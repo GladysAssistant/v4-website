@@ -151,4 +151,5 @@ module.exports = {
       },
     ],
   ],
+  plugins: [require.resolve("@docusaurus/plugin-ideal-image")],
 };

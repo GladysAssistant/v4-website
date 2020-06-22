@@ -26,12 +26,12 @@ module.exports = {
           label: "Docs",
           position: "left",
         },
-        {
+        /* {
           to: "pricing/",
           activeBasePath: "pricing",
           label: "Plus",
           position: "left",
-        },
+        }, */
         {
           to: "blog/",
           activeBasePath: "blog",
