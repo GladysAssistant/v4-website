@@ -70,13 +70,23 @@ function Home() {
               <p className="hero__subtitle">
                 A privacy-first, open-source home assistant
               </p>
-              <div className="buttons">
-                <a
-                  className="button button--outline button--secondary button--lg"
-                  href="/docs/guides/getting_started"
-                >
-                  Get Started
-                </a>
+              <div class="row">
+                <div className="buttons" style={{ paddingRight: "20px" }}>
+                  <a
+                    className="button button--primary button--lg"
+                    href="/fr/docs"
+                  >
+                    Démarrer
+                  </a>
+                </div>
+                <div className="buttons">
+                  <a
+                    className="button button--outline button--secondary button--lg"
+                    href="https://demo.gladysassistant.com"
+                  >
+                    Essayer en ligne
+                  </a>
+                </div>
               </div>
             </div>
             <div className="col col--7">

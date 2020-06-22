@@ -59,8 +59,7 @@ module.exports = {
           position: "right",
         },
         {
-          to: "/",
-          activeBasePath: "blog",
+          to: "https://plus.gladysassistant.com",
           label: "Login",
           position: "right",
         },
