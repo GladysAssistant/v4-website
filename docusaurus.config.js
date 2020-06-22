@@ -1,114 +1,114 @@
 module.exports = {
-  title: 'Gladys Assistant',
-  tagline: 'A privacy-first, open-source home assistant',
-  url: 'https://your-docusaurus-test-site.com',
-  baseUrl: '/',
-  favicon: 'img/favicon/favicon.ico',
-  organizationName: 'gladysassistant', // Usually your GitHub org/user name.
-  projectName: 'gladys', // Usually your repo name.
+  title: "Gladys Assistant",
+  tagline: "A privacy-first, open-source home assistant",
+  url: "https://your-docusaurus-test-site.com",
+  baseUrl: "/",
+  favicon: "img/favicon/favicon.ico",
+  organizationName: "gladysassistant", // Usually your GitHub org/user name.
+  projectName: "gladys", // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'Gladys Assistant',
+      title: "Gladys Assistant",
       logo: {
-        alt: 'Gladys Assistant logo',
-        src: 'img/logo.svg',
+        alt: "Gladys Assistant logo",
+        src: "img/logo.svg",
       },
       links: [
         {
-          to: 'integrations/',
-          activeBasePath: 'integrations',
-          label: 'Integrations',
-          position: 'left',
+          to: "integrations/",
+          activeBasePath: "integrations",
+          label: "Integrations",
+          position: "left",
         },
         {
-          to: 'docs/',
-          activeBasePath: 'docs',
-          label: 'Docs',
-          position: 'left',
+          to: "docs/",
+          activeBasePath: "docs",
+          label: "Docs",
+          position: "left",
         },
         {
-          to: 'pricing/',
-          activeBasePath: 'pricing',
-          label: 'Plus',
-          position: 'left',
+          to: "pricing/",
+          activeBasePath: "pricing",
+          label: "Plus",
+          position: "left",
         },
         {
-          to: 'blog/',
-          activeBasePath: 'blog',
-          label: 'Blog',
-          position: 'left',
+          to: "blog/",
+          activeBasePath: "blog",
+          label: "Blog",
+          position: "left",
         },
         {
-          label: 'Language',
-          position: 'right', // or 'right'
+          label: "Language",
+          position: "right", // or 'right'
           items: [
             {
-              label: 'English',
-              href: '...',
+              label: "English",
+              href: "...",
             },
             {
-              label: 'Français',
-              href: '...',
+              label: "Français",
+              href: "...",
             },
             // ... more items
           ],
         },
         {
-          href: 'https://github.com/gladysassistant/gladys',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/gladysassistant/gladys",
+          label: "GitHub",
+          position: "right",
         },
         {
-          to: '/',
-          activeBasePath: 'blog',
-          label: 'Login',
-          position: 'right',
+          to: "/",
+          activeBasePath: "blog",
+          label: "Login",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
           items: [
             {
-              label: 'Style Guide',
-              to: 'docs/',
+              label: "Style Guide",
+              to: "docs/",
             },
             {
-              label: 'Second Doc',
-              to: 'docs/doc2/',
+              label: "Second Doc",
+              to: "docs/doc2/",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Community",
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: "Stack Overflow",
+              href: "https://stackoverflow.com/questions/tagged/docusaurus",
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              label: "Discord",
+              href: "https://discordapp.com/invite/docusaurus",
             },
             {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: "Twitter",
+              href: "https://twitter.com/docusaurus",
             },
           ],
         },
         {
-          title: 'More',
+          title: "More",
           items: [
             {
-              label: 'Blog',
-              to: 'blog',
+              label: "Blog",
+              to: "blog",
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              label: "GitHub",
+              href: "https://github.com/facebook/docusaurus",
             },
           ],
         },
@@ -118,24 +118,24 @@ module.exports = {
   },
   presets: [
     [
-      '@docusaurus/preset-classic',
+      "@docusaurus/preset-classic",
       {
         docs: {
           // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: 'doc12',
-          sidebarPath: require.resolve('./sidebars.js'),
+          homePageId: "installation/raspberry-pi",
+          sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/',
+            "https://github.com/facebook/docusaurus/edit/master/website/",
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/blog/',
+            "https://github.com/facebook/docusaurus/edit/master/website/blog/",
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
       },
     ],
