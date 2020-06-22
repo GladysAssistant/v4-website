@@ -44,11 +44,11 @@ module.exports = {
           items: [
             {
               label: "English",
-              href: "...",
+              href: "/en/",
             },
             {
               label: "Français",
-              href: "...",
+              href: "/fr/",
             },
             // ... more items
           ],
