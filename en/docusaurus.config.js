@@ -1,8 +1,8 @@
 module.exports = {
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
-  url: "https://your-docusaurus-test-site.com",
-  baseUrl: "/",
+  url: "https://5ef07b94def46d0008742db4--hopeful-goldberg-e0c785.netlify.app",
+  baseUrl: "/en/",
   favicon: "img/favicon/favicon.ico",
   organizationName: "gladysassistant", // Usually your GitHub org/user name.
   projectName: "gladys", // Usually your repo name.
