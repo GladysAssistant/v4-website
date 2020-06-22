@@ -3,6 +3,9 @@
 rm -rf _build
 mkdir _build
 
+# Installing deps
+npm install
+
 # Building en website
 cd en
 npm run build
