@@ -22,7 +22,7 @@ I recommend the software [Etcher](https://etcher.io/) (Linux/MacOS/Windows compa
 
 Install Etcher, plug your SD card into your computer, and clone the `.img` file on your SD card.
 
-<img src="/img/docs/installation/etcher.png" alt="Etcher" class="img-responsive" />
+<img src="/en/img/docs/installation/etcher.png" alt="Etcher" class="img-responsive" />
 
 ## Plug your Raspberry Pi
 

@@ -12,11 +12,11 @@ Ce tutoriel vous explique comment installer Gladys avec Docker sur une Freebox D
 
 Tout d'abord il faut se rendre sur l'interface Freebox à l'adresse suivante : mafreebox.free.fr.
 
-<img src="/img/docs/installation/freebox-delta/freeboxos.PNG" alt="FreeboxOs" class="img-responsive" />
+<img src="/fr/img/docs/installation/freebox-delta/freeboxos.PNG" alt="FreeboxOs" class="img-responsive" />
 
 Cliquez sur "VMs". Cette fenêtre apparait :
 
-<img src="/img/docs/installation/freebox-delta/add-vm.PNG" alt="Ajouter une VM" class="img-responsive" />
+<img src="/fr/img/docs/installation/freebox-delta/add-vm.PNG" alt="Ajouter une VM" class="img-responsive" />
 
 Choisissez un nom pour la VM, par exemple Gladys.
 
@@ -24,7 +24,7 @@ Sélectionnez l'option "Choisir un système d'exploitation pré-installé parmi 
 
 Cliquez sur "Suivant".
 
-<img src="/img/docs/installation/freebox-delta/add-vm-2.PNG" alt="Ajouter une VM" class="img-responsive" />
+<img src="/fr/img/docs/installation/freebox-delta/add-vm-2.PNG" alt="Ajouter une VM" class="img-responsive" />
 
 Sélectionnez le système à installer, par exemple Ubuntu.
 
@@ -34,13 +34,13 @@ Choisissez un nom d'utilisateur, par exemple galdys.
 
 Cliquez sur "Suivant".
 
-<img src="/img/docs/installation/freebox-delta/add-vm-3.PNG" alt="Ajouter une VM" class="img-responsive" />
+<img src="/fr/img/docs/installation/freebox-delta/add-vm-3.PNG" alt="Ajouter une VM" class="img-responsive" />
 
 Cliquez sur "Terminer".
 
 La VM est prête, cliquez sur "Allumer" pour démarrer la VM.
 
-<img src="/img/docs/installation/freebox-delta/start-vm.PNG" alt="Ajouter une VM" class="img-responsive" />
+<img src="/fr/img/docs/installation/freebox-delta/start-vm.PNG" alt="Ajouter une VM" class="img-responsive" />
 
 Accédez à votre VM en SSH et mettez à jour le système.
 
@@ -96,4 +96,4 @@ docker run -d \
 
 Vous pouvez accéder à Gladys en tapant l'IP de votre VM sur votre navigateur.
 
-<img src="/img/docs/installation/freebox-delta/freebox-vm-success.PNG" alt="Access VM" class="img-responsive" />
+<img src="/fr/img/docs/installation/freebox-delta/freebox-vm-success.PNG" alt="Access VM" class="img-responsive" />

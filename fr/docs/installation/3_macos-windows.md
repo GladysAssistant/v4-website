@@ -20,18 +20,18 @@ Vous devez lancer Kitematic.
 
 Puis, dans l'interface, cherchez "gladysassistant":
 
-<img src="/img/docs/installation/docker-desktop/kitematic-gladysassistant.png" alt="Kitematic gladys assistant" class="img-responsive" />
+<img src="/fr/img/docs/installation/docker-desktop/kitematic-gladysassistant.png" alt="Kitematic gladys assistant" class="img-responsive" />
 
 Sélectionnez le tag "4.0.0-beta-amd64":
 
-<img src="/img/docs/installation/docker-desktop/kitematic-select-tag.png" alt="Kitematic gladys assistant" class="img-responsive" />
+<img src="/fr/img/docs/installation/docker-desktop/kitematic-select-tag.png" alt="Kitematic gladys assistant" class="img-responsive" />
 
 Cliquez sur "Create" pour lancer un nouveau container:
 
-<img src="/img/docs/installation/docker-desktop/kitematic-start-gladys.png" alt="Kitematic gladys assistant" class="img-responsive" />
+<img src="/fr/img/docs/installation/docker-desktop/kitematic-start-gladys.png" alt="Kitematic gladys assistant" class="img-responsive" />
 
 Puis lancez dans votre navigateur l'URL indiqué par Kitematic (ici, "http://localhost:32768")
 
-<img src="/img/docs/installation/docker-desktop/kitematic-success.png" alt="Kitematic gladys assistant" class="img-responsive" />
+<img src="/fr/img/docs/installation/docker-desktop/kitematic-success.png" alt="Kitematic gladys assistant" class="img-responsive" />
 
 Hop, vous avez accès à Gladys!
