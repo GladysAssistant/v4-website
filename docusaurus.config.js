@@ -70,15 +70,23 @@ module.exports = {
       style: "dark",
       links: [
         {
-          title: "Docs",
+          title: "Getting Started",
           items: [
             {
-              label: "Style Guide",
-              to: "docs/",
+              label: "Raspberry Pi",
+              to: "docs/installation/raspberry-pi",
             },
             {
-              label: "Second Doc",
-              to: "docs/doc2/",
+              label: "Docker",
+              to: "docs/installation/docker",
+            },
+            {
+              label: "MacOS/Windows",
+              to: "docs/installation/macos-windows",
+            },
+            {
+              label: "Freebox Delta",
+              to: "docs/installation/freebox-delta",
             },
           ],
         },
@@ -86,16 +94,20 @@ module.exports = {
           title: "Community",
           items: [
             {
-              label: "Stack Overflow",
-              href: "https://stackoverflow.com/questions/tagged/docusaurus",
-            },
-            {
-              label: "Discord",
-              href: "https://discordapp.com/invite/docusaurus",
+              label: "Forum",
+              href: "https://community.gladysassistant.com",
             },
             {
               label: "Twitter",
-              href: "https://twitter.com/docusaurus",
+              href: "https://twitter.com/gladysassistant",
+            },
+            {
+              label: "Facebook",
+              href: "https://facebook.com/gladysassistant",
+            },
+            {
+              label: "Instagram",
+              href: "https://instagram.com/gladysassistant",
             },
           ],
         },
@@ -108,12 +120,12 @@ module.exports = {
             },
             {
               label: "GitHub",
-              href: "https://github.com/facebook/docusaurus",
+              href: "https://github.com/gladysassistant/gladys",
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
     },
   },
   presets: [
