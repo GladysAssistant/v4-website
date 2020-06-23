@@ -25,11 +25,11 @@ function Home({ translation }) {
       <header className={classnames("hero shadow--lw")}>
         <div className="container">
           <div className="row">
-            <div className={classnames("col col--5", styles.heroText)}>
+            <div className={classnames("col padding-top--lg")}>
               <h1 className="hero__title">{translation.title}</h1>
               <p className="hero__subtitle">{translation.description}</p>
               <div class="row">
-                <div className="buttons" style={{ paddingRight: "20px" }}>
+                <div className="buttons margin-right--md ">
                   <a
                     className="button button--primary button--lg"
                     href="/en/docs"
@@ -37,7 +37,7 @@ function Home({ translation }) {
                     {translation.gettingStartedButton}
                   </a>
                 </div>
-                <div className="buttons">
+                <div className="buttons margin-right--md">
                   <a
                     className="button button--outline button--secondary button--lg"
                     href="https://demo.gladysassistant.com"
