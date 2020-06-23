@@ -1,14 +1,21 @@
 import React from "react";
+import classnames from "classnames";
 import styles from "./styles.module.css";
 import Image from "@theme/IdealImage";
+import Link from "@docusaurus/Link";
 
 const truncate = (str, len) =>
   str.substring(0, (str + " ").lastIndexOf(" ", len));
 
-function Integration({ docsId, imageName, title, description }) {
+function Integration({ docsId, imageName, title, description, lang, buyLink }) {
   const MAX_DESCRIPTION_LENGTH = 80;
   if (description.length > MAX_DESCRIPTION_LENGTH) {
     description = truncate(description, MAX_DESCRIPTION_LENGTH) + " ...";
+  }
+  if (buyLink && buyLink.indexOf("amazon") !== -1) {
+    var amazonUrl = new URL(buyLink);
+    amazonUrl.searchParams.set("tag", "gladproj-21");
+    buyLink = amazonUrl.toString();
   }
   return (
     <div class="card">
@@ -26,18 +33,31 @@ function Integration({ docsId, imageName, title, description }) {
         <small>{description}</small>
       </div>
       <div class="card__footer">
-        <a
-          class="button button--primary button--block"
-          href={`/en/docs/integrations/${docsId}`}
-        >
-          Read more
-        </a>
+        <div className={classnames({ [styles.buttonsIntegration]: buyLink })}>
+          <div
+            className={classnames({ [styles.buttonIntegrationLeft]: buyLink })}
+          >
+            <Link
+              class="button button--primary button--block"
+              to={`/${lang}/docs/integrations/${docsId}`}
+            >
+              Read more
+            </Link>
+          </div>
+          {buyLink && (
+            <div className={styles.buttonIntegrationRight}>
+              <Link class="button button--secondary button--block" to={buyLink}>
+                Buy
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-function IntegrationPage({ integrations }) {
+function IntegrationPage({ integrations, lang }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
@@ -77,7 +97,11 @@ function IntegrationPage({ integrations }) {
           <div class="row">
             {integrationsFiltered.map((integration) => (
               <div className="col col--4">
-                <Integration key={integration.title} {...integration} />
+                <Integration
+                  key={integration.title}
+                  {...integration}
+                  lang={lang}
+                />
               </div>
             ))}
           </div>

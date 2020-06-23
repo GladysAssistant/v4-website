@@ -366,7 +366,11 @@ function Home({ translation, integrations, lang }) {
                 <div className="row">
                   {integrations.map((integration) => (
                     <div className="col col--3">
-                      <Integration {...integration} />
+                      <Integration
+                        {...integration}
+                        buyLink={false}
+                        lang={lang}
+                      />
                     </div>
                   ))}
                 </div>

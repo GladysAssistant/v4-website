@@ -10,7 +10,7 @@ function Home() {
       description="Description will go into a meta tag in <head />"
     >
       <main>
-        <IntegrationPage integrations={integrations} />
+        <IntegrationPage integrations={integrations} lang="en" />
       </main>
     </Layout>
   );

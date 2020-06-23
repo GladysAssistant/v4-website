@@ -11,7 +11,7 @@ function Home() {
       description="Tous les périphériques compatibles avec Gladys."
     >
       <main>
-        <IntegrationPage integrations={integrations} />
+        <IntegrationPage integrations={integrations} lang="fr" />
       </main>
     </Layout>
   );
