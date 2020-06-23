@@ -126,7 +126,7 @@ Je vais donc passer par un autre outil pour builder le site: soit CircleCI, soit
 De mon côté, j'ai plusieurs objectifs:
 
 - Finir le Gladys Starter Pack
-- Finir la nouvelle plateforme développeur Gladys (j'en parlais dans [mon dernier article bilan](/fr/article/bilan-mois-mai-pour-le-projet-gladys))
+- Finir la nouvelle plateforme développeur Gladys (j'en parlais dans [mon dernier article bilan](/fr/blog/bilan-mois-mai-pour-le-projet-gladys))
 - Faire différents fixs sur le coeur de Gladys
 
 C'est déjà bien pour l'été, sachant que je serais 2 semaines en vacances cet été du 15 au 29 août! (L'instant repos de l'année 😴)

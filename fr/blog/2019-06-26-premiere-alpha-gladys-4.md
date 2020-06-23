@@ -11,7 +11,7 @@ image: /assets/images/presentation/gladys-4-alpha.jpg
 id: premiere-alpha-gladys-4
 ---
 
-[English article here](/en/article/first-alpha-gladys-4).
+[English article here](/en/blog/first-alpha-gladys-4).
 
 Salut à tous !
 

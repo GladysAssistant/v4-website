@@ -13,7 +13,7 @@ id: bilan-2019-gladys-assistant
 
 Salut à tous !
 
-Chaque année, je publie un article bilan de l'année. Je l'avais fais en [2018](/fr/article/bilan-2018-pour-gladys-assistant), [2017](/fr/article/bilan-gladys-2017), [2016](/fr/article/bilan-annee-2016) et [2015](/fr/article/bilan-2015-et-projets-pour-2016).
+Chaque année, je publie un article bilan de l'année. Je l'avais fais en [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) et [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
 
 Bienvenue dans la version 2019 de l'article 😁
 
@@ -31,7 +31,7 @@ Pendant toute cette année, avec l'aide de la communauté, nous avons imaginé, 
 
 ![Programme de 2019](/fr/img/articles/bilan-2019/2019-schedule.png)
 
-En juin 2019, après plusieurs mois de développement, j'ai sorti [une première version alpha de Gladys 4](/fr/article/premiere-alpha-gladys-4). L'objectif de cette version était de permettre aux développeurs de migrer les modules Gladys 3 vers les services de Gladys 4.
+En juin 2019, après plusieurs mois de développement, j'ai sorti [une première version alpha de Gladys 4](/fr/blog/premiere-alpha-gladys-4). L'objectif de cette version était de permettre aux développeurs de migrer les modules Gladys 3 vers les services de Gladys 4.
 
 En octobre, suite aux retours et aux développements service effectué par la communauté, j'ai sorti une première bêta, cette fois-ci fournie avec une image Raspbian clé en main, permettant une installation simple de Gladys 4.
 

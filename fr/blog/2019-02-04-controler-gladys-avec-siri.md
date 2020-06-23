@@ -11,7 +11,7 @@ image: /assets/images/presentation/gateway-siri.jpg
 id: controler-gladys-avec-siri
 ---
 
-Article in English available [here](/en/article/control-gladys-with-siri)
+Article in English available [here](/en/blog/control-gladys-with-siri)
 
 Salut à tous!
 

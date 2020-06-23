@@ -11,7 +11,7 @@ image: /assets/images/presentation/new-brand-identity.jpg
 id: une-nouvelle-identite-visuelle-pour-gladys
 ---
 
-English article available [here](/en/article/a-new-brand-identity).
+English article available [here](/en/blog/a-new-brand-identity).
 
 Salut à tous,
 

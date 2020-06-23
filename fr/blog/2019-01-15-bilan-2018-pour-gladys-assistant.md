@@ -15,7 +15,7 @@ Salut à tous,
 
 C'est la tradition : chaque année, je fais un article bilan de l'année où je récapitule toutes les avancées autour de Gladys. En toute transparence, je dévoile tous les chiffres: nombre de téléchargements, visiteurs sur le site et même revenu.
 
-Si vous voulez vous rappeler de l'année précédente, l'article [bilan de l'année 2017 est ici](/fr/article/bilan-gladys-2017).
+Si vous voulez vous rappeler de l'année précédente, l'article [bilan de l'année 2017 est ici](/fr/blog/bilan-gladys-2017).
 
 <!--truncate-->
 
@@ -79,7 +79,7 @@ La raison a cela est très simple: j'ai passé beaucoup moins de temps cette ann
 
 L'année dernière, j'avais fais un gros travail dessus:
 
-- J'avais transformé le site en site statique, bien plus rapide que l'ancien, [entièrement open-source](/fr/article/site-open-source-et-lancement-gladys-starter-pack) et distribué au plus proche des utiliateurs grâce au CDN CloudFlare.
+- J'avais transformé le site en site statique, bien plus rapide que l'ancien, [entièrement open-source](/fr/blog/site-open-source-et-lancement-gladys-starter-pack) et distribué au plus proche des utiliateurs grâce au CDN CloudFlare.
 - J'avais écris 11 articles, soit quasiment 1 par mois
 - J'avais retravaillé le design, amélioré l'ergonomie, et bossé sur le SEO/social, et l'engagement avec le nouveau système de commentaire.
 
@@ -178,7 +178,7 @@ Les dépenses sont diverses:
 - Le matériel que j'ai pu acheter, autant domotique que mes outils de travail (laptop & casque à réduction de bruits)
 - Les dépenses diverses exceptionnelles.
 
-La plus grosse dépense récente étant le [redesign complet de l'identité visuelle](/fr/article/une-nouvelle-identite-visuelle-pour-gladys) de Gladys réalisée par un designer professionel, ainsi que l'impression et l'expédition des stickers.
+La plus grosse dépense récente étant le [redesign complet de l'identité visuelle](/fr/blog/une-nouvelle-identite-visuelle-pour-gladys) de Gladys réalisée par un designer professionel, ainsi que l'impression et l'expédition des stickers.
 
 Les taxes c'est assez simple, c'est mon frais n°1 😁
 

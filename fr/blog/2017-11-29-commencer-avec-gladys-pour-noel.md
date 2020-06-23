@@ -47,7 +47,7 @@ En bref, ça marche super bien! Le seul truc que je trouve "marrant" avec ce gat
 - <a href="https://fr.gearbest.com/smart-light-bulb/pp_257679.html?wid=55" rel="nofollow" >Le Xiaomi Switch, bouton connecté à 6€ sur Gearbest</a>
 - <a href="https://fr.gearbest.com/xiaomi-aqara-_gear/" rel="nofollow" >Le Xiaomi Aqara détecteur ouverture porte et fenêtre à 6€ sur Gearbest</a>
 
-Mon article [Gladys devient compatible Xiaomi Home](https://gladysassistant.com/fr/article/gladys-devient-compatible-xiaomi-home).
+Mon article [Gladys devient compatible Xiaomi Home](https://gladysassistant.com/fr/blog/gladys-devient-compatible-xiaomi-home).
 
 ## Détecter votre présence grâce à un porte clé Bluetooth
 
@@ -59,7 +59,7 @@ Cette détection, je l'utilise depuis quasi 3 mois, et ça marche juste parfaite
 
 - <a href="https://www.amazon.fr/gp/product/B01AUNMQMG/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=gladproj-21&camp=1642&creative=6746&linkCode=as2&creativeASIN=B01AUNMQMG&linkId=c8c3d0576a70e89bbd67591379eb3dfc" rel="nofollow" >Le porte-clé Bluetooth à 10€ sur Amazon</a>
 
-Le tutoriel => [Détecter la présence de l'utilisateur grâce à un porte clé Bluetooth !](/fr/article/detecter-presence-porte-cle-bluetooth)
+Le tutoriel => [Détecter la présence de l'utilisateur grâce à un porte clé Bluetooth !](/fr/blog/detecter-presence-porte-cle-bluetooth)
 
 ## Gérer ses lumières
 

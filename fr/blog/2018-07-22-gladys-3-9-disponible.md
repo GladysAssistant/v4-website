@@ -180,7 +180,7 @@ Cette mise à jour, c'est le fruit du travail de toute une communauté, et c'est
 
 Merci à tous ceux qui ont contribués !
 
-Pour ceux qui ont loupés la nouvelle, j'ai annoncé début juillet que [j'allais passer à temps partiel sur Gladys](/fr/article/grande-nouvelle-gladys) 🚀😀
+Pour ceux qui ont loupés la nouvelle, j'ai annoncé début juillet que [j'allais passer à temps partiel sur Gladys](/fr/blog/grande-nouvelle-gladys) 🚀😀
 
 A l'occasion, j'ai lancé un [Patreon](https://www.patreon.com/gladysassistant/overview) afin de demander un soutien financier à la part de communauté pour pouvoir mener à bien ce projet !
 
