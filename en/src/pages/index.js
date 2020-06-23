@@ -21,7 +21,11 @@ function HomePage() {
       title="Gladys Assistant"
       description="A privacy-first, open-source home assistant"
     >
-      <Home translation={translation} integrations={first4Integrations} />
+      <Home
+        translation={translation}
+        integrations={first4Integrations}
+        lang="en"
+      />
     </Layout>
   );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import classnames from "classnames";
-import feather from "feather-icons";
 import styles from "./styles.module.css";
+import Link from "@docusaurus/Link";
 import Image from "@theme/IdealImage";
 import mockup from "./mockup.png";
 import cameraGladys4 from "./cameras-gladys-4.jpg";
@@ -9,6 +9,7 @@ import dashboardGladys4 from "./dashboard-gladys-4.jpg";
 import calendarGladys4 from "./calendar-gladys-4.jpg";
 import sceneGladys4 from "./scene-gladys-4.jpg";
 import { Integration } from "./Integration";
+import onClickCheckoutGladysPlus from "./stripe";
 
 function Feature({ imageUrl, title, description }) {
   const imgUrl = useBaseUrl(imageUrl);
@@ -63,7 +64,7 @@ function Cross() {
   );
 }
 
-function Pricing({ translation }) {
+function Pricing({ translation, lang }) {
   return (
     <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
       <div className="container">
@@ -77,7 +78,7 @@ function Pricing({ translation }) {
                 <div class="card-demo">
                   <div class="card">
                     <div class="card__header">
-                      <h3 className="text--center">Free</h3>
+                      <h3 className="text--center">Community (Free)</h3>
                     </div>
                     <div class="card__body">
                       <p>
@@ -108,9 +109,12 @@ function Pricing({ translation }) {
                       </p>
                     </div>
                     <div class="card__footer">
-                      <button class="button button--secondary button--block">
+                      <Link
+                        className="button button--secondary button--block"
+                        to={`/${lang}/docs`}
+                      >
                         Get started
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -151,7 +155,10 @@ function Pricing({ translation }) {
                       </p>
                     </div>
                     <div class="card__footer">
-                      <button class="button button--success button--block">
+                      <button
+                        onClick={() => onClickCheckoutGladysPlus(lang)}
+                        class="button button--success button--block"
+                      >
                         Subscribe (9.99€/month)
                       </button>
                     </div>
@@ -165,6 +172,44 @@ function Pricing({ translation }) {
     </div>
   );
 }
+
+const Features = () => (
+  <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+    <div className="container">
+      <div className="row">
+        <div className="col col--12">
+          <h2 className="text--center">
+            A super-stable software, designed for performance & security
+          </h2>
+          <p
+            className="col col--6 col--offset-4"
+            style={{ paddingTop: "2rem" }}
+          >
+            <div>
+              <input type="checkbox" checked disabled /> Atomic, rock-solid &
+              automatic upgrades
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> Integrations are
+              built-in, not installed
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> Minimalist, clean UI
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> Open-Source Code,
+              reviewed by the community
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> End-to-End Encrypted
+              remote access (Plus feature)
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 const SignupNewsletter = () => (
   <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
@@ -201,7 +246,7 @@ const SignupNewsletter = () => (
   </div>
 );
 
-function Home({ translation, integrations }) {
+function Home({ translation, integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
   return (
     <>
@@ -330,44 +375,7 @@ function Home({ translation, integrations }) {
           </div>
         </div>
 
-        <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
-          <div className="container">
-            <div className="row">
-              <div className="col col--12">
-                <h2 className="text--center">
-                  A super-stable software, designed for performance & security
-                </h2>
-                <p
-                  className="col col--6 col--offset-4"
-                  style={{ paddingTop: "2rem" }}
-                >
-                  <div>
-                    <input type="checkbox" checked disabled /> Atomic,
-                    rock-solid & automatic upgrades
-                  </div>
-                  <div>
-                    <input type="checkbox" checked disabled /> Integrations are
-                    built-in, not installed
-                  </div>
-                  <div>
-                    <input type="checkbox" checked disabled /> Minimalist, clean
-                    UI
-                  </div>
-                  <div>
-                    <input type="checkbox" checked disabled /> Open-Source Code,
-                    reviewed by the community
-                  </div>
-                  <div>
-                    <input type="checkbox" checked disabled /> End-to-End
-                    Encrypted remote access (Plus feature)
-                  </div>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Pricing />
+        <Pricing lang={lang} />
       </main>
     </>
   );
