@@ -22,7 +22,7 @@ Je vous conseille pour cela le super outil [Etcher](https://etcher.io/) (compati
 
 Installez Etcher, branchez votre carte SD à votre ordinateur, et clonez le fichier .img sur la carte.
 
-<img src="/fr/img/docs/installation/etcher.png" alt="Etcher" class="img-responsive" />
+<img src="/fr/img/docs/installation/etcher.png" alt="Etcher"  />
 
 ### Branchez votre Raspberry Pi
 

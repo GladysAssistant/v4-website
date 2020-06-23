@@ -22,11 +22,11 @@ Then go to "settings" => "Open API", and create a key.
 
 Click on the button in the top-left corner:
 
-<img src="/en/img/docs/configuration/gateway/open-api-owntracks-0.jpg" alt="Open API owntracks Gladys" class="img-responsive" width="300" />
+<img src="/en/img/docs/configuration/gateway/open-api-owntracks-0.jpg" alt="Open API owntracks Gladys"  width="300" />
 
 Click on settings:
 
-<img src="/en/img/docs/configuration/gateway/open-api-owntracks-1.jpg" alt="Open API owntracks Gladys" class="img-responsive" width="300" />
+<img src="/en/img/docs/configuration/gateway/open-api-owntracks-1.jpg" alt="Open API owntracks Gladys"  width="300" />
 
 Select "HTTP", and in the "URL" input, enter:
 
@@ -40,7 +40,7 @@ I put "iphone" for the `DeviceID`, and "pierre-gilles" for the `UserID`.
 
 Gladys uses the API key to identify who is making the request.
 
-<img src="/en/img/docs/configuration/gateway/open-api-owntracks-2.jpg" alt="Open API owntracks Gladys" class="img-responsive" width="300" />
+<img src="/en/img/docs/configuration/gateway/open-api-owntracks-2.jpg" alt="Open API owntracks Gladys"  width="300" />
 
 ### See your location in Gladys
 
