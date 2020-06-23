@@ -3,9 +3,7 @@ id: big-news-gladys
 title: I have a big news about Gladys !
 description: And it's the biggest news since the beginning of the project ;)
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg

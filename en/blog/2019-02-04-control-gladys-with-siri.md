@@ -3,9 +3,6 @@ id: control-gladys-with-siri
 title: How to control Gladys with Siri
 description: I'm happy to release today the Open API of the Gladys Gateway, enabling the use of Gladys with Siri.
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg
