@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 rm -rf _build
 mkdir _build
