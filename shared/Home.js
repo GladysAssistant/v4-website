@@ -1,5 +1,6 @@
 import React from "react";
 import classnames from "classnames";
+import feather from "feather-icons";
 import styles from "./styles.module.css";
 import Image from "@theme/IdealImage";
 import mockup from "./mockup.png";
@@ -23,6 +24,182 @@ function Feature({ imageUrl, title, description }) {
     </div>
   );
 }
+
+const Check = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#06a404"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    className={styles.checkIcons}
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);
+
+function Cross() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#fa393e"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className={styles.checkIcons}
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+  );
+}
+
+function Pricing({ translation }) {
+  return (
+    <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+      <div className="container">
+        <div className="row">
+          <div className="col col--12">
+            <h2 className="text--center" style={{ fontSize: "30px" }}>
+              Pricing
+            </h2>
+            <div className="row">
+              <div className="col col--5 col--offset-1">
+                <div class="card-demo">
+                  <div class="card">
+                    <div class="card__header">
+                      <h3 className="text--center">Free</h3>
+                    </div>
+                    <div class="card__body">
+                      <p>
+                        <ul className={styles.listUnstyled}>
+                          <li>
+                            <Check />
+                            Open Source Software
+                          </li>
+                          <li>
+                            <Cross /> End-to-End Encrypted Remote Access
+                          </li>
+                          <li>
+                            <Cross /> Daily Encrypted Backups
+                          </li>
+                          <li>
+                            <Cross /> One-click Restore
+                          </li>
+                          <li>
+                            <Cross /> Owntracks API Server
+                          </li>
+                          <li>
+                            <Cross /> Private Slack Community
+                          </li>
+                          <li>
+                            <Cross /> Support Open-Source Software
+                          </li>
+                        </ul>
+                      </p>
+                    </div>
+                    <div class="card__footer">
+                      <button class="button button--secondary button--block">
+                        Get started
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col col--5">
+                <div class="card-demo">
+                  <div class="card">
+                    <div class="card__header">
+                      <h3 className="text--center">Gladys Plus</h3>
+                    </div>
+                    <div class="card__body">
+                      <p>
+                        <ul className={styles.listUnstyled}>
+                          <li>
+                            <Check />
+                            Open-Source Software
+                          </li>
+                          <li>
+                            <Check /> End-to-End Encrypted Remote Access
+                          </li>
+                          <li>
+                            <Check /> Daily Encrypted Backups
+                          </li>
+                          <li>
+                            <Check /> One-click Restore
+                          </li>
+                          <li>
+                            <Check /> Owntracks API Server
+                          </li>
+                          <li>
+                            <Check /> Private Slack Community
+                          </li>
+                          <li>
+                            <Check /> Support Open-Source Software
+                          </li>
+                        </ul>
+                      </p>
+                    </div>
+                    <div class="card__footer">
+                      <button class="button button--success button--block">
+                        Subscribe (9.99€/month)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const SignupNewsletter = () => (
+  <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+    <div className="container">
+      <div className="row">
+        <div className="col col--6">
+          <h2 className="text--center">
+            A super-stable software, designed for performance & security
+          </h2>
+          <p className="col col--6 col--offset-4">
+            <div>
+              <input type="checkbox" checked disabled /> Atomic, rock-solid &
+              automatic upgrades
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> Integrations are
+              built-in, not installed
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> Minimalist, clean UI
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> Open-Source Code,
+              reviewed by the community
+            </div>
+            <div>
+              <input type="checkbox" checked disabled /> End-to-End Encrypted
+              remote access (Plus feature)
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 function Home({ translation, integrations }) {
   const [openPanel, setOpenPanel] = React.useState(1);
@@ -189,6 +366,8 @@ function Home({ translation, integrations }) {
             </div>
           </div>
         </div>
+
+        <Pricing />
       </main>
     </>
   );
