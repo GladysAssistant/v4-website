@@ -2,6 +2,9 @@
 title: How to control Gladys with NFC tags
 description: How to control Gladys without using the web app ? In this tutorial, we'll use Tasker and NFC tags to trigger scenario in Gladys !
 author: Pierre-Gilles Leymarie
+author_title: Fondateur de Gladys Assistant
+author_url: https://twitter.com/pierregillesl
+author_image_url: /fr/img/pierre-gilles.jpg
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg

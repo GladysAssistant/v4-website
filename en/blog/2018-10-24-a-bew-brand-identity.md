@@ -3,6 +3,9 @@ id: a-new-brand-identity
 title: A New Brand Identity for Gladys Assistant
 description: Thanks to the work of a talented designer, we now have a new logo and a new homepage!
 author: Pierre-Gilles Leymarie
+author_title: Fondateur de Gladys Assistant
+author_url: https://twitter.com/pierregillesl
+author_image_url: /fr/img/pierre-gilles.jpg
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg

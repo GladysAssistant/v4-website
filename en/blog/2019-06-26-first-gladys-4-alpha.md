@@ -3,6 +3,9 @@ id: first-alpha-gladys-4
 title: A first alpha release for Gladys 4!
 description: After 7 months of work, I'm happy to release today the first alpha release of Gladys 4, the next major version of Gladys.
 author: Pierre-Gilles Leymarie
+author_title: Fondateur de Gladys Assistant
+author_url: https://twitter.com/pierregillesl
+author_image_url: /fr/img/pierre-gilles.jpg
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg
@@ -47,7 +50,7 @@ Demo time!
 
 The main dashboard of Gladys, fully customizable
 
-![Gladys 4 Dashboard](/en/img/articles/gladys-4-alpha/dashboard.png" alt="" />
+![Gladys 4 Dashboard](/en/img/articles/gladys-4-alpha/dashboard.png)
 
 The "Chat" view, to talk with Gladys:
 
