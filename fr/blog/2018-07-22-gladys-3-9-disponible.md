@@ -19,6 +19,8 @@ Je dis "on", car cette mise à jour n'est pas uniquement le fruit de mon travail
 
 Je listerais dans cet article tous les changements notables sur cette version. Bien entendu, il y a un ensemble de petites corrections de bugs dont je ne parlerais pas mais qui sont toujours appréciables 😉
 
+<!--truncate-->
+
 ## Une vue configuration pour les modules
 
 Jusque là, les modules ne pouvaient pas avoir une vue de configuration à eux, ils ne se contentaient que d'un bouton "configuration" qui déclenchait selon le module une action particulière. Par exemple l'ancien module Z-Wave se servait de ce bouton pour passer et sortir du mode "inclusion". Mais pour l'utilisateur, c'était complexe car il n'y avait aucun retour visuel, ce n'était pas super pratique.

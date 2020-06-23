@@ -13,6 +13,8 @@ Le Raspberry est un outil formidable pour ses ports GPIOs, mais ceux-ci sont par
 
 Le majeur problème qui m'a poussé à acheter un arduino est la réception de signaux 433Mhz. Dans un de mes derniers tuto je vous expliquais comment recevoir des signaux 433Mhz sur le Raspberry, en utilisant un petit programme "RFSniffer". Cette solution fonctionne, mais surtout à des fins de tests. Le problème est que le Raspberry n'est pas temps réel. Du coup, pour vérifier si un signal 433Mhz n'est pas émis, il doit en permanence checker le récepteur, ce qui sature le CPU, autour de 30/40% ( ce qui est énorme pour juste "attendre" un signal). Si RFSniffer est lancé H24, la consommation et l'échauffement du Raspberry seront élevés ! Et c'est là que l'arduino intervient : et si l'on connectait le récepteur 433Mhz à un arduino, qui s'occuperait de le gérer, et qui ne préviendrait le Raspberry qu'en cas de réception de signal, via le port USB ! C'est ce que nous allons faire dans ce tuto. L'arduino nous permettra aussi par la suite d'utiliser du matériel électronique plus facilement qu'avec le Raspberry, et donc de "soulager" le CPU du Rasp.
 
+<!--truncate-->
+
 ## Le matériel
 
 Pour ce tuto, nous aurons besoin :

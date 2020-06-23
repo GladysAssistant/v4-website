@@ -21,6 +21,8 @@ Je n'avais jamais eu le temps ni les moyens jusque-là de passer par un professi
 
 Et coup de chance, après seulement 2 jours sur place, je rencontre un designer au barbecue de l'espace de coworking où je travaille: Oliver Swinburne.
 
+<!--truncate-->
+
 <div class="row">
 
 <div class="col-md-4">

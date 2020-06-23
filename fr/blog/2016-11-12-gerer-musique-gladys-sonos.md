@@ -21,6 +21,8 @@ Qu'est ce que cela veut dire en terme de scripts ? d'interactions ?
 
 Cela veut dire que Gladys est capable de **gérer la musique de façon native**, que ce soit dans les scripts, dans les scénarios, par les commandes textuels ou par la voix... Et ce quel que soit le module derrière !
 
+<!--truncate-->
+
 Par exemple, dans un script, vous pouvez désormais faire :
 
 ```javascript

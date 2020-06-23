@@ -15,6 +15,8 @@ id: gladys-and-nfc
 
 Comment faire pour intéragir avec Gladys sans avoir avec ouvrir une interface web, lancer une commande ? Avec des tags NFC ! Ce sont les parfaits candidats pour faire la liaison entre le monde physique, et Gladys.
 
+<!--truncate-->
+
 ### Le matériel
 
 - Des stickers NFC [achetés 4€ ici](http://amzn.to/1QQCbmU).

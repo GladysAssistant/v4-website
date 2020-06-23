@@ -17,6 +17,8 @@ Comment faire en sorte que Gladys puisse contrôler les appareils électriques c
 
 L'objectif de ce tutoriel est d'arrive à contrôler des prises <a href="">433Mhz Phénix</a> depuis Gladys.
 
+<!--truncate-->
+
 ## Le matériel
 
 - Des prises télécommandées Phénix ( qu'on peut acheter pour une vintaine d'euros [ici](http://amzn.to/1TzNH8u) )

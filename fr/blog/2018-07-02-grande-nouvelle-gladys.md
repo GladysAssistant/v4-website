@@ -15,6 +15,8 @@ Salut à tous,
 
 Aujourd’hui j’ai une super nouvelle à vous annoncer, pour être précis c'est la plus grosse nouvelle depuis le début du projet que je vous annonce aujourd'hui 😱😱
 
+<!--truncate-->
+
 ## Un peu de contexte
 
 Le projet existe depuis maintenant plus de 4 ans et demi.

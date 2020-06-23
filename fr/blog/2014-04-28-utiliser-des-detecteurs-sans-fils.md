@@ -11,6 +11,8 @@ id: utiliser-des-detecteurs-sans-fils
 
 Les détecteurs sans-fils permettent d'utiliser un nombre infini de détecteurs sur votre installation (Détecteurs de mouvements, mais aussi détecteurs d'ouvertures de portes, etc.. )
 
+<!--truncate-->
+
 ## Le matériel
 
 Pour ce tuto, j'ai utilisé :

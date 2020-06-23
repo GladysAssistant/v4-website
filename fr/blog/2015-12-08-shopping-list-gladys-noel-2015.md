@@ -14,6 +14,8 @@ id: shopping-list-gladys-noel-2015
 Salut à tous ! Noël approche, j'espère que votre liste de cadeaux est pleine d'Arduinos, de Raspberry Pi et de gadgets pour vous et votre Gladys !
 Si certains d'entre vous hésite encore à se lancer dans l'aventure Gladys, c'est peut-être l'occasion de s'équiper :) Voilà une petite shopping list de Noël spécial Gladys !
 
+<!--truncate-->
+
 ## Le kit de base
 
 Pour commencer avec Gladys, la seule chose qui vous faudra est un Raspberry Pi 2 ( avec le matériel pour le faire fonctionner bien entendu )

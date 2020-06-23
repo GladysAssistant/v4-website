@@ -18,6 +18,8 @@ Vous êtes nombreux à me demander depuis le début du projet quand la reconnais
 Sauf que depuis, les choses ont pas mal changées ! Les systèmes que l'ont voit autour de nous ont réglés le problème de "l'écoute H24" en proposant une solution hybride : Le système attend un mot clé ( le fameux "ok google", "Alexa", "Hey Siri" ) en écoutant en local et en faisant passer le son par un modèle entrainé à reconnaître uniquement ce hotword, puis lorsque le mot clé est détecté, le son est streamé vers un serveur qui lui est capable de reconnaitre une phrase
 complète.
 
+<!--truncate-->
+
 ## La reconnaissance vocale
 
 J'ai donc opté pour cette même solution hybride, grâce à la fabuleuse lib [Snowboy](https://github.com/Kitt-AI/snowboy) qui fait de la détection de hotword en local avec des réseaux de neurones. Le principe est simple : Sur leur site, on peut entrainer un modèle en répétant plusieurs fois devant son micro le mot clé que l'on veut utiliser pour la détection, puis il est possible de télécharger ce modèle et de l'utiliser en local avec leur librairie.

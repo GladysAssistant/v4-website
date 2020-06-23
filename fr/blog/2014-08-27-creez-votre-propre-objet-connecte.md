@@ -18,6 +18,8 @@ J'en profite pour vous mettre une petite photo du rendu final (enfin final, sur 
 
 <img alt="Assemblage de l'objet connecté" src="/fr/img/articles/creez-votre-propre-objet-connecte/finalisation.jpg" />
 
+<!--truncate-->
+
 ## Le matériel
 
 Pour le matériel, je suis quasiment passé entièrement par Tinydeal, un fournisseur chinois que je recommande très fortement. Les prix sont très attractifs, la qualité est au rendez-vous, et en des dizaines de commandes à mon actif je n'ai jamais eu un seul pépin... ( la livraison prend environ 3 semaine )

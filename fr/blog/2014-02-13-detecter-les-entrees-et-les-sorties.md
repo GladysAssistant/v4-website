@@ -17,6 +17,8 @@ Dans ce tuto nous allons voir comment savoir si l'appartement est occupé grâce
 
 ![détecteur mouvement](/fr/img/articles/detecter-les-entrees-et-les-sorties/sku_139624_1.jpg)
 
+<!--truncate-->
+
 ## Le montage
 
 Le montage est très simple, il suffit de connecter les ports du détecteur directement au GPIOs du Raspberry Pi en suivant le schéma suivant :

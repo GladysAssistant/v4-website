@@ -15,6 +15,8 @@ Salut à tous!
 
 Jusque là, la mise à jour de Gladys posait problème pour beaucoup d'entre vous. J'ai essayé de repenser ce processus de mise à jour afin que ce soit plus rapide, et surtout plus fiable, pour que vous puissiez tous bénéficier des mises à jour de Gladys le plus rapidement possible!
 
+<!--truncate-->
+
 ## Comment fonctionnait la mise à jour jusque là ?
 
 Jusque-là, le script de mise à jour fonctionnait de façon très simple:

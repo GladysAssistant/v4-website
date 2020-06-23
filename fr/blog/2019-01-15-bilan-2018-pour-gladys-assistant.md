@@ -17,6 +17,8 @@ C'est la tradition : chaque année, je fais un article bilan de l'année où je 
 
 Si vous voulez vous rappeler de l'année précédente, l'article [bilan de l'année 2017 est ici](/fr/article/bilan-gladys-2017).
 
+<!--truncate-->
+
 ### Une année charnière
 
 Vous le savez, à partir d'août 2018, j'ai quitté mon précédent travail d'ingénieur dans une startup pour passer plus de temps sur Gladys.

@@ -19,6 +19,8 @@ Il existe des solutions en ligne d'analyse de phrases ( Wit.ai par exemple ), ma
 
 Le but de ce post est de vous expliquer en détail comment fonctionne cette feature qui vient d'arriver avec Gladys 3.5.
 
+<!--truncate-->
+
 ## L'architecture globale
 
 Je vous ai préparé un petit schéma de l'architecture Gladys pour que vous compreniez mieux comment tout cela fonctionne !

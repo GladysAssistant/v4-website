@@ -19,6 +19,8 @@ Je voulais faire un petit état d'avancement des développements, vous montrer o
 
 Peut-être que certains auront des remarques, des retours. N'hésitez pas: c'est l'objectif de ce post !
 
+<!--truncate-->
+
 ## L'appel communauté de mars
 
 Chaque mois, c'est la tradition, je fais un appel avec tous ceux qui soutiennent le projet via [Gladys Plus](/fr/pricing/) afin de parler de tous les développements en cours et de discuter de la suite du projet.

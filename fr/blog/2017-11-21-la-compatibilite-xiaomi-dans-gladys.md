@@ -15,6 +15,8 @@ Pour ceux qui ne connaissent pas les produits Xiaomi Home, c'est tout une gamme 
 
 Et je suis heureux de vous annoncer qu'une première version de ce module Xiaomi Home est maintenant disponible !
 
+<!--truncate-->
+
 ## Le Hardware
 
 Voilà pour l'instant le hardware que je supporte. Notez que le gateway est indispensable, et ensuite c'est à vous de voir en fonction de votre installation.

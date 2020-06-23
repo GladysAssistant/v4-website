@@ -17,6 +17,8 @@ Comme je vous disais la semaine dernière, Gladys 3.0 apporte le support de Dock
 
 Dans ce tutoriel, je vais vous montrer comment mettre en place Gladys sur un serveur en 5 minutes (max). J'aurais aimé faire ce tutoriel en vidéo, mais je me suis rendu compte que ma carte son USB était vraiment de mauvaise qualité, et que le micro que j'avais acheté rendait du coup assez mal sur cette carte son. Je ferais sûrement une vidéo plus tard quand j'aurais réglé ce problème.
 
+<!--truncate-->
+
 ## Le serveur
 
 ![DigitalOcean Droplet](/fr/img/articles/gladys-docker/droplet.gif)

@@ -11,6 +11,8 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 Pour faire parler notre Raspberry, nous allons utiliser plusieurs outils : La synthèse vocale de Google, le lecteur mpg321, et PHP.
 
+<!--truncate-->
+
 ### Installez mpg321
 
 Tapez dans un terminal :

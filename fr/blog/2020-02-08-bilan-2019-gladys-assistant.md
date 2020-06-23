@@ -17,6 +17,8 @@ Chaque année, je publie un article bilan de l'année. Je l'avais fais en [2018]
 
 Bienvenue dans la version 2019 de l'article 😁
 
+<!--truncate-->
+
 ## Que s'est-il passé en 2019 ?
 
 Cette année a été une année assez différente des autres années, car c'est la première année où j'ai été du début à la fin à temps partiel sur Gladys.

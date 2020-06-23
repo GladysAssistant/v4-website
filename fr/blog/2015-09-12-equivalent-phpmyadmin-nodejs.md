@@ -15,6 +15,8 @@ Pour administrer sa base de donnée MySQL, on utilise la plupart du temps phpmya
 
 Nous allons donc utiliser [Express Admin](http://simov.github.io/express-admin/), un équivalent en Node.js à phpmyadmin ! ( et encore plus simple à utiliser !)
 
+<!--truncate-->
+
 ### Installer Express Admin
 
 Créez un dossier où vous voulez dans votre Raspberry Pi, appellons le par exemple express-admin, et plaçons nous dans ce dossier :

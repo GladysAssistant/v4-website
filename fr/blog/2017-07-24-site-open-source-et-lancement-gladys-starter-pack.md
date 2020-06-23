@@ -18,6 +18,8 @@ L'objectif de cet article est de faire un petit bilan de l'avancement, et de vou
 
 Allez, c'est parti !
 
+<!--truncate-->
+
 ## Gladys Starter Pack
 
 La première news de cet article, c'est le lancement du tant attendu [Gladys Starter Pack](/fr/gladys-starter-pack/) en pré-commande ! 🚀

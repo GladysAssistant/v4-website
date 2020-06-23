@@ -25,6 +25,8 @@ Et aujourd'hui, c'est le grand jour : c'est la sortie de la première alpha de G
 
 ![Gladys 4 devices](/fr/img/articles/gladys-4-alpha/gladys-4-mockup-devices.jpg)
 
+<!--truncate-->
+
 ## Les nouveautés
 
 Gladys 4 est une réécriture **complète** de Gladys.

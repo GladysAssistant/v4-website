@@ -17,6 +17,8 @@ Après un long week-end à bosser sur Gladys, sur la plateforme développeur et 
 
 J'aimerais revenir sur toutes ces nouveautés avec vous dans un article bilan de ce mois de Mai très chargé pour le projet.
 
+<!--truncate-->
+
 ## Un premier tutoriel vidéo
 
 J'en parlais dans ma newsletter, je me suis équipé en matériel afin de filmer des tutoriels vidéos autour de Gladys. L'objectif dans un premier temps à été de filmer la base de la base : L'installation de Gladys sur un Raspberry Pi. Pour ceux qui n'ont pas vu la vidéo, elle est disponible sur YouTube:

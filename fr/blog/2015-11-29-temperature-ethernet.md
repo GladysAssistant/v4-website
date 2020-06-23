@@ -17,6 +17,8 @@ Salut à tous ! Aujourd'hui nous allons créer une petite station météo d'int�
 
 ![DHT11 Ethernet](/fr/img/articles/temperature-ethernet/DSC_0702-light.jpg)
 
+<!--truncate-->
+
 ## Le matériel
 
 Pour ce tutoriel, on aura besoin :

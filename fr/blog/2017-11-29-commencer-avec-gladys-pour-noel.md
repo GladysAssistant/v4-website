@@ -19,6 +19,8 @@ Mais encore faut-il savoir par quoi commencer !
 
 L'objectif de ce post est de faire un petit point des essentiels pour commencer sur Gladys, des différentes setups possible en fonction de vos besoins.
 
+<!--truncate-->
+
 ## Le Raspberry Pi : La base de la base
 
 Pour faire tourner Gladys, il vous faut forcément une machine qui va l'exécuter. Cette machine, c'est souvent un Raspberry Pi : un nano-ordinateur petit, consommant peu, silencieux et surtout à bas prix!

@@ -15,6 +15,8 @@ Jusqu'à là, nous ne pouvions commander avec Gladys que les équipements branch
 
 <img alt="Mi-Light Ampoule connectées" src="/fr/img/articles/controler-des-ampoules-connectees/milight_products_light.jpg" />
 
+<!--truncate-->
+
 ## Le matériel
 
 Les ampoules Mi-Light sont les équivalents low cost des Philips Hue. J'ai trouvé cet été ces ampoules sur un site chinois, à l'époque en promotion pour environ 20€ l'unité. Pour faire un commentaire sur ces ampoules, je ne m'attendais pas à une telle qualité ! L''ampoule est vraiment de bonne facture, répond instantanément au commande qu'elles viennent de la télécommande ou du smartphone. Tout est réglable, la couleur, l'intensité de la lumière, et il existe même des modes prédéfinis (passage en fondue de chaque couleur, éclairage stroboscopique, tout est possible vu qu'il s'agit de LEDs dans l'ampoule, aucun risque de griller quoi que ce soit si on allume très rapidement l'ampoule).

@@ -17,6 +17,8 @@ Cette version a pour objectif de partir sur une base propre, de repartir sur une
 
 Le design a lui aussi été entièrement refondu, la page d'accueil affiche désormais beaucoup plus d'informations mais en étant tout aussi clair. Comme vous pouvez le voir, c'est très coloré !
 
+<!--truncate-->
+
 Au niveau du programme développeur, il va encore plus loin sur cette version. Il y a trois façons de programmer Gladys :
 
 - Les scénarios : Il est désormais possible de créer des scénarios, depuis une simple interface web, sans aucunes lignes de code.

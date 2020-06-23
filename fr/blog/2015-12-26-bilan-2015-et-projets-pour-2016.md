@@ -15,6 +15,8 @@ Salut à tous!
 
 L'année 2015 a été une grande année pour le projet, et j'aimerais faire un petit bilan avec vous, et de vous parler de la suite du projet.
 
+<!--truncate-->
+
 ### Quelques statistiques du site
 
 Et cette année vous avez été plus de 47 000 visiteurs uniques à venir sur le site Gladys ! Pour comparer à l'année 2014, c'est plus du double. Je vous ai mis un petit screenshot de mon Google Analytics pour commenter ça :

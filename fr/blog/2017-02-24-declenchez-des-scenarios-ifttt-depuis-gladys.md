@@ -17,6 +17,8 @@ Vous connaissez probablement IFTTT, "If This Then That", un service en ligne qui
 
 Nous allons dans ce tuto utiliser ce channel Maker pour lancer depuis Gladys des scénarios IFTTT.
 
+<!--truncate-->
+
 ## Création du compte IFTTT
 
 La première étape est simple, il faut tout d'abord vous créer un compte en ligne sur [https://ifttt.com](https://ifttt.com).

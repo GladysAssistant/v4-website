@@ -22,6 +22,8 @@ Quelques semaines après l'événement, la PR a atterit sur le repos Gladys, et 
 Je suis heureux de vous annoncer que cette mise à jour est désormais disponible ! 🚀
 Retour dans cette article sur toutes les améliorations de cette mise à jour, et les étapes à suivre pour passer à Gladys 3.8.
 
+<!--truncate-->
+
 ## Les nouveautés
 
 ### Un thème tout beau tout neuf

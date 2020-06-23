@@ -21,6 +21,8 @@ Aujourd'hui je vais vous présenter la prise [**WeMo Insight Switch**](http://am
 
 Elles sont certes un peu plus cher, mais de mon point de vue cette prise vaut largement son prix.
 
+<!--truncate-->
+
 ## Le matériel
 
 C'est tout simple, il vous faut juste une prise [WeMo Insight Switch](http://amzn.to/1CG0WQr) !

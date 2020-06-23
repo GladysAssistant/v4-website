@@ -19,6 +19,8 @@ Je le disais dans mon dernier article, mon focus sur l'année 2019 est sur le d�
 
 Aujourd'hui, je suis heureux d'annoncer le lancement de l'Open API du Gladys Gateway, qui permet un ensemble de nouvelles possibilités, notamment la possibilité de contrôler votre instance Gladys via Siri de n'importe où dans le monde.
 
+<!--truncate-->
+
 ## Configurer l'Open API du Gateway
 
 ### Mettre à jour Gladys

@@ -23,6 +23,8 @@ Il y avait une solution alternative que j'avais proposé récemment, il s'agit d
 
 Mais rassurez-vous, j'ai une nouvelle solution, et qui en plus est **très économique** !
 
+<!--truncate-->
+
 ## Scanner le Bluetooth avec le Raspberry Pi
 
 Le principe est simple, nous allons utiliser un ou plusieurs Raspberry Pi afin de scanner en Bluetooth notre logement à un interval régulier. Lors du scan, le Raspberry Pi va voir les périphériques présents autour de lui : Votre bracelet connecté ? Votre porte clé Bluetooth ? Et ainsi déduire que vous êtes présent dans le logement. Car on part rarement sans ses clés de la maison, ou sans son bracelet connecté !

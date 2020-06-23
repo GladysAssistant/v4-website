@@ -17,6 +17,8 @@ J'en parle beaucoup sur le forum, mais je n'ai rien encore écris "d'officiel" s
 
 Voici donc un récapitulatif des features et des concepts qui vont apparaître dans cette nouvelle version :) N'hésitez pas à faire des remarques en commentaires !
 
+<!--truncate-->
+
 ## L'unification des périphériques
 
 J'en parlais dans mon [bilan de l'année 2015](/fr/article/bilan-2015-et-projets-pour-2016), avec Gladys 2.0, de nombreux utilisateurs se sont inscrits en tant que développeur Gladys sur le site développeur, et ont commencés à développer des modules pour étendre les possibilités de Gladys.
