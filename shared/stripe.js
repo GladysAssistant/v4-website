@@ -1,4 +1,4 @@
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js/pure";
 
 async function onClickCheckoutGladysPlus(locale) {
   const stripe = await loadStripe("pk_live_zY5TGhpZHlH65hSEB4PmBeIe");
