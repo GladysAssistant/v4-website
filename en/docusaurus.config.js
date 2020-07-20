@@ -7,6 +7,7 @@ module.exports = {
   organizationName: "gladysassistant", // Usually your GitHub org/user name.
   projectName: "gladys", // Usually your repo name.
   themeConfig: {
+    image: "img/presentation/gladys-og-image.png",
     navbar: {
       title: "Gladys Assistant",
       logo: {

@@ -49,10 +49,7 @@ function HomePage() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
   return (
-    <Layout
-      title="Gladys Assistant"
-      description="A privacy-first, open-source home assistant"
-    >
+    <Layout title="" description="A privacy-first, open-source home assistant">
       <Home
         translation={translation}
         integrations={first4Integrations}
