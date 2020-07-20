@@ -23,4 +23,4 @@ cd ..
 cp ./netlify.toml ./_build/netlify.toml
 
 # Moving netlify functions
-cp ./functions ./_build/functions
+cp -R ./functions ./_build/functions
