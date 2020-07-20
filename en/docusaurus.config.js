@@ -154,7 +154,7 @@ module.exports = {
   plugins: [
     [
       require.resolve("@docusaurus/plugin-ideal-image"),
-      { min: 400, max: 2000, steps: 4 },
+      { min: 400, max: 2000, steps: 8 },
     ],
   ],
 };
