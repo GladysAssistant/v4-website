@@ -137,7 +137,7 @@ function Pricing({ translation, lang }) {
                     <div class="card__footer">
                       <button
                         onClick={() => onClickCheckoutGladysPlus(lang)}
-                        class="button button--success button--block"
+                        class="button button--primary button--block"
                       >
                         {translation.pricing.subscribe}
                       </button>
