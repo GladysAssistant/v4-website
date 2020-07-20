@@ -10,6 +10,37 @@ const translation = {
     "Le logiciel de domotique open-source qui respecte votre vie privée.",
   gettingStartedButton: "Installer",
   tryOnlineButton: "Essayer en ligne",
+  pricing: {
+    title: "Prix",
+    community: "Community (Gratuit)",
+    gladysPlus: "Gladys Plus",
+    openSourceSoftware: "Logiciel open-source",
+    endToEnd: "Accès à distance chiffré de bout en bout",
+    dailyBackups: "Backups journaliers chiffrés",
+    oneClickRestore: "Restauration en 1-clic",
+    owntracksApi: " API Owntracks",
+    privateSlack: "Communauté Slack privée",
+    supportOpenSource: "Supportez un logiciel indépendant open-source!",
+    getStarted: "Installer",
+    subscribe: "S'abonner (9.99€/mois)",
+  },
+  features: {
+    centralizeCameras: "Centralizez vos caméras",
+    controlHouse: "Contrôler votre maison",
+    connectCalendars: "Connectez vos calendriers",
+    createScenes: "Créez des scènes",
+    title: "Un logiciel conçu pour la stabilité, la performance et la sécurité",
+    atomicUpgrades: "Mises à jour atomiques & automatiques.",
+    minimalist: "Interface claire et simple",
+    integrationsBuiltIn: "Les intégrations sont intégrées, pas installées",
+    openSourceCode: "Code 100% open-source, vérifié par la communauté",
+    endToEndEncrypted: "Accès à distance chiffré de bout en bout (Gladys Plus)",
+  },
+  integrations: {
+    title: "Des compatibilités, disponible par défaut",
+    description:
+      "Toutes les intégrations sont open-source, dévelopées par la communauté.",
+  },
 };
 
 const first4Integrations = integrations.slice(0, 4);

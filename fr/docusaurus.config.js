@@ -69,7 +69,7 @@ module.exports = {
       style: "dark",
       links: [
         {
-          title: "Getting Started",
+          title: "Installation",
           items: [
             {
               label: "Raspberry Pi",
@@ -90,7 +90,7 @@ module.exports = {
           ],
         },
         {
-          title: "Community",
+          title: "Communauté",
           items: [
             {
               label: "Forum",
@@ -111,7 +111,7 @@ module.exports = {
           ],
         },
         {
-          title: "More",
+          title: "Plus",
           items: [
             {
               label: "Blog",
