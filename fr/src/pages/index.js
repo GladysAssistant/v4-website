@@ -6,8 +6,9 @@ import integrations from "../../integrations/index";
 
 const translation = {
   title: "Gladys Assistant",
-  description: "Le logiciel de domotique qui respecte votre vie privée.",
-  gettingStartedButton: "Commencer",
+  description:
+    "Le logiciel de domotique open-source qui respecte votre vie privée.",
+  gettingStartedButton: "Installer",
   tryOnlineButton: "Essayer en ligne",
 };
 
