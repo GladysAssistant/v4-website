@@ -144,6 +144,10 @@ module.exports = {
           // Please change this to your repo.
           editUrl:
             "https://github.com/GladysAssistant/v4-website/edit/master/fr/blog/",
+          feedOptions: {
+            type: "all",
+            copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
+          },
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
