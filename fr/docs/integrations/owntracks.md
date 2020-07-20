@@ -1,7 +1,7 @@
 ---
-id: configure-owntracks-gladys-plus
-title: Configurer Owntracks avec Gladys Plus
-sidebar_label: Configurer Owntracks avec Gladys Plus
+id: owntracks
+title: Owntracks
+sidebar_label: Owntracks
 ---
 
 [Owntracks](https://owntracks.org/) est une application mobile open-source qui permet d'envoyer sa géolocalisation périodiquement à un serveur.

@@ -1,7 +1,7 @@
 ---
-id: configure-xiaomi-devices
-title: Configurer les périphériques Xiaomi
-siebar_label: Configurer les périphériques Xiaomi
+id: xiaomi
+title: Xiaomi Home
+sidebar_label: Xiaomi Home
 ---
 
 ## Activation du mode développeur

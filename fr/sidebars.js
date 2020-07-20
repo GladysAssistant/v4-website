@@ -6,10 +6,12 @@ module.exports = {
       "installation/macos-windows",
       "installation/freebox-delta",
     ],
-    Configuration: [
-      "configuration/configure-xiaomi-devices",
-      "configuration/configure-sonoff-devices",
-      "configuration/configure-owntracks-gladys-plus",
+    Integrations: [
+      "integrations/xiaomi",
+      "integrations/sonoff",
+      "integrations/philips-hue",
+      "integrations/owntracks",
+      "integrations/zwave",
     ],
     API: [
       "api/architecture",

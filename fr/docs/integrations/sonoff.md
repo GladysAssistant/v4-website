@@ -1,7 +1,7 @@
 ---
-id: configure-sonoff-devices
-title: Configurer les périphériques Sonoff
-sidebar_label: Configurer les périphériques Sonoff
+id: sonoff
+title: Sonoff
+sidebar_label: Sonoff
 ---
 
 ## Installation du firmware Tasmota
