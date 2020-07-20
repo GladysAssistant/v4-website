@@ -162,6 +162,7 @@ function Home({ translation, integrations, lang }) {
                         {...integration}
                         buyLink={false}
                         lang={lang}
+                        disableLinks
                       />
                     </div>
                   ))}

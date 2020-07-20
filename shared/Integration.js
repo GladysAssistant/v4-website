@@ -8,7 +8,16 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 const truncate = (str, len) =>
   str.substring(0, (str + " ").lastIndexOf(" ", len));
 
-function Integration({ docsId, imageName, title, description, lang, buyLink }) {
+function Integration({
+  docsId,
+  imageName,
+  title,
+  description,
+  lang,
+  buyLink,
+  translation,
+  disableLinks = false,
+}) {
   const MAX_DESCRIPTION_LENGTH = 80;
   if (description.length > MAX_DESCRIPTION_LENGTH) {
     description = truncate(description, MAX_DESCRIPTION_LENGTH) + " ...";
@@ -36,32 +45,39 @@ function Integration({ docsId, imageName, title, description, lang, buyLink }) {
         <h4>{title}</h4>
         <small>{description}</small>
       </div>
-      <div class="card__footer">
-        <div className={classnames({ [styles.buttonsIntegration]: buyLink })}>
-          <div
-            className={classnames({ [styles.buttonIntegrationLeft]: buyLink })}
-          >
-            <Link
-              class="button button--primary button--block"
-              to={`/${lang}/docs/integrations/${docsId}`}
+      {disableLinks === false && (
+        <div class="card__footer">
+          <div className={classnames({ [styles.buttonsIntegration]: buyLink })}>
+            <div
+              className={classnames({
+                [styles.buttonIntegrationLeft]: buyLink,
+              })}
             >
-              Read more
-            </Link>
-          </div>
-          {buyLink && (
-            <div className={styles.buttonIntegrationRight}>
-              <Link class="button button--secondary button--block" to={buyLink}>
-                Buy
+              <Link
+                class="button button--primary button--block"
+                to={`/${lang}/docs/integrations/${docsId}`}
+              >
+                {translation.readMore}
               </Link>
             </div>
-          )}
+            {buyLink && (
+              <div className={styles.buttonIntegrationRight}>
+                <Link
+                  class="button button--secondary button--block"
+                  to={buyLink}
+                >
+                  {translation.buy}
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-function IntegrationPage({ integrations, lang }) {
+function IntegrationPage({ integrations, lang, translation }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
@@ -97,7 +113,7 @@ function IntegrationPage({ integrations, lang }) {
           </div>
         </div>
         <div className="col col col--9">
-          <h2>Integrations</h2>
+          <h2>{translation.title}</h2>
           <div class="row">
             {integrationsFiltered.map((integration) => (
               <div className="col col--4">
@@ -105,13 +121,14 @@ function IntegrationPage({ integrations, lang }) {
                   key={integration.title}
                   {...integration}
                   lang={lang}
+                  translation={translation}
                 />
               </div>
             ))}
           </div>
           {integrationsFiltered.length === 0 && (
             <div class="alert alert--secondary" role="alert">
-              No integrations found
+              {translation.noIntegrationsFound}
             </div>
           )}
         </div>

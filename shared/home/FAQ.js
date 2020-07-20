@@ -231,7 +231,7 @@ const dataFr = [
 function FAQ({ lang }) {
   const data = lang === "en" ? dataEn : dataFr;
   return (
-    <section id="faq">
+    <section id="faq" style={{ marginTop: "15px" }}>
       <div className="container">
         <div className="row">
           <div className="col col--6">

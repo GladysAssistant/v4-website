@@ -47,7 +47,13 @@ function Pricing({ translation, lang }) {
       <div className="container">
         <div className="row">
           <div className="col col--12">
-            <h2 className="text--center" style={{ fontSize: "30px" }}>
+            <h2
+              className="text--center"
+              style={{
+                fontSize: "30px",
+                marginBottom: "30px",
+              }}
+            >
               {translation.pricing.title}
             </h2>
             <div className="row">

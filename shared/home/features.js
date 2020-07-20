@@ -1,7 +1,7 @@
 import React from "react";
 
 const Features = ({ translation }) => (
-  <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+  <div style={{ paddingTop: "1rem", paddingBottom: "2rem" }}>
     <div className="container">
       <div className="row">
         <div className="col col--12">
