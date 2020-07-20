@@ -10,6 +10,7 @@ import calendarGladys4 from "./calendar-gladys-4.jpg";
 import sceneGladys4 from "./scene-gladys-4.jpg";
 import { Integration } from "./Integration";
 import onClickCheckoutGladysPlus from "./stripe";
+import FAQ from "./home/FAQ";
 
 function Feature({ imageUrl, title, description }) {
   const imgUrl = useBaseUrl(imageUrl);
@@ -380,6 +381,8 @@ function Home({ translation, integrations, lang }) {
         </div>
 
         <Pricing lang={lang} />
+
+        <FAQ lang={lang} />
       </main>
     </>
   );
