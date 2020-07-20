@@ -44,7 +44,11 @@ function Home({ translation, integrations, lang }) {
               </div>
             </div>
             <div className="col col--7">
-              <Image className={styles.heroImg} img={mockup} />
+              <Image
+                alt="Gladys Assistant Mockup"
+                className={styles.heroImg}
+                img={mockup}
+              />
             </div>
           </div>
         </div>
@@ -97,25 +101,37 @@ function Home({ translation, integrations, lang }) {
 
           {openPanel === 1 && (
             <div>
-              <Image className="" img={cameraGladys4} />
+              <Image
+                alt={translation.features.centralizeCameras}
+                img={cameraGladys4}
+              />
             </div>
           )}
 
           {openPanel === 2 && (
             <div>
-              <Image className="" img={dashboardGladys4} />
+              <Image
+                alt={translation.features.controlHouse}
+                img={dashboardGladys4}
+              />
             </div>
           )}
 
           {openPanel === 3 && (
             <div>
-              <Image className="" img={calendarGladys4} />
+              <Image
+                alt={translation.features.connectCalendars}
+                img={calendarGladys4}
+              />
             </div>
           )}
 
           {openPanel === 4 && (
             <div>
-              <Image className="" img={sceneGladys4} />
+              <Image
+                alt={translation.features.createScenes}
+                img={sceneGladys4}
+              />
             </div>
           )}
         </div>
