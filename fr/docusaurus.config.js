@@ -60,7 +60,7 @@ module.exports = {
         },
         {
           to: "https://plus.gladysassistant.com",
-          label: "Login",
+          label: "Connexion",
           position: "right",
         },
       ],
