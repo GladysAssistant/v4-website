@@ -74,7 +74,7 @@ module.exports = {
           items: [
             {
               label: "Raspberry Pi",
-              to: "docs/installation/raspberry-pi",
+              to: "docs",
             },
             {
               label: "Docker",

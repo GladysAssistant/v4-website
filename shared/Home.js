@@ -24,24 +24,30 @@ function Home({ translation, integrations, lang }) {
             <div className={classnames("col padding-top--lg")}>
               <h1 className="hero__title">{translation.title}</h1>
               <p className="hero__subtitle">{translation.description}</p>
-              <div class="row">
-                <div className="buttons margin-right--md ">
-                  <a
+              <span className="container">
+                <div
+                  className="margin-right--md"
+                  style={{ display: "inline-block" }}
+                >
+                  <Link
                     className="button button--primary button--lg"
-                    href="/en/docs"
+                    href={`/${lang}/docs`}
                   >
                     {translation.gettingStartedButton}
-                  </a>
+                  </Link>
                 </div>
-                <div className="buttons margin-right--md">
-                  <a
+                <div
+                  className="margin-right--md"
+                  style={{ display: "inline-block" }}
+                >
+                  <Link
                     className="button button--outline button--secondary button--lg"
-                    href="https://demo.gladysassistant.com"
+                    href="https://demo.gladysassistant.com/dashboard"
                   >
                     {translation.tryOnlineButton}
-                  </a>
+                  </Link>
                 </div>
-              </div>
+              </span>
             </div>
             <div className="col col--7">
               <Image

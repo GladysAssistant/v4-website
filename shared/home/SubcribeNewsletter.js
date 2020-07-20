@@ -83,7 +83,7 @@ function SubcribeNewsletter({ lang }) {
     <div className="row">
       <div className="col col--8">
         {" "}
-        <h3>{translation[lang].title}</h3>
+        <h2>{translation[lang].title}</h2>
         {translation[lang].text}
       </div>
       <div className="col col--4">
