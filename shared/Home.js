@@ -11,6 +11,7 @@ import sceneGladys4 from "./scene-gladys-4.jpg";
 import { Integration } from "./Integration";
 import onClickCheckoutGladysPlus from "./stripe";
 import FAQ from "./home/FAQ";
+import SubcribeNewsletter from "./home/SubcribeNewsletter";
 
 function Feature({ imageUrl, title, description }) {
   const imgUrl = useBaseUrl(imageUrl);
@@ -287,6 +288,12 @@ function Home({ translation, integrations, lang }) {
         </div>
       </header>
       <main>
+        <div
+          className="container"
+          style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
+        >
+          <SubcribeNewsletter lang={lang} />
+        </div>
         <div
           className="container"
           style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
