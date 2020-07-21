@@ -11,7 +11,9 @@ image: /fr/img/presentation/gateway-siri.jpg
 id: controler-gladys-avec-siri
 ---
 
-Article in English available [here](/en/blog/control-gladys-with-siri)
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
+</div>
 
 Salut à tous!
 

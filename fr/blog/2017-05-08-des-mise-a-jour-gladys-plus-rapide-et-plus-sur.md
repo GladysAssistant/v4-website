@@ -11,6 +11,10 @@ image: /fr/img/presentation/nouveau-process-maj-cover.jpg
 id: des-mise-a-jour-gladys-plus-rapide-et-plus-sur
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
+</div>
+
 Salut à tous!
 
 Jusque là, la mise à jour de Gladys posait problème pour beaucoup d'entre vous. J'ai essayé de repenser ce processus de mise à jour afin que ce soit plus rapide, et surtout plus fiable, pour que vous puissiez tous bénéficier des mises à jour de Gladys le plus rapidement possible!

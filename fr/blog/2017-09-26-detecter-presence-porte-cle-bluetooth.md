@@ -11,6 +11,10 @@ image: /fr/img/presentation/detecter-presence-bluetooth.jpg
 id: detecter-presence-porte-cle-bluetooth
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
+</div>
+
 Salut à tous !
 
 Savoir qui exactement est à la maison a toujours été un véritable défi dans Gladys, surtout quand il y a plusieurs personnes dans le logement.

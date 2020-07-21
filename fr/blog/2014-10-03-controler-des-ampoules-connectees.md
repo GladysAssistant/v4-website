@@ -11,6 +11,10 @@ image: /fr/img/presentation/milightlow.jpg
 id: controler-des-ampoules-connectees
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
+
 Jusqu'à là, nous ne pouvions commander avec Gladys que les équipements branchés sur des prises grâce aux prises télécommandées RF, mais ça ne permettait pas de contrôler les lumières du logement. Je vous propose ici un test des ampoules WIFI Mi-light, ainsi que comment les piloter depuis notre Raspberry Pi!
 
 <img alt="Mi-Light Ampoule connectées" src="/fr/img/articles/controler-des-ampoules-connectees/milight_products_light.jpg" />

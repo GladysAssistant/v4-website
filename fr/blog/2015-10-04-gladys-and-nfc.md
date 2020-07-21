@@ -11,7 +11,9 @@ image: /fr/img/presentation/nfc-cover.jpg
 id: gladys-and-nfc
 ---
 
-<div class="alert alert-info" role="alert" >Ce tutoriel a été adapté pour Gladys v3, il fonctionne pleinement avec Gladys !</div>
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
 
 Comment faire pour intéragir avec Gladys sans avoir avec ouvrir une interface web, lancer une commande ? Avec des tags NFC ! Ce sont les parfaits candidats pour faire la liaison entre le monde physique, et Gladys.
 

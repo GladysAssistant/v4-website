@@ -11,6 +11,10 @@ image: /fr/img/presentation/gladys-voice-cover.jpg
 id: voice-recognition-gladys
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
+
 Salut à tous !
 
 Vous êtes nombreux à me demander depuis le début du projet quand la reconnaissance vocale sera disponible. Lorsque le projet a commencé il y a maintenant plus de trois ans, les technologies n'étaient pas prêtes : la reconnaissance vocale de l'époque était décevante, sur Linux je n'en parle même pas, et c'était compliqué d'écouter H24 dans la pièce de l'utilisateur pour attendre une commande. Il y avait des solutions sous Windows, mais elle étaient peu flexible, et nécessitaient d'avoir un PC complet allumé en continu.

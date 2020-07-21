@@ -11,6 +11,10 @@ image: /fr/img/presentation/docker-cover.jpg
 id: gladys-et-docker
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
+
 Salut à tous !
 
 Comme je vous disais la semaine dernière, Gladys 3.0 apporte le support de Docker, une techno dont je suis pas mal fan !

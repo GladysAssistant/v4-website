@@ -9,7 +9,9 @@ author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 ---
 
-<div class="bg-warning" role="alert" >Attention, ce tutoriel a été écrit bien avant la sortie de Gladys, il explique comment brancher un détecteur de mouvement filaire au Raspberry Pi. Ce tutoriel est donc indépendant de Gladys!</div>
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
 
 L'objectif de Gladys est de nous aider au quotidien en diffusant des alertes ( nouveaux messages, rappels de rendez-vous ou de notes, réveils, etc.. ).
 Mais il est inutile de diffuser ces alertes si le propriétaire n'est pas là et que l'appartement est vide !

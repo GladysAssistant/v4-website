@@ -11,7 +11,9 @@ image: /fr/img/presentation/temperature-ethernet-cover.jpg
 id: temperature-ethernet
 ---
 
-<div class="alert alert-info" role="alert" >Ce tutoriel a été adapté pour Gladys v3, il fonctionne pleinement avec Gladys !</div>
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
 
 Salut à tous ! Aujourd'hui nous allons créer une petite station météo d'intérieur (ou d'extérieur pourquoi pas !) avec un arduino et une ethernet shield qui va nous renvoyer la température et l'humidité dans la pièce et l'enregistrer dans Gladys :)
 

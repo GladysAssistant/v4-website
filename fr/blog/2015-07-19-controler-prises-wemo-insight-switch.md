@@ -11,6 +11,10 @@ image: /fr/img/presentation/wemo_icone_light.jpg
 id: controler-prises-wemo-insight-switch
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
+
 Aujourd'hui je vais vous présenter la prise [**WeMo Insight Switch**](http://amzn.to/1CG0WQr), et vous expliquer comment la contrôler avec Node.js ! Pourquoi j'ai choisi cette prise ? Elle répond à beaucoup de mes besoins, et fait beaucoup plus que les prises RF que j'utilise actuellement. Notamment :
 
 - Mesure de la **consommation d'énergie**

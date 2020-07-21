@@ -9,6 +9,10 @@ author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
+
 Pour avoir la météo au réveil, ou pour pouvoir nous prévenir quand nous partons de chez nous qu'il pleut... Gladys doit avoir accès à la météo ! Nous allons utiliser ici l'API d'[OpenWeatherMap](http://openweathermap.org/API#forecast), une API gratuite ! ( du moins, tant qu'on ne fait pas trop d'appels ).
 
 <!--truncate-->

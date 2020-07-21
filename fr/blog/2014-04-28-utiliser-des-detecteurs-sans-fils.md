@@ -9,6 +9,10 @@ author_image_url: /fr/img/pierre-gilles.jpg
 id: utiliser-des-detecteurs-sans-fils
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel a été écrit il y a plusieurs années, il ne concerne pas Gladys v4 ! 
+</div>
+
 Les détecteurs sans-fils permettent d'utiliser un nombre infini de détecteurs sur votre installation (Détecteurs de mouvements, mais aussi détecteurs d'ouvertures de portes, etc.. )
 
 <!--truncate-->

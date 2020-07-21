@@ -11,6 +11,10 @@ image: /fr/img/presentation/ifttt-cover.jpg
 id: declenchez-des-scenarios-ifttt-depuis-gladys
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
+</div>
+
 Salut à tous !
 
 Vous connaissez probablement IFTTT, "If This Then That", un service en ligne qui permet de déclencher des actions à partir de différents Triggers. Depuis 2015, IFTTT a ouvert un channel "Maker" qui permet de déclencher des recettes IFTTT à partir d'une simple requête HTTP.
