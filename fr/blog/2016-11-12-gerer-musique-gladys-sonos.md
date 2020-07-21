@@ -35,8 +35,6 @@ gladys.music.pause({ room: 5 });
 
 Pour simplement mettre en pause la musique dans la pièce d'ID 5. Jolie non ? :D Et il y a toute une myriade de commandes disponibles pour tous les usages (play, stop, previous, next, etc...).
 
-Toutes les commandes possibles sont visibles [ici](https://github.com/gladysassistant/Gladys/blob/master/api/core/music/index.js).
-
 ## Les enceintes Sonos
 
 Je suis donc parti sur une Sonos Play:1 en Blanc. Pour parler de l'enceinte en elle même, elle est de très bonne facture. La fabrication respire la qualité, les finitions sont très propre. Le plastique a un aspect soft-touch sur le haut sympa au touché, et la grille métallique donne un charme à l'enceinte.
@@ -101,7 +99,7 @@ Comme je disais avant, vous pouvez désormais contrôler dans les scripts votre 
 gladys.music.next({ room: 5 });
 ```
 
-Vous passez à la musique suivante dans l'enceinte Sonos située dans la pièce 5 ! Il y a plein de possibilités, l'API entière est listée [ici](https://github.com/gladysassistant/Gladys/blob/master/api/core/music/index.js). Il y a bien entendu une API REST là dessus.
+Vous passez à la musique suivante dans l'enceinte Sonos située dans la pièce 5 ! Il y a plein de possibilités. Il y a bien entendu une API REST là dessus.
 
 Vous pouvez faire une requête :
 

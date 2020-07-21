@@ -19,7 +19,7 @@ Cela fait un bout de temps que je travaille sur Gladys Assistant 4, la prochaine
 
 Le développement a pris du temps car c'est une nouvelle version qui a demandé un grand travail de recherche, d'expérimentation et de définition.
 
-J'avais publié en décembre dernier un manifeste (que vous pouvez retrouver en anglais [ici](https://docs.google.com/document/d/1zqH0vvIRICOiXsgJVHRanInBgJ8aoTWtnrNpyASW9b0/edit?usp=sharing)).
+J'avais publié en décembre dernier un manifeste (que vous pouvez retrouver en anglais [ici](https://docs.google.com/document/d/1zqH0vvIRICOiXsgJVHRanInBgJ8aoTWtnrNpyASW9b0/edit?usp=sharing).
 
 Et aujourd'hui, c'est le grand jour : c'est la sortie de la première alpha de Gladys 4! 🍾🎉
 

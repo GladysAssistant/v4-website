@@ -33,7 +33,7 @@ I decided that Open API would not be turned on by default so that people can cho
 
 ### Create an API key
 
-The following step is simple. Go to [gateway.gladysassistant.com](https://gateway.gladysassistant.com), connect with your Gladys Gateway account.
+The following step is simple. Go to [plus.gladysassistant.com](https://plus.gladysassistant.com), connect with your Gladys Gateway account.
 
 **Note:** If you don't have a Gladys Gateway account yet, you need to subscribe to the [community package](/en/gladys-community-package/) 🙂
 

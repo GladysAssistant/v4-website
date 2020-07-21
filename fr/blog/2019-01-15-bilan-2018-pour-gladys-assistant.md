@@ -133,7 +133,7 @@ La progression la plus importante cette année est sur [mon Twitter personnel](h
 
 ### Un lancement ProductHunt réussi
 
-En octobre, alors que j'étais à l'extérieur avec des amis, quelqu'un a posté Gladys sur ProductHunt (voir le [post ici](https://www.producthunt.com/posts/gladys)), un site qui permet à n'importe qui de poster des nouveaux produits innovants.
+En octobre, alors que j'étais à l'extérieur avec des amis, quelqu'un a posté Gladys sur ProductHunt (voir le [post ici](https://www.producthunt.com/posts/gladys), un site qui permet à n'importe qui de poster des nouveaux produits innovants.
 
 D'un coup, le site Gladys s'est mis à recevoir des centaines de visiteurs (sans broncher, merci le CDN), et j'ai du gérer ce lancement inattendu en revenant chez moi vers 1h du matin, et ce jusqu'à 3h ^^
 

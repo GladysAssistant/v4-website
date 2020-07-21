@@ -134,13 +134,13 @@ describe.only("ExampleService", () => {
 
 (Be careful to remove the `.only` before commiting)
 
-**Note on Mocking:** Your tests are probably calling a third-party NPM module. We recommend that you mock all calls to the module using proxyquire like [here](https://github.com/GladysAssistant/gladys-4-playground/blob/master/server/test/services/example/index.test.js#L5). Your tests shouldn't call real-world API!
+**Note on Mocking:** Your tests are probably calling a third-party NPM module. We recommend that you mock all calls to the module using proxyquire like [here](https://github.com/GladysAssistant/Gladys/blob/master/server/test/services/example/index.test.js#L5). Your tests shouldn't call real-world API!
 
 #### Adding API routes
 
 Your `index.js` can return a `controllers` attribute.
 
-A good example of how a REST API was implemented in a service is the [Philips Hue service](https://github.com/GladysAssistant/gladys-4-playground/tree/master/server/services/philips-hue).
+A good example of how a REST API was implemented in a service is the [Philips Hue service](https://github.com/GladysAssistant/Gladys/tree/master/server/services/philips-hue).
 
 Have a look at the `index.js` file and the `api` folder.
 
@@ -156,7 +156,7 @@ Gladys 4 frontend is a [preact](https://preactjs.com/) app.
 
 If you want to add features to the frontend, you can edit the code in the `front` folder.
 
-All the code relative to the UI of services is located in the [front/src/routes/integration/all](https://github.com/GladysAssistant/gladys-4-playground/tree/master/front/src/routes/integration/all).
+All the code relative to the UI of services is located in the [front/src/routes/integration/all](https://github.com/GladysAssistant/Gladys/tree/master/front/src/routes/integration/all).
 
 #### Submit your service
 

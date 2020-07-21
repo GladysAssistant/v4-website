@@ -123,7 +123,7 @@ Dans Gladys 4, chaque entité a donc un ensemble d'états, et de transitions ent
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Filtering ✅ <a href="https://t.co/ksk4vI8CEh">pic.twitter.com/ksk4vI8CEh</a></p>&mdash; Pierre-Gilles Leymarie ✈️ (@pierregillesl) <a href="https://twitter.com/pierregillesl/status/1098166550345830406?ref_src=twsrc%5Etfw">February 20, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-✅ La vue de login de Gladys (c'est la même que la [page de login du Gladys Gateway](https://gateway.gladysassistant.com/login) )
+✅ La vue de login de Gladys (c'est la même que la [page de login du Gladys Gateway](https://plus.gladysassistant.com/login) )
 
 ![Page de login de Gladys 4](/fr/img/articles/avancement-gladys-4/login-gladys-4.jpg)
 
@@ -137,7 +137,7 @@ On pourrait découper les chantiers restants en 3 phases :
 
 **Phase 3:** Faire une série de tests au niveau du build Docker + de nos process de déploiements. Mettre en place les bons process pour qu'il soit super simple d'installer et mettre à jour Gladys 4.
 
-Bien entendu, tout le code de Gladys 4 est disponible en open-source [sur GitHub](https://github.com/GladysAssistant/gladys-4-playground)! N'hésitez pas à tester, ou donner un coup de main, ce sera avec plaisir !
+Bien entendu, tout le code de Gladys 4 est disponible en open-source [sur GitHub](https://github.com/GladysAssistant/Gladys)! N'hésitez pas à tester, ou donner un coup de main, ce sera avec plaisir !
 
 ## Conclusion
 
