@@ -27,7 +27,7 @@ Et le beau pic que l'on voit en plein milieu correspond au concours Raspberry Pi
 
 J'ai eu la chance en début d'année d'être convié par une agence d'architectes Strasbourgeoise, Notes de Styles, pour faire une démonstration de Gladys devant les caméras de TF1 pour le JT. C'était une formidable expérience de parler du projet devant les caméras dans un cadre superbe (une maison tout équipée en domotique, entièrement connectée, des hauts parleurs dans chaque pièce, ça change de mon petit appart!). Malheureusement nous ne sommes passés que quelques secondes au JT (coupé au dernier moment au montage, faute de temps dans le JT), mais l'expérience reste la même, c'était une super journée !
 
-<img alt="Gladys sur TF1 2015" src="/assets/images/press/Gladys_TF1.png" />
+<img alt="Gladys sur TF1 2015" src="/fr/img/articles/bilan-2015/Gladys_TF1.png" />
 
 Dernière statistique intéressante, depuis le début du projet, toute version de Gladys confondue, Gladys a été téléchargée plus de **8 800 fois** ! Et je parle juste de téléchargements via sourceforge, hors clonage github.
 

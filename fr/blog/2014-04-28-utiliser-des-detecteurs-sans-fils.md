@@ -47,8 +47,6 @@ J'ai utilisé un script de NinjaBlocks que j'ai adapté !
 
 Le code ci-dessous est à titre indicatif et pour comprendre, mais vous pouvez télécharger la dernière version de Gladys, et tout sera inclus dedans !
 
-Sinon vous pouvez aussi télécharger le zip avec tous les fichiers [ici](/assets/files/433_sensors.zip)
-
 Pour installer le zip manuellement, décompressez le ( par exemple dans "home/pi"), puis placez vous dans le dossier, puis faites un "make"
 
 Pour lancer le code, lancer la commande (dans le répertoire) :

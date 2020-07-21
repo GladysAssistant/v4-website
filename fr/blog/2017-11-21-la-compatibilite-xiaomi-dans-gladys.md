@@ -28,7 +28,7 @@ Voilà pour l'instant le hardware que je supporte. Notez que le gateway est indi
 - [Xiaomi Gateway - 24€](https://fr.gearbest.com/living-appliances/pp_344667.html?wid=55)
 - [Xiaomi Aqara Capteur d'humidité + Température - 7€](https://fr.gearbest.com/access-control/pp_626702.html?wid=55)
 - [Xiaomi bouton connecté - 6€](https://fr.gearbest.com/smart-light-bulb/pp_257679.html?wid=55)
-- [Xiaomi Aqara détecteur ouverture porte et fenêtre - 6€](https://fr.gearbest.com/xiaomi-aqara-_gear/5)
+- [Xiaomi Aqara détecteur ouverture porte et fenêtre - 6€](https://fr.gearbest.com/sale/xiaomi-aqara/)
 
 Mon grand favori étant le bouton Xiaomi qui vous permet de détecter 4 pressions différentes et de déclencher des scénarios en conséquence, comme par exemple le fameux mode romantique qui m'avait valu [un article](https://www.raspberrypi.org/blog/gladys-project-home-assistant/) sur le site de la fondation Raspberry Pi 😃
 
