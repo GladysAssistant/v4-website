@@ -11,6 +11,7 @@ module.exports = {
       "integrations/sonoff",
       "integrations/owntracks",
       "integrations/xiaomi",
+      "integrations/zwave",
     ],
     API: [
       "api/architecture",
