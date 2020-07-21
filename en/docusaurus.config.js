@@ -149,7 +149,7 @@ module.exports = {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            "https://github.com/GladysAssistant/v4-website/edit/master/en/blog/",
+            "https://github.com/GladysAssistant/v4-website/edit/master/en/",
           feedOptions: {
             type: "all",
             copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
