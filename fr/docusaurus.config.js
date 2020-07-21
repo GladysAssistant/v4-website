@@ -23,7 +23,7 @@ module.exports = {
         {
           to: "integrations/",
           activeBasePath: "integrations",
-          label: "Integrations",
+          label: "Intégrations",
           position: "left",
         },
         {
@@ -45,7 +45,7 @@ module.exports = {
           position: "left",
         },
         {
-          label: "Language",
+          label: "Langue",
           position: "right", // or 'right'
           items: [
             {
