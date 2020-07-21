@@ -6,7 +6,7 @@ author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 
-image: /assets/images/presentation/gladys-4-alpha.jpg
+image: /fr/img/presentation/gladys-4-alpha.jpg
 
 id: premiere-alpha-gladys-4
 ---

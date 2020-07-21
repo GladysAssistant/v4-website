@@ -6,7 +6,7 @@ author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 
-image: /assets/images/presentation/gladyscomeback.jpg
+image: /fr/img/presentation/gladyscomeback.jpg
 
 id: gladys-revient-entierement-reecrite
 ---

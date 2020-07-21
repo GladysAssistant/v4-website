@@ -2,7 +2,7 @@
 id: detecter-les-entrees-et-les-sorties
 title: Un détecteur de mouvements sur les ports GPIOs du Raspberry Pi
 description: Afin de diffuser des alertes uniquement quand le propriétaire est là, il est utile de savoir si l’appartement est vide ou occupé ! Nous apprendrons ici à détecter si la pièce est occupé.
-image: /assets/images/presentation/motionsensorlow.jpg
+image: /fr/img/presentation/motionsensorlow.jpg
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl

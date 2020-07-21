@@ -2,7 +2,7 @@
 id: faire-parler-le-raspberry
 title: Faire parler le Raspberry Pi
 description: Nous voila enfin dans le vif du sujet, donnons la voix à notre Rasp !
-image: /assets/images/presentation/robotspeakinglow.jpg
+image: /fr/img/presentation/robotspeakinglow.jpg
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl

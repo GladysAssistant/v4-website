@@ -2,7 +2,7 @@
 id: recuperer-la-meteo
 title: Récupérer la météo
 description: Pour nous réveiller en douceur, nous prévenir quand nous sortons qu'il va pleuvoir, Gladys doit pouvoir récupérer la météo !
-image: /assets/images/presentation/weatherlow.jpg
+image: /fr/img/presentation/weatherlow.jpg
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl

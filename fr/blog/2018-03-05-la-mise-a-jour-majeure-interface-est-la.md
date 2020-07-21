@@ -6,7 +6,7 @@ author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 
-image: /assets/images/presentation/gladys-3-8-0-cover.jpg
+image: /fr/img/presentation/gladys-3-8-0-cover.jpg
 
 id: la-mise-a-jour-majeure-interface-est-la
 ---
