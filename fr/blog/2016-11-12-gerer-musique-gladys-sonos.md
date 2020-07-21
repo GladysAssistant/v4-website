@@ -116,7 +116,7 @@ Une requête :
 GET /music/queue?room=5
 ```
 
-Vous donneras les musiques actuellement dans la queue de lecture. Là encore, tout est listée [ici](https://github.com/gladysassistant/Gladys/blob/master/config/routes.js#L154).
+Vous donneras les musiques actuellement dans la queue de lecture.
 
 ## Conclusion
 
