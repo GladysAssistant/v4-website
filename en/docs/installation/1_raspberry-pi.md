@@ -32,7 +32,7 @@ Give it some time to boot.
 
 ## Access Gladys
 
-To access Gladys, open your browser on any computer on the local network your Raspberry Pi is connected. Then enter the URL [http://gladys.local](http://gladys.local).
+To access Gladys, open your browser on any computer on the local network your Raspberry Pi is connected. Then enter the URL `http://gladys.local`.
 
 You should see Gladys web UI!
 
