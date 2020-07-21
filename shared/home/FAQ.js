@@ -59,7 +59,7 @@ const dataEn = [
         of your Gladys instance. Finally, the message is signed with the ECDSA
         P-256 Algorithm and bundled with an expiry date to avoid{" "}
         <a href="https://en.wikipedia.org/wiki/Replay_attack">Replay Attack</a>.
-        On Gladys side, the user have to validate each new user public key to
+        On Gladys side, the user has to validate each new user public key to
         avoid{" "}
         <a href="https://en.wikipedia.org/wiki/Man-in-the-middle_attack">
           Man In The Middle attack
