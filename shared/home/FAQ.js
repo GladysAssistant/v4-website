@@ -118,8 +118,8 @@ const dataFr = [
       <>
         Tu as envie d'accéder simplement et de façon sécurisée à ton instance
         Gladys de n'importe où dans le monde ? Intéragir avec une communauté
-        passionné ? Soutenir un projet open-source français en pleine croissance
-        ? Gladys Plus est fait pour toi !
+        passionnée ? Soutenir un projet open-source français en pleine
+        croissance ? Gladys Plus est fait pour toi !
       </>
     ),
   },
@@ -131,7 +131,7 @@ const dataFr = [
         sans scrupule 😄 Tu peux à tout moment annuler ton abonnement en un clic
         depuis l'interface du Gateway (il y a un bouton pour se désabonner, il
         n'est pas caché, tu as juste à cliquer et hop tu es désabonné). Si
-        seulement tous les abonnenements étaient comme ça...
+        seulement tous les abonnements étaient comme ça...
       </>
     ),
   },
@@ -140,7 +140,7 @@ const dataFr = [
     description: (
       <>
         Bien entendu ! Si Gladys Plus ne te donne pas entière satisfaction,
-        envoie moi un email et je te rembourserais directement, sans discussion.
+        envoie moi un email et je te rembourserai directement, sans discussion.
         N'hésite pas à me donner ton retour dans le mail pour que je puisse
         améliorer le service 🙂
       </>
@@ -169,8 +169,8 @@ const dataFr = [
           Remote Secure Password
         </a>
         . Le Gladys Gateway chiffre vos commandes Gladys grâce à l'algorithme
-        AES-GCM 256bits et une clé unique généré à chaque message. Cette clé est
-        ensuite chiffrée grâce à la clé publique de l'instance Gladys et
+        AES-GCM 256bits et une clé unique générée à chaque message. Cette clé
+        est ensuite chiffrée grâce à la clé publique de l'instance Gladys et
         l'algorithme RSA-OAEP 2048bits. Enfin, chaque message est signé grâce à
         l'algorithme ECDSA P-256, et accompagné d'une date d'expiration afin
         d'éviter les{" "}
@@ -214,15 +214,15 @@ const dataFr = [
       <>
         De plus en plus! Plus il y a de contributeurs à Gladys Plus, plus il est
         possible pour moi d'investir dans le projet, de passer du temps dessus,
-        et de fournir un service professionel. Par exemple, j'ai pu payer un
-        designer professionel pour refaire toute la charte graphique du projet:
+        et de fournir un service professionnel. Par exemple, j'ai pu payer un
+        designer professionnel pour refaire toute la charte graphique du projet:
         logo, illustrations, couleurs, il a tout refait. Et la communauté est
         unanime: son travail a totalement changé l'apparence du projet. Payer ce
-        designer n'a uniquement été possible grâce aux contributions de la
-        communauté, et c'est ça qui est génial! En fait, Gladys c'est un peu
-        comme une entreprise décentralisée ou les patrons, c'est vous! Ainsi,
+        designer n'a uniquement été possible que grâce aux contributions de la
+        communauté, et c'est ça qui est génial ! En fait, Gladys c'est un peu
+        comme une entreprise décentralisée ou les patrons, c'est vous. Ainsi,
         toutes les décisions dans le projet sont faites de manière à favoriser
-        les utilisateurs, pas un investisseur, une banque où un publicitaire.
+        les utilisateurs, pas un investisseur, une banque ou un publicitaire.
       </>
     ),
   },

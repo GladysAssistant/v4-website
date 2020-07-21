@@ -25,8 +25,8 @@ const translation = {
     subscribe: "S'abonner (9.99€/mois)",
   },
   features: {
-    centralizeCameras: "Centralizez vos caméras",
-    controlHouse: "Contrôler votre maison",
+    centralizeCameras: "Centralisez vos caméras",
+    controlHouse: "Contrôlez votre maison",
     connectCalendars: "Connectez vos calendriers",
     createScenes: "Créez des scènes",
     title: "Un logiciel conçu pour la stabilité, la performance et la sécurité",
@@ -37,7 +37,7 @@ const translation = {
     endToEndEncrypted: "Accès à distance chiffré de bout en bout (Gladys Plus)",
   },
   integrations: {
-    title: "Des compatibilités, disponible par défaut",
+    title: "Des compatibilités, disponibles par défaut",
     description:
       "Toutes les intégrations sont open-source, dévelopées par la communauté.",
   },
