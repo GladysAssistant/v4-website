@@ -114,7 +114,10 @@ function IntegrationPage({ integrations, lang, translation }) {
         </div>
         <div className="col col col--9">
           <h2>{translation.title}</h2>
-          <div class="row">
+          <div class="alert alert--secondary" role="alert">
+            {translation.description}
+          </div>
+          <div class="row" style={{ marginTop: "16px" }}>
             {integrationsFiltered.map((integration) => (
               <div className="col col--4">
                 <Integration
@@ -127,7 +130,7 @@ function IntegrationPage({ integrations, lang, translation }) {
             ))}
           </div>
           {integrationsFiltered.length === 0 && (
-            <div class="alert alert--secondary" role="alert">
+            <div class="alert alert--warning" role="alert">
               {translation.noIntegrationsFound}
             </div>
           )}
