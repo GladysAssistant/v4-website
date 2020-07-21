@@ -8,6 +8,11 @@ module.exports = {
   projectName: "gladys", // Usually your repo name.
   themeConfig: {
     image: "img/presentation/gladys-og-image.png",
+    googleAnalytics: {
+      trackingID: "UA-42837031-1",
+      // Optional fields.
+      anonymizeIP: true, // Should IPs be anonymized?
+    },
     navbar: {
       title: "Gladys Assistant",
       logo: {
@@ -161,5 +166,14 @@ module.exports = {
       require.resolve("@docusaurus/plugin-ideal-image"),
       { min: 400, max: 2000, steps: 8 },
     ],
+    [
+      require.resolve("@docusaurus/plugin-sitemap"),
+      {
+        cacheTime: 600 * 1000, // 600 sec - cache purge period
+        changefreq: "weekly",
+        priority: 0.5,
+      },
+    ],
+    [require.resolve("@docusaurus/plugin-google-analytics")],
   ],
 };

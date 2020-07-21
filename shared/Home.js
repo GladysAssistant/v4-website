@@ -30,7 +30,7 @@ function Home({ translation, integrations, lang }) {
                   style={{ display: "inline-block" }}
                 >
                   <Link
-                    className="button button--primary button--lg"
+                    className="button button--primary"
                     href={`/${lang}/docs`}
                   >
                     {translation.gettingStartedButton}
@@ -41,7 +41,7 @@ function Home({ translation, integrations, lang }) {
                   style={{ display: "inline-block" }}
                 >
                   <Link
-                    className="button button--outline button--secondary button--lg"
+                    className="button button--outline button--secondary"
                     href="https://demo.gladysassistant.com/dashboard"
                   >
                     {translation.tryOnlineButton}
