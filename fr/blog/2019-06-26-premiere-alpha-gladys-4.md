@@ -151,13 +151,13 @@ Un grand merci 🙌
 
 J'ai récemment stoppé les ventes du pack de vidéos de la v3 car il n'est plus adapté à la v4.
 
-Ma seule source de revenus sur Gladys est désormais le package communauté, et pour l'instant ce package rapporte environ 759€/mois. C'est un début, mais c'est peu quand on enlève les frais et les taxes.
+Ma seule source de revenus sur Gladys est désormais Gladys Plus, et pour l'instant ce package rapporte environ 759€/mois. C'est un début, mais c'est peu quand on enlève les frais et les taxes.
 
 Si vous voulez soutenir mon travail, et me permettre de passer du temps sur Gladys, vous pouvez:
 
-- Apporter un soutien régulier via le package communauté pour [9.99€/mois](/fr/gladys-community-package/). C'est la meilleure façon de soutenir mon travail et ça vous donne accès à pas mal de fonctionnalités supplémentaires, et à un chat privée avec toute la communauté 🙂
+- Apporter un soutien régulier via Gladys Plus pour 9.99€/mois. C'est la meilleure façon de soutenir mon travail et ça vous donne accès à pas mal de fonctionnalités supplémentaires, et à un chat privée avec toute la communauté 🙂
 - Faire un don en Bitcoin: 3KQiX1FtbdXLXPH9UfLSyuzRMDRGY52EiA
-- Ou via [PayPal](https://www.paypal.me/gladysproject/20) (mais bon, le Bitcoin c'est mieux!)
+- Ou via [PayPal](https://www.paypal.me/gladysassistant/20) (mais bon, le Bitcoin c'est mieux!)
 
 Merci à toutes vos remarques positives sur les derniers mois vis à vis du travail réalisé.
 

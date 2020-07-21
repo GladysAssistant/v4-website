@@ -35,7 +35,7 @@ I decided that Open API would not be turned on by default so that people can cho
 
 The following step is simple. Go to [plus.gladysassistant.com](https://plus.gladysassistant.com), connect with your Gladys Gateway account.
 
-**Note:** If you don't have a Gladys Gateway account yet, you need to subscribe to the [community package](/en/gladys-community-package/) 🙂
+**Note:** If you don't have a Gladys Gateway account yet, you need to subscribe to Gladys Plus 🙂
 
 Go to `Settings` then `Open API`.
 

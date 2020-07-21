@@ -73,7 +73,7 @@ Voilà la modélisation de la base de données de Gladys 4 pour l'instant:
 
 ![Modélisation base de donnée Gladys 4](/fr/img/articles/avancement-gladys-4/gladys-v4-data-model.png)
 
-Et pour ceux qui préfèrent voir ça en vrai, voilà une base de donnée SQLite de Gladys 4: [gladys-4-development.db](/assets/files/gladys-4-development.db).
+Et pour ceux qui préfèrent voir ça en vrai, voilà une base de donnée SQLite de Gladys 4: [gladys-4-development.db](/fr/files/gladys-4-development.db).
 
 Vous pouvez utiliser l'excellent client SQL [TablePlus](https://tableplus.io/) pour ouvrir ce fichier et voir comment ça fonctionne sous le capot :)
 
@@ -143,7 +143,7 @@ Bien entendu, tout le code de Gladys 4 est disponible en open-source [sur GitHub
 
 Comme vous pouvez le voir, Gladys 4 est en très bonne voie et s'annonce prometteur! 🙂
 
-J'aimerais encore remercier tous ceux qui soutiennent ce projet open-source via leur contribution mensuelle sur [le package communauté](https://gladysassistant.com/fr/gladys-community-package/) 🙏
+J'aimerais encore remercier tous ceux qui soutiennent ce projet open-source via leur contribution mensuelle sur Gladys Plus 🙏
 
 C'est seulement grâce à ces contributions que je peux dédier un temps partiel sur Gladys, et non pas juste mes soirs et week-ends.
 

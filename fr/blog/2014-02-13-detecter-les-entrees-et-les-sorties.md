@@ -33,7 +33,7 @@ Vous remarquerez deux vis oranges sur le capteur :
 ## Le code Python
 
 Pour le script je remercie l'auteur de [cet article](http://www.raspberrypi-spy.co.uk/2013/01/cheap-pir-sensors-and-the-raspberry-pi-part-1/) pour cet excellent script que j'ai adapté selon mes besoins.
-Vous pouvez télécharger le script commenté [ici](/assets/files/pir.py).
+
 Que ce passe-il dans ce script ?
 En fait le capteur attend qu'il y ait un mouvement. Dès qu'un mouvement est détecté, une requête est faite à un fichier PHP sur le Raspberry afin de "prévenir" qu'un mouvement a été détecté, pour que le Raspberry Pi puisse l'enregistrer.
 
