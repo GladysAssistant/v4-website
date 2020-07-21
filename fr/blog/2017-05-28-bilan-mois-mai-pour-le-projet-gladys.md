@@ -70,7 +70,7 @@ La grande nouvelle de cet article, c'est la sortie de Gladys 3.6\. Cette nouvell
 
 L'ajout d'une gestion native du calcul de temps d'itinéraire. De la même manière que Gladys gère de façon "abstraite" la météo, la musique, les devices, Gladys gère désormais de façon abstraite le calcul de temps d'itinéraire.
 
-Et j'en ai profité pour implémenter un premier module de calcul de temps d'itinéraire avec l'API Google Maps, [déjà disponible sur Gladys](https://developer.gladysassistant.com/fr/modules/google-direction) !
+Et j'en ai profité pour implémenter un premier module de calcul de temps d'itinéraire avec l'API Google Maps, déjà disponible sur Gladys !
 
 ### L'Auto Wake Up
 

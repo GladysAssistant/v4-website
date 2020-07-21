@@ -178,6 +178,4 @@ Pour l'ID, inutile de le taper en entier, vous pouvez taper les 2 premiers carac
 
 Et voilà, en quelques minutes on a pu mettre en place une instance de Gladys v3 !
 
-Si vous voulez avoir la liste les fonctions présentes, allez sur le Github dans le dossier `api/core` ( [ici](https://github.com/gladysassistant/Gladys/tree/master/api/core) ), dedans vous trouverez une liste de dossiers, chaque dossier correspond à un ensemble de fonction lié à une feature particulière et est accessible sous la variable "gladys" dans les scripts.
-
 N'hésitez pas si vous avez des questions, et bonne Pâques à tous !

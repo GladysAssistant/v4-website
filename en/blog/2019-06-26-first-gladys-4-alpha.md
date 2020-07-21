@@ -103,13 +103,13 @@ That's the biggest advantages of using a separate frontend, we can host a static
 
 As Gladys 4 runs inside Docker, it's super easy to deploy it on MacOS/Windows thanks to Kitematic.
 
-[Installing Gladys Assistant 4 alpha on MacOS/Windows](https://documentation.gladysassistant.com/en/installation#macos-windows).
+[Installing Gladys Assistant 4 alpha on MacOS/Windows](/en/docs/installation/macos-windows).
 
 ### On a Raspberry Pi
 
 On a Raspberry Pi, it's the same. You can run Gladys 4 Alpha Docker image built for ARM.
 
-[Installing Gladys Assistant 4 Alpha on Raspberry Pi](https://documentation.gladysassistant.com/en/installation#raspberry-pi).
+[Installing Gladys Assistant 4 Alpha on Raspberry Pi](/en/docs/).
 
 ## What's next?
 
@@ -120,7 +120,7 @@ Next week, I'm flying back to France and will start visiting Gladys users, to te
 I would like to thank everyone who contributed to this alpha release:
 
 - GitHub contributors: VonOx, atrovato, bertrandda, NilkOne et cicoub13. Special thank to VonOx, who did an amazing work on Docker build: ARM cross-compiling was not that easy. Same for atrovato who worked hard on the Bluetooth service. I can't wait to try it.
-- A big thanks to [Gladys Plus](/en/pricing/) contributors. It's thank to your financial support that I can spend more time on open-source.
+- A big thanks to Gladys Plus contributors. It's thank to your financial support that I can spend more time on open-source.
 
 Thanks! 🙌
 
@@ -130,7 +130,7 @@ I recently stopped the sales on the Gladys Starter Pack, who was only designed f
 
 If you want to support my work on open-source, you can:
 
-- Support monthly Gladys throught Gladys Plus for [9.99€/month](/en/pricing/). It's the best way to support my work, and it gives you access to lots of new features!
+- Support monthly Gladys throught Gladys Plus for 9.99€/month. It's the best way to support my work, and it gives you access to lots of new features!
 - Donate in Bitcoin: 3KQiX1FtbdXLXPH9UfLSyuzRMDRGY52EiA
 - Or with [PayPal](https://www.paypal.me/gladysproject/20) (But Bitcoin is better 😉)
 

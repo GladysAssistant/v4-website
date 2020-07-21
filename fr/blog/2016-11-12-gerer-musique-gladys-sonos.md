@@ -11,11 +11,15 @@ image: /assets/images/presentation/gladys-sonos-cover.jpg
 id: gerer-musique-gladys-sonos
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
+</div>
+
 Salut à tous !
 
 Cela fait longtemps que beaucoup d'entre vous me demandait une gestion de la musique dans Gladys, c'est maintenant chose faite avec Gladys 3.3.
 
-Cette version apporte un support de la musique dans Gladys de la même façon que j'ai fais pour les Device, de façon complètement abstraite au niveau du core de Gladys, avec des modules qui derrière font office de drivers vers des plateformes spécifiques ( ici je vais vous montrer comment j'ai connecté une enceinte [Sonos Play:1](https://developer.gladysassistant.com/fr/link/sonos-play-1) à Gladys !).
+Cette version apporte un support de la musique dans Gladys de la même façon que j'ai fais pour les Device, de façon complètement abstraite au niveau du core de Gladys, avec des modules qui derrière font office de drivers vers des plateformes spécifiques ( ici je vais vous montrer comment j'ai connecté une enceinte Sonos Play:1 à Gladys !).
 
 Qu'est ce que cela veut dire en terme de scripts ? d'interactions ?
 
@@ -35,7 +39,7 @@ Toutes les commandes possibles sont visibles [ici](https://github.com/gladysassi
 
 ## Les enceintes Sonos
 
-Je suis donc parti sur une [Sonos Play:1 en Blanc](https://developer.gladysassistant.com/fr/link/sonos-play-1). Pour parler de l'enceinte en elle même, elle est de très bonne facture. La fabrication respire la qualité, les finitions sont très propre. Le plastique a un aspect soft-touch sur le haut sympa au touché, et la grille métallique donne un charme à l'enceinte.
+Je suis donc parti sur une Sonos Play:1 en Blanc. Pour parler de l'enceinte en elle même, elle est de très bonne facture. La fabrication respire la qualité, les finitions sont très propre. Le plastique a un aspect soft-touch sur le haut sympa au touché, et la grille métallique donne un charme à l'enceinte.
 
 <img alt="Sonos Play:1" src="/fr/img/articles/gladys-sonos/gladys-sonos.jpg" />
 
@@ -118,6 +122,6 @@ Vous donneras les musiques actuellement dans la queue de lecture. Là encore, to
 
 ## Conclusion
 
-Je vous avoue que je me suis bien amusé avec ce module dans Gladys ! Ce qui est vraiment sympa, c'est qu'en terme de scénario, c'est vraiment infini, on peut faire des choses vraiment funs. Vous voulez un réveil en musique ? Vous voulez que quand vous rentrez chez vous Gladys lance votre playlist Spotify ? Vous voulez impressionner vos amis avec des ambiances sons et lumières ? Grâce au module [Gladys Philips Hue](https://developer.gladysassistant.com/fr/modules/hue), couplé au module Sonos, on commence à pouvoir faire des interactions vraiment sympa!
+Je vous avoue que je me suis bien amusé avec ce module dans Gladys ! Ce qui est vraiment sympa, c'est qu'en terme de scénario, c'est vraiment infini, on peut faire des choses vraiment funs. Vous voulez un réveil en musique ? Vous voulez que quand vous rentrez chez vous Gladys lance votre playlist Spotify ? Vous voulez impressionner vos amis avec des ambiances sons et lumières ? Grâce au module Gladys Philips Hue, couplé au module Sonos, on commence à pouvoir faire des interactions vraiment sympa!
 
 Le futur selon moi va venir d'un autre accessoire que je test en ce moment même depuis quelques jours, un bracelet connecté ! Ce bracelet enregistre tout sur moi : mon sommeil, mon rythme cardiaque, mes mouvements. On peut imaginer Gladys mettre une ambiance calme les soirs où je rentre d'une journée crevante... On peut imaginer Gladys baisser les lumières en cas de tension. Gladys pourrait me prévenir le soir à l'heure exacte à laquelle je dois me coucher afin que je ne sois pas fatigué le lendemain en fonction de la durée de ma nuit dernière + mon premier rendez-vous le lendemain.. Le futur s'annonce fun dans Gladys !

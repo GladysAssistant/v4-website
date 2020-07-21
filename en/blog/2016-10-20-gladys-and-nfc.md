@@ -19,7 +19,7 @@ We'll see in this tutorial how to configure NFC tags to use them with Gladys.
 
 ## Hardware
 
-- A few [NFC tags like those](https://developer.gladysassistant.com/en/link/tag-nfc).
+- A few NFC tags
 - An Android NFC compatible smartphone ( unfortunately this doesn't work on an iPhone )
 
 ## Install Tasker

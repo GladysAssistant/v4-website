@@ -9,7 +9,9 @@ author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 ---
 
-<div class="alert alert-info" role="alert" >Update: 03/05/2017. Ce tutoriel a été adapté pour Gladys v3, il fonctionne pleinement avec Gladys !</div>
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
+</div>
 
 Salut à tous,
 
@@ -168,7 +170,7 @@ Bien entendu si vous changez de channel, mettez à jour le code décimal en fonc
 
 ## Contrôler les prises dans Gladys
 
-Pour contrôler les prises dans Gladys, nous allons nous appuyer sur deux modules: [Serial](https://developer.gladysassistant.com/fr/modules/serial) et [Radioemitter](https://developer.gladysassistant.com/fr/modules/radioemitter).
+Pour contrôler les prises dans Gladys, nous allons nous appuyer sur deux modules: Serial et Radioemitter.
 
 - Installez tout d'abord le module Serial dans Gladys. (Dans le dashboard Gladys, allez dans l'onglet "Modules" => "Store" => Cliquez sur le module => "Installer" )
 - Puis, sans rebooter, installez le module Radioemitter

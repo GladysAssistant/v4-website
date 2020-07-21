@@ -9,6 +9,10 @@ author_image_url: /fr/img/pierre-gilles.jpg
 image: /assets/images/presentation/xiaomi-home.jpg
 ---
 
+<div class="alert alert--danger" role="alert">
+  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
+</div>
+
 Salut à tous,
 
 Pour ceux qui ne connaissent pas les produits Xiaomi Home, c'est tout une gamme domotique composé d'un gateway Wi-Fi connecté à la box internet, et d'un ensemble de périphériques eux connectés en Zigbee au gateway. Le même combo que les ampoules Philips Hue en quelques sortes. Leurs gros avantage, c'est que non seulement la technologie est robuste, a une bonne portée, n'est pas énergivore pour les devices, mais en plus c'est low-cost ! On parle de quelques euros pour chaque capteur.
@@ -142,7 +146,7 @@ gladys.music
 
 #### La musique avec MP3-Player
 
-Si vous n'avez pas d'enceintes Sonos et que vous voulez jouer un son sur le Raspberry Pi directement, vous pouvez utiliser le module [Gladys MP3-Player](https://developer.gladysassistant.com/fr/modules/mp3-player). Suivez les instructions d'installation.
+Si vous n'avez pas d'enceintes Sonos et que vous voulez jouer un son sur le Raspberry Pi directement, vous pouvez utiliser le module Gladys MP3-Player. Suivez les instructions d'installation.
 
 Ensuite, dans un script, pour lancer de la musique, vous pouvez faire :
 

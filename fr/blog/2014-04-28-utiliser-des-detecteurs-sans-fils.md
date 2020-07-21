@@ -43,7 +43,7 @@ Vérifiez que WiringPi et Rcswitch-pi sont bien installés sur votre Raspberry. 
 
 ### Le code
 
-J'ai utilisé un script de [NinjaBlocks](http://ninjablocks.com/blogs/how-to/7506204-adding-433-to-your-raspberry-pi) que j'ai adapté !
+J'ai utilisé un script de NinjaBlocks que j'ai adapté !
 
 Le code ci-dessous est à titre indicatif et pour comprendre, mais vous pouvez télécharger la dernière version de Gladys, et tout sera inclus dedans !
 

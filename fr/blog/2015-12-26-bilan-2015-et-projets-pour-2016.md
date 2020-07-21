@@ -59,7 +59,7 @@ Le projet a bien avancé cette année, l'année 2015 a marqué la sortie de la d
 Actuellement, au niveau de Gladys en elle même j'ai plusieurs priorités :
 
 - Fixer l'image Rasbpian pour Raspberry Pi B/B+. L'objectif serait d'avoir une image super stable qui fonctionne sans faille pour tout le monde, et qui soit très facile à mettre à jour. Le but est de devenir vraiment accessible à tous, installable en quelques minutes et "plug and play" ensuite sans trop de connaissances.
-- Etoffer la documentation. La documentation Gladys est désormais Open Source et éditable par tous (elle est disponible sur [GitHub](https://github.com/gladysassistant/gladys-docs), et vous pouvez la forker puis proposer une pull request, les changements seront immédiatemment synchronisés sur [le site développeur](http://developer.gladysassistant.com/fr/documentation) )
+- Etoffer la documentation. La documentation Gladys est désormais Open Source et éditable par tous (elle est disponible sur GitHub, et vous pouvez la forker puis proposer une pull request, les changements seront immédiatemment synchronisés sur le site développeur )
 
 #### La compatibilité Z-wave
 

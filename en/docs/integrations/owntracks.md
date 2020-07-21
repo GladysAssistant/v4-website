@@ -6,7 +6,7 @@ sidebar_label: Owntracks
 
 [Owntracks](https://owntracks.org/) is an open-source mobile app which sends the phone location to a server, periodically.
 
-[Gladys Plus](https://gladysassistant.com/pricing) allows you to receive Owntracks message and create location in Gladys.
+Gladys Plus allows you to receive Owntracks message and create location in Gladys.
 
 ### Download Owntracks
 

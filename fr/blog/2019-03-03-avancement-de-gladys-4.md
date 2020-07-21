@@ -23,7 +23,7 @@ Peut-être que certains auront des remarques, des retours. N'hésitez pas: c'est
 
 ## L'appel communauté de mars
 
-Chaque mois, c'est la tradition, je fais un appel avec tous ceux qui soutiennent le projet via [Gladys Plus](/fr/pricing/) afin de parler de tous les développements en cours et de discuter de la suite du projet.
+Chaque mois, c'est la tradition, je fais un appel avec tous ceux qui soutiennent le projet via Gladys Plus afin de parler de tous les développements en cours et de discuter de la suite du projet.
 
 Voilà le replay de cet appel:
 
@@ -115,7 +115,7 @@ Dans Gladys 4, chaque entité a donc un ensemble d'états, et de transitions ent
 
 ### Côté interface
 
-✅ Le projet preact est créé, et configuré. J'ai pu partir de l'expérience que je me suis fais sur le [Gladys Gateway](/fr/pricing/) qui tourne aussi sous preact.
+✅ Le projet preact est créé, et configuré. J'ai pu partir de l'expérience que je me suis fais sur le Gladys Gateway qui tourne aussi sous preact.
 
 ✅ J'ai pu travailler sur différents écrans de l'interface, je vais vous mettre quelques exemples.
 

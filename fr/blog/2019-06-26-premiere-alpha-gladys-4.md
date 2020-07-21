@@ -124,7 +124,7 @@ Cette alpha, comme son nom l'indique, est encore en développement. Il y a donc 
 
 Je vous laisse lire mon tutoriel ici :
 
-[Installer Gladys Assistant 4 Alpha sur MacOS/Windows](https://documentation.gladysassistant.com/fr/installation#macos-windows).
+[Installer Gladys Assistant 4 Alpha sur MacOS/Windows](/fr/docs/installation/macos-windows).
 
 ### Sur Raspberry Pi
 
@@ -132,7 +132,7 @@ Sur Raspberry Pi, c'est pareil, il suffit d'installer Docker sur le Pi, puis de 
 
 Je vous laisse lire mon tutoriel ici :
 
-[Installer Gladys Assistant 4 Alpha sur Raspberry Pi](https://documentation.gladysassistant.com/fr/installation#raspberry-pi).
+[Installer Gladys Assistant 4 Alpha sur Raspberry Pi](/fr/docs/).
 
 ## Suite & Remerciements
 
@@ -143,7 +143,7 @@ De mon côté, je rentre en France la semaine prochaine, et je commence dès la 
 J'aimerais remercier tous ceux qui ont contribués à cette version alpha:
 
 - Les contributeurs GitHub: VonOx, atrovato, bertrandda, NilkOne et cicoub13. Mention spéciale à VonOx qui a fait un travail formidable sur les build Docker: la cross-compilation ARM c'était pas facile. De même pour atrovato qui a travaillé à fond sur le service Bluetooth: j'ai hâte de merger ça.
-- Les contributeurs via [Gladys Plus](/fr/pricing/), qui grâce à leur soutien financier mensuel permettent à ce projet d'avancer !
+- Les contributeurs via Gladys Plus, qui grâce à leur soutien financier mensuel permettent à ce projet d'avancer !
 
 Un grand merci 🙌
 

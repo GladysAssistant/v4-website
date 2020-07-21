@@ -20,7 +20,7 @@ Si certains d'entre vous hésite encore à se lancer dans l'aventure Gladys, c'e
 
 Pour commencer avec Gladys, la seule chose qui vous faudra est un Raspberry Pi 2 ( avec le matériel pour le faire fonctionner bien entendu )
 
-Pour cela, rien ne vaut un [kit de démarrage Raspberry Pi 2 ( 66€ )](http://amzn.to/1Tz3ZNP) avec tout le nécessaire à l'intérieur ( 1 Raspberry Pi 2 + une carte micro SD classe 10 + une alimentation 2A + un boitier )
+Pour cela, rien ne vaut un [kit de démarrage Raspberry Pi 2 ( 66€ )](https://amzn.to/30A9CH9) avec tout le nécessaire à l'intérieur ( 1 Raspberry Pi 2 + une carte micro SD classe 10 + une alimentation 2A + un boitier )
 
 <img alt="Raspberry Pi Kit complet" src="/fr/img/articles/noel-2015/raspberry-kit.jpg" />
 

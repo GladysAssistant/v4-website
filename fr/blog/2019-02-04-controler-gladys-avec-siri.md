@@ -41,7 +41,7 @@ En effet, l'Open API étant un moyen de communiquer directement avec votre insta
 
 L'étape suivante consiste à créer une clé d'API dans le Gladys Gateway. Rendez-vous à [gateway.gladysassistant.com](https://gateway.gladysassistant.com), connectez-vous à votre compte Gladys Gateway.
 
-**Note:** Si vous n'avez pas de compte Gladys Gateway, il faut souscrire à [Gladys Plus](/fr/pricing/) 🙂
+**Note:** Si vous n'avez pas de compte Gladys Gateway, il faut souscrire à Gladys Plus.
 
 Rendez-vous dans l'onglet `Settings` en haut à droite, puis `Open API`.
 

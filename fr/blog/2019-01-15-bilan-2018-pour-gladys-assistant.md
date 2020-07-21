@@ -27,7 +27,7 @@ Cette décision, je l'ai prise uniquement parce que vous m'avez soutenu !
 
 ➡️ Que ce soit en achetant le Gladys starter pack
 
-➡️ Ou en étant contributeur sur [Gladys Plus](/fr/pricing/)
+➡️ Ou en étant contributeur sur Gladys Plus
 
 UPDATE: Juillet 2019, le starter pack n'existe plus, tout est regroupé dans Gladys Plus :)
 
@@ -162,7 +162,7 @@ Et tout ça c'est sans compter tous les appels mensuels avec la communauté, en 
 
 ### Les revenues Gladys
 
-Je veux être transparent sur Gladys, ainsi je publie chaque mois le chiffre d'affaire de Gladys sur la page [/open](/open) du site.
+Je veux être transparent sur Gladys, ainsi je publie chaque mois le chiffre d'affaire de Gladys.
 
 Quelques remarques:
 

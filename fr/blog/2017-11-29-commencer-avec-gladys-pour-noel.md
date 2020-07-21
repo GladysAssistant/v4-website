@@ -87,7 +87,7 @@ L'autre option, c'est les ampoules Milight, des ampoules chinoises plus abordabl
 
 ## La musique dans Gladys
 
-Pour gérer la musique, deux options, soit vous optez pour le module [Gladys MP3 Player](https://developer.gladysassistant.com/fr/modules/mp3-player) qui vous permet de jouer la musique directement sur le Raspberry Pi (que vous branchez ensuite en jack/HDMI à vos enceintes).
+Pour gérer la musique, deux options, soit vous optez pour le module Gladys MP3 Player qui vous permet de jouer la musique directement sur le Raspberry Pi (que vous branchez ensuite en jack/HDMI à vos enceintes).
 
 ![Sonos](/fr/img/articles/gladys-sonos/gladys-sonos.jpg)
 

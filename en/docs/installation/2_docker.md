@@ -40,7 +40,7 @@ gladysassistant/gladys:4.0.0-beta-arm
 Note:
 
 - If you are on a x64/x86 architecture, you can change the image to `gladysassistant/gladys:4.0.0-beta-amd64`
-- `-e TZ=Europe/Paris` => Timezone used by container. Feel free to consult [this list](https://fr.wikipedia.org/wiki/List_of_tz_database_time_zones) on wikipedia if you need to change this value.
+- `-e TZ=Europe/Paris` => Timezone used by container. Feel free to consult [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) on wikipedia if you need to change this value.
 
 ### Accessing Gladys
 
