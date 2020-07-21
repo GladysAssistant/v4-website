@@ -7,7 +7,6 @@ author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg
 image: /en/img/presentation/gateway-siri.jpg
-draft: true
 ---
 
 Hey all,
