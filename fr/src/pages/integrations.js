@@ -25,7 +25,7 @@ const translation = {
 function Home() {
   return (
     <Layout
-      title="Integrations"
+      title="Intégrations"
       description="Tous les périphériques compatibles avec Gladys."
     >
       <main>
