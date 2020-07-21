@@ -1,7 +1,7 @@
 module.exports = {
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
-  url: "https://v4.gladysassistant.com",
+  url: "https://gladysassistant.com",
   baseUrl: "/fr/",
   favicon: "img/favicon/favicon.ico",
   organizationName: "gladysassistant", // Usually your GitHub org/user name.
