@@ -108,6 +108,7 @@ function Home({ translation, integrations, lang }) {
           {openPanel === 1 && (
             <div>
               <Image
+                className={styles.featureImage}
                 alt={translation.features.centralizeCameras}
                 img={cameraGladys4}
               />
@@ -117,6 +118,7 @@ function Home({ translation, integrations, lang }) {
           {openPanel === 2 && (
             <div>
               <Image
+                className={styles.featureImage}
                 alt={translation.features.controlHouse}
                 img={dashboardGladys4}
               />
@@ -126,6 +128,7 @@ function Home({ translation, integrations, lang }) {
           {openPanel === 3 && (
             <div>
               <Image
+                className={styles.featureImage}
                 alt={translation.features.connectCalendars}
                 img={calendarGladys4}
               />
@@ -135,6 +138,7 @@ function Home({ translation, integrations, lang }) {
           {openPanel === 4 && (
             <div>
               <Image
+                className={styles.featureImage}
                 alt={translation.features.createScenes}
                 img={sceneGladys4}
               />
