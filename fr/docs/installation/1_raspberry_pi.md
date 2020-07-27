@@ -6,7 +6,7 @@ sidebar_label: Raspberry Pi
 
 Ce tutoriel vous explique comment installer Gladys sur Raspberry Pi !
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/yWAX-NAxjZQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="100%" src="https://www.youtube.com/embed/yWAX-NAxjZQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### Télécharger l'image Raspbian
 
