@@ -6,7 +6,7 @@ sidebar_label: MacOS/Windows
 
 Le process est presque le même que pour Raspberry Pi.
 
-### Install Docker Desktop
+### Installer Docker Desktop
 
 Vous devez d'abord installer [Docker Desktop](https://www.docker.com/products/docker-desktop).
 
@@ -30,7 +30,7 @@ Cliquez sur "Create" pour lancer un nouveau container:
 
 <img src="/fr/img/docs/installation/docker-desktop/kitematic-start-gladys.png" alt="Kitematic gladys assistant"  />
 
-Puis lancez dans votre navigateur l'URL indiqué par Kitematic (ici, "http://localhost:32768")
+Puis lancez dans votre navigateur l'URL indiquée par Kitematic (ici, "http://localhost:32768")
 
 <img src="/fr/img/docs/installation/docker-desktop/kitematic-success.png" alt="Kitematic gladys assistant"  />
 

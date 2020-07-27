@@ -30,7 +30,7 @@ Sélectionnez le système à installer, par exemple Ubuntu.
 
 Renseignez une clé SSH publique ou un mot de passe.
 
-Choisissez un nom d'utilisateur, par exemple galdys.
+Choisissez un nom d'utilisateur, par exemple `gladys`.
 
 Cliquez sur "Suivant".
 
@@ -57,7 +57,7 @@ sudo systemctl enable --now docker
 sudo usermod -aG docker gladys
 ```
 
-Ensuite, fermez votre session SSH puis reconnectez vous à votre VM.
+Ensuite, fermez votre session SSH puis reconnectez-vous à votre VM.
 
 ### Lancer Gladys
 

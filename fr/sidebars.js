@@ -1,12 +1,12 @@
 module.exports = {
   someSidebar: {
-    "Getting Started": [
+    Installation: [
       "installation/raspberry-pi",
       "installation/docker",
       "installation/macos-windows",
       "installation/freebox-delta",
     ],
-    Integrations: [
+    Intégrations: [
       "integrations/xiaomi",
       "integrations/sonoff",
       "integrations/philips-hue",

@@ -8,18 +8,18 @@ sidebar_label: Xiaomi Home
 
 L'activation du mode développeur permet à Gladys d'accéder à l'API de la passerelle Xiaomi, donc de recevoir les messages des différentes sondes, ainsi que de piloter les matériels et la passerelle elle-même.
 
-L'activation se fait à partir de l'application "Mi Home". Si elle n'est pas installé sur votre téléphone, commencez par le faire :
+L'activation se fait à partir de l'application "Mi Home". Si elle n'est pas installée sur votre téléphone, commencez par le faire :
 
 <img src="/fr/img/docs/configuration/xiaomi/xiaomi-tuto-1.jpg" alt="Xiaomi icon"  />
 
-- Une fois celà fait, lancez là.
+- Une fois cela fait, lancez-la.
 - Définissez votre région sur "Chine continentale" en créant votre compte.
 - Puis connectez tous vos appareils, selon leur procédure propre.
 - Enfin, mettez à jour le firmware.
 
 ## La passerelle
 
-Ouvrez votre passerelle en cliquant sur son icône. Sa page de gestion s'ouvre, suivez les étapes suivantes, dans l'ordre indiquée :
+Ouvrez votre passerelle en cliquant sur son icône. Sa page de gestion s'ouvre, suivez les étapes ci-dessous, dans l'ordre indiqué :
 
 ### Etape 1
 
@@ -37,7 +37,7 @@ Cliquez sur "A propos"
 
 <img src="/fr/img/docs/configuration/xiaomi/xiaomi-tuto-4.jpg" alt="Xiaomi icon"  />
 
-Cliquez plusieurs fois sur la zone en rouge, de façons à afficher les menus supplémentaires de l'étapes suivantes.
+Cliquez plusieurs fois sur la zone en rouge, de façon à afficher les menus supplémentaires de l'étapes suivantes.
 
 ### Etape 4
 

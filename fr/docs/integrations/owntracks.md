@@ -42,6 +42,6 @@ Gladys utilise la clé d'API pour identifier votre compte.
 
 <img src="/fr/img/docs/configuration/gateway/open-api-owntracks-2.jpg" alt="Open API owntracks Gladys"  width="300" />
 
-### Vérifier que l'intégration fonctionne
+### Vérifiez que l'intégration fonctionne
 
 Dans Gladys, vous devriez voir votre position sur l'onglet "Maps".
