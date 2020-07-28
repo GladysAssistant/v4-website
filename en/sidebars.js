@@ -7,6 +7,7 @@ module.exports = {
       "installation/freebox-delta",
     ],
     Integrations: [
+      "integrations/openweather",
       "integrations/philips-hue",
       "integrations/sonoff",
       "integrations/owntracks",
