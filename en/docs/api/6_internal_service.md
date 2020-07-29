@@ -1,7 +1,7 @@
 ---
 id: developing-a-service
-title: Developping a Service
-sidebar_label: Developping a Service
+title: Developing a Service
+sidebar_label: Developing a Service
 ---
 
 In Gladys 4, most integrations which don't need to be started on another physical machine than Gladys are internal services and integrated into Gladys core.
