@@ -8,6 +8,7 @@ module.exports = {
     ],
     Intégrations: [
       "integrations/openweather",
+      "integrations/camera",
       "integrations/xiaomi",
       "integrations/sonoff",
       "integrations/philips-hue",
