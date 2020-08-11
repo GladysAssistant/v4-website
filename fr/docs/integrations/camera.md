@@ -90,7 +90,7 @@ Voilà ! Votre caméra est visible.
 
 ## Envoyez un message à Gladys Assistant pour voir une image de caméra
 
-Rendez-vous dans l'onglet intégration, et demandez à Gladys "Montre moi la caméra dans la XXXXX" (Mettez le nom de la pièce ou se trouve votre caméra)
+Rendez-vous dans l'onglet message, et demandez à Gladys "Montre moi la caméra dans la XXXXX" (Mettez le nom de la pièce ou se trouve votre caméra)
 
 Et, magie :
 

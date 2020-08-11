@@ -22,7 +22,7 @@ function Integration({
   if (description.length > MAX_DESCRIPTION_LENGTH) {
     description = truncate(description, MAX_DESCRIPTION_LENGTH) + " ...";
   }
-  if (buyLink && buyLink.indexOf("amazon") !== -1) {
+  if (buyLink && buyLink.indexOf("amazon.fr") !== -1) {
     const URL = ExecutionEnvironment.canUseDOM
       ? window.URL
       : require("url").URL;
