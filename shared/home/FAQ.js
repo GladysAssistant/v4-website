@@ -141,7 +141,7 @@ const dataFr = [
       <>
         Bien entendu ! Si Gladys Plus ne te donne pas entière satisfaction,
         envoie moi un email et je te rembourserai directement, sans discussion.
-        N'hésites pas à me donner ton retour dans le mail pour que je puisse
+        N'hésite pas à me donner ton retour dans le mail pour que je puisse
         améliorer le service 🙂
       </>
     ),
