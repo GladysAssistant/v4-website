@@ -196,7 +196,7 @@ const dataFr = [
         communauté en ligne, services d'emails, abonnements, matériel, etc... Et
         c'est sans compter tout le temps que je passe sur le projet car Gladys
         est désormais mon activité principale ! 🙂 Ce projet respecte votre vie
-        privée, et par conséquent <b>ne vie que de ces contributions</b>. Chaque
+        privée, et par conséquent <b>ne vit que de ces contributions</b>. Chaque
         contribution permet au projet d'aller plus loin, et montre qu'une
         alternative libre et respectueuse de la vie privée de ses utilisateurs
         est possible 🚀
