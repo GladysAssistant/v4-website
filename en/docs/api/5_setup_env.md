@@ -14,7 +14,7 @@ The server is a Node.js app.
 
 You'll need:
 
-- Node.js >= 10
+- Node.js 12
 - sqlite3
 - openssl
 - openzwave + libopenzwave1.5-dev
@@ -72,3 +72,21 @@ npm start
 ```
 
 The frontend should be accessible at http://localhost:1444.
+
+## Start server tests
+
+Go to the `server` folder.
+
+And run:
+
+```
+npm test
+```
+
+## Start server tests only for one service
+
+To run tests just for one service, go to the `server` folder and run the command:
+
+```
+npm run test-service --service=tasmota
+```

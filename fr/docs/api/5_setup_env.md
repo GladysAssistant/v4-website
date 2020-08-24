@@ -14,7 +14,7 @@ Le backend est une serveur Node.js.
 
 Comme prérequis système, il vous faut:
 
-- Node.js >= 10
+- Node.js 12
 - sqlite3
 - openssl
 - openzwave + libopenzwave1.5-dev
@@ -72,3 +72,21 @@ npm start
 ```
 
 Le frontend devrait être accessible à http://localhost:1444.
+
+## Lancer les tests serveurs
+
+Placez vous dans le dossier `server`.
+
+Lancez:
+
+```
+npm test
+```
+
+## Lancer les tests d'un seul service
+
+Pour lancer les tests d'un seul service, placez vous dans le dossier `server`, et lancez la commande:
+
+```
+npm run test-service --service=tasmota
+```

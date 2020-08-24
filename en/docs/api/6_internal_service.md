@@ -10,7 +10,7 @@ This tutorial will explain you how to add a new integration to the core.
 
 ### Setup your development environnement
 
-I recommended you follow the instructions on the [Github repository](https://github.com/GladysAssistant/Gladys) to install Gladys 4 on your machine for development purpose.
+I recommended you follow the instructions [here](/en/docs/api/setup-development-environnement) to install Gladys 4 on your machine for development purpose.
 
 ### Server-side
 
