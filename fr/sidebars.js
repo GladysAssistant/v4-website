@@ -12,6 +12,7 @@ module.exports = {
       "integrations/xiaomi",
       "integrations/sonoff",
       "integrations/philips-hue",
+      "integrations/mqtt",
       "integrations/owntracks",
       "integrations/zwave",
     ],

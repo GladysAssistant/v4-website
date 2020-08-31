@@ -38,11 +38,13 @@ Dans ce tutoriel, nous allons prendre l'option n°1.
 
 Vous pouvez donc lancer la création du broker MQTT automatiquement par Gladys.
 
-![Configurer un broker MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/configure-mqtt-broker-3.jpg)
-
 Suivant votre connexion internet, et la puissance de votre machine, cela peut prendre en quelques secondes et quelques minutes.
 
-Vous devriez ensuite voir cet écran:
+![Configurer un broker MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/configure-mqtt-broker-3.jpg)
+
+Vous pouvez cliquer sur le petit oeil afin de voir le mot de passe que Gladys a généré pour votre broker MQTT.
+
+Je vous recommande de noter ce mot de passe quelque part.
 
 ![Configurer un broker MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/configure-mqtt-broker-4.jpg)
 
@@ -61,7 +63,7 @@ Remplissez le formulaire avec les informations de votre périphérique.
 Remplissons le par exemple avec les informations suivantes:
 
 - Nom: "Capteur de température"
-- ID externe: `mqtt:cuisine:capteur-temperature`. Pour cet identifiant, celui-ci ne doit pas avoir d'espace et doit commencer par `mqtt:`. Je vous recommande de garder une convention à travers votre installation Gladys, comme par exemple `mqtt:pièce_de_la_maison:nom_du_peripherique`.
+- ID externe: `mqtt:cuisine:capteur-temperature`. Celui-ci ne doit pas avoir d'espace et doit commencer par `mqtt:`. Je vous recommande de garder une convention à travers votre installation Gladys, comme par exemple `mqtt:pièce_de_la_maison:nom_du_peripherique`.
 - Pièce: "Cuisine".
 
 ![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-2.jpg)
@@ -70,7 +72,7 @@ Ensuite, nous allons ajouter une fonctionnalité à ce périphérique.
 
 En effet, dans Gladys, un périphérique "physique" peut avoir plusieurs "fonctionnalités". Certains constructeurs proposent des périphériques "multi-capteurs" (température/humidité/luminosité est un classique).
 
-Dans la barre de recherche, cherchez "température" et sélectionnez "Capteur température/température".
+Dans la barre de recherche, cherchez "température" et sélectionnez "Capteur température/température". Cliquez sur "Ajouter fonctionnalité".
 
 Vous pouvez ensuite remplir le formulaire avec les informations suivantes:
 
@@ -84,4 +86,53 @@ Vous pouvez ensuite remplir le formulaire avec les informations suivantes:
 
 ![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-3.jpg)
 
+Cliquez sur "Enregistrer", vous devriez sur un écran comme celui-ci:
+
 ![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-4.jpg)
+
+## Tester le périphérique MQTT
+
+Je vous propose d'utiliser un client MQTT afin de tester ce périphérique MQTT.
+
+Vous pouvez utiliser le client MQTT [MQTT.fx](https://mqttfx.jensd.de/).
+
+Après avoir installé et lancé MQTT.fx, cliquez sur la petite roue dentée afin d'ajouter les informations de connexion à votre broker MQTT.
+
+Remplissez le formulaire avec les informations suivantes:
+
+- Name: "Gladys MQTT". Ce nom n'est utile que pour l'affichage dans le logiciel.
+- Broker Adress: L'adresse IP de votre Rasperry Pi sur le réseau. Vous devez être sur le même réseau que votre Raspberry Pi pour ce tutoriel.
+- Broker Port: 1883
+
+![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-1.jpg)
+
+Ensuite, rendez-vous dans l'onglet "User Credentials", puis remplissez avec les informations de connnexion.
+
+- User Name: `gladys`
+- Password: Le mot de passe que Gladys a généré dans la première partie de ce tutoriel. Si vous n'aviez pas gardé le mot de passe, vous pouvez toujours le retrouver en retournant dans la configuration du module MQTT et en cliquant sur le petit oeil sur le champs mot de passe.
+
+![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-2.jpg)
+
+Enregistrer la configuration en cliquant sur "Ok", puis cliquez sur "Connect" en haut de l'écran pour vous connecter au broker MQTT.
+
+Dans la bar en haut, mettez le topic MQTT que vous aviez copié-collé lors de la création de la fonctionnalité plus tôt.
+
+Dans le champs du milieu, entrez une température, dans mon cas "21.2", puis cliquez sur "Publish":
+
+![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-3.jpg)
+
+Sur le dashboard, ajoutez une nouvelle box "Température de la pièce".
+
+Vous devriez voir votre périphérique avec la température que nous venons d'envoyer:
+
+![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-4.jpg)
+
+Bravo !
+
+## Pour allez plus loin
+
+Si vous souhaitez écrire un programme qui envoie des données sur votre broker MQTT, il y a des librairies MQTT dans tous les languages.
+
+Par exemple, en Node.js, vous pouvez utiliser le [package npm mqtt](https://www.npmjs.com/package/mqtt).
+
+Il y a plein de tutoriels sur internet pour toutes les plateformes :)
