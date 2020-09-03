@@ -63,7 +63,7 @@ Remplissez le formulaire avec les informations de votre périphérique.
 Remplissons le par exemple avec les informations suivantes:
 
 - Nom: "Capteur de température"
-- ID externe: `mqtt:cuisine:capteur-temperature`. Celui-ci ne doit pas avoir d'espace et doit commencer par `mqtt:`. Je vous recommande de garder une convention à travers votre installation Gladys, comme par exemple `mqtt:pièce_de_la_maison:nom_du_peripherique`.
+- ID externe: `mqtt:cuisine:capteur-temperature`. Celui-ci ne doit pas avoir d'espace et doit commencer par `mqtt:`. Je vous recommande de garder une convention à travers votre installation Gladys, comme par exemple `mqtt:piece_de_la_maison:nom_du_peripherique`.
 - Pièce: "Cuisine".
 
 ![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-2.jpg)
@@ -77,7 +77,7 @@ Dans la barre de recherche, cherchez "température" et sélectionnez "Capteur te
 Vous pouvez ensuite remplir le formulaire avec les informations suivantes:
 
 - Nom: "Température". C'est ce nom qui va s'afficher sur le dashboard.
-- ID externe de la fonctionnalité: `mqtt:cuisine:capteur-temperature:temperature`. Je vous conseille ici aussi de garder une convention comme par exemple `mqtt:pièce_de_la_maison:nom_du_peripherique:nom_de_la_fonctionnalite`.
+- ID externe de la fonctionnalité: `mqtt:cuisine:capteur-temperature:temperature`. Je vous conseille ici aussi de garder une convention comme par exemple `mqtt:piece_de_la_maison:nom_du_peripherique:nom_de_la_fonctionnalite`.
 - Unité: "°C"
 - Valeur minimum: -50 (Disons que votre capteur de température va jusqu'à -50°C)
 - Valeur maximum: 200 (Disons que votre capteur de température monte haut!)
