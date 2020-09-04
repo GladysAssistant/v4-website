@@ -65,6 +65,7 @@ To launch Gladys, run the following command on your VM:
 
 ```bash
 docker run -d \
+--log-opt max-size=10m \
 --restart=always \
 --privileged \
 --network=host \
@@ -76,7 +77,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:4.0.0-beta-arm
+gladysassistant/gladys:v4-arm
 ```
 
 ## Auto-Upgrade Gladys with Watchtower

@@ -42,7 +42,7 @@ gladysassistant/gladys:v4-arm
 
 Note:
 
-- Si vous êtes sur une architecture x64/x86, utilisez le tag `4.0.0-beta-amd64`, soit une image `gladysassistant/gladys:4.0.0-beta-amd64`
+- Si vous êtes sur une architecture x64/x86, utilisez le tag `v4-amd64`, soit une image `gladysassistant/gladys:v4-amd64`
 - `-e TZ=Europe/Paris` => Pour changer le fuseau horaire du container, vous pouvez modifier cette variable. Vous trouverez toutes les valeurs possibles sur [cette list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## Mise à jour automatique avec Watchtower

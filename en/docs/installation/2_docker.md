@@ -23,6 +23,7 @@ If you tried the alpha before the beta, you need to remove the `/var/lib/gladysa
 
 ```bash
 docker run -d \
+--log-opt max-size=10m \
 --restart=always \
 --privileged \
 --network=host \
@@ -34,12 +35,12 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:4.0.0-beta-arm
+gladysassistant/gladys:v4-arm
 ```
 
 Note:
 
-- If you are on a x64/x86 architecture, you can change the image to `gladysassistant/gladys:4.0.0-beta-amd64`
+- If you are on a x64/x86 architecture, you can change the image to `gladysassistant/gladys:v4-amd64`
 - `-e TZ=Europe/Paris` => Timezone used by container. Feel free to consult [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) on wikipedia if you need to change this value.
 
 ### Accessing Gladys
@@ -79,6 +80,7 @@ Run the command:
 
 ```bash
 docker run -d \
+--log-opt max-size=10m \
 --restart=always \
 --privileged \
 --network=host \
@@ -90,7 +92,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:4.0.0-beta-amd64
+gladysassistant/gladys:v4-amd64
 ```
 
 You can edit the open ports / network mode depending of your system.
