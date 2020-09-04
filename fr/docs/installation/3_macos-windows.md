@@ -22,7 +22,7 @@ Puis, dans l'interface, cherchez "gladysassistant":
 
 <img src="/fr/img/docs/installation/docker-desktop/kitematic-gladysassistant.png" alt="Kitematic gladys assistant"  />
 
-Sélectionnez le tag "4.0.0-beta-amd64":
+Sélectionnez le tag "v4-amd64":
 
 <img src="/fr/img/docs/installation/docker-desktop/kitematic-select-tag.png" alt="Kitematic gladys assistant"  />
 

@@ -25,6 +25,7 @@ Pour lancer Gladys, exécutez la commande suivante sur votre Raspberry Pi:
 
 ```bash
 docker run -d \
+--log-opt max-size=10m \
 --restart=always \
 --privileged \
 --network=host \
@@ -36,7 +37,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:4.0.0-beta-arm
+gladysassistant/gladys:v4-arm
 ```
 
 Note:
@@ -81,6 +82,7 @@ Pour lancer Gladys, exécutez la commande suivante sur votre Raspberry Pi:
 
 ```bash
 docker run -d \
+--log-opt max-size=10m \
 --restart=always \
 --privileged \
 --network=host \
@@ -92,7 +94,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:4.0.0-beta-amd64
+gladysassistant/gladys:v4-amd64
 ```
 
 Vous pouvez adapter dans la commande les ports exposés suivant votre système.
