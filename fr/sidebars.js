@@ -16,6 +16,7 @@ module.exports = {
       "integrations/owntracks",
       "integrations/zwave",
     ],
+    Scènes: ["scenes/intro"],
     API: [
       "api/architecture",
       "api/data-model",
