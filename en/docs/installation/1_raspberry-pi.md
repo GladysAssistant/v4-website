@@ -9,7 +9,7 @@ sidebar_label: Raspberry Pi
 We provide a pre-built Raspbian image with Gladys already configured.
 
 <p>
-<a class="button button--outline button--primary" href="https://cdn.elephantcdn.com/gh/gladysassistant/gladys/releases/download/v4.0.0-beta-6/gladys-4.0.0-beta-6.img.zip">Download Gladys Raspbian Buster 4.0.0 Beta</a>
+<a class="button button--outline button--primary" href="https://cdn.elephantcdn.com/gh/gladysassistant/gladys/releases/download/v4.0.0-beta.15/gladys-v4-rev2.img.zip">Download Gladys Raspbian Buster v4-rev 2</a>
 </p>
 
 And unzip the downloaded zip file to get a `.img` file.
