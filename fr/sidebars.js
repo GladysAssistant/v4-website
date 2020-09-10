@@ -16,7 +16,11 @@ module.exports = {
       "integrations/owntracks",
       "integrations/zwave",
     ],
-    Scènes: ["scenes/intro", "scenes/device-state-changed-trigger"],
+    Scènes: [
+      "scenes/intro",
+      "scenes/device-state-changed-trigger",
+      "scenes/turn-on-off-the-switches-action",
+    ],
     API: [
       "api/architecture",
       "api/data-model",
