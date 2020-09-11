@@ -19,6 +19,7 @@ module.exports = {
     Scènes: [
       "scenes/intro",
       "scenes/device-state-changed-trigger",
+      "scenes/scheduled-trigger",
       "scenes/turn-on-off-the-switches-action",
     ],
     API: [
