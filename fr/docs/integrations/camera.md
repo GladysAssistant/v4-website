@@ -67,7 +67,7 @@ Remplissez les informations de connexion à votre caméra
 Vous pouvez tester la connexion afin de vérifier que le flux est bien accessible de Gladys Assistant. Si Gladys n'a pas accès à la caméra, êtes-vous sûr que votre ordinateur faisant tourner Gladys est bien sur le même réseau que la caméra ? Que la caméra est bien accessible ? Que les identifiants sont bons ?
 
 ![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/ajouter_webcam_usb_gladys_assistant_02-test.jpg)
-Une fois que la caméra fonctionne, cliquez sur le bouton "Enregistrer".
+Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
 
 ![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/camera-step-4.png)
 
@@ -115,11 +115,11 @@ Cliquez sur le bouton pour créer une nouvelle caméra
 
 Remplissez les informations de connexion à votre caméra en saisissant, dans la zone Flux RTSP/HTTP de la caméra, l'adresse du port USB sur lequel est connecté la webcam : /dev/video0
 
-![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/ajouter_webcam_usb_gladys_assistant_01-config.jpg)
+![Ajouter une caméra à Gladys Assistant](/fr/static/img/docs/configuration/camera/z_ajouter_webcam_usb_gladys_assistant_01-config.jpg)
 
 Vous pouvez tester la connexion afin de vérifier que le flux est bien accessible de Gladys Assistant.
+J'ai mis une photo du port de Dieppe devant ma webcam ☺.
 
-![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/ajouter_webcam_usb_gladys_assistant_02-test.jpg)
+![Ajouter une caméra à Gladys Assistant](/fr/static/img/docs/configuration/camera/z_ajouter_webcam_usb_gladys_assistant_02-test.jpg)
 
-Une fois que la caméra fonctionne, cliquez sur le bouton "Enregistrer".
-
+Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".

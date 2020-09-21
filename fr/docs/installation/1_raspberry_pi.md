@@ -28,6 +28,8 @@ Installez Etcher, branchez votre carte SD à votre ordinateur, et clonez le fich
 
 <img src="/fr/img/docs/installation/etcher.png" alt="Etcher"  />
 
+Débranchez votre carte SD de votre ordinateur et insérez-la dans votre Raspberry Pi.
+
 ### Branchez votre Raspberry Pi
 
 Branchez votre Raspberry Pi au réseau et au secteur afin qu'il démarre.
