@@ -15,6 +15,7 @@ module.exports = {
       "integrations/mqtt",
       "integrations/owntracks",
       "integrations/zwave",
+      "integration/telegram",
     ],
     Scènes: [
       "scenes/intro",
