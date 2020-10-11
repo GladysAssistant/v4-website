@@ -26,7 +26,8 @@ Cliquez sur "Suivant".
 
 <img src="/fr/img/docs/installation/freebox-delta/add-vm-2.PNG" alt="Ajouter une VM"  />
 
-Sélectionnez le système à installer, par exemple Ubuntu.
+Sélectionnez le système à installer, par exemple Debian ou Ubuntu.
+(Préférez Debian à Ubuntu pour une meilleure reconnaissance des ports USB de la Freebox)
 
 Renseignez une clé SSH publique ou un mot de passe.
 
