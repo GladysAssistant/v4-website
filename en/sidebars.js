@@ -10,7 +10,7 @@ module.exports = {
       "integrations/openweather",
       "integrations/camera",
       "integrations/philips-hue",
-      "integrations/sonoff",
+      "integrations/tasmota",
       "integrations/owntracks",
       "integrations/xiaomi",
       "integrations/zwave",
