@@ -26,6 +26,7 @@ module.exports = {
       "scenes/wait-action",
       "scenes/continue-only-if-action",
       "scenes/send-a-message-action",
+      "scenes/turn-on-off-the-lights-action",
     ],
     API: [
       "api/architecture",
