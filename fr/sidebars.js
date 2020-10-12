@@ -25,6 +25,7 @@ module.exports = {
       "scenes/get-last-device-state-action",
       "scenes/wait-action",
       "scenes/continue-only-if-action",
+      "scenes/send-a-message-action",
     ],
     API: [
       "api/architecture",
