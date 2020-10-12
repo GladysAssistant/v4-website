@@ -24,6 +24,7 @@ module.exports = {
       "scenes/turn-on-off-the-switches-action",
       "scenes/get-last-device-state-action",
       "scenes/wait-action",
+      "scenes/continue-only-if-action",
     ],
     API: [
       "api/architecture",
