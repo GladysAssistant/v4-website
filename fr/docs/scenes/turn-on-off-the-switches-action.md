@@ -1,7 +1,7 @@
 ---
 id: turn-on-off-the-switches-action
 title: Allumer/éteindre des prises télécommandées dans une scène
-sidebar_label: Allumer/éteindre des prises dans une scène
+sidebar_label: Allumer/éteindre des prises
 ---
 
 Que ce soit pour contrôler une simple lampe de chevet, un bande de LED, ou même une machine à café, les prises télécommandées sont très utilisées en domotique.
