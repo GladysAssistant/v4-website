@@ -175,8 +175,6 @@ function Home({ translation, integrations, lang }) {
             </div>
           </div>
         </div>
-        {lang === "fr" && <Pricing lang={lang} translation={translation} />}
-        {lang === "fr" && <FAQ lang={lang} />}
       </main>
     </>
   );

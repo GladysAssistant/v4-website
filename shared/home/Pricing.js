@@ -43,69 +43,62 @@ function Cross() {
 
 function Pricing({ translation, lang }) {
   return (
-    <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+    <div style={{ paddingBottom: "2rem" }}>
       <div className="container">
         <div className="row">
           <div className="col col--12">
-            <h2
-              className="text--center"
-              style={{
-                fontSize: "30px",
-                marginBottom: "30px",
-              }}
-            >
-              {translation.pricing.title}
-            </h2>
             <div className="row">
-              <div className="col col--5 col--offset-1">
-                <div class="card-demo">
-                  <div class="card">
-                    <div class="card__header">
-                      <h3 className="text--center">
-                        {translation.pricing.community}
-                      </h3>
-                    </div>
-                    <div class="card__body">
-                      <p>
-                        <ul className={styles.listUnstyled}>
-                          <li>
-                            <Check />
-                            {translation.pricing.openSourceSoftware}
-                          </li>
-                          <li>
-                            <Cross /> {translation.pricing.endToEnd}
-                          </li>
-                          <li>
-                            <Cross /> {translation.pricing.dailyBackups}
-                          </li>
-                          <li>
-                            <Cross /> {translation.pricing.oneClickRestore}
-                          </li>
-                          <li>
-                            <Cross /> {translation.pricing.owntracksApi}
-                          </li>
-                          <li>
-                            <Cross /> {translation.pricing.privateSlack}
-                          </li>
-                          <li>
-                            <Cross /> {translation.pricing.supportOpenSource}
-                          </li>
-                        </ul>
-                      </p>
-                    </div>
-                    <div class="card__footer">
-                      <Link
-                        className="button button--secondary button--block"
-                        to={`/${lang}/docs`}
-                      >
-                        {translation.pricing.getStarted}
-                      </Link>
+              {false && (
+                <div className="col col--5 col--offset-1">
+                  <div class="card-demo">
+                    <div class="card">
+                      <div class="card__header">
+                        <h3 className="text--center">
+                          {translation.pricing.community}
+                        </h3>
+                      </div>
+                      <div class="card__body">
+                        <p>
+                          <ul className={styles.listUnstyled}>
+                            <li>
+                              <Check />
+                              {translation.pricing.openSourceSoftware}
+                            </li>
+                            <li>
+                              <Cross /> {translation.pricing.endToEnd}
+                            </li>
+                            <li>
+                              <Cross /> {translation.pricing.dailyBackups}
+                            </li>
+                            <li>
+                              <Cross /> {translation.pricing.oneClickRestore}
+                            </li>
+                            <li>
+                              <Cross /> {translation.pricing.owntracksApi}
+                            </li>
+                            <li>
+                              <Cross /> {translation.pricing.privateSlack}
+                            </li>
+                            <li>
+                              <Cross /> {translation.pricing.supportOpenSource}
+                            </li>
+                          </ul>
+                        </p>
+                      </div>
+                      <div class="card__footer">
+                        <Link
+                          className="button button--secondary button--block"
+                          to={`/${lang}/docs`}
+                        >
+                          {translation.pricing.getStarted}
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
-              <div className="col col--5">
+              <div className="col col--6  col--offset-3">
                 <div class="card-demo">
                   <div class="card">
                     <div class="card__header">
