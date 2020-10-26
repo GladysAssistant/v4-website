@@ -31,7 +31,7 @@ function Integration({
     buyLink = amazonUrl.toString();
   }
   return (
-    <div class="card">
+    <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
         <Image
           img={require(`../en/static/img/integrations/${imageName}`)}
