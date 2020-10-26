@@ -19,6 +19,14 @@ const translation = {
     </>
   ),
   noIntegrationsFound: "No integrations found.",
+  technologies: "Technologies",
+  filters: {
+    zwave: "Z-Wave",
+    "philips-hue": "Philips Hue",
+    tasmota: "Sonoff",
+    camera: "Camera",
+    xiaomi: "Xiaomi",
+  },
 };
 
 function Home() {
