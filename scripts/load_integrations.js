@@ -14,6 +14,7 @@ const AUTHORIZED_DOC_ID = [
   "sonoff",
   "xiaomi",
   "zwave",
+  "tasmota",
 ];
 
 const schema = Joi.object({
@@ -80,15 +81,20 @@ const downloadImages = async (products) => {
   return Promise.map(
     products,
     (product) => {
-      console.log("downloading " + product.imageUrl);
-      return download(product.imageUrl, "en/static/img/integrations", {
-        filename: product.imageName,
-      }).catch((err) => {
-        console.log(
-          "Cannot download image " + product.imageUrl + " " + product.imageName
-        );
-        throw err;
-      });
+      if (product.imageUrl) {
+        console.log("downloading " + product.imageUrl);
+        return download(product.imageUrl, "en/static/img/integrations", {
+          filename: product.imageName,
+        }).catch((err) => {
+          console.log(
+            "Cannot download image " +
+              product.imageUrl +
+              " " +
+              product.imageName
+          );
+          throw err;
+        });
+      }
     },
     {
       concurrency: 5,
@@ -100,6 +106,7 @@ const writeFileProducts = (products) => {
   const dictionnary = {};
   AUTHORIZED_DOC_ID.forEach((docId) => (dictionnary[docId] = []));
   products.forEach((product) => {
+    console.log(product.docsId);
     dictionnary[product.docsId].push(product);
   });
   AUTHORIZED_DOC_ID.forEach((docId) => {
@@ -110,9 +117,39 @@ const writeFileProducts = (products) => {
   });
 };
 
+const getExistingIntegrations = () => {
+  let existingIntegrations = [];
+  AUTHORIZED_DOC_ID.forEach((docId) => {
+    try {
+      const existingDoc = require(`../fr/integrations/${docId}.json`);
+      existingIntegrations = existingIntegrations.concat(existingDoc);
+    } catch (e) {}
+  });
+  return existingIntegrations;
+};
+
+const mergeProducts = (existingIntegrations, productsFromAirtable) => {
+  const productSet = new Set();
+  const products = [];
+  existingIntegrations.forEach((integration) => {
+    products.push(integration);
+    productSet.add(integration.title);
+  });
+  productsFromAirtable.forEach((integration) => {
+    if (!productSet.has(integration.title)) {
+      delete integration.imageUrl;
+      products.push(integration);
+      productSet.add(integration.title);
+    }
+  });
+  return products;
+};
+
 (async () => {
+  const existingIntegrations = getExistingIntegrations();
   const records = await getIntegrationsFromAirtable();
-  const products = parseAndFormatRecords(records);
+  const productsFromAirtable = parseAndFormatRecords(records);
+  const products = mergeProducts(existingIntegrations, productsFromAirtable);
   await downloadImages(products);
   writeFileProducts(products);
 })();
