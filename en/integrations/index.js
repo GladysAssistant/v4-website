@@ -4,10 +4,10 @@ import zwave from "./zwave.json";
 import xiaomi from "./xiaomi.json";
 import camera from "./camera.json";
 
-const integrations = philipsHue
+const integrations = camera
   .concat(sonoff)
   .concat(zwave)
   .concat(xiaomi)
-  .concat(camera);
+  .concat(philipsHue);
 
 export default integrations;
