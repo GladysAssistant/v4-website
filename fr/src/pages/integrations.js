@@ -13,8 +13,8 @@ const translation = {
     <>
       Cette liste est alimentée par la communauté. Vous pouvez nous aider à
       l'améliorer{" "}
-      <Link href="https://github.com/GladysAssistant/v4-website/tree/master/fr/integrations">
-        sur GitHub
+      <Link href="https://airtable.com/invite/l?inviteId=invCQPYLKLu5g3sGm&inviteToken=a0f27651689ca8357f5165b372e78f2b56357d126e6d18c162810626eed25207">
+        sur AirTable
       </Link>
       .
     </>
