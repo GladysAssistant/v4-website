@@ -6,7 +6,7 @@ import { IntegrationPage } from "../../../shared/Integration";
 // import { IntegrationPage } from "../components/Integration";
 
 const translation = {
-  readMore: "Doc",
+  readMore: "Intégrer",
   buy: "Acheter",
   title: "Intégrations",
   description: (
