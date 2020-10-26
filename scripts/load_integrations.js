@@ -131,11 +131,13 @@ const getExistingIntegrations = () => {
 const mergeProducts = (existingIntegrations, productsFromAirtable) => {
   const productSet = new Set();
   const products = [];
-  existingIntegrations.forEach((integration) => {
-    products.push(integration);
-    productSet.add(integration.title);
-  });
   productsFromAirtable.forEach((integration) => {
+    if (!productSet.has(integration.title)) {
+      products.push(integration);
+      productSet.add(integration.title);
+    }
+  });
+  existingIntegrations.forEach((integration) => {
     if (!productSet.has(integration.title)) {
       products.push(integration);
       productSet.add(integration.title);
