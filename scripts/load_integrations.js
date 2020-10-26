@@ -106,7 +106,7 @@ const writeFileProducts = (products) => {
   const dictionnary = {};
   AUTHORIZED_DOC_ID.forEach((docId) => (dictionnary[docId] = []));
   products.forEach((product) => {
-    console.log(product.docsId);
+    delete product.imageUrl;
     dictionnary[product.docsId].push(product);
   });
   AUTHORIZED_DOC_ID.forEach((docId) => {
@@ -137,7 +137,6 @@ const mergeProducts = (existingIntegrations, productsFromAirtable) => {
   });
   productsFromAirtable.forEach((integration) => {
     if (!productSet.has(integration.title)) {
-      delete integration.imageUrl;
       products.push(integration);
       productSet.add(integration.title);
     }
