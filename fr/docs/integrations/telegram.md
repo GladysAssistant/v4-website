@@ -7,7 +7,6 @@ sidebar_label: Telegram
 Cette intégration vous permet d'utiliser l'application de messagerie Telegram.
 
 ![Créez un compte Telegram](/fr/img/docs/configuration/telegram/telegram_00_creer_compte_Logo.jpg)
-fr\static\img\docs\configuration\telegram\telegram_00_creer_compte_Logo.jpg
 
 C'est une messagerie axée sur la vitesse et la sécurité du transfert des données.
 
@@ -27,7 +26,7 @@ Choisissez le support sur lequel vous voulez utiliser Telegram.
 
 - sur PC, cliquez sur la section "Telegram for PC/Mac/Linux", cliquez éventuellement sur "Show all platforms",  téléchargez le logiciel, puis installez-le.
 
-Démarrer l'appli ou le logiciel.
+Démarrez l'appli ou le logiciel.
 
 ![Créez un compte Telegram](/fr/img/docs/configuration/telegram/telegram_02_creer_compte_Desktop.jpg)
 
@@ -39,7 +38,7 @@ Entrez ensuite les informations pour créer votre compte.
 
 Lors du premier lancement de Telegram, vous obtenez cette fenêtre (sous Windows) :
 
-![Créez un compte Telegram](/fr/img/docs/configuration/telegram_03_creer_API_premier.jpg)
+![Créez un compte Telegram](/fr/img/docs/configuration/telegram/telegram_03_creer_API_premier.jpg)
 
 Dans la zone "Rechercher", saisissez @BotFather puis appuyez sur la touche Entrée.
 
@@ -63,7 +62,7 @@ Attention, il faut que le nom se termine par "bot" pour bien identifier qu'il s'
 
 ![Créez un compte Telegram](/fr/img/docs/configuration/telegram/telegram_06_creer_API_Bot_config_ok-1.jpg)
 
-Dans le message que vous transmet BotFather, il y a la clé API sous la ligne "Use this token to access the HTTP API:"
+Dans le message que vous transmet BotFather, il y a la clé d'API sous la ligne "Use this token to access the HTTP API:"
 
 ## Entrez cette clé dans Gladys Assistant
 
@@ -75,7 +74,7 @@ Entrez votre clé d'API puis cliquez sur "Sauvegarder".
 
 ![Entrer une clé dans Gladys Assistant](/fr/img/docs/configuration/telegram/telegram_08_Integration_Gladys_ok.jpg)
 
-## Créer le lien entre Gladys Assistant et Telegram
+## Créez le lien entre Gladys Assistant et Telegram
 
 Cliquez ensuite sur "ce lien" pour communiquer avec Gladys Assistant dans Telegram.
 
@@ -93,7 +92,7 @@ Cliquez, dans cette fenêtre sur "Telegram Desktop", puis cochez la case "Se sou
 
 Cliquez ensuite sur "Ouvrir le lien" pour ouvrir l'appli Telegram.
 
-![Entrer une clé dans Gladys Assistant](/fr/img/docs/configuration/telegram_11_Communiquer_Gladys_lancement_1ere_com.jpg)
+![Entrer une clé dans Gladys Assistant](/fr/img/docs/configuration/telegram/telegram_11_Communiquer_Gladys_lancement_1ere_com.jpg)
 
 Cliquez sur "Démarrer"
 
@@ -118,6 +117,6 @@ Vous pouvez aussi voir les conversations dans l'onglet Discussion de Gladys Assi
 
 Regardons ce que ça donne sur un smartphone :
 
-![Entrer une clé dans Gladys Assistant](/frimg/docs/configuration/telegram/telegram_15_Communiquer_Gladys_Smartphone.jpg)
+![Entrer une clé dans Gladys Assistant](/fr/img/docs/configuration/telegram/telegram_15_Communiquer_Gladys_Smartphone.jpg)
 
 Enjoy !
