@@ -16,6 +16,7 @@ cd ..
 # Building fr website
 cd fr
 npm run build
+grep -rl 'lang="en"' ./build | xargs sed -i '' -e 's/lang="en"/lang="fr"/g'
 mv ./build ../_build/fr
 cd ..
 
