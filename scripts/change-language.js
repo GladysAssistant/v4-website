@@ -1,9 +1,10 @@
 const replaceInFiles = require("replace-in-files");
+const path = require("path");
 
 const options = {
   // See more: https://www.npmjs.com/package/globby
   // Single file or glob
-  files: "./fr/build/**/*.html",
+  files: __dirname + "/../fr/build/**/*.html",
 
   // See more: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
   // Replacement
@@ -18,5 +19,6 @@ const options = {
 };
 
 (async () => {
+  console.log(options);
   await replaceInFiles(options);
 })();
