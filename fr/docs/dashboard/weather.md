@@ -6,12 +6,12 @@ sidebar_label: Météo
 
 Dans Gladys Assistant, vous pouvez afficher la météo à votre localisation sur le tableau de bord.
 
-### Pré-requis
+## Pré-requis
 
 - Vous devez au préalable avoir configuré le service [OpenWeather](/fr/docs/integrations/openweather/) pour afficher la météo dans Gladys Assistant.
 - Vous devez avoir configuré votre maison dans les paramètres, et avoir placé votre maison sur la carte, afin qu'OpenWeatherMap ait la latitude/longitude de votre maison.
 
-### Configuration
+## Configuration
 
 Rendez-vous sur le dashboard, puis cliquez sur "Editer".
 
