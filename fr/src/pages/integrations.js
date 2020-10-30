@@ -36,7 +36,7 @@ function Home() {
   return (
     <Layout
       title="Intégrations"
-      description="Tous les périphériques compatibles avec Gladys."
+      description="Tous les périphériques compatibles avec Gladys Assistant."
     >
       <main>
         <IntegrationPage

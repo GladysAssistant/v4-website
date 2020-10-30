@@ -33,7 +33,7 @@ function Home() {
   return (
     <Layout
       title="Integrations"
-      description="Description will go into a meta tag in <head />"
+      description="Search all home automation devices which are compatible with Gladys Assistant"
     >
       <main>
         <IntegrationPage

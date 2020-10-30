@@ -31,7 +31,7 @@ function Plus() {
   return (
     <Layout
       title="Gladys Plus"
-      description="Accéder à plus de fonctionnalité avec Gladys Plus."
+      description="Accéder à plus de fonctionnalités avec Gladys Plus."
     >
       <PlusComponent translation={translation} lang={"fr"} />
     </Layout>
