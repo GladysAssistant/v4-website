@@ -23,5 +23,8 @@ cd ..
 # Moving netlify config
 cp ./netlify.toml ./_build/netlify.toml
 
+# Moving robots.txt
+cp ./robots.txt ./_build/robots.txt
+
 # Moving netlify functions
 cp -R ./functions ./_build/functions
