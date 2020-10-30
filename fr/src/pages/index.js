@@ -39,7 +39,7 @@ const translation = {
   integrations: {
     title: "Des compatibilités, disponibles par défaut",
     description:
-      "Toutes les intégrations sont open-source, dévelopées par la communauté.",
+      "Toutes les intégrations sont open-source, développées par la communauté.",
   },
 };
 
