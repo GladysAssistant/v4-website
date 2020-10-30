@@ -156,7 +156,7 @@ function IntegrationPage({ integrations, lang, translation }) {
           </div>
         </div>
         <div className="col col col--9">
-          <h2>{translation.title}</h2>
+          <h1>{translation.title}</h1>
           <div class="alert alert--secondary" role="alert">
             {translation.description}
           </div>
