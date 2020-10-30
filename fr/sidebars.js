@@ -29,6 +29,13 @@ module.exports = {
       "scenes/send-a-message-action",
       "scenes/turn-on-off-the-lights-action",
     ],
+    "Tableau de bord": [
+      "dashboard/intro",
+      "dashboard/weather",
+      "dashboard/temperature-in-room",
+      "dashboard/camera",
+      "dashboard/devices-in-room",
+    ],
     API: [
       "api/architecture",
       "api/data-model",
