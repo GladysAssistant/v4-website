@@ -57,7 +57,7 @@ function Integration({
             >
               <Link
                 class="button button--primary button--block"
-                to={`/${lang}/docs/integrations/${docsId}`}
+                to={`/${lang}/docs/integrations/${docsId}/`}
               >
                 {translation.readMore}
               </Link>

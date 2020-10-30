@@ -8,6 +8,7 @@ module.exports = {
   projectName: "gladys", // Usually your repo name.
   themeConfig: {
     image: "img/presentation/gladys-og-image.png",
+    metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
     googleAnalytics: {
       trackingID: "UA-42837031-1",
       // Optional fields.
