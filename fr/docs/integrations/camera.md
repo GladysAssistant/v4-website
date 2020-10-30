@@ -4,9 +4,9 @@ title: Caméra
 sidebar_label: Caméra
 ---
 
-Gladys est compatible avec les caméras qui exposent des flux RTSP ou HTTP.
+Gladys est compatible avec les caméras qui exposent des flux RTSP ou HTTP et avec les webcam USB (méthode expliquée à la fin).
 
-Vous trouverez en général dans le manuel utilisateur de votre caméra, ou sur le site du constructeur, les informations du flux RTSP ou HTTTP.
+Vous trouverez en général dans le manuel utilisateur de votre caméra, ou sur le site du constructeur, les informations du flux RTSP ou HTTP.
 
 Voilà un exemple de flux RTSP :
 
@@ -52,7 +52,7 @@ C'est bon ! Si les informations de connexion sont bonnes, vous devriez voir votr
 
 Une fois que vous avez votre URL de flux vidéo qui fonctionne dans VLC, vous pouvez désormais ajouter le flux à Gladys.
 
-Allez dans l'onglet "Intégrations" dans Gladys, puis cliquez sur l'intégration "Caméra" :
+Allez dans l'onglet "Intégrations" dans Gladys Assistant, puis cliquez sur l'intégration "Caméras" :
 
 ![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/camera-step-1.png)
 
@@ -66,7 +66,8 @@ Remplissez les informations de connexion à votre caméra
 
 Vous pouvez tester la connexion afin de vérifier que le flux est bien accessible de Gladys Assistant. Si Gladys n'a pas accès à la caméra, êtes-vous sûr que votre ordinateur faisant tourner Gladys est bien sur le même réseau que la caméra ? Que la caméra est bien accessible ? Que les identifiants sont bons ?
 
-Une fois que la caméra fonctionne, cliquez sur le bouton "Enregistrer".
+![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/ajouter_webcam_usb_gladys_assistant_02-test.jpg)
+Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
 
 ![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/camera-step-4.png)
 
@@ -97,3 +98,28 @@ Et, magie :
 ![Demander une image de caméra à Gladys](/fr/img/docs/configuration/camera/chat-camera-fr.png)
 
 Cela fonctionne aussi par Telegram si vous avez configuré l'intégration :)
+
+## Ajoutez une webcam USB à Gladys Assistant sous Raspberry
+
+Il est possible de voir le flux diffusé par une webcam connectée en USB à Gladys Assistant.
+
+La procédure est la même pour l'intégrer à Gladys Assistant :
+
+Allez dans l'onglet "Intégrations" dans Gladys Assistant, puis cliquez sur l'intégration "Caméras" :
+
+![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/camera-step-1.png)
+
+Cliquez sur le bouton pour créer une nouvelle caméra
+
+![Ajouter une caméra à Gladys Assistant](/fr/img/docs/configuration/camera/camera-step-2.png)
+
+Remplissez les informations de connexion à votre caméra en saisissant, dans la zone Flux RTSP/HTTP de la caméra, l'adresse du port USB sur lequel est connecté la webcam : /dev/video0
+
+![Ajouter une caméra à Gladys Assistant](/fr/static/img/docs/configuration/camera/z_ajouter_webcam_usb_gladys_assistant_01-config.jpg)
+
+Vous pouvez tester la connexion afin de vérifier que le flux est bien accessible de Gladys Assistant.
+J'ai mis une photo du port de Dieppe devant ma webcam ☺.
+
+![Ajouter une caméra à Gladys Assistant](/fr/static/img/docs/configuration/camera/z_ajouter_webcam_usb_gladys_assistant_02-test.jpg)
+
+Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
