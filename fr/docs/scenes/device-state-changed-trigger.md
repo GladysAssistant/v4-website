@@ -4,7 +4,7 @@ title: Déclencher une scène lorsque l'état d'un appareil change
 sidebar_label: Déclencheur sur l'état d'un appareil
 ---
 
-Imaginons que vous vouliez faire une scène qui effectue une action si la température descend en dessous de 20°C dane une pièce.
+Imaginons que vous vouliez faire une scène qui effectue une action si la température descend en dessous de 20°C dans une pièce.
 
 Pour cela, vous avez besoin d'un déclencheur "changement d'état de l'appareil".
 
@@ -12,9 +12,9 @@ Cliquez sur "Nouveau déclencheur", puis sélectionnez "Changement d'état de l'
 
 ![Déclencher une scène lorsque l'état d'un appareil change](/fr/img/docs/scenes/device-state-changed-trigger/device-state-changed-trigger-1.jpg)
 
-Ensuite, sélectionnez la fonctionnalité de l'appareil que vous souhaitez "surveillez".
+Ensuite, sélectionnez la fonctionnalité de l'appareil que vous souhaitez "surveiller".
 
-Par exemple, dans notre cas, nous allons sélectionnez un capteur de température dans la cuisine :
+Par exemple, dans notre cas, nous allons sélectionner un capteur de température dans la cuisine :
 
 ![Déclencher une scène lorsque l'état d'un appareil change](/fr/img/docs/scenes/device-state-changed-trigger/device-state-changed-trigger-2.jpg)
 

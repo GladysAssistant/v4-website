@@ -15,6 +15,7 @@ module.exports = {
       "integrations/owntracks",
       "integrations/xiaomi",
       "integrations/zwave",
+      "integrations/telegram",
     ],
     API: [
       "api/architecture",
