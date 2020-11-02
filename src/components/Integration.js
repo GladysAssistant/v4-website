@@ -103,6 +103,7 @@ function IntegrationPage({ integrations, lang }) {
     xiaomi: true,
     "tp-link": true,
     zwave: true,
+    yeelight: true,
   });
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
@@ -264,7 +265,6 @@ function IntegrationPage({ integrations, lang }) {
                 </Translate>
               </label>
             </div>
-
             {false && (
               <div className={classnames(styles.integrationFilterCheckbox)}>
                 <input
@@ -283,6 +283,22 @@ function IntegrationPage({ integrations, lang }) {
                 </label>
               </div>
             )}
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="yeelight"
+                checked={checkedTags["yeelight"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="yeelight">
+                <Translate
+                  id="integrations.yeelight"
+                  description="Integration yeelight title"
+                >
+                  Yeelight
+                </Translate>
+              </label>
+            </div>
           </div>
         </div>
         <div className="col col col--9">

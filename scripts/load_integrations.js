@@ -17,6 +17,7 @@ const AUTHORIZED_DOC_ID = [
   "tasmota",
   "tp-link",
   "zigbee2mqtt",
+  "yeelight",
 ];
 
 const schema = Joi.object({
