@@ -6,7 +6,7 @@ author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 
-image: /fr/img/presentation/gladys-voice-cover.jpg
+image: /img/presentation/gladys-voice-cover.jpg
 
 id: voice-recognition-gladys
 ---

@@ -2,7 +2,7 @@
 id: lancement-de-gladys
 title: Lancement de Gladys !
 description: La première version de Gladys est disponible ! Téléchargez-la gratuitement et participez au programme développeur!
-image: /fr/img/presentation/Gladysannoucelow.jpg
+image: /img/presentation/Gladysannoucelow.jpg
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl

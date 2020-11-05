@@ -6,7 +6,7 @@ author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 
-image: /fr/img/presentation/gladys-3-6-cover-2.jpg
+image: /img/presentation/gladys-3-6-cover-2.jpg
 
 id: bilan-mois-mai-pour-le-projet-gladys
 ---
