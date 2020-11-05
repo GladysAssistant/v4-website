@@ -7,7 +7,7 @@ author: Pierre-Gilles Leymarie
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg
-image: /en/img/presentation/new-brand-identity.jpg
+image: /img/presentation/new-brand-identity.jpg
 ---
 
 Article en français [ici](/fr/article/une-nouvelle-identite-visuelle-pour-gladys).

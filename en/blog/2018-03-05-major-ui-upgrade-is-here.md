@@ -2,7 +2,7 @@
 id: major-ui-upgrade-is-here
 title: Gladys major interface upgrade is here !
 description: After months of work, Gladys 3.8 is now finally available with a brand new Rasbpbian image.
-image: /en/img/presentation/gladys-4-alpha.jpg
+image: /img/presentation/gladys-4-alpha.jpg
 author: Pierre-Gilles Leymarie
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl

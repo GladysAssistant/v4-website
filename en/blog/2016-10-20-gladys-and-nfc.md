@@ -6,7 +6,7 @@ author: Pierre-Gilles Leymarie
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /en/img/pierre-gilles.jpg
-image: /en/img/presentation/nfc-cover.jpg
+image: /img/presentation/nfc-cover.jpg
 ---
 
 <div class="alert alert-info" role="alert">This article works only with Gladys v3 !</div>
