@@ -22,7 +22,7 @@ Vous pouvez vous lancer dans l'aventure en suivant les tutoriels :
 - [Tutoriel pour Freebox Delta](/fr/docs/installation/freebox-delta/)
 - [Tester Gladys Assistant sur le site de démo](https://demo.gladysassistant.com)
 
-Maintenant revenons sur les décisions qui ont menés à cette quatrième version de Gladys Assistant 🙂
+Maintenant revenons sur les décisions qui ont menées à cette quatrième version de Gladys Assistant 🙂
 
 <!--truncate-->
 
@@ -34,13 +34,13 @@ La v3 de Gladys Assistant était vieillissante, autant en terme de processus de 
 
 Maintenir ce mammouth était de plus en plus dur, et l’attractivité du projet en souffrait. Les bugs “mystiques” étaient nombreux, et tout le monde en était fou. C’était frustrant de voir tout le monde s’arracher à faire une simple mise à jour dans Gladys v3, de bloquer sur des points de configurations qui devraient être automatique.
 
-**Le bilan était clair:** pour le long terme, il valait mieux repartir de zéro et apprendre de toutes ces années d’expérience, plutôt que de mettre du scotch sur un produit qui n’était pas conçu à l’origine pour être utilisé par autant de personnes pendant autant d’années.
+**Le bilan était clair :** pour le long terme, il valait mieux repartir de zéro et apprendre de toutes ces années d’expérience, plutôt que de mettre du scotch sur un produit qui n’était pas conçu à l’origine pour être utilisé par autant de personnes pendant autant d’années.
 
 Pendant 2 ans, nous avons travaillé ensemble avec la communauté afin de sortir cette version 4, conçu avec des technologies selon nous plus adapté au monde de l’embarqué.
 
 Ces deux ans ont été très dur.
 
-Très dur car pendant 2 ans, le projet en apparence n’avançait plus: il n’y avait plus de développement sur la v3, mais la v4 n’était pas prête pour autant.
+Très dur car pendant 2 ans, le projet en apparence n’avançait plus : il n’y avait plus de développement sur la v3, mais la v4 n’était pas prête pour autant.
 
 Très dur car pendant au moins 1 an, j’ai eu l’impression de travailler dans le vide, de bosser sur un produit que personne n’utilisait.
 
@@ -60,7 +60,7 @@ Avant de présenter cette v4, j’aimerais remercier tous les membres de la comm
 
 Mais aussi tous les autres contributeurs sur Github : https://github.com/GladysAssistant/Gladys#contributors-
 
-## Une refonte de l’interface: épurée, design et incroyablement rapide
+## Une refonte de l’interface : épurée, design et incroyablement rapide
 
 Gladys Assistant revient avec une nouvelle interface, entièrement repensée. L’interface est plus simple, et éditable à la souris très facilement.
 
@@ -68,7 +68,7 @@ L’interface doit sa réactivité au framework frontend [Preact](https://preact
 
 Cette interface est conçu comme une PWA ([Progressive Web App](https://fr.wikipedia.org/wiki/Progressive_web_app)) et peut donc s’installer sur le téléphone comme une app classique (iOS / Android / Mac / Windows / Linux ).
 
-Vous pouvez tester l’interface de Gladys Assistant 4 sur le site de démo ( https://demo.gladysassistant.com )
+Vous pouvez tester l’interface de Gladys Assistant 4 sur [le site de démo](https://demo.gladysassistant.com).
 
 ## Des centaines de périphériques domotiques déjà compatibles
 
@@ -137,7 +137,7 @@ Une scène “Cinéma” pour configurer votre éclairage salon ?
 
 Une scène “Réveil” actionnant la machine à café, différentes lumières de la chambre à la cuisine ?
 
-Tout est possible avec le moteur de scènes de Gladys Assistant 4 :D
+Tout est possible avec le moteur de scènes de Gladys Assistant 😄
 
 Le moteur de scène a été testé avec des fortes charges et va continuellement évoluer dans les prochains versions du logiciel.
 
@@ -153,7 +153,7 @@ Gladys Assistant s’installe facilement sur n’importe quel Raspberry Pi via u
 
 Il est possible d’installer Gladys Assistant sur n’importe quelle machine Linux: un NAS Synology, une Freebox Delta, un VPS, un vieux serveur : tout est possible.
 
-## Mise à jour automatique et atomique: une stabilité à toute épreuve.
+## Mise à jour automatique et atomique : une stabilité à toute épreuve.
 
 Un des objectifs principaux de la v4, c’est d’être un produit stable et résilient, sur le long terme. Le produit évoluant fréquemment, il était nécessaire d’avoir un système de mise à jour automatique et qui ne puisse pas compromettre l’installation d’un utilisateur.
 
@@ -165,7 +165,7 @@ Une mise à jour **ne peut pas** être dans un état bancal : soit elle réussit
 
 ## Mes ambitions suite à ce lancement
 
-Mon ambition personnelle sur cette version, c’est d’avoir 1 000 utilisateurs actifs de cette v4 dans les 6 prochains mois.
+Mon ambition personnelle sur cette version, c’est d’avoir **1 000 utilisateurs actifs** de cette v4 dans les 6 prochains mois.
 
 Ce n’est pas un objectif irréaliste, c’est même un chiffre qui parait petit, mais je veux me concentrer sur la qualité plutôt que la quantitée.
 

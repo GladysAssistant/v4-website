@@ -34,7 +34,10 @@ const translation = {
     title: "Rejoignez la communauté, et recevez l'actualité du projet !",
     text: (
       <>
-        <p>Vous êtes plus de 40 000 à avoir téléchargé Gladys.</p>
+        <p>
+          Vous êtes plus de 40 000 à avoir téléchargé Gladys Assistant depuis
+          son lancement.
+        </p>
         <p>
           Les mails sont envoyés par Pierre-Gilles Leymarie, le fondateur du
           projet, et vous pouvez toujours vous désinscrire à tout moment 🙂
