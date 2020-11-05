@@ -23,9 +23,9 @@ J'avais publié en décembre dernier un manifeste (que vous pouvez retrouver en 
 
 Et aujourd'hui, c'est le grand jour : c'est la sortie de la première alpha de Gladys 4! 🍾🎉
 
-![Gladys 4 devices](/fr/img/articles/gladys-4-alpha/gladys-4-mockup-devices.jpg)
-
 <!--truncate-->
+
+![Gladys 4 devices](/fr/img/articles/gladys-4-alpha/gladys-4-mockup-devices.jpg)
 
 ## Les nouveautés
 
