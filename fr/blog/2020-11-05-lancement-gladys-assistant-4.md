@@ -134,45 +134,49 @@ Tout est possible avec le moteur de scènes de Gladys Assistant 4 :D
 
 Le moteur de scène a été testé avec des fortes charges et va continuellement évoluer dans les prochains versions du logiciel.
 
-En savoir plus sur les scènes dans Gladys Assistant 4: https://gladysassistant.com/fr/docs/scenes/intro
+En savoir plus sur [les scènes dans Gladys Assistant 4](/fr/docs/scenes/intro/)
 
 ## La vie privée au centre du produit
 
-Gladys Assistant stocke toutes les données de l’utilisateur sur une base de donnée SQLite en local. Aucun compte distant n’est requis pour utiliser Gladys.
+Gladys Assistant stocke toutes les données de l’utilisateur sur une base de donnée SQLite en local. Aucun compte distant n’est requis pour utiliser Gladys Assistant.
 
 L’utilisateur reste maître et propriétaire de son installation.
 
-Installable facilement sur n’importe quelle machine Linux
+Gladys Assistant s’installe facilement sur n’importe quel Raspberry Pi via une image Raspbian pré-buildée avec Gladys Assistant (A télécharger [sur la documentation pour Raspberry Pi](/fr/docs/))
 
-Gladys Assistant s’installe facilement sur n’importe quel Raspberry Pi via une image Raspbian pré-buildée avec Gladys Assistant.
-
-Il est possible d’installer Gladys sur n’importe quelle machine Linux: un NAS Synology, une Freebox Delta, un VPS, un vieux serveur : tout est possible.
+Il est possible d’installer Gladys Assistant sur n’importe quelle machine Linux: un NAS Synology, une Freebox Delta, un VPS, un vieux serveur : tout est possible.
 
 ## Mise à jour automatique et atomique: une stabilité à tout épreuve.
 
 Un des objectif principal de la v4, c’est d’être un produit stable et résilient, sur le long terme. Le produit évoluant fréquemment, il était nécessaire d’avoir un système de mise à jour automatique et qui ne puisse pas compromettre l’installation d’un utilisateur.
 
-Gladys Assistant tourne donc dans Docker, un système de container Linux qui permet à l’application d’être distribué sous la forme d’une image contenant l’application et ses dépendances. Nous utilisons l’excellent Watchtower pour mettre à jour le container, automatiquement.
+Gladys Assistant tourne donc dans Docker, un système de container Linux qui permet à l’application d’être distribué sous la forme d’une image contenant l’application et ses dépendances. Nous utilisons l’excellent [Watchtower](https://github.com/containrrr/watchtower) pour mettre à jour le container, automatiquement.
 
-Ainsi, la distribution des mises à jour de Gladys est automatisée, et fonctionne de manière atomique. Une mise à jour ne peut pas être dans un état bancal: soit elle réussit, soit elle échoue.
+Ainsi, la distribution des mises à jour de Gladys est automatisée, et fonctionne de manière atomique.
+
+Une mise à jour **ne peut pas** être dans un état bancal : soit elle réussit, soit elle échoue.
 
 ## Mes ambitions suite à ce lancement
 
-Mon ambition personnelle sur cette version, c’est d’avoir 1 000 utilisateurs actifs de la v4 dans les 6 prochains mois. Ce n’est pas un objectif irréaliste, c’est même un chiffre qui parait petit, mais je veux me concentrer sur la qualité plutôt que la quantitée.
+Mon ambition personnelle sur cette version, c’est d’avoir 1 000 utilisateurs actifs de cette v4 dans les 6 prochains mois.
 
-Juste en comparaison, depuis son lancement, le Raspberry Pi s’est vendu à 30 millions d’unités. 1 000 instances Gladys représentent 0,0033% du marché des Raspberry Pi vendu, et c’est sans compter tous ceux qui font tourner Gladys sur un NAS, une freebox ou toute autre ordinateur.
+Ce n’est pas un objectif irréaliste, c’est même un chiffre qui parait petit, mais je veux me concentrer sur la qualité plutôt que la quantitée.
 
-C’est donc un objectif très modeste, mais c’est voulu.
+Juste en comparaison, depuis son lancement, le Raspberry Pi s’est vendu à 30 millions d’unités.
+
+1 000 instances Gladys représentent 0,0033% du marché des Raspberry Pi vendu, et c’est sans compter tous ceux qui font tourner Gladys sur un NAS, une freebox ou toute autre ordinateur.
+
+C’est donc **un objectif très modeste**, mais c’est voulu.
 
 Je préfère avoir 1 000 utilisateurs passionné, qui adorent Gladys, qui s’en servent tous les jours, qui participent dans la communauté en ligne, plutôt que 10 000 utilisateurs qui apprécient juste le produit sans plus.
 
-Je pense qu’avant de passer à une échelle supérieure, je préfère me concentrer sur la création de ce noyau dur d’utilisateur passionné qui font la force de ce projet. Une fois qu’on aura 1 000 utilisateurs pleinement satisfaits, on pourra s’attaquer à un prochain objectif !
+Je pense qu’avant de passer à une échelle supérieure, je préfère me concentrer sur la création de ce noyau dur d’utilisateurs passionnés qui font la force de ce projet. Une fois qu’on aura 1 000 utilisateurs pleinement satisfaits, on pourra s’attaquer à un prochain objectif.
 
-Je posterais la progression de cet objectif sur les réseaux sociaux et ferait sûrement un article bilan dans quelques mois :)
+Je posterais la progression de cet objectif sur les réseaux sociaux et ferait sûrement un article bilan dans quelques mois 🙂
 
 Encore une fois, merci à tous pour votre aide et vos retours !
 
-Si tu veux nous rejoindre pour faire parti du noyau dur des 1 000 utilisateurs de Gladys Assistant 4, c’est maintenant et ça se passe sur ce tutoriel d’installation de Gladys.
+Si tu veux nous rejoindre pour faire parti du noyau dur des 1 000 utilisateurs de Gladys Assistant 4, c’est maintenant et ça se passe sur [le tutoriel d’installation de Gladys Assistant](/fr/docs/).
 
 A très vite !
 
