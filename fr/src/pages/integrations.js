@@ -11,14 +11,15 @@ const translation = {
   title: "Intégrations",
   description: (
     <>
-      Cette liste est alimentée par la communauté. Si vous ne trouvez pas un
-      périphérique dans cette liste, cela ne veut pas nécessairement dire qu'il
-      n'est pas géré, il manque peut-être à la liste. Vous pouvez nous aider à
-      améliorer cette liste{" "}
+      Cette liste est alimentée par la communauté et ne demande qu'à être
+      enrichie ! Si vous ne trouvez pas un périphérique dans cette liste, cela
+      ne veut pas dire qu'il n'est pas géré, il manque sûrement à la liste. Vous
+      pouvez nous aider à améliorer cette liste{" "}
       <Link href="https://airtable.com/invite/l?inviteId=invCQPYLKLu5g3sGm&inviteToken=a0f27651689ca8357f5165b372e78f2b56357d126e6d18c162810626eed25207">
         sur AirTable
       </Link>
-      .
+      . Pour voir la liste des technologies compatible, rendez-vous sur la{" "}
+      <Link href="/fr/docs/integrations/openweather/">documentation</Link>.
     </>
   ),
   noIntegrationsFound: "Aucunes intégrations trouvées",
