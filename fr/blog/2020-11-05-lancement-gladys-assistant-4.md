@@ -76,7 +76,9 @@ Depuis plusieurs mois, la communauté Gladys Assistant travaille dur afin de por
 
 Aujourd'hui, des centaines de périphériques domotiques sont déjà disponibles dans Gladys Assistant 4.
 
-A ce jour, Gladys Assistant 4 supporte les périphériques:
+![Gladys Assistant 4 Intégrations](/fr/img/articles/lancement-gladys-4/integrations.png)
+
+A ce jour, Gladys Assistant supporte les périphériques :
 
 - Z-Wave ([doc](/fr/docs/integrations/zwave/))
 - Xiaomi ([doc](/fr/docs/integrations/xiaomi/))
@@ -101,14 +103,17 @@ Les flux vidéo sont compressés afin d’avoir des performances maximales d’a
 
 Gladys Assistant, c’est aussi un assistant avec qui l’utilisateur peut discuter.
 
-Gladys Assistant 4 utilise les dernières avancées en terme de traitement automatique du langage afin de comprendre les demandes de l’utilisateur.
+![Gladys Assistant 4 discussions](/fr/img/articles/lancement-gladys-4/discuss-gladys.png)
 
-Vous voulez demande à Gladys:
+Gladys Assistant utilise les dernières avancées en terme de traitement automatique du langage afin de comprendre les demandes de l’utilisateur ( Nous utilisons [NLP.js](https://github.com/axa-group/nlp.js) )
 
-“Allume la lumière du salon”
-“Quel température fait il dans la cuisine ?”
-“Quel temps fait il ?”
-“Montre moi la caméra de la cuisine”
+Vous voulez demande à Gladys Assistant :
+
+- “Allume la lumière du salon”
+- “Quel température fait il dans la cuisine ?”
+- “Quel temps fait il ?”
+- “Montre moi la caméra de la cuisine”
+- Et plein d'autres questions au fur et à mesure de l'alimentation du jeu de donnée par la communauté !
 
 Le jeu de donnée utilisé pour l'entraînement du modèle est entièrement open-source, et alimenté par la communauté.
 
@@ -125,6 +130,8 @@ En savoir plus sur [la documentation MQTT](/fr/docs/integrations/mqtt/)
 ## Un moteur de scène plus puissant que jamais
 
 Gladys Assistant 4 permet à l’utilisateur d’écrire des scènes complexe. Il est possible d’écrire des suites d’actions autant en série qu’en parallèle, avec des conditions.
+
+![Gladys Assistant 4 scènes](/fr/img/articles/lancement-gladys-4/scenes.png)
 
 Une scène “Cinéma” pour configurer votre éclairage salon?
 
