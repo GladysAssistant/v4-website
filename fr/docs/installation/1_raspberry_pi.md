@@ -15,7 +15,7 @@ Ce tutoriel vous explique comment installer Gladys sur Raspberry Pi !
 Nous mettons à disposition une image Raspbian toute prête.
 
 <p>
-<a class="button button--outline button--primary" href="https://cdn.elephantcdn.com/gh/gladysassistant/gladys/releases/download/v4.0.0-beta.15/gladys-v4-rev2.img.zip">Télécharger Gladys Raspbian Buster v4-rev 2</a>
+<a class="button button--outline button--primary" href="https://cdn.elephantcdn.com/gh/gladysassistant/gladys/releases/download/v4.0.0/gladys-4.0.0-rev3.img.zip">Télécharger Gladys Assistant Raspbian Buster v4.0.0-rev3</a>
 </p>
 
 L'image Raspbian est compressée dans un fichier zip, que vous devez dézipper afin d'arriver à un fichier `.img`.
