@@ -1,11 +1,11 @@
 ---
 title: La nouvelle version majeure Gladys Assistant 4 est disponible, réécrite de zéro !
-description: L'occasion de faire le point sur l'année 2019, et de discuter des projets pour 2020.
+description: C'est un grand jour, après presque 2 ans de travail de la part de toute la communauté, Gladys Assistant 4 est disponible, en téléchargement gratuit comme d'habitude !
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
-image: /img/presentation/bilan-2019-cover.jpg
+image: /img/presentation/gladys-4-launch.jpg
 id: lancement-gladys-assistant-4
 ---
 
@@ -107,7 +107,7 @@ Gladys Assistant, c’est aussi un assistant avec qui l’utilisateur peut discu
 
 Gladys Assistant utilise les dernières avancées en terme de traitement automatique du langage afin de comprendre les demandes de l’utilisateur ( Nous utilisons [NLP.js](https://github.com/axa-group/nlp.js) )
 
-Vous voulez demande à Gladys Assistant :
+Vous voulez demander à Gladys Assistant :
 
 - “Allume la lumière du salon”
 - “Quel température fait il dans la cuisine ?”
@@ -133,9 +133,9 @@ Gladys Assistant 4 permet à l’utilisateur d’écrire des scènes complexe. I
 
 ![Gladys Assistant 4 scènes](/fr/img/articles/lancement-gladys-4/scenes.png)
 
-Une scène “Cinéma” pour configurer votre éclairage salon?
+Une scène “Cinéma” pour configurer votre éclairage salon ?
 
-Une scène “Réveil” actionnant la machine à café, différentes lumières de la chambre à la cuisine?
+Une scène “Réveil” actionnant la machine à café, différentes lumières de la chambre à la cuisine ?
 
 Tout est possible avec le moteur de scènes de Gladys Assistant 4 :D
 
@@ -153,9 +153,9 @@ Gladys Assistant s’installe facilement sur n’importe quel Raspberry Pi via u
 
 Il est possible d’installer Gladys Assistant sur n’importe quelle machine Linux: un NAS Synology, une Freebox Delta, un VPS, un vieux serveur : tout est possible.
 
-## Mise à jour automatique et atomique: une stabilité à tout épreuve.
+## Mise à jour automatique et atomique: une stabilité à toute épreuve.
 
-Un des objectif principal de la v4, c’est d’être un produit stable et résilient, sur le long terme. Le produit évoluant fréquemment, il était nécessaire d’avoir un système de mise à jour automatique et qui ne puisse pas compromettre l’installation d’un utilisateur.
+Un des objectifs principaux de la v4, c’est d’être un produit stable et résilient, sur le long terme. Le produit évoluant fréquemment, il était nécessaire d’avoir un système de mise à jour automatique et qui ne puisse pas compromettre l’installation d’un utilisateur.
 
 Gladys Assistant tourne donc dans Docker, un système de container Linux qui permet à l’application d’être distribué sous la forme d’une image contenant l’application et ses dépendances. Nous utilisons l’excellent [Watchtower](https://github.com/containrrr/watchtower) pour mettre à jour le container, automatiquement.
 
@@ -175,7 +175,7 @@ Juste en comparaison, depuis son lancement, le Raspberry Pi s’est vendu à 30 
 
 C’est donc **un objectif très modeste**, mais c’est voulu.
 
-Je préfère avoir 1 000 utilisateurs passionné, qui adorent Gladys, qui s’en servent tous les jours, qui participent dans la communauté en ligne, plutôt que 10 000 utilisateurs qui apprécient juste le produit sans plus.
+Je préfère avoir 1 000 utilisateurs passionnés, qui adorent Gladys, qui s’en servent tous les jours, qui participent dans la communauté en ligne, plutôt que 10 000 utilisateurs qui apprécient juste le produit sans plus.
 
 Je pense qu’avant de passer à une échelle supérieure, je préfère me concentrer sur la création de ce noyau dur d’utilisateurs passionnés qui font la force de ce projet. Une fois qu’on aura 1 000 utilisateurs pleinement satisfaits, on pourra s’attaquer à un prochain objectif.
 
