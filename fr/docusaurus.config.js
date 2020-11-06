@@ -9,6 +9,14 @@ module.exports = {
   themeConfig: {
     image: "img/presentation/gladys-og-image.png",
     metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
+    announcementBar: {
+      id: "gladys_4_launch", // Any value that will identify this message.
+      content:
+        'Gladys Assistant 4 est disponible ! <a href="/fr/blog/lancement-gladys-assistant-4/">Lire l\'article sur le blog</a> 🚀',
+      // backgroundColor: "#fafbfc", // Defaults to `#fff`.
+      // textColor: "#091E42", // Defaults to `#000`.
+      isCloseable: true, // Defaults to `true`.
+    },
     googleAnalytics: {
       trackingID: "UA-42837031-1",
       // Optional fields.
