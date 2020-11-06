@@ -94,7 +94,7 @@ C’est un site qui totalise plus de 1.8 millions de vues !
 
 ![Gladys traffic site internet](/fr/img/external/gladys-traffic-growth.jpg)
 
-Plus récemment, j’ai lancé une chaine YouTube, et elle va bientôt passer les 100 000 vues ! Je compte d’ailleurs publier plus de contenu dessus dans les mois à venir 🙂
+Plus récemment, j’ai lancé une [chaine YouTube](https://www.youtube.com/channel/UCImYJQrVc8akWzm57KsZQ2A), et elle va bientôt passer les 100 000 vues ! Je compte d’ailleurs publier plus de contenu dessus dans les mois à venir 🙂
 
 ## Et en terme de revenu ?
 
@@ -151,18 +151,14 @@ Comme vous avez pu le voir sur le graph, le revenu autour du Gladys Starter Pack
 
 C’est pourquoi j’ai besoin de VOUS !
 
+**Edit 2020: le Patreon n'existe plus, vous pouvez nous supporter via Gladys Plus**
+
 J’ai créé un Patreon pour Gladys. Pour ceux qui ne connaissent pas, Patreon c’est une plateforme de financement participatif pour les créateurs indépendants. C’est utilisé par plein de makers sur internet pour financer leur travail, que ce soit des artistes, des YouTubeurs, ou des gens dans l’open-source comme moi !
 
 J’ai mis différents niveaux de contributions, qui vont du simple don d’un café, à d’autres contributions avec des avantages pour vous 😉
-
-Le Patreon est disponible ici => [https://www.patreon.com/gladysassistant/overview](https://www.patreon.com/gladysassistant/overview)
 
 Merci à tous ceux qui soutiendront Gladys, c’est grâce à eux que des solutions indépendantes open-source existe ! 🙂
 
 A bientôt sur Gladys,
 
 Pierre-Gilles
-
-PS: A l’occasion de ce lancement, j’ai mis pour la première fois le Gladys Starter Pack a [32€ au lieu de 49€](/fr/gladys-starter-pack/) ! Profitez-en ;)
-
-PS2: Pour ceux qui veulent faire un don unique au projet, c’est possible via [PayPal](https://www.paypal.me/gladysproject/10), même si je vous recommande l'option [Patreon](https://www.patreon.com/gladysassistant/overview) pour les avantages 😉
