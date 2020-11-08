@@ -1,3 +1,4 @@
+import awox from "./awox.json";
 import philipsHue from "./philips-hue.json";
 import tasmota from "./tasmota.json";
 import zwave from "./zwave.json";
@@ -8,6 +9,7 @@ const integrations = camera
   .concat(tasmota)
   .concat(zwave)
   .concat(xiaomi)
+  .concat(awox)
   .concat(philipsHue);
 
 export default integrations;

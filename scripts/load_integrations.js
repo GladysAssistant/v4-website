@@ -11,6 +11,7 @@ const Promise = require("bluebird");
 const AUTHORIZED_DOC_ID = [
   "camera",
   "philips-hue",
+  "awox",
   "sonoff",
   "xiaomi",
   "zwave",
