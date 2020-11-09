@@ -1,7 +1,7 @@
 ---
-id: setup-development-environnement
-title: Setup a development environnement
-sidebar_label: Setup a development environnement
+id: setup-development-environment
+title: Setup a development environment
+sidebar_label: Setup a development environment
 ---
 
 You'll find here instructions to setup a dev env for Gladys 4.
