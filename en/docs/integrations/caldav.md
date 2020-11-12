@@ -50,7 +50,7 @@ Go to security tabs and click on "App Passwords".
 
 1. Select "Calendar" for application
 2. Select "Other" for device
-3. Once you enter the desired name ("Gladys" for example), click on "Generate" and note the generated password
+3. Once you entered the desired name ("Gladys" for example), click on "Generate" and note the generated password
 
 ![Google Agenda](/en/img/docs/configuration/caldav/google_2_generate.png)
 
