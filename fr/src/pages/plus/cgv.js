@@ -4,7 +4,7 @@ import Layout from "@theme/Layout";
 function CvgPlus() {
   return (
     <Layout
-      title="Conditions générales de ventes"
+      title="Conditions générales de ventes de Gladys Plus"
       description="Les conditions générales de ventes de Gladys Plus"
     >
       <main>
