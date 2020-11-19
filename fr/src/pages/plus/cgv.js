@@ -69,7 +69,7 @@ function CvgPlus() {
                   recours de quelque nature qu'il soit émanant de tiers. Dans
                   l'hypothèse où la responsabilité de Pierre-Gilles Leymarie
                   serait engagée, la réparation du préjudice subi ne pourra
-                  excéder le montant de la cotisation annuelle, calculée sur les
+                  excéder le montant de l'abonnement annuel, calculée sur les
                   douze dernier mois effectivement payés par l'utilisateur
                   Gladys Plus. Par ailleurs, en aucun cas Pierre-Gilles Leymarie
                   ne sera responsable des dommages indirects (commercial,
