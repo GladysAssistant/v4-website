@@ -59,7 +59,7 @@ The Z-Wave configuration page, now integrated natively in Gladys:
 
 The Gladys Plus configuration page. Gladys Plus is Gladys paid plan.
 
-It gives you access for 9.99€/month to additionnal features like end-to-end encrypted remote access and daily backups!
+It gives you access for 9.99€/month to additional features like end-to-end encrypted remote access and daily backups!
 
 ![Gladys 4 Dashboard](/en/img/articles/gladys-4-alpha/gladys-plus.png)
 

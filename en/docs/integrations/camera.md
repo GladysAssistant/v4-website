@@ -4,7 +4,7 @@ title: Camera
 sidebar_label: Camera
 ---
 
-Gladys supports cameras which expose a RTSP or HTTP stream.
+Gladys supports cameras that expose a RTSP or HTTP stream.
 
 You'll first need to find in your user manual or on the camera's website the RTSP/HTTP URL of the stream.
 
@@ -20,7 +20,7 @@ Here is an example of an HTTP URL:
 http://user:password@192.168.1.20/video?profile=0
 ```
 
-If you don't find this information on your camera manual, you can use this website: [https://www.ispyconnect.com/sources.aspx](https://www.ispyconnect.com/sources.aspx), a database of cameras with their connection informations.
+If you don't find this information on your camera manual, you can use this website: [https://www.ispyconnect.com/sources.aspx](https://www.ispyconnect.com/sources.aspx), a database of cameras with their connection information.
 
 There is a even a built-in URL generator.
 
@@ -50,7 +50,7 @@ Done! If the URL is correct, you should see your camera stream in VLC.
 
 As soon as your camera works in VLC, it should work in Gladys Assistant as well.
 
-Go to the "Interations" tab in Gladys, then click on the "Camera" integration:
+Go to the "Integrations" tab in Gladys, then click on the "Camera" integration:
 
 ![Add a camera to Gladys Assistant](/en/img/docs/configuration/camera/camera-step-1.png)
 
