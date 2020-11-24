@@ -30,6 +30,7 @@ const schema = Joi.object({
 });
 
 const getIntegrationsFromAirtable = async (lang) => {
+  console.log(`>> Downloading Airtable ${lang} integrations`);
   const uppercaseLang = lang.toUpperCase();
   const { data } = await axios({
     method: "get",
@@ -43,6 +44,7 @@ const getIntegrationsFromAirtable = async (lang) => {
 };
 
 const parseAndFormatRecords = (records, lang) => {
+  console.log(`>> Processing ${lang} integrations`);
   const products = [];
   let amazonLink = 'www.amazon.fr';;
   switch(lang){
@@ -81,7 +83,7 @@ const parseAndFormatRecords = (records, lang) => {
     if (error) {
       console.log(error);
     } else {
-      console.log("Pushing value");
+      console.log(`>>> Adding device ${newItem.title}`);
       products.push(value);
     }
   });
@@ -89,11 +91,12 @@ const parseAndFormatRecords = (records, lang) => {
 };
 
 const downloadImages = async (products, lang) => {
+  console.log(`>> Downloading images for ${lang} integrations`);
   return Promise.map(
     products,
     (product) => {
       if (product.imageUrl) {
-        console.log("downloading " + product.imageUrl);
+        console.log(">>> Downloading " + product.imageUrl);
         return download(product.imageUrl, `${lang}/static/img/integrations`, {
           filename: product.imageName,
         }).catch((err) => {
@@ -114,6 +117,7 @@ const downloadImages = async (products, lang) => {
 };
 
 const writeFileProducts = (products, lang) => {
+  console.log(`>> Writing files for ${lang} integrations`);
   const dictionnary = {};
   AUTHORIZED_DOC_ID.forEach((docId) => (dictionnary[docId] = []));
   products.forEach((product) => {
@@ -129,6 +133,7 @@ const writeFileProducts = (products, lang) => {
 };
 
 const getExistingIntegrations = (lang) => {
+  console.log(`>> Loading existing ${lang} integrations`);
   let existingIntegrations = [];
   AUTHORIZED_DOC_ID.forEach((docId) => {
     try {
@@ -140,6 +145,7 @@ const getExistingIntegrations = (lang) => {
 };
 
 const mergeProducts = (existingIntegrations, productsFromAirtable) => {
+  console.log(`>> Merge existing and new integrations`);
   const productSet = new Set();
   const products = [];
   productsFromAirtable.forEach((integration) => {
@@ -158,15 +164,17 @@ const mergeProducts = (existingIntegrations, productsFromAirtable) => {
 };
 
 const loadIntegrations = async (lang) => {
+  console.log(`> Starting ${lang} Integration`);
   const existingIntegrations = getExistingIntegrations(lang);
   const records = await getIntegrationsFromAirtable(lang);
   const productsFromAirtable = parseAndFormatRecords(records, lang);
   const products = mergeProducts(existingIntegrations, productsFromAirtable);
   await downloadImages(products, lang);
   writeFileProducts(products, lang);
+  console.log(`> End of ${lang} Integration`);
 }
 
 (async () => {
-  loadIntegrations('fr');
-  loadIntegrations('en');
+  await loadIntegrations('fr');
+  await loadIntegrations('en');
 })();
