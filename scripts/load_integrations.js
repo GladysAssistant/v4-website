@@ -29,20 +29,31 @@ const schema = Joi.object({
   buyLink: Joi.string().required(),
 });
 
-const getIntegrationsFromAirtable = async () => {
+const getIntegrationsFromAirtable = async (lang) => {
+  const uppercaseLang = lang.toUpperCase();
   const { data } = await axios({
     method: "get",
     url:
-      "https://api.airtable.com/v0/apptqzQKsqMkRQ8GL/Table%201?maxRecords=1000&view=Grid%20view",
+      `https://api.airtable.com/v0/apptqzQKsqMkRQ8GL/${uppercaseLang}?maxRecords=1000&view=Grid%20view`,
     headers: {
-      authorization: "Bearer " + process.env.AIRTABLE_API_KEY,
+      authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
     },
   });
   return data.records;
 };
 
-const parseAndFormatRecords = (records) => {
+const parseAndFormatRecords = (records, lang) => {
   const products = [];
+  let amazonLink = 'www.amazon.fr';;
+  switch(lang){
+    case 'fr':
+      amazonLink = 'www.amazon.fr';
+      break;
+    case 'en':
+      amazonLink = 'www.amazon.com';
+      break;
+    default:
+  }
   records.forEach((record) => {
     const filename = get(record, "fields.Image.0.filename", { default: "" });
     const imageExtension = filename ? path.extname(filename) : "";
@@ -61,7 +72,7 @@ const parseAndFormatRecords = (records) => {
       buyLink: get(record, "fields.Lien d'achat"),
     };
     // set amazon partner id
-    if (newItem.buyLink && newItem.buyLink.indexOf("www.amazon.fr") !== -1) {
+    if (newItem.buyLink && newItem.buyLink.indexOf(amazonLink) !== -1) {
       var amazonUrl = new URL(newItem.buyLink);
       amazonUrl.searchParams.set("tag", "gladproj-21");
       newItem.buyLink = amazonUrl.toString();
@@ -77,13 +88,13 @@ const parseAndFormatRecords = (records) => {
   return products;
 };
 
-const downloadImages = async (products) => {
+const downloadImages = async (products, lang) => {
   return Promise.map(
     products,
     (product) => {
       if (product.imageUrl) {
         console.log("downloading " + product.imageUrl);
-        return download(product.imageUrl, "en/static/img/integrations", {
+        return download(product.imageUrl, `${lang}/static/img/integrations`, {
           filename: product.imageName,
         }).catch((err) => {
           console.log(
@@ -102,7 +113,7 @@ const downloadImages = async (products) => {
   );
 };
 
-const writeFileProducts = (products) => {
+const writeFileProducts = (products, lang) => {
   const dictionnary = {};
   AUTHORIZED_DOC_ID.forEach((docId) => (dictionnary[docId] = []));
   products.forEach((product) => {
@@ -111,17 +122,17 @@ const writeFileProducts = (products) => {
   });
   AUTHORIZED_DOC_ID.forEach((docId) => {
     fs.writeFileSync(
-      `./fr/integrations/${docId}.json`,
+      `./${lang}/integrations/${docId}.json`,
       JSON.stringify(dictionnary[docId], null, 4)
     );
   });
 };
 
-const getExistingIntegrations = () => {
+const getExistingIntegrations = (lang) => {
   let existingIntegrations = [];
   AUTHORIZED_DOC_ID.forEach((docId) => {
     try {
-      const existingDoc = require(`../fr/integrations/${docId}.json`);
+      const existingDoc = require(`../${lang}/integrations/${docId}.json`);
       existingIntegrations = existingIntegrations.concat(existingDoc);
     } catch (e) {}
   });
@@ -146,11 +157,16 @@ const mergeProducts = (existingIntegrations, productsFromAirtable) => {
   return products;
 };
 
-(async () => {
-  const existingIntegrations = getExistingIntegrations();
-  const records = await getIntegrationsFromAirtable();
-  const productsFromAirtable = parseAndFormatRecords(records);
+const loadIntegrations = async (lang) => {
+  const existingIntegrations = getExistingIntegrations(lang);
+  const records = await getIntegrationsFromAirtable(lang);
+  const productsFromAirtable = parseAndFormatRecords(records, lang);
   const products = mergeProducts(existingIntegrations, productsFromAirtable);
-  await downloadImages(products);
-  writeFileProducts(products);
+  await downloadImages(products, lang);
+  writeFileProducts(products, lang);
+}
+
+(async () => {
+  loadIntegrations('fr');
+  loadIntegrations('en');
 })();
