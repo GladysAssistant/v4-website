@@ -42,6 +42,8 @@ npm start
 
 ## How to add new integrations ?
 
+Don't add files into /{lang}/integrations/
+
 We use an AirTable spreadsheet to crowdsource the list of integrations.
 
 Please contact us on the forum if you want write access to this spreadsheet.
