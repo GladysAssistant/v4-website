@@ -27,7 +27,7 @@ const translation = {
   filters: {
     zwave: "Z-Wave",
     "philips-hue": "Philips Hue",
-    tasmota: "Sonoff",
+    ewelink: "Sonoff",
     camera: "Caméra",
     xiaomi: "Xiaomi",
   },
