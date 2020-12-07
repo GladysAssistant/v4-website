@@ -8,7 +8,7 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 const truncate = (str, len) =>
   str.substring(0, (str + " ").lastIndexOf(" ", len));
 
-const FILTERS = ["philips-hue", "zwave", "tasmota", "camera", "xiaomi"];
+const FILTERS = ["philips-hue", "awox", "zwave", "tasmota", "camera", "xiaomi"];
 
 function Integration({
   docsId,
@@ -83,6 +83,7 @@ function IntegrationPage({ integrations, lang, translation }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [checkedTags, setCheckedTags] = React.useState({
     "philips-hue": true,
+    awox: true,
     zwave: true,
     camera: true,
     tasmota: true,

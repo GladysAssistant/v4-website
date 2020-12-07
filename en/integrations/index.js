@@ -1,3 +1,4 @@
+import awox from "./awox.json";
 import philipsHue from "./philips-hue.json";
 import sonoff from "./sonoff.json";
 import zwave from "./zwave.json";
@@ -8,6 +9,7 @@ const integrations = camera
   .concat(sonoff)
   .concat(zwave)
   .concat(xiaomi)
+  .concat(awox)
   .concat(philipsHue);
 
 export default integrations;
