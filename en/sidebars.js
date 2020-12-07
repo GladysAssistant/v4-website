@@ -11,6 +11,7 @@ module.exports = {
       "integrations/caldav",
       "integrations/camera",
       "integrations/philips-hue",
+      "integrations/mqtt",
       "integrations/tasmota",
       "integrations/owntracks",
       "integrations/xiaomi",
