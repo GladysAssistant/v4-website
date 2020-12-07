@@ -25,9 +25,9 @@ Now let's go back to the decisions that led to this fourth version of Gladys Ass
 
 <!--truncate-->
 
-## Story of the project
+## The story behind this v4
 
-In December 2018, I met two members of the community to discuss the future of the project, and together we defined what we wanted for the next major release of Gladys, Gladys Assistant 4. After this meeting, j I wrote a technical manifesto that summarized our discussions.
+In December 2018, I met two members of the community to discuss the future of the project, and together we defined what we wanted for the next major release of Gladys, Gladys Assistant 4. After this meeting, I wrote a technical manifesto that summarized our discussions.
 
 Gladys Assistant v3 was aging, both in terms of development process and technologies used. It was a great product, but the developments were slower and slower and less stable due to technical choices going back to the start of the project.
 
@@ -102,7 +102,7 @@ Video streams are compressed in order to achieve maximum interface display perfo
 
 Gladys Assistant is also an assistant that the user can chat with.
 
-! [Gladys Assistant 4 discussions](/en/img/articles/gladys-4-launch/discuss-gladys.png)
+![Gladys Assistant 4 discussions](/en/img/articles/gladys-4-launch/discuss-gladys.png)
 
 Gladys Assistant uses the latest advances in automatic language processing to understand user requests (We use [NLP.js](https://github.com/axa-group/nlp.js)).
 
@@ -124,7 +124,7 @@ It is thus possible to send data to Gladys from an Arduino, an ESP8266, a remote
 
 In the other direction, it is possible for Gladys to control MQTT devices.
 
-En savoir plus sur [la documentation MQTT](/en/docs/integrations/mqtt/)
+Learn more about [the MQTT integration](/en/docs/integrations/mqtt/).
 
 ## A more powerful scene engine than ever
 
@@ -182,8 +182,8 @@ I will post the progress of this goal on social networks and will surely do a re
 
 Once again, thank you all for your help and feedback!
 
-If you want to join us to be part of the hard core of the 1000 Gladys Assistant 4 users, it's now and it's happening on [Gladys Assistant installation tutorial](/en/docs/).
+If you want to join us to be part of the hard core of the 1,000 Gladys Assistant 4 users, it's now and it's happening on [Gladys Assistant installation tutorial](/en/docs/).
 
-See you soon !
+See you soon!
 
 Pierre-Gilles Leymarie
