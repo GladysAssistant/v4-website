@@ -29,6 +29,7 @@ module.exports = {
       "scenes/send-a-message-action",
       "scenes/turn-on-off-the-lights-action",
       "scenes/http-request",
+      "scenes/user-presence",
     ],
     "Tableau de bord": [
       "dashboard/intro",
