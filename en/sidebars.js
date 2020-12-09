@@ -27,6 +27,6 @@ module.exports = {
     "Development Environment": [
       "dev/setup-development-environment-mac-linux",
       "dev/setup-development-environment-windows",
-    ]
+    ],
   },
 };
