@@ -22,8 +22,11 @@ module.exports = {
       "api/data-model",
       "api/rest-api",
       "api/mqtt-api",
-      "api/setup-development-environnement",
       "api/developing-a-service",
     ],
+    "Development Environment": [
+      "dev/setup-development-environment-mac-linux",
+      "dev/setup-development-environment-windows",
+    ]
   },
 };
