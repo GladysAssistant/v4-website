@@ -4,7 +4,7 @@ title: Setup a Mac/Linux development environment
 sidebar_label: Mac/Linux
 ---
 
-You'll find here instructions to setup a development environnement for Gladys 4.
+You'll find here instructions to setup a development environment for Gladys 4.
 
 ## Server
 

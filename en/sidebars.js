@@ -18,16 +18,11 @@ module.exports = {
       "integrations/zwave",
       "integrations/telegram",
     ],
-    API: [
-      "api/architecture",
-      "api/data-model",
-      "api/rest-api",
-      "api/mqtt-api",
-      "api/developing-a-service",
-    ],
-    "Development Environment": [
+    API: ["api/architecture", "api/data-model", "api/rest-api", "api/mqtt-api"],
+    Development: [
       "dev/setup-development-environment-mac-linux",
       "dev/setup-development-environment-windows",
+      "dev/developing-a-service",
     ],
   },
 };

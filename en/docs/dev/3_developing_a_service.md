@@ -4,13 +4,11 @@ title: Developing a Service
 sidebar_label: Developing a Service
 ---
 
-In Gladys 4, most integrations don't need to be started on another physical machine. Gladys is comprised of internal services integrated into Gladys core.
-
-This tutorial will explain you how to add a new integration to the core.
+This tutorial will explain you how to add a new integrations to the core.
 
 ### Setup your development environnement
 
-I recommended you follow the instructions [here](/en/docs/api/setup-development-environnement) to install Gladys 4 on your machine for development purpose.
+First, you need a working development environment. You can read our tutorials in this doc on how to setup a development environment on MacOS/Linux or Windows.
 
 ### Server-side
 
@@ -95,7 +93,7 @@ module.exports = function ExampleService(gladys) {
 ```
 
 - The `index.js` file should expose 2 functions: start, and stop. Those functions are mandatory, and should respectively start the service or stop it.
-- All the required dependencies listed in the package.json should be done **inside** the function, not outside. This is because we want each service to be fully isolated and not  crash if the NPM module crashes.
+- All the required dependencies listed in the package.json should be done **inside** the function, not outside. This is because we want each service to be fully isolated and not crash if the NPM module crashes.
 - The `gladys` variable is the Gladys instance and gives you access to all the Gladys API. A service shouldn't try to contact the database itself, it should only use the Gladys API. If a query is missing, don't hesitate to code a new function in Gladys API.
 - Comments on top of functions are mandatory and serve not only for documentation purpose, but for type checking as well.
 

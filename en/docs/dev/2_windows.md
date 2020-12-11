@@ -10,9 +10,9 @@ You'll find here instructions to setup a development environment for Gladys 4 on
 
 Please follow these links to prepare your OS.
 
-* [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
-* [Docker Desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
-* [Visual Studio Code](https://code.visualstudio.com/download)
+- [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+- [Docker Desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
+- [Visual Studio Code](https://code.visualstudio.com/download)
 
 ### WSL Configuration
 
@@ -37,13 +37,13 @@ First thing to do is to update distribution by running theses commands:
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 ```
 
-* Libraries installation:
+- Libraries installation:
 
 ```bash
 sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
 ```
 
-* Node.js 12 Installation:
+- Node.js 12 Installation:
 
 ```bash
 curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh
@@ -51,7 +51,7 @@ sudo bash nodesource_setup.sh
 sudo apt install nodejs -y
 ```
 
-* Openzwave compilation:
+- Openzwave compilation:
 
 ```bash
 git clone https://github.com/OpenZWave/open-zwave.git
