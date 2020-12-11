@@ -1,7 +1,7 @@
 ---
-id: setup-development-environnement
-title: Environnement de développement
-sidebar_label: Environnement de développement
+id: setup-development-environment-mac-linux
+title: Mettre en place un environnement de développement sous Mac/Linux
+sidebar_label: Mac/Linux
 ---
 
 Vous trouverez ici les instructions pour mettre en place un environnement de développemment Gladys 4.

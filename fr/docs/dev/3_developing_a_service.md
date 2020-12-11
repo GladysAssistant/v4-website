@@ -10,7 +10,7 @@ This tutorial will explain you how to add a new integration to the core.
 
 ### Setup your development environnement
 
-I recommended you follow the instructions on the [here](/fr/docs/api/setup-development-environnement) to install Gladys 4 on your machine for development purpose.
+First, you need a working development environment. You can read our tutorials in this doc on how to setup a development environment on MacOS/Linux or Windows.
 
 ### Server-side
 
