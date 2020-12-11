@@ -1,6 +1,6 @@
 ---
 id: setup-development-environment-mac-linux
-title: Environnement de développement Mac/Linux
+title: Mettre en place un environnement de développement sous Mac/Linux
 sidebar_label: Mac/Linux
 ---
 

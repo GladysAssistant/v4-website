@@ -38,16 +38,11 @@ module.exports = {
       "dashboard/camera",
       "dashboard/devices-in-room",
     ],
-    API: [
-      "api/architecture",
-      "api/data-model",
-      "api/rest-api",
-      "api/mqtt-api",
-      "api/developing-a-service",
-    ],
-    "Environnement de Développement": [
+    API: ["api/architecture", "api/data-model", "api/rest-api", "api/mqtt-api"],
+    Développement: [
       "dev/setup-development-environment-mac-linux",
       "dev/setup-development-environment-windows",
+      "dev/developing-a-service",
     ],
   },
 };

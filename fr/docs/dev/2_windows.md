@@ -1,6 +1,6 @@
 ---
 id: setup-development-environment-windows
-title: Environnement de développement Windows
+title: Mettre en place un environnement de développement sous Windows
 sidebar_label: Windows
 ---
 
@@ -10,9 +10,9 @@ Vous trouverez ici les instructions pour mettre en place un environnement de dé
 
 Veuillez suivre les insctuctions de ces sites pour préparer votre système.
 
-* [Windows Subsystem Linux](https://docs.microsoft.com/fr-fr/windows/wsl/install-win10)
-* [Docker Desktop pour Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
-* [Visual Studio Code](https://code.visualstudio.com/download)
+- [Windows Subsystem Linux](https://docs.microsoft.com/fr-fr/windows/wsl/install-win10)
+- [Docker Desktop pour Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
+- [Visual Studio Code](https://code.visualstudio.com/download)
 
 ### Configuration WSL
 
@@ -37,13 +37,13 @@ La première étape est de mettre à jour la distribution:
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 ```
 
-* Installation des outils/librairies:
+- Installation des outils/librairies:
 
 ```bash
 sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
 ```
 
-* Installation de Node.js 12:
+- Installation de Node.js 12:
 
 ```bash
 curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh
@@ -51,7 +51,7 @@ sudo bash nodesource_setup.sh
 sudo apt install nodejs -y
 ```
 
-* Compilation d'Openzwave:
+- Compilation d'Openzwave:
 
 ```bash
 git clone https://github.com/OpenZWave/open-zwave.git
