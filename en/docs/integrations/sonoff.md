@@ -1,10 +1,10 @@
 ---
-id: ewelink
-title: eWeLink
-sidebar_label: eWeLink
+id: sonoff
+title: Sonoff
+sidebar_label: Sonoff
 ---
 
-The eWeLink devices can also be used with <a href="./tasmota">Tasmota</a> OpenSource firmware.
+The Sonoff devices can also be used with <a href="../tasmota">Tasmota</a> OpenSource firmware.
 
 To connect them to Gladys:
 - configure your eWeLink cloud account

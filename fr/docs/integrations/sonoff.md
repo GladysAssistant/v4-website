@@ -1,10 +1,10 @@
 ---
-id: ewelink
-title: eWeLink
-sidebar_label: eWeLink
+id: sonoff
+title: Sonoff
+sidebar_label: Sonoff
 ---
 
-Les appareils eWeLink peuvent aussi être utilisé avec le firmware OpenSource <a href="./tasmota">Tasmota</a>.
+Les appareils Sonoff peuvent aussi être utilisé avec le firmware OpenSource <a href="../tasmota">Tasmota</a>.
 
 Pour connecter vos appareils:
 - configurez votre compte cloud eWeLink
