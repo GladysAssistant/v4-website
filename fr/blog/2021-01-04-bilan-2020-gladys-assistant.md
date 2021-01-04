@@ -5,7 +5,7 @@ author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
-image: /img/presentation/bilan-2019-cover.jpg
+image: /img/presentation/bilan-2020-cover.jpg
 id: bilan-2020-gladys-assistant
 ---
 
