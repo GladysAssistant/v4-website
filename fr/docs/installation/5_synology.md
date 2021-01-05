@@ -5,7 +5,7 @@ sidebar_label: Synology avec Docker
 ---
 
 
-Ce tutoriel vous explique comment installer Gladys avec Docker sur un NAS Synogoly compatible docker.
+Ce tutoriel vous explique comment installer Gladys avec Docker sur un NAS Synogoly compatible.
 
 ## Préalable : installer Docker sur votre NAS 
 
