@@ -43,7 +43,7 @@ function Integration({
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
         <Image
-          img={require(`../en/static/img/integrations/${imageName}`)}
+          img={require(`../${lang}/static/img/integrations/${imageName}`)}
           size={200}
           alt={title}
           title={title}
