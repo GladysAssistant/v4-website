@@ -15,6 +15,7 @@ const AUTHORIZED_DOC_ID = [
   "xiaomi",
   "zwave",
   "tasmota",
+  "tp-link",
 ];
 
 const schema = Joi.object({
@@ -34,8 +35,7 @@ const getIntegrationsFromAirtable = async (lang) => {
   const uppercaseLang = lang.toUpperCase();
   const { data } = await axios({
     method: "get",
-    url:
-      `https://api.airtable.com/v0/apptqzQKsqMkRQ8GL/${uppercaseLang}?maxRecords=1000&view=Grid%20view`,
+    url: `https://api.airtable.com/v0/apptqzQKsqMkRQ8GL/${uppercaseLang}?maxRecords=1000&view=Grid%20view`,
     headers: {
       authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
     },
@@ -46,13 +46,13 @@ const getIntegrationsFromAirtable = async (lang) => {
 const parseAndFormatRecords = (records, lang) => {
   console.log(`>> Processing ${lang} integrations`);
   const products = [];
-  let amazonLink = 'www.amazon.fr';;
-  switch(lang){
-    case 'fr':
-      amazonLink = 'www.amazon.fr';
+  let amazonLink = "www.amazon.fr";
+  switch (lang) {
+    case "fr":
+      amazonLink = "www.amazon.fr";
       break;
-    case 'en':
-      amazonLink = 'www.amazon.com';
+    case "en":
+      amazonLink = "www.amazon.com";
       break;
     default:
   }
@@ -172,9 +172,9 @@ const loadIntegrations = async (lang) => {
   await downloadImages(products, lang);
   writeFileProducts(products, lang);
   console.log(`> End of ${lang} Integration`);
-}
+};
 
 (async () => {
-  await loadIntegrations('fr');
-  await loadIntegrations('en');
+  await loadIntegrations("fr");
+  await loadIntegrations("en");
 })();
