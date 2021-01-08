@@ -30,6 +30,7 @@ const translation = {
     tasmota: "Sonoff",
     camera: "Caméra",
     xiaomi: "Xiaomi",
+    "tp-link": "TP-Link",
   },
 };
 

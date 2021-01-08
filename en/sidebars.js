@@ -13,6 +13,7 @@ module.exports = {
       "integrations/philips-hue",
       "integrations/mqtt",
       "integrations/tasmota",
+      "integrations/tp-link",
       "integrations/owntracks",
       "integrations/xiaomi",
       "integrations/zwave",
