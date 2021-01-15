@@ -37,7 +37,7 @@ Click on "About"
 
 <img src="/en/img/docs/configuration/xiaomi/xiaomi-tuto-4.jpg" alt="Xiaomi icon"  />
 
-Click multiple time on the red zone to display additionnal menus.
+Click multiple time on the red zone to display additional menus.
 
 ### Step 4
 

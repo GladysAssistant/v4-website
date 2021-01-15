@@ -11,6 +11,7 @@ module.exports = {
       "integrations/caldav",
       "integrations/camera",
       "integrations/philips-hue",
+      "integrations/mqtt",
       "integrations/tasmota",
       "integrations/tp-link",
       "integrations/owntracks",
@@ -18,13 +19,11 @@ module.exports = {
       "integrations/zwave",
       "integrations/telegram",
     ],
-    API: [
-      "api/architecture",
-      "api/data-model",
-      "api/rest-api",
-      "api/mqtt-api",
-      "api/setup-development-environnement",
-      "api/developing-a-service",
+    API: ["api/architecture", "api/data-model", "api/rest-api", "api/mqtt-api"],
+    Development: [
+      "dev/setup-development-environment-mac-linux",
+      "dev/setup-development-environment-windows",
+      "dev/developing-a-service",
     ],
   },
 };

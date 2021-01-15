@@ -4,13 +4,11 @@ title: Developing a Service
 sidebar_label: Developing a Service
 ---
 
-In Gladys 4, most integrations which don't need to be started on another physical machine than Gladys are internal services and integrated into Gladys core.
-
-This tutorial will explain you how to add a new integration to the core.
+This tutorial will explain you how to add a new integrations to the core.
 
 ### Setup your development environnement
 
-I recommended you follow the instructions [here](/en/docs/api/setup-development-environnement) to install Gladys 4 on your machine for development purpose.
+First, you need a working development environment. You can read our tutorials in this doc on how to setup a development environment on MacOS/Linux or Windows.
 
 ### Server-side
 
@@ -18,7 +16,7 @@ I recommended you follow the instructions [here](/en/docs/api/setup-development-
 
 All services are located inside the [server/services](https://github.com/GladysAssistant/Gladys/tree/master/server/services) folder.
 
-Create a new folder with the name of your service. The name should be alphanumeric, in lowercase, and with dashes as separator if needed.
+Create a new folder with the name of your service. The name should be alphanumeric, in lowercase, and with dashes as a separator if needed.
 
 Example of good folder names:
 
@@ -29,9 +27,9 @@ Example of good folder names:
 
 #### Create a package.json
 
-The package.json will describe how compatible is your service, and which dependencies are needed.
+The package.json will describe the capabilities of your service, and which dependencies are needed.
 
-You can look on Github at all package.json, but here is an example of a good package.json:
+You can look on Github for all package.json files, but here is an example of a good package.json:
 
 ```json
 {
@@ -50,7 +48,7 @@ You can look on Github at all package.json, but here is an example of a good pac
 
 #### Create an index.js file
 
-The index.js is the entry point of your service. It's a function which return all exposed function of your service.
+The index.js is the entry point of your service. It's a function that returns all exposed functions of your service.
 
 Here is an example `index.js` file. I'll describe it right after.
 
@@ -95,7 +93,7 @@ module.exports = function ExampleService(gladys) {
 ```
 
 - The `index.js` file should expose 2 functions: start, and stop. Those functions are mandatory, and should respectively start the service or stop it.
-- All require of dependencies listed in the package.json should be done **inside** the function, not outside. This is because we want each service to be fully isolated and not to crash if the NPM module crash.
+- All the required dependencies listed in the package.json should be done **inside** the function, not outside. This is because we want each service to be fully isolated and not crash if the NPM module crashes.
 - The `gladys` variable is the Gladys instance and gives you access to all the Gladys API. A service shouldn't try to contact the database itself, it should only use the Gladys API. If a query is missing, don't hesitate to code a new function in Gladys API.
 - Comments on top of functions are mandatory and serve not only for documentation purpose, but for type checking as well.
 
@@ -111,9 +109,9 @@ Therefore, all services of Gladys should be fully tested with a test coverage > 
 
 Tests of services are located in the folder [server/test/services](https://github.com/GladysAssistant/Gladys/tree/master/server/test/services).
 
-I suggest you have a look at the [tests of the example service](https://github.com/GladysAssistant/Gladys/tree/master/server/test/services/example) to give you an idea of how tests looks like.
+I suggest you have a look at the [tests of the example service](https://github.com/GladysAssistant/Gladys/tree/master/server/test/services/example) to give you an idea of how the tests should look.
 
-To run tests, in the `server` folder run:
+To run the tests, in the `server` folder run:
 
 ```
 npm test

@@ -1,10 +1,10 @@
 ---
-id: setup-development-environnement
-title: Setup a development environnement
-sidebar_label: Setup a development environnement
+id: setup-development-environment-mac-linux
+title: Setup a Mac/Linux development environment
+sidebar_label: Mac/Linux
 ---
 
-You'll find here instructions to setup a dev env for Gladys 4.
+You'll find here instructions to setup a development environment for Gladys 4.
 
 ## Server
 
@@ -19,7 +19,7 @@ You'll need:
 - openssl
 - openzwave + libopenzwave1.5-dev
 
-A good help can be to look at [CircleCI config file](https://github.com/GladysAssistant/Gladys/blob/master/.circleci/config.yml).
+for assistance, help can be found at [CircleCI config file](https://github.com/GladysAssistant/Gladys/blob/master/.circleci/config.yml).
 
 ### Clone Gladys Git repo
 
@@ -85,7 +85,7 @@ npm test
 
 ## Start server tests only for one service
 
-To run tests just for one service, go to the `server` folder and run the command:
+To run the tests just for one service, go to the `server` folder and run the command:
 
 ```
 npm run test-service --service=tasmota

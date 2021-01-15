@@ -29,6 +29,8 @@ module.exports = {
       "scenes/continue-only-if-action",
       "scenes/send-a-message-action",
       "scenes/turn-on-off-the-lights-action",
+      "scenes/http-request",
+      "scenes/user-presence",
     ],
     "Tableau de bord": [
       "dashboard/intro",
@@ -37,13 +39,11 @@ module.exports = {
       "dashboard/camera",
       "dashboard/devices-in-room",
     ],
-    API: [
-      "api/architecture",
-      "api/data-model",
-      "api/rest-api",
-      "api/mqtt-api",
-      "api/setup-development-environnement",
-      "api/developing-a-service",
+    API: ["api/architecture", "api/data-model", "api/rest-api", "api/mqtt-api"],
+    Développement: [
+      "dev/setup-development-environment-mac-linux",
+      "dev/setup-development-environment-windows",
+      "dev/developing-a-service",
     ],
   },
 };
