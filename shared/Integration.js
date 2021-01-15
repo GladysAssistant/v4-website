@@ -8,14 +8,7 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 const truncate = (str, len) =>
   str.substring(0, (str + " ").lastIndexOf(" ", len));
 
-const FILTERS = [
-  "philips-hue",
-  "zwave",
-  "sonoff",
-  "camera",
-  "xiaomi",
-  "tp-link",
-];
+const FILTERS = ["philips-hue", "zwave", "tasmota", "camera", "xiaomi"];
 
 function Integration({
   docsId,
@@ -43,7 +36,7 @@ function Integration({
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
         <Image
-          img={require(`../${lang}/static/img/integrations/${imageName}`)}
+          img={require(`../en/static/img/integrations/${imageName}`)}
           size={200}
           alt={title}
           title={title}
@@ -92,9 +85,8 @@ function IntegrationPage({ integrations, lang, translation }) {
     "philips-hue": true,
     zwave: true,
     camera: true,
-    sonoff: true,
+    tasmota: true,
     xiaomi: true,
-    "tp-link": true,
   });
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
