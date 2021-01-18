@@ -13,6 +13,7 @@ module.exports = {
       "integrations/xiaomi",
       "integrations/sonoff",
       "integrations/tasmota",
+      "integrations/tp-link",
       "integrations/philips-hue",
       "integrations/mqtt",
       "integrations/owntracks",
