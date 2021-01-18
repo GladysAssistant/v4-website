@@ -8,7 +8,7 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 const truncate = (str, len) =>
   str.substring(0, (str + " ").lastIndexOf(" ", len));
 
-const FILTERS = ["philips-hue", "zwave", "tasmota", "camera", "xiaomi", "tp-link"];
+const FILTERS = ["philips-hue", "zwave", "sonoff", "camera", "xiaomi", "tp-link"];
 
 function Integration({
   docsId,
@@ -85,7 +85,7 @@ function IntegrationPage({ integrations, lang, translation }) {
     "philips-hue": true,
     zwave: true,
     camera: true,
-    tasmota: true,
+    sonoff: true,
     xiaomi: true,
     "tp-link": true
   });
