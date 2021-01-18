@@ -4,9 +4,10 @@ title: Sonoff
 sidebar_label: Sonoff
 ---
 
-Les appareils Sonoff peuvent aussi être utilisé avec le firmware OpenSource [Tasmota](tasmota "Tasmota").
+Les appareils Sonoff peuvent aussi être utilisé avec le firmware OpenSource [Tasmota](/fr/docs/integrations/tasmota/).
 
 Pour connecter vos appareils:
+
 - configurez votre compte cloud eWeLink
 - allez dans `Intégrations / eWelink` dans Gladys
 
@@ -20,6 +21,7 @@ Vous devez disposer d'un compte cloud "eWeLink":
 ## Ajouter un appareil dans Gladys
 
 Une fois votre compte créé, retournez dans Gladys:
+
 1. aller sur la page `Intégration -> eWeLink`
 2. sélectionner le menu `Configuration`
 3. renseigner et sauvegarder vos identifiants
