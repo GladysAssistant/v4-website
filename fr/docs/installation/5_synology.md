@@ -35,7 +35,8 @@ Pour lancer Gladys, exécutez la commande ci-dessous depuis une connexion SSH su
 Il faut bien sûr que votre compte utilisateur ait les droits d'administration. Nous utilisons la commande *sudo* pour l'élévation temporaire de privilège nécessaire (le mot de passe demandé est votre mot de passe utilisateur).
 Si ce n'est pas déjà fait, docker commencera alors par télécharger l'image depuis DockerHub.  
 
-```sudo \
+```
+sudo \
 docker run -d \
 --log-opt max-size=10m \
 --restart=always \
