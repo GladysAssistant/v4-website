@@ -6,7 +6,7 @@ sidebar_label: Raspberry Pi
 
 ## Download Gladys Raspbian image
 
-We provide a pre-built Raspbian image with Gladys already configured: <a href="https://cdn.elephantcdn.com/gh/gladysassistant/gladys/releases/download/v4.0.0/gladys-4.0.0-rev3.img.zip">Download Gladys Raspbian Buster v4.0.0-rev3</a>.
+We provide a pre-built Raspbian image with Gladys already configured: <a href="https://cdn.elephantcdn.com/gh/gladysassistant/gladys/releases/download/v4.0.4/gladys-4.0.4-rev4.img.zip">Download Gladys Assistant Raspberry Pi OS v4.0.4-rev4</a>.
 
 And unzip the downloaded zip file to get a `.img` file.
 

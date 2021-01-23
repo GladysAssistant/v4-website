@@ -44,6 +44,6 @@ Then fill configuration form with your information:
 Once saved, go back to Gladys:
 1. to `Integration -> Tasmota` page
 2. select `MQTT discover` menu
-3. click on `Scan`button (if device is not laready listed)
+3. click on `Scan`button (if device is not already listed)
 4. then `Save`
-5. et voilà!
+5. and voilà!
