@@ -1,8 +1,16 @@
 ---
 id: philips-hue
-title: Philips Hue
+title: Connecter ses Philips Hue dans Gladys Assistant
 sidebar_label: Philips Hue
 ---
+
+Car c'est toujours mieux en vidéo, voilà une petite démonstration de l'intégration Philips Hue dans Gladys 🙂
+
+<div class="videoContainer">
+<iframe  class="video" src="https://www.youtube.com/embed/PjLx7TYZdRM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+## Tutoriel
 
 Pour connecter vos ampoules Philips Hue, allez dans `Intégrations / Philips Hue` dans Gladys.
 
