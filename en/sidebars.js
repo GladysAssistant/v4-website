@@ -19,6 +19,7 @@ module.exports = {
       "integrations/owntracks",
       "integrations/zwave",
       "integrations/telegram",
+      "integrations/withings",
     ],
     API: ["api/architecture", "api/data-model", "api/rest-api", "api/mqtt-api"],
     Development: [

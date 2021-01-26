@@ -19,6 +19,7 @@ module.exports = {
       "integrations/owntracks",
       "integrations/zwave",
       "integrations/telegram",
+      "integrations/withings",
     ],
     Scènes: [
       "scenes/intro",
