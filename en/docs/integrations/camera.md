@@ -4,9 +4,9 @@ title: Camera
 sidebar_label: Camera
 ---
 
-Gladys supports cameras that expose a RTSP or HTTP stream.
+Gladys supports IP cameras that expose a RTSP or HTTP stream, USB webcams and [Rasberry Pi Camera Modules](https://www.raspberrypi.org/documentation/hardware/camera/).
 
-You'll first need to find in your user manual or on the camera's website the RTSP/HTTP URL of the stream.
+If you have a IP Camera, you'll first need to find in your user manual or on the camera's website the RTSP/HTTP URL of the stream.
 
 Here is an example of a RTSP URL:
 
@@ -30,7 +30,7 @@ For example, this is for a Xiaomi camera:
 
 If you don't find anything on this website either, I suggest you to Google "your camera name + RTSP" to see if there is an open stream available.
 
-## Trying to display the stream in VLC
+## Trying to display the stream of your IP Camera in VLC
 
 It's possible to try connecting to the stream thanks to the great [VLC](https://www.videolan.org/vlc/) software.
 
@@ -46,9 +46,9 @@ Done! If the URL is correct, you should see your camera stream in VLC.
 
 ![VLC open a network stream](/en/img/docs/configuration/camera/camera-vlc-step-3.png)
 
-## Connecting your RTSP camera to Gladys Assistant
+## Connecting your camera to Gladys Assistant
 
-As soon as your camera works in VLC, it should work in Gladys Assistant as well.
+As soon as your camera works, it should work in Gladys Assistant as well.
 
 Go to the "Integrations" tab in Gladys, then click on the "Camera" integration:
 
@@ -58,7 +58,10 @@ Click on "New"
 
 ![Add a camera to Gladys Assistant](/en/img/docs/configuration/camera/camera-step-2.png)
 
-Fill the form
+Fill the form. 
+ - If you have an IP Camera, enter as camera flux the URL of your RTSP or HTTP stream. 
+ - If you have a webcam plugged to you Raspberry Pi, enter as camera flux the usb stream as for example ``` /dev/video0 ```. 
+ - If you have a [camera module for Raspberry Pi](https://www.raspberrypi.org/documentation/hardware/camera/), enter as camera flux ``` pi-camera ```
 
 ![Add a camera to Gladys Assistant](/en/img/docs/configuration/camera/camera-step-3.png)
 
