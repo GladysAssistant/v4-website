@@ -1,18 +1,19 @@
 ---
 id: raspberry-pi-ssd
 title: Evoluer son Raspberry Pi en bootant sur SSD
-sidebar_label: Raspberry Pi Evo - SSD
+sidebar_label: Raspberry Pi Evo - Boost SSD
 ---
 
 Ce tutoriel vous explique comment récupérer votre installation Gladys sur un disque SSD en bootant votre Raspberry Pi ! Ce dernier n'a pour le moment été testé que sur le matériel ci-dessous. Il est tiré de l'article du site tom's HARDWARE : [How to Boot Raspberry Pi 4 From a USB SSD or Flash Drive](https://www.tomshardware.com/how-to/boot-raspberry-pi-4-usb)
 #### Matériel utilisé :
-  - Un Raspberry Pi 4 - 4Go,
+  - Un [Raspberry Pi 4 - 4Go](https://www.amazon.fr/Raspberry-Mod%C3%A8le-ARM-Cortex-A72-WLAN-AC-Bluetooth/dp/B07TC2BK1X/ref=sr_1_4?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Raspberry+Pi+4+-+4Go&qid=1611781694&s=computers&sr=1-4),
+  - Un [Raspberry Pi 4 - 8Go](https://www.amazon.fr/Raspberry-Pi%C2%AE-Go-1-5-GHz/dp/B0899VXM8F/ref=sr_1_14?__mk_fr_FR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&dchild=1&keywords=Raspberry+Pi+4+-+8Go&qid=1611784972&s=computers&sr=1-14),
   - Un SSD [Samsung Portable T5 - 500GB](https://www.amazon.fr/gp/product/B074MCM721/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1),
-  - Un SSD [Samsung 860 EVO - 500GB](https://www.amazon.fr/gp/product/B078WQT6S6/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)   
+  - Un SSD [Samsung 860 EVO - 500GB](https://www.amazon.fr/gp/product/B078WQT6S6/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) avec un [Boitier Externe UGREEN USB 3.1 Gen 2 Type C](https://www.amazon.fr/gp/product/B07D2BHVBD/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1).
 
 ### Prérequis
 
-- Avoir installé Gladys V4 à l'aide des instructions de l'article [Raspberry Pi](/fr/docs/installation/raspberry-pi),
+- Avoir installé Gladys V4 à l'aide des instructions de l'article [Raspberry Pi](/fr/docs/),
 - Pouvoir réaliser certaines opérations en ligne de commande sur le raspberry pi.
 
 ### Mise à jour
