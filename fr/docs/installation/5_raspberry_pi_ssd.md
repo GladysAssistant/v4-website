@@ -42,9 +42,7 @@ Le test a été effectué avec l'image officielle Gladys V4.0.4 en coupant les c
       - Ecriture = 190 à 210 MB/s
       - Lecture = 560 à 610 MB/s
       - !! Attention !! Ne tourne pas en USB3.0 avec le boitier cité @pierre-gilles 
-[quote="pierre-gilles, post:1, topic:6040"]
-le boitier USB est à 9€ => [https://www.amazon.fr/Boîtier-POSUGEAR-Externe-Compatible-Transparente/dp/B077XVTTJC/ref=pd_bxgy_img_2/258-1187749-0337958 ](https://www.amazon.fr/Bo%C3%AEtier-POSUGEAR-Externe-Compatible-Transparente/dp/B077XVTTJC/ref=pd_bxgy_img_2/258-1187749-0337958?tag=gladproj-21)
-[/quote]
+
 [details="En image"]
 ![Résultat perfs Pi4 4Go - SSD Samsung EVO 860 - USB3|306x500](upload://rr8DuiNvSjFtajVtaB2DIPkAs9N.jpeg) 
 [/details]
