@@ -7,7 +7,7 @@ module.exports = {
   organizationName: "gladysassistant", // Usually your GitHub org/user name.
   projectName: "gladys", // Usually your repo name.
   themeConfig: {
-    image: "img/presentation/gladys-og-image.png",
+    image: "img/presentation/gladys-cover-demo.jpg",
     metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
     announcementBar: {
       id: "gladys_4_launch", // Any value that will identify this message.
