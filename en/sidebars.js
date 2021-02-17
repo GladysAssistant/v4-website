@@ -14,6 +14,7 @@ module.exports = {
       "integrations/sonoff",
       "integrations/tasmota",
       "integrations/philips-hue",
+      "integrations/netatmo",
       "integrations/mqtt",
       "integrations/tp-link",
       "integrations/owntracks",
