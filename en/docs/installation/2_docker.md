@@ -19,7 +19,7 @@ Then exit your SSH session, and login again.
 
 ### Start Gladys
 
-If you tried the alpha before the beta, you need to remove the `/var/lib/gladysassistant` folder to ensure all files from the alpha are deleted. Warning: you'll lose any data saved in Gladys alpha.
+Simply start a Gladys container:
 
 ```bash
 docker run -d \
@@ -35,12 +35,11 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:v4-arm
+gladysassistant/gladys:v4
 ```
 
 Note:
 
-- If you are on a x64/x86 architecture, you can change the image to `gladysassistant/gladys:v4-amd64`
 - `-e TZ=Europe/Paris` => Timezone used by container. Feel free to consult [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) on wikipedia if you need to change this value.
 
 ### Accessing Gladys
@@ -56,8 +55,8 @@ docker run -d \
   --name watchtower \
   --restart=always \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower:armhf-latest \
-  --cleanup
+  containrrr/watchtower \
+  --cleanup --include-restarting
 ```
 
 ## On any system
@@ -92,7 +91,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:v4-amd64
+gladysassistant/gladys:v4
 ```
 
 You can edit the open ports / network mode depending of your system.

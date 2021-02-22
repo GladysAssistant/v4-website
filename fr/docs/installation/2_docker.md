@@ -37,12 +37,11 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:v4-arm
+gladysassistant/gladys:v4
 ```
 
 Note:
 
-- Si vous êtes sur une architecture x64/x86, utilisez le tag `v4-amd64`, soit une image `gladysassistant/gladys:v4-amd64`
 - `-e TZ=Europe/Paris` => Pour changer le fuseau horaire du container, vous pouvez modifier cette variable. Vous trouverez toutes les valeurs possibles sur [cette list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## Mise à jour automatique avec Watchtower
@@ -54,8 +53,8 @@ docker run -d \
   --name watchtower \
   --restart=always \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower:armhf-latest \
-  --cleanup
+  containrrr/watchtower \
+  --cleanup --include-restarting
 ```
 
 ### Accéder à Gladys
@@ -94,7 +93,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:v4-amd64
+gladysassistant/gladys:v4
 ```
 
 Vous pouvez adapter dans la commande les ports exposés suivant votre système.
