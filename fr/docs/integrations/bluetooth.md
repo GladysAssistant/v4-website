@@ -59,3 +59,9 @@ La scène doit ressembler à ça :
 ![Scène départ de la maison](/fr/img/docs/configuration/bluetooth/depart-maison-scene.png)
 
 Vous pouvez jouer avec les réglages en fonction de votre maison. Si vous estimez que 10 minutes c'est trop court pour être mis comme absent, vous pouvez rallonger à 20 minutes pour éviter les "faux-départs" :)
+
+## Afficher la présence sur le tableau de bord
+
+Maintenant, si vous voulez afficher la présence des différents utilisateurs à la maison, vous pouvez utiliser la box "Utilisateurs présents":
+
+![Présence dashboard](/fr/img/docs/configuration/bluetooth/presence-dashboard.png)
