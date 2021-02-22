@@ -77,7 +77,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
-gladysassistant/gladys:v4-arm
+gladysassistant/gladys:v4
 ```
 
 ## Auto-Upgrade Gladys with Watchtower
@@ -89,8 +89,8 @@ docker run -d \
   --name watchtower \
   --restart=always \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower:armhf-latest \
-  --cleanup
+  containrrr/watchtower \
+  --cleanup --include-restarting
 ```
 
 ### Accessing Gladys
