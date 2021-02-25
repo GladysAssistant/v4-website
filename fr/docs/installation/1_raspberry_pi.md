@@ -37,3 +37,7 @@ Attendez quelques minutes que le Pi boot et que Gladys démarre.
 Vous pouvez accéder à Gladys en accédant à `http://gladys.local` sur n'importe quel navigateur sur le réseau.
 
 Si cela ne marche pas, vous pouvez y accéder en tapant l'IP de votre Raspberry Pi sur votre navigateur. Pour trouver l'IP de votre Raspberry Pi, vous pouvez utiliser des apps comme ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) sur Android ou [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) sur iOS)
+
+### Pour aller plus loin
+
+Un Raspberry Pi et une carte micro SD, c'est bien, mais pour des installations un peu trop conséquentes, cela reste limité. Et si on voyait ensemble un moyen de booster tout cela en bootant votre Pi sur un disque SSD ? Rendez-vous sur la page [Raspberry Pi Evo - Boot SSD](/fr/docs/installation/raspberry-pi-ssd) 
