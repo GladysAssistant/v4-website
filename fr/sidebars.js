@@ -5,6 +5,7 @@ module.exports = {
       "installation/docker",
       "installation/macos-windows",
       "installation/freebox-delta",
+      "installation/faq",
     ],
     Intégrations: [
       "integrations/openweather",
