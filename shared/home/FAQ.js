@@ -17,8 +17,8 @@ const dataEn = [
     description: (
       <>
         Of course! Gladys is an open-source project, not a creepy organization
-        😄 If you want to unsubscribe, you can do it in one click from the
-        Gladys Gateway. If only all subscriptions were like that...
+        😄 If you want to unsubscribe, you can do it in one click from Gladys
+        Plus. If only all subscriptions were like that...
       </>
     ),
   },
