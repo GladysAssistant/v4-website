@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/notebook-cover.jpg
 
-id: gladys-3-features
+slug: gladys-3-features
 ---
 
 Salut à tous!

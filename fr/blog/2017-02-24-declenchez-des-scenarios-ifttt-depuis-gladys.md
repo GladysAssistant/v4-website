@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/ifttt-cover.jpg
 
-id: declenchez-des-scenarios-ifttt-depuis-gladys
+slug: declenchez-des-scenarios-ifttt-depuis-gladys
 ---
 
 <div class="alert alert--danger" role="alert">

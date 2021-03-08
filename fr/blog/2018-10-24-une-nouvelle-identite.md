@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/new-brand-identity.jpg
 
-id: une-nouvelle-identite-visuelle-pour-gladys
+slug: une-nouvelle-identite-visuelle-pour-gladys
 ---
 
 English article available [here](/en/blog/a-new-brand-identity).

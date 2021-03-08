@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/commencer-gladys-noel.jpg
 
-id: commencer-avec-gladys-pour-noel
+slug: commencer-avec-gladys-pour-noel
 ---
 
 Salut à tous !
@@ -47,7 +47,7 @@ Le Raspberry Pi coûte en lui même 35€. En kit avec alimentation, boitier, et
 
 Mon gros coup de coeur de cette année, c'est le kit Xiaomi Home, et ce pour deux raisons. Déjà, il n'est pas cher (déjà un très bonne argument), mais en plus de ça leurs périphériques sont de très bonne factures. Au niveau de la techno, Xiaomi a choisi le Zigbee, et c'est selon moi un très bon choix. C'est une techno robuste (aussi utilisée sur les Philips Hue par exemple), qui permet aux devices de consommer très peu et d'avoir une bonne portée. Pour relier ces périphériques Zigbee à internet, vous devez acheter un gateway Xiaomi qui fait le pont entre votre box en Wi-Fi et ces devices Zigbee.
 
-![Xiaomi Home](/fr/img/presentation/xiaomi-home.jpg)
+![Xiaomi Home](../static/img/presentation/xiaomi-home.jpg)
 
 En bref, ça marche super bien! Le seul truc que je trouve "marrant" avec ce gateway, c'est qu'à chaque fois que vous le mettez à jour/que vous le configurez, il se met à parler en chinois dès que la mise à jour est terminée. Mes colocs se demandent encore pourquoi derrière notre meuble télé un boitier parle parfois en chinois 😁
 
@@ -76,7 +76,7 @@ Une des interactions que je trouve la plus whaou dans Gladys, ça reste la lumi�
 
 Surtout en combinant ces lampes avec le porte clé Bluetooth de l'exemple précédent, vous pouvez faire des scénarios plutôt sympa.
 
-![Gladys Romantic](/fr/img/articles/compatibilite-xiaomi-home-gladys/gladys_romantic.gif)
+![Gladys Romantic](../static/img/articles/compatibilite-xiaomi-home-gladys/gladys_romantic.gif)
 
 Pour les lumières, deux options, la première c'est les Philips Hue: des lampes assez haut de gamme dont la lumière peut varier en intensité et en couleur. C'est ce que j'ai chez moi et je n'en suis pas déçu !
 
@@ -89,7 +89,7 @@ L'autre option, c'est les ampoules Milight, des ampoules chinoises plus abordabl
 
 Pour gérer la musique, deux options, soit vous optez pour le module Gladys MP3 Player qui vous permet de jouer la musique directement sur le Raspberry Pi (que vous branchez ensuite en jack/HDMI à vos enceintes).
 
-![Sonos](/fr/img/articles/gladys-sonos/gladys-sonos.jpg)
+![Sonos](../static/img/articles/gladys-sonos/gladys-sonos.jpg)
 
 L'autre option, c'est les enceintes Sonos qui fournissent un son puissant (très puissant même, demandez à mes voisins 😁), et surtout de qualité. L'avantage des Sonos c'est quelles se connectent en Wi-Fi ou Ethernet à votre box, et ensuite elles sont contrôlable par n'importe qui dans la maison, dont Gladys. Leur prix a pas mal baissé depuis 2 ans en plus :)
 

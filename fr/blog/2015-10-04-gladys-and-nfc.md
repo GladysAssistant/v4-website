@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/nfc-cover.jpg
 
-id: gladys-and-nfc
+slug: gladys-and-nfc
 ---
 
 <div class="alert alert--danger" role="alert">

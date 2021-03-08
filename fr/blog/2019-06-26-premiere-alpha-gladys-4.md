@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-4-alpha.jpg
 
-id: premiere-alpha-gladys-4
+slug: premiere-alpha-gladys-4
 ---
 
 [English article here](/en/blog/first-alpha-gladys-4).
@@ -25,7 +25,7 @@ Et aujourd'hui, c'est le grand jour : c'est la sortie de la première alpha de G
 
 <!--truncate-->
 
-![Gladys 4 devices](/fr/img/articles/gladys-4-alpha/gladys-4-mockup-devices.jpg)
+![Gladys 4 devices](../static/img/articles/gladys-4-alpha/gladys-4-mockup-devices.jpg)
 
 ## Les nouveautés
 
@@ -58,31 +58,31 @@ Bon, assez parlé, place à la démo!
 
 Le dashboard
 
-![Gladys 4 Dashboard](/fr/img/articles/gladys-4-alpha/dashboard.png)
+![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/dashboard.png)
 
 La vue "Chat" pour discuter avec Gladys:
 
-![Gladys 4 Dashboard](/fr/img/articles/gladys-4-alpha/chat.png)
+![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/chat.png)
 
 La page de configuration du Z-Wave, désormais intégré en natif dans Gladys:
 
-![Gladys 4 Dashboard](/fr/img/articles/gladys-4-alpha/zwave.png)
+![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/zwave.png)
 
 La page de Gladys Plus, le nouveau nom du "Gladys Community package" de Gladys! C'est le plan payant de Gladys, qui permet un accès chiffré de bout en bout de partout dans le monde, des backups quotidiennes, et bien plus.
 
-![Gladys 4 Dashboard](/fr/img/articles/gladys-4-alpha/gladys-plus.png)
+![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/gladys-plus.png)
 
 Les fameuses backups quotidiennes:
 
-![Gladys 4 Dashboard](/fr/img/articles/gladys-4-alpha/backups.png)
+![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/backups.png)
 
 Enfin, la vue Système:
 
-![Gladys 4 Dashboard](/fr/img/articles/gladys-4-alpha/system.png)
+![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/system.png)
 
 Une fonctionnalité que j'adore, c'est la possibilité d'envoyer par Telegram à Gladys un simple message "Montre moi la caméra de la cuisine", et de recevoir directement dans Telegram la vue de la caméra :
 
-![Gladys 4 Telegram](/fr/img/articles/gladys-4-alpha/telegram-image.jpg)
+![Gladys 4 Telegram](../static/img/articles/gladys-4-alpha/telegram-image.jpg)
 
 ### Les détails d'UI qui ont leur importance
 

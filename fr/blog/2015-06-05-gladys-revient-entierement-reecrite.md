@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/gladyscomeback.jpg
 
-id: gladys-revient-entierement-reecrite
+slug: gladys-revient-entierement-reecrite
 ---
 
 Un an après la sortie de la première version, Gladys revient dans une nouvelle version **entièrement réécrite** en 100% Node.js.

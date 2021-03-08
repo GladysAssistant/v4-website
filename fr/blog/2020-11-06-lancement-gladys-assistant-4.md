@@ -6,14 +6,14 @@ author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
 image: /img/presentation/gladys-4-launch.jpg
-id: lancement-gladys-assistant-4
+slug: lancement-gladys-assistant-4
 ---
 
 Salut à tous,
 
 C'est un grand jour, après presque 2 ans de travail de la part de toute la communauté, Gladys Assistant 4 est disponible, en téléchargement gratuit comme d'habitude !
 
-![Gladys 4 devices](/fr/img/articles/lancement-gladys-4/gladys-4-mockup-devices.jpg)
+![Gladys 4 devices](../static/img/articles/lancement-gladys-4/gladys-4-mockup-devices.jpg)
 
 Vous pouvez vous lancer dans l'aventure en suivant les tutoriels :
 
@@ -76,7 +76,7 @@ Depuis plusieurs mois, la communauté Gladys Assistant travaille dur afin de por
 
 Aujourd'hui, des centaines de périphériques domotiques sont déjà disponibles dans Gladys Assistant 4.
 
-![Gladys Assistant 4 Intégrations](/fr/img/articles/lancement-gladys-4/integrations.png)
+![Gladys Assistant 4 Intégrations](../static/img/articles/lancement-gladys-4/integrations.png)
 
 A ce jour, Gladys Assistant supporte les périphériques :
 
@@ -91,7 +91,7 @@ De nombreuses intégrations sont en cours de développements et rejoindrons cett
 
 ## Une gestion des caméras native
 
-![Gladys Assistant 4 gestion des caméras](/fr/img/articles/lancement-gladys-4/cameras-gladys-4.jpg)
+![Gladys Assistant 4 gestion des caméras](../static/img/articles/lancement-gladys-4/cameras-gladys-4.jpg)
 
 La gestion des caméras a été intégrée nativement dans Gladys Assistant 4, via les protocoles RTSP, HTTP et USB.
 
@@ -103,7 +103,7 @@ Les flux vidéo sont compressés afin d’avoir des performances maximales d’a
 
 Gladys Assistant, c’est aussi un assistant avec qui l’utilisateur peut discuter.
 
-![Gladys Assistant 4 discussions](/fr/img/articles/lancement-gladys-4/discuss-gladys.png)
+![Gladys Assistant 4 discussions](../static/img/articles/lancement-gladys-4/discuss-gladys.png)
 
 Gladys Assistant utilise les dernières avancées en terme de traitement automatique du langage afin de comprendre les demandes de l’utilisateur (Nous utilisons [NLP.js](https://github.com/axa-group/nlp.js)).
 
@@ -131,7 +131,7 @@ En savoir plus sur [la documentation MQTT](/fr/docs/integrations/mqtt/)
 
 Gladys Assistant 4 permet à l’utilisateur d’écrire des scènes complexes. Il est possible d’écrire des suites d’actions autant en série qu’en parallèle, avec des conditions.
 
-![Gladys Assistant 4 scènes](/fr/img/articles/lancement-gladys-4/scenes.png)
+![Gladys Assistant 4 scènes](../static/img/articles/lancement-gladys-4/scenes.png)
 
 Une scène “Cinéma” pour configurer votre éclairage salon ?
 

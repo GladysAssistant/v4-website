@@ -17,8 +17,8 @@ C'est possible avec Gladys :)
 
 Si vous voulez allumer des lumières dans une scène, vous pouvez ajouter à votre scène une action "allumer la lumière" et sélectionner les lumières que vous voulez allumer.
 
-![Allumer la lumière](/fr/img/docs/scenes/turn-on-off-the-lights-action/turn-on.png)
+![Allumer la lumière](../../static/img/docs/scenes/turn-on-off-the-lights-action/turn-on.png)
 
 Pour éteindre les lumières dans une scène, vous pouvez ajouter à votre scène une action "éteindre la lumière" et sélectionnez les lumières que vous voulez éteindre.
 
-![Eteindre la lumière](/fr/img/docs/scenes/turn-on-off-the-lights-action/turn-off.png)
+![Eteindre la lumière](../../static/img/docs/scenes/turn-on-off-the-lights-action/turn-off.png)

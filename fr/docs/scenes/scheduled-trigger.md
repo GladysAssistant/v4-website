@@ -24,7 +24,7 @@ Ce déclencheur vous permet de programmer l'exécution d'une scène, tous les mo
 
 C'est utile si vous voulez par exemple exécuter une scène tous les 1er du mois.
 
-![Scène programmée tous les mois](/fr/img/docs/scenes/scheduled-trigger/scheduled-trigger-every-month.jpg)
+![Scène programmée tous les mois](../../static/img/docs/scenes/scheduled-trigger/scheduled-trigger-every-month.jpg)
 
 ## Toutes les semaines
 
@@ -34,7 +34,7 @@ C'est probablement le déclencheur le plus utilisé, car il permet de mettre en 
 
 Si vous voulez vous réveiller avec une scène personnalisées, tous les jours de la semaine (lundi-vendredi) à 7h, voilà à quoi cela ressemblera :
 
-![Scène programmée toutes les semainse](/fr/img/docs/scenes/scheduled-trigger/scheduled-trigger-every-week.jpg)
+![Scène programmée toutes les semainse](../../static/img/docs/scenes/scheduled-trigger/scheduled-trigger-every-week.jpg)
 
 ## Tous les jours
 
@@ -42,7 +42,7 @@ Ce déclencheur vous permet de déclencher une scène tous les jours à un horai
 
 Utile pour toutes les tâches récurrentes qui interviennent tous les jours de la semaine.
 
-![Scène programmée tous les jours](/fr/img/docs/scenes/scheduled-trigger/scheduled-trigger-every-day.jpg)
+![Scène programmée tous les jours](../../static/img/docs/scenes/scheduled-trigger/scheduled-trigger-every-day.jpg)
 
 ## Intervalle
 
@@ -50,7 +50,7 @@ Ce déclencheur est particulier. Il vous permet de programmer une scène, non pa
 
 Exemple :
 
-![Scène programmée à intervalle](/fr/img/docs/scenes/scheduled-trigger/scheduled-trigger-interval.jpg)
+![Scène programmée à intervalle](../../static/img/docs/scenes/scheduled-trigger/scheduled-trigger-interval.jpg)
 
 ## A une date précise
 
@@ -58,4 +58,4 @@ Ce déclencheur vous permet de programmer votre scène à un jour précis et à 
 
 Exemple : le 4 juin 2020 à 14h00
 
-![Scène programmée tous les jours](/fr/img/docs/scenes/scheduled-trigger/scheduled-trigger-specific-day.jpg)
+![Scène programmée tous les jours](../../static/img/docs/scenes/scheduled-trigger/scheduled-trigger-specific-day.jpg)

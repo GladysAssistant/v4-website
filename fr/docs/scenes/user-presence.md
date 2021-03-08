@@ -6,7 +6,7 @@ sidebar_label: Présence utilisateur
 
 Sur le tableau de bord, Gladys vous permet d'afficher quels utilisateurs sont présents/absents de la maison.
 
-![Tableau de bord présence utilisateur](/fr/img/docs/scenes/user-presence/dashboard-box.jpg)
+![Tableau de bord présence utilisateur](../../static/img/docs/scenes/user-presence/dashboard-box.jpg)
 
 Pour définir la présence/absence d'un utilisateur, vous pouvez le faire dans les scènes.
 
@@ -28,7 +28,7 @@ Avec cette information, Gladys pourra :
 
 Pour cela, dans une scène, vous pouvez créer une action "utilisateur vu à la maison" :
 
-![Utilisateur vu à la maison](/fr/img/docs/scenes/user-presence/user-seen-at-home.jpg)
+![Utilisateur vu à la maison](../../static/img/docs/scenes/user-presence/user-seen-at-home.jpg)
 
 ## Définir l'utilisateur comme "absent de la maison" dans une scène
 
@@ -41,7 +41,7 @@ Avec cette information, Gladys pourra:
 
 Pour cela, dans une scène, vous pouvez créer une action "utilisateur parti de la maison" :
 
-![Utilisateur parti de la maison](/fr/img/docs/scenes/user-presence/user-left-home.jpg)
+![Utilisateur parti de la maison](../../static/img/docs/scenes/user-presence/user-left-home.jpg)
 
 ## Remarque sur l'utilisation des Nuts
 

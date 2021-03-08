@@ -16,7 +16,7 @@ Dans les scènes, vous pouvez créer une action "Faire une requête HTTP", qui v
 
 Vous pouvez ajouter des `headers` si vous en avez besoin pour l'authentification par exemple.
 
-![Action requête HTTP dans les scènes Gladys](/fr/img/docs/scenes/http-request/gladys-scene-http-request-box.jpg)
+![Action requête HTTP dans les scènes Gladys](../../static/img/docs/scenes/http-request/gladys-scene-http-request-box.jpg)
 
 ## Exemple concret: Déclencher une action IFTTT depuis une scène Gladys Assistant
 
@@ -36,7 +36,7 @@ Je vous laisse suivre le tutoriel d'IFTTT pour configure les Maker Webhook.
 
 Normalement, après avoir configuré les Webhooks, vous devriez arriver sur une page comme cela:
 
-![IFTTT Maker Webhook](/fr/img/docs/scenes/http-request/iftt-configure-maker-webhook.jpg)
+![IFTTT Maker Webhook](../../static/img/docs/scenes/http-request/iftt-configure-maker-webhook.jpg)
 
 Remplacez `{event}` par le nom de votre event, dans mon exemple "left_home", puis copiez-collez l'URL.
 
@@ -50,23 +50,23 @@ Sur la page "Explore" d'IFTTT, cherchez le service "Google Sheet", et connectez 
 
 Recherchez le service "Webhooks" que vous avez configuré juste avant.
 
-![Cherchez Applet](/fr/img/docs/scenes/http-request/ifttt-applet-1.jpg)
+![Cherchez Applet](../../static/img/docs/scenes/http-request/ifttt-applet-1.jpg)
 
 Sélectionnez "Receive a web request":
 
-![Receive a webhook request](/fr/img/docs/scenes/http-request/ifttt-applet-2.jpg)
+![Receive a webhook request](../../static/img/docs/scenes/http-request/ifttt-applet-2.jpg)
 
 Entrez le nom de l'évènement que vous avez entré à l'étape précédente, ici "left_home":
 
-![Entrez le nom de l'évènement](/fr/img/docs/scenes/http-request/ifttt-applet-3.jpg)
+![Entrez le nom de l'évènement](../../static/img/docs/scenes/http-request/ifttt-applet-3.jpg)
 
 Sélectionnez où vous voulez qu'IFTTT enregistre la donnée (dans quelle spreadsheet sur votre Google Drive)
 
-![Sélectionnez le dossier Google drive ou enregistrer les données](/fr/img/docs/scenes/http-request/ifttt-applet-4.jpg)
+![Sélectionnez le dossier Google drive ou enregistrer les données](../../static/img/docs/scenes/http-request/ifttt-applet-4.jpg)
 
 Cliquez sur "Save".
 
-![Finir l'applet IFTTT](/fr/img/docs/scenes/http-request/ifttt-applet-5.jpg)
+![Finir l'applet IFTTT](../../static/img/docs/scenes/http-request/ifttt-applet-5.jpg)
 
 Puis cliquez sur Finish.
 
@@ -76,7 +76,7 @@ Créez une nouvelle scène dans Gladys, puis ajoutez lui une action "faire une r
 
 Sélectionnez "méthode: POST", puis dans URL entrez l'URL du webhook IFTTT que vous avez configuré précédemment.
 
-![Créer une action requête HTTP](/fr/img/docs/scenes/http-request/gladys-scene-http-request-box.jpg)
+![Créer une action requête HTTP](../../static/img/docs/scenes/http-request/gladys-scene-http-request-box.jpg)
 
 Sauvegardez la scène, puis lancez-là.
 
@@ -84,7 +84,7 @@ Si vous vous rendez sur Google Drive, vous devriez voir un dossier "IFTTT" à la
 
 Dedans, vous trouverez un spreadsheet avec une ligne qui a enregistré le moment où vous êtes parti de la maison:
 
-![Résultat dans Google Sheet](/fr/img/docs/scenes/http-request/google-sheet-result.jpg)
+![Résultat dans Google Sheet](../../static/img/docs/scenes/http-request/google-sheet-result.jpg)
 
 ## Conclusion
 

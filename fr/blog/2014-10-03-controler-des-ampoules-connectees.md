@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/milightlow.jpg
 
-id: controler-des-ampoules-connectees
+slug: controler-des-ampoules-connectees
 ---
 
 <div class="alert alert--danger" role="alert">

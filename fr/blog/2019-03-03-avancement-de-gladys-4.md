@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/avancement-gladys-4.jpg
 
-id: etat-avancement-gladys-4
+slug: etat-avancement-gladys-4
 ---
 
 Salut à tous,
@@ -61,7 +61,7 @@ Gladys 4 est composé de 2 composants principaux:
 
 Je vous remets le schéma que j'avais publié dans le manifeste technique:
 
-![Architecture Gladys 4](/fr/img/articles/avancement-gladys-4/gladys-4-overall-architecture.png)
+![Architecture Gladys 4](../static/img/articles/avancement-gladys-4/gladys-4-overall-architecture.png)
 
 ## La modélisation
 
@@ -71,7 +71,7 @@ Partir sur une mauvaise modélisation, c'est se garantir des heures de prises de
 
 Voilà la modélisation de la base de données de Gladys 4 pour l'instant:
 
-![Modélisation base de donnée Gladys 4](/fr/img/articles/avancement-gladys-4/gladys-v4-data-model.png)
+![Modélisation base de donnée Gladys 4](../static/img/articles/avancement-gladys-4/gladys-v4-data-model.png)
 
 Et pour ceux qui préfèrent voir ça en vrai, voilà une base de donnée SQLite de Gladys 4: [gladys-4-development.db](/fr/files/gladys-4-development.db).
 
@@ -95,7 +95,7 @@ Bon, maintenant la question que tout le monde se pose: elle sort quand cette ver
 
 Dans les actions, il est possible d'exécuter des actions en parallèle ou en séquentiel, ce qui permet d'ajouter des délais entre les actions par exemple.
 
-![Modélisation base de donnée Gladys 4](/fr/img/articles/avancement-gladys-4/actions-example.png" alt="‹ />
+![Modélisation base de donnée Gladys 4](../static/img/articles/avancement-gladys-4/actions-example.png" alt="‹ />
 
 Dans les déclencheurs, il est possible de faire du ET/OU entre les conditions.
 
@@ -105,11 +105,11 @@ Ce moteur de scénario est surtout **très performant**. Au dernier benchmark, i
 
 ✅ La raison à tout cela, c'est que j'ai implémenté un gestionnaire d'états dans Gladys 4. Je considère qu'en domotique, toutes les entités avec lesquels on travaille sont des [automates finis](https://fr.wikipedia.org/wiki/Automate_fini). Prenons l'exemple du sommeil, le sommeil d'un utilisateur peut-être modélisé de la façon suivante :
 
-![Modélisation UML sommeil utilisateur](/fr/img/articles/avancement-gladys-4/gladys-v4-state-user-sleep-state.png)
+![Modélisation UML sommeil utilisateur](../static/img/articles/avancement-gladys-4/gladys-v4-state-user-sleep-state.png)
 
 Un autre exemple, l'alarme d'une maison :
 
-![Modélisation UML alarme Glads 4](/fr/img/articles/avancement-gladys-4/gladys-v4-state-home-alarm-state.png)
+![Modélisation UML alarme Glads 4](../static/img/articles/avancement-gladys-4/gladys-v4-state-home-alarm-state.png)
 
 Dans Gladys 4, chaque entité a donc un ensemble d'états, et de transitions entre chaque état: des évènements. Chaque évènement peut-être déclencheur d'un scénario.
 
@@ -125,7 +125,7 @@ Dans Gladys 4, chaque entité a donc un ensemble d'états, et de transitions ent
 
 ✅ La vue de login de Gladys (c'est la même que la [page de login du Gladys Gateway](https://plus.gladysassistant.com/login) )
 
-![Page de login de Gladys 4](/fr/img/articles/avancement-gladys-4/login-gladys-4.jpg)
+![Page de login de Gladys 4](../static/img/articles/avancement-gladys-4/login-gladys-4.jpg)
 
 ### Ce qu'il reste à faire
 

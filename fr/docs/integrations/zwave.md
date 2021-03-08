@@ -20,7 +20,7 @@ Branchez en USB votre clé USB au Raspberry Pi (ou autre machine) faisant tourne
 
 Rendez-vous dans `Intégrations -> Z-Wave -> Paramètres`: vous devriez pouvoir sélectionner le port USB sur lequel est connectée votre clé USB Z-Wave.
 
-![Z-Wave ajouter clé USB](/fr/img/docs/configuration/zwave/zwave-key.png)
+![Z-Wave ajouter clé USB](../../static/img/docs/configuration/zwave/zwave-key.png)
 
 Cliquez sur connecter.
 
@@ -34,4 +34,4 @@ Vous retrouverez dans l'onglet configuration les appareils Z-Wave que Gladys Ass
 
 Une fois les appareils ajoutés, vous les retrouverez dans l'onglet "Appareils" :
 
-![Z-Wave liste des appareils](/fr/img/docs/configuration/zwave/zwave-device-added.png)
+![Z-Wave liste des appareils](../../static/img/docs/configuration/zwave/zwave-device-added.png)

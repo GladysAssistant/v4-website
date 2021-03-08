@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/express-admin-icone.jpg
 
-id: equivalent-phpmyadmin-nodejs
+slug: equivalent-phpmyadmin-nodejs
 ---
 
 Pour administrer sa base de donnée MySQL, on utilise la plupart du temps phpmyadmin qu'on a souvent sur sa machine ou son serveur. Cependant, avec l'archive préinstallée, ni Apache ni PHP n'est installé ( inutile car Gladys est écrite en 100% Node.js ).

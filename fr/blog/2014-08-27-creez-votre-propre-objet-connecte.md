@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/connectedobjectlow.jpg
 
-id: creez-votre-propre-objet-connecte
+slug: creez-votre-propre-objet-connecte
 ---
 
 On parle de plus en plus des objets connectés, mais cela reste encore des gadgets cher, et pas très "bidouille"... Nous allons ici créer un objet connecté très simple, composé d'un accéléromètre et d'un émetteur 433Mhz (piloté par un arduino), qui va être capable d'envoyer son orientation ( Si l'objet est dans le bon sens, retourné, sur le côté, si l'objet est à l'envers ), et ainsi déclencher des actions en fonction de son sens. On peut imaginer un cube, à qui chaque face est associé une action ( passer la maison en mode nuit sur une face, ouvrir tous les stores sur une autre, lancer un scénario, etc... ) Dès que le cube serait tourné, un signal serait envoyé au Raspberry qui interpréterait l'action et déclencherait un scénario.  

@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-announcement.jpg
 
-id: grande-nouvelle-gladys
+slug: grande-nouvelle-gladys
 ---
 
 Salut à tous,
@@ -56,7 +56,7 @@ C’est très frustrant actuellement, car j’ai beaucoup de projets sur Gladys 
 
 Voilà le genre de semaine que j’ai:
 
-![Calendrier PG Gladys](/fr/img/external/screenshot-calendar-pg.jpg)
+![Calendrier PG Gladys](../static/img/external/screenshot-calendar-pg.jpg)
 
 Comme vous pouvez le voir, c’est plutôt plein 😁
 
@@ -92,7 +92,7 @@ Aujourd’hui, Gladys c’est plus de **32 000 téléchargements**.
 
 C’est un site qui totalise plus de 1.8 millions de vues !
 
-![Gladys traffic site internet](/fr/img/external/gladys-traffic-growth.jpg)
+![Gladys traffic site internet](../static/img/external/gladys-traffic-growth.jpg)
 
 Plus récemment, j’ai lancé une [chaine YouTube](https://www.youtube.com/channel/UCImYJQrVc8akWzm57KsZQ2A), et elle va bientôt passer les 100 000 vues ! Je compte d’ailleurs publier plus de contenu dessus dans les mois à venir 🙂
 
@@ -119,7 +119,7 @@ L’objectif pour moi était de voir si le projet pouvait générer assez de rev
 
 Et le jour du lancement, voilà ce qui c’est passé….
 
-![Gladys revenue](/fr/img/external/revenue-corrected.png)
+![Gladys revenue](../static/img/external/revenue-corrected.png)
 
 WOW ! 😱😱
 

@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/site-gladys-open-source-cover.jpg
 
-id: site-open-source-et-lancement-gladys-starter-pack
+slug: site-open-source-et-lancement-gladys-starter-pack
 ---
 
 Salut à tous!
@@ -28,7 +28,7 @@ C'est vrai que jusque là, malgré les explications, le forum, les scripts d'ins
 
 Alors j'ai fait un sondage en début d'année pour savoir ce que vous en pensiez. Le résultat à la question "Es-tu intéressé par des tutoriels vidéos?" est sans appel :
 
-![Résultat sondage tutoriels vidéos](/fr/img/articles/site-open-source-et-lancement-gladys-starter-pack/sondage.png)
+![Résultat sondage tutoriels vidéos](../static/img/articles/site-open-source-et-lancement-gladys-starter-pack/sondage.png)
 
 Une question que certains m'ont posée a été : Pourquoi rendre ce pack payant ?
 
@@ -58,7 +58,7 @@ Après les pré-commandes, le pack passera à son prix final de 49€ !
 
 Pour vous donner un état d'avancement du pack, **toutes les vidéos sont prêtes** (filmées + montées), il me reste juste du fignolage sur l'ebook. C'est donc en très bonne voie, et tout arrivera en fin d'été, début Septembre au maximum.
 
-![Gladys starter pack](/fr/img/articles/site-open-source-et-lancement-gladys-starter-pack/starter-pack.png)
+![Gladys starter pack](../static/img/articles/site-open-source-et-lancement-gladys-starter-pack/starter-pack.png)
 
 ## Migration du site de PHP à Jekyll et disponible en open-source
 

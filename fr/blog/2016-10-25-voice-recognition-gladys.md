@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-voice-cover.jpg
 
-id: voice-recognition-gladys
+slug: voice-recognition-gladys
 ---
 
 <div class="alert alert--danger" role="alert">

@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/bilan-2015-cover.jpg
 
-id: bilan-2015-et-projets-pour-2016
+slug: bilan-2015-et-projets-pour-2016
 ---
 
 Salut à tous!

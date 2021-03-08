@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-3-6-cover-2.jpg
 
-id: bilan-mois-mai-pour-le-projet-gladys
+slug: bilan-mois-mai-pour-le-projet-gladys
 ---
 
 Salut à tous,

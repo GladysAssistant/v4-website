@@ -16,11 +16,11 @@ Rendez-vous sur le tableau de bord de Gladys, et cliquez sur "Editer".
 
 Sélectionnez la box "Appareils de la pièce", et cliquez sur le bouton +.
 
-![Ajouter la box appareil de la pièce à Gladys](/fr/img/docs/dashboard/devices-in-room/select-box.png)
+![Ajouter la box appareil de la pièce à Gladys](../../static/img/docs/dashboard/devices-in-room/select-box.png)
 
 Ensuite, sélectionnez la pièce que vous voulez afficher.
 
-![Sélectionnez la pièce à afficher](/fr/img/docs/dashboard/devices-in-room/select-room.png)
+![Sélectionnez la pièce à afficher](../../static/img/docs/dashboard/devices-in-room/select-room.png)
 
 Cliquez sur "Sauvegarder".
 

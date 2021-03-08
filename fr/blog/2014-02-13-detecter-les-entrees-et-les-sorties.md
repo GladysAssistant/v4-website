@@ -1,5 +1,5 @@
 ---
-id: detecter-les-entrees-et-les-sorties
+slug: detecter-les-entrees-et-les-sorties
 title: Un détecteur de mouvements sur les ports GPIOs du Raspberry Pi
 description: Afin de diffuser des alertes uniquement quand le propriétaire est là, il est utile de savoir si l’appartement est vide ou occupé ! Nous apprendrons ici à détecter si la pièce est occupé.
 image: /img/presentation/motionsensorlow.jpg
@@ -17,7 +17,7 @@ L'objectif de Gladys est de nous aider au quotidien en diffusant des alertes ( n
 Mais il est inutile de diffuser ces alertes si le propriétaire n'est pas là et que l'appartement est vide !
 Dans ce tuto nous allons voir comment savoir si l'appartement est occupé grâce à un détecteur de mouvement.Le capteur de mouvement utilisé dans ce tutoriel peut être acheté [ici](http://amzn.to/1IkbDJl) pour environ 3-4\$.
 
-![détecteur mouvement](/fr/img/articles/detecter-les-entrees-et-les-sorties/sku_139624_1.jpg)
+![détecteur mouvement](../static/img/articles/detecter-les-entrees-et-les-sorties/sku_139624_1.jpg)
 
 <!--truncate-->
 
@@ -25,7 +25,7 @@ Dans ce tuto nous allons voir comment savoir si l'appartement est occupé grâce
 
 Le montage est très simple, il suffit de connecter les ports du détecteur directement au GPIOs du Raspberry Pi en suivant le schéma suivant :
 
-![Schéma montage GPIO détecteur mouvement](/fr/img/articles/detecter-les-entrees-et-les-sorties/schema-pir.jpg)
+![Schéma montage GPIO détecteur mouvement](../static/img/articles/detecter-les-entrees-et-les-sorties/schema-pir.jpg)
 
 Vous remarquerez deux vis oranges sur le capteur :
 

@@ -1,5 +1,5 @@
 ---
-id: faire-parler-le-raspberry
+slug: faire-parler-le-raspberry
 title: Faire parler le Raspberry Pi
 description: Nous voila enfin dans le vif du sujet, donnons la voix à notre Rasp !
 image: /img/presentation/robotspeakinglow.jpg

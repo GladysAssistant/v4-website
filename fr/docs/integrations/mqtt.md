@@ -23,11 +23,11 @@ Le tutoriel qui va suivre implique que vous ayez installé Gladys Assistant 4 av
 
 Première étape, rendez-vous dans Gladys, rubrique `Intégrations`, et ouvrez l'intégration MQTT:
 
-![Configurer un broker MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/configure-mqtt-broker-1.jpg)
+![Configurer un broker MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-1.jpg)
 
 Ensuite, rendez-vous dans l'onglet "Configuration" afin de configurer votre broker MQTT.
 
-![Configurer un broker MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/configure-mqtt-broker-2.jpg)
+![Configurer un broker MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-2.jpg)
 
 Il y a 2 possibilités à cette étape:
 
@@ -40,13 +40,13 @@ Vous pouvez donc lancer la création du broker MQTT automatiquement par Gladys.
 
 Suivant votre connexion internet, et la puissance de votre machine, cela peut prendre en quelques secondes et quelques minutes.
 
-![Configurer un broker MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/configure-mqtt-broker-3.jpg)
+![Configurer un broker MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-3.jpg)
 
 Vous pouvez cliquer sur le petit oeil afin de voir le mot de passe que Gladys a généré pour votre broker MQTT.
 
 Je vous recommande de noter ce mot de passe quelque part.
 
-![Configurer un broker MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/configure-mqtt-broker-4.jpg)
+![Configurer un broker MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-4.jpg)
 
 Nous avons donc un broker MQTT qui tourne, et qui est connecté à Gladys !
 
@@ -56,7 +56,7 @@ Dans ce tutoriel, nous allons prendre l'exemple d'un capteur de température pla
 
 Tout d'abord, rendez-vous dans l'onglet "Appareils" de l'intégration MQTT, puis cliquez sur le bouton "Nouveau +" :
 
-![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-1.jpg)
+![Déclarer un péripérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-1.jpg)
 
 Remplissez le formulaire avec les informations de votre périphérique.
 
@@ -66,7 +66,7 @@ Remplissons le par exemple avec les informations suivantes:
 - ID externe: `mqtt:cuisine:capteur-temperature`. Celui-ci ne doit pas avoir d'espace et doit commencer par `mqtt:`. Je vous recommande de garder une convention à travers votre installation Gladys, comme par exemple `mqtt:piece_de_la_maison:nom_du_peripherique`.
 - Pièce: "Cuisine".
 
-![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-2.jpg)
+![Déclarer un péripérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-2.jpg)
 
 Ensuite, nous allons ajouter une fonctionnalité à ce périphérique.
 
@@ -84,11 +84,11 @@ Vous pouvez ensuite remplir le formulaire avec les informations suivantes:
 - Est-ce un capteur?: Cette case sert à indiquer si votre périphérique fonctionne dans le sens "Périphérique -> Gladys" ou "Gladys -> Périphérique". Si vous mettez "Oui", alors ce périphérique est en "lecture seule", il ne fait que renvoyer des valeurs à Gladys. C'est le cas de notre capteur de température. Si vous mettez "non", ce périphérique est un actionneur qui peut être controlé par Gladys.
 - Topic MQTT: C'est le topic dans lequel Gladys va "écouter" les nouvelles valeurs pour ce périphérique. Je vous conseille de le copier/coller quelque par pour plus tard.
 
-![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-3.jpg)
+![Déclarer un péripérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-3.jpg)
 
 Cliquez sur "Enregistrer", vous devriez sur un écran comme celui-ci:
 
-![Déclarer un péripérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/create-mqtt-device-4.jpg)
+![Déclarer un péripérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-4.jpg)
 
 ## Tester le périphérique MQTT
 
@@ -104,14 +104,14 @@ Remplissez le formulaire avec les informations suivantes:
 - Broker Adress: L'adresse IP de votre Rasperry Pi sur le réseau. Vous devez être sur le même réseau que votre Raspberry Pi pour ce tutoriel.
 - Broker Port: 1883
 
-![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-1.jpg)
+![Tester le périphérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-1.jpg)
 
 Ensuite, rendez-vous dans l'onglet "User Credentials", puis remplissez avec les informations de connnexion.
 
 - User Name: `gladys`
 - Password: Le mot de passe que Gladys a généré dans la première partie de ce tutoriel. Si vous n'aviez pas gardé le mot de passe, vous pouvez toujours le retrouver en retournant dans la configuration du module MQTT et en cliquant sur le petit oeil sur le champs mot de passe.
 
-![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-2.jpg)
+![Tester le périphérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-2.jpg)
 
 Enregistrer la configuration en cliquant sur "Ok", puis cliquez sur "Connect" en haut de l'écran pour vous connecter au broker MQTT.
 
@@ -119,13 +119,13 @@ Dans la bar en haut, mettez le topic MQTT que vous aviez copié-collé lors de l
 
 Dans le champs du milieu, entrez une température, dans mon cas "21.2", puis cliquez sur "Publish":
 
-![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-3.jpg)
+![Tester le périphérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-3.jpg)
 
 Sur le dashboard, ajoutez une nouvelle box "Température de la pièce".
 
 Vous devriez voir votre périphérique avec la température que nous venons d'envoyer:
 
-![Tester le périphérique MQTT dans Gladys Assistant](/fr/img/docs/configuration/mqtt/send-test-message-mqtt-4.jpg)
+![Tester le périphérique MQTT dans Gladys Assistant](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-4.jpg)
 
 Bravo !
 

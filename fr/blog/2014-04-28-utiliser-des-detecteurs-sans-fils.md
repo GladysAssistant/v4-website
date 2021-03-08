@@ -6,7 +6,7 @@ author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
-id: utiliser-des-detecteurs-sans-fils
+slug: utiliser-des-detecteurs-sans-fils
 ---
 
 <div class="alert alert--danger" role="alert">

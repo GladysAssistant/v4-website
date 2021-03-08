@@ -18,7 +18,7 @@ Rendez-vous dans l'intégration "Bluetooth", onglet "Découverte". Scannez les a
 
 Cliquez sur "Connecter à Gladys":
 
-![Configurer appareil bluetooth](/fr/img/docs/configuration/bluetooth/configurer-appareil-bluetooth.png)
+![Configurer appareil bluetooth](../../static/img/docs/configuration/bluetooth/configurer-appareil-bluetooth.png)
 
 Puis activez bien l'option "Utiliser cet appareil comme un détecteur de présence".
 
@@ -26,11 +26,11 @@ Donnez un nom unique à cet appareil, et ajoutez le à Gladys.
 
 Vous devriez arriver sur cet écran:
 
-![Configurer appareil bluetooth](/fr/img/docs/configuration/bluetooth/liste-bluetooth.png)
+![Configurer appareil bluetooth](../../static/img/docs/configuration/bluetooth/liste-bluetooth.png)
 
 Maintenant, rendez-vous dans l'écran "Scanner de présence", et vérifiez que votre configuration ressemble bien à ça:
 
-![Configurer appareil bluetooth](/fr/img/docs/configuration/bluetooth/parametres-bluetooth.png)
+![Configurer appareil bluetooth](../../static/img/docs/configuration/bluetooth/parametres-bluetooth.png)
 
 C'est bon, tout est configuré côté Bluetooth !
 
@@ -42,7 +42,7 @@ Maintenant, nous allons créer une scène qui va vous marquer comme "présent à
 
 Rendez-vous dans l'onglet "Scènes", et créez une scène comme celle-ci:
 
-![Scène retour à la maison](/fr/img/docs/configuration/bluetooth/retour-maison-scene.png)
+![Scène retour à la maison](../../static/img/docs/configuration/bluetooth/retour-maison-scene.png)
 
 La scène est très simple.
 
@@ -56,7 +56,7 @@ Si oui, Gladys ne fera rien. Si non, Gladys marquera l'utilisateur comme absent.
 
 La scène doit ressembler à ça :
 
-![Scène départ de la maison](/fr/img/docs/configuration/bluetooth/depart-maison-scene.png)
+![Scène départ de la maison](../../static/img/docs/configuration/bluetooth/depart-maison-scene.png)
 
 Vous pouvez jouer avec les réglages en fonction de votre maison. Si vous estimez que 10 minutes c'est trop court pour être mis comme absent, vous pouvez rallonger à 20 minutes pour éviter les "faux-départs" :)
 
@@ -64,4 +64,4 @@ Vous pouvez jouer avec les réglages en fonction de votre maison. Si vous estime
 
 Maintenant, si vous voulez afficher la présence des différents utilisateurs à la maison, vous pouvez utiliser la box "Utilisateurs présents":
 
-![Présence dashboard](/fr/img/docs/configuration/bluetooth/presence-dashboard.png)
+![Présence dashboard](../../static/img/docs/configuration/bluetooth/presence-dashboard.png)

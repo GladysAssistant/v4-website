@@ -12,7 +12,7 @@ Gladys utilisera ensuite Telegram/le chat web Gladys pour contacter l'utilisateu
 
 Pour envoyer un message, c'est très simple, créez une action "envoyer un message" dans une scène, et sélectionnez l'utilisateur qui doit recevoir le message.
 
-![Envoyer un message](/fr/img/docs/scenes/send-a-message-action/send-a-message.png)
+![Envoyer un message](../../static/img/docs/scenes/send-a-message-action/send-a-message.png)
 
 ## Injecter une variable dans un message
 
@@ -22,7 +22,7 @@ Vous voulez injecter la valeur de la température actuelle dans le message, afin
 
 Pour cela, vous devez dans votre scène ajouter une action "récupérer le dernier état" et sélectionnez le capteur que vous voulez requêter.
 
-![Récupérer valeur capteur](/fr/img/docs/scenes/send-a-message-action/get-device-value.jpg)
+![Récupérer valeur capteur](../../static/img/docs/scenes/send-a-message-action/get-device-value.jpg)
 
 Ensuite, plus loin dans la scène, vous pouvez ajouter une action "envoyer un message", et dans le message vous tapez "{{" et sélectionnez la variable précédemment défini.
 

@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-3-5-cover.jpg
 
-id: gladys-3-5-machine-learning
+slug: gladys-3-5-machine-learning
 ---
 
 Salut à tous !

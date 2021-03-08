@@ -1,5 +1,5 @@
 ---
-id: gerer-les-appareils-electrique
+slug: gerer-les-appareils-electrique
 title: Contrôler des prises télécommandées 433Mhz
 description: Gladys doit pouvoir gérer les lumières et les appareils électriques, que nous soyons là, ou que nous soyons absent !
 image: /img/presentation/lightbulblow.jpg
@@ -38,7 +38,7 @@ Le montage est simple, il suffit de brancher l'émetteur 433Mhz à l'arduino sui
 
 Ce qui nous donne :
 
-![Montage Arduino émetteur 433Mhz](/fr/img/articles/controler-des-prises-telecommandee-433mhz/arduino-schema.jpg)
+![Montage Arduino émetteur 433Mhz](../static/img/articles/controler-des-prises-telecommandee-433mhz/arduino-schema.jpg)
 
 Vous pouvez bien entendu utiliser un arduino Nano, le montage est rigoureusement le même, étant donné que l'arduino Nano a les mêmes PINs.
 

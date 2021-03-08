@@ -17,11 +17,11 @@ Rendez-vous sur le dashboard, puis cliquez sur "Editer".
 
 Sélectionnez la box "Météo, puis cliquez sur le bouton +.
 
-![Ajouter la box météo à Gladys](/fr/img/docs/dashboard/weather/add-weather-box.png)
+![Ajouter la box météo à Gladys](../../static/img/docs/dashboard/weather/add-weather-box.png)
 
 Ensuite, sélectionnez votre maison. Cela permettra au service de connnaitre votre latitude/longitude.
 
-![Sélectionnez votre maison dans Gladys](/fr/img/docs/dashboard/weather/select-home.png)
+![Sélectionnez votre maison dans Gladys](../../static/img/docs/dashboard/weather/select-home.png)
 
 Cliquez sur "Sauvegarder".
 

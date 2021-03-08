@@ -28,7 +28,7 @@ Actions:
 
 Dans Gladys, la scène va ressembler à ça :
 
-![Faire du café automatiquement tous les matins de la semaine avec Gladys](/fr/img/docs/scenes/turn-on-off-the-switches-action/screenshot.png)
+![Faire du café automatiquement tous les matins de la semaine avec Gladys](../../static/img/docs/scenes/turn-on-off-the-switches-action/screenshot.png)
 
 Comme vous pouvez le voir, il y a en premier un déclencheur qui se déclenche sur tous les jours de la semaine hors week-end (de lundi à vendredi).
 

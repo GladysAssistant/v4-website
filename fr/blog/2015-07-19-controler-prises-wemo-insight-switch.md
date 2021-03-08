@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/wemo_icone_light.jpg
 
-id: controler-prises-wemo-insight-switch
+slug: controler-prises-wemo-insight-switch
 ---
 
 <div class="alert alert--danger" role="alert">

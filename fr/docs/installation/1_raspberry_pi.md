@@ -2,6 +2,7 @@
 id: raspberry-pi
 title: Raspberry Pi
 sidebar_label: Raspberry Pi
+slug: /
 ---
 
 Ce tutoriel vous explique comment installer Gladys sur Raspberry Pi !

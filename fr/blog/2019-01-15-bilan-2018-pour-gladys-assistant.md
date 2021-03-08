@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/bilan-2018-cover.jpg
 
-id: bilan-2018-pour-gladys-assistant
+slug: bilan-2018-pour-gladys-assistant
 ---
 
 Salut à tous,
@@ -73,7 +73,7 @@ C'est peut-être le seul point où Gladys n'a pas progressé cette année, le tr
 
 Nous avons fais 700k pages vues cette année, pour 95k visiteurs sur le site.
 
-![Traffic sur le site 2018](/fr/img/articles/bilan-2018/traffic.jpg)
+![Traffic sur le site 2018](../static/img/articles/bilan-2018/traffic.jpg)
 
 La raison a cela est très simple: j'ai passé beaucoup moins de temps cette année sur le site.
 

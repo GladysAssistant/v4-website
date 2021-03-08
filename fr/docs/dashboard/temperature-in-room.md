@@ -18,11 +18,11 @@ Rendez-vous sur le tableau de bord, et cliquez sur "Editer".
 
 Sélectionnez la box "température de la pièce", et cliquez sur le bouton +.
 
-![Ajouter la box température à Gladys](/fr/img/docs/dashboard/temperature-in-room/select-box.png)
+![Ajouter la box température à Gladys](../../static/img/docs/dashboard/temperature-in-room/select-box.png)
 
 Ensuite, sélectionnez la pièce que vous voulez afficher.
 
-![Sélectionnez la pièce à afficher](/fr/img/docs/dashboard/temperature-in-room/select-room.png)
+![Sélectionnez la pièce à afficher](../../static/img/docs/dashboard/temperature-in-room/select-room.png)
 
 Cliquez sur "Sauvegarder".
 

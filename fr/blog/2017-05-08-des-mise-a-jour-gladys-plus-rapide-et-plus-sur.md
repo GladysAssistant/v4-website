@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/nouveau-process-maj-cover.jpg
 
-id: des-mise-a-jour-gladys-plus-rapide-et-plus-sur
+slug: des-mise-a-jour-gladys-plus-rapide-et-plus-sur
 ---
 
 <div class="alert alert--danger" role="alert">

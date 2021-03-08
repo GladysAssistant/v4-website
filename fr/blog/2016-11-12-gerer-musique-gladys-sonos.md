@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-sonos-cover.jpg
 
-id: gerer-musique-gladys-sonos
+slug: gerer-musique-gladys-sonos
 ---
 
 <div class="alert alert--danger" role="alert">

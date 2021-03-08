@@ -14,10 +14,10 @@ Imaginons que vous voulez faire une scène qui va chercher la température de la
 
 La première étape dans votre scène est d'ajouter une action "récupérer le dernier état", et de sélectionner le capteur que vous voulez utiliser.
 
-![Récupérer le dernier état scène](/fr/img/docs/scenes/get-last-device-state-action/get-last-device-state.jpg)
+![Récupérer le dernier état scène](../../static/img/docs/scenes/get-last-device-state-action/get-last-device-state.jpg)
 
 Ensuite, dans le bloc d'action suivant, vous pouvez ajouter une action "Continuer seulement si", en sélectionnant la variable récupéré précédemment.
 
 En mettant la condition "capteur température cuisine < 20°C", cela nous donne ça:
 
-![Continuer seulement si scène](/fr/img/docs/scenes/get-last-device-state-action/continue-only-if.jpg)
+![Continuer seulement si scène](../../static/img/docs/scenes/get-last-device-state-action/continue-only-if.jpg)

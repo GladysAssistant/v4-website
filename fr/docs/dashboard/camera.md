@@ -18,18 +18,18 @@ Rendez-vous sur le tableau de bord de Gladys Assistant, puis cliquez sur le bout
 
 Sélectionnez la box "Caméra", et cliquez sur le bouton +.
 
-![Ajouter la box caméra à Gladys](/fr/img/docs/dashboard/camera/select-box.png)
+![Ajouter la box caméra à Gladys](../../static/img/docs/dashboard/camera/select-box.png)
 
 Ensuite, sélectionnez la caméra que vous voulez afficher.
 
 Donnez un nom à cette box, c'est ce texte qui s'affichera sur le tableau de bord sous l'image de la caméra.
 
-![Sélectionnez la caméra à afficher](/fr/img/docs/dashboard/camera/select-camera.png)
+![Sélectionnez la caméra à afficher](../../static/img/docs/dashboard/camera/select-camera.png)
 
 Cliquez sur "Sauvegarder".
 
 Voilà ! Vous devriez voir l'image de votre caméra.
 
-![Affichage caméra tableau de bord Gladys Assistant](/fr/img/docs/dashboard/camera/view-image.png)
+![Affichage caméra tableau de bord Gladys Assistant](../../static/img/docs/dashboard/camera/view-image.png)
 
 Cette image se rafraichissera automatiquement, selon la fréquence que vous avez défini dans l'intégration caméra.

@@ -1,5 +1,5 @@
 ---
-id: lancement-de-gladys
+slug: lancement-de-gladys
 title: Lancement de Gladys !
 description: La première version de Gladys est disponible ! Téléchargez-la gratuitement et participez au programme développeur!
 image: /img/presentation/Gladysannoucelow.jpg

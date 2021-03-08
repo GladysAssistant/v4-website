@@ -8,7 +8,7 @@ author_image_url: /fr/img/pierre-gilles.jpg
 
 image: /img/presentation/noel-2015-cover.jpg
 
-id: shopping-list-gladys-noel-2015
+slug: shopping-list-gladys-noel-2015
 ---
 
 Salut à tous ! Noël approche, j'espère que votre liste de cadeaux est pleine d'Arduinos, de Raspberry Pi et de gadgets pour vous et votre Gladys !

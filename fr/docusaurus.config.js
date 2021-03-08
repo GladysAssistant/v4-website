@@ -28,7 +28,7 @@ module.exports = {
         alt: "Gladys Assistant logo",
         src: "img/logo.svg",
       },
-      links: [
+      items: [
         {
           to: "integrations/",
           activeBasePath: "integrations",
@@ -147,8 +147,7 @@ module.exports = {
       "@docusaurus/preset-classic",
       {
         docs: {
-          // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: "installation/raspberry-pi",
+          path: "docs",
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           editUrl:
@@ -171,18 +170,15 @@ module.exports = {
     ],
   ],
   plugins: [
+    ["@docusaurus/plugin-ideal-image", { min: 400, max: 2000, steps: 10 }],
     [
-      require.resolve("@docusaurus/plugin-ideal-image"),
-      { min: 400, max: 2000, steps: 10 },
-    ],
-    [
-      require.resolve("@docusaurus/plugin-sitemap"),
+      "@docusaurus/plugin-sitemap",
       {
         cacheTime: 600 * 1000, // 600 sec - cache purge period
         changefreq: "weekly",
         priority: 0.5,
       },
     ],
-    [require.resolve("@docusaurus/plugin-google-analytics")],
+    "@docusaurus/plugin-google-analytics",
   ],
 };

@@ -8,7 +8,7 @@ Dans Gladys Assistant, le tableau de bord est la page principale de Gladys.
 
 Cette page est entièrement configurable pour répondre à votre besoin.
 
-![Tableau de bord Gladys Assistant 4](/fr/img/docs/dashboard/dashboard-gladys-4.jpg)
+![Tableau de bord Gladys Assistant 4](../../static/img/docs/dashboard/dashboard-gladys-4.jpg)
 
 Afficher des images de caméras ? Surveiller des valeurs de capteurs ? Contrôler ses lumières ?
 
