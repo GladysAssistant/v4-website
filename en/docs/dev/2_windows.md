@@ -24,7 +24,7 @@ wsl.exe --set-default-version 2
 
 From the Microsoft Store, search and install Ubuntu 20.04. This can take some time regarding your connection speed.
 
-<img src="/en/img/docs/dev/ms-store-ubuntu20.04.png" alt="Microsoft Store Ubuntu" />
+<img src="../../static/img/docs/dev/ms-store-ubuntu20.04.png" alt="Microsoft Store Ubuntu" />
 
 Now you can run Ubuntu, from start menu please launch Ubuntu 20.04 LTS.
 First time ubuntu will ask you to create user.

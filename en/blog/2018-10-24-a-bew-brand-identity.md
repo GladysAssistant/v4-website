@@ -1,5 +1,5 @@
 ---
-id: a-new-brand-identity
+slug: a-new-brand-identity
 title: A New Brand Identity for Gladys Assistant
 description: Thanks to the work of a talented designer, we now have a new logo and a new homepage!
 author: Pierre-Gilles Leymarie
@@ -22,7 +22,7 @@ Since the beginning of the project, I didn't take the time (and didn't have the 
 
 Luckily, two days after arriving in Canggu, I met a designer at Dojo Bali barbecue: Oliver Swinburne.
 
-![Oliver Swinburne](/en/img/articles/new-identity/oliver.jpg)
+![Oliver Swinburne](/../static/img/articles/new-identity/oliver.jpg)
 
 <p>Oliver is a designer and illustrator from London, who works remotely like me. You can see his work on <a href="http://oliverswinburne.dribbble.com/">Dribbble</a> or on his website <a href="https://www.oliverswinburne.com/">oliverswinburne.com </a>.</p>
 
@@ -34,7 +34,7 @@ I explained to Oliver what Gladys does, what's the story behind the project, and
 
 Two weeks later, Oliver came back with a 19 pages PDF. This PDF was a summary of his research and was exploring 3 logo possibilities.
 
-![Gladys Logo exploration](/en/img/articles/new-identity/logo-design-exploration.jpg)
+![Gladys Logo exploration](/../static/img/articles/new-identity/logo-design-exploration.jpg)
 
 Each route was followed by a description of his work. Here are a few examples:
 
@@ -44,11 +44,11 @@ Each route was followed by a description of his work. Here are a few examples:
 
 Finally, after a few messages, we ended up with this brand new logo for Gladys:
 
-![Gladys Logo](/en/img/articles/new-identity/gladys-logo.png)
+![Gladys Logo](/../static/img/articles/new-identity/gladys-logo.png)
 
 With the following colors:
 
-![Gladys Colors](/en/img/articles/new-identity/gladys-colors.jpg)
+![Gladys Colors](/../static/img/articles/new-identity/gladys-colors.jpg)
 
 And the main font, Overpass.
 
@@ -62,25 +62,25 @@ He first asked me what style I wanted between:
 
 1. Flat style with bold colors and gradients
 
-![Gladys Illustration 1](/en/img/articles/new-identity/gladys-illustration-style-1.jpg)
+![Gladys Illustration 1](/../static/img/articles/new-identity/gladys-illustration-style-1.jpg)
 
 2. Isometric style with bold colors and gradients
 
-![Gladys Illustration 2](/en/img/articles/new-identity/gladys-illustration-style-2.jpg)
+![Gladys Illustration 2](/../static/img/articles/new-identity/gladys-illustration-style-2.jpg)
 
 I was more into Proposition 2, that shows better all the tech behind Gladys.
 
 So Oliver began this first draw on paper:
 
-![Gladys Colors](/en/img/articles/new-identity/gladys-illustration-draw.jpg)
+![Gladys Colors](/../static/img/articles/new-identity/gladys-illustration-draw.jpg)
 
 Then, he proposed this first version in black and white:
 
-![Gladys Black and white](/en/img/articles/new-identity/black-and-white.jpg)
+![Gladys Black and white](/../static/img/articles/new-identity/black-and-white.jpg)
 
 And finally, designed this homepage:
 
-![Gladys landing page](/en/img/articles/new-identity/gladys-landing-page.jpg)
+![Gladys landing page](/../static/img/articles/new-identity/gladys-landing-page.jpg)
 
 My reaction was: WOOOOOOOOOOW 😱
 

@@ -1,5 +1,5 @@
 ---
-id: gladys-and-nfc
+slug: gladys-and-nfc
 title: How to control Gladys with NFC tags
 description: How to control Gladys without using the web app ? In this tutorial, we'll use Tasker and NFC tags to trigger scenario in Gladys !
 author: Pierre-Gilles Leymarie
@@ -29,7 +29,7 @@ We'll see in this tutorial how to configure NFC tags to use them with Gladys.
 - Install first Tasker
 - Go to preferences, on the `Misc` tab, then tick `Allow External Access` (So that the Trigger app we'll use next will be able to execute Tasker tasks)
 
-![Screenshot Android tasker](/en/img/articles/gladys-and-nfc/screenshot-allow-access-en.jpg)
+![Screenshot Android tasker](/../static/img/articles/gladys-and-nfc/screenshot-allow-access-en.jpg)
 
 ## Create a task in Tasker
 
@@ -46,9 +46,9 @@ I have a simple scenario I use everyday: I have a NFC tag sticked on my nightsta
 - Select `Variables` then `Variable Set`. ( this will allows us to set Gladys API Token )
 - Fill the name input with `%Token` and in the `To` field, copy past your Gladys API token. This token can be found in the `Parameters` => `Security` view in Gladys.
 
-![Screenshot Gladys token](/en/img/articles/gladys-and-nfc/token-gladys-v3.png)
+![Screenshot Gladys token](/../static/img/articles/gladys-and-nfc/token-gladys-v3.png)
 
-![Screenshot set token tasker](/en/img/articles/gladys-and-nfc/screenshot-set-token-en.jpg)
+![Screenshot set token tasker](/../static/img/articles/gladys-and-nfc/screenshot-set-token-en.jpg)
 
 - Go back on the action list and create a new action by clicking again on the `+` button. Select `Net` then `POST HTTP`.
 - Fill the `Server:port` field with the IP and the port of your Gladys instance. Example : `YOUR_RASPBERRY_PI_IP` => `192.168.0.12`. If your Gladys is listening on a specific port, put it at the end of the IP like this: `192.168.0.12:8080`.
@@ -64,7 +64,7 @@ You can put any event you want in the following list : [https://github.com/glady
 
 The `user` field is your User ID. You can find this ID in Gladys in `Parameters` => `My Account`.
 
-![Screenshot edit task](/en/img/articles/gladys-and-nfc/screenshot-edit-task-en.jpg)
+![Screenshot edit task](/../static/img/articles/gladys-and-nfc/screenshot-edit-task-en.jpg)
 
 - Go back to the task list, your task is ready ! You can test it by simply pressing the `Play` button.
 
@@ -81,7 +81,7 @@ The `user` field is your User ID. You can find this ID in Gladys in `Parameters`
 - Select `Next`, then `Finish`, and finally put your phone on the NFC tag you want to configure.
 - Your NFC tag is now ready to use !
 
-![Screenshot write NFC](/en/img/articles/gladys-and-nfc/screenshot-write-nfc.jpg)
+![Screenshot write NFC](/../static/img/articles/gladys-and-nfc/screenshot-write-nfc.jpg)
 
 ## To conclude
 

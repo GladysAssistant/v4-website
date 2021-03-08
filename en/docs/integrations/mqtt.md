@@ -23,11 +23,11 @@ The following tutorial implies that you have installed Gladys Assistant 4 with t
 
 First step, go to Gladys, section `Integrations`, and open the MQTT integration:
 
-![Configure a MQTT broker in Gladys Assistant](/en/img/docs/configuration/mqtt/configure-mqtt-broker-1.jpg)
+![Configure a MQTT broker in Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-1.jpg)
 
 Then, go to the "Configuration" tab to configure your MQTT broker.
 
-![Configure a MQTT broker in Gladys Assistant](/en/img/docs/configuration/mqtt/configure-mqtt-broker-2.jpg)
+![Configure a MQTT broker in Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-2.jpg)
 
 There are 2 possibilities at this step:
 
@@ -40,13 +40,13 @@ You can therefore launch the creation of the MQTT broker automatically by Gladys
 
 Depending on your internet connection, and the power of your machine, this can take a few seconds and a few minutes.
 
-![Configure a MQTT broker in Gladys Assistant](/en/img/docs/configuration/mqtt/configure-mqtt-broker-3.jpg)
+![Configure a MQTT broker in Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-3.jpg)
 
 You can click on the little eye to see the password that Gladys generated for your MQTT broker.
 
 I recommend that you write this password down somewhere.
 
-![Configure a MQTT broker in Gladys Assistant](/en/img/docs/configuration/mqtt/configure-mqtt-broker-4.jpg)
+![Configure a MQTT broker in Gladys Assistant](../../static/img/docs/configuration/mqtt/configure-mqtt-broker-4.jpg)
 
 We therefore have a running MQTT broker which is connected to Gladys!
 
@@ -56,7 +56,7 @@ In this tutorial, we will take the example of a temperature sensor placed in the
 
 First, go to the "Devices" tab of the MQTT integration, then click on the "New +" button:
 
-![Create a MQTT device in Gladys Assistant](/en/img/docs/configuration/mqtt/create-mqtt-device-1.jpg)
+![Create a MQTT device in Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-1.jpg)
 
 Fill out the form with your device information.
 
@@ -66,7 +66,7 @@ For example, let's fill it in with the following information:
 - External ID: `mqtt:kitchen:temperature-sensor`. This must not have spaces and must start with `mqtt:`. I recommend that you keep a convention throughout your Gladys installation, such as `mqtt:room_name:device_name`.
 - Room: "Kitchen".
 
-![Create a MQTT device in Gladys Assistant](/en/img/docs/configuration/mqtt/create-mqtt-device-2.jpg)
+![Create a MQTT device in Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-2.jpg)
 
 Next, we are going to add features to this device.
 
@@ -84,11 +84,11 @@ You can then fill out the form with the following information:
 - Is it a sensor ?: This box is used to indicate if your peripheral works in the direction "Peripheral -> Gladys" or "Gladys -> Peripheral". If you put "Yes", then this device is "read-only", it just returns values ​​to Gladys. This is the case with our temperature sensor. If you put "no", this device is an actuator which can be controlled by Gladys.
 - MQTT Topic: This is the topic in which Gladys will "listen" to the new values ​​for this device. I advise you to copy / paste it somewhere for later.
 
-![Create a MQTT device in Gladys Assistant](/en/img/docs/configuration/mqtt/create-mqtt-device-3.jpg)
+![Create a MQTT device in Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-3.jpg)
 
 Click "Save", you should on a screen like this:
 
-![Create a MQTT device in Gladys Assistant](/en/img/docs/configuration/mqtt/create-mqtt-device-4.jpg)
+![Create a MQTT device in Gladys Assistant](../../static/img/docs/configuration/mqtt/create-mqtt-device-4.jpg)
 
 ## Test the MQTT device
 
@@ -104,14 +104,14 @@ Fill out the form with the following information:
 - Broker Address: The IP address of your Rasperry Pi on the network. You must be on the same network as your Raspberry Pi for this tutorial.
 - Broker Port: 1883
 
-![Test the MQTT device](/en/img/docs/configuration/mqtt/send-test-message-mqtt-1.jpg)
+![Test the MQTT device](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-1.jpg)
 
 Then, go to the "User Credentials" tab, then fill in with the login information.
 
 - User Name: `gladys`
 - Password: The password that Gladys generated in the first part of this tutorial. If you had not kept the password, you can still find it by going back to the configuration of the MQTT module and clicking on the little eye on the password field.
 
-![Test the MQTT device](/en/img/docs/configuration/mqtt/send-test-message-mqtt-2.jpg)
+![Test the MQTT device](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-2.jpg)
 
 Save the configuration by clicking on "Ok", then click on "Connect" at the top of the screen to connect to the MQTT broker.
 
@@ -119,13 +119,13 @@ In the bar at the top, put the MQTT topic that you had copied and pasted when cr
 
 In the middle field, enter a temperature, in my case "21.2", then click on "Publish":
 
-![Test the MQTT device](/en/img/docs/configuration/mqtt/send-test-message-mqtt-3.jpg)
+![Test the MQTT device](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-3.jpg)
 
 On the dashboard, add a new "devices in room" box and select your room.
 
 You should see your device with the temperature we just sent:
 
-![Test the MQTT device](/en/img/docs/configuration/mqtt/send-test-message-mqtt-4.jpg)
+![Test the MQTT device](../../static/img/docs/configuration/mqtt/send-test-message-mqtt-4.jpg)
 
 Bravo !
 

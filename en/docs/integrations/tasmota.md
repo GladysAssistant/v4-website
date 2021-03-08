@@ -7,6 +7,7 @@ sidebar_label: Tasmota
 Tasmota is an open source firmware for ESP8266 devices.
 
 To connect them to Gladys:
+
 - flash your device with Tamosta firmware
 - configure it
 - go to `Integrations / Tasmota` in Gladys
@@ -25,23 +26,25 @@ Enter your MQTT broken information and fill the <i>Topic</i> field with the expe
 
 Click on `Configuration`.
 
-![Tasmota menu](/en/img/docs/configuration/tasmota/tasmota-home.png)
+![Tasmota menu](../../static/img/docs/configuration/tasmota/tasmota-home.png)
 
 Click on `Configure MQTT` menu.
 
-![Tasmota configuration](/en/img/docs/configuration/tasmota/tasmota-configuration.png)
+![Tasmota configuration](../../static/img/docs/configuration/tasmota/tasmota-configuration.png)
 
 Then fill configuration form with your information:
+
 - `Host` : MQTT broker URL
 - `Port` : MQTT broker port
 - `User` : user to connect to MOQTT broker
 - `Password` : password to connect to MQTT broker
 
-![Tasmota MQTT](/en/img/docs/configuration/tasmota/tasmota-mqtt.png)
+![Tasmota MQTT](../../static/img/docs/configuration/tasmota/tasmota-mqtt.png)
 
 ## Add device to Gladys
 
 Once saved, go back to Gladys:
+
 1. to `Integration -> Tasmota` page
 2. select `MQTT discover` menu
 3. click on `Scan`button (if device is not already listed)

@@ -2,6 +2,7 @@
 id: raspberry-pi
 title: Raspberry Pi
 sidebar_label: Raspberry Pi
+slug: /
 ---
 
 ## Download Gladys Raspbian image
@@ -18,7 +19,7 @@ I recommend the software [Etcher](https://etcher.io/) (Linux/MacOS/Windows compa
 
 Install Etcher, plug your SD card into your computer, and clone the `.img` file on your SD card.
 
-<img src="/en/img/docs/installation/etcher.png" alt="Etcher"  />
+<img src="../../static/img/docs/installation/etcher.png" alt="Etcher"  />
 
 ## Plug your Raspberry Pi
 

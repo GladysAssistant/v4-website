@@ -18,7 +18,7 @@ Go to the "Bluetooth" integration, "Discovery" tab. Scan the surrounding bluetoo
 
 Click on "Connect to Gladys":
 
-![Configure bluetooth device](/en/img/docs/configuration/bluetooth/configure-device.png)
+![Configure bluetooth device](../../static/img/docs/configuration/bluetooth/configure-device.png)
 
 Then activate the option "Use this device as a presence sensor".
 
@@ -26,11 +26,11 @@ Give this device a unique name, and add it to Gladys.
 
 You should arrive on this screen:
 
-![Configure bluetooth device](/en/img/docs/configuration/bluetooth/device-list.png)
+![Configure bluetooth device](../../static/img/docs/configuration/bluetooth/device-list.png)
 
 Now, go to the "Presence scanner" screen, and check that your configuration looks like this:
 
-![Configure bluetooth device](/en/img/docs/configuration/bluetooth/presence-scanner.png)
+![Configure bluetooth device](../../static/img/docs/configuration/bluetooth/presence-scanner.png)
 
 It's good, everything is configured on the Bluetooth side!
 
@@ -42,7 +42,7 @@ Now we are going to create a scene that will mark you as "present at home" when 
 
 Go to the "Scenes" tab, and create a scene like this:
 
-![Return home scene](/en/img/docs/configuration/bluetooth/back-at-home-scene.png)
+![Return home scene](../../static/img/docs/configuration/bluetooth/back-at-home-scene.png)
 
 The scene is very simple.
 
@@ -56,7 +56,7 @@ If so, Gladys will do nothing. If not, Gladys will mark the user as absent.
 
 The scene should look like this:
 
-![Scene leaving home](/en/img/docs/configuration/bluetooth/left-home-scene.png)
+![Scene leaving home](../../static/img/docs/configuration/bluetooth/left-home-scene.png)
 
 You can play around with the settings to suit your home. If you feel that 10 minutes is too short to be put as absent, you can extend it to 20 minutes to avoid "false starts" :)
 
@@ -64,4 +64,4 @@ You can play around with the settings to suit your home. If you feel that 10 min
 
 Now, if you want to display the presence of the different users at home, you can use the "Users present" box:
 
-![Presence dashboard](/en/img/docs/configuration/bluetooth/user-presence-dashboard.png)
+![Presence dashboard](../../static/img/docs/configuration/bluetooth/user-presence-dashboard.png)

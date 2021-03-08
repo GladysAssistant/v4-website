@@ -1,5 +1,5 @@
 ---
-id: control-gladys-with-siri
+slug: control-gladys-with-siri
 title: How to control Gladys with Siri
 description: I'm happy to release today the Open API of the Gladys Gateway, enabling the use of Gladys with Siri.
 author: Pierre-Gilles Leymarie
@@ -41,7 +41,7 @@ Go to `Settings` then `Open API`.
 
 You should see this screen:
 
-![Generate API key Gladys Gateway](/en/img/articles/siri-gateway/generate-api-key.jpg)
+![Generate API key Gladys Gateway](/../static/img/articles/siri-gateway/generate-api-key.jpg)
 
 Give a name to your open API key, then click on `Generate`.
 
@@ -75,7 +75,7 @@ In the JSON Body, put
 
 You can put any sentence you want to say to Gladys.
 
-![Insomnia REST Client](/en/img/articles/siri-gateway/insomnia.jpg)
+![Insomnia REST Client](/../static/img/articles/siri-gateway/insomnia.jpg)
 
 Press `Send`, your Gladys instance should receive the request.
 
@@ -118,11 +118,11 @@ In Request Body, click on `Add new field` => `Text`.
 
 Give as `Key` = "Text" and as `Text`, put your sentence
 
-![Siri Shortcut Gladys](/en/img/articles/siri-gateway/leaving-home-en.jpg)
+![Siri Shortcut Gladys](/../static/img/articles/siri-gateway/leaving-home-en.jpg)
 
 Finally, click on the configuration button on the top right, and select `Add to Siri`.
 
-![Add siri to Gladys](/en/img/articles/siri-gateway/add-to-siri.jpg)
+![Add siri to Gladys](/../static/img/articles/siri-gateway/add-to-siri.jpg)
 
 Give a sentence to Siri, like for this example `I'm leaving home`.
 
@@ -130,13 +130,13 @@ Click on `Done`.
 
 To do the same with event, it'll look like this:
 
-![Siri Shortcut event Gladys](/en/img/articles/siri-gateway/event-left-home.jpg)
+![Siri Shortcut event Gladys](/../static/img/articles/siri-gateway/event-left-home.jpg)
 
 You can test the integration by clicking on `Play` or on the shortcut on the homescreen of the app.
 
 If you want to use this shortcut without talking to Siri, you can even add the shortcut to the home screen or in the widget view:
 
-![Siri Shortcut Gladys](/en/img/articles/siri-gateway/siri-shortcut-en.jpg)
+![Siri Shortcut Gladys](/../static/img/articles/siri-gateway/siri-shortcut-en.jpg)
 
 ## To Conclude
 

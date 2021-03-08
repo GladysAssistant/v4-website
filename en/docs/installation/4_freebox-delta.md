@@ -12,11 +12,11 @@ This tutorial is for Freebox Delta owner who wants to install Gladys with Docker
 
 First, go to the Freebox interface at the following address: mafreebox.free.fr.
 
-<img src="/en/img/docs/installation/freebox-delta/freeboxos.PNG" alt="FreeboxOs"  />
+![FreeboxOS](../../static/img/docs/installation/freebox-delta/freeboxos.PNG)
 
 Click on "VMs". This window appears:
 
-<img src="/en/img/docs/installation/freebox-delta/add-vm.PNG" alt="Add a VM"  />
+![Add a VM](../../static/img/docs/installation/freebox-delta/add-vm.PNG)
 
 Choose a name for the VM, for example Gladys.
 
@@ -24,7 +24,7 @@ Select the option "Choose a pre-installed operating system from a list".
 
 Click on "Next".
 
-<img src="/en/img/docs/installation/freebox-delta/add-vm-2.PNG" alt="Ajouter une VM"  />
+![Add a VM](../../static/img/docs/installation/freebox-delta/add-vm-2.PNG)
 
 Select the system to install, for example Ubuntu.
 
@@ -34,13 +34,13 @@ Choose a username, for example galdys.
 
 Click on "Next".
 
-<img src="/en/img/docs/installation/freebox-delta/add-vm-3.PNG" alt="Ajouter une VM"  />
+![Add a VM](../../static/img/docs/installation/freebox-delta/add-vm-3.PNG)
 
 Click on "Finish".
 
 The VM is ready, click on "Switch on" to start the VM.
 
-<img src="/en/img/docs/installation/freebox-delta/start-vm.PNG" alt="Ajouter une VM"  />
+![Add a VM](../../static/img/docs/installation/freebox-delta/start-vm.PNG)
 
 Access your VM in SSH and update the system.
 
@@ -97,4 +97,4 @@ docker run -d \
 
 You can access Gladys directly by typing the IP of your VM in your browser.
 
-<img src="/en/img/docs/installation/freebox-delta/freebox-vm-success.PNG" alt="Access VM"  />
+![Accessing Gladys](../../static/img/docs/installation/freebox-delta/freebox-vm-success.PNG)

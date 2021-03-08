@@ -1,5 +1,5 @@
 ---
-id: big-news-gladys
+slug: big-news-gladys
 title: I have a big news about Gladys !
 description: And it's the biggest news since the beginning of the project ;)
 author: Pierre-Gilles Leymarie
@@ -37,7 +37,7 @@ Currently, my only moments to work on Gladys are late at night (after my day at 
 
 For example, this is the kind of typical week I have:
 
-![Agenda Gladys Assistant](/en/img/external/screenshot-calendar-pg.jpg)
+![Agenda Gladys Assistant](../static/img/external/screenshot-calendar-pg.jpg)
 
 As you can see, my weeks are pretty full 😁
 
@@ -108,7 +108,7 @@ The goal for me was to see if the project could bring enough revenue to be self-
 
 And on launch day, THAT happened....
 
-![Revenue Gladys Assistant](/en/img/external/revenue-corrected.png)
+![Revenue Gladys Assistant](../static/img/external/revenue-corrected.png)
 
 I was like WOW 😱
 
