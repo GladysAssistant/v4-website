@@ -171,14 +171,5 @@ module.exports = {
   ],
   plugins: [
     ["@docusaurus/plugin-ideal-image", { min: 400, max: 2000, steps: 10 }],
-    [
-      "@docusaurus/plugin-sitemap",
-      {
-        cacheTime: 600 * 1000, // 600 sec - cache purge period
-        changefreq: "weekly",
-        priority: 0.5,
-      },
-    ],
-    "@docusaurus/plugin-google-analytics",
   ],
 };
