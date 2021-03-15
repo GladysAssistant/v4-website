@@ -63,7 +63,7 @@ Vous pouvez accéder à Gladys en tapant l'IP de votre Raspberry Pi sur votre na
 
 ## Sur n'importe quel système
 
-Docker s'installe sur n'importe quel système, et vous permet de faire tourner Gladys n'impote où :
+Docker s'installe sur n'importe quel système, et vous permet de faire tourner Gladys n'importe où :
 
 - Un NAS Synology
 - Une VM Linux
