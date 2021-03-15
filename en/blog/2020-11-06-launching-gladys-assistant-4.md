@@ -31,33 +31,33 @@ In December 2018, I met two members of the community to discuss the future of th
 
 Gladys Assistant v3 was aging, both in terms of development process and technologies used. It was a great product, but the developments were slower and slower and less stable due to technical choices going back to the start of the project.
 
-Maintaining this mammoth was getting harder and harder, and the attractiveness of the project suffered. There were many “mystical” bugs, and everyone was crazy about them. It was frustrating to see everyone struggling to do a simple update in Gladys v3, getting stuck on configuration points that should be automatic.
+Maintaining this mammoth was getting harder and harder, and the attractiveness of the project suffered. There were many “mystical” bugs, and everyone was going crazy because of that. It was frustrating to see everyone struggling to do a simple update in Gladys v3, getting stuck on configuration points that should be automatic.
 
-**The bottom line was clear:** for the long term, it was better to start from scratch and learn from all those years of experience, rather than putting scotch tape on a product that was not originally designed for be used by so many people for so many years.
+**The bottom line was clear:** for the long term, it was better to start from scratch and learn from all those years of experience, rather than putting duct tape on a product that was not originally designed for be used by so many people for so many years.
 
-For 2 years, we worked together with the community to release version 4, designed with technologies in our opinion more suited to the on-board world.
+For 2 years, we worked together with the community to release version 4, designed with technologies in our opinion more suited to the embedded world.
 
 These two years have been very hard.
 
 Very hard because for 2 years, the project apparently did not move forward: there was no further development on v3, but v4 was not ready for all that.
 
-Very hard because for at least a year, I felt like I was working in a vacuum, working on a product that nobody was using.
+Very hard because for at least a year, I felt like I was working for nothing, working on a product that nobody was using.
 
 It was the crossing of the desert.
 
-But today, it’s the fulfillment. The work paid off, and thanks to the work of the whole community, Gladys Assistant 4 is available! 🎉
+But today, it’s the fulfillment. The work paid off, and thanks to the involvement of the whole community, Gladys Assistant 4 is available! 🎉
 
 ## Thanks
 
 Before presenting this v4, I would like to thank all of the community members who have done a tremendous amount of work on this version.
 
-- [Alexandre Trovato](https://community.gladysassistant.com/u/AlexTrovato/summary), “the machine”, which is able to propose a pull-request before I finish my response to his message 😁
+- [Alexandre Trovato](https://community.gladysassistant.com/u/AlexTrovato/summary), “the machine”, who is able to propose a pull-request before I finish my response to his message 😁
 - [Vincent Kulak](https://community.gladysassistant.com/u/vonox/summary), “the god of Docker”, who set up the entire build process for Gladys Assistant 4.
 - [Thibaut Courvoisier](https://community.gladysassistant.com/u/link39/summary), “the Z-Wave pro”, who lets everyone benefit from his rich Z-Wave installation, and his thorough knowledge of the protocol.
-- [Thomas Lemaistre](https://community.gladysassistant.com/u/terdious/summary), “the biggest Gladys user of all time”, who constantly pushes the limits of the product with his Pro use which he allows you to manage your campsite.
-- [Bertrand d'Aure](https://community.gladysassistant.com/u/bertrandda/summary), “Mr. Caldav”, who develops and maintains the CalDav integration and who bends over backwards to make it work for everyone the world.
+- [Thomas Lemaistre](https://community.gladysassistant.com/u/terdious/summary), “the biggest Gladys user of all time”, who constantly pushes the limits of the product with his professional use which he allows you to manage your campsite.
+- [Bertrand d'Aure](https://community.gladysassistant.com/u/bertrandda/summary), “Mr. Caldav”, who develops and maintains the CalDav integration and who bends over backwards to make it work for everyone in the world.
 
-But also all the other contributors on Github: https://github.com/GladysAssistant/Gladys#contributors-
+But also all the other contributors on Github: https://github.com/GladysAssistant/Gladys#contributors
 
 ## A redesign of the interface: clean, stylish and incredibly fast
 
@@ -65,7 +65,7 @@ Gladys Assistant returns with a new, completely redesigned interface. The interf
 
 The interface owes its responsiveness to the frontend framework [Preact](https://preactjs.com/) used in Gladys Assistant 4. A modern and very light framework, ensuring great fluidity for Gladys.
 
-This interface is designed as a PWA ([Progressive Web App](https://fr.wikipedia.org/wiki/Progressive_web_app)) and can therefore be installed on the phone like a classic app (iOS / Android / Mac / Windows / Linux).
+This interface is designed as a PWA ([Progressive Web App](https://fr.wikipedia.org/wiki/Progressive_web_app)) and can therefore be installed on the phone like a regular app (iOS / Android / Mac / Windows / Linux).
 
 You can test the Gladys Assistant 4 interface at [the demo site](https://demo.gladysassistant.com).
 
@@ -144,7 +144,7 @@ Learn more about [scenes in Gladys Assistant 4](/en/docs/scenes/intro/).
 
 ## Privacy at the heart of the product
 
-Gladys Assistant stores all user data on a local SQLite database. No remote account is required to use Gladys Assistant.
+Gladys Assistant stores all user data in a local SQLite database. No remote account is required to use Gladys Assistant.
 
 The user remains the master and owner of his installation.
 
@@ -172,17 +172,17 @@ Just in comparison, since its launch, the Raspberry Pi has sold 30 million units
 
 1,000 Gladys instances represent 0.0033% of the Raspberry Pi market sold, and that's without counting all those who run Gladys on a NAS, freebox or any other computer.
 
-So it's **a very modest goal**, but it is intended.
+So it's **a very modest goal**, as it is intended to be.
 
 I'd rather have 1,000 passionate users who love Gladys, use it every day, participate in the online community, rather than 10,000 users who just enjoy the product and nothing more.
 
-I think before scaling up, I prefer to focus on creating that hard core of passionate users who are the strength of this project. Once we have 1,000 fully satisfied users, we can tackle a next goal.
+I think before scaling up, I prefer to focus on creating that core of passionate users who is the strength of this project. Once we have 1,000 fully satisfied users, we can tackle the next goal.
 
 I will post the progress of this goal on social networks and will surely do a review article in a few months 🙂
 
 Once again, thank you all for your help and feedback!
 
-If you want to join us to be part of the hard core of the 1,000 Gladys Assistant 4 users, it's now and it's happening on [Gladys Assistant installation tutorial](/en/docs/).
+If you want to join us to be part of the core of the 1,000 Gladys Assistant 4 users, it's now and it's happening on [Gladys Assistant installation tutorial](/en/docs/).
 
 See you soon!
 
