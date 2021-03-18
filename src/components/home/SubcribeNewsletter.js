@@ -1,5 +1,7 @@
 import React from "react";
 
+import Translate, { translate } from "@docusaurus/Translate";
+
 function validateEmail(email) {
   var re = /[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}/gim;
   return re.test(email);
@@ -85,9 +87,21 @@ function SubcribeNewsletter({ lang }) {
   return (
     <div className="row">
       <div className="col col--8">
-        {" "}
-        <h2>{translation[lang].title}</h2>
-        {translation[lang].text}
+        <h2>
+          <Translate
+            id="subscribeNewsletter.title"
+            description="Subscribe newsletter banner title"
+          >
+            Join the community, and receive news about the project !
+          </Translate>
+        </h2>
+        <Translate
+          id="subscribeNewsletter.text"
+          description="Subscribe newsletter banner text"
+        >
+          Emails are sent by Pierre-Gilles Leymarie, founder of the project, and
+          you can unsubscribe at any time 🙂
+        </Translate>
       </div>
       <div className="col col--4">
         <form>
@@ -105,7 +119,13 @@ function SubcribeNewsletter({ lang }) {
               >
                 <span aria-hidden="true">×</span>
               </button>
-              {translation[lang].error}
+              <Translate
+                id="subscribeNewsletter.error"
+                description="Subscribe newsletter banner error"
+              >
+                An error occured, are you sure your email is right? If yes,
+                please retry.
+              </Translate>
             </div>
           )}
           <div class="form-group">
@@ -119,7 +139,11 @@ function SubcribeNewsletter({ lang }) {
               }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={translation[lang].email}
+              placeholder={translate({
+                id: "subscribeNewsletter.emailPlaceholder",
+                message: "Email",
+                description: "Subscribe newsletter email placeholder",
+              })}
             />
           </div>
           <div class="form-group">
@@ -134,23 +158,33 @@ function SubcribeNewsletter({ lang }) {
               }}
               value={firstname}
               onChange={(e) => setFirstname(e.target.value)}
-              placeholder={translation[lang].firstname}
+              placeholder={translate({
+                id: "subscribeNewsletter.firstnamePlaceholder",
+                message: "Firstname",
+                description: "Subscribe newsletter firstname placeholder",
+              })}
             />
           </div>
-          <input
-            type="hidden"
-            name="language"
-            value="en"
-            id="languageNewsletter"
-          />
           <button
             onClick={subscribe}
             style={{ marginTop: "10px" }}
             class="button button--primary button--block"
           >
-            {status === "waiting"
-              ? translation[lang].subscribing
-              : translation[lang].subscribe}
+            {status === "waiting" ? (
+              <Translate
+                id="subscribeNewsletter.subscribing"
+                description="Subscribe newsletter banner subscribing button text"
+              >
+                Subscribing...
+              </Translate>
+            ) : (
+              <Translate
+                id="subscribeNewsletter.subscribeButton"
+                description="Subscribe newsletter banner subscribe button"
+              >
+                Subscribe
+              </Translate>
+            )}
           </button>
         </form>
       </div>
