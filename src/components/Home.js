@@ -14,6 +14,8 @@ import FAQ from "./home/FAQ";
 import Features from "./home/features";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
 
+import Translate, { translate } from "@docusaurus/Translate";
+
 function Home({ translation, integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
   return (
@@ -22,8 +24,19 @@ function Home({ translation, integrations, lang }) {
         <div className="container">
           <div className="row">
             <div className={classnames("col padding-top--lg")}>
-              <h1 className="hero__title">{translation.title}</h1>
-              <p className="hero__subtitle">{translation.description}</p>
+              <h1 className="hero__title">
+                <Translate id="home.title" description="The home page title">
+                  Gladys Assistant
+                </Translate>
+              </h1>
+              <p className="hero__subtitle">
+                <Translate
+                  id="home.description"
+                  description="The home page description"
+                >
+                  A privacy-first, open-source home assistant
+                </Translate>
+              </p>
               <span className="container">
                 <div
                   className="margin-right--md"
@@ -31,9 +44,14 @@ function Home({ translation, integrations, lang }) {
                 >
                   <Link
                     className="button button--primary"
-                    href={`/${lang}/docs`}
+                    href={lang === "en" ? `/docs` : `/${lang}/docs`}
                   >
-                    {translation.gettingStartedButton}
+                    <Translate
+                      id="home.gettingStartedButton"
+                      description="The getting started button of the homepage"
+                    >
+                      Getting started
+                    </Translate>
                   </Link>
                 </div>
                 <div
@@ -44,7 +62,12 @@ function Home({ translation, integrations, lang }) {
                     className="button button--outline button--secondary"
                     href="https://demo.gladysassistant.com/dashboard"
                   >
-                    {translation.tryOnlineButton}
+                    <Translate
+                      id="home.tryOnlineButton"
+                      description="The try online button of the homepage"
+                    >
+                      Try Online
+                    </Translate>
                   </Link>
                 </div>
               </span>
@@ -77,7 +100,12 @@ function Home({ translation, integrations, lang }) {
                 "pills__item--active": openPanel === 1,
               })}
             >
-              {translation.features.centralizeCameras}
+              <Translate
+                id="home.features.centralizeCameras"
+                description="Centralize your cameras title of the homepage"
+              >
+                Centralize your cameras
+              </Translate>
             </li>
             <li
               onClick={() => setOpenPanel(2)}
@@ -85,7 +113,12 @@ function Home({ translation, integrations, lang }) {
                 "pills__item--active": openPanel === 2,
               })}
             >
-              {translation.features.controlHouse}
+              <Translate
+                id="home.features.controlHouse"
+                description="Control your house title of the homepage"
+              >
+                Control your house
+              </Translate>
             </li>
             <li
               onClick={() => setOpenPanel(3)}
@@ -93,7 +126,12 @@ function Home({ translation, integrations, lang }) {
                 "pills__item--active": openPanel === 3,
               })}
             >
-              {translation.features.connectCalendars}
+              <Translate
+                id="home.features.connectCalendars"
+                description="Connect your calendars title of the homepage"
+              >
+                Connect your calendars
+              </Translate>
             </li>
             <li
               onClick={() => setOpenPanel(4)}
@@ -101,7 +139,12 @@ function Home({ translation, integrations, lang }) {
                 "pills__item--active": openPanel === 4,
               })}
             >
-              {translation.features.createScenes}
+              <Translate
+                id="home.features.createScenes"
+                description="Create scenes title of the homepage"
+              >
+                Create scenes
+              </Translate>
             </li>
           </ul>
 
@@ -154,10 +197,21 @@ function Home({ translation, integrations, lang }) {
             <div className="row">
               <div className="col col--12">
                 <h2 className="text--center">
-                  {translation.integrations.title}
+                  <Translate
+                    id="home.integrations.title"
+                    description="Integrations title of the homepage"
+                  >
+                    Lots of compatibilities, built-in
+                  </Translate>
                 </h2>
                 <p className="text--center">
-                  {translation.integrations.description}
+                  <Translate
+                    id="home.integrations.description"
+                    description="Integrations description of the homepage"
+                  >
+                    All integrations are open-source and developed by the
+                    community.
+                  </Translate>
                 </p>
                 <div className="row">
                   {integrations.map((integration) => (

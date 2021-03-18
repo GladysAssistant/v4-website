@@ -88,7 +88,7 @@ function Pricing({ translation, lang }) {
                       <div class="card__footer">
                         <Link
                           className="button button--secondary button--block"
-                          to={`/${lang}/docs`}
+                          to={lang === "en" ? `/docs` : `/${lang}/docs`}
                         >
                           {translation.pricing.getStarted}
                         </Link>

@@ -46,13 +46,13 @@ const first4Integrations = integrations.slice(0, 4);
 
 function HomePage() {
   const context = useDocusaurusContext();
-  const { siteConfig = {} } = context;
+  const { i18n } = context;
   return (
-    <Layout title="" description="A privacy-first, open-source home assistant">
+    <Layout>
       <Home
         translation={translation}
         integrations={first4Integrations}
-        lang="en"
+        lang={i18n.currentLocale}
       />
     </Layout>
   );

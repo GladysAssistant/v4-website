@@ -5,17 +5,10 @@ import Image from "@theme/IdealImage";
 import Link from "@docusaurus/Link";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 
+import Translate, { translate } from "@docusaurus/Translate";
+
 const truncate = (str, len) =>
   str.substring(0, (str + " ").lastIndexOf(" ", len));
-
-const FILTERS = [
-  "philips-hue",
-  "zwave",
-  "sonoff",
-  "camera",
-  "xiaomi",
-  "tp-link",
-];
 
 function Integration({
   docsId,
@@ -64,9 +57,18 @@ function Integration({
             >
               <Link
                 class="button button--primary button--block"
-                to={`/${lang}/docs/integrations/${docsId}/`}
+                to={
+                  lang === "en"
+                    ? `/docs/integrations/${docsId}/`
+                    : `/${lang}/docs/integrations/${docsId}/`
+                }
               >
-                {translation.readMore}
+                <Translate
+                  id="integration.readMoreButton"
+                  description="one integration read more button"
+                >
+                  Read more
+                </Translate>
               </Link>
             </div>
             {buyLink && (
@@ -75,7 +77,12 @@ function Integration({
                   class="button button--secondary button--block"
                   to={buyLink}
                 >
-                  {translation.buy}
+                  <Translate
+                    id="integration.buyButton"
+                    description="one integration buy button"
+                  >
+                    Buy
+                  </Translate>
                 </Link>
               </div>
             )}
@@ -141,32 +148,146 @@ function IntegrationPage({ integrations, lang, translation }) {
                 "navbar__search-input",
                 styles.filterSearchInput
               )}
-              placeholder="Search"
+              placeholder={translate({
+                message: "Search",
+                id: "integrations.searchPlaceholder",
+                description: "Integration page search placeholder",
+              })}
               value={searchTerm}
               onChange={handleChange}
             />
           </div>
           <h3 className={classnames(styles.filterBlock, styles.filterTitle)}>
-            {translation.technologies}
+            <Translate
+              id="integrations.technologies"
+              description="Integration page technologies picker title"
+            >
+              Technologies
+            </Translate>
           </h3>
           <div className={classnames(styles.filterBlock)}>
-            {FILTERS.map((filter) => (
-              <div className={classnames(styles.integrationFilterCheckbox)}>
-                <input
-                  type="checkbox"
-                  name={filter}
-                  checked={checkedTags[filter]}
-                  onChange={handleCheckedChange}
-                />
-                <label for={filter}>{translation.filters[filter]}</label>
-              </div>
-            ))}
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="philips-hue"
+                checked={checkedTags["philips-hue"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="philips-hue">
+                <Translate
+                  id="integrations.philipsHue"
+                  description="Integration philips hue title"
+                >
+                  Philips Hue
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="zwave"
+                checked={checkedTags["zwave"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="zwave">
+                <Translate
+                  id="integrations.zwave"
+                  description="Integration zwave title"
+                >
+                  Z-Wave
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="sonoff"
+                checked={checkedTags["sonoff"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="sonoff">
+                <Translate
+                  id="integrations.sonoff"
+                  description="Integration sonoff title"
+                >
+                  Sonoff
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="camera"
+                checked={checkedTags["camera"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="camera">
+                <Translate
+                  id="integrations.camera"
+                  description="Integration camera title"
+                >
+                  Camera
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="xiaomi"
+                checked={checkedTags["xiaomi"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="xiaomi">
+                <Translate
+                  id="integrations.xiaomi"
+                  description="Integration xiaomi title"
+                >
+                  Xiaomi
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="tp-link"
+                checked={checkedTags["tp-link"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="tp-link">
+                <Translate
+                  id="integrations.tpLink"
+                  description="Integration tp-link title"
+                >
+                  TP-Link
+                </Translate>
+              </label>
+            </div>
           </div>
         </div>
         <div className="col col col--9">
-          <h1>{translation.title}</h1>
+          <h1>
+            <Translate
+              id="integrations.title"
+              description="Integration page title"
+            >
+              Integrations
+            </Translate>
+          </h1>
           <div class="alert alert--secondary" role="alert">
-            {translation.description}
+            <Translate
+              id="integrations.description"
+              description="Integration page description"
+              values={{
+                website: (
+                  <Link to="https://github.com/GladysAssistant/v4-website/tree/master/integrations">
+                    here
+                  </Link>
+                ),
+              }}
+            >
+              {`This list is crowdsourced by the community. To improve this list,
+              you can help us on GitHub {website}.`}
+            </Translate>
           </div>
           <div class="row" style={{ marginTop: "16px" }}>
             {integrationsFiltered.map((integration) => (
@@ -182,7 +303,12 @@ function IntegrationPage({ integrations, lang, translation }) {
           </div>
           {integrationsFiltered.length === 0 && (
             <div class="alert alert--warning" role="alert">
-              {translation.noIntegrationsFound}
+              <Translate
+                id="integrations.noIntegrationsFound"
+                description="Integration no integrations found message"
+              >
+                No integrations found.
+              </Translate>
             </div>
           )}
         </div>
