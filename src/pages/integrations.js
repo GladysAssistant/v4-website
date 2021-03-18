@@ -1,46 +1,32 @@
 import React from "react";
 import Layout from "@theme/Layout";
-import Link from "@docusaurus/Link";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import integrations from "../../integrations/index";
 import { IntegrationPage } from "../components/Integration";
 
-const translation = {
-  readMore: "Read more",
-  buy: "Buy",
-  title: "Integrations",
-  description: (
-    <>
-      This list is crowdsourced by the community. To improve this list, you can
-      help us{" "}
-      <Link href="https://github.com/GladysAssistant/v4-website/tree/master/en/integrations">
-        on GitHub here
-      </Link>
-      .
-    </>
-  ),
-  noIntegrationsFound: "No integrations found.",
-  technologies: "Technologies",
-  filters: {
-    zwave: "Z-Wave",
-    "philips-hue": "Philips Hue",
-    sonoff: "Sonoff",
-    camera: "Camera",
-    xiaomi: "Xiaomi",
-    "tp-link": "TP-Link",
-  },
-};
+import { translate } from "@docusaurus/Translate";
 
 function Home() {
+  const context = useDocusaurusContext();
+  const { i18n } = context;
   return (
     <Layout
-      title="Integrations"
-      description="Search all home automation devices which are compatible with Gladys Assistant"
+      title={translate({
+        id: "integrations.title",
+        description: "integrations page title",
+        message: "Integrations",
+      })}
+      description={translate({
+        id: "integrations.metaDescription",
+        description: "integrations page meta description",
+        message:
+          "Search all home automation devices compatible with Gladys Assistant",
+      })}
     >
       <main>
         <IntegrationPage
           integrations={integrations}
-          lang="en"
-          translation={translation}
+          lang={i18n.currentLocale}
         />
       </main>
     </Layout>

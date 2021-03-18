@@ -7,48 +7,6 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-const translation = {
-  en: {
-    subscribe: "Subscribe",
-    subscribing: "Subscribing...",
-    firstname: "Firstname",
-    email: "Email",
-    error:
-      "An error occured, are you sure your email is right? If yes, please retry.",
-    title: "Join the community, and receive news about the project !",
-    text: (
-      <>
-        <p>You are more than 40 000 who have downloaded Gladys.</p>
-        <p>
-          Emails are sent by Pierre-Gilles Leymarie, founder of the project, and
-          you can unsubscribe at any time 🙂
-        </p>
-      </>
-    ),
-  },
-  fr: {
-    subscribe: "S'inscrire",
-    subscribing: "Inscription en cours...",
-    firstname: "Prénom",
-    email: "Email",
-    error:
-      "Nous n'avons pas réussi à vous inscrire, est-ce que votre email est bon ?",
-    title: "Rejoignez la communauté, et recevez l'actualité du projet !",
-    text: (
-      <>
-        <p>
-          Vous êtes plus de 40 000 à avoir téléchargé Gladys Assistant depuis
-          son lancement.
-        </p>
-        <p>
-          Les mails sont envoyés par Pierre-Gilles Leymarie, le fondateur du
-          projet, et vous pouvez toujours vous désinscrire à tout moment 🙂
-        </p>
-      </>
-    ),
-  },
-};
-
 function SubcribeNewsletter({ lang }) {
   const [email, setEmail] = React.useState("");
   const [firstname, setFirstname] = React.useState("");

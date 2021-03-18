@@ -4,7 +4,7 @@ import FAQ from "./home/FAQ";
 
 import Translate from "@docusaurus/Translate";
 
-function Plus({ translation, lang }) {
+function Plus({ lang }) {
   return (
     <main>
       <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
@@ -44,7 +44,7 @@ function Plus({ translation, lang }) {
           </div>
         </div>
       </div>
-      <Pricing lang={lang} translation={translation} />
+      <Pricing lang={lang} />
       <FAQ lang={lang} />
     </main>
   );

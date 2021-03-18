@@ -1,37 +1,25 @@
 import React from "react";
 import Layout from "@theme/Layout";
-
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import PlusComponent from "../components/Plus";
 
-const translation = {
-  plus: {
-    title: "Gladys Plus",
-    description1: "Gladys Assistant is free and open-source, forever.",
-    description2: "We provide Gladys Plus for cool additionnal features!",
-  },
-  pricing: {
-    title: "Price",
-    community: "Community (free)",
-    gladysPlus: "Gladys Plus",
-    openSourceSoftware: "Open-Source Software",
-    endToEnd: "End-to-End Encrypted Remote Access",
-    dailyBackups: "Daily Encrypted Backups",
-    oneClickRestore: "One-click Restore",
-    owntracksApi: "Owntracks API Server",
-    privateSlack: "Private Slack Community",
-    supportOpenSource: "Support independant Open-Source Software",
-    getStarted: "Install",
-    subscribe: "Subscribe (9.99€/month)",
-  },
-};
-
 function Plus() {
+  const context = useDocusaurusContext();
+  const { i18n } = context;
   return (
     <Layout
-      title="Gladys Plus"
-      description="Add more features to Gladys Assistant with Gladys Plus"
+      title={translate({
+        id: "gladysPlus.title",
+        description: "gladys plus page title",
+        message: "Gladys Plus",
+      })}
+      description={translate({
+        id: "gladysPlus.metaDescription",
+        description: "gladys plus meta description",
+        message: "Add more features to Gladys Assistant with Gladys Plus",
+      })}
     >
-      <PlusComponent translation={translation} lang={"en"} />
+      <PlusComponent lang={i18n.currentLocale} />
     </Layout>
   );
 }

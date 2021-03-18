@@ -41,7 +41,7 @@ function Cross() {
   );
 }
 
-function Pricing({ translation, lang }) {
+function Pricing({ lang }) {
   return (
     <div style={{ paddingBottom: "2rem" }}>
       <div className="container">
@@ -72,7 +72,6 @@ function Pricing({ translation, lang }) {
                             >
                               Open-Source Software
                             </Translate>
-                            {translation.pricing.openSourceSoftware}
                           </li>
                           <li>
                             <Check />{" "}

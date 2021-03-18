@@ -92,7 +92,7 @@ function Integration({
   );
 }
 
-function IntegrationPage({ integrations, lang, translation }) {
+function IntegrationPage({ integrations, lang }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [checkedTags, setCheckedTags] = React.useState({
     "philips-hue": true,
@@ -295,7 +295,6 @@ function IntegrationPage({ integrations, lang, translation }) {
                   key={integration.title}
                   {...integration}
                   lang={lang}
-                  translation={translation}
                 />
               </div>
             ))}
