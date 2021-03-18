@@ -1,10 +1,8 @@
 #!/bin/bash
 set -e
 
+# Cleaning build folder
 rm -rf build
-
-# Installing deps
-yarn
 
 # Building website
 npm run build
