@@ -1,8 +1,5 @@
 import React from "react";
 import Layout from "@theme/Layout";
-import integrations from "../../integrations/index";
-import { IntegrationPage } from "../components/Integration";
-// import { IntegrationPage } from "../components/Integration";
 
 function PaymentSuccess() {
   return (
