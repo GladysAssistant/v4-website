@@ -16,7 +16,7 @@ import SubcribeNewsletter from "./home/SubcribeNewsletter";
 
 import Translate, { translate } from "@docusaurus/Translate";
 
-function Home({ translation, integrations, lang }) {
+function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
   return (
     <>
@@ -152,7 +152,11 @@ function Home({ translation, integrations, lang }) {
             <div>
               <Image
                 className={styles.featureImage}
-                alt={translation.features.centralizeCameras}
+                alt={translate({
+                  id: "home.features.centralizeCameras",
+                  description: "Centralize your cameras title of the homepage",
+                  message: "Centralize your cameras",
+                })}
                 img={cameraGladys4}
               />
             </div>
@@ -162,7 +166,11 @@ function Home({ translation, integrations, lang }) {
             <div>
               <Image
                 className={styles.featureImage}
-                alt={translation.features.controlHouse}
+                alt={translate({
+                  id: "home.features.controlHouse",
+                  description: "Control your house title of the homepage",
+                  message: "Control your house",
+                })}
                 img={dashboardGladys4}
               />
             </div>
@@ -172,7 +180,11 @@ function Home({ translation, integrations, lang }) {
             <div>
               <Image
                 className={styles.featureImage}
-                alt={translation.features.connectCalendars}
+                alt={translate({
+                  id: "home.features.connectCalendars",
+                  description: "Connect your calendars title of the homepage",
+                  message: "Connect your calendars",
+                })}
                 img={calendarGladys4}
               />
             </div>
@@ -182,13 +194,17 @@ function Home({ translation, integrations, lang }) {
             <div>
               <Image
                 className={styles.featureImage}
-                alt={translation.features.createScenes}
+                alt={translate({
+                  id: "home.features.createScenes",
+                  description: "Create scenes title of the homepage",
+                  message: "Create scenes",
+                })}
                 img={sceneGladys4}
               />
             </div>
           )}
         </div>
-        <Features translation={translation} />
+        <Features />
         <div
           style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
           className="hero shadow--lw"
