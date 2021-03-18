@@ -1,32 +1,19 @@
 #!/bin/bash
 set -e
 
-export NODE_OPTIONS='--max_old_space_size=4096' 
-
-rm -rf _build
-mkdir _build
+rm -rf build
 
 # Installing deps
-npm install
+yarn
 
-# Building en website
-cd en
+# Building website
 npm run build
-mv ./build ../_build/en
-cd ..
-
-# Building fr website
-cd fr
-npm run build
-node ../scripts/change-language.js
-mv ./build ../_build/fr
-cd ..
 
 # Moving netlify config
-cp ./netlify.toml ./_build/netlify.toml
+cp ./netlify.toml ./build/netlify.toml
 
 # Moving robots.txt
-cp ./robots.txt ./_build/robots.txt
+cp ./robots.txt ./build/robots.txt
 
 # Moving netlify functions
-cp -R ./functions ./_build/functions
+cp -R ./functions ./build/functions
