@@ -1,7 +1,7 @@
 import React from "react";
-import Link from "@docusaurus/Link";
 import styles from "../styles.module.css";
 import onClickCheckoutGladysPlus from "../stripe";
+import Translate from "@docusaurus/Translate";
 
 const Check = () => (
   <svg
@@ -48,87 +48,76 @@ function Pricing({ translation, lang }) {
         <div className="row">
           <div className="col col--12">
             <div className="row">
-              {false && (
-                <div className="col col--5 col--offset-1">
-                  <div class="card-demo">
-                    <div class="card">
-                      <div class="card__header">
-                        <h3 className="text--center">
-                          {translation.pricing.community}
-                        </h3>
-                      </div>
-                      <div class="card__body">
-                        <p>
-                          <ul className={styles.listUnstyled}>
-                            <li>
-                              <Check />
-                              {translation.pricing.openSourceSoftware}
-                            </li>
-                            <li>
-                              <Cross /> {translation.pricing.endToEnd}
-                            </li>
-                            <li>
-                              <Cross /> {translation.pricing.dailyBackups}
-                            </li>
-                            <li>
-                              <Cross /> {translation.pricing.oneClickRestore}
-                            </li>
-                            <li>
-                              <Cross /> {translation.pricing.owntracksApi}
-                            </li>
-                            <li>
-                              <Cross /> {translation.pricing.privateSlack}
-                            </li>
-                            <li>
-                              <Cross /> {translation.pricing.supportOpenSource}
-                            </li>
-                          </ul>
-                        </p>
-                      </div>
-                      <div class="card__footer">
-                        <Link
-                          className="button button--secondary button--block"
-                          to={lang === "en" ? `/docs` : `/${lang}/docs`}
-                        >
-                          {translation.pricing.getStarted}
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               <div className="col col--6  col--offset-3">
                 <div class="card-demo">
                   <div class="card">
                     <div class="card__header">
                       <h3 className="text--center">
-                        {translation.pricing.gladysPlus}
+                        <Translate
+                          id="pricing.title"
+                          description="Pricing title"
+                        >
+                          Gladys Plus
+                        </Translate>
                       </h3>
                     </div>
                     <div class="card__body">
                       <p>
                         <ul className={styles.listUnstyled}>
                           <li>
-                            <Check /> {translation.pricing.openSourceSoftware}
+                            <Check />{" "}
+                            <Translate
+                              id="pricing.openSourceSoftware"
+                              description="Pricing open-source software"
+                            >
+                              Open-Source Software
+                            </Translate>
+                            {translation.pricing.openSourceSoftware}
                           </li>
                           <li>
-                            <Check /> {translation.pricing.endToEnd}
+                            <Check />{" "}
+                            <Translate
+                              id="pricing.endToEndEncryptedRemoteAccess"
+                              description="Pricing end-to-end encrypted remote access"
+                            >
+                              End-to-End Encrypted Remote Access
+                            </Translate>
                           </li>
                           <li>
-                            <Check /> {translation.pricing.dailyBackups}
+                            <Check />{" "}
+                            <Translate
+                              id="pricing.dailyBackups"
+                              description="Pricing daily backups"
+                            >
+                              Daily Encrypted Backups
+                            </Translate>
                           </li>
                           <li>
-                            <Check /> {translation.pricing.oneClickRestore}
+                            <Check />{" "}
+                            <Translate
+                              id="pricing.oneClickRestore"
+                              description="Pricing one-click restore"
+                            >
+                              One-click Restore
+                            </Translate>
                           </li>
                           <li>
-                            <Check /> {translation.pricing.owntracksApi}
+                            <Check />{" "}
+                            <Translate
+                              id="pricing.owntracksApi"
+                              description="Pricing owntracks API"
+                            >
+                              Owntracks API Server
+                            </Translate>
                           </li>
                           <li>
-                            <Check /> {translation.pricing.privateSlack}
-                          </li>
-                          <li>
-                            <Check /> {translation.pricing.supportOpenSource}
+                            <Check />{" "}
+                            <Translate
+                              id="pricing.supportOpenSource"
+                              description="Pricing support open-source"
+                            >
+                              Support independant Open-Source Software
+                            </Translate>
                           </li>
                         </ul>
                       </p>
@@ -138,7 +127,12 @@ function Pricing({ translation, lang }) {
                         onClick={() => onClickCheckoutGladysPlus(lang)}
                         class="button button--primary button--block"
                       >
-                        {translation.pricing.subscribe}
+                        <Translate
+                          id="pricing.subscribeButton"
+                          description="Pricing subscribe button"
+                        >
+                          Subscribe (9.99€/month)
+                        </Translate>
                       </button>
                     </div>
                   </div>

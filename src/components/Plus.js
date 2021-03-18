@@ -1,8 +1,8 @@
 import React from "react";
-import Layout from "@theme/Layout";
-
 import Pricing from "./home/Pricing";
 import FAQ from "./home/FAQ";
+
+import Translate from "@docusaurus/Translate";
 
 function Plus({ translation, lang }) {
   return (
@@ -18,12 +18,27 @@ function Plus({ translation, lang }) {
                   marginBottom: "30px",
                 }}
               >
-                {translation.plus.title}
+                <Translate
+                  id="gladysPlusPage.title"
+                  description="Gladys Plus page title"
+                >
+                  Gladys Plus
+                </Translate>
               </h1>
               <p className="text--center">
-                {translation.plus.description1}
+                <Translate
+                  id="gladysPlusPage.description1"
+                  description="Gladys Plus description 1"
+                >
+                  Gladys Assistant is free and open-source, forever.
+                </Translate>
                 <br />
-                {translation.plus.description2}
+                <Translate
+                  id="gladysPlusPage.description2"
+                  description="Gladys Plus description 2"
+                >
+                  We provide Gladys Plus for cool additionnal features!
+                </Translate>
               </p>
             </div>
           </div>

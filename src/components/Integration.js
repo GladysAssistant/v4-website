@@ -17,7 +17,6 @@ function Integration({
   description,
   lang,
   buyLink,
-  translation,
   disableLinks = false,
 }) {
   const MAX_DESCRIPTION_LENGTH = 80;
