@@ -15,11 +15,11 @@ Gladys therefore implements an MQTT API in both directions:
 - "Peripheral -> Gladys"
 - "Gladys -> Peripheral"
 
-The MQTT API is described in [the MQTT documentation](/en/docs/api/mqtt-api).
+The MQTT API is described in [the MQTT documentation](/docs/api/mqtt-api).
 
 ## Configure an MQTT broker in Gladys Assistant
 
-The following tutorial implies that you have installed Gladys Assistant 4 with the official Rasbian image as [explained here](/en/docs/), or that you have Gladys installed witg Docker.
+The following tutorial implies that you have installed Gladys Assistant 4 with the official Rasbian image as [explained here](/docs/), or that you have Gladys installed witg Docker.
 
 First step, go to Gladys, section `Integrations`, and open the MQTT integration:
 

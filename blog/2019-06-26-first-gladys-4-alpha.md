@@ -103,13 +103,13 @@ That's the biggest advantages of using a separate frontend, we can host a static
 
 As Gladys 4 runs inside Docker, it's super easy to deploy it on MacOS/Windows thanks to Kitematic.
 
-[Installing Gladys Assistant 4 alpha on MacOS/Windows](/en/docs/installation/macos-windows).
+[Installing Gladys Assistant 4 alpha on MacOS/Windows](/docs/installation/macos-windows).
 
 ### On a Raspberry Pi
 
 On a Raspberry Pi, it's the same. You can run Gladys 4 Alpha Docker image built for ARM.
 
-[Installing Gladys Assistant 4 Alpha on Raspberry Pi](/en/docs/).
+[Installing Gladys Assistant 4 Alpha on Raspberry Pi](/docs/).
 
 ## What's next?
 

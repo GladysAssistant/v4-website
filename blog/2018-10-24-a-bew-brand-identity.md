@@ -10,7 +10,7 @@ author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/new-brand-identity.jpg
 ---
 
-Article en français [ici](/fr/article/une-nouvelle-identite-visuelle-pour-gladys).
+Article en français [ici](/fr/blog/une-nouvelle-identite-visuelle-pour-gladys).
 
 Hi everyone!
 

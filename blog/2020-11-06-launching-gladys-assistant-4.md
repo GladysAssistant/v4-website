@@ -17,8 +17,8 @@ It's a big day, after almost 2 years of work by the whole community, Gladys Assi
 
 You can embark on the adventure by following the tutorials:
 
-- [Raspberry Pi Tutorial](/en/docs/)
-- [Manual installation with Docker](/en/docs/installation/docker/)
+- [Raspberry Pi Tutorial](/docs/)
+- [Manual installation with Docker](/docs/installation/docker/)
 - [Test Gladys Assistant on the demo site](https://demo.gladysassistant.com)
 
 Now let's go back to the decisions that led to this fourth version of Gladys Assistant 🙂
@@ -79,12 +79,12 @@ Today, hundreds of home automation devices are already available in Gladys Assis
 
 To date, Gladys Assistant supports peripherals:
 
-- Z-Wave ([doc](/en/docs/integrations/zwave/))
-- Xiaomi ([doc](/en/docs/integrations/xiaomi/))
-- Philips Hue ([doc](/en/docs/integrations/philips-hue/))
-- Sonoff (Tasmota) ([doc](/en/docs/integrations/tasmota/))
-- RTSP, HTTP and USB cameras ([doc](/en/docs/integrations/camera/))
-- The MQTT protocol ([doc](/en/docs/integrations/mqtt/))
+- Z-Wave ([doc](/docs/integrations/zwave/))
+- Xiaomi ([doc](/docs/integrations/xiaomi/))
+- Philips Hue ([doc](/docs/integrations/philips-hue/))
+- Sonoff (Tasmota) ([doc](/docs/integrations/tasmota/))
+- RTSP, HTTP and USB cameras ([doc](/docs/integrations/camera/))
+- The MQTT protocol ([doc](/docs/integrations/mqtt/))
 
 Many integrations are under development and will join this list in order to control a maximum of devices. And since Gladys Assistant is open-source, you can contribute to this list by submitting a PR on GitHub :)
 
@@ -124,7 +124,7 @@ It is thus possible to send data to Gladys from an Arduino, an ESP8266, a remote
 
 In the other direction, it is possible for Gladys to control MQTT devices.
 
-Learn more about [the MQTT integration](/en/docs/integrations/mqtt/).
+Learn more about [the MQTT integration](/docs/integrations/mqtt/).
 
 ## A more powerful scene engine than ever
 
@@ -140,7 +140,7 @@ Everything is possible with Gladys Assistant's scene engine 😄
 
 The scene engine has been tested with heavy loads and will continuously evolve in future versions of the software.
 
-Learn more about [scenes in Gladys Assistant 4](/en/docs/scenes/intro/).
+Learn more about [scenes in Gladys Assistant 4](/docs/scenes/intro/).
 
 ## Privacy at the heart of the product
 
@@ -182,7 +182,7 @@ I will post the progress of this goal on social networks and will surely do a re
 
 Once again, thank you all for your help and feedback!
 
-If you want to join us to be part of the hard core of the 1,000 Gladys Assistant 4 users, it's now and it's happening on [Gladys Assistant installation tutorial](/en/docs/).
+If you want to join us to be part of the hard core of the 1,000 Gladys Assistant 4 users, it's now and it's happening on [Gladys Assistant installation tutorial](/docs/).
 
 See you soon!
 

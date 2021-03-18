@@ -101,7 +101,7 @@ Then, download this backup file on your machine (the `backup-gladys.sql` file). 
 
 ### Flash your SD card
 
-Then, you can now install the new version of Gladys on your SD card. You need to download the new image on the [installation](/en/installation/) page of the website.
+Then, you can now install the new version of Gladys on your SD card. You need to download the new image on the installation page of the website.
 
 Clone this image on your SD card (it may be safer to do that on a new SD card, to avoid losing your old installation if the process goes wrong.). You can follow Gladys main installation tutorial.
 
