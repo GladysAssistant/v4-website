@@ -1,28 +1,28 @@
 ---
 id: weather
-title: Box météo
-sidebar_label: Météo
+title: Weather
+sidebar_label: Weather
 ---
 
-Dans Gladys Assistant, vous pouvez afficher la météo à votre localisation sur le tableau de bord.
+In Gladys Assistant, you can display the weather at your location on the dashboard.
 
-## Pré-requis
+## Prerequisites
 
-- Vous devez au préalable avoir configuré le service [OpenWeather](../../static/img/docs/integrations/openweather/) pour afficher la météo dans Gladys Assistant.
-- Vous devez avoir configuré votre maison dans les paramètres, et avoir placé votre maison sur la carte, afin qu'OpenWeatherMap ait la latitude/longitude de votre maison.
+- You must first have configured the [OpenWeather service](/docs/integrations/openweather/) to display the weather forecast in Gladys Assistant.
+- You must have configured your home in the settings, and have placed your home on the map, so that OpenWeatherMap has the latitude / longitude of your home.
 
 ## Configuration
 
-Rendez-vous sur le dashboard, puis cliquez sur "Editer".
+Go to the dashboard, then click on "Edit".
 
-Sélectionnez la box "Météo, puis cliquez sur le bouton +.
+Select the "Weather" box, then click on the + button.
 
-![Ajouter la box météo à Gladys](../../static/img/docs/en/dashboard/weather/add-weather-box.png)
+![Add the weather box to Gladys](../../static/img/docs/en/dashboard/weather/add-weather-box.png)
 
-Ensuite, sélectionnez votre maison. Cela permettra au service de connnaitre votre latitude/longitude.
+Then select your home. This will allow the service to know your latitude / longitude.
 
-![Sélectionnez votre maison dans Gladys](../../static/img/docs/en/dashboard/weather/select-home.png)
+![Select your home in Gladys](../../static/img/docs/en/dashboard/weather/select-home.png)
 
-Cliquez sur "Sauvegarder".
+Click on "Save".
 
-Vous devriez voir la météo !
+You should see the weather forecast!

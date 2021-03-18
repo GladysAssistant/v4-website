@@ -1,29 +1,29 @@
 ---
 id: temperature-in-room
-title: Box température de la pièce
-sidebar_label: Température de la pièce
+title: Temperature in room
+sidebar_label: Temperature in room
 ---
 
-Dans Gladys Assistant, vous pouvez afficher la température moyenne d'une pièce sur votre tableau de bord.
+In Gladys Assistant, you can display the average temperature of a room on your dashboard.
 
-Cette box va chercher la température de tous les capteurs de températures présent dans la pièce, et en affiche une moyenne sur le tableau de bord.
+This box will look for the temperature of all the temperature sensors present in the room, and displays an average on the dashboard.
 
-## Pré-requis
+## Prerequisites
 
-Vous devez au préalable avoir configuré au moins un capteur de température. Cela peut-être un capteur de n'importe quel protocole (Z-Wave, MQTT, peu importe), et avoir affecté ce capteur à une pièce.
+You must first have configured at least one temperature sensor. It could be a sensor from any protocol (Z-Wave, MQTT, whatever), and have assigned that sensor to a room.
 
 ## Configuration
 
-Rendez-vous sur le tableau de bord, et cliquez sur "Editer".
+Go to the dashboard, and click on "Edit".
 
-Sélectionnez la box "température de la pièce", et cliquez sur le bouton +.
+Select the "room temperature" box, and click on the + button.
 
-![Ajouter la box température à Gladys](../../static/img/docs/en/dashboard/temperature-in-room/select-box.png)
+![Add the temperature box to Gladys](../../static/img/docs/en/dashboard/temperature-in-room/select-box.png)
 
-Ensuite, sélectionnez la pièce que vous voulez afficher.
+Then select the room you want to display.
 
-![Sélectionnez la pièce à afficher](../../static/img/docs/en/dashboard/temperature-in-room/select-room.png)
+![Select the room to display](../../static/img/docs/en/dashboard/temperature-in-room/select-room.png)
 
-Cliquez sur "Sauvegarder".
+Click on "Save".
 
-Vous devriez voir la température moyenne de cette pièce !
+You should see the average temperature of this room!

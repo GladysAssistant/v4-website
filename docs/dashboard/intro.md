@@ -1,17 +1,17 @@
 ---
 id: intro
-title: Le tableau de bord de Gladys Assistant
+title: Gladys Assistant dashboard
 sidebar_label: Introduction
 ---
 
-Dans Gladys Assistant, le tableau de bord est la page principale de Gladys.
+In Gladys Assistant, the dashboard is the main page of Gladys.
 
-Cette page est entièrement configurable pour répondre à votre besoin.
+This page is fully configurable to meet your needs.
 
-![Tableau de bord Gladys Assistant 4](../../static/img/docs/en/dashboard/dashboard-gladys-4.jpg)
+![Gladys Assistant 4 dashboard](../../static/img/docs/en/dashboard/dashboard-gladys-4.jpg)
 
-Afficher des images de caméras ? Surveiller des valeurs de capteurs ? Contrôler ses lumières ?
+Display camera images? Monitor sensor values? Control his lights?
 
-Dans cette catégorie de la documentation, nous parcourerons tous les types de "box" (ou widget si vous voulez!), et expliquerons comment chacun fonctionne.
+In this category of documentation, we'll walk through all types of "boxes" (or widgets if you like!), And explain how each one works.
 
-Si vous avez des besoins qui ne sont pas couverts par le tableau de bord actuel de Gladys, n'hésitez pas à nous contacter sur [le forum](https://community.gladysassistant.com/) afin de voir si on peut développer une box spécifique.
+If you have any needs that are not covered by the current Gladys dashboard, do not hesitate to contact us on [the forum](https://community.gladysassistant.com/) to see if we can develop a specific box.

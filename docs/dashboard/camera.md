@@ -1,35 +1,35 @@
 ---
 id: camera
-title: Box caméra
-sidebar_label: Caméra
+title: Camera
+sidebar_label: Camera
 ---
 
-Dans Gladys Assistant, il est possible d'afficher sur le tableau de bord les images de vos caméras.
+In Gladys Assistant, it is possible to display images from your cameras on the dashboard.
 
-Ces images sont rafraichies à interval régulier, suivant l'interval que vous avez spécifié dans la configuration de votre caméra.
+These images are refreshed at regular intervals, according to the interval you specified in your camera configuration.
 
-## Pré-requis
+## Prerequisites
 
-Vous devez avoir configuré une caméra, voir [la documentation](../../static/img/docs/integrations/camera/) de l'intégration caméra.
+You must have configured a camera, see [documentation](/docs/integrations/camera/) for camera integration.
 
 ## Configuration
 
-Rendez-vous sur le tableau de bord de Gladys Assistant, puis cliquez sur le bouton "Editer".
+Go to the Gladys Assistant dashboard, then click on the "Edit" button.
 
-Sélectionnez la box "Caméra", et cliquez sur le bouton +.
+Select the "Camera" box, and click on the + button.
 
-![Ajouter la box caméra à Gladys](../../static/img/docs/en/dashboard/camera/select-box.png)
+![Add camera box to Gladys](../../static/img/docs/en/dashboard/camera/select-box.png)
 
-Ensuite, sélectionnez la caméra que vous voulez afficher.
+Then select the camera you want to view.
 
-Donnez un nom à cette box, c'est ce texte qui s'affichera sur le tableau de bord sous l'image de la caméra.
+Give this box a name, it is this text that will be displayed on the dashboard under the camera image.
 
-![Sélectionnez la caméra à afficher](../../static/img/docs/en/dashboard/camera/select-camera.png)
+![Select the camera to display](../../static/img/docs/en/dashboard/camera/select-camera.png)
 
-Cliquez sur "Sauvegarder".
+Click on "Save".
 
-Voilà ! Vous devriez voir l'image de votre caméra.
+You should see the image from your camera.
 
-![Affichage caméra tableau de bord Gladys Assistant](../../static/img/docs/en/dashboard/camera/view-image.png)
+![Gladys Assistant Dashboard Camera View](../../static/img/docs/en/dashboard/camera/view-image.png)
 
-Cette image se rafraichissera automatiquement, selon la fréquence que vous avez défini dans l'intégration caméra.
+This image will refresh automatically, according to the frequency that you have defined in the camera integration.

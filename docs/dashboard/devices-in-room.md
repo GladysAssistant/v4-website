@@ -1,35 +1,35 @@
 ---
 id: devices-in-room
-title: Box appareils de la pièce
-sidebar_label: Appareils de la pièce
+title: Devices in room
+sidebar_label: Devices in room
 ---
 
-Dans Gladys Assistant, vous pouvez contrôler vos appareils directement depuis le tableau de bord, et afficher les valeurs de vos capteurs dans l'interface.
+In Gladys Assistant, you can control your devices directly from the dashboard, and display the values ​​of your sensors in the interface.
 
-## Pré-requis
+## Prerequisites
 
-Vous devez avoir ajouté au moins quelques appareils à Gladys, sinon cela a peu d'intérêt 😄
+You must have added at least a few devices to Gladys, otherwise it is of little interest 😄
 
 ## Configuration
 
-Rendez-vous sur le tableau de bord de Gladys, et cliquez sur "Editer".
+Go to the Gladys dashboard, and click on "Edit".
 
-Sélectionnez la box "Appareils de la pièce", et cliquez sur le bouton +.
+Select the "Room devices" box, and click on the + button.
 
-![Ajouter la box appareil de la pièce à Gladys](../../static/img/docs/en/dashboard/devices-in-room/select-box.png)
+![Add the room's device box to Gladys](../../static/img/docs/en/dashboard/devices-in-room/select-box.png)
 
-Ensuite, sélectionnez la pièce que vous voulez afficher.
+Then select the room you want to display.
 
-![Sélectionnez la pièce à afficher](../../static/img/docs/en/dashboard/devices-in-room/select-room.png)
+![Select the room to display](../../static/img/docs/en/dashboard/devices-in-room/select-room.png)
 
-Cliquez sur "Sauvegarder".
+Click on "Save".
 
-Vous devriez voir tous les appareils de cette pièce.
+You should see all the devices in that room.
 
-## Remarque
+## Note
 
-Cette box n'affiche que ce qu'elle est capable de gérer.
+This box only displays what it is capable of handling.
 
-Si vous avez une fonctionnalité particulière sur l'un de vos appareils, il est possible que cette fonctionnalité ne soit pas encore gérée par le tableau de bord, et par conséquent n'apparaisse pas ici.
+If you have a particular feature on one of your devices, it is possible that this feature is not yet managed by the dashboard, and therefore does not appear here.
 
-N'hésitez pas à nous contacter sur le forum si vous voulez proposer l'ajout d'une fonctionnalité à cette box.
+Do not hesitate to contact us on the forum if you want to propose the addition of a feature to this box.
