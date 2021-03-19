@@ -35,7 +35,7 @@ function Integration({
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
         <Image
-          img={require(`../../static/img/integrations/${imageName}`)}
+          img={require(`../../static/img/integrations/${lang}/${imageName}`)}
           size={200}
           alt={title}
           title={title}
@@ -278,14 +278,19 @@ function IntegrationPage({ integrations, lang }) {
               description="Integration page description"
               values={{
                 website: (
-                  <Link to="https://github.com/GladysAssistant/v4-website/tree/master/integrations">
-                    here
+                  <Link to="https://airtable.com/invite/l?inviteId=invCQPYLKLu5g3sGm&inviteToken=a0f27651689ca8357f5165b372e78f2b56357d126e6d18c162810626eed25207">
+                    <Translate
+                      id="integrations.improveHere"
+                      description="Integration improve integration list here"
+                    >
+                      here
+                    </Translate>
                   </Link>
                 ),
               }}
             >
               {`This list is crowdsourced by the community. To improve this list,
-              you can help us on GitHub {website}.`}
+              you can help us on Airtable {website}.`}
             </Translate>
           </div>
           <div class="row" style={{ marginTop: "16px" }}>
