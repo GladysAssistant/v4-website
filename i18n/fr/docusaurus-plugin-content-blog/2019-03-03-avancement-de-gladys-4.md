@@ -95,7 +95,7 @@ Bon, maintenant la question que tout le monde se pose: elle sort quand cette ver
 
 Dans les actions, il est possible d'exécuter des actions en parallèle ou en séquentiel, ce qui permet d'ajouter des délais entre les actions par exemple.
 
-![Modélisation base de donnée Gladys 4](../../../static/img/articles/fr/avancement-gladys-4/actions-example.png" alt="‹ />
+![Modélisation base de donnée Gladys 4](../../../static/img/articles/fr/avancement-gladys-4/actions-example.png)
 
 Dans les déclencheurs, il est possible de faire du ET/OU entre les conditions.
 

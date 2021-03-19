@@ -21,11 +21,7 @@ J'aimerais revenir sur toutes ces nouveautés avec vous dans un article bilan de
 
 ## Un premier tutoriel vidéo
 
-J'en parlais dans ma newsletter, je me suis équipé en matériel afin de filmer des tutoriels vidéos autour de Gladys. L'objectif dans un premier temps à été de filmer la base de la base : L'installation de Gladys sur un Raspberry Pi. Pour ceux qui n'ont pas vu la vidéo, elle est disponible sur YouTube:
-
-<div class="embed-responsive embed-responsive-16by9">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/rx1PmlMGh38" frameborder="0" allowfullscreen=""></iframe>
-</div>
+J'en parlais dans ma newsletter, je me suis équipé en matériel afin de filmer des tutoriels vidéos autour de Gladys. L'objectif dans un premier temps à été de filmer la base de la base : L'installation de Gladys sur un Raspberry Pi. Pour ceux qui n'ont pas vu la vidéo, elle est disponible sur YouTube.
 
 De nombreux débutants étaient en effet bloqués à l'installation de Gladys, car sans aucunes connaissances du monde Linux ce n'est pas toujours facile de commencer avec Gladys. J'espère que cette première vidéo permettra aux plus débutants de commencer sur le projet plus simplement :)
 

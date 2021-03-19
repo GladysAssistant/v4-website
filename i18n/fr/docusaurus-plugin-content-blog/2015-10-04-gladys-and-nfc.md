@@ -4,7 +4,7 @@ description: Comment déclencher des actions sur Gladys sans forcément être su
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+author_image_url: /fr/img/pierre-gilles.jpg
 image: /img/presentation/nfc-cover.jpg
 slug: gladys-and-nfc
 ---
@@ -31,7 +31,7 @@ Comment faire pour intéragir avec Gladys sans avoir avec ouvrir une interface w
 - Installez tout d'abord Tasker
 - Allez dans les préférences de Tasker, onglet `Divers`, puis cocher `Autoriser l'accès extérieur` (pour que Trigger puisse déclencher des actions )
 
-![Screenshot Android tasker](../static/img/articles/fr/gladys-and-nfc/screenshot-allow-access.jpg)
+![Screenshot Android tasker](../../../static/img/articles/fr/gladys-and-nfc/screenshot-allow-access.jpg)
 
 ### Créez une tâche Tasker
 
@@ -50,9 +50,9 @@ Le principe: Avant de me coucher, je pose mon smartphone sur ma table de nuit ( 
 - Sélectionnez `Variables` puis `Affecter une variable`. ( Cela va nous servir à enregistrer le token d'API de votre Gladys )
 - Donnez lui comme nom `%Token` et comme valeur ( le champs A ) le token d'API que vous pouvez trouvez dans l'onglet paramètres de l'interface de Gladys.
 
-![Screenshot Gladys token](../static/img/articles/fr/gladys-and-nfc/token-gladys-v3.png)
+![Screenshot Gladys token](../../../static/img/articles/fr/gladys-and-nfc/token-gladys-v3.png)
 
-![Screenshot set token tasker](../static/img/articles/fr/gladys-and-nfc/screenshot-set-token.jpg)
+![Screenshot set token tasker](../../../static/img/articles/fr/gladys-and-nfc/screenshot-set-token.jpg)
 
 - Revenez maintenant en arrière et créez une nouvelle action en cliquant sur `+` en bas comme précédemment. Sélectionnez `Réseau` puis `POST HTTP`.
 - Remplissez le champ `Serveur:port` avec le serveur et le port de votre instance Gladys, example : `IP_DE_VOTRE_RASPBERRY_PI`. Si votre Gladys écoute sur un port particulier, il faut le préciser à la fin. Exemple: `192.168.0.12:8080`.
@@ -68,7 +68,7 @@ Vous pouvez mettre n'importe quel code parmi la liste d'events suivants : [https
 
 Le user est l'ID du user que vous voulez affecter par l'event. Si vous allez vous coucher, mettez votre ID ( vous pouvez trouver votre ID dans les paramètres de Gladys, rubrique `Mon compte` )
 
-![Screenshot edit task](../static/img/articles/fr/gladys-and-nfc/screenshot-edit-task2.jpg)
+![Screenshot edit task](../../../static/img/articles/fr/gladys-and-nfc/screenshot-edit-task2.jpg)
 
 - C'est bon, votre tâche est prête. Vous pouvez la tester en cliquant sur le bouton "play" en bas à gauche. Normalement vous devriez voir apparaître l'event dans l'onglet `Moi` de votre Gladys.
 
@@ -85,7 +85,7 @@ Le user est l'ID du user que vous voulez affecter par l'event. Si vous allez vou
 - Faites `Suivant`, puis `Terminé`, puis placez votre téléphone sur le tag NFC que vous voulez écrire.
 - C'est bon, votre tag NFC est prêt!
 
-![Screenshot write NFC](../static/img/articles/fr/gladys-and-nfc/screenshot-write-nfc.jpg)
+![Screenshot write NFC](../../../static/img/articles/fr/gladys-and-nfc/screenshot-write-nfc.jpg)
 
 ### Conclusion
 

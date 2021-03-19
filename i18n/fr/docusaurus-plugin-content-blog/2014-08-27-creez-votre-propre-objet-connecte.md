@@ -4,7 +4,7 @@ description: A nous de créer nos propres objets connectés, avec un arduino, qu
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+author_image_url: /fr/img/pierre-gilles.jpg
 image: /img/presentation/connectedobjectlow.jpg
 slug: creez-votre-propre-objet-connecte
 ---
@@ -14,7 +14,7 @@ Mais ce n'est qu'un exemple parmi tant d'autre ! Le but ici est de créer une ba
 
 J'en profite pour vous mettre une petite photo du rendu final (enfin final, sur la breadbord de développement !)
 
-![Assemblage de l'objet connecté](../static/img/articles/fr/creez-votre-propre-objet-connecte/finalisation.jpg)
+![Assemblage de l'objet connecté](../../../static/img/articles/fr/creez-votre-propre-objet-connecte/finalisation.jpg)
 
 <!--truncate-->
 
@@ -40,7 +40,7 @@ Pour connecter l'accéléromètre, on branche les ports de l'accéléromètre (e
 -SDA => A4  
 -SDL => A5
 
-![Objet connecté final](../static/img/articles/fr/creez-votre-propre-objet-connecte/assemblage.jpg)
+![Objet connecté final](../../../static/img/articles/fr/creez-votre-propre-objet-connecte/assemblage.jpg)
 
 Pour connecter l'émetteur 433Mhz, on branche les ports de l'émetteur (en premier) au ports suivant de l'arduino :  
 -VCC => 5V  
@@ -54,7 +54,7 @@ Enfin, on connecte le connecteur pour batterie 9V pour pouvoir alimenter notre o
 
 Pour que l'objet ait une portée suffisante, je vous conseille de fixer une antenne au port "ANT" de l'émetteur, de taille 17,2cm de préférence.
 
-![Objet connecté DIY](../static/img/articles/fr/creez-votre-propre-objet-connecte/objet_connecte_final.jpg)
+![Objet connecté DIY](../../../static/img/articles/fr/creez-votre-propre-objet-connecte/objet_connecte_final.jpg)
 
 ## Le logiciel
 

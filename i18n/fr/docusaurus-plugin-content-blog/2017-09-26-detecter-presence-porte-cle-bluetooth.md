@@ -52,7 +52,7 @@ Avec un peu d'astuce, il est même possible de localiser l'utilisateur dans la m
 
 Je vous ai fais un petit schéma pour que vous visualisiez mieux ce que ça va donner :
 
-![Schéma domotique Raspberry Pi Bluetoot](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/house-bluetooth.png" alt="h)
+![Schéma domotique Raspberry Pi Bluetoot](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/house-bluetooth.png)
 
 Vous remarquerez que j'ai mis ici 3 Raspberry Pi pour l'exemple, mais en pratique j'arrive largement à couvrir mon logement avec un seul Raspberry Pi 3 en le plaçant de façon central dans le salon. A voir en fonction de votre logement :)
 

@@ -4,7 +4,7 @@ description: Les prises Wi-Fi Wemo Insight Switch ont de nombreux atouts, essayo
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+author_image_url: /fr/img/pierre-gilles.jpg
 image: /img/presentation/wemo_icone_light.jpg
 slug: controler-prises-wemo-insight-switch
 ---
@@ -29,7 +29,7 @@ Elles sont certes un peu plus cher, mais de mon point de vue cette prise vaut la
 
 C'est tout simple, il vous faut juste une prise [WeMo Insight Switch](http://amzn.to/1CG0WQr) !
 
-![Wemo Insight Switch](../static/img/articles/fr/controler-prises-wemo/wemo_box_light.jpg)
+![Wemo Insight Switch](../../../static/img/articles/fr/controler-prises-wemo/wemo_box_light.jpg)
 
 ## Installation
 
@@ -48,7 +48,7 @@ Je vous laisse jouer avec l'application, on peut s'amuser à créer des règles,
 
 Un exemple sympa d'utilisation tout simple, on branche la bouilloire à la prise, et on programme l'allumage pour le lendemain matin, et l'eau est chaude au levée !
 
-![L'eau qui bout le matin au levée !](../static/img/articles/fr/controler-prises-wemo/wemo_coffee_light.jpg)
+![L'eau qui bout le matin au levée !](../../../static/img/articles/fr/controler-prises-wemo/wemo_coffee_light.jpg)
 
 ### Let's hack the plug !
 

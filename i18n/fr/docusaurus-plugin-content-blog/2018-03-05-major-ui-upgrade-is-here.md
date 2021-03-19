@@ -58,7 +58,7 @@ Et ce n'est que le début! Vu que désormais c'est très simple de développer u
 
 Il y a une semaine sur le forum, je recevais un feedback de @Jojo, qui me disait qu'il n'arrivait pas à comprendre l'utilité de demander à Gladys de nous réveiller, étant donné que derrière il fallait forcément créer un scénario manuellement sur cette alarme.
 
-![Feedback forum alarm](../../../static/img/articles/fr/gladys-3-8/feedback-forum-alarm.jpg" alt="Feedback forum alarm)
+![Feedback forum alarm](../../../static/img/articles/fr/gladys-3-8/feedback-forum-alarm.jpg)
 
 Et il avait raison !
 

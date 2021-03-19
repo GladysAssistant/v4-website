@@ -4,7 +4,7 @@ description: Un petit post récapitulatif du matériel nécessaire pour mettre e
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+author_image_url: /fr/img/pierre-gilles.jpg
 image: /img/presentation/commencer-gladys-noel.jpg
 slug: commencer-avec-gladys-pour-noel
 ---
@@ -74,7 +74,7 @@ Une des interactions que je trouve la plus whaou dans Gladys, ça reste la lumi�
 
 Surtout en combinant ces lampes avec le porte clé Bluetooth de l'exemple précédent, vous pouvez faire des scénarios plutôt sympa.
 
-![Gladys Romantic](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/gladys_romantic.gif)
+![Gladys Romantic](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/gladys_romantic.gif)
 
 Pour les lumières, deux options, la première c'est les Philips Hue: des lampes assez haut de gamme dont la lumière peut varier en intensité et en couleur. C'est ce que j'ai chez moi et je n'en suis pas déçu !
 
@@ -87,7 +87,7 @@ L'autre option, c'est les ampoules Milight, des ampoules chinoises plus abordabl
 
 Pour gérer la musique, deux options, soit vous optez pour le module Gladys MP3 Player qui vous permet de jouer la musique directement sur le Raspberry Pi (que vous branchez ensuite en jack/HDMI à vos enceintes).
 
-![Sonos](../static/img/articles/fr/gladys-sonos/gladys-sonos.jpg)
+![Sonos](../../../static/img/articles/fr/gladys-sonos/gladys-sonos.jpg)
 
 L'autre option, c'est les enceintes Sonos qui fournissent un son puissant (très puissant même, demandez à mes voisins 😁), et surtout de qualité. L'avantage des Sonos c'est quelles se connectent en Wi-Fi ou Ethernet à votre box, et ensuite elles sont contrôlable par n'importe qui dans la maison, dont Gladys. Leur prix a pas mal baissé depuis 2 ans en plus :)
 
