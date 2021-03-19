@@ -11,7 +11,7 @@ slug: bilan-2020-gladys-assistant
 
 Hi all !
 
-Like every year, it is time for a new annual review for Gladys Assistant. I had done it in [2019](/blog/bilan-2019-gladys-assistant), [2018](/blog/2018-year-review-of-gladys-assistant), [2017](/blog/bilan-gladys-2017), [2016](/blog/bilan-annee-2016) and [2015](/blog/bilan-2015-et-projets-pour-2016).
+Like every year, it is time for a new annual review for Gladys Assistant. I had done it in [2019](/blog/bilan-2019-gladys-assistant), [2018](/blog/bilan-2018-pour-gladys-assistant), [2017](/blog/bilan-gladys-2017), [2016](/blog/bilan-annee-2016) and [2015](/blog/bilan-2015-et-projets-pour-2016).
 
 Let's go for the 2020 year in review :)
 
@@ -19,7 +19,7 @@ Let's go for the 2020 year in review :)
 
 ## What happened in 2020?
 
-The year 2020 was rich in new features for the project, because in November version 4 of Gladys [was released](/blog/gladys-assistant-4-launch), a rewritten version from scratch.
+The year 2020 was rich in new features for the project, because in November version 4 of Gladys [was released](/blog/lancement-gladys-assistant-4), a rewritten version from scratch.
 
 Many of you joined the community following this launch, since 780 of you installed Gladys v4 the month of its launch: a very encouraging figure.
 

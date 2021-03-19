@@ -23,7 +23,7 @@ If you have installed Gladys manually, look at the "Docker" tab of this document
 
 ### Who uses Gladys Assistant 4?
 
-Gladys Assistant v4 was released in [November 2020](/blog/gladys-assistant-4-launch/). Since then, hundreds of you have used Gladys Assistant, and the goal is to grow to thousands in the coming months!
+Gladys Assistant v4 was released in [November 2020](/blog/lancement-gladys-assistant-4). Since then, hundreds of you have used Gladys Assistant, and the goal is to grow to thousands in the coming months!
 
 Gladys Assistant is installed by all types of users:
 
