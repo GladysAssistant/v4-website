@@ -111,7 +111,7 @@ Il y a un an, le projet n’était pas du tout viable. J’investissais mon arge
 
 Croyez moi, pour un étudiant comme moi, ça faisait **beaucoup**.
 
-Alors j’ai travaillé dur pendant 4 mois pour créer le [Gladys Starter Pack](/fr/gladys-starter-pack/), un pack vidéo + ebook que je vendais 39€ en pré-commande, et que je vends 49€ désormais.
+Alors j’ai travaillé dur pendant 4 mois pour créer le Gladys Starter Pack, un pack vidéo + ebook que je vendais 39€ en pré-commande, et que je vends 49€ désormais.
 
 (Petite anecdote: Une semaine avant la sortie du starter pack, je me suis fais voler mon ordinateur… 😅 Heureusement, toutes les vidéos étaient backup online, mais bon j’ai passé une mauvaise semaine^^)
 

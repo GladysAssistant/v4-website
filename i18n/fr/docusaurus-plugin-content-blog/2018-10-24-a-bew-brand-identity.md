@@ -11,8 +11,6 @@ image: /img/presentation/new-brand-identity.jpg
 slug: une-nouvelle-identite-visuelle-pour-gladys
 ---
 
-English article available [here](/en/blog/a-new-brand-identity).
-
 Salut à tous,
 
 Lorsque je suis arrivé à Bali il y a maintenant 2 mois, je suis venu avec un objectif: Passer du temps sur le projet pour emmener Gladys à un autre niveau.

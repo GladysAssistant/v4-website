@@ -22,7 +22,7 @@ Allez, c'est parti !
 
 ## Gladys Starter Pack
 
-La première news de cet article, c'est le lancement du tant attendu [Gladys Starter Pack](/fr/gladys-starter-pack/) en pré-commande ! 🚀
+La première news de cet article, c'est le lancement du tant attendu Gladys Starter Pack en pré-commande ! 🚀
 
 C'est vrai que jusque là, malgré les explications, le forum, les scripts d'installation, les exemples sur les pages modules, il y avait un manque pour beaucoup d'un chemin "clair" à suivre pour mettre en place Gladys chez soit. Surtout quand on n'a pas forcément le temps d'aller fouiner, le temps d'aller mettre les briques les unes sur les autres. Une documentation écrite ne suffisait pas, il fallait pour ce besoin quelque chose de beaucoup plus guidé : des tutoriels vidéos.
 
@@ -52,7 +52,7 @@ Et depuis dimanche dernier, ce pack est maintenant en ligne, et disponible en pr
 
 J'aimerais en tout cas dire un grand MERCI à ceux qui ont déjà pré-commandé le pack 🙌 Vraiment, ça me touche beaucoup :) Je ferai sûrement un petit mail pour ceux qui l'ont pré-commandé pour vous remercier personnellement, je suis vraiment heureux d'avoir une commmauté comme ça !
 
-Pour ceux qui aimeraient découvrir ce pack, et contribuer au projet, les pré-commandes sont toujours ouvertes, et le pack est disponible au prix de 39€ => [Précommandes Gladys Starter Pack](/fr/gladys-starter-pack/)!
+Pour ceux qui aimeraient découvrir ce pack, et contribuer au projet, les pré-commandes sont toujours ouvertes, et le pack est disponible au prix de 39€.
 
 Après les pré-commandes, le pack passera à son prix final de 49€ !
 

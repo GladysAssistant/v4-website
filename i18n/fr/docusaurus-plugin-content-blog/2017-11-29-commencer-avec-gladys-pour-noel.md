@@ -101,8 +101,6 @@ A l'occasion de Noël, le Gladys Starter Pack est en promotion à <b>37,90€ au
 
 L'occasion de soutenir le projet à bas prix !
 
-Le Gladys Starter Pack est disponible ici => [https://gladysassistant.com/fr/gladys-starter-pack/](/fr/gladys-starter-pack/)
-
 Merci à tous ceux qui l'ont déjà acheté et soutiennent ainsi le projet :)
 
 ## Conclusion

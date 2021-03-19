@@ -11,8 +11,6 @@ image: /img/presentation/gladys-4-alpha.jpg
 slug: premiere-alpha-gladys-4
 ---
 
-[English article here](/en/blog/first-alpha-gladys-4).
-
 Salut à tous !
 
 Cela fait un bout de temps que je travaille sur Gladys Assistant 4, la prochaine version majeure de Gladys.

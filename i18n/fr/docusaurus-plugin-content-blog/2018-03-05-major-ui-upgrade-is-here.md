@@ -108,7 +108,7 @@ Ensuite, récupérez ce fichier de backup en local sur votre machine (le fichier
 
 ### Flashez votre carte SD
 
-Maintenant, vous pouvez installer la nouvelle version de Gladys sur votre carte SD. Pour cela, téléchargez sur la page [installation](https://gladysassistant.com/fr/installation/) du site la nouvelle image Raspbian.
+Maintenant, vous pouvez installer la nouvelle version de Gladys sur votre carte SD. Pour cela, téléchargez sur la page installation du site la nouvelle image Raspbian.
 
 Ensuite, clonez-là sur une carte SD (soit une nouvelle, soit la même qu'avant si vous n'en avez qu'une). Vous pouvez suivre le [tutoriel d'installation de Gladys](https://www.youtube.com/watch?v=rx1PmlMGh38), rien n'a changé tout est pareil :)
 
@@ -170,4 +170,4 @@ Deuxième point, si vous aviez installé des modules externe type module bluetoo
 
 Je suis super heureux de pouvoir enfin sortir cette release. J'espère qu'elle se passera bien chez vous et qu'elle vous plaira :)
 
-A l'occasion de cette importante release pour le projet, le Gladys Starter Pack est en promotion à 34€ au lieu de 49€ avec le code promo "GLADYS_3_8" ! Disponible ici => [https://gladysassistant.com/fr/gladys-starter-pack/](/fr/gladys-starter-pack/). L'occasion de commencer sur Gladys avec cette super release, et de soutenir le projet :)
+A l'occasion de cette importante release pour le projet, le Gladys Starter Pack est en promotion à 34€ au lieu de 49€ avec le code promo "GLADYS_3_8" ! L'occasion de commencer sur Gladys avec cette super release, et de soutenir le projet :)
