@@ -6,7 +6,7 @@ author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/gladys-4-launch.jpg
-slug: gladys-assistant-4-launch
+slug: lancement-gladys-assistant-4
 ---
 
 Hi all,

@@ -1,5 +1,5 @@
 ---
-slug: first-alpha-gladys-4
+slug: premiere-alpha-gladys-4
 title: A first alpha release for Gladys 4!
 description: After 7 months of work, I'm happy to release today the first alpha release of Gladys 4, the next major version of Gladys.
 author: Pierre-Gilles Leymarie
