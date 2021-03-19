@@ -1,121 +1,119 @@
 ---
-title: Bilan de 2019 pour Gladys Assistant !
-description: L'occasion de faire le point sur l'année 2019, et de discuter des projets pour 2020.
+title: Gladys Assistant's 2019 Year In Review
+description: Let's look back at this crazy year for Gladys Assistant, and see what's next for 2020
 author: Pierre-Gilles Leymarie
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
-
 image: /img/presentation/bilan-2019-cover.jpg
-
 slug: bilan-2019-gladys-assistant
 ---
 
-Salut à tous !
+Hi all !
 
-Chaque année, je publie un article bilan de l'année. Je l'avais fais en [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) et [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
+Each year, I publish a review article for the year. I had done it in [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) and [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
 
-Bienvenue dans la version 2019 de l'article 😁
+Welcome to the 2019 version of the article 😁
 
 <!--truncate-->
 
-## Que s'est-il passé en 2019 ?
+## What happened in 2019?
 
-Cette année a été une année assez différente des autres années, car c'est la première année où j'ai été du début à la fin à temps partiel sur Gladys.
+This year has been quite a different year from other years, as it's the first year I've been from start to finish part-time on Gladys.
 
-Cette disponibilité supplémentaire m'a permis de lancer un chantier conséquent : Gladys 4.
+This additional availability allowed me to launch a major project: Gladys 4.
 
-Un chantier conséquent car Gladys 4 est un produit entièrement nouveau qui ne partage rien avec Gladys 3. C'est plus qu'une re-écriture complète en terme de code, c'est une toute nouvelle réflexion en terme de produit et d'expérience utilisateur.
+A major project because Gladys 4 is an entirely new product which does not share anything with Gladys 3. It is more than a complete rewrite in terms of code, it is a whole new reflection in terms of product and experience. user.
 
-Pendant toute cette année, avec l'aide de la communauté, nous avons imaginé, designé et implémenté le futur de Gladys.
+Throughout this year, with the help of the community, we have imagined, designed and implemented the future of Gladys.
 
-![Programme de 2019](../static/img/articles/fr/bilan-2019/2019-schedule.png)
+![Program of 2019](../static/img/articles/fr/bilan-2019/2019-schedule.png)
 
-En juin 2019, après plusieurs mois de développement, j'ai sorti [une première version alpha de Gladys 4](/fr/blog/premiere-alpha-gladys-4). L'objectif de cette version était de permettre aux développeurs de migrer les modules Gladys 3 vers les services de Gladys 4.
+In June 2019, after several months of development, I released [a first alpha version of Gladys 4] (/blog/premiere-alpha-gladys-4). The goal of this version was to allow developers to migrate Gladys 3 modules to Gladys 4 services.
 
-En octobre, suite aux retours et aux développements service effectué par la communauté, j'ai sorti une première bêta, cette fois-ci fournie avec une image Raspbian clé en main, permettant une installation simple de Gladys 4.
+In October, following the feedback and service developments made by the community, I released a first beta, this time supplied with a turnkey Raspbian image, allowing a simple installation of Gladys 4.
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">[BREAKING] Today, I’m launching <a href="https://twitter.com/gladysassistant?ref_src=twsrc%5Etfw">@gladysassistant</a> 4 Beta! 🚀🚀<br/><br/>It’s the results of months of hard work from the whole Gladys community.<br/><br/>The UI is clean, the system is lightweight and fast, and we have more and more integrations coming everyday!<br/><br/>See ➡️ <a href="https://t.co/8bcQWrzh7v">https://t.co/8bcQWrzh7v</a></p>&mdash; Pierre-Gilles Leymarie ✈️ (@pierregillesl) <a href="https://twitter.com/pierregillesl/status/1185254263309635585?ref_src=twsrc%5Etfw">October 18, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-Cette version tourne aujourd'hui chez plus de 200 utilisateurs, et m'a permis de recevoir un ensemble de retour sur le produit. On est encore loin du nombre d'utilisateurs de Gladys 3, mais migrer tout le monde n'était pas l'objectif de cette bêta !
+This version is now running with more than 200 users, and has allowed me to receive a set of feedback on the product. We are still a long way from the number of Gladys 3 users, but migrating everyone was not the objective of this beta!
 
-Aujourd'hui, je travaille d'arrache-pied pour sortir de la bêta et proposer une version de Gladys 4 "RC" (Release Candidate) avant une sortie officielle.
+Today, I am working hard to get out of beta and offer a version of Gladys 4 "RC" (Release Candidate) before an official release.
 
-## Des conférences et des rencontres utilisateurs Gladys
+## Gladys user conferences and meetings
 
-En plus du développement, 2019 c'était aussi l'année de **nombreuses rencontres utilisateurs Gladys** à travers la France, puisque je suis allé à Lyon, Valence, Niort, Rennes, Orléans, Dijon et Lille afin de rencontrer des utilisateurs Gladys "en vrai".
+In addition to development, 2019 was also the year of ** many Gladys user meetings ** across France, since I went to Lyon, Valence, Niort, Rennes, Orléans, Dijon and Lille to meet users Gladys "in real life".
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Adding tons of new Z-Wave devices to <a href="https://twitter.com/gladysassistant?ref_src=twsrc%5Etfw">@gladysassistant</a> 4 thanks to Link39 installation in Lyon! 🔥🔥 <a href="https://t.co/Nlblva6wFB">pic.twitter.com/Nlblva6wFB</a></p>&mdash; Pierre-Gilles Leymarie ✈️ (@pierregillesl) <a href="https://twitter.com/pierregillesl/status/1151594985717948416?ref_src=twsrc%5Etfw">July 17, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-L'objectif de ces rencontres, c'était de voir des installations domotique d'utilisateurs Gladys, de discuter avec ces utilisateurs et de comprendre leur utilisation.
+The goal of these meetings was to see home automation installations of Gladys users, to discuss with these users and to understand their use.
 
-Chez chaque utilisateur Gladys, j'ai été super bien accueilli : on a bien discuté, développé ensemble pour Gladys, pas mal rigolé aussi 😄C'était l'occasion de manger ensemble, de prendre un verre ! 🍻
+With each Gladys user, I was very well received: we had a good discussion, developed together for Gladys, a lot of laughs too 😄 It was the opportunity to eat together, to have a drink! 🍻
 
-Je garde un super souvenir de cette tournée, et je suis vraiment content d'avoir pu rencontrer ces utilisateurs en vrai après des années à discuter en ligne.
+I have fond memories of this tour, and I'm really happy to have been able to meet these users in real life after years of chatting online.
 
-Je continuerais bien entendu, le concept est top et vous êtes tous super sympa !
+I would of course continue, the concept is great and you are all super nice!
 
-## Quelques statistiques
+## Some statistics
 
-### Le site Gladys
+### The Gladys website
 
 ![Trafic sur le site 2019](../static/img/articles/fr/bilan-2019/traffic.jpg)
 
-Voilà les visites du site pour l'année 2019 !
+Here are the site visits for the year 2019!
 
-Si vous comparez par rapport à l'année 2018, c'est en baisse.
+If you compare against the year 2018, it is down.
 
-Compte tenu du fait que l'année 2019 a plutôt été une année dédié au développement produit, il y a eu peu de communications, peu/pas de travail marketing pour que l'on parle de Gladys sur d'autres sites/magazines, il est donc normal que le trafic soit en baisse.
+Considering the fact that the year 2019 was rather a year dedicated to product development, there was little communication, little / no marketing work so that we talk about Gladys on other sites / magazines, it It is therefore normal that the traffic is down.
 
-J'espère un beau pic en 2020 pour le lancement de Gladys 4 😀
+I hope for a nice peak in 2020 for the launch of Gladys 4 😀
 
 ### Les réseaux sociaux
 
 Sur les réseaux sociaux:
 
-- [@gladysassistant sur Twitter](https://twitter.com/gladysassistant) rassemble 2 721 followers
-- [Gladys Assistant Facebook](https://www.facebook.com/gladysassistant) comptabilise 761 likes
-- [@gladysassistant sur instagram](https://www.instagram.com/gladysassistant) rassemble 545 abonnés
+- [@gladysassistant on Twitter](https://twitter.com/gladysassistant) has 2 721 followers
+- [Gladys Assistant Facebook](https://www.facebook.com/gladysassistant) has 761 likes
+- [@gladysassistant on instagram](https://www.instagram.com/gladysassistant) has 545 followers
 
-Et enfin 1 772 sur [mon Twitter personnel](https://twitter.com/pierregillesl), qui a bien bondi cette année, ayant de mon côté pas mal communiqué sur Gladys sur celui-ci.
+And 1 772 on [my personal Twitter](https://twitter.com/pierregillesl), which jumped well this year, having for my part communicated a lot about Gladys on this one.
 
-### La newsletter
+### The newsletter
 
-Au niveau de la newsletter, vous êtes 3 687 à suivre la [newsletter Gladys Assistant](https://email-list.gladysassistant.com/subscription/1mXJoEWEl).
+In terms of the newsletter, 3,687 of you follow the Gladys Assistant newsletter.
 
-- 3197 abonnés en français
-- 490 abonnés en anglais
+- 3,197 subscribers in French
+- 490 subscribers in English
 
-Une croissance de +9.3% par rapport à l'an dernier 📈
+Growth of + 9.3% compared to last year 📈
 
-### Le GitHub Gladys Assistant
+### The GitHub Gladys Assistant
 
-Nous sommes à 1 320 stars ⭐ sur le [repo Gladys principal](https://github.com/GladysAssistant/Gladys)
+We are 1320 stars ⭐ on the [main Gladys repo](https://github.com/GladysAssistant/Gladys)
 
-C'est +32% par rapport à l'année dernière !
+This is + 32% compared to last year!
 
-Je compte sur vous pour nous emmener à 10 000 🚀🚀
+I'm counting on you to take us to 10,000 🚀🚀
 
-## Les projets pour 2020
+## Projects for 2020
 
-Mon objectif n°1 c'est évidemment de sortir cette version 4 de Gladys.
+My n°1 goal is obviously to release this version 4 of Gladys.
 
-Je suis très content de cette nouvelle version. Je suis persuadé qu'elle va marquer un tournant pour le projet et qu'elle va agiter le monde de la domotique !
+I am very happy with this new version. I am convinced that it will mark a turning point for the project and that it will shake up the world of home automation!
 
-Côté commercial, la sortie de cette nouvelle version va probablement booster les ventes de Gladys Plus.
+On the commercial side, the release of this new version will probably boost sales of Gladys Plus.
 
-Les fonctionnalités offertes par Gladys Plus dans la v4 sont si riche : contrôle à distance chiffré (même les images de caméras), backups quotidien du système, Open API, etc.
+The functionalities offered by Gladys Plus in v4 are so rich: encrypted remote control (even camera images), daily system backups, Open API, etc.
 
-Je suis persuadé que les nouveaux utilisateurs de Gladys 4 seront convaincus par cette offre, et j'ai hâte de monter en charge sur ce plan 🙂
+I am convinced that new Gladys 4 users will be convinced by this offer, and I can not wait to step up on this plan 🙂
 
 ## Conclusion
 
-Je n'ai jamais été aussi optimiste pour la suite de Gladys Assistant ! J'ai hâte de sortir cette version clé, et surtout hâte d'avoir vos retours 😃
+I have never been so optimistic about the Gladys Assistant sequel! I can't wait to release this key version, and especially can't wait to hear from you 😃
 
-Merci à tous ceux qui ont contribués ou juste suivi Gladys en 2019 !
+Thank you to everyone who contributed or just followed Gladys in 2019!
 
-Vous êtes une communauté en or 🏅
+You are a golden community 🏅
 
-Bonne année 2020 à tous,
+Happy new year 2020 to all,
 
 Pierre-Gilles Leymarie
