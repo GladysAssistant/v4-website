@@ -22,11 +22,11 @@ Puis allez dans "settings" => "Open API", et créez une clé.
 
 Clickez sur le bouton en haut à gauche de l'app:
 
-<img src="/fr/img/docs/configuration/gateway/open-api-owntracks-0.jpg" alt="Open API owntracks Gladys"  width="300" />
+![Open API owntracks Gladys](../../../../../static/img/docs/fr/configuration/gateway/open-api-owntracks-0.jpg)
 
 Cliquez sur "paramètres":
 
-<img src="/fr/img/docs/configuration/gateway/open-api-owntracks-1.jpg" alt="Open API owntracks Gladys"  width="300" />
+![Open API owntracks Gladys](../../../../../static/img/docs/fr/configuration/gateway/open-api-owntracks-1.jpg)
 
 Sélectionnez "HTTP", puis dans l'input "URL" entrez:
 
@@ -40,7 +40,7 @@ J'ai mis personnellement "iphone" dans `DeviceID` et "pierre-gilles" dans `UserI
 
 Gladys utilise la clé d'API pour identifier votre compte.
 
-<img src="/fr/img/docs/configuration/gateway/open-api-owntracks-2.jpg" alt="Open API owntracks Gladys"  width="300" />
+![Open API owntracks Gladys](../../../../../static/img/docs/fr/configuration/gateway/open-api-owntracks-2.jpg)
 
 ### Vérifiez que l'intégration fonctionne
 

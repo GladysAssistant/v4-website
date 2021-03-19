@@ -48,7 +48,8 @@ Je vous laisse jouer avec l'application, on peut s'amuser à créer des règles,
 
 Un exemple sympa d'utilisation tout simple, on branche la bouilloire à la prise, et on programme l'allumage pour le lendemain matin, et l'eau est chaude au levée !
 
-![L'eau qui bout le matin au levée !](../../../static/img/articles/fr/controler-prises-wemo/wemo_coffee_light.jpg)
+![L'eau qui bout le matin au levée !](../../../static/img/articles/fr/controler-prises-wemo/wemo*coffee_light.jpg)
+\_L'eau qui bout le matin au levée !\*
 
 ### Let's hack the plug !
 

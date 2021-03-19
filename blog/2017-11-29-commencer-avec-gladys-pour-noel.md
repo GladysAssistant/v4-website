@@ -5,7 +5,9 @@ author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
+
 image: /img/presentation/commencer-gladys-noel.jpg
+
 slug: commencer-avec-gladys-pour-noel
 ---
 
@@ -45,7 +47,7 @@ Le Raspberry Pi coûte en lui même 35€. En kit avec alimentation, boitier, et
 
 Mon gros coup de coeur de cette année, c'est le kit Xiaomi Home, et ce pour deux raisons. Déjà, il n'est pas cher (déjà un très bonne argument), mais en plus de ça leurs périphériques sont de très bonne factures. Au niveau de la techno, Xiaomi a choisi le Zigbee, et c'est selon moi un très bon choix. C'est une techno robuste (aussi utilisée sur les Philips Hue par exemple), qui permet aux devices de consommer très peu et d'avoir une bonne portée. Pour relier ces périphériques Zigbee à internet, vous devez acheter un gateway Xiaomi qui fait le pont entre votre box en Wi-Fi et ces devices Zigbee.
 
-![Xiaomi Home](../../../static/img/presentation/xiaomi-home.jpg)
+![Xiaomi Home](../static/img/presentation/xiaomi-home.jpg)
 
 En bref, ça marche super bien! Le seul truc que je trouve "marrant" avec ce gateway, c'est qu'à chaque fois que vous le mettez à jour/que vous le configurez, il se met à parler en chinois dès que la mise à jour est terminée. Mes colocs se demandent encore pourquoi derrière notre meuble télé un boitier parle parfois en chinois 😁
 
