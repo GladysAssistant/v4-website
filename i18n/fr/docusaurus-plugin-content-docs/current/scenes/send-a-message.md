@@ -28,7 +28,7 @@ Ensuite, plus loin dans la scène, vous pouvez ajouter une action "envoyer un me
 
 <div class="videoContainer">
 <video  width="100%" controls autoplay loop muted>
-<source src="/fr/img/docs/scenes/send-a-message-action/inject-variable-demo.mp4" type="video/mp4)
+<source src="/fr/img/docs/scenes/send-a-message-action/inject-variable-demo.mp4" type="video/mp4" />
   Your browser does not support the video tag.
 </video>
 </div>

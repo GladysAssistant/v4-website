@@ -4,7 +4,7 @@ description: Dans cet article, nous verrons en détail comment fonctionne l'anal
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-3-5-cover.jpg
 
@@ -25,7 +25,7 @@ Le but de ce post est de vous expliquer en détail comment fonctionne cette feat
 
 Je vous ai préparé un petit schéma de l'architecture Gladys pour que vous compreniez mieux comment tout cela fonctionne !
 
-![Analyse phrases Gladys architecture](../../../static/img/articles/fr/gladys-3-5/sentence-analysis-architecture.png)
+![Analyse phrases Gladys architecture](../static/img/articles/fr/gladys-3-5/sentence-analysis-architecture.png)
 
 Pour commenter ce schéma, nous avons en entrée une question de l'utilisateur envoyé via un channel de communication. Cela peut-être un message envoyé via l'interface Gladys via websocket, un message envoyé via Telegram, via Facebook Messenger, ou via l'API Gladys tout simplement.
 
@@ -39,7 +39,7 @@ L'objectif est de trouver les informations importantes relatives à la phrase. L
 
 L'étape extraction va détecter les informations et les transformer en des données formatées pour Gladys.
 
-![Analyse phrases Gladys exemple](../../../static/img/articles/fr/gladys-3-5/textanalysis.png)
+![Analyse phrases Gladys exemple](../static/img/articles/fr/gladys-3-5/textanalysis.png)
 
 Ces données derrière resortent de la façon suivante :
 
@@ -186,15 +186,15 @@ Pensez ensuite à mettre à jour les données Gladys ( "Paramètres" => "Mettre 
 
 Puis vous pouvez ajouter dans les notifications l'option "websocket" dans votre liste ( ce qui va dire à Gladys de vous envoyer les notifications via websocket dans l'interface Gladys si vous êtes sur l'interface ).
 
-![Configuration notification Gladys](../../../static/img/articles/fr/gladys-3-5/configure-notification.jpg)
+![Configuration notification Gladys](../static/img/articles/fr/gladys-3-5/configure-notification.jpg)
 
 Et enfin ajoutez à votre dashboard la box "Chat".
 
-![Configuration box Gladys](../../../static/img/articles/fr/gladys-3-5/configure-box.jpg)
+![Configuration box Gladys](../static/img/articles/fr/gladys-3-5/configure-box.jpg)
 
 Vous devriez voir apparaître dans Gladys sur votre dashboard une box ressemblant à ça :
 
-![Box Gladys dashboard](../../../static/img/articles/fr/gladys-3-5/box-example.png)
+![Box Gladys dashboard](../static/img/articles/fr/gladys-3-5/box-example.png)
 
 C'est votre premier point d'entrée pour parler à Gladys ;)
 

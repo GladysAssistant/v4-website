@@ -4,7 +4,7 @@ description: Pour des interactions électroniques plus poussées, connectons un 
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/arduinounolow.jpg
 slug: connecter-un-arduino-au-raspberry-pi
 ---
@@ -94,7 +94,7 @@ Vous devriez voir apparaître les données envoyées par l'arduino via USB dans 
 
 - Connectez tout d'abord votre récepteur à l'arduino suivant ce schéma :
 
-![Schéma récepteur RF arduino](../../../static/img/articles/fr/connecter-un-arduino-au-raspberry-pi/schéma-recepteur-RF-arduino.jpg)
+![Schéma récepteur RF arduino](../static/img/articles/fr/connecter-un-arduino-au-raspberry-pi/schéma-recepteur-RF-arduino.jpg)
 
 - Téléchargez la librairie [RCswitch](https://code.google.com/p/rc-switch/downloads/list)
 - Extraire le zip et placer le dossier "RCswitch" dans le dossier "C:UsersUSER_NAMEDocumentsArduinolibraries" de votre PC.

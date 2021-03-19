@@ -4,7 +4,7 @@ description: Refonte du module Z-wave, travail sur l'UX, renforcement de la séc
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-3-9.jpg
 
@@ -27,7 +27,7 @@ Jusque là, les modules ne pouvaient pas avoir une vue de configuration à eux, 
 
 Désormais, les modules peuvent avoir leur propre vue de configuration, qui est accessible dans la page module en cliquant sur le bouton "Configuration".
 
-![Vue configuration module Gladys](../../../static/img/articles/fr/gladys-3-9/module-configuration-button.jpg)
+![Vue configuration module Gladys](../static/img/articles/fr/gladys-3-9/module-configuration-button.jpg)
 
 Le module Z-Wave est le premier module à mettre en place une vue de configuration!
 
@@ -37,27 +37,27 @@ C'est un énorme travail qui a été effectué par [@MathieuAndrade](https://twi
 
 Lorsqu'on accède à la vue de configuration du module, on tombe sur ça :
 
-![Zwave configuration mode Gladys](../../../static/img/articles/fr/gladys-3-9/zwave-configuration-view.jpg)
+![Zwave configuration mode Gladys](../static/img/articles/fr/gladys-3-9/zwave-configuration-view.jpg)
 
 Vous pouvez passer en mode inclusion, passer en mode exclusion, gérez vos noeuds, guérir le réseau. Ce module est désormais un vrai module Z-Wave complet !
 
 Par exemple, si je configure le fameux <a href="https://www.amazon.fr/gp/product/B00JHHNUPY/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1642&creative=6746&creativeASIN=B00JHHNUPY&linkCode=as2&tag=gladproj-21" rel="nofollow" >détecteur de mouvement Fibaro</a> :
 
-![Fibaro Motion Sensor Gladys](../../../static/img/articles/fr/gladys-3-9/fibaro-motion-sensor.jpg)
+![Fibaro Motion Sensor Gladys](../static/img/articles/fr/gladys-3-9/fibaro-motion-sensor.jpg)
 
 Je passe en mode inclusion dans Gladys :
 
-![Zwave inclusion mode Gladys](../../../static/img/articles/fr/gladys-3-9/zwave-inclusion-mode.jpg)
+![Zwave inclusion mode Gladys](../static/img/articles/fr/gladys-3-9/zwave-inclusion-mode.jpg)
 
 J'appuie trois fois sur le bouton au dos du capteur, et celui-ci se retrouve directement dans l'interface.
 
 Si je clique sur le bouton "Configuration" dans l'interface puis que je ré-appuie 3 fois sur le bouton au dos du capteur, je peux voir toutes les options que ce capteur propose et les régler.
 
-![Zwave périphérique configuration](../../../static/img/articles/fr/gladys-3-9/zwave-device-configuration.jpg)
+![Zwave périphérique configuration](../static/img/articles/fr/gladys-3-9/zwave-device-configuration.jpg)
 
 Enfin, toutes les données que remontent ce capteur Z-Wave sont remontées dans un périphérique natif Gladys, et on peut afficher ces valeurs dans l'interface, comme par exemple sur une box du dashboard :
 
-![Dashboard Gladys temperature](../../../static/img/articles/fr/gladys-3-9/device-box-value.jpg)
+![Dashboard Gladys temperature](../static/img/articles/fr/gladys-3-9/device-box-value.jpg)
 
 Vous l'avez compris, ce nouveau module est **extrêment puissant**. Là ou dans le passé il fallait forcément passer par une box externe pour gérer son réseau Z-Wave, il est désormais possible de ne passer plus que par Gladys !
 
@@ -81,7 +81,7 @@ Lorsque Gladys veut parler dans une pièce, elle n'a qu'à publier un événemen
 
 Voilà un schéma qui récapitule les possibilités apportés par ce genre d'architecture, architecture où il n'y a plus un seul Gladys faisant tourner tous les modules mais un ensemble de modules "esclaves" pilotés à distance par Gladys :
 
-![MQTT Gladys modules](../../../static/img/articles/fr/gladys-3-9/mqtt-gladys.jpg)
+![MQTT Gladys modules](../static/img/articles/fr/gladys-3-9/mqtt-gladys.jpg)
 
 J'espère que vous voyez comme moi toutes les possibilités offertes par ce nouveau type de modules 😄
 
@@ -95,7 +95,7 @@ Il y a désormais une nouvelle box sur l'écran d'accueil vous permettant d'affi
 
 Cette box ressemble à ça :
 
-![Device box room](../../../static/img/articles/fr/gladys-3-9/new-device-box-room.jpg)
+![Device box room](../static/img/articles/fr/gladys-3-9/new-device-box-room.jpg)
 
 Pour la mettre en place, rendez-vous comme toujours dans les paramètre de Gladys > "Box".
 
@@ -151,7 +151,7 @@ Pour ceux qui ne connaissent pas, Alpine est une distribution Linux très très 
 
 Et ça, c'est perf ⚡️
 
-![Gladys Docker Alpine](../../../static/img/articles/fr/gladys-3-9/docker-size-alpine.jpg)
+![Gladys Docker Alpine](../static/img/articles/fr/gladys-3-9/docker-size-alpine.jpg)
 
 ## Comment passer en Gladys 3.9 ?
 

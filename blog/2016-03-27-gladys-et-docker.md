@@ -4,7 +4,7 @@ description: Nous allons installer ici Gladys en moins de 5 minutes sur un serve
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/docker-cover.jpg
 
@@ -25,7 +25,7 @@ Dans ce tutoriel, je vais vous montrer comment mettre en place Gladys sur un ser
 
 ## Le serveur
 
-![DigitalOcean Droplet](../../../static/img/articles/fr/gladys-docker/droplet.gif)
+![DigitalOcean Droplet](../static/img/articles/fr/gladys-docker/droplet.gif)
 
 Pour ce tutoriel je vous propose de tester Gladys sur DigitalOcean, je ne sais pas si vous connaissez, c'est une startup qui propose des serveurs à déployer en quelques clics pour des prix vraiment abordables.
 
@@ -41,23 +41,23 @@ Pour se créer un compte, ça se passe du coup ici => [DigitalOcean](https://m.d
 
 Une fois que vous avez créé votre compte DigitalOcean, il faut créer ce qu'ils appellent un "Droplet" (une VM en gros).
 
-![Créer droplet](../../../static/img/articles/fr/gladys-docker/create-droplet.png)
+![Créer droplet](../static/img/articles/fr/gladys-docker/create-droplet.png)
 
 Tout d'abord, sélectionnez "Create droplet".
 
-![One click apps](../../../static/img/articles/fr/gladys-docker/one-click-app.png)
+![One click apps](../static/img/articles/fr/gladys-docker/one-click-app.png)
 
 Puis, dans l'onglet "One-click apps", sélectionnez "Docker".
 
-![Frankfurt](../../../static/img/articles/fr/gladys-docker/frankfurt.png)
+![Frankfurt](../static/img/articles/fr/gladys-docker/frankfurt.png)
 
 Vous devez ensuite sélectionner un datacenter où votre serveur sera lancé. L'emplacement n'a pas beaucoup d'importance, mais je vous conseille de prendre un serveur proche de vous, sinon vous aurez une latence pas forcément agréable. J'ai mis Frankfurt pour ma part.
 
-![Sélection du serveur](../../../static/img/articles/fr/gladys-docker/pricing.png)
+![Sélection du serveur](../static/img/articles/fr/gladys-docker/pricing.png)
 
 On sélectionne ensuite le tarif que l'on souhaite, ici 5\$ suffira amplement, Gladys tourne très bien dessus !
 
-![Sélection du serveur](../../../static/img/articles/fr/gladys-docker/ssh-keys.png)
+![Sélection du serveur](../static/img/articles/fr/gladys-docker/ssh-keys.png)
 
 Ensuite, DigitalOcean vous propose d'entrer une clé SSH pour pouvoir vous connecter au serveur, je vous recommande très fortement de le faire, se loguer avec mot de passe c'est pas super secure.
 
@@ -156,7 +156,7 @@ Pensez aussi ici à remettre votre mot de passe Mariadb.
 
 ## Gladys is live !
 
-![Gladys is live](../../../static/img/articles/fr/gladys-docker/gladys-live.jpg)
+![Gladys is live](../static/img/articles/fr/gladys-docker/gladys-live.jpg)
 
 Et voilà, Gladys tourne ! Vous pouvez vous rendre sur votre navigateur, taper l'IP de votre serveur, et voir Gladys tourner.
 

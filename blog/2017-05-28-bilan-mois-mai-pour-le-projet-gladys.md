@@ -4,7 +4,7 @@ description: "Un premier tutoriel vidéo publié, Gladys 3.6 sortie riche en nou
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-3-6-cover-2.jpg
 
@@ -35,9 +35,9 @@ J'en parle beaucoup, notamment [sur mon blog perso](https://pierregillesleymarie
 
 Côté front-end, la plateforme est écrite en React, et l'interface ressemblera à ça (petit teasing!):
 
-![Developer Platform Gladys](../../../static/img/articles/fr/gladys-3-6/dev-platform.png)
+![Developer Platform Gladys](../static/img/articles/fr/gladys-3-6/dev-platform.png)
 
-![Developer Platform Gladys](../../../static/img/articles/fr/gladys-3-6/dev-platform2.png)
+![Developer Platform Gladys](../static/img/articles/fr/gladys-3-6/dev-platform2.png)
 
 Vous pouvez jeter un oeil au [Github](https://github.com/gladysassistant/dev-plaftorm-backend) et aux commits, ça bosse :p
 

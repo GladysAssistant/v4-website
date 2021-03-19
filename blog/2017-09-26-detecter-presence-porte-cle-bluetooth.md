@@ -4,7 +4,7 @@ description: Savoir qui exactement est à la maison a toujours été un défi co
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/detecter-presence-bluetooth.jpg
 
@@ -52,7 +52,7 @@ Avec un peu d'astuce, il est même possible de localiser l'utilisateur dans la m
 
 Je vous ai fais un petit schéma pour que vous visualisiez mieux ce que ça va donner :
 
-![Schéma domotique Raspberry Pi Bluetoot](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/house-bluetooth.png" alt="h)
+![Schéma domotique Raspberry Pi Bluetoot](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/house-bluetooth.png" alt="h)
 
 Vous remarquerez que j'ai mis ici 3 Raspberry Pi pour l'exemple, mais en pratique j'arrive largement à couvrir mon logement avec un seul Raspberry Pi 3 en le plaçant de façon central dans le salon. A voir en fonction de votre logement :)
 
@@ -149,11 +149,11 @@ Ensuite, dans Gladys vous devriez retrouver les périphériques vus par Gladys-b
 
 Voilà un exemple chez moi, je suis détectable via mon bracelet Fitbit Charge 2 ou mon porte clé Nut. J'ai donc assigné ces deux périphériques à mon compte Gladys =>
 
-![Gladys Devices Bluetooth](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/gladys-devices-bluetooth.jpg)
+![Gladys Devices Bluetooth](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/gladys-devices-bluetooth.jpg)
 
 Ensuite, dans les "Paramètres" => "Paramètres" sur le dashboard Gladys, définissez la variable `USER_TIME_BEFORE_CONSIDERING_LEFT_HOME` qui correspond au temps en minutes avant que Gladys vous considère comme absent si vous n'êtes pas vu à la maison. J'ai mis 10 minutes pour ma part, mais on peut mettre plus court.
 
-![Gladys Script](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/parameter-user-considering-left-home.jpg)
+![Gladys Script](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/parameter-user-considering-left-home.jpg)
 
 Puis créez un script avec comme code :
 
@@ -161,7 +161,7 @@ Puis créez un script avec comme code :
 gladys.house.checkUsersPresence();
 ```
 
-![Gladys Script](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/script.jpg)
+![Gladys Script](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/script.jpg)
 
 Lorsque ce script s'exécutera, Gladys vérifiera la dernière fois que vous avez été vu à la maison. Si c'est supérieur à la variable `USER_TIME_BEFORE_CONSIDERING_LEFT_HOME`, alors Gladys déclenchera l'event "left-home" => vous serez marqué comme absent de la maison, et si vous avez défini un scénario type "couper tout chez moi quand je pars", le scénario sera exécuté.
 
@@ -169,23 +169,23 @@ Maintenant il faut que l'on dise à Gladys d'exécuter ce fameux script toutes l
 
 Créez une alarme de type `Cron` dans les alarmes, et mettez comme contenu `*/5 * * * *`, ce qui veut dire "toutes les 5 minutes". Enregistrez l'alarme.
 
-![Cron rules](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/cron-rule-5-minutes.jpg)
+![Cron rules](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/cron-rule-5-minutes.jpg)
 
 Puis dans les scénarios, nous allons dire à Gladys "Dès que l'alarme toutes les 5 minutes se déclenche => Lancer le script".
 
 Allez dans Scénarios, donnez un titre à votre scénario, puis sélectionnez comme Trigger "Alarmes" => "Quand une alarme se déclenche". Sélectionnez votre alarme "Toutes les 5 minutes".
 
-![Gladys Trigger alarm](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/scenario-trigger.jpg)
+![Gladys Trigger alarm](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/scenario-trigger.jpg)
 
 Sauter l'étape conditions, et dans "Actions" sélectionnez "Exécute un script" puis sélectionnez le script que vous avez créé précédemment.
 
-![Gladys scenario action](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/scenario-action.jpg)
+![Gladys scenario action](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/scenario-action.jpg)
 
 Et c'est tout ! Gladys est désormais prête à vous détecter à la maison.
 
 Vous devriez retrouver ce genre d'événéments dans la vue "Moi" de votre Gladys :
 
-![Gladys Me View](../../../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/me-view.jpg)
+![Gladys Me View](../static/img/articles/fr/detecter-presence-porte-cle-bluetooth/me-view.jpg)
 
 ## Conclusion
 

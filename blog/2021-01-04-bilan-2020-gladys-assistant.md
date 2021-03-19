@@ -4,7 +4,7 @@ description: Faisons le point sur cette année charnière pour Gladys Assistant.
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/bilan-2020-cover.jpg
 slug: bilan-2020-gladys-assistant
 ---
@@ -25,7 +25,7 @@ Vous êtes très nombreux à avoir rejoint la communauté suite à ce lancement,
 
 Voilà les statistiques d’installation de cette v4 sur toute l’année 2020. Avant Novembre, la v4 était encore en beta et uniquement utilisé en interne ce qui explique les chiffres bas d’installations. Le pic est en Novembre, et il se stabilise en décembre ensuite car beaucoup de gens ont testés Gladys sans forcément s’en servir immédiatement à long terme: c’est normal 🙂
 
-![Statistiques installations Gladys Assistant 4](../../../static/img/articles/fr/bilan-2020/installations-stats.jpg)
+![Statistiques installations Gladys Assistant 4](../static/img/articles/fr/bilan-2020/installations-stats.jpg)
 
 Désormais, le produit reçoit des mises à jour fréquentes de la part des 17 contributeurs GitHub sur cette v4.
 
@@ -41,7 +41,7 @@ Les visites sur le site ont été en baisse en début d’année, mais ont repri
 
 Le taux de rebond n’a cessé de baisser suite à la sortie de notre nouveau site (taux de rebond = le pourcentage de visiteurs qui quittent le site sans faire aucunes interactions avec celui-ci) Il était assez élevé en début d’année (50%), et tourne désormais autour de 22%.
 
-![Statistiques visiteurs site Gladys Assistant 4](../../../static/img/articles/fr/bilan-2020/website-visitors.jpg)
+![Statistiques visiteurs site Gladys Assistant 4](../static/img/articles/fr/bilan-2020/website-visitors.jpg)
 
 ### Les réseaux sociaux
 

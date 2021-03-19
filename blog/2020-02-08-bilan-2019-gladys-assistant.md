@@ -4,7 +4,7 @@ description: L'occasion de faire le point sur l'année 2019, et de discuter des 
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/bilan-2019-cover.jpg
 
@@ -29,7 +29,7 @@ Un chantier conséquent car Gladys 4 est un produit entièrement nouveau qui ne 
 
 Pendant toute cette année, avec l'aide de la communauté, nous avons imaginé, designé et implémenté le futur de Gladys.
 
-![Programme de 2019](../../../static/img/articles/fr/bilan-2019/2019-schedule.png)
+![Programme de 2019](../static/img/articles/fr/bilan-2019/2019-schedule.png)
 
 En juin 2019, après plusieurs mois de développement, j'ai sorti [une première version alpha de Gladys 4](/fr/blog/premiere-alpha-gladys-4). L'objectif de cette version était de permettre aux développeurs de migrer les modules Gladys 3 vers les services de Gladys 4.
 
@@ -59,7 +59,7 @@ Je continuerais bien entendu, le concept est top et vous êtes tous super sympa 
 
 ### Le site Gladys
 
-![Trafic sur le site 2019](../../../static/img/articles/fr/bilan-2019/traffic.jpg)
+![Trafic sur le site 2019](../static/img/articles/fr/bilan-2019/traffic.jpg)
 
 Voilà les visites du site pour l'année 2019 !
 

@@ -4,7 +4,7 @@ description: Le process de mise à jour Gladys évolue pour être plus rapide et
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/nouveau-process-maj-cover.jpg
 
@@ -77,7 +77,7 @@ En gros, c'est moi qui compile une bonne fois pour toute les dépendances et bun
 
 Un petit schéma pour récapituler tout ça :
 
-![Build process Gladys](../../../static/img/articles/fr/des-mise-a-jour-gladys-plus-rapide-et-plus-sur/build-process.png)
+![Build process Gladys](../static/img/articles/fr/des-mise-a-jour-gladys-plus-rapide-et-plus-sur/build-process.png)
 
 ### L'installation de la mise à jour chez vous
 
@@ -87,7 +87,7 @@ La bonne nouvelle, c'est que ce script ne disparait plus si jamais l'installatio
 
 Un petit schéma de comment se passe l'installation chez vous désormais :
 
-![Update process Gladys](../../../static/img/articles/fr/des-mise-a-jour-gladys-plus-rapide-et-plus-sur/update-process.png)
+![Update process Gladys](../static/img/articles/fr/des-mise-a-jour-gladys-plus-rapide-et-plus-sur/update-process.png)
 
 ## Migration vers la nouvelle image
 

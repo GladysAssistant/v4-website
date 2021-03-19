@@ -5,7 +5,7 @@ description: Découvrez comment intégrer les périphériques Xiaomi Home chez v
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/xiaomi-home.jpg
 ---
 
@@ -45,27 +45,27 @@ Le module est disponible sur [GitHub](https://github.com/gladysassistant/gladys-
 - Passez le Gateway Xiaomi en mode développeur de la façon suivante :
 - Cliquez sur le gateway :
 
-![Click on gateway](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/1_click_on_gateway.jpg)
+![Click on gateway](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/1_click_on_gateway.jpg)
 
 - Puis cliquez sur les trois petits points :
 
-![Click on three dots](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/2_click_on_3_dots.jpg)
+![Click on three dots](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/2_click_on_3_dots.jpg)
 
 - Cliquez sur "About" :
 
-![Click on about](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/3_click_about.jpg)
+![Click on about](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/3_click_about.jpg)
 
 - Cliquez plusieurs fois sur la zone suivante afin d'afficher les menus cachés :
 
-![Click on zone](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/4_click_on_zone.jpg)
+![Click on zone](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/4_click_on_zone.jpg)
 
 - Cliquez sur le menu en chinois suivant :
 
-![Click on menu](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/5_click_menu.jpg)
+![Click on menu](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/5_click_menu.jpg)
 
 - Enfin, activez le mode développeur :
 
-![Activate dev mode](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/6_activate_dev_mode.jpg)
+![Activate dev mode](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/6_activate_dev_mode.jpg)
 
 ## Configuration de Xiaomi Home dans Gladys
 
@@ -95,7 +95,7 @@ nano config.js
 
 Remplacez `localhost` par l'IP de votre instance Gladys et `your-gladys-token` par un token de sécurité Gladys. Pour rappel, vous pouvez récupérer ce token dans l'onglet "Paramètres" => "Sécurité" de votre dashboard Gladys.
 
-![Security Token Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/token_gladys.jpg)
+![Security Token Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/token_gladys.jpg)
 
 Enfin, lancez Gladys Xiaomi Home :
 
@@ -119,13 +119,13 @@ Bon, afin d'apprendre à utiliser le Xiaomi Home, nous allons mettre en place en
 
 D'abord, assurez-vous que vos périphériques apparaissent bien dans Gladys :
 
-![Security Token Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/devices_in_gladys.jpg)
+![Security Token Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/devices_in_gladys.jpg)
 
 ### Créez le script romantique
 
 Puis, créez un script correspondant à l'action de votre mode romantique dans l'onglet "Script" du dashboard Gladys :
 
-![Security Token Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/create_script.jpg)
+![Security Token Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/create_script.jpg)
 
 Pour le contenu du script, voilà le mien mais il est complètement lié à mon installation. Je vais le disséquer avec vous pour apprendre à en faire un pour chez vous :
 
@@ -180,7 +180,7 @@ gladys.music.play({room: 1, uri: 'https://www.mfiles.co.uk/mp3-downloads/Beethov
 
 Si vous avez une Sonos et que vous voulez récupérer l'identifier d'une playlist de chez vous, rendez-vous à l'URL "/music/playlist" de votre Raspberry Pi. Vous devriez tomber sur ça =>
 
-![Get URI playlist sonos Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/get_uri_playlist_sonos.jpg)
+![Get URI playlist sonos Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/get_uri_playlist_sonos.jpg)
 
 Récupérer l'URI correspondant à votre playlist, et pour jouer la musique dans le script mettez :
 
@@ -204,7 +204,7 @@ gladys.deviceType.exec({devicetype: 10, value: 40});
 
 Cette commande va passer la valeur du deviceType d'ID "10" à 40 (ici, la luminosité). Comment connaitre l'ID du deviceType ? Pour cela, rendez-vous dans l'onglet "Devices" puis "Mes Devices". Cliquez sur "Edit" du device de votre choix, exemple ici pour ma lampe de salon :
 
-![Get devicetype id Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/get_devicetype_id.jpg)
+![Get devicetype id Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/get_devicetype_id.jpg)
 
 Je récupère l'ID "10" de mon deviceType "brightness", et comme je peux le voir la luminosity s'exprime de 0 à 100. Ici pour passer la luminosité à 40% je fais donc :
 
@@ -220,7 +220,7 @@ Maintenant, il faut créer un scénario qui se lance lors de l'appui sur le bout
 
 Tout d'abord, allez dans l'onglet "Scenario" et cliquez sur "Nouveau" :
 
-![Get devicetype id Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_1_create_scenario.jpg)
+![Get devicetype id Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_1_create_scenario.jpg)
 
 Ensuite, cliquez sur "Device", vous devriez arriver sur un écran comme ci-dessous. Sélectionnez votre bouton Xiaomi, et sélectionnez quelle valeur vous voulez surveiller.
 
@@ -229,15 +229,15 @@ La valeur 2 correspond à un double clic.
 La valeur 3 correspond à une longue pression.
 La valeur 4 correspond à une longue pression puis relâchement.
 
-![Get devicetype id Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_2_select_trigger.jpg)
+![Get devicetype id Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_2_select_trigger.jpg)
 
 Skippez la partie "condition", et passez directement aux "Actions". Cliquez sur "Exécuter un script" :
 
-![Get devicetype id Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_3_execute_script.jpg)
+![Get devicetype id Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_3_execute_script.jpg)
 
 Enfin, sélectionnez le script que nous avons créé précedemment et cliquez sur "Enregistrer".
 
-![Get devicetype id Gladys](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_4_execute_script.jpg)
+![Get devicetype id Gladys](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/s_4_execute_script.jpg)
 
 C'est bon, votre script est prêt !
 
@@ -245,7 +245,7 @@ Vous pouvez le tester en appuyant sur votre bouton.
 
 Et BAM !
 
-![Gladys Romantic](../../../static/img/articles/fr/compatibilite-xiaomi-home-gladys/gladys_romantic.gif)
+![Gladys Romantic](../static/img/articles/fr/compatibilite-xiaomi-home-gladys/gladys_romantic.gif)
 
 ## Conclusion
 

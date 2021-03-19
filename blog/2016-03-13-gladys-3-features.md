@@ -4,7 +4,7 @@ description: Je travaille depuis pas mal de temps sur cette version 3.0 de Glady
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/notebook-cover.jpg
 
@@ -41,11 +41,11 @@ Cette notion de LifeEvent disparait dans Gladys 3.0 au profit d'une notion d'Eve
 
 C'est à dire que désormais, le flow de déclenchement d'un scénario est le suivant :
 
-![Schema Gladys évènements exemple](../../../static/img/articles/fr/gladys-3-annonce/event-process.png)
+![Schema Gladys évènements exemple](../static/img/articles/fr/gladys-3-annonce/event-process.png)
 
 Pour donner un exemple concret, cela donne ça :
 
-![Schema Gladys évènements exemple](../../../static/img/articles/fr/gladys-3-annonce/event-process-example.png)
+![Schema Gladys évènements exemple](../static/img/articles/fr/gladys-3-annonce/event-process-example.png)
 
 (Lire la partie suivante pour l'explication sur les modes)
 

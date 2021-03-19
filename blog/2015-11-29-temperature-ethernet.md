@@ -4,7 +4,7 @@ description: Nous allons connecter un capteur de température/humidité à une e
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/temperature-ethernet-cover.jpg
 
@@ -17,7 +17,7 @@ slug: temperature-ethernet
 
 Salut à tous ! Aujourd'hui nous allons créer une petite station météo d'intérieur (ou d'extérieur pourquoi pas !) avec un arduino et une ethernet shield qui va nous renvoyer la température et l'humidité dans la pièce et l'enregistrer dans Gladys :)
 
-![DHT11 Ethernet](../../../static/img/articles/fr/temperature-ethernet/DSC_0702-light.jpg)
+![DHT11 Ethernet](../static/img/articles/fr/temperature-ethernet/DSC_0702-light.jpg)
 
 <!--truncate-->
 
@@ -35,7 +35,7 @@ Pour ce tutoriel, on aura besoin :
 
 Les branchements sont tout simple, je vous ai fais un petit schéma sur Fritzing. Tout d'abord branchez l'ethernet shield sur votre arduino, puis connectez le DHT11 suivant le schéma ci-dessous ( une fois que l'ethernet shield est branché les PINs sur l'ethernet shield sont les mêmes que sur l'arduino Uno ).
 
-![DHT11 Ethernet](../../../static/img/articles/fr/temperature-ethernet/schema-light.jpg)
+![DHT11 Ethernet](../static/img/articles/fr/temperature-ethernet/schema-light.jpg)
 
 ## L'arduino en tant que client
 
@@ -55,7 +55,7 @@ Créez un device avec les informations :
 - service: ethernet ( ça n'a pas grand importance ici )
 - Pièce: La pièce dans laquelle est situé votre station météo ( vous pouvez créer des pièces dans les paramètres, hésitez pas à créer une pièce pour votre jardin )
 
-![Gladys device view](../../../static/img/articles/fr/temperature-ethernet/screenshot-device.png)
+![Gladys device view](../static/img/articles/fr/temperature-ethernet/screenshot-device.png)
 
 Ensuite, cliquez sur "edit" et créez un deviceType avec comme informations :
 
@@ -66,7 +66,7 @@ Ensuite, cliquez sur "edit" et créez un deviceType avec comme informations :
 - max: 6000 ( la température à la surface du soleil, peu de chance qu'on l'atteigne dans votre salon )
 - Capteur: cochez la case
 
-![Gladys device view](../../../static/img/articles/fr/temperature-ethernet/screenshot-device-type.png)
+![Gladys device view](../static/img/articles/fr/temperature-ethernet/screenshot-device-type.png)
 
 Notez bien l'ID unique du deviceType que vous venez de créer.
 

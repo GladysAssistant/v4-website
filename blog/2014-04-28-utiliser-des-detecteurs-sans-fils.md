@@ -5,7 +5,7 @@ image: /img/presentation/wirelessmotionlow.jpg
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 slug: utiliser-des-detecteurs-sans-fils
 ---
 
@@ -29,7 +29,7 @@ Pour ce tuto, j'ai utilisé :
 
 Connectez le récepteur 433Mhz selon le schéma suivant :
 
-![Récepteur RF 433Mhz Raspberry Pi](../../../static/img/articles/fr/utiliser-des-detecteurs-sans-fils/recepteur_RF_light.jpg)
+![Récepteur RF 433Mhz Raspberry Pi](../static/img/articles/fr/utiliser-des-detecteurs-sans-fils/recepteur_RF_light.jpg)
 
 ## Le software
 

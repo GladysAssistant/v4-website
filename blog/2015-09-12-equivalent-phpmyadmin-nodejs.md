@@ -4,7 +4,7 @@ description: On utilise souvent PhpMyAdmin pour administrer sa base de donnée M
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/express-admin-icone.jpg
 slug: equivalent-phpmyadmin-nodejs
 ---
@@ -45,25 +45,25 @@ sudo admin config
 
 On remplit avec les informations suivantes :
 
-![Configuration](../../../static/img/articles/fr/equivalent-phphmyadmin-nodejs/configuration.png)
+![Configuration](../static/img/articles/fr/equivalent-phphmyadmin-nodejs/configuration.png)
 
 ### Utiliser express-admin
 
 Allez sur votre navigateur à l'adresse `http://IP_DE_VOTRE_RASPBERRY_PI:3000`. Vous devriez trouver quelque chose qui ressemble à ça :
 
-![Login page](../../../static/img/articles/fr/equivalent-phphmyadmin-nodejs/login.png)
+![Login page](../static/img/articles/fr/equivalent-phphmyadmin-nodejs/login.png)
 
 Vous pouvez vous connecter avec les identifiants que vous avez rentré lors de la configuration ( Admin user, Admin password ).
 
 Vous devriez arriver sur un panel, félicitation vous avez réussi !
 
-![Panel](../../../static/img/articles/fr/equivalent-phphmyadmin-nodejs/panel.png)
+![Panel](../static/img/articles/fr/equivalent-phphmyadmin-nodejs/panel.png)
 
 ### Modifier une ligne
 
 Petite subtilité, il y a apparemment des petits bugs avec express-admin et les champs `datetime` de MySQL ( voir [l'issue GitHub](https://github.com/simov/express-admin/issues/50) ). Il considère que les dates sont fausses et vous mets une erreur 'malformed' qui vous empêche de mettre à jour un champs.
 
-![Malformed](../../../static/img/articles/fr/equivalent-phphmyadmin-nodejs/malformed.png)
+![Malformed](../static/img/articles/fr/equivalent-phphmyadmin-nodejs/malformed.png)
 
 Il y a néanmoins une solution ( plutôt un quickfix ), une fois que vous avez lancé au moins une fois express-admin, allez dans le fichier `config/settings.json` et modifiez le type des champs datetime ( seulement des tables que vous voulez modifier ) à :
 

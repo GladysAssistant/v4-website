@@ -4,7 +4,7 @@ description: Je suis heureux de vous annoncer la sortie de l'Open API du Gladys 
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gateway-siri.jpg
 
@@ -49,7 +49,7 @@ Rendez-vous dans l'onglet `Settings` en haut à droite, puis `Open API`.
 
 Vous devriez arriver sur cet écran:
 
-![Générer clé d'API Gladys Gateway](../../../static/img/articles/fr/siri-gateway/generate-api-key.jpg)
+![Générer clé d'API Gladys Gateway](../static/img/articles/fr/siri-gateway/generate-api-key.jpg)
 
 Donnez un nom à votre clé d'API, puis cliquez sur `Generate`.
 
@@ -83,7 +83,7 @@ Dans le body JSON, mettez:
 
 Ou n'importe quel phrase que vous voulez dire à Gladys!
 
-![Insomnia REST Client](../../../static/img/articles/fr/siri-gateway/insomnia.jpg)
+![Insomnia REST Client](../static/img/articles/fr/siri-gateway/insomnia.jpg)
 
 Pressez `Send`, normalement Gladys devrait recevoir votre requête et effectuer l'action.
 
@@ -126,11 +126,11 @@ Dans Request Body, cliquez sur `Add new field` => `Text`.
 
 Donnez lui comme `Key` = "Text" et comme `Text` mettez votre phrase.
 
-![Siri Shortcut Gladys](../../../static/img/articles/fr/siri-gateway/leaving-home-fr.jpg)
+![Siri Shortcut Gladys](../static/img/articles/fr/siri-gateway/leaving-home-fr.jpg)
 
 Ensuite, cliquez sur le bouton de configuration en haut à droite, et cliquez sur `Add to Siri`.
 
-![Ajoute à Siri Gladys](../../../static/img/articles/fr/siri-gateway/add-to-siri.jpg)
+![Ajoute à Siri Gladys](../static/img/articles/fr/siri-gateway/add-to-siri.jpg)
 
 Donnez une phrase à Siri, exemple: `Je pars de la maison`.
 
@@ -140,13 +140,13 @@ Voilà, c'est fait!
 
 Pour créer un évènement, cela ressemblerait à ça:
 
-![Siri Shortcut évènement Gladys](../../../static/img/articles/fr/siri-gateway/event-left-home.jpg)
+![Siri Shortcut évènement Gladys](../static/img/articles/fr/siri-gateway/event-left-home.jpg)
 
 Vous pouvez tester l'intégration en cliquant sur le bouton `Play` ou sur le shortcut directement depuis l'écran d'accueil, ou tout simplement en demandant à Siri.
 
 Si vous voulez utiliser ce shortcut sans parler, vous pouvez même l'ajouter à l'écran d'accueil de votre iPhone ou via un widget pour activer cette scène.
 
-![Siri Shortcut Gladys](../../../static/img/articles/fr/siri-gateway/siri-shortcut-fr.jpg)
+![Siri Shortcut Gladys](../static/img/articles/fr/siri-gateway/siri-shortcut-fr.jpg)
 
 ## Conclusion
 

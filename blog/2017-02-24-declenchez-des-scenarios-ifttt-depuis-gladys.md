@@ -4,7 +4,7 @@ description: Dans ce tutoriel nous allons connecter Gladys à IFTTT, afin d'acc�
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/ifttt-cover.jpg
 
@@ -35,25 +35,25 @@ Une fois le compte créé, nous allons pouvoir créer un premier scénario. Ici,
 
 Commencez par cliquer sur "New Applet" dans le menu en haut à droite.
 
-![New Applet IFTTT](../../../static/img/articles/fr/ifttt-gladys/1-create-scenario.png)
+![New Applet IFTTT](../static/img/articles/fr/ifttt-gladys/1-create-scenario.png)
 
 ### Configurer un trigger
 
 Cliquez sur "This" pour ajouter un trigger à ce scénario, puis dans la liste des services cherchez le service "Maker".
 
-![Choose service IFTTT](../../../static/img/articles/fr/ifttt-gladys/2-choose-service.png)
+![Choose service IFTTT](../static/img/articles/fr/ifttt-gladys/2-choose-service.png)
 
 Vous devriez arriver sur un écran vous demandant de connecter ce service. Cliquez sur "Connect".
 
-![Connect Maker IFTTT](../../../static/img/articles/fr/ifttt-gladys/3-connect-maker.png)
+![Connect Maker IFTTT](../static/img/articles/fr/ifttt-gladys/3-connect-maker.png)
 
 Une fois le channel connecté, il faut sélectionner "Receive a web request" pour dire que l'on va créer un scénario qui se déclenche lorsqu'on enverra une requête HTTP à IFTTT.
 
-![Receive web request IFTTT](../../../static/img/articles/fr/ifttt-gladys/4-receive-a-web-request.png)
+![Receive web request IFTTT](../static/img/articles/fr/ifttt-gladys/4-receive-a-web-request.png)
 
 Dans la fenêtre suivante, il faut rentrer l'event que nous allons écouter. Ici pour l'exemple ce sera l'évènement "left-home".
 
-![Enter event name IFTTT](../../../static/img/articles/fr/ifttt-gladys/5-enter-event-name.png)
+![Enter event name IFTTT](../static/img/articles/fr/ifttt-gladys/5-enter-event-name.png)
 
 ### Configurer une action
 
@@ -61,15 +61,15 @@ L'objectif de ce scénario est d'enregistrer dans une spreadsheet Google Drive l
 
 Commencez par sélectionner le service Google Drive.
 
-![Choose action service IFTTT](../../../static/img/articles/fr/ifttt-gladys/6-choose-action-service.png)
+![Choose action service IFTTT](../static/img/articles/fr/ifttt-gladys/6-choose-action-service.png)
 
 Puis sélectionnez l'action "Add row to spreadsheet".
 
-![Add row to spreadsheet IFTTT](../../../static/img/articles/fr/ifttt-gladys/7-choose-action.png)
+![Add row to spreadsheet IFTTT](../static/img/articles/fr/ifttt-gladys/7-choose-action.png)
 
 Vous pouvez ensuite configurer le format de votre spreadsheet excel, je vous conseille de la laisser telle quelle pour ce tutoriel ! Cliquez sur "Create action" pour finir le processus.
 
-![Add row to spreadsheet IFTTT](../../../static/img/articles/fr/ifttt-gladys/8-action-configuration.png)
+![Add row to spreadsheet IFTTT](../static/img/articles/fr/ifttt-gladys/8-action-configuration.png)
 
 ### Configurer le channel maker
 
@@ -77,11 +77,11 @@ Il vous faut maintenant configurer le channel Maker et récupérer l'URL à appe
 
 Pour cela, allez dans l'onglet "Services" puis recherchez le channel "Maker".
 
-![Add row to spreadsheet IFTTT](../../../static/img/articles/fr/ifttt-gladys/9-configure-maker.png)
+![Add row to spreadsheet IFTTT](../static/img/articles/fr/ifttt-gladys/9-configure-maker.png)
 
 D'ici, cliquez sur "Settings" en haut à droite. Vous devriez voir une page vous donnant une URL de la forme "https://maker.ifttt.com/use/xxxxxxxx". Ouvrez cette URL dans votre navigateur en la copiant. Vous devriez tomber sur une page comme celle-ci :
 
-![Add row to spreadsheet IFTTT](../../../static/img/articles/fr/ifttt-gladys/11-maker-channel-infos.png)
+![Add row to spreadsheet IFTTT](../static/img/articles/fr/ifttt-gladys/11-maker-channel-infos.png)
 
 Copiez-collez l'URL `https://maker.ifttt.com/trigger/{event}/with/key/YOUR_KEY`, et remplacez `{event}` par `left-home` pour arriver sur une URL `https://maker.ifttt.com/trigger/left-home/with/key/YOUR_KEY`. Vous pouvez testez directement sur la page l'intégration pour voir si une ligne apparait bien dans votre spreadsheet. Pour vérifiez, allez sur Google Drive, les dossiers "IFTTT" => "Maker" => "left-home" devraient être présents, le dossier "left-home" devrait contenir une spreadsheet excel avec une ligne par event déclenché.
 
@@ -91,21 +91,21 @@ Commencez déjà par vérifier que votre installation Gladys est bien à jour, e
 
 Ensuite, allez dans la page "Scénarios" sur le dashboard, et créez un scénario. Commencez par sélectionner un trigger dans la catégorie "Utilisateur" :
 
-![Select trigger in Gladys](../../../static/img/articles/fr/ifttt-gladys/12-gladys-select-trigger.png)
+![Select trigger in Gladys](../static/img/articles/fr/ifttt-gladys/12-gladys-select-trigger.png)
 
 Puis, prenez l'évènement "Départ de l'utilisateur".
 
-![Choisir un event Gladys](../../../static/img/articles/fr/ifttt-gladys/13-gladys-scenario-choose-event.png)
+![Choisir un event Gladys](../static/img/articles/fr/ifttt-gladys/13-gladys-scenario-choose-event.png)
 
 Vous pouvez ensuite skipper la partie "Condition" pour directement aller dans la partie "Actions". Sélectionnez ici "Lance une requête HTTP" ou "Send an HTTP request" si vous êtes en anglais dans Gladys.
 
-![Sélectionner une action Gladys](../../../static/img/articles/fr/ifttt-gladys/14-gladys-select-action.png)
+![Sélectionner une action Gladys](../static/img/articles/fr/ifttt-gladys/14-gladys-select-action.png)
 
 Cliquez sur "Enregistrer", et hop c'est bon !
 
 Si vous voulez tester ce script, vous pouvez tout simplement utiliser la box Gladys qui vous permet de créer des events depuis la page d'accueil (pour ajouter une box au dashbaord => "Paramètres" => "box" => puis sélectionnez la box, mettez la position en X et Y sur le dashboard, puis validez)
 
-![Une box pour créer des events Gladys](../../../static/img/articles/fr/ifttt-gladys/15-event-box-gladys.png)
+![Une box pour créer des events Gladys](../static/img/articles/fr/ifttt-gladys/15-event-box-gladys.png)
 
 Sinon, vous pouvez toujours faire une requête HTTP sur Gladys en mettant l'URL suivante dans votre navigateur :
 

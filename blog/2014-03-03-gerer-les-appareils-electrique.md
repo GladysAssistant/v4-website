@@ -6,7 +6,7 @@ image: /img/presentation/lightbulblow.jpg
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 ---
 
 <div class="alert alert--danger" role="alert">
@@ -38,7 +38,7 @@ Le montage est simple, il suffit de brancher l'émetteur 433Mhz à l'arduino sui
 
 Ce qui nous donne :
 
-![Montage Arduino émetteur 433Mhz](../../../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/arduino-schema.jpg)
+![Montage Arduino émetteur 433Mhz](../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/arduino-schema.jpg)
 
 Vous pouvez bien entendu utiliser un arduino Nano, le montage est rigoureusement le même, étant donné que l'arduino Nano a les mêmes PINs.
 
@@ -82,7 +82,7 @@ On comprend assez vite à quoi correspond chaque partie du code.
 
 Les 10 premiers bits correspondent au channel de la prise. Voilà comment était configurée ma télécommande :
 
-![Télécommande 433Mhz Phénix](../../../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/telecommande-code.jpg)
+![Télécommande 433Mhz Phénix](../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/telecommande-code.jpg)
 
 On comprend vite que :
 
@@ -111,7 +111,7 @@ Le code est simplement :
 
 J'ai résumé sur une photo de la configuration de mes prises comment on retrouve le code :
 
-![Prise 433Mhz Phénix codage](../../../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/prise-codage.jpg)
+![Prise 433Mhz Phénix codage](../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/prise-codage.jpg)
 
 ### Déduire les différents codes
 
@@ -180,13 +180,13 @@ Pour contrôler les prises dans Gladys, nous allons nous appuyer sur deux module
 - Cliquez sur le bouton "Configuration" du module Serial dans la vue "modules" du dashboard Gladys. Cela devrait chercher votre arduino sur le ports USB du Raspberry Pi, et ajouter votre arduino dans la liste des devices dans Gladys.
 - Créez un device dans Gladys (dans la vue "Mes devices") avec les informations suivantes:
 
-![Créer device Gladys])../../../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-device.jpg)
+![Créer device Gladys])../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-device.jpg)
 
 **Attention:** Vous devez remplacer le "identifier" par le code décimal de votre prise, en suivant le système que j'ai expliqué plus haut. Vous pouvez utiliser mon tableau si vous êtes sur le channel 5, ou recalculer les codes décimaux par vous même. Si vous voulez être sûr des codes, vous pouvez toujours écouter le code envoyé par la télécommande grâce au récepteur 433Mhz et utiliser un programme sur Arduino comme [ReceiveDemo_Simple.ino](https://github.com/sui77/rc-switch/blob/master/examples/ReceiveDemo_Simple/ReceiveDemo_Simple.ino), vous avez juste à appuyer sur le bouton "Off" de la télécommande et voir le code qui s'affiche dans le moniteur série sur l'IDE Arduino.
 
 - Puis, cliquez sur le bouton "Edit" du device, et créez le deviceType suivant :
 
-![Créer deviceType Gladys](../../../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-devicetype.jpg)
+![Créer deviceType Gladys](../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-devicetype.jpg)
 
 C'est bon, votre prise est déclarée dans Gladys, et est prête à être contrôlée !
 
@@ -194,9 +194,9 @@ Pour la contrôler, vous pouvez tout simplement cliquer sur le bouton "On/Off" d
 
 Voilà ce que j'obtiens chez moi:
 
-![4 prises télécommandées 433Mhz Gladys](../../../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-4-prises.jpg)
+![4 prises télécommandées 433Mhz Gladys](../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-4-prises.jpg)
 
-![Vue Pièce Gladys](../../../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-vue-piece.jpg)
+![Vue Pièce Gladys](../static/img/articles/fr/controler-des-prises-telecommandee-433mhz/screenshot-vue-piece.jpg)
 
 ## Conclusion
 

@@ -4,7 +4,7 @@ description: Contrôlez les lumières de votre logement en WIFI, et créez des a
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/milightlow.jpg
 
@@ -17,7 +17,7 @@ slug: controler-des-ampoules-connectees
 
 Jusqu'à là, nous ne pouvions commander avec Gladys que les équipements branchés sur des prises grâce aux prises télécommandées RF, mais ça ne permettait pas de contrôler les lumières du logement. Je vous propose ici un test des ampoules WIFI Mi-light, ainsi que comment les piloter depuis notre Raspberry Pi!
 
-![Mi-Light Ampoule connectées](../../../static/img/articles/fr/controler-des-ampoules-connectees/milight_products_light.jpg)
+![Mi-Light Ampoule connectées](../static/img/articles/fr/controler-des-ampoules-connectees/milight_products_light.jpg)
 
 <!--truncate-->
 

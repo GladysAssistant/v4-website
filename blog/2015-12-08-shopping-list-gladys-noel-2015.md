@@ -4,7 +4,7 @@ description: J'espère que votre lettre au père Noël est pleine de Raspberry P
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/noel-2015-cover.jpg
 
@@ -22,7 +22,7 @@ Pour commencer avec Gladys, la seule chose qui vous faudra est un Raspberry Pi 2
 
 Pour cela, rien ne vaut un [kit de démarrage Raspberry Pi 2 ( 66€ )](https://amzn.to/30A9CH9) avec tout le nécessaire à l'intérieur ( 1 Raspberry Pi 2 + une carte micro SD classe 10 + une alimentation 2A + un boitier )
 
-![Raspberry Pi Kit complet](../../../static/img/articles/fr/noel-2015/raspberry-kit.jpg)
+![Raspberry Pi Kit complet](../static/img/articles/fr/noel-2015/raspberry-kit.jpg)
 
 Si vous voulez acheter tout séparement, il y a néanmoins quelques points à respecter :
 
@@ -38,7 +38,7 @@ J'avais écris un tutoriel sur le sujet [ici](/fr/blog/gladys-and-nfc).
 
 Vous trouverez les tags NFC [pour 4€ ici](http://amzn.to/1QQCbmU) !
 
-![Tags NFC](../../../static/img/articles/fr/noel-2015/nfc-cover.jpg)
+![Tags NFC](../static/img/articles/fr/noel-2015/nfc-cover.jpg)
 
 ## Des ampoules connectées
 
@@ -46,7 +46,7 @@ J'avais parlé des ampoules connectées Mi-Light ( [ici](/fr/blog/controler-des-
 
 Vous trouverez les ampoules Mi-Light [pour 35€ ici](http://amzn.to/1gsN0PX), et le pont Wi-Fi [pour 18€ ici](http://amzn.to/1Ogrwzf).
 
-![Milight Lamps](../../../static/img/articles/fr/noel-2015/milight_products_light.jpg)
+![Milight Lamps](../static/img/articles/fr/noel-2015/milight_products_light.jpg)
 
 ## Commencer avec un Arduino
 
@@ -62,7 +62,7 @@ Si vous voulez vous amuser et faire une station météo comme dans [mon dernier 
 
 Après l'arduino peut vous servir à tout et n'importe quoi, il y a un paquets de tutoriels sur internet pour à peu prêt tout !
 
-![Arduino Ethernet shield](../../../static/img/articles/fr/noel-2015/temperature-ethernet-cover.jpg)
+![Arduino Ethernet shield](../static/img/articles/fr/noel-2015/temperature-ethernet-cover.jpg)
 
 ## Des capteurs de mouvements
 

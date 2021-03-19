@@ -4,7 +4,7 @@ description: Gladys dans sa version 3.3 est désormais capable de gérer la musi
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-sonos-cover.jpg
 
@@ -39,7 +39,7 @@ Pour simplement mettre en pause la musique dans la pièce d'ID 5. Jolie non ? :D
 
 Je suis donc parti sur une Sonos Play:1 en Blanc. Pour parler de l'enceinte en elle même, elle est de très bonne facture. La fabrication respire la qualité, les finitions sont très propre. Le plastique a un aspect soft-touch sur le haut sympa au touché, et la grille métallique donne un charme à l'enceinte.
 
-![Sonos Play:1](../../../static/img/articles/fr/gladys-sonos/gladys-sonos.jpg)
+![Sonos Play:1](../static/img/articles/fr/gladys-sonos/gladys-sonos.jpg)
 
 Au niveau du son, il est puissant. L'enceinte sonorise sans problèmes une pièce à elle toute seule. Mais ce qui est intéressant avec les Sonos, c'est tout l'aspect connecté et multi-room. Et c'est ça qui nous intéresse ici dans Gladys !
 
@@ -47,7 +47,7 @@ Niveau connectique, la Sonos Play:1 est connectée en Wi-Fi, mais possède une p
 
 Le principe de l'enceinte, c'est que vous allez pouvoir connecter n'importe quel service que vous utilisez ( Spotify, Deezer, SoundClound, Apple Music, etc... ) à votre Sonos, et ensuite vous pourrez jouer n'importe quel musique de vos différents catalogues, n'importe quel playlist créé depuis votre ordinateur, votre smartphone, c'est vraiment pratique. Si vous avez plusieurs Sonos dans plusieurs pièces, c'est le jackpot, vous pouvez tout contrôler de façon centralisée et jouer la même musique sur plusieurs enceintes.
 
-![Sonos Play:1 box](../../../static/img/articles/fr/gladys-sonos/gladys-sonos-box.jpg)
+![Sonos Play:1 box](../static/img/articles/fr/gladys-sonos/gladys-sonos-box.jpg)
 
 Ainsi en apportant la compatibilité Sonos, j'apporte aussi indirectement la compatibilité Spotify, Apple Music, Deezer dans Gladys vu qu'indirectement la musique jouée dans la maison provient de ces plateformes :D Deux en un donc !
 
@@ -67,7 +67,7 @@ Je vous conseille aussi de mettre à jour les données Gladys pour aller cherche
 
 Une fois Gladys en version 3.3, vous devez tout simplement aller dans la vue `Modules` sur le dashboard, aller dans `Store de modules` et cliquer sur le module `Sonos`. Vous devriez arriver sur ça :
 
-![module sonos Gladys](../../../static/img/articles/fr/gladys-sonos/screenshot-gladys-store-sonos.jpg)
+![module sonos Gladys](../static/img/articles/fr/gladys-sonos/screenshot-gladys-store-sonos.jpg)
 
 Vous pouvez cliquer sur `Installer`. Une fois que l'installation est terminée, il faut désormais rebooter Gladys. Allez dans les `Paramètres` puis cliquez sur `Redémarrer Gladys`. Attendez le temps que l'interface soit de nouveau accessible.
 
@@ -77,7 +77,7 @@ Pour configurer le module, c'est très simple. Rendez-vous dans la page `Module`
 
 Dans la vue `Device` de Gladys, vous devriez voir apparaitre quelque chose comme ça :
 
-![Sonos device Gladys](../../../static/img/articles/fr/gladys-sonos/sonos-device.jpg)
+![Sonos device Gladys](../static/img/articles/fr/gladys-sonos/sonos-device.jpg)
 
 Spécifiez à Gladys dans quelle pièce est située votre Sonos, cela vous permettra de dire à Gladys d'allumer la musique dans telle pièce et pas en citant l'ID du devicetype. ( ce qui est possible aussi, mais moins sexy à l'usage ).
 
@@ -87,7 +87,7 @@ Maintenant que tout fonctionne, vous pouvez ajouter la box music à votre dashbo
 
 Pour cela, rendez-vous dans l'onglet `Paramètre` => `Boxs`. Ajoutez une box, sélectionnez `Musique`. Pour les valeurs des X et Y, cela correspond à la position en coordonnée de la box sur le dashbord. Pour mettre la box en haut sur la colonne de gauche par exemple, mettez X = 1 et Y = 1. Si vous voulez que la box soit sur la colonne de droite, mettez X = 2, Y = 1. Enregistrez, et hop c'est bon !
 
-![Box Musique Gladys](../../../static/img/articles/fr/gladys-sonos/screenshot-box-music-gladys.jpg)
+![Box Musique Gladys](../static/img/articles/fr/gladys-sonos/screenshot-box-music-gladys.jpg)
 
 **Remarque :** J'ai eu un petit problème de cache navigateur quand j'ai installé la nouvelle box Musique sur mon Raspberry Pi... Cela peut arriver, ne paniquez pas si la box s'affiche bizarrement.
 
