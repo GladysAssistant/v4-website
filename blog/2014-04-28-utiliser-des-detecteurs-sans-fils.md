@@ -35,7 +35,7 @@ Connectez le récepteur 433Mhz selon le schéma suivant :
 
 J'aurais souhaité faire cette partie directement en NodeJS, mais je n'ai pas trouvé d'équivalent à RCswitch-pi. Le code de détection est donc en C, et communique avec la base de donnée en faisant des requêtes HTTP avec libcurl.
 
-Update, nouveau tutoriel : Désormais je reçois les signaux directement depuis un [arduino](/fr/blog/connecter-un-arduino-au-raspberry-pi), cela permet de ne pas surcharger le CPU du raspberry pi
+Update, nouveau tutoriel : Désormais je reçois les signaux directement depuis un [arduino](/blog/connecter-un-arduino-au-raspberry-pi), cela permet de ne pas surcharger le CPU du raspberry pi
 
 Installez libcurl avec la commande suivante :
 
@@ -43,7 +43,7 @@ Installez libcurl avec la commande suivante :
 apt-get install libcurl4-openssl-dev
 ```
 
-Vérifiez que WiringPi et Rcswitch-pi sont bien installés sur votre Raspberry. Si non, installez-les comme dans [le tuto 9#](/fr/blog/gerer-les-appareils-electrique) !
+Vérifiez que WiringPi et Rcswitch-pi sont bien installés sur votre Raspberry. Si non, installez-les comme dans [le tuto 9#](/blog/gerer-les-appareils-electrique) !
 
 ### Le code
 

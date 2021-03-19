@@ -21,7 +21,7 @@ Voici donc un récapitulatif des features et des concepts qui vont apparaître d
 
 ## L'unification des périphériques
 
-J'en parlais dans mon [bilan de l'année 2015](/fr/blog/bilan-2015-et-projets-pour-2016), avec Gladys 2.0, de nombreux utilisateurs se sont inscrits en tant que développeur Gladys sur le site développeur, et ont commencés à développer des modules pour étendre les possibilités de Gladys.
+J'en parlais dans mon [bilan de l'année 2015](/blog/bilan-2015-et-projets-pour-2016), avec Gladys 2.0, de nombreux utilisateurs se sont inscrits en tant que développeur Gladys sur le site développeur, et ont commencés à développer des modules pour étendre les possibilités de Gladys.
 
 Cela m'a permis de voir les usages et les demandes des développeurs, et surtout de remarquer une chose: La plupart des modules que les développeurs créent sont des modules pour ajouter des compatibilités avec du matériel, et souvent dans Gladys 2.0 ils se voyaient obligés de tout réinventer, ils devaient gérer absolument tout: créer leur service, créer leurs routes d'API, gérer l'affichage sur le dashboard, etc...
 

@@ -34,7 +34,7 @@ Si vous voulez acheter tout séparement, il y a néanmoins quelques points à re
 
 Vous voulez intéragir avec Gladys pour pas cher ? Avec quelques tags NFC collés un peu partout dans la maison, on peut déclencher des actions lorsqu'on rentre, lorsqu'on se couche, lorsqu'on regarde un film, les possibilités sont toujours infinies !
 
-J'avais écris un tutoriel sur le sujet [ici](/fr/blog/gladys-and-nfc).
+J'avais écris un tutoriel sur le sujet [ici](/blog/gladys-and-nfc).
 
 Vous trouverez les tags NFC [pour 4€ ici](http://amzn.to/1QQCbmU) !
 
@@ -42,7 +42,7 @@ Vous trouverez les tags NFC [pour 4€ ici](http://amzn.to/1QQCbmU) !
 
 ## Des ampoules connectées
 
-J'avais parlé des ampoules connectées Mi-Light ( [ici](/fr/blog/controler-des-ampoules-connectees) ), un équivalent low-cost des Philips Hue. Elles ont l'avantage d'être multicolores, Wi-Fi, et avec une API très facile à utiliser. Je m'en sers au quotidien depuis pas mal de temps, et toujours rien à redire tout fonctionne parfaitement.
+J'avais parlé des ampoules connectées Mi-Light ( [ici](/blog/controler-des-ampoules-connectees) ), un équivalent low-cost des Philips Hue. Elles ont l'avantage d'être multicolores, Wi-Fi, et avec une API très facile à utiliser. Je m'en sers au quotidien depuis pas mal de temps, et toujours rien à redire tout fonctionne parfaitement.
 
 Vous trouverez les ampoules Mi-Light [pour 35€ ici](http://amzn.to/1gsN0PX), et le pont Wi-Fi [pour 18€ ici](http://amzn.to/1Ogrwzf).
 
@@ -58,7 +58,7 @@ Pour commencer, je vous conseille d'acheter un Arduino Uno, bon point de départ
 
 ( Pour ceux qui veulent un arduino moins cher, il y a l'Arduino Nano assez équivalent au Uno, qu'on peut trouver pour 3/4€ [ici](http://amzn.to/1M82tlv) )
 
-Si vous voulez vous amuser et faire une station météo comme dans [mon dernier tutoriel](/fr/blog/temperature-ethernet), il vous faudra en plus de l'Arduino une [ethernet shield](http://amzn.to/1lRuhjQ) et un [capteur température/humidité DHT11](http://www.gearbest.com/development-boards/pp_45175.html)
+Si vous voulez vous amuser et faire une station météo comme dans [mon dernier tutoriel](/blog/temperature-ethernet), il vous faudra en plus de l'Arduino une [ethernet shield](http://amzn.to/1lRuhjQ) et un [capteur température/humidité DHT11](http://www.gearbest.com/development-boards/pp_45175.html)
 
 Après l'arduino peut vous servir à tout et n'importe quoi, il y a un paquets de tutoriels sur internet pour à peu prêt tout !
 
@@ -66,7 +66,7 @@ Après l'arduino peut vous servir à tout et n'importe quoi, il y a un paquets d
 
 ## Des capteurs de mouvements
 
-J'en avais parlé dans deux tutoriels, d'abord en écoutant les signaux 433Mhz depuis le Raspberry Pi, puis depuis un arduino pour alléger le CPU du Rpi. Le premier tutoriel peut être trouvé [ici](/fr/blog/utiliser-des-detecteurs-sans-fils), et le deuxième [ici](/fr/blog/connecter-un-arduino-au-raspberry-pi).
+J'en avais parlé dans deux tutoriels, d'abord en écoutant les signaux 433Mhz depuis le Raspberry Pi, puis depuis un arduino pour alléger le CPU du Rpi. Le premier tutoriel peut être trouvé [ici](/blog/utiliser-des-detecteurs-sans-fils), et le deuxième [ici](/blog/connecter-un-arduino-au-raspberry-pi).
 
 Pour vous équiper en capteurs de mouvements sans-fil, vous aurez besoin :
 
@@ -79,7 +79,7 @@ Pour vous équiper en capteurs de mouvements sans-fil, vous aurez besoin :
 Pour finir, petite catégorie un peu fourre tout avec un peu tout et n'importe quoi, même des produits sans lien avec Gladys mais qui m'ont particulièrement plu :D
 
 - [Xiaomi Mi-band](http://amzn.to/1OgvKqI) : Un bracelet connecté sympa que j'ai offert à mon père et que j'ai pu tester en profondeur ! L'avantage, c'est qu'il ne coûte pas cher (16€) et que la batterie dure 2 mois. Après il remonte surtout votre activité physique dans la journée, vous réveille en vibrant le matin, mais ne fait pas grand chose d'autres.
-- [Wemo Insight Switch](http://amzn.to/1CG0WQr) : Des prises connectées Wi-Fi avec contrôle de la consommation. Elles fonctionnent plutôt pas mal, j'avais fais [un tutoriel](/fr/blog/controler-prises-wemo-insight-switch) dessus ! La seule reproche que je pourrais faire c'est que l'application n'est pas toujours hyper fluide, mais bon on passe pas notre vie dessus non plus.
+- [Wemo Insight Switch](http://amzn.to/1CG0WQr) : Des prises connectées Wi-Fi avec contrôle de la consommation. Elles fonctionnent plutôt pas mal, j'avais fais [un tutoriel](/blog/controler-prises-wemo-insight-switch) dessus ! La seule reproche que je pourrais faire c'est que l'application n'est pas toujours hyper fluide, mais bon on passe pas notre vie dessus non plus.
 - [Les géants du web - Octo Technology](http://amzn.to/1PWaWuB) : Un bouquin qui m'a pas mal plu sur les pratiques des grands acteurs du web d'aujourd'hui (Facebook, Google, Amazon) et les solutions techniques qu'ils ont mis en place pour marcher si bien avec autant d'utilisateurs ( ça parle déploiement continue, devOps, design for failure, feature flipping, sharding horizontal ). Je conseille !
 
 ## Ce que j'ai commandé moi

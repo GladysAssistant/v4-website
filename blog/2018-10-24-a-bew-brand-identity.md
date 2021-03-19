@@ -10,8 +10,6 @@ author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/new-brand-identity.jpg
 ---
 
-Article en français [ici](/fr/blog/une-nouvelle-identite-visuelle-pour-gladys).
-
 Hi everyone!
 
 When I arrived in Bali 2 months ago, I went with a simple goal: spend more time on Gladys to bring the project to another level.

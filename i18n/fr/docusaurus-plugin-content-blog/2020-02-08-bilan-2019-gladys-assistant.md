@@ -13,7 +13,7 @@ slug: bilan-2019-gladys-assistant
 
 Salut à tous !
 
-Chaque année, je publie un article bilan de l'année. Je l'avais fais en [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) et [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
+Chaque année, je publie un article bilan de l'année. Je l'avais fais en [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) et [2015](/blog/bilan-2015-et-projets-pour-2016).
 
 Bienvenue dans la version 2019 de l'article 😁
 

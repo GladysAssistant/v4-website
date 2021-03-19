@@ -11,7 +11,7 @@ slug: bilan-2019-gladys-assistant
 
 Hi all !
 
-Each year, I publish a review article for the year. I had done it in [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) and [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
+Each year, I publish a review article for the year. I had done it in [2018](/blog/2018-year-review-of-gladys-assistant), [2017](/blog/bilan-gladys-2017), [2016](/blog/bilan-annee-2016) and [2015](/blog/bilan-2015-et-projets-pour-2016).
 
 Welcome to the 2019 version of the article 😁
 

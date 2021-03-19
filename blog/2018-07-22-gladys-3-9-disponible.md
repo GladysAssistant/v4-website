@@ -180,7 +180,7 @@ Cette mise à jour, c'est le fruit du travail de toute une communauté, et c'est
 
 Merci à tous ceux qui ont contribués !
 
-Pour ceux qui ont loupés la nouvelle, j'ai annoncé début juillet que [j'allais passer à temps partiel sur Gladys](/fr/blog/grande-nouvelle-gladys) 🚀😀
+Pour ceux qui ont loupés la nouvelle, j'ai annoncé début juillet que j'allais passer à temps partiel sur Gladys.
 
 **Edit 2020: Le Patreon n'existe plus en faveur de notre nouveau plan Gladys Plus !**
 

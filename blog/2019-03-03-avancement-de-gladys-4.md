@@ -73,7 +73,7 @@ Voilà la modélisation de la base de données de Gladys 4 pour l'instant:
 
 ![Modélisation base de donnée Gladys 4](../static/img/articles/fr/avancement-gladys-4/gladys-v4-data-model.png)
 
-Et pour ceux qui préfèrent voir ça en vrai, voilà une base de donnée SQLite de Gladys 4: [gladys-4-development.db](/fr/files/gladys-4-development.db).
+Et pour ceux qui préfèrent voir ça en vrai, voilà une base de donnée SQLite de Gladys 4: [gladys-4-development.db](/files/gladys-4-development.db).
 
 Vous pouvez utiliser l'excellent client SQL [TablePlus](https://tableplus.io/) pour ouvrir ce fichier et voir comment ça fonctionne sous le capot :)
 
