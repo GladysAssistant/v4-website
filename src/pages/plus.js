@@ -3,6 +3,8 @@ import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import PlusComponent from "../components/Plus";
 
+import { translate } from "@docusaurus/Translate";
+
 function Plus() {
   const context = useDocusaurusContext();
   const { i18n } = context;

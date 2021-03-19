@@ -21,14 +21,6 @@ module.exports = {
   themeConfig: {
     image: "img/presentation/gladys-cover-demo.jpg",
     metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
-    announcementBar: {
-      id: "gladys_4_launch", // Any value that will identify this message.
-      content:
-        'Gladys Assistant 4 is available! <a href="/en/blog/gladys-assistant-4-launch/">Read the blog post</a> 🚀',
-      // backgroundColor: "#fafbfc", // Defaults to `#fff`.
-      // textColor: "#091E42", // Defaults to `#000`.
-      isCloseable: true, // Defaults to `true`.
-    },
     googleAnalytics: {
       trackingID: "UA-42837031-1",
       // Optional fields.
