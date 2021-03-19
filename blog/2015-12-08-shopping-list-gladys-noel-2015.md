@@ -2,7 +2,7 @@
 title: La shopping list de Gladys pour un Noël connecté !
 description: J'espère que votre lettre au père Noël est pleine de Raspberry Pi et d'Arduinos ! ;) Petit tour d'horizon de ce qui est nécessaire pour commencer avec Gladys
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

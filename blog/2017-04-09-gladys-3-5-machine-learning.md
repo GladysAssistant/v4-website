@@ -2,7 +2,7 @@
 title: Comment Gladys 3.5 répond à vos messages  grâce au machine learning
 description: Dans cet article, nous verrons en détail comment fonctionne l'analyse de phrases dans Gladys 3.5, et comment vous pouvez désormais discuter avec Gladys !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

@@ -2,7 +2,7 @@
 title: Contrôler les prises Wi-Fi Wemo Insight Switch
 description: Les prises Wi-Fi Wemo Insight Switch ont de nombreux atouts, essayons de les contrôler avec Node.js !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/wemo_icone_light.jpg

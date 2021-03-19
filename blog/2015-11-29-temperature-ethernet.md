@@ -2,7 +2,7 @@
 title: Une station météo connectée à internet
 description: Nous allons connecter un capteur de température/humidité à une ethernet shield afin de communiquer à Gladys la température d'une pièce !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

@@ -2,7 +2,7 @@
 title: Gladys 3.9 est disponible !
 description: Refonte du module Z-wave, travail sur l'UX, renforcement de la sécurité et des performances, une mise à jour riche en nouveautés !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

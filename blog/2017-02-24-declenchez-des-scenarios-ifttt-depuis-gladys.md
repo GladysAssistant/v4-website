@@ -2,7 +2,7 @@
 title: Déclenchez des scénarios IFTTT depuis Gladys !
 description: Dans ce tutoriel nous allons connecter Gladys à IFTTT, afin d'accéder à toute la richesse de cette plateforme !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

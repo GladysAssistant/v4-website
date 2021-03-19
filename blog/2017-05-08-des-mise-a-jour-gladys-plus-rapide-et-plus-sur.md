@@ -2,7 +2,7 @@
 title: Des mises à jour Gladys plus rapides et plus stables !
 description: Le process de mise à jour Gladys évolue pour être plus rapide et surtout beaucoup plus stable !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

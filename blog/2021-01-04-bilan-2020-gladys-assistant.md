@@ -1,90 +1,90 @@
 ---
-title: Bilan de 2020 pour Gladys Assistant !
-description: Faisons le point sur cette année charnière pour Gladys Assistant.
+title: Gladys Assistant's 2020 Year In Review
+description: Let's look back at this crazy year for Gladys Assistant
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/bilan-2020-cover.jpg
 slug: bilan-2020-gladys-assistant
 ---
 
-Salut à tous !
+Hi all !
 
-Comme chaque année, il est l’heure d’un nouveau bilan annuel pour Gladys Assistant. Je l'avais fais en [2019](/fr/blog/bilan-2019-gladys-assistant), [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) et [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
+Like every year, it is time for a new annual review for Gladys Assistant. I had done it in [2019](/fr/blog/bilan-2019-gladys-assistant), [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) and [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
 
-C'est parti pour le bilan de l'année 2020 🙂
+Let's go for the 2020 year in review :)
 
 <!--truncate-->
 
-## Que s’est-il passé en 2020 ?
+## What happened in 2020?
 
-L’année 2020 a été riche en nouveautés pour le projet, car en Novembre la version 4 de Gladys [est sortie](/fr/blog/lancement-gladys-assistant-4), une version réécrite de zéro.
+The year 2020 was rich in new features for the project, because in November version 4 of Gladys [was released](/blog/gladys-assistant-4-launch), a rewritten version from scratch.
 
-Vous êtes très nombreux à avoir rejoint la communauté suite à ce lancement, puisque vous êtes 780 à avoir installé Gladys v4 le mois de son lancement: un super chiffre très encourageant.
+Many of you joined the community following this launch, since 780 of you installed Gladys v4 the month of its launch: a very encouraging figure.
 
-Voilà les statistiques d’installation de cette v4 sur toute l’année 2020. Avant Novembre, la v4 était encore en beta et uniquement utilisé en interne ce qui explique les chiffres bas d’installations. Le pic est en Novembre, et il se stabilise en décembre ensuite car beaucoup de gens ont testés Gladys sans forcément s’en servir immédiatement à long terme: c’est normal 🙂
+Here are the installation statistics for this v4 for the whole of 2020. Before November, v4 was still in beta and only used internally, which explains the low installation figures. The peak is in November, and it stabilizes in December afterwards because many people have tested Gladys without necessarily using it immediately in the long term: this is normal 🙂
 
 ![Statistiques installations Gladys Assistant 4](../static/img/articles/fr/bilan-2020/installations-stats.jpg)
 
-Désormais, le produit reçoit des mises à jour fréquentes de la part des 17 contributeurs GitHub sur cette v4.
+Now, the product receives frequent updates from the 17 GitHub contributors on this v4.
 
-En moyenne, hors vacances, il y a eu **une nouvelle version de Gladys par semaine** tout au long de cette année.
+On average, excluding holidays, there was ** one new version of Gladys per week ** throughout this year.
 
-## Quelques statistiques
+## Some statistics
 
-### Le site Gladys
+### The Gladys site
 
-Les visites sur le site ont été en baisse en début d’année, mais ont repris très fort en Novembre suite au lancement de la v4.
+Visits to the site were down at the start of the year, but picked up very strongly in November following the launch of v4.
 
-2 600 visiteurs uniques en 1 jour, c’était une belle journée ! La principale source de ce traffic était l’article de [Maison et Domotique](https://www.maison-et-domotique.com/123220-gladys-assistant-v4-solution-domotique-open-source/) sur le sujet, ainsi que celui de [Korben](https://korben.info/gladys-assistant.html) quelques jours plus tard.
+2,600 unique visitors in 1 day, it was a great day! The main source of this traffic was the article of [Maison et Domotique](https://www.maison-et-domotique.com/123220-gladys-assistant-v4-solution-domotique-open-source/) on the subject, as well as that of [Korben](https://korben.info/gladys-assistant.html) a few days later.
 
-Le taux de rebond n’a cessé de baisser suite à la sortie de notre nouveau site (taux de rebond = le pourcentage de visiteurs qui quittent le site sans faire aucunes interactions avec celui-ci) Il était assez élevé en début d’année (50%), et tourne désormais autour de 22%.
+The bounce rate has continued to drop following the release of our new site (bounce rate = the percentage of visitors who leave the site without having any interactions with it) It was quite high at the start of the year ( 50%), and is now around 22%.
 
-![Statistiques visiteurs site Gladys Assistant 4](../static/img/articles/fr/bilan-2020/website-visitors.jpg)
+! [Gladys Assistant 4 site visitors statistics] (../ static / img / articles / fr / limite-2020 / website-visitors.jpg)
 
-### Les réseaux sociaux
+### Social networks
 
-Sur les réseaux sociaux:
+On social networks:
 
-- [@gladysassistant sur Twitter](https://twitter.com/gladysassistant) rassemble 2 746 followers
-- [Gladys Assistant Facebook](https://www.facebook.com/gladysassistant) comptabilise 745 likes
-- [@gladysassistant sur instagram](https://www.instagram.com/gladysassistant) rassemble 555 abonnés
+- [@gladysassistant on Twitter](https://twitter.com/gladysassistant) has 2,746 followers
+- [Gladys Assistant Facebook](https://www.facebook.com/gladysassistant) counts 745 likes
+- [@gladysassistant on instagram](https://www.instagram.com/gladysassistant) brings together 555 subscribers
 
-Et enfin 1 775 followers sur [mon Twitter personnel](https://twitter.com/pierregillesl) !
+And finally 1,775 followers on [my personal Twitter] (https://twitter.com/pierregillesl)!
 
-### La newsletter
+### The newsletter
 
-Au niveau de la newsletter, vous êtes 3 757 à suivre la [newsletter Gladys Assistant](https://email-list.gladysassistant.com/subscription/1mXJoEWEl).
+Regarding the newsletter, 3,757 of you follow the Gladys Assistant newsletter.
 
-- 3242 abonnés en français
-- 515 abonnés en anglais
+- 3242 subscribers in French
+- 515 subscribers in English
 
-L'année dernière j'ai envoyé une vingtaine d'email, soit entre 1 et 2 emails par mois.
+Last year I sent about 20 emails, or between 1 and 2 emails per month.
 
-Je n'envoie que des emails écrit à la main (avec amour !), du contenu de qualité, non-automatisé. Je suis absolument anti-spam comme vous et je passe du temps à écrire du contenu pertinent. J'espère que ça se ressent !
+I only send handwritten emails (with love!), Quality, non-automated content. I am absolutely spam proof like you and spend time writing relevant content. Hope you can feel it!
 
-### Le GitHub Gladys Assistant
+### The GitHub Gladys Assistant
 
-Nous sommes à 1 556 stars ⭐ sur le [repo Gladys Assistant](https://github.com/GladysAssistant/Gladys)
+We are at 1,556 stars ⭐ on the [Gladys Assistant repo](https://github.com/GladysAssistant/Gladys)
 
-C'est +16% par rapport à l'année dernière !
+This is +16% compared to last year!
 
-Je compte sur vous pour nous emmener à 10 000 🚀🚀 Si chacun de vous pouvais prendre 5 secondes pour aller mettre une étoile au projet, ça serait juste génial 😍
+I'm counting on you to take us to 10,000 🚀🚀 If each of you could take 5 seconds to go and put a star on the project, that would be just great 😍
 
-## Projets et objectifs pour 2021
+## Projects and objectives for 2021
 
-Mon objectif de l’année dernière (sortir la v4) étant atteint, mon objectif principale désormais est de faire connaître ce produit et de convertir un maximum de nouveaux utilisateurs.
+My goal for last year (releasing v4) having been reached, my main goal now is to promote this product and convert as many new users as possible.
 
-Je vais donc diviser mon temps en deux missions cette année:
+So I'm going to divide my time into two missions this year:
 
-- **Evangélisation du produit :** continuer mon travail auprès de journalistes spécialisés, participer à des conférences (en ligne!), écrire du contenu. Bref, faire en sorte que Gladys Assistant rayonne et soit mise en avant à un maximum d’endroits. Je suis fier de cette v4 et je veux qu’elle soit utilisée ! C’est un cercle vertueux: plus il y a d’utilisateurs, plus il y a de contributeurs, donc plus le produit s’améliore, ce qui ramène des nouveaux utilisateurs.
-- **Travail sur le produit et la documentation :** Je suis conscient que le produit est nouveau et forcément certaines fonctionnalités manquent. Néanmoins je trouve qu’on a pris un bon rythme de développement et que les outils et process qu’on a en place (Les [features requests](https://community.gladysassistant.com/c/feature-requests/43/l/latest?order=votes) sur le forum, les issues GitHub, CircleCI + CodeCov) nous permettent de travailler vite et bien. Progressivement, fonctionnalités par fonctionnalités, on se rapprochera d’un logiciel domotique complet et assez riche pour répondre à 90% des cas. La documentation est un point qui me tient particulièrement à coeur sur cette v4. J’ai mis la barre haute sur la qualité des tutoriels écrits sur le site, et je suis content de voir que la communauté écrit des tutoriels encore plus beau et complet que les miens 😄 C’est comme ça qu’on pourra attirer les 1 000 prochains utilisateurs.
+- **Product evangelization:** continue my work with specialized journalists, participate in conferences (online!), Write content. In short, to ensure that Gladys Assistant shines and is highlighted in as many places as possible. I am proud of this v4 and want it to be used! It's a virtuous circle: the more users there are, the more contributors, so the better the product gets, which brings in new users.
+- **Work on the product and the documentation:** I am aware that the product is new and inevitably some functionalities are missing. However, I find that we have taken a good pace of development and that the tools and processes that we have in place (The features requests tab on the forum, GitHub, CircleCI + CodeCov issues) allow us to work quickly and well. Gradually, functionality by functionality, we will come closer to a home automation software that is complete and rich enough to respond to 90% of cases. Documentation is a point that is particularly close to my heart on this v4. I set the bar high on the quality of the tutorials written on the site, and I'm happy to see that the community writes even more beautiful and complete tutorials than mine 😄 This is how we can attract the 1 000 next users.
 
-En tout cas je vous souhaite à tous une très bonne année 2021 🥳
+In any case, I wish you all a very happy new year 2021 🥳
 
-Si vous n’avez pas encore testé Gladys Assistant 4, c’est le moment: rendez-vous sur [la documentation](/fr/docs) !
+If you have not yet tested Gladys Assistant 4, now is the time: go to [the documentation](/docs/)!
 
-A très vite.
+See you soon.
 
 Pierre-Gilles

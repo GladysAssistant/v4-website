@@ -2,7 +2,7 @@
 title: Installer Gladys 3.0 sur un serveur avec Docker
 description: Nous allons installer ici Gladys en moins de 5 minutes sur un serveur grâce à Docker !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

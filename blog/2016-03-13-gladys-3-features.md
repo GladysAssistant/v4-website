@@ -2,7 +2,7 @@
 title: Ce qu'il faut attendre de Gladys 3.0 !
 description: Je travaille depuis pas mal de temps sur cette version 3.0 de Gladys, voilà un premier aperçu des features de cette nouvelle version !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 

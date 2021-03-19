@@ -3,7 +3,7 @@ slug: gladys-devient-compatible-xiaomi-home
 title: Gladys devient compatible Xiaomi Home !
 description: Découvrez comment intégrer les périphériques Xiaomi Home chez vous et comment mettre en place le fameux mode romantique !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/xiaomi-home.jpg

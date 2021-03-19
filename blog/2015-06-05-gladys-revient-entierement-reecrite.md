@@ -2,7 +2,7 @@
 title: Gladys revient entièrement réécrite !
 description: Un an après la première version, Gladys revient dans une toute nouvelle version en full Node.js !
 author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
+author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 
