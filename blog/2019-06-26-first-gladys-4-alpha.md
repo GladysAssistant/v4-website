@@ -15,7 +15,7 @@ In December, I published a [manifesto](https://docs.google.com/document/d/1zqH0v
 
 And now, after 7 months of hard work, I'm happy to release today the first alpha version of Gladys 4!
 
-![Gladys 4 devices](../static/img/articles/gladys-4-alpha/gladys-4-mockup-devices.jpg)
+![Gladys 4 devices](../static/img/articles/en/gladys-4-alpha/gladys-4-mockup-devices.jpg)
 
 <!--truncate-->
 
@@ -47,33 +47,33 @@ Demo time!
 
 The main dashboard of Gladys, fully customizable
 
-![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/dashboard.png)
+![Gladys 4 Dashboard](../static/img/articles/en/gladys-4-alpha/dashboard.png)
 
 The "Chat" view, to talk with Gladys:
 
-![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/chat.png)
+![Gladys 4 Dashboard](../static/img/articles/en/gladys-4-alpha/chat.png)
 
 The Z-Wave configuration page, now integrated natively in Gladys:
 
-![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/zwave.png)
+![Gladys 4 Dashboard](../static/img/articles/en/gladys-4-alpha/zwave.png)
 
 The Gladys Plus configuration page. Gladys Plus is Gladys paid plan.
 
 It gives you access for 9.99€/month to additional features like end-to-end encrypted remote access and daily backups!
 
-![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/gladys-plus.png)
+![Gladys 4 Dashboard](../static/img/articles/en/gladys-4-alpha/gladys-plus.png)
 
 Daily backups:
 
-![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/backups.png)
+![Gladys 4 Dashboard](../static/img/articles/en/gladys-4-alpha/backups.png)
 
 System view:
 
-![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/system.png)
+![Gladys 4 Dashboard](../static/img/articles/en/gladys-4-alpha/system.png)
 
 A feature I love is the ability to text Gladys that you want to see the kitchen, and she messages you back on Telegram with a view from the room camera:
 
-![Gladys 4 Dashboard](../static/img/articles/gladys-4-alpha/telegram-image.jpg)
+![Gladys 4 Dashboard](../static/img/articles/en/gladys-4-alpha/telegram-image.jpg)
 
 ### Small UI details that are important
 

@@ -28,7 +28,7 @@ I'm happy to announce that this release is now available, and is called Gladys 3
 
 The main change of this upgrade is the new design of Gladys UI. The theme has been upgraded to the latest version, and all components now look more modern:
 
-![Gladys 3.8 UI](../static/img/articles/gladys-3-8/macbook-dashboard-2018.jpg)
+![Gladys 3.8 UI](../static/img/articles/en/gladys-3-8/macbook-dashboard-2018.jpg)
 
 Pretty, no ? 😉
 
