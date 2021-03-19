@@ -13,14 +13,15 @@ function HomePage() {
   return (
     <Layout
       title={translate({
-        id: "home.metaDescription",
-        description: "home page meta description",
+        id: "home.description",
+        description: "The home page description",
         message: "A privacy-first, open-source home assistant",
       })}
       description={translate({
         id: "home.metaDescription",
         description: "home page meta description",
-        message: "A privacy-first, open-source home assistant",
+        message:
+          "Gladys Assistant is a modern, privacy-first & open-source home automation software that runs anywhere.",
       })}
     >
       <Home integrations={first4Integrations} lang={i18n.currentLocale} />
