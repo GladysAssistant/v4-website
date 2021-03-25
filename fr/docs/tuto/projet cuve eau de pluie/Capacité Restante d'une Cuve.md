@@ -53,7 +53,11 @@ Suivre la procédure d’installation dans Gladys et une fois la configuration t
 
 <img width="746" alt="Capture d’écran 2021-03-14 à 20 32 43" src="https://user-images.githubusercontent.com/80550818/111081638-81dc6480-8504-11eb-926e-a0fc5547891f.png">
 
+![Mqtt1](site Web v4 /fr /statique/ projet cuve /myqtt 1.png) 
+
 <img width="746" alt="Capture d’écran 2021-03-14 à 20 30 50" src="https://user-images.githubusercontent.com/80550818/111081581-4b064e80-8504-11eb-9ea7-beac635c160d.png">
+
+![Mqtt2](site Web v4/fr/statique/projet cuve/myqtt 2.png)
 
 Puis "sauvegarder"
 
