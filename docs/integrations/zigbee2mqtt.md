@@ -4,56 +4,54 @@ title: Zigbee2Mqtt
 sidebar_label: Zigbee2Mqtt
 ---
 
-TO TRANSLATE
+Thanks to the [Zigbee2Mqtt](https://www.zigbee2mqtt.io/) project, it is possible to easily integrate most of the devices using the Zigbee protocol. You can check the list of compatible devices [here](https://www.zigbee2mqtt.io/information/supported_devices.html).
 
-Grâce au projet [Zigbee2Mqtt](https://www.zigbee2mqtt.io/), il est possible d'intégrer facilement la plupart des périphériques utilisant le protocole Zigbee. Vous pouvez d'ailleurs consulter la liste des appareils compatibles [ici](https://www.zigbee2mqtt.io/information/supported_devices.html).
+Before you start, make sure you have connected a USB Zigbee adapter like the CC2652R or CC2652RB.
 
-Avant de commencer, vérifiez que vous avez bien connecté un adaptateur USB Zigbee comme le CC2652R ou le CC2652RB.
+Go to `Integrations / Zigbee2Mqtt` in Gladys.  
 
-Rendez-vous dans `Intégrations / Zigbee2Mqtt` dans Gladys.  
+## Configure the USB dongle port
 
-## Configurez le port du dongle USB
+By clicking on `Settings` in the menu, Gladys will automatically scan the different USB ports to propose a drop-down list. Indicate in the settings the USB port to use to allow Gladys to communicate in Zigbee.
 
-En cliquant dans le menu sur `Paramètres`, Gladys va automatiquement scanner les différents ports USB pour vous proposer une liste déroulante. Indiquez dans le paramètrage le port USB à utiliser pour permettre à Gladys de communqiuer en Zigbee.
+![USB dongle settings](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
-![Paramètrage dongle USB](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_parametrage_dongle_usb_fr.png)
+## Activate Zigbee2Mqtt
 
-## Activez Zigbee2Mqtt
+Once your dongle is configured, Gladys needs to install two containers (MQTT and Zigbee2Mqtt) to use the dongle and communicate with all your devices. Don't worry, all this has been automated.
 
-Une fois votre dongle configuré, Gladys a besoin d'installer deux containers (MQTT et Zigbee2Mqtt) pour utiliser le dongle et communqiuer avec tous vos appareils. Ne vous inquiétez pas, tout cela a été automatisé.
+Go to the `Setup` section and click on the **Enable Zigbee2mqtt** button. After a few moments (the time depends on your Raspberry Pi model and your bandwidth), you should see all the elements started and the links between each one green.
 
-Rendez-vous dans la partie `Configuration` et cliquez sur le bouton **Activer Zigbee2Mqtt**. Après quelques instants (le temps dépend de votre modèle de Raspberry Pi et de votre bande passante), vous devriez visualiser tous les éléments démarrés et les liens entre chacun au vert.
+![Zigbee2Mqtt services status](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_services_state_en.png)
 
-![Etat des services Zigbee2Mqtt](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_etat_services_fr.png)
+## Allow device association
 
-## Autorisez l'association d'appareils
+To allow devices to be associated to your Zigbee network, you must allow joining in the Zigbee configuration.
 
-Pour permettre aux périphériques d'êtres associés à votre réseau Zigbee, il faut autoriser l'association dans la 
+Click on the `Discover` menu, then click on the `Permit joining` button.
 
-Cliquez sur le menu `Découverte Zigbee`, puis cliquez sur le bouton `Autoriser l'association`.
+![Authorize association](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_authorize_association_en.png)
 
-![Autoriser l'association](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_autoriser_association_fr.png)
+:warning: Be careful, once your devices are associated, you will have to come back here to forbid the association, for security.
 
-:warning: Attention, une fois vos appareils associés, vous devrez revenir ici pour interdire l'association, par sécurité.
+## Add devices
 
-## Ajoutez des appareils
+To make your device join the network, please refer to its manual. In most cases, a long press on the physical button allows this operation.
 
-Pour que votre périphérique rejoigne le réseau, reportez-vous à la notice de celui-ci. Dans la majorité des cas, un appui long sur le bouton physique permet cette opération.
+Still in the same screen, click on the **Scan** button to ask the Zigbee network for the list of known devices.
 
-Toujours dans le même écran, cliquez sur le bouton **Scanner** pour demander au réseau Zigbee la liste des appareils connus.
+The devices already associated to your Zigbee network will appear with the list of detected features. You can rename them and associate them to a room using the drop-down list.
 
-Les appareils déjà associés à votre réseau Zigbee apparaîtront avec la liste des fonctionnalités détectées. Vous pouvez les renommer et les associer à une pièce grâce à la liste déroulante.
+![Add a device](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_add_device_en.png)
 
-![Ajouter un appareil](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_ajouter_appareil_fr.png)
+## Modify the devices
 
-## Modifiez les appareils
+If necessary, you can go to the `Devices` menu to modify/complete the configuration of your devices.
 
-Si nécessaire, vous pouvez vous rendre dans le menu `Appareils` pour modifier/compléter la configuration de vos appareils.
+Click on the **Edit** button of a device. You can then edit its name, the room it belongs to and the name of each feature.
 
-Cliquez sur le bouton **Editer** d'un appareil. Vous pourrez alors éditer son nom, la pièce à laquelle il appartient et le nom de chaque fonctionnalité.
+![Edit a device](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_edit_device_en.png)
 
-![Editer un appareil](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_editer_appareil_fr.png)
+## Usage
 
-## Utilisation
-
-Vous pouvez maintenant utiliser ces appareils Zigbee depuis le [Tableau de bord](../dashboard/devices-in-room.md) ou depuis les [Scènes](../scenes/intro.md) de manière automatique. Selon les fonctionnalités de chaque appareil, vous aurez accès à des mesures, des états ou des actions.
+You can now use these Zigbee devices from the [Dashboard](../dashboard/devices-in-room.md) or from the [Scenes](../scenes/intro.md) automatically. Depending on the feature of each device, you will have access to measures, states or actions.

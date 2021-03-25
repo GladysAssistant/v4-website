@@ -20,13 +20,13 @@ En cliquant dans le menu sur `Paramètres`, Gladys va automatiquement scanner le
 
 Une fois votre dongle configuré, Gladys a besoin d'installer deux containers (MQTT et Zigbee2Mqtt) pour utiliser le dongle et communqiuer avec tous vos appareils. Ne vous inquiétez pas, tout cela a été automatisé.
 
-Rendez-vous dans la partie `Configuration` et cliquez sur le bouton **Activer Zigbee2Mqtt**. Après quelques instants (le temps dépend de votre modèle de Raspberry Pi et de votre bande passante), vous devriez visualiser tous les éléments démarrés et les liens entre chacun au vert.
+Rendez-vous dans la partie `Configuration` et cliquez sur le bouton **Activer Zigbee2mqtt**. Après quelques instants (le temps dépend de votre modèle de Raspberry Pi et de votre bande passante), vous devriez visualiser tous les éléments démarrés et les liens entre chacun au vert.
 
 ![Etat des services Zigbee2Mqtt](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_etat_services_fr.png)
 
 ## Autorisez l'association d'appareils
 
-Pour permettre aux périphériques d'êtres associés à votre réseau Zigbee, il faut autoriser l'association dans la 
+Pour permettre aux périphériques d'êtres associés à votre réseau Zigbee, il faut autoriser l'association dans la configuration de Zigbee.
 
 Cliquez sur le menu `Découverte Zigbee`, puis cliquez sur le bouton `Autoriser l'association`.
 
