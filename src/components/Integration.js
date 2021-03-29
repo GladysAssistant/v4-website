@@ -101,6 +101,7 @@ function IntegrationPage({ integrations, lang }) {
     sonoff: true,
     xiaomi: true,
     "tp-link": true,
+    yeelight: true,
   });
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
@@ -258,6 +259,22 @@ function IntegrationPage({ integrations, lang }) {
                   description="Integration tp-link title"
                 >
                   TP-Link
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="yeelight"
+                checked={checkedTags["yeelight"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="yeelight">
+                <Translate
+                  id="integrations.yeelight"
+                  description="Integration yeelight title"
+                >
+                  Yeelight
                 </Translate>
               </label>
             </div>

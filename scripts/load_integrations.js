@@ -16,6 +16,7 @@ const AUTHORIZED_DOC_ID = [
   "zwave",
   "tasmota",
   "tp-link",
+  "yeelight",
 ];
 
 const schema = Joi.object({

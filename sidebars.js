@@ -24,6 +24,7 @@ module.exports = {
         "integrations/tasmota",
         "integrations/tp-link",
         "integrations/philips-hue",
+        "integrations/yeelight",
         "integrations/mqtt",
         "integrations/owntracks",
         "integrations/zwave",
