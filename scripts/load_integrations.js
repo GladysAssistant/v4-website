@@ -16,6 +16,7 @@ const AUTHORIZED_DOC_ID = [
   "zwave",
   "tasmota",
   "tp-link",
+  "zigbee2mqtt",
 ];
 
 const schema = Joi.object({
