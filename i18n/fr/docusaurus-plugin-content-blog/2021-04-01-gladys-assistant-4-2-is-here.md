@@ -65,6 +65,16 @@ En cherchant, j'ai remarqué des pistes d'optimisations pour diminuer la charge 
 
 Un des changements améliore drastiquement les performances, et j'ai vraiment hâte de voir en production ce que ça va donner sur les plus grosses instances (comme chez Terdious) ou sur les instances avec des petites connexions (comme chez Mastho).
 
+### Mise à jour majeures de plusieurs dépendances internes
+
+Nous en avons profité pour faire des mises à jour majeures de certaines dépendances que nous utilisons:
+
+- De Node 12 -> à Node.js 14 LTS
+- De Sequelize 4 -> Sequelize 6
+- Nous sommes passés à la dernière version de [node-nlp](https://github.com/axa-group/nlp.js), la librairie que nous utilisons pour la reconnaissance du language dans Gladys. D'après les tests réalisés, le moteur de language reconnait bien mieux les demandes ! Au passage, des nouvelles phrases ont été rajoutés au module météo pour des discussions plus riches avec Gladys 😄
+
+Tout n'était pas forcément évident, mais on est content de l'avoir fait !
+
 ## Comment mettre à jour ?
 
 Si vous avez installé Gladys avec l’image Raspberry Pi OS officielle, vos instances se mettront à jour **automatiquement** dans les heures à venir. Cela peut prendre jusqu’à 24h, pas de panique.
