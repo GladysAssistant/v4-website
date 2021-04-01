@@ -1,11 +1,11 @@
 ---
-title: Gladys Assistant v4.2.0 is here, with Zigbee2mqtt support!
+title: Gladys Assistant 4.2.0 is here, with Zigbee2mqtt support!
 description: After months of work, Gladys Assistant is now able to handle Zigbee devices!
 author: Pierre-Gilles Leymarie
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
-image: /img/presentation/gladys-4-2-zigbee-cover.jpg
+image: /img/presentation/gladys-4-2-zigbee-cover-en.jpg
 slug: gladys-assistant-4-2-is-here
 ---
 
@@ -31,7 +31,7 @@ This is the result of months of work on the part of many members of the communit
 
 For the moment, all the peripherals are not necessarily perfectly managed, which is normal as we do not have all the unimaginable peripherals on earth. There may be some adjustments to be made that we will discover over the course of the use of this integration.
 
-See [the documentation for this integration](/fr/docs/integrations/zigbee2mqtt).
+See [the documentation for this integration](/docs/integrations/zigbee2mqtt).
 
 Do not hesitate to give feedback on the forum if you come across a poorly managed device
 
@@ -57,13 +57,13 @@ Thanks to the work of [VonOx](https://community.gladysassistant.com/u/vonox/summ
 
 ![Brightness](../static/img/articles/en/gladys-4-2/light.png)
 
-### Gladys More
+### Gladys Plus
 
 I continued my work on optimizations and performance to improve the speed of access to Gladys Plus!
 
 While researching, I noticed a way to reduce the load on Gladys Plus servers as well as on local instances.
 
-This change drastically improves performance, and I can't wait to see in production what it will look like on larger instances (like Terdious) or instances with small connections (like Mastho).
+This change drastically improves performances, and I can't wait to see in production what it will look like on larger instances (like Terdious) or instances with slow connections (like Mastho).
 
 ### Major update of several internal dependencies
 
