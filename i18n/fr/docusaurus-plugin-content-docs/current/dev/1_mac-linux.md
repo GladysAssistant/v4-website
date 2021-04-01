@@ -14,7 +14,7 @@ Le backend est une serveur Node.js.
 
 Comme prérequis système, il vous faut:
 
-- Node.js 12
+- Node.js 14
 - sqlite3
 - openssl
 - openzwave + libopenzwave1.5-dev

@@ -14,7 +14,7 @@ The server is a Node.js app.
 
 You'll need:
 
-- Node.js 12
+- Node.js 14
 - sqlite3
 - openssl
 - openzwave + libopenzwave1.5-dev

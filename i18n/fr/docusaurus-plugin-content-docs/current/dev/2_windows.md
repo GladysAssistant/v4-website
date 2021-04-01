@@ -43,7 +43,7 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
 ```
 
-- Installation de Node.js 12:
+- Installation de Node.js 14:
 
 ```bash
 curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh
