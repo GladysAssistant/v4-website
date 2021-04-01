@@ -37,6 +37,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
+-v /run/udev:/run/udev:ro \
 gladysassistant/gladys:v4
 ```
 
@@ -93,6 +94,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
+-v /run/udev:/run/udev:ro \
 gladysassistant/gladys:v4
 ```
 
