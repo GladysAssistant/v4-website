@@ -33,6 +33,8 @@ C’est le résultat de mois de travail de la part de plusieurs membres de la co
 
 Pour l’instant, tous les périphériques ne sont pas forcément parfaitement gérés, ce qui est normal on ne possède pas tous les périphériques inimaginable sur terre, il y a peut-être quelques ajustements à faire que l'on découvrira au fil de l’utilisation de cette intégration.
 
+Voir [la documentation de cette intégration](/fr/docs/integrations/zigbee2mqtt).
+
 N’hésitez pas à faire des retours sur le forum si vous rencontrez un périphérique mal géré 🙂
 
 ### Lever/coucher du soleil
