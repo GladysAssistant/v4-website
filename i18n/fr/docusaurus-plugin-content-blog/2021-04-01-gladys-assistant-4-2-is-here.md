@@ -79,7 +79,7 @@ Tout n'était pas forcément évident, mais on est content de l'avoir fait !
 
 Si vous avez installé Gladys avec l’image Raspberry Pi OS officielle, vos instances se mettront à jour **automatiquement** dans les heures à venir. Cela peut prendre jusqu’à 24h, pas de panique.
 
-Si vous avez installé Gladys avec Docker, vérifiez que vous utilisez bien Watchtower (Voir la [documentation ](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower))
+Si vous avez installé Gladys avec Docker, vérifiez que vous utilisez bien Watchtower. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
 
 Avec Watchtower, Gladys se mettra automatiquement à jour.
 
