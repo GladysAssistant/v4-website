@@ -26,6 +26,7 @@ module.exports = {
         "integrations/philips-hue",
         "integrations/mqtt",
         "integrations/owntracks",
+        "integrations/zigbee2mqtt",
         "integrations/zwave",
         "integrations/telegram",
       ],

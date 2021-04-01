@@ -101,6 +101,7 @@ function IntegrationPage({ integrations, lang }) {
     sonoff: true,
     xiaomi: true,
     "tp-link": true,
+    zigbee2mqtt: true,
   });
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
@@ -258,6 +259,22 @@ function IntegrationPage({ integrations, lang }) {
                   description="Integration tp-link title"
                 >
                   TP-Link
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="zigbee2mqtt"
+                checked={checkedTags["zigbee2mqtt"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="zigbee2mqtt">
+                <Translate
+                  id="integrations.zigbee2mqtt"
+                  description="Integration zigbee2mqtt title"
+                >
+                  Zigbee2Mqtt
                 </Translate>
               </label>
             </div>
