@@ -38,7 +38,7 @@ Schéma :
 
 ! [schéma de montage] (site Web v4/fr/statique/projet cuve/schéma.png)
 
-'''
+```
 GND : GND
 
 VCC : 5V
@@ -46,7 +46,7 @@ VCC : 5V
 Echo : Pin D6
 
 Trigger: Pin D7
-'''
+```
 
 __2ème étape : L’intégration de MQTT dans Gladys__
 
