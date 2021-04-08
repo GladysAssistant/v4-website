@@ -8,7 +8,7 @@ In Gladys Assistant, it is possible to create **scenes**: a set of **actions** e
 
 The scenes are entirely personalized: it is the user who composes this action suite in the Gladys scene editor.
 
-These scenes can be triggered manually, or automatically via a **trigger**.
+These scenes can be triggered manually, automatically via a **trigger** or from another scene.
 
 Some examples :
 
