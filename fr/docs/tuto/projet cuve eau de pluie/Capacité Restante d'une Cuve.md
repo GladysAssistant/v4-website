@@ -36,7 +36,7 @@ __1ère Etape : Branchement du capteur JSN-SR04T au Wemos D1 mini__
 
 Schéma : 
 
-![schema de montage](../../fr/static/img/docs/cuve/schema.png)
+![schema de montage](../../static/img/docs/fr/tuto/cuve/schema.png)
 
 ```
 GND : GND
