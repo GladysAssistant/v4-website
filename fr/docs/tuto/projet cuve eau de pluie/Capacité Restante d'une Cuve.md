@@ -53,13 +53,9 @@ __2ème étape : L’intégration de MQTT dans Gladys__
 
 Suivre la procédure d’installation dans Gladys et une fois la configuration terminée, il faut créer un nouvel appareil MQTT avec les éléments ci-dessous
 
-<img width="746" alt="Capture d’écran 2021-03-14 à 20 32 43" src="https://user-images.githubusercontent.com/80550818/111081638-81dc6480-8504-11eb-926e-a0fc5547891f.png">
+![Mqtt1](../../static/img/docs/fr/tuto/cuve/mqtt 1.png)
 
-![Mqtt1](site Web v4 /fr /statique/ projet cuve /myqtt 1.png) 
-
-<img width="746" alt="Capture d’écran 2021-03-14 à 20 30 50" src="https://user-images.githubusercontent.com/80550818/111081581-4b064e80-8504-11eb-9ea7-beac635c160d.png">
-
-![Mqtt2](site Web v4/fr/statique/projet cuve/myqtt 2.png)
+![Mqtt2](../../static/img/docs/fr/tuto/cuve/mqtt 2.png)
 
 Puis "sauvegarder"
 
@@ -67,7 +63,7 @@ Pour finir vous pouvez créer le bandeau en page d’accueil afin de voir le ré
 
 Sur le Dashboard,  cliquez sur "éditer"  -> "appareils de la pièce" -> "jardin"
 
-<img width="319" alt="Capture d’écran 2021-03-14 à 20 35 08" src="https://user-images.githubusercontent.com/80550818/111081683-cec03b00-8504-11eb-8dc1-91e99e6c493e.png">
+![dashboard](../../static/img/docs/fr/tuto/cuve/dashboard.png)
 
 __3ème étape : Le code Arduino à télécharger dans le wemos (code maison à affiner ou améliorer )__
 
