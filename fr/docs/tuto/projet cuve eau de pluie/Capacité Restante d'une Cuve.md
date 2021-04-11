@@ -278,3 +278,4 @@ Quelques photos de mon installation
 
 ![photo-2](../../static/img/docs/fr/tuto/cuve/photo-2.png) 
 
+
