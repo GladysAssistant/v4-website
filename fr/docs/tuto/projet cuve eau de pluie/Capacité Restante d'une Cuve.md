@@ -53,9 +53,9 @@ __2ème étape : L’intégration de MQTT dans Gladys__
 
 Suivre la procédure d’installation dans Gladys et une fois la configuration terminée, il faut créer un nouvel appareil MQTT avec les éléments ci-dessous
 
-![Mqtt1](../../static/img/docs/fr/tuto/cuve/mqtt 1.png)
+![Mqtt1](../../static/img/docs/fr/tuto/cuve/mqtt-1.png)
 
-![Mqtt2](../../static/img/docs/fr/tuto/cuve/mqtt 2.png)
+![Mqtt2](../../static/img/docs/fr/tuto/cuve/mqtt-2.png)
 
 Puis "sauvegarder"
 
