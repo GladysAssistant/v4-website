@@ -254,27 +254,27 @@ Une fois le code téléversé, vous pouvez brancher les cables avec le schéma d
 
 Vous pouvez créer différentes scènes et notamment vous prévenir si la cuve est presque vide ou vous envoyer 1fois/jour la capacité restante par exemple.
 
-<img width="501" alt="Capture d’écran 2021-03-14 à 20 37 20" src="https://user-images.githubusercontent.com/80550818/111081755-22cb1f80-8505-11eb-8cb8-da6b66bbe712.png">
+![scène](../../static/img/docs/fr/tuto/cuve/scène.png)
 
 1ère Scène : Notification cuve vide
 
-<img width="1013" alt="Capture d’écran 2021-03-14 à 20 38 52" src="https://user-images.githubusercontent.com/80550818/111081804-645bca80-8505-11eb-9e21-e3b7039e2f47.png">
+![scène-1-1](../../static/img/docs/fr/tuto/cuve/scène-1-1.png) 
 
-<img width="1011" alt="Capture d’écran 2021-03-14 à 20 39 18" src="https://user-images.githubusercontent.com/80550818/111081808-69207e80-8505-11eb-87bb-098fcd9d8117.png">
+![scène-1-2](../../static/img/docs/fr/tuto/cuve/scène-1-2.png) 
 
 2ème scène : Rapport Journalier Cuve
 
-<img width="1013" alt="Capture d’écran 2021-03-14 à 20 41 04" src="https://user-images.githubusercontent.com/80550818/111081905-cd434280-8505-11eb-9e68-8bce294298d3.png">
+![scène-2-1](../../static/img/docs/fr/tuto/cuve/scène-2-1.png) 
 
-<img width="1013" alt="Capture d’écran 2021-03-14 à 20 41 33" src="https://user-images.githubusercontent.com/80550818/111081912-d46a5080-8505-11eb-9c5a-d9c9a889c8fb.png">
+![scène-2-2](../../static/img/docs/fr/tuto/cuve/scène-2-2.png) 
 
-<img width="1011" alt="Capture d’écran 2021-03-14 à 20 41 56" src="https://user-images.githubusercontent.com/80550818/111081917-d92f0480-8505-11eb-8dbf-3782e2764832.png">
+![scène-2-3](../../static/img/docs/fr/tuto/cuve/scène-2-3.png) 
 
 Vous pouvez installer l'application télégram pour recevoir maintenant vos notifications.
 
 Quelques photos de mon installation
 
-![20210224_172243](https://user-images.githubusercontent.com/80550818/111082051-8570eb00-8506-11eb-94b0-95c071e0c473.jpg)
+![photo-1](../../static/img/docs/fr/tuto/cuve/photo-1.png) 
 
-![20210224_173532](https://user-images.githubusercontent.com/80550818/111082057-90c41680-8506-11eb-9fcc-2b94a9221bfe.jpg)
+![photo-2](../../static/img/docs/fr/tuto/cuve/photo-2.png) 
 
