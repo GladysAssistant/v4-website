@@ -93,11 +93,7 @@ Il faut se rendre dans l’onglet "outils" -> "gérer les bibliothèques"
 
 Nous aurons besoin de : 
 
-- ArduinoJSON
-
 - ESP8266Wifi
-
-- ESP8266WifiMulti
 
 - PubSubClient
 
