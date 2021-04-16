@@ -105,30 +105,34 @@ Vous pouvez à présent copier/coller le code ci-dessous en pensant à bien remp
 
 ```
 #include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h> 
-#include <PubSubClient.h> 
-#include <ArduinoJson.h>
+#include <PubSubClient.h>
 
-//MQTT
+/* WIFI */
 
-#define mqtt_server « 192.168.X.X"   // *adresse IP de Gladys*
-#define mqtt_user "gladys"      // *username dans gladys*
-#define mqtt_password « ******************»        // *mot de passe dans l’intégration Gladys*
-#define gladys_topic "gladys/master/device/mqtt:jardin:capteur-cuve/feature/mqtt:jardin:capteur-cuve:capacite/state"  /
-#define mqtt_cuve "mqtt:jardin:capteur-cuve"     //Topic capteur cuve
-#define JsonbufferSize     100
+#define wifi_ssid "stormbox"
+#define wifi_password "el14no29ce07je19"
 
-//WIFI
+/* MQTT */
 
-const char* ssid = « ***********»; // *nom de votre réseau wifi*
-const char* password = « ***************»; // *mot de passe wifi*
+#define mqtt_server "192.168.0.8"
+#define mqtt_user "gladys"            // username
+#define mqtt_password "Noah2907-Elea1402$"        // password
+#define gladys_topic "gladys/master/device/mqtt:jardin:capteur-ultrason/feature/mqtt: jardin:capteur-ultrason:quantite/state"
+#define mqtt_cuve "mqtt:jardin:capteur-ultrason"     //Topic capteur cuve
+
+/* Buffer qui permet de décoder les messages MQTT reçus */
+
+char message_buff[100];
+
+long lastMsg = 0;   //Horodatage du dernier message publié sur MQTT
+long lastRecu = 0;
+bool debug = false;  //Affiche sur la console si True
 
 /* Constantes pour les broches */
 
-const byte TRIGGER_PIN = 2; // Broche TRIGGER et D7 du wemos
-const byte ECHO_PIN = 3;    // Broche ECHO et D6 du wemos
-const byte VW_SET_TX_PIN = 12;
- 
+const byte TRIGGER_PIN = 7; // Broche TRIGGER
+const byte ECHO_PIN = 6;    // Broche ECHO
+
 /* Constantes pour le timeout */
 
 const unsigned long MEASURE_TIMEOUT = 25000UL; // 25ms = ~8m à 340m/s
@@ -137,116 +141,109 @@ const unsigned long MEASURE_TIMEOUT = 25000UL; // 25ms = ~8m à 340m/s
 
 const float SOUND_SPEED = 340.0 / 1000;
 
+//Création des objets
+
 WiFiClient espClient;
-ESP8266WiFiMulti WiFiMulti;
 PubSubClient client(espClient);
 
+void setup() {
+
+  /* Initialise le port serie */
+
+  Serial.begin(9600);     //Facultatif pour le debug
+
+  /* Initialise les broches */
+
+  pinMode(TRIGGER_PIN, OUTPUT);
+  digitalWrite(TRIGGER_PIN, LOW); // La broche TRIGGER doit être à LOW au repos
+  pinMode(ECHO_PIN, INPUT);
+
+  setup_wifi();           //On se connecte au réseau wifi
+  client.setServer(mqtt_server, 1883);    //Configuration de la connexion au serveur MQTT
+}
+
+//Connexion au réseau WiFi
+void setup_wifi() {
+  delay(10);
+  Serial.println();
+  Serial.print("Connexion a ");
+  Serial.println(wifi_ssid);
+
+  WiFi.begin(wifi_ssid, wifi_password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("Connexion WiFi etablie ");
+  Serial.print("=> Addresse IP : ");
+  Serial.print(WiFi.localIP());
+}
+
+//Reconnexion
 void reconnect() {
- 
+  //Boucle jusqu'à obtenur une reconnexion
   while (!client.connected()) {
-    Serial.print("Connecting to MQTT broker ...");
-    if (client.connect("Cuve", mqtt_user, mqtt_password)) {
+    Serial.print("Connexion au serveur MQTT...");
+    if (client.connect("ESP8266Client", mqtt_user, mqtt_password)) {
       Serial.println("OK");
     } else {
-      Serial.print("[Error] Not connected: ");
+      Serial.print("KO, erreur : ");
       Serial.print(client.state());
-      Serial.println("Wait 5 seconds before retry.");
+      Serial.println(" On attend 5 secondes avant de recommencer");
       delay(5000);
     }
   }
 }
 
-void setup_wifi(){
-  //connexion au wifi
-  WiFiMulti.addAP(ssid, password);
-  while ( WiFiMulti.run() != WL_CONNECTED ) {
-    delay ( 500 );
-    Serial.print ( "." );
-  }
-  Serial.println("");
-  Serial.println("WiFi connecté");
-  Serial.print("MAC : ");
-  Serial.println(WiFi.macAddress());
-  Serial.print("Adresse IP : ");
-  Serial.println(WiFi.localIP());
-}
-
-void setup() {
- 
-    // Initialise le port série //
-    Serial.begin (115200);
-    Serial.println("\n");
-    
-    setup_wifi();                           //Connect to Wifi network
-    client.setServer(mqtt_server, 1883);    // Configure MQTT connection, change port if needed.
-    if (!client.connected()) {
-        reconnect();
-        
-    // Initialise les broches //    
-    pinMode(TRIGGER_PIN, OUTPUT);
-    digitalWrite(TRIGGER_PIN, LOW); // La broche TRIGGER doit être à LOW au repos
-    pinMode(ECHO_PIN, INPUT);
-    }
-}
-
 void loop() {
-  
-  /* 1. Lance une mesure de distance en envoyant une impulsion HIGH de 10µs sur la broche TRIGGER */
-  digitalWrite(TRIGGER_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIGGER_PIN, LOW);
-  
-  /* 2. Mesure le temps entre l'envoi de l'impulsion ultrasonique et son écho (si il existe) */
-  long measure = pulseIn(ECHO_PIN, HIGH, MEASURE_TIMEOUT);
-   
-  /* 3. Calcul la distance à partir du temps mesuré */
-  int distance_mm = measure / 2.0 * SOUND_SPEED;
-  float cuve = 2000 - distance_mm; // ATTENTION Valeur à remplacer par la profondeur de votre cuve vide en mm
-  cuve = cuve / 2000; // Valeur à modifier également
-  cuve = cuve * 100
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
 
-  /* Affiche les résultats en mm */
-  #ifdef HRC04
-  
-  Serial.print(distance_mm, cuve);
-  Serial.println();
+  long now = millis();
 
-  /* Envoyer les données au broker mqtt */
+  /*Envoi d'un message par minute*/
 
-  #endif
-  
-  // Publish values to MQTT topics 
-    // Gladys attend un fichier JSON
-    // Pourcentage_eau
-    //Edition des objets JSON + publication
-    StaticJsonDocument<300> JSONbuffer;
+  if (now - lastMsg > 1000 * 60) {
+    lastMsg = now;
 
-    JSONbuffer["capteur"] = "hrc04";
-    JSONbuffer["cuve"] = "cuve";
+    /* 1. Lance une mesure de distance en envoyant une impulsion HIGH de 10µs sur la broche TRIGGER */
 
-    char buffer[JsonbufferSize];
-   
-    serializeJson(JSONbuffer, buffer);
+    digitalWrite(TRIGGER_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIGGER_PIN, LOW);
 
-    Serial.print("Data serialised: ");
-    Serial.println(buffer);
-    
-    JSONbuffer["cuve"] = cuve;
+    /* 2. Mesure le temps entre l'envoi de l'impulsion ultrasonique et son écho (si il existe) */
 
-    serializeJson(JSONbuffer, buffer);
-    Serial.print("Data udpated: ");
-    Serial.println(buffer);
-    
-    
-  // Déconnexion du broker MQTT
-  client.disconnect();
-  
-  // Déconnexion du réseau wifi
-  WiFi.disconnect();
+    long measure = pulseIn(ECHO_PIN, HIGH, MEASURE_TIMEOUT);
 
-  
-  /* Délai d'attente pour éviter d'afficher trop de résultats à la seconde */
-  delay(60000); // toutes les minutes
+    /* 3. Calcul la distance à partir du temps mesuré */
+
+    int distance_mm = measure / 2.0 * SOUND_SPEED;
+    float c = 2000 - distance_mm;
+    c = c / 2000;
+    c = c * 100;
+
+    //Inutile d'aller plus loin si le capteur ne renvoi rien
+    if ( isnan(c)) {
+      Serial.println("Echec de lecture ! Verifiez votre capteur HRC-04");
+      return;
+    }
+
+    if ( debug ) {
+      Serial.print("Cuve : ");
+      Serial.print(c);
+    }
+    client.publish(gladys_topic, String(c).c_str(), true);   //Publie la température sur le topic temperature_topic
+  }
+  if (now - lastRecu > 100 ) {
+    lastRecu = now;
+    client.subscribe("homeassistant/switch1");
+  }
 }
 ```
 
