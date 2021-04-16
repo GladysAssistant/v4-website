@@ -105,14 +105,14 @@ Vous pouvez à présent copier/coller le code ci-dessous en pensant à bien remp
 
 /* WIFI */
 
-#define wifi_ssid "stormbox"
-#define wifi_password "el14no29ce07je19"
+#define wifi_ssid "*********"
+#define wifi_password "**************"
 
 /* MQTT */
 
 #define mqtt_server "192.168.0.8"
 #define mqtt_user "gladys"            // username
-#define mqtt_password "Noah2907-Elea1402$"        // password
+#define mqtt_password "************" // mot de passe MQTT
 #define gladys_topic "gladys/master/device/mqtt:jardin:capteur-ultrason/feature/mqtt: jardin:capteur-ultrason:quantite/state"
 #define mqtt_cuve "mqtt:jardin:capteur-ultrason"     //Topic capteur cuve
 
