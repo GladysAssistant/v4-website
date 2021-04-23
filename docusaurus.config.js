@@ -161,4 +161,12 @@ module.exports = {
       { min: 400, max: 2000, steps: 10 },
     ],
   ],
+  scripts: [
+    {
+      async: true,
+      defer: true,
+      src:
+        "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
+    },
+  ],
 };
