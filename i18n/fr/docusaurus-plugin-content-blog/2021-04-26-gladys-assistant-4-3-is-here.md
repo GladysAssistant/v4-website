@@ -84,7 +84,7 @@ C'est désormais possible, et voilà un exemple en vidéo de cette scène :
 
 <div class="videoContainer">
 <video  width="100%" controls autoplay loop muted>
-<source src="/static/img/articles/fr/gladys-4-3/requete-http-prix-bitcoin.mp4" type="video/mp4" />
+<source src="/img/articles/fr/gladys-4-3/requete-http-prix-bitcoin.mp4" type="video/mp4" />
   Your browser does not support the video tag.
 </video>
 </div>
