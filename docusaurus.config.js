@@ -21,11 +21,6 @@ module.exports = {
   themeConfig: {
     image: "img/presentation/gladys-cover-demo.jpg",
     metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
-    googleAnalytics: {
-      trackingID: "UA-42837031-1",
-      // Optional fields.
-      anonymizeIP: true, // Should IPs be anonymized?
-    },
     navbar: {
       title: "Gladys Assistant",
       logo: {
