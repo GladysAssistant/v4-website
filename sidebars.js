@@ -81,6 +81,7 @@ module.exports = {
         "dev/setup-development-environment-mac-linux",
         "dev/setup-development-environment-windows",
         "dev/developing-a-service",
+        "dev/cypress-tests",
       ],
     },
   ],
