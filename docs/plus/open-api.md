@@ -12,7 +12,7 @@ Let's imagine I want to send data from my phone: my location, an event when I co
 
 You need to be a paid Gladys Plus user to use the Open API.
 
-You can subscribe here.
+You can subscribe [here](/plus).
 
 ## Generate a new API Key
 
