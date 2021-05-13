@@ -22,6 +22,8 @@ Go to [https://plus.gladysassistant.com/dashboard/settings/gateway-open-api](htt
 
 Type a name for the device that will use your API key.
 
+![Generate open api key](../../../../../static/img/docs/fr/plus/open-api/create-open-api-key.png)
+
 Click on "Generate", then copy-paste the API key and save it somewhere: it'll never be displayed again.
 
 ## Send a new sensor value
@@ -113,3 +115,9 @@ You can do the same for when you leave home.
 You can also add the shortcut to your home screen if you want to trigger it manually:
 
 ![iOS Shortcut Gladys Plus Open API](../../static/img/docs/en/plus/open-api/5.jpg)
+
+## Send phone location using Owntracks
+
+It's also possible to send your phone location to Gladys using the Open API and Owntracks:
+
+[Read the tutorial in the documentation](/docs/integrations/owntracks)
