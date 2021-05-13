@@ -22,7 +22,7 @@ Go to [https://plus.gladysassistant.com/dashboard/settings/gateway-open-api](htt
 
 Type a name for the device that will use your API key.
 
-![Generate open api key](../../../../../static/img/docs/fr/plus/open-api/create-open-api-key.png)
+![Generate open api key](../../static/img/docs/en/plus/open-api/create-open-api-key.png)
 
 Click on "Generate", then copy-paste the API key and save it somewhere: it'll never be displayed again.
 
