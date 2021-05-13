@@ -84,5 +84,10 @@ module.exports = {
         "dev/cypress-tests",
       ],
     },
+    {
+      type: "category",
+      label: "Gladys Plus",
+      items: ["plus/intro", "plus/open-api"],
+    },
   ],
 };
