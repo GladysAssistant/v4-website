@@ -36,9 +36,9 @@ You can use the "MQTT" integration to create devices, even if you don't use the 
 
 Let's create a device for your phone:
 
-// photo
+![Create device Gladys Assistant](../../static/img/docs/en/plus/open-api/create-device.png)
 
-Note: We'll say that your phone is a motion sensor, because
+**Note:** We'll say that your phone is a motion sensor, because it's a great binary device for this use case. It doesn't really matter here, you'll see how we'll use this here :)
 
 You can keep the feature "external_id" for later, we'll need it in the API.
 
@@ -76,9 +76,9 @@ Body:
 
 You can create 2 scenes in Gladys to set your user as "left home" or "at home" when your phone is near home:
 
-// photo
+![Back at home scene](../../static/img/docs/en/plus/open-api/back-at-home.png)
 
-// photo
+![Left home scene](../../static/img/docs/en/plus/open-api/left-home.png)
 
 ## Use Tasker or iOS Shortcuts to trigger this API
 
@@ -108,6 +108,8 @@ Now, we can create an automation to make this shortcut run automatically when yo
 
 ![iOS Shortcut Gladys Plus Open API](../../static/img/docs/en/plus/open-api/4.jpg)
 
-You can do the same for when you leave home:
+You can do the same for when you leave home.
+
+You can also add the shortcut to your home screen if you want to trigger it manually:
 
 ![iOS Shortcut Gladys Plus Open API](../../static/img/docs/en/plus/open-api/5.jpg)
