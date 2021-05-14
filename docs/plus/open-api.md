@@ -51,7 +51,7 @@ Now, let's try to send an API request to the Open API to say "my phone is home".
 We'll send:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {
@@ -65,7 +65,7 @@ You can try the API using [Insomnia](https://insomnia.rest/).
 If you want to say the opposite (my phone left home), you can send:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {

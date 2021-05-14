@@ -49,7 +49,7 @@ Maintenant, nous allons une envoyer une requête d'API, "mon téléphone est à 
 Pour cela, nous allons faire la requête suivante:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {
@@ -63,7 +63,7 @@ Vous pouvez essayer cette requête avec [Insomnia](https://insomnia.rest/).
 Pour envoyer le contraire (mon téléphone est absent de la maison), vous pouvez envoyer la requête suivante:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {
