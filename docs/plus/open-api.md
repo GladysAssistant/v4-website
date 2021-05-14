@@ -98,7 +98,10 @@ Then, create a new shortcut, and add a new web action:
 
 ![iOS Shortcut Gladys Plus Open API](../../static/img/docs/en/plus/open-api/1.jpg)
 
-Copy the URL of the Gateway, and add the JSON body:
+Copy the URL of the Gateway, and add the JSON body.
+
+- The "device_feature_external_id" attribute should be a text field
+- The "state' attribute should be a number field
 
 ![iOS Shortcut Gladys Plus Open API](../../static/img/docs/en/plus/open-api/2.jpg)
 

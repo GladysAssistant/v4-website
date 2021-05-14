@@ -94,7 +94,10 @@ Vous devez installer l'application "Shortcuts" sur l'App Store. C'est une applic
 
 ![iOS Shortcut Gladys Plus Open API](../../../../../static/img/docs/en/plus/open-api/1.jpg)
 
-Copiez l'URL de l'API, et remplissez les informations:
+Copiez l'URL de l'API, et remplissez l'URL et le body JSON comme testé précédemment.
+
+- Le champ "device_feature_external_id" doit être de type "text"
+- Le champ "state" doit être de type "number"
 
 ![iOS Shortcut Gladys Plus Open API](../../../../../static/img/docs/en/plus/open-api/2.jpg)
 
