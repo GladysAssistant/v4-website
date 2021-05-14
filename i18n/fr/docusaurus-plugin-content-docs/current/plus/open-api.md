@@ -49,7 +49,7 @@ Maintenant, nous allons une envoyer une requête d'API, "mon téléphone est à 
 Pour cela, nous allons faire la requête suivante:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {
@@ -63,7 +63,7 @@ Vous pouvez essayer cette requête avec [Insomnia](https://insomnia.rest/).
 Pour envoyer le contraire (mon téléphone est absent de la maison), vous pouvez envoyer la requête suivante:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {
@@ -94,7 +94,10 @@ Vous devez installer l'application "Shortcuts" sur l'App Store. C'est une applic
 
 ![iOS Shortcut Gladys Plus Open API](../../../../../static/img/docs/en/plus/open-api/1.jpg)
 
-Copiez l'URL de l'API, et remplissez les informations:
+Copiez l'URL de l'API, et remplissez l'URL et le body JSON comme testé précédemment.
+
+- Le champ "device_feature_external_id" doit être de type "text"
+- Le champ "state" doit être de type "number"
 
 ![iOS Shortcut Gladys Plus Open API](../../../../../static/img/docs/en/plus/open-api/2.jpg)
 

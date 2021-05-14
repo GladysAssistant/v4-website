@@ -51,7 +51,7 @@ Now, let's try to send an API request to the Open API to say "my phone is home".
 We'll send:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {
@@ -65,7 +65,7 @@ You can try the API using [Insomnia](https://insomnia.rest/).
 If you want to say the opposite (my phone left home), you can send:
 
 ```
-POST https://api.gladysgateway.com/v1/api/device/state/:YOUR_OPEN_API_KEY
+POST https://api.gladysgateway.com/v1/api/device/state/YOUR_OPEN_API_KEY
 
 Body:
 {
@@ -98,7 +98,10 @@ Then, create a new shortcut, and add a new web action:
 
 ![iOS Shortcut Gladys Plus Open API](../../static/img/docs/en/plus/open-api/1.jpg)
 
-Copy the URL of the Gateway, and add the JSON body:
+Copy the URL of the Gateway, and add the JSON body.
+
+- The "device_feature_external_id" attribute should be a text field
+- The "state' attribute should be a number field
 
 ![iOS Shortcut Gladys Plus Open API](../../static/img/docs/en/plus/open-api/2.jpg)
 
