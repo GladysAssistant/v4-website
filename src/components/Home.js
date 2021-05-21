@@ -11,6 +11,7 @@ import sceneGladys4 from "./scene-gladys-4.jpg";
 import { Integration } from "./Integration";
 import Pricing from "./home/Pricing";
 import FAQ from "./home/FAQ";
+import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import Features from "./home/features";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
 
@@ -89,6 +90,14 @@ function Home({ integrations, lang }) {
         >
           <SubcribeNewsletter lang={lang} />
         </div>
+        {lang === "fr" && (
+          <div
+            className="container"
+            style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
+          >
+            <YoutubeEmbedVideo id="yP-umEMVcro" />
+          </div>
+        )}
         <div
           className="container"
           style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
