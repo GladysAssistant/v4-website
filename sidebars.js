@@ -46,7 +46,7 @@ module.exports = {
         "scenes/turn-on-off-the-lights-action",
         "scenes/http-request",
         "scenes/user-presence",
-        "scenes/chain-action"
+        "scenes/chain-action",
         "scenes/house-empty",
         "scenes/house-no-longer-empty",
         "scenes/back-at-home",
