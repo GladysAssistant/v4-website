@@ -21,6 +21,10 @@ module.exports = {
   themeConfig: {
     image: "img/presentation/gladys-cover-demo.jpg",
     metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
+    colorMode: {
+      defaultMode: "dark",
+      respectPrefersColorScheme: false,
+    },
     navbar: {
       title: "Gladys Assistant",
       logo: {
