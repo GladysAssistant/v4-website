@@ -6,7 +6,6 @@ module.exports = {
       items: [
         "installation/raspberry-pi",
         "installation/docker",
-        "installation/macos-windows",
         "installation/freebox-delta",
         "installation/faq",
       ],

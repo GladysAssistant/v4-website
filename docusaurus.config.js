@@ -87,10 +87,6 @@ module.exports = {
               to: "docs/installation/docker",
             },
             {
-              label: "MacOS/Windows",
-              to: "docs/installation/macos-windows",
-            },
-            {
               label: "Freebox Delta",
               to: "docs/installation/freebox-delta",
             },
