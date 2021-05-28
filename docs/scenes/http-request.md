@@ -95,3 +95,20 @@ This was just one example, this action in the scenes allows you to do millions o
 - Call [Zapier] API (https://zapier.com/) to call any API (Gmail, Calendar, Trello, and hundreds of others)
 
 In short, the possibilities are limitless.
+
+## Using the response of an HTTP call in a scene
+
+It's possible to use the response of an HTTP request in scenes.
+
+Example here querying Coinbase API to get Bitcoin price and send it to the user with Telegram:
+
+<div class="videoContainer">
+<video  width="100%" controls autoplay loop muted>
+<source src="/img/docs/en/scenes/http-request/bitcoin-price.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+</div>
+
+You can compare the value with a "continue only if":
+
+![Continue only if](../../static/img/docs/en/scenes/http-request/continue-only-if.png)

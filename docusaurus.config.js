@@ -21,10 +21,9 @@ module.exports = {
   themeConfig: {
     image: "img/presentation/gladys-cover-demo.jpg",
     metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
-    googleAnalytics: {
-      trackingID: "UA-42837031-1",
-      // Optional fields.
-      anonymizeIP: true, // Should IPs be anonymized?
+    colorMode: {
+      defaultMode: "dark",
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: "Gladys Assistant",
@@ -52,12 +51,18 @@ module.exports = {
           position: "left",
         },
         {
+          to: "https://community.gladysassistant.com/",
+          label: "Community",
+          position: "left",
+        },
+        {
           type: "localeDropdown",
           position: "right",
         },
         {
           href: "https://github.com/gladysassistant/gladys",
-          label: "GitHub",
+          className: "header-github-link",
+          "aria-label": "GitHub repository",
           position: "right",
         },
         {
@@ -160,5 +165,12 @@ module.exports = {
       require.resolve("@docusaurus/plugin-ideal-image"),
       { min: 400, max: 2000, steps: 10 },
     ],
+  ],
+  scripts: [
+    {
+      async: true,
+      defer: true,
+      src: "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
+    },
   ],
 };

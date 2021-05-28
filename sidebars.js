@@ -47,6 +47,11 @@ module.exports = {
         "scenes/http-request",
         "scenes/user-presence",
         "scenes/chain-action"
+        "scenes/house-empty",
+        "scenes/house-no-longer-empty",
+        "scenes/back-at-home",
+        "scenes/left-home",
+        "scenes/time-condition",
       ],
     },
     {
@@ -77,7 +82,13 @@ module.exports = {
         "dev/setup-development-environment-mac-linux",
         "dev/setup-development-environment-windows",
         "dev/developing-a-service",
+        "dev/cypress-tests",
       ],
+    },
+    {
+      type: "category",
+      label: "Gladys Plus",
+      items: ["plus/intro", "plus/open-api"],
     },
   ],
 };
