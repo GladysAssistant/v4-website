@@ -43,12 +43,6 @@ cd server
 npm install
 ```
 
-### Start DB migration
-
-```
-npm run db-migrate:dev
-```
-
 ### Start the server
 
 ```
