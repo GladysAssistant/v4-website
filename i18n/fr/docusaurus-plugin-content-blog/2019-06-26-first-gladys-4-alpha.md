@@ -116,14 +116,6 @@ Cette alpha, comme son nom l'indique, est encore en développement. Il y a donc 
 
 🇫🇷 Pour l'instant, la v4 n'est qu'en anglais, mais la traduction sera faite avant la sortie finale de Gladys. Il y a des fichiers de traductions, ce ne sera pas un gros chantier.
 
-### Sur MacOS/Windows
-
-Étant donné que Gladys 4 tourne sous Docker, il est assez facile de l'installer sur MacOS et Windows, sans même à avoir à taper de lignes de commandes grâce à l'application Kitematic.
-
-Je vous laisse lire mon tutoriel ici :
-
-[Installer Gladys Assistant 4 Alpha sur MacOS/Windows](/fr/docs/installation/macos-windows).
-
 ### Sur Raspberry Pi
 
 Sur Raspberry Pi, c'est pareil, il suffit d'installer Docker sur le Pi, puis de lancer l'image, tout tourne tout seul ensuite.
