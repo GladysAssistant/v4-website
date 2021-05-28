@@ -17,9 +17,15 @@ You'll need:
 - Node.js 14
 - sqlite3
 - openssl
-- openzwave + libopenzwave1.5-dev
+- openzwave >= 1.6
 
-for assistance, help can be found at [CircleCI config file](https://github.com/GladysAssistant/Gladys/blob/master/.circleci/config.yml).
+On a Mac, to install open-zwave, run:
+
+```
+brew install open-zwave
+```
+
+(You need to have [Homebrew](https://brew.sh/) installed)
 
 ### Clone Gladys Git repo
 
