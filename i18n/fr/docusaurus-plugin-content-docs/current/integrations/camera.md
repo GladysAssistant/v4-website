@@ -125,3 +125,11 @@ J'ai mis une photo du port de Dieppe devant ma webcam 😄
 ![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/z_ajouter_webcam_usb_gladys_assistant_02-test.jpg)
 
 Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
+
+## Le tutoriel en vidéo
+
+Si vous préférez les tutoriels en vidéo, j'ai enregistré une vidéo pour vous montrer en direct comment faire:
+
+<div class="videoContainer">
+    <iframe class="video" src="https://www.youtube.com/embed/sCFoiqwSIq0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
