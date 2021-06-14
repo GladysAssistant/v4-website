@@ -66,6 +66,10 @@ It's now possible!
 
 ![House not empty](../static/img/articles/en/gladys-4-4/house-not-empty.jpg)
 
+With this scene, you can add the presence card on the dashboard:
+
+![User presence dashboard](../static/img/articles/en/gladys-4-4/presence-dashboard.jpg)
+
 ### Bugfixes
 
 We fixed a few bugfixes in this release:
