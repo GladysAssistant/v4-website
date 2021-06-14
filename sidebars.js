@@ -51,6 +51,7 @@ module.exports = {
         "scenes/back-at-home",
         "scenes/left-home",
         "scenes/time-condition",
+        "scenes/zone",
       ],
     },
     {
