@@ -15,13 +15,13 @@ curl -sSL https://get.docker.com | sh
 sudo usermod -aG docker pi
 ```
 
-Ensuite, fermez votre session SSH puis reconnectez vous à votre Raspberry Pi.
+Ensuite, fermez votre session SSH puis reconnectez-vous à votre Raspberry Pi.
 
 ### Lancer Gladys
 
-Si vous avez déjà lancé l'alpha auparavant, pensez à supprimer votre dossier `/var/lib/gladysassistant`, car nous avons fais des modifications à ce niveau entre l'alpha et la beta. Attention: vous perdrez les données de l'alpha!
+Si vous avez déjà lancé l'alpha auparavant, pensez à supprimer votre dossier `/var/lib/gladysassistant`, car nous avons fait des modifications à ce niveau entre l'alpha et la beta. Attention : vous perdrez les données de l'alpha !
 
-Pour lancer Gladys, exécutez la commande suivante sur votre Raspberry Pi:
+Pour lancer Gladys, exécutez la commande suivante sur votre Raspberry Pi :
 
 ```bash
 docker run -d \
@@ -41,13 +41,13 @@ docker run -d \
 gladysassistant/gladys:v4
 ```
 
-Note:
+Note :
 
-- `-e TZ=Europe/Paris` => Pour changer le fuseau horaire du container, vous pouvez modifier cette variable. Vous trouverez toutes les valeurs possibles sur [cette list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+- `-e TZ=Europe/Paris` => Pour changer le fuseau horaire du conteneur, vous pouvez modifier cette variable. Vous trouverez toutes les valeurs possibles sur [cette liste](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## Mise à jour automatique avec Watchtower
 
-Vous pouvez utiliser Watchtower pour mettre automatiquement Gladys à jour quand une nouvelle version est disponible. Pour cela, lancez le container:
+Vous pouvez utiliser Watchtower pour mettre automatiquement Gladys à jour quand une nouvelle version est disponible. Pour cela, lancez le conteneur :
 
 ```
 docker run -d \
@@ -60,11 +60,11 @@ docker run -d \
 
 ### Accéder à Gladys
 
-Vous pouvez accéder à Gladys en tapant l'IP de votre Raspberry Pi sur votre navigateur. Pour trouver l'IP de votre Raspberry Pi, vous pouvez utiliser des apps comme ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) sur Android ou [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) sur iOS)
+Vous pouvez accéder à Gladys en saisissant l'IP de votre Raspberry Pi sur votre navigateur. Pour la trouver, vous pouvez utiliser des apps comme ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) sur Android ou [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) sur iOS)
 
 ## Sur n'importe quel système
 
-Docker s'installe sur n'importe quel système, et vous permet de faire tourner Gladys n'importe où :
+Docker s'installe sur n'importe quel système et vous permet de faire tourner Gladys où vous le souhaitez :
 
 - Un NAS Synology
 - Une VM Linux
@@ -74,11 +74,11 @@ Docker s'installe sur n'importe quel système, et vous permet de faire tourner G
 
 ### Installer Docker
 
-Je vous conseille de vous rendre sur la [documentation docker](https://docs.docker.com/), et de lire la documentation lié à votre système.
+Je vous conseille de vous rendre sur la [documentation Docker](https://docs.docker.com/) et de lire la documentation liée à votre système.
 
 ### Lancer Gladys
 
-Pour lancer Gladys, exécutez la commande suivante sur votre Raspberry Pi:
+Pour lancer Gladys, exécutez la commande suivante sur votre Raspberry Pi :
 
 ```bash
 docker run -d \
