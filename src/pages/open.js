@@ -268,7 +268,7 @@ function Open() {
               </div>
             </div>
             <div class={"row " + styles.openPageChartRow}>
-              <div className="col col--12">
+              <div className={"col col--12 " + styles.openPageCard}>
                 <div class="card">
                   <div class="card__body">
                     <h2 className="text--center">
@@ -287,8 +287,8 @@ function Open() {
               </div>
             </div>
             <div class={"row " + styles.openPageChartRow}>
-              <div className="col col--4">
-                <div class="card" style={{ height: "250px" }}>
+              <div className={"col col--4 " + styles.openPageCard}>
+                <div class="card" style={{ height: "270px" }}>
                   <div class="card__body">
                     <h2 className="text--center">
                       <Translate
@@ -377,8 +377,8 @@ function Open() {
                   </div>
                 </div>
               </div>
-              <div className="col col--4">
-                <div class="card" style={{ height: "250px" }}>
+              <div className={"col col--4 " + styles.openPageCard}>
+                <div class="card" style={{ height: "270px" }}>
                   <div class="card__body">
                     <h2 className="text--center">
                       <Translate
@@ -400,8 +400,8 @@ function Open() {
                   </div>
                 </div>
               </div>
-              <div className="col col--4">
-                <div className="card" style={{ height: "250px" }}>
+              <div className={"col col--4 " + styles.openPageCard}>
+                <div className="card" style={{ height: "270px" }}>
                   <div className="card__header">
                     <h2 className="text--center" style={{ marginBottom: 0 }}>
                       <Translate
