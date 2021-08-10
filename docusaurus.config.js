@@ -124,6 +124,10 @@ module.exports = {
               label: "GitHub",
               href: "https://github.com/gladysassistant/gladys",
             },
+            {
+              label: "Open Metrics",
+              href: "open",
+            },
           ],
         },
       ],
