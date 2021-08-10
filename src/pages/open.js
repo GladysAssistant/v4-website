@@ -385,7 +385,7 @@ function Open() {
                         id="openPage.nbOfForumUsers"
                         description="Gladys open page number of forum users"
                       >
-                        Nb of forum users
+                        No. of forum users
                       </Translate>
                     </h2>
                     <ul>
