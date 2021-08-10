@@ -72,11 +72,23 @@ async function getUsage() {
     forumPageViewsPoints.push(elem.y);
   });
 
+  let totalForumUser = 0;
+
+  data.forum_users.forEach((user) => {
+    totalForumUser += user.count;
+  });
+
+  data.forum_users.unshift({
+    user_type: "total",
+    count: totalForumUser,
+  });
+
   return {
     labels,
     points,
     forumPageViewsLabels,
     forumPageViewsPoints,
+    forum_users: data.forum_users,
     nb_gladys_plus_users: data.nb_gladys_plus_users,
   };
 }
@@ -102,7 +114,6 @@ function Open() {
     : null;
 
   useEffect(async () => {
-    console.log("useEffect");
     const data = await getUsage();
     const config = {
       type: "line",
@@ -119,12 +130,21 @@ function Open() {
       },
       options: {
         responsive: true,
-        title: {
-          display: false,
-          text: "Gladys instances",
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: "index",
+        },
+        plugins: {
+          tooltip: {
+            position: "nearest",
+          },
         },
         indexAxis: "x",
         scales: {
+          x: {
+            display: true,
+          },
           y: {
             title: {
               display: true,
@@ -150,6 +170,7 @@ function Open() {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         title: {
           display: false,
           text: "Forum pageviews",
@@ -267,13 +288,7 @@ function Open() {
                         Number of home running Gladys
                       </Translate>
                     </h2>
-                    <div
-                      style={{
-                        maxHeight: "400px",
-                        marginBottom: "32px",
-                        width: "100%",
-                      }}
-                    >
+                    <div style={{ height: "400px" }}>
                       <canvas ref={usageChartCanva}></canvas>
                     </div>
                   </div>
@@ -282,7 +297,7 @@ function Open() {
             </div>
             <div class={"row " + styles.openPageChartRow}>
               <div className="col col--4">
-                <div class="card" style={{ height: "300px" }}>
+                <div class="card" style={{ height: "250px" }}>
                   <div class="card__body">
                     <h2 className="text--center">
                       <Translate
@@ -293,28 +308,28 @@ function Open() {
                       </Translate>
                     </h2>
                     <ul>
-                      <li>
+                      <li className={styles.openPageList}>
                         <a href="/blog/bilan-2020-gladys-assistant">
                           2020 yearly review
                         </a>
                       </li>
-                      <li>
+                      <li className={styles.openPageList}>
                         <a href="/blog/bilan-2019-gladys-assistant">
                           2019 yearly review
                         </a>
                       </li>
-                      <li>
+                      <li className={styles.openPageList}>
                         <a href="/blog/bilan-2018-pour-gladys-assistant">
                           2018 yearly review
                         </a>
                       </li>
-                      <li>
+                      <li className={styles.openPageList}>
                         <a href="/blog/bilan-gladys-2017">2017 yearly review</a>
                       </li>
-                      <li>
+                      <li className={styles.openPageList}>
                         <a href="/blog/bilan-annee-2016">2016 yearly review</a>
                       </li>
-                      <li>
+                      <li className={styles.openPageList}>
                         <a href="/blog/bilan-2015-et-projets-pour-2016">
                           2015 yearly review
                         </a>
@@ -324,7 +339,7 @@ function Open() {
                 </div>
               </div>
               <div className="col col--4">
-                <div class="card" style={{ height: "300px" }}>
+                <div class="card" style={{ height: "250px" }}>
                   <div class="card__body">
                     <h2 className="text--center">
                       <Translate
@@ -335,30 +350,19 @@ function Open() {
                       </Translate>
                     </h2>
                     <ul>
-                      <li>
-                        <b>Total:</b> 2300
-                      </li>
-                      <li>
-                        <b>Total:</b> 2300
-                      </li>
-                      <li>
-                        <b>Total:</b> 2300
-                      </li>
-                      <li>
-                        <b>Total:</b> 2300
-                      </li>
-                      <li>
-                        <b>Total:</b> 2300
-                      </li>
-                      <li>
-                        <b>Total:</b> 2300
-                      </li>
+                      {usageChartData &&
+                        usageChartData.forum_users &&
+                        usageChartData.forum_users.map((user) => (
+                          <li className={styles.openPageList}>
+                            <b>{user.user_type}:</b> {user.count}
+                          </li>
+                        ))}
                     </ul>
                   </div>
                 </div>
               </div>
               <div className="col col--4">
-                <div className="card" style={{ height: "300px" }}>
+                <div className="card" style={{ height: "250px" }}>
                   <div className="card__header">
                     <h2 className="text--center" style={{ marginBottom: 0 }}>
                       <Translate
