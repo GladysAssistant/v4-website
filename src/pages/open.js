@@ -23,37 +23,8 @@ Chart.register(
 );
 
 async function getUsage() {
-  //const response = await fetch("https://open.gladysassistant.workers.dev/");
-  //const data = await response.json();
-  const data = {
-    gladys_4_instances: [
-      { nb_instances: "383", month: "2021-02" },
-      { nb_instances: "462", month: "2021-03" },
-      { nb_instances: "430", month: "2021-04" },
-      { nb_instances: "378", month: "2021-05" },
-      { nb_instances: "342", month: "2021-06" },
-      { nb_instances: "325", month: "2021-07" },
-      { nb_instances: "249", month: "2021-08" },
-    ],
-    nb_gladys_plus_users: 37,
-    forum_users: [
-      { user_type: "newuser", count: 339 },
-      { user_type: "basic", count: 1236 },
-      { user_type: "member", count: 163 },
-      { user_type: "regular", count: 3 },
-      { user_type: "leader", count: 4 },
-    ],
-    forum_page_views: [
-      { x: "2021-08-02", y: 1153 },
-      { x: "2021-08-03", y: 938 },
-      { x: "2021-08-04", y: 953 },
-      { x: "2021-08-05", y: 982 },
-      { x: "2021-08-06", y: 693 },
-      { x: "2021-08-07", y: 767 },
-      { x: "2021-08-08", y: 914 },
-      { x: "2021-08-09", y: 1132 },
-    ],
-  };
+  const response = await fetch("https://open.gladysassistant.workers.dev/");
+  const data = await response.json();
   const labels = [];
   const points = [];
 
