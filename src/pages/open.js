@@ -99,6 +99,8 @@ function Open() {
   const forumPageViewsCanva = useRef(null);
   const [usageChartData, setUsageChartData] = useState(null);
   const { i18n } = context;
+  const language = i18n.currentLocale;
+  const urlPrefix = language === "fr" ? "/fr" : "";
 
   const numberOfInstances = usageChartData
     ? usageChartData.points[usageChartData.points.length - 1]
@@ -205,12 +207,12 @@ function Open() {
   return (
     <Layout
       title={translate({
-        id: "open.title",
+        id: "openPage.title",
         description: "",
         message: "Open Metrics",
       })}
       description={translate({
-        id: "open.metaDescription",
+        id: "openPage.metaDescription",
         description: "gladys open page meta description",
         message: "See some interesting statistics about Gladys usage !",
       })}
@@ -235,8 +237,8 @@ function Open() {
                 </h1>
                 <p className="text--center">
                   <Translate
-                    id="open.description"
-                    description="Gladys Plus description 1"
+                    id="openPage.description"
+                    description="Open page description"
                   >
                     Gladys Assistant is completely transparent: how much people
                     are using Gladys? What's the current revenue of the project?
@@ -248,7 +250,14 @@ function Open() {
               <div className={"col col--4 " + styles.openPageCard}>
                 <div class="card">
                   <div class="card__body">
-                    <div className="text--center">Home running Gladys</div>
+                    <div className="text--center">
+                      <Translate
+                        id="openPage.homeRunningGladys"
+                        description="Open Page home running Gladys"
+                      >
+                        Home running Gladys
+                      </Translate>
+                    </div>
                     <h3 className="text--center" style={{ fontSize: "4rem" }}>
                       {numberOfInstances}
                     </h3>
@@ -258,7 +267,14 @@ function Open() {
               <div className={"col col--4 " + styles.openPageCard}>
                 <div class="card">
                   <div class="card__body">
-                    <div className="text--center">Gladys Plus users</div>
+                    <div className="text--center">
+                      <Translate
+                        id="openPage.gladysPlusUsers"
+                        description="Open Page gladys plus users Gladys"
+                      >
+                        Gladys Plus users
+                      </Translate>
+                    </div>
                     <h3 className="text--center" style={{ fontSize: "4rem" }}>
                       {numberOfGladysPlusUsers}
                     </h3>
@@ -268,7 +284,11 @@ function Open() {
               <div className={"col col--4 " + styles.openPageCard}>
                 <div class="card">
                   <div class="card__body">
-                    <div className="text--center">MRR</div>
+                    <div className="text--center">
+                      <Translate id="openPage.mrr" description="Open Page MRR">
+                        MRR
+                      </Translate>
+                    </div>
                     <h3 className="text--center" style={{ fontSize: "4rem" }}>
                       ${mrr}
                     </h3>
@@ -282,8 +302,8 @@ function Open() {
                   <div class="card__body">
                     <h2 className="text--center">
                       <Translate
-                        id="open.description"
-                        description="Gladys Plus description 1"
+                        id="openPage.numberOfHomeRunningGladys"
+                        description="Chart title"
                       >
                         Number of home running Gladys
                       </Translate>
@@ -301,37 +321,85 @@ function Open() {
                   <div class="card__body">
                     <h2 className="text--center">
                       <Translate
-                        id="open.description"
-                        description="Gladys Plus description 1"
+                        id="openPage.lastYearReviews"
+                        description="Last year reviews"
                       >
                         Last years reviews
                       </Translate>
                     </h2>
                     <ul>
                       <li className={styles.openPageList}>
-                        <a href="/blog/bilan-2020-gladys-assistant">
-                          2020 yearly review
+                        <a
+                          href={`${urlPrefix}/blog/bilan-2020-gladys-assistant`}
+                        >
+                          <Translate
+                            id="openPage.yearlyReview"
+                            description="Yearly reviews"
+                            values={{ year: 2020 }}
+                          >
+                            {"{year} yearly review"}
+                          </Translate>
                         </a>
                       </li>
                       <li className={styles.openPageList}>
-                        <a href="/blog/bilan-2019-gladys-assistant">
-                          2019 yearly review
+                        <a
+                          href={`${urlPrefix}/blog/bilan-2019-gladys-assistant`}
+                        >
+                          <Translate
+                            id="openPage.yearlyReview"
+                            description="Yearly reviews"
+                            values={{ year: 2019 }}
+                          >
+                            {"{year} yearly review"}
+                          </Translate>
                         </a>
                       </li>
                       <li className={styles.openPageList}>
-                        <a href="/blog/bilan-2018-pour-gladys-assistant">
-                          2018 yearly review
+                        <a
+                          href={`${urlPrefix}/blog/bilan-2018-pour-gladys-assistant`}
+                        >
+                          <Translate
+                            id="openPage.yearlyReview"
+                            description="Yearly reviews"
+                            values={{ year: 2018 }}
+                          >
+                            {"{year} yearly review"}
+                          </Translate>
                         </a>
                       </li>
                       <li className={styles.openPageList}>
-                        <a href="/blog/bilan-gladys-2017">2017 yearly review</a>
+                        <a href={`${urlPrefix}/blog/bilan-gladys-2017`}>
+                          <Translate
+                            id="openPage.yearlyReview"
+                            description="Yearly reviews"
+                            values={{ year: 2017 }}
+                          >
+                            {"{year} yearly review"}
+                          </Translate>
+                        </a>
                       </li>
                       <li className={styles.openPageList}>
-                        <a href="/blog/bilan-annee-2016">2016 yearly review</a>
+                        <a href={`${urlPrefix}/blog/bilan-annee-2016`}>
+                          <Translate
+                            id="openPage.yearlyReview"
+                            description="Yearly reviews"
+                            values={{ year: 2016 }}
+                          >
+                            {"{year} yearly review"}
+                          </Translate>
+                        </a>
                       </li>
                       <li className={styles.openPageList}>
-                        <a href="/blog/bilan-2015-et-projets-pour-2016">
-                          2015 yearly review
+                        <a
+                          href={`${urlPrefix}/blog/bilan-2015-et-projets-pour-2016`}
+                        >
+                          <Translate
+                            id="openPage.yearlyReview"
+                            description="Yearly reviews"
+                            values={{ year: 2015 }}
+                          >
+                            {"{year} yearly review"}
+                          </Translate>
                         </a>
                       </li>
                     </ul>
@@ -343,8 +411,8 @@ function Open() {
                   <div class="card__body">
                     <h2 className="text--center">
                       <Translate
-                        id="open.description"
-                        description="Gladys Plus description 1"
+                        id="openPage.nbOfForumUsers"
+                        description="Gladys open page number of forum users"
                       >
                         Nb of forum users
                       </Translate>
@@ -366,16 +434,16 @@ function Open() {
                   <div className="card__header">
                     <h2 className="text--center" style={{ marginBottom: 0 }}>
                       <Translate
-                        id="open.description"
-                        description="Gladys Plus description 1"
+                        id="openPage.forumPageViews"
+                        description="Gladys open forum page views"
                       >
                         Forum page views
                       </Translate>
                     </h2>
                     <div className="text--center">
                       <Translate
-                        id="open.description"
-                        description="Gladys Plus description 1"
+                        id="openPage.lastWeek"
+                        description="Gladys Open page last week"
                       >
                         (Last week)
                       </Translate>
