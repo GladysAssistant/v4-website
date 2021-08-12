@@ -114,7 +114,10 @@ function Home() {
               </Translate>
             </p>
             {status === STATUS.SUCCESS && (
-              <div class="alert alert--success margin-bottom--md" role="alert">
+              <div
+                className="alert alert--success margin-bottom--md"
+                role="alert"
+              >
                 <Translate
                   id="contactPage.success"
                   description="Gladys contact page success message"
@@ -125,7 +128,10 @@ function Home() {
               </div>
             )}
             {status === STATUS.VALIDATION_ERROR && (
-              <div class="alert alert--warning margin-bottom--md" role="alert">
+              <div
+                className="alert alert--warning margin-bottom--md"
+                role="alert"
+              >
                 <Translate
                   id="contactPage.validationError"
                   description="Gladys contact page validation error"
@@ -136,7 +142,10 @@ function Home() {
               </div>
             )}
             {status === STATUS.NETWORK_ERROR && (
-              <div class="alert alert--danger margin-bottom--md" role="alert">
+              <div
+                className="alert alert--danger margin-bottom--md"
+                role="alert"
+              >
                 <Translate
                   id="contactPage.networkError"
                   description="Gladys contact page network error"
@@ -148,7 +157,7 @@ function Home() {
               </div>
             )}
             <form onSubmit={sendMessage}>
-              <label for="fname">
+              <label>
                 <Translate
                   id="contactPage.email"
                   description="Gladys contact email"
@@ -170,7 +179,7 @@ function Home() {
                 })}
               />
 
-              <label for="subject">
+              <label>
                 <Translate
                   id="contactPage.message"
                   description="Gladys contact message"
@@ -200,7 +209,7 @@ function Home() {
                     ? submitButtonSending
                     : submitButtonInitialState
                 }
-                class="button button--primary margin-top--sm"
+                className="button button--primary margin-top--sm"
               />
             </form>
           </div>
