@@ -217,10 +217,10 @@ function Open() {
                 </p>
               </div>
             </div>
-            <div class="row">
+            <div className="row">
               <div className={"col col--4 " + styles.openPageCard}>
-                <div class="card">
-                  <div class="card__body">
+                <div className="card">
+                  <div className="card__body">
                     <div className="text--center">
                       <Translate
                         id="openPage.homeRunningGladys"
@@ -236,8 +236,8 @@ function Open() {
                 </div>
               </div>
               <div className={"col col--4 " + styles.openPageCard}>
-                <div class="card">
-                  <div class="card__body">
+                <div className="card">
+                  <div className="card__body">
                     <div className="text--center">
                       <Translate
                         id="openPage.gladysPlusUsers"
@@ -253,8 +253,8 @@ function Open() {
                 </div>
               </div>
               <div className={"col col--4 " + styles.openPageCard}>
-                <div class="card">
-                  <div class="card__body">
+                <div className="card">
+                  <div className="card__body">
                     <div className="text--center">
                       <Translate id="openPage.mrr" description="Open Page MRR">
                         MRR
@@ -269,8 +269,8 @@ function Open() {
             </div>
             <div class={"row " + styles.openPageChartRow}>
               <div className={"col col--12 " + styles.openPageCard}>
-                <div class="card">
-                  <div class="card__body">
+                <div className="card">
+                  <div className="card__body">
                     <h2 className="text--center">
                       <Translate
                         id="openPage.numberOfHomeRunningGladys"
@@ -288,8 +288,8 @@ function Open() {
             </div>
             <div class={"row " + styles.openPageChartRow}>
               <div className={"col col--4 " + styles.openPageCard}>
-                <div class="card" style={{ height: "270px" }}>
-                  <div class="card__body">
+                <div className="card" style={{ height: "270px" }}>
+                  <div className="card__body">
                     <h2 className="text--center">
                       <Translate
                         id="openPage.lastYearReviews"
@@ -378,8 +378,8 @@ function Open() {
                 </div>
               </div>
               <div className={"col col--4 " + styles.openPageCard}>
-                <div class="card" style={{ height: "270px" }}>
-                  <div class="card__body">
+                <div className="card" style={{ height: "270px" }}>
+                  <div className="card__body">
                     <h2 className="text--center">
                       <Translate
                         id="openPage.nbOfForumUsers"
