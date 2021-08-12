@@ -49,8 +49,7 @@ function Home() {
 
     try {
       setStatus(STATUS.SENDING);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      /*await fetch("https://contact-page.gladysassistant.workers.dev/", {
+      await fetch("https://contact-page.gladysassistant.workers.dev/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +58,7 @@ function Home() {
           email,
           message,
         }),
-      });*/
+      });
       setEmail("");
       setMessage("");
       setStatus(STATUS.SUCCESS);
@@ -164,7 +163,11 @@ function Home() {
                 }
                 onChange={updateEmail}
                 value={email}
-                placeholder="Enter your email address"
+                placeholder={translate({
+                  id: "contact.emailPlaceholder",
+                  description: "Contact page email placeholder",
+                  message: "Enter your email",
+                })}
               />
 
               <label for="subject">
@@ -176,7 +179,11 @@ function Home() {
                 </Translate>
               </label>
               <textarea
-                placeholder="Write here your message!"
+                placeholder={translate({
+                  id: "contact.messagePlaceholder",
+                  description: "Contact page message placeholder",
+                  message: "Write here your message!",
+                })}
                 className={
                   styles.contactTextAreaField +
                   " margin-top--sm margin-bottom--sm"

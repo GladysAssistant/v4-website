@@ -126,7 +126,11 @@ module.exports = {
             },
             {
               label: "Open Metrics",
-              href: "open",
+              href: "/open",
+            },
+            {
+              label: "Contact Us",
+              href: "/contact",
             },
           ],
         },
