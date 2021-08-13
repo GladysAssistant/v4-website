@@ -9,6 +9,23 @@ import styles from "./styles.module.css";
 
 import { translate } from "@docusaurus/Translate";
 
+const Check = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#06a404"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    className={styles.checkIcons}
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);
+
 const STATUS = {
   INITIAL: "INITIAL",
   SENDING: "SENDING",
@@ -23,6 +40,11 @@ function Plus() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(STATUS.INITIAL);
   const { i18n } = context;
+
+  const scrollTopTop = () => {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  };
 
   const updateEmail = (e) => {
     setEmail(e.target.value);
@@ -267,6 +289,95 @@ function Plus() {
                   marginLeft: "30%",
                 }}
               />
+            </div>
+          </div>
+          <div className={cx("row", styles.plusRow)}>
+            <div className="col col--6  col--offset-3">
+              <div class="card-demo">
+                <div class="card">
+                  <div class="card__header">
+                    <div className="text--center">
+                      <h3
+                        className={cx("text--center", styles.plusPricingTitle)}
+                      >
+                        <Translate
+                          id="pricing.title"
+                          description="Pricing title"
+                        >
+                          9.99€
+                        </Translate>
+                      </h3>
+                      <small className={styles.plusPricingTitleMonth}>
+                        /month
+                      </small>
+                    </div>
+                  </div>
+                  <div class="card__body">
+                    <p>
+                      <ul className={styles.listUnstyled}>
+                        <li>
+                          <Check />{" "}
+                          <Translate
+                            id="pricing.openSourceSoftware"
+                            description="Pricing open-source software"
+                          >
+                            Unlimited family members
+                          </Translate>
+                        </li>
+                        <li>
+                          <Check />{" "}
+                          <Translate
+                            id="pricing.endToEndEncryptedRemoteAccess"
+                            description="Pricing end-to-end encrypted remote access"
+                          >
+                            Unlimited Remote Access requests
+                          </Translate>
+                        </li>
+                        <li>
+                          <Check />{" "}
+                          <Translate
+                            id="pricing.dailyBackups"
+                            description="Pricing daily backups"
+                          >
+                            Unlimited Open API requests
+                          </Translate>
+                        </li>
+                        <li>
+                          <Check />{" "}
+                          <Translate
+                            id="pricing.oneClickRestore"
+                            description="Pricing one-click restore"
+                          >
+                            Unlimited voice assistants requests
+                          </Translate>
+                        </li>
+                        <li>
+                          <Check />{" "}
+                          <Translate
+                            id="pricing.supportOpenSource"
+                            description="Pricing support open-source"
+                          >
+                            Support independant Open-Source Software
+                          </Translate>
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                  <div class="card__footer">
+                    <button
+                      onClick={scrollTopTop}
+                      class="button button--primary button--block"
+                    >
+                      <Translate
+                        id="pricing.subscribeButton"
+                        description="Pricing subscribe button"
+                      >
+                        Start a free 14 days trial
+                      </Translate>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
