@@ -5,6 +5,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import useThemeContext from "@theme/hooks/useThemeContext";
 import Translate from "@docusaurus/Translate";
 import FAQ from "../components/home/FAQ";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 import styles from "./styles.module.css";
 
@@ -227,7 +228,10 @@ function Plus() {
             </div>
             <div className="col col--6">
               <img
-                src="/img/plus/mockup.png"
+                src={useBaseUrl("img/plus/mockup-1x.png")}
+                srcSet={`${useBaseUrl(
+                  "img/plus/mockup-1x.png"
+                )} 1x, ${useBaseUrl("img/plus/mockup-2x.png")} 2x`}
                 className={cx(
                   isDarkTheme ? "" : styles.invertImageColor,
                   styles.plusImage
@@ -239,7 +243,7 @@ function Plus() {
             <div className="col col--6">
               <img
                 className={cx(isDarkTheme ? "" : styles.invertImageColor)}
-                src="/img/plus/plus-e2e-white.png"
+                src={useBaseUrl("/img/plus/plus-e2e-white.png")}
                 style={{
                   width: "80%",
                   marginLeft: "10%",
@@ -306,7 +310,7 @@ function Plus() {
             </div>
             <div className="col col--6">
               <img
-                src="/img/plus/plus-backup-white.png"
+                src={useBaseUrl("/img/plus/plus-backup-white.png")}
                 className={cx(isDarkTheme ? "" : styles.invertImageColor)}
                 style={{
                   width: "80%",
@@ -370,7 +374,7 @@ function Plus() {
             </div>
             <div className="col col--6">
               <img
-                src="/img/plus/google-assistant.svg"
+                src={useBaseUrl("/img/plus/google-assistant.svg")}
                 style={{
                   width: "40%",
                   marginLeft: "30%",
