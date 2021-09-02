@@ -46,6 +46,7 @@ function Plus() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(STATUS.INITIAL);
   const { i18n } = context;
+  const language = i18n.currentLocale;
 
   const scrollTopTop = () => {
     document.body.scrollTop = 0; // For Safari
@@ -75,6 +76,7 @@ function Plus() {
           },
           body: JSON.stringify({
             email,
+            language,
           }),
         }
       );
