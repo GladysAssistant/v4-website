@@ -4,6 +4,7 @@ import cx from "classnames";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import useThemeContext from "@theme/hooks/useThemeContext";
 import Translate from "@docusaurus/Translate";
+import FAQ from "../components/home/FAQ";
 
 import styles from "./styles.module.css";
 
@@ -68,7 +69,7 @@ function Plus() {
     try {
       setStatus(STATUS.SENDING);
       await fetch(
-        "https://subscribe-gladys-plus.gladysassistant.workers.dev/",
+        "https://subscribe-gladys-gladysPlusPage.gladysassistant.workers.dev/",
         {
           method: "POST",
           headers: {
@@ -89,7 +90,7 @@ function Plus() {
   };
 
   const submitButtonInitialState = translate({
-    id: "gladysPlus.submit",
+    id: "gladysgladysPlusPage.submit",
     description: "Gladys Plus submit",
     message: "Start free trial",
   });
@@ -109,6 +110,7 @@ function Plus() {
             maxWidth: "72rem",
             marginLeft: "auto",
             marginRight: "auto",
+            marginBottom: "10rem",
           }}
         >
           <div className="row">
@@ -184,7 +186,7 @@ function Plus() {
                   )}
                   <label style={{ display: "block" }}>
                     <Translate
-                      id="plus.startFreeTrial"
+                      id="gladysPlusPage.startFreeTrial"
                       description="Gladys Plus free trial input"
                     >
                       Start free trial (14 days)
@@ -200,7 +202,7 @@ function Plus() {
                     onChange={updateEmail}
                     value={email}
                     placeholder={translate({
-                      id: "plus.emailPlaceholder",
+                      id: "gladysPlusPage.emailPlaceholder",
                       description: "Gladys Plus email placeholder",
                       message: "Enter your email",
                     })}
@@ -255,7 +257,7 @@ function Plus() {
               </h2>
               <p>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.endToEndEncryptedRemoteAccessText"
                   description="Gladys Plus page title"
                 >
                   Access your local Gladys instance from your phone or any
@@ -264,7 +266,7 @@ function Plus() {
               </p>
               <p>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.endToEndEncryptedRemoteAccessText2"
                   description="Gladys Plus page title"
                 >
                   The data is end-to-end encrypted using modern cryptography
@@ -277,7 +279,7 @@ function Plus() {
             <div className="col col--6">
               <h2 className={cx(styles.plusFeatureTitle)}>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.automatedBackups"
                   description="Gladys Plus page title"
                 >
                   Automatic & encrypted backups
@@ -285,7 +287,7 @@ function Plus() {
               </h2>
               <p>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.automatedBackupsText"
                   description="Gladys Plus page title"
                 >
                   Gladys Plus backup your local instance once every day, so you
@@ -294,7 +296,7 @@ function Plus() {
               </p>
               <p>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.automatedBackupsText2"
                   description="Gladys Plus page title"
                 >
                   Your data is encrypted with a key you own, we are not able to
@@ -329,7 +331,7 @@ function Plus() {
             <div className="col col--6">
               <h2 className={cx(styles.plusFeatureTitle)}>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.restApi"
                   description="Gladys Plus page title"
                 >
                   Remote REST API, from anywhere
@@ -337,7 +339,7 @@ function Plus() {
               </h2>
               <p>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.restApiText"
                   description="Gladys Plus page title"
                 >
                   Send HTTP request from anywhere in the world, safely proxied
@@ -350,7 +352,7 @@ function Plus() {
             <div className="col col--6">
               <h2 className={cx(styles.plusFeatureTitle)}>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.voiceAssistant"
                   description="Gladys Plus page title"
                 >
                   Voice assistant (alpha)
@@ -358,7 +360,7 @@ function Plus() {
               </h2>
               <p>
                 <Translate
-                  id="gladysPlusPage.endToEndEncryptedRemoteAccess"
+                  id="gladysPlusPage.voiceAssistantText"
                   description="Gladys Plus page title"
                 >
                   Send requests to any Gladys devices from Google Assistant by
@@ -386,7 +388,7 @@ function Plus() {
                         className={cx("text--center", styles.plusPricingTitle)}
                       >
                         <Translate
-                          id="pricing.title"
+                          id="gladysPlusPage.pricingTitle"
                           description="Pricing title"
                         >
                           9.99€
@@ -403,7 +405,7 @@ function Plus() {
                         <li>
                           <Check />{" "}
                           <Translate
-                            id="pricing.openSourceSoftware"
+                            id="gladysPlusPage.unlimitedFamilyMembers"
                             description="Pricing open-source software"
                           >
                             Unlimited family members
@@ -412,7 +414,7 @@ function Plus() {
                         <li>
                           <Check />{" "}
                           <Translate
-                            id="pricing.endToEndEncryptedRemoteAccess"
+                            id="gladysPlusPage.unlimitedRemoteAccess"
                             description="Pricing end-to-end encrypted remote access"
                           >
                             Unlimited Remote Access requests
@@ -421,7 +423,7 @@ function Plus() {
                         <li>
                           <Check />{" "}
                           <Translate
-                            id="pricing.dailyBackups"
+                            id="gladysPlusPage.unlimitedOpenApiRequests"
                             description="Pricing daily backups"
                           >
                             Unlimited Open API requests
@@ -430,7 +432,7 @@ function Plus() {
                         <li>
                           <Check />{" "}
                           <Translate
-                            id="pricing.oneClickRestore"
+                            id="gladysPlusPage.unlimitedVoiceAssistant"
                             description="Pricing one-click restore"
                           >
                             Unlimited voice assistants requests
@@ -439,7 +441,7 @@ function Plus() {
                         <li>
                           <Check />{" "}
                           <Translate
-                            id="pricing.supportOpenSource"
+                            id="gladysPlusPage.supportOpenSource"
                             description="Pricing support open-source"
                           >
                             Support independant Open-Source Software
@@ -454,7 +456,7 @@ function Plus() {
                       class="button button--primary button--block"
                     >
                       <Translate
-                        id="pricing.subscribeButton"
+                        id="gladysPlusPage.startFreeTrial"
                         description="Pricing subscribe button"
                       >
                         Start a free 14 days trial
@@ -466,6 +468,7 @@ function Plus() {
             </div>
           </div>
         </div>
+        <FAQ lang={language} />
       </div>
     </main>
   );
@@ -475,12 +478,12 @@ function PlusParent() {
   return (
     <Layout
       title={translate({
-        id: "gladysPlus.title",
+        id: "gladysgladysPlusPage.title",
         description: "gladys plus page title",
         message: "Gladys Plus",
       })}
       description={translate({
-        id: "gladysPlus.metaDescription",
+        id: "gladysgladysPlusPage.metaDescription",
         description: "gladys plus meta description",
         message: "Add more features to Gladys Assistant with Gladys Plus",
       })}

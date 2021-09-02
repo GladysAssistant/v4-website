@@ -52,18 +52,18 @@ const dataEn = [
         <a href="https://en.wikipedia.org/wiki/Secure_Remote_Password_protocol">
           Remote Secure Password
         </a>{" "}
-        protocol. The Gladys Gateway encrypts all your messages using AES-GCM
-        256bits algorithm and a unique key generated at each message. This key
-        is then encrypted using RSA-OAEP 2048bits algorithm and the public key
-        of your Gladys instance. Finally, the message is signed with the ECDSA
-        P-256 Algorithm and bundled with an expiry date to avoid{" "}
+        protocol. Gladys Plus encrypts all your messages using AES-GCM 256bits
+        algorithm and a unique key generated at each message. This key is then
+        encrypted using RSA-OAEP 2048bits algorithm and the public key of your
+        Gladys instance. Finally, the message is signed with the ECDSA P-256
+        Algorithm and bundled with an expiry date to avoid{" "}
         <a href="https://en.wikipedia.org/wiki/Replay_attack">Replay Attack</a>.
         On Gladys side, the user has to validate each new user public key to
         avoid{" "}
         <a href="https://en.wikipedia.org/wiki/Man-in-the-middle_attack">
           Man In The Middle attack
         </a>
-        . With those securities, even if the Gladys Gateway is compromised, the
+        . With those securities, even if Gladys Plus is compromised, the
         attacker cannot control your Gladys instance because he doesn't have
         your private key.
       </p>
@@ -116,9 +116,9 @@ const dataFr = [
     description: (
       <>
         Tu as envie d'accéder simplement et de façon sécurisée à ton instance
-        Gladys de n'importe où dans le monde ? Intéragir avec une communauté
-        passionnée ? Soutenir un projet open-source français en pleine
-        croissance ? Gladys Plus est fait pour toi !
+        Gladys de n'importe où dans le monde ? Avoir des sauvegardes
+        quotidiennes de ton instance Gladys ? Soutenir un projet open-source
+        français en pleine croissance ? Gladys Plus est fait pour toi !
       </>
     ),
   },
@@ -128,8 +128,8 @@ const dataFr = [
       <>
         Bien-sûr! Gladys c'est un projet open-source, pas une grosse entreprise
         sans scrupule 😄 Tu peux à tout moment annuler ton abonnement en un clic
-        depuis l'interface du Gateway (il y a un bouton pour se désabonner, il
-        n'est pas caché, tu as juste à cliquer et hop tu es désabonné). Si
+        depuis l'interface de Gladys Plus (il y a un bouton pour se désabonner,
+        il n'est pas caché, tu as juste à cliquer et hop tu es désabonné). Si
         seulement tous les abonnements étaient comme ça...
       </>
     ),
@@ -167,9 +167,9 @@ const dataFr = [
         <a href="https://en.wikipedia.org/wiki/Secure_Remote_Password_protocol">
           Remote Secure Password
         </a>
-        . Le Gladys Gateway chiffre vos commandes Gladys grâce à l'algorithme
-        AES-GCM 256bits et une clé unique générée à chaque message. Cette clé
-        est ensuite chiffrée grâce à la clé publique de l'instance Gladys et
+        . Gladys Plus chiffre vos commandes Gladys grâce à l'algorithme AES-GCM
+        256bits et une clé unique générée à chaque message. Cette clé est
+        ensuite chiffrée grâce à la clé publique de l'instance Gladys et
         l'algorithme RSA-OAEP 2048bits. Enfin, chaque message est signé grâce à
         l'algorithme ECDSA P-256, et accompagné d'une date d'expiration afin
         d'éviter les{" "}
@@ -180,7 +180,7 @@ const dataFr = [
         <a href="https://en.wikipedia.org/wiki/Man-in-the-middle_attack">
           Man In The Middle
         </a>
-        . Ainsi, si le Gateway est compromis, l'attaquant ne pourra absolument
+        . Ainsi, si Gladys Plus est compromis, l'attaquant ne pourra absolument
         rien faire car sans clé privée il n'a pas contrôle sur votre Gladys.
       </>
     ),
@@ -189,16 +189,16 @@ const dataFr = [
     title: <>Pourquoi Gladys Plus est-il payant ?</>,
     description: (
       <>
-        Gladys, tous ses services, le Gladys Gateway, le site web: tout est 100%
-        open-source et gratuit à utiliser. Mais open-source ne veut pas dire que
-        de mon côté je n'ai pas des frais récurrents: serveurs, domaines,
-        communauté en ligne, services d'emails, abonnements, matériel, etc... Et
-        c'est sans compter tout le temps que je passe sur le projet car Gladys
-        est désormais mon activité principale ! 🙂 Ce projet respecte votre vie
-        privée, et par conséquent <b>ne vit que de ces contributions</b>. Chaque
-        contribution permet au projet d'aller plus loin, et montre qu'une
-        alternative libre et respectueuse de la vie privée de ses utilisateurs
-        est possible 🚀
+        Gladys, tous ses services, même le code de Gladys Plus, le site web:
+        tout est 100% open-source et gratuit à utiliser. Mais open-source ne
+        veut pas dire que de mon côté je n'ai pas des frais récurrents:
+        serveurs, domaines, communauté en ligne, services d'emails, abonnements,
+        matériel, etc... Et c'est sans compter tout le temps que je passe sur le
+        projet car je travaille à temps partiel sur Gladys ! 🙂 Ce projet
+        respecte votre vie privée, et par conséquent{" "}
+        <b>ne vit que de ces contributions</b>. Chaque contribution permet au
+        projet d'aller plus loin, et montre qu'une alternative libre et
+        respectueuse de la vie privée de ses utilisateurs est possible 🚀
       </>
     ),
   },
