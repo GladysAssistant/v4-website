@@ -37,15 +37,15 @@ const dataEn = [
       <p>
         I took a lot of time to read about state of the art End-To-End
         Encryption. I read{" "}
-        <a href="https://www.apple.com/business/site/docs/iOS_Security_Guide.pdf">
+        <a href="https://manuals.info.apple.com/MANUALS/1000/MA1902/en_US/apple-platform-security-guide.pdf">
           Apple Security White Paper
         </a>{" "}
         about iMessage E2E encryption feature. I read{" "}
-        <a href="https://www.dashlane.com/download/Dashlane_SecurityWhitePaper_October2018.pdf">
+        <a href="https://www.dashlane.com/download/Dashlane_SecurityWhitePaper_March2021.pdf">
           Dashlane
         </a>{" "}
         White paper, read and talked with{" "}
-        <a href="https://support.insomnia.rest/article/57-encryption">
+        <a href="https://support.insomnia.rest/article/159-end-to-end-encryption">
           Insomnia
         </a>{" "}
         Founder, and read about ProtonMail implementation of the{" "}
@@ -151,15 +151,15 @@ const dataFr = [
       <>
         J'ai passé beaucoup de temps à lire sur l'état de l'art en matière de
         chiffrement de bout en bout. J'ai notamment lu le{" "}
-        <a href="https://www.apple.com/business/site/docs/iOS_Security_Guide.pdf">
+        <a href="https://manuals.info.apple.com/MANUALS/1000/MA1902/en_US/apple-platform-security-guide.pdf">
           Security White Paper d'Apple
         </a>{" "}
         sur le chiffrement de bout en bout d'iMessage, le white paper de{" "}
-        <a href="https://www.dashlane.com/download/Dashlane_SecurityWhitePaper_October2018.pdf">
+        <a href="https://www.dashlane.com/download/Dashlane_SecurityWhitePaper_March2021.pdf">
           Dashlane
         </a>
         , j'ai lu la documentation et discuté avec le fondateur d'
-        <a href="https://support.insomnia.rest/article/57-encryption">
+        <a href="https://support.insomnia.rest/article/159-end-to-end-encryption">
           Insomnia
         </a>{" "}
         et j'ai lu la documentation de ProtonMail à propos de leur
