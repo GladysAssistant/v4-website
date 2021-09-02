@@ -79,7 +79,6 @@ function Plus() {
         }
       );
       setEmail("");
-      setMessage("");
       setStatus(STATUS.SUCCESS);
     } catch (e) {
       console.error(e);
@@ -225,8 +224,10 @@ function Plus() {
             <div className="col col--6">
               <img
                 src="/img/plus/mockup.png"
-                className={cx(isDarkTheme ? "" : styles.invertImageColor)}
-                style={{ marginLeft: "10%", width: "80%" }}
+                className={cx(
+                  isDarkTheme ? "" : styles.invertImageColor,
+                  styles.plusImage
+                )}
               />
             </div>
           </div>
