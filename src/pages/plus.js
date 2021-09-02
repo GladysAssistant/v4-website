@@ -34,6 +34,12 @@ const STATUS = {
   SUCCESS: "SUCCESS",
 };
 
+function validateEmail(email) {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+
 function Plus() {
   const context = useDocusaurusContext();
   const { isDarkTheme } = useThemeContext();
@@ -48,6 +54,37 @@ function Plus() {
 
   const updateEmail = (e) => {
     setEmail(e.target.value);
+  };
+
+  const subscribe = async (e) => {
+    e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setStatus(STATUS.VALIDATION_ERROR);
+      return;
+    }
+
+    try {
+      setStatus(STATUS.SENDING);
+      await fetch(
+        "https://subscribe-gladys-plus.gladysassistant.workers.dev/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+          }),
+        }
+      );
+      setEmail("");
+      setMessage("");
+      setStatus(STATUS.SUCCESS);
+    } catch (e) {
+      console.error(e);
+      setStatus(STATUS.NETWORK_ERROR);
+    }
   };
 
   const submitButtonInitialState = translate({
@@ -100,6 +137,50 @@ function Plus() {
                   </Translate>
                 </p>
                 <div>
+                  {status === STATUS.SUCCESS && (
+                    <div
+                      className="alert alert--success margin-bottom--md"
+                      role="alert"
+                    >
+                      <Translate
+                        id="gladysPlusPage.subscribeSuccess"
+                        description="Gladys Plus page success message"
+                      >
+                        Thanks for subscribing to Gladys Plus! You'll receive an
+                        email soon to activate your acccount. If you don't
+                        receive anything, please contact us on the contact page
+                        or on the forum.
+                      </Translate>
+                    </div>
+                  )}
+                  {status === STATUS.VALIDATION_ERROR && (
+                    <div
+                      className="alert alert--warning margin-bottom--md"
+                      role="alert"
+                    >
+                      <Translate
+                        id="gladysPlusPage.validationError"
+                        description="Gladys plus page validation error"
+                      >
+                        Please enter a valid email.
+                      </Translate>
+                    </div>
+                  )}
+                  {status === STATUS.NETWORK_ERROR && (
+                    <div
+                      className="alert alert--danger margin-bottom--md"
+                      role="alert"
+                    >
+                      <Translate
+                        id="gladysPlusPage.networkError"
+                        description="Gladys plus page network error"
+                      >
+                        Network error: Are you connected to the internet? Please
+                        retry. If the problem persist, you can contact us on the
+                        contact page, on Twitter, or on the forum.
+                      </Translate>
+                    </div>
+                  )}
                   <label style={{ display: "block" }}>
                     <Translate
                       id="plus.startFreeTrial"
@@ -125,6 +206,7 @@ function Plus() {
                   />
                   <input
                     type="submit"
+                    onClick={subscribe}
                     disabled={status === STATUS.SENDING}
                     value={
                       status === STATUS.SENDING
