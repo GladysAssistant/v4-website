@@ -114,7 +114,7 @@ Pour en savoir plus vous pouvez jeter un coup d'oeil à la PR GitHub : [`#1194`]
 J'ai deux gros chantiers en cours actuellement:
 
 - Une fonctionnalité très demandée, la possibilité d'afficher des courbes de capteurs sur le tableau de bord Gladys. J'en ai pas mal parlé [sur Twitter](https://twitter.com/pierregillesl/status/1419521241044553731) si ça vous intéresse.
-- Finir l'intégration Google Home dans Gladys Plus. La certification Google prend du temps, et je prend le temps de faire ça bien avec eux avant que ça parte en production.
+- Finir l'intégration Google Home dans Gladys Plus. La certification Google prend du temps, et je prend le temps de faire ça bien avec eux avant que ça parte en production. Si vous voulez suivre l'avancement de l'intégration, vous pouvez suivre [ce sujet sur le forum](https://community.gladysassistant.com/t/integrer-gladys-dans-googlehome/5553/37?u=pierre-gilles).
 
 ## Comment mettre à jour ?
 
