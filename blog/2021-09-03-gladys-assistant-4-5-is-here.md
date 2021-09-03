@@ -19,13 +19,25 @@ Today we are releasing Gladys Assistant v4.5, a version that is bringing lots of
 
 It's now possible to have multiples dashboards in Gladys Assistant.
 
+![Multi dashboard Gladys Assistant](../static/img/articles/en/gladys-4-5/multi-dashboard.jpg)
+
+You can create several dashboards, and each of them have a unique URL, so you can add bookmarks on your browser to your favorite dashboards.
+
+You can select the dashboard you want to display:
+
+![Switch dashboard Gladys Assistant](../static/img/articles/en/gladys-4-5/switch-dashboard.jpg)
+
+And it'll switch to another dashboard, easy!
+
+![Camera dashboard Gladys Assistant](../static/img/articles/en/gladys-4-5/camera-dashboard.jpg)
+
 ### Disabling a scene
 
 It was a highly requested feature, it's now possible to disable a scene in Gladys Assistant! Finally!
 
 If you are prototyping a scene, going on holiday, or simply want to disable an annoying scene: you can do it now!
 
--- image
+![Disable scene Gladys Assistant](../static/img/articles/en/gladys-4-5/disable-scene.jpg)
 
 ### New "Set device value" action in scenes
 
@@ -35,7 +47,7 @@ It's now possible to control any device in a scene:
 - Control the temperature of a lamp
 - Control any multilevel value
 
--- image
+![Control device scene Gladys Assistant](../static/img/articles/en/gladys-4-5/set-device-value.jpg)
 
 It's very powerful, and I hope you'll like it!
 
@@ -43,11 +55,11 @@ It's very powerful, and I hope you'll like it!
 
 Small change, it's now possible to select which user to display in the "user at home" dashboard box.
 
--- image
+![Select users in user at home box Gladys Assistant](../static/img/articles/en/gladys-4-5/user-presence.jpg)
 
 ### Lots of performance improvements
 
-As the forum was very quite this summer, I took the time to work on some more long-term tasks.
+As the forum was very quiet this summer, I took the time to work on some more long-term tasks.
 
 I migrated preact-cli (the tool we use to build Gladys frontend) to their new release 3.x. It was not easy, but definitely worth it, as it reduced by a lot the size of the javascript bundle.
 
