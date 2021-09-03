@@ -197,6 +197,9 @@ function Plus() {
                       styles.plusInput,
                       "margin-top--sm margin-bottom--sm margin-right--md"
                     )}
+                    style={{
+                      display: "inline-block",
+                    }}
                     onChange={updateEmail}
                     value={email}
                     placeholder={translate({
