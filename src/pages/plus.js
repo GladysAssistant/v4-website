@@ -69,19 +69,16 @@ function Plus() {
 
     try {
       setStatus(STATUS.SENDING);
-      await fetch(
-        "https://subscribe-gladys-gladysPlusPage.gladysassistant.workers.dev/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            language,
-          }),
-        }
-      );
+      await fetch("https://subscribe-gladys-plus.gladysassistant.workers.dev", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          language,
+        }),
+      });
       setEmail("");
       setStatus(STATUS.SUCCESS);
     } catch (e) {
@@ -97,9 +94,9 @@ function Plus() {
   });
 
   const submitButtonSending = translate({
-    id: "contact.sendingMessage",
-    description: "Contact page sendingMessage",
-    message: "Sending message...",
+    id: "gladysgladysPlusPage.creatingAccount",
+    description: "Gladys Plus page waiting message",
+    message: "Creating account...",
   });
 
   return (
