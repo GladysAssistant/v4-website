@@ -13,7 +13,7 @@ Ce tutoriel vous explique comment installer Gladys sur Raspberry Pi !
 
 ### Télécharger l'image Raspbian
 
-Nous mettons à disposition une image Raspbian toute prête : <a href="https://gladysassistant.com/download/latest">Télécharger Gladys Assistant Raspberry Pi OS latest rev5</a>.
+Nous mettons à disposition une image Raspbian toute prête : <a href="https://gladysassistant.com/download/latest" rel="nofollow">Télécharger Gladys Assistant Raspberry Pi OS latest rev5</a>.
 
 L'image Raspbian est compressée dans un fichier zip, que vous devez dézipper afin d'arriver à un fichier `.img`.
 

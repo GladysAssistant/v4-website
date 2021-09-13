@@ -7,7 +7,7 @@ slug: /
 
 ## Download Gladys Raspbian image
 
-We provide a pre-built Raspbian image with Gladys already configured: <a href="https://gladysassistant.com/download/latest">Download Gladys Assistant Raspberry Pi OS latest rev5</a>.
+We provide a pre-built Raspbian image with Gladys already configured: <a href="https://gladysassistant.com/download/latest" rel="nofollow">Download Gladys Assistant Raspberry Pi OS latest rev5</a>.
 
 And unzip the downloaded zip file to get a `.img` file.
 
