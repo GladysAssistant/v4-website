@@ -6,6 +6,7 @@ import useThemeContext from "@theme/hooks/useThemeContext";
 import Translate from "@docusaurus/Translate";
 import FAQ from "../components/home/FAQ";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
 
 import styles from "./styles.module.css";
 
@@ -382,6 +383,11 @@ function Plus() {
               />
             </div>
           </div>
+          {language === "fr" && (
+            <div className={cx("container", styles.plusRow)}>
+              <YoutubeEmbedVideo id="TmjrBeufjyo" />
+            </div>
+          )}
           <div className={cx("row", styles.plusRow)}>
             <div className="col col--6  col--offset-3">
               <div class="card-demo">
