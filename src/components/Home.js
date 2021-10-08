@@ -111,126 +111,11 @@ function Home({ integrations, lang }) {
         {lang === "fr" && (
           <div
             className="container"
-            style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
+            style={{ paddingTop: "2rem", paddingBottom: "1rem" }}
           >
             <YoutubeEmbedVideo id="yP-umEMVcro" />
           </div>
         )}
-        <div
-          className="container"
-          style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
-        >
-          <ul class="pills pills--block">
-            <li
-              onClick={() => setOpenPanel(1)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 1,
-              })}
-            >
-              <Translate
-                id="home.features.centralizeCameras"
-                description="Centralize your cameras title of the homepage"
-              >
-                Centralize your cameras
-              </Translate>
-            </li>
-            <li
-              onClick={() => setOpenPanel(2)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 2,
-              })}
-            >
-              <Translate
-                id="home.features.controlHouse"
-                description="Control your house title of the homepage"
-              >
-                Control your house
-              </Translate>
-            </li>
-            <li
-              onClick={() => setOpenPanel(3)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 3,
-              })}
-            >
-              <Translate
-                id="home.features.connectCalendars"
-                description="Connect your calendars title of the homepage"
-              >
-                Connect your calendars
-              </Translate>
-            </li>
-            <li
-              onClick={() => setOpenPanel(4)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 4,
-              })}
-            >
-              <Translate
-                id="home.features.createScenes"
-                description="Create scenes title of the homepage"
-              >
-                Create scenes
-              </Translate>
-            </li>
-          </ul>
-
-          {openPanel === 1 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.centralizeCameras",
-                  description: "Centralize your cameras title of the homepage",
-                  message: "Centralize your cameras",
-                })}
-                img={cameraGladys4}
-              />
-            </div>
-          )}
-
-          {openPanel === 2 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.controlHouse",
-                  description: "Control your house title of the homepage",
-                  message: "Control your house",
-                })}
-                img={dashboardGladys4}
-              />
-            </div>
-          )}
-
-          {openPanel === 3 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.connectCalendars",
-                  description: "Connect your calendars title of the homepage",
-                  message: "Connect your calendars",
-                })}
-                img={calendarGladys4}
-              />
-            </div>
-          )}
-
-          {openPanel === 4 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.createScenes",
-                  description: "Create scenes title of the homepage",
-                  message: "Create scenes",
-                })}
-                img={sceneGladys4}
-              />
-            </div>
-          )}
-        </div>
         <Features />
         <div
           style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
@@ -268,6 +153,16 @@ function Home({ integrations, lang }) {
                     </div>
                   ))}
                 </div>
+                <p className="text--center">
+                  <Link href={lang === "en" ? `/docs` : `/${lang}/docs`}>
+                    <Translate
+                      id="home.integrations.seeInDocumentation"
+                      description="Integrations link to documentation"
+                    >
+                      See all integrations in the documentation.
+                    </Translate>
+                  </Link>
+                </p>
               </div>
             </div>
           </div>
