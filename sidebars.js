@@ -18,6 +18,7 @@ module.exports = {
         "integrations/caldav",
         "integrations/camera",
         "integrations/xiaomi",
+        "integrations/google-home",
         "integrations/bluetooth",
         "integrations/sonoff",
         "integrations/tasmota",
