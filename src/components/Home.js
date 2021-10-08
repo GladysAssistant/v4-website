@@ -3,14 +3,12 @@ import classnames from "classnames";
 import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
 import Image from "@theme/IdealImage";
-import mockup from "./mockup.png";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import cameraGladys4 from "./cameras-gladys-4.jpg";
 import dashboardGladys4 from "./dashboard-gladys-4.jpg";
 import calendarGladys4 from "./calendar-gladys-4.jpg";
 import sceneGladys4 from "./scene-gladys-4.jpg";
 import { Integration } from "./Integration";
-import Pricing from "./home/Pricing";
-import FAQ from "./home/FAQ";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import Features from "./home/features";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
@@ -74,11 +72,31 @@ function Home({ integrations, lang }) {
               </span>
             </div>
             <div className="col col--7">
-              <Image
+              <img
+                sizes="(max-width: 1400px) 100vw, 1400px"
+                srcset={`
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_200.png"
+                    )} 200w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_698.png"
+                    )} 698w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_1020.png"
+                    )} 1020w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_1251.png"
+                    )} 1251w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_1400.png"
+                    )} 1400w
+               `}
+                src={useBaseUrl(
+                  "/img/home/mockup/mockup_njwsve_c_scale,w_1400.png"
+                )}
                 alt="Gladys Assistant Mockup"
                 className={styles.heroImg}
-                img={mockup}
-              />
+              ></img>
             </div>
           </div>
         </div>
@@ -93,126 +111,11 @@ function Home({ integrations, lang }) {
         {lang === "fr" && (
           <div
             className="container"
-            style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
+            style={{ paddingTop: "2rem", paddingBottom: "1rem" }}
           >
             <YoutubeEmbedVideo id="yP-umEMVcro" />
           </div>
         )}
-        <div
-          className="container"
-          style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
-        >
-          <ul class="pills pills--block">
-            <li
-              onClick={() => setOpenPanel(1)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 1,
-              })}
-            >
-              <Translate
-                id="home.features.centralizeCameras"
-                description="Centralize your cameras title of the homepage"
-              >
-                Centralize your cameras
-              </Translate>
-            </li>
-            <li
-              onClick={() => setOpenPanel(2)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 2,
-              })}
-            >
-              <Translate
-                id="home.features.controlHouse"
-                description="Control your house title of the homepage"
-              >
-                Control your house
-              </Translate>
-            </li>
-            <li
-              onClick={() => setOpenPanel(3)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 3,
-              })}
-            >
-              <Translate
-                id="home.features.connectCalendars"
-                description="Connect your calendars title of the homepage"
-              >
-                Connect your calendars
-              </Translate>
-            </li>
-            <li
-              onClick={() => setOpenPanel(4)}
-              className={classnames("pills__item", {
-                "pills__item--active": openPanel === 4,
-              })}
-            >
-              <Translate
-                id="home.features.createScenes"
-                description="Create scenes title of the homepage"
-              >
-                Create scenes
-              </Translate>
-            </li>
-          </ul>
-
-          {openPanel === 1 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.centralizeCameras",
-                  description: "Centralize your cameras title of the homepage",
-                  message: "Centralize your cameras",
-                })}
-                img={cameraGladys4}
-              />
-            </div>
-          )}
-
-          {openPanel === 2 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.controlHouse",
-                  description: "Control your house title of the homepage",
-                  message: "Control your house",
-                })}
-                img={dashboardGladys4}
-              />
-            </div>
-          )}
-
-          {openPanel === 3 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.connectCalendars",
-                  description: "Connect your calendars title of the homepage",
-                  message: "Connect your calendars",
-                })}
-                img={calendarGladys4}
-              />
-            </div>
-          )}
-
-          {openPanel === 4 && (
-            <div>
-              <Image
-                className={styles.featureImage}
-                alt={translate({
-                  id: "home.features.createScenes",
-                  description: "Create scenes title of the homepage",
-                  message: "Create scenes",
-                })}
-                img={sceneGladys4}
-              />
-            </div>
-          )}
-        </div>
         <Features />
         <div
           style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
@@ -250,6 +153,16 @@ function Home({ integrations, lang }) {
                     </div>
                   ))}
                 </div>
+                <p className="text--center">
+                  <Link href={lang === "en" ? `/docs` : `/${lang}/docs`}>
+                    <Translate
+                      id="home.integrations.seeInDocumentation"
+                      description="Integrations link to documentation"
+                    >
+                      See all integrations in the documentation.
+                    </Translate>
+                  </Link>
+                </p>
               </div>
             </div>
           </div>

@@ -12,11 +12,11 @@ Ce tutoriel vous explique comment installer Gladys avec Docker sur une Freebox D
 
 Tout d'abord il faut se rendre sur l'interface Freebox à l'adresse suivante : mafreebox.free.fr.
 
-![FreeboxOs](../../../../../static/img/docs/fr/installation/freebox-delta/freeboxos.PNG)
+![FreeboxOs](../../../../../static/img/docs/fr/installation/freebox-delta/freeboxos.jpg)
 
 Cliquez sur "VMs". Cette fenêtre apparait :
 
-![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/add-vm.PNG)
+![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/add-vm.jpg)
 
 Choisissez un nom pour la VM, par exemple Gladys.
 
@@ -24,7 +24,7 @@ Sélectionnez l'option "Choisir un système d'exploitation pré-installé parmi 
 
 Cliquez sur "Suivant".
 
-![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/add-vm-2.PNG)
+![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/add-vm-2.jpg)
 
 Sélectionnez le système à installer, par exemple Debian ou Ubuntu.
 (Préférez Debian à Ubuntu pour une meilleure reconnaissance des ports USB de la Freebox)
@@ -35,13 +35,13 @@ Choisissez un nom d'utilisateur, par exemple `gladys`.
 
 Cliquez sur "Suivant".
 
-![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/add-vm-3.PNG)
+![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/add-vm-3.jpg)
 
 Cliquez sur "Terminer".
 
 La VM est prête, cliquez sur "Allumer" pour démarrer la VM.
 
-![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/start-vm.PNG)
+![Ajouter une VM](../../../../../static/img/docs/fr/installation/freebox-delta/start-vm.jpg)
 
 Accédez à votre VM en SSH et mettez à jour le système.
 
@@ -98,4 +98,4 @@ docker run -d \
 
 Vous pouvez accéder à Gladys en tapant l'IP de votre VM sur votre navigateur.
 
-![Accéder a la VM](../../../../../static/img/docs/fr/installation/freebox-delta/freebox-vm-success.PNG)
+![Accéder a la VM](../../../../../static/img/docs/fr/installation/freebox-delta/freebox-vm-success.jpg)
