@@ -4,9 +4,17 @@ title: Utiliser Google Home avec Gladys Assistant
 sidebar_label: Google Home
 ---
 
+Salut à tous !
+
+L'intégration Google Home est maintenant disponible pour tous 🥳
+
+Ce tutoriel vous expliquera comment configurer Google Home en quelques minutes sur votre instance Gladys.
+
+## Un petit mot avant de commencer
+
 L'intégration Google Home est une intégration particulière.
 
-Malheureusement, Google Home est un produit 100% Cloud, et Google demande à ce que ses partenaires soient eux aussi hébergés dans le Cloud.
+Google Home étant un produit 100% Cloud, Google demande à ce que ses partenaires soient eux aussi hébergés dans le Cloud.
 
 Ainsi, contrairement aux autres intégrations qui peuvent fonctionner entièrement localement, Google Home par nature ne peut fonctionner qu'en passant par une intégration approuvée par Google, et hébergée dans le cloud.
 
