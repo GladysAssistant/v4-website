@@ -3,14 +3,12 @@ import classnames from "classnames";
 import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
 import Image from "@theme/IdealImage";
-import mockup from "./mockup.png";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import cameraGladys4 from "./cameras-gladys-4.jpg";
 import dashboardGladys4 from "./dashboard-gladys-4.jpg";
 import calendarGladys4 from "./calendar-gladys-4.jpg";
 import sceneGladys4 from "./scene-gladys-4.jpg";
 import { Integration } from "./Integration";
-import Pricing from "./home/Pricing";
-import FAQ from "./home/FAQ";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import Features from "./home/features";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
@@ -74,11 +72,31 @@ function Home({ integrations, lang }) {
               </span>
             </div>
             <div className="col col--7">
-              <Image
+              <img
+                sizes="(max-width: 1400px) 100vw, 1400px"
+                srcset={`
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_200.png"
+                    )} 200w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_698.png"
+                    )} 698w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_1020.png"
+                    )} 1020w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_1251.png"
+                    )} 1251w,
+                    ${useBaseUrl(
+                      "/img/home/mockup/mockup_njwsve_c_scale,w_1400.png"
+                    )} 1400w
+               `}
+                src={useBaseUrl(
+                  "/img/home/mockup/mockup_njwsve_c_scale,w_1400.png"
+                )}
                 alt="Gladys Assistant Mockup"
                 className={styles.heroImg}
-                img={mockup}
-              />
+              ></img>
             </div>
           </div>
         </div>
