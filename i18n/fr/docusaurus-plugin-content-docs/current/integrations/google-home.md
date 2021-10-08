@@ -14,19 +14,19 @@ Ce tutoriel vous expliquera comment configurer Google Home en quelques minutes s
 
 L'intégration Google Home est une intégration particulière.
 
-Google Home étant un produit 100% Cloud, Google demande à ce que ses partenaires soient eux aussi hébergés dans le Cloud.
+Google Home étant un produit 100 % Cloud, Google demande à ce que ses partenaires soient eux aussi hébergés dans le Cloud.
 
 Ainsi, contrairement aux autres intégrations qui peuvent fonctionner entièrement localement, Google Home par nature ne peut fonctionner qu'en passant par une intégration approuvée par Google, et hébergée dans le cloud.
 
 Afin de permettre à la communauté Gladys d'utiliser Google Home avec Gladys, nous avons développé notre propre intégration Google Home, via [Gladys Plus](/fr/plus), notre passerelle web.
 
-Etre partenaire Google Home n'était pas une tâche facile, il nous a fallu:
+Être partenaire Google Home n'était pas une tâche facile, il nous a fallu :
 
 - Passer une certification pour être partenaire Google Home
-- Valider des tests automatisées
+- Valider des tests automatisés
 - Passer une revue manuelle avec un employé de chez Google
 
-Tout ce process, la maintenance et les coûts d'infrastructure demandée par cette intégration justifie la participation que nous demandons pour faire fonctionner cette intégration, et j'espère que vous comprendrez.
+Tout ce process, la maintenance et les coûts d'infrastructure demandée par cette intégration justifient la participation que nous demandons pour faire fonctionner cette intégration, et j'espère que vous comprendrez.
 
 ## Créer un compte Gladys Plus
 
@@ -42,7 +42,7 @@ Tu vas normalement recevoir un email qui t'expliquera comment configurer Gladys 
 
 Tu peux suivre les étapes dans le mail.
 
-Si tu veux, j'ai aussi fais un live où je montre comment configurer Gladys Plus:
+Si tu veux, j'ai aussi fait un live où je montre comment configurer Gladys Plus:
 
 <div class="videoContainer">
 <iframe  class="video" src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
