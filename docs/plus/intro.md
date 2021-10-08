@@ -21,3 +21,5 @@ We provide Gladys Plus, accessible at https://plus.gladysassistant.com, it's an 
 We provide an encrypted backup service, fully automated, so you can restore your instance at any time, anywhere.
 
 - **Outside world Open API**: Sometimes, we want to send API request to our home to send new sensors data, or Owntracks location data for example.
+
+- **Google Home integration**: Google Home is a very special integration, because Google Home works exclusively in the cloud (and we can't really change anything about that unfortunately). We are Google certified partner and offer a Google Home integration in Gladys Plus.

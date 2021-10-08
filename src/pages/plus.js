@@ -360,7 +360,7 @@ function Plus() {
                   id="gladysPlusPage.voiceAssistant"
                   description="Gladys Plus page title"
                 >
-                  Voice assistant (alpha)
+                  Voice assistant
                 </Translate>
               </h2>
               <p>
@@ -369,7 +369,8 @@ function Plus() {
                   description="Gladys Plus page title"
                 >
                   Send requests to any Gladys devices from Google Assistant by
-                  voice, or from your phone.
+                  voice, or from your phone. Alexa compatibility is work in
+                  progress!
                 </Translate>
               </p>
             </div>
@@ -405,7 +406,12 @@ function Plus() {
                         </Translate>
                       </h3>
                       <small className={styles.plusPricingTitleMonth}>
-                        /month
+                        <Translate
+                          id="gladysPlusPage.pricingPerMonth"
+                          description="Pricing per month"
+                        >
+                          /month
+                        </Translate>
                       </small>
                     </div>
                   </div>
