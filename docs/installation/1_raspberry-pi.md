@@ -1,21 +1,25 @@
 ---
 id: raspberry-pi
-title: Raspberry Pi
+title: Install Gladys Assistant on a Raspberry Pi
 sidebar_label: Raspberry Pi
 slug: /
 ---
 
+If you want to install Gladys Assistant on a Raspberry Pi that is already configured, use the [Docker](/docs/installation/docker) tutorial.
+
 ## Download Gladys Raspbian image
 
-We provide a pre-built Raspbian image with Gladys already configured: <a href="https://gladysassistant.com/download/latest" rel="nofollow">Download Gladys Assistant Raspberry Pi OS latest rev5</a>.
+We provide a pre-built Raspbian image with Gladys already configured:
 
-And unzip the downloaded zip file to get a `.img` file.
+<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow" >Click-here to download Gladys Assistant Raspberry Pi OS rev5</a>
+
+This link will download a `.zip` file containing the Raspberry Pi OS image of Gladys Assistant. After unzipping the downloaded file, you'll get a `.img` file.
 
 ## Clone the image on a SD card
 
 Then, you just have to clone this image on the SD card you want to use with you Raspberry Pi.
 
-I recommend the software [Etcher](https://etcher.io/) (Linux/MacOS/Windows compatible).
+I recommend the software [Etcher](https://www.balena.io/etcher/) (Linux/MacOS/Windows compatible).
 
 Install Etcher, plug your SD card into your computer, and clone the `.img` file on your SD card.
 

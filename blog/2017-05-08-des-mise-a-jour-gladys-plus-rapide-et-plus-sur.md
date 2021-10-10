@@ -105,7 +105,7 @@ Puis récupérez ce fichier en local sur votre machine (Soit en FTP avec [FileZi
 
 Ensuite, vous pouvez télécharger la nouvelle image Gladys sur la page d'installation.
 
-Ensuite, je vous conseille [Etcher](https://etcher.io/) pour cloner l'image sur votre carte SD ( fonctionne sous Linux/MacOS/Windows ).
+Ensuite, je vous conseille [Etcher](https://www.balena.io/etcher/) pour cloner l'image sur votre carte SD ( fonctionne sous Linux/MacOS/Windows ).
 
 Clonez l'image sur votre carte SD.
 
