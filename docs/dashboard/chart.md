@@ -6,7 +6,7 @@ sidebar_label: Chart
 
 Since Gladys Assistant v4.6, you can display a sensor chart on Gladys dashboard.
 
-![Chart on Gladys Assistant dashboard](../../static/img/docs/en/dashboard/chart/demo.jpg)
+![Chart on Gladys Assistant dashboard](../../static/img/docs/en/dashboard/chart/chart-dashboard.jpg)
 
 ## Prerequisites
 
@@ -30,3 +30,29 @@ Select the device you want to display here, and configure your chart:
 ![Configure chart](../../static/img/docs/en/dashboard/chart/configure-chart.jpg)
 
 Save, and you're done!
+
+### Verify that the backgroung aggregation is working
+
+To be able to display charts very fast, Gladys is running some aggregation tasks every hour to pre-process sensors data.
+
+For example, if you want to display the last 6 months of a temperature sensor that sends data to Gladys every 30 seconds:
+
+- It means the sensor send 2 x 60 x 24 = 2 880 values per day
+- that's 2 880 x 30 = 86 400 values per month
+- that's 86 400 x 6 = 518k values for 6 months
+
+In the UI, Gladys will only need 100 values to display the chart, so we need to downsample the 518k values to 100 values.
+
+As we want the Gladys UI to be snappy, we can't process all that in live, we need to pre-process sensors data in the background so it's super fast to query the dataset.
+
+Our goal is less than 100ms for any request.
+
+Gladys is processing 3 types of aggregation:
+
+- hourly data
+- daily data
+- monthly data
+
+If you want to verify that the background tasks are working properly, you can check in "Settings" => "Background tasks":
+
+![Background tasks](../../static/img/docs/en/dashboard/chart/background-tasks.jpg)
