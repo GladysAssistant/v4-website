@@ -19,25 +19,25 @@ Aujourd'hui je suis heureux de sortir Gladys Assistant v4.7, une nouvelle versio
 
 Il est maintenant possible d'afficher des graphiques de valeurs de capteurs sur le tableau de bord, afin de pouvoir suivre l'évolution d'un capteur dans le temps.
 
-Cette fonctionnalité fonctionne sans aucune configuration, et sans avoir à connecter une base de donnée externe type InfluxDB. Nous avons fait le choix de faire le développement en interne, afin que ce soit simple à utiliser, super performant, et évolutif.
+Cette fonctionnalité fonctionne sans aucune configuration, et sans avoir à connecter une base de données externe type InfluxDB. Nous avons fa it le choix de faire le développement en interne, afin que ce soit simple à utiliser, super performant, et évolutif.
 
 ![Affichage graphique Gladys Assistant](../../../static/img/articles/fr/gladys-4-7/chart-dashboard.jpg)
 
-Pour afficher cette vue graphique rapidement quel que soit l'intervalle demandé, Gladys calcule en arrière-plan des données "aggrégées" toutes les heures, avec 3 niveaux de granularités :
+Pour afficher cette vue graphique rapidement quel que soit l'intervalle demandé, Gladys calcule en arrière-plan des données "agrégées" toutes les heures, avec 3 niveaux de granularités :
 
-- **Aggrégation horaire :** Gladys garde 100 valeurs par capteur et par heure.
-- **Aggrégation journalière :** Gladys garde 100 valeurs par capteur et par jour.
-- **Aggrégation mensuelle :** Gladys garde 100 valeurs par capteur et par mois.
+- **Agrégation horaire :** Gladys garde 100 valeurs par capteur et par heure.
+- **Agrégation journalière :** Gladys garde 100 valeurs par capteur et par jour.
+- **Agrégation mensuelle :** Gladys garde 100 valeurs par capteur et par mois.
 
-Lorsque vous affichez un graphique sur le tableau de bord, Gladys va ainsi choisir le niveau d'aggrégation le plus adaptée, afin que l'affichage soit hyper rapide.
+Lorsque vous affichez un graphique sur le tableau de bord, Gladys va ainsi choisir le niveau d'agrégation le plus adapté, afin que l'affichage soit hyper rapide.
 
-Notre objectif est de maintenir le temps de réponse en dessous de 100ms, quel que soit l'intervalle sélectionné.
+Notre objectif est de maintenir le temps de réponse en dessous de 100 ms, quel que soit l'intervalle sélectionné.
 
 Pour en savoir plus, rendez-vous dans [la documentation](/fr/docs/dashboard/chart).
 
 ### Compatibilité Zigbee2mqtt complète
 
-Lorque nous avons sorti la compatibilité Zigbee2mqtt en début d'année, nous avons pris une approche prudente : chaque appareil Zigbee2mqtt devait être manuellement intégré par un développeur Gladys avant de pouvoir être utilisé.
+Lorsque nous avons sorti la compatibilité Zigbee2mqtt en début d'année, nous avons pris une approche prudente : chaque appareil Zigbee2mqtt devait être manuellement intégré par un développeur Gladys avant de pouvoir être utilisé.
 
 Cette approche nous a permis pendant les premiers mois de bien comprendre l'usage et d'intégrer proprement chaque nouveau type d'appareil.
 
@@ -55,7 +55,7 @@ Certains utilisateurs branchent une lampe (chevet, bureau, salon) sur une prise 
 
 Par exemple, ils veulent pouvoir dire "Allume la lumière du salon" et que cette action allume la prise.
 
-Il est désormais possible de re-catégoriser ces prises dans l'intégration Tasmota, afin qu'une prise soit considéré comme lampe par Gladys.
+Il est désormais possible de re-catégoriser ces prises dans l'intégration Tasmota, afin qu'une prise soit considérée comme lampe par Gladys.
 
 ### Ajout d'une nouvelle catégorie "Température de l'appareil"
 
@@ -70,7 +70,7 @@ Fonctionnalitées développée ici: [#1327](https://github.com/GladysAssistant/G
 ### De nombreuses améliorations/corrections de bugs
 
 - Dans l'intégration MQTT, Gladys affiche un message si le broker MQTT est connecté ou pas ([#1349](https://github.com/GladysAssistant/Gladys/commit/a5c95dcfbfc84b8ddde141a4e3680cae9fb659ce))
-- Dans l'intégration Caldav, correction d'un bug sur la date des évènements récurrents ([#1367](https://github.com/GladysAssistant/Gladys/commit/b6ab1c06e94f804c6077da7b99e5e258ef0cf475))
+- Dans l'intégration Caldav, correction d'un bug sur la date des événements récurrents ([#1367](https://github.com/GladysAssistant/Gladys/commit/b6ab1c06e94f804c6077da7b99e5e258ef0cf475))
 - Dans l'intégration Telegram, la température est désormais envoyée au bon format ([#1363](https://github.com/GladysAssistant/Gladys/commit/bcbb1234b1590fb14a2af5eef87065c966297287))
 - Dans la vue scène, correction d'un bug qui empêchait l'utilisateur de sauvegarder une scène ([#1318](https://github.com/GladysAssistant/Gladys/commit/7ed2d520b8b5b6c03b539311903425393797aaa1))
 - De nombreuses améliorations & corrections dans l'intégration EWelink ([#1044](https://github.com/GladysAssistant/Gladys/commit/a755d55f2ebb70983111343018b3fd9a1590933b))
