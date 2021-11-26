@@ -64,6 +64,7 @@ module.exports = {
         "dashboard/temperature-in-room",
         "dashboard/camera",
         "dashboard/devices-in-room",
+        "dashboard/chart",
       ],
     },
     {
