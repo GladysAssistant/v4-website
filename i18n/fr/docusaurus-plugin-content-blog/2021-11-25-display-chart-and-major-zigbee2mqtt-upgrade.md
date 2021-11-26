@@ -19,7 +19,7 @@ Aujourd'hui je suis heureux de sortir Gladys Assistant v4.7, une nouvelle versio
 
 Il est maintenant possible d'afficher des graphiques de valeurs de capteurs sur le tableau de bord, afin de pouvoir suivre l'évolution d'un capteur dans le temps.
 
-Cette fonctionnalité fonctionne sans aucune configuration, et sans avoir à connecter une base de données externe type InfluxDB. Nous avons fa it le choix de faire le développement en interne, afin que ce soit simple à utiliser, super performant, et évolutif.
+Cette fonctionnalité ne nécessite aucune configuration, et fonctionne sans avoir à connecter une base de données externe type InfluxDB. Nous avons fait le choix de faire le développement en interne, afin que ce soit simple à utiliser, super performant, et évolutif.
 
 ![Affichage graphique Gladys Assistant](../../../static/img/articles/fr/gladys-4-7/chart-dashboard.jpg)
 

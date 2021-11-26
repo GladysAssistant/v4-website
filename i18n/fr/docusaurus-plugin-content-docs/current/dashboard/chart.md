@@ -24,7 +24,7 @@ Sélectionnez l'appareil que vous voulez afficher, puis configurer le reste de l
 
 - Nom: Sera affiché en haut de la box sur le dashboard
 - Type de graphique: Il est possible d'afficher plusieurs types de graphique dans Gladys (Ligne, Histogramme, Aire, Ligne droite)
-- Afficher les axes: Nous proposons deux types d'affichages, un affichage plus design sans les axes et un avec les axes.
+- Afficher les axes: Nous proposons deux types d'affichage, un affichage plus design sans les axes et un avec les axes.
 - Afficher la variation: Si sélectionné, le graphique affichera la variation relative entre la première et la dernière valeur sur l'interval sélectionné.
 
 ![Configurer le graphique](../../../../../static/img/docs/fr/dashboard/chart/configure-chart.jpg)
@@ -41,11 +41,11 @@ Par exemple, si jamais vous voulez afficher les 6 derniers mois de votre capteur
 - soit 2 880 x 30 = 86 400 valeurs par mois
 - soit 86 400 x 6 = 518k valeurs de capteurs pour 6 mois
 
-Lors de l'affichage de la courbe sur le tableau de bord, Gladys n'a besoin que d'une centaine de points (afficher plus n'a aucun sens), il faut donc faire de l'échantillonage sur ce set de donnée.
+Lors de l'affichage de la courbe sur le tableau de bord, Gladys n'a besoin que d'une centaine de points (afficher plus n'a aucun sens), il faut donc faire de l'échantillonage sur cet ensemble de données.
 
 Cependant, si Gladys devait faire cet échantillonage en direct, ce serait trop long, et l'interface de Gladys serait lente.
 
-Gladys pre-calcule donc des valeurs agrégée par heure, jour et mois afin de simplifier les requêtes.
+Gladys pre-calcule donc des valeurs agrégées par heure, jour et mois afin de simplifier les requêtes.
 
 Vous pouvez vérifier dans les paramètres que ces tâches en arrière-plan fonctionnent bien en allant dans l'onglet "Tâches en arrière-plan" dans les paramètres :
 
