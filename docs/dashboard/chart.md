@@ -31,6 +31,20 @@ Select the device you want to display here, and configure your chart:
 
 Save, and you're done!
 
+## A few examples
+
+A simple example of a device sending its energy consumption, displayed as "bar" chart, with axes and with the variation displayed:
+
+![Energy consumption display with bar chart](../../static/img/docs/en/dashboard/chart/bar.jpg)
+
+The same device can be displayed with a "area" chart, without axes for a more design view:
+
+![Energy consumption display with area chart without axes](../../static/img/docs/en/dashboard/chart/area-without-axes.jpg)
+
+Or same "area" chart, with axes, less design but easier to read:
+
+![Energy consumption display with bar chart with axes](../../static/img/docs/en/dashboard/chart/area-with-axes.jpg)
+
 ### Verify that the backgroung aggregation is working
 
 To be able to display charts very fast, Gladys is running some aggregation tasks every hour to pre-process sensors data.
