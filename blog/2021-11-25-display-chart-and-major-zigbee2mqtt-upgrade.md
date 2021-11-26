@@ -43,11 +43,13 @@ Each device needed to be classified manually by a developer before being able to
 
 This approach was safer to start, because it allowed us to better integrate each device, understand a wide range of Zigbee peripherals and adapt Gladys for those devices.
 
-But after some time, it became very painful to write one PR for each new Zigbee device (there are thousands of them 😅), so we took another approach:
+But after some time, it became very repetitive to write one PR for each new Zigbee device, so we took another approach:
 
 Auto-detecting each device!
 
 Thanks to Alexandre Trovato [#1302 Pull Request](https://github.com/GladysAssistant/Gladys/pull/1302), we are now able to parse the data sent by Zigbee2mqtt to automatically map those devices to Gladys capabilities.
+
+It means that all Zigbee2mqtt compatible devices are now compatible with Gladys, natively!
 
 ### In Tasmota integration, be able to change a switch to a light
 
