@@ -31,6 +31,22 @@ Sélectionnez l'appareil que vous voulez afficher, puis configurer le reste de l
 
 Enregistrez, et hop c'est bon !
 
+## Quelques exemples de graphiques
+
+Imaginons que vous vouliez afficher la consommation énergetique d'un de vos appareils, le graphique "histogramme" est assez adapté pour ça :
+
+![Affichage histogramme](../../../../../static/img/docs/fr/dashboard/chart/bar.jpg)
+
+Vous pouvez aussi afficher ça sous la forme d'une courbe "aire", sans les axes pour affichage plus design :
+
+![Configurer le graphique](../../../../../static/img/docs/fr/dashboard/chart/area-without-axes.jpg)
+
+Ou avec les axes pour plus de lisibilité :
+
+![Configurer le graphique](../../../../../static/img/docs/fr/dashboard/chart/area-with-axes.jpg)
+
+Les possibilités sont infinies !
+
 ## Vérifier que l'agrégation fonctionne bien
 
 Toutes les heures, Gladys va calculer des valeurs "agrégées" pour tous les appareils de votre installation, afin de permettre à l'affichage d'être très rapide.
