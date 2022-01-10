@@ -10,6 +10,12 @@ Vous pourrez ainsi connecter tout type d'appareils Zigbee en direct, et vous aff
 
 Nous utilions pour cela l'excellent projet opens-source [Zigbee2Mqtt](https://www.zigbee2mqtt.io/).
 
+Si vous préférez en vidéo, j'ai filmé ce tutoriel sur Youtube pour vous montrer comment faire concrètement :
+
+<div class="videoContainer">
+<iframe  class="video" src="https://www.youtube.com/embed/ALW3uDB9P0s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
 ## Le matériel nécessaire
 
 Pour commencer, vous aurez besoin d'un dongle USB Zigbee.
