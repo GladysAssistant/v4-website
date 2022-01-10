@@ -1,16 +1,34 @@
 ---
 id: zigbee2mqtt
-title: Zigbee2Mqtt
+title: Gérez ses appareils Zigbee dans sa domotique avec une clé USB Zigbee et Zigbee2mqtt
 sidebar_label: Zigbee2Mqtt
 ---
 
-Grâce au projet [Zigbee2Mqtt](https://www.zigbee2mqtt.io/), il est possible d'intégrer facilement la plupart des périphériques utilisant le protocole Zigbee. Vous pouvez d'ailleurs consulter la liste des appareils compatibles [ici](https://www.zigbee2mqtt.io/information/supported_devices.html).
+Dans ce tutoriel, nous allons vous expliquer comment intégrer vos appareils Zigbee dans Gladys via une clé USB Zigbee.
 
-Avant de commencer, vérifiez que vous avez bien connecté un adaptateur USB Zigbee comme le CC2652R ou le CC2652RB.
+Vous pourrez ainsi connecter tout type d'appareils Zigbee en direct, et vous affranchir des bridges Zigbee souvent fourni par les constructeurs (Bridge Philips Hue, Hub Xiaomi).
 
-Rendez-vous dans `Intégrations / Zigbee2Mqtt` dans Gladys.  
+Nous utilions pour cela l'excellent projet opens-source [Zigbee2Mqtt](https://www.zigbee2mqtt.io/).
+
+## Le matériel nécessaire
+
+Pour commencer, vous aurez besoin d'un dongle USB Zigbee.
+
+![Sonoff Zigbee 3.0 USB dongle plus](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
+
+Nous avons testé par exemple le Sonoff Zigbee 3.0 USB Dongle Plus, qui fonctionne très bien avec Gladys et Zigbee2mqtt. Dans mon cas je l'ai acheté pour 11.99€ [chez Domadoo](https://www.domadoo.fr/fr/interface-domotique/5976-sonoff-cle-usb-zigbee-30-antenne-externe-20dbm-compatible-zha-zigbee2mqtt.html), mais il est aussi trouvable un peu plus cher à 26,99€ sur [Amazon](https://amzn.to/3FpIlcZ).
+
+Le gros avantage de ce dongle est qu'il est déjà flashé, par conséquent il est prêt à l'emploi, il n'y a rien à faire.
+
+Vous pouvez consulter la liste des adapteurs Zigbee supportés [ici](https://www.zigbee2mqtt.io/guide/adapters/#recommended).
+
+Vous pouvez consulter la liste des appareils Zigbee compatibles [ici](https://www.zigbee2mqtt.io/supported-devices/).
 
 ## Configurez le port du dongle USB
+
+Connectez votre dongle USB Zigbee à votre machine faisant tourner Gladys (Raspberry Pi, NAS).
+
+Dans Gladys, Rendez-vous dans `Intégrations / Zigbee2Mqtt`.
 
 En cliquant dans le menu sur `Paramètres`, Gladys va automatiquement scanner les différents ports USB pour vous proposer une liste déroulante. Indiquez dans le paramètrage le port USB à utiliser pour permettre à Gladys de communqiuer en Zigbee.
 
