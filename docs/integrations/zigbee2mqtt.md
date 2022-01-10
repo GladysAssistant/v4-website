@@ -1,18 +1,30 @@
 ---
 id: zigbee2mqtt
-title: Zigbee2Mqtt
+title: Connect Zigbee devices with an USB Zigbee dongle and Zigbee2mqtt
 sidebar_label: Zigbee2Mqtt
 ---
 
-Thanks to the [Zigbee2Mqtt](https://www.zigbee2mqtt.io/) project, it is possible to easily integrate most of the devices using the Zigbee protocol. You can check the list of compatible devices [here](https://www.zigbee2mqtt.io/information/supported_devices.html).
+In this tutorial we'll show you how to connect your Zigbee devices directly to Gladys, without needing any third-party bridges, just by using an USB Zigbee dongle and [Zigbee2Mqtt](https://www.zigbee2mqtt.io/) project.
 
-Before you start, make sure you have connected a USB Zigbee adapter like the CC2652R or CC2652RB.
+You can check the list of compatible devices [here](https://www.zigbee2mqtt.io/supported-devices/).
 
-Go to `Integrations / Zigbee2Mqtt` in Gladys.  
+Before you start, make sure you have a USB Zigbee adapter.
+
+An easy & affordable USB dongle we tested with Gladys is the [Sonoff Zigbee 3.0 USB dongle](https://amzn.to/3JZwzJy).
+
+The full list of compatible adapters can be found on [Zigbee2mqtt supported adapters list](https://www.zigbee2mqtt.io/guide/adapters/).
 
 ## Configure the USB dongle port
 
-By clicking on `Settings` in the menu, Gladys will automatically scan the different USB ports to propose a drop-down list. Indicate in the settings the USB port to use to allow Gladys to communicate in Zigbee.
+Connect your Zigbee USB dongle to your machine running Gladys (your Raspberry Pi, your NAS).
+
+![Sonoff USB Zigbee 3.0](../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
+
+In Gladys, go to `Integrations / Zigbee2Mqtt`.
+
+Then, click on `Settings` in the menu. Gladys will automatically scan the different USB ports to propose a drop-down list.
+
+Indicate in the settings the USB port to use to allow Gladys to communicate in Zigbee.
 
 ![USB dongle settings](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
