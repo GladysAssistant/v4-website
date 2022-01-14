@@ -95,13 +95,13 @@ function Integration({
 function IntegrationPage({ integrations, lang }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [checkedTags, setCheckedTags] = React.useState({
+    zigbee2mqtt: true,
     "philips-hue": true,
-    zwave: true,
     camera: true,
     sonoff: true,
     xiaomi: true,
     "tp-link": true,
-    zigbee2mqtt: true,
+    zwave: true,
   });
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
@@ -165,7 +165,24 @@ function IntegrationPage({ integrations, lang }) {
               Technologies
             </Translate>
           </h3>
+
           <div className={classnames(styles.filterBlock)}>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="zigbee2mqtt"
+                checked={checkedTags["zigbee2mqtt"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="zigbee2mqtt">
+                <Translate
+                  id="integrations.zigbee2mqtt"
+                  description="Integration zigbee2mqtt title"
+                >
+                  Zigbee2Mqtt
+                </Translate>
+              </label>
+            </div>
             <div className={classnames(styles.integrationFilterCheckbox)}>
               <input
                 type="checkbox"
@@ -179,22 +196,6 @@ function IntegrationPage({ integrations, lang }) {
                   description="Integration philips hue title"
                 >
                   Philips Hue
-                </Translate>
-              </label>
-            </div>
-            <div className={classnames(styles.integrationFilterCheckbox)}>
-              <input
-                type="checkbox"
-                name="zwave"
-                checked={checkedTags["zwave"]}
-                onChange={handleCheckedChange}
-              />
-              <label for="zwave">
-                <Translate
-                  id="integrations.zwave"
-                  description="Integration zwave title"
-                >
-                  Z-Wave
                 </Translate>
               </label>
             </div>
@@ -262,19 +263,20 @@ function IntegrationPage({ integrations, lang }) {
                 </Translate>
               </label>
             </div>
+
             <div className={classnames(styles.integrationFilterCheckbox)}>
               <input
                 type="checkbox"
-                name="zigbee2mqtt"
-                checked={checkedTags["zigbee2mqtt"]}
+                name="zwave"
+                checked={checkedTags["zwave"]}
                 onChange={handleCheckedChange}
               />
-              <label for="zigbee2mqtt">
+              <label for="zwave">
                 <Translate
-                  id="integrations.zigbee2mqtt"
-                  description="Integration zigbee2mqtt title"
+                  id="integrations.zwave"
+                  description="Integration zwave title"
                 >
-                  Zigbee2Mqtt
+                  Z-Wave
                 </Translate>
               </label>
             </div>
