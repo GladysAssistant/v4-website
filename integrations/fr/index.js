@@ -6,12 +6,12 @@ import camera from "./camera.json";
 import tpLink from "./tp-link.json";
 import zigbee2mqtt from "./zigbee2mqtt.json";
 
-const integrations = camera
+const integrations = zigbee2mqtt
   .concat(sonoff)
-  .concat(zwave)
   .concat(xiaomi)
   .concat(philipsHue)
   .concat(tpLink)
-  .concat(zigbee2mqtt);
+  .concat(camera)
+  .concat(zwave);
 
 export default integrations;

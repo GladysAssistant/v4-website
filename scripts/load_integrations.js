@@ -80,6 +80,12 @@ const parseAndFormatRecords = (records, lang) => {
       amazonUrl.searchParams.set("tag", "gladproj-21");
       newItem.buyLink = amazonUrl.toString();
     }
+    // Domadoo link
+    if (newItem.buyLink && newItem.buyLink.indexOf("domadoo.fr") !== -1) {
+      var domadooUrl = new URL(newItem.buyLink);
+      domadooUrl.searchParams.set("domid", "17");
+      newItem.buyLink = domadooUrl.toString();
+    }
     const { value, error } = schema.validate(newItem);
     if (error) {
       console.log(error);
