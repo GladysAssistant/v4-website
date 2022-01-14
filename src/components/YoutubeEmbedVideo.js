@@ -1,12 +1,17 @@
 import React from "react";
 import styles from "./styles.module.css";
+import cx from "classnames";
 
-function YoutubeEmbedVideo({ id }) {
+function YoutubeEmbedVideo({ id, disablePadding }) {
   const [videoOpened, setVideoOpened] = React.useState(false);
 
   if (!videoOpened) {
     return (
-      <div class={styles.videoContainer}>
+      <div
+        class={cx(styles.videoContainer, {
+          videoContainerPadding: !disablePadding,
+        })}
+      >
         <div class={styles.imgContainer}>
           <img
             src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`}

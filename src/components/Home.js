@@ -167,6 +167,56 @@ function Home({ integrations, lang }) {
             </div>
           </div>
         </div>
+        {lang === "fr" && (
+          <div
+            style={{ paddingTop: "0rem", paddingBottom: "2rem" }}
+            className="hero shadow--lw"
+          >
+            <div className="container">
+              <div className="row">
+                <div className="col col--12">
+                  <h2 className="text--center">
+                    <Translate
+                      id="home.videos.title"
+                      description="Youtube videos title of the homepage"
+                    >
+                      Our latest YouTube videos
+                    </Translate>
+                  </h2>
+                  <p className="text--center">
+                    <Translate
+                      id="home.videos.description"
+                      description="Youtube videos description of the homepage"
+                    >
+                      We are active on our YouTube channel, if you like our
+                      content, you can subscribe!
+                    </Translate>
+                  </p>
+                  <div className="row">
+                    <div className="col col--4">
+                      <YoutubeEmbedVideo id="ALW3uDB9P0s" />
+                      <h4 className={styles.homeYouTubeVideoTitle}>
+                        Gérez vos appareils Zigbee dans votre domotique
+                      </h4>
+                    </div>
+                    <div className="col col--4">
+                      <YoutubeEmbedVideo id="t6mVCZ5Y9SU" />
+                      <h4 className={styles.homeYouTubeVideoTitle}>
+                        Présentation technique de Gladys Assistant 4
+                      </h4>
+                    </div>
+                    <div className="col col--4">
+                      <YoutubeEmbedVideo id="bpmHzR8_S5g" disablePadding />
+                      <h4 className={styles.homeYouTubeVideoTitle}>
+                        Intégrer Node-RED avec Gladys Assistant en MQTT
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
