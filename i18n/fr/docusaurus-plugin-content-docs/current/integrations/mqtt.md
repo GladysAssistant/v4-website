@@ -1,4 +1,4 @@
----
+﻿---
 id: mqtt
 title: MQTT
 sidebar_label: MQTT
@@ -82,7 +82,7 @@ Vous pouvez ensuite remplir le formulaire avec les informations suivantes:
 - Valeur minimum: -50 (Disons que votre capteur de température va jusqu'à -50°C)
 - Valeur maximum: 200 (Disons que votre capteur de température monte haut!)
 - Est-ce un capteur?: Cette case sert à indiquer si votre périphérique fonctionne dans le sens "Périphérique -> Gladys" ou "Gladys -> Périphérique". Si vous mettez "Oui", alors ce périphérique est en "lecture seule", il ne fait que renvoyer des valeurs à Gladys. C'est le cas de notre capteur de température. Si vous mettez "non", ce périphérique est un actionneur qui peut être controlé par Gladys.
-- Topic MQTT: C'est le topic dans lequel Gladys va "écouter" les nouvelles valeurs pour ce périphérique. Je vous conseille de le copier/coller quelque par pour plus tard.
+- Topic MQTT: C'est le topic dans lequel Gladys va "écouter" les nouvelles valeurs pour ce périphérique. Je vous conseille de le copier/coller quelque par pour plus tard. Attention, si vous décochez l'option "Est-ce un capteur", deux Topics sont fonctionnels. Le premier permet au capteur de publier son état (comme si c'était un capteur) et le deuxième commander la balise par un message MQTT généré par Gladys via son API.
 
 ![Déclarer un péripérique MQTT dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/mqtt/create-mqtt-device-3.jpg)
 

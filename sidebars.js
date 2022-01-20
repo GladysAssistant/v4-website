@@ -72,6 +72,11 @@ module.exports = {
       label: "API",
       items: ["api/data-model", "api/rest-api", "api/mqtt-api"],
     },
+	{
+      type: "category",
+      label: "Discussion",
+      items: ["Discussion/intro"],
+    },
     {
       type: "category",
       label: "Development",

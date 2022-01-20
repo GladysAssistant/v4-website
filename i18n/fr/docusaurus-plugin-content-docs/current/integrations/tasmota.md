@@ -1,4 +1,4 @@
----
+﻿---
 id: tasmota
 title: Tasmota
 sidebar_label: Tasmota
@@ -38,6 +38,8 @@ Puis remplissez le formulaire avec vos informations :
 - `Port` : le port du broker
 - `User` : l'identifiant pour se connecter au broker
 - `Password` : le mot de passe pour se connecter au broker
+- `Topic` : le Topic sur lequel vous allez communiquer avec Gladys. Attention, l'usage d'un sous-niveau de Topic par une barre oblique (/) est interdit car Gladys découvre les appareils Tasmota uniquement sur le niveau de Topic 1
+- `Topic Complet` : Ne rien renseigner
 
 ![Tasmota MQTT](../../../../../static/img/docs/fr/configuration/tasmota/tamosta-mqtt.png)
 
