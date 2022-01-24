@@ -74,8 +74,8 @@ module.exports = {
     },
 	{
       type: "category",
-      label: "Discussion",
-      items: ["Discussion/intro"],
+      label: "Chat",
+      items: ["chat/intro"],
     },
     {
       type: "category",
