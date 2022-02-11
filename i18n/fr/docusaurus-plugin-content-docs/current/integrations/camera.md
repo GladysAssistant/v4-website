@@ -26,7 +26,7 @@ Il propose même un générateur d'URL en fonction de la marque, le modèle de v
 
 Exemple avec une caméra Xiaomi :
 
-![Générateur flux RTSP iSpyConnect](../../../../../static/img/docs/fr/configuration/camera/camera-ispy.png)
+![Générateur flux RTSP iSpyConnect](../../../../../static/img/docs/fr/configuration/camera/camera-ispy.jpg)
 
 Si vous ne trouvez rien sur ce site, une recherche Google peut vous aider, en cherchant "NOM DE LA CAMERA + RTSP", vous trouverez votre bonheur si la caméra expose un flux.
 
@@ -38,15 +38,15 @@ Il est possible de tester la connexion à votre caméra à l'aide de l'excellent
 
 Pour cela, ouvrez VLC et cliquez sur "Fichier" -> "Ouvrir un flux réseau"
 
-![VLC ouvrir un flux réseau](../../../../../static/img/docs/fr/configuration/camera/camera-vlc-step-1.png)
+![VLC ouvrir un flux réseau](../../../../../static/img/docs/fr/configuration/camera/camera-vlc-step-1.jpg)
 
 Ensuite, entrez l'URL de votre flux RTSP ou HTTP.
 
-![VLC ouvrir un flux réseau](../../../../../static/img/docs/fr/configuration/camera/camera-vlc-step-2.png)
+![VLC ouvrir un flux réseau](../../../../../static/img/docs/fr/configuration/camera/camera-vlc-step-2.jpg)
 
 C'est bon ! Si les informations de connexion sont bonnes, vous devriez voir votre caméra :
 
-![VLC ouvrir un flux réseau](../../../../../static/img/docs/fr/configuration/camera/camera-vlc-step-3.png)
+![VLC ouvrir un flux réseau](../../../../../static/img/docs/fr/configuration/camera/camera-vlc-step-3.jpg)
 
 ## Ajoutez votre caméra à Gladys Assistant
 
@@ -54,15 +54,15 @@ Une fois que vous avez votre URL de flux vidéo qui fonctionne dans VLC, vous po
 
 Allez dans l'onglet "Intégrations" dans Gladys Assistant, puis cliquez sur l'intégration "Caméras" :
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-1.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-1.jpg)
 
 Cliquez sur le bouton pour créer une nouvelle caméra
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-2.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-2.jpg)
 
 Remplissez les informations de connexion à votre caméra
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-3.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-3.jpg)
 
 Vous pouvez tester la connexion afin de vérifier que le flux est bien accessible de Gladys Assistant. Si Gladys n'a pas accès à la caméra, êtes-vous sûr que votre ordinateur faisant tourner Gladys est bien sur le même réseau que la caméra ? Que la caméra est bien accessible ? Que les identifiants sont bons ?
 
@@ -70,25 +70,25 @@ Vous pouvez tester la connexion afin de vérifier que le flux est bien accessibl
 
 Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-4.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-4.jpg)
 
 ## Ajoutez la caméra au dashboard de Gladys Assistant
 
 Rendez-vous sur le dasboard de Gladys et cliquez sur le bouton pour modifier le dashboard
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-5.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-5.jpg)
 
 Cliquez sur "+" là où vous voulez ajouter votre box, et sélectionnez la box "Caméra"
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-6.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-6.jpg)
 
 Sélectionnez votre caméra, donnez un nom à la box, et cliquez sur "Enregistrer"
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-7.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-7.jpg)
 
 Voilà ! Votre caméra est visible.
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-8.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-8.jpg)
 
 ## Envoyez un message à Gladys Assistant pour voir une image de caméra
 
@@ -96,7 +96,7 @@ Rendez-vous dans l'onglet message, et demandez à Gladys "Montre moi la caméra 
 
 Et, magie :
 
-![Demander une image de caméra à Gladys](../../../../../static/img/docs/fr/configuration/camera/chat-camera-fr.png)
+![Demander une image de caméra à Gladys](../../../../../static/img/docs/fr/configuration/camera/chat-camera-fr.jpg)
 
 Cela fonctionne aussi par Telegram si vous avez configuré l'intégration :)
 
@@ -108,11 +108,11 @@ La procédure est la même pour l'intégrer à Gladys Assistant :
 
 Allez dans l'onglet "Intégrations" dans Gladys Assistant, puis cliquez sur l'intégration "Caméras" :
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-1.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-1.jpg)
 
 Cliquez sur le bouton pour créer une nouvelle caméra
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-2.png)
+![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-2.jpg)
 
 Remplissez les informations de connexion à votre caméra en saisissant, dans la zone Flux RTSP/HTTP de la caméra, l'adresse du port USB sur lequel est connecté la webcam : /dev/video0
 
