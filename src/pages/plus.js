@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import Layout from "@theme/Layout";
 import cx from "classnames";
+
+import { useColorMode } from "@docusaurus/theme-common";
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import useThemeContext from "@theme/hooks/useThemeContext";
+
 import Translate from "@docusaurus/Translate";
 import FAQ from "../components/home/FAQ";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
 
 import styles from "./styles.module.css";
@@ -45,7 +48,7 @@ function validateEmail(email) {
 
 function Plus() {
   const context = useDocusaurusContext();
-  const { isDarkTheme } = useThemeContext();
+  const { isDarkTheme } = useColorMode();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(STATUS.INITIAL);
   const { i18n } = context;
