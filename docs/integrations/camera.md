@@ -26,7 +26,7 @@ There is a even a built-in URL generator.
 
 For example, this is for a Xiaomi camera:
 
-![RTSP camera URL generator iSpyConnect](../../static/img/docs/en/configuration/camera/camera-ispy.png)
+![RTSP camera URL generator iSpyConnect](../../static/img/docs/en/configuration/camera/camera-ispy.jpg)
 
 If you don't find anything on this website either, I suggest you to Google "your camera name + RTSP" to see if there is an open stream available.
 
@@ -36,15 +36,15 @@ It's possible to try connecting to the stream thanks to the great [VLC](https://
 
 Open VLC and click on "File" -> "Open a Network..."
 
-![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-1.png)
+![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-1.jpg)
 
 Then, enter the URL of your RTSP or HTTP stream
 
-![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-2.png)
+![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-2.jpg)
 
 Done! If the URL is correct, you should see your camera stream in VLC.
 
-![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-3.png)
+![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-3.jpg)
 
 ## Connecting your RTSP camera to Gladys Assistant
 
@@ -52,39 +52,39 @@ As soon as your camera works in VLC, it should work in Gladys Assistant as well.
 
 Go to the "Integrations" tab in Gladys, then click on the "Camera" integration:
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-1.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-1.jpg)
 
 Click on "New"
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-2.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-2.jpg)
 
 Fill the form
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-3.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-3.jpg)
 
 You can then try the stream by clicking on "Test connection". If it doesn't work, are you sure that your Gladys hardware is on the same network as your camera? Are credentials correct?
 
 Then, you can click on "Save".
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-4.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-4.jpg)
 
 ## Add your camera to Gladys Assistant dashboard
 
 Visit Gladys dashboard and click on "Edit"
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-5.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-5.jpg)
 
 Click on "+", then choose the camera box
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-6.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-6.jpg)
 
 Select your camera, then click on "Save"
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-7.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-7.jpg)
 
 Voilà ! Your camera should be visible
 
-![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-8.png)
+![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-8.jpg)
 
 ## Send a message to Gladys Assistant to see a camera image
 
@@ -92,6 +92,6 @@ Go to the "Chat" tab, and ask Gladys "Show me the camera in the XXXX" (where XXX
 
 And... magic!
 
-![Ask for a camera image in Gladys Assistant](../../static/img/docs/en/configuration/camera/chat-camera-en.png)
+![Ask for a camera image in Gladys Assistant](../../static/img/docs/en/configuration/camera/chat-camera-en.jpg)
 
 It should work in Telegram as well if you configured Telegram in Gladys.
