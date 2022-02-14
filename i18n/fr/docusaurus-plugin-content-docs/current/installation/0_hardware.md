@@ -17,19 +17,19 @@ Néanmoins, une grande partie de la communauté fait tourner Gladys sur un Raspb
 
 ## Commencer pour moins de 100€
 
-- Un Raspberry Pi 4, disponible chez [Kubii.fr](https://www.kubii.fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-0765756931175.html?gladys). Le modèle 4 est une belle amélioration par rapport à la troisième génération, car il offre 2 ports USB 3.0, un port Ethernet Gigabit, et offre enfin la possibilité de choisir des modèles avec plus de RAM.
+- Un Raspberry Pi 4, disponible chez <a href="https://www.kubii.fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-0765756931175.html?gladys" rel="noopener">Kubii.fr</a>. Le modèle 4 est une belle amélioration par rapport à la troisième génération, car il offre 2 ports USB 3.0, un port Ethernet Gigabit, et offre enfin la possibilité de choisir des modèles avec plus de RAM.
 
-Si vous comptez utiliser Gladys seule sur le Raspberry Pi, je vous conseille le modèle avec [2GB de RAM](https://www.kubii.fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-0765756931175.html?gladys). Si vous comptez faire tourner Gladys + quelques autres services (Pi-Hole/Adguard, Node-RED), je vous conseille de prendre plus de RAM pour être tranquille ( [4GB](https://www.kubii.fr/cartes-raspberry-pi/2772-nouveau-raspberry-pi-4-modele-b-4gb-kubii-0765756931182.html?gladys), ou même [8GB](https://www.kubii.fr/cartes-raspberry-pi/2955-raspberry-pi-4-modele-b-8gb-0765756931199.html?gladys) si vous voulez être large )
+Si vous comptez utiliser Gladys seule sur le Raspberry Pi, je vous conseille le modèle avec <a href="https://www.kubii.fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-0765756931175.html?gladys" rel="noopener">2GB de RAM</a>. Si vous comptez faire tourner Gladys + quelques autres services (Pi-Hole/Adguard, Node-RED), je vous conseille de prendre plus de RAM pour être tranquille ( <a href="https://www.kubii.fr/cartes-raspberry-pi/2772-nouveau-raspberry-pi-4-modele-b-4gb-kubii-0765756931182.html?gladys" rel="noopener">4GB</a> ), ou même <a href="https://www.kubii.fr/cartes-raspberry-pi/2955-raspberry-pi-4-modele-b-8gb-0765756931199.html?gladys" rel="noopener">8GB</a> si vous voulez être large )
 
 ![Raspberry Pi 4](../../../../../static/img/docs/fr/installation/raspberry-pi-4.jpg)
 
-- L'alimentation officielle USB-C 3A disponible chez [Kubii.fr](https://www.kubii.fr/14-chargeurs-alimentations-raspberry/2678-alimentation-officielle-usb-type-c-raspberry-pi-3272496300002.html?gladys). Il est important d'utiliser une alimentation USB-C de bonne qualité qui fournit un ampérage suffisant pour que le Raspberry Pi puisse tourner correctement. Si vous branchez un SSD externe sur votre Pi comme je recommande, il est encore plus important d'avoir un chargeur qui fournit un ampérage suffisant.
+- L'alimentation officielle USB-C 3A disponible chez <a href="https://www.kubii.fr/14-chargeurs-alimentations-raspberry/2678-alimentation-officielle-usb-type-c-raspberry-pi-3272496300002.html?gladys" rel="noopener" >Kubii.fr</a>. Il est important d'utiliser une alimentation USB-C de bonne qualité qui fournit un ampérage suffisant pour que le Raspberry Pi puisse tourner correctement. Si vous branchez un SSD externe sur votre Pi comme je recommande, il est encore plus important d'avoir un chargeur qui fournit un ampérage suffisant.
 
-- Boitier officiel pour Raspberry Pi 4, disponible chez [Kubii.fr](https://www.kubii.fr/boitiers-et-supports/2681-boitier-officiel-pour-raspberry-pi-4-kubii-3272496298583.html?gladys)
+- Boitier officiel pour Raspberry Pi 4, disponible chez <a href="https://www.kubii.fr/boitiers-et-supports/2681-boitier-officiel-pour-raspberry-pi-4-kubii-3272496298583.html?gladys" rel="noopener">Kubii.fr</a>.
 
-- Une carte micro-SD class 10 disponible chez [Kubii.fr](https://www.kubii.fr/carte-sd-et-stockage/2939-micro-sdhc-16gb-class10-verbatim-023942440826.html?gladys)
+- Une carte micro-SD class 10 disponible chez <a href="https://www.kubii.fr/carte-sd-et-stockage/2939-micro-sdhc-16gb-class10-verbatim-023942440826.html?gladys" rel="noopener">Kubii.fr</a>.
 
-Nous ne recommandons pas de faire tourner Gladys sur une carte-SD sur le long terme, car les cartes SD ne sont pas conçues pour supporter de tels cycles de lectures/écritures. Néanmoins, il est toujours pratique d'avoir une carte micro-SD sous la main, notamment pour pouvoir flasher le bootloader du Pi lors de la première installation.
+Nous ne recommandons pas de faire tourner Gladys sur une carte-SD sur le long terme, car les cartes SD ne sont pas conçues pour supporter de tels cycles de lectures/écritures. Néanmoins, il est toujours pratique d'avoir une carte micro-SD sous la main, notamment utile lors de la première installation.
 
 - Un disque SSD comme ce [PNY 120GB Sata III à 19€90 sur Amazon](https://www.amazon.fr/PNY-CS900-Disque-Flash-Interne/dp/B01KFLH1WS?tag=gladproj-21&th=1) couplé à un [boitier USB 3.0 à 11€](https://www.amazon.fr/EasyULT-Boitier-Externe-Vitesse-UASP-Noir/dp/B07PMWJB8P?&linkCode=ll1&tag=gladproj-21&linkId=d2bf9d23a85189d9ec0479a23dec4923&language=fr_FR&ref_=as_li_ss_tl).
 
