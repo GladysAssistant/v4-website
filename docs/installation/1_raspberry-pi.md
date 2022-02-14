@@ -1,16 +1,16 @@
 ---
 id: raspberry-pi
-title: Install Gladys Assistant on a Raspberry Pi
+title: Installation on a Raspberry Pi
 sidebar_label: Raspberry Pi
 ---
 
 If you want to install Gladys Assistant on a Raspberry Pi that is already configured, use the [Docker](/docs/installation/docker) tutorial.
 
-## Download Gladys Raspbian image
+## Download Gladys Raspberry Pi OS image
 
-We provide a pre-built Raspbian image with Gladys already configured:
+We provide a pre-built Raspberry Pi OS image with Gladys already configured:
 
-<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow" >Click-here to download Gladys Assistant Raspberry Pi OS rev5</a>
+<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow" >Download Gladys Assistant OS rev5</a>
 
 This link will download a `.zip` file containing the Raspberry Pi OS image of Gladys Assistant. After unzipping the downloaded file, you'll get a `.img` file.
 
@@ -32,7 +32,7 @@ Give it some time to boot.
 
 ## Access Gladys
 
-To access Gladys, open your browser on any computer on the local network your Raspberry Pi is connected. Then enter the URL `http://gladys.local`.
+To access Gladys, open your browser on any computer on the local network your Raspberry Pi is connected. Then enter the URL `http://gladys.local` or `http://raspberrypi.local` or `http://IP_OF_YOUR_RASPBERRY_PI`.
 
 You should see Gladys web UI!
 

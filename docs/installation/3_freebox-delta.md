@@ -1,6 +1,6 @@
 ---
 id: freebox-delta
-title: How to install Gladys Assistant on a Freebox Delta
+title: Installation on a Freebox Delta
 sidebar_label: Freebox Delta
 ---
 
