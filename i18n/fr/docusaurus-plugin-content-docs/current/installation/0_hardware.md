@@ -13,7 +13,7 @@ Néanmoins, une grande partie de la communauté fait tourner Gladys sur un Raspb
 - Il consomme peu (se branche sur un chargeur USB-C)
 - Complètement silencieux car il n'a pas de ventilateur
 - Il offre de belles performances (Quad core Cortex-A72 en ARM v8 à 1.5GHz + jusqu'à 8GB de RAM)
-- Enfin, c'est le micro-ordinateur le plus populaire du marché, avec plus de 39 millions d'unités vendus depuis son lancement. La communauté est grande, et réactive. Il est rare qu'un problème critique soit sans réponses, et l'OS est continuellement maintenu par le constructeur, même pour les vieux modèles.
+- Enfin, c'est le micro-ordinateur le plus populaire du marché, avec plus de 39 millions d'unités vendus depuis son lancement. La communauté est grande, et réactive. Il est rare qu'un problème critique soit sans réponse, et l'OS est continuellement maintenu par le constructeur, même pour les vieux modèles.
 
 ## Commencer pour moins de 100€
 
@@ -29,7 +29,7 @@ Si vous comptez utiliser Gladys seule sur le Raspberry Pi, je vous conseille le 
 
 - Une carte micro-SD class 10 disponible chez [Kubii.fr](https://www.kubii.fr/carte-sd-et-stockage/2939-micro-sdhc-16gb-class10-verbatim-023942440826.html?gladys)
 
-Nous ne recommandons pas de faire tourner Gladys sur une carte-SD sur le long terme, car les cartes SD ne sont pas conçue pour supporter de tels cycles de lectures/écritures. Néanmoins, il est toujours pratique d'avoir une carte micro-SD sous la main, notamment pour pouvoir flasher le bootloader du Pi lors de la première installation
+Nous ne recommandons pas de faire tourner Gladys sur une carte-SD sur le long terme, car les cartes SD ne sont pas conçues pour supporter de tels cycles de lectures/écritures. Néanmoins, il est toujours pratique d'avoir une carte micro-SD sous la main, notamment pour pouvoir flasher le bootloader du Pi lors de la première installation.
 
 - Un disque SSD comme ce [PNY 120GB Sata III à 19€90 sur Amazon](https://www.amazon.fr/PNY-CS900-Disque-Flash-Interne/dp/B01KFLH1WS?tag=gladproj-21&th=1) couplé à un [boitier USB 3.0 à 11€](https://www.amazon.fr/EasyULT-Boitier-Externe-Vitesse-UASP-Noir/dp/B07PMWJB8P?&linkCode=ll1&tag=gladproj-21&linkId=d2bf9d23a85189d9ec0479a23dec4923&language=fr_FR&ref_=as_li_ss_tl).
 
