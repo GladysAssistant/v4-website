@@ -2,7 +2,6 @@
 id: raspberry-pi
 title: Install Gladys Assistant on a Raspberry Pi
 sidebar_label: Raspberry Pi
-slug: /
 ---
 
 If you want to install Gladys Assistant on a Raspberry Pi that is already configured, use the [Docker](/docs/installation/docker) tutorial.
