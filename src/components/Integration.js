@@ -311,6 +311,16 @@ function IntegrationPage({ integrations, lang }) {
               {`This list is crowdsourced by the community. To improve this list,
               you can help us on Airtable {website}.`}
             </Translate>
+            <br />
+            <br />
+            <Translate
+              id="integrations.descriptionPartners"
+              description="Integration page affiliate partners"
+            >
+              Links on this page redirects to partners, who give us a commission
+              on orders. So don't hesitate to order with those links to support
+              Gladys Assistant 🙂
+            </Translate>
           </div>
           <div class="row" style={{ marginTop: "16px" }}>
             {integrationsFiltered.map((integration) => (
