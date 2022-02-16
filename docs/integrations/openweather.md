@@ -4,7 +4,7 @@ title: OpenWeather
 sidebar_label: OpenWeather
 ---
 
-This integration let you get the weather in Gladys Assistant.
+This integration let you display the weather forecast in Gladys Assistant.
 
 ## Create an OpenWeather account
 
@@ -18,7 +18,7 @@ Then click on "Get API key"
 
 ![Create account OpenWeather](../../static/img/docs/en/configuration/openweather/create-account-step-2.jpg)
 
-Then enter your informations to create an account.
+Enter your details to create an account.
 
 ![Create account OpenWeather](../../static/img/docs/en/configuration/openweather/create-account-step-3.jpg)
 
@@ -30,7 +30,7 @@ Confirm your email, and you'll receive another email with your API key.
 
 ![Create account OpenWeather](../../static/img/docs/en/configuration/openweather/create-account-step-5.jpg)
 
-This API key is not immediately valid, **you have to wait**.
+This API key is not valid immediately, **you will have to wait**.
 
 ## Enter the API key in Gladys Assistant
 
@@ -38,13 +38,13 @@ Go to "Integrations" -> "OpenWeather". Enter your API key, and click "save".
 
 ![Add OpenWeather API key in Gladys Assistant](../../static/img/docs/en/configuration/openweather/add-api-key.jpg)
 
-## Add a weather box to the dashboard
+## Add a weather widget to the dashboard
 
 Go to the dashboard, and click on "edit".
 
 ![Configure OpenWeather in Gladys Assistant](../../static/img/docs/en/configuration/openweather/configure-gladys-1.jpg)
 
-Add a weather box.
+Add a weather widget.
 
 ![Configure OpenWeather in Gladys Assistant](../../static/img/docs/en/configuration/openweather/configure-gladys-2.jpg)
 
@@ -54,6 +54,6 @@ Click on "Save".
 
 ![Configure OpenWeather in Gladys Assistant](../../static/img/docs/en/configuration/openweather/configure-gladys-3.jpg)
 
-Voilà !
+Voilà!
 
 ![Configure OpenWeather in Gladys Assistant](../../static/img/docs/en/configuration/openweather/configure-gladys-4.jpg)
