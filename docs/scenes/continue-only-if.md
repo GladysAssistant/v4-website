@@ -4,7 +4,7 @@ title: Continue only if
 sidebar_label: Continue only if
 ---
 
-This action allows you to continue or not the execution of the scene according to a given condition.
+This action allows you to continue (or not) the execution of the scene according to a given condition.
 
 Let's take an example.
 
@@ -18,6 +18,6 @@ The first step in your scene is to add a "get last state" action, and select the
 
 Then, in the next action block, you can add a "Continue only if" action, by selecting the variable retrieved previously.
 
-By setting the condition "kitchen temperature sensor <20 ° C", this gives us this:
+By setting the condition "kitchen temperature sensor <20°C", this gives us this:
 
 ![Continue only if scene](../../static/img/docs/en/scenes/get-last-device-state-action/continue-only-if.jpg)

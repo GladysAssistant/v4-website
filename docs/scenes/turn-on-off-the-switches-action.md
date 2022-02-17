@@ -8,11 +8,11 @@ Whether it is to control a simple bedside lamp, an LED strip, or even a coffee m
 
 In Gladys, you can control your remote-controlled outlets, whether on the dashboard or in the stages.
 
-We will see a concrete example here.
+We will find a concrete example below.
 
 Take the very basic filter coffee makers that can be found on the market for around ten euros. These coffee makers have the advantage of having a physical on / off button, which can remain in the permanent "on" position.
 
-With a remote-controlled socket in front, it becomes possible to control the machine, and therefore to make coffee on order!
+With a remote-controlled socket in front, it becomes possible to control the appliance, and therefore to make coffee on demand!
 
 ## Make coffee automatically every morning of the week with Gladys
 
