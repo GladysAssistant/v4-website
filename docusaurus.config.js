@@ -80,8 +80,12 @@ module.exports = {
           title: "Getting Started",
           items: [
             {
-              label: "Raspberry Pi",
+              label: "Recommended hardware",
               to: "docs",
+            },
+            {
+              label: "Raspberry Pi",
+              to: "docs/installation/raspberry-pi/",
             },
             {
               label: "Docker",
@@ -118,10 +122,6 @@ module.exports = {
           title: "More",
           items: [
             {
-              label: "Blog",
-              to: "blog",
-            },
-            {
               label: "GitHub",
               href: "https://github.com/gladysassistant/gladys",
             },
@@ -132,6 +132,10 @@ module.exports = {
             {
               label: "Contact Us",
               href: "/contact",
+            },
+            {
+              label: "Donate",
+              href: "https://www.buymeacoffee.com/gladysassistant",
             },
           ],
         },
