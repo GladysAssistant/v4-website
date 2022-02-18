@@ -4,7 +4,7 @@ title: Open API
 sidebar_label: Open API
 ---
 
-We provide an Open API in Gladys to let our user send data from outside of their network.
+We provide an Open API in Gladys that lets our user send data from outside their network.
 
 Let's imagine I want to send data from my phone: my location, an event when I come home, my battery, an event when my phone is near a NFC tag, an event when I enter a zone, anything is possible with the Open API.
 
@@ -28,9 +28,11 @@ Click on "Generate", then copy-paste the API key and save it somewhere: it'll ne
 
 ## Send a new sensor value
 
-Now let's send a new sensor value.
+Now, let's send a new sensor value.
 
-In this tutorial, we'll imagine that you want to send an event when your phone is home, and send another event when your phone left home.
+Tutorial scenario: 
+
+Let's assume you want to send an event when your phone is home, and send another event when your phone has left home.
 
 ### Let's create a device in Gladys
 
@@ -40,7 +42,7 @@ Let's create a device for your phone:
 
 ![Create device Gladys Assistant](../../static/img/docs/en/plus/open-api/create-device.png)
 
-**Note:** We'll say that your phone is a motion sensor, because it's a great binary device for this use case. It doesn't really matter here, you'll see how we'll use this here :)
+**Note:** Say that your phone is a motion sensor, because it's a great binary device for this use case. It doesn't really matter here, you'll see how we'll use this here :)
 
 You can keep the feature "external_id" for later, we'll need it in the API.
 
@@ -92,7 +94,7 @@ Example with iOS:
 
 ### First step, install Shortcuts and create a new shortcut
 
-You need to install the "Shortcuts" app on the app store. It's made by Apple, and it's free to use.
+You need to install the "Shortcuts" app on the app store. It's made by Apple and it's free to use.
 
 Then, create a new shortcut, and add a new web action:
 
