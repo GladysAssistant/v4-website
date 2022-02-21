@@ -200,15 +200,15 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="t6mVCZ5Y9SU" />
+                      <YoutubeEmbedVideo id="Zn7imzI0oYU" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Présentation technique de Gladys Assistant 4
+                        Installer Gladys sur un disque externe SSD
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="bpmHzR8_S5g" disablePadding />
+                      <YoutubeEmbedVideo id="t6mVCZ5Y9SU" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Intégrer Node-RED avec Gladys Assistant en MQTT
+                        Présentation technique de Gladys Assistant 4
                       </h4>
                     </div>
                   </div>

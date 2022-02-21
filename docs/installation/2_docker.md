@@ -1,6 +1,6 @@
 ---
 id: docker
-title: How to install Gladys Assistant with Docker
+title: Installation with Docker
 sidebar_label: Docker
 ---
 

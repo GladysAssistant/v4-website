@@ -2,6 +2,7 @@ module.exports = {
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
   url: "https://gladysassistant.com",
+  trailingSlash: true,
   baseUrl: "/",
   favicon: "img/favicon/favicon.ico",
   organizationName: "gladysassistant", // Usually your GitHub org/user name.
@@ -79,8 +80,12 @@ module.exports = {
           title: "Getting Started",
           items: [
             {
-              label: "Raspberry Pi",
+              label: "Recommended hardware",
               to: "docs",
+            },
+            {
+              label: "Raspberry Pi",
+              to: "docs/installation/raspberry-pi/",
             },
             {
               label: "Docker",
@@ -117,10 +122,6 @@ module.exports = {
           title: "More",
           items: [
             {
-              label: "Blog",
-              to: "blog",
-            },
-            {
               label: "GitHub",
               href: "https://github.com/gladysassistant/gladys",
             },
@@ -131,6 +132,10 @@ module.exports = {
             {
               label: "Contact Us",
               href: "/contact",
+            },
+            {
+              label: "Donate",
+              href: "https://www.buymeacoffee.com/gladysassistant",
             },
           ],
         },
@@ -145,14 +150,14 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
-          editUrl:
-            "https://github.com/GladysAssistant/v4-website/edit/master/en/",
+          editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
+          editLocalizedFiles: true,
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl:
-            "https://github.com/GladysAssistant/v4-website/edit/master/en/",
+          editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
+          editLocalizedFiles: true,
           feedOptions: {
             type: "all",
             copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,

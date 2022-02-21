@@ -4,6 +4,7 @@ module.exports = {
       type: "category",
       label: "Installation",
       items: [
+        "installation/hardware",
         "installation/raspberry-pi",
         "installation/docker",
         "installation/freebox-delta",

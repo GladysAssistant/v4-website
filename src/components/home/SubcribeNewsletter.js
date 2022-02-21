@@ -22,7 +22,7 @@ function SubcribeNewsletter({ lang }) {
 
     try {
       setStatus("waiting");
-      await fetch("/.netlify/functions/new-subscriber", {
+      await fetch("https://subscribe-newsletter.gladysassistant.workers.dev/", {
         method: "post",
         headers: {
           Accept: "application/json",
