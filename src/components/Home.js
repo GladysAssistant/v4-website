@@ -206,9 +206,9 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="t6mVCZ5Y9SU" />
+                      <YoutubeEmbedVideo id="XXanY-SP_5w" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Présentation technique de Gladys Assistant 4
+                        Gladys Assistant chez vous #1 chez Louis
                       </h4>
                     </div>
                   </div>
