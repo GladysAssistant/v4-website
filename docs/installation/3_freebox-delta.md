@@ -6,7 +6,7 @@ sidebar_label: Freebox Delta
 
 ## On a Freebox Delta
 
-This tutorial is for Freebox Delta owner who wants to install Gladys with Docker.
+This tutorial explains how to install Gladys on a Freebox Delta (this is done with Docker).
 
 ### Create a virtual machine on the Freebox Delta
 
@@ -18,7 +18,7 @@ Click on "VMs". This window appears:
 
 ![Add a VM](../../static/img/docs/en/installation/freebox-delta/add-vm.jpg)
 
-Choose a name for the VM, for example Gladys.
+Choose a name for the VM, for example `Gladys`.
 
 Select the option "Choose a pre-installed operating system from a list".
 
@@ -26,11 +26,11 @@ Click on "Next".
 
 ![Add a VM](../../static/img/docs/en/installation/freebox-delta/add-vm-2.jpg)
 
-Select the system to install, for example Ubuntu.
+Select the system to install, for example `Ubuntu`.
 
 Enter a public SSH key or password.
 
-Choose a username, for example galdys.
+Choose a username, for example `gladys`.
 
 Click on "Next".
 
@@ -38,11 +38,11 @@ Click on "Next".
 
 Click on "Finish".
 
-The VM is ready, click on "Switch on" to start the VM.
+The virtual machine (VM) is ready, click on "Switch on" to start the VM.
 
 ![Add a VM](../../static/img/docs/en/installation/freebox-delta/start-vm.jpg)
 
-Access your VM in SSH and update the system.
+SSH into your VM and update the system:
 
 ```bash
 sudo apt update
@@ -51,13 +51,15 @@ sudo apt upgrade
 
 ### Install Docker on the Raspberry Pi
 
+Type in the following commands, one by one, to install Docker on the Raspberry Pi.
+
 ```bash
 sudo apt install docker.io
 sudo systemctl enable --now docker
 sudo usermod -aG docker gladys
 ```
 
-Then exit your SSH session, and login again.
+Then exit your SSH session, and login again to ensure the changes are applied.
 
 ### Start Gladys
 

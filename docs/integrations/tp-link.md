@@ -8,18 +8,16 @@ To connect your TP-Link lights and plugs, go to `Integrations / TP-Link` in Glad
 
 ## Scan devices on the network
 
-By clicking on the button `Scan network`, Gladys will automatically detect different devices available on your Wi-Fi network. Be sure that they are installed, configured (with Kasa application) and turned on to be visible.
+By clicking on the button `Scan network`, Gladys will automatically detect different devices available on your Wi-Fi network. Make sure that they are installed, configured (with Kasa application) and turned on to be visible.
 
 ![Device detection](../../static/img/docs/en/configuration/tp-link/tp_link_detection_appareils_en.png)
 
 ## Add a device
 
-Wether it's a light or a plug, Gladys will let you add this device thanks to the `Connect` button. Once added, you can configure in which room your device is installed.
+Whether it is a light or a plug, Gladys will let you add this device through to the `Connect` button. Once added, you can configure in which room your device is installed.
 
 ![Add a device](../../static/img/docs/en/configuration/tp-link/tp_link_ajouter_appareil_en.png)
 
-You will see in the device card description the various features available in Gladys.
+You will find the various features available in Gladys in the device's card description.
 
 ![Features](../../static/img/docs/en/configuration/tp-link/tp_link_features_en.png)
-
-You're done!

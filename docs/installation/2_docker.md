@@ -4,7 +4,7 @@ title: Installation with Docker
 sidebar_label: Docker
 ---
 
-I'll explain in this tutorial how to install Gladys Assistant with Docker. This tutorial works for any system (Raspberry Pi, Ubuntu VM, Synology NAS).
+In this tutorial, we go through the instructions for installing Gladys Assistant with Docker. This tutorial works for any system (Raspberry Pi, Ubuntu VM, Synology NAS).
 
 ## Install Docker
 
@@ -14,15 +14,15 @@ To install Docker, simply run the command :
 curl -sSL https://get.docker.com | sh
 ```
 
-Then, you need to add your linux user to the Docker group. If you are on a Raspberry Pi, you can run this command to add the "pi" user to the "docker"group:
+Once Docker is installed, add your linux user to the Docker group. If you are on a Raspberry Pi, you can run this command to add the "pi" user to the "docker"group:
 
 ```
 sudo usermod -aG docker pi
 ```
 
-Then exit your SSH session, and login again so the change takes effect.
+Exit your SSH session, and login again in order for the changes to takes effect.
 
-To verify that Docker is working fine, you can do:
+To verify that Docker is working as expected, type:
 
 ```
 docker ps
@@ -30,7 +30,7 @@ docker ps
 
 It should show an empty list of running container.
 
-If you have issues installing Docker, I recommend going to the [docker documentation](https://docs.docker.com/) and looking for instructions for your system.
+If you have any issues installing Docker, have a look at the [docker documentation](https://docs.docker.com/). Look for instructions pertaining to your system.
 
 ## Start Gladys
 
@@ -75,4 +75,4 @@ docker run -d \
 
 You can access Gladys directly by typing the IP of your machine (the Raspberry Pi for example) in your browser.
 
-To find the IP, just type `ifconfig` on the linux machine shell, or you can use a network scanner app to find the IP ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) on Android or [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) on iOS)
+To find the IP, just type `ifconfig` on the linux machine shell, or use a network scanner app ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) on Android or [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) on iOS)

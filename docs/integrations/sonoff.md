@@ -4,7 +4,7 @@ title: Sonoff
 sidebar_label: Sonoff
 ---
 
-The Sonoff devices can also be used with [Tasmota](/docs/integrations/tasmota/) OpenSource firmware.
+Sonoff devices can be used with [Tasmota](/docs/integrations/tasmota/) OpenSource firmware.
 
 To connect them to Gladys:
 

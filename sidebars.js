@@ -34,7 +34,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Scene",
+      label: "Scenes",
       items: [
         "scenes/intro",
         "scenes/device-state-changed-trigger",

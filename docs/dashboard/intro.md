@@ -4,14 +4,15 @@ title: Gladys Assistant dashboard
 sidebar_label: Introduction
 ---
 
-In Gladys Assistant, the dashboard is the main page of Gladys.
+The dashboard is the main page of Gladys Assistant.
 
-This page is fully configurable to meet your needs.
+This page is fully configurable and you can tweak it to meet your needs.
 
 ![Gladys Assistant 4 dashboard](../../static/img/docs/en/dashboard/dashboard-gladys-4.jpg)
 
-Display camera images? Monitor sensor values? Control his lights?
+Are you looking to display camera images? Monitor sensor values? Control his lights?
+You can do so on your dashboard.
 
-In this category of documentation, we'll walk through all types of "boxes" (or widgets if you like!), And explain how each one works.
+In this section, we go through all types of widgets, and how each one works.
 
-If you have any needs that are not covered by the current Gladys dashboard, do not hesitate to contact us on [the forum](https://community.gladysassistant.com/) to see if we can develop a specific box.
+If you have any requirements that are not covered by the current Gladys dashboard, do not hesitate to contact us on [the forum](https://community.gladysassistant.com/). We can explore the possibility of developing specific widgets.

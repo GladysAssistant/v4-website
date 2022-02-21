@@ -159,7 +159,7 @@ function Home({ integrations, lang }) {
                       id="home.integrations.seeInDocumentation"
                       description="Integrations link to documentation"
                     >
-                      See all integrations in the documentation.
+                      See all integrations in the documentation section.
                     </Translate>
                   </Link>
                 </p>

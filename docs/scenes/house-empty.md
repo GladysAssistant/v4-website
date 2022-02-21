@@ -12,7 +12,7 @@ You can also use it in the scene to continue only if the house is empty.
 
 ![House is empty](../../static/img/docs/en/scenes/house-empty/house-empty.png)
 
-To set user presence at home, you can read our tutoriel on [Bluetooth presence](/docs/integrations/bluetooth) or set presence [in scene](/docs/scenes/user-presence).
+To set user presence at home, you can read our tutorial on [Bluetooth presence](/docs/integrations/bluetooth) or set presence [in scene](/docs/scenes/user-presence).
 
 ## In a scene
 

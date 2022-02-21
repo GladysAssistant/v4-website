@@ -6,7 +6,11 @@ sidebar_label: Camera
 
 Gladys supports cameras that expose a RTSP or HTTP stream.
 
-You'll first need to find in your user manual or on the camera's website the RTSP/HTTP URL of the stream.
+You'll first need to find RTSP/HTTP URL of the stream. 
+
+:::note
+You will find the URL in your device's user manual or on the manufacturer's website 
+:::
 
 Here is an example of a RTSP URL:
 
@@ -20,7 +24,7 @@ Here is an example of an HTTP URL:
 http://user:password@192.168.1.20/video?profile=0
 ```
 
-If you don't find this information on your camera manual, you can use this website: [https://www.ispyconnect.com/sources.aspx](https://www.ispyconnect.com/sources.aspx), a database of cameras with their connection information.
+If you can't find this information on your camera manual, try using this website: [https://www.ispyconnect.com/sources.aspx](https://www.ispyconnect.com/sources.aspx) (this is a database of cameras with their relevant connection information).
 
 There is a even a built-in URL generator.
 
@@ -28,11 +32,11 @@ For example, this is for a Xiaomi camera:
 
 ![RTSP camera URL generator iSpyConnect](../../static/img/docs/en/configuration/camera/camera-ispy.jpg)
 
-If you don't find anything on this website either, I suggest you to Google "your camera name + RTSP" to see if there is an open stream available.
+If you don't find the iformation you are looking for on this website, I suggest you to Google "your camera name + RTSP". This should bring up search results that you can use to see if there is an open stream available.
 
 ## Trying to display the stream in VLC
 
-It's possible to try connecting to the stream thanks to the great [VLC](https://www.videolan.org/vlc/) software.
+You can connect to your camera's stream with [VLC](https://www.videolan.org/vlc/).
 
 Open VLC and click on "File" -> "Open a Network..."
 
@@ -42,13 +46,15 @@ Then, enter the URL of your RTSP or HTTP stream
 
 ![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-2.jpg)
 
-Done! If the URL is correct, you should see your camera stream in VLC.
+Done! 
+
+If the URL is correct, you should see your camera stream in VLC.
 
 ![VLC open a network stream](../../static/img/docs/en/configuration/camera/camera-vlc-step-3.jpg)
 
 ## Connecting your RTSP camera to Gladys Assistant
 
-As soon as your camera works in VLC, it should work in Gladys Assistant as well.
+If you have managed to see your camera stream in VLC, it should work in Gladys Assistant as well.
 
 Go to the "Integrations" tab in Gladys, then click on the "Camera" integration:
 
@@ -70,7 +76,7 @@ Then, you can click on "Save".
 
 ## Add your camera to Gladys Assistant dashboard
 
-Visit Gladys dashboard and click on "Edit"
+Go to the Gladys dashboard and click on "Edit"
 
 ![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-5.jpg)
 
@@ -82,7 +88,7 @@ Select your camera, then click on "Save"
 
 ![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-7.jpg)
 
-Voilà ! Your camera should be visible
+Voilà ! Your camera should be visible.
 
 ![Add a camera to Gladys Assistant](../../static/img/docs/en/configuration/camera/camera-step-8.jpg)
 
@@ -94,4 +100,4 @@ And... magic!
 
 ![Ask for a camera image in Gladys Assistant](../../static/img/docs/en/configuration/camera/chat-camera-en.jpg)
 
-It should work in Telegram as well if you configured Telegram in Gladys.
+It should work in Telegram as well, if you have configured Telegram in Gladys.

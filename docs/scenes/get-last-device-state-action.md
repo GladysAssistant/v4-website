@@ -10,13 +10,13 @@ Let's take an example.
 
 ## Add a condition on the temperature of a room
 
-Suppose you want to do a scene that fetch the temperature of the room, then continues the scenario only if the temperature is below 20°C.
+Suppose you want to build a scene that fetches the temperature of the room, then continues the scenario only if the temperature is below 20°C.
 
 The first step in your scene is to add a "get last state" action, and select the sensor you want to use.
 
 ![Get last scene state](../../static/img/docs/en/scenes/get-last-device-state-action/get-last-device-state.jpg)
 
-Then, in the next action block, you can add a "Continue only if" action, by selecting the variable retrieved previously.
+Then, in the next action block, add a "Continue only if" action, by selecting the variable retrieved previously.
 
 By setting the condition "kitchen temperature sensor < 20 ° C", this gives us this:
 

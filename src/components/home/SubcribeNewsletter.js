@@ -50,15 +50,15 @@ function SubcribeNewsletter({ lang }) {
             id="subscribeNewsletter.title"
             description="Subscribe newsletter banner title"
           >
-            Join the community, and receive news about the project !
+            Join the community, and get the latest news about the project!
           </Translate>
         </h2>
         <Translate
           id="subscribeNewsletter.text"
           description="Subscribe newsletter banner text"
         >
-          Emails are sent by Pierre-Gilles Leymarie, founder of the project, and
-          you can unsubscribe at any time 🙂
+          Emails are sent by Pierre-Gilles Leymarie, founder of the project.
+          You can unsubscribe at any time 🙂
         </Translate>
       </div>
       <div className="col col--4">
@@ -118,7 +118,7 @@ function SubcribeNewsletter({ lang }) {
               onChange={(e) => setFirstname(e.target.value)}
               placeholder={translate({
                 id: "subscribeNewsletter.firstnamePlaceholder",
-                message: "Firstname",
+                message: "First name",
                 description: "Subscribe newsletter firstname placeholder",
               })}
             />
