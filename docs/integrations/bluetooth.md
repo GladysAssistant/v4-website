@@ -11,7 +11,7 @@ There are bluetooth key chains like the [NUT keychain](https://www.amazon.com/gp
 With this kind of key fob, Gladys can detect when you are (or are not) at home, simply by scanning for nearby bluetooth devices.
 
 :::note
-This trick does not work with all Bluetooh devices. This only works with bluetooth devices that (1) transmit their signal continuously, and (2) which do not obfuscate their bluetooth address. **Most  phones do noy broadcast their bluetooth signal continuously**. 
+This trick does not work with all Bluetooh devices. This only works with bluetooth devices that (1) transmit their signal continuously, and (2) which do not obfuscate their bluetooth address. **Most  phones do not broadcast their bluetooth signal continuously**. 
 
 In general, the "dumber" the device, the better it works! For example, I had a Fitbit Force 2 bracelet, and it worked. However, it does not work with an Apple Watch.
 :::
