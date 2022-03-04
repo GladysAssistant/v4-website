@@ -8,13 +8,13 @@ This integration allows you to use the Telegram messaging app.
 
 ![Créez un compte Telegram](../../static/img/docs/en/configuration/telegram/telegram_00_creer_compte_Logo.jpg)
 
-It is a messaging service focused on the speed and security of data transfer.
+Telegram is a messaging service focused on the speed and security of data transfer.
 
-Available on many media (Android, IOs, Windows Phone, website, PC, Mac, Linux), it will allow you to communicate with Gladys Assistant by giving it instructions, receiving information or questions ...
+Available on many platforms (Android, IOs, Windows Phone, website, PC, Mac, Linux), it will allow you to communicate with Gladys Assistant by giving it instructions, receiving information or questions...
 
 ## Create a Telegram account
 
-Go to the Telegram website : [https://telegram.org/](https://telegram.org/).
+Go to the Telegram website: [https://telegram.org/](https://telegram.org/).
 
 Choose the device you want to use Telegram on.
 
@@ -36,29 +36,29 @@ Then enter the information to create your account.
 
 ## Create the Telegram Bot API key
 
-When launching Telegram for the first time, you get this window (on Windows) :
+When launching Telegram for the first time, you get this window (on Windows):
 
 ![Créez un compte Telegram](../../static/img/docs/en/configuration/telegram/telegram_03_creer_API_premier.jpg)
 
-In the "Search" box, type @BotFather and then press the Enter key.
+In the "Search" box, type `@BotFather` and then press the Enter key.
 
 Click on the BotFather icon (the first in the list).
 
 ![Créez un compte Telegram](../../static/img/docs/en/configuration/telegram/telegram_04_creer_API_BotFather-0.jpg)
 
-Click on the "Start" button at the bottom of the message viewing window ...
+Click on the "Start" button at the bottom of the message viewing window...
 
 ![Créez un compte Telegram](../../static/img/docs/en/configuration/telegram/telegram_04_creer_API_BotFather-1.jpg)
 
-... and type /newbot to ask Telegram Bot to create a new Bot for you.
+...and type `/newbot` to ask Telegram Bot to create a new Bot for you.
 
 ![Créez un compte Telegram](../../static/img/docs/en/configuration/telegram/telegram_05_creer_API_Bot_Name.jpg)
 
 BotFather asks you for the name you want to give to your bot. This will be the name displayed in your chats.
 
-Then, you will have to indicate a "public" name, which will make it possible to find it in the directory. We have to find a name that will be unique.
+Then, you will have to indicate a "public" name, which will make it possible to find it in the directory. We have to chose a unique name.
 
-Please note that the name must end with "bot" to clearly identify that it is a robot.
+Please note that the name must end with "bot", to clearly identify that it is a robot.
 
 ![Créez un compte Telegram](../../static/img/docs/en/configuration/telegram/telegram_06_creer_API_Bot_config_ok-1.jpg)
 
@@ -76,7 +76,7 @@ Enter your API key then click "Save".
 
 ## Create the link between Gladys Assistant and Telegram
 
-Then click on "this link" to communicate with Gladys Assistant in Telegram.
+Click on "this link" to communicate with Gladys Assistant in Telegram.
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_08_Integration_Gladys_ok-1.jpg)
 
@@ -86,7 +86,7 @@ Click on "Send message".
 
 A window asking you to open this link in the Telegram Desktop app may appear.
 
-In this window, click on "Telegram Desktop", then check the box "Remember my choice for tg links." to stop seeing this window the next time.
+In this window, click on "Telegram Desktop", then check the box "Remember my choice for tg links." This will hide this window for the next times.
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_10_Communiquer_Gladys_lancement_appli.jpg)
 
@@ -98,11 +98,11 @@ Click on "Start"
 
 ## First communication between Telegram and Gladys Assistant
 
-Enter your first question for your Gladys Assistant, for example : what's the weather like?
+Enter your first question for your Gladys Assistant, for example : "What's the weather like?"
 
-Wait a bit and ......... magic !!!
+Wait a bit and ......... magic!!!
 
-Your assistant answers you ! Isn't fun ?
+Your assistant answers you!
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_12_Communiquer_Gladys_1ere_com.jpg)
 
@@ -110,7 +110,7 @@ Check on the Gladys Assistant home page:
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_13_Communiquer_Gladys_Gladys_Accueil.jpg)
 
-You can also view the conversations in the Discussion tab of Gladys Assistant.
+You can also view the conversations in the `Discussion` tab of Gladys Assistant.
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_14_Communiquer_Gladys_Gladys_Discussion.jpg)
 

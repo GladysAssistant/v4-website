@@ -4,11 +4,11 @@ title: Make HTTP requests in a scene
 sidebar_label: HTTP Request
 ---
 
-In scenes, it is sometimes practical to call an external API in order to control devices not necessarily managed by Gladys Assistant, or to simply call an external service without developing a service specifically for the occasion.
+In scenes, it is sometimes useful to call an external API in order to control devices that are not managed by Gladys Assistant. You may also want to simply call an external service, without developing a service specifically for the occasion.
 
 ## Prerequisites
 
-You must be in Gladys Assistant v4.0.3 minimum to have this functionality.
+You must be in Gladys Assistant v4.0.3 (or over) to have this functionality.
 
 ## Send an HTTP request in a scene
 
@@ -20,21 +20,21 @@ You can add headers if you need them for authentication for example.
 
 ## Concrete example: Trigger an IFTTT action from a Gladys Assistant scene
 
-You are probably familiar with [IFTTT] (https://ifttt.com/), a service that allows different services to be connected to each other. Their business model having changed recently, it is only possible to create 3 actions per account, but this is more than enough if you want to use it only to compensate for a lack of Gladys for example.
+You are probably familiar with [IFTTT] (https://ifttt.com/), a service that allows different services to be connected to each other. Their business model having changed recently, it is only possible to create 3 actions per account, but this is more than enough if you want to use it only to compensate for a lack of Gladys functionality.
 
 In this example, we'll use IFTTT to save a value to Google Sheet each time a scene is called.
 
-Here we are going to send a "departure from home" event to IFTTT and ask it to log this event in a Google Sheet, in order for example to track your departures from home.
+The aim is to send a "departure from home" event to IFTTT and ask it to log this event in a Google Sheet. This will allow us to track our departures from home.
 
 This is of course an example that you can adapt according to your needs 😁
 
 ### Configure Maker Webhooks in IFTTT
 
-In IFTTT, go to [https://ifttt.com/maker_webhooks Danemark(https://ifttt.com/maker_webhooks) to configure Maker Webhooks.
+In IFTTT, go to [https://ifttt.com/maker_webhooks](https://ifttt.com/maker_webhooks) to configure Maker Webhooks.
 
-I let you follow the IFTTT tutorial to configure the Maker Webhooks.
+Follow the IFTTT tutorial to configure the Maker Webhooks.
 
-Normally, after configuring the webhooks, you should come to a page like this:
+After configuring the webhooks, you should find yourself on a page like this:
 
 ![IFTTT Maker Webhook](../../static/img/docs/en/scenes/http-request/iftt-configure-maker-webhook.jpg)
 
@@ -44,7 +44,7 @@ Save the URL for later.
 
 ### Configure the Google Sheet service in IFTTT
 
-On the IFTTT "Explore" page, find the "Google Sheet" service, and connect your Google account. This will be used for the rest.
+On the IFTTT "Explore" page, find the "Google Sheet" service, and connect your Google account. This will be used for the rest of the tutorial.
 
 ### Create an applet
 
@@ -78,7 +78,7 @@ Select "method: POST", then in URL enter the URL of the IFTTT webhook that you c
 
 ![Create HTTP request action](../../static/img/docs/en/scenes/http-request/gladys-scene-http-request-box.jpg)
 
-Save the scene, then launch it.
+Save the scene and launch it.
 
 If you go to Google Drive, you should see an "IFTTT" folder at the root, containing a "MakerWebhook" folder, as well as in this case a "let_home" folder.
 
@@ -88,10 +88,27 @@ Inside you'll find a spreadsheet with a line that recorded when you left the hou
 
 ## Conclusion
 
-This was just one example, this action in the scenes allows you to do millions of things:
+This was just one example. You can use this action in the scenes to do millions of things:
 
 - Call the API of another home automation box
 - Call IFTTT to control any API: Music through Sonos? Ring your phone? Send an email ? Send a tweet?
 - Call [Zapier] API (https://zapier.com/) to call any API (Gmail, Calendar, Trello, and hundreds of others)
 
 In short, the possibilities are limitless.
+
+## Using the response of an HTTP call in a scene
+
+You can also use the response of an HTTP request in scenes.
+
+Example here querying Coinbase API to get Bitcoin price and send it to the user with Telegram:
+
+<div class="videoContainer">
+<video  width="100%" controls autoplay loop muted>
+<source src="/img/docs/en/scenes/http-request/bitcoin-price.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+</div>
+
+You can compare the value with a "continue only if":
+
+![Continue only if](../../static/img/docs/en/scenes/http-request/continue-only-if.png)

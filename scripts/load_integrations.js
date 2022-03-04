@@ -16,6 +16,7 @@ const AUTHORIZED_DOC_ID = [
   "zwave",
   "tasmota",
   "tp-link",
+  "zigbee2mqtt",
 ];
 
 const schema = Joi.object({
@@ -78,6 +79,12 @@ const parseAndFormatRecords = (records, lang) => {
       var amazonUrl = new URL(newItem.buyLink);
       amazonUrl.searchParams.set("tag", "gladproj-21");
       newItem.buyLink = amazonUrl.toString();
+    }
+    // Domadoo link
+    if (newItem.buyLink && newItem.buyLink.indexOf("domadoo.fr") !== -1) {
+      var domadooUrl = new URL(newItem.buyLink);
+      domadooUrl.searchParams.set("domid", "17");
+      newItem.buyLink = domadooUrl.toString();
     }
     const { value, error } = schema.validate(newItem);
     if (error) {

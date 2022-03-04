@@ -4,7 +4,7 @@ title: Setup a Windows development environment
 sidebar_label: Windows
 ---
 
-You'll find here instructions to setup a development environment for Gladys 4 on Windows.
+You'll find below the instructions on how to setup a development environment for Gladys 4.
 
 ## System prerequisites
 
@@ -16,18 +16,18 @@ Please follow these links to prepare your OS.
 
 ### WSL Configuration
 
-Please ensure your system use WSL2 by running following command
+Please ensure your system uses WSL2 by running following command:
 
 ```
 wsl.exe --set-default-version 2
 ```
 
-From the Microsoft Store, search and install Ubuntu 20.04. This can take some time regarding your connection speed.
+From the Microsoft Store, search and install Ubuntu 20.04. This can take some time, dependong on your connection speed.
 
-<img src="../../static/img/docs/en/dev/ms-store-ubuntu20.04.png" alt="Microsoft Store Ubuntu" />
+![Microsoft Store Ubuntu](../../static/img/docs/en/dev/ms-store-ubuntu20.04.png)
 
-Now you can run Ubuntu, from start menu please launch Ubuntu 20.04 LTS.
-First time ubuntu will ask you to create user.
+Now you can run Ubuntu; from your start menu please launch Ubuntu 20.04 LTS.
+The first time you run Ubuntu, you will be asked to create a user.
 
 ### Install system dependencies
 
@@ -43,10 +43,10 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
 ```
 
-- Node.js 12 Installation:
+- Node.js 14 Installation:
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
 sudo bash nodesource_setup.sh
 sudo apt install nodejs -y
 ```
@@ -130,9 +130,9 @@ And run:
 npm test
 ```
 
-## Start server tests only for one service
+## Start server tests only for a single service
 
-To run the tests just for one service, go to the `server` folder and run the command:
+To run the tests just for a single service, go to the `server` folder and run the command:
 
 ```
 npm run test-service --service=tasmota

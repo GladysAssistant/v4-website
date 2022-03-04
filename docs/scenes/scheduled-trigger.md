@@ -4,11 +4,11 @@ title: Scheduled Trigger
 sidebar_label: Scheduled Trigger
 ---
 
-It is common in home automation to want to program a scene: every day? Once a day ? once a week ? Once a month ? Every 15 minutes?
+It is common in home automation to want to schedule a scene: every day? Once a day? once a week? Once a month? Every 15 minutes?
 
-Gladys offers a trigger that allows you to program the execution of a scene.
+Gladys offers a trigger that allows you to schedule the execution of a scene.
 
-There are 5 types of programming possible:
+There are 5 types of scheduling possible:
 
 - Every month
 - Every week
@@ -16,7 +16,7 @@ There are 5 types of programming possible:
 - At intervals
 - On a specific day
 
-Presentation of the different possibilities:
+Let's run throug the different options available:
 
 ## Every month
 
@@ -30,9 +30,9 @@ This is useful if, for example, you want to run a scene every 1st of the month.
 
 This trigger lets you schedule a scene to run on certain days of the week at a specific time.
 
-It is probably the most used trigger, because it allows you to set up everything that is "daily routine".
+It is probably the most used trigger because it allows you to set any "daily routine" elements up.
 
-If you want to wake up to a custom scene, every day of the week (Monday-Friday) at 7am, this is what it will look like:
+If you want to wake up to a custom scene, every day of the week (Monday-Friday) at 7am, this is what your scene will look like:
 
 ![Scene scheduled every week](../../static/img/docs/en/scenes/scheduled-trigger/scheduled-trigger-every-week.jpg)
 
@@ -46,7 +46,7 @@ Useful for all recurring tasks that occur every day of the week.
 
 ## Interval
 
-This trigger is special. It allows you to program a scene, not by "day" but at a particular interval (every 30 seconds, every 15 minutes, every hour).
+This trigger is special. It allows you to program a scene, not by "day" but at a particular interval (ie: every 30 seconds, every 15 minutes, every hour).
 
 Example:
 

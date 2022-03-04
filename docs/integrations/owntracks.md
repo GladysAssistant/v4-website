@@ -34,7 +34,7 @@ Select "HTTP", and in the "URL" input, enter:
 https://api.gladysgateway.com/v1/api/owntracks/[YOUR-API-KEY]
 ```
 
-In the `UserID` and `DeviceID` input, you can put anything you want (those fields are mandatory).
+Fill in the `UserID` and `DeviceID` field with the terms of your choice (they are mandatory).
 
 I put "iphone" for the `DeviceID`, and "pierre-gilles" for the `UserID`.
 

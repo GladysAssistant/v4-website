@@ -4,7 +4,7 @@ title: Setup a Mac/Linux development environment
 sidebar_label: Mac/Linux
 ---
 
-You'll find here instructions to setup a development environment for Gladys 4.
+You'll find below the instructions on how to setup a development environment for Gladys 4.
 
 ## Server
 
@@ -14,12 +14,18 @@ The server is a Node.js app.
 
 You'll need:
 
-- Node.js 12
+- Node.js 14
 - sqlite3
 - openssl
-- openzwave + libopenzwave1.5-dev
+- openzwave >= 1.6
 
-for assistance, help can be found at [CircleCI config file](https://github.com/GladysAssistant/Gladys/blob/master/.circleci/config.yml).
+On a Mac, to install open-zwave, run:
+
+```
+brew install open-zwave
+```
+
+(You need to have [Homebrew](https://brew.sh/) installed)
 
 ### Clone Gladys Git repo
 
@@ -35,12 +41,6 @@ cd server
 
 ```
 npm install
-```
-
-### Start DB migration
-
-```
-npm run db-migrate:dev
 ```
 
 ### Start the server

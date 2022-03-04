@@ -16,7 +16,7 @@ To connect them to Gladys:
 
 Follow instructions on <a href="https://tasmota.github.io/docs/Getting-Started/" target="_blank">Tasmota installation user guide</a>.
 
-There is many firmware installation guides on Internet according to each device. You can find the one you are looking for.
+There are many firmware installation guides online, depending on the device. You will be able to find the right guide for your device by browsing through the search results.
 
 ## Configure device
 
@@ -41,7 +41,7 @@ Then fill configuration form with your information:
 
 ![Tasmota MQTT](../../static/img/docs/en/configuration/tasmota/tasmota-mqtt.png)
 
-## Add device to Gladys
+## Add the device to Gladys
 
 Once saved, go back to Gladys:
 

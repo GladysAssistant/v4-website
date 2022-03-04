@@ -1,17 +1,17 @@
 ---
 id: turn-on-off-the-lights-action
-title: Turn on/off the light in a scene
-sidebar_label: Turn on/off the light
+title: Turn the lights on/off in a scene
+sidebar_label: Turn the light on/off
 ---
 
 In home automation, controlling the light is often one of the most used actions.
 
 - Waking up with light in addition to music?
-- Turn off all the lights when you leave the accommodation?
+- Turn off all the lights when you leave the house?
 - Turn on the light when you enter a room?
 - A cinema mode that turns off the living room lights?
 
-It's possible with Gladys :)
+All of these are possible with Gladys. 😀
 
 ## Control the lights in a scene
 

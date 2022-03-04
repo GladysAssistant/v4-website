@@ -19,7 +19,7 @@ You first need to install the "Mi Home" application to activate the developer mo
 
 ## The Gateway
 
-Open the gateway by clicking on its icon. Follow the steps:
+Open the gateway by clicking on its icon. Follow the steps below:
 
 ### Step 1
 
@@ -49,12 +49,16 @@ First menu will bring you to step 5, second menu to step 6.
 
 ![Xiaomi step 5](../../static/img/docs/en/configuration/xiaomi/xiaomi-tuto-6.jpg)
 
-Activate the developer mode with the button, keep the password, then validate "ok".
+Activate the developer mode with the button, write down the password, then hit "ok".
 
 ### Step 6
 
 ![Xiaomi step 6](../../static/img/docs/en/configuration/xiaomi/xiaomi-tuto-7.jpg)
 
-In this menu, you'll find the mac address of your gateway, its sid, useful to link the password you got in the previous step to the gateway (if you have several gateway, it can be useful).
+In this menu, you'll find the mac address of your gateway, its SID and a useful to link the password you got in step 5. 
+
+:::note
+The link to the password can be useful if you have several gateways.
+:::
 
 You are now ready to integrate your Xiaomi devices in Gladys!

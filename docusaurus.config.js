@@ -2,6 +2,7 @@ module.exports = {
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
   url: "https://gladysassistant.com",
+  trailingSlash: true,
   baseUrl: "/",
   favicon: "img/favicon/favicon.ico",
   organizationName: "gladysassistant", // Usually your GitHub org/user name.
@@ -20,11 +21,10 @@ module.exports = {
   },
   themeConfig: {
     image: "img/presentation/gladys-cover-demo.jpg",
-    metadatas: [{ name: "twitter:site", content: "@gladysassistant" }],
-    googleAnalytics: {
-      trackingID: "UA-42837031-1",
-      // Optional fields.
-      anonymizeIP: true, // Should IPs be anonymized?
+    metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
+    colorMode: {
+      defaultMode: "dark",
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: "Gladys Assistant",
@@ -52,12 +52,18 @@ module.exports = {
           position: "left",
         },
         {
+          to: "https://community.gladysassistant.com/",
+          label: "Community",
+          position: "left",
+        },
+        {
           type: "localeDropdown",
           position: "right",
         },
         {
           href: "https://github.com/gladysassistant/gladys",
-          label: "GitHub",
+          className: "header-github-link",
+          "aria-label": "GitHub repository",
           position: "right",
         },
         {
@@ -74,16 +80,16 @@ module.exports = {
           title: "Getting Started",
           items: [
             {
-              label: "Raspberry Pi",
+              label: "Recommended hardware",
               to: "docs",
+            },
+            {
+              label: "Raspberry Pi",
+              to: "docs/installation/raspberry-pi/",
             },
             {
               label: "Docker",
               to: "docs/installation/docker",
-            },
-            {
-              label: "MacOS/Windows",
-              to: "docs/installation/macos-windows",
             },
             {
               label: "Freebox Delta",
@@ -116,12 +122,20 @@ module.exports = {
           title: "More",
           items: [
             {
-              label: "Blog",
-              to: "blog",
-            },
-            {
               label: "GitHub",
               href: "https://github.com/gladysassistant/gladys",
+            },
+            {
+              label: "Open Metrics",
+              href: "/open",
+            },
+            {
+              label: "Contact Us",
+              href: "/contact",
+            },
+            {
+              label: "Donate",
+              href: "https://www.buymeacoffee.com/gladysassistant",
             },
           ],
         },
@@ -136,14 +150,14 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
-          editUrl:
-            "https://github.com/GladysAssistant/v4-website/edit/master/en/",
+          editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
+          editLocalizedFiles: true,
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl:
-            "https://github.com/GladysAssistant/v4-website/edit/master/en/",
+          editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
+          editLocalizedFiles: true,
           feedOptions: {
             type: "all",
             copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
@@ -160,5 +174,12 @@ module.exports = {
       require.resolve("@docusaurus/plugin-ideal-image"),
       { min: 400, max: 2000, steps: 10 },
     ],
+  ],
+  scripts: [
+    {
+      async: true,
+      defer: true,
+      src: "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
+    },
   ],
 };

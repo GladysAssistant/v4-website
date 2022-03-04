@@ -14,12 +14,18 @@ Le backend est une serveur Node.js.
 
 Comme prérequis système, il vous faut:
 
-- Node.js 12
+- Node.js 14
 - sqlite3
 - openssl
-- openzwave + libopenzwave1.5-dev
+- openzwave >= 1.6
 
-Une bonne aide pour mettre en place son environnement peut-être d'aller regarder le [fichier de configuration de CircleCI](https://github.com/GladysAssistant/Gladys/blob/master/.circleci/config.yml).
+Sur Mac, pour installer open-zwave, lancez:
+
+```
+brew install open-zwave
+```
+
+(Il faut avoir [Homebrew](https://brew.sh/index_fr) d'installé)
 
 ### Cloner le repo Gladys
 
@@ -35,12 +41,6 @@ cd server
 
 ```
 npm install
-```
-
-### Lancer la migration de DB
-
-```
-npm run db-migrate:dev
 ```
 
 ### Lancer le serveur

@@ -95,3 +95,18 @@ Ce n'était qu'un exemple, cette action dans les scènes permet de faire des mil
 - Appeler l'API de [Zapier](https://zapier.com/) pour appeler n'importe quelle API (Gmail, Calendar, Trello, et des centaines d'autres)
 
 Bref, les possibilités sont illimitées.
+
+## Récupérer la réponse d'une requête HTTP dans les scènes
+
+Il est possible d'utiliser la réponse d'une requête HTTP dans une scène.
+
+Exemple avec l'API Coinbase pour récupérer le prix du Bitcoin, et envoyer le prix par message Telegram:
+
+<div class="videoContainer">
+<video  width="100%" controls autoplay loop muted>
+<source src="/img/docs/fr/scenes/http-request/bitcoin-price.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+</div>
+
+![Continuer seulement si](../../../../../static/img/docs/fr/scenes/http-request/continue-only-if.png)
