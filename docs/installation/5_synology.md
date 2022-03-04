@@ -48,7 +48,7 @@ gladysassistant/gladys:v4
 **Notes:**
 
 - `--name "gladys"` : Name of the container.
-- `-v /volume1/docker/gladysassistant:...` : Path where datas wille be persisted on your NAS.
+- `-v /volume1/docker/gladysassistant:...` : Path where datas will be persisted on your NAS.
 - `-e SERVER_PORT=8420` : Port where Gladys will be exposed, you can change by any value not used by *Disk Station* ( [Reserved port on Synology website](https://kb.synology.com/en-global/DSM/tutorial/What_network_ports_are_used_by_Synology_services) )
 
 ### Gladys access
