@@ -16,12 +16,10 @@ Pour voir la liste des NAS Synology compatibles, allez sur la [page du package d
 
 ### Préparer le stockage de Gladys
 
-Pour conserver les données en dehors du conteneur, nous avons besoin de créer un dossier sur le volume du Syno.  
-Si il n'existe pas déjà, créez le *Dossier partagé* `docker` via *File Station* pour tous vos besoins de stockage des conteneurs dockers.  
-Créez ensuite un dossier pour le stockage de ce conteneur Gladys ```/docker/gladysassistant```  
+Pour conserver les données en dehors du conteneur, nous avons besoin de créer un dossier sur le volume du Syno.
+Si il n'existe pas déjà, créez le *Dossier partagé* `docker` via *File Station* pour tous vos besoins de stockage des conteneurs docker.
+Créez ensuite un dossier pour le stockage de ce conteneur Gladys ```/docker/gladysassistant```
 **attention**: le chemin de ce dossier en ligne de commande devra intégrer le nom du volume de stockage : `/volume1/docker/gladysassistant`
-
-C'est là que le conteneur stockera le contenu de  `/var/lib/gladysassistant`  
 
 ### Installer et lancer le Gladys via SSH
 
