@@ -13,21 +13,21 @@ Hi everyone!
 
 Today I'm happy to release a new version of Gladys, Gladys Assistant v4.8 🥳
 
-This version is mainly focused on the calendar integration, but also adds lots of UX improvements in Gladys.
+This version is mainly focused on the calendar integration, but it also adds a lot of UX improvements in Gladys.
 
 ## What's new in Gladys Assistant 4.8?
 
-### Scene trigger when a calendar event is coming
+### Scene trigger when a calendar event is coming up
 
 This is a big feature that finally makes calendars really useful in Gladys.
 
-It's now possible to trigger a scene when a specific event is coming in the calendar.
+It's now possible to trigger a scene when a specific event is coming up in the calendar.
 
 Imagine you want to get a reminder when you need to go to work? Get a nice wake up at the right time?
 
 You need to have at least one calendar connected to Gladys (We support iCloud calendars, Google Agenda, Synology calendars or any Caldav calendar with our [Caldav integration](/docs/integrations/caldav/)).
 
-Then, you can create a new scene, and create a "Calendar event is coming" trigger:
+You can create a new scene, and create a "Calendar event is coming" trigger:
 
 ![Calendar event is coming](../static/img/docs/en/scenes/calendar-event-is-coming/calendar-event-is-coming.jpg)
 
@@ -69,7 +69,7 @@ For any device that is not a sensor:
 
 ### Zigbee2mqtt: CO sensors & Alarm feature
 
-Thanks to Alexandre Trovato work on Github [here](https://github.com/GladysAssistant/Gladys/pull/1417) and [here](https://github.com/GladysAssistant/Gladys/pull/1420), it's now possible to add Zigbee2mqtt CO sensor & use the alarm feature in Gladys.
+Thanks to Alexandre Trovato's work on Githu [here](https://github.com/GladysAssistant/Gladys/pull/1417) and [here](https://github.com/GladysAssistant/Gladys/pull/1420), you can now add a Zigbee2mqtt CO sensor & use the alarm feature in Gladys.
 
 ## How to upgrade?
 
