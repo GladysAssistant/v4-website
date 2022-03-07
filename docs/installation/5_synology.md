@@ -73,4 +73,4 @@ Run this command to create Watchtower container.
    --cleanup --include-restarting
 ```
 
-It will check every day if your caontainers need to be updated.
+It will check every day if your containers need to be updated.
