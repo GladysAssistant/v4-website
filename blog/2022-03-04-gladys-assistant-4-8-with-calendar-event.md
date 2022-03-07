@@ -25,7 +25,7 @@ It's now possible to trigger a scene when a specific event is coming up in the c
 
 Imagine you want to get a reminder when you need to go to work? Get a nice wake up at the right time?
 
-You need to have at least one calendar connected to Gladys (We support iCloud calendars, Google Agenda, Synology calendars or any Caldav calendar with our [Caldav integration](/docs/integrations/caldav/)).
+You need to have at least one calendar connected to Gladys (We support iCloud calendars, Google Calendar, Synology calendars or any Caldav calendar with our [Caldav integration](/docs/integrations/caldav/)).
 
 You can create a new scene, and create a "Calendar event is coming" trigger:
 

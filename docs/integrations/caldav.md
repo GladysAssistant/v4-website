@@ -39,7 +39,7 @@ In Gladys dashboard, go to CalDAV config page.
 
 ![iCloud](../../static/img/docs/en/configuration/caldav/apple_4_apple_config.png)
 
-Click on "Save". 
+Click on "Save".
 
 If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
 
@@ -49,24 +49,24 @@ Log in to your Google account : [https://myaccount.google.com/](https://myaccoun
 
 Go to security tabs and click on "App Passwords".
 
-![Google Agenda](../../static/img/docs/en/configuration/caldav/google_1_app_password.png)
+![Google Calendar](../../static/img/docs/en/configuration/caldav/google_1_app_password.png)
 
 1. Select "Calendar" for application
 2. Select "Other" for device
 3. Once you entered the chosen application name ("Gladys" for example), click on "Generate" and write down the generated password.
 
-![Google Agenda](../../static/img/docs/en/configuration/caldav/google_2_generate.png)
+![Google Calendar](../../static/img/docs/en/configuration/caldav/google_2_generate.png)
 
 In the Gladys dashboard, go to CalDAV config page (Integration tab > Calendar).
 
-![Google Agenda](../../static/img/docs/en/configuration/caldav/apple_3_integration.png)
+![Google Calendar](../../static/img/docs/en/configuration/caldav/apple_3_integration.png)
 
 1. Choose "Google Calendar"
 2. Leave the default URL
 3. Type your Google email address
 4. Paste here the previously generated password
 
-![Google Agenda](../../static/img/docs/en/configuration/caldav/google_4_google_config.png)
+![Google Calendar](../../static/img/docs/en/configuration/caldav/google_4_google_config.png)
 
 Click on "Save". If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
 
@@ -96,7 +96,7 @@ In the Gladys dashboard, go to CalDAV config page (Integration tab > Calendar).
 
 ![Synology](../../static/img/docs/en/configuration/caldav/apple_4_apple_config.png)
 
-Click on "Save". 
+Click on "Save".
 
 If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
 
@@ -128,7 +128,7 @@ In Gladys dashboard, go to CalDAV config page (Integration tab > Calendar).
 
 ![Nextcloud](../../static/img/docs/en/configuration/caldav/apple_4_apple_config.png)
 
-Click on "Save". 
+Click on "Save".
 
 If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
 
