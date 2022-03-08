@@ -69,7 +69,7 @@ For any device that is not a sensor:
 
 ### Zigbee2mqtt: CO sensors & Alarm feature
 
-Thanks to Alexandre Trovato's work on Githu [here](https://github.com/GladysAssistant/Gladys/pull/1417) and [here](https://github.com/GladysAssistant/Gladys/pull/1420), you can now add a Zigbee2mqtt CO sensor & use the alarm feature in Gladys.
+Thanks to Alexandre Trovato's work on Github [here](https://github.com/GladysAssistant/Gladys/pull/1417) and [here](https://github.com/GladysAssistant/Gladys/pull/1420), you can now add a Zigbee2mqtt CO sensor & use the alarm feature in Gladys.
 
 ## How to upgrade?
 
