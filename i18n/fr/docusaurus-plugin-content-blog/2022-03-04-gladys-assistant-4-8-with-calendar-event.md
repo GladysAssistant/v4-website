@@ -15,6 +15,14 @@ Aujourd'hui je suis heureux de lancer une nouvelle version de Gladys, Gladys Ass
 
 Cette version met l'accent sur les calendriers, mais il y a d'autres améliorations qui vont plaire à tout le monde à mon avis !
 
+Le replay du live Youtube de lancement est disponible ici :
+
+<div class="videoContainer">
+<iframe class="video" src="https://www.youtube.com/embed/ijIa9ZYObJE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<!--truncate-->
+
 ## Les nouveautés de Gladys Assistant 4.8
 
 ### Déclencher une scène quand un évènement d'un calendrier arrive
