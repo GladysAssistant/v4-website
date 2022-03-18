@@ -66,7 +66,10 @@ Pour lancer Gladys, exécutez la commande suivante sur votre VM:
 
 ```bash
 docker run -d \
+--log-driver json-file \
 --log-opt max-size=10m \
+--cgroupns=host \
+--cidfile=/var/lib/gladysassistant/containerId \
 --restart=always \
 --privileged \
 --network=host \
@@ -78,6 +81,7 @@ docker run -d \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
+-v /run/udev:/run/udev:ro \
 gladysassistant/gladys:v4
 ```
 
