@@ -69,7 +69,6 @@ docker run -d \
 --log-driver json-file \
 --log-opt max-size=10m \
 --cgroupns=host \
---cidfile=/var/lib/gladysassistant/containerId \
 --restart=always \
 --privileged \
 --network=host \
