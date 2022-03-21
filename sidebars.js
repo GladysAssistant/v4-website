@@ -39,6 +39,8 @@ module.exports = {
         "scenes/intro",
         "scenes/device-state-changed-trigger",
         "scenes/scheduled-trigger",
+        "scenes/calendar-event-is-coming-trigger",
+        "scenes/calendar-event-is-running-condition",
         "scenes/turn-on-off-the-switches-action",
         "scenes/get-last-device-state-action",
         "scenes/wait-action",
