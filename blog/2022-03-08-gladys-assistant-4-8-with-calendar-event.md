@@ -15,6 +15,8 @@ Today I'm happy to release a new version of Gladys, Gladys Assistant v4.8 🥳
 
 This version is mainly focused on the calendar integration, but it also adds a lot of UX improvements in Gladys.
 
+<!--truncate-->
+
 ## What's new in Gladys Assistant 4.8?
 
 ### Scene trigger when a calendar event is coming up
