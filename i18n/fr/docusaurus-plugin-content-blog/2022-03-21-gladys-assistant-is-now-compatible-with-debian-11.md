@@ -72,6 +72,8 @@ Exemple:
 
 Désormais, les intégrations qui lancent des containers (MQTT & Zigbee2mqtt) utiliseront le même dossier pour leur données, même si ce dossier est modifié par l'utilisateur dans le `docker run`.
 
+Ce changement était nécessaire pour les utilisateurs sur NAS Unraid ou Synology, car leur architecture de dossier est particulière, et ils ont besoin de stocker toutes les informations de ces containers dans des dossiers précis.
+
 ### Corrections de bugs
 
 - Correction d'un bug assez important où la fréquence de rafraichissement des appareils comme les caméras n'étaient pas forcément pris en compte après un changement, voir pire, la fréquence de rafraichissement était prise en compte plusieurs fois, ce qui fait qu'une caméra dont la fréquence a été changée pouvait rafraichir plusieurs fois par cycle. ([#1463](https://github.com/GladysAssistant/Gladys/pull/1463))
