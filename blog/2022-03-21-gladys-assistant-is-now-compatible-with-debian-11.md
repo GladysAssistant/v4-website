@@ -78,10 +78,10 @@ Gladys will take the same the folder on host, and use it for the Zigbee2mqtt & M
 
 ### Lots of bugfixes
 
-- Fix a bug where updating a camera device would result in the device being polled several times at its poll frequency
-- Fix a bug in scene: The "Try" HTTP Request button was not taking headers into account.
-- Fix a bug on the dashboard: the dashboard name was not updated in the list when updated.
-- Add missing translations for the vibration sensor.
+- Fix a bug where updating a camera device would result in the device being polled several times at its poll frequency ([#1463](https://github.com/GladysAssistant/Gladys/pull/1463))
+- Fix a bug in scene: The "Try" HTTP Request button was not taking headers into account. ([#1475](https://github.com/GladysAssistant/Gladys/pull/1475))
+- Fix a bug on the dashboard: the dashboard name was not updated in the list when updated. ([#1463](https://github.com/GladysAssistant/Gladys/pull/1463))
+- Add missing translations for the vibration sensor. ([#1461](https://github.com/GladysAssistant/Gladys/pull/1461))
 
 ## How to upgrade?
 
