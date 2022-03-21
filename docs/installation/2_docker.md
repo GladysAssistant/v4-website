@@ -38,7 +38,9 @@ You can start a Gladys container with the command:
 
 ```bash
 docker run -d \
+--log-driver json-file \
 --log-opt max-size=10m \
+--cgroupns=host \
 --restart=always \
 --privileged \
 --network=host \

@@ -40,7 +40,9 @@ Pour lancer Gladys, exécutez la commande suivante :
 
 ```bash
 docker run -d \
+--log-driver json-file \
 --log-opt max-size=10m \
+--cgroupns=host \
 --restart=always \
 --privileged \
 --network=host \
