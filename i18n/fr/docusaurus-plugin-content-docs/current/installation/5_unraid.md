@@ -14,13 +14,13 @@ Pour ce faire :
 2) Cherchez Gladys-Assistant
 3) Cliquez sur install 
 
-![AppManager](../../static/img/docs/en/installation/unraid/apps_manager.jpg)
+![AppManager](../../../../../static/img/docs/en/installation/unraid/apps_manager.jpg)
 
 ## Configuration de Gladys
 
 Après avoir cliquez sur installer, vous serez redirigé vers la page de configuration de Gladys.
 
-![Configuration](../../static/img/docs/en/installation/unraid/docker_config.jpg)
+![Configuration](../../../../../static/img/docs/en/installation/unraid/docker_config.jpg)
 
 Voici les différents paramètres qui vous seront proposez : 
 
@@ -55,7 +55,7 @@ Ainsi pour mettre à jour votre instance :
 
 Vous pouvez voir la version de votre instance depuis l'interface Gladys en cliquant sur votre profil en haut à droite puis sur paramètres et système.
 
-![Update](../../static/img/docs/en/installation/unraid/gladys_update.jpg)
+![Update](../../../../../static/img/docs/en/installation/unraid/gladys_update.jpg)
 
 
 ## Paramètres avancés
