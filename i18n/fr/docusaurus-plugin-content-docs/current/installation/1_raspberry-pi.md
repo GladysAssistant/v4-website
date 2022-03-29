@@ -26,11 +26,11 @@ Nous mettons à disposition une image Raspberry Pi OS toute prête.
 
 Pour Raspberry Pi 3, 4 et 400 :
 
-<a class="button button--primary margin-bottom--md" href="/download/latest-64" rel="nofollow" >Télécharger Gladys Assistant OS Bullseye 64 bits</a>
+<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest-64" rel="nofollow" >Télécharger Gladys Assistant OS Bullseye 64 bits</a>
 
 Pour les Raspberry Pi plus anciens ( Raspberry Pi 1, 2 et Zero ) en architecture 32 bits :
 
-<a class="button button--primary margin-bottom--md" href="/download/latest" rel="nofollow">Télécharger Gladys Assistant OS Bullseye 32 bits</a>
+<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow">Télécharger Gladys Assistant OS Bullseye 32 bits</a>
 
 L'image Raspberry Pi OS est compressée dans un fichier zip, que vous devez dézipper afin d'arriver à un fichier `.img`.
 

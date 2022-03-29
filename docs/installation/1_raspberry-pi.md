@@ -12,11 +12,11 @@ We provide a pre-built Raspberry Pi OS image with Gladys already configured.
 
 For Raspberry Pi 3, 4 & 400:
 
-<a class="button button--primary margin-bottom--md" href="/download/latest-64" rel="nofollow" >Download Gladys Assistant OS Bullseye 64-bit</a>
+<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest-64" rel="nofollow" >Download Gladys Assistant OS Bullseye 64-bit</a>
 
 For older Raspberry Pi (Raspberry Pi 1, 2 & Zero):
 
-<a class="button button--primary margin-bottom--md" href="/download/latest" rel="nofollow" >Download Gladys Assistant OS Bullseye 32-bit</a>
+<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow" >Download Gladys Assistant OS Bullseye 32-bit</a>
 
 This link will download a `.zip` file containing the Raspberry Pi OS image of Gladys Assistant. After unzipping the downloaded file, you'll get a `.img` file.
 
