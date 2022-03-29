@@ -30,7 +30,7 @@ Here are the different parameters :
 4) Your time zone, make sure to follow this [type](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 5) The port on which Gladys's Dashboard will be displayed.
 
-Caution: If you have/plan to have MQTT Device the ports 1883 and 1884 must be free. Same for Zigbee device that needs both 1883, 1884, and 8080 free.
+Caution: If you have/plan to have MQTT Device the port 1883 must be free. Same for Zigbee device that needs both 1884 and 8080 free.
 
 Caution: If you change the default port 8006, the WebUI button might redirect you to the wrong port address to change that, click on advanced view, find web UI and change the number.
 
