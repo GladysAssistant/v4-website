@@ -8,9 +8,15 @@ If you are looking to install Gladys Assistant on a Raspberry Pi that is already
 
 ## Download Gladys Raspberry Pi OS image
 
-We provide a pre-built Raspberry Pi OS image with Gladys already configured:
+We provide a pre-built Raspberry Pi OS image with Gladys already configured.
 
-<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow" >Download Gladys Assistant OS rev5</a>
+For Raspberry Pi 3, 4 & 400:
+
+<a class="button button--primary margin-bottom--md" href="/download/latest-64" rel="nofollow" >Download Gladys Assistant OS Bullseye 64-bit</a>
+
+For older Raspberry Pi (Raspberry Pi 1, 2 & Zero):
+
+<a class="button button--primary margin-bottom--md" href="/download/latest" rel="nofollow" >Download Gladys Assistant OS Bullseye 32-bit</a>
 
 This link will download a `.zip` file containing the Raspberry Pi OS image of Gladys Assistant. After unzipping the downloaded file, you'll get a `.img` file.
 
@@ -43,4 +49,3 @@ If you don't see the Gladys login page when typing `http://gladys.local` in your
 
 💡 To find the right IP address, you can use a network scanner app such as ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) on Android or [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) on iOS)
 :::
-
