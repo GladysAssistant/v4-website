@@ -3,7 +3,6 @@ import classnames from "classnames";
 import styles from "./styles.module.css";
 import Image from "@theme/IdealImage";
 import Link from "@docusaurus/Link";
-import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 
 import Translate, { translate } from "@docusaurus/Translate";
 
@@ -24,9 +23,6 @@ function Integration({
     description = truncate(description, MAX_DESCRIPTION_LENGTH) + " ...";
   }
   if (buyLink && buyLink.indexOf("amazon.fr") !== -1) {
-    const URL = ExecutionEnvironment.canUseDOM
-      ? window.URL
-      : require("url").URL;
     var amazonUrl = new URL(buyLink);
     amazonUrl.searchParams.set("tag", "gladproj-21");
     buyLink = amazonUrl.toString();
