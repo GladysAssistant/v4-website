@@ -31,18 +31,18 @@ It's not recommended to use Gladys on a micro-SD card because a micro-SD is not 
 
 We highly recommend using a SSD disk instead of an SD card, and there are some great options for cheap prices. If you want ever higher performance/reliability, the [Samsung 870 EVO for 57$](https://www.amazon.com/SAMSUNG-500GB-Internal-MZ-77E500B-AM/dp/B08QBN5J9B?ac_md=3-0-VW5kZXIgJDEwMA%3D%3D-ac_d_bv_bv_bv&crid=1TYDTBQU3P3OS&cv_ct_cx=samsung%2Bevo%2Bssd&keywords=samsung%2Bevo%2Bssd&pd_rd_i=B08QBMD6P4&pd_rd_r=79cb8660-e26d-41f9-a659-0e85e3732cc3&pd_rd_w=mbPCS&pd_rd_wg=fPPgW&pf_rd_p=f77357a4-3bc9-48f9-a560-10a39068cae9&pf_rd_r=ESM4V1RF2VKCF46BSZ45&qid=1644834996&sprefix=samsung%2Bevo%2Bssd%2Caps%2C154&sr=1-1-f4ff053e-b1e8-4d31-8f95-56d755c862ba&th=1&linkCode=ll1&tag=gladproj-20&linkId=d3e58fb66485be6c90c3d9652ed31c62&language=en_US&ref_=as_li_ss_tl) with a 5 years warranty is a great choice.
 
-## The ultimate starter-kit for less than 100$
+## The ultimate starter-kit for almost around 100$
 
-I did a little recap table of all needed pieces for this setup, and it's just under 100$:
+I did a little recap table of all needed pieces for this setup, and it's just around ~100$:
 
 | Piece                  | Price |
 | ---------------------- | ----- |
 | Raspberry Pi 4         | 45$   |
-| Raspberry Pi charger   | 7,95$ |
+| Raspberry Pi charger   | 7.95$ |
 | Raspberry Pi case      | 11$   |
-| 32GB Micro-SD card     | 6,75$ |
+| 32GB Micro-SD card     | 6.75$ |
 | 120GB SSD disk         | 22$   |
 | USB 3.0 disk enclosure | 11$   |
-| **Total price**        | 93,6$ |
+| **Total price**        | 103.7$ |
 
 It proves that building your own home automation setup is pretty cheap today!
