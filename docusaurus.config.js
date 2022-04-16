@@ -181,5 +181,10 @@ module.exports = {
       defer: true,
       src: "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
     },
+    {
+      async: true,
+      defer: true,
+      src: "/js/mailerlite.js",
+    },
   ],
 };
