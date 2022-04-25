@@ -91,16 +91,46 @@ function Plus() {
     }
   };
 
+  const isFr = () => {
+    if (language === "fr") {
+      return true;
+    }
+    try {
+      let fr = false;
+      navigator.languages.forEach((oneLang) => {
+        if (oneLang.indexOf("fr") !== -1) {
+          fr = true;
+        }
+      });
+      return fr;
+    } catch (e) {
+      console.error(e);
+      return true;
+    }
+  };
+
+  const subscribeDiscount = (e) => {
+    e.preventDefault();
+    const locale = isFr() ? "fr" : "en";
+    window.location.href = `https://direct-pay-gladys-plus.gladysassistant.workers.dev?locale=${locale}`;
+  };
+
   const submitButtonInitialState = translate({
-    id: "gladysgladysPlusPage.submit",
+    id: "gladysPlusPage.submit",
     description: "Gladys Plus submit",
     message: "Start free trial",
   });
 
   const submitButtonSending = translate({
-    id: "gladysgladysPlusPage.creatingAccount",
+    id: "gladysPlusPage.creatingAccount",
     description: "Gladys Plus page waiting message",
     message: "Creating account...",
+  });
+
+  const subscribeButtonDiscount = translate({
+    id: "gladysPlusPage.subscribeButtonDiscount",
+    description: "Gladys Plus suscribe button discount",
+    message: "Subscribe now (4.99€/month for 1 year)",
   });
 
   return (
@@ -186,47 +216,81 @@ function Plus() {
                       </Translate>
                     </div>
                   )}
-                  <label style={{ display: "block" }}>
-                    <Translate
-                      id="gladysPlusPage.startFreeTrial"
-                      description="Gladys Plus free trial input"
+                  {false && (
+                    <span>
+                      <label style={{ display: "block" }}>
+                        <Translate
+                          id="gladysPlusPage.startFreeTrial"
+                          description="Gladys Plus free trial input"
+                        >
+                          Start free trial (14 days)
+                        </Translate>
+                      </label>
+                      <input
+                        type="text"
+                        className={cx(
+                          styles.inputField,
+                          styles.plusInput,
+                          "margin-top--sm margin-bottom--sm margin-right--md"
+                        )}
+                        style={{
+                          display: "inline-block",
+                        }}
+                        onChange={updateEmail}
+                        value={email}
+                        placeholder={translate({
+                          id: "gladysPlusPage.emailPlaceholder",
+                          description: "Gladys Plus email placeholder",
+                          message: "Enter your email",
+                        })}
+                      />
+                      <input
+                        type="submit"
+                        onClick={subscribe}
+                        disabled={status === STATUS.SENDING}
+                        value={
+                          status === STATUS.SENDING
+                            ? submitButtonSending
+                            : submitButtonInitialState
+                        }
+                        className={cx(
+                          styles.plusInput,
+                          styles.plusInputButton,
+                          "button button--primary"
+                        )}
+                      />
+                    </span>
+                  )}
+                  <span>
+                    <label style={{ display: "block", marginBottom: "10px" }}>
+                      <Translate
+                        id="gladysPlusPage.subscribe"
+                        description="Gladys Plus subscribe"
+                      >
+                        Exlusive deal for a limited time!
+                      </Translate>
+                    </label>
+                    <button
+                      onClick={subscribeDiscount}
+                      className={cx(
+                        styles.plusInput,
+                        styles.plusInputButton,
+                        "button button--primary"
+                      )}
                     >
-                      Start free trial (14 days)
-                    </Translate>
-                  </label>
-                  <input
-                    type="text"
-                    className={cx(
-                      styles.inputField,
-                      styles.plusInput,
-                      "margin-top--sm margin-bottom--sm margin-right--md"
-                    )}
-                    style={{
-                      display: "inline-block",
-                    }}
-                    onChange={updateEmail}
-                    value={email}
-                    placeholder={translate({
-                      id: "gladysPlusPage.emailPlaceholder",
-                      description: "Gladys Plus email placeholder",
-                      message: "Enter your email",
-                    })}
-                  />
-                  <input
-                    type="submit"
-                    onClick={subscribe}
-                    disabled={status === STATUS.SENDING}
-                    value={
-                      status === STATUS.SENDING
-                        ? submitButtonSending
-                        : submitButtonInitialState
-                    }
-                    className={cx(
-                      styles.plusInput,
-                      styles.plusInputButton,
-                      "button button--primary"
-                    )}
-                  />
+                      {subscribeButtonDiscount}
+                    </button>
+                    <div style={{ marginTop: "10px" }}>
+                      <small>
+                        <Translate
+                          id="gladysPlusPage.unsuscribeAtAnytime"
+                          description="Pricing unsubscribe at anytime text"
+                        >
+                          (Unsuscribe at anytime)
+                        </Translate>
+                      </small>
+                    </div>
+                  </span>
                 </div>
               </form>
             </div>
@@ -402,10 +466,10 @@ function Plus() {
                         className={cx("text--center", styles.plusPricingTitle)}
                       >
                         <Translate
-                          id="gladysPlusPage.pricingTitle"
-                          description="Pricing title"
+                          id="gladysPlusPage.pricingTitleDiscount"
+                          description="Pricing title discount"
                         >
-                          9.99€
+                          Exclusive discount: 4.99€
                         </Translate>
                       </h3>
                       <small className={styles.plusPricingTitleMonth}>
@@ -471,16 +535,21 @@ function Plus() {
                   </div>
                   <div class="card__footer">
                     <button
-                      onClick={scrollTopTop}
+                      onClick={subscribeDiscount}
                       class="button button--primary button--block"
                     >
-                      <Translate
-                        id="gladysPlusPage.startFreeTrial"
-                        description="Pricing subscribe button"
-                      >
-                        Start a free 14 days trial
-                      </Translate>
+                      {subscribeButtonDiscount}
                     </button>
+                    <div style={{ textAlign: "center", marginTop: "10px" }}>
+                      <small>
+                        <Translate
+                          id="gladysPlusPage.unsuscribeAtAnytime"
+                          description="Pricing unsubscribe at anytime text"
+                        >
+                          (Unsuscribe at anytime)
+                        </Translate>
+                      </small>
+                    </div>
                   </div>
                 </div>
               </div>
