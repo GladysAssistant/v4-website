@@ -26,7 +26,7 @@ Vous devez soit ouvrir votre réseau à l'extérieur d'Internet, soit configurer
 
 Les deux options ne sont pas parfaites: la première n'est pas sécurisée, car votre instance locale devient disponible en ligne et peut être piratée. L'option VPN est pénible à configurer, à utiliser et à maintenir.
 
-Le "Gladys Gateway", fait parti du package Gladys Plus, et est disponible à https://plus.gladysassistant.com, c'est un tunnel chiffré de bout en bout qui transmet les requêtes faites sur le client web à votre instance locale sans compromettre votre vie privée car le trafic est chiffré de bout en bout.
+Le "Gladys Gateway", fait parti du package Gladys Plus, et est disponible à [plus.gladysassistant.com](https://plus.gladysassistant.com), c'est un tunnel chiffré de bout en bout qui transmet les requêtes faites sur le client web à votre instance locale sans compromettre votre vie privée car le trafic est chiffré de bout en bout.
 
 ### Sauvegardes chiffrées quotidiennes
 
