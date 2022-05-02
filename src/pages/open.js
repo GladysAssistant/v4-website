@@ -317,6 +317,17 @@ function Open() {
                         </h2>
                         <ul>
                           <li className={styles.openPageList}>
+                            <a href={`${urlPrefix}/blog/2021-year-in-review`}>
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2021 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
                             <a
                               href={`${urlPrefix}/blog/bilan-2020-gladys-assistant`}
                             >
@@ -372,19 +383,6 @@ function Open() {
                                 id="openPage.yearlyReview"
                                 description="Yearly reviews"
                                 values={{ year: 2016 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a
-                              href={`${urlPrefix}/blog/bilan-2015-et-projets-pour-2016`}
-                            >
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2015 }}
                               >
                                 {"{year} yearly review"}
                               </Translate>
