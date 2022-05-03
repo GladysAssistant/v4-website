@@ -52,9 +52,19 @@ module.exports = {
           position: "left",
         },
         {
-          to: "https://community.gladysassistant.com/",
+          type: "dropdown",
           label: "Community",
           position: "left",
+          items: [
+            {
+              label: "English Community (New!)",
+              href: "https://en-community.gladysassistant.com/",
+            },
+            {
+              label: "Communauté en français",
+              href: "https://community.gladysassistant.com/",
+            },
+          ],
         },
         {
           type: "localeDropdown",
