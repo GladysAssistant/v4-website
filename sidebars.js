@@ -10,6 +10,7 @@ module.exports = {
         "installation/synology",
         "installation/unraid",
         "installation/freebox-delta",
+        "installation/phone",
         "installation/faq",
       ],
     },
