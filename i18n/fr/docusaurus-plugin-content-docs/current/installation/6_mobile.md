@@ -48,8 +48,6 @@ Donnez un nom à l'application, et "Ajouter" :
 
 ![iOS Step 3](../../../../../static/img/docs/en/installation/phone/ios-step-3.jpg)
 
-Success! You have Gladys Plus on your home screen.
+C'est bon, vous avez installé Gladys sur votre téléphone !
 
 ![iOS Step 4](../../../../../static/img/docs/en/installation/phone/ios-step-4.jpg)
-
-C'est bon !
