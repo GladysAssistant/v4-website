@@ -10,6 +10,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Translate from "@docusaurus/Translate";
 import FAQ from "../components/home/FAQ";
 import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
+import TestimonialSection from "../components/PlusTestimonial";
 
 import styles from "./styles.module.css";
 
@@ -142,7 +143,7 @@ function Plus() {
             maxWidth: "72rem",
             marginLeft: "auto",
             marginRight: "auto",
-            marginBottom: "10rem",
+            marginBottom: "5rem",
           }}
         >
           <div className="row">
@@ -363,7 +364,7 @@ function Plus() {
                   description="Gladys Plus page title"
                 >
                   Gladys Plus backup your local instance once every day, so you
-                  don’t have to worry about losing your local data again.
+                  don't have to worry about losing your local data again.
                 </Translate>
               </p>
               <p>
@@ -556,6 +557,11 @@ function Plus() {
             </div>
           </div>
         </div>
+        {language === "fr" && (
+          <div style={{ marginBottom: "5rem" }}>
+            <TestimonialSection lang={language} />
+          </div>
+        )}
         <FAQ lang={language} />
       </div>
     </main>
