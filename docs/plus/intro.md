@@ -6,7 +6,7 @@ sidebar_label: Intro
 
 [Gladys Plus](/plus/) is an additionnal product developed & maintained by [Pierre-Gilles Leymarie](https://twitter.com/pierregillesl), founder of Gladys Assistant.
 
-Gladys Plus is a paid product, entirely optional, that gives the user a few additional &  interesting features:
+Gladys Plus is a paid product, entirely optional, that gives the user a few additional & interesting features:
 
 - **End-to-End Encrypted remote access**: We all know that, when it comes to home automation, accessing the local setup from outside of the home network is complicated.
 
@@ -14,7 +14,7 @@ You either need to open your network to the outside of the internet, or you need
 
 Both options are not perfect: the first one is insecure, because your local instance becomes available online and can be hacked and the VPN option is painful to setup, use and maintain.
 
-We provide Gladys Plus, accessible at https://plus.gladysassistant.com. It is an E2E encrypted tunnel that proxies the request to your home network without compromising your privacy. This is a result of the traffic being end-to-end encrypted.
+We provide Gladys Plus, accessible at [plus.gladysassistant.com](https://plus.gladysassistant.com). It is an E2E encrypted tunnel that proxies the request to your home network without compromising your privacy. This is a result of the traffic being end-to-end encrypted.
 
 - **Daily encrypted backups**: Losing your home automation data because of a disk failure or a misconfiguration is never fun.
 

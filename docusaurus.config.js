@@ -52,9 +52,19 @@ module.exports = {
           position: "left",
         },
         {
-          to: "https://community.gladysassistant.com/",
+          type: "dropdown",
           label: "Community",
           position: "left",
+          items: [
+            {
+              label: "English Community (New!)",
+              href: "https://en-community.gladysassistant.com/",
+            },
+            {
+              label: "Communauté en français",
+              href: "https://community.gladysassistant.com/",
+            },
+          ],
         },
         {
           type: "localeDropdown",
@@ -180,6 +190,11 @@ module.exports = {
       async: true,
       defer: true,
       src: "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
+    },
+    {
+      async: true,
+      defer: true,
+      src: "/js/mailerlite.js",
     },
   ],
 };

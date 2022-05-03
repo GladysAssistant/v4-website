@@ -61,6 +61,7 @@ async function getUsage() {
     forumPageViewsPoints,
     forum_users: data.forum_users,
     nb_gladys_plus_users: data.nb_gladys_plus_users,
+    chartmogul_data: data.chartmogul_data,
   };
 }
 
@@ -68,6 +69,7 @@ function Open() {
   const context = useDocusaurusContext();
   const usageChartCanva = useRef(null);
   const forumPageViewsCanva = useRef(null);
+  const [loading, setLoading] = useState(true);
   const [usageChartData, setUsageChartData] = useState(null);
   const { i18n } = context;
   const language = i18n.currentLocale;
@@ -80,10 +82,9 @@ function Open() {
   const numberOfGladysPlusUsers = usageChartData
     ? usageChartData.nb_gladys_plus_users
     : null;
-  const euroInUsdRate = 1.17;
-  const gladysPlusPricing = 9.99;
-  const mrr = numberOfGladysPlusUsers
-    ? Math.round(numberOfGladysPlusUsers * gladysPlusPricing * euroInUsdRate)
+
+  const mrr = usageChartData
+    ? Math.round(usageChartData.chartmogul_data.current / 100)
     : null;
 
   useEffect(async () => {
@@ -160,6 +161,7 @@ function Open() {
       },
     };
     setUsageChartData(data);
+    setLoading(false);
 
     if (usageChartCanva) {
       const usageCtx = usageChartCanva.current.getContext("2d");
@@ -217,222 +219,240 @@ function Open() {
                 </p>
               </div>
             </div>
-            <div className="row">
-              <div className={"col col--4 " + styles.openPageCard}>
-                <div className="card">
-                  <div className="card__body">
-                    <div className="text--center">
-                      <Translate
-                        id="openPage.homeRunningGladys"
-                        description="Open Page home running Gladys"
-                      >
-                        Home running Gladys
-                      </Translate>
+            {loading && <div class={styles.spinner}></div>}
+            {loading === false && (
+              <div>
+                <div className="row">
+                  <div className={"col col--4 " + styles.openPageCard}>
+                    <div className="card">
+                      <div className="card__body">
+                        <div className="text--center">
+                          <Translate
+                            id="openPage.homeRunningGladys"
+                            description="Open Page home running Gladys"
+                          >
+                            Home running Gladys
+                          </Translate>
+                        </div>
+                        <h3
+                          className="text--center"
+                          style={{ fontSize: "4rem" }}
+                        >
+                          {numberOfInstances}
+                        </h3>
+                      </div>
                     </div>
-                    <h3 className="text--center" style={{ fontSize: "4rem" }}>
-                      {numberOfInstances}
-                    </h3>
                   </div>
-                </div>
-              </div>
-              <div className={"col col--4 " + styles.openPageCard}>
-                <div className="card">
-                  <div className="card__body">
-                    <div className="text--center">
-                      <Translate
-                        id="openPage.gladysPlusUsers"
-                        description="Open Page gladys plus users Gladys"
-                      >
-                        Gladys Plus users
-                      </Translate>
+                  <div className={"col col--4 " + styles.openPageCard}>
+                    <div className="card">
+                      <div className="card__body">
+                        <div className="text--center">
+                          <Translate
+                            id="openPage.gladysPlusUsers"
+                            description="Open Page gladys plus users Gladys"
+                          >
+                            Gladys Plus users
+                          </Translate>
+                        </div>
+                        <h3
+                          className="text--center"
+                          style={{ fontSize: "4rem" }}
+                        >
+                          {numberOfGladysPlusUsers}
+                        </h3>
+                      </div>
                     </div>
-                    <h3 className="text--center" style={{ fontSize: "4rem" }}>
-                      {numberOfGladysPlusUsers}
-                    </h3>
                   </div>
-                </div>
-              </div>
-              <div className={"col col--4 " + styles.openPageCard}>
-                <div className="card">
-                  <div className="card__body">
-                    <div className="text--center">
-                      <Translate id="openPage.mrr" description="Open Page MRR">
-                        MRR
-                      </Translate>
-                    </div>
-                    <h3 className="text--center" style={{ fontSize: "4rem" }}>
-                      ${mrr}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class={"row " + styles.openPageChartRow}>
-              <div className={"col col--12 " + styles.openPageCard}>
-                <div className="card">
-                  <div className="card__body">
-                    <h2 className="text--center">
-                      <Translate
-                        id="openPage.numberOfHomeRunningGladys"
-                        description="Chart title"
-                      >
-                        Number of home running Gladys
-                      </Translate>
-                    </h2>
-                    <div style={{ height: "400px" }}>
-                      <canvas ref={usageChartCanva}></canvas>
+                  <div className={"col col--4 " + styles.openPageCard}>
+                    <div className="card">
+                      <div className="card__body">
+                        <div className="text--center">
+                          <Translate
+                            id="openPage.mrr"
+                            description="Open Page MRR"
+                          >
+                            MRR
+                          </Translate>
+                        </div>
+                        <h3
+                          className="text--center"
+                          style={{ fontSize: "4rem" }}
+                        >
+                          {mrr} €
+                        </h3>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class={"row " + styles.openPageChartRow}>
-              <div className={"col col--4 " + styles.openPageCard}>
-                <div className="card" style={{ height: "270px" }}>
-                  <div className="card__body">
-                    <h2 className="text--center">
-                      <Translate
-                        id="openPage.lastYearReviews"
-                        description="Last year reviews"
-                      >
-                        Last years reviews
-                      </Translate>
-                    </h2>
-                    <ul>
-                      <li className={styles.openPageList}>
-                        <a
-                          href={`${urlPrefix}/blog/bilan-2020-gladys-assistant`}
-                        >
+                <div class={"row " + styles.openPageChartRow}>
+                  <div className={"col col--12 " + styles.openPageCard}>
+                    <div className="card">
+                      <div className="card__body">
+                        <h2 className="text--center">
                           <Translate
-                            id="openPage.yearlyReview"
-                            description="Yearly reviews"
-                            values={{ year: 2020 }}
+                            id="openPage.numberOfHomeRunningGladys"
+                            description="Chart title"
                           >
-                            {"{year} yearly review"}
+                            Number of home running Gladys
                           </Translate>
-                        </a>
-                      </li>
-                      <li className={styles.openPageList}>
-                        <a
-                          href={`${urlPrefix}/blog/bilan-2019-gladys-assistant`}
-                        >
-                          <Translate
-                            id="openPage.yearlyReview"
-                            description="Yearly reviews"
-                            values={{ year: 2019 }}
-                          >
-                            {"{year} yearly review"}
-                          </Translate>
-                        </a>
-                      </li>
-                      <li className={styles.openPageList}>
-                        <a
-                          href={`${urlPrefix}/blog/bilan-2018-pour-gladys-assistant`}
-                        >
-                          <Translate
-                            id="openPage.yearlyReview"
-                            description="Yearly reviews"
-                            values={{ year: 2018 }}
-                          >
-                            {"{year} yearly review"}
-                          </Translate>
-                        </a>
-                      </li>
-                      <li className={styles.openPageList}>
-                        <a href={`${urlPrefix}/blog/bilan-gladys-2017`}>
-                          <Translate
-                            id="openPage.yearlyReview"
-                            description="Yearly reviews"
-                            values={{ year: 2017 }}
-                          >
-                            {"{year} yearly review"}
-                          </Translate>
-                        </a>
-                      </li>
-                      <li className={styles.openPageList}>
-                        <a href={`${urlPrefix}/blog/bilan-annee-2016`}>
-                          <Translate
-                            id="openPage.yearlyReview"
-                            description="Yearly reviews"
-                            values={{ year: 2016 }}
-                          >
-                            {"{year} yearly review"}
-                          </Translate>
-                        </a>
-                      </li>
-                      <li className={styles.openPageList}>
-                        <a
-                          href={`${urlPrefix}/blog/bilan-2015-et-projets-pour-2016`}
-                        >
-                          <Translate
-                            id="openPage.yearlyReview"
-                            description="Yearly reviews"
-                            values={{ year: 2015 }}
-                          >
-                            {"{year} yearly review"}
-                          </Translate>
-                        </a>
-                      </li>
-                    </ul>
+                        </h2>
+                        <div style={{ height: "400px" }}>
+                          <canvas ref={usageChartCanva}></canvas>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className={"col col--4 " + styles.openPageCard}>
-                <div className="card" style={{ height: "270px" }}>
-                  <div className="card__body">
-                    <h2 className="text--center">
-                      <Translate
-                        id="openPage.nbOfForumUsers"
-                        description="Gladys open page number of forum users"
-                      >
-                        No. of forum users
-                      </Translate>
-                    </h2>
-                    <ul>
-                      {usageChartData &&
-                        usageChartData.forum_users &&
-                        usageChartData.forum_users.map((user) => (
+                <div class={"row " + styles.openPageChartRow}>
+                  <div className={"col col--4 " + styles.openPageCard}>
+                    <div className="card" style={{ height: "270px" }}>
+                      <div className="card__body">
+                        <h2 className="text--center">
+                          <Translate
+                            id="openPage.lastYearReviews"
+                            description="Last year reviews"
+                          >
+                            Last years reviews
+                          </Translate>
+                        </h2>
+                        <ul>
                           <li className={styles.openPageList}>
-                            <b>{user.user_type}:</b> {user.count}
+                            <a href={`${urlPrefix}/blog/2021-year-in-review`}>
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2021 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
                           </li>
-                        ))}
-                    </ul>
+                          <li className={styles.openPageList}>
+                            <a
+                              href={`${urlPrefix}/blog/bilan-2020-gladys-assistant`}
+                            >
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2020 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
+                            <a
+                              href={`${urlPrefix}/blog/bilan-2019-gladys-assistant`}
+                            >
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2019 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
+                            <a
+                              href={`${urlPrefix}/blog/bilan-2018-pour-gladys-assistant`}
+                            >
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2018 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
+                            <a href={`${urlPrefix}/blog/bilan-gladys-2017`}>
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2017 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
+                            <a href={`${urlPrefix}/blog/bilan-annee-2016`}>
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2016 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={"col col--4 " + styles.openPageCard}>
+                    <div className="card" style={{ height: "270px" }}>
+                      <div className="card__body">
+                        <h2 className="text--center">
+                          <Translate
+                            id="openPage.nbOfForumUsers"
+                            description="Gladys open page number of forum users"
+                          >
+                            No. of forum users
+                          </Translate>
+                        </h2>
+                        <ul>
+                          {usageChartData &&
+                            usageChartData.forum_users &&
+                            usageChartData.forum_users.map((user) => (
+                              <li className={styles.openPageList}>
+                                <b>{user.user_type}:</b> {user.count}
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={"col col--4 " + styles.openPageCard}>
+                    <div className="card" style={{ height: "270px" }}>
+                      <div className="card__header">
+                        <h2
+                          className="text--center"
+                          style={{ marginBottom: 0 }}
+                        >
+                          <Translate
+                            id="openPage.forumPageViews"
+                            description="Gladys open forum page views"
+                          >
+                            Forum page views
+                          </Translate>
+                        </h2>
+                        <div className="text--center">
+                          <Translate
+                            id="openPage.lastWeek"
+                            description="Gladys Open page last week"
+                          >
+                            (Last week)
+                          </Translate>
+                        </div>
+                      </div>
+                      <div className="card__body">
+                        <div
+                          style={{
+                            height: "150px",
+                            width: "100%",
+                          }}
+                        >
+                          <canvas ref={forumPageViewsCanva}></canvas>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className={"col col--4 " + styles.openPageCard}>
-                <div className="card" style={{ height: "270px" }}>
-                  <div className="card__header">
-                    <h2 className="text--center" style={{ marginBottom: 0 }}>
-                      <Translate
-                        id="openPage.forumPageViews"
-                        description="Gladys open forum page views"
-                      >
-                        Forum page views
-                      </Translate>
-                    </h2>
-                    <div className="text--center">
-                      <Translate
-                        id="openPage.lastWeek"
-                        description="Gladys Open page last week"
-                      >
-                        (Last week)
-                      </Translate>
-                    </div>
-                  </div>
-                  <div className="card__body">
-                    <div
-                      style={{
-                        height: "150px",
-                        width: "100%",
-                      }}
-                    >
-                      <canvas ref={forumPageViewsCanva}></canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </main>
