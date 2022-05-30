@@ -437,8 +437,7 @@ function Plus() {
                   description="Gladys Plus page title"
                 >
                   Send requests to any Gladys devices from Google Assistant by
-                  voice, or from your phone. Alexa compatibility is work in
-                  progress!
+                  voice, or from your phone. Alexa compatibility is in alpha!
                 </Translate>
               </p>
             </div>
