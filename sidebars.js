@@ -23,6 +23,7 @@ module.exports = {
         "integrations/camera",
         "integrations/xiaomi",
         "integrations/google-home",
+        "integrations/alexa",
         "integrations/bluetooth",
         "integrations/sonoff",
         "integrations/tasmota",
