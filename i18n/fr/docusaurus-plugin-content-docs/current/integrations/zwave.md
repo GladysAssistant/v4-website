@@ -6,7 +6,18 @@ sidebar_label: Z-Wave
 
 Gladys Assistant utilise [Open-Zwave](http://openzwave.com/) pour contrôler les appareils Z-Wave.
 
-Pour voir si votre périphérique est potentiellement géré par Gladys Assistant, vous pouvez vous rendre sur la [base de donnée d'open-zwave](http://openzwave.com/device-database).
+:::warning
+Juin 2022: Open-Zwave est une librairie qui n'est plus maintenue, et par conséquent beaucoup d'appareils ne sont pas gérés dans l'intégration actuelle.
+
+Nous travaillons actuellement sur une migration vers ZWaveJS (Voir avancement [sur le forum](https://community.gladysassistant.com/t/v4-integration-z-wave/6057/68?u=pierre-gilles)).
+
+En attendant, nous vous conseillons de passer par Node-RED + ZwaveJS2MQTT.
+
+- [Tutoriel Gladys + Node-RED sur Youtube](https://www.youtube.com/watch?v=bpmHzR8_S5g)
+- [Tutoriel ZwaveJS2mqtt sur le forum](https://community.gladysassistant.com/t/node-red-zwavejs2mqtt-et-volet-roulants-zmnhcd1/6589)
+- [Tutoriel Gladys + Node-RED + ZwaveJS sur le forum](https://community.gladysassistant.com/t/node-red-integration-z-wave/6626)
+
+:::
 
 ## Connectez votre clé USB Z-Wave à votre Raspberry Pi
 
