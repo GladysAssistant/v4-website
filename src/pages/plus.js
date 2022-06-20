@@ -131,7 +131,7 @@ function Plus() {
   const subscribeButtonDiscount = translate({
     id: "gladysPlusPage.subscribeButtonDiscount",
     description: "Gladys Plus suscribe button discount",
-    message: "Subscribe now (4.99€/month for 1 year)",
+    message: "Subscribe now (59,99€ for 1 year)",
   });
 
   return (
@@ -470,7 +470,7 @@ function Plus() {
                           id="gladysPlusPage.pricingTitleDiscount"
                           description="Pricing title discount"
                         >
-                          Exclusive discount: 59,99€ for one year
+                          Discount: 59,99€ for one year
                         </Translate>
                       </h3>
                       {false && (
