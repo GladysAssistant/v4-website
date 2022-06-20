@@ -28,10 +28,6 @@ Afin de permettre à la communauté Gladys d'utiliser Alexa avec Gladys, nous av
 
 Tout ce process, la maintenance et les coûts d'infrastructure demandée par cette intégration justifient la participation que nous demandons pour faire fonctionner cette intégration, et j'espère que vous comprendrez.
 
-:::note
-Cette intégration est en alpha pour l'instant. Vous pouvez venir sur notre [forum](https://community.gladysassistant.com/t/integrer-gladys-dans-alexa/6399/13?u=pierre-gilles) pour récupérer un accès à cette intégration.
-:::note
-
 ## Créer un compte Gladys Plus
 
 Tu peux créer un compte sur cette page de [Gladys Plus](/fr/plus).

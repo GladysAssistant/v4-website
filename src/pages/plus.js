@@ -131,7 +131,7 @@ function Plus() {
   const subscribeButtonDiscount = translate({
     id: "gladysPlusPage.subscribeButtonDiscount",
     description: "Gladys Plus suscribe button discount",
-    message: "Subscribe now (4.99€/month for 1 year)",
+    message: "Subscribe now (59,99€ for 1 year)",
   });
 
   return (
@@ -436,8 +436,9 @@ function Plus() {
                   id="gladysPlusPage.voiceAssistantText"
                   description="Gladys Plus page title"
                 >
-                  Send requests to any Gladys devices from Google Assistant by
-                  voice, or from your phone. Alexa compatibility is in alpha!
+                  Send requests to any Gladys devices from Google Assistant or
+                  Amazon Alexa by voice, or from your phone on the Google Home /
+                  Alexa app.
                 </Translate>
               </p>
             </div>
@@ -469,17 +470,19 @@ function Plus() {
                           id="gladysPlusPage.pricingTitleDiscount"
                           description="Pricing title discount"
                         >
-                          Exclusive discount: 4.99€
+                          Discount: 59,99€ for one year
                         </Translate>
                       </h3>
-                      <small className={styles.plusPricingTitleMonth}>
-                        <Translate
-                          id="gladysPlusPage.pricingPerMonth"
-                          description="Pricing per month"
-                        >
-                          /month
-                        </Translate>
-                      </small>
+                      {false && (
+                        <small className={styles.plusPricingTitleMonth}>
+                          <Translate
+                            id="gladysPlusPage.pricingPerMonth"
+                            description="Pricing per month"
+                          >
+                            /month
+                          </Translate>
+                        </small>
+                      )}
                     </div>
                   </div>
                   <div class="card__body">

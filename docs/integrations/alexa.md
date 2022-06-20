@@ -16,10 +16,6 @@ To become a Alexa partner, we had to:
 
 This is not a simple process, and therefore it's not realistic for all our users go through it on their side. It is a process that is intended for professionals & companies, hence why we offer this integration in Gladys Plus, exclusively.
 
-:::note
-This integration is still in alpha for now. Come to our [forum](https://community.gladysassistant.com/) to get access to the alpha.
-:::note
-
 ## Create a Gladys Plus account
 
 To join Gladys plus, head over to the [dedicated page](/plus), and enter your email.
