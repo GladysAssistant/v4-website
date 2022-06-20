@@ -15,6 +15,20 @@ Aujourd'hui je suis heureux de lancer Gladys Assistant 4.9, une version majeure 
 
 Cette intégration veut dire que nous sommes désormais compatible avec les deux principaux assistant vocaux du marché : [Google Home](/fr/docs/integrations/google-home) et [Alexa](/fr/docs/integrations/alexa).
 
+## Tirage au sort : Gagne un Amazon Echo Dot (4e génération)
+
+A l'occasion de la sortie officielle de l'intégration Amazon Alexa, je veux offrir un Amazon Echo Dot 4ème génération à un utilisateur Gladys Plus !
+
+![Amazon Echo Dot 4ème génération](../../../static/img/articles/fr/gladys-4-9/amazon-echo-dot.jpg)
+
+Pour participer au concours :
+
+- Inscris-toi sur [Gladys Plus](/fr/plus/) entre maintenant et ce **dimanche 26 Juin 2022 à 20h30**
+- Tirage au sort le 26 juin à 21h parmi tous les utilisateurs actifs Gladys Plus !
+- Livraison en UE uniquement
+
+Si tu es gagnant, je te contacterais pour t'envoyer un Amazon Echo Dot 🙂
+
 <!--truncate-->
 
 ## Les nouveautés de Gladys Assistant 4.9

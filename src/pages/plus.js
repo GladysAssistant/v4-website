@@ -436,8 +436,9 @@ function Plus() {
                   id="gladysPlusPage.voiceAssistantText"
                   description="Gladys Plus page title"
                 >
-                  Send requests to any Gladys devices from Google Assistant by
-                  voice, or from your phone. Alexa compatibility is in alpha!
+                  Send requests to any Gladys devices from Google Assistant or
+                  Amazon Alexa by voice, or from your phone on the Google Home /
+                  Alexa app.
                 </Translate>
               </p>
             </div>
@@ -469,17 +470,19 @@ function Plus() {
                           id="gladysPlusPage.pricingTitleDiscount"
                           description="Pricing title discount"
                         >
-                          Exclusive discount: 4.99€
+                          Exclusive discount: 59,99€ for one year
                         </Translate>
                       </h3>
-                      <small className={styles.plusPricingTitleMonth}>
-                        <Translate
-                          id="gladysPlusPage.pricingPerMonth"
-                          description="Pricing per month"
-                        >
-                          /month
-                        </Translate>
-                      </small>
+                      {false && (
+                        <small className={styles.plusPricingTitleMonth}>
+                          <Translate
+                            id="gladysPlusPage.pricingPerMonth"
+                            description="Pricing per month"
+                          >
+                            /month
+                          </Translate>
+                        </small>
+                      )}
                     </div>
                   </div>
                   <div class="card__body">
