@@ -29,6 +29,12 @@ Pour participer au concours :
 
 Si tu es gagnant, je te contacterais pour t'envoyer un Amazon Echo Dot 🙂
 
+Le replay du live Youtube de lancement est disponible ici :
+
+<div class="videoContainer">
+<iframe class="video" src="https://www.youtube.com/embed/Da_AQSQedFg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
 <!--truncate-->
 
 ## Les nouveautés de Gladys Assistant 4.9
