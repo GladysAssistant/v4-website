@@ -115,6 +115,10 @@ module.exports = {
               href: "https://community.gladysassistant.com",
             },
             {
+              label: "Youtube",
+              href: "https://youtube.com/c/GladysAssistant",
+            },
+            {
               label: "Twitter",
               href: "https://twitter.com/gladysassistant",
             },
