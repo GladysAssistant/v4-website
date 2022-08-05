@@ -37,31 +37,31 @@ Les clé client_id et secret seront à copier dans l'intégration Withings dans 
 
 Dans Gladys rejoignez la page de configuration Withings:
 
-![Configuration intégration Withings dans Gladys](../../../../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-0.png)
+![Configuration intégration Withings dans Gladys](../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-0.png)
 
 Allez dans le menu 'Découverte' et renseigner les champs:
 1. client_id du compte Withings partner
 2. secret du compte Withings partner
 
-![Configuration intégration Withings dans Gladys](../../../../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-1.png)
+![Configuration intégration Withings dans Gladys](../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-1.png)
 
 Puis cliquez sur "Connecter maintenant".
 
 Vous êtes redirigé vers le site d'authorisation de withigs:
 
-![Configuration intégration Withings dans Gladys](../../../../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-2.png)
+![Configuration intégration Withings dans Gladys](../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-2.png)
 
 Cliquer sur"Authoriser".
 
 Vous êtes de retour sur l'interface Gladys, si tout c'est bien passé vous verrez la page suivante:
 
-![Configuration intégration Withings dans Gladys](../../../../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-3.png)
+![Configuration intégration Withings dans Gladys](../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-3.png)
 
 Pour ajouter un appareil dans Gladys, vous devez cliquer sur "Connecter dans Gladys" pour chaque appareil. Après la connexion, les données historiques stockées sur le serveur Withngs sont téléchargées.
 
 Vous pouvez cliquer sur le lien "Appareils" du menu gauche pour visualiser les appareils syncrhonisés:
 
-![Configuration intégration Withings dans Gladys](../../../../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-4.png)
+![Configuration intégration Withings dans Gladys](../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-4.png)
 
 ## Usage
 
