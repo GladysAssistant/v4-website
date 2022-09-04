@@ -24,6 +24,7 @@ module.exports = {
         "integrations/xiaomi",
         "integrations/google-home",
         "integrations/alexa",
+        "integrations/homekit",
         "integrations/bluetooth",
         "integrations/sonoff",
         "integrations/tasmota",
