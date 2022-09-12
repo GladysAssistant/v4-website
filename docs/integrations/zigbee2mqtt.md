@@ -50,9 +50,7 @@ Click on the `Discover` menu, then click on the `Permit joining` button.
 
 To make your device join the network, please refer to its manual. In most cases, a long press on the physical button allows this operation.
 
-Still in the same screen, click on the **Scan** button to ask the Zigbee network for the list of known devices.
-
-The devices already associated to your Zigbee network will appear in the list of detected features. You can rename them and associate them to a room using the drop-down list.
+The devices already associated to your Zigbee network will automatically appear in the list with detected features. You can rename them and associate them to a room using the drop-down list.
 
 ![Add a device](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_add_device_en.png)
 
