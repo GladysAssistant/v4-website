@@ -25,6 +25,7 @@ module.exports = {
         "integrations/google-home",
         "integrations/alexa",
         "integrations/bluetooth",
+        "integrations/broadlink",
         "integrations/sonoff",
         "integrations/tasmota",
         "integrations/tp-link",
