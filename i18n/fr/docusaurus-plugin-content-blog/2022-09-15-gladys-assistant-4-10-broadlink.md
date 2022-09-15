@@ -11,7 +11,7 @@ slug: gladys-assistant-4-10-broadlink-and-performances
 
 Salut à tous !
 
-J'espère que vous avez tous passés de bonnes vacances d'été 🙂
+J'espère que vous avez tous passé de bonnes vacances d'été 🙂
 
 Cette rentrée a été très productive côté Gladys, et je suis heureux de lancer aujourd'hui Gladys Assistant v4.10, une mise à jour avec beaucoup de nouveautés, autant côté intégrations que côté core.
 
@@ -35,13 +35,13 @@ Si l'intégration vous intéresse, le Broadlink RM4 Mini est disponible pour [21
 
 J'ai eu des retours sur le forum comme quoi le tableau de bord de Gladys pouvait être lent à charger sur les instances avec beaucoup de graphiques/et beaucoup de capteurs.
 
-J'ai demandé à un utilisateur concerné de m'envoyer sa base de donnée, et je me suis vite rendu compte du problème:
+J'ai demandé à un utilisateur concerné de m'envoyer sa base de données, et je me suis vite rendu compte du problème :
 
 ![Tableau de bord lent](../../../static/img/articles/fr/gladys-4-10/slow-dashboard.jpg)
 
 Son tableau de bord mettait 40 secondes à charger : ce n'est pas normal du tout !! 😅
 
-J'ai donc re-joué une par une chaque requête SQL utilisée lors de l'affichage de son tableau de bord, et je suis tombé sur une requête assez simple qui mettait pourtant 6 secondes à être exécutée, et qui ne renvoyait rien :
+J'ai donc rejoué une par une chaque requête SQL utilisée lors de l'affichage de son tableau de bord, et je suis tombé sur une requête assez simple qui mettait pourtant 6 secondes à être exécutée, et qui ne renvoyait rien :
 
 ![Requête SQL lente](../../../static/img/articles/fr/gladys-4-10/slow-sql-query.jpg)
 
@@ -56,25 +56,25 @@ CREATE INDEX ix_device_feature_state_device_feature_id_created_at
 ON t_device_feature_state (device_feature_id, created_at);
 ```
 
-Après avoir ajouter cette index, cette requête est passée de 6 secondes... à 5 ms! ⚡
+Après avoir ajouté cette index, cette requête est passée de 6 secondes... à 5 ms! ⚡
 
 Son tableau de bord est passé de 40 secondes de temps de chargement... à 100 ms! ⚡
 
-Cette amélioration de performance est disponible dans Gladys Assistant v4.10, n'hésitez pas à me tenir au courant sur le forum si vous voyez une différence 😉
+Cette amélioration de performance est disponible dans Gladys Assistant v4.10, n'hésitez pas à me tenir informé sur le forum si vous voyez une différence 😉
 
-Attention, la construction de l'index peut prendre un peu de temps lors de la mise à jour ( suivant la taille de votre base de donnée ), cette mise à jour sera probablement un peu plus longue que les autres !
+Attention, la construction de l'index peut prendre un peu de temps lors de la mise à jour ( suivant la taille de votre base de données ), cette mise à jour sera probablement un peu plus longue que les autres !
 
 Si ça vous intéresse, la discussion sur le forum [est disponible ici](https://community.gladysassistant.com/t/probleme-de-performance-sur-dashboard-avec-beaucoup-de-graphiques/7522/6?u=pierre-gilles).
 
 ### Sélectionnez de quels appareils vous voulez garder l'historique des états
 
-Il est maintenant possible d'exclure certains appareils de l'historisation des états, afin d'alléger votre base de donnée Gladys.
+Il est maintenant possible d'exclure certains appareils de l'historisation des états, afin d'alléger votre base de données Gladys.
 
-Je vous invite à vous connecter à votre instance Gladys, et dans chaque intégration vérifier que vous n'enregistrez que l'historique de ce dont vous avez besoin:
+Je vous invite à vous connecter à votre instance Gladys, et dans chaque intégration vérifiez que vous n'enregistrez que l'historique de ce dont vous avez besoin:
 
 ![Désactiver l'historique des valeurs](../../../static/img/articles/fr/gladys-4-10/keep-state-history.jpg)
 
-Je précise qu'à chaque fois que vous changez ce paramètre sur un appareil, Gladys fera tourner un `VACUUM` sur la base de donnée SQLite, ce qui "nettoie" la base de donnée et purgera des vieilles valeurs !
+Je précise qu'à chaque fois que vous changez ce paramètre sur un appareil, Gladys fera tourner un `VACUUM` sur la base de donnée SQLite, ce qui "nettoie" la base de données et purgera des vieilles valeurs !
 
 ### Support des calendriers WebCal
 
@@ -94,7 +94,7 @@ Il est maintenant possible d'ajouter des volets roulants dans Gladys, pour l'ins
 
 ![Volets roulants Gladys](../../../static/img/articles/fr/gladys-4-10/shutters.jpg)
 
-Vous pouvez créer dans Gladys un volet roulant qui sera contrôllable avec 3 actions :
+Vous pouvez créer dans Gladys un volet roulant qui sera contrôlable avec 3 actions :
 
 ```
 STOP: 0
@@ -102,11 +102,11 @@ OPEN: 1
 CLOSE: -1
 ```
 
-Il est aussi possible de contrôller la position du volets roulants ( si c'est supporté par votre modèle de volets roulants ).
+Il est aussi possible de contrôler la position du volet roulant ( si c'est supporté par votre modèle de volets roulants ).
 
 ### Zigbee2mqtt: Affichage de la qualité de signal sur le tableau de bord
 
-L'intégration Zigbee2mqtt renvoie un attribut "Force du signal" pour les appareils Zigbee de votre réseau. Cela permet de jauger si votre appareil est bien situé, ou si il est trop loin.
+L'intégration Zigbee2mqtt renvoie un attribut "Force du signal" pour les appareils Zigbee de votre réseau. Cela permet de jauger si votre appareil est bien situé, ou s'il est trop loin.
 
 Gladys récupère désormais cet attribut et vous permet de l'afficher sur le tableau de bord :
 
@@ -116,7 +116,7 @@ Gladys récupère désormais cet attribut et vous permet de l'afficher sur le ta
 
 Les VOC, ou "Volatile Organic Compounds" en anglais sont des produits chimiques qui se retrouvent dans l'air de votre maison et qui proviennent de différentes sources : peintures, meubles, produits d'entretiens, etc...
 
-Ces polluants sont parfois observés dans des niveaux 2 à 5 fois supérieurs à l'extérieur de la maison, et ont des effets long terme néfaste sur la santé.
+Ces polluants sont parfois observés dans des niveaux 2 à 5 fois supérieurs à l'extérieur de la maison, et ont des effets longs termes néfastes sur la santé.
 
 Il existe des capteurs Zigbee pour mesurer ces fameux "VOC", et Gladys est désormais compatible avec eux.
 
