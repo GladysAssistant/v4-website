@@ -37,7 +37,7 @@ So I asked one user to send me his database, so I could see what was wrong.
 
 Here is what I saw:
 
-![Slow dashboard](../static/img/articles/en/gladys-4-10/slow-dashboard.png)
+![Slow dashboard](../static/img/articles/en/gladys-4-10/slow-dashboard.jpg)
 
 His dashboard was taking up to 40 seconds to load: not normal at all !! 😅
 
@@ -45,7 +45,7 @@ So I tried running individually every single SQL query that are involved in disp
 
 I quickly found that some super simple queries were taking up to 6 seconds to run, just to finally return an empty result: not normal!
 
-![Slow SQL query](../static/img/articles/en/gladys-4-10/slow-sql-query.png)
+![Slow SQL query](../static/img/articles/en/gladys-4-10/slow-sql-query.jpg)
 
 I used `EXPLAIN QUERY PLAN` to understand what SQLite was doing.
 
@@ -72,7 +72,7 @@ It's now possible to select which device state history you want to keep.
 
 If you have a device that is very verbose and that store tons of data in your database, you can now exclude it from the history feature, and Gladys will only keep the last value.
 
-![Keep state history](../static/img/articles/en/gladys-4-10/keep-state-history.png)
+![Keep state history](../static/img/articles/en/gladys-4-10/keep-state-history.jpg)
 
 ### WebCal support
 
@@ -88,7 +88,7 @@ If you follow some WebCal calendars in your calendar (iCloud, Nextcloud, ...), G
 
 We now support automatic shutters and curtains in the MQTT integration.
 
-![Shutters](../static/img/articles/en/gladys-4-10/shutters.png)
+![Shutters](../static/img/articles/en/gladys-4-10/shutters.jpg)
 
 You can create a shutter in Gladys, and control 3 states:
 
@@ -106,7 +106,7 @@ With Zigbee2mqtt, we receive a "signal strength" attribute that tells if the dev
 
 We now support this attribute (LQI), and you can now display it on your dashboard:
 
-![Zigbee2mqtt LQI](../static/img/articles/en/gladys-4-10/z2m-lqi.png)
+![Zigbee2mqtt LQI](../static/img/articles/en/gladys-4-10/z2m-lqi.jpg)
 
 ### Zigbee2mqtt: Add support for VOC sensors (air quality sensors)
 
