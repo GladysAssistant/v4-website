@@ -80,6 +80,14 @@ git clone https://github.com/GladysAssistant/Gladys gladys && cd gladys
 cd server
 ```
 
+As you probaly don't need to run every single integration when developing, we recommend you create a `.env` file in the `server` folder with the following content:
+
+```
+INSTALL_SERVICES_SILENT_FAIL=true
+```
+
+Then you can install server dependencies:
+
 ```
 npm install
 ```
