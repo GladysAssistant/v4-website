@@ -25,6 +25,7 @@ function Home() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState(STATUS.INITIAL);
   const { i18n } = context;
+  const language = i18n.currentLocale;
 
   const updateEmail = (e) => {
     setEmail(e.target.value);
@@ -113,6 +114,18 @@ function Home() {
                 use this form. For technical support, please use the forum.
               </Translate>
             </p>
+            {language === "fr" && (
+              <div
+                className="alert alert--warning margin-bottom--md"
+                role="alert"
+              >
+                Vous êtes sur le formulaire de contact de Gladys Assistant, un
+                logiciel de maison connectée open-source.{" "}
+                <a href="/fr/">Pour en savoir plus</a>.<br />
+                <br />
+                Nous n'avons <b>aucun lien</b> avec wedoogift !
+              </div>
+            )}
             {status === STATUS.SUCCESS && (
               <div
                 className="alert alert--success margin-bottom--md"
