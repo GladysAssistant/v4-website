@@ -51,19 +51,6 @@ sudo bash nodesource_setup.sh
 sudo apt install nodejs -y
 ```
 
-- Compilation d'Openzwave:
-
-```bash
-git clone https://github.com/OpenZWave/open-zwave.git
-cd open-zwave
-git checkout 5d18bbfb21d8cdc61ee6baae6f478c963297dfc5
-make
-sudo make install
-sudo sh -c "echo '/usr/local/lib64' > /etc/ld.so.conf.d/openzwave.conf"
-sudo ldconfig
-cd && rm -rf open-zwave
-```
-
 ## Le backend
 
 Le backend est une serveur Node.js.
@@ -79,6 +66,20 @@ git clone https://github.com/GladysAssistant/Gladys gladys && cd gladys
 ```
 cd server
 ```
+
+Lorsque vous installez les dépendances serveurs, Gladys va installer toutes les dépendances, y compris celles des intégrations.
+
+Lorsque vous développez sur votre machine, vous n'avez pas forcément besoin d'installer toutes les intégrations car certaines ne sont que compatibles Linux.
+
+Nous vous recommandons de créer un fichier `.env` dans le dossier `server` avec le contenu suivant :
+
+```
+INSTALL_SERVICES_SILENT_FAIL=true
+```
+
+Ce qui va indiquer à Gladys que l'installation des intégrations n'est pas obligatoire pour développer.
+
+Ensuite lancez :
 
 ```
 npm install
@@ -96,7 +97,7 @@ npm run db-migrate:dev
 npm start
 ```
 
-Le serveur devrait être accessible à http://localhost:1443.
+Le serveur devrait être accessible à `http://localhost:1443`.
 
 ## Le frontend
 
@@ -118,7 +119,7 @@ npm install
 npm start
 ```
 
-Le frontend devrait être accessible à http://localhost:1444.
+Le frontend devrait être accessible à `http://localhost:1444`.
 
 ## Lancer les tests serveurs
 
@@ -128,6 +129,14 @@ Lancez:
 
 ```
 npm test
+```
+
+Ce qui va lancer ESLint + les tests Mocha.
+
+Comme c'est un peu lourd de lancer ESLint à chaque fois que vous lancez un test, il est possible de lancer les tests Mocha uniquement avec la commande suivante :
+
+```
+npm run test-without-lint
 ```
 
 ## Lancer les tests d'un seul service

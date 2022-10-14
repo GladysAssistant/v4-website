@@ -1,7 +1,7 @@
 ---
 id: cypress-tests
 title: Faire tourner les tests Cypress dans Gladys
-sidebar_label: Cypress tests
+sidebar_label: Les tests frontends
 ---
 
 Nous utilisons [Cypress](https://www.cypress.io/) pour faire des tests frontend end-to-end.
