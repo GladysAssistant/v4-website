@@ -16,6 +16,8 @@ import styles from "./styles.module.css";
 
 import { translate } from "@docusaurus/Translate";
 
+const YEARLY_PLAN_ACTIVATED = false;
+
 const Check = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +219,7 @@ function Plus() {
                       </Translate>
                     </div>
                   )}
-                  {false && (
+                  {!YEARLY_PLAN_ACTIVATED && (
                     <span>
                       <label style={{ display: "block" }}>
                         <Translate
@@ -262,36 +264,38 @@ function Plus() {
                       />
                     </span>
                   )}
-                  <span>
-                    <label style={{ display: "block", marginBottom: "10px" }}>
-                      <Translate
-                        id="gladysPlusPage.subscribe"
-                        description="Gladys Plus subscribe"
-                      >
-                        Exlusive deal for a limited time!
-                      </Translate>
-                    </label>
-                    <button
-                      onClick={subscribeDiscount}
-                      className={cx(
-                        styles.plusInput,
-                        styles.plusInputButton,
-                        "button button--primary"
-                      )}
-                    >
-                      {subscribeButtonDiscount}
-                    </button>
-                    <div style={{ marginTop: "10px" }}>
-                      <small>
+                  {YEARLY_PLAN_ACTIVATED && (
+                    <span>
+                      <label style={{ display: "block", marginBottom: "10px" }}>
                         <Translate
-                          id="gladysPlusPage.unsuscribeAtAnytime"
-                          description="Pricing unsubscribe at anytime text"
+                          id="gladysPlusPage.subscribe"
+                          description="Gladys Plus subscribe"
                         >
-                          (Unsuscribe at anytime)
+                          Exlusive deal for a limited time!
                         </Translate>
-                      </small>
-                    </div>
-                  </span>
+                      </label>
+                      <button
+                        onClick={subscribeDiscount}
+                        className={cx(
+                          styles.plusInput,
+                          styles.plusInputButton,
+                          "button button--primary"
+                        )}
+                      >
+                        {subscribeButtonDiscount}
+                      </button>
+                      <div style={{ marginTop: "10px" }}>
+                        <small>
+                          <Translate
+                            id="gladysPlusPage.unsuscribeAtAnytime"
+                            description="Pricing unsubscribe at anytime text"
+                          >
+                            (Unsuscribe at anytime)
+                          </Translate>
+                        </small>
+                      </div>
+                    </span>
+                  )}
                 </div>
               </form>
             </div>
@@ -463,17 +467,37 @@ function Plus() {
                 <div class="card">
                   <div class="card__header">
                     <div className="text--center">
-                      <h3
-                        className={cx("text--center", styles.plusPricingTitle)}
-                      >
-                        <Translate
-                          id="gladysPlusPage.pricingTitleDiscount"
-                          description="Pricing title discount"
+                      {YEARLY_PLAN_ACTIVATED && (
+                        <h3
+                          className={cx(
+                            "text--center",
+                            styles.plusPricingTitle
+                          )}
                         >
-                          Discount: 59,99€ for one year
-                        </Translate>
-                      </h3>
-                      {false && (
+                          <Translate
+                            id="gladysPlusPage.pricingTitleDiscount"
+                            description="Pricing title discount"
+                          >
+                            Discount: 59,99€ for one year
+                          </Translate>
+                        </h3>
+                      )}
+                      {!YEARLY_PLAN_ACTIVATED && (
+                        <h3
+                          className={cx(
+                            "text--center",
+                            styles.plusPricingTitle
+                          )}
+                        >
+                          <Translate
+                            id="gladysPlusPage.pricingTitle"
+                            description="Pricing title"
+                          >
+                            9.99€
+                          </Translate>
+                        </h3>
+                      )}
+                      {!YEARLY_PLAN_ACTIVATED && (
                         <small className={styles.plusPricingTitleMonth}>
                           <Translate
                             id="gladysPlusPage.pricingPerMonth"
@@ -538,10 +562,14 @@ function Plus() {
                   </div>
                   <div class="card__footer">
                     <button
-                      onClick={subscribeDiscount}
+                      onClick={
+                        YEARLY_PLAN_ACTIVATED ? subscribeDiscount : scrollTopTop
+                      }
                       class="button button--primary button--block"
                     >
-                      {subscribeButtonDiscount}
+                      {YEARLY_PLAN_ACTIVATED
+                        ? subscribeButtonDiscount
+                        : submitButtonInitialState}
                     </button>
                     <div style={{ textAlign: "center", marginTop: "10px" }}>
                       <small>
