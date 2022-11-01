@@ -26,6 +26,7 @@ module.exports = {
         "integrations/alexa",
         "integrations/homekit",
         "integrations/bluetooth",
+        "integrations/broadlink",
         "integrations/sonoff",
         "integrations/tasmota",
         "integrations/tp-link",

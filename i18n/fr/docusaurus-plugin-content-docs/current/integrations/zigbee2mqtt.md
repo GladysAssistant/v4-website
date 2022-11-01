@@ -62,9 +62,7 @@ Cliquez sur le menu `Découverte Zigbee`, puis cliquez sur le bouton `Autoriser 
 
 Pour que votre périphérique rejoigne le réseau, reportez-vous à la notice de celui-ci. Dans la majorité des cas, un appui long sur le bouton physique permet cette opération.
 
-Toujours dans le même écran, cliquez sur le bouton **Scanner** pour demander au réseau Zigbee la liste des appareils connus.
-
-Les appareils déjà associés à votre réseau Zigbee apparaîtront avec la liste des fonctionnalités détectées. Vous pouvez les renommer et les associer à une pièce grâce à la liste déroulante.
+Les appareils déjà associés à votre réseau Zigbee apparaîtront automatiquement avec la liste des fonctionnalités détectées. Vous pouvez les renommer et les associer à une pièce grâce à la liste déroulante.
 
 ![Ajouter un appareil](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_ajouter_appareil_fr.png)
 

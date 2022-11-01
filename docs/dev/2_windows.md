@@ -51,19 +51,6 @@ sudo bash nodesource_setup.sh
 sudo apt install nodejs -y
 ```
 
-- Openzwave compilation:
-
-```bash
-git clone https://github.com/OpenZWave/open-zwave.git
-cd open-zwave
-git checkout 5d18bbfb21d8cdc61ee6baae6f478c963297dfc5
-make
-sudo make install
-sudo sh -c "echo '/usr/local/lib64' > /etc/ld.so.conf.d/openzwave.conf"
-sudo ldconfig
-cd && rm -rf open-zwave
-```
-
 ## Server
 
 The server is a Node.js app.
@@ -79,6 +66,14 @@ git clone https://github.com/GladysAssistant/Gladys gladys && cd gladys
 ```
 cd server
 ```
+
+As you probaly don't need to run every single integration when developing, we recommend you create a `.env` file in the `server` folder with the following content:
+
+```
+INSTALL_SERVICES_SILENT_FAIL=true
+```
+
+Then you can install server dependencies:
 
 ```
 npm install
@@ -96,7 +91,7 @@ npm run db-migrate:dev
 npm start
 ```
 
-The server should be accessible at http://localhost:1443.
+The server should be accessible at `http://localhost:1443`.
 
 ## Frontend
 
@@ -118,7 +113,7 @@ npm install
 npm start
 ```
 
-The frontend should be accessible at http://localhost:1444.
+The frontend should be accessible at `http://localhost:1444`.
 
 ## Start server tests
 
@@ -129,6 +124,14 @@ And run:
 ```
 npm test
 ```
+
+This will run Eslint + mocha tests. As it's painful to run eslint everytime, you can do:
+
+```
+npm run test-without-lint
+```
+
+If you want to run only mocha tests.
 
 ## Start server tests only for a single service
 

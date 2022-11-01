@@ -17,15 +17,6 @@ You'll need:
 - Node.js 14
 - sqlite3
 - openssl
-- openzwave >= 1.6
-
-On a Mac, to install open-zwave, run:
-
-```
-brew install open-zwave
-```
-
-(You need to have [Homebrew](https://brew.sh/) installed)
 
 ### Clone Gladys Git repo
 
@@ -39,6 +30,14 @@ git clone https://github.com/GladysAssistant/Gladys gladys && cd gladys
 cd server
 ```
 
+As you probaly don't need to run every single integration when developing, we recommend you create a `.env` file in the `server` folder with the following content:
+
+```
+INSTALL_SERVICES_SILENT_FAIL=true
+```
+
+Then run:
+
 ```
 npm install
 ```
@@ -49,7 +48,7 @@ npm install
 npm start
 ```
 
-The server should be accessible at http://localhost:1443.
+The server should be accessible at `http://localhost:1443`.
 
 ## Frontend
 
@@ -71,7 +70,7 @@ npm install
 npm start
 ```
 
-The frontend should be accessible at http://localhost:1444.
+The frontend should be accessible at `http://localhost:1444`.
 
 ## Start server tests
 
@@ -82,6 +81,14 @@ And run:
 ```
 npm test
 ```
+
+This will run Eslint + mocha tests. As it's painful to run eslint everytime, you can do:
+
+```
+npm run test-without-lint
+```
+
+If you want to run only mocha tests.
 
 ## Start server tests only for one service
 
