@@ -15,7 +15,9 @@ Aujourd'hui c'est le lancement de Gladys Assistant 4.12, une version importante 
 
 J'ai présenté cette version dans un live YouTube que vous pouvez revoir en replay ici :
 
-LIVE YOUTUBE
+<div class="videoContainer">
+    <iframe class="video" src="https://www.youtube.com/embed/MT8iGphtm0M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 <!--truncate-->
 
