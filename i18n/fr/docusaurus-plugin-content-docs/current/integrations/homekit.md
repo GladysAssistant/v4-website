@@ -23,6 +23,7 @@ Vous pouvez maintenant controller vos appareils sur l'application Maison ou voca
 - Ampoules (On/Off, couleur, température et luminosité)
 - Prises (On/Off)
 - Capteur de température
+- Capteur d'ouverture (porte, fenêtre...)
 
 Sur demande, nous ajouterons d'autres appareils suivant les besoins de la communauté, n'hésitez pas à passer sur [le forum](https://community.gladysassistant.com/).
 
