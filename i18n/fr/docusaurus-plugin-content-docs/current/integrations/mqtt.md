@@ -94,38 +94,33 @@ Cliquez sur "Enregistrer", vous devriez sur un écran comme celui-ci:
 
 Je vous propose d'utiliser un client MQTT afin de tester ce périphérique MQTT.
 
-Vous pouvez utiliser le client MQTT [MQTT.fx](https://mqttfx.jensd.de/).
+Vous pouvez utiliser le client MQTT [MQTT X](https://mqttx.app/).
 
-Après avoir installé et lancé MQTT.fx, cliquez sur la petite roue dentée afin d'ajouter les informations de connexion à votre broker MQTT.
+Après avoir installé et lancé MQTT X, cliquez sur "New connexion" pour créer une nouvelle connexion.
 
 Remplissez le formulaire avec les informations suivantes:
 
-- Name: "Gladys MQTT". Ce nom n'est utile que pour l'affichage dans le logiciel.
-- Broker Adress: L'adresse IP de votre Rasperry Pi sur le réseau. Vous devez être sur le même réseau que votre Raspberry Pi pour ce tutoriel.
-- Broker Port: 1883
+- Name: "MQTTGladys". Ce nom n'est utile que pour l'affichage dans le logiciel.
+- Host: L'adresse IP de votre Rasperry Pi sur le réseau. Vous devez être sur le même réseau que votre Raspberry Pi pour ce tutoriel.
+- Port: 1883
+- Username: `gladys`
+- Password: Le mot de passe que Gladys a généré dans la première partie de ce tutoriel. Si vous n'aviez pas gardé le mot de passe, vous pouvez toujours le retrouver en retournant dans la configuration du module MQTT et en cliquant sur le petit oeil sur le champs mot de passe.
 
 ![Tester le périphérique MQTT dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/mqtt/send-test-message-mqtt-1.jpg)
 
-Ensuite, rendez-vous dans l'onglet "User Credentials", puis remplissez avec les informations de connnexion.
+Enregistrer la configuration en cliquant sur "Connect".
 
-- User Name: `gladys`
-- Password: Le mot de passe que Gladys a généré dans la première partie de ce tutoriel. Si vous n'aviez pas gardé le mot de passe, vous pouvez toujours le retrouver en retournant dans la configuration du module MQTT et en cliquant sur le petit oeil sur le champs mot de passe.
+Dans la bar en bas, mettez le topic MQTT que vous aviez copié-collé lors de la création de la fonctionnalité plus tôt.
+
+Dans le champs en dessous, entrez une température, dans mon cas "21.2", puis cliquez sur "Publish":
 
 ![Tester le périphérique MQTT dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/mqtt/send-test-message-mqtt-2.jpg)
-
-Enregistrer la configuration en cliquant sur "Ok", puis cliquez sur "Connect" en haut de l'écran pour vous connecter au broker MQTT.
-
-Dans la bar en haut, mettez le topic MQTT que vous aviez copié-collé lors de la création de la fonctionnalité plus tôt.
-
-Dans le champs du milieu, entrez une température, dans mon cas "21.2", puis cliquez sur "Publish":
-
-![Tester le périphérique MQTT dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/mqtt/send-test-message-mqtt-3.jpg)
 
 Sur le dashboard, ajoutez une nouvelle box "Température de la pièce".
 
 Vous devriez voir votre périphérique avec la température que nous venons d'envoyer:
 
-![Tester le périphérique MQTT dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/mqtt/send-test-message-mqtt-4.jpg)
+![Tester le périphérique MQTT dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/mqtt/send-test-message-mqtt-3.jpg)
 
 Bravo !
 
