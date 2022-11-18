@@ -94,42 +94,37 @@ Click "Save", you should on a screen like this:
 
 We suggest you use an MQTT client to test this MQTT device.
 
-You can use the MQTT client [MQTT.fx](https://mqttfx.jensd.de/).
+You can use the MQTT client [MQTT X](https://mqttx.app/).
 
-After installing and launching MQTT.fx, click on the small cogwheel to add the connection information to your MQTT broker.
+After installing and launching the software, click on "New connection".
 
 Fill out the form with the following information:
 
-- Name: "Gladys MQTT". This name is only useful for display in the software.
-- Broker Address: The IP address of your Rasperry Pi on the network. You must be on the same network as your Raspberry Pi for this tutorial.
+- Name: "MQTTGladys". This name is only useful for display in the software.
+- Host: The IP address of your Rasperry Pi on the network. You must be on the same network as your Raspberry Pi for this tutorial.
 - Broker Port: 1883
+- User Name: `gladys`
+- Password: The password that Gladys generated in the first part of this tutorial.
 
 ![Test the MQTT device](../../static/img/docs/en/configuration/mqtt/send-test-message-mqtt-1.jpg)
-
-Then, go to the "User Credentials" tab, then fill in with the login information.
-
-- User Name: `gladys`
-- Password: The password that Gladys generated in the first part of this tutorial. 
 
 :::note
 If you had not kept the password, you can still find it by going back to the configuration of the MQTT module and clicking on the little eye on the password field.
 :::
 
+Save the configuration by clicking on "Connect".
+
+In the bar at the bottom, put the MQTT topic that you had copied when creating the feature earlier.
+
+In the bottom field, enter a temperature, in this case "21.2", then click on "Publish":
+
 ![Test the MQTT device](../../static/img/docs/en/configuration/mqtt/send-test-message-mqtt-2.jpg)
-
-Save the configuration by clicking on "Ok", then click on "Connect" at the top of the screen to connect to the MQTT broker.
-
-In the bar at the top, put the MQTT topic that you had copied when creating the feature earlier.
-
-In the middle field, enter a temperature, in this case "21.2", then click on "Publish":
-
-![Test the MQTT device](../../static/img/docs/en/configuration/mqtt/send-test-message-mqtt-3.jpg)
 
 On the dashboard, add a new "devices in room" box and select your room.
 
 You should see your device with the temperature we just sent:
 
-![Test the MQTT device](../../static/img/docs/en/configuration/mqtt/send-test-message-mqtt-4.jpg)
+![Test the MQTT device](../../static/img/docs/en/configuration/mqtt/send-test-message-mqtt-3.jpg)
 
 Bravo !
 
