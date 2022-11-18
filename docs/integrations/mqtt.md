@@ -102,8 +102,8 @@ Fill out the form with the following information:
 
 - Name: "MQTTGladys". This name is only useful for display in the software.
 - Host: The IP address of your Rasperry Pi on the network. You must be on the same network as your Raspberry Pi for this tutorial.
-- Broker Port: 1883
-- User Name: `gladys`
+- Port: 1883
+- Username: `gladys`
 - Password: The password that Gladys generated in the first part of this tutorial.
 
 ![Test the MQTT device](../../static/img/docs/en/configuration/mqtt/send-test-message-mqtt-1.jpg)
