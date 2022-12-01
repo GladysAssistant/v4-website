@@ -28,6 +28,14 @@ Select the settings the USB port is to use in order to allow Gladys to communica
 
 ![USB dongle settings](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
+:::warning
+If you run Gladys on an external disk connected in USB, you may have power issues as your Pi can struggle to give enough power to both the disk and the Zigbee USB key.
+
+We recommend you use a externaly powered USB charging tower.
+
+You can read more about it on ZigbeeMQTT website: [Zigbee2MQTT fails to start](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html)
+:::
+
 ## Activate Zigbee2Mqtt
 
 Once your dongle is configured, Gladys needs to install two containers (MQTT and Zigbee2Mqtt) to use the dongle and communicate with all your devices. Don't worry, all this has been automated.
