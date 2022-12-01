@@ -51,7 +51,7 @@ sudo bash nodesource_setup.sh
 sudo apt install nodejs -y
 ```
 
-Alternative, vous pouvez utilisez [nvm](https://github.com/nvm-sh/nvm) installer et gérer les versions de nodejs installées.
+Alternative, vous pouvez utilisez [nvm](https://github.com/nvm-sh/nvm) pour installer et gérer les versions de nodejs installées.
 
 ## Le backend
 
