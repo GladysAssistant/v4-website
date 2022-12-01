@@ -4,19 +4,19 @@ title: Setup a Mac/Linux development environment
 sidebar_label: Mac/Linux
 ---
 
-You'll find below the instructions on how to setup a development environment for Gladys 4.
+You'll find below the instructions on how to setup a development environment for Gladys Assistant.
 
 ## Server
 
-The server is a Node.js app.
+The server is a Node.js backend.
 
 ### Install system dependencies
 
 You'll need:
 
-- Node.js 14
-- sqlite3
-- openssl
+- Node.js 18 LTS ([Download](https://nodejs.org/en/download/))
+- sqlite3 ([sqlite in Homebrew](https://formulae.brew.sh/formula/sqlite) on MacOS, `sudo apt install sqlite3` on Ubuntu/Debian)
+- openssl ([OpenSSL 3 in Homebrew](https://formulae.brew.sh/formula/openssl@3) on MacOS, `sudo apt install openssl` on Ubuntu/Debian)
 
 ### Clone Gladys Git repo
 
@@ -82,13 +82,11 @@ And run:
 npm test
 ```
 
-This will run Eslint + mocha tests. As it's painful to run eslint everytime, you can do:
+You can run the linter with:
 
 ```
-npm run test-without-lint
+npm run eslint
 ```
-
-If you want to run only mocha tests.
 
 ## Start server tests only for one service
 

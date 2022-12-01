@@ -14,9 +14,9 @@ Le backend est une serveur Node.js.
 
 Comme prérequis système, il vous faut:
 
-- Node.js 14
-- sqlite3
-- openssl
+- Node.js 18 LTS ([Télécharger](https://nodejs.org/en/download/))
+- sqlite3 ([sqlite Homebrew](https://formulae.brew.sh/formula/sqlite) sur MacOS, `sudo apt install sqlite3` sur Ubuntu/Debian)
+- openssl ([OpenSSL 3 Homebrew](https://formulae.brew.sh/formula/openssl@3) sur MacOS, `sudo apt install openssl` sur Ubuntu/Debian)
 
 ### Cloner le repo Gladys
 
@@ -88,12 +88,12 @@ Lancez:
 npm test
 ```
 
-Ce qui va lancer ESLint + les tests Mocha.
+Ce qui va lancer les tests mochas.
 
-Comme c'est un peu lourd de lancer ESLint à chaque fois que vous lancez un test, il est possible de lancer les tests Mocha uniquement avec la commande suivante :
+Pour faire tourner le linter:
 
 ```
-npm run test-without-lint
+npm run eslint
 ```
 
 ## Lancer les tests d'un seul service

@@ -4,10 +4,8 @@ title: Z-Wave
 sidebar_label: Z-Wave
 ---
 
-Gladys Assistant uses Open-Zwave to connect Gladys to Z-Wave devices.
-
 :::warning
-June 2022: The Open-Zwave library is now deprecated, and we are migrating to ZWaveJS, a new library written in pure JS, more robust, and with a wide range of compatible devices.
+December 2022: This Open-Zwave integration is now deprecated, and we are migrating to Zwave-js-ui, a new library written in pure JS, more robust, and with a wide range of compatible devices.
 
 In the meantime, we highly recommend that you use Gladys + Node-RED + ZWaveJS2mqtt instead of this integration.
 
