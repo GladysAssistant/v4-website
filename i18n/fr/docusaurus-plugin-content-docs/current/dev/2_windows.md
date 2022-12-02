@@ -43,13 +43,15 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
 ```
 
-- Installation de Node.js 14:
+- Installation de Node.js 18:
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
 sudo bash nodesource_setup.sh
 sudo apt install nodejs -y
 ```
+
+Alternative, vous pouvez utilisez [nvm](https://github.com/nvm-sh/nvm) pour installer et gérer les versions de nodejs installées.
 
 ## Le backend
 
