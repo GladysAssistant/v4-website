@@ -12,7 +12,7 @@ Most people in the community use a Raspberry Pi because it's an affordable littl
 ## Our recommended stack
 
 :::note
-With the current Raspberry Pi shortage, a good alternative would be to run Gladys on a mini-PC like a Dell Optilex 3040 or an Intel NUC.
+With the current Raspberry Pi shortage, a good alternative would be to run Gladys on a mini-PC like a Dell OptiPlex 3040 or an Intel NUC.
 
 Those mini-PC runs natively on a SSD so they are usually very stable to use.
 :::

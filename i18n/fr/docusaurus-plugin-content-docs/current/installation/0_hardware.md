@@ -16,7 +16,7 @@ Néanmoins, une grande partie de la communauté fait tourner Gladys sur un Raspb
 - Enfin, c'est le micro-ordinateur le plus populaire du marché, avec plus de 39 millions d'unités vendus depuis son lancement. La communauté est grande, et réactive. Il est rare qu'un problème critique soit sans réponse, et l'OS est continuellement maintenu par le constructeur, même pour les vieux modèles.
 
 :::note
-Avec la pénurie actuelle de Raspberry Pi, une bonne solution de remplacement est d'acheter un mini-PC, comme un Dell Optilex 3040, ou un Intel NUC.
+Avec la pénurie actuelle de Raspberry Pi, une bonne solution de remplacement est d'acheter un mini-PC, comme un Dell OptiPlex 3040, ou un Intel NUC.
 
 Ces mini-PC ont l'avantage d'avoir un SSD intégré nativement, et d'être souvent plus stable niveau alimentation.
 
