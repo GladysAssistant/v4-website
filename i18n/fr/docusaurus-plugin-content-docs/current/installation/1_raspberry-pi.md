@@ -8,6 +8,14 @@ Ce tutoriel vous explique comment installer Gladys sur Raspberry Pi !
 
 Si vous avez un Raspberry Pi qui est déjà configuré (vous avez déjà installé Raspberry Pi OS), il est possible d'installer Gladys manuellement avec Docker [sur ce tutoriel](/fr/docs/installation/docker).
 
+:::note
+Avec la pénurie actuelle de Raspberry Pi, une bonne solution de remplacement est d'acheter un mini-PC, comme un Dell Optilex 3040, ou un Intel NUC.
+
+Ces mini-PC ont l'avantage d'avoir un SSD intégré nativement, et d'être souvent plus stable niveau alimentation.
+
+On en parle sur [le forum ici](https://community.gladysassistant.com/t/faire-tourner-gladys-sur-un-mac-mini-intel-pas-cher/7617/2?u=pierre-gilles).
+:::
+
 ## Installation sur une carte micro-SD
 
 Nous proposons 2 façons d'installer Gladys: sur une micro-SD, ou sur un disque externe SSD.
