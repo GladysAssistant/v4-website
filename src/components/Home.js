@@ -8,6 +8,7 @@ import cameraGladys4 from "./cameras-gladys-4.jpg";
 import dashboardGladys4 from "./dashboard-gladys-4.jpg";
 import calendarGladys4 from "./calendar-gladys-4.jpg";
 import sceneGladys4 from "./scene-gladys-4.jpg";
+import ecowattAlerts from "./ecowatt-alerts.jpg";
 import { Integration } from "./Integration";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import Features from "./home/features";
@@ -108,6 +109,36 @@ function Home({ integrations, lang }) {
         >
           <SubcribeNewsletter lang={lang} />
         </div>
+        {lang === "fr" && (
+          <div
+            style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
+            className="hero shadow--lw"
+          >
+            <div className="container">
+              <div className="row">
+                <div className="col col--12">
+                  <h2 className="text--center">
+                    Nouvelle intégration avec Ecowatt
+                  </h2>
+                  <p className="text--center">
+                    En cas d'alerte Ecowatt, réduisez votre consommation
+                    électrique automatiquement dans Gladys !{" "}
+                    <a href="https://community.gladysassistant.com/t/integration-ecowatt-des-scenarios-intelligents-dans-gladys-en-cas-de-tension-sur-le-reseau-electrique/7720">
+                      En savoir plus
+                    </a>
+                    .
+                  </p>
+                  <div className="row">
+                    <div className="col col--2"></div>
+                    <div className="col col--8">
+                      <img src={ecowattAlerts} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {lang === "fr" && (
           <div
             className="container"
