@@ -123,7 +123,7 @@ function Home({ integrations, lang }) {
                   <p className="text--center">
                     En cas d'alerte Ecowatt, réduisez votre consommation
                     électrique automatiquement dans Gladys !{" "}
-                    <a href="https://community.gladysassistant.com/t/integration-ecowatt-des-scenarios-intelligents-dans-gladys-en-cas-de-tension-sur-le-reseau-electrique/7720">
+                    <a href="/fr/blog/gladys-assistant-4-13-ecowatt/">
                       En savoir plus
                     </a>
                     .
