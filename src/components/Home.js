@@ -4,11 +4,6 @@ import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
 import Image from "@theme/IdealImage";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import cameraGladys4 from "./cameras-gladys-4.jpg";
-import dashboardGladys4 from "./dashboard-gladys-4.jpg";
-import calendarGladys4 from "./calendar-gladys-4.jpg";
-import sceneGladys4 from "./scene-gladys-4.jpg";
-import ecowattAlerts from "./ecowatt-alerts.jpg";
 import { Integration } from "./Integration";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import Features from "./home/features";
@@ -131,7 +126,10 @@ function Home({ integrations, lang }) {
                   <div className="row">
                     <div className="col col--2"></div>
                     <div className="col col--8">
-                      <img src={ecowattAlerts} />
+                      <img
+                        src={useBaseUrl("/img/home/ecowatt-alerts.jpg")}
+                        alt="Ecowatt intégration Gladys"
+                      />
                     </div>
                   </div>
                 </div>
