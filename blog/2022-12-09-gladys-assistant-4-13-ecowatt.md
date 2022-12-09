@@ -72,5 +72,4 @@ If you want to support us, there are many ways:
 - Answer posts on the forum, give your feedback.
 - Help us improve the documentation.
 - Develop new features/integrations on Gladys, we are 100% open-source.
-- Make a [one time donation](https://www.buymeacoffee.com/gladysassistant).
 - Subscribe to [Gladys Plus](/plus).
