@@ -63,6 +63,8 @@ You can click on the "Devices" link in the left menu to view the syncronized dev
 
 ![Configuration intégration Withings dans Gladys](../../static/img/docs/en/configuration/withings/withings-settings-config-4.png)
 
+WARNING: The battery level is an approximation (the Withings API does not return the exact value).
+
 ## Usage
 
 You can now use these Withings devices from the [Dashboard](../dashboard/devices-in-room.md) or from the [Scenes](../scenes/intro.md) automatically. Depending on the feature of each device, you will have access to measures, states or actions.

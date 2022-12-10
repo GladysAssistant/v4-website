@@ -63,6 +63,8 @@ Vous pouvez cliquer sur le lien "Appareils" du menu gauche pour visualiser les a
 
 ![Configuration intégration Withings dans Gladys](../../../../../static/img/docs/fr/configuration/withings/withings-settings-config-4.png)
 
+ATTENTION: Le niveau de batterie est une approximation (l'API Withings ne renvoyant pas la valeur exacte).
+
 ## Usage
 
 You can now use these Withings devices from the [Dashboard](../dashboard/devices-in-room.md) or from the [Scenes](../scenes/intro.md) automatically. Depending on the feature of each device, you will have access to measures, states or actions.
