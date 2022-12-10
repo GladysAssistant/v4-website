@@ -4,10 +4,6 @@ import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
 import Image from "@theme/IdealImage";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import cameraGladys4 from "./cameras-gladys-4.jpg";
-import dashboardGladys4 from "./dashboard-gladys-4.jpg";
-import calendarGladys4 from "./calendar-gladys-4.jpg";
-import sceneGladys4 from "./scene-gladys-4.jpg";
 import { Integration } from "./Integration";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import Features from "./home/features";
@@ -108,6 +104,39 @@ function Home({ integrations, lang }) {
         >
           <SubcribeNewsletter lang={lang} />
         </div>
+        {lang === "fr" && (
+          <div
+            style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
+            className="hero shadow--lw"
+          >
+            <div className="container">
+              <div className="row">
+                <div className="col col--12">
+                  <h2 className="text--center">
+                    Nouvelle intégration avec Ecowatt
+                  </h2>
+                  <p className="text--center">
+                    En cas d'alerte Ecowatt, réduisez votre consommation
+                    électrique automatiquement dans Gladys !{" "}
+                    <a href="/fr/blog/gladys-assistant-4-13-ecowatt/">
+                      En savoir plus
+                    </a>
+                    .
+                  </p>
+                  <div className="row">
+                    <div className="col col--2"></div>
+                    <div className="col col--8">
+                      <img
+                        src={useBaseUrl("/img/home/ecowatt-alerts.jpg")}
+                        alt="Ecowatt intégration Gladys"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {lang === "fr" && (
           <div
             className="container"

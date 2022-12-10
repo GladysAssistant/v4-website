@@ -14,18 +14,9 @@ Le backend est une serveur Node.js.
 
 Comme prérequis système, il vous faut:
 
-- Node.js 14
-- sqlite3
-- openssl
-- openzwave >= 1.6
-
-Sur Mac, pour installer open-zwave, lancez:
-
-```
-brew install open-zwave
-```
-
-(Il faut avoir [Homebrew](https://brew.sh/index_fr) d'installé)
+- Node.js 18 LTS ([Télécharger](https://nodejs.org/en/download/))
+- sqlite3 ([sqlite Homebrew](https://formulae.brew.sh/formula/sqlite) sur MacOS, `sudo apt install sqlite3` sur Ubuntu/Debian)
+- openssl ([OpenSSL 3 Homebrew](https://formulae.brew.sh/formula/openssl@3) sur MacOS, `sudo apt install openssl` sur Ubuntu/Debian)
 
 ### Cloner le repo Gladys
 
@@ -38,6 +29,20 @@ git clone https://github.com/GladysAssistant/Gladys gladys && cd gladys
 ```
 cd server
 ```
+
+Lorsque vous installez les dépendances serveurs, Gladys va installer toutes les dépendances, y compris celles des intégrations.
+
+Lorsque vous développez sur votre machine, vous n'avez pas forcément besoin d'installer toutes les intégrations car certaines ne sont que compatibles Linux (et vous développez probablement sur MacOS ou Windows).
+
+Nous vous recommandons de créer un fichier `.env` dans le dossier `server` avec le contenu suivant :
+
+```
+INSTALL_SERVICES_SILENT_FAIL=true
+```
+
+Ce qui va indiquer à Gladys que l'installation des intégrations n'est pas obligatoire pour développer.
+
+Ensuite lancez :
 
 ```
 npm install
@@ -81,6 +86,14 @@ Lancez:
 
 ```
 npm test
+```
+
+Ce qui va lancer les tests mochas.
+
+Pour faire tourner le linter:
+
+```
+npm run eslint
 ```
 
 ## Lancer les tests d'un seul service

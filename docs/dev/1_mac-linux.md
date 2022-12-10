@@ -4,28 +4,19 @@ title: Setup a Mac/Linux development environment
 sidebar_label: Mac/Linux
 ---
 
-You'll find below the instructions on how to setup a development environment for Gladys 4.
+You'll find below the instructions on how to setup a development environment for Gladys Assistant.
 
 ## Server
 
-The server is a Node.js app.
+The server is a Node.js backend.
 
 ### Install system dependencies
 
 You'll need:
 
-- Node.js 14
-- sqlite3
-- openssl
-- openzwave >= 1.6
-
-On a Mac, to install open-zwave, run:
-
-```
-brew install open-zwave
-```
-
-(You need to have [Homebrew](https://brew.sh/) installed)
+- Node.js 18 LTS ([Download](https://nodejs.org/en/download/))
+- sqlite3 ([sqlite in Homebrew](https://formulae.brew.sh/formula/sqlite) on MacOS, `sudo apt install sqlite3` on Ubuntu/Debian)
+- openssl ([OpenSSL 3 in Homebrew](https://formulae.brew.sh/formula/openssl@3) on MacOS, `sudo apt install openssl` on Ubuntu/Debian)
 
 ### Clone Gladys Git repo
 
@@ -39,6 +30,14 @@ git clone https://github.com/GladysAssistant/Gladys gladys && cd gladys
 cd server
 ```
 
+As you probaly don't need to run every single integration when developing, we recommend you create a `.env` file in the `server` folder with the following content:
+
+```
+INSTALL_SERVICES_SILENT_FAIL=true
+```
+
+Then run:
+
 ```
 npm install
 ```
@@ -49,7 +48,7 @@ npm install
 npm start
 ```
 
-The server should be accessible at http://localhost:1443.
+The server should be accessible at `http://localhost:1443`.
 
 ## Frontend
 
@@ -71,7 +70,7 @@ npm install
 npm start
 ```
 
-The frontend should be accessible at http://localhost:1444.
+The frontend should be accessible at `http://localhost:1444`.
 
 ## Start server tests
 
@@ -81,6 +80,12 @@ And run:
 
 ```
 npm test
+```
+
+You can run the linter with:
+
+```
+npm run eslint
 ```
 
 ## Start server tests only for one service

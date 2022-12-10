@@ -4,12 +4,10 @@ title: Z-Wave
 sidebar_label: Z-Wave
 ---
 
-Gladys Assistant utilise [Open-Zwave](http://openzwave.com/) pour contrôler les appareils Z-Wave.
-
 :::warning
-Juin 2022: Open-Zwave est une librairie qui n'est plus maintenue, et par conséquent beaucoup d'appareils ne sont pas gérés dans l'intégration actuelle.
+Décembre 2022: Cette intégration utilise Open-Zwave et n'est plus supportée.
 
-Nous travaillons actuellement sur une migration vers ZWaveJS (Voir avancement [sur le forum](https://community.gladysassistant.com/t/v4-integration-z-wave/6057/68?u=pierre-gilles)).
+Nous travaillons actuellement sur une migration vers Zwave-js-ui (Voir avancement [sur le forum](https://community.gladysassistant.com/t/v4-integration-z-wave/6057/68?u=pierre-gilles)).
 
 En attendant, nous vous conseillons de passer par Node-RED + ZwaveJS2MQTT.
 

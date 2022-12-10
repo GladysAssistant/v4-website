@@ -15,6 +15,14 @@ Néanmoins, une grande partie de la communauté fait tourner Gladys sur un Raspb
 - Il offre de belles performances (Quad core Cortex-A72 en ARM v8 à 1.5GHz + jusqu'à 8GB de RAM)
 - Enfin, c'est le micro-ordinateur le plus populaire du marché, avec plus de 39 millions d'unités vendus depuis son lancement. La communauté est grande, et réactive. Il est rare qu'un problème critique soit sans réponse, et l'OS est continuellement maintenu par le constructeur, même pour les vieux modèles.
 
+:::note
+Avec la pénurie actuelle de Raspberry Pi, une bonne solution de remplacement est d'acheter un mini-PC, comme un Dell OptiPlex 3040, ou un Intel NUC.
+
+Ces mini-PC ont l'avantage d'avoir un SSD intégré nativement, et d'être souvent plus stable niveau alimentation.
+
+On en parle sur [le forum ici](https://community.gladysassistant.com/t/faire-tourner-gladys-sur-un-mac-mini-intel-pas-cher/7617/2?u=pierre-gilles).
+:::
+
 ## Commencer pour moins de 100€
 
 - Un Raspberry Pi 4, disponible chez <a href="https://www.kubii.fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-0765756931175.html?gladys" rel="noopener">Kubii.fr</a>. Le modèle 4 est une belle amélioration par rapport à la troisième génération, car il offre 2 ports USB 3.0, un port Ethernet Gigabit, et offre enfin la possibilité de choisir des modèles avec plus de RAM.

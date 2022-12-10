@@ -11,6 +11,12 @@ Most people in the community use a Raspberry Pi because it's an affordable littl
 
 ## Our recommended stack
 
+:::note
+With the current Raspberry Pi shortage, a good alternative would be to run Gladys on a mini-PC like a Dell OptiPlex 3040 or an Intel NUC.
+
+Those mini-PC runs natively on a SSD so they are usually very stable to use.
+:::
+
 - A [Raspberry Pi 4](https://www.amazon.com/Raspberry-Model-2019-Quad-Bluetooth/dp/B07TD42S27?crid=3UT3K90QVBE66&keywords=raspberry%2Bpi%2B4%2B2GB&qid=1644833683&sprefix=raspberry%2Bpi%2B4%2B2gb%2Caps%2C152&sr=8-3&th=1&linkCode=ll1&tag=gladproj-20&linkId=76c25f0db9eb8b1afc55c6c7d9b92187&language=en_US&ref_=as_li_ss_tl). It's a great improvement over the 3rd generation, because it now has USB 3.0 port (very useful to plug an external SSD), Gigabit Ethernet, a more powerful CPU and finally some more choices of RAM.
 
 For a normal setup, if you plan to only run Gladys, I recommend the model with 2GB of RAM. If you plan to run more containers on the same Pi (Pi-Hole/AdGuard, Node-RED), I recommend taking one with more RAM (4GB, or 8GB if you want to be safe)
@@ -35,14 +41,14 @@ We highly recommend using a SSD disk instead of an SD card, and there are some g
 
 I did a little recap table of all needed pieces for this setup, and it's just around ~$100:
 
-| Piece                  | Price |
-| ---------------------- | ----- |
-| Raspberry Pi 4         | $45   |
-| Raspberry Pi charger   | $7.95 |
-| Raspberry Pi case      | $11   |
-| 32GB Micro-SD card     | $6.75 |
-| 120GB SSD disk         | $22   |
-| USB 3.0 disk enclosure | $11   |
+| Piece                  | Price  |
+| ---------------------- | ------ |
+| Raspberry Pi 4         | $45    |
+| Raspberry Pi charger   | $7.95  |
+| Raspberry Pi case      | $11    |
+| 32GB Micro-SD card     | $6.75  |
+| 120GB SSD disk         | $22    |
+| USB 3.0 disk enclosure | $11    |
 | **Total price**        | $103.7 |
 
 It proves that building your own home automation setup is pretty cheap today!

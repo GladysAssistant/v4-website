@@ -28,6 +28,14 @@ Select the settings the USB port is to use in order to allow Gladys to communica
 
 ![USB dongle settings](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
+:::warning
+If you run Gladys on an external disk connected in USB, you may have power issues as your Pi can struggle to give enough power to both the disk and the Zigbee USB key.
+
+We recommend you use a externaly powered USB charging tower.
+
+You can read more about it on ZigbeeMQTT website: [Zigbee2MQTT fails to start](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html)
+:::
+
 ## Activate Zigbee2Mqtt
 
 Once your dongle is configured, Gladys needs to install two containers (MQTT and Zigbee2Mqtt) to use the dongle and communicate with all your devices. Don't worry, all this has been automated.
@@ -50,9 +58,7 @@ Click on the `Discover` menu, then click on the `Permit joining` button.
 
 To make your device join the network, please refer to its manual. In most cases, a long press on the physical button allows this operation.
 
-Still in the same screen, click on the **Scan** button to ask the Zigbee network for the list of known devices.
-
-The devices already associated to your Zigbee network will appear in the list of detected features. You can rename them and associate them to a room using the drop-down list.
+The devices already associated to your Zigbee network will automatically appear in the list with detected features. You can rename them and associate them to a room using the drop-down list.
 
 ![Add a device](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_add_device_en.png)
 
