@@ -4,7 +4,7 @@ title: Gladys Plus
 sidebar_label: Intro
 ---
 
-[Gladys Plus](/fr/plus/) est un service additionnel créé et maintenu par [Pierre-Gilles Leymarie](https://twitter.com/pierregillesl), fondateur du project
+[Gladys Plus](/fr/plus/) est un service additionnel créé et maintenu par [Pierre-Gilles Leymarie](https://twitter.com/pierregillesl), fondateur du projet.
 
 Ce service est entièrement optionel, il est tout à fait possible d'utiliser Gladys complètement gratuitement sans ce service.
 
