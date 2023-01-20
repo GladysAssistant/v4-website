@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Layout from "@theme/Layout";
+import Head from "@docusaurus/Head";
 import cx from "classnames";
 
 import { useColorMode } from "@docusaurus/theme-common";
@@ -17,6 +18,7 @@ import styles from "./styles.module.css";
 import { translate } from "@docusaurus/Translate";
 
 const YEARLY_PLAN_ACTIVATED = false;
+const PRICING_TABLE_ACTIVATED = true;
 
 const Check = () => (
   <svg
@@ -51,7 +53,7 @@ function validateEmail(email) {
 
 function Plus() {
   const context = useDocusaurusContext();
-  const { isDarkTheme } = useColorMode();
+  const isDarkTheme = useColorMode().colorMode === "dark";
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(STATUS.INITIAL);
   const { i18n } = context;
@@ -133,7 +135,7 @@ function Plus() {
   const subscribeButtonDiscount = translate({
     id: "gladysPlusPage.subscribeButtonDiscount",
     description: "Gladys Plus suscribe button discount",
-    message: "Subscribe now (59,99€ for 1 year)",
+    message: "Subscribe now",
   });
 
   return (
@@ -219,7 +221,7 @@ function Plus() {
                       </Translate>
                     </div>
                   )}
-                  {!YEARLY_PLAN_ACTIVATED && (
+                  {!YEARLY_PLAN_ACTIVATED && !PRICING_TABLE_ACTIVATED && (
                     <span>
                       <label style={{ display: "block" }}>
                         <Translate
@@ -284,6 +286,42 @@ function Plus() {
                       >
                         {subscribeButtonDiscount}
                       </button>
+                      <div style={{ marginTop: "10px" }}>
+                        <small>
+                          <Translate
+                            id="gladysPlusPage.unsuscribeAtAnytime"
+                            description="Pricing unsubscribe at anytime text"
+                          >
+                            (Unsuscribe at anytime)
+                          </Translate>
+                        </small>
+                      </div>
+                    </span>
+                  )}
+                  {PRICING_TABLE_ACTIVATED && (
+                    <span>
+                      <label style={{ display: "block", marginBottom: "10px" }}>
+                        <Translate
+                          id="gladysPlusPage.subscribe"
+                          description="Gladys Plus subscribe"
+                        >
+                          14 days free trial and -40% on the first bill with the
+                          SMART2023 code!
+                        </Translate>
+                      </label>
+
+                      <a
+                        href="#pricing-table"
+                        className={cx(
+                          styles.plusInput,
+                          styles.plusInputButton,
+                          "button button--primary"
+                        )}
+                        style={{ paddingTop: "9px" }}
+                      >
+                        {subscribeButtonDiscount}
+                      </a>
+
                       <div style={{ marginTop: "10px" }}>
                         <small>
                           <Translate
@@ -461,130 +499,147 @@ function Plus() {
               <YoutubeEmbedVideo id="TmjrBeufjyo" />
             </div>
           )}
+          <div id="pricing-table"></div>
           <div className={cx("row", styles.plusRow)}>
-            <div className="col col--6  col--offset-3">
-              <div class="card-demo">
-                <div class="card">
-                  <div class="card__header">
-                    <div className="text--center">
-                      {YEARLY_PLAN_ACTIVATED && (
-                        <h3
-                          className={cx(
-                            "text--center",
-                            styles.plusPricingTitle
-                          )}
-                        >
-                          <Translate
-                            id="gladysPlusPage.pricingTitleDiscount"
-                            description="Pricing title discount"
+            {PRICING_TABLE_ACTIVATED && (
+              <div className="col col--12">
+                <stripe-pricing-table
+                  pricing-table-id={
+                    language === "fr"
+                      ? "prctbl_1MRqJdKgPjCBPRbMrhGDD5c6"
+                      : "prctbl_1MRrSZKgPjCBPRbMkqwI347j"
+                  }
+                  publishable-key="pk_live_zY5TGhpZHlH65hSEB4PmBeIe"
+                ></stripe-pricing-table>
+              </div>
+            )}
+            {!PRICING_TABLE_ACTIVATED && (
+              <div className="col col--6  col--offset-3">
+                <div class="card-demo">
+                  <div class="card">
+                    <div class="card__header">
+                      <div className="text--center">
+                        {YEARLY_PLAN_ACTIVATED && (
+                          <h3
+                            className={cx(
+                              "text--center",
+                              styles.plusPricingTitle
+                            )}
                           >
-                            Discount: 59,99€ for one year
-                          </Translate>
-                        </h3>
-                      )}
-                      {!YEARLY_PLAN_ACTIVATED && (
-                        <h3
-                          className={cx(
-                            "text--center",
-                            styles.plusPricingTitle
-                          )}
-                        >
-                          <Translate
-                            id="gladysPlusPage.pricingTitle"
-                            description="Pricing title"
+                            <Translate
+                              id="gladysPlusPage.pricingTitleDiscount"
+                              description="Pricing title discount"
+                            >
+                              Discount: 59,99€ for one year
+                            </Translate>
+                          </h3>
+                        )}
+                        {!YEARLY_PLAN_ACTIVATED && (
+                          <h3
+                            className={cx(
+                              "text--center",
+                              styles.plusPricingTitle
+                            )}
                           >
-                            9.99€
-                          </Translate>
-                        </h3>
-                      )}
-                      {!YEARLY_PLAN_ACTIVATED && (
-                        <small className={styles.plusPricingTitleMonth}>
+                            <Translate
+                              id="gladysPlusPage.pricingTitle"
+                              description="Pricing title"
+                            >
+                              9.99€
+                            </Translate>
+                          </h3>
+                        )}
+                        {!YEARLY_PLAN_ACTIVATED && (
+                          <small className={styles.plusPricingTitleMonth}>
+                            <Translate
+                              id="gladysPlusPage.pricingPerMonth"
+                              description="Pricing per month"
+                            >
+                              /month
+                            </Translate>
+                          </small>
+                        )}
+                      </div>
+                    </div>
+                    <div class="card__body">
+                      <p>
+                        <ul className={styles.listUnstyled}>
+                          <li>
+                            <Check />{" "}
+                            <Translate
+                              id="gladysPlusPage.unlimitedFamilyMembers"
+                              description="Pricing open-source software"
+                            >
+                              Unlimited family members
+                            </Translate>
+                          </li>
+                          <li>
+                            <Check />{" "}
+                            <Translate
+                              id="gladysPlusPage.unlimitedRemoteAccess"
+                              description="Pricing end-to-end encrypted remote access"
+                            >
+                              Unlimited Remote Access requests
+                            </Translate>
+                          </li>
+                          <li>
+                            <Check />{" "}
+                            <Translate
+                              id="gladysPlusPage.unlimitedOpenApiRequests"
+                              description="Pricing daily backups"
+                            >
+                              Unlimited Open API requests
+                            </Translate>
+                          </li>
+                          <li>
+                            <Check />{" "}
+                            <Translate
+                              id="gladysPlusPage.unlimitedVoiceAssistant"
+                              description="Pricing one-click restore"
+                            >
+                              Unlimited voice assistants requests
+                            </Translate>
+                          </li>
+                          <li>
+                            <Check />{" "}
+                            <Translate
+                              id="gladysPlusPage.supportOpenSource"
+                              description="Pricing support open-source"
+                            >
+                              Support independant Open-Source Software
+                            </Translate>
+                          </li>
+                        </ul>
+                      </p>
+                    </div>
+                    <div class="card__footer">
+                      <button
+                        onClick={
+                          YEARLY_PLAN_ACTIVATED
+                            ? subscribeDiscount
+                            : scrollTopTop
+                        }
+                        class="button button--primary button--block"
+                      >
+                        {YEARLY_PLAN_ACTIVATED
+                          ? subscribeButtonDiscount
+                          : submitButtonInitialState}
+                      </button>
+                      <div style={{ textAlign: "center", marginTop: "10px" }}>
+                        <small>
                           <Translate
-                            id="gladysPlusPage.pricingPerMonth"
-                            description="Pricing per month"
+                            id="gladysPlusPage.unsuscribeAtAnytime"
+                            description="Pricing unsubscribe at anytime text"
                           >
-                            /month
+                            (Unsuscribe at anytime)
                           </Translate>
                         </small>
-                      )}
-                    </div>
-                  </div>
-                  <div class="card__body">
-                    <p>
-                      <ul className={styles.listUnstyled}>
-                        <li>
-                          <Check />{" "}
-                          <Translate
-                            id="gladysPlusPage.unlimitedFamilyMembers"
-                            description="Pricing open-source software"
-                          >
-                            Unlimited family members
-                          </Translate>
-                        </li>
-                        <li>
-                          <Check />{" "}
-                          <Translate
-                            id="gladysPlusPage.unlimitedRemoteAccess"
-                            description="Pricing end-to-end encrypted remote access"
-                          >
-                            Unlimited Remote Access requests
-                          </Translate>
-                        </li>
-                        <li>
-                          <Check />{" "}
-                          <Translate
-                            id="gladysPlusPage.unlimitedOpenApiRequests"
-                            description="Pricing daily backups"
-                          >
-                            Unlimited Open API requests
-                          </Translate>
-                        </li>
-                        <li>
-                          <Check />{" "}
-                          <Translate
-                            id="gladysPlusPage.unlimitedVoiceAssistant"
-                            description="Pricing one-click restore"
-                          >
-                            Unlimited voice assistants requests
-                          </Translate>
-                        </li>
-                        <li>
-                          <Check />{" "}
-                          <Translate
-                            id="gladysPlusPage.supportOpenSource"
-                            description="Pricing support open-source"
-                          >
-                            Support independant Open-Source Software
-                          </Translate>
-                        </li>
-                      </ul>
-                    </p>
-                  </div>
-                  <div class="card__footer">
-                    <button
-                      onClick={
-                        YEARLY_PLAN_ACTIVATED ? subscribeDiscount : scrollTopTop
-                      }
-                      class="button button--primary button--block"
-                    >
-                      {YEARLY_PLAN_ACTIVATED
-                        ? subscribeButtonDiscount
-                        : submitButtonInitialState}
-                    </button>
-                    <div style={{ textAlign: "center", marginTop: "10px" }}>
-                      <small>
-                        <Translate
-                          id="gladysPlusPage.unsuscribeAtAnytime"
-                          description="Pricing unsubscribe at anytime text"
-                        >
-                          (Unsuscribe at anytime)
-                        </Translate>
-                      </small>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
         {language === "fr" && (
@@ -612,6 +667,9 @@ function PlusParent() {
         message: "Add more features to Gladys Assistant with Gladys Plus",
       })}
     >
+      <Head>
+        <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+      </Head>
       <Plus />
     </Layout>
   );
