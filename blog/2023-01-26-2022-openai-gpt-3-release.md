@@ -17,6 +17,8 @@ On the internet, everyone has tried to chat with this AI, whether it was to see 
 
 On my side, I think this AI is a great tool, a kind of overpowered search engine, accessible to language, which has access to an impressive dataset!
 
+<!--truncate-->
+
 ## What does this have to do with Gladys?
 
 In Gladys, we have always had a "Discussion" tab, which allows you to send requests to Gladys: "Turn on the light in the living room", "Show me the camera in the garden", "What is the temperature in the bathroom?

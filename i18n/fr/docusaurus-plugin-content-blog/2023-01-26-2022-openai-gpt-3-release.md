@@ -17,6 +17,8 @@ Sur internet, tout le monde a tenté de discuter avec cette IA, que ce soit pour
 
 De mon côté, je pense que cette IA est un outil formidable, une sorte de moteur de recherche sur-puissant, accessible au language, qui a accès à un dataset impressionnant !
 
+<!--truncate-->
+
 ## Quel rapport avec Gladys ?
 
 Dans Gladys, nous avons toujours eu un onglet "Discussion", qui permet d'envoyer des demandes à Gladys: "Allume la lumière du salon", "Montre moi la caméra du jardin", "Quelle est la température dans la salle de bain ?".
@@ -120,7 +122,7 @@ Suivant vos retours, on pourra intégrer GTP-3 entièrement avec Gladys.
 
 Alors, vous en pensez quoi ?
 
-J'attends vos retour sur [le forum](https://community.gladysassistant.com/) !
+J'attends vos retour sur [le forum](https://community.gladysassistant.com/t/lia-openai-gpt-3-disponible-dans-gladys-assistant/7888) !
 
 ## Comment mettre à jour ?
 
