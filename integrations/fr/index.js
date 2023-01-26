@@ -11,7 +11,7 @@ const integrations = zigbee2mqtt
   .concat(xiaomi)
   .concat(philipsHue)
   .concat(tpLink)
-  .concat(camera)
-  .concat(zwave);
+  .concat(camera);
+// .concat(zwave);
 
 export default integrations;
