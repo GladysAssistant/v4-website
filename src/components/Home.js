@@ -113,12 +113,12 @@ function Home({ integrations, lang }) {
               <div className="row">
                 <div className="col col--12">
                   <h2 className="text--center">
-                    Nouvelle intégration avec Ecowatt
+                    Nouvelle intégration avec OpenAI GPT-3
                   </h2>
                   <p className="text--center">
-                    En cas d'alerte Ecowatt, réduisez votre consommation
-                    électrique automatiquement dans Gladys !{" "}
-                    <a href="/fr/blog/gladys-assistant-4-13-ecowatt/">
+                    La puissance de l'intelligence artificielle, disponible dans
+                    Gladys 🤯{"  "}
+                    <a href="/fr/blog/open-ai-gpt-3-in-gladys-assistant/">
                       En savoir plus
                     </a>
                     .
@@ -127,7 +127,9 @@ function Home({ integrations, lang }) {
                     <div className="col col--2"></div>
                     <div className="col col--8">
                       <img
-                        src={useBaseUrl("/img/home/ecowatt-alerts.jpg")}
+                        src={useBaseUrl(
+                          "/img/articles/fr/openai-gpt-3-release/open-ai-integration.jpg"
+                        )}
                         alt="Ecowatt intégration Gladys"
                       />
                     </div>
@@ -229,15 +231,15 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="Zn7imzI0oYU" disablePadding />
+                      <YoutubeEmbedVideo id="l2E1wNF-Mtw" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Installer Gladys sur un disque externe SSD
+                        Live: Bilan de 2022 et projets pour 2023
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="OeXewA105qI" />
+                      <YoutubeEmbedVideo id="6pBeBcgLvj0" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Cyril et son café prêt tous les matins
+                        Installer Gladys sur un PC Ubuntu
                       </h4>
                     </div>
                   </div>
