@@ -231,15 +231,15 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="6pBeBcgLvj0" disablePadding />
-                      <h4 className={styles.homeYouTubeVideoTitle}>
-                        Installer Gladys sur un PC Ubuntu
-                      </h4>
-                    </div>
-                    <div className="col col--4">
                       <YoutubeEmbedVideo id="l2E1wNF-Mtw" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
                         Live: Bilan de 2022 et projets pour 2023
+                      </h4>
+                    </div>
+                    <div className="col col--4">
+                      <YoutubeEmbedVideo id="6pBeBcgLvj0" disablePadding />
+                      <h4 className={styles.homeYouTubeVideoTitle}>
+                        Installer Gladys sur un PC Ubuntu
                       </h4>
                     </div>
                   </div>
