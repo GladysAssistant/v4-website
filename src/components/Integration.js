@@ -260,22 +260,24 @@ function IntegrationPage({ integrations, lang }) {
               </label>
             </div>
 
-            <div className={classnames(styles.integrationFilterCheckbox)}>
-              <input
-                type="checkbox"
-                name="zwave"
-                checked={checkedTags["zwave"]}
-                onChange={handleCheckedChange}
-              />
-              <label for="zwave">
-                <Translate
-                  id="integrations.zwave"
-                  description="Integration zwave title"
-                >
-                  Z-Wave
-                </Translate>
-              </label>
-            </div>
+            {false && (
+              <div className={classnames(styles.integrationFilterCheckbox)}>
+                <input
+                  type="checkbox"
+                  name="zwave"
+                  checked={checkedTags["zwave"]}
+                  onChange={handleCheckedChange}
+                />
+                <label for="zwave">
+                  <Translate
+                    id="integrations.zwave"
+                    description="Integration zwave title"
+                  >
+                    Z-Wave
+                  </Translate>
+                </label>
+              </div>
+            )}
           </div>
         </div>
         <div className="col col col--9">
