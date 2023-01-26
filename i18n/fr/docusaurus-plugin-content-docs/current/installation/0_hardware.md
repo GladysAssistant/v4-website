@@ -5,54 +5,26 @@ sidebar_label: Le matériel
 slug: /
 ---
 
-Gladys Assistant est un programme qui tourne sur n'importe quelle machine Linux: un Raspberry Pi, un NAS, un VPS, un serveur à la maison, etc...
+Gladys Assistant est un programme qui tourne sur n'importe quelle machine Linux: un PC sous Ubuntu, un Raspberry Pi, un NAS, un VPS, un serveur...
 
-Néanmoins, une grande partie de la communauté fait tourner Gladys sur un Raspberry Pi, et ce pour plusieurs raisons :
+Récapitulons les différentes options :
 
-- C'est un micro-ordinateur très abordable (40-50€)
-- Il consomme peu (se branche sur un chargeur USB-C)
-- Complètement silencieux car il n'a pas de ventilateur
-- Il offre de belles performances (Quad core Cortex-A72 en ARM v8 à 1.5GHz + jusqu'à 8GB de RAM)
-- Enfin, c'est le micro-ordinateur le plus populaire du marché, avec plus de 39 millions d'unités vendus depuis son lancement. La communauté est grande, et réactive. Il est rare qu'un problème critique soit sans réponse, et l'OS est continuellement maintenu par le constructeur, même pour les vieux modèles.
+- **Un PC sous Ubuntu**: De plus en plus d'utilisateurs font tourner Gladys sur un mini-PC, comme un Dell Optiplex 3040, un Intel NUC, ou n'importe quel ordinateur Linux. Ces machines sont très stables, durables, et trouvables autour de 100€ d'occasions ou reconditionnés. A mon sens, en 2023, c'est une des options les plus intéressantes pour installer Gladys.
 
-:::note
-Avec la pénurie actuelle de Raspberry Pi, une bonne solution de remplacement est d'acheter un mini-PC, comme un Dell OptiPlex 3040, ou un Intel NUC.
+Ma vidéo sur le sujet :
 
-Ces mini-PC ont l'avantage d'avoir un SSD intégré nativement, et d'être souvent plus stable niveau alimentation.
+<div class="videoContainer" style={{marginBottom: '20px' }}>
+<iframe class="video" src="https://www.youtube.com/embed/6pBeBcgLvj0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
-On en parle sur [le forum ici](https://community.gladysassistant.com/t/faire-tourner-gladys-sur-un-mac-mini-intel-pas-cher/7617/2?u=pierre-gilles).
-:::
+Plus d'informations dans [ce sujet](/fr/docs/installation/docker/).
 
-## Commencer pour moins de 100€
+- **Un Raspberry Pi**: Il est possible d'installer Gladys sur un Raspberry Pi grâce à notre image Raspberry Pi OS toute prête. Cependant, avec la pénurie de semi-conducteurs, les Raspberry Pi sont compliqués à trouver et sont devenus très cher ! Nous ne recommandons pas d'utiliser une micro-SD pour stocker vos données (car les micro-SD sont très facilement corrompues), il faut passer par un SSD. Cette manipulation n'est pas forcément facile à faire, et à partir du moment où vous connectez un SSD + un dongle Zigbee par exemple, vous pouvez avoir des problèmes d'alimentations car le Pi n'est pas fait pour connecter autant d'appareils. C'est pour ça qu'aujourd'hui, passer par un mini-PC peut-être une option plus simple et plus stable.
 
-- Un Raspberry Pi 4, disponible chez <a href="https://www.kubii.fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-0765756931175.html?gladys" rel="noopener">Kubii.fr</a>. Le modèle 4 est une belle amélioration par rapport à la troisième génération, car il offre 2 ports USB 3.0, un port Ethernet Gigabit, et offre enfin la possibilité de choisir des modèles avec plus de RAM.
+Plus d'informations dans [ce sujet](/fr/docs/installation/raspberry-pi/).
 
-Si vous comptez utiliser Gladys seule sur le Raspberry Pi, je vous conseille le modèle avec <a href="https://www.kubii.fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-0765756931175.html?gladys" rel="noopener">2GB de RAM</a>. Si vous comptez faire tourner Gladys + quelques autres services (Pi-Hole/Adguard, Node-RED), je vous conseille de prendre plus de RAM pour être tranquille ( <a href="https://www.kubii.fr/cartes-raspberry-pi/2772-nouveau-raspberry-pi-4-modele-b-4gb-kubii-0765756931182.html?gladys" rel="noopener">4GB</a> ), ou même <a href="https://www.kubii.fr/cartes-raspberry-pi/2955-raspberry-pi-4-modele-b-8gb-0765756931199.html?gladys" rel="noopener">8GB</a> si vous voulez être large )
+- **Un NAS** : Gladys tourne sur un NAS, que ce soit un NAS Unraid ([tutoriel ici](/fr/docs/installation/unraid/)), ou un NAS Synology ([tutoriel ici](/fr/docs/installation/synology/)).
 
-![Raspberry Pi 4](../../../../../static/img/docs/fr/installation/raspberry-pi-4.jpg)
+Un NAS est souvent une machine très stable, et durable. C'est une très bonne option pour commencer sur Gladys.
 
-- L'alimentation officielle USB-C 3A disponible chez <a href="https://www.kubii.fr/14-chargeurs-alimentations-raspberry/2678-alimentation-officielle-usb-type-c-raspberry-pi-3272496300002.html?gladys" rel="noopener" >Kubii.fr</a>. Il est important d'utiliser une alimentation USB-C de bonne qualité qui fournit un ampérage suffisant pour que le Raspberry Pi puisse tourner correctement. Si vous branchez un SSD externe sur votre Pi comme je recommande, il est encore plus important d'avoir un chargeur qui fournit un ampérage suffisant.
-
-- Boitier officiel pour Raspberry Pi 4, disponible chez <a href="https://www.kubii.fr/boitiers-et-supports/2681-boitier-officiel-pour-raspberry-pi-4-kubii-3272496298583.html?gladys" rel="noopener">Kubii.fr</a>.
-
-- Une carte micro-SD class 10 disponible chez <a href="https://www.kubii.fr/carte-sd-et-stockage/2939-micro-sdhc-16gb-class10-verbatim-023942440826.html?gladys" rel="noopener">Kubii.fr</a>.
-
-Nous ne recommandons pas de faire tourner Gladys sur une carte-SD sur le long terme, car les cartes SD ne sont pas conçues pour supporter de tels cycles de lectures/écritures. Néanmoins, il est toujours pratique d'avoir une carte micro-SD sous la main, notamment utile lors de la première installation.
-
-- Un disque SSD comme ce [PNY 120GB Sata III à 19€90 sur Amazon](https://www.amazon.fr/PNY-CS900-Disque-Flash-Interne/dp/B01KFLH1WS?tag=gladproj-21&th=1) couplé à un [boitier USB 3.0 à 11€](https://www.amazon.fr/EasyULT-Boitier-Externe-Vitesse-UASP-Noir/dp/B07PMWJB8P?&linkCode=ll1&tag=gladproj-21&linkId=d2bf9d23a85189d9ec0479a23dec4923&language=fr_FR&ref_=as_li_ss_tl).
-
-Comme je disais plus haut, un disque SSD est largement recommandé pour utiliser Gladys.
-
-### Si on récapitule
-
-| Matériel         | Prix          |
-| ---------------- | ------------- |
-| Raspberry Pi 4   | 43,90€ **\*** |
-| Alimentation     | 8,95€         |
-| Boitier          | 5,95€         |
-| Carte micro-SD   | 7,90€         |
-| Disque SSD 120GB | 19,90€        |
-| Boitier USB 3.0  | 10,99€        |
-| **Prix total**   | 97,59€        |
-
-** \* Note:** Due à la pénurie de composants et aux problèmes d'approvisionnements actuels, la fondation Raspberry Pi a des difficultés à produire le Raspberry Pi en quantitées suffisantes. Par conséquent, le Raspberry Pi est souvent en rupture de stock, et la fondation [a annoncé fin 2021](https://www.raspberrypi.com/news/supply-chain-shortages-and-our-first-ever-price-increase/) que les prix allaient augmenter temporairement de 10€.
+Si vous avez des questions sur le matériel à utiliser, venez nous les poser sur la [communauté en ligne](https://community.gladysassistant.com/).
