@@ -44,6 +44,10 @@ const getIntegrationsFromAirtable = async (lang) => {
   return data.records;
 };
 
+const cleanLabel = (label = '') => {
+  return label.trim().replace(/\s\s+/g, " ");
+};
+
 const parseAndFormatRecords = (records, lang) => {
   console.log(`>> Processing ${lang} integrations`);
   const products = [];
@@ -63,15 +67,15 @@ const parseAndFormatRecords = (records, lang) => {
     const title = get(record, "fields.Titre du produit", { default: "" });
     const tags = get(record, "fields.Tags");
     const newItem = {
-      docsId: get(
+      docsId: cleanLabel(get(
         record,
         "fields.ID de la documentation (référence vers la doc)"
-      ),
-      title,
-      description: get(record, "fields.Courte description"),
+      )),
+      title: cleanLabel(title),
+      description: cleanLabel(get(record, "fields.Courte description")),
       imageUrl: get(record, "fields.Image.0.thumbnails.large.url"),
       imageName: `${slug(title)}${imageExtension}`,
-      tags: tags ? tags.split(",") : [],
+      tags: tags ? tags.split(",").map(tag => cleanLabel(tag)) : [],
       buyLink: get(record, "fields.Lien d'achat"),
     };
     // set amazon partner id
@@ -132,6 +136,8 @@ const writeFileProducts = (products, lang) => {
     dictionnary[product.docsId].push(product);
   });
   AUTHORIZED_DOC_ID.forEach((docId) => {
+    const items = dictionnary[docId];
+    items.sort((a, b) => a.title.localeCompare(b.title, lang));
     fs.writeFileSync(
       `./integrations/${lang}/${docId}.json`,
       JSON.stringify(dictionnary[docId], null, 4)
@@ -156,15 +162,17 @@ const mergeProducts = (existingIntegrations, productsFromAirtable) => {
   const productSet = new Set();
   const products = [];
   productsFromAirtable.forEach((integration) => {
-    if (!productSet.has(integration.title)) {
+    const integrationKey = integration.title.toLowerCase();
+    if (!productSet.has(integrationKey)) {
       products.push(integration);
-      productSet.add(integration.title);
+      productSet.add(integrationKey);
     }
   });
   existingIntegrations.forEach((integration) => {
-    if (!productSet.has(integration.title)) {
+    const integrationKey = integration.title.toLowerCase();
+    if (!productSet.has(integrationKey)) {
       products.push(integration);
-      productSet.add(integration.title);
+      productSet.add(integrationKey);
     }
   });
   return products;
