@@ -3,6 +3,7 @@ import classnames from "classnames";
 import styles from "./styles.module.css";
 import Image from "@theme/IdealImage";
 import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 import Translate, { translate } from "@docusaurus/Translate";
 
@@ -35,9 +36,8 @@ function Integration({
   return (
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
-        <Image
-          img={require(`../../static/img/integrations/${lang}/${imageName}`)}
-          size={200}
+        <img
+          src={useBaseUrl(`/img/integrations/${lang}/${imageName}`)}
           alt={title}
           title={title}
           className={styles.integrationImage}
