@@ -3,8 +3,14 @@ import classnames from "classnames";
 import styles from "./styles.module.css";
 import Image from "@theme/IdealImage";
 import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 import Translate, { translate } from "@docusaurus/Translate";
+
+const IMPROVE_COMPATIBILITY_LIST_LINKS = {
+  fr: "https://community.gladysassistant.com/t/comment-alimenter-la-liste-de-compatibilites-sur-le-site/7964",
+  en: "https://en-community.gladysassistant.com/t/how-to-feed-the-compatibility-list-on-the-site/77",
+};
 
 const truncate = (str, len) =>
   str.substring(0, (str + " ").lastIndexOf(" ", len));
@@ -30,9 +36,8 @@ function Integration({
   return (
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
-        <Image
-          img={require(`../../static/img/integrations/${lang}/${imageName}`)}
-          size={200}
+        <img
+          src={useBaseUrl(`/img/integrations/${lang}/${imageName}`)}
           alt={title}
           title={title}
           className={styles.integrationImage}
@@ -295,7 +300,7 @@ function IntegrationPage({ integrations, lang }) {
               description="Integration page description"
               values={{
                 website: (
-                  <Link to="https://airtable.com/invite/l?inviteId=invCQPYLKLu5g3sGm&inviteToken=a0f27651689ca8357f5165b372e78f2b56357d126e6d18c162810626eed25207">
+                  <Link to={IMPROVE_COMPATIBILITY_LIST_LINKS[lang]}>
                     <Translate
                       id="integrations.improveHere"
                       description="Integration improve integration list here"
