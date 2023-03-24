@@ -36,6 +36,19 @@ We recommend you use a externaly powered USB charging tower.
 You can read more about it on ZigbeeMQTT website: [Zigbee2MQTT fails to start](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html)
 :::
 
+:::info
+If you use a Sonoff-E dongle (you can check on the back of your Sonoff which version you're using), you need to change a bit the configuration of Zigbee2mqtt and add to the file `/var/lib/gladysassistant/zigbee2mqtt/z2m/configuration.yaml` the following configuration:
+
+```
+serial:
+  adapter: ezsp
+```
+
+Read more here: https://www.zigbee2mqtt.io/guide/adapters/#experimental
+
+We are working on adding this automatically in Gladys, in the meantime, please add this to the configuration :)
+:::
+
 ## Activate Zigbee2Mqtt
 
 Once your dongle is configured, Gladys needs to install two containers (MQTT and Zigbee2Mqtt) to use the dongle and communicate with all your devices. Don't worry, all this has been automated.
