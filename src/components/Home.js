@@ -36,6 +36,40 @@ const testimonials = {
 };
 
 const FAQQuestions = {
+  fr: [
+    {
+      title: <>How can I install Gladys?</>,
+      response: (
+        <>
+          Gladys can be installed on any Linux machine: a Raspberry Pi, a NAS, a
+          server, anything !"
+        </>
+      ),
+    },
+    {
+      title: <>Who uses Gladys Assistant 4?</>,
+      response: (
+        <>
+          Gladys Assistant v4 was released in November 2020. Since then,
+          hundreds of you have used Gladys Assistant. The goal is to grow to
+          thousands of users in the coming months! Gladys Assistant is installed
+          by all types of users:
+          <ul>
+            <li>
+              Complete novices, who want to automate their home with a simple,
+              powerful product that also respects their privacy.
+            </li>
+            <li>
+              Developers who find the fact they can code for their home
+              improvement amazing. Many of them contribute to this open-source
+              project!
+            </li>
+            <li>Professionals, who manage large fleets of sensors</li>
+          </ul>
+        </>
+      ),
+    },
+  ],
   en: [
     {
       title: <>How can I install Gladys?</>,
@@ -195,15 +229,32 @@ function Home({ integrations, lang }) {
       <main>
         <div className={classnames(styles.homeSection)}>
           <h2 className={styles.secondaryTitle}>
-            Some cool features out of the box
+            <Translate
+              id="home.coolFeatures.title"
+              description="Cool features description on the homepage"
+            >
+              Some cool features out of the box
+            </Translate>
           </h2>
           <div className={styles.coolFeatureFlexContainer}>
             <div className={styles.coolFeatureItem}>
-              <h4>Build great dashboard</h4>
+              <h4>
+                <Translate
+                  id="home.coolFeatures.dashboardTitle"
+                  description="Cool features dashboard title on the homepage"
+                >
+                  Build great dashboard
+                </Translate>
+              </h4>
               <p>
-                You can create as much dashboard as you want in Gladys, and they
-                are entirely customizable. Add your cameras, charts of sensors
-                in your house, display who's at home and who's not.
+                <Translate
+                  id="home.coolFeatures.dashboardDescrition"
+                  description="Cool features dashboard title on the homepage"
+                >
+                  You can create as much dashboard as you want in Gladys, and
+                  they are entirely customizable. Add your cameras, charts of
+                  sensors in your house, display who's at home and who's not.
+                </Translate>
               </p>
             </div>
             <div className={styles.coolFeatureItem}>
@@ -227,22 +278,47 @@ function Home({ integrations, lang }) {
               />
             </div>
             <div className={styles.coolFeatureItem}>
-              <h4>Automate your life with scenes</h4>
+              <h4>
+                <Translate
+                  id="home.coolFeatures.sceneTitle"
+                  description="Cool features scene title on the homepage"
+                >
+                  Automate your life with scenes
+                </Translate>
+              </h4>
               <p>
-                You want to wake up with nice music? The coffee ready? Gladys
-                can help you with that. Scenes are fully editable in the UI, and
-                can be triggered from an event coming, at a specific time, or
-                manually.
+                <Translate
+                  id="home.coolFeatures.sceneDescription"
+                  description="Cool features scene title on the homepage"
+                >
+                  You want to wake up with nice music? The coffee ready? Gladys
+                  can help you with that. Scenes are fully editable in the UI,
+                  and can be triggered from an event coming, at a specific time,
+                  or manually.
+                </Translate>
               </p>
             </div>
           </div>
           <div className={styles.coolFeatureFlexContainer}>
             <div className={styles.coolFeatureItem}>
-              <h4>Always one message away</h4>
+              <h4>
+                <Translate
+                  id="home.coolFeatures.chatTitle"
+                  description="Cool features chat title on the homepage"
+                >
+                  Always one message away
+                </Translate>
+              </h4>
               <p>
-                Gladys is a smart assistant. You can talk to her in the
-                interface, or with our Telegram integration. Ask her to show you
-                the image of the camera in the kitchen, and she’ll answer back!
+                <Translate
+                  id="home.coolFeatures.chatDescription"
+                  description="Cool features chat title on the homepage"
+                >
+                  Gladys is a smart assistant. You can talk to her in the
+                  interface, or with our Telegram integration. Ask her to show
+                  you the image of the camera in the kitchen, and she'll answer
+                  back!
+                </Translate>
               </p>
             </div>
             <div className={styles.coolFeatureItem}>
@@ -264,7 +340,12 @@ function Home({ integrations, lang }) {
           )}
         >
           <h2 className={styles.secondaryTitle}>
-            Lots of compatibilities, built-in
+            <Translate
+              id="home.compatibilities.title"
+              description="Cool features chat title on the homepage"
+            >
+              Lots of compatibilities, built-in
+            </Translate>
           </h2>
           <div className="row">
             <div className="col col--12">
@@ -300,58 +381,142 @@ function Home({ integrations, lang }) {
 
         <div className={classnames(styles.homeSection)}>
           <h2 className={styles.secondaryTitle}>
-            The most intuitive smart home software
+            <Translate
+              id="home.characteristics.title"
+              description="Characteristics chat title on the homepage"
+            >
+              The most intuitive smart home software
+            </Translate>
           </h2>
           <div className={styles.featureFlexContainer}>
             <div className={styles.feature}>
-              <h4>Privacy</h4>
+              <h4>
+                <Translate
+                  id="home.characteristics.privacyTitle"
+                  description="Characteristics privacy title on the homepage"
+                >
+                  Privacy
+                </Translate>
+              </h4>
               <p>
-                Gladys is self-hosted, and all your data stays in your local
-                machine at home, in a simple SQLite database.
+                <Translate
+                  id="home.characteristics.privacyDescription"
+                  description="Characteristics chat title on the homepage"
+                >
+                  Gladys is self-hosted, and all your data stays in your local
+                  machine at home, in a simple SQLite database.
+                </Translate>
               </p>
             </div>
             <div className={styles.feature}>
-              <h4>Easy to use</h4>
+              <h4>
+                <Translate
+                  id="home.characteristics.easeOfUseTitle"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Easy to use
+                </Translate>
+              </h4>
               <p>
-                We build Gladys like we would build any consumer product: no SSH
-                needed, no files to edit.
+                <Translate
+                  id="home.characteristics.easeOfUseDescription"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  We build Gladys like we would build any consumer product: no
+                  SSH needed, no files to edit.
+                </Translate>
               </p>
             </div>
             <div className={styles.feature}>
-              <h4>Clean UI</h4>
+              <h4>
+                <Translate
+                  id="home.characteristics.cleanUITitle"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Clean UI
+                </Translate>
+              </h4>
               <p>
-                We built Gladys user interface with great care, and always start
-                with the design when working on a new feature.
+                <Translate
+                  id="home.characteristics.cleanUIDescription"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  We built Gladys user interface with great care, and always
+                  start with the design when working on a new feature.
+                </Translate>
               </p>
             </div>
           </div>
           <div className={styles.featureFlexContainer}>
             <div className={styles.feature}>
-              <h4>Stable</h4>
+              <h4>
+                <Translate
+                  id="home.characteristics.stableTitle"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Stable
+                </Translate>
+              </h4>
               <p>
-                Stability is one of the core value of the project, we build
-                Gladys to run for tens of years.
+                <Translate
+                  id="home.characteristics.stableDescription"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Stability is one of the core value of the project, we build
+                  Gladys to run for tens of years.
+                </Translate>
               </p>
             </div>
             <div className={styles.feature}>
-              <h4>Fast</h4>
+              <h4>
+                <Translate
+                  id="home.characteristics.fastTitle"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Fast
+                </Translate>
+              </h4>
               <p>
-                Gladys is built with fast technologies (Preact + Node.js) and we
-                care a lot about performances.
+                <Translate
+                  id="home.characteristics.fastDescription"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Gladys is built with fast technologies (Preact + Node.js) and
+                  we care a lot about performances.
+                </Translate>
               </p>
             </div>
             <div className={styles.feature}>
-              <h4>Auto upgrades</h4>
+              <h4>
+                <Translate
+                  id="home.characteristics.autoUpgradeTitle"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Auto upgrades
+                </Translate>
+              </h4>
               <p>
-                Gladys run as a Docker container. We use Watchtower to
-                automatically upgrade Gladys.
+                <Translate
+                  id="home.characteristics.autoUpgradeDescription"
+                  description="Characteristics ease of use title on the homepage"
+                >
+                  Gladys run as a Docker container. We use Watchtower to
+                  automatically upgrade Gladys.
+                </Translate>
               </p>
             </div>
           </div>
         </div>
 
         <div className={classnames(styles.homeSection)}>
-          <h2 className={styles.secondaryTitle}>Our users love Gladys</h2>
+          <h2 className={styles.secondaryTitle}>
+            <Translate
+              id="home.testimonial.title"
+              description="Testimonia title on the homepage"
+            >
+              Our users love Gladys
+            </Translate>
+          </h2>
           <div className={styles.testimonialContainer}>
             <TestimonialHomeSection lang="fr" testimonials={testimonials} />
           </div>
@@ -359,8 +524,10 @@ function Home({ integrations, lang }) {
 
         {lang === "fr" && (
           <div
-            style={{ paddingTop: "0rem", paddingBottom: "2rem" }}
-            className="hero shadow--lw"
+            className={classnames(
+              styles.homeSection,
+              styles.youtubeVideoSection
+            )}
           >
             <div className="container">
               <div className="row">
