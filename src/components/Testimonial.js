@@ -1,8 +1,7 @@
 import React from "react";
 import cx from "classnames";
 import Translate from "@docusaurus/Translate";
-
-import testimonialsFr from "./testimonials.fr.json";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 import styles from "./styles.module.css";
 
@@ -14,7 +13,7 @@ function Testimonial({ username, content, url, date }) {
           <img
             alt={username}
             className="avatar__photo"
-            src={`/fr/img/testimonials/${username}.png`}
+            src={useBaseUrl(`img/testimonials/${username}.png`)}
             width="48"
             height="48"
             loading="lazy"
@@ -29,23 +28,21 @@ function Testimonial({ username, content, url, date }) {
       <div className={cx("card__body", styles.testimonial)}>{content}</div>
 
       <div className="card__footer">
-        <a
-          className={cx(styles.testimonialMeta, styles.testimonialDate)}
-          href={url}
-        >
-          {date}
-        </a>
+        {url && (
+          <a
+            className={cx(styles.testimonialMeta, styles.testimonialDate)}
+            href={url}
+          >
+            {date}
+          </a>
+        )}
+        {!url && <span>{date}</span>}
       </div>
     </div>
   );
 }
 
-const testimonials = {
-  fr: testimonialsFr,
-  en: [],
-};
-
-function TestimonialSection({ lang }) {
+function TestimonialSection({ lang, testimonials }) {
   const testimonialsColumn = [[], [], []];
   testimonials[lang].forEach((testimonial, i) =>
     testimonialsColumn[i % 3].push(testimonial)
@@ -70,7 +67,11 @@ function TestimonialSection({ lang }) {
           {testimonialsColumn.map((testimonialsItem, i) => (
             <div className="col col--4" key={i}>
               {testimonialsItem.map((testimonial) => (
-                <Testimonial {...testimonial} key={testimonial.url} />
+                <Testimonial
+                  {...testimonial}
+                  key={testimonial.url}
+                  lang={lang}
+                />
               ))}
             </div>
           ))}
@@ -80,4 +81,27 @@ function TestimonialSection({ lang }) {
   );
 }
 
-export default TestimonialSection;
+function TestimonialHomeSection({ lang, testimonials }) {
+  const testimonialsColumn = [[], [], []];
+  testimonials[lang].forEach((testimonial, i) =>
+    testimonialsColumn[i % 3].push(testimonial)
+  );
+
+  if (testimonials[lang].length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={cx("row", styles.testimonialsSection)}>
+      {testimonialsColumn.map((testimonialsItem, i) => (
+        <div className="col col--4" key={i}>
+          {testimonialsItem.map((testimonial) => (
+            <Testimonial {...testimonial} key={testimonial.url} lang={lang} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export { Testimonial, TestimonialSection, TestimonialHomeSection };

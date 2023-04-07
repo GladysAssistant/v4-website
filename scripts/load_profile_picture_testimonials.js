@@ -3,7 +3,15 @@ const download = require("download");
 const Promise = require("bluebird");
 const path = require("path");
 
-const testimonialsInFr = require("../src/components/testimonials.fr.json");
+const testimonialsInFr = require("../src/components/testimonials/testimonial.fr.json");
+const testimonialsInEn = require("../src/components/testimonials/testimonial.en.json");
+const testimonialsPlusInFr = require("../src/components/testimonials/testimonial.plus.fr.json");
+const testimonialsPlusInEn = require("../src/components/testimonials/testimonial.plus.en.json");
+
+const allTestimonials = testimonialsInFr
+  .concat(testimonialsInEn)
+  .concat(testimonialsPlusInFr)
+  .concat(testimonialsPlusInEn);
 
 const DISCOURSE_FORUM_DOMAIN = "https://community.gladysassistant.com";
 
@@ -28,7 +36,7 @@ async function downloadImage(url, username, extension) {
 }
 
 async function getAll() {
-  await Promise.each(testimonialsInFr, async (testimonial) => {
+  await Promise.each(allTestimonials, async (testimonial) => {
     const { url, extension } = await getImage(testimonial.username);
     await downloadImage(url, testimonial.username, extension);
   });

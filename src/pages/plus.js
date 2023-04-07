@@ -11,7 +11,10 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Translate from "@docusaurus/Translate";
 import FAQ from "../components/home/FAQ";
 import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
-import TestimonialSection from "../components/PlusTestimonial";
+import { TestimonialSection } from "../components/Testimonial";
+
+import testimonialsFr from "../components/testimonials/testimonial.plus.fr.json";
+import testimonialsEn from "../components/testimonials/testimonial.plus.en.json";
 
 import styles from "./styles.module.css";
 
@@ -19,6 +22,11 @@ import { translate } from "@docusaurus/Translate";
 
 const YEARLY_PLAN_ACTIVATED = false;
 const PRICING_TABLE_ACTIVATED = true;
+
+const testimonials = {
+  fr: testimonialsFr,
+  en: testimonialsEn,
+};
 
 const Check = () => (
   <svg
@@ -644,7 +652,7 @@ function Plus() {
         </div>
         {language === "fr" && (
           <div style={{ marginBottom: "5rem" }}>
-            <TestimonialSection lang={language} />
+            <TestimonialSection lang={language} testimonials={testimonials} />
           </div>
         )}
         <FAQ lang={language} />

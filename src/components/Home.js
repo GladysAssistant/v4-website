@@ -2,29 +2,134 @@ import React from "react";
 import classnames from "classnames";
 import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
-import Image from "@theme/IdealImage";
+// import Image from "@theme/IdealImage";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import { Integration } from "./Integration";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
-import Features from "./home/features";
-import SubcribeNewsletter from "./home/SubcribeNewsletter";
+import HoverVideoPlayer from "react-hover-video-player";
+import { TestimonialHomeSection } from "./Testimonial";
+import PlayImage from "./play.svg";
+
+import testimonialFr from "./testimonials/testimonial.fr.json";
+import testimonialEn from "./testimonials/testimonial.en.json";
 
 import Translate, { translate } from "@docusaurus/Translate";
+
+const COMPATIBILITIES = [
+  [
+    { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg" },
+    { title: "Philips-Hue", imgSrc: "philips-hue.jpg" },
+    { title: "MQTT", imgSrc: "mqtt.jpg" },
+    { title: "Xiaomi", imgSrc: "xiaomi.jpg" },
+  ],
+  [
+    { title: "Tasmota", imgSrc: "tasmota.jpg" },
+    { title: "TP-Link", imgSrc: "tp-link.jpg" },
+    { title: "Google Home", imgSrc: "google-home.jpg" },
+    { title: "Camera", imgSrc: "rtsp-camera.jpg" },
+  ],
+];
+
+const testimonials = {
+  fr: testimonialFr,
+  en: testimonialEn,
+};
+
+const FAQQuestions = {
+  en: [
+    {
+      title: <>How can I install Gladys?</>,
+      response: (
+        <>
+          Gladys can be installed on any Linux machine: a Raspberry Pi, a NAS, a
+          server, anything !"
+        </>
+      ),
+    },
+    {
+      title: <>Who uses Gladys Assistant 4?</>,
+      response: (
+        <>
+          Gladys Assistant v4 was released in November 2020. Since then,
+          hundreds of you have used Gladys Assistant. The goal is to grow to
+          thousands of users in the coming months! Gladys Assistant is installed
+          by all types of users:
+          <ul>
+            <li>
+              Complete novices, who want to automate their home with a simple,
+              powerful product that also respects their privacy.
+            </li>
+            <li>
+              Developers who find the fact they can code for their home
+              improvement amazing. Many of them contribute to this open-source
+              project!
+            </li>
+            <li>Professionals, who manage large fleets of sensors</li>
+          </ul>
+        </>
+      ),
+    },
+  ],
+};
+
+const MainImageResponsive = ({ imageKey, alt }) => {
+  const sizes = [
+    200, 644, 958, 1213, 1433, 1635, 1832, 2004, 2150, 2352, 2496, 2642, 2800,
+  ];
+
+  let srcSet = "";
+
+  sizes.forEach((size) => {
+    if (srcSet.length > 0) {
+      srcSet += ",\n";
+    }
+    srcSet += `${useBaseUrl(
+      `/img/home/main_screenshot/${imageKey},w_${size}.png`
+    )} ${size}w`;
+  });
+
+  return (
+    <img
+      sizes="(max-width: 2800px) 100vw, 2800px"
+      srcset={srcSet}
+      src={useBaseUrl(`/img/home/main_screenshot/${imageKey},w_2800.png`)}
+      alt={alt}
+    ></img>
+  );
+};
+
+const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
+  <HoverVideoPlayer
+    className={styles.coolFeatureVideoPlayer}
+    videoSrc={videoSrc}
+    pausedOverlay={
+      <div className={styles.coolFeatureVideoPausedOverlay}>
+        <img src={imgSrc} alt={alt} />
+        <PlayImage className={styles.coolFeatureVideoPausedOverlaySvg} />
+      </div>
+    }
+    loadingOverlay={
+      <div className="loading-overlay">
+        <div className="loading-spinner" />
+      </div>
+    }
+  />
+);
 
 function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
   return (
     <>
-      <header className={classnames("hero shadow--lw")}>
-        <div className="container">
-          <div className="row">
-            <div className={classnames("col padding-top--lg")}>
-              <h1 className="hero__title">
+      <header className={classnames("shadow--lw")}>
+        <div className={styles.heroBanner}>
+          <div className={styles.flexContainer}>
+            <div className={classnames("padding-top--lg")}>
+              <h1 className={styles.heroTitle}>
                 <Translate id="home.title" description="The home page title">
                   Gladys Assistant
                 </Translate>
               </h1>
-              <p className="hero__subtitle">
+              <p className={styles.heroSubtitle}>
                 <Translate
                   id="home.description"
                   description="The home page description"
@@ -38,7 +143,10 @@ function Home({ integrations, lang }) {
                   style={{ display: "inline-block" }}
                 >
                   <Link
-                    className="button button--primary"
+                    className={classnames(
+                      "button button--primary",
+                      styles.heroButton
+                    )}
                     href={lang === "en" ? `/docs` : `/${lang}/docs`}
                   >
                     <Translate
@@ -54,7 +162,10 @@ function Home({ integrations, lang }) {
                   style={{ display: "inline-block" }}
                 >
                   <Link
-                    className="button button--outline button--secondary"
+                    className={classnames(
+                      "button button--outline button--secondary",
+                      styles.heroButton
+                    )}
                     href="https://demo.gladysassistant.com/dashboard"
                   >
                     <Translate
@@ -67,137 +178,185 @@ function Home({ integrations, lang }) {
                 </div>
               </span>
             </div>
-            <div className="col col--7">
-              <img
-                sizes="(max-width: 1400px) 100vw, 1400px"
-                srcset={`
-                    ${useBaseUrl(
-                      "/img/home/mockup/mockup_njwsve_c_scale,w_200.png"
-                    )} 200w,
-                    ${useBaseUrl(
-                      "/img/home/mockup/mockup_njwsve_c_scale,w_698.png"
-                    )} 698w,
-                    ${useBaseUrl(
-                      "/img/home/mockup/mockup_njwsve_c_scale,w_1020.png"
-                    )} 1020w,
-                    ${useBaseUrl(
-                      "/img/home/mockup/mockup_njwsve_c_scale,w_1251.png"
-                    )} 1251w,
-                    ${useBaseUrl(
-                      "/img/home/mockup/mockup_njwsve_c_scale,w_1400.png"
-                    )} 1400w
-               `}
-                src={useBaseUrl(
-                  "/img/home/mockup/mockup_njwsve_c_scale,w_1400.png"
-                )}
-                alt="Gladys Assistant Mockup"
-                className={styles.heroImg}
-              ></img>
+          </div>
+          <div className={styles.flexContainer}>
+            <div className={styles.heroImg}>
+              <MainImageResponsive
+                imageKey={
+                  lang === "en"
+                    ? "main_screenshot_en_j5czyj_c_scale"
+                    : "main_screenshot_fr_ncm1yr_c_scale"
+                }
+              />
             </div>
           </div>
         </div>
       </header>
       <main>
-        <div
-          className="container"
-          style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
-        >
-          <SubcribeNewsletter lang={lang} />
-        </div>
-        {lang === "fr" && (
-          <div
-            style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
-            className="hero shadow--lw"
-          >
-            <div className="container">
-              <div className="row">
-                <div className="col col--12">
-                  <h2 className="text--center">
-                    Nouvelle intégration avec OpenAI GPT-3
-                  </h2>
-                  <p className="text--center">
-                    La puissance de l'intelligence artificielle, disponible dans
-                    Gladys 🤯{"  "}
-                    <a href="/fr/blog/open-ai-gpt-3-in-gladys-assistant/">
-                      En savoir plus
-                    </a>
-                    .
-                  </p>
-                  <div className="row">
-                    <div className="col col--2"></div>
-                    <div className="col col--8">
-                      <img
-                        src={useBaseUrl(
-                          "/img/articles/fr/openai-gpt-3-release/open-ai-integration.jpg"
-                        )}
-                        alt="Ecowatt intégration Gladys"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div className={classnames(styles.homeSection)}>
+          <h2 className={styles.secondaryTitle}>
+            Some cool features out of the box
+          </h2>
+          <div className={styles.coolFeatureFlexContainer}>
+            <div className={styles.coolFeatureItem}>
+              <h4>Build great dashboard</h4>
+              <p>
+                You can create as much dashboard as you want in Gladys, and they
+                are entirely customizable. Add your cameras, charts of sensors
+                in your house, display who's at home and who's not.
+              </p>
+            </div>
+            <div className={styles.coolFeatureItem}>
+              <PausedOverlay
+                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/dashboard_${lang}.mp4`}
+                imgSrc={useBaseUrl(
+                  `/img/home/video_thumbnails/dashboard_${lang}.png`
+                )}
+                alt="Dashboard"
+              />
             </div>
           </div>
-        )}
-        {lang === "fr" && (
-          <div
-            className="container"
-            style={{ paddingTop: "2rem", paddingBottom: "1rem" }}
-          >
-            <YoutubeEmbedVideo id="yP-umEMVcro" />
+          <div className={styles.coolFeatureFlexContainer}>
+            <div className={styles.coolFeatureItem}>
+              <PausedOverlay
+                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/scene_${lang}.mp4`}
+                imgSrc={useBaseUrl(
+                  `/img/home/video_thumbnails/scene_${lang}.png`
+                )}
+                alt="Scene"
+              />
+            </div>
+            <div className={styles.coolFeatureItem}>
+              <h4>Automate your life with scenes</h4>
+              <p>
+                You want to wake up with nice music? The coffee ready? Gladys
+                can help you with that. Scenes are fully editable in the UI, and
+                can be triggered from an event coming, at a specific time, or
+                manually.
+              </p>
+            </div>
           </div>
-        )}
-        <Features />
+          <div className={styles.coolFeatureFlexContainer}>
+            <div className={styles.coolFeatureItem}>
+              <h4>Always one message away</h4>
+              <p>
+                Gladys is a smart assistant. You can talk to her in the
+                interface, or with our Telegram integration. Ask her to show you
+                the image of the camera in the kitchen, and she’ll answer back!
+              </p>
+            </div>
+            <div className={styles.coolFeatureItem}>
+              <PausedOverlay
+                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/chat_${lang}.mp4`}
+                imgSrc={useBaseUrl(
+                  `/img/home/video_thumbnails/chat_${lang}.png`
+                )}
+                alt="Chat"
+              />
+            </div>
+          </div>
+        </div>
+
         <div
-          style={{ paddingTop: "2rem", paddingBottom: "2rem" }}
-          className="hero shadow--lw"
+          className={classnames(
+            styles.homeSection,
+            styles.compatibilitiesSection
+          )}
         >
-          <div className="container">
-            <div className="row">
-              <div className="col col--12">
-                <h2 className="text--center">
-                  <Translate
-                    id="home.integrations.title"
-                    description="Integrations title of the homepage"
-                  >
-                    Lots of compatibilities, built-in
-                  </Translate>
-                </h2>
-                <p className="text--center">
-                  <Translate
-                    id="home.integrations.description"
-                    description="Integrations description of the homepage"
-                  >
-                    All integrations are open-source and developed by the
-                    community.
-                  </Translate>
-                </p>
-                <div className="row">
-                  {integrations.map((integration) => (
-                    <div className="col col--3">
-                      <Integration
-                        {...integration}
-                        buyLink={false}
-                        lang={lang}
-                        disableLinks
+          <h2 className={styles.secondaryTitle}>
+            Lots of compatibilities, built-in
+          </h2>
+          <div className="row">
+            <div className="col col--12">
+              <p className="text--center">
+                <Translate
+                  id="home.integrations.description"
+                  description="Integrations description of the homepage"
+                >
+                  All integrations are open-source and developed by the
+                  community.
+                </Translate>
+              </p>
+              {COMPATIBILITIES.map((row) => (
+                <div className={styles.compatibilitiesRow}>
+                  {row.map((item) => (
+                    <div className={styles.compatibilitiesCol}>
+                      <img
+                        src={useBaseUrl(
+                          "/img/home/compatibilities/" + item.imgSrc
+                        )}
+                        width="254"
+                        height="169"
+                        alt={item.title}
                       />
+                      <h5>{item.title}</h5>
                     </div>
                   ))}
                 </div>
-                <p className="text--center">
-                  <Link href={lang === "en" ? `/docs` : `/${lang}/docs`}>
-                    <Translate
-                      id="home.integrations.seeInDocumentation"
-                      description="Integrations link to documentation"
-                    >
-                      See all integrations in the documentation section.
-                    </Translate>
-                  </Link>
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
+
+        <div className={classnames(styles.homeSection)}>
+          <h2 className={styles.secondaryTitle}>
+            The most intuitive smart home software
+          </h2>
+          <div className={styles.featureFlexContainer}>
+            <div className={styles.feature}>
+              <h4>Privacy</h4>
+              <p>
+                Gladys is self-hosted, and all your data stays in your local
+                machine at home, in a simple SQLite database.
+              </p>
+            </div>
+            <div className={styles.feature}>
+              <h4>Easy to use</h4>
+              <p>
+                We build Gladys like we would build any consumer product: no SSH
+                needed, no files to edit.
+              </p>
+            </div>
+            <div className={styles.feature}>
+              <h4>Clean UI</h4>
+              <p>
+                We built Gladys user interface with great care, and always start
+                with the design when working on a new feature.
+              </p>
+            </div>
+          </div>
+          <div className={styles.featureFlexContainer}>
+            <div className={styles.feature}>
+              <h4>Stable</h4>
+              <p>
+                Stability is one of the core value of the project, we build
+                Gladys to run for tens of years.
+              </p>
+            </div>
+            <div className={styles.feature}>
+              <h4>Fast</h4>
+              <p>
+                Gladys is built with fast technologies (Preact + Node.js) and we
+                care a lot about performances.
+              </p>
+            </div>
+            <div className={styles.feature}>
+              <h4>Auto upgrades</h4>
+              <p>
+                Gladys run as a Docker container. We use Watchtower to
+                automatically upgrade Gladys.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className={classnames(styles.homeSection)}>
+          <h2 className={styles.secondaryTitle}>Our users love Gladys</h2>
+          <div className={styles.testimonialContainer}>
+            <TestimonialHomeSection lang="fr" testimonials={testimonials} />
+          </div>
+        </div>
+
         {lang === "fr" && (
           <div
             style={{ paddingTop: "0rem", paddingBottom: "2rem" }}
@@ -248,6 +407,32 @@ function Home({ integrations, lang }) {
             </div>
           </div>
         )}
+
+        <div className={classnames(styles.homeSection)}>
+          <h2 className={styles.secondaryTitle}>FAQ</h2>
+          <div className="row">
+            <div className="col">
+              {FAQQuestions[lang]
+                .slice(0, Math.ceil(FAQQuestions[lang].length / 2))
+                .map((oneElement) => (
+                  <div>
+                    <h4>{oneElement.title}</h4>
+                    <p>{oneElement.response}</p>
+                  </div>
+                ))}
+            </div>
+            <div className="col">
+              {FAQQuestions[lang]
+                .slice(Math.ceil(FAQQuestions[lang].length / 2))
+                .map((oneElement) => (
+                  <div>
+                    <h4>{oneElement.title}</h4>
+                    <p>{oneElement.response}</p>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
       </main>
     </>
   );
