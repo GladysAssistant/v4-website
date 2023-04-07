@@ -121,7 +121,7 @@ const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   return (
     <img
       sizes="(max-width: 2800px) 100vw, 2800px"
-      srcset={srcSet}
+      srcSet={srcSet}
       src={useBaseUrl(`/img/home/main_screenshot/${imageKey},w_2800.png`)}
       alt={alt}
     ></img>
