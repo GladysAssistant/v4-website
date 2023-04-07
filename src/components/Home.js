@@ -106,11 +106,7 @@ const FAQQuestions = {
   ],
 };
 
-const MainImageResponsive = ({ imageKey, alt }) => {
-  const sizes = [
-    200, 644, 958, 1213, 1433, 1635, 1832, 2004, 2150, 2352, 2496, 2642, 2800,
-  ];
-
+const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   let srcSet = "";
 
   sizes.forEach((size) => {
@@ -221,6 +217,17 @@ function Home({ integrations, lang }) {
                     ? "main_screenshot_en_j5czyj_c_scale"
                     : "main_screenshot_fr_ncm1yr_c_scale"
                 }
+                sizes={
+                  lang === "en"
+                    ? [
+                        480, 850, 1142, 1388, 1623, 1839, 2022, 2181, 2379,
+                        2526, 2694, 2800,
+                      ]
+                    : [
+                        480, 825, 1090, 1342, 1548, 1756, 1951, 2083, 2254,
+                        2412, 2568, 2731, 2800,
+                      ]
+                }
               />
             </div>
           </div>
@@ -267,7 +274,12 @@ function Home({ integrations, lang }) {
               />
             </div>
           </div>
-          <div className={styles.coolFeatureFlexContainer}>
+          <div
+            className={classnames(
+              styles.coolFeatureFlexContainer,
+              styles.coolFeatureFlexContainerToReverse
+            )}
+          >
             <div className={styles.coolFeatureItem}>
               <PausedOverlay
                 videoSrc={`https://gladysassistant-assets.b-cdn.net/home/scene_${lang}.mp4`}
@@ -532,7 +544,7 @@ function Home({ integrations, lang }) {
             <div className="container">
               <div className="row">
                 <div className="col col--12">
-                  <h2 className="text--center">
+                  <h2 className={styles.secondaryTitle}>
                     <Translate
                       id="home.videos.title"
                       description="Youtube videos title of the homepage"
