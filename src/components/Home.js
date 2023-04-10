@@ -43,7 +43,14 @@ const FAQQuestions = {
         <>
           Gladys s'installer sur n'importe quelle machine Linux (un Raspberry
           Pi, un NAS, un serveur, un vieux PC Linux, peut-importe !), du moment
-          que Docker tourne sur la machine, Gladys peut tourner dessus.
+          que Docker tourne sur la machine, Gladys peut tourner dessus. <br />
+          <br />
+          PS: Gladys Assistant est <b>gratuite</b>, c'est un simple container
+          Docker à lancer{" "}
+          <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
+            en une commande
+          </Link>
+          .
         </>
       ),
     },
@@ -112,7 +119,14 @@ const FAQQuestions = {
         <>
           Gladys can be installed on any Linux machine (a Raspberry Pi, a NAS, a
           server, an old Linux PC, anything!), as long as Docker is running on
-          the machine, Gladys can run on it.
+          the machine, Gladys can run on it. <br />
+          <br />
+          Gladys Assistant is <b>free to use</b>, it's just a simple Docker
+          container that can be started with{" "}
+          <Link href="/docs/installation/docker/#start-gladys">
+            a simple command
+          </Link>
+          .
         </>
       ),
     },
