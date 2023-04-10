@@ -20,7 +20,7 @@ module.exports = {
     },
   },
   themeConfig: {
-    image: "img/presentation/gladys-cover-demo.jpg",
+    image: "img/presentation/gladys-cover-demo-2023.jpg",
     metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
     colorMode: {
       defaultMode: "dark",
