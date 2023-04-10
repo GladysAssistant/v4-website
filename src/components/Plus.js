@@ -1,12 +1,9 @@
 import React from "react";
-import cx from "classnames";
 
 import Pricing from "./home/Pricing";
 import FAQ from "./home/FAQ";
 
 import Translate from "@docusaurus/Translate";
-
-import styles from "./styles.module.css";
 
 function Plus({ lang }) {
   return (
