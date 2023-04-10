@@ -190,6 +190,7 @@ const MainImageResponsive = ({ imageKey, alt, sizes }) => {
 
   return (
     <img
+      fetchpriority="high"
       sizes="(max-width: 2800px) 100vw, 2800px"
       srcSet={srcSet}
       src={useBaseUrl(`/img/home/main_screenshot/${imageKey},w_2800.png`)}
@@ -304,6 +305,7 @@ function Home({ integrations, lang }) {
                         2412, 2568, 2731, 2800,
                       ]
                 }
+                alt="Gladys Assistant Demo Image"
               />
             </div>
           </div>
