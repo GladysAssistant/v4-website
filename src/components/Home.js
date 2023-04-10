@@ -218,7 +218,7 @@ const PausedOverlay2 = ({ videoSrc, imgSrc, alt }) => (
 );
 
 const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
-  <video autoPlay loop muted>
+  <video autoPlay loop muted playsInline>
     <source src={videoSrc} type="video/mp4" />
   </video>
 );
