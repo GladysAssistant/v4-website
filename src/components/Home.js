@@ -17,16 +17,16 @@ import Translate, { translate } from "@docusaurus/Translate";
 
 const COMPATIBILITIES = [
   [
-    { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg" },
-    { title: "Philips-Hue", imgSrc: "philips-hue.jpg" },
-    { title: "MQTT", imgSrc: "mqtt.jpg" },
-    { title: "Xiaomi", imgSrc: "xiaomi.jpg" },
+    { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
+    { title: "Philips-Hue", imgSrc: "philips-hue.jpg", docKey: "philips-hue" },
+    { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
+    { title: "Xiaomi", imgSrc: "xiaomi.jpg", docKey: "xiaomi" },
   ],
   [
-    { title: "Tasmota", imgSrc: "tasmota.jpg" },
-    { title: "TP-Link", imgSrc: "tp-link.jpg" },
-    { title: "Google Home", imgSrc: "google-home.jpg" },
-    { title: "Camera", imgSrc: "rtsp-camera.jpg" },
+    { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
+    { title: "TP-Link", imgSrc: "tp-link.jpg", docKey: "tp-link" },
+    { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
+    { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],
 ];
 
@@ -38,45 +38,81 @@ const testimonials = {
 const FAQQuestions = {
   fr: [
     {
-      title: <>How can I install Gladys?</>,
+      title: <>Quel matériel requis pour installer Gladys Assistant ?</>,
       response: (
         <>
-          Gladys can be installed on any Linux machine: a Raspberry Pi, a NAS, a
-          server, anything !"
+          Gladys s'installer sur n'importe quelle machine Linux (un Raspberry
+          Pi, un NAS, un serveur, un vieux PC Linux, peut-importe !), du moment
+          que Docker tourne sur la machine, Gladys peut tourner dessus.
         </>
       ),
     },
     {
-      title: <>Who uses Gladys Assistant 4?</>,
+      title: <>Qui utilise Gladys Assistant 4 ?</>,
       response: (
         <>
-          Gladys Assistant v4 was released in November 2020. Since then,
-          hundreds of you have used Gladys Assistant. The goal is to grow to
-          thousands of users in the coming months! Gladys Assistant is installed
-          by all types of users:
+          La v4 de Gladys Assistant est sortie en Novembre 2020. Depuis, le
+          projet est en pleine croissance et l'objectif est de devenir un
+          logiciel de référence dans le monde de la domotique open-source !
+          <br />
+          <br /> Gladys Assistant est installée par tout type d'utilisateurs :{" "}
+          <br /> <br />
           <ul>
             <li>
-              Complete novices, who want to automate their home with a simple,
-              powerful product that also respects their privacy.
+              Des novices complet, qui veulent automatiser leur maison avec un
+              produit simple, puissant et respectueux de leur vie privée.
             </li>
             <li>
-              Developers who find the fact they can code for their home
-              improvement amazing. Many of them contribute to this open-source
-              project!
+              Des développeurs qui trouvent ça fou de pouvoir coder pour leur
+              maison et qui contribuent à ce projet open-source !
             </li>
-            <li>Professionals, who manage large fleets of sensors</li>
+            <li>Des pros, qui gère des parcs de capteurs impressionants</li>
           </ul>
+        </>
+      ),
+    },
+    {
+      title: <>Comment contribuer au projet ?</>,
+      response: (
+        <>
+          Gladys Assistant est entièrement open-source et disponible sur{" "}
+          <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
+          Toute PR est la bienvenue 🙂 <br />
+          <br /> Si tu veux contribuer, n'hésite pas à venir sur la{" "}
+          <a href="https://community.gladysassistant.com/">communauté</a> pour
+          parler du développement sur lequel tu veux te lancer. Ca permettra de
+          voir avec les autres développeurs si quelqu'un d'autre ne travail pas
+          déjà dessus, et surtout de discuter "spécifications" avec de partir
+          dans le développement !
+        </>
+      ),
+    },
+    {
+      title: <>Comment accéder à Gladys depuis l'extérieur de mon réseau ?</>,
+      response: (
+        <>
+          Nous proposons <a href="/fr/plus">Gladys Plus</a>, un service qui
+          proxy le traffic de{" "}
+          <a href="https://plus.gladysassistant.com">
+            plus.gladysassistant.com
+          </a>{" "}
+          à votre instance locale Gladys, tout ça en chiffré de bout en bout
+          pour respecter votre vie privée, et sans configuration ! Gladys Plus
+          est une "Progressive Web App" que vous pouvez installer sur votre
+          smartphone (Android et iOS), et ainsi avoir accès à Gladys de partout
+          dans le monde.
         </>
       ),
     },
   ],
   en: [
     {
-      title: <>How can I install Gladys?</>,
+      title: <>What equipment is required to install Gladys Assistant?</>,
       response: (
         <>
-          Gladys can be installed on any Linux machine: a Raspberry Pi, a NAS, a
-          server, anything !"
+          Gladys can be installed on any Linux machine (a Raspberry Pi, a NAS, a
+          server, an old Linux PC, anything!), as long as Docker is running on
+          the machine, Gladys can run on it.
         </>
       ),
     },
@@ -84,22 +120,56 @@ const FAQQuestions = {
       title: <>Who uses Gladys Assistant 4?</>,
       response: (
         <>
-          Gladys Assistant v4 was released in November 2020. Since then,
-          hundreds of you have used Gladys Assistant. The goal is to grow to
-          thousands of users in the coming months! Gladys Assistant is installed
-          by all types of users:
+          Gladys Assistant 4 was released in November 2020. Since then, the
+          project has been growing and the goal is to become a reference
+          software in the world of open-source home automation!
+          <br />
+          <br />
+          Gladys Assistant is installed by all types of users: <br /> <br />
           <ul>
             <li>
-              Complete novices, who want to automate their home with a simple,
-              powerful product that also respects their privacy.
+              Complete novices who want to automate their home with a simple,
+              powerful, and privacy-respecting product.
             </li>
             <li>
-              Developers who find the fact they can code for their home
-              improvement amazing. Many of them contribute to this open-source
-              project!
+              Developers who think it's amazing to be able to code for their
+              home and who contribute to this open-source project!
             </li>
-            <li>Professionals, who manage large fleets of sensors</li>
+            <li>Pros who manage impressive sensor networks</li>
           </ul>
+        </>
+      ),
+    },
+    {
+      title: <>How to contribute to the project?</>,
+      response: (
+        <>
+          Gladys Assistant is entirely open-source and available on{" "}
+          <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
+          Any PR is welcome 🙂 <br />
+          <br />
+          If you want to contribute, don't hesitate to come to the{" "}
+          <a href="https://en-community.gladysassistant.com/">community</a> to
+          talk about the development you want to work on. This will allow you to
+          see with other developers if someone else is not already working on
+          it, and especially to discuss "specifications" before starting
+          development!
+        </>
+      ),
+    },
+    {
+      title: <>How to access Gladys from outside my network?</>,
+      response: (
+        <>
+          We offer <a href="/plus">Gladys Plus</a>, a service that proxies
+          traffic from{" "}
+          <a href="https://plus.gladysassistant.com">
+            plus.gladysassistant.com
+          </a>{" "}
+          to your local Gladys instance, all end-to-end encrypted to respect
+          your privacy, and without configuration! Gladys Plus is a "Progressive
+          Web App" that you can install on your smartphone (Android and iOS),
+          and thus have access to Gladys from anywhere in the world.
         </>
       ),
     },
@@ -128,7 +198,7 @@ const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   );
 };
 
-const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
+const PausedOverlay2 = ({ videoSrc, imgSrc, alt }) => (
   <HoverVideoPlayer
     className={styles.coolFeatureVideoPlayer}
     videoSrc={videoSrc}
@@ -144,6 +214,12 @@ const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
       </div>
     }
   />
+);
+
+const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
+  <video autoPlay loop muted>
+    <source src={videoSrc} type="video/mp4" />
+  </video>
 );
 
 function Home({ integrations, lang }) {
@@ -374,15 +450,17 @@ function Home({ integrations, lang }) {
                 <div className={styles.compatibilitiesRow}>
                   {row.map((item) => (
                     <div className={styles.compatibilitiesCol}>
-                      <img
-                        src={useBaseUrl(
-                          "/img/home/compatibilities/" + item.imgSrc
-                        )}
-                        width="254"
-                        height="169"
-                        alt={item.title}
-                      />
-                      <h5>{item.title}</h5>
+                      <a href={useBaseUrl(`/docs/integrations/${item.docKey}`)}>
+                        <img
+                          src={useBaseUrl(
+                            "/img/home/compatibilities/" + item.imgSrc
+                          )}
+                          width="254"
+                          height="169"
+                          alt={item.title}
+                        />
+                        <h5>{item.title}</h5>
+                      </a>
                     </div>
                   ))}
                 </div>
@@ -530,7 +608,7 @@ function Home({ integrations, lang }) {
             </Translate>
           </h2>
           <div className={styles.testimonialContainer}>
-            <TestimonialHomeSection lang="fr" testimonials={testimonials} />
+            <TestimonialHomeSection lang={lang} testimonials={testimonials} />
           </div>
         </div>
 
@@ -575,9 +653,9 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="6pBeBcgLvj0" disablePadding />
+                      <YoutubeEmbedVideo id="FdD56kxIbGs" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Installer Gladys sur un PC Ubuntu
+                        Utiliser ChatGPT dans Gladys Assistant
                       </h4>
                     </div>
                   </div>
@@ -589,7 +667,7 @@ function Home({ integrations, lang }) {
 
         <div className={classnames(styles.homeSection)}>
           <h2 className={styles.secondaryTitle}>FAQ</h2>
-          <div className="row">
+          <div className={classnames("row", styles.faqRows)}>
             <div className="col">
               {FAQQuestions[lang]
                 .slice(0, Math.ceil(FAQQuestions[lang].length / 2))

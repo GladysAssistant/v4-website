@@ -36,7 +36,6 @@ function Testimonial({ username, content, url, date }) {
             {date}
           </a>
         )}
-        {!url && <span>{date}</span>}
       </div>
     </div>
   );
