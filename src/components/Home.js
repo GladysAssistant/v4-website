@@ -1,6 +1,6 @@
 import React from "react";
 import classnames from "classnames";
-import styles from "./styles.module.css";
+import styles from "./homeStyles.module.css";
 import Link from "@docusaurus/Link";
 // import Image from "@theme/IdealImage";
 import useBaseUrl from "@docusaurus/useBaseUrl";
