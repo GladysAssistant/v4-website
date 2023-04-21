@@ -313,8 +313,7 @@ function Plus() {
                           id="gladysPlusPage.subscribe"
                           description="Gladys Plus subscribe"
                         >
-                          -40% on the first bill (monthly or yearly) with the
-                          SMART2023 discount code!
+                          14 days free trial!
                         </Translate>
                       </label>
 
