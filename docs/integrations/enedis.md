@@ -1,6 +1,6 @@
 ---
 id: enedis
-title: Enedis
+title: View your electricity consumption in Gladys with Enedis
 sidebar_label: Enedis
 ---
 

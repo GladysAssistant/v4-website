@@ -1,6 +1,6 @@
 ---
 id: enedis
-title: Enedis
+title: Visualiser sa consommation électrique dans Gladys avec Enedis
 sidebar_label: Enedis
 ---
 
