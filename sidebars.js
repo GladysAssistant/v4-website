@@ -25,6 +25,7 @@ module.exports = {
         "integrations/google-home",
         "integrations/alexa",
         "integrations/homekit",
+        "integrations/enedis",
         "integrations/bluetooth",
         "integrations/broadlink",
         "integrations/sonoff",
