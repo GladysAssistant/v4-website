@@ -60,7 +60,7 @@ Néanmoins, en pratique les données ne sont pas toujours disponibles à la mêm
 
 Si toutefois, vous observez des trous sur votre tableau de bord, qui persiste dans le temps, merci de mettre un message sur [le forum](https://community.gladysassistant.com/).
 
-## La synchronisation ne se fait plus ?
+### La synchronisation ne se fait plus ?
 
 Votre consentement est valide 2 ans, et doit être renouvellé si vous voulez que Gladys continue à récupérer vos données.
 

@@ -62,7 +62,7 @@ However, in practice the data is not always available at the same time, and on s
 
 If however, you observe holes on your dashboard, which persist over time, please post a message on [the forum](https://en-community.gladysassistant.com/).
 
-## Synchronization is not done anymore?
+### Synchronization is not done anymore?
 
 Your consent is valid for 2 years, and must be renewed if you want Gladys to continue retrieving your data.
 
