@@ -12,6 +12,10 @@ Côté Gladys, nous avons une structure juridique, "Gladys Assistant SAS", qui n
 
 Cette API est mise à disposition via [Gladys Plus](/fr/plus).
 
+:::note
+Cette intégration est uniquement utilisable en France, Enedis étant le gestionnaire du réseau de distribution d'électricité français.
+:::
+
 ## Se connecter à Enedis dans Gladys
 
 Rendez-vous sur [plus.gladysassistant.com](https://plus.gladysassistant.com), et cliquez sur l'intégration "Enedis":
