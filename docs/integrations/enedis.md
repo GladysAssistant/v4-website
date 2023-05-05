@@ -12,7 +12,9 @@ For Gladys, we have a legal structure, "Gladys Assistant SAS", which allows us t
 
 This API is available via [Gladys Plus](/plus).
 
-Note: This documentation has screenshot in French, mainly because this integration is dedicated to the french market.
+:::note
+This integration is only usable in France as it connects to the french electricity provider API.
+:::
 
 ## Connect to Enedis in Gladys
 
