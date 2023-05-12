@@ -1,11 +1,11 @@
 ---
 title: Camera live streaming in Gladys Assistant 4.23
-description: Watch your home from anywhere in the world, end-to-end encrypted
+description: Watch your home from anywhere in the world, end-to-end encrypted!
 author: Pierre-Gilles Leymarie
 author_title: Founder of Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
-image: /img/presentation/open-ai-gpt-3-release.jpg
+image: /img/presentation/camera-streaming-gladys-4-23-en.png
 slug: camera-live-streaming-gladys-assistant-4-23
 ---
 
