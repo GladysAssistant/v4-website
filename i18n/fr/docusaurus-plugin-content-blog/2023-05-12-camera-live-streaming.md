@@ -15,7 +15,9 @@ Je suis heureux de vous présenter aujourd'hui Gladys Assistant 4.23.
 
 J'ai fais une vidéo pour présenter cette version en détail en expliquant comment chaque nouveauté fonctionne :
 
-YOUTUBE
+<div class="videoContainer">
+    <iframe class="video" src="https://www.youtube.com/embed/cbu1IbvKAKM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 <!--truncate-->
 
