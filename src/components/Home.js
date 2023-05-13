@@ -663,15 +663,15 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="l2E1wNF-Mtw" />
+                      <YoutubeEmbedVideo id="cbu1IbvKAKM" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Live: Bilan de 2022 et projets pour 2023
+                        Streaming de caméra sur le tableau de bord
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="FdD56kxIbGs" disablePadding />
+                      <YoutubeEmbedVideo id="l2E1wNF-Mtw" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Utiliser ChatGPT dans Gladys Assistant
+                        Live: Bilan de 2022 et projets pour 2023
                       </h4>
                     </div>
                   </div>
