@@ -28,25 +28,18 @@ Select the settings the USB port is to use in order to allow Gladys to communica
 
 ![USB dongle settings](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
+**13 May 2023:** You can now select the Zigbee dongle model you're using:
+
+![USB dongle model](../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-dongle.jpg)
+
+This tells Zigbee2mqtt which configuration to run.
+
 :::warning
 If you run Gladys on an external disk connected in USB, you may have power issues as your Pi can struggle to give enough power to both the disk and the Zigbee USB key.
 
 We recommend you use a externaly powered USB charging tower.
 
 You can read more about it on ZigbeeMQTT website: [Zigbee2MQTT fails to start](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html)
-:::
-
-:::info
-If you use a Sonoff-E dongle (you can check on the back of your Sonoff which version you're using), you need to change a bit the configuration of Zigbee2mqtt and add to the file `/var/lib/gladysassistant/zigbee2mqtt/z2m/configuration.yaml` the following configuration:
-
-```
-serial:
-  adapter: ezsp
-```
-
-Read more here: https://www.zigbee2mqtt.io/guide/adapters/#experimental
-
-We are working on adding this automatically in Gladys, in the meantime, please add this to the configuration :)
 :::
 
 ## Activate Zigbee2Mqtt

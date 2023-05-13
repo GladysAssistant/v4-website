@@ -38,19 +38,6 @@ Nous recommandons d'utiliser un hub USB alimenté de manière externe.
 Si Zigbee2Mqtt ne démarre pas chez vous, je vous recommande de lire la FAQ sur le site de Zigbee2mqtt : [Zigbee2MQTT fails to start](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html)
 :::
 
-:::info
-Si vous utilisez un dongle Sonoff-E ( Vous pouvez vérifier au dos de votre Sonoff quelle version vous utilisez ), vous devez changer la configuration de Zigbee2mqtt et ajouter au fichier `/var/lib/gladysassistant/zigbee2mqtt/z2m/configuration.yaml` la configuration suivante :
-
-```
-serial:
-  adapter: ezsp
-```
-
-Pour en savoir plus: https://community.gladysassistant.com/t/zigbee2mqtt-services-demarres-mais-croix-rouge-pour-le-lien/7955/6?u=pierre-gilles
-
-Nous sommes entrain de travailler pour ajouter cette configuration automatiquement dans Gladys, en attendant il faut faire cette manipulation manuelle !
-:::
-
 ## Configurez le port du dongle USB
 
 Connectez votre dongle USB Zigbee à votre machine faisant tourner Gladys (Raspberry Pi, NAS).
@@ -60,6 +47,12 @@ Dans Gladys, Rendez-vous dans `Intégrations / Zigbee2Mqtt`.
 En cliquant dans le menu sur `Paramètres`, Gladys va automatiquement scanner les différents ports USB pour vous proposer une liste déroulante. Indiquez dans le paramètrage le port USB à utiliser pour permettre à Gladys de communqiuer en Zigbee.
 
 ![Paramètrage dongle USB](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_parametrage_dongle_usb_fr.png)
+
+**13 Mai 2023:** Il est maintenant possible de sélectionner directement dans Gladys le modèle de dongle Zigbee que vous utilisez :
+
+![Modèle Zigbee](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/zigbee-model.jpg)
+
+Cela permet de charger directement la configuration Zigbee2mqtt correspondante.
 
 ## Activez Zigbee2Mqtt
 
