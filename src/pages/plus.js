@@ -313,7 +313,9 @@ function Plus() {
                           id="gladysPlusPage.subscribe"
                           description="Gladys Plus subscribe"
                         >
-                          14 days free trial!
+                          For the launch of the camera streaming feature, -40%
+                          on the first payment (annual or monthly) with the code
+                          CAMERA2023!
                         </Translate>
                       </label>
 
@@ -392,7 +394,7 @@ function Plus() {
                   description="Gladys Plus page title"
                 >
                   The data is end-to-end encrypted using modern cryptography
-                  algorithm, we don’t have access to your instance.
+                  algorithm, we don't have access to your instance.
                 </Translate>
               </p>
             </div>
