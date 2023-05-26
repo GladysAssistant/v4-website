@@ -23,6 +23,7 @@ That's all, you can control your devices with Home app or using Siri.
 - Bulb (On/Off, color, temperature et brightness)
 - Switch (On/Off)
 - Temperature sensor
+- Opening sensor (door, window...)
 
 Additionnal compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).
 
