@@ -1,9 +1,39 @@
 ---
 id: rest-api
-title: REST API
-sidebar_label: REST API
+title: HTTP API
+sidebar_label: HTTP API
 ---
 
-Gladys REST API is entirely open!
+Gladys Assistant is a server that exposes an HTTP REST API.
 
-You can find the documentation on [https://apidoc.gladysassistant.com/](https://apidoc.gladysassistant.com/).
+This API is used for the Gladys frontend, but can also be used to perform actions automatically.
+
+You can code your own Gladys client, or create small scripts (via Node-RED, n8n) on top of this API.
+
+**Note:** This API is only available via your local network (where Gladys is available). If you want to access a remote API, we offer an [Open API](/docs/plus/open-api/) via Gladys Plus.
+
+## Authentication
+
+To retrieve an `access_token`, you can call the login route:
+
+```bash
+curl --location --request POST 'http://GLADYS_IP_ADDRESS/api/v1/login' \
+--header 'Content-Type: application/json;charset=UTF-8' \
+--data-raw '{"email":"<email>", "password":"<password>"}'
+```
+
+Once the access_token has been retrieved, it can be used to call the :
+
+```bash
+curl --location --request GET 'http://GLADYS_IP_ADDRESS/api/v1/device' \
+--header 'Accept: application/json, text/plain, */*' \
+--header 'authorization: Bearer <access_token>''
+```
+
+This will return a list of Gladys devices.
+
+**Note:** The access_token is only valid for 24 hours. The refresh_token is valid for 30 days and allows you to fetch a new access_token by calling the route `POST /api/v1/access_token`.
+
+## API documentation
+
+Full documentation for this API can be found at: [https://apidoc.gladysassistant.com/](https://apidoc.gladysassistant.com/).
