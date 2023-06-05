@@ -32,6 +32,8 @@ curl --location --request GET 'http://GLADYS_IP_ADDRESS/api/v1/device' \
 
 This will return a list of Gladys devices.
 
+**Note:** The access_token is only valid for 24 hours. The refresh_token is valid for 30 days and allows you to fetch a new access_token by calling the route `POST /api/v1/access_token`.
+
 ## API documentation
 
 Full documentation for this API can be found at: [https://apidoc.gladysassistant.com/](https://apidoc.gladysassistant.com/).
