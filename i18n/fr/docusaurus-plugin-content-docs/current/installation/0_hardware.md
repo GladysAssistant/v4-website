@@ -9,7 +9,7 @@ Gladys Assistant est un programme qui tourne sur n'importe quelle machine Linux:
 
 Récapitulons les différentes options :
 
-- **Un PC sous Ubuntu**: De plus en plus d'utilisateurs font tourner Gladys sur un mini-PC, comme un Dell Optiplex 3040, un Intel NUC, ou n'importe quel ordinateur Linux. Ces machines sont très stables, durables, et trouvables autour de 100€ d'occasions ou reconditionnés. A mon sens, en 2023, c'est une des options les plus intéressantes pour installer Gladys.
+- **Un PC sous Ubuntu**: De plus en plus d'utilisateurs font tourner Gladys sur un mini-PC, comme un Dell Optiplex 3040, un Intel NUC, un [mini-PC Beelink](https://www.amazon.fr/Beelink-Business-Windows11-128G-Ethernet/dp/B0B2J9VDH8?tag=gladproj-21) ou n'importe quel ordinateur Linux. Ces machines sont très stables, durables, et au final pas forcément très cher quand on prend tout en compte. A mon sens, en 2023, c'est une des options les plus intéressantes pour installer Gladys.
 
 Ma vidéo sur le sujet :
 
@@ -17,11 +17,9 @@ Ma vidéo sur le sujet :
 <iframe class="video" src="https://www.youtube.com/embed/6pBeBcgLvj0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-Plus d'informations dans [ce sujet](/fr/docs/installation/docker/).
+Pour installer Gladys avec Docker, [le tutoriel sur cette documentation](/fr/docs/installation/docker/).
 
-- **Un Raspberry Pi**: Il est possible d'installer Gladys sur un Raspberry Pi grâce à notre image Raspberry Pi OS toute prête. Cependant, avec la pénurie de semi-conducteurs, les Raspberry Pi sont compliqués à trouver et sont devenus très cher ! Nous ne recommandons pas d'utiliser une micro-SD pour stocker vos données (car les micro-SD sont très facilement corrompues), il faut passer par un SSD. Cette manipulation n'est pas forcément facile à faire, et à partir du moment où vous connectez un SSD + un dongle Zigbee par exemple, vous pouvez avoir des problèmes d'alimentations car le Pi n'est pas fait pour connecter autant d'appareils. C'est pour ça qu'aujourd'hui, passer par un mini-PC peut-être une option plus simple et plus stable.
-
-Plus d'informations dans [ce sujet](/fr/docs/installation/raspberry-pi/).
+- **Un Raspberry Pi**: Il est possible d'installer Gladys sur un Raspberry Pi grâce à notre image Raspberry Pi OS toute prête. Cependant, avec la pénurie de semi-conducteurs, les Raspberry Pi sont compliqués à trouver et sont devenus très cher. [Installer Gladys sur un Raspberry Pi](/fr/docs/installation/raspberry-pi/)
 
 - **Un NAS** : Gladys tourne sur un NAS, que ce soit un NAS Unraid ([tutoriel ici](/fr/docs/installation/unraid/)), ou un NAS Synology ([tutoriel ici](/fr/docs/installation/synology/)).
 

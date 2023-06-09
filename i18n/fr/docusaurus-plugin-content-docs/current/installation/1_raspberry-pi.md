@@ -9,24 +9,24 @@ Ce tutoriel vous explique comment installer Gladys sur Raspberry Pi !
 Si vous avez un Raspberry Pi qui est déjà configuré (vous avez déjà installé Raspberry Pi OS), il est possible d'installer Gladys manuellement avec Docker [sur ce tutoriel](/fr/docs/installation/docker).
 
 :::note
-Avec la pénurie actuelle de Raspberry Pi, une bonne solution de remplacement est d'acheter un mini-PC, comme un Dell OptiPlex 3040, ou un Intel NUC.
+Avec la pénurie actuelle de Raspberry Pi, une bonne solution de remplacement est d'acheter un mini-PC, comme un Dell OptiPlex 3040, un mini-PC [Beelink](https://www.amazon.fr/Beelink-Business-Windows11-128G-Ethernet/dp/B0B2J9VDH8?tag=gladproj-21) ou un Intel NUC.
 
 Ces mini-PC ont l'avantage d'avoir un SSD intégré nativement, et d'être souvent plus stable niveau alimentation.
 
-On en parle sur [le forum ici](https://community.gladysassistant.com/t/faire-tourner-gladys-sur-un-mac-mini-intel-pas-cher/7617/2?u=pierre-gilles).
+[Mon tutoriel sur YouTube](https://www.youtube.com/watch?v=6pBeBcgLvj0)
 :::
 
 ## Installation sur une carte micro-SD
 
 Nous proposons 2 façons d'installer Gladys: sur une micro-SD, ou sur un disque externe SSD.
 
-L'installation sur micro-SD est un bon moyen de commencer avec Gladys, mais elle a ses limites sur le long terme car une micro-SD n'est pas conçue pour supporter une telle charge de lecture/écriture et la SD risque d'être corrompue assez vite.
-
-L'installation sur SSD est la façon recommandée d'installer Gladys pour le long terme.
+L'installation sur micro-SD est un bon moyen de commencer avec Gladys.
 
 <div class="videoContainer">
 <iframe class="video" src="https://www.youtube.com/embed/yWAX-NAxjZQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+
+Il faut néanmoins rester conscient que sur le long terme, il est probable que vous ayez des problèmes de corruptions de données car les micro-SD s'usent vite.
 
 ### Télécharger l'image Raspberry Pi OS
 
