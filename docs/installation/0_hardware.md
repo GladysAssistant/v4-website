@@ -9,7 +9,7 @@ Gladys Assistant is a program that runs on any Linux machine: a PC running Ubunt
 
 Let's summarize the different options:
 
-- **A PC running Ubuntu**: More and more users are running Gladys on a mini-PC, like a Dell Optiplex 3040, an Intel NUC, or any Linux computer. These machines are very stable, durable, and can be found around 100€ used or refurbished. In my opinion, in 2023, this is one of the most interesting options to install Gladys.
+- **A PC running Ubuntu**: More and more users are running Gladys on a mini-PC, like a Dell Optiplex 3040, an Intel NUC, a mini-PC Beelink or any Linux computer. These machines are very stable, durable, and are not that expensive when taking everything into account. In my opinion, in 2023, this is one of the most interesting options to install Gladys.
 
 [How to install Gladys with Docker on a PC](/docs/installation/docker/).
 
