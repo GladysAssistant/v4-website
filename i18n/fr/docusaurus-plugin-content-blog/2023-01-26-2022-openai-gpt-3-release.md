@@ -23,11 +23,11 @@ De mon côté, je pense que cette IA est un outil formidable, une sorte de moteu
 
 Dans Gladys, nous avons toujours eu un onglet "Discussion", qui permet d'envoyer des demandes à Gladys: "Allume la lumière du salon", "Montre moi la caméra du jardin", "Quelle est la température dans la salle de bain ?".
 
-Sur le principe, cet onglet fonctionne de la même manière que GPT-3 : nous avons entrainé un réseau de neurone sur un ensemble de données, pour lui "apprendre" à répondre à des commandes utilisateurs.
+Sur le principe, cet onglet fonctionne de la même manière que GPT-3 : nous avons entraîné un réseau de neurone sur un ensemble de données, pour lui "apprendre" à répondre à des commandes utilisateurs.
 
 La différence entre l'implémentation actuelle dans Gladys, et GPT-3, c'est la taille des données d'entrées.
 
-Là où Gladys a été entrainée sur quelques commandes, GPT-3 a été entrainé sur 175 milliards de paramètres, notamment :
+Là où Gladys a été entraînée sur quelques commandes, GPT-3 a été entraîné sur 175 milliards de paramètres, notamment :
 
 - Des petabytes de pages web crawlées pendant 8 ans
 - Tout le contenu de Reddit ayant plus de 3 upvotes
@@ -36,9 +36,9 @@ Là où Gladys a été entrainée sur quelques commandes, GPT-3 a été entrain�
 
 Pour entraîner ce modèle, OpenAI a utilisé un cluster de 10 000 cartes graphiques Nvidia V100. Monstrueux !
 
-Une fois entrainé, ce modèle est tellement gros qu'il faut un serveur avec au moins 175 Go de mémoire vive pour le faire tourner 🤯
+Une fois entraîné, ce modèle est tellement gros qu'il faut un serveur avec au moins 175 Go de mémoire vive pour le faire tourner 🤯
 
-Bref, vous l'avez compris, GPT-3 est à un niveau impressionant difficilement atteignable à notre petite échelle.
+Bref, vous l'avez compris, GPT-3 est à un niveau impressionnant difficilement atteignable à notre petite échelle.
 
 ## Intégration OpenAI GPT-3 dans Gladys
 
@@ -48,7 +48,7 @@ C'est cette API que j'ai intégrée dans Gladys !
 
 J'ai fais des tests pour voir si GPT-3 pouvait avoir un intérêt dans le cadre de la domotique, et franchement c'est bluffant.
 
-J'ai travaillé le "prompt" que j'envoie à GPT-3 pour délimiter le cadre des intéractions possibles, et ça marche super bien !
+J'ai travaillé le "prompt" que j'envoie à GPT-3 pour délimiter le cadre des interactions possibles, et ça marche super bien !
 
 GPT-3 arrive à classifier chaque demande, et peut répondre à plein de questions car je le rappelle GPT-3 a accès à du contenu venant de partout sur internet.
 

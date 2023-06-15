@@ -23,7 +23,7 @@ La version 16GB de RAM est elle à [203€ (-34%)](https://www.amazon.fr/Beelink
 
 Certains dans la communauté en ont même commandés plusieurs, c'est pour dire 😂
 
-La communauté est assez unanime pour dire qu'aujourd'hui, les mini-PC sont une alternative plus que sérieuses aux Raspberry Pi, difficilement trouvable, et au final à un prix similaire quand on prend toute en compte ( Carte + SSD + alimentation + boitier ).
+La communauté est assez unanime pour dire qu'aujourd'hui, les mini-PC sont une alternative plus que sérieuses aux Raspberry Pi, difficilement trouvable, et au final à un prix similaire quand on prend toute en compte ( Carte + SSD + alimentation + boîtier ).
 
 ## Nouveau widget "Appareils"
 
@@ -31,23 +31,23 @@ La communauté est assez unanime pour dire qu'aujourd'hui, les mini-PC sont une 
 
 C'était un point de frustration pour beaucoup, jusque-là il n'était pas possible de créer un widget "Appareils" mixant des appareils venant de différentes pièces.
 
-C'est désormais corrigé avec ce nouveau widget développé par Lokkye, qui est entièrement personnalisable: vous pouvez y glisser n'importe quel appareil, et mettre le titre que vous voulez :
+C'est désormais corrigé avec ce nouveau widget développé par Lokkye, qui est entièrement personnalisable : vous pouvez y glisser n'importe quel appareil, et mettre le titre que vous voulez :
 
 ![Widget Appareils](../../../static/img/articles/fr/gladys-4-25/appareils-dashboard.jpg)
 
 ## Amélioration de l'UX des scènes
 
-L'expérience générale de création et d'édition de scènes a été grandement amélioré dans cette version.
+L'expérience générale de création et d'édition de scènes a été grandement améliorée dans cette version.
 
 Déjà, une scène a désormais une description éditable ce qui vous permet de mieux discerner vos scènes :
 
 ![Scène description](../../../static/img/articles/fr/gladys-4-25/scene-description.jpg)
 
-Cette description peut être éditée super simple d'un clic sur la description dans la scène :
+Cette description peut être éditée super simplement d'un clic sur la description dans la scène :
 
 ![Scène header bureau](../../../static/img/articles/fr/gladys-4-25/scene-header-desktop.jpg)
 
-Vous remarquerez que le cartouche en haut de l'écran d'édition des scènes a été amélioré pour être plus fonctionnel et plus lisible. Les fonctionnalités secondaires (Duplication et suppression) ont été relégué à un bouton "Plus" pour ne pas surcharger l'écran de bouton en permanence.
+Vous remarquerez que le cartouche en haut de l'écran d'édition des scènes a été amélioré pour être plus fonctionnel et plus lisible. Les fonctionnalités secondaires (Duplication et suppression) ont été reléguées à un bouton "Plus" pour ne pas surcharger l'écran de bouton en permanence.
 
 Sur mobile, le responsive a été amélioré pour que l'écran reste lisible et clair même sur petit écran :
 
@@ -55,7 +55,7 @@ Sur mobile, le responsive a été amélioré pour que l'écran reste lisible et 
 
 Enfin, la fonctionnalité la plus demandée est enfin possible dans Gladys : déplacer des actions/bloc d'actions dans les scènes.
 
-Grâce à cette croix sélectable, il devient possible d'attraper des actions et en drag & drop les déplacer à un autre point de la scène.
+Grâce à cette croix sélectionnable, il devient possible d'attraper des actions et en drag & drop les déplacer à un autre point de la scène.
 
 ![Déplacement action scène](../../../static/img/articles/fr/gladys-4-25/move-action-scene.jpg)
 
@@ -103,7 +103,7 @@ Avec Watchtower, Gladys se mettra automatiquement à jour.
 
 ## Remerciements aux contributeurs
 
-Encore une fois, merci à tous ceux qui ont contribués à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
+Encore une fois, merci à tous ceux qui ont contribué à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
 
 ## Supporter le projet
 

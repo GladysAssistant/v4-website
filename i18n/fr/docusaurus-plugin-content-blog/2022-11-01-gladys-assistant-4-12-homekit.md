@@ -71,7 +71,7 @@ Vous pouvez changer la température de consigne depuis votre tableau de bord, ou
 
 ### Améliorations diverses et correction de bugs
 
-- Correction d'un bug où les graphiques étaients mal rafraichis lorsque l'utilisateur change de tableau de bord.
+- Correction d'un bug où les graphiques étaient mal rafraîchis lorsque l'utilisateur change de tableau de bord.
 - Amélioration des traductions française sur la suppression d'un appareil avec beaucoup d'états
 - Ajout d'une icône "cpu" pour les appareils de type "température de l'appareil"
 - Gladys Plus: Début de la migration vers socket-io v4.0
@@ -88,7 +88,7 @@ Avec Watchtower, Gladys se mettra automatiquement à jour.
 
 ## Remerciements aux contributeurs
 
-Encore une fois, merci à tous ceux qui ont contribués à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
+Encore une fois, merci à tous ceux qui ont contribué à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
 
 ## Supporter le projet
 

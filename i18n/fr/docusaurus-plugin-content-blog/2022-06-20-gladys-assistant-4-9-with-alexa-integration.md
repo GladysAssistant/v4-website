@@ -59,7 +59,7 @@ Sur smartphone, vous retrouvez vos appareils dans l'application Alexa, et pouvez
 
 ![Amazon Alexa Gladys](../../../static/img/articles/fr/gladys-4-9/alexa.jpg)
 
-Pour configurer l'intégation Amazon Alexa, suivez notre tutoriel: [Configurer Alexa avec Gladys](/fr/docs/integrations/alexa).
+Pour configurer l'intégration Amazon Alexa, suivez notre tutoriel: [Configurer Alexa avec Gladys](/fr/docs/integrations/alexa).
 
 ### Injecter des variables dans une requête HTTP dans les scènes
 
@@ -87,7 +87,7 @@ Avec Watchtower, Gladys se mettra automatiquement à jour.
 
 ## Remerciements aux contributeurs
 
-Encore une fois, merci à tous ceux qui ont contribués à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
+Encore une fois, merci à tous ceux qui ont contribué à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
 
 ## Supporter le projet
 

@@ -80,7 +80,7 @@ Avec Watchtower, Gladys se mettra automatiquement à jour.
 
 ## Remerciements aux contributeurs
 
-Encore une fois, merci à tous ceux qui ont contribués à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
+Encore une fois, merci à tous ceux qui ont contribué à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
 
 ## Supporter le projet
 
