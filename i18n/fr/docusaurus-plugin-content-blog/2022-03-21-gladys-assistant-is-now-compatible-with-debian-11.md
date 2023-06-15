@@ -27,7 +27,7 @@ Comme Gladys tourne entièrement dans Docker, on pourrait se demander : pourquoi
 
 Gladys fait un peu plus que juste tourner dans son container: elle créé aussi de nouveau containers pour certaines intégrations: MQTT et Zigbee2mqtt, qui sont des projets différents qui tournent dans leur propre container, à côté de Gladys.
 
-Ainsi, Gladys appelle l'API de Docker, situé lui sur la machine hôte. Sur cette partie là uniquement, Gladys est "sensible" aux changements effectués sur l'OS hôte : si l'API de Docker fonctionne différement sur l'hôte, alors il faut changer le code dans Gladys.
+Ainsi, Gladys appelle l'API de Docker, situé lui sur la machine hôte. Sur cette partie là uniquement, Gladys est "sensible" aux changements effectués sur l'OS hôte : si l'API de Docker fonctionne différemment sur l'hôte, alors il faut changer le code dans Gladys.
 
 Dans notre cas ici, nous utilisons les Cgroup v1 dans Debian 10 pour déterminer l'ID du container courant ( celui qui fait tourner Gladys ).
 
@@ -76,7 +76,7 @@ Ce changement était nécessaire pour les utilisateurs sur NAS Unraid ou Synolog
 
 ### Corrections de bugs
 
-- Correction d'un bug assez important où la fréquence de rafraichissement des appareils comme les caméras n'étaient pas forcément pris en compte après un changement, voir pire, la fréquence de rafraichissement était prise en compte plusieurs fois, ce qui fait qu'une caméra dont la fréquence a été changée pouvait rafraichir plusieurs fois par cycle. ([#1463](https://github.com/GladysAssistant/Gladys/pull/1463))
+- Correction d'un bug assez important où la fréquence de rafraîchissement des appareils comme les caméras n'étaient pas forcément pris en compte après un changement, voir pire, la fréquence de rafraîchissement était prise en compte plusieurs fois, ce qui fait qu'une caméra dont la fréquence a été changée pouvait rafraîchir plusieurs fois par cycle. ([#1463](https://github.com/GladysAssistant/Gladys/pull/1463))
 
 - Correction d'un bug dans les scènes où le bouton "essayer" de l'action "requête HTTP" ne prenait pas en compte les headers renseignés ([#1475](https://github.com/GladysAssistant/Gladys/pull/1475))
 
@@ -94,7 +94,7 @@ Avec Watchtower, Gladys se mettra automatiquement à jour.
 
 ## Remerciements aux contributeurs
 
-Encore une fois, merci à tous ceux qui ont contribués à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
+Encore une fois, merci à tous ceux qui ont contribué à cette release ! On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette release :)
 
 ## Supporter le projet
 
