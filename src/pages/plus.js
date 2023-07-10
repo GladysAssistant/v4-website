@@ -313,10 +313,24 @@ function Plus() {
                           id="gladysPlusPage.subscribe"
                           description="Gladys Plus subscribe"
                         >
-                          For the launch of the camera streaming feature, -40%
-                          on the first payment (annual or monthly) with the code
-                          CAMERA2023!
+                          For the launch of the Tuya integration, -40% on the
+                          first payment (annual or monthly) with the code
+                          TUYA2023!
                         </Translate>
+                        {language === "fr" && (
+                          <p class="margin-top--md">
+                            <b>FLASH début Juillet 2023 :</b> Offre limitée au
+                            21 prochaines commandes uniquement, une prise{" "}
+                            <a
+                              target="_blank"
+                              href="https://www.domadoo.fr/fr/peripheriques/6211-nous-prise-intelligente-wifi-mesure-de-consommation-10a-5907772033999.html?domid=17"
+                            >
+                              connectée Tuya avec contrôle de la consommation
+                            </a>{" "}
+                            <b>OFFERTE</b> !!
+                            <br />( Livraison en UE uniquement )
+                          </p>
+                        )}
                       </label>
 
                       <a
