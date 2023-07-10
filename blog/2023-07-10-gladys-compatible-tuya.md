@@ -31,7 +31,7 @@ Tuya sockets like this [$12 energy monitoring socket](https://amzn.to/44EvMHp) a
 
 Tuya compatible lights like [Dalattin pack of 4 light bulbs for $20,99](https://amzn.to/3JSinnc) are compatible!
 
-To configure these devices, you can follow the tutorial [in Gladys documentation](/en/docs/integrations/tuya/).
+To configure these devices, you can follow the tutorial [in Gladys documentation](/docs/integrations/tuya/).
 
 If you have other Tuya devices that are not yet managed, please come to [the forum](https://en-community.gladysassistant.com/) to talk about them.
 
