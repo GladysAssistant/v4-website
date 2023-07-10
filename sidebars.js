@@ -31,6 +31,7 @@ module.exports = {
         "integrations/sonoff",
         "integrations/tasmota",
         "integrations/tp-link",
+        "integrations/tuya",
         "integrations/philips-hue",
         "integrations/mqtt",
         "integrations/owntracks",
