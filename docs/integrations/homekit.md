@@ -20,10 +20,12 @@ That's all, you can control your devices with Home app or using Siri.
 
 ## Compatible devices
 
-- Bulb (On/Off, color, temperature et brightness)
-- Switch (On/Off)
-- Temperature sensor
-- Opening sensor (door, window...)
+- Bulbs (On/Off, color, temperature et brightness)
+- Switches (On/Off)
+- Temperature sensors
+- Humidity sensors
+- Opening sensors (door, window...)
+- Water leakage sensors
 
 Additionnal compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).
 
