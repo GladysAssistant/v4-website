@@ -62,7 +62,7 @@ These actions are available in scenes for your automations:
 
 ![IKEA STYRBAR](../static/img/articles/en/gladys-4-27/ikea-styrbar-button.jpg)
 
-This connected remote control allows you to control the On/Off, dimming and color of one or more bulbs. It's available for [9,99€ at IKEA](https://www.ikea.com/us/en/p/styrbar-telecommande-connecte-blanc-30488363/).
+This connected remote control allows you to control the On/Off, dimming and color of one or more bulbs. It's available for [9,99€ at IKEA](https://www.ikea.com/us/en/p/styrbar-remote-control-smart-white-80488370/).
 
 I've added support for 11 actions:
 
