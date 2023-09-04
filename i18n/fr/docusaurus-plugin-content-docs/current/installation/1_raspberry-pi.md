@@ -22,8 +22,8 @@ Nous proposons 2 façons d'installer Gladys: sur une micro-SD, ou sur un disque 
 
 L'installation sur micro-SD est un bon moyen de commencer avec Gladys.
 
-<div class="videoContainer">
-<iframe class="video" src="https://www.youtube.com/embed/yWAX-NAxjZQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/yWAX-NAxjZQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 Il faut néanmoins rester conscient que sur le long terme, il est probable que vous ayez des problèmes de corruptions de données car les micro-SD s'usent vite.
@@ -70,8 +70,8 @@ Si cela ne marche pas, vous pouvez y accéder en tapant l'IP de votre Raspberry 
 
 Pour installer Gladys sur un SSD, j'ai fais un tutoriel vidéo assez complet sur le sujet :
 
-<div class="videoContainer" style={{marginBottom: '2rem'}}>
-<iframe class="video" src="https://www.youtube.com/embed/Zn7imzI0oYU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog" style={{marginBottom: '2rem'}}>
+<iframe  src="https://www.youtube.com/embed/Zn7imzI0oYU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 :::warning

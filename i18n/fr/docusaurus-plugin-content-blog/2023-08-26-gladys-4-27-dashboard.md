@@ -40,6 +40,12 @@ Gladys est désormais pleinement compatible avec 3 nouveaux appareils Zigbee, do
 
 Pour ceux qui ne connaissent pas la gamme [éclairage connecté Zigbee IKEA](https://www.ikea.com/fr/fr/cat/eclairage-connecte-36812/), c'est une gamme très accessible (dès 9,99€ l'ampoule, 6,99€ l'interrupteur), et de bonne qualité. Si vous commencez en domotique, c'est un bon moyen de commencer. En plus, c'est trouvable dans tous les magasins IKEA ou en livraison sur leur site !
 
+J'ai d'ailleurs fais une vidéo YouTube sur le sujet :
+
+<div class="youtubeVideoContainerInBlog">
+    <iframe src="https://www.youtube.com/embed/gNlZ2bId8Z0?si=zbfeILVdXuU7AG8x" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+
 ### Bouton IKEA TRÅDFRI avec variateur d'intensité
 
 ![IKEA TRÅDFRI avec variateur d'intensité](../../../static/img/articles/fr/gladys-4-27/ikea-tradfri-button.jpg)
