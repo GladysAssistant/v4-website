@@ -29,8 +29,8 @@ La vidéo est sur YouTube ci-dessous, et vous trouverez à la suite les différe
 
 PS: Si vous pouviez mettre un commentaire sur la vidéo Youtube, cela a un vrai impact sur le référencement YouTube et ça permet à la chaine d'être encore plus visible sur internet. Merci d'avance !
 
-<div class="videoContainer">
-<iframe class="video" src="https://www.youtube.com/embed/bpmHzR8_S5g" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/bpmHzR8_S5g" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Lancer Node-RED

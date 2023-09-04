@@ -13,8 +13,8 @@ Récapitulons les différentes options :
 
 Ma vidéo sur le sujet :
 
-<div class="videoContainer" style={{marginBottom: '20px' }}>
-<iframe class="video" src="https://www.youtube.com/embed/6pBeBcgLvj0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog" style={{marginBottom: '20px' }}>
+<iframe src="https://www.youtube.com/embed/6pBeBcgLvj0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 Pour installer Gladys avec Docker, [le tutoriel sur cette documentation](/fr/docs/installation/docker/).

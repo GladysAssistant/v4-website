@@ -663,15 +663,15 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="cbu1IbvKAKM" disablePadding />
+                      <YoutubeEmbedVideo id="gNlZ2bId8Z0" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Streaming de caméra sur le tableau de bord
+                        Le trio ULTIME pour automatiser la lumière ??
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="l2E1wNF-Mtw" />
+                      <YoutubeEmbedVideo id="FdD56kxIbGs" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Live: Bilan de 2022 et projets pour 2023
+                        Utiliser ChatGPT pour contrôler sa maison connectée
                       </h4>
                     </div>
                   </div>

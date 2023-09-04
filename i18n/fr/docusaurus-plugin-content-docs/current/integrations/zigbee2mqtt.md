@@ -12,8 +12,8 @@ Nous utilions pour cela l'excellent projet opens-source [Zigbee2Mqtt](https://ww
 
 Si vous préférez en vidéo, j'ai filmé ce tutoriel sur Youtube pour vous montrer comment faire concrètement :
 
-<div class="videoContainer">
-<iframe  class="video" src="https://www.youtube.com/embed/ALW3uDB9P0s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/ALW3uDB9P0s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Le matériel nécessaire

@@ -134,6 +134,6 @@ Il y a plein de tutoriels sur internet pour toutes les plateformes :)
 
 J'ai enregistré un petit tutoriel en mode live coding pour Node.js par exemple:
 
-<div class="videoContainer">
-<iframe class="video" src="https://www.youtube.com/embed/o5yn_FnYtkc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/o5yn_FnYtkc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>

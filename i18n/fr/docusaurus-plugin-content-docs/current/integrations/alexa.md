@@ -42,8 +42,8 @@ Tu peux suivre les étapes dans le mail.
 
 Si tu veux, j'ai aussi fait un live où je montre comment configurer Gladys Plus:
 
-<div class="videoContainer">
-<iframe  class="video" src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog">
+<iframe  src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Configurer Alexa

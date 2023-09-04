@@ -12,8 +12,8 @@ L'objectif de ce service est de proposer des fonctionnalités assez pratique à 
 
 J'ai fais une vidéo sur YouTube où je présente comment fonctionne Gladys Plus:
 
-<div class="videoContainer">
-<iframe  class="video" src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Les fonctionnalités proposées
