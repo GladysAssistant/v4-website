@@ -14,4 +14,16 @@ Afficher des images de caméras ? Surveiller des valeurs de capteurs ? Contrôle
 
 Dans cette catégorie de la documentation, nous parcourerons tous les types de "box" (ou widget si vous voulez!), et expliquerons comment chacun fonctionne.
 
+### Mode tablette
+
+Si vous utilisez Gladys sur une tablette tactile quelque part dans votre maison, il est probable que vous vouliez afficher en plein écran le tableau de bord de Gladys, sans avoir la possibilité de naviguer hors de cet écran.
+
+Il est possible de forcer un mode plein écran en ajoutant un paramètre à l'URL :
+
+```
+?fullscreen=force
+```
+
+### Des retours ?
+
 Si vous avez des besoins qui ne sont pas couverts par le tableau de bord actuel de Gladys, n'hésitez pas à nous contacter sur [le forum](https://community.gladysassistant.com/) afin de voir si on peut développer une box spécifique.
