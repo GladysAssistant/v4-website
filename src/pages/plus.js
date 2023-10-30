@@ -313,10 +313,23 @@ function Plus() {
                           id="gladysPlusPage.subscribe"
                           description="Gladys Plus subscribe"
                         >
-                          For the launch of the Tuya integration, -40% on the
-                          first payment (annual or monthly) with the code
-                          TUYA2023!
+                          For the launch of the Alarm feature, -40% on the first
+                          annual payment with the code ALARM2023!
                         </Translate>
+                        {language === "fr" && (
+                          <p class="margin-top--md">
+                            <b>FLASH 30/10 - 05/11 2023 :</b> Offre limitée, un
+                            capteur{" "}
+                            <a
+                              target="_blank"
+                              href="https://www.domadoo.fr/fr/peripheriques/5320-sonoff-capteur-d-ouverture-de-portefenetre-zigbee-30-snzb-04-6920075776126.html?domid=17"
+                            >
+                              connectée Zigbee ouverture porte-fenêtre
+                            </a>{" "}
+                            <b>OFFERT pour chaque paiement annuel </b> !!
+                            <br />( Livraison en UE uniquement )
+                          </p>
+                        )}
                       </label>
 
                       <a

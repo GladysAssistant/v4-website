@@ -71,6 +71,7 @@ module.exports = {
       label: "Dashboard",
       items: [
         "dashboard/intro",
+        "dashboard/alarm",
         "dashboard/weather",
         "dashboard/temperature-in-room",
         "dashboard/camera",
