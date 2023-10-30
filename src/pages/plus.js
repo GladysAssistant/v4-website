@@ -326,7 +326,7 @@ function Plus() {
                             >
                               connectée Zigbee ouverture porte-fenêtre
                             </a>{" "}
-                            <b>OFFERT pour chaque paiement annuel </b> !!
+                            <b>OFFERT pour chaque inscription en annuel </b> !!
                             <br />( Livraison en UE uniquement )
                           </p>
                         )}
