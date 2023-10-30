@@ -8,7 +8,7 @@ If you have configured a MQTT Broker with your Gladys installation, you will hav
 
 Here are all the MQTT topics available, each one with an example message to send:
 
-#### Push a decimal device state
+### Push a decimal device state
 
 Say you have a temperature sensor sending data to Gladys, you'll have to send it's temperature values to:
 
@@ -17,7 +17,7 @@ Topic: gladys/master/device/:device_external_id/feature/:device_feature_external
 Body: 22.2
 ```
 
-#### Push a text device state
+### Push a text device state
 
 If you want, you can send text to Gladys to display it on the dashboard!
 
@@ -30,7 +30,7 @@ Topic: gladys/master/device/:device_external_id/feature/:device_feature_external
 Body: Hello Gladys!
 ```
 
-#### Push a state to a device
+### Push a state to a device
 
 Say you have a MQTT light, and you want it to be controlled in Gladys.
 
@@ -55,3 +55,19 @@ Or
 ```
 
 Meaning "The light needs to be turned off".
+
+### Launch a scene with MQTT
+
+You can now launch a scene using MQTT by posting a message on the topic:
+
+```
+gladys/master/scene/SCENE_SELECTOR/start
+```
+
+By replacing `SCENE_SELECTOR` with the scene selector, which can be found in the scene edition URL.
+
+For example, for the scene `http://192.168.1.10/dashboard/scene/cinema`, you'll need to send a message to the topic:
+
+```
+gladys/master/scene/cinema/start
+```
