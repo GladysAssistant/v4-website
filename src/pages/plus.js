@@ -316,20 +316,6 @@ function Plus() {
                           For the launch of the Alarm feature, -40% on the first
                           annual payment with the code ALARM2023!
                         </Translate>
-                        {language === "fr" && (
-                          <p class="margin-top--md">
-                            <b>FLASH 30/10 - 05/11 2023 :</b> Offre limitée, un
-                            capteur{" "}
-                            <a
-                              target="_blank"
-                              href="https://www.domadoo.fr/fr/peripheriques/5320-sonoff-capteur-d-ouverture-de-portefenetre-zigbee-30-snzb-04-6920075776126.html?domid=17"
-                            >
-                              connectée Zigbee ouverture porte-fenêtre
-                            </a>{" "}
-                            <b>OFFERT pour chaque inscription en annuel </b> !!
-                            <br />( Livraison en UE uniquement )
-                          </p>
-                        )}
                       </label>
 
                       <a
