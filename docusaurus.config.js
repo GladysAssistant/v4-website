@@ -194,6 +194,11 @@ module.exports = {
     {
       async: true,
       defer: true,
+      src: "https://abcdef.gladysassistant.com/latest.js",
+    },
+    {
+      async: true,
+      defer: true,
       src: "/js/mailerlite.js",
     },
   ],
