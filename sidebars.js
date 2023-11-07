@@ -38,6 +38,7 @@ module.exports = {
         "integrations/zigbee2mqtt",
         "integrations/zwave",
         "integrations/telegram",
+        "integrations/node-red",
       ],
     },
     {
