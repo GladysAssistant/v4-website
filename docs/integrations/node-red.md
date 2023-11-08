@@ -5,7 +5,7 @@ sidebar_label: Node-RED
 ---
 
 
-In this tutorial, we will show you how to integrate [Node-RED](https://nodered.org/). to Gladys Assistant.
+In this tutorial, we will show you how to integrate [Node-RED](https://nodered.org/) to Gladys Assistant.
 
 This will allow you to connect hardware devices, APIs and online services.
 
@@ -39,4 +39,3 @@ You can now create your Node-RED flows
 
 ![Node-RED](../../static/img/docs/en/configuration/node-red/node-red_en.png)
 
-## FAQ
