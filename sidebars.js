@@ -7,6 +7,7 @@ module.exports = {
         "installation/hardware",
         "installation/raspberry-pi",
         "installation/docker",
+        "installation/docker-compose",
         "installation/synology",
         "installation/unraid",
         "installation/freebox-delta",
