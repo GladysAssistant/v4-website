@@ -255,7 +255,7 @@ function Home({ integrations, lang }) {
                   id="home.description"
                   description="The home page description"
                 >
-                  A privacy-first, open-source home assistant
+                  Craft Your Perfect Smart Home Experience.
                 </Translate>
               </p>
               <span className="container">
@@ -274,29 +274,31 @@ function Home({ integrations, lang }) {
                       id="home.gettingStartedButton"
                       description="The getting started button of the homepage"
                     >
-                      Getting started
+                      Install for free
                     </Translate>
                   </Link>
                 </div>
-                <div
-                  className="margin-right--md"
-                  style={{ display: "inline-block" }}
-                >
-                  <Link
-                    className={classnames(
-                      "button button--outline button--secondary",
-                      styles.heroButton
-                    )}
-                    href="https://demo.gladysassistant.com/dashboard"
+                {false && (
+                  <div
+                    className="margin-right--md"
+                    style={{ display: "inline-block" }}
                   >
-                    <Translate
-                      id="home.tryOnlineButton"
-                      description="The try online button of the homepage"
+                    <Link
+                      className={classnames(
+                        "button button--outline button--secondary",
+                        styles.heroButton
+                      )}
+                      href="https://demo.gladysassistant.com/dashboard"
                     >
-                      Try Online
-                    </Translate>
-                  </Link>
-                </div>
+                      <Translate
+                        id="home.tryOnlineButton"
+                        description="The try online button of the homepage"
+                      >
+                        Try Online
+                      </Translate>
+                    </Link>
+                  </div>
+                )}
               </span>
             </div>
           </div>
