@@ -255,7 +255,7 @@ function Home({ integrations, lang }) {
                   id="home.description"
                   description="The home page description"
                 >
-                  A privacy-first, open-source home assistant
+                  Craft Your Perfect Smart Home Experience.
                 </Translate>
               </p>
               <span className="container">
@@ -274,29 +274,31 @@ function Home({ integrations, lang }) {
                       id="home.gettingStartedButton"
                       description="The getting started button of the homepage"
                     >
-                      Getting started
+                      Install for free
                     </Translate>
                   </Link>
                 </div>
-                <div
-                  className="margin-right--md"
-                  style={{ display: "inline-block" }}
-                >
-                  <Link
-                    className={classnames(
-                      "button button--outline button--secondary",
-                      styles.heroButton
-                    )}
-                    href="https://demo.gladysassistant.com/dashboard"
+                {false && (
+                  <div
+                    className="margin-right--md"
+                    style={{ display: "inline-block" }}
                   >
-                    <Translate
-                      id="home.tryOnlineButton"
-                      description="The try online button of the homepage"
+                    <Link
+                      className={classnames(
+                        "button button--outline button--secondary",
+                        styles.heroButton
+                      )}
+                      href="https://demo.gladysassistant.com/dashboard"
                     >
-                      Try Online
-                    </Translate>
-                  </Link>
-                </div>
+                      <Translate
+                        id="home.tryOnlineButton"
+                        description="The try online button of the homepage"
+                      >
+                        Try Online
+                      </Translate>
+                    </Link>
+                  </div>
+                )}
               </span>
             </div>
           </div>
@@ -342,7 +344,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.dashboardTitle"
                   description="Cool features dashboard title on the homepage"
                 >
-                  Build great dashboard
+                  Build great dashboards
                 </Translate>
               </h4>
               <p>
@@ -350,7 +352,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.dashboardDescrition"
                   description="Cool features dashboard title on the homepage"
                 >
-                  You can create as much dashboard as you want in Gladys, and
+                  You can create as many dashboards as you want in Gladys, and
                   they are entirely customizable. Add your cameras, charts of
                   sensors in your house, display who's at home and who's not.
                 </Translate>
@@ -528,7 +530,7 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.easeOfUseDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  We build Gladys like we would build any consumer product: no
+                  We built Gladys like we would build any consumer product: no
                   SSH needed, no files to edit.
                 </Translate>
               </p>
@@ -568,7 +570,7 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.stableDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  Stability is one of the core value of the project, we build
+                  Stability is one of the core values of the project, we built
                   Gladys to run for tens of years.
                 </Translate>
               </p>
