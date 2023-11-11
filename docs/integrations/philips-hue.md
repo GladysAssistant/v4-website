@@ -15,6 +15,11 @@ Press the physical button on the top of your bridge.
 In `Configure bridge`, click on `Connect` on your bridge.
 
 If you don't see your bridge, make sure it's on the same network as your machine running Gladys.
+
+If you still don't see your bridge, you can add it manually by filling its IP Address.
+
+![Manual Bridge IP Configuration](../../static/img/docs/en/configuration/philips-hue/philips_hue_manual_ip_configuration.png)
+
 :::note
 Make sure you have the Hue Bridge v2 (the square one). The integration will not work with the original Hue Bridge (round bridge).
 :::

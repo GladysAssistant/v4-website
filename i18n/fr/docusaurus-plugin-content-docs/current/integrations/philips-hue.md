@@ -22,10 +22,18 @@ Sur votre pont Philips Hue connecté à votre box internet, cliquez sur le bouto
 
 Dans `Configurer bridge`, cliquez sur `Connecter` sur votre pont.
 
-Si vous ne voyez pas votre pont, vérifiez que Gladys est bien sur le même réseau que le pont hue.
+Si vous ne voyez pas votre pont, vérifiez que Gladys est bien sur le même réseau que le pont Hue.
+
+Si vous ne voyez toujours pas votre pont, vous pouvez l'ajouter manuellement grâce à son adresse IP.
+
+![Manual Bridge IP Configuration](../../../../../static/img/docs/fr/configuration/philips-hue/philips_hue_manual_ip_configuration.png)
+
+:::note
+Assurez-vous d'avoir le Pont Philips Hue v2 (le carré). L'intégration ne fonctionnera pas avec le Pont v1 (rond).
+:::
 
 ## Ajoutez une ampoule dans Gladys
 
-Dans `Périphériques`, cliquez sur `Connect` sur chaque ampoule que vous voulez ajouter à Gladys.
+Dans `Périphériques`, cliquez sur `Connecter` sur chaque ampoule que vous voulez ajouter à Gladys.
 
 Et voilà !
