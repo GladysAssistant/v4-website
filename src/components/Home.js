@@ -41,8 +41,8 @@ const FAQQuestions = {
       title: <>Quel matériel requis pour installer Gladys Assistant ?</>,
       response: (
         <>
-          Gladys s'installer sur n'importe quelle machine Linux (un Raspberry
-          Pi, un NAS, un serveur, un vieux PC Linux, peut-importe !), du moment
+          Gladys peut s'installer sur n'importe quelle machine Linux (un Raspberry
+          Pi, un NAS, un serveur, un vieux PC Linux, peu importe !), du moment
           que Docker tourne sur la machine, Gladys peut tourner dessus. <br />
           <br />
           PS: Gladys Assistant est <b>gratuite</b>, c'est un simple container
@@ -73,7 +73,7 @@ const FAQQuestions = {
               Des développeurs qui trouvent ça fou de pouvoir coder pour leur
               maison et qui contribuent à ce projet open-source !
             </li>
-            <li>Des pros, qui gère des parcs de capteurs impressionants</li>
+            <li>Des pros, qui gèrent des parcs de capteurs impressionnants</li>
           </ul>
         </>
       ),
@@ -87,9 +87,9 @@ const FAQQuestions = {
           Toute PR est la bienvenue 🙂 <br />
           <br /> Si tu veux contribuer, n'hésite pas à venir sur la{" "}
           <a href="https://community.gladysassistant.com/">communauté</a> pour
-          parler du développement sur lequel tu veux te lancer. Ca permettra de
-          voir avec les autres développeurs si quelqu'un d'autre ne travail pas
-          déjà dessus, et surtout de discuter "spécifications" avec de partir
+          parler du développement sur lequel tu veux te lancer. Ça permettra de
+          voir avec les autres développeurs si quelqu'un d'autre ne travaille pas
+          déjà dessus, et surtout de discuter "spécifications" avant de partir
           dans le développement !
         </>
       ),
