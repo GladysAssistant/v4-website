@@ -19,6 +19,8 @@ Aujourd'hui sort Gladys Assistant 4.31, une version qui apporte pas mal de nouve
 
 Vous étiez nombreux à demander un mécanisme pour filtrer les scènes qui sont de plus en plus nombreuses sur vos instances, et @Lokkye l'a fait !
 
+<!--truncate-->
+
 Vous pouvez désormais ajouter un ou plusieurs tags à vos scènes :
 
 ![Scène ajouter un tag Gladys](../../../static/img/articles/fr/gladys-4-31/scene-set-tag.jpg)

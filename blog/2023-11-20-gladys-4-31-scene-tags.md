@@ -19,6 +19,8 @@ Today I'm releasing Gladys Assistant 4.31, a version that brings a lot of new fe
 
 Many of you have been asking for a mechanism to filter the increasing number of scenes in your instances, and @Lokkye has done just that!
 
+<!--truncate-->
+
 You can now add one or more tags to your scenes:
 
 ![Scene add Gladys tag](../static/img/articles/en/gladys-4-31/scene-set-tag.jpg)
