@@ -5,7 +5,7 @@ author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
 author_image_url: /fr/img/pierre-gilles.jpg
-image: /img/presentation/gladys-assistant-4-30-fr.jpg
+image: /img/presentation/gladys-assistant-4-31.jpg
 slug: gladys-4-31-tags-mqtt-scene
 ---
 
