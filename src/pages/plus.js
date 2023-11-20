@@ -313,8 +313,8 @@ function Plus() {
                           id="gladysPlusPage.subscribe"
                           description="Gladys Plus subscribe"
                         >
-                          For the launch of the Alarm feature, -40% on the first
-                          annual payment with the code ALARM2023!
+                          Black Friday Deal: Get -40% on the first payment with
+                          the code BLACKFRIDAY2023!!
                         </Translate>
                       </label>
 
