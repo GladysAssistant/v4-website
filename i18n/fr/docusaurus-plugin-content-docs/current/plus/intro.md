@@ -6,11 +6,11 @@ sidebar_label: Intro
 
 [Gladys Plus](/fr/plus/) est un service additionnel créé et maintenu par [Pierre-Gilles Leymarie](https://twitter.com/pierregillesl), fondateur du projet.
 
-Ce service est entièrement optionel, il est tout à fait possible d'utiliser Gladys complètement gratuitement sans ce service.
+Ce service est entièrement optionnel, il est tout à fait possible d'utiliser Gladys complètement gratuitement sans ce service.
 
-L'objectif de ce service est de proposer des fonctionnalités assez pratique à des utilisateurs qui préfèrent du clé en main, facile à utiliser pour toute la famille, et sécurisé par défaut.
+L'objectif de ce service est de proposer des fonctionnalités assez pratiques à des utilisateurs qui préfèrent du clé en main, facile à utiliser pour toute la famille, et sécurisé par défaut.
 
-J'ai fais une vidéo sur YouTube où je présente comment fonctionne Gladys Plus:
+J'ai fait une vidéo sur YouTube où je présente comment fonctionne Gladys Plus:
 
 <div class="youtubeVideoContainerInBlog">
 <iframe src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
