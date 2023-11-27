@@ -17,7 +17,7 @@ L'alarme dans Gladys a 4 modes :
 - **Armée** : La maison est armée. Mode utile quand vous êtes absent de la maison.
 - **Désarmée** : La maison est désarmée, l'alarme n'est pas active.
 - **Armement partiel** : Ce mode est pratique pour faire un "mode nuit" ou un "mode sieste". Vous êtes à la maison et vous souhaitez surveillez uniquement l'extérieur de la maison mais pas l'intérieur pour pouvoir continuer à vous déplacer.
-- **Mode panique** : Un intru est dans la maison et vous voulez déclencher l'alarme, peut-être envoyer un message automatique à un proche ?
+- **Mode panique** : Un intrus est dans la maison et vous voulez déclencher l'alarme, peut-être envoyer un message automatique à un proche ?
 
 Maintenant que vous avez compris les différents modes, il faut configurer des scènes pour mettre en place votre stratégie d'alarme.
 
@@ -36,7 +36,7 @@ Maintenant, il va falloir dire à Gladys ce que le mode alarme va faire.
 
 La première scène à créer, c'est une scène qui se déclenchera quand l'armement de l'alarme est en cours.
 
-Par exemple, vous pouvez vous envoyer un message Telegram quand l'alarme est en cours d'armement, ou faire un signal sonore dans la maison, faire clignoter les lumières, tout est possible !
+Par exemple, vous pouvez vous envoyer un message Telegram quand l'alarme est en cours d'armement, ou déclencher un signal sonore dans la maison, faire clignoter les lumières, tout est possible !
 
 ![Alarme armement en cours...](../../../../../static/img/docs/fr/dashboard/alarm/alarm-arming.jpg)
 
@@ -50,13 +50,13 @@ Vous pouvez créer une scène sur plusieurs déclencheurs:
 
 ![Alarme mouvement scènes](../../../../../static/img/docs/fr/dashboard/alarm/alarm-scene-motion.jpg)
 
-Puis ajouter une condition "ET que l'alarme est en mode armée" :
+Puis ajouter une condition "Si l'alarme est en mode" "Armée" :
 
 ![Alarme condition de scène](../../../../../static/img/docs/fr/dashboard/alarm/alarm-condition.jpg)
 
-Si cette condition est vérifie, la scène continuera et vous pouvez ensuite vous envoyer un message Telegram, vous envoyez une image de caméra via Telegram, déclencher une alerte sonore dans la maison, etc...
+Si cette condition est vérifiée, la scène continuera et vous pouvez ensuite vous envoyer un message Telegram, vous envoyez une image de caméra via Telegram, déclencher une alerte sonore dans la maison, etc...
 
-Si quelqu'un s'introduit chez vous, il va peut-être essayer de déverouiller Gladys via vos tablettes au mur.
+Si quelqu'un s'introduit chez vous, il va peut-être essayer de déverrouiller Gladys via vos tablettes au mur.
 
 Il est possible de tester 3 codes avant que le clavier se bloque pour 5 minutes, et au bout de 3 codes échoués, ce déclencheur de scène sera appelé :
 
@@ -78,14 +78,14 @@ Gladys vous demande cette information pour savoir quand elle devra "verrouiller"
 
 Je le précise sur cet écran, si vous voulez que votre tablette soit en plein-écran (et le reste), vous pouvez ajouter un paramètre à l'URL: `?fullscreen=force`.
 
-Ce "plein écran forcé" n'a pas de rapport avec le mode tablette, l'un et l'autre sont entièrement indépendant.
+Ce "plein écran forcé" n'a pas de rapport avec le mode tablette, l'un et l'autre sont entièrement indépendants.
 
-Quand l'alarme sera armée, automatiquement Gladys ira chercher toutes les tablettes de la maison, et les verrouillera.
+Quand l'alarme sera armée, Gladys ira chercher automatiquement toutes les tablettes de la maison et les verrouillera.
 
-Ces tablettes afficherons un clavier numérique qui vous permettra de déverrouiller l'alarme :
+Ces tablettes afficheront un clavier numérique qui vous permettra de déverrouiller l'alarme :
 
 ![Mode tablette code numérique](../../../../../static/img/docs/fr/dashboard/alarm/alarm-tablet-mode-locked.jpg)
 
-Ce clavier est une alternative aux claviers physique, mais vous pouvez tout à fait utiliser un vrai clavier physique Zigbee et faire une scène qui désarme l'alarme quand ce clavier est utilisé.
+Ce clavier est une alternative aux claviers physiques, mais vous pouvez tout à fait utiliser un vrai clavier physique Zigbee et faire une scène qui désarme l'alarme quand ce clavier est utilisé.
 
 Vous pouvez aussi entièrement vous passer de ces claviers et désarmer l'alarme via votre téléphone via le widget "Alarme".
