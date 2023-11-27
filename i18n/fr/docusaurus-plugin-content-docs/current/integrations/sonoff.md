@@ -22,10 +22,10 @@ Vous devez disposer d'un compte cloud "eWeLink":
 
 Une fois votre compte créé, retournez dans Gladys:
 
-1. aller sur la page `Intégration -> eWeLink`
-2. sélectionner le menu `Configuration`
-3. renseigner et sauvegarder vos identifiants
-4. sélectionner le menu `Découverte eWeLink`
-5. cliquer sur le bouton `Scanner` en haut à droite (si le périphérique n'est pas déjà dans la liste)
-6. enfin, cliquer sur `Sauvegarder`
+1. allez sur la page `Intégration -> eWeLink`
+2. sélectionnez le menu `Configuration`
+3. renseignez et sauvegarder vos identifiants
+4. sélectionnez le menu `Découverte eWeLink`
+5. cliquez sur le bouton `Scanner` en haut à droite (si le périphérique n'est pas déjà dans la liste)
+6. enfin, cliquez sur `Sauvegarder`
 7. et voilà !
