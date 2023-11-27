@@ -308,15 +308,18 @@ function Plus() {
                   )}
                   {PRICING_TABLE_ACTIVATED && (
                     <span>
-                      <label style={{ display: "block", marginBottom: "10px" }}>
-                        <Translate
-                          id="gladysPlusPage.subscribe"
-                          description="Gladys Plus subscribe"
+                      {false && (
+                        <label
+                          style={{ display: "block", marginBottom: "10px" }}
                         >
-                          Black Friday Deal: Get -40% on the first payment with
-                          the code BLACKFRIDAY2023!!
-                        </Translate>
-                      </label>
+                          <Translate
+                            id="gladysPlusPage.subscribe"
+                            description="Gladys Plus subscribe"
+                          >
+                            Enter discount here
+                          </Translate>
+                        </label>
+                      )}
 
                       <a
                         href="#pricing-table"
