@@ -6,7 +6,7 @@ sidebar_label: Température de la pièce
 
 Dans Gladys Assistant, vous pouvez afficher la température moyenne d'une pièce sur votre tableau de bord.
 
-Cette box va chercher la température de tous les capteurs de températures présent dans la pièce, et en affiche une moyenne sur le tableau de bord.
+Cette box va chercher la température de tous les capteurs de températures présents dans la pièce, et en afficher une moyenne sur le tableau de bord.
 
 ## Pré-requis
 
