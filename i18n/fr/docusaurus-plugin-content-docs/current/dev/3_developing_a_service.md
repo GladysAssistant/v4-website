@@ -36,15 +36,15 @@ Voilà un petit explicatif de tous les dossiers du projet backend se trouvant da
 
 ### Le frontend Preact.js
 
-L’application Preact a été généré par [preact-cli](https://github.com/preactjs/preact-cli) :
+L’application Preact a été générée par [preact-cli](https://github.com/preactjs/preact-cli) :
 
 ![Frontend architecture Gladys](../../../../../static/img/docs/fr/dev/frontend_architecture.png)
 
 ## Inspiration : Live Coding sur YouTube
 
-J’ai fais récemment un live YouTube de 7 heures (c’est complet !!) où j’explique comment coder une intégration de A à Z.
+J’ai fait récemment un live YouTube de 7 heures (c’est complet !!) où j’explique comment coder une intégration de A à Z.
 
-Je pars des spécifications fonctionelles, aux spécifications techniques, au développement du frontend, du backend, des tests, du flow Git, TOUT est dedans !
+Je pars des spécifications fonctionnelles, aux spécifications techniques, au développement du frontend, du backend, des tests, du flow Git, TOUT est dedans !
 
 Vous trouverez ce live coding ici :
 
@@ -54,7 +54,7 @@ Vous trouverez ce live coding ici :
 
 ## Comment coder une intégration Gladys Assistant ?
 
-Les intégrations sont localisés dans le dossier [server/services](https://github.com/GladysAssistant/Gladys/tree/master/server/services).
+Les intégrations sont localisées dans le dossier [server/services](https://github.com/GladysAssistant/Gladys/tree/master/server/services).
 
 Créez un nouveau dossier portant le nom de votre service. Le nom doit être alphanumérique, en minuscules, avec des tirets comme séparateurs si nécessaire.
 
