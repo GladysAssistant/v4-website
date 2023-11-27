@@ -4,7 +4,7 @@ title: MQTT API
 sidebar_label: MQTT API
 ---
 
-Si vous avez configurer un broker MQTT avec Gladys, vous pouvez communiquer avec Gladys via MQTT.
+Si vous avez configuré un broker MQTT avec Gladys, vous pouvez communiquer avec Gladys via MQTT.
 
 ### Envoyer un nouvel état décimal
 
