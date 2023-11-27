@@ -59,9 +59,9 @@ Par exemple, si jamais vous voulez afficher les 6 derniers mois de votre capteur
 
 Lors de l'affichage de la courbe sur le tableau de bord, Gladys n'a besoin que d'une centaine de points (afficher plus n'a aucun sens), il faut donc faire de l'échantillonage sur cet ensemble de données.
 
-Cependant, si Gladys devait faire cet échantillonage en direct, ce serait trop long, et l'interface de Gladys serait lente.
+Cependant, si Gladys devait faire cet échantillonnage en direct, ce serait trop long, et l'interface de Gladys serait lente.
 
-Gladys pre-calcule donc des valeurs agrégées par heure, jour et mois afin de simplifier les requêtes.
+Gladys précalcule donc des valeurs agrégées par heure, jour et mois afin de simplifier les requêtes.
 
 Vous pouvez vérifier dans les paramètres que ces tâches en arrière-plan fonctionnent bien en allant dans l'onglet "Tâches en arrière-plan" dans les paramètres :
 
