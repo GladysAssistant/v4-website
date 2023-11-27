@@ -8,6 +8,8 @@ In Gladys Assistant, you can display images from your cameras, straight on the d
 
 These images are refreshed at regular intervals. You can specify the interval in your camera configuration.
 
+You can also view the camera's live video feed using the "Live" button.
+
 ## Prerequisites
 
 - You must have configured a camera, see [documentation](/docs/integrations/camera/) for camera integration.
