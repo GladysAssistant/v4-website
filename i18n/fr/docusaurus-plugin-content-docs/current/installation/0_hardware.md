@@ -15,7 +15,7 @@ Le plus important est de définir les automatisations que vous voulez mettre en 
 
 J’aime personnellement faire un tableau (sur Excel, Google Sheet, ou Notion) découpé par pièce où je liste tous les appareils que j’ai envie de mettre.
 
-![Tableau Notion Maison connectée](../../../../../static/img/docs/fr/installation/guide/notion-table-connected.png)
+![Tableau Notion Maison connectée](../../../../../static/img/docs/fr/installation/guide/notion-table-connected.jpg)
 
 Par exemple:
 
@@ -61,21 +61,21 @@ Suivant la box que vous avez choisi, il faudra soit utiliser:
 
 Une fois que Gladys tourne chez vous, vous allez pouvoir y accéder via votre navigateur web et la configuration de votre maison.
 
-![Configuration maison](../../../../../static/img/docs/fr/installation/guide/welcome-gladys.png)
+![Installation de Gladys](../../../../../static/img/docs/fr/installation/guide/welcome-gladys.jpg)
 
 Il vous suffit ici de suivre les étapes.
 
-Nous allons d’abord créer le compte de l’administrateur principal de votre maison connectée:
+Nous allons d’abord créer le compte de l’administrateur principal de votre maison connectée :
 
-![Créer compte local](../../../../../static/img/docs/fr/installation/guide/create-local-account.png)
+![Créer compte local Gladys](../../../../../static/img/docs/fr/installation/guide/create-local-account.jpg)
 
 Ensuite, Gladys vous demande quelques préférences :
 
-![Créer compte local](../../../../../static/img/docs/fr/installation/guide/preferences.png)
+![Définir préférences compte local Gladys](../../../../../static/img/docs/fr/installation/guide/preferences.jpg)
 
-Enfin, vous pouvez nommer votre maison:
+Enfin, vous pouvez nommer votre maison :
 
-![Créer maison](../../../../../static/img/docs/fr/installation/guide/configure-house.png)
+![Créer maison dans Gladys](../../../../../static/img/docs/fr/installation/guide/configure-house.jpg)
 
 Voilà ! Tun as maintenant un système de maison connecté Gladys chez toi.
 
