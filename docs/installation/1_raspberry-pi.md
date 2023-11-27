@@ -6,12 +6,6 @@ sidebar_label: Raspberry Pi
 
 If you are looking to install Gladys Assistant on a Raspberry Pi that is already configured, use the [Docker](/docs/installation/docker) tutorial.
 
-:::note
-With the current Raspberry Pi shortage, a good alternative would be to run Gladys on a mini-PC like a Dell OptiPlex 3040, a Beelink mini-PC or an Intel NUC.
-
-Those mini-PC runs natively on a SSD so they are usually very stable to use.
-:::
-
 ## Download Gladys Raspberry Pi OS image
 
 We provide a pre-built Raspberry Pi OS image with Gladys already configured.
