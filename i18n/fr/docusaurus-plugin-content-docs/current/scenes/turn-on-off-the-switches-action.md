@@ -10,7 +10,7 @@ Dans Gladys, vous pouvez contrôler vos prises télécommandées, que ce soit su
 
 Nous verrons ici un exemple concret.
 
-Prenons les cafetière filtres très basiques que l'on peut trouver dans le commerce pour une dizaine d'euros. Ces cafetières ont l'avantages d'avoir un bouton on/off physique, qui peut rester en position "allumé" permanente.
+Prenons les cafetière filtres très basiques que l'on peut trouver dans le commerce pour une dizaine d'euros. Ces cafetières ont l'avantages d'avoir un bouton on/off physique, qui peut rester en position "allumé" en permanence.
 
 Avec une prise télécommandée devant, il devient possible de contrôler la machine, et donc de faire du café sur commande !
 
