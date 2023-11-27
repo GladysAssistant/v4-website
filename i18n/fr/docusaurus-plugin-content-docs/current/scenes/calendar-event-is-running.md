@@ -16,6 +16,6 @@ Ensuite, vous pouvez créer la condition suivante :
 
 Si un évènement est en cours dans les calendriers "Perso" ou "Sport", et qu'il contient le mot "travail" dans le titre, alors la scène continuera. Sinon, la scène sera stoppée.
 
-Vous pouvez ensuite utiliser l'évènement trouvé dans la scène, par exemple dans l'action "envoyer un message" :
+Vous pouvez ensuite utiliser l'évènement trouvé dans la scène, par exemple dans l'action "Envoyer un message" :
 
 ![Message avec variable](../../../../../static/img/docs/fr/scenes/calendar-event-is-running/msg-calendar-is-running-fr.jpg)
