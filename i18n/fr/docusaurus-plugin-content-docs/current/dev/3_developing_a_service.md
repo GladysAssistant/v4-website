@@ -8,7 +8,7 @@ Gladys Assistant est un projet open-source, et tout son code est disponible sur 
 
 N’importe qui peut lire et modifier ce code pour ajouter des fonctionnalités, des nouvelles intégrations ou corriger un bug.
 
-## Les technologies utilisés
+## Les technologies utilisées
 
 Gladys est un projet Node.js assez classique qui utilise :
 
@@ -36,15 +36,15 @@ Voilà un petit explicatif de tous les dossiers du projet backend se trouvant da
 
 ### Le frontend Preact.js
 
-L’application Preact a été généré par [preact-cli](https://github.com/preactjs/preact-cli) :
+L’application Preact a été générée par [preact-cli](https://github.com/preactjs/preact-cli) :
 
 ![Frontend architecture Gladys](../../../../../static/img/docs/fr/dev/frontend_architecture.png)
 
 ## Inspiration : Live Coding sur YouTube
 
-J’ai fais récemment un live YouTube de 7 heures (c’est complet !!) où j’explique comment coder une intégration de A à Z.
+J’ai fait récemment un live YouTube de 7 heures (c’est complet !!) où j’explique comment coder une intégration de A à Z.
 
-Je pars des spécifications fonctionelles, aux spécifications techniques, au développement du frontend, du backend, des tests, du flow Git, TOUT est dedans !
+Je pars des spécifications fonctionnelles, aux spécifications techniques, au développement du frontend, du backend, des tests, du flow Git, TOUT est dedans !
 
 Vous trouverez ce live coding ici :
 
@@ -54,7 +54,7 @@ Vous trouverez ce live coding ici :
 
 ## Comment coder une intégration Gladys Assistant ?
 
-Les intégrations sont localisés dans le dossier [server/services](https://github.com/GladysAssistant/Gladys/tree/master/server/services).
+Les intégrations sont localisées dans le dossier [server/services](https://github.com/GladysAssistant/Gladys/tree/master/server/services).
 
 Créez un nouveau dossier portant le nom de votre service. Le nom doit être alphanumérique, en minuscules, avec des tirets comme séparateurs si nécessaire.
 
@@ -135,7 +135,7 @@ module.exports = function ExampleService(gladys) {
 
 ### Lier votre intégration à Gladys
 
-Lorsque votre intégration est prêt à être testée, vous pouvez éditer le fichier [server/services/index.js](https://github.com/GladysAssistant/Gladys/blob/master/server/services/index.js) et ajouter le require vers votre service.
+Lorsque votre intégration est prête à être testée, vous pouvez éditer le fichier [server/services/index.js](https://github.com/GladysAssistant/Gladys/blob/master/server/services/index.js) et ajouter le require vers votre service.
 
 ### Tests unitaires
 
