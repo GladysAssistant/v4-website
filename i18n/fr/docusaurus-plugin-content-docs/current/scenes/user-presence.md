@@ -26,25 +26,23 @@ Avec cette information, Gladys pourra :
 - Soit émettre un évènement "retour à la maison" si l'utilisateur était absent de la maison avant cela.
 - Soit ne rien faire si l'utilisateur était déjà à la maison.
 
-Pour cela, dans une scène, vous pouvez créer une action "utilisateur vu à la maison" :
+Pour cela, dans une scène, vous pouvez créer une action "Utilisateur vu à la maison" :
 
 ![Utilisateur vu à la maison](../../../../../static/img/docs/fr/scenes/user-presence/user-seen-at-home.jpg)
 
 ## Définir l'utilisateur comme "absent de la maison" dans une scène
 
-L'objectif de cette action est de dire à Gladys "L'utilisateur n'est pas cette maison".
+L'objectif de cette action est de dire à Gladys "L'utilisateur n'est pas dans cette maison".
 
 Avec cette information, Gladys pourra:
 
 - Soit émettre un évènement "départ de la maison" si l'utilisateur était marqué comme "à la maison" avant cela.
 - Soit ne rien faire si l'utilisateur n'était pas à la maison, ou pas dans **cette** maison.
 
-Pour cela, dans une scène, vous pouvez créer une action "utilisateur parti de la maison" :
+Pour cela, dans une scène, vous pouvez créer une action "Utilisateur parti de la maison" :
 
 ![Utilisateur parti de la maison](../../../../../static/img/docs/fr/scenes/user-presence/user-left-home.jpg)
 
 ## Remarque sur l'utilisation des Nuts
 
-Nous travaillons à l'heure actuelle sur une gestion native des périphériques de présence Bluetooth type Nut (voir [post](https://community.gladysassistant.com/t/presence-utilisateur-a-la-maison/5505/28) sur le forum).
-
-Ce n'est pas encore le cas mais c'est en cours !
+Une gestion native des périphériques de présence Bluetooth de type Nut est désormais possible dans l'intégration "Bluetooth" depuis la version 4.10 de Gladys !
