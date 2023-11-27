@@ -8,9 +8,9 @@ L'intégration Bluetooth est utile pour la gestion de la présence.
 
 Il existe des portes-clés Bluetooth comme le [porte clé NUT](https://www.amazon.fr/NUT-%C3%89crou-Mini-Bluetooth-Tracker/dp/B01M664D98/ref=sr_1_1?tag=gladproj-21) qui signalent leur présence en Bluetooth en permanence.
 
-Avec ce genre de porte-clé, Gladys peut détecter quand vous êtes/n'êtes pas à la maison en scannant tout simplement pour les appareils bluetooth à proximité.
+Avec ce genre de porte-clé, Gladys peut détecter quand vous êtes/n'êtes pas à la maison en scannant tout simplement les appareils bluetooth à proximité.
 
-**Note :** Cette astuce ne fonctionne pas avec tous les appareils Bluetooh. Cela fonctionne uniquement avec les appareils bluetooth qui émettent en permanence, et qui ne font pas des techniques d'obfuscation de leur adresse bluetooth, comme le font la plupart des téléphone par exemple. De manière générale, le plus "bête" est l'appareil, le mieux ça marche ! J'avais par exemple un bracelet Fitbit Force 2, et cela fonctionnait. En revanche, ça ne fonctionne pas avec une Apple Watch.
+**Note :** Cette astuce ne fonctionne pas avec tous les appareils Bluetooh. Cela fonctionne uniquement avec les appareils bluetooth qui émettent en permanence, et qui ne font pas des techniques d'obfuscation de leur adresse bluetooth, comme le font la plupart des téléphone par exemple. De manière générale, plus l'appareil est "bête", plus cela marches mieux ! J'avais par exemple un bracelet Fitbit Force 2, et cela fonctionnait. En revanche, ça ne fonctionne pas avec une Apple Watch.
 
 ## Configurer votre appareil bluetooth
 
