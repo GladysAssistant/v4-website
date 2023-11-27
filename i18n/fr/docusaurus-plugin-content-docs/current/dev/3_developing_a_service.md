@@ -1,37 +1,75 @@
 ---
 id: developing-a-service
-title: Développer un service Gladys
-sidebar_label: Développer un service Gladys
+title: Contribuer sur Gladys Assistant
+sidebar_label: Contribuer sur Gladys Assistant
 ---
 
-In Gladys 4, most integrations which don't need to be started on another physical machine than Gladys are internal services and integrated into Gladys core.
+Gladys Assistant est un projet open-source, et tout son code est disponible sur [Github](https://github.com/GladysAssistant/Gladys).
 
-This tutorial will explain you how to add a new integration to the core.
+N’importe qui peut lire et modifier ce code pour ajouter des fonctionnalités, des nouvelles intégrations ou corriger un bug.
 
-### Setup your development environnement
+## Les technologies utilisés
 
-First, you need a working development environment. You can read our tutorials in this doc on how to setup a development environment on MacOS/Linux or Windows.
+Gladys est un projet Node.js assez classique qui utilise :
 
-### Server-side
+- [Preact.js](https://preactjs.com/) pour le frontend (exactement comme React, mais en plus léger)
+- Node.js [Express](https://expressjs.com/) comme framework backend
+- [SQLite](https://www.sqlite.org/index.html) pour la base de donnée
+- [Sequelize](https://sequelize.org/) comme ORM pour la base de donnée et les migrations
+- [Mocha](https://mochajs.org/) pour les tests backend
+- [Cypress](https://www.cypress.io/) pour les tests d’intégration frontend
 
-#### Create a new folder for your service
+## Mettre en place un environnement de développement
 
-All services are located inside the [server/services](https://github.com/GladysAssistant/Gladys/tree/master/server/services) folder.
+Nous avons 2 tutoriels suivant votre plateforme :
 
-Create a new folder with the name of your service. The name should be alphanumeric, in lowercase, and with dashes as separator if needed.
+- [Mettre en place un environnement de développement sur MacOS/Linux](/fr/docs/dev/setup-development-environment-mac-linux/)
+- [Mettre en place un environnement de développement sur Windows](/fr/docs/dev/setup-development-environment-windows/)
 
-Example of good folder names:
+## L’architecture de dossier
+
+### Le serveur Node.js Express
+
+Voilà un petit explicatif de tous les dossiers du projet backend se trouvant dans le dossier **server.**
+
+![Server architecture Gladys](../../../../../static/img/docs/fr/dev/server_architecture.png)
+
+### Le frontend Preact.js
+
+L’application Preact a été généré par [preact-cli](https://github.com/preactjs/preact-cli) :
+
+![Frontend architecture Gladys](../../../../../static/img/docs/fr/dev/frontend_architecture.png)
+
+## Inspiration : Live Coding sur YouTube
+
+J’ai fais récemment un live YouTube de 7 heures (c’est complet !!) où j’explique comment coder une intégration de A à Z.
+
+Je pars des spécifications fonctionelles, aux spécifications techniques, au développement du frontend, du backend, des tests, du flow Git, TOUT est dedans !
+
+Vous trouverez ce live coding ici :
+
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/M4vOjQXMiZI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+## Comment coder une intégration Gladys Assistant ?
+
+Les intégrations sont localisés dans le dossier [server/services](https://github.com/GladysAssistant/Gladys/tree/master/server/services).
+
+Créez un nouveau dossier portant le nom de votre service. Le nom doit être alphanumérique, en minuscules, avec des tirets comme séparateurs si nécessaire.
+
+Exemple de bons noms de dossier :
 
 - `wemo`
 - `philips-hue`
 - `zwave`
 - `usb`
 
-#### Create a package.json
+### Créer un package.json
 
-The package.json will describe how compatible is your service, and which dependencies are needed.
+Le package.json décrit la compatibilité de votre service, et les dépendances nécessaires.
 
-You can look on Github at all package.json, but here is an example of a good package.json:
+Vous pouvez consulter tous les package.json sur Github, mais voici un exemple d'un bon package.json :
 
 ```json
 {
@@ -46,15 +84,11 @@ You can look on Github at all package.json, but here is an example of a good pac
 }
 ```
 
-**Note:** `os` and `cpu` fields are mandatory. It's useful to tell Gladys if your service runs only on Linux, or is running on windows (win32) and MacOS (darwin) as well.
+**Note:** Les champs `os` et `cpu` sont obligatoires.
 
-#### Create an index.js file
+### Créer un fichier index.js
 
-The index.js is the entry point of your service. It's a function which return all exposed function of your service.
-
-Here is an example `index.js` file. I'll describe it right after.
-
-```javascript
+```jsx
 const logger = require("../../utils/logger");
 const ExampleLightHandler = require("./lib/light");
 
@@ -89,39 +123,39 @@ module.exports = function ExampleService(gladys) {
   return Object.freeze({
     start,
     stop,
-    light: new ExampleLightHandler(gladys, client),
+    device: new ExampleLightHandler(gladys, client),
   });
 };
 ```
 
-- The `index.js` file should expose 2 functions: start, and stop. Those functions are mandatory, and should respectively start the service or stop it.
-- All require of dependencies listed in the package.json should be done **inside** the function, not outside. This is because we want each service to be fully isolated and not to crash if the NPM module crash.
-- The `gladys` variable is the Gladys instance and gives you access to all the Gladys API. A service shouldn't try to contact the database itself, it should only use the Gladys API. If a query is missing, don't hesitate to code a new function in Gladys API.
-- Comments on top of functions are mandatory and serve not only for documentation purpose, but for type checking as well.
+- Le fichier `index.js` doit exposer 2 fonctions : start, et stop. Ces fonctions sont obligatoires, et doivent respectivement démarrer le service ou l'arrêter.
+- Toutes les requêtes de dépendances listées dans le package.json doivent être faites **à l'intérieur** de la fonction, et non à l'extérieur. C'est parce que nous voulons que chaque service soit complètement isolé et ne se plante pas si le module NPM se plante.
+- La variable `gladys` est l'instance de Gladys et vous donne accès à toutes les API de Gladys. Un service ne doit pas essayer de contacter la base de données lui-même, il doit seulement utiliser l'API de Gladys. Si une requête est manquante, n'hésitez pas à coder une nouvelle fonction dans l'API Gladys.
+- Les commentaires sur les fonctions sont obligatoires et servent non seulement à la documentation, mais aussi à la vérification des types.
 
-#### Linking your service to Gladys
+### Lier votre intégration à Gladys
 
-When your service is ready to be tested, you can edit the [server/services/index.js](https://github.com/GladysAssistant/Gladys/blob/master/server/services/index.js) file and add the require to your service.
+Lorsque votre intégration est prêt à être testée, vous pouvez éditer le fichier [server/services/index.js](https://github.com/GladysAssistant/Gladys/blob/master/server/services/index.js) et ajouter le require vers votre service.
 
-#### Unit-tests
+### Tests unitaires
 
-Gladys 4 main goal is to be a reliable and stable core.
+Un objectif principal de Gladys Assistant est d'être un logiciel ultra-stable et fiable.
 
-Therefore, all services of Gladys should be fully tested with a test coverage > 90%.
+Par conséquent, tout le code de Gladys doit être entièrement testé.
 
-Tests of services are located in the folder [server/test/services](https://github.com/GladysAssistant/Gladys/tree/master/server/test/services).
+Les tests des services sont situés dans le dossier [server/test/services](https://github.com/GladysAssistant/Gladys/tree/master/server/test/services).
 
-I suggest you have a look at the [tests of the example service](https://github.com/GladysAssistant/Gladys/tree/master/server/test/services/example) to give you an idea of how tests looks like.
+Je vous suggère de jeter un coup d'oeil aux [tests du service d'exemple](https://github.com/GladysAssistant/Gladys/tree/master/server/test/services/example) pour vous donner une idée de ce à quoi ressemblent les tests.
 
-To run tests, in the `server` folder run:
+Pour lancer les tests, dans le dossier `server` exécutez :
 
 ```
 npm test
 ```
 
-If you want to execute only the tests relative to your service, you can add `.only` to your tests, example:
+Si vous voulez exécuter uniquement les tests relatifs à votre service, vous pouvez ajouter `.only` à vos tests, par exemple :
 
-```javascript
+```jsx
 describe.only("ExampleService", () => {
   const exampleService = ExampleService();
   it("should have start function", () => {
@@ -132,36 +166,32 @@ describe.only("ExampleService", () => {
 });
 ```
 
-(Be careful to remove the `.only` before commiting)
+(Veillez à supprimer le `.only` avant de valider)
 
-**Note on Mocking:** Your tests are probably calling a third-party NPM module. We recommend that you mock all calls to the module using proxyquire like [here](https://github.com/GladysAssistant/Gladys/blob/master/server/test/services/example/index.test.js#L5). Your tests shouldn't call real-world API!
+**Note sur le Mocking:** Vos tests appellent probablement un module NPM tiers. Nous vous recommandons de simuler tous les appels au module en utilisant des proxyquire comme [ici](https://github.com/GladysAssistant/Gladys/blob/master/server/test/services/example/index.test.js#L5). Vos tests ne doivent pas appeler des API du monde réel !
 
-#### Adding API routes
+### Qualité du code
 
-Your `index.js` can return a `controllers` attribute.
+Nous utilisons une configuration `eslint` assez stricte.
 
-A good example of how a REST API was implemented in a service is the [Philips Hue service](https://github.com/GladysAssistant/Gladys/tree/master/server/services/philips-hue).
+Utilisez `VSCode` pour le développement afin de voir les problèmes de linting en temps réel, ou exécutez `npm run eslint` dans le dossier `server` pour voir toutes les erreurs de linting.
 
-Have a look at the `index.js` file and the `api` folder.
+### Interface
 
-#### Code quality
+L'interface de Gladys 4 est une application [preact](https://preactjs.com/).
 
-We use a pretty strict `eslint` configuration.
+Si vous voulez ajouter des fonctionnalités au frontend, vous pouvez éditer le code dans le dossier `front`.
 
-Use `VSCode` for developement to see linting issues in real time, or execute `npm run eslint` in the `server` folder to see all linting errors.
+Tout le code relatif à l'interface utilisateur des services est situé dans le dossier [front/src/routes/integration/all](https://github.com/GladysAssistant/Gladys/tree/master/front/src/routes/integration/all).
 
-### Frontend
+### Soumettre votre intégration
 
-Gladys 4 frontend is a [preact](https://preactjs.com/) app.
+Si vous pensez que votre service est suffisamment bon pour être publié, félicitations !
 
-If you want to add features to the frontend, you can edit the code in the `front` folder.
+Vous pouvez créer une PR sur GitHub.
 
-All the code relative to the UI of services is located in the [front/src/routes/integration/all](https://github.com/GladysAssistant/Gladys/tree/master/front/src/routes/integration/all).
+Lire: [Créer une PR sur Github](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
 
-#### Submit your service
+## Des questions ?
 
-If you think your service is good enough to be published, congrats!
-
-You can submit a GitHub pull request to the repository.
-
-Read: [How to create a pull request](https://help.github.com/en/articles/creating-a-pull-request).
+Tu as des question ? Viens en parler [sur le forum](https://community.gladysassistant.com/) !
