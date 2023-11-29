@@ -192,6 +192,14 @@ Vous pouvez créer une PR sur GitHub.
 
 Lire: [Créer une PR sur Github](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
 
+### Tester une intégration proposée par un contributeur
+
+Si vous souhaitez tester et aider à déboguer une intégration, vous pouvez suivre le tutoriel suivant (idéalement sur une machine de test)
+
+Lire: [Tutoriel: Lancer une image Docker de test](https://community.gladysassistant.com/t/tutoriel-lancer-une-image-docker-de-test/8042)
+
+
+
 ## Des questions ?
 
 Tu as des question ? Viens en parler [sur le forum](https://community.gladysassistant.com/) !
