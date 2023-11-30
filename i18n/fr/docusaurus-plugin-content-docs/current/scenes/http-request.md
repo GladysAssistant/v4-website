@@ -4,7 +4,7 @@ title: Faire des requêtes HTTP dans une scène
 sidebar_label: Requête HTTP
 ---
 
-Dans les scènes, il est parfois pratique d'appeler une API externe afin de contrôler des périphériques pas forcément géré par Gladys Assistant, ou pour simplement appeler un service externe sans développer un service spécifiquement pour l'occasion.
+Dans les scènes, il est parfois pratique d'appeler une API externe afin de contrôler des périphériques pas forcément gérés par Gladys Assistant, ou pour simplement appeler un service externe sans développer un service spécifiquement pour l'occasion.
 
 ## Pré-requis
 
@@ -72,9 +72,9 @@ Puis cliquez sur Finish.
 
 ### Dans Gladys, créez une scène
 
-Créez une nouvelle scène dans Gladys, puis ajoutez lui une action "faire une requête HTTP".
+Créez une nouvelle scène dans Gladys, puis ajoutez lui une action "Faire une requête HTTP".
 
-Sélectionnez "méthode: POST", puis dans URL entrez l'URL du webhook IFTTT que vous avez configuré précédemment.
+Sélectionnez "Méthode: POST", puis dans URL entrez l'URL du webhook IFTTT que vous avez configuré précédemment.
 
 ![Créer une action requête HTTP](../../../../../static/img/docs/fr/scenes/http-request/gladys-scene-http-request-box.jpg)
 
