@@ -35,5 +35,5 @@ Vous voilà maintenant dans l'éditeur de scène. Analysons ensemble chaque part
 4. Enregistrer : Ce bouton enregistre la scène.
 5. Supprimer : Ce bouton supprime la scène.
 6. Ajouter déclencheur : Ce bouton vous permet d'ajouter un déclencheur à la scène. Vous pouvez ajouter autant de déclencheurs que vous voulez.
-7. Ajouter action : Ce bouton ajoute une action au bloc d'action.
-8. Cliquer sur le titre de la scène pour l'éditer.
+7. Ajouter action : Ce bouton ajoute une action au bloc d'actions.
+8. Cliquez sur le titre de la scène pour l'éditer.
