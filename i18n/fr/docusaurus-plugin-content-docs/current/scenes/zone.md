@@ -6,7 +6,7 @@ sidebar_label: Utilisateur entre/sort d'une zone
 
 Il est possible de déclencher une scène quand un utilisateur entre/sort d'une zone.
 
-Les zones peuvent être créée dans la vue "Plans".
+Les zones peuvent être créées dans la vue "Plans".
 
 ![Plan](../../../../../static/img/docs/fr/scenes/zone/map.jpg)
 
