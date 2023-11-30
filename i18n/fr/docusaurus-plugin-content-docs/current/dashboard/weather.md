@@ -4,7 +4,7 @@ title: Box météo
 sidebar_label: Météo
 ---
 
-Dans Gladys Assistant, vous pouvez afficher la météo à votre localisation sur le tableau de bord.
+Dans Gladys Assistant, vous pouvez afficher la météo liée à votre localisation sur le tableau de bord.
 
 ## Pré-requis
 
