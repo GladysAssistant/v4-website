@@ -30,7 +30,7 @@ Vous arrivez sur votre instance locale de Node-RED.
 
 ![Login Node-RED](../../../../../static/img/docs/fr/configuration/node-red/node-red_login_fr.png)
 
-Pour vous connecter, il faut utiliser les informations de connection fourni dans la partie `Configuration` 
+Pour vous connecter, il faut utiliser les informations de connexion fournies dans la partie `Configuration` 
 
 ## Utilisation
 
