@@ -10,7 +10,7 @@ Gladys utilisera ensuite Telegram/le chat web Gladys pour contacter l'utilisateu
 
 ## Exemple simple
 
-Pour envoyer un message, c'est très simple, créez une action "envoyer un message" dans une scène, et sélectionnez l'utilisateur qui doit recevoir le message.
+Pour envoyer un message, c'est très simple, créez une action "Envoyer un message" dans une scène, et sélectionnez l'utilisateur qui doit recevoir le message.
 
 ![Envoyer un message](../../../../../static/img/docs/fr/scenes/send-a-message-action/send-a-message.png)
 
@@ -20,11 +20,11 @@ Imaginons que vous voulez vous envoyer une alerte quand la température est trop
 
 Vous voulez injecter la valeur de la température actuelle dans le message, afin de savoir la valeur de température actuelle.
 
-Pour cela, vous devez dans votre scène ajouter une action "récupérer le dernier état" et sélectionnez le capteur que vous voulez requêter.
+Pour cela, vous devez dans votre scène ajouter une action "Récupérer le dernier état" puis vous sélectionnez le capteur que vous voulez requêter.
 
 ![Récupérer valeur capteur](../../../../../static/img/docs/fr/scenes/send-a-message-action/get-device-value.jpg)
 
-Ensuite, plus loin dans la scène, vous pouvez ajouter une action "envoyer un message", et dans le message vous tapez "{{" et sélectionnez la variable précédemment défini.
+Ensuite, plus loin dans la scène, vous pouvez ajouter une action "Envoyer un message" et dans le message vous tapez "{{ " puis vous sélectionnez la variable précédemment définie.
 
 <div class="videoContainer">
 <video  width="100%" controls autoplay loop muted>
