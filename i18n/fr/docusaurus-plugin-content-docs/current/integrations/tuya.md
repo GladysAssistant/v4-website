@@ -25,7 +25,7 @@ Cliquez sur « Create ».
 
 
 4. Autorisez les services API suivants :
-   (Elles sont normalement sélectionnées par default)
+   (Ils sont normalement sélectionnés par default)
 * IoT Core 
 * Authorization Token Management 
 * Smart Home Scene Linkage 
