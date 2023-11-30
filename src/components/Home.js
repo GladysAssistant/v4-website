@@ -20,12 +20,12 @@ const COMPATIBILITIES = [
     { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
     { title: "Philips-Hue", imgSrc: "philips-hue.jpg", docKey: "philips-hue" },
     { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
-    { title: "Xiaomi", imgSrc: "xiaomi.jpg", docKey: "xiaomi" },
+    { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
   ],
   [
     { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
-    { title: "TP-Link", imgSrc: "tp-link.jpg", docKey: "tp-link" },
-    { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
+    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
+    { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],
 ];
@@ -41,9 +41,10 @@ const FAQQuestions = {
       title: <>Quel matériel requis pour installer Gladys Assistant ?</>,
       response: (
         <>
-          Gladys peut s'installer sur n'importe quelle machine Linux (un Raspberry
-          Pi, un NAS, un serveur, un vieux PC Linux, peu importe !), du moment
-          que Docker tourne sur la machine, Gladys peut tourner dessus. <br />
+          Gladys peut s'installer sur n'importe quelle machine Linux (un
+          Raspberry Pi, un NAS, un serveur, un vieux PC Linux, peu importe !),
+          du moment que Docker tourne sur la machine, Gladys peut tourner
+          dessus. <br />
           <br />
           PS: Gladys Assistant est <b>gratuite</b>, c'est un simple container
           Docker à lancer{" "}
@@ -85,12 +86,14 @@ const FAQQuestions = {
           Gladys Assistant est entièrement open-source et disponible sur{" "}
           <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
           Toute PR est la bienvenue 🙂 <br />
-          <br /> Si tu veux contribuer, n'hésite pas à venir sur la{" "}
+          <br /> Si tu veux contribuer, lis notre tutoriel{" "}
+          <a href="/fr/docs/dev/developing-a-service/">
+            Contribuer sur Gladys Assistant
+          </a>{" "}
+          et n'hésite pas à venir sur la{" "}
           <a href="https://community.gladysassistant.com/">communauté</a> pour
-          parler du développement sur lequel tu veux te lancer. Ça permettra de
-          voir avec les autres développeurs si quelqu'un d'autre ne travaille pas
-          déjà dessus, et surtout de discuter "spécifications" avant de partir
-          dans le développement !
+          parler du développement sur lequel tu veux te lancer. N'hésite pas si
+          tu as des questions, on est toujours là pour donner un coup de main !
         </>
       ),
     },
@@ -108,6 +111,28 @@ const FAQQuestions = {
           est une "Progressive Web App" que vous pouvez installer sur votre
           smartphone (Android et iOS), et ainsi avoir accès à Gladys de partout
           dans le monde.
+        </>
+      ),
+    },
+    {
+      title: <>Sondage Noël 2023 : Que penses-tu de Gladys Assistant ?</>,
+      response: (
+        <>
+          <p>
+            Nous sommes à la recherche de retours sur Gladys : Que penses-tu du
+            projet ? Si tu n'utilise pas encore Gladys, pourquoi ?
+          </p>
+          <p>
+            Pour répondre au sondage,{" "}
+            <a
+              href="https://forms.gle/KPo69uyeP3HrTrd57"
+              rel="nofollow"
+              target="_blank"
+            >
+              rendez-vous ici
+            </a>{" "}
+            !
+          </p>
         </>
       ),
     },
@@ -671,9 +696,9 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="FdD56kxIbGs" disablePadding />
+                      <YoutubeEmbedVideo id="M4vOjQXMiZI" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Utiliser ChatGPT pour contrôler sa maison connectée
+                        Live coding : Une intégration Sonos en une journée ?
                       </h4>
                     </div>
                   </div>
