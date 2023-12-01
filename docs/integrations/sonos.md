@@ -36,7 +36,7 @@ Now you can add a **music widget** to your dashboard and control your Sonos spea
 
 Go to the Gladys dashboard and click on the `edit` button to modify the dashboard.
 
-![image.jpg](Connect%20a%20Sonos%20speaker%20to%20your%20home%20automation%20sy%20407808a1935f4775999ce1ed00f723f5/image.jpg)
+![edit dashboard](<../../static/img/docs/en/configuration/sonos/edit dashboard.jpg>)
 
 Click on `add +` then select the `music` widget - you can move it to a column.
 

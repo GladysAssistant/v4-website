@@ -36,9 +36,8 @@ Vous pouvez maintenant rajouter un **widget musique** sur votre tableau de bord 
 
 Rendez-vous sur le dashboard de Gladys et cliquez sur le bouton `éditer` pour modifier le dashboard.
 
-![https://gladysassistant.com/fr/assets/images/camera-step-5-3e74bd1a02985544eff8abcd18b8504a.jpg](https://gladysassistant.com/fr/assets/images/camera-step-5-3e74bd1a02985544eff8abcd18b8504a.jpg)
+![edit dashboard](<../../../../../static/img/docs/fr/configuration/sonos/edit dashboard.jpg>)
 
-[](https://gladysassistant.com/fr/docs/integrations/camera/#ajoutez-la-cam%C3%A9ra-au-dashboard-de-gladys-assistant)
 
 Cliquez sur `ajouter +` puis sélectionnez le widget `musique` vous pouvez le déplacer dans une colonne.
 
