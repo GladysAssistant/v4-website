@@ -1,7 +1,6 @@
 # Connecter une enceinte Sonos à sa domotique
 
-![Capture intégration.PNG](v4-website/static/img/docs/fr/configuration
-/Capture_appareils.png)
+![Capture intégration.PNG](https://gladysassistant.com/fr/docs/integrations/Sonos/Capture_appareils.png)
 
 ## Prérequis[](https://gladysassistant.com/fr/docs/integrations/sonoff/#pr%C3%A9requis)
 
