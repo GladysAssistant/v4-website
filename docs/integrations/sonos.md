@@ -18,7 +18,7 @@ After adding your speakers in the Sonos application, go back to Gladys:
 1. go to the `Integration -> Sonos` page in Gladys
 2. select the `Sonos Discovery` menu
     
-    ![Connect%20a%20Sonos%20speaker%20to%20your%20home%20automation%20sy%20407808a1935f4775999ce1ed00f723f5/Capture_dcouverte_Sonos.png](../../static/img/docs/en/configuration/sonos/Capture_dcouverte_Sonos.png)
+    ![Capture_dcouverte_Sonos.png](../../static/img/docs/en/configuration/sonos/Capture_dcouverte_Sonos.png)
     
 3. click on the `Scanner` button at top right (if the device is not already in the list)
 4. finally, click on `Save` for the speakers you want to integrate into Gladys
@@ -28,7 +28,7 @@ After adding your speakers in the Sonos application, go back to Gladys:
 
 If necessary, you can go to the `Apparatus` menu to modify / complete the configuration of your speakers by adding them to a room or renaming them.
 
-![Connect%20a%20Sonos%20speaker%20to%20your%20home%20automation%20sy%20407808a1935f4775999ce1ed00f723f5/Capture_appareils.png](../../static/img/docs/en/configuration/sonos/Capture_appareils.png)
+![Capture_appareils.png](../../static/img/docs/en/configuration/sonos/Capture_appareils.png)
 
 ## Control music on the dashboard
 
