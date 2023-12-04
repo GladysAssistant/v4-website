@@ -14,9 +14,18 @@ The server is a Node.js backend.
 
 You'll need:
 
-- Node.js 18 LTS ([Download](https://nodejs.org/en/download/))
-- sqlite3 ([sqlite in Homebrew](https://formulae.brew.sh/formula/sqlite) on MacOS, `sudo apt install sqlite3` on Ubuntu/Debian)
-- openssl ([OpenSSL 3 in Homebrew](https://formulae.brew.sh/formula/openssl@3) on MacOS, `sudo apt install openssl` on Ubuntu/Debian)
+- Node.js 18 LTS ([Download](https://nodejs.org/en/download/) on MacOs).
+- Node.js 18 LTS on Ubuntu/Debian:
+
+  ```bash
+  curl -sLO https://deb.nodesource.com/nsolid_setup_deb.sh
+  sudo bash nsolid_setup_deb.sh 18
+  sudo apt install nodejs -y
+  ```
+Alternatively you can use [nvm](https://github.com/nvm-sh/nvm) to install and manage nodejs version.
+
+- sqlite3 ([sqlite in Homebrew](https://formulae.brew.sh/formula/sqlite) on MacOS, `sudo apt install sqlite3` on Ubuntu/Debian).
+- Openssl ([OpenSSL 3 in Homebrew](https://formulae.brew.sh/formula/openssl@3) on MacOS, `sudo apt install openssl` on Ubuntu/Debian).
 
 ### Clone Gladys Git repo
 
@@ -36,10 +45,23 @@ As you probaly don't need to run every single integration when developing, we re
 INSTALL_SERVICES_SILENT_FAIL=true
 ```
 
-Then run:
+To create the `.env` file with the previous content:
+
+```bash
+echo "INSTALL_SERVICES_SILENT_FAIL=true" > .env
+```
+
+Then you can install server dependencies:
 
 ```
 npm install
+```
+
+
+### Run DB migration
+
+```
+npm run db-migrate:dev
 ```
 
 ### Start the server

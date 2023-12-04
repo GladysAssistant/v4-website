@@ -31,13 +31,13 @@ La première fois Ubuntu vous demandera de créer un utilisateur.
 
 ### Dépendences systèmes
 
-La première étape est de mettre à jour la distribution:
+La première étape est de mettre à jour la distribution :
 
 ```bash
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 ```
 
-- Installation des outils/librairies:
+- Installation des outils/librairies :
 
 ```bash
 sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
@@ -46,8 +46,8 @@ sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
 - Installation de Node.js 18:
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
-sudo bash nodesource_setup.sh
+curl -sLO https://deb.nodesource.com/nsolid_setup_deb.sh
+sudo bash nsolid_setup_deb.sh 18
 sudo apt install nodejs -y
 ```
 
@@ -71,12 +71,16 @@ cd server
 
 Lorsque vous installez les dépendances serveurs, Gladys va installer toutes les dépendances, y compris celles des intégrations.
 
-Lorsque vous développez sur votre machine, vous n'avez pas forcément besoin d'installer toutes les intégrations car certaines ne sont que compatibles Linux.
-
-Nous vous recommandons de créer un fichier `.env` dans le dossier `server` avec le contenu suivant :
+Lorsque vous développez sur votre machine, vous n'avez pas forcément besoin d'installer toutes les intégrations, nous vous recommandons de créer un fichier `.env` dans le dossier `server` avec le contenu suivant :
 
 ```
 INSTALL_SERVICES_SILENT_FAIL=true
+```
+
+Pour créer le fichier `.env` avec le contenu précédent :
+
+```bash
+echo "INSTALL_SERVICES_SILENT_FAIL=true" > .env
 ```
 
 Ce qui va indiquer à Gladys que l'installation des intégrations n'est pas obligatoire pour développer.
@@ -93,7 +97,7 @@ npm install
 npm run db-migrate:dev
 ```
 
-### Lancer le serveur
+### Démarrer le serveur
 
 ```
 npm start
@@ -103,7 +107,7 @@ Le serveur devrait être accessible à `http://localhost:1443`.
 
 ## Le frontend
 
-A la racine du repo git, faites:
+A la racine du repo git, faites :
 
 ```
 cd front
@@ -115,7 +119,7 @@ cd front
 npm install
 ```
 
-### Lancer le frontend
+### Démarrer le frontend
 
 ```
 npm start
@@ -127,23 +131,23 @@ Le frontend devrait être accessible à `http://localhost:1444`.
 
 Placez vous dans le dossier `server`.
 
-Lancez:
+Lancez :
 
 ```
 npm test
 ```
 
-Ce qui va lancer ESLint + les tests Mocha.
+Ce qui va lancer les tests mochas.
 
-Comme c'est un peu lourd de lancer ESLint à chaque fois que vous lancez un test, il est possible de lancer les tests Mocha uniquement avec la commande suivante :
+Pour faire tourner le linter :
 
 ```
-npm run test-without-lint
+npm run eslint
 ```
 
 ## Lancer les tests d'un seul service
 
-Pour lancer les tests d'un seul service, placez vous dans le dossier `server`, et lancez la commande:
+Pour lancer les tests d'un seul service, placez vous dans le dossier `server`, et lancez la commande :
 
 ```
 npm run test-service --service=tasmota
@@ -151,7 +155,7 @@ npm run test-service --service=tasmota
 
 ## Lancer VSCode
 
-Vous pouvez lancer Visual Studio Code depuis ubuntu avec cette commande:
+Vous pouvez lancer Visual Studio Code depuis ubuntu avec cette commande :
 
 ```
 code .
