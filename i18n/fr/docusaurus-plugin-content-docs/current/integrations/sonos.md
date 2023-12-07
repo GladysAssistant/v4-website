@@ -18,7 +18,7 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 1. allez sur la page `Intégration -> Sonos` dans Gladys
 2. sélectionnez le menu `Découverte Sonos`
     
-    ![Capture découverte Sonos](../../../../../static/img/docs/fr/configuration/sonos/Capture_dcouverte_Sonos.png)
+    ![Capture découverte Sonos](../../../../../static/img/docs/fr/configuration/sonos/Capture_decouverte_Sonos.png)
     
 3. cliquez sur le bouton `Scanner` en haut à droite (si le périphérique n'est pas déjà dans la liste)
 4. enfin, cliquez sur `Sauvegarder` pour les enceintes que vous voulez intégrer à Gladys

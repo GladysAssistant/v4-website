@@ -1,6 +1,6 @@
 # Connect a Sonos speaker to your home automation system
 
-![Capture intégration](../../static/img/docs/en/configuration/sonos/Capture_intgration.png)
+![Capture intégration](../../static/img/docs/en/configuration/sonos/integration_sonos.png)
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ After adding your speakers in the Sonos application, go back to Gladys:
 1. go to the `Integration -> Sonos` page in Gladys
 2. select the `Sonos Discovery` menu
     
-    ![Capture_dcouverte_Sonos](../../static/img/docs/en/configuration/sonos/Capture_dcouverte_Sonos.png)
+    ![Capture_dcouverte_Sonos](../../static/img/docs/en/configuration/sonos/Capture_decouverte_Sonos.png)
     
 3. click on the `Scanner` button at top right (if the device is not already in the list)
 4. finally, click on `Save` for the speakers you want to integrate into Gladys
