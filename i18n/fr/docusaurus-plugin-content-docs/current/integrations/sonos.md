@@ -18,7 +18,7 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 1. allez sur la page `Intégration -> Sonos` dans Gladys
 2. sélectionnez le menu `Découverte Sonos`
     
-    ![Capture découverte Sonos.PNG](../../../../../static/img/docs/fr/configuration/sonos/Capture_dcouverte_Sonos.png)
+    ![Capture découverte Sonos](../../../../../static/img/docs/fr/configuration/sonos/Capture_dcouverte_Sonos.png)
     
 3. cliquez sur le bouton `Scanner` en haut à droite (si le périphérique n'est pas déjà dans la liste)
 4. enfin, cliquez sur `Sauvegarder` pour les enceintes que vous voulez intégrer à Gladys
@@ -28,7 +28,7 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 
 Si nécessaire, vous pouvez vous rendre dans le menu `Appareils` pour modifier / compléter la configuration de vos enceintes en les ajoutant dans une pièce ou en les renommant.
 
-![Capture appareils.PNG](../../../../../static/img/docs/fr/configuration/sonos/Capture_appareils.png)
+![Capture appareils](../../../../../static/img/docs/fr/configuration/sonos/Capture_appareils.png)
 
 ## Contrôler la musique sur le tableau de bord
 
@@ -43,10 +43,10 @@ Cliquez sur `ajouter +` puis sélectionnez le widget `musique` vous pouvez le d�
 
 Sélectionnez votre enceinte, et cliquez sur `Enregistrer`
 
-![widget musique.PNG](../../../../../static/img/docs/fr/configuration/sonos/widget_musique.png)
+![widget musique](../../../../../static/img/docs/fr/configuration/sonos/widget_musique.png)
 
 Voilà ! Votre widget est visible sur le dashboard.
 
-![Capture box musique.PNG](../../../../../static/img/docs/fr/configuration/sonos/Capture_box_musique.png)
+![Capture box musique](../../../../../static/img/docs/fr/configuration/sonos/Capture_box_musique.png)
 
 Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.

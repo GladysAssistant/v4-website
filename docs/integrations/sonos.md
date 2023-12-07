@@ -1,6 +1,6 @@
 # Connect a Sonos speaker to your home automation system
 
-![Capture intégration.PNG](../../static/img/docs/en/configuration/sonos/Capture_intgration.png)
+![Capture intégration](../../static/img/docs/en/configuration/sonos/Capture_intgration.png)
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ After adding your speakers in the Sonos application, go back to Gladys:
 1. go to the `Integration -> Sonos` page in Gladys
 2. select the `Sonos Discovery` menu
     
-    ![Capture_dcouverte_Sonos.png](../../static/img/docs/en/configuration/sonos/Capture_dcouverte_Sonos.png)
+    ![Capture_dcouverte_Sonos](../../static/img/docs/en/configuration/sonos/Capture_dcouverte_Sonos.png)
     
 3. click on the `Scanner` button at top right (if the device is not already in the list)
 4. finally, click on `Save` for the speakers you want to integrate into Gladys
@@ -28,7 +28,7 @@ After adding your speakers in the Sonos application, go back to Gladys:
 
 If necessary, you can go to the `Apparatus` menu to modify / complete the configuration of your speakers by adding them to a room or renaming them.
 
-![Capture_appareils.png](../../static/img/docs/en/configuration/sonos/Capture_appareils.png)
+![Capture_appareils](../../static/img/docs/en/configuration/sonos/Capture_appareils.png)
 
 ## Control music on the dashboard
 
@@ -42,10 +42,10 @@ Click on `add +` then select the `music` widget - you can move it to a column.
 
 Select your speaker, and click `Record`.
 
-![widget musique.PNG](../../static/img/docs/en/configuration/sonos/widget_musique.png)
+![widget musique](../../static/img/docs/en/configuration/sonos/widget_musique.png)
 
 That's it! Your widget is visible on the dashboard.
 
-![Capture box musique.PNG](../../static/img/docs/en/configuration/sonos/Capture_box_musique.png)
+![Capture box musique](../../static/img/docs/en/configuration/sonos/Capture_box_musique.png)
 
 Please post a message on [the forum](https://community.gladysassistant.com/), if you need any help.
