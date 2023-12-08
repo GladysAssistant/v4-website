@@ -6,7 +6,7 @@ sidebar_label: Sonos
 
 # Connecter une enceinte Sonos à sa domotique
 
-    ![Capture intégration](../../../../../static/img/docs/fr/configuration/sonos/integration_sonos.png)
+![integration sonos](../../../../../static/img/docs/fr/configuration/sonos/integration_sonos.png)
 
 ## Prérequis[](https://gladysassistant.com/fr/docs/integrations/sonoff/#pr%C3%A9requis)
 
@@ -34,7 +34,7 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 
 Si nécessaire, vous pouvez vous rendre dans le menu `Appareils` pour modifier / compléter la configuration de vos enceintes en les ajoutant dans une pièce ou en les renommant.
 
-    ![Capture appareils](../../../../../static/img/docs/fr/configuration/sonos/Capture_appareils.png) 
+![Capture appareils](../../../../../static/img/docs/fr/configuration/sonos/Capture_appareils.png)
 
 ## Contrôler la musique sur le tableau de bord
 
@@ -42,17 +42,17 @@ Vous pouvez maintenant rajouter un **widget musique** sur votre tableau de bord 
 
 Rendez-vous sur le dashboard de Gladys et cliquez sur le bouton `éditer` pour modifier le dashboard.
 
-    ![edit dashboard](<../../../../../static/img/docs/fr/configuration/sonos/Capture édition dashboard fr.png>)
+![capture edition dashboard](<../../../../../static/img/docs/fr/configuration/sonos/Capture édition dashboard fr.png>)
 
 
 Cliquez sur `ajouter +` puis sélectionnez le widget `musique` vous pouvez le déplacer dans une colonne.
 
 Sélectionnez votre enceinte, et cliquez sur `Enregistrer`
 
-    ![widget musique](../../../../../static/img/docs/fr/configuration/sonos/widget_musique.png)
+![widget musique](../../../../../static/img/docs/fr/configuration/sonos/widget_musique.png)
 
 Voilà ! Votre widget est visible sur le dashboard.
 
-    ![Capture box musique](../../../../../static/img/docs/fr/configuration/sonos/Capture_box_musique.png)
+![capture box musique](../../../../../static/img/docs/fr/configuration/sonos/Capture_box_musique.png)
 
 Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
