@@ -28,7 +28,7 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 
 Si nécessaire, vous pouvez vous rendre dans le menu `Appareils` pour modifier / compléter la configuration de vos enceintes en les ajoutant dans une pièce ou en les renommant.
 
-![Capture appareils](../../../../../static/img/docs/fr/configuration/sonos/Capture_appareils.png)
+![Capture appareils](../../../../../static/img/docs/fr/configuration/sonos/Capture_appareils.png) 
 
 ## Contrôler la musique sur le tableau de bord
 

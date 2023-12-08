@@ -33,6 +33,7 @@ module.exports = {
         "integrations/owntracks",
         "integrations/philips-hue",
         "integrations/sonoff",
+        "integrations/sonos,
         "integrations/tasmota",
         "integrations/telegram",
         "integrations/tp-link",
