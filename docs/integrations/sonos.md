@@ -54,4 +54,4 @@ That's it! Your widget is visible on the dashboard.
 
 ![Capture box musique](../../static/img/docs/en/configuration/sonos/Capture_box_musique.png)
 
-Please post a message on [the forum](https://community.gladysassistant.com/), if you need any help.
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
