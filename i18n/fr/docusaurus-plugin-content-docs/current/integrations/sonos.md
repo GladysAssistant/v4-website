@@ -1,3 +1,9 @@
+---
+id: sonos
+title: Sonos
+sidebar_label: Sonos
+---
+
 # Connecter une enceinte Sonos à sa domotique
 
 ![Capture intégration](../../../../../static/img/docs/fr/configuration/sonos/integration_sonos.png)

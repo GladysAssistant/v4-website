@@ -1,3 +1,9 @@
+---
+id: sonos
+title: Sonos
+sidebar_label: Sonos
+---
+
 # Connect a Sonos speaker to your home automation system
 
 ![Capture intégration](../../static/img/docs/en/configuration/sonos/integration_sonos.png)
