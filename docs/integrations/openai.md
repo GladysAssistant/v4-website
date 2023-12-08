@@ -4,6 +4,8 @@ title: Using ChatGPT to control your connected home
 sidebar_label: ChatGPT
 ---
 
+![Capture intégration](<../../static/img/docs/en/configuration/openai/intégration OpenAI ChatGPT.png>)
+
 OpenAI definitely revolutionized the world of artificial intelligence when it launched ChatGPT last year.
 
 What if you could use ChatGPT to control your connected home?

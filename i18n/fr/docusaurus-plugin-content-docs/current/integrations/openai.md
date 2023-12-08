@@ -4,6 +4,8 @@ title: Utiliser ChatGPT pour contrôler sa maison connectée
 sidebar_label: ChatGPT
 ---
 
+   ![Capture intégration](<../../../../../static/img/docs/fr/configuration/openai/intégration OpenAI ChatGPT.png>)
+
 OpenAI a définitivement révolutionné le monde de l’intelligence artificielle en lançant ChatGPT l’année dernière.
 
 Et si tu pouvais utiliser ChatGPT pour contrôler ta maison connectée ?
