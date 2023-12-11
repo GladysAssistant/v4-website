@@ -4,7 +4,7 @@ title: Connecter une enceinte Sonos à sa maison connectée
 sidebar_label: Sonos
 ---
 
-import { center-content, center-image } from '../../src/css/custom.module.css';
+import { center-content, center-image } from '../../src/css/custom.css';
 
 <div class={center-content}>
   <div class={center-image}>
