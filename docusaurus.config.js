@@ -171,8 +171,8 @@ module.exports = {
         },
         docs: {
           // Spécifiez le chemin vers votre fichier CSS personnalisé
-          path: 'src/docs',
-          sidebarPath: require.resolve("./src/css/custom.css"),
+          path: 'docs',
+          sidebarPath: require.resolve('./sidebars.js'),
         },
         blog: {
           showReadingTime: true,
