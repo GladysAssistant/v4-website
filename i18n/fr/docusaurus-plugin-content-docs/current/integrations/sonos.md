@@ -4,13 +4,13 @@ title: Connecter une enceinte Sonos à sa maison connectée
 sidebar_label: Sonos
 ---
 
-export default () => (
-<div style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
-  <div style="text-align: center;">
+
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+  <div style={{ textAlign: 'center' }}>
 ![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
 </div>
-);
+;
 
 ## Prérequis
 
