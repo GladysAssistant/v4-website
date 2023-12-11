@@ -6,8 +6,8 @@ sidebar_label: Sonos
 
 import { center-content, center-image } from '../../src/css/custom.module.css';
 
-<div className={center-content}>
-  <div className={center-image}>
+<div class={center-content}>
+  <div class={center-image}>
 ![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
 </div>
