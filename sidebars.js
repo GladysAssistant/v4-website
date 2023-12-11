@@ -30,6 +30,7 @@ module.exports = {
         "integrations/mqtt",
         "integrations/node-red",
         "integrations/openweather",
+        "integrations/openai",
         "integrations/owntracks",
         "integrations/philips-hue",
         "integrations/sonoff",
