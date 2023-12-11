@@ -203,7 +203,7 @@ module.exports = {
       src: "https://abcdef.gladysassistant.com/latest.js",
     },
   ],
-  customCss: [
+  customFields: [
     [
     require.resolve('./src/css/custom.css'),
   ],
