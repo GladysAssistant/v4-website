@@ -39,19 +39,18 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 
 - Libraries installation:
 
-```bash
-sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
-```
+  ```bash
+  sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
+  ```
 
 - Node.js 18 Installation:
 
-```bash
-curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
-sudo bash nodesource_setup.sh
-sudo apt install nodejs -y
-```
-
-Alternatively you can use [nvm](https://github.com/nvm-sh/nvm) to install and manage nodejs version.
+  ```bash
+  curl -sLO https://deb.nodesource.com/nsolid_setup_deb.sh
+  sudo bash nsolid_setup_deb.sh 18
+  sudo apt install nodejs -y
+  ```
+  Alternatively you can use [nvm](https://github.com/nvm-sh/nvm) to install and manage nodejs version.
 
 ## Server
 
@@ -75,13 +74,19 @@ As you probaly don't need to run every single integration when developing, we re
 INSTALL_SERVICES_SILENT_FAIL=true
 ```
 
+To create the `.env` file with the previous content:
+
+```bash
+echo "INSTALL_SERVICES_SILENT_FAIL=true" > .env
+```
+
 Then you can install server dependencies:
 
 ```
 npm install
 ```
 
-### Start DB migration
+### Run DB migration
 
 ```
 npm run db-migrate:dev
@@ -127,13 +132,13 @@ And run:
 npm test
 ```
 
-This will run Eslint + mocha tests. As it's painful to run eslint everytime, you can do:
+This will run Mocha tests.
+
+You can run the linter with:
 
 ```
-npm run test-without-lint
+npm run eslint
 ```
-
-If you want to run only mocha tests.
 
 ## Start server tests only for a single service
 
