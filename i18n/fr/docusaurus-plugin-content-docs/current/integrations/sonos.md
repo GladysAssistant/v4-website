@@ -12,7 +12,8 @@ export default () => (
 ![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
 </div>
-)
+);
+
 ## Prérequis
 
 Vous devez disposer de l’application Sonos pour connecter vos enceintes Sonos (sonos Play 1, sonos One, sonos Playbar, sonos Sub, sonos Port, …)
