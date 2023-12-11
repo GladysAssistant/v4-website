@@ -203,19 +203,9 @@ module.exports = {
       src: "https://abcdef.gladysassistant.com/latest.js",
     },
   ],
-  // ...
-  themes: [
-    // ...
-    '@docusaurus/theme-classic',
-    '@docusaurus/theme-search-algolia',
-    // ...
-  ],
-  plugins: [
-    // ...
-  ],
   customCss: [
-    // Ajoutez le chemin vers votre fichier CSS personnalisé
+    [
     require.resolve('./src/css/custom.css'),
-    
   ],
-};
+]
+}
