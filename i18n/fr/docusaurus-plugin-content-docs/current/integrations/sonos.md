@@ -7,7 +7,9 @@ sidebar_label: Sonos
 
 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
   <div style={{ textAlign: 'center' }}>
-![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
+
+![cover](../../../../../static/img/docs/cover/sonos.jpg)
+
   </div>
 </div>
 
