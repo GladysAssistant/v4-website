@@ -5,7 +5,7 @@ sidebar_label: Sonos
 ---
 
 export default () => (
-<div class={center-content}>
+<div class={center}>
   <div class={center-image}>
 ![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
