@@ -5,8 +5,8 @@ sidebar_label: Sonos
 ---
 
 export default () => (
-<div class={center}>
-  <div class={center-image}>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+  <div style="text-align: center;">
 ![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
 </div>
