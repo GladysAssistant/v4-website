@@ -208,4 +208,10 @@ module.exports = {
       src: "https://abcdef.gladysassistant.com/latest.js",
     },
   ],
+  stylesheets: [
+    {
+      rel: 'stylesheet',
+      href: '/css/custom.css',
+    },
+  ],
 }

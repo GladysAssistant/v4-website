@@ -4,13 +4,15 @@ title: Connecter une enceinte Sonos à sa maison connectée
 sidebar_label: Sonos
 ---
 
-import { center-content, center-image } from '../../src/css/custom.css';
+import React from 'react';
 
+export default () => (
 <div class={center-content}>
   <div class={center-image}>
 ![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
 </div>
+)
 ## Prérequis
 
 Vous devez disposer de l’application Sonos pour connecter vos enceintes Sonos (sonos Play 1, sonos One, sonos Playbar, sonos Sub, sonos Port, …)
