@@ -4,8 +4,6 @@ title: Connecter une enceinte Sonos à sa maison connectée
 sidebar_label: Sonos
 ---
 
-import React from 'react';
-
 export default () => (
 <div class={center-content}>
   <div class={center-image}>
