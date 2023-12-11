@@ -10,7 +10,6 @@ sidebar_label: Sonos
 ![cover_sonos](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
 </div>
-;
 
 ## Prérequis
 
