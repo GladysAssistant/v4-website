@@ -45,6 +45,15 @@ module.exports = {
       ],
     },
     {
+    type: "category",
+      label: "Docs",
+      items: [
+        "doc/Alexa",
+        "doc/sonos",
+        "doc/sonoff",
+      ],
+    },
+    {
       type: "category",
       label: "Scenes",
       items: [
