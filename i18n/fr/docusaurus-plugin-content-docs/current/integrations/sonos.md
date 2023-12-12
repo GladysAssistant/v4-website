@@ -25,8 +25,9 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 
 1. allez sur la page `Intégration -> Sonos` dans Gladys
 2. sélectionnez le menu `Découverte Sonos`
+
 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center', margin: '5px' }}>
+  <div style={{ textAlign: 'center', margin: '0px' }}>
 
    ![Découverte Sonos](../../../../../static/img/docs/fr/configuration/sonos/sonos_discovery.png)
   </div>
