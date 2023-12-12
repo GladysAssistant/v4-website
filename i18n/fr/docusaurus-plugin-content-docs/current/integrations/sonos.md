@@ -71,6 +71,7 @@ Sélectionnez votre enceinte, et cliquez sur `Enregistrer`
 </div>
 Voilà ! Votre widget est visible sur le tableau de bord.
 
+
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
   <div style={{ textAlign: 'center'}}>
 
