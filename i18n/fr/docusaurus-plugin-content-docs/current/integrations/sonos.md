@@ -3,8 +3,8 @@ id: sonos
 title: Connecter une enceinte Sonos à sa maison connectée
 sidebar_label: Sonos
 ---
-<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center', margin: '0px' }}>
+<div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
+  <div style={{ textAlign: 'center'}}>
 
 ![cover](../../../../../static/img/docs/cover/sonos.jpg)
   </div>
@@ -40,8 +40,9 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 ## Renommer / placer une enceinte dans une pièce
 
 Si nécessaire, vous pouvez vous rendre dans le menu `Appareils` pour modifier / compléter la configuration de vos enceintes en les ajoutant dans une pièce ou en les renommant.
-<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center', margin: '0px' }}>
+
+<div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
+  <div style={{ textAlign: 'center'}}>
 
 ![Appareils Sonos](../../../../../static/img/docs/fr/configuration/sonos/add_sonos_speaker.png)
   </div>
@@ -51,8 +52,9 @@ Si nécessaire, vous pouvez vous rendre dans le menu `Appareils` pour modifier
 Vous pouvez maintenant rajouter un **widget musique** sur votre tableau de bord et contrôler vos enceintes Sonos grâce au player musique.
 
 Rendez-vous sur le dashboard de Gladys et cliquez sur le bouton `éditer` pour modifier le dashboard.
-<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center', margin: '0px' }}>
+
+<div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
+  <div style={{ textAlign: 'center'}}>
 
 ![Edition dashboard Gladys](../../../../../static/img/docs/fr/configuration/sonos/edit_dashboard.png)
   </div>
@@ -60,13 +62,15 @@ Rendez-vous sur le dashboard de Gladys et cliquez sur le bouton `éditer` pour m
 Cliquez sur `ajouter +` puis sélectionnez le widget `musique` vous pouvez le déplacer dans une colonne.
 
 Sélectionnez votre enceinte, et cliquez sur `Enregistrer`
-<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center', margin: '0px' }}>
+
+<div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
+  <div style={{ textAlign: 'center'}}>
 
 ![Edition Widget musique](../../../../../static/img/docs/fr/configuration/sonos/edit_music_widget.png)
   </div>
 </div>
 Voilà ! Votre widget est visible sur le tableau de bord.
+
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
   <div style={{ textAlign: 'center'}}>
 
