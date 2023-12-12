@@ -19,12 +19,6 @@ module.exports = {
       type: "category",
       label: "Integrations",
       items: [
-        {
-          type: "doc",
-          id: "integrations/Integrations", // Remplacez par l'ID de votre nouvelle page
-        },
-      ],
-    },
         "integrations/alexa",
         "integrations/bluetooth",
         "integrations/broadlink",
