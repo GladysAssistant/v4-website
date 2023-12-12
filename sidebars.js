@@ -19,6 +19,12 @@ module.exports = {
       type: "category",
       label: "Integrations",
       items: [
+        {
+          type: "doc",
+          id: "integrations/Integrations", // Remplacez par l'ID de votre nouvelle page
+        },
+      ],
+    },
         "integrations/alexa",
         "integrations/bluetooth",
         "integrations/broadlink",
@@ -42,15 +48,6 @@ module.exports = {
         "integrations/xiaomi",
         "integrations/zigbee2mqtt",
         "integrations/zwave",
-      ],
-    },
-    {
-    type: "category",
-      label: "Docs",
-      items: [
-        "doc/Alexa",
-        "doc/sonos",
-        "doc/sonoff",
       ],
     },
     {
