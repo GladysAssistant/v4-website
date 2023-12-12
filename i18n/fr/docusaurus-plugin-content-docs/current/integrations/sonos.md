@@ -4,10 +4,8 @@ title: Connecter une enceinte Sonos à sa maison connectée
 sidebar_label: Sonos
 ---
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center'}}>
 
 ![cover](../../../../../static/img/docs/cover/sonos.jpg)
-  </div>
 </div>
 
 ## Prérequis
@@ -27,10 +25,8 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 2. sélectionnez le menu `Découverte Sonos`
 
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center'}}>
 
    ![Découverte Sonos](../../../../../static/img/docs/fr/configuration/sonos/sonos_discovery.png)
-  </div>
 </div>
 
 3. cliquez sur le bouton `Scanner` en haut à droite (si le périphérique n'est pas déjà dans la liste)
@@ -42,10 +38,8 @@ Après avoir ajouté vos enceintes dans l’application Sonos, retournez dans Gl
 Si nécessaire, vous pouvez vous rendre dans le menu `Appareils` pour modifier / compléter la configuration de vos enceintes en les ajoutant dans une pièce ou en les renommant.
 
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center'}}>
 
 ![Appareils Sonos](../../../../../static/img/docs/fr/configuration/sonos/add_sonos_speaker.png)
-  </div>
 </div>
 ## Contrôler la musique sur le tableau de bord
 
@@ -54,20 +48,16 @@ Vous pouvez maintenant rajouter un **widget musique** sur votre tableau de bord 
 Rendez-vous sur le dashboard de Gladys et cliquez sur le bouton `éditer` pour modifier le dashboard.
 
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center'}}>
 
 ![Edition dashboard Gladys](../../../../../static/img/docs/fr/configuration/sonos/edit_dashboard.png)
-  </div>
 </div>
 Cliquez sur `ajouter +` puis sélectionnez le widget `musique` vous pouvez le déplacer dans une colonne.
 
 Sélectionnez votre enceinte, et cliquez sur `Enregistrer`
 
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
-  <div style={{ textAlign: 'center'}}>
 
 ![Edition Widget musique](../../../../../static/img/docs/fr/configuration/sonos/edit_music_widget.png)
-  </div>
 </div>
 Voilà ! Votre widget est visible sur le tableau de bord.
 
@@ -75,6 +65,6 @@ Voilà ! Votre widget est visible sur le tableau de bord.
 <div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
 
 ![Widget musique Gladys](../../../../../static/img/docs/fr/configuration/sonos/music_widget.png)
-  </div>
+</div>
 
 Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
