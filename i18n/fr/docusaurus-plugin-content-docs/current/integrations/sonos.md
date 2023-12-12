@@ -62,7 +62,7 @@ Sélectionnez votre enceinte, et cliquez sur `Enregistrer`
 Voilà ! Votre widget est visible sur le tableau de bord.
 
 
-<div style={{ display: 'flex', justifyContent: 'center', minHeight: '100vh' }}>
+<div style={{ display: 'flex', justifyContent: 'center'}}>
 
 ![Widget musique Gladys](../../../../../static/img/docs/fr/configuration/sonos/music_widget.png)
 </div>
