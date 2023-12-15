@@ -50,5 +50,4 @@ Voilà ! Votre widget est visible sur le tableau de bord.
 
 ![Widget musique Gladys](../../../../../static/img/docs/fr/configuration/sonos/music_widget.png)
 
-
 Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
