@@ -169,11 +169,6 @@ module.exports = {
           editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
           editLocalizedFiles: true,
         },
-        docs: {
-          // Spécifiez le chemin vers votre fichier CSS personnalisé
-          path: 'docs',
-          sidebarPath: require.resolve('./sidebars.js'),
-        },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
@@ -206,12 +201,6 @@ module.exports = {
       async: true,
       defer: true,
       src: "https://abcdef.gladysassistant.com/latest.js",
-    },
-  ],
-  stylesheets: [
-    {
-      rel: 'stylesheet',
-      href: '/css/custom.css',
     },
   ],
 }
