@@ -203,4 +203,4 @@ module.exports = {
       src: "https://abcdef.gladysassistant.com/latest.js",
     },
   ],
-};
+}
