@@ -192,6 +192,19 @@ Vous pouvez créer une PR sur GitHub.
 
 Lire: [Créer une PR sur Github](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
 
+### Formations sur les outils de développement d'une intégration
+
+Vous souhaitez rafraichir, approfondir vos connaissances sur les outils utilisés pour développer une intégration pour Gladys-Assistant, suivez les liens !
+
+Pour le langage Html [HTML](https://grafikart.fr/formations/html)
+Pour les feuilles de style [CSS](https://grafikart.fr/formations/css)
+Pour le langage React [REACT](https://grafikart.fr/formations/react)
+Pour le langage Javascript [JAVASCRIPT](https://grafikart.fr/formations/formation-javascript)
+Pour déboguer le langage Javascript [DEBOGAGE JAVASCRIPT](https://grafikart.fr/formations/deboguer-javascript)
+Pour la gestion de dépot Git [GIT](https://grafikart.fr/formations/git)
+Pour le lanage SQL [SQL](https://grafikart.fr/formations/apprendre-sql)
+
 ## Des questions ?
 
 Tu as des question ? Viens en parler [sur le forum](https://community.gladysassistant.com/) !
+
