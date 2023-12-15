@@ -3,10 +3,6 @@ id: sonos
 title: How to connect a Sonos speaker to your smart home system
 sidebar_label: Sonos
 ---
-<div style={{ display: 'flex', justifyContent: 'center'}}>
-
-![cover](../../static/img/docs/cover/sonos.jpg)
-</div>
 
 ## Prerequisites
 

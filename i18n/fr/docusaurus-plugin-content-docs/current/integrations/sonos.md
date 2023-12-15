@@ -3,10 +3,6 @@ id: sonos
 title: Connecter une enceinte Sonos à sa maison connectée
 sidebar_label: Sonos
 ---
-<div style={{ display: 'flex', justifyContent: 'center'}}>
-
-![cover](../../../../../static/img/docs/cover/sonos.jpg)
-</div>
 
 ## Prérequis
 
