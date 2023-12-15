@@ -38,24 +38,6 @@ const testimonials = {
 const FAQQuestions = {
   fr: [
     {
-      title: <>Quel matériel requis pour installer Gladys Assistant ?</>,
-      response: (
-        <>
-          Gladys peut s'installer sur n'importe quelle machine Linux (un
-          Raspberry Pi, un NAS, un serveur, un vieux PC Linux, peu importe !),
-          du moment que Docker tourne sur la machine, Gladys peut tourner
-          dessus. <br />
-          <br />
-          PS: Gladys Assistant est <b>gratuite</b>, c'est un simple container
-          Docker à lancer{" "}
-          <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
-            en une commande
-          </Link>
-          .
-        </>
-      ),
-    },
-    {
       title: <>Qui utilise Gladys Assistant 4 ?</>,
       response: (
         <>
