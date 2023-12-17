@@ -17,16 +17,47 @@ import Translate, { translate } from "@docusaurus/Translate";
 
 const COMPATIBILITIES = [
   [
-    { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
-    { title: "Philips-Hue", imgSrc: "philips-hue.jpg", docKey: "philips-hue" },
-    { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
-    { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
+    { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
+    { title: "OpenWeather", imgSrc: "openweather.jpg", docKey: "openweather" },
+    { title: "Apple HomeKit", imgSrc: "homekit.jpg", docKey: "homeKit"},
   ],
   [
-    { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
-    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
-    { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
+    { title: "Bluetooth", imgSrc: "bluetooth.jpg", docKey: "bluetooth" },
+    { title: "Broadlink", imgSrc: "broadlink.jpg", docKey: "broadlink" },
+    { title: "CalDav", imgSrc: "caldav.jpg", docKey: "caldav" },
+  ],
+  [
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
+    { title: "Enedis", imgSrc: "enedis.jpg", docKey: "enedis" },
+    { title: "eWelink", imgSrc: "ewelink.jpg", docKey: "ewelink" },
+  ],
+  [
+    { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
+    { title: "Lan Manager", imgSrc: "lan-manager.jpg", docKey: "lan-manager" },
+    { title: "MELCloud", imgSrc: "melcloud.jpg", docKey: "melcloud" },
+  ],
+  [
+    { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
+    { title: "Nextcloud Talk", imgSrc: "nextcloud-talk.jpg", docKey: "nextcloud-talk" },
+    { title: "Node-red", imgSrc: "node-red.jpg", docKey: "node-red" }
+  ],
+  [
+    { title: "Open AI Chat GPT", imgSrc: "openai.jpg", docKey: "openai" },
+    { title: "Owntracks", imgSrc: "owntracks.jpg", docKey: "owntracks" },
+    { title: "Philips-Hue", imgSrc: "philips-hue.jpg", docKey: "philips-hue" },
+  ],
+  [
+    { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" }
+    { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
+    { title: "Telegram", imgSrc: "telegram.jpg", docKey: "telegram" },
+  ],
+  [
+    { title: "TP-Link", imgSrc: "tp-link.jpg", docKey: "tp-link/" }
+    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
+    { title: "Xiaomi Home", imgSrc: "xiaomi.jpg", docKey: "xiaomi" }
+  ],
+  [
+    { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
   ],
 ];
 
