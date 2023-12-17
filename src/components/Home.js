@@ -88,24 +88,6 @@ const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   );
 };
 
-const PausedOverlay2 = ({ videoSrc, imgSrc, alt }) => (
-  <HoverVideoPlayer
-    className={styles.coolFeatureVideoPlayer}
-    videoSrc={videoSrc}
-    pausedOverlay={
-      <div className={styles.coolFeatureVideoPausedOverlay}>
-        <img src={imgSrc} alt={alt} />
-        <PlayImage className={styles.coolFeatureVideoPausedOverlaySvg} />
-      </div>
-    }
-    loadingOverlay={
-      <div className="loading-overlay">
-        <div className="loading-spinner" />
-      </div>
-    }
-  />
-);
-
 const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
   <video autoPlay loop muted playsInline>
     <source src={videoSrc} type="video/mp4" />
