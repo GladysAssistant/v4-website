@@ -56,6 +56,7 @@ const COMPATIBILITIES = [
     { title: "Xiaomi Home", imgSrc: "xiaomi.jpg", docKey: "xiaomi" },
     { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
     { title: "Coming soon Z-Wave-js-ui", imgSrc: "zwave-js-ui.jpg", docKey: "zwave-js-ui" },
+    { title: "", imgSrc: "", docKey: "" },
   ],
 ];
 
