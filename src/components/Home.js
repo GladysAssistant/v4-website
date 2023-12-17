@@ -300,93 +300,10 @@ function Home({ integrations, lang }) {
       <header className={classnames("shadow--lw")}>
         <div className={styles.heroBanner}>
           <div className={styles.flexContainer}>
-            <div className={classnames("padding-top--lg")}>
-              <h1 className={styles.heroTitle}>
-                <Translate id="home.title" description="The home page title">
-                  Gladys Assistant
-                </Translate>
-              </h1>
-              <p className={styles.heroSubtitle}>
-                <Translate
-                  id="home.description"
-                  description="The home page description"
-                >
-                  Craft Your Perfect Smart Home Experience.
-                </Translate>
-              </p>
-              <span className="container">
-                <div
-                  className="margin-right--md"
-                  style={{ display: "inline-block" }}
-                >
-                  <Link
-                    className={classnames(
-                      "button button--primary",
-                      styles.heroButton
-                    )}
-                    href={lang === "en" ? `/docs` : `/${lang}/docs`}
-                  >
-                    <Translate
-                      id="home.gettingStartedButton"
-                      description="The getting started button of the homepage"
-                    >
-                      Install for free
-                    </Translate>
-                  </Link>
-                </div>
-                {false && (
-                  <div
-                    className="margin-right--md"
-                    style={{ display: "inline-block" }}
-                  >
-                    <Link
-                      className={classnames(
-                        "button button--outline button--secondary",
-                        styles.heroButton
-                      )}
-                      href="https://demo.gladysassistant.com/dashboard"
-                    >
-                      <Translate
-                        id="home.tryOnlineButton"
-                        description="The try online button of the homepage"
-                      >
-                        Try Online
-                      </Translate>
-                    </Link>
-                  </div>
-                )}
-              </span>
-            </div>
-          </div>
-          <div className={styles.flexContainer}>
-            <div className={styles.heroImg}>
-              <MainImageResponsive
-                imageKey={
-                  lang === "en"
-                    ? "main_screenshot_en_j5czyj_c_scale"
-                    : "main_screenshot_fr_ncm1yr_c_scale"
-                }
-                sizes={
-                  lang === "en"
-                    ? [
-                        480, 850, 1142, 1388, 1623, 1839, 2022, 2181, 2379,
-                        2526, 2694, 2800,
-                      ]
-                    : [
-                        480, 825, 1090, 1342, 1548, 1756, 1951, 2083, 2254,
-                        2412, 2568, 2731, 2800,
-                      ]
-                }
-                alt="Gladys Assistant Demo Image"
-              />
-            </div>
-          </div>
+        </div>
         </div>
       </header>
       <main>
-        <div className={classnames(styles.homeSection)}>
-        </div>
-
         <div
           className={classnames(
             styles.homeSection,
@@ -398,7 +315,7 @@ function Home({ integrations, lang }) {
               id="home.compatibilities.title"
               description="Cool features chat title on the homepage"
             >
-              List of built-in integrations
+              A large number of integrations
             </Translate>
           </h2>
           <div className="row">
