@@ -20,18 +20,16 @@ const COMPATIBILITIES = [
     { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
     { title: "API OpenWeather", imgSrc: "openweather.jpg", docKey: "openweather" },
     { title: "Apple HomeKit", imgSrc: "homekit.jpg", docKey: "homeKit"},
+    { title: "Bluetooth", imgSrc: "bluetooth.jpg", docKey: "bluetooth" },
   ],
   [
-    { title: "Bluetooth", imgSrc: "bluetooth.jpg", docKey: "bluetooth" },
     { title: "Broadlink", imgSrc: "broadlink.jpg", docKey: "broadlink" },
     { title: "CalDav", imgSrc: "caldav.jpg", docKey: "caldav" },
-  ],
-  [
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
     { title: "Enedis", imgSrc: "enedis.jpg", docKey: "enedis" },
-    { title: "eWelink", imgSrc: "ewelink.jpg", docKey: "ewelink" },
   ],
   [
+    { title: "eWelink", imgSrc: "ewelink.jpg", docKey: "ewelink" },
     { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
     { title: "Lan Manager", imgSrc: "lan-manager.jpg", docKey: "lan-manager" },
     { title: "MELCloud", imgSrc: "melcloud.jpg", docKey: "melcloud" },
@@ -40,18 +38,16 @@ const COMPATIBILITIES = [
     { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
     { title: "Coming soon Netatmo", imgSrc: "netatmo.jpg", docKey: "netatmo" },
     { title: "Nextcloud Talk", imgSrc: "nextcloud-talk.jpg", docKey: "nextcloud-talk" },
+    { title: "Node-red", imgSrc: "node-red.jpg", docKey: "node-red" },
   ],
   [
-    { title: "Node-red", imgSrc: "node-red.jpg", docKey: "node-red" },
     { title: "Open AI Chat GPT", imgSrc: "openai.jpg", docKey: "openai" },
     { title: "Owntracks", imgSrc: "owntracks.jpg", docKey: "owntracks" },
-  ],
-  [
     { title: "Philips-Hue", imgSrc: "philips-hue.jpg", docKey: "philips-hue" },
     { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-    { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
   ],
   [
+    { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
     { title: "Telegram", imgSrc: "telegram.jpg", docKey: "telegram" },
     { title: "TP-Link", imgSrc: "tp-link.jpg", docKey: "tp-link/" },
     { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
@@ -106,7 +102,7 @@ function Home({ integrations, lang }) {
               id="home.compatibilities.title"
               description="Cool features chat title on the homepage"
             >
-              A large number of integrations
+              A large number of integrations !
             </Translate>
           </h2>
           <div className="row">
