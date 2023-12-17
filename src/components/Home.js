@@ -297,12 +297,6 @@ function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
   return (
     <>
-      <header className={classnames("shadow--lw")}>
-        <div className={styles.heroBanner}>
-          <div className={styles.flexContainer}>
-        </div>
-        </div>
-      </header>
       <main>
         <div
           className={classnames(
