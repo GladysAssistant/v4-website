@@ -5,7 +5,10 @@ import Link from "@docusaurus/Link";
 // import Image from "@theme/IdealImage";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import { Integration } from "./Integration";
+import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
+import HoverVideoPlayer from "react-hover-video-player";
 import { TestimonialHomeSection } from "./Testimonial";
+import PlayImage from "./play.svg";
 
 import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
@@ -62,7 +65,6 @@ const testimonials = {
   fr: testimonialFr,
   en: testimonialEn,
 };
-
 const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   let srcSet = "";
 
