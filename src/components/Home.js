@@ -387,6 +387,54 @@ function Home({ integrations, lang }) {
         <div className={classnames(styles.homeSection)}>
         </div>
 
+        <div
+          className={classnames(
+            styles.homeSection,
+            styles.compatibilitiesSection
+          )}
+        >
+          <h2 className={styles.secondaryTitle}>
+            <Translate
+              id="home.compatibilities.title"
+              description="Cool features chat title on the homepage"
+            >
+              List of built-in integrations
+            </Translate>
+          </h2>
+          <div className="row">
+            <div className="col col--12">
+              <p className="text--center">
+                <Translate
+                  id="home.integrations.description"
+                  description="Integrations description of the homepage"
+                >
+                  All integrations are open-source and developed by the
+                  community.
+                </Translate>
+              </p>
+              {COMPATIBILITIES.map((row) => (
+                <div className={styles.compatibilitiesRow}>
+                  {row.map((item) => (
+                    <div className={styles.compatibilitiesCol}>
+                      <a href={useBaseUrl(`/docs/integrations/${item.docKey}`)}>
+                        <img
+                          src={useBaseUrl(
+                            "/img/home/compatibilities/" + item.imgSrc
+                          )}
+                          width="254"
+                          height="169"
+                          alt={item.title}
+                        />
+                        <h5>{item.title}</h5>
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className={classnames(styles.homeSection)}>
           <h2 className={styles.secondaryTitle}>
             <Translate
