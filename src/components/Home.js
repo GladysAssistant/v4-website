@@ -61,10 +61,6 @@ const COMPATIBILITIES = [
   ],
 ];
 
-const testimonials = {
-  fr: testimonialFr,
-  en: testimonialEn,
-};
 
 const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   let srcSet = "";
