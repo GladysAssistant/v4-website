@@ -88,12 +88,6 @@ const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   );
 };
 
-const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
-  <video autoPlay loop muted playsInline>
-    <source src={videoSrc} type="video/mp4" />
-  </video>
-);
-
 function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
   return (
