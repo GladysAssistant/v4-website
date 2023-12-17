@@ -100,7 +100,7 @@ function Home({ integrations, lang }) {
           <h2 className={styles.secondaryTitle}>
             <Translate
               id="home.compatibilities.title"
-              description="Cool features chat title on the homepage"
+              description="Cool features chat title on the integrations page"
             >
               A large number of integrations !
             </Translate>
@@ -110,12 +110,22 @@ function Home({ integrations, lang }) {
               <p className="text--center">
                 <Translate
                   id="home.integrations.description"
-                  description="Integrations description of the homepage"
+                  description="Integrations description on the integrations page"
                 >
                   All integrations are open-source and developed by the
                   community.
                 </Translate>
               </p>
+              <h3 className={styles.secondaryTitle}>
+            <Translate
+              id="home.compatibilities.title"
+              description="description on the integrations page"
+            >
+              Explore a diverse range of integrations to suit every aspect of your daily life. 
+              Thanks to these community developments, Gladys Assistant can interact with a wide range of smart devices, 
+              online services and protocols, creating a centralized solution to simplify your daily life.
+            </Translate>
+          </h3>
               {COMPATIBILITIES.map((row) => (
                 <div className={styles.compatibilitiesRow}>
                   {row.map((item) => (
