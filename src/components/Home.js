@@ -99,7 +99,7 @@ function Home({ integrations, lang }) {
         >
           <h2 className={styles.secondaryTitle}>
             <Translate
-              id="home.compatibilities.title"
+              id="integration.page.compatibilities.title"
               description="Cool features chat title on the integrations page"
             >
               A large number of integrations !
@@ -109,7 +109,7 @@ function Home({ integrations, lang }) {
             <div className="col col--12">
               <p className="text--center">
                 <Translate
-                  id="home.integrations.description"
+                  id="integration.page.description"
                   description="Integrations description on the integrations page"
                 >
                   All integrations are open-source and developed by the
@@ -118,7 +118,7 @@ function Home({ integrations, lang }) {
               </p>
               <h3 className={styles.secondaryTitle}>
             <Translate
-              id="home.compatibilities.title"
+              id="description.integration.page"
               description="description on the integrations page"
             >
               Explore a diverse range of integrations to suit every aspect of your daily life. 
