@@ -116,7 +116,7 @@ function Home({ integrations, lang }) {
                   community.
                 </Translate>
               </p>
-              <h3 className={styles.secondaryTitle}>
+              <h4 className={styles.description}>
             <Translate
               id="description.integration.page"
               description="description on the integrations page"
@@ -125,7 +125,7 @@ function Home({ integrations, lang }) {
               Thanks to these community developments, Gladys Assistant can interact with a wide range of smart devices, 
               online services and protocols, creating a centralized solution to simplify your daily life.
             </Translate>
-          </h3>
+          </h4>
               {COMPATIBILITIES.map((row) => (
                 <div className={styles.compatibilitiesRow}>
                   {row.map((item) => (
