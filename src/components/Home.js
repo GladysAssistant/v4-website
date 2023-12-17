@@ -18,7 +18,7 @@ import Translate, { translate } from "@docusaurus/Translate";
 const COMPATIBILITIES = [
   [
     { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
-    { title: "OpenWeather", imgSrc: "openweather.jpg", docKey: "openweather" },
+    { title: "API OpenWeather", imgSrc: "openweather.jpg", docKey: "openweather" },
     { title: "Apple HomeKit", imgSrc: "homekit.jpg", docKey: "homeKit"},
   ],
   [
@@ -58,6 +58,7 @@ const COMPATIBILITIES = [
   ],
   [
     { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
+    { title: "Z-Wave-js-ui", imgSrc: "zwave-js-ui.jpg", docKey: "zwave-js-ui" },
   ],
 ];
 
