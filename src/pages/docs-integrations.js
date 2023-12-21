@@ -24,7 +24,7 @@ function docsintegrations() {
       })}
      >
       <main>
-        <IntegrationPage
+        <Docs-integrationsPage
           integrations={integrations[i18n.currentLocale]}
           lang={i18n.currentLocale}
         />
