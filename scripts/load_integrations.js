@@ -16,6 +16,7 @@ const AUTHORIZED_DOC_ID = [
   "zwave",
   "tasmota",
   "tp-link",
+  "netatmo",
   "zigbee2mqtt",
 ];
 
@@ -113,9 +114,9 @@ const downloadImages = async (products, lang) => {
         }).catch((err) => {
           console.log(
             "Cannot download image " +
-              product.imageUrl +
-              " " +
-              product.imageName
+            product.imageUrl +
+            " " +
+            product.imageName
           );
           throw err;
         });
@@ -152,7 +153,7 @@ const getExistingIntegrations = (lang) => {
     try {
       const existingDoc = require(`../integrations/${lang}/${docId}.json`);
       existingIntegrations = existingIntegrations.concat(existingDoc);
-    } catch (e) {}
+    } catch (e) { }
   });
   return existingIntegrations;
 };
