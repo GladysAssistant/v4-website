@@ -22,7 +22,7 @@ function Home() {
         message:
           "Search all home automation devices compatible with Gladys Assistant",
       })}
-    >
+     >
       <main>
         <IntegrationPage
           integrations={integrations[i18n.currentLocale]}
