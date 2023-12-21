@@ -112,6 +112,28 @@ function Docsintegrations({ integrations, lang }) {
               online services and protocols, creating a centralized solution to simplify your daily life.
             </Translate>
           </p>
+          <div className={styles.coolFeatureFlexContainer}>
+            <div className={styles.coolFeatureItem}>
+              <h4>
+                <Translate
+                  id="home.coolFeatures.dashboardTitle"
+                  description="Cool features dashboard title on the homepage"
+                >
+                  Build great dashboards
+                </Translate>
+              </h4>
+              <p>
+                <Translate
+                  id="home.coolFeatures.dashboardDescrition"
+                  description="Cool features dashboard title on the homepage"
+                >
+                  You can create as many dashboards as you want in Gladys, and
+                  they are entirely customizable. Add your cameras, charts of
+                  sensors in your house, display who's at home and who's not.
+                </Translate>
+              </p>
+            </div>
+            </div>
               {COMPATIBILITIES.map((row) => (
                 <div className={styles.compatibilitiesRow}>
                   {row.map((item) => (
