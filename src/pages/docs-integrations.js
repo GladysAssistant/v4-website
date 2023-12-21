@@ -25,7 +25,7 @@ function Home() {
      >
       <main>
         <IntegrationPage
-          Docs-integrations={Docs-integrations[i18n.currentLocale]}
+          integrations={integrations[i18n.currentLocale]}
           lang={i18n.currentLocale}
         />
       </main>
