@@ -34,16 +34,22 @@ module.exports = {
       },
       items: [
         {
-          to: "integrations/",
+          to: "docs-integrations/",
           activeBasePath: "integrations",
           label: "Integrations",
           position: "left",
         },
         {
+          to: "integrations/",
+          activeBasePath: "integrations",
+          label: "Integrations",
+          position: "right",
+        },
+        {
           to: "docs/",
           activeBasePath: "docs",
           label: "Docs",
-          position: "left",
+          position: "right",
         },
         {
           to: "blog/",
@@ -60,7 +66,7 @@ module.exports = {
         {
           type: "dropdown",
           label: "Community",
-          position: "left",
+          position: "right",
           items: [
             {
               label: "English Community (New!)",
