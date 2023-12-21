@@ -72,7 +72,7 @@ const MainImageResponsive = ({ imageKey, alt, sizes }) => {
   );
 };
 
-function docsintegrations({ integrations, lang }) {
+function Docsintegrations({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
   return (
     <>
@@ -138,4 +138,4 @@ function docsintegrations({ integrations, lang }) {
     </>
   );
 }
-export { docsintegrations };
+export { Docsintegrations };
