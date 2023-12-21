@@ -22,12 +22,6 @@ function Home() {
           "Integrations available in Gladys Assistant",
         })}
         >
-          <main>
-            <IntegrationPage
-              integrations={integrations[i18n.currentLocale]}
-              lang={i18n.currentLocale}
-            />
-          </main>
         </Layout>
       );
     }
