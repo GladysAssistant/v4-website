@@ -21,7 +21,7 @@ Vous devez ensuite vous rendre sur la page [Netatmo connect](https://dev.netatmo
 
 #### Création d'une "app"
 
-Rendez vous ensuite sur votre page [My app](https://dev.netatmo.com/apps/) et cliquer sur le bouton "Create" pour créer un lien vers votre compte Gladys. Entrez les informations nécessaires (champs avec une \*) comme l'exemple ci-dessous :
+Rendez vous ensuite sur votre page [My app](https://dev.netatmo.com/apps/) et cliquer sur le bouton "Create" pour créer un lien vers votre compte Gladys. Entrez les informations nécessaires (champs avec une \*) comme dans l'exemple ci-dessous :
 ![Configurer une api 1](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-configure-connect-1.jpg)
 
 #### Récupération des identifiants clients de connection
@@ -39,17 +39,18 @@ Pour ajouter vos appareils Netatmo dans Gladys, allez dans `Intégrations / Neta
 ### Etape 1 : Connexion API Netatmo
 
 Depuis l'onglet `Paramètre`,
-![Integration Netatmo - Vers Paramètre](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-vers-parametre.jpg)
+![Integration Netatmo - Vers Paramètre](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-vers-configuration.jpg)
 Entrez les informations récupérées lors de [l'étape précédente](/fr/docs/netatmo#integrations/etape-2---netatmo-connect) :
 
-- Entrez votre adresse mail de connection à votre compte "Netatmo connect"
-- Le mot de passe de ce même compte
 - Le client ID,
 - Le client secret,
 
-Enfin cliquez sur "Sauvegarder".
-Après quelques secondes, vous devriez maintenant être connecté avec l'API Netatmo.
-![Integration Netatmo - Paramètre](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-parametre.jpg)
+Enfin cliquez sur le bouton "Sauvegarder la configuration et connexion à Netatmo".
+Vous serez alors redirigé vers le site de Netatmo pour pouvoir accepter la connexion depuis Gladys. (Il est important de noter qu'en acceptant, vous acceptez que Gladys ai accès au moins en lecture et en écriture pour les appareils supportés à toutes les données détaillées dans cette page)
+Après acceptation, vous serez redirigé sur votre précédente page de Gladys, vous devriez maintenant être connecté avec l'API Netatmo. 
+
+(En cas d'erreur veuillez consulter le chapitre "Erreurs pouvant être rencontrées")
+![Integration Netatmo - Paramètre](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-parametre-avant-connexion.jpg)
 
 ### Etape 2 : Découverte des appareils Netatmo
 
