@@ -34,8 +34,8 @@ module.exports = {
       },
       items: [
         {
-          to: "docs-integrations/",
-          activeBasePath: "docs-integrations",
+          to: "docsintegrations/",
+          activeBasePath: "docsintegrations",
           label: "Integration documentation",
           position: "left",
         },
