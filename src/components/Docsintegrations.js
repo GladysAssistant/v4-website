@@ -94,14 +94,16 @@ function Docsintegrations({ integrations, lang }) {
           <div className={styles.coolFeatureFlexContainer}>
             <div className={styles.coolFeatureItem}>
               <h4>
-                <Translate
-                  id="home.integrations.description"
-                  description= "Integrations description of the homepage"
-                >
-                  All integrations are open-source and developed by the community.
-                </Translate>
+               <p className="text--center">
+                 <Translate
+                   id="home.integrations.description"
+                   description= "Integrations description of the homepage"
+                 >
+                   All integrations are open-source and developed by the community.
+                 </Translate>
+               </p>
               </h4>
-              <p>
+              <p className="text--center">
                 <Translate
                   id="description.integration"
                   description= "description on the integrations page"
@@ -112,7 +114,7 @@ function Docsintegrations({ integrations, lang }) {
                 </Translate>
               </p>
             </div>
-            </div>
+          </div>
               {COMPATIBILITIES.map((row) => (
                 <div className={styles.compatibilitiesRow}>
                   {row.map((item) => (
