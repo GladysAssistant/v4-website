@@ -133,8 +133,6 @@ function Docsintegrations({ integrations, lang }) {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
       </main>
     </>
   );
