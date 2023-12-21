@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import integrations from "../../integrations";
-import { IntegrationPage } from "../components/Integration";
+import { IntegrationPage } from "../components/Docs-integration";
 
 import { translate } from "@docusaurus/Translate";
 
