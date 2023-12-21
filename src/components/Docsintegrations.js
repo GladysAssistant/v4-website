@@ -91,45 +91,24 @@ function Docsintegrations({ integrations, lang }) {
               A large number of integrations !
             </Translate>
           </h2>
-          <div className="row">
-            <div className="col col--12">
-              <p className="text--center">
-                <Translate
-                  id="home.integrations.description"
-                  description= "Integrations description of the homepage"
-                >
-                  All integrations are open-source and developed by the
-                  community.
-                </Translate>
-              </p>
-              <p className={styles.secondaryTitle}>
-            <Translate
-              id="description.integration"
-              description= "description on the integrations page"
-            >
-              Explore a diverse range of integrations to suit every aspect of your daily life. 
-              Thanks to these community developments, Gladys Assistant can interact with a wide range of smart devices, 
-              online services and protocols, creating a centralized solution to simplify your daily life.
-            </Translate>
-          </p>
           <div className={styles.coolFeatureFlexContainer}>
             <div className={styles.coolFeatureItem}>
               <h4>
                 <Translate
-                  id="home.coolFeatures.dashboardTitle"
-                  description="Cool features dashboard title on the homepage"
+                  id="home.integrations.description"
+                  description= "Integrations description of the homepage"
                 >
-                  Build great dashboards
+                  All integrations are open-source and developed by the community.
                 </Translate>
               </h4>
               <p>
                 <Translate
-                  id="home.coolFeatures.dashboardDescrition"
-                  description="Cool features dashboard title on the homepage"
+                  id="description.integration"
+                  description= "description on the integrations page"
                 >
-                  You can create as many dashboards as you want in Gladys, and
-                  they are entirely customizable. Add your cameras, charts of
-                  sensors in your house, display who's at home and who's not.
+                  Explore a diverse range of integrations to suit every aspect of your daily life. 
+                  Thanks to these community developments, Gladys Assistant can interact with a wide range of smart devices, 
+                  online services and protocols, creating a centralized solution to simplify your daily life.
                 </Translate>
               </p>
             </div>
