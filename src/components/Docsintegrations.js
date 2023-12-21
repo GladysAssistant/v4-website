@@ -102,7 +102,7 @@ function Docsintegrations({ integrations, lang }) {
                   community.
                 </Translate>
               </p>
-              <h4 className={styles.secondaryTitle}>
+              <p className={styles.secondaryTitle}>
             <Translate
               id="description.integration"
               description= "description on the integrations page"
@@ -111,7 +111,7 @@ function Docsintegrations({ integrations, lang }) {
               Thanks to these community developments, Gladys Assistant can interact with a wide range of smart devices, 
               online services and protocols, creating a centralized solution to simplify your daily life.
             </Translate>
-          </h4>
+          </p>
               {COMPATIBILITIES.map((row) => (
                 <div className={styles.compatibilitiesRow}>
                   {row.map((item) => (
