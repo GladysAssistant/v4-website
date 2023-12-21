@@ -6,7 +6,7 @@ import { IntegrationPage } from "../components/Docs-integrations";
 
 import { translate } from "@docusaurus/Translate";
 
-function Home() {
+function docsintegrations() {
   const context = useDocusaurusContext();
   const { i18n } = context;
   return (
@@ -33,4 +33,4 @@ function Home() {
   );
 }
 
- export default Home;
+ export default docsintegrations;
