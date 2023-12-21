@@ -9,6 +9,8 @@ import { translate } from "@docusaurus/Translate";
 function Home() {
   const context = useDocusaurusContext();
   const { i18n } = context;
+
+  console.log("Avant le rendu");
   return (
     <Layout
       title={translate({
