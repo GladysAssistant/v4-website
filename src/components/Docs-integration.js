@@ -4,7 +4,6 @@ import styles from "./homeStyles.module.css";
 import Link from "@docusaurus/Link";
 // import Image from "@theme/IdealImage";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import { Integration } from "./Integration";
 import PlayImage from "./play.svg";
 
 
