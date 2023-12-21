@@ -2,7 +2,6 @@ import React from "react";
 import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import integrations from "../../integrations";
-import { IntegrationPage } from "../components/Docs-integration";
 
 import { translate } from "@docusaurus/Translate";
 
@@ -22,14 +21,6 @@ function Home() {
         message:
           "Integrations available in Gladys Assistant",
       })}
-    >
-      <main>
-        <IntegrationPage
-          docs-integrations={docs-integrations[i18n.currentLocale]}
-          lang={i18n.currentLocale}
-        />
-      </main>
-    </Layout>
   );
 }
 
