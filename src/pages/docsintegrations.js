@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import integrations from "../../integrations";
-import { docsintegrations } from "../components/Docsintegrations";
+import { Docsintegrations } from "../components/Docsintegrations";
 
 import { translate } from "@docusaurus/Translate";
 
@@ -26,7 +26,7 @@ function Home() {
       })}
      >
       <main>
-        <docsintegrations
+        <Docsintegrations
           integrations={integrations[i18n.currentLocale]}
           lang={i18n.currentLocale}
         />
