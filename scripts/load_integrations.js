@@ -16,7 +16,6 @@ const AUTHORIZED_DOC_ID = [
   "zwave",
   "tasmota",
   "tp-link",
-  "netatmo",
   "zigbee2mqtt",
 ];
 
