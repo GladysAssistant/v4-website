@@ -24,9 +24,9 @@ Vous devez ensuite vous rendre sur la page [Netatmo connect](https://dev.netatmo
 Rendez vous sur votre page [My app](https://dev.netatmo.com/apps/) et cliquer sur le bouton "Create" pour créer un lien vers votre compte Gladys. Entrez les informations nécessaires (champs avec une \*) comme dans l'exemple ci-dessous :
 ![Configurer une api 1](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-connect-1.jpg)
 
-#### Récupération des identifiants clients de connection
+#### Récupération de l'identifiant et du secret client de connexion
 
-En cliquant sur "Save", vous aurez ensuite accès aux informations nécessaires dans le cadre en-dessous (voir [Etape 1 du tutoriel](/fr/docs/integrations/netatmo#etape-1--connexion-api-netatmo))
+En cliquant sur "Save", vous aurez ensuite accès aux informations nécessaires dans le cadre en-dessous (voir [Etape 1 du tutoriel](/fr/docs/integrations/netatmo#etape-11--configuration-de-la-connexion-%C3%A0-lapi-netatmo))
 
 ![Configurer une api 2](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-connect-2.jpg)
 
@@ -36,7 +36,11 @@ Pour ajouter vos appareils Netatmo dans Gladys, allez dans `Intégrations / Neta
 
 ![Integration Netatmo](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations.jpg)
 
-### Etape 1.1 : Identifiants de connexion à l'API Netatmo
+Puis cliquer sur l'onglet `Configuration` pour accéder à la page de connexion à l'API Netatmo.
+
+![Integration Netatmo - Configuration](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-devices-without-devices.jpg)
+
+### Etape 1.1 : Configuration de la connexion à l'API Netatmo
 
 Depuis l'onglet `Configuration`, entrez les informations récupérées lors de [l'étape précédente](/fr/docs/integrations/netatmo#etape-2---netatmo-connect) :
 - Le client ID,
@@ -45,10 +49,10 @@ Depuis l'onglet `Configuration`, entrez les informations récupérées lors de [
 
 
 Enfin cliquez sur le bouton "Sauvegarder la configuration et connexion à Netatmo".
-[Vous serez alors redirigé vers le site de Netatmo pour pouvoir accepter la connexion depuis Gladys.](fr/docs/integrations/netatmo/#etape-12--autorisation-de-connexion-de-lapplication-gladys-%C3%A0-votre-compte-netatmo)
+[Vous serez alors redirigé vers le site de Netatmo pour pouvoir accepter la connexion depuis Gladys.](/fr/docs/integrations/netatmo/#etape-12--autorisation-de-connexion-de-lapplication-gladys-%C3%A0-votre-compte-netatmo)
 
 ### Etape 1.2 : Autorisation de connexion de l'application Gladys à votre compte Netatmo
-Il est important de noter qu'en cliquant sur "OUI, J'ACCEPTE", vous autorisez Gladys a accéder en lecture et en écriture pour tous les appareils actuellement supportés ainsi qu'en lecture à tous les appareils qui ne sont pas encore supportés dans le but de faciliter leur intégration future. Aucune donnée ni aucun accès n'est partagé à l'extérieur de votre instance Gladys locale.
+Il est important de noter qu'en cliquant sur "OUI, J'ACCEPTE", vous autorisez Gladys à accéder en lecture et en écriture pour tous les appareils actuellement supportés ainsi qu'en lecture à tous les appareils qui ne sont pas encore supportés dans le but de faciliter leur intégration future. Aucune donnée ni aucun accès n'est partagé à l'extérieur de votre instance Gladys locale.
 ![Integration Netatmo - Configuration - Connecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-authorize-access.jpg)
 
 Pour toute nouvelle intégration d'appareils non encore pris en charge, vous devrez à nouveau passer par cette étape pour accepter l'écriture (commandes) sur ces nouveaux appareils.
@@ -96,34 +100,56 @@ N'oubliez pas de remplacer les données 'sensible' comme l'id de l'appareil, de 
 
 ![Integration Netatmo - Découverte - Issue Github](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-issue-github-device-unknown.jpg)
 
-### Etape 3 : Onglet "Appareils" Définir une pièce aux appareils et modification des fonctionnalités
+### Etape 3 : Onglet "Appareils"
 
-Dans l'onglet `Appareils`, vous retrouvez les appareils ajoutés avec leurs caractéristiques.
+Dans l'onglet `Appareils`, vous retrouvez les appareils ajoutés avec leurs caractéristiques, notamment leur état de connexion ![Integration Netatmo - Etat connexion appareil OK](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-devices-state-connection-ok.jpg) ou ![Integration Netatmo - Etat connexion appareil NOK](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-devices-state-connection-nok.jpg) et le niveau de batterie.
 
-![Integration Netatmo - Appareils Netatmo](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-appareils-netatmo.jpg)
-
+![Integration Netatmo - Appareils Netatmo](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-devices.jpg)
 #### 1) Définir une pièce
 
-Pour pouvoir afficher un appareil sur le dashboard, il faut en premier lieu lui associer une pièce. Sélectionner celle-ci dans le menu déroulant suivant :
-![Netatmo Integration - Netatmo devices - Select room](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-appareils-netatmo-selection-piece.jpg)
-Puis cliquer sur le bouton "Sauvegarder".
+Pour pouvoir afficher un appareil sur le dashboard, il faut en premier lieu lui associer une pièce. Sélectionner celle-ci dans le menu déroulant suivant, puis cliquer sur le bouton "Sauvegarder" :
+
+![Netatmo Integration - Appareil Netatmo - Sélection de la pièce](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-devices-selected-room.jpg)
 
 #### 2) Modifier les fonctionnalités
 
-Vous pouvez modifier le nom d'affichage des fonctionnalités qui apparaitront sur la page d'accueil. De plus certaines fonctionnalités peuvent être affichées de différentes manière. Cliquer sur le bouton "Modifier" d'une fiche d'appareil :
+Pour le moment vous ne pourrez modifier que le nom d'affichage de l'appareil. Prochainement vous aurez également accès à un bouton "Modifier", vous pourrez alors modifier le nom d'affichage des fonctionnalités qui apparaitront sur la page d'accueil. 
+De plus certaines fonctionnalités pourront être affichées de différentes manière.
 
-  N'oubliez pas de sauvegarder vos modifications avant de quitter la page !!
+## Road Map - Prévision d'évolution du service
 
-## Avancement et prévision d'évolution du service
+### Janvier/Février 2024
+#### 1) Pull request 1 - Suite des appareils "Energy"
+- Vannes (NRV)
+#### 2) Pull request 2 - Ajout du bouton "Modifier"
+Pouvoir modifier les noms des fonctionnalités des appareils Netatmo
 
-### Janvier 2023
+### Avant le 2ème trimestre 2024
+#### 1) Pull request 3 - Ajout de la station météo "Weather"
+- Station météo principale (NAMain),
+- Module extérieur (NAModule1).
+#### 2) Pull request 4 - Suite des appareils "Weather"
+- Anémomètre (NAModule2),
+- Pluviomètre (NAModule3),
+- Modules intérieurs complémentaires (NAModule4).
 
-A ce jour, les appareils suivants :
-- Détecteur de fumée "NSD",
-- Sonnette "NDB"
+### Avant le 3ème trimestre 2024
+#### 1) Pull request 5 - Ajout de la sécurité Netatmo "Home + Security"
+- Caméra intérieure (NACamera),
+- Capteur d'ouverture de porte et fenêtre (NACamDoorTag),
+- Sirène (NIS).
+#### 2) Pull request 6 - Suite des appareils "Home + Security"
+- Caméra extérieure (NOC) avec ou sans sirène,
+- Détecteur de fumée (NSD).
+#### 3) Pull request 7 - Ajout du Homecoach "Aircare"
+- Capteur de qualité de l'air (NHC).
 
-Ne peuvent être remontés vers Gladys car l'API ne propose pas de retour d'état. Toutefois, les "webhooks" sont en cours de développement via Gladys Plus. Pour tout ceux qui disposent d'un abonnement, il serait prochainement possible de récupérer les retours d'états de ces appareils.
+### Avant la fin d'année 2024
+#### 1) Pull request 8 - Ajout des webhooks ([Pour les utilisateurs Gladys Plus](/fr/plus/))
+Cette fonctionnalité permettra de recevoir les alertes et changements d'états de certains appareils en temps réel (Consignes de température, détection caméra, détection d'ouverture de porte, alerte de connexion/déconnexion d'un appareil, etc.) pour tout ceux qui disposent d'un abonnement Gladys Plus.
+#### 2) ... Au gré des demandes d'ajouts de fonctionnalités ...
 
-Les retours d'états de tous les appareils vue à [l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo) sont fonctionnels. Les commandes sont en cours de programmation.
+## Conclusion
+Les retours d'états de tous les appareils décrits à [l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo) sont maintenant fonctionnels.
 
-Et voilà ! Vous pouvez maintenant ajouter les appareils et fonctionnalités dont vous souhaitez profiter sur votre page d'accueil ou encore créer vos scènes d'alertes.
+Et voilà ! Vous pouvez maintenant ajouter les appareils et fonctionnalités dont vous souhaitez profiter sur votre page d'accueil ou encore créer vos scènes d'alertes ou de commandes.

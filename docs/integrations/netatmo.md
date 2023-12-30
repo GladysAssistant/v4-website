@@ -24,9 +24,9 @@ You must then go to the [Netatmo Connect](https://dev.netatmo.com/) page and cli
 Go to your [My app](https://dev.netatmo.com/apps/) page and click on the "Create" button to create a link to your Gladys account. Enter the necessary information (fields with a \*) as in the example below:
 ![Configure an API 1](../../static/img/docs/en/configuration/netatmo/netatmo-connect-1.jpg)
 
-#### Retrieving Client Connection IDs
+#### Retrieving Client Connection ID and secret
 
-By clicking on "Save", you will then have access to the necessary information in the frame below (see [Step 1 of the tutorial](/docs/integrations/netatmo#step-11-netatmo-api-connection-credentials))
+By clicking on "Save", you will then have access to the necessary information in the frame below (see [Step 1 of the tutorial](/docs/integrations/netatmo#step-11-setup-netatmo-api-connection-credentials))
 
 ![Configure an API 2](../../static/img/docs/en/configuration/netatmo/netatmo-connect-2.jpg)
 
@@ -36,7 +36,10 @@ To add your Netatmo devices to Gladys, go to `Integrations / Netatmo`.
 
 ![Netatmo Integration](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations.jpg)
 
-### Step 1.1: Netatmo API Connection Credentials
+Then click on the `Configuration` tab to access the Netatmo API connection page.
+![Netatmo Integration - Setup](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-devices-without-devices.jpg)
+
+### Step 1.1: Setup Netatmo API Connection Credentials
 
 From the `Setup` tab, enter the information retrieved during the [previous step](/docs/integrations/netatmo#step-2---netatmo-connect) :
 - The client ID,
@@ -66,7 +69,7 @@ In the `Netatmo Discovery` tab, you will find all compatible devices that you pr
 
 ![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-with-devices.jpg)
 
-Currently compatible devices are [(Go to the next step)](/docs/integrations/netatmo#step-22--discovery-of-non-compatible-netatmo-devices):
+Currently compatible devices are [(Go to the next step)](/docs/integrations/netatmo#step-22-discovery-of-non-compatible-netatmo-devices):
 - **The Hub (NAPlug)**, you will find the name of the device configured in the Netatmo app, the model, its Netatmo ID, the room to which the device is attached in the app, and the currently supported features.
 
 ![Netatmo Integration - Discovery NAPlug](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAPlug.jpg)
@@ -95,40 +98,56 @@ Do not forget to replace sensitive data such as the device ID, house ID, room ID
 
 ![Netatmo Integration - Discovery - Github Issue](../../static/img/docs/en/configuration/netatmo/en-netatmo-issue-github-device-unknown.jpg)
 
+### Step 3: "Devices" Tab
 
+In the `Devices` tab, you will find the added devices with their characteristics, including their connection status ![Netatmo Integration - Device Connection Status OK](../../static/img/docs/en/configuration/netatmo/netatmo-integrations-devices-state-connection-ok.jpg) or ![Netatmo Integration - Device Connection Status NOK](../../static/img/docs/en/configuration/netatmo/netatmo-integrations-devices-state-connection-nok.jpg) and the battery level.
 
-
-### Step 3: Assigning a Room to Devices and Modifying Features
-
-In the `Netatmo Devices` tab, you will find the added devices with their characteristics.
-
-![Netatmo Integration - Netatmo Devices](../../static/img/docs/en/configuration/netatmo/netatmo-integrations-appareils-netatmo.jpg)
-
+![Netatmo Integration - Netatmo Devices](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-devices.jpg)
 #### 1) Assigning a Room
 
-To display a device on the dashboard, you must first associate it with a room. Select it from the following dropdown menu:
-![Netatmo Integration - Netatmo Devices - Select Room](../../static/img/docs/en/configuration/netatmo/netatmo-integrations-appareils-netatmo-selection-piece.jpg)
-Then click on the "Save" button.
+To display a device on the dashboard, you must first assign it to a room. Select it from the following dropdown menu, then click on the "Save" button:
+
+![Netatmo Integration - Netatmo Device - Select Room](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-devices-selected-room.jpg)
 
 #### 2) Modifying Features
 
-You can modify the display name of the features that will appear on the home page. Moreover, some features can be displayed in different ways. Click on the "Modify" button of a device plug :
+For now, you can only change the display name of the device. Soon, you will also have access to an "Edit" button, allowing you to modify the display names of features that will appear on the homepage. 
+Moreover, some features will be able to be displayed in different ways.
 
-  Don't forget to save your changes before leaving the page !!
+## Road Map - Service Evolution Forecast
 
-## Progress and forecast of service evolution
+### January/February 2024
+#### 1) Pull request 1 - Continuing "Energy" devices
+- Valves (NRV)
+#### 2) Pull request 2 - Adding the "Edit" button
+Ability to modify the feature names of Netatmo devices
 
-### February 2021
+### Before the 2nd quarter of 2024
+#### 1) Pull request 3 - Adding "Weather" weather station
+- Main weather station (NAMain),
+- Outdoor module (NAModule1).
+#### 2) Pull request 4 - Continuing "Weather" devices
+- Anemometer (NAModule2),
+- Rain gauge (NAModule3),
+- Additional indoor modules (NAModule4).
 
-To date, the following devices :
-- Smoke detector "NSD",
-- Bell "NDB"
+### Before the 3rd quarter of 2024
+#### 1) Pull request 5 - Adding Netatmo "Home + Security" security
+- Indoor Camera (NACamera),
+- Door and window opening sensor (NACamDoorTag),
+- Siren (NIS).
+#### 2) Pull request 6 - Continuing "Home + Security" devices
+- Outdoor Camera (NOC) with or without siren,
+- Smoke detector (NSD).
+#### 3) Pull request 7 - Adding the "Aircare" Homecoach
+- Air quality sensor (NHC).
 
-Cannot be traced back to Gladys for the moment because the API does not offer status feedback. However, the "webhooks" are under development via Gladys Plus. For all those who have a subscription, it will soon be possible to retrieve the status feedbacks of these devices.
+### Before the end of 2024
+#### 1) Pull request 8 - Adding webhooks ([For Gladys Plus users](/en/plus/))
+This feature will enable real-time reception of alerts and state changes for certain devices (temperature settings, camera detection, door opening detection, device connection/disconnection alerts, etc.) for those who have a Gladys Plus subscription.
+#### 2) ... As per requests for additional features ...
 
-The status feedbacks of all the devices seen in [step 1 of the prerequisites](/docs/integrations/netatmo#step-1---compatible-devices-and-mobile-applications-netatmo) are functional. The controls are being programmed.
+## Conclusion
+The status feedback of all devices described in [step 1 of the prerequisites](/docs/integrations/netatmo#step-1---compatible-devices-and-netatmo-mobile-apps) is now functional.
 
-You're done! You can now add the devices and features you want to enjoy on your home page or create your alert scenes.
-
-
-
+And there you have it! You can now add the devices and features you want to enjoy on your homepage or create your alert or command scenes.
