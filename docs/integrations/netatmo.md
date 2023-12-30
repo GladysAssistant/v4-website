@@ -143,7 +143,7 @@ Ability to modify the feature names of Netatmo devices
 - Air quality sensor (NHC).
 
 ### Before the end of 2024
-#### 1) Pull request 8 - Adding webhooks ([For Gladys Plus users](/en/plus/))
+#### 1) Pull request 8 - Adding webhooks ([For Gladys Plus users](/plus/))
 This feature will enable real-time reception of alerts and state changes for certain devices (temperature settings, camera detection, door opening detection, device connection/disconnection alerts, etc.) for those who have a Gladys Plus subscription.
 #### 2) ... As per requests for additional features ...
 
