@@ -34,19 +34,18 @@ En cliquant sur "Save", vous aurez ensuite accès aux informations nécessaires 
 
 Pour ajouter vos appareils Netatmo dans Gladys, allez dans `Intégrations / Netatmo`.
 
-![Integration Netatmo](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations.jpg)
+![Integration Netatmo](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations.jpg)
 
 ### Etape 1.1 : Identifiants de connexion à l'API Netatmo
 
-Depuis l'onglet `Configuration`,
-![Integration Netatmo - Configuration - Déconnecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-disconnected.jpg)
-Entrez les informations récupérées lors de [l'étape précédente](/fr/docs/integrations/netatmo#etape-2---netatmo-connect) :
-
+Depuis l'onglet `Configuration`, entrez les informations récupérées lors de [l'étape précédente](/fr/docs/integrations/netatmo#etape-2---netatmo-connect) :
 - Le client ID,
-- Le client secret,
+- Le client secret
+![Integration Netatmo - Configuration - Déconnecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-disconnected.jpg)
+
 
 Enfin cliquez sur le bouton "Sauvegarder la configuration et connexion à Netatmo".
-Vous serez alors redirigé vers le site de Netatmo pour pouvoir accepter la connexion depuis Gladys. 
+[Vous serez alors redirigé vers le site de Netatmo pour pouvoir accepter la connexion depuis Gladys.](fr/docs/integrations/netatmo/#etape-12--autorisation-de-connexion-de-lapplication-gladys-%C3%A0-votre-compte-netatmo)
 
 ### Etape 1.2 : Autorisation de connexion de l'application Gladys à votre compte Netatmo
 Il est important de noter qu'en cliquant sur "OUI, J'ACCEPTE", vous autorisez Gladys a accéder en lecture et en écriture pour tous les appareils actuellement supportés ainsi qu'en lecture à tous les appareils qui ne sont pas encore supportés dans le but de faciliter leur intégration future. Aucune donnée ni aucun accès n'est partagé à l'extérieur de votre instance Gladys locale.
@@ -61,34 +60,45 @@ Après acceptation, vous serez redirigé sur votre précédente page de Gladys, 
 
 (En cas d'erreur veuillez consulter le chapitre "Erreurs pouvant être rencontrées" - A rédiger)
 
-### Etape 2 : Découverte des appareils Netatmo
+### Etape 2.1 : Découverte des appareils Netatmo compatibles
 
-Dans l'onglet `Découverte appareils Netatmo`,
+Dans l'onglet `Découverte Netatmo`, vous retrouvez tous les appareils compatibles que vous aurez précédemment configurés sur l'application dédiée [de l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo).
+
 ![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-with-devices.jpg)
 
-Vous retrouvez tous les appareils compatibles que vous aurez précédemment configurés sur l'application dédiée [de l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo).
 
-Les appareils actuellement compatibles sont :
-- Le concentrateur (NAPlug), vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées.
+Les appareils actuellement compatibles sont [(Passer à l'étape suivante)](/fr/docs/integrations/netatmo#etape-22--découverte-des-appareils-netatmo-non-compatibles) :
+- **Le concentrateur (NAPlug)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées.
 
-![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAPlug.jpg)
+![Integration Netatmo - Découverte NAPlug](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAPlug.jpg)
 
-- Le thermostat (NATherm1), vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées.
+- **Le thermostat (NATherm1)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées.
 
 ![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NATherm1.jpg)
 
-Vous pouvez déjà sélectionner la pièce dans laquelle ils sont installés puis intégrer ceux-ci d'un simple clique sur le bouton "Sauvegarder". Le bouton passent alors en "Déjà créé".
+Vous pouvez sélectionner la pièce Gladys dans laquelle ils sont installés puis intégrer ceux-ci d'un simple clique sur le bouton "Sauvegarder". Le bouton passent alors en "Déjà créé".
 
-![Integration Netatmo - Découverte - Déjà créé](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-decouverte-appareils-deja-cree.jpg)
+![Integration Netatmo - Découverte - Déjà créé](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-already-created.jpg)
 
-Sur cette page vous retrouvé également un bouton "Mettre à jour" pour effectuer un rafraichissement des noms des appareils en cas de changement de ces derniers dans les applications Netatmo.
+Sur cette page vous retrouvé également en haut un bouton "Rafraichir" pour effectuer un rafraichissement des fonctionnalités des appareils en cas de changement de ces derniers dans les applications Netatmo ou en cas de nouvelle prise en charge dans Gladys.
 
-![Integration Netatmo - Découverte - Mettre à jour](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-decouverte-appareils-mettre-a-jour.jpg)
+![Integration Netatmo - Découverte - Rafraichir](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-refresh.jpg)
 
+### Etape 2.2 : Découverte des appareils Netatmo non compatibles
 
-### Etape 3 : Définir une pièce aux appareils et modification des fonctionnalités
+Vous pourrez également retrouver les appareils en votre possession qui ne sont pas encore compatibles avec Gladys.
+![Integration Netatmo - Découverte - Non compatibles](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-device-unknown.jpg)
 
-Dans l'onglet `Appareils Netatmo`, vous retrouvez cette fois les appareils ajoutés avec leurs caractéristiques.
+Vous pourrez effectuer une demande de prise en charge pour ces appreils par l'intermédiaire du bouton "Proposer ce périphérique" qui vous amenera sur la page Github pour créer directement une issue de demande d'ajout avec les propriétés du nouvel appareil.
+:::warning
+N'oubliez pas de remplacer les données 'sensible' comme l'id de l'appareil, de la maison, de la pièce ou du concentrateur.
+:::
+
+![Integration Netatmo - Découverte - Issue Github](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-issue-github-device-unknown.jpg)
+
+### Etape 3 : Onglet "Appareils" Définir une pièce aux appareils et modification des fonctionnalités
+
+Dans l'onglet `Appareils`, vous retrouvez les appareils ajoutés avec leurs caractéristiques.
 
 ![Integration Netatmo - Appareils Netatmo](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-appareils-netatmo.jpg)
 
