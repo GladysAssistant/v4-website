@@ -1,6 +1,6 @@
 ---
 id: netatmo
-title: Netatmo
+title: Connect your Netatmo thermostats to your smart home system installation
 sidebar_label: Netatmo
 ---
 
@@ -116,36 +116,29 @@ Moreover, some features will be able to be displayed in different ways.
 
 ## Road Map - Service Evolution Forecast
 
-### January/February 2024
-#### 1) Pull request 1 - Continuing "Energy" devices
+### Pull request 1 - Continuing "Energy" devices
 - Valves (NRV)
-#### 2) Pull request 2 - Adding the "Edit" button
+### Pull request 2 - Adding the "Edit" button
 Ability to modify the feature names of Netatmo devices
-
-### Before the 2nd quarter of 2024
-#### 1) Pull request 3 - Adding "Weather" weather station
+### Pull request 3 - Adding "Weather" weather station
 - Main weather station (NAMain),
 - Outdoor module (NAModule1).
-#### 2) Pull request 4 - Continuing "Weather" devices
+### Pull request 4 - Continuing "Weather" devices
 - Anemometer (NAModule2),
 - Rain gauge (NAModule3),
 - Additional indoor modules (NAModule4).
-
-### Before the 3rd quarter of 2024
-#### 1) Pull request 5 - Adding Netatmo "Home + Security" security
+### Pull request 5 - Adding Netatmo "Home + Security" security
 - Indoor Camera (NACamera),
 - Door and window opening sensor (NACamDoorTag),
 - Siren (NIS).
-#### 2) Pull request 6 - Continuing "Home + Security" devices
+### Pull request 6 - Continuing "Home + Security" devices
 - Outdoor Camera (NOC) with or without siren,
 - Smoke detector (NSD).
-#### 3) Pull request 7 - Adding the "Aircare" Homecoach
+### Pull request 7 - Adding the "Aircare" Homecoach
 - Air quality sensor (NHC).
-
-### Before the end of 2024
-#### 1) Pull request 8 - Adding webhooks ([For Gladys Plus users](/plus/))
+### Pull request 8 - Adding webhooks ([For Gladys Plus users](/plus/))
 This feature will enable real-time reception of alerts and state changes for certain devices (temperature settings, camera detection, door opening detection, device connection/disconnection alerts, etc.) for those who have a Gladys Plus subscription.
-#### 2) ... As per requests for additional features ...
+#### ... As per requests for additional features ...
 
 ## Conclusion
 The status feedback of all devices described in [step 1 of the prerequisites](/docs/integrations/netatmo#step-1---compatible-devices-and-netatmo-mobile-apps) is now functional.

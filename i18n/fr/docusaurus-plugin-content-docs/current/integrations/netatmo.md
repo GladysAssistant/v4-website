@@ -1,6 +1,6 @@
 ---
 id: netatmo
-title: Netatmo
+title: Connecter ses thermostats Netatmo à sa maison connectée
 sidebar_label: Netatmo
 ---
 
@@ -118,36 +118,29 @@ De plus certaines fonctionnalités pourront être affichées de différentes man
 
 ## Road Map - Prévision d'évolution du service
 
-### Janvier/Février 2024
-#### 1) Pull request 1 - Suite des appareils "Energy"
+### Pull request 1 - Suite des appareils "Energy"
 - Vannes (NRV)
-#### 2) Pull request 2 - Ajout du bouton "Modifier"
+### Pull request 2 - Ajout du bouton "Modifier"
 Pouvoir modifier les noms des fonctionnalités des appareils Netatmo
-
-### Avant le 2ème trimestre 2024
-#### 1) Pull request 3 - Ajout de la station météo "Weather"
+### Pull request 3 - Ajout de la station météo "Weather"
 - Station météo principale (NAMain),
 - Module extérieur (NAModule1).
-#### 2) Pull request 4 - Suite des appareils "Weather"
+### Pull request 4 - Suite des appareils "Weather"
 - Anémomètre (NAModule2),
 - Pluviomètre (NAModule3),
 - Modules intérieurs complémentaires (NAModule4).
-
-### Avant le 3ème trimestre 2024
-#### 1) Pull request 5 - Ajout de la sécurité Netatmo "Home + Security"
+### Pull request 5 - Ajout de la sécurité Netatmo "Home + Security"
 - Caméra intérieure (NACamera),
 - Capteur d'ouverture de porte et fenêtre (NACamDoorTag),
 - Sirène (NIS).
-#### 2) Pull request 6 - Suite des appareils "Home + Security"
+### Pull request 6 - Suite des appareils "Home + Security"
 - Caméra extérieure (NOC) avec ou sans sirène,
 - Détecteur de fumée (NSD).
-#### 3) Pull request 7 - Ajout du Homecoach "Aircare"
+### Pull request 7 - Ajout du Homecoach "Aircare"
 - Capteur de qualité de l'air (NHC).
-
-### Avant la fin d'année 2024
-#### 1) Pull request 8 - Ajout des webhooks ([Pour les utilisateurs Gladys Plus](/fr/plus/))
+### Pull request 8 - Ajout des webhooks ([Pour les utilisateurs Gladys Plus](/fr/plus/))
 Cette fonctionnalité permettra de recevoir les alertes et changements d'états de certains appareils en temps réel (Consignes de température, détection caméra, détection d'ouverture de porte, alerte de connexion/déconnexion d'un appareil, etc.) pour tout ceux qui disposent d'un abonnement Gladys Plus.
-#### 2) ... Au gré des demandes d'ajouts de fonctionnalités ...
+#### ... Au gré des demandes d'ajouts de fonctionnalités ...
 
 ## Conclusion
 Les retours d'états de tous les appareils décrits à [l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo) sont maintenant fonctionnels.
