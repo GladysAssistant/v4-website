@@ -17,26 +17,29 @@ Below are only the devices compatible with Gladys:
 
 ### Step 2 - Netatmo Connect
 
-You must then go to the [Netatmo Connect](https://dev.netatmo.com/) page and click on the "LOG IN" link to create an account with your email and password.
+You must then go to the [Netatmo Connect](https://dev.netatmo.com/) page and click on the `LOG IN` link to create an account with your email and password.
+![Connection Netatmo connect](../../static/img/docs/en/configuration/netatmo/netatmo-connect-log-in.jpg)
 
 #### Creating an "app"
 
-Go to your [My app](https://dev.netatmo.com/apps/) page and click on the "Create" button to create a link to your Gladys account. Enter the necessary information (fields with a \*) as in the example below:
+Go to your [My app](https://dev.netatmo.com/apps/) page and click on the `Create` button to create a link to your Gladys account. 
+![Create app](../../static/img/docs/en/configuration/netatmo/netatmo-connect-create-app.jpg)
+Enter the necessary information (fields with a \*) as in the example below:
 ![Configure an API 1](../../static/img/docs/en/configuration/netatmo/netatmo-connect-1.jpg)
 
 #### Retrieving Client Connection ID and secret
 
-By clicking on "Save", you will then have access to the necessary information in the frame below (see [Step 1 of the tutorial](/docs/integrations/netatmo#step-11-setup-netatmo-api-connection-credentials))
+By clicking on `Save`, you will then have access to the necessary information in the frame below (see [Step 1 of the tutorial](/docs/integrations/netatmo#step-11-setup-netatmo-api-connection-credentials))
 
 ![Configure an API 2](../../static/img/docs/en/configuration/netatmo/netatmo-connect-2.jpg)
 
 ## Tutorial
 
-To add your Netatmo devices to Gladys, go to `Integrations / Netatmo`.
+To add your Netatmo devices to Gladys, go to `Integrations -> Netatmo`.
 
 ![Netatmo Integration](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations.jpg)
 
-Then click on the `Configuration` tab to access the Netatmo API connection page.
+Then click on the `Setup` tab to access the Netatmo API connection page.
 ![Netatmo Integration - Setup](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-devices-without-devices.jpg)
 
 ### Step 1.1: Setup Netatmo API Connection Credentials
@@ -47,11 +50,11 @@ From the `Setup` tab, enter the information retrieved during the [previous step]
 
 ![Netatmo Integration - Setup - Disconnected](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-disconnected.jpg)
 
-Then click on the "Save configuration and connect to Netatmo" button.
+Then click on the `Save configuration and connect to Netatmo` button.
 [You will then be redirected to the Netatmo website to accept the connection from Gladys.](/docs/integrations/netatmo#step-12-authorizing-gladys-application-to-connect-to-your-netatmo-account)
 
 ### Step 1.2: Authorizing Gladys Application to Connect to Your Netatmo Account
-It is important to note that by clicking on "YES, I ACCEPT", you allow Gladys to access in read and write mode for all currently supported devices as well as read-only for devices not yet supported to facilitate their future integration. No data or access is shared outside of your local Gladys instance.
+It is important to note that by clicking on `YES, I ACCEPT` you allow Gladys to access in read and write mode for all currently supported devices as well as read-only for devices not yet supported to facilitate their future integration. No data or access is shared outside of your local Gladys instance.
 ![Netatmo Integration - Setup - Connected](../../static/img/docs/en/configuration/netatmo/en-netatmo-authorize-access.jpg)
 
 For any new integration of devices not yet supported, you will have to go through this step again to accept the writing (commands) on these new devices.
@@ -60,8 +63,6 @@ For any new integration of devices not yet supported, you will have to go throug
 After acceptance, you will be redirected back to your previous Gladys page, you should now be connected to the Netatmo API.
 
 ![Netatmo Integration - Setup - Connected](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-connected.jpg)
-
-(If an error occurs, please refer to the "Possible Errors Encountered" chapter - To be written)
 
 ### Step 2.1: Discovering Compatible Netatmo Devices
 
@@ -78,11 +79,11 @@ Currently compatible devices are [(Go to the next step)](/docs/integrations/neta
 
 ![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NATherm1.jpg)
 
-You can select the Gladys room in which they are installed and then integrate them with a simple click on the "Save" button. The button then changes to "Already Created".
+You can select the Gladys room in which they are installed and then integrate them with a simple click on the `Save` button. The button then changes to `Already Created`.
 
 ![Netatmo Integration - Discovery - Already Created](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-already-created.jpg)
 
-On this page, you will also find a "Refresh" button at the top to refresh the features of the devices in case of changes in the Netatmo apps or in case of new support in Gladys.
+On this page, you will also find a `Refresh` button at the top to refresh the features of the devices in case of changes in the Netatmo apps or in case of new support in Gladys.
 
 ![Netatmo Integration - Discovery - Refresh](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-refresh.jpg)
 
@@ -91,27 +92,27 @@ On this page, you will also find a "Refresh" button at the top to refresh the fe
 You will also be able to find devices in your possession that are not yet compatible with Gladys.
 ![Netatmo Integration - Discovery - Non-Compatible](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-device-unknown.jpg)
 
-You can request support for these devices through the "Propose this device" button, which will take you to the Github page to directly create an issue request with the properties of the new device.
+You can request support for these devices through the `Suggest this device` button, which will take you to the Github page to directly create an issue request with the properties of the new device.
 :::warning
 Do not forget to replace sensitive data such as the device ID, house ID, room ID, or hub ID.
 :::
 
 ![Netatmo Integration - Discovery - Github Issue](../../static/img/docs/en/configuration/netatmo/en-netatmo-issue-github-device-unknown.jpg)
 
-### Step 3: "Devices" Tab
+### Step 3: `Devices` Tab
 
 In the `Devices` tab, you will find the added devices with their characteristics, including their connection status ![Netatmo Integration - Device Connection Status OK](../../static/img/docs/en/configuration/netatmo/netatmo-integrations-devices-state-connection-ok.jpg) or ![Netatmo Integration - Device Connection Status NOK](../../static/img/docs/en/configuration/netatmo/netatmo-integrations-devices-state-connection-nok.jpg) and the battery level.
 
 ![Netatmo Integration - Netatmo Devices](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-devices.jpg)
 #### 1) Assigning a Room
 
-To display a device on the dashboard, you must first assign it to a room. Select it from the following dropdown menu, then click on the "Save" button:
+To display a device on the dashboard, you must first assign it to a room. Select it from the following dropdown menu, then click on the `Save` button:
 
 ![Netatmo Integration - Netatmo Device - Select Room](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-devices-selected-room.jpg)
 
 #### 2) Modifying Features
 
-For now, you can only change the display name of the device. Soon, you will also have access to an "Edit" button, allowing you to modify the display names of features that will appear on the homepage. 
+For now, you can only change the display name of the device. Soon, you will also have access to an `Edit` button, allowing you to modify the display names of features that will appear on the homepage. 
 Moreover, some features will be able to be displayed in different ways.
 
 ## Road Map - Service Evolution Forecast
@@ -143,4 +144,6 @@ This feature will enable real-time reception of alerts and state changes for cer
 ## Conclusion
 The status feedback of all devices described in [step 1 of the prerequisites](/docs/integrations/netatmo#step-1---compatible-devices-and-netatmo-mobile-apps) is now functional.
 
-And there you have it! You can now add the devices and features you want to enjoy on your homepage or create your alert or command scenes.
+And there you have it! You can now add the devices and features you want to enjoy on your homepage or create your alert or command scenes by following the part of the documentation dedicated to the [Dashboard](/docs/dashboard/intro/) or [Scenes](/docs/scenes/intro/).
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
