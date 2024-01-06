@@ -11,9 +11,11 @@ sidebar_label: Netatmo
 To add your Netatmo devices to Gladys, they must first be added to their respective apps, which you should download from the Play Store or Apple Store.
 Below are only the devices compatible with Gladys:
 
-#### "Energy" App [Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat): 
+- #### "NATherm1" Thermostats :
+    - [Netatmo Energy on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
+    - [Netatmo Energy on Apple Store](https://apps.apple.com/us/app/netatmo-energy/id730893725)
+
 ![Configure an app 1](../../static/img/docs/en/configuration/netatmo/netatmo-application-energy.jpg)
-- "NATherm1" Thermostats
 
 ### Step 2 - Netatmo Connect
 
