@@ -4,47 +4,43 @@ title: Manage presence with Bluetooth detection
 sidebar_label: Bluetooth
 ---
 
-Bluetooth integration is useful for presence detection.
+# Manage presence with Bluetooth detection
 
-There are bluetooth key chains like the [NUT keychain](https://www.amazon.com/gp/product/B08K3124JR/ref=as_li_qf_asin_il_tl?ie=UTF8&tag=gladproj-20&creative=9325&linkCode=as2&creativeASIN=B08K3124JR&linkId=5688d18164e92becabd17c6d49fdd778) which permanently broadcast their presence via Bluetooth.
+**Bluetooth** integration is useful for presence management.
+
+There are Bluetooth key rings like the [NUT key ring](https://www.amazon.fr/NUT-%C3%89crou-Mini-Bluetooth-Tracker/dp/B01M664D98/ref=sr_1_1?tag=gladproj-21) that constantly signal their presence via Bluetooth.
 
 With this kind of key fob, Gladys can detect when you are (or are not) at home, simply by scanning for nearby bluetooth devices.
 
-:::note
-This trick does not work with all Bluetooh devices. This only works with bluetooth devices that (1) transmit their signal continuously, and (2) which do not obfuscate their bluetooth address. **Most  phones do not broadcast their bluetooth signal continuously**. 
+**Note:** This trick doesn't work with all Bluetooth devices. It only works with Bluetooth devices that transmit continuously, and that don't obfuscate their Bluetooth address, as most phones do, for example. Generally speaking, the "dumber" the device, the better it works! For example, I had a Fitbit Force 2 bracelet, and it worked. However, it doesn't work with an Apple Watch.
 
-In general, the "dumber" the device, the better it works! For example, I had a Fitbit Force 2 bracelet, and it worked. However, it does not work with an Apple Watch.
-:::
+## Configure your Bluetooth device
 
-## Configure your bluetooth device
-
-Go to the "Bluetooth" integration, "Discovery" tab. Scan the surrounding bluetooth devices, and find the device you want to add.
-
-Click on "Connect to Gladys":
+Go to `Integration -> Bluetooth`, `Discover` tab. Scan the surrounding Bluetooth devices, and look for the device you want to add.
 
 ![Configure bluetooth device](../../static/img/docs/en/configuration/bluetooth/configure-device.png)
 
-Then activate the option "Use this device as a presence sensor".
+Then activate the `Use this device as a presence detector` option.
 
 Give this device a unique name, and add it to Gladys.
 
-You should land on this screen:
+This screen should appear:
 
 ![Configure bluetooth device](../../static/img/docs/en/configuration/bluetooth/device-list.png)
 
-Now, go to the "Presence scanner" screen, and check that your configuration looks like this:
+Now go to the `Presence scanner` screen, and check that your configuration looks like this:
 
 ![Configure bluetooth device](../../static/img/docs/en/configuration/bluetooth/presence-scanner.png)
 
-It's good, everything is configured on the Bluetooth side!
+All set on the Bluetooth side!
 
 ## Manage presence in scenes
 
 ### A "homecoming" scene
 
-We are now going to create a `scene` that will mark a user as "present at home" when this Nut keychain (or any other compatible bluetooth device) is detected.
+Now we're going to create a scene that will mark you as "present at home" when this Nut keyring is detected.
 
-Go to the "Scenes" tab, and create a scene like this:
+Go to the `Scenes` tab, and create a scene like this one:
 
 ![Return home scene](../../static/img/docs/en/configuration/bluetooth/back-at-home-scene.png)
 
@@ -54,9 +50,9 @@ WHEN "the key fob is detected" THEN "put user 'Tony' as present at home".
 
 ### A "leaving home" scene
 
-To manage the departure of the user from the house, we recommend you make a scene executed periodically, which will check if your NUT keychain has been detected recently at home.
+To manage leaving the house, I recommend making a periodically executed scene that will check whether your NUT keyring has recently been detected at home, or not.
 
-If Gladys detects the device's presence, it won't do anything. If not, Gladys will mark the user as absent.
+If yes, Gladys will do nothing. If not, Gladys will mark the user as absent.
 
 The scene should look like this:
 
@@ -66,6 +62,18 @@ You can play around with the settings to suit your home. If you feel that 10 min
 
 ## Display presence on the dashboard
 
-You can display the presence of selected users on the dashboard. To do so, you can use the "Users present" widget:
+You can now add a **Users present** widget to your dashboard to display the presence of different users at home.
+
+Go to Gladys' dashboard and click on the `edit` button to modify the dashboard.
+
+![edit_dashbord](<../../static/img/docs/en/configuration/bluetooth/edit dashboard.png>)
+
+Click on `add +` then select the `Users present` widget, which you can move to a column.
+
+Select the user(s) you wish to display, and click on `Save`.
+
+That's it! Your widget is now visible on the dashboard.
 
 ![Presence dashboard](../../static/img/docs/en/configuration/bluetooth/user-presence-dashboard.png)
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
