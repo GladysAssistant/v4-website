@@ -12,13 +12,13 @@ Seul un type d'appareil est supporté: Le [Fibaro Détecteur d'ouverture de port
 Nous sommes à la recherche d'aide pour intégrer d'autres appareils !
 :::
 
-Gladys Assistant propose une intégration avec [Z-Wave JS UI](https://zwave-js.github.io/), un logiciel qui permet de contrôler des appareils Z-Wave.
+Gladys Assistant propose une intégration avec [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), un logiciel qui permet de contrôler des appareils Z-Wave.
 
 Gladys se connecte au même broker MQTT que Z-Wave JS UI et reçoit des messages MQTT à chaque changement d'état d'un appareil.
 
 ## Installer Z-Wave JS UI
 
-Nous vous invitons à vous rendre sur le site de [Z-Wave JS UI](https://zwave-js.github.io/) pour trouver les instructions d'installation de Z-Wave JS UI.
+Nous vous invitons à vous rendre sur le site de [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/) pour trouver les instructions d'installation de Z-Wave JS UI.
 
 ## Configurer Z-Wave JS UI
 

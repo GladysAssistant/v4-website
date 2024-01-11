@@ -12,13 +12,13 @@ Only one type of device is supported: The [Fibaro Door Opening Sensor](https://w
 We are looking for help to integrate other devices!
 :::
 
-Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.io/), a software application for controlling Z-Wave devices.
+Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), a software application for controlling Z-Wave devices.
 
 Gladys connects to the same MQTT broker as Z-Wave JS UI and receives MQTT messages whenever a device's status changes.
 
 ## Installing Z-Wave JS UI
 
-Please visit the [Z-Wave JS UI](https://zwave-js.github.io/) website for Z-Wave JS UI installation instructions.
+Please visit the [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/) website for Z-Wave JS UI installation instructions.
 
 ## Configuring Z-Wave JS UI
 
