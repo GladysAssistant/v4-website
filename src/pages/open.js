@@ -317,6 +317,28 @@ function Open() {
                         </h2>
                         <ul>
                           <li className={styles.openPageList}>
+                            <a href={`${urlPrefix}/blog/2023-year-in-review`}>
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2023 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
+                            <a href={`${urlPrefix}/blog/2022-year-in-review`}>
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2022 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
                             <a href={`${urlPrefix}/blog/2021-year-in-review`}>
                               <Translate
                                 id="openPage.yearlyReview"
@@ -361,28 +383,6 @@ function Open() {
                                 id="openPage.yearlyReview"
                                 description="Yearly reviews"
                                 values={{ year: 2018 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a href={`${urlPrefix}/blog/bilan-gladys-2017`}>
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2017 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a href={`${urlPrefix}/blog/bilan-annee-2016`}>
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2016 }}
                               >
                                 {"{year} yearly review"}
                               </Translate>
