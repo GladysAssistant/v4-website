@@ -4,68 +4,70 @@ title: View your electricity consumption in Gladys with Enedis
 sidebar_label: Enedis
 ---
 
-Enedis is a french electricity provider, and offers an API that allows to retrieve the electricity consumption data from a Linky meter of a household.
+# View your electricity consumption in Gladys with Enedis
 
-This API is only proposed to companies, after signing a contract and a certification process.
+Enedis offers an API for retrieving electricity consumption data from a household's Linky meter.
 
-For Gladys, we have a legal structure, "Gladys Assistant SAS", which allows us to have access to this API and authorizes us to make it available to individuals.
+This API is only available to companies after signing a contract and undergoing a certification process.
 
-This API is available via [Gladys Plus](/plus).
+As for Gladys, we have a legal structure, "Gladys Assistant SAS", which gives us access to this API and authorizes us to make it available to private individuals.
 
-:::note
-This integration is only usable in France as it connects to the french electricity provider API.
-:::
+This API is made available via [Gladys Plus](https://gladysassistant.com/fr/plus/).
+
+NOTE
+
+This integration can only be used in France, as Enedis is the operator of the French electricity distribution network.
 
 ## Connect to Enedis in Gladys
 
-Go to [plus.gladysassistant.com](https://plus.gladysassistant.com), and click on the "Enedis" integration:
+Go to [plus.gladysassistant.com](https://plus.gladysassistant.com/), and click on `Integration -> Enedis` :
 
-![Enedis icon](../../static/img/docs/en/configuration/enedis/enedis-integration-icone.jpg)
+Click on the button `I access my Enedis customer area`:
 
-Click on the button "I access my Enedis customer area":
+![connexion_enedis](../../static/img/docs/en/configuration/enedis/connexion_enedis.png)
 
-![Enedis integration Gladys consent](../../static/img/docs/en/configuration/enedis/enedis-integration-clic.jpg)
+On the Enedis side, accept the consent and click on `Validater`.
 
-On the Enedis side, accept the consent and click on "Validate".
+![consentement](../../static/img/docs/en/configuration/enedis/consentement.jpg)
 
-![Enedis consent](../../static/img/docs/en/configuration/enedis/enedis-consentement.jpg)
+In Gladys, you will find your electricity meter in `My Meters` :
 
-You should arrive on Gladys, which will synchronize with your Enedis account.
+![my_meters](<../../static/img/docs/en/configuration/enedis/my meters.png>)
 
-The first synchronization may take some time depending on the load on the Enedis API, I advise you to quit Gladys and come back later 🙂
+## View your consumption on the dashboard
 
-## View your electricity consumption
+Go to Gladys' dashboard and click on the `edit` button to modify the dashboard.
 
-In Gladys, you find your electricity meter in "Meters" :
+![edit_dashboard](../../static/img/docs/en/configuration/enedis/edit_dashboard.png)
 
-![Enedis Gladys integration, my meters](../../static/img/docs/en/configuration/enedis/enedis-compteur.jpg)
+Click on `add +` then select the `graphic` widget, you can move it to a column and select D`aily consumption` :
 
-On the dashboard, you can create a new graph, and select "Daily consumption" :
+![widget_enedis](../../static/img/docs/en/configuration/enedis/widget_chart.png)
 
-![Enedis Gladys integration, daily consumption](../../static/img/docs/en/configuration/enedis/graphique-consommation-quotidienne.jpg)
+Choose `Histogram`, you should see this graph on your dashboard:
 
-Choose "Histogram", and you should see this graph on your dashboard :
-
-![Enedis Gladys integration, graph](../../static/img/docs/en/configuration/enedis/enedis-graphique.jpg)
+![graphic_enedis](../../static/img/docs/en/configuration/enedis/enedis_graphic.png)
 
 ## FAQ
 
-### I can not make the Enedis consent?
+### I can't make the Enedis consent
 
-The Enedis platform is sometimes offline for updates on the Enedis side. Often the best thing to do is to try again later.
+The Enedis platform is sometimes offline due to updates on the Enedis side. Often, the best thing to do is to try again later.
 
-If it still doesn't work, check that your Enedis account is working: are you able to see your electricity consumption data in Enedis? If not, the problem is probably with Enedis.
+If this still doesn't work, check that your Enedis account is up and running: can you see your electricity consumption data in Enedis? If not, the problem probably lies with Enedis.
 
-### I don't have any more data on the previous days ?
+### I don't have any data from previous days
 
-The Enedis API is updated every morning in theory.
+In theory, the Enedis API is updated every morning.
 
-However, in practice the data is not always available at the same time, and on some days (public holidays for example), the data is not available.
+However, in practice the data is not always available at the same time, and on certain days (public holidays, for example), the data is not available.
 
-If however, you observe holes on your dashboard, which persist over time, please post a message on [the forum](https://en-community.gladysassistant.com/).
+However, if you notice any gaps in your dashboard that persist over time, please post a message on [the forum](https://community.gladysassistant.com/).
 
-### Synchronization is not done anymore?
+### Synchronization no longer works?
 
 Your consent is valid for 2 years, and must be renewed if you want Gladys to continue retrieving your data.
 
-If your account does not synchronize anymore, in case of doubt I advise you to renew your consent by clicking on the blue button "I access my Enedis customer space".
+If your account no longer synchronizes, if in doubt I advise you to renew your consent by clicking on the blue button "J'accède à mon espace client Enedis".
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
