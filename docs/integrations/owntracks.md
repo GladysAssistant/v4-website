@@ -4,44 +4,52 @@ title: Owntracks
 sidebar_label: Owntracks
 ---
 
-[Owntracks](https://owntracks.org/) is an open-source mobile app which sends the phone location to a server, periodically.
+# Owntracks
 
-Gladys Plus allows you to receive Owntracks message and create location in Gladys.
+[Owntracks](https://owntracks.org/) is an open-source mobile application that lets you send your geolocation periodically to a server.
+
+**Gladys Plus]([https://gladysassistant.com/fr/plus/](https://gladysassistant.com/fr/plus/))** allows you to receive these locations in Gladys.
 
 ### Download Owntracks
 
-First download Owntracks on iOS or Android.
+First, download Owntracks.
+
+- [Android](https://play.google.com/store/apps/details?id=org.owntracks.android&hl=fr&gl=US)
+- [iOS](https://apps.apple.com/fr/app/owntracks/id692424691)
 
 ### Create an API key in Gladys Plus
 
-Go to [plus.gladysassistant.com](https://plus.gladysassistant.com/), connect.
+Go to [plus.gladysassistant.com](https://plus.gladysassistant.com/), log in.
 
-Then go to "settings" => "Open API", and create a key.
+Then go to `Integration -> Open API`, and create a key.
 
 ### Go to Owntracks
 
-Click on the button in the top-left corner:
+Click on the button at the top left of the app:
 
-![Open API owntracks Gladys](../../static/img/docs/en/configuration/gateway/open-api-owntracks-0.jpg)
+![owntracks_carte](../../static/img/docs/en/configuration/gateway/open-api-owntracks-0.jpg)
 
-Click on settings:
+Click on `Settings`:
 
-![Open API owntracks Gladys](../../static/img/docs/en/configuration/gateway/open-api-owntracks-1.jpg)
+![owntracks_statuts_info](../../static/img/docs/en/configuration/gateway/open-api-owntracks-1.jpg)
 
-Select "HTTP", and in the "URL" input, enter:
+Select `HTTP`, then in the `URL` input enter:
 
 ```
-https://api.gladysgateway.com/v1/api/owntracks/[YOUR-API-KEY]
+<https://api.gladysgateway.com/v1/api/owntracks/[YOUR-API-KEY]>
+
 ```
 
-Fill in the `UserID` and `DeviceID` field with the terms of your choice (they are mandatory).
+In `DeviceID` and `UserID`, put what you want, it's not useful for Gladys but the fields are mandatory.
 
-I put "iphone" for the `DeviceID`, and "pierre-gilles" for the `UserID`.
+I personally put "iphone" in `DeviceID` and "Pierre-Gilles" in `UserID`.
 
-Gladys uses the API key to identify who is making the request.
+Gladys uses the API key to identify your account.
 
-![Open API owntracks Gladys](../../static/img/docs/en/configuration/gateway/open-api-owntracks-2.jpg)
+![owntracks_settings](../../static/img/docs/en/configuration/gateway/open-api-owntracks-2.jpg)
 
-### See your location in Gladys
+### Check that integration is working
 
-You should see your location in Gladys in the "Maps" tab.
+In Gladys, you should see your position on the `Plans` tab.
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
