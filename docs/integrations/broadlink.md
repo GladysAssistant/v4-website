@@ -4,30 +4,64 @@ title: Broadlink
 sidebar_label: Broadlink
 ---
 
-Gladys allows you to control Broadlink devices, or to create infrared remote controls.
+# Control your TVs and air conditioners with a BroadlLink infrared transmitter
 
-## Connect Broadlink device on network
+With **ladys**, you can manage **Broadlink** devices and create remote controls to operate them via infrared.
 
-To allow Gladys to manage the Broadlink device, it should be connected on the same WiFi network as Gladys.
-To do this, please follow the official Broadlink documentation according to your device.
+## Connect the device to your network
 
-## Control a device from Gladys
+To be visible to Gladys, the **Broadlink** device must be connected to the same WiFi network as Gladys. To do this, simply follow the official Broadlink hardware installation procedure.
 
-In Gladys, go to `Integrations / Broadlink`, click on `Discover devices` to look for detected Broadlink devices.
+## Add a device to Gladys
 
-Then click on `Save` to add a device, or `Create remote control` to control your infrared devices.
+From Gladys, go to `Integrations -> Broadlink`, then click on `Available devices` to find the devices detected on your network.
 
-## Create a remote control
+![appareils disponibles.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/appareils_disponibles.png)
 
-You can replace your physical remote controls by Gladys.
-Go to `Devices`, then `New remote control`, select you Broadlink controler and the type of the device to manage, and follow the learning mode.
+Just click on `Register` to add a device.
+
+## Create a remote control in Gladys
+
+It's now possible to replace your remote controls with Gladys. Go to the `Devices -> Create +` menu, enter a name, choose a room, your Broadlink controller and the type of device, then let the learning mode guide you.
+
+Example for a TV remote control:
+
+![image_2023-11-30_162216516.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/image_2023-11-30_162216516.png)
+
+After pairing, click on `Save`.
+
+You will no longer need your remote controls.
+
+Your remote control is now registered in `apparatus`.
+
+![image_2023-11-30_164102049.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/image_2023-11-30_164102049.png)
 
 ## Troubleshooting
 
-### Locked device
+### Device locked
 
-From the Broadlink mobile application, go to the device settings to unlock it.
+From the Broadlink mobile application, you need to uncheck the option in the settings.
 
 ### RF management
 
-Today, only Infra-Red protocol is managed.
+Currently, only infrared signals are supported.
+
+## Control your remote on the dashboard
+
+You can now add a **devices widget** to your dashboard and control your remote control.
+
+Go to the Gladys dashboard and click on the "edit" button to modify the dashboard.
+
+[](https://gladysassistant.com/fr/docs/integrations/camera/#ajoutez-la-cam%C3%A9ra-au-dashboard-de-gladys-assistant)
+
+![edit_dashboard](<../../static/img/docs/en/configuration/broadlink en/edit_dashboard.png>)
+
+Click on `add +`, then select the `devices` widget and move it to a column.
+
+Select the feature(s) you wish to add, and click `Save`.
+
+That's it! Your widget is now visible on the dashboard.
+
+![image_2023-11-30_164520690.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/image_2023-11-30_164520690.png)
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
