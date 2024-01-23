@@ -28,7 +28,7 @@ Type a name for your password, "Gladys" for exemple.
 
 Note the generated password.
 
-In Gladys dashboard, go to CalDAV config page.
+go to the `Integration -> CalDav` page in Gladys
 
 ![iCloud](../../static/img/docs/en/configuration/caldav/apple_3_integration.png)
 
@@ -39,7 +39,7 @@ In Gladys dashboard, go to CalDAV config page.
 
 ![iCloud](../../static/img/docs/en/configuration/caldav/apple_4_apple_config.png)
 
-Click on "Save".
+Click on `Save`.
 
 If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
 
@@ -57,18 +57,18 @@ Go to security tabs and click on "App Passwords".
 
 ![Google Calendar](../../static/img/docs/en/configuration/caldav/google_2_generate.png)
 
-In the Gladys dashboard, go to CalDAV config page (Integration tab > Calendar).
+go to the `Integration -> CalDav` page in Gladys
 
 ![Google Calendar](../../static/img/docs/en/configuration/caldav/apple_3_integration.png)
 
-1. Choose "Google Calendar"
+1. Choose `Google Calendar`
 2. Leave the default URL
 3. Type your Google email address
 4. Paste here the previously generated password
 
 ![Google Calendar](../../static/img/docs/en/configuration/caldav/google_4_google_config.png)
 
-Click on "Save". If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
+Click on `Save`. If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
 
 ### Synology Calendar
 
@@ -85,11 +85,11 @@ Copy "macOS / iOS" url.
 
 ![Synology](../../static/img/docs/en/configuration/caldav/synology_3_calendar_url.png)
 
-In the Gladys dashboard, go to CalDAV config page (Integration tab > Calendar).
+go to the `Integration -> CalDav` page in Gladys
 
 ![Synology](../../static/img/docs/en/configuration/caldav/apple_3_integration.png)
 
-1. Choose "Synlogy Calendar"
+1. Choose `Synlogy Calendar`
 2. Paste here the URL you copied previously
 3. Type your Synology username
 4. Type here you Synology password
@@ -117,7 +117,7 @@ Then "Copy the primary CalDAV address"
 
 ![Nextcloud](../../static/img/docs/en/configuration/caldav/nextcloud_3_config_url.png)
 
-In Gladys dashboard, go to CalDAV config page (Integration tab > Calendar).
+go to the `Integration -> CalDav` page in Gladys
 
 ![Nextcloud](../../static/img/docs/en/configuration/caldav/apple_3_integration.png)
 
@@ -128,7 +128,7 @@ In Gladys dashboard, go to CalDAV config page (Integration tab > Calendar).
 
 ![Nextcloud](../../static/img/docs/en/configuration/caldav/apple_4_apple_config.png)
 
-Click on "Save".
+Click on `Save`.
 
 If there is a validation message, Gladys will sync your calendar. If an error appears, check previous steps and try again.
 
@@ -141,3 +141,5 @@ For all others services
 3. Then enter your password (if applicable)
 
 ![Others services](../../static/img/docs/en/configuration/caldav/other_config.png)
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.

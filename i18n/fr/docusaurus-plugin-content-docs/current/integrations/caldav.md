@@ -1,6 +1,6 @@
 ---
 id: caldav
-title: CalDAV
+title: Synchronisez vos calendriers CalDAV dans Gladys Assistant
 sidebar_label: CalDAV
 ---
 
@@ -28,7 +28,7 @@ Entrez le nom voulu associé à votre mot de passe
 
 Puis notez le mot de passe généré
 
-Dans Gladys rejoignez la page de configuration CalDAV
+Dans Gladys rejoignez la page `Intégrations -> CalDAV`.
 
 ![iCloud](../../../../../static/img/docs/fr/configuration/caldav/apple_3_integration.png)
 
@@ -39,7 +39,7 @@ Dans Gladys rejoignez la page de configuration CalDAV
 
 ![iCloud](../../../../../static/img/docs/fr/configuration/caldav/apple_4_apple_config.png)
 
-Cliquez sur "Sauvegarder". S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérfiez les étapes précédentes et recommencez.
+Cliquez sur `Sauvegarder`. S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérifiez les étapes précédentes et recommencez.
 
 ### Google Agenda
 
@@ -55,18 +55,18 @@ Rejoignez le panneau sécurité puis cliquez sur "Mot de passe des applications"
 
 ![Google Agenda](../../../../../static/img/docs/fr/configuration/caldav/google_2_generate.png)
 
-Dans Gladys rejoignez la page de configuration CalDAV
+Dans Gladys rejoignez la page `Intégrations -> CalDAV`.
 
 ![Google Agenda](../../../../../static/img/docs/fr/configuration/caldav/apple_3_integration.png)
 
-1. Choississez "Google Agenda"
+1. Choississez `Google Agenda`
 2. Laissez l'URL par défaut
 3. Entrez l'email de votre compte Google
 4. Collez ici le mot de passe précédement généré
 
 ![Google Agenda](../../../../../static/img/docs/fr/configuration/caldav/google_4_google_config.png)
 
-Cliquez sur "Sauvegarder". S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérfiez les étapes précédentes et recommencez.
+Cliquez sur `Sauvegarder`. S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérifiez les étapes précédentes et recommencez.
 
 ### Calendrier Synology
 
@@ -83,18 +83,18 @@ Copiez l'url qui se trouve au niveau de "macOS / iOS"
 
 ![Synology](../../../../../static/img/docs/fr/configuration/caldav/synology_3_calendar_url.png)
 
-Dans Gladys rejoignez la page de configuration CalDAV
+Dans Gladys rejoignez la page `Intégrations -> CalDAV`.
 
 ![Synology](../../../../../static/img/docs/fr/configuration/caldav/apple_3_integration.png)
 
-1. Choisissez "Synlogy Calendar"
+1. Choisissez `Synlogy Calendar`
 2. Collez ici l'url copiée précédement
 3. Entrez votre nom d'utilisateur Synology
 4. Entrez ici le mot de passe de votre compte
 
 ![Synology](../../../../../static/img/docs/fr/configuration/caldav/apple_4_apple_config.png)
 
-Cliquez sur "Sauvegarder". S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérfiez les étapes précédentes et recommencez.
+Cliquez sur "Sauvegarder". S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérifiez les étapes précédentes et recommencez.
 
 ### Nextcloud
 
@@ -113,7 +113,7 @@ Puis "Copiez l'adresse CalDAV principale"
 
 ![Nextcloud](../../../../../static/img/docs/fr/configuration/caldav/nextcloud_3_config_url.png)
 
-Dans Gladys rejoignez la page de configuration CalDAV
+Dans Gladys rejoignez la page `Intégrations -> CalDAV`.
 
 ![Nextcloud](../../../../../static/img/docs/fr/configuration/caldav/apple_3_integration.png)
 
@@ -124,7 +124,7 @@ Dans Gladys rejoignez la page de configuration CalDAV
 
 ![Nextcloud](../../../../../static/img/docs/fr/configuration/caldav/apple_4_apple_config.png)
 
-Cliquez sur "Sauvegarder". S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérfiez les étapes précédentes et recommencez.
+Cliquez sur `Sauvegarder`. S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérifiez les étapes précédentes et recommencez.
 
 ### Autres
 
@@ -135,3 +135,5 @@ Pour tout autre service
 3. Entrez le mot de passe de votre compte
 
 ![Autre service](../../../../../static/img/docs/fr/configuration/caldav/other_config.png)
+
+Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
