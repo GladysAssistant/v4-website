@@ -4,17 +4,25 @@ title: How to configure Alexa with Gladys Assistant
 sidebar_label: Alexa
 ---
 
-It is possible to control Gladys devices with Alexa using [Gladys Plus](/plus), our online gateway service.
+This tutorial will show you how to set up **Alexa** **integration** in just a few minutes on your **Gladys** instance.
 
-Alexa is a unique integration, because Alexa works exclusively in the cloud. This means we have very limited control over what we can and can't do (unfortunately).
+## A word before we begin
 
-To become a Alexa partner, we had to:
+**Alexa** integration is a special kind of integration.
 
-- Pass some automated unit tests on Amazon side
-- Pass a manual review from Amazon team
-- Complete a Alexa Certification process
+As Alexa is a 100% Cloud product, Amazon requires that its partners are also hosted in the Cloud.
 
-This is not a simple process, and therefore it's not realistic for all our users go through it on their side. It is a process that is intended for professionals & companies, hence why we offer this integration in Gladys Plus, exclusively.
+So, unlike other integrations that can work entirely locally, Alexa by nature can only work through an Amazon-approved, cloud-hosted integration.
+
+To enable the Gladys community to use Alexa with Gladys, we developed our own **Alexa** integration, via [Gladys Plus](https://gladysassistant.com/fr/plus/), our web gateway.
+
+Being an Alexa partner was not an easy task, we had to :
+
+- pass certification to become an Alexa partner
+- Validate automated tests
+- pass a manual review with an Amazon employee
+
+All this process, maintenance and infrastructure costs justify the fee we charge to make this integration work, and I hope you'll understand.
 
 ## Create a Gladys Plus account
 
@@ -68,3 +76,5 @@ For now, only:
 - Switch (On/Off)
 
 Additionnal compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).
+
+Please post a message on the forum, if you need any help.
