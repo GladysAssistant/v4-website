@@ -64,13 +64,10 @@ Attention, il faut que le nom se termine par "bot" pour bien identifier qu'il s'
 
 Dans le message que vous transmet BotFather, il y a la clé d'API sous la ligne "Use this token to access the HTTP API:"
 
-## Entrez cette clé dans Gladys Assistant
+## Ajoutez Telegram dans Gladys
 
-Allez dans "Intégrations" -> "Telegram".
-
-![Entrer une clé dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/telegram/telegram_07_Integration_Gladys-0.jpg)
-
-Entrez votre clé d'API puis cliquez sur "Sauvegarder".
+1. Allez sur la page `Intégrations -> Telegram` dans Gladys.
+2. Entrez votre clé d'API puis cliquez sur `Sauvegarder`
 
 ![Entrer une clé dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/telegram/telegram_08_Integration_Gladys_ok.jpg)
 
@@ -110,7 +107,7 @@ Vérifiez sur la page d'accueil de Gladys Assistant :
 
 ![Entrer une clé dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/telegram/telegram_13_Communiquer_Gladys_Gladys_Accueil.jpg)
 
-Vous pouvez aussi voir les conversations dans l'onglet Discussion de Gladys Assistant.
+Vous pouvez aussi voir les conversations dans l'onglet `Discussion` de Gladys Assistant.
 
 ![Entrer une clé dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/telegram/telegram_14_Communiquer_Gladys_Gladys_Discussion.jpg)
 
@@ -118,4 +115,4 @@ Regardons ce que ça donne sur un smartphone :
 
 ![Entrer une clé dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/telegram/telegram_15_Communiquer_Gladys_Smartphone.jpg)
 
-Enjoy !
+Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
