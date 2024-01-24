@@ -16,7 +16,7 @@ To be visible to Gladys, the **Broadlink** device must be connected to the same 
 
 From Gladys, go to `Integrations -> Broadlink`, then click on `Available devices` to find the devices detected on your network.
 
-![appareils disponibles.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/appareils_disponibles.png)
+![available_devices](../../static/img/docs/en/configuration/broadlink/available_devices.png)
 
 Just click on `Register` to add a device.
 
@@ -26,7 +26,7 @@ It's now possible to replace your remote controls with Gladys. Go to the `Device
 
 Example for a TV remote control:
 
-![image_2023-11-30_162216516.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/image_2023-11-30_162216516.png)
+![tv_device](../../static/img/docs/en/configuration/broadlink/create_remote.png)
 
 After pairing, click on `Save`.
 
@@ -34,7 +34,7 @@ You will no longer need your remote controls.
 
 Your remote control is now registered in `apparatus`.
 
-![image_2023-11-30_164102049.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/image_2023-11-30_164102049.png)
+![tv_device](../../static/img/docs/en/configuration/broadlink/tv_device.png)
 
 ## Troubleshooting
 
@@ -54,7 +54,7 @@ Go to the Gladys dashboard and click on the "edit" button to modify the dashboar
 
 [](https://gladysassistant.com/fr/docs/integrations/camera/#ajoutez-la-cam%C3%A9ra-au-dashboard-de-gladys-assistant)
 
-![edit_dashboard](<../../static/img/docs/en/configuration/broadlink en/edit_dashboard.png>)
+![edit_dashboard](../../static/img/docs/en/configuration/broadlink/edit_dashboard.png)
 
 Click on `add +`, then select the `devices` widget and move it to a column.
 
@@ -62,6 +62,6 @@ Select the feature(s) you wish to add, and click `Save`.
 
 That's it! Your widget is now visible on the dashboard.
 
-![image_2023-11-30_164520690.png](Control%20your%20TVs%20and%20air%20conditioners%20with%20a%20Broad%207c8998cf45c84c15adcb36a6655247f0/image_2023-11-30_164520690.png)
+![widget_dashboard](../../static/img/docs/en/configuration/broadlink/dashboard.png)
 
 Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
