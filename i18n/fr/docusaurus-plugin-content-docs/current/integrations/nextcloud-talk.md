@@ -36,18 +36,16 @@ Pour indiquer la conversation de Nextcloud Talk que Gladys doit écouter :
 
 ## Entrez la configuration de votre bot dans Gladys Assistant
 
-Allez dans "Intégrations" -> "Nextcloud Talk".
-
-![Intégration Nextcloud Talk](../../../../../static/img/docs/fr/configuration/nextcloud-talk/nextcloud_talk_4_integration_list.png)
+Allez sur la page `Intégrations -> Nextcloud Talk` dans Gladys.
 
 1. Entrez l'url de base de votre instance Nextcloud
 2. Entrez ici le nom d'utilisateur du compte Nextcloud de votre bot
 3. Collez ici le mot de passe précédement généré 
 4. Collez le token récupéré dans l'url de la conversation
 
-Puis cliquez sur "Sauvegarder".
-
 ![Entrer une clé dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/nextcloud-talk/nextcloud_talk_5_configuration.png)
+
+Puis cliquez sur `Sauvegarder`.
 
 ## Première communication entre Nextcloud Talk et Gladys Assistant
 
@@ -56,3 +54,5 @@ Sur Nextcloud web ou l'application mobile, saisissez votre première question da
 Patientez un peu et ......... magie !!!
 
 Votre assistant vous répond ! C'est cool, non ?
+
+Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
