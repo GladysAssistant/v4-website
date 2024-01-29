@@ -50,9 +50,9 @@ From the `Setup` tab, enter the information retrieved during the [previous step]
 - The client ID,
 - The client secret
 
-![Netatmo Integration - Setup - Disconnected](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-disconnected.jpg)
+![Netatmo Integration - Setup - Disconnected](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-not-configured.jpg)
 
-Then click on the `Save configuration and connect to Netatmo` button.
+Then click on the `Save and connect` button.
 [You will then be redirected to the Netatmo website to accept the connection from Gladys.](/docs/integrations/netatmo#step-12-authorizing-gladys-application-to-connect-to-your-netatmo-account)
 
 ### Step 1.2: Authorizing Gladys Application to Connect to Your Netatmo Account
@@ -65,6 +65,12 @@ For any new integration of devices not yet supported, you will have to go throug
 After acceptance, you will be redirected back to your previous Gladys page, you should now be connected to the Netatmo API.
 
 ![Netatmo Integration - Setup - Connected](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-connected.jpg)
+
+
+### Step 1.4: Disconnecting from the application
+You can completely disconnect from the Netatmo application by clicking on the `Disconnect` button. This will clear the credentials and associated permissions.
+
+![Netatmo Integration - Setup - Disconnected](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-disconnected.jpg)
 
 ### Step 2.1: Discovering Compatible Netatmo Devices
 
@@ -119,27 +125,20 @@ Moreover, some features will be able to be displayed in different ways.
 
 ## Road Map - Service Evolution Forecast
 
-### Pull request 1 - Continuing "Energy" devices
-- Valves (NRV)
-### Pull request 2 - Adding the "Edit" button
-Ability to modify the feature names of Netatmo devices
-### Pull request 3 - Adding "Weather" weather station
-- Main weather station (NAMain),
-- Outdoor module (NAModule1).
-### Pull request 4 - Continuing "Weather" devices
-- Anemometer (NAModule2),
-- Rain gauge (NAModule3),
-- Additional indoor modules (NAModule4).
-### Pull request 5 - Adding Netatmo "Home + Security" security
-- Indoor Camera (NACamera),
-- Door and window opening sensor (NACamDoorTag),
-- Siren (NIS).
-### Pull request 6 - Continuing "Home + Security" devices
-- Outdoor Camera (NOC) with or without siren,
-- Smoke detector (NSD).
-### Pull request 7 - Adding the "Aircare" Homecoach
-- Air quality sensor (NHC).
-### Pull request 8 - Adding webhooks ([For Gladys Plus users](/plus/))
+- #### Pull request 1 - Netatmo "Energy" : Valves (NRV)
+- #### Pull request 2 - Netatmo "Weather" : Main weather station (NAMain)
+- #### Pull request 3 - Netatmo "Weather" : Additional indoor modules (NAModule4)
+- #### Pull request 4 - Netatmo "Weather" : Outdoor module (NAModule1)
+- #### Pull request 5 - Netatmo "Weather" : Anemometer (NAModule2)
+- #### Pull request 6 - Netatmo "Weather" : Rain gauge (NAModule3)
+- #### Pull request 7 - Netatmo "Aircare" Homecoach : Air quality sensor (NHC)
+- #### Pull request 8 - Netatmo "Home + Security" : Indoor Camera (NACamera)
+- #### Pull request 9 - Netatmo "Home + Security" : Door and window opening sensor (NACamDoorTag)
+- #### Pull request 10 - Netatmo "Home + Security" : Siren (NIS)
+- #### Pull request 11 - Netatmo "Home + Security" : Outdoor Camera (NOC) with or without siren
+- #### Pull request 12 - Netatmo "Home + Security" : Smoke detector (NSD).
+- #### Pull request 13 - Adding the "Edit" button : Ability to modify the feature names of Netatmo devices
+- #### Pull request 14 - Adding webhooks ([For Gladys Plus users](/plus/))
 This feature will enable real-time reception of alerts and state changes for certain devices (temperature settings, camera detection, door opening detection, device connection/disconnection alerts, etc.) for those who have a Gladys Plus subscription.
 #### ... As per requests for additional features ...
 
