@@ -50,14 +50,14 @@ From the `Setup` tab, enter the information retrieved during the [previous step]
 - The client ID,
 - The client secret
 
-![Netatmo Integration - Setup - Disconnected](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-not-configured.jpg)
+![Netatmo Integration - Setup - Not configured](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-not-configured.jpg)
 
 Then click on the `Save and connect` button.
 [You will then be redirected to the Netatmo website to accept the connection from Gladys.](/docs/integrations/netatmo#step-12-authorizing-gladys-application-to-connect-to-your-netatmo-account)
 
 ### Step 1.2: Authorizing Gladys Application to Connect to Your Netatmo Account
 It is important to note that by clicking on `YES, I ACCEPT` you allow Gladys to access in read and write mode for all currently supported devices as well as read-only for devices not yet supported to facilitate their future integration. No data or access is shared outside of your local Gladys instance.
-![Netatmo Integration - Setup - Connected](../../static/img/docs/en/configuration/netatmo/en-netatmo-authorize-access.jpg)
+![Netatmo Integration - Setup - Authorize](../../static/img/docs/en/configuration/netatmo/en-netatmo-authorize-access.jpg)
 
 For any new integration of devices not yet supported, you will have to go through this step again to accept the writing (commands) on these new devices.
 
@@ -136,7 +136,7 @@ Moreover, some features will be able to be displayed in different ways.
 - #### Pull request 9 - Netatmo "Home + Security" : Door and window opening sensor (NACamDoorTag)
 - #### Pull request 10 - Netatmo "Home + Security" : Siren (NIS)
 - #### Pull request 11 - Netatmo "Home + Security" : Outdoor Camera (NOC) with or without siren
-- #### Pull request 12 - Netatmo "Home + Security" : Smoke detector (NSD).
+- #### Pull request 12 - Netatmo "Home + Security" : Smoke detector (NSD)
 - #### Pull request 13 - Adding the "Edit" button : Ability to modify the feature names of Netatmo devices
 - #### Pull request 14 - Adding webhooks ([For Gladys Plus users](/plus/))
 This feature will enable real-time reception of alerts and state changes for certain devices (temperature settings, camera detection, door opening detection, device connection/disconnection alerts, etc.) for those who have a Gladys Plus subscription.

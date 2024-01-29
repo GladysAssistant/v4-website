@@ -50,7 +50,7 @@ Puis cliquer sur l'onglet `Configuration` pour accéder à la page de connexion 
 Depuis l'onglet `Configuration`, entrez les informations récupérées lors de [l'étape précédente](/fr/docs/integrations/netatmo#etape-2---netatmo-connect) :
 - Le client ID,
 - Le client secret
-![Integration Netatmo - Configuration - Déconnecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-disconnected.jpg)
+![Integration Netatmo - Configuration - Non configuré](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-not-configured.jpg)
 
 
 Enfin cliquez sur le bouton `Sauvegarder la configuration et connexion à Netatmo`.
@@ -58,7 +58,7 @@ Enfin cliquez sur le bouton `Sauvegarder la configuration et connexion à Netatm
 
 ### Etape 1.2 : Autorisation de connexion de l'application Gladys à votre compte Netatmo
 Il est important de noter qu'en cliquant sur `OUI, J'ACCEPTE` vous autorisez Gladys à accéder en lecture et en écriture pour tous les appareils actuellement supportés ainsi qu'en lecture à tous les appareils qui ne sont pas encore supportés dans le but de faciliter leur intégration future. Aucune donnée ni aucun accès n'est partagé à l'extérieur de votre instance Gladys locale.
-![Integration Netatmo - Configuration - Connecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-authorize-access.jpg)
+![Integration Netatmo - Configuration - Autorisation](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-authorize-access.jpg)
 
 Pour toute nouvelle intégration d'appareils non encore pris en charge, vous devrez à nouveau passer par cette étape pour accepter l'écriture (commandes) sur ces nouveaux appareils.
 
@@ -66,6 +66,11 @@ Pour toute nouvelle intégration d'appareils non encore pris en charge, vous dev
 Après acceptation, vous serez redirigé sur votre précédente page de Gladys, vous devriez maintenant être connecté avec l'API Netatmo. 
 
 ![Integration Netatmo - Configuration - Connecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-connected.jpg)
+
+### Step 1.4: Se déconnecter de l'application
+Vous pouvez vous déconnecter complètement de l'application Netatmo en cliquant sur le bouton 'Déconnecter'. Cela effacera les informations d'identification et les autorisations associées.
+
+![Integration Netatmo - Configuration - Déconnecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-disconnected.jpg)
 
 ### Etape 2.1 : Découverte des appareils Netatmo compatibles
 
@@ -87,7 +92,7 @@ Vous pouvez sélectionner la pièce Gladys dans laquelle ils sont installés pui
 
 ![Integration Netatmo - Découverte - Déjà créé](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-already-created.jpg)
 
-Sur cette page vous retrouvé également en haut un bouton `Rafraichir` pour effectuer un rafraichissement des fonctionnalités des appareils en cas de changement de ces derniers dans les applications Netatmo ou en cas de nouvelle prise en charge dans Gladys.
+Sur cette page vous retrouvez également en haut un bouton `Rafraichir` pour effectuer un rafraichissement des fonctionnalités des appareils en cas de changement de ces derniers dans les applications Netatmo ou en cas de nouvelle prise en charge dans Gladys.
 
 ![Integration Netatmo - Découverte - Rafraichir](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-refresh.jpg)
 
@@ -121,27 +126,20 @@ De plus certaines fonctionnalités pourront être affichées de différentes man
 
 ## Road Map - Prévision d'évolution du service
 
-### Pull request 1 - Suite des appareils "Energy"
-- Vannes (NRV)
-### Pull request 2 - Ajout du bouton "Modifier"
-Pouvoir modifier les noms des fonctionnalités des appareils Netatmo
-### Pull request 3 - Ajout de la station météo "Weather"
-- Station météo principale (NAMain),
-- Module extérieur (NAModule1).
-### Pull request 4 - Suite des appareils "Weather"
-- Anémomètre (NAModule2),
-- Pluviomètre (NAModule3),
-- Modules intérieurs complémentaires (NAModule4).
-### Pull request 5 - Ajout de la sécurité Netatmo "Home + Security"
-- Caméra intérieure (NACamera),
-- Capteur d'ouverture de porte et fenêtre (NACamDoorTag),
-- Sirène (NIS).
-### Pull request 6 - Suite des appareils "Home + Security"
-- Caméra extérieure (NOC) avec ou sans sirène,
-- Détecteur de fumée (NSD).
-### Pull request 7 - Ajout du Homecoach "Aircare"
-- Capteur de qualité de l'air (NHC).
-### Pull request 8 - Ajout des webhooks ([Pour les utilisateurs Gladys Plus](/fr/plus/))
+- #### Pull request 1 - Netatmo "Energy" : Vannes (NRV)
+- #### Pull request 2 - Netatmo "Weather" : Station météo principale (NAMain)
+- #### Pull request 3 - Netatmo "Weather" : Modules intérieurs complémentaires (NAModule4)
+- #### Pull request 4 - Netatmo "Weather" : Module extérieur (NAModule1)
+- #### Pull request 5 - Netatmo "Weather" : Anémomètre (NAModule2)
+- #### Pull request 6 - Netatmo "Weather" : Pluviomètre (NAModule3)
+- #### Pull request 7 - Netatmo "Aircare" - Homecoach : Capteur de qualité de l'air (NHC)
+- #### Pull request 8 - Netatmo "Home + Security" : Caméra intérieure (NACamera)
+- #### Pull request 9 - Netatmo "Home + Security" : Capteur d'ouverture de porte et fenêtre (NACamDoorTag)
+- #### Pull request 10 - Netatmo "Home + Security" : Sirène (NIS)
+- #### Pull request 11 - Netatmo "Home + Security" : Caméra extérieure (NOC) avec ou sans sirène
+- #### Pull request 12 - Netatmo "Home + Security" : Détecteur de fumée (NSD)
+- #### Pull request 13 - Ajout du bouton "Modifier" : Pouvoir modifier les noms des fonctionnalités des appareils Netatmo
+- #### Pull request 14 - Ajout des webhooks ([Pour les utilisateurs Gladys Plus](/fr/plus/))
 Cette fonctionnalité permettra de recevoir les alertes et changements d'états de certains appareils en temps réel (Consignes de température, détection caméra, détection d'ouverture de porte, alerte de connexion/déconnexion d'un appareil, etc.) pour tout ceux qui disposent d'un abonnement Gladys Plus.
 #### ... Au gré des demandes d'ajouts de fonctionnalités ...
 
