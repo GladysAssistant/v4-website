@@ -147,4 +147,6 @@ The status feedback of all devices described in [step 1 of the prerequisites](/d
 
 And there you have it! You can now add the devices and features you want to enjoy on your homepage or create your alert or command scenes by following the part of the documentation dedicated to the [Dashboard](/docs/dashboard/intro/) or [Scenes](/docs/scenes/intro/).
 
+![Netatmo Dashboard - Plug & NATherm1](../../static/img/docs/en/configuration/netatmo/en-netatmo-dashboard.jpg)
+
 Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.

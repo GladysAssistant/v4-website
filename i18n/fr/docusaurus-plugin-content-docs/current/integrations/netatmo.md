@@ -148,4 +148,6 @@ Les retours d'états de tous les appareils décrits à [l'étape 1 des prérequi
 
 Et voilà ! Vous pouvez maintenant ajouter les appareils et fonctionnalités dont vous souhaitez profiter sur votre page d'accueil ou encore créer vos scènes d'alertes ou de commandes en suivant la partie de la documentation consacrée au [Tableau de bord](/fr/docs/dashboard/intro) ou aux [Scènes](/fr/docs/scenes/intro).
 
+![Netatmo Dashboard - Plug & NATherm1](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-dashboard.jpg)
+
 Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
