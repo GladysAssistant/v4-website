@@ -1,7 +1,7 @@
 ---
 id: hardware
-title: Maison connectée - Le guide ultime pour commencer
-sidebar_label: Le guide ultime pour commencer
+title: Commencer avec Gladys
+sidebar_label: Commencer
 slug: /
 ---
 
