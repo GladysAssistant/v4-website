@@ -9,6 +9,14 @@ Il est compliqué de savoir par où commencer quand on débute en domotique. Que
 
 Je vous propose ce tutoriel pour évoquer tous ces points ensemble et vous donner un point d’entrée pour créer votre maison connectée de zéro.
 
+:::info
+Février 2024: Je viens de lancer une formation pour vous expliquer comment mettre en place VOTRE maison connectée !
+
+Dans cette formation, je vous montre un exemple concret : mon installation personnelle.
+
+A découvrir ici: [formation.gladysassistant.com](https://formation.gladysassistant.com)
+:::
+
 ## Définir son projet de maison connectée
 
 Le plus important est de définir les automatisations que vous voulez mettre en place à la maison : des lumières connectées ? Une alarme pour sécuriser la maison ? Faire des économies d’énergies en coupant les appareils inutilisés / le chauffage ?
@@ -43,7 +51,7 @@ Gladys tourne sur n’importe quel mini-PC sous Linux :
 
 | Modèle                               | Prix   | Commentaire                                                                                                                                                                                                                                                                                                                                                                        | Lien                                                                                                                     |
 | ------------------------------------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Raspberry Pi 4                       | 56,90€ | La carte la plus connue du marché et la plus abordable. Facile à mettre en place avec notre image Raspberry Pi OS. Attention, utiliser une micro-SD peut présenter des risques sur le long terme (risque de corruption de disque). Peut-être un bon point d’entrée pour commencer sur Gladys pour pas cher !                                                                        | [Kubii](https://www.kubii.com/fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-3272496308794.html?gladys) |
+| Raspberry Pi 4                       | 56,90€ | La carte la plus connue du marché et la plus abordable. Facile à mettre en place avec notre image Raspberry Pi OS. Attention, utiliser une micro-SD peut présenter des risques sur le long terme (risque de corruption de disque). Peut-être un bon point d’entrée pour commencer sur Gladys pour pas cher !                                                                       | [Kubii](https://www.kubii.com/fr/cartes-raspberry-pi/2771-nouveau-raspberry-pi-4-modele-b-2gb-3272496308794.html?gladys) |
 | Khadas VIM1S                         | 65,99€ | Une carte avec un stockage eMMC intégré. 2GB RAM / 16GB de stockage. Installation d’Ubuntu Server via leur BIOS personnalisé puis installation de Gladys en CLI avec Docker.                                                                                                                                                                                                       | [Amazon](https://amzn.to/3suD6Z3)                                                                                        |
 | Beelink Mini S12 Pro                 | 185€   | Un mini-PC surpuissant: Quad Core Intel 12ème génération à basse consommation, 8/16GB de RAM, 256/512GB de SSD NVMe. Extrêmement stable sur le long terme, et très performant. Peu de bidouille à faire (c’est tout intégré dans un boitier, et alimentation fournie). Pour l’utiliser, installation d’Ubuntu Server via une clé USB bootable + installation de Gladys via Docker. | [Amazon](https://amzn.to/49RNnPI)                                                                                        |
 | N’importe quel serveur, NAS, mini-PC |        | Tu as un NAS Synology ? Un Intel NUC ? N’importe quel serveur Linux, du moment qu’il peut faire tourner Docker, peut faire tourner Gladys. N’hésite pas à venir sur le forum si tu as des questions.                                                                                                                                                                               |                                                                                                                          |

@@ -290,7 +290,7 @@ function Home({ integrations, lang }) {
                 >
                   <Link
                     className={classnames(
-                      "button button--primary",
+                      "button button--secondary",
                       styles.heroButton
                     )}
                     href={lang === "en" ? `/docs` : `/${lang}/docs`}
@@ -303,6 +303,22 @@ function Home({ integrations, lang }) {
                     </Translate>
                   </Link>
                 </div>
+                {lang === "fr" && (
+                  <div
+                    className="margin-right--md"
+                    style={{ display: "inline-block" }}
+                  >
+                    <Link
+                      className={classnames(
+                        "button button--primary",
+                        styles.heroButton
+                      )}
+                      href="https://formation.gladysassistant.com"
+                    >
+                      Obtenez le guide ULTIME pour démarrer !
+                    </Link>
+                  </div>
+                )}
                 {false && (
                   <div
                     className="margin-right--md"
