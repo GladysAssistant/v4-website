@@ -1,6 +1,6 @@
 ---
 title: Lancement du guide ULTIME pour commencer en domotique 🚀
-description: Quelle année ! L'occasion de revenir sur ce qui a marqué 2023 et les projets que j'ai pour 2024
+description: Depuis le temps que j'ai envie de vous parler de ce projet, le voici enfin !
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
