@@ -26,6 +26,14 @@ module.exports = {
       defaultMode: "dark",
       respectPrefersColorScheme: false,
     },
+    announcementBar: {
+      id: "launching_formation",
+      content:
+        'Nouveau : Obtiens le guide ULTIME pour mettre en place ta maison connnectée : <a target="_blank"  href="https://formation.gladysassistant.com">J\'en profite !</a>',
+      backgroundColor: "#65c7f7",
+      textColor: "#091E42",
+      isCloseable: true,
+    },
     navbar: {
       title: "Gladys Assistant",
       logo: {
