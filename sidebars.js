@@ -29,6 +29,7 @@ module.exports = {
         "integrations/homekit",
         "integrations/mqtt",
         "integrations/nextcloud-talk",
+        "integrations/netatmo",
         "integrations/node-red",
         "integrations/openweather",
         "integrations/openai",
