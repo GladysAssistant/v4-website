@@ -43,7 +43,7 @@ module.exports = {
         "integrations/tuya",
         "integrations/xiaomi",
         "integrations/zigbee2mqtt",
-        "integrations/zwave",
+        "integrations/zwavejs-ui",
       ],
     },
     {
