@@ -4,13 +4,17 @@ const puppeteer = require("puppeteer");
 
 const LANGUAGES = ["fr", "en"];
 const INTEGRATIONS = [
-  "philips-hue",
-  "zwave",
-  "sonoff",
-  "xiaomi",
+  "broadlink",
   "camera",
+  "netatmo",
+  "philips-hue",
+  "sonoff",
+  "sonos",
+  "tasmota",
   "tp-link",
+  "xiaomi",
   "zigbee2mqtt",
+  "zwave",
 ];
 
 const LIST_OF_NOT_FOUND_TITLES = [

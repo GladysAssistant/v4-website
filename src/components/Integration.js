@@ -96,12 +96,15 @@ function Integration({
 function IntegrationPage({ integrations, lang }) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [checkedTags, setCheckedTags] = React.useState({
-    zigbee2mqtt: true,
-    "philips-hue": true,
+    broadlink: true,
     camera: true,
+    netatmo: true,
     sonoff: true,
-    xiaomi: true,
+    sonos: true,
+    "philips-hue": true,
     "tp-link": true,
+    xiaomi: true,
+    zigbee2mqtt: true,
     zwave: true,
   });
   const handleChange = (event) => {
@@ -171,16 +174,48 @@ function IntegrationPage({ integrations, lang }) {
             <div className={classnames(styles.integrationFilterCheckbox)}>
               <input
                 type="checkbox"
-                name="zigbee2mqtt"
-                checked={checkedTags["zigbee2mqtt"]}
+                name="broadlink"
+                checked={checkedTags["broadlink"]}
                 onChange={handleCheckedChange}
               />
-              <label for="zigbee2mqtt">
+              <label for="broadlink">
                 <Translate
-                  id="integrations.zigbee2mqtt"
-                  description="Integration zigbee2mqtt title"
+                  id="integrations.broadlink"
+                  description="Integration broadlink title"
                 >
-                  Zigbee2Mqtt
+                  Broadlink
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="camera"
+                checked={checkedTags["camera"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="camera">
+                <Translate
+                  id="integrations.camera"
+                  description="Integration camera title"
+                >
+                  Camera
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="netatmo"
+                checked={checkedTags["netatmo"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="netatmo">
+                <Translate
+                  id="integrations.netatmo"
+                  description="Integration netatmo title"
+                >
+                  Netatmo
                 </Translate>
               </label>
             </div>
@@ -219,16 +254,32 @@ function IntegrationPage({ integrations, lang }) {
             <div className={classnames(styles.integrationFilterCheckbox)}>
               <input
                 type="checkbox"
-                name="camera"
-                checked={checkedTags["camera"]}
+                name="sonos"
+                checked={checkedTags["sonos"]}
                 onChange={handleCheckedChange}
               />
-              <label for="camera">
+              <label for="sonos">
                 <Translate
-                  id="integrations.camera"
-                  description="Integration camera title"
+                  id="integrations.sonos"
+                  description="Integration sonos title"
                 >
-                  Camera
+                  Sonos
+                </Translate>
+              </label>
+            </div>
+            <div className={classnames(styles.integrationFilterCheckbox)}>
+              <input
+                type="checkbox"
+                name="tp-link"
+                checked={checkedTags["tp-link"]}
+                onChange={handleCheckedChange}
+              />
+              <label for="tp-link">
+                <Translate
+                  id="integrations.tpLink"
+                  description="Integration tp-link title"
+                >
+                  TP-Link
                 </Translate>
               </label>
             </div>
@@ -251,16 +302,16 @@ function IntegrationPage({ integrations, lang }) {
             <div className={classnames(styles.integrationFilterCheckbox)}>
               <input
                 type="checkbox"
-                name="tp-link"
-                checked={checkedTags["tp-link"]}
+                name="zigbee2mqtt"
+                checked={checkedTags["zigbee2mqtt"]}
                 onChange={handleCheckedChange}
               />
-              <label for="tp-link">
+              <label for="zigbee2mqtt">
                 <Translate
-                  id="integrations.tpLink"
-                  description="Integration tp-link title"
+                  id="integrations.zigbee2mqtt"
+                  description="Integration zigbee2mqtt title"
                 >
-                  TP-Link
+                  Zigbee2Mqtt
                 </Translate>
               </label>
             </div>

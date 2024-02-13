@@ -9,14 +9,17 @@ const download = require("download");
 const Promise = require("bluebird");
 
 const AUTHORIZED_DOC_ID = [
+  "broadlink",
   "camera",
+  "netatmo",
   "philips-hue",
   "sonoff",
-  "xiaomi",
-  "zwave",
+  "sonos",
   "tasmota",
   "tp-link",
+  "xiaomi",
   "zigbee2mqtt",
+  "zwave",
 ];
 
 const schema = Joi.object({
