@@ -11,7 +11,7 @@ sidebar_label: Netatmo
 To add your Netatmo devices to Gladys, they must first be added to their respective apps, which you should download from the Play Store or Apple Store.
 Below are only the devices compatible with Gladys:
 
-- #### "NATherm1" Thermostats :
+- #### "NATherm1" Thermostats and "NRV" Valves:
     - [Netatmo Energy on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
     - [Netatmo Energy on Apple Store](https://apps.apple.com/us/app/netatmo-energy/id730893725)
 
@@ -78,14 +78,40 @@ In the `Netatmo Discovery` tab, you will find all compatible devices that you pr
 
 ![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-with-devices.jpg)
 
-Currently compatible devices are [(Go to the next step)](/docs/integrations/netatmo#step-22-discovery-of-non-compatible-netatmo-devices):
-- **The Hub (NAPlug)**, you will find the name of the device configured in the Netatmo app, the model, its Netatmo ID, the room to which the device is attached in the app, and the currently supported features.
+Currently compatible devices are **(you can move on to the next step by clicking [here](/docs/integrations/netatmo#step-22-discovery-of-non-compatible-netatmo-devices))**:
+- **The Hub (NAPlug)**, you will find the name of the device configured in the Netatmo app, the model, its Netatmo ID, the room to which the device is attached in the app, and the currently supported features in particular:
+   - the strength of the wifi signal,
+   - the intensity of the overall radio signal,
+   - the state of connection of the bridge to a boiler.
 
 ![Netatmo Integration - Discovery NAPlug](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAPlug.jpg)
 
-- **The Thermostat (NATherm1)**, you will find the name of the device configured in the Netatmo app, the model, the bridge to which it is connected, its Netatmo ID, the room to which the device is attached in the app, and the currently supported features.
+- **The Thermostat (NATherm1)**, you will find the name of the device configured in the Netatmo app, the model, the bridge to which it is connected, its Netatmo ID, the room to which the device is attached in the app, and the currently supported features in particular:
+   - the exact battery status (in %),
+   - the measured temperature of the thermostat,
+   - the temperature of the room (average of the temperatures of the various Netatmo devices located in this room),
+   - the thermostat setpoint temperature on which you can also control either from the dashboard or from a scene,
+   - detection of a window opened by any Netatmo device located in the same room,
+   - the intensity of the radio signal with the bridge,
+   - the boiler heating request state (activated if the set temperature is higher than the room temperature).
 
 ![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NATherm1.jpg)
+
+- **The valve (NRV)**, you will find the name of the device configured in the Netatmo application, the model, the bridge to which it is connected, its Netatmo ID, the room in which the device is attached in the application and the functionalities currently supported in particular:
+   - the battery status divided into 6 states and converted into %:
+     - max: 100%
+     - full: 90%
+     - high: 75%
+     - medium: 50%
+     - low: 25%
+     - very low: 10%
+   - the temperature of the room (average of the temperatures of the various Netatmo devices located in this room),
+   - the set temperature of the room on which you can also control either from the dashboard or from a scene,
+   - detection of a window opened by any Netatmo device located in the same room,
+   - the intensity of the radio signal with the bridge,
+   - the boiler heating request state (activated if the set temperature is higher than the room temperature).
+
+![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NRV.jpg)
 
 You can select the Gladys room in which they are installed and then integrate them with a simple click on the `Save` button. The button then changes to `Already Created`.
 
@@ -125,12 +151,30 @@ Moreover, some features will be able to be displayed in different ways.
 
 ## Road Map - Service Evolution Forecast
 
-- #### Pull request 1 - Netatmo "Energy" : Valves (NRV)
+- #### ~~Pull request 1 - Netatmo "Energy" : Valves (NRV)~~
+    - **Status: Implemented in February 2024** - This functionality has been added to allow the management of NRV valves as part of the Netatmo "Energy" service. For details, see PR [#2014](https://github.com/GladysAssistant/Gladys/pull/2014).
+
+
 - #### Pull request 2 - Netatmo "Weather" : Main weather station (NAMain)
+    - **Status: Under development** - This feature is under development. For details, see PR [#2015](https://github.com/GladysAssistant/Gladys/pull/2015).
+
+    
 - #### Pull request 3 - Netatmo "Weather" : Additional indoor modules (NAModule4)
+    - **Status: Under development** - This feature is under development. For details, see PR [#2016](https://github.com/GladysAssistant/Gladys/pull/2016).
+
+    
 - #### Pull request 4 - Netatmo "Weather" : Outdoor module (NAModule1)
+    - **Status: Under development** - This feature is under development. For details, see PR [#2017](https://github.com/GladysAssistant/Gladys/pull/2017).
+
+    
 - #### Pull request 5 - Netatmo "Weather" : Anemometer (NAModule2)
+    - **Status: Under development** - This feature is under development. For details, see PR [#2018](https://github.com/GladysAssistant/Gladys/pull/2018).
+
+    
 - #### Pull request 6 - Netatmo "Weather" : Rain gauge (NAModule3)
+    - **Status: Under development** - This feature is under development. For details, see PR [#2019](https://github.com/GladysAssistant/Gladys/pull/2019).
+
+    
 - #### Pull request 7 - Netatmo "Aircare" Homecoach : Air quality sensor (NHC)
 - #### Pull request 8 - Netatmo "Home + Security" : Indoor Camera (NACamera)
 - #### Pull request 9 - Netatmo "Home + Security" : Door and window opening sensor (NACamDoorTag)

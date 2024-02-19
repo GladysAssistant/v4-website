@@ -11,7 +11,7 @@ sidebar_label: Netatmo
 Pour pouvoir ajouter vos appareils Netatmo dans Gladys, ceux-ci doivent au préalable être ajoutés dans leurs applications respectives que vous devrez télécharger sur le play store ou l'apple store.
 Ci-dessous ne sont référencés que les appareils compatibles avec Gladys :
 
-- #### Les thermostats "NATherm1" :
+- #### Les thermostats "NATherm1" et les vannes NRV :
     - [Netatmo Energy sur Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
     - [Netatmo Energy sur Apple Store](https://apps.apple.com/fr/app/netatmo-energy/id730893725)
 
@@ -79,14 +79,40 @@ Dans l'onglet `Découverte Netatmo`, vous retrouvez tous les appareils compatibl
 ![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-with-devices.jpg)
 
 
-Les appareils actuellement compatibles sont [(Passer à l'étape suivante)](/fr/docs/integrations/netatmo#etape-22--découverte-des-appareils-netatmo-non-compatibles) :
-- **Le concentrateur (NAPlug)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées.
+Les appareils actuellement compatibles sont (**vous pouvez passer à l'étape suivante en cliquant [ici](/fr/docs/integrations/netatmo#etape-22--découverte-des-appareils-netatmo-non-compatibles)**) :
+- **Le concentrateur (NAPlug)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
+  - l'intensité du signal wifi,
+  - l'intensité du signal radio global,
+  - l'état de connexion du pont à une chaudière.
 
 ![Integration Netatmo - Découverte NAPlug](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAPlug.jpg)
 
-- **Le thermostat (NATherm1)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées.
+- **Le thermostat (NATherm1)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
+  - l'état de la batterie exacte (en %),
+  - la température mesurée du thermostat,
+  - la température de la pièce (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
+  - la température de consigne du thermostat sur lequel vous pouvez également agir en commande soit depuis le tableau de bord, soit depuis une scène,
+  - la détection d'une fenêtre ouverte par tout appareil Netatmo se situant dans la même pièce,
+  - l'intensité du signal radio avec le pont,
+  - l'état de demande de chauffage à la chaudière (activé si la température de consigne est supérieure à la température de la pièce).
 
 ![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NATherm1.jpg)
+
+- **La vanne (NRV)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
+  - l'état de la batterie divisé en 6 états et converti en % :
+    - max: 100%
+    - pleine: 90%
+    - haute: 75%
+    - moyenne: 50%
+    - basse: 25%
+    - très basse: 10%
+  - la température de la pièce (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
+  - la température de consigne de la pièce sur laquelle vous pouvez également agir en commande soit depuis le tableau de bord, soit depuis une scène,
+  - la détection d'une fenêtre ouverte par tout appareil Netatmo se situant dans la même pièce,
+  - l'intensité du signal radio avec le pont,
+  - l'état de demande de chauffage à la chaudière (activé si la température de consigne est supérieure à la température de la pièce).
+
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NRV.jpg)
 
 Vous pouvez sélectionner la pièce Gladys dans laquelle ils sont installés puis intégrer ceux-ci d'un simple clique sur le bouton `Sauvegarder`. Le bouton passent alors en `Déjà créé`.
 
@@ -126,12 +152,30 @@ De plus certaines fonctionnalités pourront être affichées de différentes man
 
 ## Road Map - Prévision d'évolution du service
 
-- #### Pull request 1 - Netatmo "Energy" : Vannes (NRV)
+- #### ~~Pull request 1 - Netatmo "Energy" : Vannes (NRV)~~
+  - **Statut : Implémenté en février 2024** - Cette fonctionnalité a été ajoutée pour permettre la gestion des vannes NRV dans le cadre du service Netatmo "Energy". Pour plus de détails, voir la PR [#2014](https://github.com/GladysAssistant/Gladys/pull/2014).
+
+
 - #### Pull request 2 - Netatmo "Weather" : Station météo principale (NAMain)
+  - **Statut : En cours de développement** - Cette fonctionnalité est en cours de développement. Pour plus de détails, voir la PR [#2015](https://github.com/GladysAssistant/Gladys/pull/2015).
+
+
 - #### Pull request 3 - Netatmo "Weather" : Modules intérieurs complémentaires (NAModule4)
+  - **Statut : En cours de développement** - Cette fonctionnalité est en cours de développement. Pour plus de détails, voir la PR [#2016](https://github.com/GladysAssistant/Gladys/pull/2016).
+
+
 - #### Pull request 4 - Netatmo "Weather" : Module extérieur (NAModule1)
+  - **Statut : En cours de développement** - Cette fonctionnalité est en cours de développement. Pour plus de détails, voir la PR [#2017](https://github.com/GladysAssistant/Gladys/pull/2017).
+
+
 - #### Pull request 5 - Netatmo "Weather" : Anémomètre (NAModule2)
+  - **Statut : En cours de développement** - Cette fonctionnalité est en cours de développement. Pour plus de détails, voir la PR [#2018](https://github.com/GladysAssistant/Gladys/pull/2018).
+
+
 - #### Pull request 6 - Netatmo "Weather" : Pluviomètre (NAModule3)
+  - **Statut : En cours de développement** - Cette fonctionnalité est en cours de développement. Pour plus de détails, voir la PR [#2019](https://github.com/GladysAssistant/Gladys/pull/2019).
+
+
 - #### Pull request 7 - Netatmo "Aircare" - Homecoach : Capteur de qualité de l'air (NHC)
 - #### Pull request 8 - Netatmo "Home + Security" : Caméra intérieure (NACamera)
 - #### Pull request 9 - Netatmo "Home + Security" : Capteur d'ouverture de porte et fenêtre (NACamDoorTag)
