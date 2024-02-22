@@ -35,18 +35,16 @@ To indicate which Nextcloud Talk conversation Gladys should listen to:
 
 ## Enter full Nextcloud Talk bot configuration in Gladys Assistant
 
-Go to "Integrations" -> "Nextcloud Talk".
-
-![Integration Nextcloud Talk](../../static/img/docs/en/configuration/nextcloud-talk/nextcloud_talk_4_integration_list.png)
+Go to the `Integrations -> Nextcloud Talk` page in Gladys.
 
 1. Enter your Nextcloud instance base url
 2. Enter the username of your bot's Nextcloud account
 3. Paste here previously generated password 
 4. Paste conversation token
 
-Click on "Save".
-
 ![Enter bot configuration Gladys Assistant](../../static/img/docs/en/configuration/nextcloud-talk/nextcloud_talk_5_configuration.png)
+
+Click on `Save`.
 
 ## First communication between Telegram and Gladys Assistant
 
@@ -55,3 +53,5 @@ On Nextcloud web or mobile application, enter your first question for your Glady
 Wait a bit and ......... magic !!!
 
 Your assistant answers you ! Isn't fun ?
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
