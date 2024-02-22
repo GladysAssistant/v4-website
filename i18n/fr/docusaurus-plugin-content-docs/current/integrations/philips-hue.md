@@ -10,15 +10,15 @@ Car c'est toujours mieux en vidéo, voilà une petite démonstration de l'intég
 
 [Contrôler ses Philips Hue dans Gladys Assistant 4](https://youtu.be/PjLx7TYZdRM)
 
-## Tutoriel[](https://gladysassistant.com/fr/docs/integrations/philips-hue/#tutoriel)
+## Tutoriel
 
 Pour connecter vos ampoules Philips Hue, allez dans `Intégrations -> Philips Hue` dans Gladys.
 
-## Appuyez sur le bouton sur votre pont Philips Hue[](https://gladysassistant.com/fr/docs/integrations/philips-hue/#appuyez-sur-le-bouton-sur-votre-pont-philips-hue)
+## Appuyez sur le bouton sur votre pont Philips Hue
 
 Sur votre pont Philips Hue connecté à votre box internet, cliquez sur le bouton central.
 
-## Connectez un pont à Gladys[](https://gladysassistant.com/fr/docs/integrations/philips-hue/#connectez-un-pont-%C3%A0-gladys)
+## Connectez un pont à Gladys
 
 Dans `Configuration des ponts`, cliquez sur `Connecter/Reconnecter` sur votre pont.
 
@@ -34,7 +34,7 @@ REMARQUE
 
 Assurez vous d'avoir le Pont Philips Hue v2 (le carré). L'intégration ne fonctionnera pas avec le Pont v1 (rond).
 
-## Ajoutez une ampoule dans Gladys[](https://gladysassistant.com/fr/docs/integrations/philips-hue/#ajoutez-une-ampoule-dans-gladys)
+## Ajoutez une ampoule dans Gladys
 
 Dans `Appareils`, cliquez sur `Connecter/Reconnecter` sur chaque ampoule que vous voulez ajouter à Gladys.
 
