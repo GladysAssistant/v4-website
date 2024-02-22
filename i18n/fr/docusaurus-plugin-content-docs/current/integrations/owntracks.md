@@ -10,20 +10,20 @@ sidebar_label: Owntracks
 
 **[Gladys Plus](https://gladysassistant.com/fr/plus/)** vous permet de recevoir ces localisations dans Gladys.
 
-### Télécharger Owntracks[](https://gladysassistant.com/fr/docs/integrations/owntracks/#t%C3%A9l%C3%A9charger-owntracks)
+### Télécharger Owntracks
 
 Tout d'abord, téléchargez Owntracks.
 
 - [Owntracks pour Android](https://play.google.com/store/apps/details?id=org.owntracks.android&hl=fr&gl=US)
 - [Owntracks pour OS](https://apps.apple.com/fr/app/owntracks/id692424691)
 
-### Créez une clé d'API dans Gladys Plus[](https://gladysassistant.com/fr/docs/integrations/owntracks/#cr%C3%A9ez-une-cl%C3%A9-dapi-dans-gladys-plus)
+### Créez une clé d'API dans Gladys Plus
 
 Allez à [plus.gladysassistant.com](https://plus.gladysassistant.com/), connectez vous.
 
 Puis allez dans`Intégration -> Open API`, et créez une clé.
 
-### Allez dans Owntracks[](https://gladysassistant.com/fr/docs/integrations/owntracks/#allez-dans-owntracks)
+### Allez dans Owntracks
 
 Cliquez sur le bouton en haut à gauche de l'app:
 
@@ -48,7 +48,7 @@ Gladys utilise la clé d'API pour identifier votre compte.
 
 ![owntracks_settings](../../../../../static/img/docs/fr/configuration/gateway/open-api-owntracks-2.jpg)
 
-### Vérifiez que l'intégration fonctionne[](https://gladysassistant.com/fr/docs/integrations/owntracks/#v%C3%A9rifiez-que-lint%C3%A9gration-fonctionne)
+### Vérifiez que l'intégration fonctionne
 
 Dans Gladys, vous devriez voir votre position sur l'onglet `Plans`.
 
