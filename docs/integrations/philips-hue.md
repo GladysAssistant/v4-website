@@ -4,28 +4,62 @@ title: Philips Hue
 sidebar_label: Philips Hue
 ---
 
-To connect your Philips Hue to Gladys, go to `Integrations / Philips Hue` (in Gladys).
+# Connect your Philips Hue to Gladys Assistant
 
-## Press the button on your bridge
+Because it's always better on video, here's a little demonstration of Philips Hue integration in Gladys 🙂
 
-Press the physical button on the top of your bridge.
+[Contrôler ses Philips Hue dans Gladys Assistant 4](https://youtu.be/PjLx7TYZdRM)
 
-## Connect your bridge in Gladys
+## Tutorial
 
-In `Configure bridge`, click on `Connect` on your bridge.
+To connect your Philips Hue bulbs, go to `Integrations -> Philips Hue` in Gladys.
 
-If you don't see your bridge, make sure it's on the same network as your machine running Gladys.
+## Press the button on your Philips Hue bridge
 
-If you still don't see your bridge, you can add it manually by filling its IP Address.
+On your Philips Hue bridge connected to your internet box, click on the central button.
 
-![Manual Bridge IP Configuration](../../static/img/docs/en/configuration/philips-hue/philips_hue_manual_ip_configuration.png)
+## Connect a bridge to Gladys
 
-:::note
-Make sure you have the Hue Bridge v2 (the square one). The integration will not work with the original Hue Bridge (round bridge).
-:::
+In `Configure bridges`, click `Connect/Reconnect` on your bridge.
 
-## Add your lights in Gladys
+If you don't see your bridge, check that Gladys is on the same network as the Hue bridge.
 
-In `Devices`, click on `Connect` on each lamp you want to control in Gladys.
+![config_hue_bridge](<../../static/img/docs/en/configuration/philips-hue/config hue_bridge.png>)
 
-Success!
+Another box will appear with the bridge you've just connected.
+
+![connected_bridges](../../static/img/docs/en/configuration/philips-hue/connected_bridges.png)
+
+NOTE
+
+Make sure you have the Philips Hue Bridge v2 (the square one). Integration will not work with the v1 Bridge (round).
+
+## Add a bulb to Gladys
+
+In `Apparatus`, click `Connect/Reconnect` on each bulb you want to add to Gladys.
+
+![device_hue](../../static/img/docs/en/configuration/philips-hue/devices_hue.png)
+
+![device_hue2](../../static/img/docs/en/configuration/philips-hue/device_hue.png)
+
+There you go!
+
+## Control your lights on the dashboard
+
+You can now add a **devices widget** to your dashboard and control your lights.
+
+Go to Gladys' dashboard and click on the `Edit` button to modify the dashboard.
+
+![edit_dashboard](../../static/img/docs/en/configuration/philips-hue/edit_dashboard.png)
+
+Click on `add +` then select the `apparatus` widget, which you can move to a column. Select your lamps according to your functionalities, give your widget a name and click on `Save`.
+
+You can add several lamps to the same widget.
+
+![widget_device](../../static/img/docs/en/configuration/philips-hue/widget_device.png)
+
+That's it! Your widget is visible on the dashboard.
+
+![widget_dashboard](../../static/img/docs/en/configuration/philips-hue/widget_dashboard.png)
+
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
