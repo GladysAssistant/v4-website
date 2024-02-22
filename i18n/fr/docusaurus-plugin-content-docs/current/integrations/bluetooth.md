@@ -14,7 +14,7 @@ Avec ce genre de porte-clé, **Gladys** peut détecter quand vous êtes/n'êtes 
 
 **Note :** Cette astuce ne fonctionne pas avec tous les appareils Bluetooh. Cela fonctionne uniquement avec les appareils bluetooth qui émettent en permanence, et qui ne font pas des techniques d'obfuscation de leur adresse bluetooth, comme le font la plupart des téléphone par exemple. De manière générale, plus l'appareil est "bête", plus cela marches mieux ! J'avais par exemple un bracelet Fitbit Force 2, et cela fonctionnait. En revanche, ça ne fonctionne pas avec une Apple Watch.
 
-## Configurer votre appareil Bluetooth[](https://gladysassistant.com/fr/docs/integrations/bluetooth/#configurer-votre-appareil-bluetooth)
+## Configurer votre appareil Bluetooth
 
 Rendez-vous dans ****`Intégration **-**> Bluetooth`, onglet `Découverte`. Scannez les appareils Bluetooth environnant, et cherchez l'appareil que vous voulez ajouter.
 
@@ -36,9 +36,9 @@ Maintenant, rendez-vous dans l'écran `Scanner de présence`, et vérifiez que v
 
 C'est bon, tout est configuré côté Bluetooth !
 
-## Gérer la présence dans les scènes[](https://gladysassistant.com/fr/docs/integrations/bluetooth/#g%C3%A9rer-la-pr%C3%A9sence-dans-les-sc%C3%A8nes)
+## Gérer la présence dans les scènes
 
-### Une scène "retour à la maison"[](https://gladysassistant.com/fr/docs/integrations/bluetooth/#une-sc%C3%A8ne-retour-%C3%A0-la-maison)
+### Une scène "retour à la maison"
 
 Maintenant, nous allons créer une scène qui va vous marquer comme "présent à la maison" quand ce porte clé Nut est détecté.
 
@@ -50,7 +50,7 @@ La scène est très simple.
 
 QUAND "le porte clé est détecté" ALORS "mettre l'utilisateur Tony comme présent à la maison".
 
-### Une scène "départ de la maison"[](https://gladysassistant.com/fr/docs/integrations/bluetooth/#une-sc%C3%A8ne-d%C3%A9part-de-la-maison)
+### Une scène "départ de la maison"
 
 Pour gérer le départ de la maison, je vous recommande de faire une scène exécutée périodiquement qui va vérifier si votre porte clé NUT a été détecté récemment à la maison, ou pas.
 
@@ -62,13 +62,11 @@ La scène doit ressembler à ça :
 
 Vous pouvez jouer avec les réglages en fonction de votre maison. Si vous estimez que 10 minutes c'est trop court pour être mis comme absent, vous pouvez rallonger à 20 minutes pour éviter les "faux-départs" :)
 
-## Afficher la présence sur le tableau de bord[](https://gladysassistant.com/fr/docs/integrations/bluetooth/#afficher-la-pr%C3%A9sence-sur-le-tableau-de-bord)
+## Afficher la présence sur le tableau de bord[]
 
 Vous pouvez maintenant rajouter un **widget Utilisateurs présents** sur votre tableau de bord pour afficher la présence des différents utilisateurs à la maison.
 
 Rendez-vous sur le dashboard de Gladys et cliquez sur le bouton `éditer` pour modifier le dashboard.
-
-[](https://gladysassistant.com/fr/docs/integrations/camera/#ajoutez-la-cam%C3%A9ra-au-dashboard-de-gladys-assistant)
 
 ![editer_dashbord](../../../../../static/img/docs/fr/configuration/bluetooth/editer_dashboard.png)
 
