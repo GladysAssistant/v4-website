@@ -15,7 +15,10 @@ Below are only the devices compatible with Gladys:
     - [Netatmo Energy on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
     - [Netatmo Energy on Apple Store](https://apps.apple.com/us/app/netatmo-energy/id730893725)
 
-![Configure an app 1](../../static/img/docs/en/configuration/netatmo/netatmo-application-energy.jpg)
+
+- #### The "NAMain" weather stations and the associable (outdoor, rain gauge, anemometer and indoor modules "NAModule1" to "NAModule4"):
+    - [Netatmo Weather on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.netatmo) 
+    - [Netatmo Weather on Apple Store](https://apps.apple.com/us/app/netatmo-weather/id532538499)
 
 ### Step 2 - Netatmo Connect
 
