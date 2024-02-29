@@ -2,43 +2,45 @@
 id: netatmo
 title: Connecter ses thermostats Netatmo à sa maison connectée
 sidebar_label: Netatmo
+toc_min_heading_level: 2
+toc_max_heading_level: 5
 ---
 
-## Prérequis
+## **Prérequis**
 
-### Etape 1 - Appareils compatibles et applications mobiles Netatmo
+### **Etape 1 - Appareils compatibles et applications mobiles Netatmo**
 
 Pour pouvoir ajouter vos appareils Netatmo dans Gladys, ceux-ci doivent au préalable être ajoutés dans leurs applications respectives que vous devrez télécharger sur le play store ou l'apple store.
 Ci-dessous ne sont référencés que les appareils compatibles avec Gladys :
 
-- #### Les thermostats "NATherm1" et les vannes "NRV" :
-    - [Netatmo Energy sur Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
-    - [Netatmo Energy sur Apple Store](https://apps.apple.com/fr/app/netatmo-energy/id730893725)
+#### - Les thermostats "NATherm1" et les vannes "NRV"
+  - [Netatmo Energy sur Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
+  - [Netatmo Energy sur Apple Store](https://apps.apple.com/fr/app/netatmo-energy/id730893725)
 
 
-- #### Les stations météo "NAMain" et les modules associables (extérieur, anémomètre, pluviomètre et intérieur "NAModule1" à "NAModule4") :
-    - [Netatmo Weather sur Play Store](https://play.google.com/store/apps/details?id=com.netatmo.netatmo) 
-    - [Netatmo Weather sur Apple Store](https://apps.apple.com/fr/app/netatmo-weather/id532538499)
+#### - Les stations météo "NAMain" et les modules associables
+  - [Netatmo Weather sur Play Store](https://play.google.com/store/apps/details?id=com.netatmo.netatmo) 
+  - [Netatmo Weather sur Apple Store](https://apps.apple.com/fr/app/netatmo-weather/id532538499)
 
-### Etape 2 - Netatmo connect
+### **Etape 2 - Netatmo connect**
 
 Vous devez ensuite vous rendre sur la page [Netatmo connect](https://dev.netatmo.com/) et cliquer sur le lien `LOG IN` pour créer un compte avec votre adresse mail et un mot de passe.
 ![Connexion Netatmo connect](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-connect-log-in.jpg)
 
-#### Création d'une "app"
+#### - Création d'une "app"
 
 Rendez vous sur votre page [My app](https://dev.netatmo.com/apps/) et cliquer sur le bouton `Create` pour créer un lien vers votre compte Gladys. 
 ![Créer une app](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-connect-create-app.jpg)
 Entrez les informations nécessaires (champs avec une \*) comme dans l'exemple ci-dessous :
 ![Configurer une api 1](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-connect-1.jpg)
 
-#### Récupération de l'identifiant et du secret client de connexion
+#### - Récupération de l'identifiant et du secret client de connexion
 
 En cliquant sur `Save`, vous aurez ensuite accès aux informations nécessaires dans le cadre en-dessous (voir [Etape 1 du tutoriel](/fr/docs/integrations/netatmo#etape-11--configuration-de-la-connexion-%C3%A0-lapi-netatmo))
 
 ![Configurer une api 2](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-connect-2.jpg)
 
-## Tutoriel
+## **Tutoriel**
 
 Pour ajouter vos appareils Netatmo dans Gladys, allez dans `Intégrations -> Netatmo`.
 
@@ -48,34 +50,38 @@ Puis cliquer sur l'onglet `Configuration` pour accéder à la page de connexion 
 
 ![Integration Netatmo - Configuration](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-devices-without-devices.jpg)
 
-### Etape 1.1 : Configuration de la connexion à l'API Netatmo
+### **Etape 1.1 : Configuration de la connexion à l'API Netatmo**
 
 Depuis l'onglet `Configuration`, entrez les informations récupérées lors de [l'étape précédente](/fr/docs/integrations/netatmo#etape-2---netatmo-connect) :
-- Le client ID,
-- Le client secret
+- **Le client ID**,
+- **Le client secret**
+- **Activer l'API "Energy"** si vous avez au moins un thermostat, une vanne ou un plug ainsi que l'application Netatmo Energy sur Play Store ou Apple Store fonctionnelle
+- **Activer l'API "Weather"** si vous avez au moins la station météo de base ainsi que l'application Netatmo Weather sur Play Store ou Apple Store fonctionnelle
+
 ![Integration Netatmo - Configuration - Non configuré](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-not-configured.jpg)
 
 
 Enfin cliquez sur le bouton `Sauvegarder la configuration et connexion à Netatmo`.
 [Vous serez alors redirigé vers le site de Netatmo pour pouvoir accepter la connexion depuis Gladys.](/fr/docs/integrations/netatmo/#etape-12--autorisation-de-connexion-de-lapplication-gladys-%C3%A0-votre-compte-netatmo)
 
-### Etape 1.2 : Autorisation de connexion de l'application Gladys à votre compte Netatmo
-Il est important de noter qu'en cliquant sur `OUI, J'ACCEPTE` vous autorisez Gladys à accéder en lecture et en écriture pour tous les appareils actuellement supportés ainsi qu'en lecture à tous les appareils qui ne sont pas encore supportés dans le but de faciliter leur intégration future. Aucune donnée ni aucun accès n'est partagé à l'extérieur de votre instance Gladys locale.
+### **Etape 1.2 : Autorisation de connexion de l'application Gladys à votre compte Netatmo**
+Il est important de noter qu'en cliquant sur `OUI, J'ACCEPTE` vous autorisez Gladys à accéder en lecture et en écriture pour tous les appareils actuellement supportés ainsi qu'en lecture à l'intégralité de vos appareils même s'il ne sont pas encore supportés, ceci dans le but de faciliter leur intégration future. Aucune donnée ni aucun accès n'est partagé à l'extérieur de votre instance Gladys locale.
+
 ![Integration Netatmo - Configuration - Autorisation](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-authorize-access.jpg)
 
 Pour toute nouvelle intégration d'appareils non encore pris en charge, vous devrez à nouveau passer par cette étape pour accepter l'écriture (commandes) sur ces nouveaux appareils.
 
-### Etape 1.3 : Validation et connexion de l'application
+### **Etape 1.3 : Validation et connexion de l'application**
 Après acceptation, vous serez redirigé sur votre précédente page de Gladys, vous devriez maintenant être connecté avec l'API Netatmo. 
 
 ![Integration Netatmo - Configuration - Connecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-connected.jpg)
 
-### Step 1.4: Se déconnecter de l'application
-Vous pouvez vous déconnecter complètement de l'application Netatmo en cliquant sur le bouton 'Déconnecter'. Cela effacera les informations d'identification et les autorisations associées.
+### **Step 1.4 : Se déconnecter de l'application**
+Vous pouvez vous déconnecter complètement de l'application Netatmo en cliquant sur le bouton `Déconnecter`. Cela effacera les informations d'identification et les autorisations associées.
 
 ![Integration Netatmo - Configuration - Déconnecté](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-setup-disconnected.jpg)
 
-### Etape 2.1 : Découverte des appareils Netatmo compatibles
+### **Etape 2.1 : Découverte des appareils Netatmo compatibles**
 
 Dans l'onglet `Découverte Netatmo`, vous retrouvez tous les appareils compatibles que vous aurez précédemment configurés sur l'application dédiée [de l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo).
 
@@ -83,57 +89,136 @@ Dans l'onglet `Découverte Netatmo`, vous retrouvez tous les appareils compatibl
 
 
 Les appareils actuellement compatibles sont (**vous pouvez passer à l'étape suivante en cliquant [ici](/fr/docs/integrations/netatmo#etape-22--découverte-des-appareils-netatmo-non-compatibles)**) :
-- **Le concentrateur (NAPlug)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
-  - l'intensité du signal wifi,
-  - l'intensité du signal radio global,
-  - l'état de connexion du pont à une chaudière.
+
+#### ***La gestion du chauffage - "Energy"***
+
+##### - *Le concentrateur (NAPlug)*
+**Description :**
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, son ID Netatmo et la pièce dans laquelle l'appareil est rattaché dans l'application.
+
+**Les fonctionnalités actuellement supportées :**
+- l'intensité du signal wifi,
+- l'intensité du signal radio global,
+- l'état de connexion du pont à une chaudière.
 
 ![Integration Netatmo - Découverte NAPlug](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAPlug.jpg)
 
-- **Le thermostat (NATherm1)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
-  - l'état de la batterie exacte (en %),
-  - la température mesurée du thermostat,
-  - la température de la pièce (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
-  - la température de consigne du thermostat sur lequel vous pouvez également agir en commande soit depuis le tableau de bord, soit depuis une scène,
-  - la détection d'une fenêtre ouverte par tout appareil Netatmo se situant dans la même pièce,
-  - l'intensité du signal radio avec le pont,
-  - l'état de demande de chauffage à la chaudière (activé si la température de consigne est supérieure à la température de la pièce).
+##### - *Le thermostat (NATherm1)*
+**Description :**
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, le pont auquel il est connecté, son ID Netatmo et la pièce dans laquelle l'appareil est rattaché dans l'application.
+
+**Les fonctionnalités actuellement supportées :**
+- l'état de la batterie exacte (en %),
+- la température mesurée du thermostat,
+- la température de la pièce (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
+- la température de consigne du thermostat sur lequel vous pouvez également agir en commande soit depuis le tableau de bord, soit depuis une scène,
+- la détection d'une fenêtre ouverte par tout appareil Netatmo se situant dans la même pièce,
+- l'intensité du signal radio avec le pont NAPlug,
+- l'état de demande de chauffage à la chaudière (activé si la température de consigne est supérieure à la température de la pièce).
 
 ![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NATherm1.jpg)
 
-- **La vanne (NRV)**, vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
-  - l'état de la batterie divisé en 6 états et converti en % :
-    - max: 100%
-    - pleine: 90%
-    - haute: 75%
-    - moyenne: 50%
-    - basse: 25%
-    - très basse: 10%
-  - la température de la pièce (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
-  - la température de consigne de la pièce sur laquelle vous pouvez également agir en commande soit depuis le tableau de bord, soit depuis une scène,
-  - la détection d'une fenêtre ouverte par tout appareil Netatmo se situant dans la même pièce,
-  - l'intensité du signal radio avec le pont,
-  - l'état de demande de chauffage à la chaudière (activé si la température de consigne est supérieure à la température de la pièce).
+##### - *La vanne (NRV)*
+**Description :**
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application.
+
+**Les fonctionnalités actuellement supportées :**
+- l'état de la batterie divisé en 6 états et converti en % :
+  - max: 100%
+  - pleine: 90%
+  - haute: 75%
+  - moyenne: 50%
+  - basse: 25%
+  - très basse: 10%
+- la température de la pièce (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
+- la température de consigne de la pièce sur laquelle vous pouvez également agir en commande soit depuis le tableau de bord, soit depuis une scène,
+- la détection d'une fenêtre ouverte par tout appareil Netatmo se situant dans la même pièce,
+- l'intensité du signal radio avec le pont NAPlug,
+- l'état de demande de chauffage à la chaudière (activé si la température de consigne est supérieure à la température de la pièce).
 
 ![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NRV.jpg)
 
-- **La station météo hygromètre intérieur (NAMain)**, elle joue également le rôle de concentrateur pour vos autres modules liés à la station météo. Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
-  - la température mesurée par l'hygromètre,
-  - si vous avez au moins un appareil de la catégorie "Energy" (plug, thermostat ou vanne), la température de la pièce sera accessible (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
-  - la température mesurée par l'hygromètre,
-  - l'intensité du signal wifi,.
+#### ***La station météo - "Weather"***
 
-![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NRV.jpg)
+##### - *Station Hygromètre intérieur (NAMain)*
+**Description :**
+Elle joue également le rôle de concentrateur pour vos autres modules liés à la station météo.
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, son ID Netatmo et la pièce dans laquelle l'appareil est rattaché dans l'application.
 
-- **La station météo hygromètre intérieur (NAMain)**, elle joue également le rôle de centralisateur pour vos autre module liés à la station météo. Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo, le modèle, le pont auquel il est connecté, son ID Netatmo, la pièce dans laquelle l'appareil est rattaché dans l'application et les fonctionnalités actuellement supportées notamment :
-  - l'état de la batterie exacte (en %),
-  - la température de la pièce (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
-  - la température de consigne de la pièce sur laquelle vous pouvez également agir en commande soit depuis le tableau de bord, soit depuis une scène,
-  - la détection d'une fenêtre ouverte par tout appareil Netatmo se situant dans la même pièce,
-  - l'intensité du signal radio avec le pont,
-  - l'état de demande de chauffage à la chaudière (activé si la température de consigne est supérieure à la température de la pièce).
+**Les fonctionnalités actuellement supportées :**
+- la température mesurée par l'hygromètre,
+- si vous avez au moins un appareil de la catégorie "Energy" (plug, thermostat ou vanne), la température de la pièce calculée sera accessible (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
+- la température minimum mesurée sur les dernières 24h,
+- la température maximum mesurée sur les dernières 24h,
+- l'humidité mesurée par l'hygromètre (en %),
+- le CO2 mesuré par l'hygromètre (en particules par million - ppm),
+- le volume sonore mesuré par l'hygromètre (en décibels - dB),
+- la pression atmosphérique mesurée par l'hygromètre,
+- la pression absolue calculée par l'hygromètre,
+- l'intensité du signal wifi.
+Toutes ces mesures reflètent la qualité de l'air de votre intérieur.
 
-![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NRV.jpg)
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAMain.jpg)
+
+##### - *Module extérieur (NAModule1)*
+**Description :**
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, le pont auquel il est connecté, son ID Netatmo et la pièce dans laquelle l'appareil est rattaché dans l'application (si disponible).
+
+**Les fonctionnalités actuellement supportées :**
+- l'état de la batterie exacte (en %),
+- la température mesurée par le module,
+- la température minimum mesurée sur les dernières 24h,
+- la température maximum mesurée sur les dernières 24h,
+- l'humidité mesurée par le module (en %),
+- l'intensité du signal radio avec le pont NAMain.
+
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAModule1.jpg)
+
+##### - *Module Anémomètre (NAModule2)*
+**Description :**
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, le pont auquel il est connecté, son ID Netatmo et la pièce dans laquelle l'appareil est rattaché dans l'application (si disponible).
+
+**Les fonctionnalités actuellement supportées :**
+- l'état de la batterie exacte (en %),
+- la vitesse du vent actuelle mesurée par le module (moyenné sur 5 minutes - en km/h),
+- la vitesse des rafales mesurée par le module (vitesse max sur 5 minutes - en km/h),
+- la vitesse maximum du jour du vent mesurée par le module (max des moyennes sur 5 minutes de la journée - en km/h),
+- l'angle du vent actuel mesuré par le module (moyenné sur 5 minutes - en degré d'angle),
+- l'angle des rafales mesuré par le module (en degré d'angle),
+- l'angle de la vitesse maximum du jour mesuré par le module (en degré d'angle),
+- l'intensité du signal radio avec le pont NAMain.
+
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAModule2.jpg)
+
+##### - *Module Pluviomètre (NAModule3)*
+**Description :**
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, le pont auquel il est connecté, son ID Netatmo et la pièce dans laquelle l'appareil est rattaché dans l'application (si disponible).
+
+**Les fonctionnalités actuellement supportées :**
+- l'état de la batterie exacte (en %),
+- les précipitations actuelles mesurées par le module (cumulées sur 5 minutes - en mm),
+- les précipitations sur 1h mesurées par le module (cumulées sur 1 heure - en mm/h),
+- les précipitations sur 24h mesurées par le module (cumulées sur 24 heures - en mm/j),
+- l'intensité du signal radio avec le pont NAMain.
+
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAModule3.jpg)
+
+##### - *Module additionnel Hygromètre intérieur (NAModule4)*
+**Description :**
+Vous y trouverez le nom de l'appareil configuré dans l'application Netatmo (modifiable pour Gladys seulement), le modèle, le pont auquel il est connecté, son ID Netatmo et la pièce dans laquelle l'appareil est rattaché dans l'application (si disponible).
+
+**Les fonctionnalités actuellement supportées :**
+- l'état de la batterie exacte (en %),
+- la température mesurée par l'hygromètre,
+- si vous avez au moins un appareil de la catégorie "Energy" (plug, thermostat ou vanne), la température de la pièce calculée sera accessible (moyenne des températures des divers appareils Netatmo se trouvant dans cette pièce),
+- la température minimum mesurée sur les dernières 24h,
+- la température maximum mesurée sur les dernières 24h,
+- l'humidité mesurée par l'hygromètre (en %),
+- le CO2 mesuré par l'hygromètre (en particules par million - ppm),
+- l'intensité du signal radio avec le pont NAMain.
+Toutes ces mesures reflètent la qualité de l'air de votre intérieur.
+
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-NAModule4.jpg)
 
 Vous pouvez sélectionner la pièce Gladys dans laquelle ils sont installés puis intégrer ceux-ci d'un simple clique sur le bouton `Sauvegarder`. Le bouton passent alors en `Déjà créé`.
 

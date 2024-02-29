@@ -2,6 +2,8 @@
 id: netatmo
 title: Connect your Netatmo thermostats to your smart home system installation
 sidebar_label: Netatmo
+toc_min_heading_level: 2
+toc_max_heading_level: 5
 ---
 
 ## Prerequisites
@@ -11,28 +13,28 @@ sidebar_label: Netatmo
 To add your Netatmo devices to Gladys, they must first be added to their respective apps, which you should download from the Play Store or Apple Store.
 Below are only the devices compatible with Gladys:
 
-- #### "NATherm1" Thermostats and "NRV" Valves:
-    - [Netatmo Energy on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
-    - [Netatmo Energy on Apple Store](https://apps.apple.com/us/app/netatmo-energy/id730893725)
+#### - "NATherm1" Thermostats and "NRV" Valves
+- [Netatmo Energy on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.thermostat) 
+- [Netatmo Energy on Apple Store](https://apps.apple.com/us/app/netatmo-energy/id730893725)
 
 
-- #### The "NAMain" weather stations and the associable (outdoor, rain gauge, anemometer and indoor modules "NAModule1" to "NAModule4"):
-    - [Netatmo Weather on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.netatmo) 
-    - [Netatmo Weather on Apple Store](https://apps.apple.com/us/app/netatmo-weather/id532538499)
+#### - "NAMain" weather stations and the associable
+- [Netatmo Weather on Play Store](https://play.google.com/store/apps/details?id=com.netatmo.netatmo) 
+- [Netatmo Weather on Apple Store](https://apps.apple.com/us/app/netatmo-weather/id532538499)
 
 ### Step 2 - Netatmo Connect
 
 You must then go to the [Netatmo Connect](https://dev.netatmo.com/) page and click on the `LOG IN` link to create an account with your email and password.
 ![Connection Netatmo connect](../../static/img/docs/en/configuration/netatmo/netatmo-connect-log-in.jpg)
 
-#### Creating an "app"
+#### - Creating an "app"
 
 Go to your [My app](https://dev.netatmo.com/apps/) page and click on the `Create` button to create a link to your Gladys account. 
 ![Create app](../../static/img/docs/en/configuration/netatmo/netatmo-connect-create-app.jpg)
 Enter the necessary information (fields with a \*) as in the example below:
 ![Configure an API 1](../../static/img/docs/en/configuration/netatmo/netatmo-connect-1.jpg)
 
-#### Retrieving Client Connection ID and secret
+#### - Retrieving Client Connection ID and secret
 
 By clicking on `Save`, you will then have access to the necessary information in the frame below (see [Step 1 of the tutorial](/docs/integrations/netatmo#step-11-setup-netatmo-api-connection-credentials))
 
@@ -50,8 +52,10 @@ Then click on the `Setup` tab to access the Netatmo API connection page.
 ### Step 1.1: Setup Netatmo API Connection Credentials
 
 From the `Setup` tab, enter the information retrieved during the [previous step](/docs/integrations/netatmo#step-2---netatmo-connect) :
-- The client ID,
-- The client secret
+- **The client ID**,
+- **The secret shopper**
+- **Activate the "Energy" API** if you have at least one thermostat, a valve or a plug as well as the Netatmo Energy application on Play Store or Apple Store functional
+- **Activate the "Weather" API** if you have at least the basic weather station as well as the Netatmo Weather application on Play Store or Apple Store functional
 
 ![Netatmo Integration - Setup - Not configured](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-setup-not-configured.jpg)
 
@@ -59,7 +63,7 @@ Then click on the `Save and connect` button.
 [You will then be redirected to the Netatmo website to accept the connection from Gladys.](/docs/integrations/netatmo#step-12-authorizing-gladys-application-to-connect-to-your-netatmo-account)
 
 ### Step 1.2: Authorizing Gladys Application to Connect to Your Netatmo Account
-It is important to note that by clicking on `YES, I ACCEPT` you allow Gladys to access in read and write mode for all currently supported devices as well as read-only for devices not yet supported to facilitate their future integration. No data or access is shared outside of your local Gladys instance.
+It is important to note that by clicking on `YES, I ACCEPT`, you authorize Gladys to access in reading and writing mode for all currently supported devices and also in read-only mode for all your devices, even those not yet supported, with the aim of facilitating their future integration.
 ![Netatmo Integration - Setup - Authorize](../../static/img/docs/en/configuration/netatmo/en-netatmo-authorize-access.jpg)
 
 For any new integration of devices not yet supported, you will have to go through this step again to accept the writing (commands) on these new devices.
@@ -82,39 +86,136 @@ In the `Netatmo Discovery` tab, you will find all compatible devices that you pr
 ![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-with-devices.jpg)
 
 Currently compatible devices are **(you can move on to the next step by clicking [here](/docs/integrations/netatmo#step-22-discovery-of-non-compatible-netatmo-devices))**:
-- **The Hub (NAPlug)**, you will find the name of the device configured in the Netatmo app, the model, its Netatmo ID, the room to which the device is attached in the app, and the currently supported features in particular:
-   - the strength of the wifi signal,
-   - the intensity of the overall radio signal,
-   - the state of connection of the bridge to a boiler.
+
+#### ***Heating management - "Energy"***
+
+##### - *The Hub (NAPlug)*
+**Description :**
+You will find the name of the device configured in the Netatmo app, the model, its Netatmo ID and the room to which the device is attached in the application.
+
+**The currently supported features :**
+- the strength of the wifi signal,
+- the intensity of the overall radio signal,
+- the state of connection of the bridge to a boiler.
 
 ![Netatmo Integration - Discovery NAPlug](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAPlug.jpg)
 
-- **The Thermostat (NATherm1)**, you will find the name of the device configured in the Netatmo app, the model, the bridge to which it is connected, its Netatmo ID, the room to which the device is attached in the app, and the currently supported features in particular:
-   - the exact battery status (in %),
-   - the measured temperature of the thermostat,
-   - the temperature of the room (average of the temperatures of the various Netatmo devices located in this room),
-   - the thermostat setpoint temperature on which you can also control either from the dashboard or from a scene,
-   - detection of a window opened by any Netatmo device located in the same room,
-   - the intensity of the radio signal with the bridge,
-   - the boiler heating request state (activated if the set temperature is higher than the room temperature).
+##### - *The Thermostat (NATherm1)*
+**Description :**
+You will find the name of the device configured in the Netatmo app, the model, the bridge to which it is connected, its Netatmo ID and the room to which the device is attached in the application.
+
+**The currently supported features :**
+- the exact battery status (in %),
+- the measured temperature of the thermostat,
+- the temperature of the room (average of the temperatures of the various Netatmo devices located in this room),
+- the thermostat setpoint temperature on which you can also control either from the dashboard or from a scene,
+- detection of a window opened by any Netatmo device located in the same room,
+- the intensity of the radio signal with the bridge NAPlug,
+- the boiler heating request state (activated if the set temperature is higher than the room temperature).
 
 ![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NATherm1.jpg)
 
-- **The valve (NRV)**, you will find the name of the device configured in the Netatmo application, the model, the bridge to which it is connected, its Netatmo ID, the room in which the device is attached in the application and the functionalities currently supported in particular:
-   - the battery status divided into 6 states and converted into %:
-     - max: 100%
-     - full: 90%
-     - high: 75%
-     - medium: 50%
-     - low: 25%
-     - very low: 10%
-   - the temperature of the room (average of the temperatures of the various Netatmo devices located in this room),
-   - the set temperature of the room on which you can also control either from the dashboard or from a scene,
-   - detection of a window opened by any Netatmo device located in the same room,
-   - the intensity of the radio signal with the bridge,
-   - the boiler heating request state (activated if the set temperature is higher than the room temperature).
+##### - *The valve (NRV)*
+**Description :**
+You will find the name of the device configured in the Netatmo application, the model, the bridge to which it is connected, its Netatmo ID and the room in which the device is attached in the application.
+
+**The currently supported features :**
+- the battery status divided into 6 states and converted into %:
+    - max: 100%
+    - full: 90%
+    - high: 75%
+    - medium: 50%
+    - low: 25%
+    - very low: 10%
+- the temperature of the room (average of the temperatures of the various Netatmo devices located in this room),
+- the set temperature of the room on which you can also control either from the dashboard or from a scene,
+- detection of a window opened by any Netatmo device located in the same room,
+- the intensity of the radio signal with the bridge NAPlug,
+- the boiler heating request state (activated if the set temperature is higher than the room temperature).
 
 ![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NRV.jpg)
+
+#### ***The weather station - "Weather"***
+
+##### - *Indoor Hygrometer Station (NAMain)*
+**Description :**
+It also acts as a hub for your other modules linked to the weather station.
+There you will find the name of the device configured in the Netatmo application (modifiable for Gladys only), the model, its Netatmo ID and the room in which the device is attached in the application.
+
+**Currently supported features:**
+- the temperature measured by the hygrometer,
+- if you have at least one device in the "Energy" category (plug, thermostat or valve), the calculated room temperature will be accessible (average of the temperatures of the various Netatmo devices located in this room),
+- the minimum temperature measured over the last 24 hours,
+- the maximum temperature measured over the last 24 hours,
+- the humidity measured by the hygrometer (in %),
+- the CO2 measured by the hygrometer (in particles per million - ppm),
+- the sound volume measured by the hygrometer (in decibels - dB),
+- the atmospheric pressure measured by the hygrometer,
+- the absolute pressure calculated by the hygrometer,
+- the strength of the wifi signal.
+All of these measurements reflect the air quality in your home.
+
+![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAMain.jpg)
+
+##### - *Outdoor module (NAModule1)*
+**Description :**
+There you will find the name of the device configured in the Netatmo application (modifiable for Gladys only), the model, the bridge to which it is connected, its Netatmo ID and the room in which the device is attached in the application ( if available).
+
+**Currently supported features:**
+- the exact battery status (in %),
+- the temperature measured by the module,
+- the minimum temperature measured over the last 24 hours,
+- the maximum temperature measured over the last 24 hours,
+- the humidity measured by the module (in %),
+- the strength of the radio signal with the NAMain bridge.
+
+![Netatmo Integration - Discovery](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAModule1.jpg)
+
+##### - *Anemometer Module (NAModule2)*
+**Description :**
+There you will find the name of the device configured in the Netatmo application (modifiable for Gladys only), the model, the bridge to which it is connected, its Netatmo ID and the room in which the device is attached in the application ( if available).
+
+**Currently supported features:**
+- the exact battery status (in %),
+- the current wind speed measured by the module (averaged over 5 minutes - in km/h),
+- the speed of the gusts measured by the module (max speed over 5 minutes - in km/h),
+- the maximum wind speed of the day measured by the module (maximum averages over 5 minutes of the day - in km/h),
+- the current wind angle measured by the module (averaged over 5 minutes - in degree of angle),
+- the angle of the gusts measured by the module (in degrees of angle),
+- the angle of the maximum speed of the day measured by the module (in degrees of angle),
+- the strength of the radio signal with the NAMain bridge.
+
+![Integration Netatmo - Découverte](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAModule2.jpg)
+
+##### - *Rain Gauge Module (NAModule3)*
+**Description :**
+There you will find the name of the device configured in the Netatmo application (modifiable for Gladys only), the model, the bridge to which it is connected, its Netatmo ID and the room in which the device is attached in the application ( if available).
+
+**Currently supported features:**
+- the exact battery status (in %),
+- current precipitation measured by the module (cumulative over 5 minutes - in mm),
+- precipitation over 1 hour measured by the module (cumulative over 1 hour - in mm/h),
+- precipitation over 24 hours measured by the module (cumulative over 24 hours - in mm/d),
+- the strength of the radio signal with the NAMain bridge.
+
+![Integration Netatmo - Découverte](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAModule3.jpg)
+
+##### - *Additional module Indoor hygrometer (NAModule4)*
+**Description :**
+There you will find the name of the device configured in the Netatmo application (modifiable for Gladys only), the model, the bridge to which it is connected, its Netatmo ID and the room in which the device is attached in the application ( if available).
+
+**Currently supported features:**
+- the exact battery status (in %),
+- the temperature measured by the hygrometer,
+- if you have at least one device in the "Energy" category (plug, thermostat or valve), the calculated room temperature will be accessible (average of the temperatures of the various Netatmo devices located in this room),
+- the minimum temperature measured over the last 24 hours,
+- the maximum temperature measured over the last 24 hours,
+- the humidity measured by the hygrometer (in %),
+- the CO2 measured by the hygrometer (in particles per million - ppm),
+- the strength of the radio signal with the NAMain bridge.
+All of these measurements reflect the air quality in your home.
+
+![Integration Netatmo - Découverte](../../static/img/docs/en/configuration/netatmo/en-netatmo-integrations-discovery-NAModule4.jpg)
 
 You can select the Gladys room in which they are installed and then integrate them with a simple click on the `Save` button. The button then changes to `Already Created`.
 
