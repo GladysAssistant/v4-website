@@ -228,8 +228,9 @@ Sur cette page vous retrouvez également en haut un bouton `Rafraichir` pour eff
 
 ![Integration Netatmo - Découverte - Rafraichir](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-refresh.jpg)
 
-### **Etape 2.2 : Découverte des appareils Netatmo non compatibles**
+### **Etape 2.2 : Découverte des appareils Netatmo non compatibles et/ou problème de Configuration**
 
+#### Appareils Netatmo non compatibles
 Vous pourrez également retrouver les appareils en votre possession qui ne sont pas encore compatibles avec Gladys.
 ![Integration Netatmo - Découverte - Non compatibles](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-device-unknown.jpg)
 
@@ -240,64 +241,102 @@ N'oubliez pas de remplacer les données 'sensible' comme l'id de l'appareil, de 
 
 ![Integration Netatmo - Découverte - Issue Github](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-issue-github-device-unknown.jpg)
 
+#### Problème de configuration
+Il est possible que vous rencontriez les cas suivant dans la page de `Découverte Netatmo` :
+- Sauvegarde impossible pour les appareils Netatmo "Energy" dans le cas ou vous auriez des appareils Concentrateur (NAPlug), Thermostat (NATherm1/NTH01) ou Vanne (NRV/NAV) mais que vous n'avez pas sélectionner l'option `Activer l'API "Energy"` dans la page `Configuration`.
+
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-no-save-NATherm1.jpg)
+
+- Sauvegarde impossible pour les appareils Netatmo "Weather" dans le cas ou vous auriez des appareils de la Station Météo (NAMain) mais que vous n'avez pas sélectionner l'option `Activer l'API "Weather"` dans la page `Configuration`.
+
+![Integration Netatmo - Découverte](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-discovery-no-save-NAModule2.jpg)
+
+Dans l'un de ces cas, vous devrez vous rendre sur la page `Configuration` pour sélectionner la ou les options correspondante(s) et cliquer sur `Sauvegarder et connecter` de nouveau pour autoriser la récupération des données.
+
 ### **Etape 3 : Onglet `Appareils`**
 
 Dans l'onglet `Appareils`, vous retrouvez les appareils ajoutés avec leurs caractéristiques, notamment leur état de connexion ![Integration Netatmo - Etat connexion appareil OK](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-devices-state-connection-ok.jpg) ou ![Integration Netatmo - Etat connexion appareil NOK](../../../../../static/img/docs/fr/configuration/netatmo/netatmo-integrations-devices-state-connection-nok.jpg) et le niveau de batterie.
 
 ![Integration Netatmo - Appareils Netatmo](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-devices.jpg)
-#### - Définir une pièce
+#### Définir une pièce
 
 Pour pouvoir afficher un appareil sur le dashboard, il faut en premier lieu lui associer une pièce. Sélectionner celle-ci dans le menu déroulant suivant, puis cliquer sur le bouton `Sauvegarder` :
 
 ![Netatmo Integration - Appareil Netatmo - Sélection de la pièce](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-integrations-devices-selected-room.jpg)
 
-#### - Modifier les fonctionnalités
+#### Modifier les fonctionnalités
 
 Pour le moment vous ne pourrez modifier que le nom d'affichage de l'appareil. Prochainement vous aurez également accès à un bouton `Modifier`, vous pourrez alors modifier le nom d'affichage des fonctionnalités qui apparaitront sur la page d'accueil. 
 De plus certaines fonctionnalités pourront être affichées de différentes manière.
 
 ## **Road Map - Prévision d'évolution du service**
 
-- #### ~~Pull request 1 - Netatmo "Energy" : Vannes (NRV)~~
-  - **Statut : Implémenté en février 2024** - Cette fonctionnalité a été ajoutée pour permettre la gestion des vannes NRV dans le cadre du service Netatmo "Energy". Pour plus de détails, voir la PR [#2014](https://github.com/GladysAssistant/Gladys/pull/2014).
+### **Pull requests terminées**
+
+- **~~Pull request 1 - Netatmo "Energy" : Vannes (NRV)~~**
+  
+  Implémenté en février 2024 - Cette fonctionnalité a été ajoutée pour permettre la gestion des vannes NRV dans le cadre du service Netatmo "Energy". Pour plus de détails, voir la PR [#2014](https://github.com/GladysAssistant/Gladys/pull/2014).
 
 
-- #### ~~Pull request 2 - Netatmo "Weather" : Station météo principale (NAMain)~~
-  - **Statut : Implémenté en mars 2024** - Cette fonctionnalité a été ajoutée pour permettre la gestion des stations intérieures dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2015](https://github.com/GladysAssistant/Gladys/pull/2015).
+- **~~Pull request 2 - Netatmo "Weather" : Station météo principale (NAMain)~~**
+  
+  Implémenté en mars 2024 - Cette fonctionnalité a été ajoutée pour permettre la gestion des stations intérieures dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2021](https://github.com/GladysAssistant/Gladys/pull/2021).
 
 
-- #### ~~Pull request 3 - Netatmo "Weather" : Modules intérieurs complémentaires (NAModule4)~~
-  - **Statut : Implémenté en mars 2024** - Cette fonctionnalité a été ajoutée pour permettre la gestion des modules additionnels intérieurs dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2016](https://github.com/GladysAssistant/Gladys/pull/2016).
+- **~~Pull request 3 - Netatmo "Weather" : Modules intérieurs complémentaires (NAModule4)~~**
+  
+  Implémenté en mars 2024 - Cette fonctionnalité a été ajoutée pour permettre la gestion des modules additionnels intérieurs dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2021](https://github.com/GladysAssistant/Gladys/pull/2021).
 
 
-- #### ~~Pull request 4 - Netatmo "Weather" : Module extérieur (NAModule1)~~
-  - **Statut : Implémenté en mars 2024** - Cette fonctionnalité a été ajoutée pour permettre la gestion des modules extérieures dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2017](https://github.com/GladysAssistant/Gladys/pull/2017).
+- **~~Pull request 4 - Netatmo "Weather" : Module extérieur (NAModule1)~~**
+  
+  Implémenté en mars 2024 - Cette fonctionnalité a été ajoutée pour permettre la gestion des modules extérieures dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2021](https://github.com/GladysAssistant/Gladys/pull/2021).
 
 
-- #### ~~Pull request 5 - Netatmo "Weather" : Anémomètre (NAModule2)~~
-  - **Statut : Implémenté en mars 2024** - Cette fonctionnalité a été ajoutée pour permettre la gestion des anémomètres dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2018](https://github.com/GladysAssistant/Gladys/pull/2018).
+- **~~Pull request 5 - *Netatmo "Weather" : Anémomètre (NAModule2)*~~**
+  
+  Implémenté en mars 2024 - Cette fonctionnalité a été ajoutée pour permettre la gestion des anémomètres dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2021](https://github.com/GladysAssistant/Gladys/pull/2021).
 
 
-- #### ~~Pull request 6 - Netatmo "Weather" : Pluviomètre (NAModule3)~~
-  - **Statut : Implémenté en mars 2024** - Cette fonctionnalité a été ajoutée pour permettre la gestion des pluviomètres dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2019](https://github.com/GladysAssistant/Gladys/pull/2019).
+- **~~Pull request 6 - Netatmo "Weather" : Pluviomètre (NAModule3)~~**
+  
+  Implémenté en mars 2024 - Cette fonctionnalité a été ajoutée pour permettre la gestion des pluviomètres dans le cadre du service Netatmo "Weather". Pour plus de détails, voir la PR [#2021](https://github.com/GladysAssistant/Gladys/pull/2021).
 
+### **Pull requests à venir**
 
-#### - Pull request 7 - Netatmo "Aircare" - Homecoach : Capteur de qualité de l'air (NHC)
-#### - Pull request 8 - Netatmo "Home + Security" : Caméra intérieure (NACamera)
-#### - Pull request 9 - Netatmo "Home + Security" : Capteur d'ouverture de porte et fenêtre (NACamDoorTag)
-#### - Pull request 10 - Netatmo "Home + Security" : Sirène (NIS)
-#### - Pull request 11 - Netatmo "Home + Security" : Caméra extérieure (NOC) avec ou sans sirène
-#### - Pull request 12 - Netatmo "Home + Security" : Détecteur de fumée (NSD)
-#### - Pull request 13 - Ajout du bouton "Modifier" : Pouvoir modifier les noms des fonctionnalités des appareils Netatmo
-#### - Pull request 14 - Ajout des webhooks ([Pour les utilisateurs Gladys Plus](/fr/plus/))
-Cette fonctionnalité permettra de recevoir les alertes et changements d'états de certains appareils en temps réel (Consignes de température, détection caméra, détection d'ouverture de porte, alerte de connexion/déconnexion d'un appareil, etc.) pour tout ceux qui disposent d'un abonnement Gladys Plus.
-#### ... Au gré des demandes d'ajouts de fonctionnalités ...
+#### Pull request 7 - *Netatmo "Aircare" - Homecoach : Capteur de qualité de l'air (NHC)*
+- **Status: Non démarré** - Cette fonctionnalité n'a pas encore débutée.
+
+#### Pull request 8 - *Netatmo "Home + Security" : Caméra intérieure (NACamera)*
+- **Statut : Développement en cours** - Cette fonctionnalité n'a pas encore de Pull Request créée mais est en cours de développement.
+
+#### Pull request 9 - *Netatmo "Home + Security" : Capteur d'ouverture de porte et fenêtre (NACamDoorTag)*
+- **Status: Non démarré** - Cette fonctionnalité n'a pas encore débutée.
+
+#### Pull request 10 - *Netatmo "Home + Security" : Sirène (NIS)*
+- **Status: Non démarré** - Cette fonctionnalité n'a pas encore débutée.
+
+#### Pull request 11 - *Netatmo "Home + Security" : Caméra extérieure (NOC) avec ou sans sirène*
+- **Status: Non démarré** - Cette fonctionnalité n'a pas encore débutée.
+
+#### Pull request 12 - *Netatmo "Home + Security" : Détecteur de fumée (NSD)*
+- **Status: Non démarré** - Cette fonctionnalité n'a pas encore débutée.
+
+#### Pull request 13 - *Ajout du bouton "Modifier" : Pouvoir modifier les noms des fonctionnalités des appareils Netatmo*
+- **Status: Non démarré** - Cette fonctionnalité n'a pas encore débutée.
+
+#### Pull request 14 - *Ajout des webhooks ([Pour les utilisateurs Gladys Plus](/fr/plus/))*
+- **Status: Non démarré** - Cette fonctionnalité n'a pas encore débutée. Cette fonctionnalité permettra de recevoir les alertes et changements d'états de certains appareils en temps réel (Consignes de température, détection caméra, détection d'ouverture de porte, alerte de connexion/déconnexion d'un appareil, etc.) pour tout ceux qui disposent d'un abonnement Gladys Plus.
+
+**... Au gré des demandes d'ajouts de fonctionnalités ...**
 
 ## Conclusion
 Les retours d'états de tous les appareils décrits à [l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo) sont maintenant fonctionnels.
 
 Et voilà ! Vous pouvez maintenant ajouter les appareils et fonctionnalités dont vous souhaitez profiter sur votre page d'accueil ou encore créer vos scènes d'alertes ou de commandes en suivant la partie de la documentation consacrée au [Tableau de bord](/fr/docs/dashboard/intro) ou aux [Scènes](/fr/docs/scenes/intro).
 
-![Netatmo Dashboard - Plug & NATherm1](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-dashboard.jpg)
+![Tableau de bord Netatmo - Chauffage](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-dashboard-heating.jpg)
+
+![Tableau de bord Netatmo - Station météo](../../../../../static/img/docs/fr/configuration/netatmo/fr-netatmo-dashboard-weather.jpg)
 
 Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), si jamais vous avez besoin d’aide.
