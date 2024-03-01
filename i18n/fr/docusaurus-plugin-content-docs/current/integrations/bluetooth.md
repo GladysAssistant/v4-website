@@ -62,7 +62,7 @@ La scène doit ressembler à ça :
 
 Vous pouvez jouer avec les réglages en fonction de votre maison. Si vous estimez que 10 minutes c'est trop court pour être mis comme absent, vous pouvez rallonger à 20 minutes pour éviter les "faux-départs" :)
 
-## Afficher la présence sur le tableau de bord[]
+## Afficher la présence sur le tableau de bord
 
 Vous pouvez maintenant rajouter un **widget Utilisateurs présents** sur votre tableau de bord pour afficher la présence des différents utilisateurs à la maison.
 

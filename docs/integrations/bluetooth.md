@@ -66,7 +66,7 @@ You can now add a **Users present** widget to your dashboard to display the pres
 
 Go to Gladys' dashboard and click on the `edit` button to modify the dashboard.
 
-![edit_dashbord](<../../static/img/docs/en/configuration/bluetooth/edit dashboard.png>)
+![edit_dashbord](../../static/img/docs/en/configuration/bluetooth/edit dashboard.png)
 
 Click on `add +` then select the `Users present` widget, which you can move to a column.
 
