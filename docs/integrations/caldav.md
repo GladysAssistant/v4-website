@@ -89,7 +89,7 @@ go to the `Integration -> CalDav` page in Gladys
 
 ![Synology](../../static/img/docs/en/configuration/caldav/apple_3_integration.png)
 
-1. Choose `Synlogy Calendar`
+1. Choose `Synology Calendar`
 2. Paste here the URL you copied previously
 3. Type your Synology username
 4. Type here you Synology password
