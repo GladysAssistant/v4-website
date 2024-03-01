@@ -50,7 +50,7 @@ Currently, only infrared signals are supported.
 
 You can now add a **devices widget** to your dashboard and control your remote control.
 
-Go to the Gladys dashboard and click on the "edit" button to modify the dashboard.
+Go to the Gladys dashboard and click on the `edit` button to modify the dashboard.
 
 [](https://gladysassistant.com/fr/docs/integrations/camera/#ajoutez-la-cam%C3%A9ra-au-dashboard-de-gladys-assistant)
 
