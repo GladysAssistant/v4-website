@@ -8,7 +8,7 @@ sidebar_label: Owntracks
 
 [Owntracks](https://owntracks.org/) is an open-source mobile application that lets you send your geolocation periodically to a server.
 
-**Gladys Plus]([https://gladysassistant.com/fr/plus/](https://gladysassistant.com/fr/plus/))** allows you to receive these locations in Gladys.
+**Gladys Plus([https://gladysassistant.com/fr/plus/](https://gladysassistant.com/fr/plus/))** allows you to receive these locations in Gladys.
 
 ### Download Owntracks
 
