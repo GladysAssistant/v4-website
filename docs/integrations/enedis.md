@@ -40,7 +40,7 @@ Go to Gladys' dashboard and click on the `edit` button to modify the dashboard.
 
 ![edit_dashboard](../../static/img/docs/en/configuration/enedis/edit_dashboard.png)
 
-Click on `add +` then select the `graphic` widget, you can move it to a column and select D`aily consumption` :
+Click on `add +` then select the `graphic` widget, you can move it to a column and select `Daily consumption` :
 
 ![widget_enedis](../../static/img/docs/en/configuration/enedis/widget_chart.png)
 
