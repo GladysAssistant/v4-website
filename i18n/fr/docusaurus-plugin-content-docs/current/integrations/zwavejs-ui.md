@@ -7,10 +7,12 @@ sidebar_label: Z-Wave JS UI
 :::warning
 Janvier 2024: Cette intégration est en alpha pour l'instant.
 
-deux types d'appareils sont supportés : 
+Les fonctionnalités suivantes sont supportées : 
  
  - Les détecteurs d'ouverture/fermeture de porte ou fenêtre comme le [Fibaro Door/Window Sensor 2](https://www.domadoo.fr/fr/peripheriques/4105-fibaro-detecteur-d-ouverture-z-wave-doorwindow-sensor-2-blanc-5902701700348.html?domid=17).
- - Les prises connectés comme la [Fibaro Wall Plug](https://www.fibaro.com/fr/products/wall-plug/)
+ - Les interrupteurs permettant d'allumer et d'éteindre l'éclairage ou des prises électriques. Exemple de périphérique supporté : [Fibaro Wall Plug](https://www.fibaro.com/fr/products/wall-plug/), [Fibaro Switch](https://www.fibaro.com/fr/products/switches/)
+ - Mesure de température
+ - Mesure de la consommation d'énergie
 
 Nous sommes à la recherche d'aide pour intégrer d'autres appareils !
 :::
