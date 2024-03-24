@@ -66,11 +66,8 @@ In the message sent to you by BotFather, there is the API key under the line "Us
 
 ## Enter this key in Gladys Assistant
 
-Go to "Integrations" -> "Telegram".
-
-![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_07_Integration_Gladys-0.jpg)
-
-Enter your API key then click "Save".
+1. Go to the `Integrations -> Telegram` page in Gladys.
+2. Enter your API key and click `Save`.
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_08_Integration_Gladys_ok.jpg)
 
@@ -118,4 +115,4 @@ Let's see what it looks like on a smartphone:
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_15_Communiquer_Gladys_Smartphone.jpg)
 
-Enjoy !
+Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
