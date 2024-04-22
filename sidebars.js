@@ -55,6 +55,7 @@ module.exports = {
         "scenes/scheduled-trigger",
         "scenes/calendar-event-is-coming-trigger",
         "scenes/calendar-event-is-running-condition",
+        "scenes/edf-tempo",
         "scenes/turn-on-off-the-switches-action",
         "scenes/get-last-device-state-action",
         "scenes/wait-action",
@@ -83,6 +84,7 @@ module.exports = {
         "dashboard/camera",
         "dashboard/devices-in-room",
         "dashboard/chart",
+        "dashboard/edf-tempo",
       ],
     },
     {
