@@ -130,7 +130,7 @@ const FAQQuestions = {
             <br />
             Si ce kit te parle, dépêche toi, il y a une liste d'attente :{" "}
             <a
-              href="https://app.youform.io/forms/abosckyk"
+              href="https://forms.gle/p4GpnPfbk8GxMKEB9"
               rel="nofollow"
               target="_blank"
             >

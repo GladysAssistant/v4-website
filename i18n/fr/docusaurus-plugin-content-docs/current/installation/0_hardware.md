@@ -56,7 +56,7 @@ Gladys tourne sur n’importe quel mini-PC sous Linux :
 | Khadas VIM1S                         | 65,99€ | Une carte avec un stockage eMMC intégré. 2GB RAM / 16GB de stockage. Installation d’Ubuntu Server via leur BIOS personnalisé puis installation de Gladys en CLI avec Docker.                                                                                                                                                                                                       | [Amazon](https://amzn.to/3suD6Z3)                                                                                        |
 | N’importe quel serveur, NAS, mini-PC |        | Tu as un NAS Synology ? Un Intel NUC ? N’importe quel serveur Linux, du moment qu’il peut faire tourner Docker, peut faire tourner Gladys. N’hésite pas à venir sur le forum si tu as des questions.                                                                                                                                                                               |                                                                                                                          |
 
-**Note:** Pour accélérer le déploiement de Gladys, je vais lancer une série très limitée d'un kit de démarrage contenant du hardware mais pas que ! 😎 [Je m'inscris !](https://app.youform.io/forms/abosckyk)
+**Note:** Pour accélérer le déploiement de Gladys, je vais lancer une série très limitée d'un kit de démarrage contenant du hardware mais pas que ! 😎 [Je m'inscris !](https://forms.gle/p4GpnPfbk8GxMKEB9)
 
 ## Installation de Gladys Assistant
 
