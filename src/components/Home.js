@@ -115,23 +115,27 @@ const FAQQuestions = {
       ),
     },
     {
-      title: <>Sondage Noël 2023 : Que penses-tu de Gladys Assistant ?</>,
+      title: <>Un kit de démarrage pour commencer ?</>,
       response: (
         <>
           <p>
-            Nous sommes à la recherche de retours sur Gladys : Que penses-tu du
-            projet ? Si tu n'utilise pas encore Gladys, pourquoi ?
-          </p>
-          <p>
-            Pour répondre au sondage,{" "}
+            Pour accélérer le déploiement de Gladys, je vais lancer une série
+            très limitée (10 exemplaires pour l'instants) d'un kit de démarrage,
+            contenant du hardware mais pas que ! 😎
+            <br />
+            <br />
+            Ce kit est destiné à un public qui n'a pas d'installation Gladys
+            pour l'instant et qui souhaite se lancer facilement.
+            <br />
+            <br />
+            Si ce kit te parle, dépêche toi, il y a une liste d'attente :{" "}
             <a
-              href="https://forms.gle/KPo69uyeP3HrTrd57"
+              href="https://app.youform.io/forms/abosckyk"
               rel="nofollow"
               target="_blank"
             >
-              rendez-vous ici
-            </a>{" "}
-            !
+              Je m'inscris !
+            </a>
           </p>
         </>
       ),
