@@ -318,9 +318,9 @@ function Home({ integrations, lang }) {
                         "button button--primary",
                         styles.heroButton
                       )}
-                      href="https://formation.gladysassistant.com"
+                      href="https://forms.gle/p4GpnPfbk8GxMKEB9"
                     >
-                      Obtenez le guide ULTIME pour démarrer !
+                      Je veux acheter un kit de démarrage !
                     </Link>
                   </div>
                 )}
