@@ -1,6 +1,8 @@
 import React from "react";
 
 import Translate, { translate } from "@docusaurus/Translate";
+import cx from "classnames";
+import styles from "../homeStyles.module.css";
 
 function validateEmail(email) {
   var re = /[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}/gim;
@@ -57,11 +59,11 @@ function SubcribeNewsletter({ lang }) {
           id="subscribeNewsletter.text"
           description="Subscribe newsletter banner text"
         >
-          Emails are sent by Pierre-Gilles Leymarie, founder of the project.
-          You can unsubscribe at any time 🙂
+          Emails are sent by Pierre-Gilles Leymarie, founder of the project. You
+          can unsubscribe at any time 🙂
         </Translate>
       </div>
-      <div className="col col--4">
+      <div className={cx("col col--4", styles.newsletterSectionInputCol)}>
         <form>
           {status === "failed" && (
             <div
