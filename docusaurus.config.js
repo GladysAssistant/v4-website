@@ -140,6 +140,10 @@ module.exports = {
               label: "Instagram",
               href: "https://instagram.com/gladysassistant",
             },
+            {
+              label: "Starter kit (FR only)",
+              href: "https://forms.gle/p4GpnPfbk8GxMKEB9",
+            },
           ],
         },
         {

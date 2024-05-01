@@ -5,12 +5,12 @@ module.exports = {
       label: "Installation",
       items: [
         "installation/hardware",
-        "installation/raspberry-pi",
         "installation/docker",
         "installation/docker-compose",
         "installation/synology",
         "installation/unraid",
         "installation/freebox-delta",
+        "installation/raspberry-pi",
         "installation/phone",
         "installation/faq",
       ],
