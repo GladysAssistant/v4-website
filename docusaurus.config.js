@@ -27,9 +27,9 @@ module.exports = {
       respectPrefersColorScheme: false,
     },
     announcementBar: {
-      id: "launching_formation",
+      id: "launching_start_kit",
       content:
-        'Nouveau : Obtiens le guide ULTIME pour mettre en place ta maison connnectée : <a target="_blank"  href="https://formation.gladysassistant.com">J\'en profite !</a>',
+        'Nouveau : Je lance un kit de démarrage tout inclus : <a target="_blank"  href="https://forms.gle/p4GpnPfbk8GxMKEB9">J\'en profite !</a> (Edition limitée)',
       backgroundColor: "#65c7f7",
       textColor: "#091E42",
       isCloseable: true,
