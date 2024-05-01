@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import Layout from "@theme/Layout";
 import Translate from "@docusaurus/Translate";
 import {
@@ -67,8 +67,8 @@ async function getUsage() {
 
 function Open() {
   const context = useDocusaurusContext();
-  const usageChartCanva = useRef(null);
-  const forumPageViewsCanva = useRef(null);
+  const [usageChartCanva, setUsageChartCanva] = useState(null);
+  const [forumPageViewsCanva, setForumPageViewsCanva] = useState(null);
   const [loading, setLoading] = useState(true);
   const [usageChartData, setUsageChartData] = useState(null);
   const { i18n } = context;
@@ -87,17 +87,29 @@ function Open() {
     ? Math.round(usageChartData.chartmogul_data.current / 100)
     : null;
 
-  useEffect(async () => {
+  async function fetchData() {
     const data = await getUsage();
+    setUsageChartData(data);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (!usageChartData) {
+      return;
+    }
     const config = {
       type: "line",
       data: {
-        labels: data.labels,
+        labels: usageChartData.labels,
         datasets: [
           {
             label: "Number of Gladys instances",
             borderColor: "#74b9ff",
-            data: data.points,
+            data: usageChartData.points,
             fill: false,
           },
         ],
@@ -132,12 +144,12 @@ function Open() {
     const forumPageViewsConfig = {
       type: "line",
       data: {
-        labels: data.forumPageViewsLabels,
+        labels: usageChartData.forumPageViewsLabels,
         datasets: [
           {
             label: "Forum pageviews",
             borderColor: "#74b9ff",
-            data: data.forumPageViewsPoints,
+            data: usageChartData.forumPageViewsPoints,
             fill: false,
           },
         ],
@@ -160,21 +172,26 @@ function Open() {
         },
       },
     };
-    setUsageChartData(data);
-    setLoading(false);
-
     if (usageChartCanva) {
-      const usageCtx = usageChartCanva.current.getContext("2d");
+      const usageCtx = usageChartCanva.getContext("2d");
       const usageChart = new Chart(usageCtx, config);
     }
 
     if (forumPageViewsCanva) {
-      const forumPageViewsCtx = forumPageViewsCanva.current.getContext("2d");
+      const forumPageViewsCtx = forumPageViewsCanva.getContext("2d");
       const forumPageViewsChart = new Chart(
         forumPageViewsCtx,
         forumPageViewsConfig
       );
     }
+  }, [usageChartCanva, forumPageViewsCanva, usageChartData]);
+
+  const usageChartRef = useCallback((node) => {
+    setUsageChartCanva(node);
+  }, []);
+
+  const forumChartRef = useCallback((node) => {
+    setForumPageViewsCanva(node);
   }, []);
 
   return (
@@ -297,7 +314,7 @@ function Open() {
                           </Translate>
                         </h2>
                         <div style={{ height: "400px" }}>
-                          <canvas ref={usageChartCanva}></canvas>
+                          <canvas ref={usageChartRef}></canvas>
                         </div>
                       </div>
                     </div>
@@ -445,7 +462,7 @@ function Open() {
                             width: "100%",
                           }}
                         >
-                          <canvas ref={forumPageViewsCanva}></canvas>
+                          <canvas ref={forumChartRef}></canvas>
                         </div>
                       </div>
                     </div>
