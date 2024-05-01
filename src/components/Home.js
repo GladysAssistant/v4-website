@@ -9,6 +9,7 @@ import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import HoverVideoPlayer from "react-hover-video-player";
 import { TestimonialHomeSection } from "./Testimonial";
 import PlayImage from "./play.svg";
+import SubcribeNewsletter from "./home/SubcribeNewsletter";
 
 import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
@@ -373,6 +374,11 @@ function Home({ integrations, lang }) {
         </div>
       </header>
       <main>
+        <div
+          className={classnames(styles.homeSection, styles.newsletterSection)}
+        >
+          <SubcribeNewsletter lang={lang} />
+        </div>
         <div className={classnames(styles.homeSection)}>
           <h2 className={styles.secondaryTitle}>
             <Translate
@@ -752,6 +758,11 @@ function Home({ integrations, lang }) {
                 ))}
             </div>
           </div>
+        </div>
+        <div
+          className={classnames(styles.homeSection, styles.newsletterSection)}
+        >
+          <SubcribeNewsletter lang={lang} />
         </div>
       </main>
     </>
