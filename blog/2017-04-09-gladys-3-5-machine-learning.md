@@ -45,6 +45,7 @@ Ces données derrière resortent de la façon suivante :
 
 **Phrase 1 :**
 
+```
     {
         "deviceTypes": [],
         "rooms": [{
@@ -58,9 +59,11 @@ Ces données derrière resortent de la façon suivante :
         "times": [],
         "replacedText": "Allume la lumière du %ROOM%"
     }
+```
 
 **Phrase 2 :**
 
+```
     {
         "deviceTypes": [],
         "rooms": [],
@@ -89,9 +92,11 @@ Ces données derrière resortent de la façon suivante :
         }],
         "replacedText": "Réveille moi %TIME%"
     }
+```
 
 **Phrase 3 :**
 
+```
     {
         "deviceTypes": [{
             "name": "lampe de bureau - binary",
@@ -111,6 +116,7 @@ Ces données derrière resortent de la façon suivante :
         "times": [],
         "replacedText": "Éteins ma %DEVICE_TYPE%"
     }
+```
 
 ## La classification
 
@@ -137,6 +143,7 @@ Grâce à votre aide, j'ai pu constituer une base de données de questions à po
 
 Une entrée de la base de donnée ressemble à ça :
 
+```
      {
         "service": "calendar",
         "label": "get-next-event",
@@ -152,6 +159,7 @@ Une entrée de la base de donnée ressemble à ça :
             }
         ]
     }
+```
 
 Comme vous pouvez le voir, plusieurs phrases peuvent être classifiée avec un même tag. En entrainant un modèle avec plein de phrases, Gladys est capable de déterminer pour chaque nouvelle phrase qui arrive la probabilité que cette phrase appartienne à tel ou tel label.
 

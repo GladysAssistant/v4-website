@@ -4,7 +4,7 @@ description: Gladys dans sa version 3.3 est désormais capable de gérer la musi
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-sonos-cover.jpg
 

@@ -4,7 +4,7 @@ description: Après 7 mois de travail, la première alpha de Gladys 4 est enfin 
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-4-alpha.jpg
 

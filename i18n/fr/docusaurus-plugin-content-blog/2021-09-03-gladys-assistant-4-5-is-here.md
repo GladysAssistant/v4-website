@@ -4,7 +4,7 @@ description: C'est une version importante, il est maintenant possible de créer 
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/gladys-4-5-fr-cover.jpg
 slug: gladys-assistant-4-5-is-here
 ---

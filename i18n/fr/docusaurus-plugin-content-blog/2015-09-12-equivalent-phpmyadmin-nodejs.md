@@ -4,7 +4,7 @@ description: On utilise souvent PhpMyAdmin pour administrer sa base de donnée M
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/express-admin-icone.jpg
 slug: equivalent-phpmyadmin-nodejs
 ---

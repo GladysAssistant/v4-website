@@ -24,7 +24,7 @@ Pour cela, vous devez dans votre scène ajouter une action "Récupérer le derni
 
 ![Récupérer valeur capteur](../../../../../static/img/docs/fr/scenes/send-a-message-action/get-device-value.jpg)
 
-Ensuite, plus loin dans la scène, vous pouvez ajouter une action "Envoyer un message" et dans le message vous tapez "{{ " puis vous sélectionnez la variable précédemment définie.
+Ensuite, plus loin dans la scène, vous pouvez ajouter une action "Envoyer un message" et dans le message vous tapez `{{ ` puis vous sélectionnez la variable précédemment définie.
 
 <div class="videoContainer">
 <video  width="100%" controls autoplay loop muted>

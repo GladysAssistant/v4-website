@@ -6,7 +6,7 @@ image: /img/presentation/lightbulblow.jpg
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 ---
 
 <div class="alert alert--danger" role="alert">
@@ -17,7 +17,7 @@ Salut à tous,
 
 Comment faire en sorte que Gladys puisse contrôler les appareils électriques chez nous ? Beaucoup d'appareils électriques ( lampes de chevet, machine à café ), ne sont pas connectés mais s'allument directement quand on les branche. Avec des prises télécommandées, il devient possible de connecter ces appareils à Gladys.
 
-L'objectif de ce tutoriel est d'arrive à contrôler des prises <a href="">433Mhz Phénix</a> depuis Gladys.
+L'objectif de ce tutoriel est d'arrive à contrôler des prises 433Mhz Phénix depuis Gladys.
 
 <!--truncate-->
 
@@ -32,9 +32,9 @@ L'objectif de ce tutoriel est d'arrive à contrôler des prises <a href="">433Mh
 
 Le montage est simple, il suffit de brancher l'émetteur 433Mhz à l'arduino suivant le montage suivant :
 
-- Arduino 5V <-> VCC sur l'émetteur 433Mhz
-- Arduino GND <-> GND sur l'émetteur 433Mhz
-- Arduino pin 10 <-> DATA sur l'émetteur 433Mhz
+- Arduino 5V - VCC sur l'émetteur 433Mhz
+- Arduino GND - GND sur l'émetteur 433Mhz
+- Arduino pin 10 - DATA sur l'émetteur 433Mhz
 
 Ce qui nous donne :
 

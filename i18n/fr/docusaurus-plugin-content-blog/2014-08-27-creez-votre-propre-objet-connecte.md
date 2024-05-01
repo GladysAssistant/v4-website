@@ -4,7 +4,7 @@ description: A nous de créer nos propres objets connectés, avec un arduino, qu
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/connectedobjectlow.jpg
 slug: creez-votre-propre-objet-connecte
 ---
