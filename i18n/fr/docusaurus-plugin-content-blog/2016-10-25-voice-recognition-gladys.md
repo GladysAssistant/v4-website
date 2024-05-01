@@ -4,7 +4,7 @@ description: Vous avez toujours rêvé de voir la reconnaissance vocale arriver 
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 
 image: /img/presentation/gladys-voice-cover.jpg
 

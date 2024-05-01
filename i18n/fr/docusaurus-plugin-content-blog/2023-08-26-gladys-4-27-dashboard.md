@@ -4,7 +4,7 @@ description: Des tableaux de bords encore plus personnalisés et plus de compati
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/gladys-assistant-4-27.jpg
 slug: gladys-4-27-dashboard-rename-and-zigbee
 ---

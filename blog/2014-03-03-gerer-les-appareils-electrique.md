@@ -9,9 +9,9 @@ author_url: https://twitter.com/pierregillesl
 author_image_url: /img/pierre-gilles.jpg
 ---
 
-<div class="alert alert--danger" role="alert">
-  Update: 21/07/2020: Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 ! 
-</div>
+:::danger Update: 21/07/2020
+Ce tutoriel est destiné à Gladys v3, il ne fonctionne pas avec Gladys v4 !
+:::
 
 Salut à tous,
 
@@ -32,9 +32,9 @@ L'objectif de ce tutoriel est d'arrive à contrôler des prises <a href="">433Mh
 
 Le montage est simple, il suffit de brancher l'émetteur 433Mhz à l'arduino suivant le montage suivant :
 
-- Arduino 5V <-> VCC sur l'émetteur 433Mhz
-- Arduino GND <-> GND sur l'émetteur 433Mhz
-- Arduino pin 10 <-> DATA sur l'émetteur 433Mhz
+- Arduino 5V - VCC sur l'émetteur 433Mhz
+- Arduino GND - GND sur l'émetteur 433Mhz
+- Arduino pin 10 - DATA sur l'émetteur 433Mhz
 
 Ce qui nous donne :
 
@@ -119,52 +119,12 @@ Afin de pouvoir ajouter dans Gladys vos périphériques, vous allez avoir besoin
 
 Voilà dans mon cas les différentes valeurs:
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Channel</th>
-            <th align="center">Prise</th>
-            <th align="center">Action</th>
-            <th align="right">Code TriState</th>
-            <th align="right">Code binaire</th>
-            <th align="right">Code décimal</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>5</td>
-            <td align="center">A</td>
-            <td align="center">Off</td>
-            <td align="right">FFFF0 0FFF FF0</td>
-            <td align="right">0101010100 00010101 010100</td>
-            <td align="right">5571924</td>
-        </tr>
-        <tr>
-        <td>5</td>
-            <td align="center">B</td>
-            <td align="center">Off</td>
-            <td align="right">FFFF0 F0FF FF0</td>
-            <td align="right">0101010100 01000101 010100</td>
-            <td align="right">5574996</td>
-        </tr>
-        <tr>
-        <td>5</td>
-            <td align="center">C</td>
-            <td align="center">Off</td>
-            <td align="right">FFFF0 FF0F FF0</td>
-            <td align="right">0101010100 01010001 010100</td>
-            <td align="right">5575764</td>
-        </tr>
-        <tr>
-        <td>5</td>
-            <td align="center">D</td>
-            <td align="center">Off</td>
-            <td align="right">FFFF0 FFF0 FF0</td>
-            <td align="right">0101010100 01010100 010100</td>
-            <td align="right">5575956</td>
-        </tr>
-    </tbody>
-</table>
+| Channel | Prise | Action | Code TriState  | Code binaire               | Code décimal |
+| ------- | ----- | ------ | -------------- | -------------------------- | ------------ |
+| 5       | A     | Off    | FFFF0 0FFF FF0 | 0101010100 00010101 010100 | 5571924      |
+| 5       | B     | Off    | FFFF0 F0FF FF0 | 0101010100 01000101 010100 | 5574996      |
+| 5       | C     | Off    | FFFF0 FF0F FF0 | 0101010100 01010001 010100 | 5575764      |
+| 5       | D     | Off    | FFFF0 FFF0 FF0 | 0101010100 01010100 010100 | 5575956      |
 
 Bien entendu si vous changez de channel, mettez à jour le code décimal en fonction dans Gladys.
 

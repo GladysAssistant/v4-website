@@ -4,7 +4,7 @@ description: Aujourd'hui je suis heureux de sortir Gladys Assistant v4.7, une no
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/gladys-assistant-4-7-chart.jpg
 slug: display-chart-and-major-zigbee2mqtt-upgrade
 ---

@@ -4,7 +4,7 @@ description: La puissance de l'intelligence artificielle disponible dans Gladys.
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/open-ai-gpt-3-release.jpg
 slug: open-ai-gpt-3-in-gladys-assistant
 ---

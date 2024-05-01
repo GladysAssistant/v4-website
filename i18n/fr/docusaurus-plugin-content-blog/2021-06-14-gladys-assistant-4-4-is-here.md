@@ -4,7 +4,7 @@ description: Il est maintenant possible de créer des scènes qui se déclenchen
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/gladys-4-4-fr-cover.jpg
 slug: gladys-assistant-4-4-is-here
 ---

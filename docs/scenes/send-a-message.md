@@ -24,7 +24,7 @@ To do this, you must add a "retrieve the last state" action to your scene and se
 
 ![Get sensor value](../../static/img/docs/en/scenes/send-a-message-action/get-device-value.jpg)
 
-Then, further in the scene, you can add a "send message" action, and in the message you type "{{" and select the previously defined variable.
+Then, further in the scene, you can add a "send message" action, and in the message you type `{{` and select the previously defined variable.
 
 <div class="videoContainer">
 <video  width="100%" controls autoplay loop muted>

@@ -4,7 +4,7 @@ description: Il est de plus en plus facile de créer des scènes complexes avec 
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
-author_image_url: /fr/img/pierre-gilles.jpg
+author_image_url: /img/pierre-gilles.jpg
 image: /img/presentation/gladys-4-3-fr-cover.jpg
 slug: gladys-assistant-4-3-is-here
 ---
