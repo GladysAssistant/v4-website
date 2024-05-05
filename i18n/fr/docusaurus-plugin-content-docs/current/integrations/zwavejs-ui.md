@@ -4,15 +4,14 @@ title: Intégrez vos appareils Z-Wave grâce à Z-Wave JS UI
 sidebar_label: Z-Wave JS UI
 ---
 
-:::warning
-Janvier 2024: Cette intégration est en alpha pour l'instant.
-
 Les fonctionnalités suivantes sont supportées : 
  
  - Les détecteurs d'ouverture/fermeture de porte ou fenêtre comme le [Fibaro Door/Window Sensor 2](https://www.domadoo.fr/fr/peripheriques/4105-fibaro-detecteur-d-ouverture-z-wave-doorwindow-sensor-2-blanc-5902701700348.html?domid=17).
  - Les interrupteurs permettant d'allumer et d'éteindre l'éclairage ou des prises électriques. Exemple de périphérique supporté : [Fibaro Wall Plug](https://www.fibaro.com/fr/products/wall-plug/), [Fibaro Switch](https://www.fibaro.com/fr/products/switches/)
  - Mesure de température
  - Mesure de la consommation d'énergie
+ - Montée / Descente des volets roulants : ouvrez/fermez vos volets roulants et consultez leur position. Exemple de périphérique supporté : [Fibaro Walli Roller Shutter](https://manuals.fibaro.com/fr/walli-roller-shutter/), [Qubino Flush Shutter](https://qubino.com/products/flush-shutter/)
+ - Variateurs : allumez/éteignez vos lumières (ou tout autre appareil géré par un voltage variable). Exemple de périphérique supporté : [Fibaro Walli Dimmer](https://manuals.fibaro.com/fr/walli-dimmer/), [Fibaro Dimmer 2](https://manuals.fibaro.com/fr/dimmer-2/)
 
 Nous sommes à la recherche d'aide pour intégrer d'autres appareils !
 :::
