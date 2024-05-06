@@ -4,6 +4,9 @@ title: Intégrez vos appareils Z-Wave grâce à Z-Wave JS UI
 sidebar_label: Z-Wave JS UI
 ---
 
+:::warning
+Janvier 2024: Cette intégration est en alpha pour l'instant.
+
 Les fonctionnalités suivantes sont supportées : 
  
  - Les détecteurs d'ouverture/fermeture de porte ou fenêtre comme le [Fibaro Door/Window Sensor 2](https://www.domadoo.fr/fr/peripheriques/4105-fibaro-detecteur-d-ouverture-z-wave-doorwindow-sensor-2-blanc-5902701700348.html?domid=17).
