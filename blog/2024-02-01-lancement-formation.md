@@ -38,6 +38,8 @@ This will allow me to be at the forefront in terms of Gladys use, and to be able
 
 For the moment, the apartment is empty.
 
+<!--truncate-->
+
 I'm going to take advantage of this installation to film several episodes in the form of a mini-series where I'll present each part of my installation and explain how to do the same at home:
 
 - Lighting

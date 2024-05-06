@@ -19,6 +19,8 @@ From now on, when you configure Zigbee2mqtt in Gladys, Gladys will offer you 2 c
 
 ![Gladys Zigbee2mqtt mode choice](../static/img/articles/en/gladys-4-40/choose-zigbee-mode.png)
 
+<!--truncate-->
+
 Either you're a beginner starting from scratch, and Gladys can take care of all the Zigbee2mqtt configuration (that's what Gladys was doing until now).
 
 Or you're an experienced user who already has an existing Zigbee2mqtt installation (for example, if you're using Home Assistant or any other home automation platform), in which case you can connect Gladys to an existing installation.
