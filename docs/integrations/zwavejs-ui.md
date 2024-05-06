@@ -4,6 +4,9 @@ title: Integrate your Z-Wave devices with Z-Wave JS UI
 sidebar_label: Z-Wave JS UI
 ---
 
+:::warning
+January 2024: This integration is in alpha for now.
+
 The following features are supported: 
 
  - Door/Window sensor such as the [Fibaro Door Opening Sensor](https://www.amazon.com/Fibaro-FGDW-002-1-Window-Temperature-Sensor/dp/B074FCG1PF?crid=AMCFKK427FRN&keywords=Fibaro+door+sensor+2&qid=1704977401&sprefix=fibaro+door+sensor+2%2Caps%2C164&sr=8-1&linkCode=ll1&tag=gladproj-20&linkId=3e61bb12444e6d8265e7440bd0174456&language=en_US&ref_=as_li_ss_tl)
