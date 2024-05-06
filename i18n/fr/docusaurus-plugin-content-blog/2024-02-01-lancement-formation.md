@@ -38,6 +38,8 @@ Cela me permettra d'être au front en terme d'utilisation de Gladys, et de pouvo
 
 Pour l'instant, l'appartement est vide.
 
+<!--truncate-->
+
 Je vais profiter de cette installation pour filmer plusieurs épisodes sous la forme d'une mini-série où je présenterais chaque volet de mon installation et où j'expliquerais comment faire pareil chez vous :
 
 - Éclairage
