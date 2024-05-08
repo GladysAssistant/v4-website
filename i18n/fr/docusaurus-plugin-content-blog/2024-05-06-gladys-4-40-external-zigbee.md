@@ -13,6 +13,12 @@ Salut à tous !
 
 Je lance aujourd'hui Gladys Assistant 4.40, une mise à jour de Gladys qui apporte une fonctionnalité très demandée : la possibilité d'utiliser Gladys avec une instance Zigbee2mqtt existante.
 
+:::info
+Les ponts de mai, c'est toujours un bon moment pour se lancer sur un sujet.
+
+A cette occasion, je fais -25% sur [le guide ULTIME pour mettre en place sa maison connectée](https://formation.gladysassistant.com/) avec le code **PONT_MAI_2024** ! 🚀
+:::
+
 ## Utiliser Gladys avec une instance Zigbee2mqtt existante
 
 Désormais, lorsque vous configurerez Zigbee2mqtt dans Gladys, Gladys vous proposera 2 choix :
