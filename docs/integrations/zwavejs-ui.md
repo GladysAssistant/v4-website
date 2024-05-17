@@ -13,6 +13,8 @@ The following features are supported:
  - Binary Switch: turn on/off lights or cut off power from the sockets. Sample of supported devices: [Fibaro Wall Plug](https://www.fibaro.com/en/products/wall-plug/), [Fibaro Switches](https://www.fibaro.com/en/products/switches/)
  - Air Temperature sensors
  - Power Meter analytics
+ - UP/DOWN curtains: open/close and see your curtains position. Sample of supported devices: [Fibaro Walli Roller Shutter](https://manuals.fibaro.com/fr/walli-roller-shutter/), [Qubino Flush Shutter](https://qubino.com/products/flush-shutter/)
+ - Dimmers: turn ON/OFF your lights (or any device accepting a controlled voltage). Sample of supported devices: [Fibaro Walli Dimmer](https://manuals.fibaro.com/fr/walli-dimmer/), [Fibaro Dimmer 2](https://manuals.fibaro.com/fr/dimmer-2/)
 
 We are looking for help to integrate other devices!
 :::
