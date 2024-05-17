@@ -120,8 +120,8 @@ const FAQQuestions = {
       response: (
         <>
           <p>
-            Pour accélérer le déploiement de Gladys, je vais lancer une série
-            très limitée (10 exemplaires pour l'instants) d'un kit de démarrage,
+            Pour accélérer le déploiement de Gladys, j'ai lancé une édition très
+            limitée (10 exemplaires pour l'instant) d'un kit de démarrage,
             contenant du hardware mais pas que ! 😎
             <br />
             <br />
@@ -129,7 +129,8 @@ const FAQQuestions = {
             pour l'instant et qui souhaite se lancer facilement.
             <br />
             <br />
-            Si ce kit te parle, dépêche toi, il y a une liste d'attente :{" "}
+            Si ce kit te parle, dépêche toi, il ne reste plus que 5 exemplaires
+            :{" "}
             <a
               href="https://forms.gle/p4GpnPfbk8GxMKEB9"
               rel="nofollow"
@@ -318,9 +319,9 @@ function Home({ integrations, lang }) {
                         "button button--primary",
                         styles.heroButton
                       )}
-                      href="https://forms.gle/p4GpnPfbk8GxMKEB9"
+                      href="https://formation.gladysassistant.com/?coupon=HOMEPAGE_SALE_2024"
                     >
-                      Je veux acheter un kit de démarrage !
+                      -25% sur la formation Gladys !
                     </Link>
                   </div>
                 )}

@@ -27,9 +27,9 @@ module.exports = {
       respectPrefersColorScheme: false,
     },
     announcementBar: {
-      id: "launching_start_kit",
+      id: "formation_promotion",
       content:
-        'Nouveau : Je lance un kit de démarrage tout inclus : <a target="_blank"  href="https://forms.gle/p4GpnPfbk8GxMKEB9">J\'en profite !</a> (Edition limitée)',
+        '-25% sur la formation Gladys : <a target="_blank" href="https://formation.gladysassistant.com/?coupon=HOMEPAGE_SALE_2024">Le guide ULTIME pour commencer en domotique</a>',
       backgroundColor: "#65c7f7",
       textColor: "#091E42",
       isCloseable: true,
