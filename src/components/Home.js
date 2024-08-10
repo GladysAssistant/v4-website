@@ -120,24 +120,16 @@ const FAQQuestions = {
       response: (
         <>
           <p>
-            Pour accélérer le déploiement de Gladys, j'ai lancé une édition très
-            limitée (10 exemplaires pour l'instant) d'un kit de démarrage,
-            contenant du hardware mais pas que ! 😎
+            Pour accélérer le déploiement de Gladys, j'ai lancé un kit de
+            démarrage, contenant du hardware mais pas que ! 😎
             <br />
             <br />
             Ce kit est destiné à un public qui n'a pas d'installation Gladys
             pour l'instant et qui souhaite se lancer facilement.
             <br />
             <br />
-            Si ce kit te parle, dépêche toi, il ne reste plus que 5 exemplaires
-            :{" "}
-            <a
-              href="https://forms.gle/p4GpnPfbk8GxMKEB9"
-              rel="nofollow"
-              target="_blank"
-            >
-              Je m'inscris !
-            </a>
+            Si ce kit te parle, dépêche toi :{" "}
+            <a href="/fr/starter-kit/">Je commande !</a>
           </p>
         </>
       ),
@@ -319,9 +311,9 @@ function Home({ integrations, lang }) {
                         "button button--primary",
                         styles.heroButton
                       )}
-                      href="https://formation.gladysassistant.com/?coupon=HOMEPAGE_SALE_2024"
+                      href="/fr/starter-kit/"
                     >
-                      -25% sur la formation Gladys !
+                      Le kit de démarrage officiel !
                     </Link>
                   </div>
                 )}

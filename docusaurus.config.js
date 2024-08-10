@@ -27,9 +27,9 @@ module.exports = {
       respectPrefersColorScheme: false,
     },
     announcementBar: {
-      id: "formation_promotion",
+      id: "lancement_kit_demarrage_officiel",
       content:
-        '-25% sur la formation Gladys : <a target="_blank" href="https://formation.gladysassistant.com/?coupon=HOMEPAGE_SALE_2024">Le guide ULTIME pour commencer en domotique</a>',
+        'Lancement du <a href="/fr/starter-kit/">kit de démarrage officiel</a> !',
       backgroundColor: "#65c7f7",
       textColor: "#091E42",
       isCloseable: true,
@@ -142,7 +142,7 @@ module.exports = {
             },
             {
               label: "Starter kit (FR only)",
-              href: "https://forms.gle/p4GpnPfbk8GxMKEB9",
+              href: "/starter-kit/",
             },
           ],
         },
