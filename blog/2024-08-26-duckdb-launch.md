@@ -39,12 +39,7 @@ But in June, DuckDB finally reached version 1.0, with a clear announcement that 
 
 ## Integration into Gladys
 
-Following the launch of version 1.0, I immediately started development in Gladys and did a YouTube live stream to test the technology with you:
-
-<div class="youtubeVideoContainerInBlog">
-    <iframe  src="https://www.youtube.com/embed/EtEfyS6uHoE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-</div>
-<br />
+Following the launch of version 1.0, I immediately started development in Gladys and did a YouTube live stream to test the technology with you.
 
 We quickly saw together that the technology was very promising, so I continued development.
 
@@ -168,7 +163,7 @@ Thanks again to all the testers who helped in the development 🙏
 
 ## Getting Started with Gladys?
 
-If you want to get started with Gladys and don't have the hardware, I'm launching a unique starter kit!
+If you want to get started with Gladys and don't have the hardware, I'm launching a unique starter kit! (France only for now)
 
 I'm offering:
 
@@ -178,7 +173,7 @@ I'm offering:
 
 All at an unbeatable price.
 
-To learn more, [click here](/fr/starter-kit/)!
+If you are in France and want to know more, [click here](/fr/starter-kit/)!
 
 ## Supporting the Project
 
@@ -187,6 +182,5 @@ There are many ways to support the project:
 - Participate in discussions on the forum, help newcomers.
 - Contribute to the project by proposing new integrations/features.
 - Improve the documentation, which is open source.
-- Take advantage of the [Gladys training (-25% off currently!)](https://formation.gladysassistant.com/?coupon=DUCKDB_LAUNCH).
 
 Thanks to everyone who supports Gladys 🙏
