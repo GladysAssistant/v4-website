@@ -98,7 +98,7 @@ This kind of dataset is very easy to compress:
 
 Gladys should normally update automatically if you use Watchtower.
 
-If you installed Gladys with Docker, make sure you're using Watchtower. See the [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
+If you installed Gladys with Docker, make sure you're using Watchtower. See the [documentation](/docs/installation/docker/#auto-upgrade-gladys-with-watchtower).
 
 If you're impatient and know what you're doing, you can also manually run Watchtower in "one-shot" mode:
 
@@ -160,20 +160,6 @@ I hope this update will bring you the same results as it has for all the testers
 In any case, I'm convinced that this update will revolutionize the use of Gladys, and I welcome your feedback.
 
 Thanks again to all the testers who helped in the development 🙏
-
-## Getting Started with Gladys?
-
-If you want to get started with Gladys and don't have the hardware, I'm launching a unique starter kit! (France only for now)
-
-I'm offering:
-
-- A powerful mini-PC (the same one I have at home)
-- Access to the Gladys training (plenty of video and written content)
-- One year of Gladys Plus
-
-All at an unbeatable price.
-
-If you are in France and want to know more, [click here](/fr/starter-kit/)!
 
 ## Supporting the Project
 
