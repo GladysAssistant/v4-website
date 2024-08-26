@@ -1,6 +1,6 @@
 ---
 title: "DuckDB : Des performances extrêmes et une base de données 97% plus légère !"
-description: Une mise à jour majeure de Gladys qui va révolutionner votre utilisation
+description: Une mise à jour majeure de Gladys qui va révolutionner votre utilisation.
 author: Pierre-Gilles Leymarie
 author_title: Fondateur de Gladys Assistant
 author_url: https://twitter.com/pierregillesl
@@ -11,7 +11,7 @@ slug: gladys-and-duckdb
 
 Salut à tous,
 
-Aujourd'hui est un grand jour : je sors une version majeure de Gladys qui va améliorer drastiquement l'expérience Gladys et qui nous permet d'être à la pointe en termes de technologie de stockage de données.
+Aujourd'hui est un grand jour : je sors une version majeure de Gladys qui va améliorer drastiquement l'expérience Gladys et qui nous permet d'être à la pointe en terme de technologie de stockage de données.
 
 Imaginez...
 
@@ -35,7 +35,7 @@ DuckDB avec son approche OLAP + fichier est unique en son genre, et je surveilla
 
 Jusque-là, DuckDB était en alpha et n'était donc pas prêt à être utilisée en production sur un produit aussi critique que Gladys.
 
-Mais en juin, DuckDB est enfin sorti en 1.0, et a clairement annoncé que l'API et le format de fichier n'allait plus changer de façon majeure, et ainsi DuckDB devenait utilisable en production.
+Mais en juin, DuckDB est enfin sorti en 1.0, et a clairement annoncé que l'API et le format de fichier n'allaient plus changer de façon majeure, et ainsi DuckDB devenait utilisable en production.
 
 ## L'intégration dans Gladys
 
@@ -65,7 +65,7 @@ Le 6 août, j'ai lancé les tests "réels" en commençant sur mon installation G
 
 Mon instance a une quarantaine d'appareils, et est live depuis février 2024.
 
-J'avais une base de donnée de 905 Mo, pour 996 000 états de capteurs, qui une fois migré est passé à :
+J'avais une base de donnée de 905 Mo, pour 996 000 états de capteurs, qui une fois migrée est passée à :
 
 ![Pourcentage de réduction SQLite vers DuckDB Pierre-Gilles](../../../static/img/articles/fr/gladys-and-duckdb/pierregilles-duckdb.jpg)
 
@@ -77,7 +77,7 @@ Chez le plus gros utilisateur Gladys, Terdious, avec 80 millions d'états pour u
 
 Bref, c'est assez révolutionnaire !
 
-Depuis maintenant 20 jours, cette nouvelle version tourne chez moi et d'autres utilisateurs Gladys sans aucuns soucis.
+Depuis maintenant 20 jours, cette nouvelle version tourne chez moi et d'autres utilisateurs Gladys sans aucun soucis.
 
 Les graphiques sont beaucoup plus rapides, Terdious a remarqué des temps de chargement 2 fois plus rapide sur son mini-PC.
 
@@ -89,7 +89,7 @@ Sur son Pi 4, c'est encore plus impressionnant, les tableaux de bords comportant
 
 En fait, pas vraiment :
 
-- Déjà, SQLite n'étant pas adapté pour cet usage, nous étions obligés de stocker l'information 4 fois dans la base de donnée : une fois pour la donnée "brute", une fois pour des données agrégées mensuels, une fois pour des données agrégées journalières, et une fois pour des données agrégées horaires. Cela nous permettait d'aller chercher plus vite dans des jeux de données réduits en amont.
+- Déjà, SQLite n'étant pas adapté pour cet usage, nous étions obligés de stocker l'information 4 fois dans la base de donnée : une fois pour la donnée "brute", une fois pour des données agrégées mensuelles, une fois pour des données agrégées journalières, et une fois pour des données agrégées horaires. Cela nous permettait d'aller chercher plus vite dans des jeux de données réduits en amont.
 - Ensuite, côté SQLite, j'avais ajouté des index très précis pour répondre à des requêtes du style "Montre-moi les valeurs du capteur de température XX entre ce matin et maintenant". Ces index multicolonnes permettaient d'avoir de bonnes performances, mais étaient gourmands en stockage (là encore, c'est de la redondance).
 - Enfin, DuckDB fait un travail formidable. Les données sont compressées aggressivement (Si ça vous intéresse, il y a [article sur leur blog](https://duckdb.org/2022/10/28/lightweight-compression.html)).
 
@@ -148,7 +148,7 @@ Gladys reste utilisable, mais ralentie !
 
 Enfin, une fois cette purge terminée, vous devrez faire un nettoyage de la DB SQLite pour que le fichier sur votre disque soit finalement réduit.
 
-Pour cela, cliquez sur le bouton "Nettoyer la base de donnée" :
+Pour cela, cliquez sur le bouton "Nettoyer la base de données" :
 
 ![Nettoyer la base de donnée](../../../static/img/articles/fr/gladys-and-duckdb/clean-db.png)
 
@@ -156,7 +156,7 @@ Cette tâche est **bloquante** et Gladys ne sera pas disponible pendant le netto
 
 Enfin, une fois la tâche terminée, redémarrez Gladys.
 
-C'est bon, vous devriez avoir une base de donnée beaucoup plus petite et une instance Gladys bien plus rapide !
+C'est bon, vous devriez avoir une base de données beaucoup plus petite et une instance Gladys bien plus rapide !
 
 ## Conclusion
 
