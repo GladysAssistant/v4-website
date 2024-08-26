@@ -11,7 +11,7 @@ slug: gladys-and-duckdb
 
 Salut à tous,
 
-Aujourd'hui est un grand jour : je sors une version majeure de Gladys qui va améliorer drastiquement l'expérience Gladys et qui nous permet d'être à la pointe en terme de technologie de stockage de données.
+Aujourd'hui est un grand jour : je sors une version majeure de Gladys qui va améliorer drastiquement l'expérience Gladys et qui nous permet d'être à la pointe en termes de technologie de stockage de données.
 
 Imaginez...
 
