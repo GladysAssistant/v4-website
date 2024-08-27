@@ -1,6 +1,6 @@
 ---
 id: telegram
-title: Telegram
+title: Send Gladys notifications to Telegram
 sidebar_label: Telegram
 ---
 

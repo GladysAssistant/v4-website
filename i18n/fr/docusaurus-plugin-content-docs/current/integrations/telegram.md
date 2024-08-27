@@ -1,10 +1,10 @@
 ---
 id: telegram
-title: Telegram
+title: Envoyer des notifications Gladys sur Telegram
 sidebar_label: Telegram
 ---
 
-Cette intégration vous permet d'utiliser l'application de messagerie Telegram.
+Cette intégration Gladys vous permet d'utiliser l'application de messagerie Telegram.
 
 ![Créez un compte Telegram](../../../../../static/img/docs/fr/configuration/telegram/telegram_00_creer_compte_Logo.jpg)
 
