@@ -122,7 +122,7 @@ function Plus() {
   const subscribe = (e) => {
     e.preventDefault();
     const locale = isFr() ? "fr" : "en";
-    window.location.href = `https://buy.stripe.com/fZe7sX5EKcK6dos147?prefilled_promo_code=JOURDECHANCE`;
+    window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=STARTERKIT`;
   };
 
   const updateEmail = (e) => {
