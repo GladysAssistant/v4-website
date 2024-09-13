@@ -173,7 +173,7 @@ function Plus() {
                 <div>
                   <span>
                     <label style={{ display: "block" }}>
-                      (Offre limitée dans le temps)
+                      (Offre valable jusqu'au 18 septembre 2024)
                     </label>
                     <input
                       type="submit"
