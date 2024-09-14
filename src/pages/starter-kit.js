@@ -173,12 +173,18 @@ function Plus() {
                 <div>
                   <span>
                     <label style={{ display: "block" }}>
+                      <span style={{ fontSize: "30px", fontWeight: "bold" }}>
+                        259,97€
+                      </span>{" "}
+                      ( au lieu de 439,97€ )
+                    </label>
+                    <label style={{ display: "block", fontSize: "14px" }}>
                       (Offre valable jusqu'au 18 septembre 2024)
                     </label>
                     <input
                       type="submit"
                       onClick={subscribe}
-                      value="Commander maintenant !"
+                      value="Commander !"
                       className={cx(
                         "button button--primary",
                         styles.starterKitInputButton
