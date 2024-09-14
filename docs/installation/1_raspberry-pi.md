@@ -4,9 +4,17 @@ title: Installation on a Raspberry Pi
 sidebar_label: Raspberry Pi
 ---
 
+The Raspberry Pi used to be a great option for running Gladys, but now, if you have the choice, I recommend getting a mini-PC instead.
+
+It’s more powerful, more reliable, and often more affordable. See my guide [here](/docs/).
+
+## Installing Gladys on an already configured Raspberry Pi
+
 If you are looking to install Gladys Assistant on a Raspberry Pi that is already configured, use the [Docker](/docs/installation/docker) tutorial.
 
-## Download Gladys Raspberry Pi OS image
+## Installing Gladys on a new Raspberry Pi
+
+### Download Gladys Raspberry Pi OS image
 
 We provide a pre-built Raspberry Pi OS image with Gladys already configured.
 
@@ -14,13 +22,15 @@ For Raspberry Pi 3, 4 & 400:
 
 <a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest-64" rel="nofollow" >Download Gladys Assistant OS Bullseye 64-bit</a>
 
-For older Raspberry Pi (Raspberry Pi 1, 2 & Zero):
+:::note
+We do not support old Raspberry Pi with arm/v6 architecture.
 
-<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow" >Download Gladys Assistant OS Bullseye 32-bit</a>
+For the Raspberry Pi 5, follow the [Docker](/docs/installation/docker) tutorial.
+:::
 
 This link will download a `.zip` file containing the Raspberry Pi OS image of Gladys Assistant. After unzipping the downloaded file, you'll get a `.img` file.
 
-## Clone the image on a SD card
+### Clone the image on a SD card
 
 Once you have retrieved the image (`.img` file described above), you need to clone this image on the Raspberry Pi SD card.
 
@@ -30,13 +40,13 @@ Install Etcher, plug your SD card into your computer, and clone the `.img` file 
 
 ![Etcher](../../static/img/docs/en/installation/etcher.png)
 
-## Plug your Raspberry Pi
+### Plug your Raspberry Pi
 
 Plug your Raspberry Pi to your local network. Make sure the power adaptor is connected.
 
 Give it some time to boot.
 
-## Access Gladys
+### Access Gladys
 
 To access Gladys, open your web browser on any computer on the local network. **/!\ Make sure your computer and your Raspberry Pi are connected to the same network.**
 

@@ -4,7 +4,18 @@ title: Installation sur un Raspberry Pi
 sidebar_label: Raspberry Pi
 ---
 
-Ce tutoriel vous explique comment installer Gladys sur Raspberry Pi !
+Historiquement, je recommandais l’utilisation des Raspberry Pi pour installer Gladys.
+
+Cependant, ils sont de moins en moins compétitifs pour plusieurs raisons :
+
+- Un coût global élevé une fois l’alimentation, le boîtier et le SSD ajoutés.
+- Une fiabilité limitée avec une carte micro-SD et une installation complexe avec un SSD. En plus, même avec un SSD en USB, les performances restent bien inférieures à celles d'un mini-PC équipé d’un SSD NVMe intégré.
+- Un processeur moins performant par rapport aux équivalents Intel à basse consommation.
+- Des problèmes récurrents d’alimentation lorsqu’on ajoute un dongle Zigbee et un SSD.
+
+Ma recommandation est d'acheter un mini-PC. Il y a des monstres de puissance dès [190€ sur Amazon](https://amzn.to/47yVAaL), et des versions en dessous de 100€ si on cherche en reconditionné ou en occasion sur LeBonCoin.
+
+De mon côté, je propose un [kit de démarrage](/fr/starter-kit/) basé sur le Beelink mini S12 Pro, c'est d'ailleurs ce que je fais tourner chez moi.
 
 Si vous avez un Raspberry Pi qui est déjà configuré (vous avez déjà installé Raspberry Pi OS), il est possible d'installer Gladys manuellement avec Docker [sur ce tutoriel](/fr/docs/installation/docker).
 
@@ -28,9 +39,11 @@ Pour Raspberry Pi 3, 4 et 400 :
 
 <a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest-64" rel="nofollow" >Télécharger Gladys Assistant OS Bullseye 64 bits</a>
 
-Pour les Raspberry Pi plus anciens ( Raspberry Pi 1, 2 et Zero ) en architecture 32 bits :
+:::note
+Les anciens Raspberry Pi ne sont plus supportés à cause de leur architecture arm/v6 qui n'est plus supportées par certaines technos dans Gladys.
 
-<a class="button button--primary margin-bottom--md" href="https://gladysassistant.com/download/latest" rel="nofollow">Télécharger Gladys Assistant OS Bullseye 32 bits</a>
+Pour installer Gladys sur un Raspberry Pi 5, je vous conseille d'installer Raspberry Pi OS, puis de suivre le tutoriel [Docker](/fr/docs/installation/docker).
+:::
 
 L'image Raspberry Pi OS est compressée dans un fichier zip, que vous devez dézipper afin d'arriver à un fichier `.img`.
 
