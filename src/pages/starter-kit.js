@@ -179,12 +179,13 @@ function Plus() {
                       ( au lieu de 439,97€ )
                     </label>
                     <label style={{ display: "block", fontSize: "14px" }}>
-                      (Offre valable jusqu'au 18 septembre 2024)
+                      (Retour le 30 septembre)
                     </label>
                     <input
                       type="submit"
-                      onClick={subscribe}
-                      value="Commander !"
+                      // onClick={subscribe}
+                      disabled
+                      value="Actuellement indisponible !"
                       className={cx(
                         "button button--primary",
                         styles.starterKitInputButton
