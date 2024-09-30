@@ -179,7 +179,8 @@ function Plus() {
                       ( au lieu de 439,97€ )
                     </label>
                     <label style={{ display: "block", fontSize: "14px" }}>
-                      (Retour le 30 septembre)
+                      (Indisponible au prix actuel suite à une augmentation des
+                      prix du fournisseur...)
                     </label>
                     <input
                       type="submit"
