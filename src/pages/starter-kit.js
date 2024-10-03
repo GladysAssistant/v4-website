@@ -178,15 +178,16 @@ function Plus() {
                       </span>{" "}
                       ( au lieu de 439,97€ )
                     </label>
+
                     <label style={{ display: "block", fontSize: "14px" }}>
-                      (Indisponible au prix actuel suite à une augmentation des
-                      prix du fournisseur...)
+                      (Offre temporaire, le prix peut évoluer en fonction des
+                      prix fournisseurs)
                     </label>
+
                     <input
                       type="submit"
-                      // onClick={subscribe}
-                      disabled
-                      value="Actuellement indisponible !"
+                      onClick={subscribe}
+                      value="Commander !"
                       className={cx(
                         "button button--primary",
                         styles.starterKitInputButton
