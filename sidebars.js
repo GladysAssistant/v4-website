@@ -28,6 +28,7 @@ module.exports = {
         "integrations/google-home",
         "integrations/homekit",
         "integrations/mqtt",
+        "integrations/lan-manager",
         "integrations/nextcloud-talk",
         "integrations/netatmo",
         "integrations/node-red",
