@@ -31,7 +31,7 @@ Nous vous invitons à vous rendre sur le site de [Z-Wave JS UI](https://zwave-js
 
 Afin que l'intégration avec Gladys fonctionne correctement, 2 réglages sont nécessaires.
 
-Il faut d'abord régler dans les paramètres les paramètres MQTT, notamment le champ "name" qui va définir le topic MQTT sur lequel les messages seront envoyés.
+Il faut d'abord régler dans Settings les paramètres MQTT, notamment le champ "name" qui va définir le topic MQTT sur lequel les messages seront envoyés.
 
 ![Z-Wave JS UI Configuration MQTT](../../../../../static/img/docs/fr/configuration/zwavejs-ui/zwavejs-ui-mqtt-configuration.jpg)
 
@@ -41,12 +41,12 @@ Ensuite, il est nécessaire de configurer la section "Gateway" de la manière su
 
 ## Connecter Gladys à Z-Wave JS UI
 
-Afin que Gladyus puisse communiquer avec Z-Wave JS UI, il faut fournir à Gladys l'URL et les informations de connexion au broker MQTT sur lequel publie Z-Wave JS UI.
+Afin que Gladys puisse communiquer avec Z-Wave JS UI, il faut fournir à Gladys l'URL et les informations de connexion au broker MQTT sur lequel publie Z-Wave JS UI.
 
 Rendez-vous dans l'onglet "Configuration" pour ajouter ces informations.
 
 ## Découverte Z-Wave JS UI
 
-Rendez-vous sur l'onglet "Découvert" pour voir les appareils que votre instance Z-Wave JS UI expose.
+Rendez-vous sur l'onglet "Découverte Z-Wave JS UI" pour voir les appareils que votre instance Z-Wave JS UI expose.
 
 Vous pouvez ensuite les ajouter à Gladys d'un seul clic!
