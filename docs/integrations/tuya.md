@@ -14,22 +14,22 @@ sidebar_label: Tuya
 
 3. Choose a name for your project, and fill in the different fields:
 
-* Project Name : Name of your project (for example "Gladys");
-* Industry : Smart Home ;
-* Development method : Smart Home ;
-* Data Center : Central Europe Data Center (even if you live in Western Europe, it's better, otherwise select the datacenter closest to you).
+- Project Name : Name of your project (for example "Gladys");
+- Industry : Smart Home ;
+- Development method : Smart Home ;
+- Data Center : Central Europe Data Center (even if you live in Western Europe, it's better).
 
 Click on « Create ».
 
 ![Tuya Gladys integration, create project](../../static/img/docs/en/configuration/tuya/create-project.png)
 
-
 4. Authorize the following API services:
    (It's selected by default)
-* IoT Core 
-* Authorization Token Management 
-* Smart Home Scene Linkage 
-* Data Dashboard Service
+
+- IoT Core
+- Authorization Token Management
+- Smart Home Scene Linkage
+- Data Dashboard Service
 
 ![Tuya Gladys integration, select api services](../../static/img/docs/en/configuration/tuya/select-api-services.png)
 
@@ -57,5 +57,14 @@ Click on « Create ».
 
 ![Tuya Gladys integration, save configuration](../../static/img/docs/en/configuration/tuya/save-configuration.jpeg)
 
-
 ## FAQ
+
+### Is the scan not working?
+
+On the forum, Francis66 had this issue, and he resolved it this way:
+
+- I no longer had access rights to the API resources
+  - Access to Cloud Develop Base Resource and IoT Core was lost because the trial period had expired.
+- For the region: I had selected Western Europe instead of Central Europe.
+
+If you have any questions, ask it on [our forum](https://en-community.gladysassistant.com/).
