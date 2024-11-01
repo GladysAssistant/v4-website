@@ -81,9 +81,9 @@ Si vous débutez et cherchez un kit tout-en-un, j’ai ce qu’il vous faut !
 
 Je propose un pack incluant :
 
-    •	Un mini-PC surpuissant (celui que j’utilise chez moi !)
-    •	Un accès à la formation Gladys (contenu vidéo et écrit)
-    •	Un an de Gladys Plus
+- Un mini-PC surpuissant (celui que j’utilise chez moi !)
+- Un accès à la formation Gladys (contenu vidéo et écrit)
+- Un an de Gladys Plus
 
 Le tout pour un prix imbattable de [259,97€](/fr/starter-kit/) !
 
