@@ -62,6 +62,7 @@ module.exports = {
         "scenes/wait-action",
         "scenes/continue-only-if-action",
         "scenes/send-a-message-action",
+        "scenes/send-a-zigbee2mqtt-message-action",
         "scenes/turn-on-off-the-lights-action",
         "scenes/http-request",
         "scenes/user-presence",
