@@ -26,11 +26,6 @@ To do this, you must add a "retrieve the last state" action to your scene and se
 
 Then, further in the scene, you can add a "send message" action, and in the message you type `{{` and select the previously defined variable.
 
-<div class="videoContainer">
-<video  width="100%" controls autoplay loop muted>
-<source src="/img/docs/en/scenes/send-a-message-action/inject-variable-demo.mp4" type="video/mp4" />
-  Your browser does not support the video tag.
-</video>
-</div>
+![Get sensor value](../../static/img/docs/en/scenes/send-a-message-action/inject-variable-demo.png)
 
 When the scene runs, you should get the value in your message 🥳
