@@ -4,41 +4,41 @@ title: Define the presence of a user in a scene
 sidebar_label: User presence
 ---
 
-On the dashboard, Gladys allows you to display which users are present/absent from the house.
+# User Presence on the Dashboard
 
-![User presence dashboard](../../static/img/docs/en/scenes/user-presence/dashboard-box.jpg)
+On the dashboard, Gladys allows you to display which users are present or absent from the house.
 
-You can use scenes to define the presence/absence of a user.
+![User presence dashboard](../../static/img/docs/en/scenes/user-presence/dashboard-box.png)
 
-- Either with the objective of launching the scene manually when you leave/come home (practical, but hey maybe a little restrictive, we want automation!)
-- Either by automating the detection of the presence: This can be a button in the entrance, a motion detection if you are alone at home, a small Tasker that sends a message in MQTT when you are connected to the Wi-Fi of at home, a Nut: it's up to you!
+You can use scenes to define a user's presence or absence.
 
-## Prerequisites
+- This can be done manually, by launching the scene when you leave or arrive home (useful, but perhaps a bit restrictive – automation is preferred!).
+- Or, automate presence detection: This could be a button at the entrance, motion detection if you're home alone, a Tasker app that sends an MQTT message when you're connected to home Wi-Fi, or a Nut tracker. The choice is yours!
 
-You must be in Gladys Assistant v4.0.3 (or older)to have this functionality.
+We have tutorials for [Bluetooth detection](/docs/integrations/bluetooth/) and [network scan](/docs/integrations/lan-manager/).
 
-## Define the user as "present at home" in a scene
+## Define the User as "Present at Home" in a Scene
 
-The objective of this action is to tell Gladys: "the user has been seen at home".
-
-With this information, Gladys will be able to:
-
-- Either emit a "return home" event if the user was away from home before that.
-- Or do nothing if the user was already at home.
-
-To do this, in a scene, you can create a "user seen at home" action:
-
-![User seen at home](../../static/img/docs/en/scenes/user-presence/user-seen-at-home.jpg)
-
-## Define user as "away from home" in a scene
-
-The objective of this action is to tell Gladys "The user is not this house".
+The goal of this action is to tell Gladys, "The user has been detected at home."
 
 With this information, Gladys will be able to:
 
-- Either send a "leaving home" event (if the user was marked as "at home" before that).
-- Or do nothing if the user was not at home, or not in **this** house.
+- Trigger a "return home" event if the user was previously marked as away.
+- Do nothing if the user was already at home.
 
-To do this, in a scene, you can create a "user left home" action:
+To set this up, you can create a "user seen at home" action within a scene:
 
-![User left home](../../static/img/docs/en/scenes/user-presence/user-left-home.jpg)
+![User seen at home](../../static/img/docs/en/scenes/user-presence/user-seen-at-home.png)
+
+## Define the User as "Away from Home" in a Scene
+
+The goal of this action is to inform Gladys, "The user is not in this house."
+
+With this information, Gladys will be able to:
+
+- Trigger a "leaving home" event if the user was previously marked as present at home.
+- Do nothing if the user was not marked as present, or if they were marked as away from **this** house.
+
+To configure this, you can create a "user left home" action within a scene:
+
+![User left home](../../static/img/docs/en/scenes/user-presence/user-left-home.png)
