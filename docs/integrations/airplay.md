@@ -8,7 +8,9 @@ sidebar_label: Airplay
 
 Check that your speaker is accessible from all devices on the same network.
 
-For a HomePod, go to the Home application, `Home Settings` then choose `Speakers and TVs` -> then select `Any user on the same network` and disable the password.
+For a HomePod diffusion, go to the Home application, `Home Settings` then choose `Speakers and TVs` -> then select `Any user on the same network` and disable the password.
+
+If you wish to stream audio to a Mac on the network, go to your Mac's Settings, `General`, click on `AirDrop and Handoff`, enable the `AirPlay receiver`, authorize `All people on the same network` and also disable the password. PLEASE NOTE: for security reasons, you must manually validate the AirPlay connection each time you broadcast to a Mac, by accepting the on-screen notification.
 
 ## Add a speaker in Gladys
 

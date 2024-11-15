@@ -8,7 +8,9 @@ sidebar_label: Airplay
 
 Vérifiez que votre enceinte est accessible depuis l'ensemble des appareils du même réseau.
 
-Pour un HomePod, rendez vous dans l'application Maison, `Règlages du domicile` puis choisissez `Haut-parleurs et téléviseurs` -> puis sélectionnez `Tout utilisateur sur le même réseau` et désactivez le mot de passe.
+Pour diffuser sur un HomePod, rendez vous dans l'application Maison, `Règlages du domicile` puis choisissez `Haut-parleurs et téléviseurs` -> puis sélectionnez `Tout utilisateur sur le même réseau` et désactivez le mot de passe.
+
+Si vous souhaitez diffuser l'audio sur un Mac du réseau, rendez vous dans les Paramètres de votre mac, `Général`, cliquez sur `AirDrop et Handoff`, activez le `Récepteur AirPlay`, autorisez `Toutes personnes sur le même réseau` et désactivez également le mot de passe. À NOTER que pour des raisons de sécurité, vous devez valider manuellement la connexion AirPlay à chaque diffusion sur un mac en acceptant la notification qui apparait à l'écran.
 
 ## Ajouter une enceinte dans Gladys
 
