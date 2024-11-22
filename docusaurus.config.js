@@ -30,11 +30,11 @@ module.exports = {
       respectPrefersColorScheme: false,
     },
     announcementBar: {
-      id: "lancement_kit_demarrage_officiel",
+      id: "black_friday_2024",
       content:
-        'Lancement du <a href="/fr/starter-kit/">kit de démarrage officiel</a> !',
-      backgroundColor: "#65c7f7",
-      textColor: "#091E42",
+        'Black Friday: Promo extrême sur le <a href="/fr/starter-kit/">kit de démarrage officiel</a> !!',
+      backgroundColor: "#ff5722",
+      textColor: "white",
       isCloseable: true,
     },
     navbar: {
@@ -66,6 +66,12 @@ module.exports = {
           to: "plus/",
           activeBasePath: "plus",
           label: "Plus",
+          position: "left",
+        },
+        {
+          href: "https://formation.gladysassistant.com/?coupon=BLACKFRIDAYCRAZY",
+          activeBasePath: "formation",
+          label: "Formation",
           position: "left",
         },
         {
