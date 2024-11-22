@@ -1,10 +1,7 @@
 ---
 title: Créez votre propre objet connecté !
 description: A nous de créer nos propres objets connectés, avec un arduino, quelques capteurs, pour environ 10€, pour ajouter encore plus de possibilités à Gladys !
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/connectedobjectlow.jpg
 slug: creez-votre-propre-objet-connecte
 ---

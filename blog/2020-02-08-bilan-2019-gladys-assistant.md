@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant's 2019 Year In Review
 description: Let's look back at this crazy year for Gladys Assistant, and see what's next for 2020
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/bilan-2019-cover.jpg
 slug: bilan-2019-gladys-assistant
 ---

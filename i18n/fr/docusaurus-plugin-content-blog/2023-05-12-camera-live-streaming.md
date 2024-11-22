@@ -1,10 +1,7 @@
 ---
 title: Streaming de caméra live dans Gladys Assistant 4.23
 description: Surveillez votre logement à distance, chiffré de bout en bout
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/camera-streaming-gladys-4-23.png
 slug: camera-live-streaming-gladys-assistant-4-23
 ---

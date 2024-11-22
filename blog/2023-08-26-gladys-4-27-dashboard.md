@@ -1,10 +1,7 @@
 ---
 title: IKEA TRÅDFRI Zigbee compatibility & dashboard device renaming
 description: Even more personalized dashboards and Zigbee compatibility in Gladys Assistant 4.27
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-27.jpg
 slug: gladys-4-27-dashboard-rename-and-zigbee
 ---

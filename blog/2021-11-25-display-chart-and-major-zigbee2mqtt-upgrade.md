@@ -1,10 +1,7 @@
 ---
 title: "New release: Display chart on Gladys dashboard & Major upgrade on Zigbee2mqtt"
 description: Big release today, it's now finally possible to display charts on the dashboard & to use any Zigbee2mqtt compatible device in Gladys Assistant.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-7-chart.jpg
 slug: display-chart-and-major-zigbee2mqtt-upgrade
 ---

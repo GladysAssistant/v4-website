@@ -1,10 +1,7 @@
 ---
 title: Integrate Node-RED with Gladys Assistant in MQTT
 description: Today we will learn how to integrate Node-RED, a low-code tool, with Gladys Assistant.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/node-red-gladys-assistant-en.jpg
 slug: integrate-node-red-with-gladys-assistant-in-mqtt
 ---

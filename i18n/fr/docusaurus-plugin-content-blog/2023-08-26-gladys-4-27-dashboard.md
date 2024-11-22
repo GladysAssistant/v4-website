@@ -1,10 +1,7 @@
 ---
 title: Compatibilité IKEA TRÅDFRI Zigbee & renommage appareil tableau de bord
 description: Des tableaux de bords encore plus personnalisés et plus de compatibilités Zigbee dans Gladys Assistant 4.27
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-27.jpg
 slug: gladys-4-27-dashboard-rename-and-zigbee
 ---

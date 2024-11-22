@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.8 is available, with calendar based triggers and conditions in scenes!
 description: It's now possible to use calendar events in scenes triggers & conditions.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-8-cover.jpg
 slug: gladys-assistant-4-8-with-calendar-in-scenes
 ---

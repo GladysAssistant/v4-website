@@ -1,10 +1,7 @@
 ---
 title: Gladys devient compatible HomeKit !
 description: Gladys Assistant 4.12 apporte le support d'HomeKit/Siri, du Lixee TIC, et la gestion du chauffage.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-12.jpg
 slug: gladys-assistant-4-12-homekit
 ---

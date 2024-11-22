@@ -1,10 +1,7 @@
 ---
 title: C'est bientôt Noël, l'occasion de commencer avec Gladys !
 description: Un petit post récapitulatif du matériel nécessaire pour mettre en place Gladys chez soit !
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 
 image: /img/presentation/commencer-gladys-noel.jpg
 

@@ -1,10 +1,7 @@
 ---
 title: Node.js 18 & Ecowatt integration
 description: Automatically reduce your electricity consumption when the network needs it.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-13-en.jpg
 slug: gladys-assistant-4-13-ecowatt
 ---

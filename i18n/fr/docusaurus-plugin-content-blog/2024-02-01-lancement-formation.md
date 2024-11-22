@@ -1,10 +1,7 @@
 ---
 title: Lancement du guide ULTIME pour commencer en domotique 🚀
 description: Depuis le temps que j'ai envie de vous parler de ce projet, le voici enfin !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/formation-lancement.jpg
 slug: lancement-formation
 ---

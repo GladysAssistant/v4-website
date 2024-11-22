@@ -1,10 +1,7 @@
 ---
 title: De la reconnaissance vocale sur Raspberry Pi avec Gladys ? Oui !
 description: Vous avez toujours rêvé de voir la reconnaissance vocale arriver dans Gladys ? C'est maintenant chose faite !
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 
 image: /img/presentation/gladys-voice-cover.jpg
 

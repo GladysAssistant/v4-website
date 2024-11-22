@@ -1,10 +1,7 @@
 ---
 title: J'ai une très grande nouvelle pour le projet !
 description: La plus grande nouvelle sur Gladys depuis le début du projet !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 
 image: /img/presentation/gladys-announcement.jpg
 

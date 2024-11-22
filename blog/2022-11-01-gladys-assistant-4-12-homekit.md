@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.12 with HomeKit support !
 description: This new release adds a lot of new features, like HomeKit support, controlling your thermostat, and Lixee TIC devices support.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-12.jpg
 slug: gladys-assistant-4-12-homekit
 ---

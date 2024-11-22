@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant devient compatible Tuya !
 description: Les appareils Tuya/Smart Life/LSC Connect de chez Action peuvent maintenant être utilisés dans Gladys !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-tuya.jpg
 slug: gladys-assistant-tuya
 ---
@@ -14,6 +11,8 @@ Salut à tous !
 Je suis heureux d'annoncer aujourd'hui Gladys Assistant 4.26, une version qui apporte la compatibilité avec les appareils compatible Tuya.
 
 Il était déjà possible d'utiliser certaines appareils Tuya Zigbee avec Gladys via notre intégration Zigbee2mqtt, mais désormais, les prises connectées et ampoules Wi-Fi sont aussi compatibles via une intégration Tuya officielle 🎉🎉
+
+<!-- truncate -->
 
 ## Une prise connectée Tuya OFFERTE avec Gladys Plus !!
 

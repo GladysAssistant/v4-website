@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.5 est disponible avec le multi-dashboard !
 description: C'est une version importante, il est maintenant possible de créer autant de tableaux de bord que vous voulez.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-5-fr-cover.jpg
 slug: gladys-assistant-4-5-is-here
 ---

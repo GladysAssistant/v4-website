@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.4 is available with zone detection
 description: Want to detect when you enter a zone? Exit a zone?
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-4-en-cover.jpg
 slug: gladys-assistant-4-4-is-here
 ---

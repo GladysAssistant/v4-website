@@ -1,4 +1,7 @@
 module.exports = {
+  future: {
+    experimental_faster: true,
+  },
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
   url: "https://gladysassistant.com",

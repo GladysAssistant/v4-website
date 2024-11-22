@@ -1,10 +1,7 @@
 ---
 title: Etat d'avancement de Gladys 4, la prochaine version majeure de Gladys
 description: Déjà un bout de temps que nous travaillons sur le futur de Gladys, petit état d'avancement de ce projet ambitieux !
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/avancement-gladys-4.jpg
 slug: etat-avancement-gladys-4
 ---

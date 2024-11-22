@@ -1,10 +1,7 @@
 ---
 title: Gladys gets a full alarm!
 description: Security is the basis of home automation. Today, Gladys includes a complete alarm to help you manage your home's security.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-30-en.jpg
 slug: gladys-4-30-alarm-mode
 ---

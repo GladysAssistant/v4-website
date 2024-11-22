@@ -1,10 +1,7 @@
 ---
 title: L'IA Proactive débarque dans Gladys Assistant !
 description: L’intelligence artificielle s’intègre encore plus profondément dans Gladys pour rendre votre maison encore plus intelligente et réactive.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-48.jpg
 slug: proactive-ai
 ---
@@ -18,6 +15,8 @@ Depuis janvier 2023, vous pouviez déjà poser des questions à ChatGPT via Glad
 ![ChatGPT Gladys Assistant](../../../static/img/articles/fr/gladys-4-48/chatgpt-gladys.jpg)
 
 C’était un bon début, mais je veux aller encore plus loin ! Et si l’IA pouvait être proactive et prendre des décisions pour vous ?
+
+<!-- truncate -->
 
 ## Imaginez les possibilités
 

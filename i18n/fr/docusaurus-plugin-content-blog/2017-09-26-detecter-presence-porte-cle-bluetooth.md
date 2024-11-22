@@ -1,10 +1,7 @@
 ---
 title: Détecter la présence de l'utilisateur grâce à un porte clé Bluetooth !
 description: Savoir qui exactement est à la maison a toujours été un défi complexe. Aujourd'hui avec de simple périphériques Bluetooth, c'est possible très facilement.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 
 image: /img/presentation/detecter-presence-bluetooth.jpg
 

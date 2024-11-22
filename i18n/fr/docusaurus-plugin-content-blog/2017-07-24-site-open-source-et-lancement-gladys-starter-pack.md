@@ -1,10 +1,7 @@
 ---
 title: Le site Gladys devient open-source pour le lancement du Gladys Starter Pack !
 description: Je suis heureux de vous annoncer que le Gladys Starter Pack est enfin disponible en pré-commandes ! L'occasion de refaire entièrement le site Gladys, et de le rendre open-source.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 
 image: /img/presentation/site-gladys-open-source-cover.jpg
 

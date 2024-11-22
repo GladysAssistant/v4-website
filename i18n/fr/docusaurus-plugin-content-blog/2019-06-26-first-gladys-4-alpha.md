@@ -1,10 +1,7 @@
 ---
 title: Une première version alpha pour Gladys 4 !
 description: Après 7 mois de travail, la première alpha de Gladys 4 est enfin disponible. Retour sur les nouveautés, et les instructions d'installation de cette version.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 
 image: /img/presentation/gladys-4-alpha.jpg
 

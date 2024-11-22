@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.3 est disponible et met l'accent sur les scènes
 description: Il est de plus en plus facile de créer des scènes complexes avec Gladys Assistant 4
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-3-fr-cover.jpg
 slug: gladys-assistant-4-3-is-here
 ---
