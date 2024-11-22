@@ -69,6 +69,12 @@ module.exports = {
           position: "left",
         },
         {
+          href: "https://formation.gladysassistant.com/?coupon=BLACKFRIDAYCRAZY",
+          activeBasePath: "formation",
+          label: "Formation",
+          position: "left",
+        },
+        {
           type: "dropdown",
           label: "Community",
           position: "left",
