@@ -116,7 +116,7 @@ function Plus() {
     setKitsRemaining(data.remaining);
     setPrice(data.price);
     setCouponCode(data.validCoupon);
-    setIsLowStock(progressPercentage >= 50);
+    setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
     if (data.total !== undefined && data.remaining !== undefined) {
       const progressPercentage =
         ((data.total - data.remaining) / data.total) * 100;

@@ -313,7 +313,7 @@ function Home({ integrations, lang }) {
                       )}
                       href="/fr/starter-kit/"
                     >
-                      Le kit de démarrage officiel !
+                      Black Friday: Promo sur le kit de démarrage !
                     </Link>
                   </div>
                 )}
