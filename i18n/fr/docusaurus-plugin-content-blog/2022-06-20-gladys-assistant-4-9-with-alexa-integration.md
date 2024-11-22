@@ -1,10 +1,7 @@
 ---
 title: Lancement de Gladys Assistant 4.9 avec l'intégration Amazon Alexa !
 description: Il est maintenant possible de contrôler ses appareils Gladys Assistant depuis Alexa, à la voix ou sur mobile.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-9.jpg
 slug: gladys-assistant-4-9-with-alexa-integration
 ---

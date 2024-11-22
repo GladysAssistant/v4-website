@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant v4.10 is live, with Broadlink support!
 description: Broadlink support, performance improvements and Zigbee2mqtt new capabilities
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-10.jpg
 slug: gladys-assistant-4-10-broadlink-and-performances
 ---

@@ -3,10 +3,7 @@ slug: gerer-les-appareils-electrique
 title: Contrôler des prises télécommandées 433Mhz
 description: Gladys doit pouvoir gérer les lumières et les appareils électriques, que nous soyons là, ou que nous soyons absent !
 image: /img/presentation/lightbulblow.jpg
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 ---
 
 :::danger Update: 21/07/2020

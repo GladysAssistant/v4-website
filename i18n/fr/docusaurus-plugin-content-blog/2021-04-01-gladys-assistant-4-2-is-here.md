@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.2 est disponible et ajoute la compatibilité Zigbee2mqtt !
 description: Après plusieurs mois de travail, Gladys Assistant est capable de gérer les périphériques Zigbee
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-2-zigbee-cover.jpg
 slug: gladys-assistant-4-2-is-here
 ---

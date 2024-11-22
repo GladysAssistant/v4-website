@@ -1,10 +1,7 @@
 ---
 title: Bilan de 2020 pour Gladys Assistant !
 description: Faisons le point sur cette année charnière pour Gladys Assistant.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/bilan-2020-cover.jpg
 slug: bilan-2020-gladys-assistant
 ---

@@ -1,10 +1,7 @@
 ---
 title: "Gladys Assistant 4.25: Scene and dashboard enhancements"
 description: A new "Devices" widget, send a camera image in scenes, and more!
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-25-en.jpg
 slug: gladys-assistant-4-25
 ---

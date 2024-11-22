@@ -1,10 +1,7 @@
 ---
 title: "Tag filtering & MQTT in scenes in Gladys Assistant 4.31"
 description: Gladys Assistant 4.31 brings new features to scenes, as well as fixes to the new alarm functionality.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-31.jpg
 slug: gladys-4-31-tags-mqtt-scene
 ---

@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.4 est disponible avec la détection d'entrée/sortie de zone
 description: Il est maintenant possible de créer des scènes qui se déclenchent à l'entrée/sortie d'une zone.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-4-fr-cover.jpg
 slug: gladys-assistant-4-4-is-here
 ---

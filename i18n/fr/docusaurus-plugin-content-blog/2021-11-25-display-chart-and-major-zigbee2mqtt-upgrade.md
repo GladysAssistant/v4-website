@@ -1,10 +1,7 @@
 ---
 title: "Nouvelle version : Vue graphique sur le tableau de bord et mise à jour majeure de Zigbee2mqtt"
 description: Aujourd'hui je suis heureux de sortir Gladys Assistant v4.7, une nouvelle version qui apporte de nombreuses fonctionnalités demandées par la communauté !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-7-chart.jpg
 slug: display-chart-and-major-zigbee2mqtt-upgrade
 ---

@@ -1,10 +1,7 @@
 ---
 title: "DuckDB : Des performances extrêmes et une base de données 97% plus légère !"
 description: Une mise à jour majeure de Gladys qui va révolutionner votre utilisation.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/duckdb-launch.jpg
 slug: gladys-and-duckdb
 ---

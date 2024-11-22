@@ -1,10 +1,7 @@
 ---
 title: Test Gladys Assistant with an existing Zigbee2mqtt instance!
 description: Are you a Home Assistant user who wants to test Gladys without touching your installation? It's possible!
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-40.jpg
 slug: gladys-4-40-external-zigbee
 ---

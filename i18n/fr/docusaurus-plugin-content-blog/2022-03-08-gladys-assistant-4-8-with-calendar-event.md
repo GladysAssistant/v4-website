@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.8 est disponible, et permet d'utiliser les calendriers dans les scènes !
 description: Plein de nouveautés autour du calendrier et des scènes sur cette nouvelle version de Gladys.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-8-cover.jpg
 slug: gladys-assistant-4-8-with-calendar-in-scenes
 ---

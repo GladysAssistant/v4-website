@@ -1,10 +1,7 @@
 ---
 title: Intégrer Node-RED avec Gladys Assistant en MQTT
 description: Aujourd'hui nous allons apprendre comment connecter Node-RED à Gladys Assistant en MQTT !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/node-red-gladys-assistant-fr.jpg
 slug: integrate-node-red-with-gladys-assistant-in-mqtt
 ---

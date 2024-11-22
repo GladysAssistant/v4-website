@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant v4.10 est disponible et ajoute le support des télécommandes IR Broadlink
 description: Intégration Broadlink, amélioration drastique des performances et nouvelles compatibilités Zigbee
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-10.jpg
 slug: gladys-assistant-4-10-broadlink-and-performances
 ---

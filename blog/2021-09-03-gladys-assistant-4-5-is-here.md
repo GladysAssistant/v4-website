@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant 4.5 is available, with the multi-dashboard feature!
 description: It's a big update, and we really hope you will like it!
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-5-en-cover.jpg
 slug: gladys-assistant-4-5-is-here
 ---

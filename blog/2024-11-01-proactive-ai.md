@@ -1,10 +1,7 @@
 ---
 title: Proactive AI Arrives in Gladys Assistant!
 description: Artificial intelligence is integrated even more deeply into Gladys to make your home smarter and more responsive.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-48.jpg
 slug: proactive-ai
 ---

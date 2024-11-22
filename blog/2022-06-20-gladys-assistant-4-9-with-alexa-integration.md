@@ -1,10 +1,7 @@
 ---
 title: Launching Gladys Assistant 4.9 with Amazon Alexa support
 description: It's time to launch a new release, with a big new integration, Amazon Alexa.
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-9.jpg
 slug: gladys-assistant-4-9-with-alexa-integration
 ---

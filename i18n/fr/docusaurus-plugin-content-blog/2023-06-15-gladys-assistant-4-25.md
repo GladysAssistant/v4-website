@@ -1,10 +1,7 @@
 ---
 title: "Gladys Assistant 4.25 : Amélioration dans les scènes et sur le tableau de bord"
 description: Un nouveau widget "Appareils", envoyer une image de caméra dans les scènes, et plus !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-assistant-4-25-fr.jpg
 slug: gladys-assistant-4-25
 ---

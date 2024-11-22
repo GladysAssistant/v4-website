@@ -1,10 +1,7 @@
 ---
 title: Bilan du mois de Mai pour le projet Gladys !
 description: "Un premier tutoriel vidéo publié, Gladys 3.6 sortie riche en nouvelles features, une plateforme développeur qui est sur les rails: Un mois de Mai très chargé pour le projet !"
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 
 image: /img/presentation/gladys-3-6-cover-2.jpg
 

@@ -1,10 +1,7 @@
 ---
 title: La nouvelle version majeure Gladys Assistant 4 est disponible, réécrite de zéro !
 description: C'est un grand jour, après presque 2 ans de travail de la part de toute la communauté, Gladys Assistant 4 est disponible, en téléchargement gratuit comme d'habitude !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-4-launch.jpg
 slug: lancement-gladys-assistant-4
 ---

@@ -1,10 +1,7 @@
 ---
 title: L'IA OpenAI GPT-3 disponible dans Gladys Assistant
 description: La puissance de l'intelligence artificielle disponible dans Gladys.
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/open-ai-gpt-3-release.jpg
 slug: open-ai-gpt-3-in-gladys-assistant
 ---

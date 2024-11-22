@@ -1,10 +1,7 @@
 ---
 title: Bilan de l'année 2015 et projets pour 2016 !
 description: L'année 2015 a été une formidable année pour le projet. Quelques statistiques sur Gladys, et mes projets pour 2016 !
-author: Pierre-Gilles Leymarie
-author_title: Fondateur de Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/bilan-2015-cover.jpg
 slug: bilan-2015-et-projets-pour-2016
 ---

@@ -1,10 +1,7 @@
 ---
 title: Gladys Assistant is now compatible with Debian 11 & Ubuntu > 20.04
 description: As Gladys runs in Docker, it could seems that it should be compatible with any system by default, but it's not as simple!
-author: Pierre-Gilles Leymarie
-author_title: Founder of Gladys Assistant
-author_url: https://twitter.com/pierregillesl
-author_image_url: /img/pierre-gilles.jpg
+authors: pierregilles
 image: /img/presentation/gladys-debian-11.jpg
 slug: gladys-assistant-compatible-with-debian-11
 ---
