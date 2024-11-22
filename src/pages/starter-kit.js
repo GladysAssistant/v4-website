@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@theme/Layout";
 import Head from "@docusaurus/Head";
 import cx from "classnames";
@@ -7,8 +7,6 @@ import { useColorMode } from "@docusaurus/theme-common";
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-
-import Translate from "@docusaurus/Translate";
 
 import styles from "./styles.module.css";
 
@@ -90,16 +88,74 @@ const faqData = [
   },
 ];
 
+const targetDate = new Date(1733104800000);
+
 function Plus() {
   const context = useDocusaurusContext();
   const isDarkTheme = useColorMode().colorMode === "dark";
   const { i18n } = context;
   const language = i18n.currentLocale;
 
+  const [price, setPrice] = useState(null);
+  const [kitsRemaining, setKitsRemaining] = useState(null);
+  const [progressPercentage, setProgressPercentage] = useState(null);
+  const [isLowStock, setIsLowStock] = useState(null);
+  const [couponCode, setCouponCode] = useState("STARTERKIT");
+  const [loading, setLoading] = useState(true);
+
   const scrollTopTop = () => {
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
   };
+
+  async function fetchData() {
+    const response = await fetch(
+      "https://black-friday-discount.gladysassistant.workers.dev/"
+    );
+    const data = await response.json();
+    setKitsRemaining(data.remaining);
+    setPrice(data.price);
+    setCouponCode(data.validCoupon);
+    setIsLowStock(progressPercentage >= 50);
+    if (data.total !== undefined && data.remaining !== undefined) {
+      const progressPercentage =
+        ((data.total - data.remaining) / data.total) * 100;
+      setProgressPercentage(progressPercentage);
+    }
+    setLoading(false);
+  }
+
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  // Calculate the remaining time
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        clearInterval(interval); // Stop the countdown when the target date is reached
+      } else {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        if (days <= 1) {
+          setTimeLeft({ days, hours, minutes, seconds });
+        }
+      }
+    }, 1000);
+
+    // Clean up the interval when component unmounts
+    return () => clearInterval(interval);
+  }, [targetDate]);
+
+  useEffect(() => {
+    console.log("useEffect");
+    fetchData();
+  }, []);
 
   const isFr = () => {
     if (language === "fr") {
@@ -122,7 +178,7 @@ function Plus() {
   const subscribe = (e) => {
     e.preventDefault();
     const locale = isFr() ? "fr" : "en";
-    window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=STARTERKIT`;
+    window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=${couponCode}`;
   };
 
   const updateEmail = (e) => {
@@ -153,7 +209,7 @@ function Plus() {
         <div
           className="container"
           style={{
-            maxWidth: "72rem",
+            maxWidth: "75rem",
             marginLeft: "auto",
             marginRight: "auto",
             marginBottom: "5rem",
@@ -166,33 +222,74 @@ function Plus() {
                   Kit de démarrage officiel Gladys
                 </h1>
                 <p>
-                  Le meilleur hardware pour commencer
+                  Un mini-PC surpuissant
                   <br />+ la formation officielle Gladys
                   <br />+ un an de Gladys Plus
                 </p>
+                <p>
+                  Livraison <b>GRATUITE</b>
+                  <br />
+                  <small>(Retour sous 1 mois si insatisfait)</small>
+                </p>
                 <div>
+                  <div className={styles.blackFridayBanner}>
+                    Offre limitée Black Friday !
+                  </div>
                   <span>
-                    <label style={{ display: "block" }}>
+                    <label
+                      style={{ display: "block" }}
+                      className={cx({
+                        [styles.loadingAnimation]: loading,
+                      })}
+                    >
                       <span style={{ fontSize: "30px", fontWeight: "bold" }}>
-                        259,97€
+                        {price}€
                       </span>{" "}
                       ( au lieu de 439,97€ )
                     </label>
 
-                    <label style={{ display: "block", fontSize: "14px" }}>
-                      (Offre temporaire, le prix peut évoluer en fonction des
-                      prix fournisseurs)
-                    </label>
+                    <label
+                      style={{ display: "block", fontSize: "14px" }}
+                    ></label>
 
                     <input
                       type="submit"
                       onClick={subscribe}
-                      value="Commander !"
+                      value="Commander maintenant !"
+                      disabled={loading}
                       className={cx(
                         "button button--primary",
                         styles.starterKitInputButton
                       )}
                     />
+
+                    <div
+                      className={cx(styles.progressContainer, {
+                        [styles.loadingAnimation]: loading,
+                      })}
+                    >
+                      <div className={styles.progressBarBackground}>
+                        <div
+                          className={styles.progressBar}
+                          style={{ width: `${progressPercentage}%` }}
+                        />
+                      </div>
+                      <p
+                        className={cx(styles.kitsRemainingText, {
+                          [styles.pulse]: isLowStock, // Ajoute l'effet "pulse" si le stock est faible
+                        })}
+                      >
+                        🚨 <b>{kitsRemaining} kits restants à ce prix</b>
+                      </p>
+                    </div>
+                    {timeLeft && (
+                      <p>
+                        Temps restant:{" "}
+                        {new Intl.DurationFormat("fr", {
+                          style: "short",
+                        }).format(timeLeft)}
+                      </p>
+                    )}
                   </span>
                 </div>
               </form>
@@ -292,8 +389,10 @@ function Plus() {
               </p>
             </div>
           </div>
+          <div style={{ marginTop: "50px" }}>
+            <FAQ data={faqData} />
+          </div>
         </div>
-        <FAQ data={faqData} />
       </div>
     </main>
   );
