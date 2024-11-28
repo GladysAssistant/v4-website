@@ -19,6 +19,7 @@ module.exports = {
       type: "category",
       label: "Integrations",
       items: [
+        "integrations/airplay",
         "integrations/alexa",
         "integrations/bluetooth",
         "integrations/broadlink",
