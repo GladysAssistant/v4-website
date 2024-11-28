@@ -379,32 +379,6 @@ function Open() {
                               </Translate>
                             </a>
                           </li>
-                          <li className={styles.openPageList}>
-                            <a
-                              href={`${urlPrefix}/blog/bilan-2019-gladys-assistant`}
-                            >
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2019 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a
-                              href={`${urlPrefix}/blog/bilan-2018-pour-gladys-assistant`}
-                            >
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2018 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
                         </ul>
                       </div>
                     </div>

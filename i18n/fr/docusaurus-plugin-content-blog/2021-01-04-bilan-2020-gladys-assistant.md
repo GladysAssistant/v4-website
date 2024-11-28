@@ -8,7 +8,7 @@ slug: bilan-2020-gladys-assistant
 
 Salut à tous !
 
-Comme chaque année, il est l’heure d’un nouveau bilan annuel pour Gladys Assistant. Je l'avais fais en [2019](/fr/blog/bilan-2019-gladys-assistant), [2018](/fr/blog/bilan-2018-pour-gladys-assistant), [2017](/fr/blog/bilan-gladys-2017), [2016](/fr/blog/bilan-annee-2016) et [2015](/fr/blog/bilan-2015-et-projets-pour-2016).
+Comme chaque année, il est l’heure d’un nouveau bilan annuel pour Gladys Assistant.
 
 C'est parti pour le bilan de l'année 2020 🙂
 
