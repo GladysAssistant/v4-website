@@ -25,7 +25,7 @@ const COMPATIBILITIES = [
   ],
   [
     { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
-    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
+    { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
     { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],

@@ -44,12 +44,14 @@ module.exports = {
         src: "img/logo.svg",
       },
       items: [
-        {
+        /* TRYING TO REMOVE IT TO SEE IF 
+        IT'S MORE CLEAR FOR NEW USERS WITHOUT THIS PAGE 
+        { 
           to: "integrations/",
           activeBasePath: "integrations",
           label: "Integrations",
           position: "left",
-        },
+        }, */
         {
           to: "docs/",
           activeBasePath: "docs",
