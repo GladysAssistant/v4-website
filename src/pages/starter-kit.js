@@ -127,33 +127,7 @@ function Plus() {
 
   const [timeLeft, setTimeLeft] = useState(null);
 
-  // Calculate the remaining time
   useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
-
-      if (distance <= 0) {
-        clearInterval(interval); // Stop the countdown when the target date is reached
-      } else {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        if (days <= 1) {
-          setTimeLeft({ days, hours, minutes, seconds });
-        }
-      }
-    }, 1000);
-
-    // Clean up the interval when component unmounts
-    return () => clearInterval(interval);
-  }, [targetDate]);
-
-  useEffect(() => {
-    console.log("useEffect");
     fetchData();
   }, []);
 
@@ -232,9 +206,11 @@ function Plus() {
                   <small>(Retour sous 1 mois si insatisfait)</small>
                 </p>
                 <div>
-                  <div className={styles.blackFridayBanner}>
-                    Offre limitée Black Friday !
-                  </div>
+                  {false && (
+                    <div className={styles.blackFridayBanner}>
+                      Offre limitée Black Friday !
+                    </div>
+                  )}
                   <span>
                     <label
                       style={{ display: "block" }}
@@ -263,25 +239,27 @@ function Plus() {
                       )}
                     />
 
-                    <div
-                      className={cx(styles.progressContainer, {
-                        [styles.loadingAnimation]: loading,
-                      })}
-                    >
-                      <div className={styles.progressBarBackground}>
-                        <div
-                          className={styles.progressBar}
-                          style={{ width: `${progressPercentage}%` }}
-                        />
-                      </div>
-                      <p
-                        className={cx(styles.kitsRemainingText, {
-                          [styles.pulse]: isLowStock, // Ajoute l'effet "pulse" si le stock est faible
+                    {false && (
+                      <div
+                        className={cx(styles.progressContainer, {
+                          [styles.loadingAnimation]: loading,
                         })}
                       >
-                        🚨 <b>{kitsRemaining} kits restants à ce prix</b>
-                      </p>
-                    </div>
+                        <div className={styles.progressBarBackground}>
+                          <div
+                            className={styles.progressBar}
+                            style={{ width: `${progressPercentage}%` }}
+                          />
+                        </div>
+                        <p
+                          className={cx(styles.kitsRemainingText, {
+                            [styles.pulse]: isLowStock, // Ajoute l'effet "pulse" si le stock est faible
+                          })}
+                        >
+                          🚨 <b>{kitsRemaining} kits restants à ce prix</b>
+                        </p>
+                      </div>
+                    )}
                     {timeLeft && (
                       <p>
                         Temps restant:{" "}
