@@ -18,6 +18,8 @@ That was a good start, but I want to take it further! What if AI could be proact
 
 ## Imagine the possibilities
 
+<!--truncate-->
+
 Imagine a car pulls up in front of your house. A dedicated security guard would watch, recognize your car—its shape, color, license plate—and know immediately that it’s you. But hiring a 24/7 guard isn’t within reach for everyone!
 
 What if AI could play that role?
