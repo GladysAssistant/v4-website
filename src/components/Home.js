@@ -709,9 +709,9 @@ function Home({ integrations, lang }) {
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="gNlZ2bId8Z0" />
+                      <YoutubeEmbedVideo id="_bmsWALVePc" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Le trio ULTIME pour automatiser la lumière ??
+                        Live: Bilan de 2024 et projets pour 2025
                       </h4>
                     </div>
                     <div className="col col--4">
