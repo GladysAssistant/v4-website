@@ -334,6 +334,17 @@ function Open() {
                         </h2>
                         <ul>
                           <li className={styles.openPageList}>
+                            <a href={`${urlPrefix}/blog/2024-year-in-review`}>
+                              <Translate
+                                id="openPage.yearlyReview"
+                                description="Yearly reviews"
+                                values={{ year: 2024 }}
+                              >
+                                {"{year} yearly review"}
+                              </Translate>
+                            </a>
+                          </li>
+                          <li className={styles.openPageList}>
                             <a href={`${urlPrefix}/blog/2023-year-in-review`}>
                               <Translate
                                 id="openPage.yearlyReview"

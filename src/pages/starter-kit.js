@@ -97,10 +97,12 @@ function Plus() {
   const language = i18n.currentLocale;
 
   const [price, setPrice] = useState(null);
+  const [priceCheaperKit, setPriceCheaperKit] = useState(null);
   const [kitsRemaining, setKitsRemaining] = useState(null);
   const [progressPercentage, setProgressPercentage] = useState(null);
   const [isLowStock, setIsLowStock] = useState(null);
   const [couponCode, setCouponCode] = useState("STARTERKIT");
+  const [cheaperKitCouponCode, setCheaperKitCouponCode] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const scrollTopTop = () => {
@@ -115,7 +117,9 @@ function Plus() {
     const data = await response.json();
     setKitsRemaining(data.remaining);
     setPrice(data.price);
+    setPriceCheaperKit(data.cheaper_mini_pc.price);
     setCouponCode(data.validCoupon);
+    setCheaperKitCouponCode(data.cheaper_mini_pc.validCoupon);
     setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
     if (data.total !== undefined && data.remaining !== undefined) {
       const progressPercentage =
@@ -153,6 +157,12 @@ function Plus() {
     e.preventDefault();
     const locale = isFr() ? "fr" : "en";
     window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=${couponCode}`;
+  };
+
+  const subscribeCheaperPc = (e) => {
+    e.preventDefault();
+    const locale = isFr() ? "fr" : "en";
+    window.location.href = `https://buy.stripe.com/6oEcNhaZ45hEbgk28f?prefilled_promo_code=${cheaperKitCouponCode}`;
   };
 
   const updateEmail = (e) => {
@@ -220,8 +230,7 @@ function Plus() {
                     >
                       <span style={{ fontSize: "30px", fontWeight: "bold" }}>
                         {price}€
-                      </span>{" "}
-                      ( au lieu de 439,97€ )
+                      </span>
                     </label>
 
                     <label
@@ -231,7 +240,7 @@ function Plus() {
                     <input
                       type="submit"
                       onClick={subscribe}
-                      value="Commander maintenant !"
+                      value="Commander maintenant le S12 Pro !"
                       disabled={loading}
                       className={cx(
                         "button button--primary",
@@ -369,6 +378,108 @@ function Plus() {
           </div>
           <div style={{ marginTop: "50px" }}>
             <FAQ data={faqData} />
+          </div>
+          <div className={cx("row", styles.starterKitRow)}>
+            <div className="col col--12">
+              <h2 className={cx(styles.plusTooExpensiveTitle)}>Trop cher ?</h2>
+              <p>
+                <strong>Janvier 2025 :</strong> Je comprends que certains
+                puissent trouver le kit un peu cher. C'est pourquoi j'ai décidé
+                de lancer une version plus accessible à {priceCheaperKit} €,
+                équipée d'un mini-PC moins puissant mais tout à fait adapté pour
+                commencer.
+              </p>
+
+              <p>
+                Si vous avez le budget, je recommande vivement le Beelink Mini
+                S12 Pro. Son processeur N100 est non seulement plus performant,
+                mais également très économe en énergie. Avec 16 Go de RAM et un
+                SSD de 500 Go, il garantit une expérience fluide et durable.
+              </p>
+
+              <p>
+                Cela dit, pour débuter, le Beelink Mini S12 reste une très bonne
+                option ! 😊
+              </p>
+              <div className={styles.tableContainer}>
+                <table className={styles.priceTable}>
+                  <thead>
+                    <tr>
+                      <th>Caractéristiques</th>
+                      <th>Beelink Mini S12</th>
+                      <th>Beelink Mini S12 Pro</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Processeur</td>
+                      <td>Alder Lake-N95</td>
+                      <td>Alder Lake-N N100</td>
+                    </tr>
+                    <tr>
+                      <td>Mémoire RAM</td>
+                      <td>8 Go DDR4</td>
+                      <td>16 Go DDR4</td>
+                    </tr>
+                    <tr>
+                      <td>Stockage</td>
+                      <td>256 Go M.2 SSD 2280</td>
+                      <td>500 Go M.2 SSD 2280</td>
+                    </tr>
+                    <tr>
+                      <td>WiFi</td>
+                      <td>WiFi 5</td>
+                      <td>WiFi 6</td>
+                    </tr>
+                    <tr>
+                      <td>Bluetooth</td>
+                      <td>Bluetooth 5.0</td>
+                      <td>Bluetooth 5.2</td>
+                    </tr>
+                    <tr>
+                      <td>Ports HDMI</td>
+                      <td>Double HDMI</td>
+                      <td>Double HDMI</td>
+                    </tr>
+                    <tr>
+                      <td>LAN</td>
+                      <td>1000 Mbps</td>
+                      <td>1000 Mbps</td>
+                    </tr>
+                    <tr>
+                      <td>Prix du starter kit</td>
+                      <td>
+                        <b>{priceCheaperKit} €</b>
+                      </td>
+                      <td>
+                        <b>{price} €</b>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Je commande</td>
+                      <td>
+                        <input
+                          type="submit"
+                          onClick={subscribeCheaperPc}
+                          value="Commander S12"
+                          disabled={loading}
+                          className={cx("button button--primary")}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="submit"
+                          onClick={subscribe}
+                          value="Commander S12 Pro"
+                          disabled={loading}
+                          className={cx("button button--primary")}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
