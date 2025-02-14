@@ -75,6 +75,8 @@ module.exports = {
           activeBasePath: "formation",
           label: "Formation",
           position: "left",
+          // Only show this item for French locale
+          className: "navbar__link--fr-only",
         },
         {
           type: "dropdown",
@@ -119,26 +121,24 @@ module.exports = {
               to: "docs",
             },
             {
-              label: "Raspberry Pi",
-              to: "docs/installation/raspberry-pi/",
+              label: "Kit de démarrage officiel",
+              href: "/starter-kit/",
+              className: "footer__link-item footer__link--fr-only",
             },
             {
-              label: "Docker",
+              label: "Installing on Docker",
               to: "docs/installation/docker",
             },
             {
-              label: "Freebox Delta",
+              label: "Installation sur une Freebox Delta",
               to: "docs/installation/freebox-delta",
+              className: "footer__link-item footer__link--fr-only",
             },
           ],
         },
         {
-          title: "Community",
+          title: "Socials",
           items: [
-            {
-              label: "Forum",
-              href: "https://community.gladysassistant.com",
-            },
             {
               label: "Twitter",
               href: "https://twitter.com/gladysassistant",
@@ -150,10 +150,6 @@ module.exports = {
             {
               label: "Instagram",
               href: "https://instagram.com/gladysassistant",
-            },
-            {
-              label: "Starter kit (FR only)",
-              href: "/starter-kit/",
             },
           ],
         },
