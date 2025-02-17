@@ -183,14 +183,15 @@ const FAQQuestions = {
         <>
           Gladys Assistant is entirely open-source and available on{" "}
           <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
-          Any PR is welcome 🙂 <br />
-          <br />
-          If you want to contribute, don't hesitate to come to the{" "}
+          All PRs are welcome 🙂 <br />
+          <br /> If you want to contribute, read our tutorial{" "}
+          <a href="/docs/dev/developing-a-service/">
+            Contributing to Gladys Assistant
+          </a>{" "}
+          and don't hesitate to join the{" "}
           <a href="https://en-community.gladysassistant.com/">community</a> to
-          talk about the development you want to work on. This will allow you to
-          see with other developers if someone else is not already working on
-          it, and especially to discuss "specifications" before starting
-          development!
+          discuss the development you want to work on. Don't hesitate if you
+          have questions, we're always here to help!
         </>
       ),
     },
@@ -207,6 +208,10 @@ const FAQQuestions = {
           your privacy, and without configuration! Gladys Plus is a "Progressive
           Web App" that you can install on your smartphone (Android and iOS),
           and thus have access to Gladys from anywhere in the world.
+          <br />
+          <br />
+          Using this service is <b>entirely optional</b>, you can use Gladys
+          Assistant without it with your own domain if you prefer.
         </>
       ),
     },
