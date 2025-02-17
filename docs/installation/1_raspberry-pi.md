@@ -71,3 +71,12 @@ To find the Raspberry Pi IP address on your local network, you can use applicati
 - [Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner) on Android
 - [iNet - Network Scanner](https://apps.apple.com/us/app/inet-network-scanner/id340793353) on iOS
   :::
+
+### What are the default Rasperry Pi OS image credentials to connect using SSH?
+
+The Raspberry Pi OS image provided on this website is based on the official image of the Raspberry Pi foundation.
+
+To connect by SSH, the credentials are the same as those in the image of the foundation:
+
+- **Login**: pi
+- **Password**: raspberry

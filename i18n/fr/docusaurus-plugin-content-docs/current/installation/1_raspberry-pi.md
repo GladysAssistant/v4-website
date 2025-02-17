@@ -86,3 +86,12 @@ Si vous faites tourner Gladys sur un Raspberry Pi avec un disque externe et que 
 
 Nous recommandons d'utiliser un hub USB alimenté de manière externe.
 :::
+
+### Quels sont les identifiants par défaut de l'image Rasperry Pi OS pour se connecter en SSH ?
+
+L'image Raspberry Pi OS proposée se base sur l'image officielle de la fondation Raspberry Pi.
+
+Pour se connecter en SSH, les identifiants sont les mêmes que ceux de l'image de la fondation :
+
+- **Login** : pi
+- **Mot de passe** : raspberry

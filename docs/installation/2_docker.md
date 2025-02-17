@@ -4,7 +4,7 @@ title: Install Gladys Assistant with Docker
 sidebar_label: Install with Docker
 ---
 
-In this tutorial, we go through the instructions for installing Gladys Assistant with Docker. This tutorial works for any system (Raspberry Pi, Ubuntu VM, Synology NAS).
+In this tutorial, we go through the instructions for installing Gladys Assistant with Docker. This tutorial works for any system (Mini-PC, NAS, Linux Server, VM...).
 
 ## Install Docker
 
