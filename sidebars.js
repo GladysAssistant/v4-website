@@ -10,7 +10,11 @@ module.exports = {
         "installation/docker-compose",
         "installation/synology",
         "installation/unraid",
-        "installation/freebox-delta",
+        {
+          id: "installation/freebox-delta",
+          type: "doc",
+          className: "fr-only",
+        },
         "installation/raspberry-pi",
         "installation/phone",
         "installation/faq",

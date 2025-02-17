@@ -1,7 +1,7 @@
 ---
 id: unraid
-title: Deploy Gladys on a Unraid NAS with Docker
-sidebar_label: Unraid NAS
+title: Install Gladys Assistant on a Unraid NAS
+sidebar_label: Install on an Unraid NAS
 ---
 
 In this tutorial, we go through the instructions for installing Gladys Assistant on an Unraid NAS with Docker

@@ -1,7 +1,7 @@
 ---
 id: freebox-delta
-title: Installation on a Freebox Delta
-sidebar_label: Freebox Delta
+title: Install Gladys Assistant on a Freebox Delta
+sidebar_label: Install on a Freebox Delta
 ---
 
 ## On a Freebox Delta

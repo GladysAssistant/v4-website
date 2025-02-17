@@ -1,44 +1,98 @@
 ---
 id: docker-compose
-title: Installation with Docker Compose
-sidebar_label: Docker Compose
+title: Install Gladys Assistant with Docker Compose
+sidebar_label: Install with Docker Compose
 ---
 
-In this tutorial, we go through the instructions for installing Gladys Assistant with Docker Compose. This tutorial works for any system (Raspberry Pi, Ubuntu VM, Synology NAS).
+This tutorial explains how to manually install Gladys using Docker Compose, regardless of the machine you are running Gladys on: a mini-PC, a Synology NAS, a Linux VM, or any other setup.
 
-## Requirements
+## Prerequisites
 
-To install Docker Compose, you must first install Docker. Please refer to [Install Docker documentation](/docs/installation/docker)
-
-### Install Docker Compose
-
-You should install Docker Compose v2 as a Docker plugin. To do so, you can follow the [official documentation](https://docs.docker.com/compose/install/#scenario-two-install-the-compose-plugin)
-
-## Copy/Import the Gladys Docker Compose file descriptor
-
-You can find a Docker Compose file example on our github repository : https://raw.githubusercontent.com/GladysAssistant/Gladys/master/docker/docker-compose.yml
-
-Save this file into a directory on your system.
-
-Things you may want to change:
-
-- `SERVER_PORT: 80` => You can change the default port where the Gladys UI will be exposed. 
-- `TZ: Europe/Paris` => Timezone used by container. Feel free to consult [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) on wikipedia if you need to change this value.
-
-## Start Gladys
-
-You can start Gladys (and Watchtower) containers with the command:
+To install Docker Compose, you just need to install Docker:
 
 ```bash
-docker compose up -d
+curl -sSL https://get.docker.com | sh
+```
+
+If you want to verify that Docker Compose is active on your system, type:
+
+```bash
+sudo docker compose version
+```
+
+In my case, I see the following displayed:
+
+```bash
+gladys@gladys:~$ docker compose version
+Docker Compose version v2.24.5
+```
+
+## Create the Docker Compose Configuration File
+
+```yaml
+version: "3"
+
+services:
+  gladys:
+    image: gladysassistant/gladys:v4
+    container_name: gladys
+    restart: always
+    privileged: true
+    network_mode: host
+    cgroup: host
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+    environment:
+      NODE_ENV: production
+      SQLITE_FILE_PATH: /var/lib/gladysassistant/gladys-production.db
+      SERVER_PORT: 80
+      TZ: Europe/Paris
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/gladysassistant:/var/lib/gladysassistant
+      - /dev:/dev
+      - /run/udev:/run/udev:ro
+  watchtower:
+    image: containrrr/watchtower
+    restart: always
+    container_name: watchtower
+    command: --cleanup --include-restarting
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+```
+
+Save this file in a directory on your system.
+
+## Configure Gladys Assistant
+
+Some settings you can customize:
+
+- `SERVER_PORT: 80` → You can change the default port of the Gladys interface.
+- `TZ: Europe/Paris` → To change the container's time zone. You can find all possible values in [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+## Start Gladys Assistant
+
+To start Gladys (and Watchtower), run the following command:
+
+```bash
+sudo docker compose up -d
 ```
 
 Note:
 
-- `-d` => This option is launching the containers in a detached mode, meaning you can disconnect and the containers will stay.
+- `-d` => This option allows you to run the containers in detached mode. This way, you can disconnect, and the containers will continue to run.
 
-## Accessing Gladys
+## Access Gladys Assistant
 
-You can access Gladys directly by typing the IP of your machine (the Raspberry Pi for example) in your browser.
+You can access Gladys by entering your machine's IP address in your browser.
 
-To find the IP, just type `ifconfig` on the linux machine shell, or use a network scanner app ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) on Android or [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) on iOS)
+:::note
+Note: You must be on the same network as the machine!
+:::
+
+To find your machine's IP address on your local network, you can use applications like:
+
+- [Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner) on Android
+- [iNet - Network Scanner](https://apps.apple.com/us/app/inet-network-scanner/id340793353) on iOS
