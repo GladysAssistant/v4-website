@@ -24,8 +24,8 @@ Gladys is a fairly standard Node.js project that uses:
 
 We have two tutorials depending on your platform:
 
-- [Set up a development environment on MacOS/Linux](/fr/docs/dev/setup-development-environment-mac-linux/)
-- [Set up a development environment on Windows](/fr/docs/dev/setup-development-environment-windows/)
+- [Set up a development environment on MacOS/Linux](/docs/dev/setup-development-environment-mac-linux/)
+- [Set up a development environment on Windows](/docs/dev/setup-development-environment-windows/)
 
 ## Directory Architecture
 
