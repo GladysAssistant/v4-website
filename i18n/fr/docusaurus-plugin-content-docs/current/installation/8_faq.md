@@ -4,26 +4,15 @@ title: FAQ
 sidebar_label: FAQ
 ---
 
-### Quels sont les identifiants par défaut de l'image Rasperry Pi OS pour se connecter en SSH ?
-
-L'image Raspberry Pi OS proposée se base sur l'image officielle de la fondation Raspberry Pi.
-
-Pour se connecter en SSH, les identifiants sont les mêmes que ceux de l'image de la fondation :
-
-- **Login** : pi
-- **Mot de passe** : raspberry
-
 ### Comment mettre à jour Gladys ?
 
-Si tu as installé Gladys avec l'image Raspberry Pi OS, Gladys se mettra automatiquement à jour grâce à [Watchtower](https://containrrr.dev/watchtower/).
+Nous recommandons l'utilisation de [Watchtower](https://containrrr.dev/watchtower/).
 
 Watchtower est un container Docker qui tourne à côté de Gladys, et qui vérifie toutes les 24h si il y a une nouvelle mise à jour de Gladys.
 
-Si tu as installé Gladys manuellement, regarde l'onglet "Docker" de cette documentation pour mettre en place Watchtower 🙂
-
 ### Qui utilise Gladys Assistant 4 ?
 
-La v4 de Gladys Assistant est sortie en [Novembre 2020](/fr/blog/lancement-gladys-assistant-4/). Depuis, vous êtes des centaines à utiliser Gladys Assistant, et l'objectif est de passer à des milliers dans les prochains mois !
+La v4 de Gladys Assistant est sortie en [Novembre 2020](/fr/blog/lancement-gladys-assistant-4/).
 
 Gladys Assistant est installée par tout type d'utilisateurs :
 

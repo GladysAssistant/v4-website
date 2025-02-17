@@ -1,7 +1,7 @@
 ---
 id: freebox-delta
-title: Installation on a Freebox Delta
-sidebar_label: Freebox Delta
+title: Install Gladys Assistant on a Freebox Delta
+sidebar_label: Install on a Freebox Delta
 ---
 
 ## On a Freebox Delta
@@ -49,9 +49,9 @@ sudo apt update
 sudo apt upgrade
 ```
 
-### Install Docker on the Raspberry Pi
+### Install Docker on the Freebox Delta
 
-Type in the following commands, one by one, to install Docker on the Raspberry Pi.
+Type in the following commands, one by one, to install Docker on the Freebox Delta.
 
 ```bash
 sudo apt install docker.io

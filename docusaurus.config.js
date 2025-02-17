@@ -117,7 +117,7 @@ module.exports = {
           title: "Getting Started",
           items: [
             {
-              label: "Recommended hardware",
+              label: "The ultimate guide",
               to: "docs",
             },
             {
@@ -126,12 +126,20 @@ module.exports = {
               className: "footer__link-item footer__link--fr-only",
             },
             {
-              label: "Installing on Docker",
-              to: "docs/installation/docker",
+              label: "Installing on a Mini-PC",
+              to: "docs/installation/mini-pc/",
+            },
+            {
+              label: "Installing on a Synology NAS",
+              to: "docs/installation/synology/",
+            },
+            {
+              label: "Installing on an Unraid server",
+              to: "docs/installation/unraid/",
             },
             {
               label: "Installation sur une Freebox Delta",
-              to: "docs/installation/freebox-delta",
+              to: "docs/installation/freebox-delta/",
               className: "footer__link-item footer__link--fr-only",
             },
           ],

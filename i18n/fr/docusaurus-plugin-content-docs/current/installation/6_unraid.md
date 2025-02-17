@@ -1,14 +1,14 @@
 ---
 id: unraid
-title: Installer Gladys sur un NAS Unraid avec Docker
-sidebar_label: NAS Unraid
+title: Installer Gladys Assistant sur un NAS Unraid
+sidebar_label: Installation sur NAS Unraid
 ---
 
 Dans ce tutoriel, nous verrons les instructions pour installer Gladys Assistant sur Unraid à l'aide de Docker.
 
 ## Trouver Gladys-Assistant
 
-Tout d'abord, vous devez trouvez l'application au sein de l'App Manager.
+Tout d'abord, vous devez trouver l'application au sein de l'App Manager.
 
 Pour ce faire :
 
@@ -37,7 +37,7 @@ De même si vous souhaitez utiliser des appareils Zigbee, vous aurez besoin des 
 
 :::note
 si vous changez le port par défaut 8006, le bouton qui redirige vers l'interface Gladys pourrait ne pas fonctionner, pour changer cela cliquez sur advanced view, trouvez le paramètre web UI, et changez le numéro avec le port, puis appliquez les changements.
-:::note
+:::
 
 Cliquez sur apply et attendez que l'installation se finisse.
 
@@ -53,8 +53,9 @@ Vous pouvez aussi accéder à l'interface en cliquant sur docker, puis sur le lo
 
 Actuellement Watchtower n'est pas disponible sur Unraid (cela pourrait changer prochainement).
 
-Ainsi pour mettre à jour votre instance : 0) Cliquez sur Docker
+Ainsi pour mettre à jour votre instance :
 
+0. Cliquez sur Docker
 1. Puis sur Advanced view
 2. Et enfin sur force update
 
@@ -64,12 +65,12 @@ Vous pouvez voir la version de votre instance depuis l'interface Gladys en cliqu
 
 ## Paramètres avancés
 
-En configurant Gladys, vous avez peut être vu qu'il y a des paramètres avancés.
-Les voici en détails :
+En configurant Gladys, vous avez peut-être vu qu'il y a des paramètres avancés.
+Les voici en détail :
 
 - Gladys lib folder : dossier dans lequel les fichiers permanents de l'installation seront stockés.
-- Gladys Dev Folder : dossier d'accès aux appareils branchés aux NAS
+- Gladys Dev Folder : dossier d'accès aux appareils branchés au NAS
 - Gladys uDev Folder : Udev est le device manager du noyau Linux
-- DB File path : Chemin d'accès à la base de données SQLite (A l'intérieur du conteneur docker)
-- Environement : production ou developement (Affichage des debugs)
-- Gladys Docker Folder : chemin d'accès à la commande Docker pour créer et manager des dockers depuis l'intérieur de Gladys
+- DB File path : Chemin d'accès à la base de données SQLite (à l'intérieur du conteneur Docker)
+- Environnement : production ou development
+- Gladys Docker Folder : chemin d'accès à la commande Docker pour créer et gérer des dockers depuis l'intérieur de Gladys

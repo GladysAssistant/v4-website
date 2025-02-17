@@ -1,12 +1,21 @@
 ---
 id: raspberry-pi
-title: Installation on a Raspberry Pi
-sidebar_label: Raspberry Pi
+title: Installing Gladys Assistant on a Raspberry Pi
+sidebar_label: Install on a Raspberry Pi
 ---
 
-The Raspberry Pi used to be a great option for running Gladys, but now, if you have the choice, I recommend getting a mini-PC instead.
+:::note
+Historically, I recommended using Raspberry Pi for installing Gladys.
 
-It’s more powerful, more reliable, and often more affordable. See my guide [here](/docs/).
+However, they are becoming less competitive for several reasons:
+
+- A high overall cost once you add the power supply, case, and SSD.
+- Limited reliability with a micro-SD card and a complex installation with an SSD. Moreover, even with a USB SSD, the performance is still far inferior to that of a mini-PC with an integrated NVMe SSD.
+- A less powerful processor compared to low-power Intel equivalents.
+- Recurring power issues when adding a Zigbee dongle and an SSD.
+
+My recommendation is to buy a mini-PC. There are powerful options starting at [$169 on Amazon US](https://amzn.to/4gKDV2E), and versions below $120 if you search for refurbished ones.
+:::
 
 ## Installing Gladys on an already configured Raspberry Pi
 
@@ -57,5 +66,17 @@ You should see the Gladys Web UI (portal).
 :::note
 If you don't see the Gladys login page when typing `http://gladys.local` in your browser, try typing the IP address of your Raspberry Pi.
 
-💡 To find the right IP address, you can use a network scanner app such as ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) on Android or [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) on iOS)
-:::
+To find the Raspberry Pi IP address on your local network, you can use applications like:
+
+- [Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner) on Android
+- [iNet - Network Scanner](https://apps.apple.com/us/app/inet-network-scanner/id340793353) on iOS
+  :::
+
+### What are the default Rasperry Pi OS image credentials to connect using SSH?
+
+The Raspberry Pi OS image provided on this website is based on the official image of the Raspberry Pi foundation.
+
+To connect by SSH, the credentials are the same as those in the image of the foundation:
+
+- **Login**: pi
+- **Password**: raspberry

@@ -1,10 +1,10 @@
 ---
 id: docker
 title: Installation avec Docker
-sidebar_label: Docker
+sidebar_label: Installation avec Docker
 ---
 
-Ce tutoriel vous explique comment installer Gladys manuellement avec Docker, quel que soit la machine sur laquelle vous faites tourner Gladys : Un Raspberry Pi, un NAS Synology, une VM linux, peu importe.
+Ce tutoriel vous explique comment installer Gladys manuellement avec Docker, quelle que soit la machine sur laquelle vous faites fonctionner Gladys.
 
 ## Installer Docker
 
@@ -14,23 +14,13 @@ Si Docker n'est pas encore installé sur votre machine, vous pouvez l'installer 
 curl -sSL https://get.docker.com | sh
 ```
 
-Il faut maintenant ajouter votre utilisateur au groupe "docker" pour que votre utilisateur puisse exécuter les commandes Docker.
-
-Si vous êtes sur un Raspberry Pi, il faut exécuter la commande pour l'utilisateur "pi" :
+Pour vérifier que Docker fonctionne bien, lancez la commande suivante :
 
 ```
-sudo usermod -aG docker pi
+sudo docker ps
 ```
 
-Ensuite, fermez votre session SSH, puis reconnectez-vous. L'ajout d'un utilisateur a un groupe ne prend effet qu'après une reconnexion.
-
-Pour vérifier que Docker tourne bien, lancez la commande suivante :
-
-```
-docker ps
-```
-
-Vous devriez voir une liste des containers qui tournent sur la machine. Comme vous venez d'installer Docker, cette liste doit être vide normalement.
+Vous devriez voir une liste des conteneurs qui fonctionnent sur la machine. Comme vous venez d'installer Docker, cette liste doit être vide normalement.
 
 Si vous avez un problème lors de l'installation de Docker, je vous conseille de vous rendre sur la [documentation Docker](https://docs.docker.com/) et de lire la documentation liée à votre système.
 
@@ -39,7 +29,7 @@ Si vous avez un problème lors de l'installation de Docker, je vous conseille de
 Pour lancer Gladys, exécutez la commande suivante :
 
 ```bash
-docker run -d \
+sudo docker run -d \
 --log-driver json-file \
 --log-opt max-size=10m \
 --cgroupns=host \
@@ -60,6 +50,8 @@ gladysassistant/gladys:v4
 
 **Note :**
 
+- **sudo** : Dépend de votre installation. Si vous êtes sur une installation standard d'Ubuntu Server, Gladys a besoin des droits d'administrateurs et donc d'être en "privileged" pour accéder aux ports USB.
+
 - `-e TZ=Europe/Paris` => Pour changer le fuseau horaire du conteneur, vous pouvez modifier cette variable. Vous trouverez toutes les valeurs possibles sur [cette liste](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 - `-v /var/lib/gladysassistant` : Le dossier de destination où Gladys va stocker toutes ses données. Vous pouvez changer la partie à gauche des ":" pour modifier le dossier de destination.
@@ -72,8 +64,8 @@ gladysassistant/gladys:v4
 
 Vous pouvez utiliser Watchtower pour mettre automatiquement Gladys à jour quand une nouvelle version est disponible. Pour cela, lancez le conteneur :
 
-```
-docker run -d \
+```bash
+sudo docker run -d \
   --name watchtower \
   --restart=always \
   -v /var/run/docker.sock:/var/run/docker.sock \

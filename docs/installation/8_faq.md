@@ -4,22 +4,11 @@ title: FAQ
 sidebar_label: FAQ
 ---
 
-### What are the default Rasperry Pi OS image credentials to connect using SSH?
-
-The Raspberry Pi OS image provided on this website is based on the official image of the Raspberry Pi foundation.
-
-To connect by SSH, the credentials are the same as those in the image of the foundation:
-
-- **Login**: pi
-- **Password**: raspberry
-
 ### How to update Gladys?
 
-If you have installed Gladys with the Raspberry Pi OS image, Gladys will update automatically thanks to [Watchtower](https://containrrr.dev/watchtower/).
+We recommend using [Watchtower](https://containrrr.dev/watchtower/).
 
-Watchtower is a Docker container which runs in parallel to Gladys. It checks, every 24 hours, for new Gladys releases anmd updates.
-
-If you have installed Gladys manually, have a look at the "Docker" tab of this documentation. It will run you through the steps needed to set up Watchtower 🙂
+Watchtower is a Docker container which runs in parallel to Gladys. It checks, every 24 hours, for new Gladys releases and updates.
 
 ### Who uses Gladys Assistant 4?
 
@@ -37,7 +26,7 @@ Gladys Assistant is fully open-source and available on [GitHub](https://github.c
 
 Any PR is welcome 🙂
 
-If you want to contribute, head over to [the community](https://community.gladysassistant.com/) to talk about the features you want to develop. This will allow you to check in with the other developers and make sure nobody is already working on it. It will also be a good oportunity to discuss "specifications", before going into development!
+If you want to contribute, head over to [the community](https://community.gladysassistant.com/) to talk about the features you want to develop. This will allow you to check in with the other developers and make sure nobody is already working on it. It will also be a good opportunity to discuss "specifications", before going into development!
 
 ### What is the philosophy of the project?
 

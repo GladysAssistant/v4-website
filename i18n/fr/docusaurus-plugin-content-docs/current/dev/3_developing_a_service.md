@@ -6,7 +6,7 @@ sidebar_label: Contribuer sur Gladys Assistant
 
 Gladys Assistant est un projet open-source, et tout son code est disponible sur [Github](https://github.com/GladysAssistant/Gladys).
 
-N’importe qui peut lire et modifier ce code pour ajouter des fonctionnalités, des nouvelles intégrations ou corriger un bug.
+N'importe qui peut lire et modifier ce code pour ajouter des fonctionnalités, des nouvelles intégrations ou corriger un bug.
 
 ## Les technologies utilisées
 
@@ -15,9 +15,10 @@ Gladys est un projet Node.js assez classique qui utilise :
 - [Preact.js](https://preactjs.com/) pour le frontend (exactement comme React, mais en plus léger)
 - Node.js [Express](https://expressjs.com/) comme framework backend
 - [SQLite](https://www.sqlite.org/index.html) pour la base de donnée
+- [DuckDB](https://duckdb.org/) pour stocker des données time-séries (les données de capteurs)
 - [Sequelize](https://sequelize.org/) comme ORM pour la base de donnée et les migrations
 - [Mocha](https://mochajs.org/) pour les tests backend
-- [Cypress](https://www.cypress.io/) pour les tests d’intégration frontend
+- [Cypress](https://www.cypress.io/) pour les tests d'intégration frontend
 
 ## Mettre en place un environnement de développement
 
@@ -26,7 +27,7 @@ Nous avons 2 tutoriels suivant votre plateforme :
 - [Mettre en place un environnement de développement sur MacOS/Linux](/fr/docs/dev/setup-development-environment-mac-linux/)
 - [Mettre en place un environnement de développement sur Windows](/fr/docs/dev/setup-development-environment-windows/)
 
-## L’architecture de dossier
+## L'architecture de dossier
 
 ### Le serveur Node.js Express
 
@@ -36,13 +37,13 @@ Voilà un petit explicatif de tous les dossiers du projet backend se trouvant da
 
 ### Le frontend Preact.js
 
-L’application Preact a été générée par [preact-cli](https://github.com/preactjs/preact-cli) :
+L'application Preact a été générée par [preact-cli](https://github.com/preactjs/preact-cli) :
 
 ![Frontend architecture Gladys](../../../../../static/img/docs/fr/dev/frontend_architecture.png)
 
 ## Inspiration : Live Coding sur YouTube
 
-J’ai fait récemment un live YouTube de 7 heures (c’est complet !!) où j’explique comment coder une intégration de A à Z.
+J'ai fait récemment un live YouTube de 7 heures (c'est complet !!) où j'explique comment coder une intégration de A à Z.
 
 Je pars des spécifications fonctionnelles, aux spécifications techniques, au développement du frontend, du backend, des tests, du flow Git, TOUT est dedans !
 
