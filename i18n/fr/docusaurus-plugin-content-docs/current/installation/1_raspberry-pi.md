@@ -1,9 +1,10 @@
 ---
 id: raspberry-pi
 title: Installation sur un Raspberry Pi
-sidebar_label: Raspberry Pi
+sidebar_label: Installation sur Raspberry Pi
 ---
 
+:::note
 Historiquement, je recommandais l’utilisation des Raspberry Pi pour installer Gladys.
 
 Cependant, ils sont de moins en moins compétitifs pour plusieurs raisons :
@@ -15,7 +16,8 @@ Cependant, ils sont de moins en moins compétitifs pour plusieurs raisons :
 
 Ma recommandation est d'acheter un mini-PC. Il y a des monstres de puissance dès [190€ sur Amazon](https://amzn.to/47yVAaL), et des versions en dessous de 100€ si on cherche en reconditionné ou en occasion sur LeBonCoin.
 
-De mon côté, je propose un [kit de démarrage](/fr/starter-kit/) basé sur le Beelink mini S12 Pro, c'est d'ailleurs ce que je fais tourner chez moi.
+De mon côté, je propose un [kit de démarrage](/fr/starter-kit/) dès 165€, c'est d'ailleurs ce que je fais tourner chez moi.
+:::
 
 Si vous avez un Raspberry Pi qui est déjà configuré (vous avez déjà installé Raspberry Pi OS), il est possible d'installer Gladys manuellement avec Docker [sur ce tutoriel](/fr/docs/installation/docker).
 

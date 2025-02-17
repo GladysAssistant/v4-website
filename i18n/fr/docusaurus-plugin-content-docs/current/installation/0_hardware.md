@@ -5,63 +5,66 @@ sidebar_label: Commencer
 slug: /
 ---
 
-Il est compliqué de savoir par où commencer quand on débute en domotique. Quel matériel choisir ? Pour quel budget ? Quel protocole domotique mettre en place ?
+Il peut être difficile de savoir par où commencer lorsque l'on débute en domotique. Quel matériel choisir ? Quel budget prévoir ? Quel protocole domotique adopter ?
 
-Je vous propose ce tutoriel pour évoquer tous ces points ensemble et vous donner un point d’entrée pour créer votre maison connectée de zéro.
-
-:::info
-**Septembre 2024:** Je lance un kit de démarrage pour vous aider à commencer facilement sur Gladys.
-
-Je commande [le kit ici](/fr/starter-kit/)
-:::
+Ce guide vous aidera à répondre à ces questions et vous offrira un point de départ pour créer votre maison connectée de zéro.
 
 ## Définir son projet de maison connectée
 
-Le plus important est de définir les automatisations que vous voulez mettre en place à la maison : des lumières connectées ? Une alarme pour sécuriser la maison ? Faire des économies d’énergies en coupant les appareils inutilisés / le chauffage ?
+Le plus important est de définir les automatisations que vous souhaitez mettre en place chez vous : des lumières connectées, une alarme pour sécuriser votre domicile, des économies d'énergie en coupant les appareils inutilisés ou le chauffage ?
 
-J’aime personnellement faire un tableau (sur Excel, Google Sheet, ou Notion) découpé par pièce où je liste tous les appareils que j’ai envie de mettre.
+Un bon moyen de s'organiser est de créer un tableau (sur Excel, Google Sheets ou Notion) dans lequel vous listez tous les appareils que vous souhaitez intégrer, pièce par pièce.
 
 ![Tableau Notion Maison connectée](../../../../../static/img/docs/fr/installation/guide/notion-table-connected.jpg)
 
-Par exemple:
-
-**Salon**
+### Exemple: Salon
 
 | Nom                                            | Prix   | Lien                                                                                                                                                                   |
 | ---------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Capteur ouverture/fenêtre Zigbee Sonoff        | 10,06€ | [Domadoo](https://www.domadoo.fr/fr/peripheriques/5320-sonoff-capteur-d-ouverture-de-portefenetre-zigbee-30-snzb-04-6920075776126.html?domid=17)                       |
 | Capteur température/humidité Zigbee avec écran | 10,91€ | [Domadoo](https://www.domadoo.fr/fr/peripheriques/6614-sonoff-capteur-de-temperature-et-d-humidite-zigbee-30-avec-ecran.html?domid=17)                                 |
 | Module volet roulant Zigbee                    | 39,92€ | [Domadoo](https://www.domadoo.fr/fr/peripheriques/5245-sunricher-module-volet-roulant-zigbee-30.html?domid=17)                                                         |
 | Prise connectée pour télé avec consommation    | 16,99€ | [Domadoo](https://www.domadoo.fr/fr/peripheriques/6165-nous-prise-intelligente-zigbee-30-mesure-de-consommation-5907772033517.html?domid=17)                           |
-| Ampoule IKEA Tradfi E27 couleur (plafonnier)   | 17,99€ | [IKEA](https://www.ikea.com/fr/fr/p/tradfri-ampoule-led-e27-806-lumen-connecte-sans-fil-a-variateur-dintensite-spectre-couleur-et-blanc-globe-70439158/)               |
+| Ampoule IKEA TRÅDFRI E27 couleur (plafonnier)  | 17,99€ | [IKEA](https://www.ikea.com/fr/fr/p/tradfri-ampoule-led-e27-806-lumen-connecte-sans-fil-a-variateur-dintensite-spectre-couleur-et-blanc-globe-70439158/)               |
 | Télécommande IKEA STYRBAR (luminosité/couleur) | 9,99€  | [IKEA](https://www.ikea.com/fr/fr/p/styrbar-telecommande-connecte-blanc-30488363/)                                                                                     |
 | Détecteur mouvement Zigbee Aqara P1            | 24,99€ | [Domadoo](https://www.domadoo.fr/fr/peripheriques/6138-aqara-detecteur-de-mouvement-et-luminosite-zigbee-30-aqara-motion-sensor-p1-ms-s02-6970504215979.html?domid=17) |
 
-L’idée n’est pas forcément de se dire “Je vais mettre 300€ tout de suite pour tout couvrir”, mais plutôt d’organiser votre plan et ensuite d’équiper progressivement votre maison (sauf si vous venez d’emménager et que vous voulez équiper votre maison d’un coup)
+L'idée n'est pas nécessairement d'acheter tout d'un coup, mais plutôt de planifier et d'équiper progressivement votre maison, sauf si vous venez d'emménager et souhaitez tout installer immédiatement.
 
 ## Choisir sa box domotique
 
-Gladys Assistant est un logiciel “auto-hébergé” ce qui signifie que tout tournera en local chez vous sur une box domotique.
+Gladys Assistant est un logiciel auto-hébergé, ce qui signifie que tout fonctionne en local sur une box domotique. C'est l'une de ses principales forces !
 
-C’est la force de Gladys !
+Gladys peut tourner sur n'importe quelle machine sous Linux :
 
-Gladys tourne sur n’importe quel mini-PC sous Linux :
+- **Beelink Mini S12 Pro** (Entre 179€ et 249€ selon promotions)
 
-| Modèle                               | Prix                           | Commentaire                                                                                                                                                                                                                                                                                                                                                                                                                                               | Lien                                                                                                                             |
-| ------------------------------------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Kit de démarrage officiel Gladys     | Suivant options                | Je propose un kit de démarrage officiel pour t'aider à démarrer facilement !                                                                                                                                                                                                                                                                                                                                                                              | [Je commande ici](/fr/starter-kit/)                                                                                              |
-| Beelink Mini S12 Pro                 | 189€                           | Un mini-PC surpuissant: Quad Core Intel 12ème génération à basse consommation, 8/16GB de RAM, 256/512GB de SSD NVMe. Extrêmement stable sur le long terme, et très performant. Peu de bidouille à faire (c’est tout intégré dans un boitier, et alimentation fournie). Pour l’utiliser, installation d’Ubuntu Server via une clé USB bootable + installation de Gladys via Docker.                                                                        | [Amazon](https://amzn.to/47yVAaL)                                                                                                |
-| Raspberry Pi                         | 133,50€ en kit (+SSD,+boitier) | Si vous avez déjà un Raspberry Pi chez vous, cela peut-être une bonne option pour faire tourner Gladys. Néanmoins, ce n'est plus l'option la plus abordable quand on prend tout en compte (stockage, alimentation, boitier). Attention, utiliser une micro-SD peut présenter des risques sur le long terme (risque de corruption de disque). Peut-être un bon point d’entrée pour commencer sur Gladys, mais je recommande le mini-PC sur le long terme ! | [Kubii](https://www.kubii.com/fr/kits-nano-ordinateurs/4122-1866-kit-starter-raspberry-pi-5-3272496315907.html#/ram-8_gb?gladys) |
-| N’importe quel serveur, NAS, mini-PC |                                | Tu as un NAS Synology ? Un Intel NUC ? N’importe quel serveur Linux, du moment qu’il peut faire tourner Docker, peut faire tourner Gladys. N’hésite pas à venir sur le forum si tu as des questions.                                                                                                                                                                                                                                                      |                                                                                                                                  |
+  - Mini-PC puissant (Intel 12e génération, 16GB RAM, SSD NVMe 500 Gb).
+  - Stable et performant sur le long terme.
+  - Installation d'Ubuntu Server via clé USB bootable + installation de Gladys via Docker.
+  - Disponible sur [Amazon](https://amzn.to/47yVAaL)
 
-**Note:** Pour accélérer le déploiement de Gladys, je vais lancer une série très limitée d'un kit de démarrage contenant du hardware mais pas que ! 😎 [Je commande !](/fr/starter-kit/)
+- **N’importe quel serveur, NAS, mini-PC**
+
+  - Si vous avez un NAS Synology, un Intel NUC ou tout autre serveur Linux compatible Docker, vous pouvez installer Gladys dessus.
+
+- **Raspberry Pi**
+  - Si vous possédez déjà un Raspberry Pi, cela peut être une solution pour tester Gladys.
+  - Cependant, **je déconseille cette option sur le long terme** pour plusieurs raisons :
+    - Le coût total est relativement élevé, en tenant compte du Pi, de l'alimentation, du boîtier et du SSD.
+    - L'utilisation d'une carte micro-SD pour le stockage est **fortement déconseillée**, car elle entraîne un risque élevé de corruption des données.
+    - Les problèmes d'instabilité de l'alimentation via les ports USB rendent l'utilisation de dongles Zigbee/Z-Wave difficile et peu fiable.
+
+Si tu es intéressé par la gamme Beelink, je propose un kit de démarrage basé sur cette marque, [accessible dès 165€](/fr/starter-kit/).
 
 ## Installation de Gladys Assistant
 
-Suivant la box que vous avez choisi, il faudra soit utiliser:
+Selon le matériel choisi, vous pouvez suivre l'un des tutoriels suivants :
 
-- Notre image Raspberry Pi OS: [Installation sur Raspberry Pi](/fr/docs/installation/raspberry-pi/)
-- Notre [tutoriel d'installation via Docker](/fr/docs/installation/docker/)
+- [Installer Gladys Assistant sur un mini-PC](/fr/docs/installation/mini-pc/)
+- [Installer Gladys Assistant sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
+- [Installer Gladys Assistant sur un NAS Synology](/fr/docs/installation/synology/)
+- [Installer Gladys Assistant sur un NAS Unraid](/fr/docs/installation/unraid/)
+- [Installer Gladys Assistant sur un Raspberry Pi](/fr/docs/installation/raspberry-pi/)
 
 ## Configuration de votre maison connectée
 

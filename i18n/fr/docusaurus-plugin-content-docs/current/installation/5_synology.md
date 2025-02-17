@@ -1,7 +1,7 @@
 ---
 id: synology
-title: Installer Gladys sur un NAS Synology avec Docker
-sidebar_label: NAS Synology
+title: Installer Gladys Assistant sur un NAS Synology
+sidebar_label: Installation sur NAS Synology
 ---
 
 Ce tutoriel vous explique comment installer Gladys avec Docker sur un NAS Synology compatible.
