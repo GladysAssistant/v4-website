@@ -18,23 +18,23 @@ You must install the docker app from the "Apps Manager":
 
 ## Gladys configuration
 
-You will then be redirected to the configuration pages of Gladys
+You will then be redirected to the configuration pages of Gladys.
 
 ![Configuration](../../static/img/docs/en/installation/unraid/docker_config.jpg)
 
-Here are the different parameters :
+Here are the different parameters:
 
-1. The name of your App, if you don't have any other instance you can leave Gladys-Assistant
-2. The docker hub repository, don't touch that unless you know what you are doing.
-3. The Network type MUST stay on **HOST**. This is needed for Gladys to be able to scan your network to find a new smart device.
-4. Your time zone, make sure to follow this [type](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-5. The port on which Gladys's Dashboard will be displayed.
+1. The name of your App. If you don't have any other instance, you can leave it as Gladys-Assistant
+2. The Docker Hub repository. Don't touch that unless you know what you are doing
+3. The Network type MUST stay on **HOST**. This is needed for Gladys to be able to scan your network to find new smart devices
+4. Your time zone. Make sure to follow this [format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+5. The port on which Gladys's Dashboard will be displayed
 
-Caution: If you have/plan to have MQTT Device the port 1883 must be free. Same for Zigbee device that needs both 1884 and 8080 free.
+Caution: If you have/plan to have MQTT Devices, the port 1883 must be free. Same for Zigbee devices that need both 1884 and 8080 free.
 
 :::note
 If you change the default port 8006, the WebUI button might redirect you to the wrong port address to change that, click on advanced view, find web UI and change the number.
-:::note
+:::
 
 Click on apply and wait until the installation finishes.
 
@@ -52,8 +52,9 @@ Welcome in Gladys Assistant!
 
 Currently, Watchtower isn't available in Unraid (might change soon).
 
-To update Gladys : 0) Go to the docker
+To update Gladys :
 
+0. Go to the docker
 1. Click Advanced view
 2. Click on force update
 
@@ -63,11 +64,11 @@ You can see your current version in Gladys Dashboard, click on your profile on t
 
 ## Advanced Parameters
 
-When configuring Gladys, you can see others parameters.
+When configuring Gladys, you can see other parameters:
 
 - Gladys lib folder: folder on your NAS to store permanent files
 - Gladys Dev Folder: folder where devices are represented as files
-- Gladys uDev Folder: Udev is the device manager for the Linux kernel.
+- Gladys uDev Folder: Udev is the device manager for the Linux kernel
 - DB File path: Docker path to the SQLite database
-- Environement : production or development (Display Debug)
+- Environment: production or development (Display Debug)
 - Gladys Docker Folder: Docker command file to create and manage docker from within Gladys
