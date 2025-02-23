@@ -24,4 +24,10 @@ J’ai réalisé une vidéo détaillant étape par étape l’installation d’U
 
 Une fois Ubuntu installé, il ne reste plus qu’à installer Docker et lancer Gladys via notre image Docker officielle.
 
-Pour cela, suivez notre guide détaillé : [Installer Gladys avec Docker](/fr/docs/installation/docker/).
+Vous pouvez aussi suivre notre guide détaillé dans la documentation : [Installer Gladys avec Docker](/fr/docs/installation/docker/).
+
+Ou suivre ce tutoriel vidéo :
+
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/f82TTi8B1Oo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
