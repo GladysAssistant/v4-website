@@ -185,6 +185,13 @@ module.exports = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
     },
+    algolia: {
+      // The application ID provided by Algolia
+      appId: "3WF6SAYEB6",
+      // Public API key: it is safe to commit it
+      apiKey: "600eb334dfbb32667746a9cffa94ae0a",
+      indexName: "gladysassistant",
+    },
   },
   presets: [
     [
