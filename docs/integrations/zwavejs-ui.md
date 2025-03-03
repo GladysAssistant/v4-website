@@ -4,21 +4,6 @@ title: Integrate your Z-Wave devices with Z-Wave JS UI
 sidebar_label: Z-Wave JS UI
 ---
 
-:::warning
-January 2024: This integration is in alpha for now.
-
-The following features are supported: 
-
- - Door/Window sensor such as the [Fibaro Door Opening Sensor](https://www.amazon.com/Fibaro-FGDW-002-1-Window-Temperature-Sensor/dp/B074FCG1PF?crid=AMCFKK427FRN&keywords=Fibaro+door+sensor+2&qid=1704977401&sprefix=fibaro+door+sensor+2%2Caps%2C164&sr=8-1&linkCode=ll1&tag=gladproj-20&linkId=3e61bb12444e6d8265e7440bd0174456&language=en_US&ref_=as_li_ss_tl)
- - Binary Switch: turn on/off lights or cut off power from the sockets. Sample of supported devices: [Fibaro Wall Plug](https://www.fibaro.com/en/products/wall-plug/), [Fibaro Switches](https://www.fibaro.com/en/products/switches/)
- - Air Temperature sensors
- - Power Meter analytics
- - UP/DOWN curtains: open/close and see your curtains position. Sample of supported devices: [Fibaro Walli Roller Shutter](https://manuals.fibaro.com/fr/walli-roller-shutter/), [Qubino Flush Shutter](https://qubino.com/products/flush-shutter/)
- - Dimmers: turn ON/OFF your lights (or any device accepting a controlled voltage). Sample of supported devices: [Fibaro Walli Dimmer](https://manuals.fibaro.com/fr/walli-dimmer/), [Fibaro Dimmer 2](https://manuals.fibaro.com/fr/dimmer-2/)
-
-We are looking for help to integrate other devices!
-:::
-
 Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), a software application for controlling Z-Wave devices.
 
 Gladys connects to the same MQTT broker as Z-Wave JS UI and receives MQTT messages whenever a device's status changes.
@@ -50,3 +35,23 @@ Go to the "Configuration" tab to add this information.
 Go to the "Discovered" tab to see the devices your Z-Wave JS UI instance exposes.
 
 You can then add them to Gladys with a single click!
+
+## Supported Features
+
+- **Door/Window Sensors** – Detect open/close status, such as the [Fibaro Door Opening Sensor](https://www.amazon.com/Fibaro-FGDW-002-1-Window-Temperature-Sensor/dp/B074FCG1PF?crid=AMCFKK427FRN&keywords=Fibaro+door+sensor+2&qid=1704977401&sprefix=fibaro+door+sensor+2%2Caps%2C164&sr=8-1&linkCode=ll1&tag=gladproj-20&linkId=3e61bb12444e6d8265e7440bd0174456&language=en_US&ref_=as_li_ss_tl).
+- **Binary Switches** – Control lights or power outlets (on/off). Supported devices include:
+  - [Fibaro Wall Plug](https://www.fibaro.com/en/products/wall-plug/)
+  - [Fibaro Switches](https://www.fibaro.com/en/products/switches/)
+- **Air Temperature Sensors** – Monitor room temperature.
+- **Power Metering** – Track energy consumption analytics.
+- **Curtain/Shutter Control** – Open, close, and check curtain position. Supported devices include:
+  - [Fibaro Walli Roller Shutter](https://manuals.fibaro.com/fr/walli-roller-shutter/)
+  - [Qubino Flush Shutter](https://qubino.com/products/flush-shutter/)
+- **Dimmers** – Adjust brightness or control voltage-based devices. Supported devices include:
+  - [Fibaro Walli Dimmer](https://manuals.fibaro.com/fr/walli-dimmer/)
+  - [Fibaro Dimmer 2](https://manuals.fibaro.com/fr/dimmer-2/)
+- **Luminosity Sensors** – Measure ambient light levels.
+- **Alarm Sensors** – Detect security threats.
+- **Binary Sensors** – Support various on/off detection scenarios.
+
+If your device is not currently supported, let us know on the forum!

@@ -4,21 +4,6 @@ title: Intégrez vos appareils Z-Wave grâce à Z-Wave JS UI
 sidebar_label: Z-Wave JS UI
 ---
 
-:::warning
-Janvier 2024: Cette intégration est en alpha pour l'instant.
-
-Les fonctionnalités suivantes sont supportées : 
- 
- - Les détecteurs d'ouverture/fermeture de porte ou fenêtre comme le [Fibaro Door/Window Sensor 2](https://www.domadoo.fr/fr/peripheriques/4105-fibaro-detecteur-d-ouverture-z-wave-doorwindow-sensor-2-blanc-5902701700348.html?domid=17).
- - Les interrupteurs permettant d'allumer et d'éteindre l'éclairage ou des prises électriques. Exemple de périphérique supporté : [Fibaro Wall Plug](https://www.fibaro.com/fr/products/wall-plug/), [Fibaro Switch](https://www.fibaro.com/fr/products/switches/)
- - Mesure de température
- - Mesure de la consommation d'énergie
- - Montée / Descente des volets roulants : ouvrez/fermez vos volets roulants et consultez leur position. Exemple de périphérique supporté : [Fibaro Walli Roller Shutter](https://manuals.fibaro.com/fr/walli-roller-shutter/), [Qubino Flush Shutter](https://qubino.com/products/flush-shutter/)
- - Variateurs : allumez/éteignez vos lumières (ou tout autre appareil géré par un voltage variable). Exemple de périphérique supporté : [Fibaro Walli Dimmer](https://manuals.fibaro.com/fr/walli-dimmer/), [Fibaro Dimmer 2](https://manuals.fibaro.com/fr/dimmer-2/)
-
-Nous sommes à la recherche d'aide pour intégrer d'autres appareils !
-:::
-
 Gladys Assistant propose une intégration avec [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), un logiciel qui permet de contrôler des appareils Z-Wave.
 
 Gladys se connecte au même broker MQTT que Z-Wave JS UI et reçoit des messages MQTT à chaque changement d'état d'un appareil.
@@ -50,3 +35,23 @@ Rendez-vous dans l'onglet "Configuration" pour ajouter ces informations.
 Rendez-vous sur l'onglet "Découverte Z-Wave JS UI" pour voir les appareils que votre instance Z-Wave JS UI expose.
 
 Vous pouvez ensuite les ajouter à Gladys d'un seul clic!
+
+## Fonctionnalités supportées
+
+- **Capteurs de porte/fenêtre** – Détectent l'état ouvert/fermé, comme le [Fibaro Door Opening Sensor](https://www.domadoo.fr/fr/peripheriques/4105-fibaro-detecteur-d-ouverture-z-wave-doorwindow-sensor-2-blanc-5902701700348.html?domid=17).
+- **Interrupteurs binaires** – Permettent d'allumer/éteindre les lumières ou de couper l'alimentation des prises électriques. Appareils compatibles :
+  - [Fibaro Wall Plug](https://www.fibaro.com/fr/products/wall-plug/)
+  - [Interrupteurs Fibaro](https://www.fibaro.com/fr/products/switches/)
+- **Capteurs de température** – Surveillent la température ambiante.
+- **Suivi de la consommation électrique** – Analyse de la consommation d'énergie.
+- **Contrôle des rideaux/volets** – Ouvrir, fermer et connaître la position des rideaux. Appareils compatibles :
+  - [Fibaro Walli Roller Shutter](https://manuals.fibaro.com/fr/walli-roller-shutter/)
+  - [Qubino Flush Shutter](https://qubino.com/products/flush-shutter/)
+- **Variateurs de lumière (Dimmers)** – Ajustent la luminosité ou contrôlent des appareils à tension variable. Appareils compatibles :
+  - [Fibaro Walli Dimmer](https://manuals.fibaro.com/fr/walli-dimmer/)
+  - [Fibaro Dimmer 2](https://manuals.fibaro.com/fr/dimmer-2/)
+- **Capteurs de luminosité** – Mesurent l'intensité lumineuse ambiante.
+- **Capteurs d'alarme** – Détectent les menaces de sécurité.
+- **Capteurs binaires** – Permettent divers scénarios de détection ON/OFF.
+
+Si vous avez un appareil qui n'est pas encore géré, n'hésitez pas à nous contacter sur le forum.
