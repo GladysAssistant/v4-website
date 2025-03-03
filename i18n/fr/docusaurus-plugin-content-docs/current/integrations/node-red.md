@@ -9,15 +9,14 @@ Dans ce tutoriel, nous allons vous expliquer qu'il est possible d'intégrer [Nod
 Vous pourrez ainsi connecter des périphériques matériels, des API et des services en ligne.
 
 ## Activez Node-RED
+
 Dans Gladys, Rendez-vous dans `Intégrations / Node-RED`.
 
 Gladys a besoin d'installer un container. Ne vous inquiétez pas, tout cela a été automatisé.
 
 Rendez-vous dans la partie `Configuration` et cliquez sur le bouton **Activer**. Après quelques instants (le temps dépend de votre modèle de Raspberry Pi et de votre bande passante), vous devriez visualiser tous les éléments démarrés et les liens entre chacun au vert.
 
-
 ![Etat des services Node-RED](../../../../../static/img/docs/fr/configuration/node-red/node-red_etat_services_fr.png)
-
 
 ## Se connecter à Node-RED
 
@@ -26,11 +25,11 @@ Vous pouvez ouvrir l'interface de Node-Red en cliquant sur le lien
 
 ![Lien Node-RED](../../../../../static/img/docs/fr/configuration/node-red/node-red_link_fr.png)
 
-Vous arrivez sur votre instance locale de Node-RED. 
+Vous arrivez sur votre instance locale de Node-RED.
 
 ![Login Node-RED](../../../../../static/img/docs/fr/configuration/node-red/node-red_login_fr.png)
 
-Pour vous connecter, il faut utiliser les informations de connexion fournies dans la partie `Configuration` 
+Pour vous connecter, il faut utiliser les informations de connexion fournies dans la partie `Configuration`
 
 ## Utilisation
 
@@ -38,3 +37,8 @@ Vous pouvez maintenant créer vos flux Node-RED
 
 ![Node-RED](../../../../../static/img/docs/fr/configuration/node-red/node-red_fr.png)
 
+### Installer Node-RED en dehors de Gladys
+
+Si vous voulez lancer Node-RED manuellement en dehors de Gladys, c'est aussi possible.
+
+Vous pouvez suivre [mon article sur le blog](/fr/blog/integrate-node-red-with-gladys-assistant-in-mqtt/).
