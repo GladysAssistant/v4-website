@@ -32,6 +32,7 @@ module.exports = {
         "integrations/camera",
         "integrations/enedis",
         "integrations/free-mobile",
+        "integrations/google-cast",
         "integrations/google-home",
         "integrations/homekit",
         "integrations/mqtt",
