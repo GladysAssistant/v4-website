@@ -96,6 +96,8 @@ function Plus() {
   const { i18n } = context;
   const language = i18n.currentLocale;
 
+  const [isUnavailable, setIsUnavailable] = useState(null);
+  const [unavailableMessage, setUnavailableMessage] = useState(null);
   const [price, setPrice] = useState(null);
   const [priceCheaperKit, setPriceCheaperKit] = useState(null);
   const [kitsRemaining, setKitsRemaining] = useState(null);
@@ -115,16 +117,21 @@ function Plus() {
       "https://black-friday-discount.gladysassistant.workers.dev/"
     );
     const data = await response.json();
-    setKitsRemaining(data.remaining);
-    setPrice(data.price);
-    setPriceCheaperKit(data.cheaper_mini_pc.price);
-    setCouponCode(data.validCoupon);
-    setCheaperKitCouponCode(data.cheaper_mini_pc.validCoupon);
-    setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
-    if (data.total !== undefined && data.remaining !== undefined) {
-      const progressPercentage =
-        ((data.total - data.remaining) / data.total) * 100;
-      setProgressPercentage(progressPercentage);
+    if (data.unavailable === true) {
+      setIsUnavailable(true);
+      setUnavailableMessage(data.message);
+    } else {
+      setKitsRemaining(data.remaining);
+      setPrice(data.price);
+      setPriceCheaperKit(data.cheaper_mini_pc.price);
+      setCouponCode(data.validCoupon);
+      setCheaperKitCouponCode(data.cheaper_mini_pc.validCoupon);
+      setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
+      if (data.total !== undefined && data.remaining !== undefined) {
+        const progressPercentage =
+          ((data.total - data.remaining) / data.total) * 100;
+        setProgressPercentage(progressPercentage);
+      }
     }
     setLoading(false);
   }
@@ -222,16 +229,31 @@ function Plus() {
                     </div>
                   )}
                   <span>
-                    <label
-                      style={{ display: "block" }}
-                      className={cx({
-                        [styles.loadingAnimation]: loading,
-                      })}
-                    >
-                      <span style={{ fontSize: "30px", fontWeight: "bold" }}>
-                        {price}€
-                      </span>
-                    </label>
+                    {!isUnavailable && (
+                      <label
+                        style={{ display: "block" }}
+                        className={cx({
+                          [styles.loadingAnimation]: loading,
+                        })}
+                      >
+                        <span style={{ fontSize: "30px", fontWeight: "bold" }}>
+                          {price}€
+                        </span>
+                      </label>
+                    )}
+
+                    {isUnavailable && (
+                      <label
+                        style={{ display: "block" }}
+                        className={cx({
+                          [styles.loadingAnimation]: loading,
+                        })}
+                      >
+                        <span style={{ fontSize: "30px", fontWeight: "bold" }}>
+                          {unavailableMessage}
+                        </span>
+                      </label>
+                    )}
 
                     <label
                       style={{ display: "block", fontSize: "14px" }}
@@ -241,7 +263,7 @@ function Plus() {
                       type="submit"
                       onClick={subscribe}
                       value="Commander maintenant le S12 Pro !"
-                      disabled={loading}
+                      disabled={isUnavailable || loading}
                       className={cx(
                         "button button--primary",
                         styles.starterKitInputButton
@@ -449,10 +471,12 @@ function Plus() {
                     <tr>
                       <td>Prix du starter kit</td>
                       <td>
-                        <b>{priceCheaperKit} €</b>
+                        {!isUnavailable && <b>{priceCheaperKit} €</b>}
+                        {isUnavailable && <b>{unavailableMessage}</b>}
                       </td>
                       <td>
-                        <b>{price} €</b>
+                        {!isUnavailable && <b>{price} €</b>}
+                        {isUnavailable && <b>{unavailableMessage}</b>}
                       </td>
                     </tr>
                     <tr>
@@ -462,7 +486,7 @@ function Plus() {
                           type="submit"
                           onClick={subscribeCheaperPc}
                           value="Commander S12"
-                          disabled={loading}
+                          disabled={isUnavailable || loading}
                           className={cx("button button--primary")}
                         />
                       </td>
@@ -471,7 +495,7 @@ function Plus() {
                           type="submit"
                           onClick={subscribe}
                           value="Commander S12 Pro"
-                          disabled={loading}
+                          disabled={isUnavailable || loading}
                           className={cx("button button--primary")}
                         />
                       </td>
