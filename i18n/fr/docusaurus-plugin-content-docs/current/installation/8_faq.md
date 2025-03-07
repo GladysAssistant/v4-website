@@ -4,38 +4,34 @@ title: FAQ
 sidebar_label: FAQ
 ---
 
-### Comment mettre à jour Gladys ?
+## Comment mettre à jour Gladys ?
 
-Nous recommandons l'utilisation de [Watchtower](https://containrrr.dev/watchtower/).
+Nous recommandons l'utilisation de [Watchtower](https://containrrr.dev/watchtower/), un conteneur Docker qui fonctionne en parallèle de Gladys et vérifie toutes les 24 heures si une nouvelle mise à jour est disponible.
 
-Watchtower est un container Docker qui tourne à côté de Gladys, et qui vérifie toutes les 24h si il y a une nouvelle mise à jour de Gladys.
+## Qui utilise Gladys Assistant 4 ?
 
-### Qui utilise Gladys Assistant 4 ?
+La version 4 de Gladys Assistant est sortie en [novembre 2020](/fr/blog/lancement-gladys-assistant-4/).
 
-La v4 de Gladys Assistant est sortie en [Novembre 2020](/fr/blog/lancement-gladys-assistant-4/).
+Gladys Assistant est utilisé par une grande variété d'utilisateurs :
 
-Gladys Assistant est installée par tout type d'utilisateurs :
+- **Des débutants complets**, souhaitant automatiser leur maison avec un outil simple, puissant et respectueux de leur vie privée.
+- **Des développeurs**, fascinés par l'idée de coder pour leur maison et qui contribuent activement à ce projet open-source.
+- **Des professionnels**, gérant des parcs de capteurs impressionnants (Oui, nous parlons de vous [@Terdious](https://community.gladysassistant.com/u/terdious/summary) 😛).
 
-- Des novices complet, qui veulent automatiser leur maison avec un produit simple, puissant et respectueux de leur vie privée.
-- Des développeurs qui trouvent ça fou de pouvoir coder pour leur maison et qui contribuent à ce projet open-source !
-- Des pros, qui gère des parcs de capteurs impressionants (Oui, on parle de toi [@Terdious](https://community.gladysassistant.com/u/terdious/summary) 😛)
+## Comment contribuer au projet ?
 
-### Comment contribuer au projet ?
+Gladys Assistant est entièrement open-source et disponible sur [GitHub](https://github.com/GladysAssistant/gladys). Toute contribution est la bienvenue ! 🙂
 
-Gladys Assistant est entièrement open-source et disponible sur [GitHub](https://github.com/GladysAssistant/gladys).
+Si vous souhaitez contribuer, nous vous invitons à en discuter sur [la communauté](https://community.gladysassistant.com/) avant de vous lancer. Cela permet d'éviter les doublons et de discuter des spécifications avec les autres développeurs afin de s'assurer que votre travail s'insère parfaitement dans le projet.
 
-Toute PR est la bienvenue 🙂
+## Quelle est la philosophie du projet ?
 
-Si tu veux contribuer, n'hésite pas à venir sur [la communauté](https://community.gladysassistant.com/) pour parler du développement sur lequel tu veux te lancer. Ça permettra de voir avec les autres développeurs si quelqu'un d'autre ne travaille pas déjà dessus, et surtout de discuter "spécifications" avec la communauté avant de partir dans le développement !
+L'objectif de Gladys Assistant est de proposer un logiciel de domotique :
 
-### C'est quoi la philosophie du projet ?
-
-L'objectif du projet, c'est de créer un logiciel de domotique :
-
-- **Respectueux de la vie privée**, les données sont stockées en local chez l'utilisateur.
-- **Simple à utiliser**. L'expérience utilisateur est notre priorité. Gladys a été développé avec le souci du détail, chaque fonctionnalité a été pensée avant d'être développée. Ce ne sont pas les contraintes techniques qui définissent nos choix produits, c'est notre exigence produit qui nous force à trouver des solutions techniques.
-- **Design**. La belle interface de Gladys Assistant est la signature du projet, et nous passons beaucoup de temps à faire en sorte que cela reste le cas.
-- **Performant**. Gladys doit être capable d'encaisser une certaine charge sans compromettre la fluidité de l'interface.
-- **Léger**. Nous souhaitons que le logiciel ait une empreinte minimale sur le système de l'utilisateur. Nous passons beaucoup de temps à analyser les dépendances que nous utilisons, afin de fournir un produit léger.
-- **Stable**. Gladys doit rester stable, sur le long terme. Nous voulons que nos utilisateurs utilisent Gladys pendant des années, sans interruption de services, avec des mises à jour en continu et sans accroc.
-- **Sécurisé** : Nous mettons toutes les bonnes pratiques en place pour que Gladys soit sécurisée. Nous avons des processus automatisés en place pour garantir que des régressions de sécurités ne soient pas introduites dans chaque version de Gladys.
+- **Respectueux de la vie privée** : Toutes les données sont stockées en local, chez l'utilisateur.
+- **Simple à utiliser** : L'expérience utilisateur est notre priorité absolue. Chaque fonctionnalité est soigneusement pensée avant d'être développée.
+- **Esthétique** : L'interface soignée de Gladys Assistant est une signature du projet. Nous consacrons du temps à maintenir un design fluide et agréable.
+- **Performant** : Gladys doit supporter une charge importante sans compromettre la réactivité de l'interface.
+- **Léger** : Nous optimisons en permanence l'empreinte système de Gladys en sélectionnant avec soin nos dépendances.
+- **Stable** : Nous garantissons des mises à jour continues et sans accroc, permettant une utilisation fluide sur le long terme.
+- **Sécurisé** : Nous appliquons les meilleures pratiques pour assurer la sécurité de Gladys et utilisons des processus automatisés afin de prévenir toute régression de sécurité dans chaque version.
