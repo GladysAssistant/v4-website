@@ -4,83 +4,77 @@ title: Utiliser Alexa avec Gladys Assistant
 sidebar_label: Alexa
 ---
 
-Salut à tous !
+## Introduction
 
-L'intégration Alexa est maintenant disponible 🥳
+L'intégration d'Alexa avec Gladys Assistant est désormais disponible ! 🎉
 
-Ce tutoriel vous expliquera comment configurer Alexa en quelques minutes sur votre instance Gladys.
+Ce guide vous expliquera comment la configurer en quelques minutes sur votre instance Gladys.
 
-## Un petit mot avant de commencer
+## Avant de commencer
 
-L'intégration Alexa est une intégration particulière.
+L'intégration Alexa est un cas particulier.
 
-Alexa étant un produit 100% Cloud, Amazon demande à ce que ses partenaires soient eux aussi hébergés dans le Cloud.
+Étant un service 100 % cloud, Amazon exige que ses partenaires soient également hébergés dans le cloud. Contrairement aux autres intégrations qui peuvent fonctionner entièrement en local, Alexa nécessite une intégration approuvée par Amazon et hébergée sur Internet.
 
-Ainsi, contrairement aux autres intégrations qui peuvent fonctionner entièrement localement, Alexa par nature ne peut fonctionner qu'en passant par une intégration approuvée par Amazon, et hébergée dans le cloud.
+Pour permettre à la communauté d'utiliser Alexa avec Gladys, nous avons développé une intégration spécifique via [Gladys Plus](/fr/plus), notre passerelle web sécurisée.
 
-Afin de permettre à la communauté Gladys d'utiliser Alexa avec Gladys, nous avons développé notre propre intégration Alexa, via [Gladys Plus](/fr/plus), notre passerelle web.
+Devenir partenaire Alexa n'a pas été une tâche facile. Nous avons dû :
 
-Être partenaire Alexa n'était pas une tâche facile, il nous a fallu :
+- Obtenir une certification officielle d'Amazon
+- Réussir des tests automatisés
+- Passer une revue manuelle avec un employé d'Amazon
 
-- Passer une certification pour être partenaire Alexa
-- Valider des tests automatisés
-- Passer une revue manuelle avec un employé de chez Amazon
+Ce processus, ainsi que la maintenance et les coûts d'infrastructure associés, expliquent la nécessité d'un abonnement pour utiliser cette intégration. Nous espérons que vous comprendrez. 😊
 
-Tout ce process, la maintenance et les coûts d'infrastructure demandée par cette intégration justifient la participation que nous demandons pour faire fonctionner cette intégration, et j'espère que vous comprendrez.
+## Création d'un compte Gladys Plus
 
-## Créer un compte Gladys Plus
+Vous pouvez créer un compte sur [Gladys Plus](/fr/plus).
 
-Tu peux créer un compte sur cette page de [Gladys Plus](/fr/plus).
+Vos retours sont toujours les bienvenus, que ce soit par email ou sur le [forum](https://community.gladysassistant.com/) !
 
-N'hésite pas à nous faire des retours (par email ou sur le forum) !
+## Configuration de Gladys Plus
 
-## Configurer Gladys Plus
+Après votre inscription, vous recevrez un email avec les instructions de configuration.
 
-Tu vas normalement recevoir un email qui t'expliquera comment configurer Gladys Plus.
-
-Tu peux suivre les étapes dans le mail.
-
-Si tu veux, j'ai aussi fait un live où je montre comment configurer Gladys Plus:
+Vous pouvez suivre ces étapes ou consulter notre tutoriel vidéo :
 
 <div class="youtubeVideoContainerInBlog">
-<iframe  src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe src="https://www.youtube.com/embed/TmjrBeufjyo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-## Configurer Alexa
+## Configuration d'Alexa
 
-Allez à "Skills & Games" :
+1. Ouvrez l'application Alexa et accédez à "Skills & Games".
 
-![Intégration Alexa dans Gladys](../../../../../static/img/docs/fr/configuration/alexa/1-add-skill.jpg)
+   ![Ajout de la skill Gladys](../../../../../static/img/docs/fr/configuration/alexa/1-add-skill.jpg)
 
-Cliquez sur l'intégration "Gladys Assistant" :
+2. Recherchez "Gladys Assistant" et sélectionnez l'intégration.
 
-![Intégration Alexa dans Gladys](../../../../../static/img/docs/fr/configuration/alexa/2-click-on-gladys.jpg)
+   ![Sélection de Gladys Assistant](../../../../../static/img/docs/fr/configuration/alexa/2-click-on-gladys.jpg)
 
-Activez l'intégration
+3. Activez l'intégration.
 
-![Intégration Alexa dans Gladys](../../../../../static/img/docs/fr/configuration/alexa/3-activate.jpg)
+   ![Activation de l'intégration](../../../../../static/img/docs/fr/configuration/alexa/3-activate.jpg)
 
-Vous devez ensuite vous connecter avec votre compte Gladys Plus.
+4. Connectez-vous avec votre compte Gladys Plus.
 
-![Intégration Alexa dans Gladys](../../../../../static/img/docs/fr/configuration/alexa/4-connect-gladys-plus.jpg)
+   ![Connexion à Gladys Plus](../../../../../static/img/docs/fr/configuration/alexa/4-connect-gladys-plus.jpg)
 
-Succès !
+5. Une fois connecté, l'intégration est activée avec succès ! 🎉
 
-![Intégration Alexa dans Gladys](../../../../../static/img/docs/fr/configuration/alexa/5-success.jpg)
+   ![Succès](../../../../../static/img/docs/fr/configuration/alexa/5-success.jpg)
 
-Alexa va maintenant scanner votre instance Gladys pour trouver des appareils compatibles.
+6. Alexa va maintenant scanner votre instance Gladys pour détecter les appareils compatibles.
 
-![Intégration Alexa dans Gladys](../../../../../static/img/docs/fr/configuration/alexa/6-scan-for-devices.jpg)
+   ![Scan des appareils](../../../../../static/img/docs/fr/configuration/alexa/6-scan-for-devices.jpg)
 
-![Intégration Alexa dans Gladys](../../../../../static/img/docs/fr/configuration/alexa/7-scanning.jpg)
+   ![En cours de scan](../../../../../static/img/docs/fr/configuration/alexa/7-scanning.jpg)
 
 ## Appareils compatibles
 
-Pour l'instant, seuls les appareils suivants sont supportés par l'intégration :
+Actuellement, les appareils suivants sont pris en charge :
 
-- Lampes (On/Off, Couleur et luminosité)
-- Prises (On/Off)
+- **Lampes** : On/Off, couleur et luminosité
+- **Prises** : On/Off
 
-Sur demande, nous ajouterons d'autres appareils suivant les besoins de la communauté.
-
-Je vous invite à poster un message sur [le forum](https://community.gladysassistant.com/), ou à me contacter par email si jamais une intégration vous manque.
+Nous ajouterons d'autres types d'appareils en fonction des besoins de la communauté. N'hésitez pas à en faire la demande sur [le forum](https://community.gladysassistant.com/) ou à nous contacter par email !

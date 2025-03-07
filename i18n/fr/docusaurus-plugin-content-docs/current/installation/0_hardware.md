@@ -9,7 +9,7 @@ Il peut être difficile de savoir par où commencer lorsque l'on débute en domo
 
 Ce guide vous aidera à répondre à ces questions et vous offrira un point de départ pour créer votre maison connectée de zéro.
 
-## Définir son projet de maison connectée
+## Définir votre projet de maison connectée
 
 Le plus important est de définir les automatisations que vous souhaitez mettre en place chez vous : des lumières connectées, une alarme pour sécuriser votre domicile, des économies d'énergie en coupant les appareils inutilisés ou le chauffage ?
 
@@ -30,7 +30,7 @@ Un bon moyen de s'organiser est de créer un tableau (sur Excel, Google Sheets o
 
 L'idée n'est pas nécessairement d'acheter tout d'un coup, mais plutôt de planifier et d'équiper progressivement votre maison, sauf si vous venez d'emménager et souhaitez tout installer immédiatement.
 
-## Choisir sa box domotique
+## Choisir votre box domotique
 
 Gladys Assistant est un logiciel auto-hébergé, ce qui signifie que tout fonctionne en local sur une box domotique. C'est l'une de ses principales forces !
 
@@ -49,12 +49,12 @@ Gladys peut tourner sur n'importe quelle machine sous Linux :
 
 - **Raspberry Pi**
   - Si vous possédez déjà un Raspberry Pi, cela peut être une solution pour tester Gladys.
-  - Cependant, **je déconseille cette option sur le long terme** pour plusieurs raisons :
+  - Cependant, **cette option est déconseillée sur le long terme** pour plusieurs raisons :
     - Le coût total est relativement élevé, en tenant compte du Pi, de l'alimentation, du boîtier et du SSD.
     - L'utilisation d'une carte micro-SD pour le stockage est **fortement déconseillée**, car elle entraîne un risque élevé de corruption des données.
     - Les problèmes d'instabilité de l'alimentation via les ports USB rendent l'utilisation de dongles Zigbee/Z-Wave difficile et peu fiable.
 
-Si tu es intéressé par la gamme Beelink, je propose un kit de démarrage basé sur cette marque, [accessible dès 165€](/fr/starter-kit/).
+Si vous êtes intéressé par la gamme Beelink, je propose un kit de démarrage basé sur cette marque, [disponible dès 165€](/fr/starter-kit/).
 
 ## Installation de Gladys Assistant
 
@@ -68,26 +68,26 @@ Selon le matériel choisi, vous pouvez suivre l'un des tutoriels suivants :
 
 ## Configuration de votre maison connectée
 
-Une fois que Gladys tourne chez vous, vous allez pouvoir y accéder via votre navigateur web et la configuration de votre maison.
+Une fois que Gladys fonctionne chez vous, vous pourrez y accéder via votre navigateur web et configurer votre maison.
 
 ![Installation de Gladys](../../../../../static/img/docs/fr/installation/guide/welcome-gladys.jpg)
 
-Il vous suffit ici de suivre les étapes.
+Il vous suffira de suivre les étapes.
 
-Nous allons d’abord créer le compte de l’administrateur principal de votre maison connectée :
+Vous commencerez par créer le compte de l’administrateur principal de votre maison connectée :
 
 ![Créer compte local Gladys](../../../../../static/img/docs/fr/installation/guide/create-local-account.jpg)
 
-Ensuite, Gladys vous demande quelques préférences :
+Ensuite, Gladys vous demandera quelques préférences :
 
 ![Définir préférences compte local Gladys](../../../../../static/img/docs/fr/installation/guide/preferences.jpg)
 
-Enfin, vous pouvez nommer votre maison :
+Enfin, vous pourrez nommer votre maison :
 
 ![Créer maison dans Gladys](../../../../../static/img/docs/fr/installation/guide/configure-house.jpg)
 
-Voilà ! Tu as maintenant un système de maison connectée Gladys chez toi.
+Voilà ! Vous avez maintenant un système de maison connectée Gladys opérationnel.
 
-Tu peux maintenant mettre en place les différentes intégrations présentes dans Gladys.
+Vous pouvez maintenant mettre en place les différentes intégrations présentes dans Gladys.
 
-Si tu as des questions, rejoins-nous dès maintenant [sur le forum](https://community.gladysassistant.com/) !
+Si vous avez des questions, rejoignez-nous dès maintenant [sur le forum](https://community.gladysassistant.com/) !
