@@ -165,11 +165,11 @@ function Plus() {
   let dntActive = false;
 
   if (isBrowser) {
-    dntActive = isBrowser;
-    parseInt(
-      navigator.msDoNotTrack || window.doNotTrack || navigator.doNotTrack,
-      10
-    ) === 1;
+    dntActive =
+      parseInt(
+        navigator.msDoNotTrack || window.doNotTrack || navigator.doNotTrack,
+        10
+      ) === 1;
   }
 
   const subscribe = (e) => {
