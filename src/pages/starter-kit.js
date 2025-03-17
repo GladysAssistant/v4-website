@@ -160,16 +160,36 @@ function Plus() {
     }
   };
 
+  const dntActive =
+    parseInt(
+      navigator.msDoNotTrack || window.doNotTrack || navigator.doNotTrack,
+      10
+    ) === 1;
+
   const subscribe = (e) => {
     e.preventDefault();
     const locale = isFr() ? "fr" : "en";
-    window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=${couponCode}`;
+    const openStripe = () => {
+      window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=${couponCode}`;
+    };
+    if (window.sa_loaded && !dntActive) {
+      sa_event("starter_kit_click_buy_mini_s12_pro", openStripe);
+    } else {
+      openStripe();
+    }
   };
 
   const subscribeCheaperPc = (e) => {
     e.preventDefault();
     const locale = isFr() ? "fr" : "en";
-    window.location.href = `https://buy.stripe.com/6oEcNhaZ45hEbgk28f?prefilled_promo_code=${cheaperKitCouponCode}`;
+    const openStripe = () => {
+      window.location.href = `https://buy.stripe.com/6oEcNhaZ45hEbgk28f?prefilled_promo_code=${cheaperKitCouponCode}`;
+    };
+    if (window.sa_loaded && !dntActive) {
+      sa_event("starter_kit_click_buy_mini_s12", openStripe);
+    } else {
+      openStripe();
+    }
   };
 
   const updateEmail = (e) => {
