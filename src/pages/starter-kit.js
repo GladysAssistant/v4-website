@@ -6,6 +6,7 @@ import cx from "classnames";
 import { useColorMode } from "@docusaurus/theme-common";
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import useIsBrowser from "@docusaurus/useIsBrowser";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import styles from "./styles.module.css";
@@ -92,6 +93,7 @@ const targetDate = new Date(1733104800000);
 
 function Plus() {
   const context = useDocusaurusContext();
+  const isBrowser = useIsBrowser();
   const isDarkTheme = useColorMode().colorMode === "dark";
   const { i18n } = context;
   const language = i18n.currentLocale;
@@ -160,35 +162,43 @@ function Plus() {
     }
   };
 
-  const dntActive =
+  let dntActive = false;
+
+  if (isBrowser) {
+    dntActive = isBrowser;
     parseInt(
       navigator.msDoNotTrack || window.doNotTrack || navigator.doNotTrack,
       10
     ) === 1;
+  }
 
   const subscribe = (e) => {
     e.preventDefault();
     const locale = isFr() ? "fr" : "en";
-    const openStripe = () => {
-      window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=${couponCode}`;
-    };
-    if (window.sa_loaded && !dntActive) {
-      sa_event("starter_kit_click_buy_mini_s12_pro", openStripe);
-    } else {
-      openStripe();
+    if (isBrowser) {
+      const openStripe = () => {
+        window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=${couponCode}`;
+      };
+      if (window.sa_loaded && !dntActive) {
+        sa_event("starter_kit_click_buy_mini_s12_pro", openStripe);
+      } else {
+        openStripe();
+      }
     }
   };
 
   const subscribeCheaperPc = (e) => {
     e.preventDefault();
     const locale = isFr() ? "fr" : "en";
-    const openStripe = () => {
-      window.location.href = `https://buy.stripe.com/6oEcNhaZ45hEbgk28f?prefilled_promo_code=${cheaperKitCouponCode}`;
-    };
-    if (window.sa_loaded && !dntActive) {
-      sa_event("starter_kit_click_buy_mini_s12", openStripe);
-    } else {
-      openStripe();
+    if (isBrowser) {
+      const openStripe = () => {
+        window.location.href = `https://buy.stripe.com/6oEcNhaZ45hEbgk28f?prefilled_promo_code=${cheaperKitCouponCode}`;
+      };
+      if (window.sa_loaded && !dntActive) {
+        sa_event("starter_kit_click_buy_mini_s12", openStripe);
+      } else {
+        openStripe();
+      }
     }
   };
 
