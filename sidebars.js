@@ -30,6 +30,7 @@ module.exports = {
         "integrations/broadlink",
         "integrations/caldav",
         "integrations/camera",
+        "integrations/callmebot",
         "integrations/enedis",
         "integrations/free-mobile",
         "integrations/google-cast",
