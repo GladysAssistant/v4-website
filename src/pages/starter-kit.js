@@ -267,7 +267,7 @@ function Plus() {
                         })}
                       >
                         <span style={{ fontSize: "30px", fontWeight: "bold" }}>
-                          {price}€
+                          À partir de {priceCheaperKit}€
                         </span>
                       </label>
                     )}
@@ -292,7 +292,7 @@ function Plus() {
                     <input
                       type="submit"
                       onClick={subscribe}
-                      value="Commander maintenant le S12 Pro !"
+                      value={`Commander maintenant le S12 Pro ! (${price}€)`}
                       disabled={isUnavailable || loading}
                       className={cx(
                         "button button--primary",
@@ -433,13 +433,14 @@ function Plus() {
           </div>
           <div className={cx("row", styles.starterKitRow)}>
             <div className="col col--12">
-              <h2 className={cx(styles.plusTooExpensiveTitle)}>Trop cher ?</h2>
+              <h2 className={cx(styles.plusTooExpensiveTitle)}>
+                Beelink mini S12 ou Pro ?
+              </h2>
               <p>
-                <strong>Janvier 2025 :</strong> Je comprends que certains
-                puissent trouver le kit un peu cher. C'est pourquoi j'ai décidé
-                de lancer une version plus accessible à {priceCheaperKit} €,
-                équipée d'un mini-PC moins puissant mais tout à fait adapté pour
-                commencer.
+                Je comprends que certains puissent trouver le kit un peu cher.
+                C'est pourquoi j'ai décidé de lancer une version plus accessible
+                à {priceCheaperKit} €, équipée d'un mini-PC moins puissant mais
+                tout à fait adapté pour commencer.
               </p>
 
               <p>

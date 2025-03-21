@@ -318,7 +318,7 @@ function Home({ integrations, lang }) {
                       )}
                       href="/fr/starter-kit/"
                     >
-                      Le kit de démarrage officiel
+                      Le kit de démarrage (dès 165€)
                     </Link>
                   </div>
                 )}
