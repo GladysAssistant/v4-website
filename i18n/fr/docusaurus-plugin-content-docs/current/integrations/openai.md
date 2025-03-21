@@ -24,13 +24,15 @@ Ensuite, vous pouvez discuter avec ChatGPT dans l’onglet discussion ou via not
 
 ## Les commandes disponibles
 
-Il y a actuellement 7 commandes disponibles :
+Il y a actuellement 9 commandes disponibles :
 
 | Action                                | Exemple                                             |
 | ------------------------------------- | --------------------------------------------------- |
 | Affichage caméra dans une pièce       | Montre-moi la caméra du salon                       |
 | Allumage de la lumière                | Allume la lumière dans la cuisine                   |
 | Éteindre la lumière                   | Éteins la lumière de la cuisine                     |
+| Allumage d'une prise connectée        | Allume la prise "machine à laver"                   |
+| Éteindre une prise connectée          | Éteins la prise "machine à laver"                   |
 | Récupérer la température              | Quelle température fait-il dans le jardin ?         |
 | Récupérer l’humidité                  | Quel est le taux d’humidité dans la salle de bain ? |
 | Lancer une scène                      | Lance la scène “Mode cinéma”                        |

@@ -24,14 +24,16 @@ Then you can chat with ChatGPT in the chat tab or via our Telegram integration.
 
 ## Available commands
 
-There are currently 7 commands available:
+There are currently 9 available commands:
 
-| Action                    | Example                                     |
-| ------------------------- | ------------------------------------------- |
-| Show camera in a room     | Show me the camera in the living room       |
-| Turn on the light         | Turn on the light in the kitchen            |
-| Turn off the light        | Turn off the light in the kitchen           |
-| Get temperature in a room | What’s the temperature in the garden ?      |
-| Get humidity in a room    | What’s the humidity level in the bathroom ? |
-| Start a scene             | Start the “cinema” scene                    |
-| Get useful informations   | How do you boil an egg?                     |
+| Action                       | Example                                     |
+| ---------------------------- | ------------------------------------------- |
+| Display camera in a room     | Show me the living room camera              |
+| Turn on the light            | Turn on the kitchen light                   |
+| Turn off the light           | Turn off the kitchen light                  |
+| Turn on a smart plug         | Turn on the "washing machine" plug          |
+| Turn off a smart plug        | Turn off the "washing machine" plug         |
+| Get the temperature          | What’s the temperature in the garden?       |
+| Get the humidity             | What is the humidity level in the bathroom? |
+| Start a scene                | Start the "Cinema Mode" scene               |
+| Retrieve general information | Who is Jules Verne?                         |
