@@ -292,7 +292,7 @@ function Plus() {
                     <input
                       type="submit"
                       onClick={subscribe}
-                      value={`Commander maintenant le S12 Pro ! ${
+                      value={`Commander le S12 Pro ! ${
                         price ? `(${price}€)` : ""
                       }`}
                       disabled={isUnavailable || loading}
