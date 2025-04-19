@@ -1,33 +1,45 @@
 ---
 id: homekit
-title: Connecter Gladys à HomeKit et utilisez Siri
+title: Connecter Gladys à HomeKit et utiliser Siri
 sidebar_label: HomeKit
 ---
 
 ## Côté Gladys
 
-Pour connecter votre instance Gladys à HomeKit, allez dans `Intégrations / HomeKit`.
+Pour connecter votre instance Gladys à HomeKit, rendez-vous dans le menu `Intégrations` puis cliquez sur `HomeKit`.
 
-## Application Maison
+Vous y trouverez un QR code qui permettra à l’application Maison d’ajouter Gladys comme pont HomeKit.
 
-Sur votre iPhone, iPad ou iPod Touch, rendez vous sur l'application Maison.
+## Application Maison (Home)
 
-Cliquez en haut à droite sur `+` -> `Ajouter un accessoire`.
+Sur votre iPhone, iPad ou iPod Touch, ouvrez l'application **Maison**.
 
-Scannez le QR code affiché dans la page de l'intégration. Gladys étant considéré comme un pont, l'application Maison connectera automatiquement l'ensemble des appareils compatibles dans le réseau HomeKit. Lors de cette première connexion Maison vous proposera de définir la position de chaque appareils. Choisissez une pièce préconfiguré ou créé en une.
+1. Cliquez en haut à droite sur `+` puis sélectionnez `Ajouter un accessoire`.
+2. Scannez le **QR code** affiché dans l’intégration HomeKit de Gladys.
+3. L'application va détecter Gladys comme un **pont HomeKit** et ajouter automatiquement tous les appareils compatibles.
 
-Vous pouvez maintenant controller vos appareils sur l'application Maison ou vocalement avec Siri.
+Lors de cette première connexion, l'application vous demandera d’attribuer chaque appareil à une pièce. Vous pouvez sélectionner une pièce existante ou en créer une nouvelle.
+
+Vous pouvez désormais **contrôler vos appareils via l’application Maison ou vocalement avec Siri** 🗣️✨
 
 ## Appareils compatibles
 
-- Ampoules (On/Off, couleur, température et luminosité)
-- Prises (On/Off)
-- Capteur de température
-- Capteur d'ouverture (porte, fenêtre...)
+Voici la liste des appareils actuellement pris en charge :
 
-Sur demande, nous ajouterons d'autres appareils suivant les besoins de la communauté, n'hésitez pas à passer sur [le forum](https://community.gladysassistant.com/).
+- 💡 Ampoules (On/Off, couleur, température, luminosité)
+- 🔌 Prises (On/Off)
+- 🌡️ Capteurs de température
+- 💧 Capteurs d'humidité
+- 🚪 Capteurs d'ouverture (portes, fenêtres…)
+- 🪟 Volets roulants et rideaux
 
-## Note : Ajout d'appareils après la première connexion à HomeKit
+Nous ajoutons régulièrement de nouveaux types d’appareils en fonction des besoins de la communauté. N’hésitez pas à faire vos suggestions sur [le forum Gladys](https://community.gladysassistant.com/) !
 
-Si vous connectez un appareil à Gladys après avoir lié votre instance à HomeKit, l'appareil (s'il est compatible) sera automatiquement ajouté à une pièce par défaut, vous devrez la changer manuellement.
-Si le nouvel appareil n'apparait pas dans le réseau HomeKit il peut être nécessaire de recharger l'intégration HomeKit en cliquant sur `Relancer` puis attendez quelques secondes.
+## Ajouter de nouveaux appareils après la connexion initiale
+
+Si vous ajoutez un appareil dans Gladys après avoir connecté HomeKit :
+
+- S’il est **compatible**, il sera automatiquement ajouté à HomeKit, dans une **pièce par défaut**. Vous pourrez ensuite le déplacer dans la pièce souhaitée.
+- Si le nouvel appareil **n’apparaît pas**, vous pouvez redémarrer l’intégration HomeKit en cliquant sur le bouton `Relancer`, puis patienter quelques secondes le temps que le pont redémarre.
+
+🛠️ Besoin d’aide ? Rendez-vous sur [le forum de la communauté](https://community.gladysassistant.com/), on est là pour vous aider !

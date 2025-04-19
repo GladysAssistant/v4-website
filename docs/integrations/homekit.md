@@ -4,30 +4,42 @@ title: Connect Gladys to HomeKit and use Siri
 sidebar_label: HomeKit
 ---
 
-## On Gladys
+## On the Gladys Side
 
-To connect Gladys to HomeKit, go to `Integrations / HomeKit`.
+To connect your Gladys instance to HomeKit, go to the `Integrations` menu and click on `HomeKit`.
+
+You’ll find a QR code there that allows the Apple Home app to add Gladys as a HomeKit bridge.
 
 ## Home App
 
-On your iPhone, iPad, iTouch, open Home App.
+On your iPhone, iPad, or iPod Touch, open the **Home** app.
 
-Clic on top-right `+` -> `Add accessory`.
+1. Tap the `+` icon at the top right, then select `Add Accessory`.
+2. Scan the **QR code** displayed in the HomeKit integration page in Gladys.
+3. The app will detect Gladys as a **HomeKit bridge** and automatically import all compatible devices.
 
-Scan the code QR display on integration page. Gladys is seen as a bridge, Home app will connect all compatible devices to HomeKit network. During the first connection, you Maison will propose you to define the position of each device. Choose a predifined room or create one.
+During this initial setup, the app will ask you to assign each device to a room. You can either select an existing room or create a new one.
 
-That's all, you can control your devices with Home app or using Siri.
+You can now **control your devices via the Home app or with Siri voice commands** 🗣️✨
 
-## Compatible devices
+## Supported Devices
 
-- Bulb (On/Off, color, temperature et brightness)
-- Switch (On/Off)
-- Temperature sensor
-- Opening sensor (door, window...)
+Here is the list of currently supported devices:
 
-Additionnal compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).
+- 💡 Light bulbs (On/Off, color, temperature, brightness)
+- 🔌 Plugs (On/Off)
+- 🌡️ Temperature sensors
+- 💧 Humidity sensors
+- 🚪 Door/window sensors
+- 🪟 Roller shutters and curtains
 
-## Note: Add device after first HomeKit connection
+We regularly add support for new device types based on community feedback. Feel free to suggest yours on the [Gladys forum](https://en-community.gladysassistant.com/)!
 
-If you connect a device to Gladys after the first connection to HomeKit, it should be automatically add to a default room, you will have to change it manually.
-If your new device is not visible on Home app, you can reload HomeKit intégration by clicking on `Reload`, then wait a few seconds.
+## Adding New Devices After Initial Pairing
+
+If you add a new device in Gladys after you’ve already linked to HomeKit:
+
+- If the device is **compatible**, it will be automatically added to HomeKit in a **default room**. You can then move it to the correct room manually.
+- If the new device **doesn’t appear**, try restarting the HomeKit integration by clicking the `Restart` button, then wait a few seconds for the bridge to reload.
+
+🛠️ Need help? Join us on the [Gladys community forum](https://en-community.gladysassistant.com/) — we’re here to support you!
