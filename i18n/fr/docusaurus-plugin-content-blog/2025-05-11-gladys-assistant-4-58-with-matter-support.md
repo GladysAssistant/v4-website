@@ -10,6 +10,8 @@ Si vous êtes sur le forum Gladys, vous l'aurez remarqué : les dernières semai
 
 Aujourd'hui, je suis très heureux de sortir **Gladys Assistant 4.58**, qui apporte notamment le support de Matter, mais ce n'est loin d'être la seule chose intéressante dans cette version 😄
 
+<!--truncate-->
+
 ## Intégration Matter
 
 J'en parlais dans mon [bilan de l'année 2024](/fr/blog/2024-year-in-review/), je suis persuadé que Matter est une petite révolution dans le monde de la maison connectée, et une révolution qui aura un **impact extrêmement positif pour Gladys**.
