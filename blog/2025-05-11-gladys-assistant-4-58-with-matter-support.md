@@ -153,7 +153,7 @@ If you're a beginner and looking for a simple and complete solution, I've design
 - Access to a **complete training** where I show you my setup step by step
 - One year subscription to **Gladys Plus**, with automatic backups, encrypted remote access, and more
 
-All starting at 165.98€, for now only shipping [in France](/fr/starter-kit/).
+All starting at 165.98€, for now only shipping [in France](https://gladysassistant.com/fr/starter-kit/).
 (Ping me if you want shipping to another country!)
 
 By choosing this kit, you save time, support an open-source project, and enjoy a solution designed to last 😎
