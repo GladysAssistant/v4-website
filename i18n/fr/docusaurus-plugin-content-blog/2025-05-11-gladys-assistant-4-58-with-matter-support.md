@@ -10,6 +10,8 @@ Si vous êtes sur le forum Gladys, vous l'aurez remarqué : les dernières semai
 
 Aujourd'hui, je suis très heureux de sortir **Gladys Assistant 4.58**, qui apporte notamment le support de Matter, mais ce n'est loin d'être la seule chose intéressante dans cette version 😄
 
+Si vous préférez en vidéo, j'étais en direct sur Youtube pour vous présenter cette version, le [replay est disponible ici](https://www.youtube.com/live/2_fGKdoiK2Q?si=MiU5UfUZ5xVU0-QI&t=57).
+
 <!--truncate-->
 
 ## Intégration Matter
