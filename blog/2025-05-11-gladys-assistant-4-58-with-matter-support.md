@@ -2,7 +2,7 @@
 title: Gladys Assistant Now Compatible with Matter
 description: "Discover Gladys Assistant v4.58: Matter support, but that's not the only new feature!"
 authors: pierregilles
-image: /img/presentation/gladys-4-58-en.jpg
+image: /img/presentation/gladys-assistant-4-58.jpg
 slug: gladys-assistant-4-58-with-matter-support
 ---
 
