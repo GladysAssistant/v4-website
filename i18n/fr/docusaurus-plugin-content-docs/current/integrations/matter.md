@@ -14,7 +14,7 @@ Gladys supporte les fonctionnalités suivantes :
 
 - **On/Off** : prises, lumières, climatisation, chauffage, ventilateurs, etc.
 - **Lumières** : gestion de la luminosité et des couleurs.
-- **Volets roulants / rideaux** : Monter, descendre, pause + réglage de la position.
+- **Volets roulants / rideaux** : monter, descendre, pause + réglage de la position.
 - **Thermostats** : réglage de la température cible.
 - **Climatisations** : réglage de la température cible.
 - **Capteurs de mouvement**
@@ -26,7 +26,7 @@ Si vous avez un appareil qui n'est pas encore géré, n'hésitez pas à venir en
 
 ## Matter vs Thread
 
-Matter est un **protocole applicatif**, c’est-à-dire qu’il définit comment les appareils communiquent entre eux au niveau des messages échangés : quels types de commandes sont possibles (par exemple, allumer une lumière, relever la température), dans quel format ces messages sont envoyés, et comment les appareils gèrent leur état, l’appairage, ou encore la sécurité.
+Matter est un **protocole applicatif**, c’est-à-dire qu’il définit comment les appareils communiquent entre eux au niveau des messages échangés : quels types de commandes sont possibles (par exemple, allumer une lumière, relever la température), dans quel format ces messages sont envoyés, et comment les appareils gèrent leur état, l’appairage ou encore la sécurité.
 
 En résumé, Matter se concentre sur le “quoi” et le “comment” des interactions entre appareils connectés.
 
@@ -34,21 +34,21 @@ Thread, de son côté, est un **protocole de réseau maillé bas niveau**, conç
 
 Thread gère le “comment ça circule”, c’est-à-dire le transport des messages à travers un réseau sans fil fiable, rapide et sécurisé.
 
-Il existe des appareils Matter utilisant Thread comme protocole réseau, mais pas que ! Il existe aussi des appareils Matter utilisant Wi-Fi, Ethernet, ou même Bluetooth comme protocole réseau.
+Il existe des appareils Matter utilisant Thread comme protocole réseau, mais pas seulement ! Il existe aussi des appareils Matter utilisant le Wi-Fi, l’Ethernet ou même le Bluetooth comme protocole réseau.
 
 ### Si votre appareil est déjà sur votre réseau
 
-Si votre appareil est compatible Matter et utilise le Wi-Fi/Ethernet, il est déjà sur votre réseau et peut-être utilisé directement dans Gladys !
+Si votre appareil est compatible Matter et utilise le Wi-Fi/Ethernet, il est déjà sur votre réseau et peut être utilisé directement dans Gladys !
 
 C'est par exemple le cas de tous les bridges Matter proposés par des fabricants comme Philips Hue, IKEA via leur passerelle DIRIGERA, etc.
 
-C'est aussi le cas de tous les appareils Wi-Fi comme des prises connectées, ampoules directement connectées au Wi-Fi.
+C'est aussi le cas de tous les appareils Wi-Fi comme des prises connectées ou des ampoules directement connectées au Wi-Fi.
 
 ### Matterbridge
 
 [Matterbridge](https://github.com/Luligu/matterbridge) est un projet open-source qui a pour objectif d'importer dans un réseau Matter des appareils qui ne sont pas compatibles Matter à la base.
 
-A ce jour, Matterbridge supporte :
+À ce jour, Matterbridge supporte :
 
 - [Shelly](https://github.com/Luligu/matterbridge-shelly)
 - [Somfy Tahoma](https://github.com/Luligu/matterbridge-somfy-tahoma)
@@ -62,7 +62,7 @@ A ce jour, Matterbridge supporte :
 
 Si votre appareil utilise Thread, il faudra le connecter à un routeur Thread avant de pouvoir l'utiliser dans Gladys.
 
-Le routeur Thread (ou "Thread Border Router" en anglais) fait le pont entre vos appareils Threads et votre réseau local à la maison.
+Le routeur Thread (ou "Thread Border Router" en anglais) fait le pont entre vos appareils Thread et votre réseau local à la maison.
 
 Beaucoup d'appareils du commerce sont des routeurs Thread :
 
@@ -77,7 +77,7 @@ Beaucoup d'appareils du commerce sont des routeurs Thread :
 - Amazon Echo Studio
 - Amazon Echo Show (21, 15, 10 et 8)
 
-Il est aussi possible de mettre en place un routeur Thread soit même avec un dongle USB Thread et OpenThread.
+Il est aussi possible de mettre en place un routeur Thread soi-même avec un dongle USB Thread et OpenThread.
 
 ## Configuration dans Gladys Assistant
 
@@ -99,12 +99,12 @@ Ensuite, rendez-vous dans l'onglet "Ajouter un appareil" pour appairer un nouvel
 Pour ajouter un appareil Matter, vous aurez besoin d'un code d'appairage à 11 chiffres.
 
 :::note
-Si votre appareil est déjà connecté à un autre contrôleur Matter, vous devrez utiliser un code d'appairage fourni par ce contrôleur, et non le code de l'appareil. **Exemple :** J'ai une prise Eve connectée à mon Apple TV 4K Ethernet. Le code d'appairage se trouve dans l'application "Maison" sur iOS.
+Si votre appareil est déjà connecté à un autre contrôleur Matter, vous devrez utiliser un code d'appairage fourni par ce contrôleur, et non le code de l'appareil. **Exemple :** j’ai une prise Eve connectée à mon Apple TV 4K Ethernet. Le code d'appairage se trouve dans l'application "Maison" sur iOS.
 :::
 
 Une fois que l'appareil est appairé, rendez-vous dans l'onglet "Appareils" pour l'ajouter à Gladys.
 
-Sur cet onglet, vous retrouvez tous les appareils Matter apparairés, et ceux que vous avez déjà ajoutés à Gladys :
+Sur cet onglet, vous retrouvez tous les appareils Matter appairés, et ceux que vous avez déjà ajoutés à Gladys :
 
 ![Enregistrer l'appareil Matter dans Gladys](../../../../../static/img/docs/fr/configuration/matter/save-matter-device-to-gladys.png)
 
@@ -116,6 +116,6 @@ Sur le tableau de bord, vous pouvez maintenant ajouter un widget "Appareils" et 
 
 ![Ajouter une climatisation Matter sur le tableau de bord](../../../../../static/img/docs/fr/configuration/matter/add-ac-to-dashboard.png)
 
-Une fois que vous enregistrez le tableau de bord, votre climatisation devient compatible Matter :
+Une fois que vous enregistrez le tableau de bord, votre climatisation devient contrôlable via Matter :
 
 ![Contrôler votre climatisation Matter dans Gladys](../../../../../static/img/docs/fr/configuration/matter/control-ac-dashboard.png)
