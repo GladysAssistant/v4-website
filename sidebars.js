@@ -62,6 +62,7 @@ module.exports = {
       label: "Scenes",
       items: [
         "scenes/intro",
+        "scenes/math-functions",
         "scenes/device-state-changed-trigger",
         "scenes/scheduled-trigger",
         "scenes/calendar-event-is-coming-trigger",

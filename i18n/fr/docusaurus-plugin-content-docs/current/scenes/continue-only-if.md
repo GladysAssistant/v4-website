@@ -1,7 +1,7 @@
 ---
 id: continue-only-if-action
-title: Continuer seulement si
-sidebar_label: Continuer seulement si
+title: Condition sur variables
+sidebar_label: Condition sur variables
 ---
 
 Cette action vous permet de continuer ou non l'exécution de la scène suivant une condition donnée.
@@ -20,4 +20,8 @@ Ensuite, dans le bloc d'action suivant, vous pouvez ajouter une action "Continue
 
 En mettant la condition "capteur température cuisine < 20°C", cela nous donne ça:
 
-![Continuer seulement si scène](../../../../../static/img/docs/fr/scenes/get-last-device-state-action/continue-only-if.jpg)
+![Condition sur variables](../../../../../static/img/docs/fr/scenes/get-last-device-state-action/continue-only-if.jpg)
+
+Dans cette action, vous pouvez injecter des variables et utiliser des fonctions mathématiques.
+
+Voir [Fonctions mathématiques disponibles](/fr/docs/scenes/math-functions/).

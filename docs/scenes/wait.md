@@ -22,15 +22,4 @@ For example, if you have retrieved a sensor value earlier in your scene (with th
 
 ### Available mathematical functions
 
-- `+` : addition
-- `-` : subtraction
-- `*` : multiplication
-- `/` : division
-- `%` : modulo
-- `^` : power
-- `abs(-5)` : absolute value (Result = 5)
-- `round(5.2)` : rounding (Result = 5)
-- `round(5.8, 1)` : rounding with 1 decimal place (Result = 5.8)
-- `floor(5.2)` : floor rounding (Result = 5)
-- `ceil(5.2)` : ceiling rounding (Result = 6)
-- `random(1, 10)` : random number between 1 and 10
+See [math functions](/docs/scenes/math-functions).
