@@ -28,6 +28,7 @@ Par exemple, si vous avez récupéré la valeur d'un capteur plus tôt dans votr
 - `/` : division
 - `%` : modulo
 - `^` : puissance
+- `abs(-5)` : valeur absolue (Résult = 5)
 - `round(5.2)` : arrondi (Résult = 5)
 - `round(5.8, 1)` : arrondi avec 1 chiffre après la virgule (Résult = 5.8)
 - `floor(5.2)` : arrondi inférieur (Résult = 5)

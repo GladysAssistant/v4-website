@@ -28,6 +28,7 @@ For example, if you have retrieved a sensor value earlier in your scene (with th
 - `/` : division
 - `%` : modulo
 - `^` : power
+- `abs(-5)` : absolute value (Result = 5)
 - `round(5.2)` : rounding (Result = 5)
 - `round(5.8, 1)` : rounding with 1 decimal place (Result = 5.8)
 - `floor(5.2)` : floor rounding (Result = 5)
