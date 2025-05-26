@@ -34,7 +34,7 @@ Sur votre serveur Gladys, créez un dossier `matterbridge` :
 mkdir ~/matterbridge && cd ~/matterbridge
 ```
 
-Copiez‑collez le `docker-compose.yml` ci‑dessous :
+Copiez‑collez le `docker-compose.yml` ci‑dessous (avec nano par exemple, `sudo nano docker-compose.yml`):
 
 ```yaml
 services:
@@ -48,7 +48,7 @@ services:
     ports:
       - "8283:8283" # Expose l’UI Web de Matterbridge
     volumes:
-      - "${HOME}/matterbridge:/root/matterbridge" # Mounts the Matterbridge plugin directory
+      - "${HOME}/matterbridge:/root/Matterbridge" # Mounts the Matterbridge plugin directory
       - "${HOME}/.matterbridge:/root/.matterbridge" # Mounts the Matterbridge storage directory
 ```
 
