@@ -78,9 +78,9 @@ To install the Shelly plugin, click on the 3 dots **matterbridge-shelly → INST
 
 ![Matterbridge plugin](../../static/img/docs/en/configuration/shelly/4-matterbridge-plugin.png)
 
-Once the plugin is installed, Matterbridge should restart automatically. If not, you can restart manually by clicking on the icon in the top right corner of the interface.
-
 ![Matterbridge restart](../../static/img/docs/en/configuration/shelly/5-matterbridge-shelly-install.png)
+
+Once the plugin is installed, Matterbridge should restart automatically. If not, you can restart manually by clicking on the icon in the top right corner of the interface.
 
 Your Shelly devices connected to the network will be automatically discovered without additional intervention. You can verify this in the interface logs and under the **Devices** tab.
 
