@@ -34,7 +34,7 @@ Sur votre serveur Gladys, créez un dossier `matterbridge` :
 mkdir ~/matterbridge && cd ~/matterbridge
 ```
 
-Copiez‑collez le `docker-compose.yml` ci‑dessous (avec nano par exemple, `sudo nano docker-compose.yml`):
+Copiez‑collez le `docker-compose.yml` ci‑dessous (avec nano par exemple, `nano docker-compose.yml`):
 
 ```yaml
 services:
