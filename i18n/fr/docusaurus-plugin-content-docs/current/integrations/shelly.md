@@ -26,7 +26,7 @@ Ce guide pas à pas vous expliquera comment :
 - Docker + Docker Compose disponibles sur la machine hôte
 - Accès terminal/SSH & éditeur de texte
 
-### 1. Déployer Matterbridge en Docker
+### 1. Déployer Matterbridge avec Docker
 
 Sur votre serveur Gladys, créez un dossier `matterbridge` :
 
