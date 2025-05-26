@@ -74,6 +74,8 @@ Go to the main page of Matterbridge. You should first check if an update is avai
 
 ![Matterbridge plugin](../../static/img/docs/en/configuration/shelly/3-matterbridge-up-to-date.png)
 
+### 2. Install the Shelly plugin
+
 To install the Shelly plugin, click on the 3 dots **matterbridge-shelly → INSTALL**,
 
 ![Matterbridge plugin](../../static/img/docs/en/configuration/shelly/4-matterbridge-plugin.png)
@@ -88,7 +90,7 @@ Your Shelly devices connected to the network will be automatically discovered wi
 
 ![List of Shelly devices](../../static/img/docs/en/configuration/shelly/7-matterbridge-shelly-devices-list.png)
 
-### 2. Commission the bridge in Gladys
+### 3. Commission the bridge in Gladys
 
 First, get the **Manual pairing code** from the **Home** main page.
 
@@ -114,7 +116,7 @@ The bridge now appears in the **Settings** tab.
 
 ![Matterbridge Nodes in Gladys](../../static/img/docs/en/configuration/shelly/12-matterbridge-nodes.png)
 
-### 3. Going further
+### 4. Going further
 
 - Enable other Matterbridge plugins: Zigbee2MQTT, Somfy Tahoma, Home Assistant, etc.
 - Add these devices to your dashboard
