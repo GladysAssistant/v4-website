@@ -46,6 +46,7 @@ module.exports = {
         "integrations/openai",
         "integrations/owntracks",
         "integrations/philips-hue",
+        "integrations/shelly",
         "integrations/sonoff",
         "integrations/sonos",
         "integrations/tasmota",
