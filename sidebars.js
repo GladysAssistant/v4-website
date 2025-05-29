@@ -48,6 +48,7 @@ module.exports = {
         "integrations/philips-hue",
         "integrations/shelly",
         "integrations/sonoff",
+        "integrations/somfy-tahoma",
         "integrations/sonos",
         "integrations/tasmota",
         "integrations/telegram",
