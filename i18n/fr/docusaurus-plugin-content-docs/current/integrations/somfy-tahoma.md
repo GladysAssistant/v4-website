@@ -8,7 +8,9 @@ Somfy est un groupe industriel français, spécialisé dans la motorisation, l'a
 
 Grâce à l'application TaHoma® by Somfy et une box domotique, il est possible de gérer à distance des volets, stores, portes de garage, portails, systèmes de sécurité, caméras, et autres interphones connectés.
 
-![Somfy TaHoma](../../../../../static/img/docs/fr/configuration/somfy-tahoma/1-somfy-tahoma.jpg)
+import SomfyImage from '../../../../../static/img/docs/fr/configuration/somfy-tahoma/1-somfy-tahoma.jpg';
+
+<img src={SomfyImage} height="400"/>
 
 Actuellement, la gestion complète de la maison se limite à cette application et une connexion au cloud Somfy.
 

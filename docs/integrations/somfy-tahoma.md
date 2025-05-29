@@ -8,7 +8,9 @@ Somfy is a French industrial group specializing in motorization, automation of h
 
 With the TaHoma® by Somfy application and a home automation box, it is possible to remotely manage shutters, blinds, garage doors, gates, security systems, cameras, and other connected intercoms.
 
-![Somfy TaHoma](../../static/img/docs/en/configuration/somfy-tahoma/1-somfy-tahoma.jpg)
+import SomfyImage from '../../static/img/docs/en/configuration/somfy-tahoma/1-somfy-tahoma.jpg';
+
+<img src={SomfyImage} height="400"/>
 
 Currently, complete home management is limited to this application and a connection to the Somfy cloud.
 
