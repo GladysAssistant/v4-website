@@ -10,7 +10,7 @@ Grâce à l'application TaHoma® by Somfy et une box domotique, il est possible 
 
 ![Somfy TaHoma](../../../../../static/img/docs/fr/configuration/somfy-tahoma/1-somfy-tahoma.jpg)
 
-Actuellement la gestion complète de la maison se limite à cette application et une connexion au cloud Somfy.
+Actuellement, la gestion complète de la maison se limite à cette application et une connexion au cloud Somfy.
 
 Alors pour aller plus loin dans les interactions, Gladys va permettre une gestion plus étendue grâce à ses diverses intégrations.
 
@@ -85,7 +85,7 @@ Pour installer le plugin Somfy/TaHoma, cliquez sur les 3 points, sélectionnez *
 
 ![Somfy TaHoma plugin](../../../../../static/img/docs/fr/configuration/somfy-tahoma/3-somfy-tahoma-plugin-2.png)
 
-Une fois le plugin installé, Matterbridge devrait redémarrer tout seul au besoin. Si ce n'est pas le cas, vous pouvez redémarrer manuellement en cliquant sur l'icône en haut à droite de l'interface.
+Une fois le plugin installé, Matterbridge devrait redémarrer automatiquement au besoin. Si ce n'est pas le cas, vous pouvez redémarrer manuellement en cliquant sur l'icône en haut à droite de l'interface.
 
 ![Restart Matterbridge](../../../../../static/img/docs/fr/configuration/somfy-tahoma/4-somfy-tahoma-restart-matterbridge.png)
 
@@ -93,11 +93,11 @@ Le plugin est installé et un message d'erreur dans les logs nous indique qu'il 
 
 ![Somfy TaHoma logs](../../../../../static/img/docs/fr/configuration/somfy-tahoma/5-somfy-tahoma-logs.jpg)
 
-Pour cela, cliquer sur l'icône **Plugin config** :
+Pour cela, cliquez sur l'icône **Plugin config** :
 
 ![Somfy TaHoma config plugin](../../../../../static/img/docs/fr/configuration/somfy-tahoma/6-somfy-tahoma-config-plugin.png)
 
-Remplissez **mail** et **mot de passe** de votre compte Somfy, sélectionner le serveur **Somfy Europe**, et validez sur **Confirm** :
+Remplissez **mail** et **mot de passe** de votre compte Somfy, sélectionnez le serveur **Somfy Europe**, et validez sur **Confirm** :
 
 ![Somfy TaHoma plugin config info](../../../../../static/img/docs/fr/configuration/somfy-tahoma/7-somfy-tahoma-plugin-config-info.png)
 
