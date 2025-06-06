@@ -351,7 +351,7 @@ function Plus() {
                                 color: "var(--ifm-color-primary)",
                               }}
                             >
-                              {priceCheaperKit}€
+                              {priceCheaperKit ? priceCheaperKit + "€" : "..."}
                             </p>
                           )}
                         </div>
@@ -423,7 +423,7 @@ function Plus() {
                                 color: "var(--ifm-color-primary)",
                               }}
                             >
-                              {price}€
+                              {price ? price + "€" : "..."}
                             </p>
                           )}
                         </div>
@@ -445,79 +445,77 @@ function Plus() {
                       </div>
                     </div>
                     {/* Option 3: Beelink S13 */}
-                    {priceS13 && (
+                    <div
+                      className="col col--4"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
                       <div
-                        className="col col--4"
-                        style={{ display: "flex", flexDirection: "column" }}
+                        style={{
+                          border: "1px solid #ddd",
+                          padding: "20px",
+                          paddingTop: "40px",
+                          borderRadius: "8px",
+                          textAlign: "center",
+                          marginBottom: "15px",
+                          position: "relative",
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          backgroundColor: "var(--ifm-color-primary-darkest)",
+                          color: "white",
+                        }}
                       >
-                        <div
+                        <span
                           style={{
-                            border: "1px solid #ddd",
-                            padding: "20px",
-                            paddingTop: "40px",
-                            borderRadius: "8px",
-                            textAlign: "center",
-                            marginBottom: "15px",
-                            position: "relative",
-                            flexGrow: 1,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            backgroundColor: "var(--ifm-color-primary-darkest)",
-                            color: "white",
+                            position: "absolute",
+                            top: "-15px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            backgroundColor: "var(--ifm-color-warning)",
+                            color: "black",
+                            padding: "5px 15px",
+                            borderRadius: "20px",
+                            fontSize: "0.9em",
+                            fontWeight: "bold",
                           }}
                         >
-                          <span
+                          Perf. Max
+                        </span>
+                        <div>
+                          <h3 style={{ color: "white" }}>Beelink S13</h3>
+                          <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
+                            Le summum de la performance pour votre domotique et
+                            bien plus encore.
+                          </p>
+                          <p
                             style={{
-                              position: "absolute",
-                              top: "-15px",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              backgroundColor: "var(--ifm-color-warning)",
-                              color: "black",
-                              padding: "5px 15px",
-                              borderRadius: "20px",
-                              fontSize: "0.9em",
+                              fontSize: "30px",
                               fontWeight: "bold",
+                              margin: "15px 0",
+                              color: "var(--ifm-color-warning)",
                             }}
                           >
-                            Perf. Max
-                          </span>
-                          <div>
-                            <h3 style={{ color: "white" }}>Beelink S13</h3>
-                            <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
-                              Le summum de la performance pour votre domotique
-                              et bien plus encore.
-                            </p>
-                            <p
-                              style={{
-                                fontSize: "30px",
-                                fontWeight: "bold",
-                                margin: "15px 0",
-                                color: "var(--ifm-color-warning)",
-                              }}
-                            >
-                              {priceS13}€
-                            </p>
-                          </div>
-                          <button
-                            onClick={subscribeS13}
-                            disabled={loading || !priceS13}
-                            className={cx(
-                              "button button--warning button--lg",
-                              styles.starterKitInputButton
-                            )}
-                            style={{
-                              width: "100%",
-                              marginTop: "15px",
-                              fontSize: "1rem",
-                            }}
-                          >
-                            Commander le S13
-                          </button>
+                            {priceS13 ? priceS13 + "€" : "..."}
+                          </p>
                         </div>
+                        <button
+                          onClick={subscribeS13}
+                          disabled={loading || !priceS13}
+                          className={cx(
+                            "button button--warning button--lg",
+                            styles.starterKitInputButton
+                          )}
+                          style={{
+                            width: "100%",
+                            marginTop: "15px",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          Commander le S13
+                        </button>
                       </div>
-                    )}
+                    </div>
                   </div>
                 )}
 
