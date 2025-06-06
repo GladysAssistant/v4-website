@@ -253,85 +253,94 @@ function Plus() {
                   <small>(Retour sous 1 mois si insatisfait)</small>
                 </p>
                 <div>
-                  {false && (
-                    <div className={styles.blackFridayBanner}>
-                      Offre limitée Black Friday !
+                  <h2 style={{fontSize: '28px', marginTop: '2rem', marginBottom: '1.5rem', textAlign: 'center'}}>Choisissez votre kit de démarrage :</h2>
+                  {isUnavailable && (
+                    <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+                      <span style={{ fontSize: "24px", fontWeight: "bold", color: 'var(--ifm-color-danger)' }}>
+                        {unavailableMessage || "Kits actuellement indisponibles"}
+                      </span>
                     </div>
                   )}
-                  <span>
-                    {!isUnavailable && (
-                      <label
-                        style={{ display: "block" }}
-                        className={cx({
-                          [styles.loadingAnimation]: loading,
-                        })}
-                      >
-                        <span style={{ fontSize: "30px", fontWeight: "bold" }}>
-                          À partir de {priceCheaperKit}€
-                        </span>
-                      </label>
-                    )}
-
-                    {isUnavailable && (
-                      <label
-                        style={{ display: "block" }}
-                        className={cx({
-                          [styles.loadingAnimation]: loading,
-                        })}
-                      >
-                        <span style={{ fontSize: "30px", fontWeight: "bold" }}>
-                          {unavailableMessage}
-                        </span>
-                      </label>
-                    )}
-
-                    <label
-                      style={{ display: "block", fontSize: "14px" }}
-                    ></label>
-
-                    <input
-                      type="submit"
-                      onClick={subscribe}
-                      value={`Commander le S12 Pro ! ${
-                        price ? `(${price}€)` : ""
-                      }`}
-                      disabled={isUnavailable || loading}
-                      className={cx(
-                        "button button--primary",
-                        styles.starterKitInputButton
-                      )}
-                    />
-
-                    {false && (
-                      <div
-                        className={cx(styles.progressContainer, {
-                          [styles.loadingAnimation]: loading,
-                        })}
-                      >
-                        <div className={styles.progressBarBackground}>
-                          <div
-                            className={styles.progressBar}
-                            style={{ width: `${progressPercentage}%` }}
-                          />
+                  {!isUnavailable && (
+                    <div className="row"> {/* Using Infima grid for two columns */}
+                      {/* Option 1: Beelink Mini S12 */}
+                      <div className="col col--6" style={{display: 'flex', flexDirection: 'column'}}>
+                        <div style={{ border: '1px solid #eee', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '15px', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                          <div>
+                            <h3>Beelink Mini S12</h3>
+                            <p style={{minHeight: '50px', fontSize: '0.9em'}}>L'essentiel pour bien démarrer votre domotique et découvrir Gladys.</p>
+                            {priceCheaperKit && (
+                              <p style={{ fontSize: "32px", fontWeight: "bold", margin: "15px 0", color: 'var(--ifm-color-primary)' }}>{priceCheaperKit}€</p>
+                            )}
+                          </div>
+                          <button
+                            onClick={subscribeCheaperPc}
+                            disabled={loading || !priceCheaperKit}
+                            className={cx("button button--outline button--primary button--lg", styles.starterKitInputButton)}
+                            style={{width: '100%', marginTop: '15px'}}
+                          >
+                            Commander le S12
+                          </button>
                         </div>
-                        <p
-                          className={cx(styles.kitsRemainingText, {
-                            [styles.pulse]: isLowStock, // Ajoute l'effet "pulse" si le stock est faible
-                          })}
-                        >
-                          🚨 <b>{kitsRemaining} kits restants à ce prix</b>
-                        </p>
                       </div>
-                    )}
-                    {timeLeft && (
-                      <p>
-                        Temps restant:{" "}
-                        {new Intl.DurationFormat("fr", {
-                          style: "short",
-                        }).format(timeLeft)}
+
+                      {/* Option 2: Beelink Mini S12 Pro */}
+                      <div className="col col--6" style={{display: 'flex', flexDirection: 'column'}}>
+                        <div style={{ border: '2px solid var(--ifm-color-primary)', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '15px', position: 'relative', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                          <span style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'var(--ifm-color-primary)', color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '0.9em', fontWeight: 'bold' }}>
+                            Recommandé
+                          </span>
+                          <div>
+                            <h3>Beelink Mini S12 Pro</h3>
+                            <p style={{minHeight: '50px', fontSize: '0.9em'}}>Pour une expérience ultra-fluide, plus de puissance et de stockage.</p>
+                            {price && (
+                              <p style={{ fontSize: "32px", fontWeight: "bold", margin: "15px 0", color: 'var(--ifm-color-primary)' }}>{price}€</p>
+                            )}
+                          </div>
+                          <button
+                            onClick={subscribe}
+                            disabled={loading || !price}
+                            className={cx("button button--primary button--lg", styles.starterKitInputButton)}
+                            style={{width: '100%', marginTop: '15px'}}
+                          >
+                            Commander le S12 Pro
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Kits Remaining - Placed after the two options */}
+                  {kitsRemaining !== null && typeof progressPercentage === 'number' && !isUnavailable && (
+                    <div
+                      className={cx(styles.progressContainer, {
+                        [styles.loadingAnimation]: loading,
+                      })}
+                      style={{ marginTop: '30px' }}
+                    >
+                      <div className={styles.progressBarBackground}>
+                        <div
+                          className={styles.progressBar}
+                          style={{ width: `${progressPercentage}%` }}
+                        />
+                      </div>
+                      <p
+                        className={cx(styles.kitsRemainingText, {
+                          [styles.pulse]: isLowStock,
+                        })}
+                      >
+                        🚨 <b>{kitsRemaining} {kitsRemaining === 1 ? 'kit' : 'kits'} de démarrage au total {kitsRemaining === 1 ? 'restant' : 'restants'} !</b>
                       </p>
-                    )}
-                  </span>
+                    </div>
+                  )}
+                  {timeLeft && !isUnavailable && (
+                    <p style={{textAlign: 'center', marginTop: '10px', fontSize: '0.9em'}}>
+                      Temps restant pour profiter de l'offre :{" "}
+                      <b>{new Intl.DurationFormat("fr", {
+                        style: "long",
+                      }).format(timeLeft)}</b>
+                    </p>
+                  )}
                 </div>
               </form>
             </div>
@@ -433,6 +442,32 @@ function Plus() {
           <div style={{ marginTop: "50px" }}>
             <FAQ data={faqData} />
           </div>
+          {/* Section Témoignages */}
+          <div className="container" style={{marginTop: '5rem', marginBottom: '3rem'}}>
+            <h2 className={styles.plusFeatureTitle} style={{textAlign: 'center', marginBottom: '3rem', fontSize: '36px'}}>Ce qu'ils pensent du Starter Kit</h2>
+            <div className="row">
+              <div className="col col--4" style={{display: 'flex', flexDirection: 'column', marginBottom: '1.5rem'}}>
+                <div style={{border: '1px solid #ddd', padding: '25px', borderRadius: '8px', textAlign: 'left', flexGrow: 1, boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}}>
+                  <p style={{fontStyle: 'italic', marginBottom: '15px'}}>{`"Le kit de démarrage est une pure merveille ! L'installation du Beelink et de Gladys s'est faite sans aucun souci grâce à la formation vidéo. Tout fonctionne parfaitement."`}</p>
+                  <p style={{fontWeight: 'bold', textAlign: 'right'}}>- Julien M.</p>
+                </div>
+              </div>
+              <div className="col col--4" style={{display: 'flex', flexDirection: 'column', marginBottom: '1.5rem'}}>
+                <div style={{border: '1px solid #ddd', padding: '25px', borderRadius: '8px', textAlign: 'left', flexGrow: 1, boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}}>
+                  <p style={{fontStyle: 'italic', marginBottom: '15px'}}>{`"J'hésitais à me lancer dans la domotique, mais ce kit m'a convaincu. Le support de Pierre-Gilles est exceptionnel, il a répondu à ma question en moins d'une heure. Je suis ravi !"`}</p>
+                  <p style={{fontWeight: 'bold', textAlign: 'right'}}>- Sophie L.</p>
+                </div>
+              </div>
+              <div className="col col--4" style={{display: 'flex', flexDirection: 'column', marginBottom: '1.5rem'}}>
+                <div style={{border: '1px solid #ddd', padding: '25px', borderRadius: '8px', textAlign: 'left', flexGrow: 1, boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}}>
+                  <p style={{fontStyle: 'italic', marginBottom: '15px'}}>{`"Enfin une solution domotique accessible et performante. Le Beelink Mini S12 Pro est une petite bombe. Gladys est bien plus réactive que sur mon ancien Raspberry Pi."`}</p>
+                  <p style={{fontWeight: 'bold', textAlign: 'right'}}>- Marc D.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Fin Section Témoignages */}
+
           <div className={cx("row", styles.starterKitRow)}>
             <div className="col col--12">
               <h2 className={cx(styles.plusTooExpensiveTitle)}>
