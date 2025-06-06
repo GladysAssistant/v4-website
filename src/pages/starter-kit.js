@@ -107,6 +107,8 @@ function Plus() {
   const [isLowStock, setIsLowStock] = useState(null);
   const [couponCode, setCouponCode] = useState("STARTERKIT");
   const [cheaperKitCouponCode, setCheaperKitCouponCode] = useState(null);
+  const [priceS13, setPriceS13] = useState(null);
+  const [s13CouponCode, setS13CouponCode] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const scrollTopTop = () => {
@@ -128,6 +130,10 @@ function Plus() {
       setPriceCheaperKit(data.cheaper_mini_pc.price);
       setCouponCode(data.validCoupon);
       setCheaperKitCouponCode(data.cheaper_mini_pc.validCoupon);
+      if (data.beelink_s13) {
+        setPriceS13(data.beelink_s13.price);
+        setS13CouponCode(data.beelink_s13.validCoupon);
+      }
       setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
       if (data.total !== undefined && data.remaining !== undefined) {
         const progressPercentage =
@@ -202,6 +208,20 @@ function Plus() {
     }
   };
 
+  const subscribeS13 = (e) => {
+    e.preventDefault();
+    if (isBrowser) {
+      const openStripe = () => {
+        window.location.href = `https://buy.stripe.com/5kQ9AUb184vI1N28f4fjG09?prefilled_promo_code=${s13CouponCode}`;
+      };
+      if (window.sa_loaded && !dntActive) {
+        sa_event("starter_kit_click_buy_mini_s13", openStripe);
+      } else {
+        openStripe();
+      }
+    }
+  };
+
   const updateEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -230,7 +250,7 @@ function Plus() {
         <div
           className="container"
           style={{
-            maxWidth: "75rem",
+            maxWidth: "1400px",
             marginLeft: "auto",
             marginRight: "auto",
             marginBottom: "5rem",
@@ -252,71 +272,265 @@ function Plus() {
                   <br />
                   <small>(Retour sous 1 mois si insatisfait)</small>
                 </p>
-                <div>
-                  <h2 style={{fontSize: '28px', marginTop: '2rem', marginBottom: '1.5rem', textAlign: 'center'}}>Choisissez votre kit de démarrage :</h2>
-                  {isUnavailable && (
-                    <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                      <span style={{ fontSize: "24px", fontWeight: "bold", color: 'var(--ifm-color-danger)' }}>
-                        {unavailableMessage || "Kits actuellement indisponibles"}
-                      </span>
-                    </div>
-                  )}
-                  {!isUnavailable && (
-                    <div className="row"> {/* Using Infima grid for two columns */}
-                      {/* Option 1: Beelink Mini S12 */}
-                      <div className="col col--6" style={{display: 'flex', flexDirection: 'column'}}>
-                        <div style={{ border: '1px solid #eee', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '15px', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                          <div>
-                            <h3>Beelink Mini S12</h3>
-                            <p style={{minHeight: '50px', fontSize: '0.9em'}}>L'essentiel pour bien démarrer votre domotique et découvrir Gladys.</p>
-                            {priceCheaperKit && (
-                              <p style={{ fontSize: "32px", fontWeight: "bold", margin: "15px 0", color: 'var(--ifm-color-primary)' }}>{priceCheaperKit}€</p>
-                            )}
-                          </div>
-                          <button
-                            onClick={subscribeCheaperPc}
-                            disabled={loading || !priceCheaperKit}
-                            className={cx("button button--outline button--primary button--lg", styles.starterKitInputButton)}
-                            style={{width: '100%', marginTop: '15px'}}
-                          >
-                            Commander le S12
-                          </button>
-                        </div>
-                      </div>
+              </form>
+            </div>
+            <div className="col col--6 docusaurus-hide-md">
+              <img
+                src={useBaseUrl("img/starter-kit/beelink_without_bg.png")}
+                srcSet={`${useBaseUrl(
+                  "img/starter-kit/beelink_without_bg.png"
+                )} 1x, ${useBaseUrl(
+                  "img/starter-kit/beelink_without_bg.png"
+                )} 2x`}
+                className={cx(styles.starterKitImage, styles.specImageLeft)}
+              />
+            </div>
+          </div>
 
-                      {/* Option 2: Beelink Mini S12 Pro */}
-                      <div className="col col--6" style={{display: 'flex', flexDirection: 'column'}}>
-                        <div style={{ border: '2px solid var(--ifm-color-primary)', padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '15px', position: 'relative', flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                          <span style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'var(--ifm-color-primary)', color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '0.9em', fontWeight: 'bold' }}>
-                            Recommandé
+          {/* Nouvelle Row pour la section de choix des kits */}
+          <div className="row">
+            <div className="col col--12">
+              <div>
+                <h2
+                  style={{
+                    fontSize: "28px",
+                    marginTop: "2rem",
+                    marginBottom: "3rem",
+                    textAlign: "center",
+                  }}
+                >
+                  Choisissez votre kit de démarrage :
+                </h2>
+                {isUnavailable && (
+                  <div style={{ marginBottom: "20px", textAlign: "center" }}>
+                    <span
+                      style={{
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        color: "var(--ifm-color-danger)",
+                      }}
+                    >
+                      {unavailableMessage || "Kits actuellement indisponibles"}
+                    </span>
+                  </div>
+                )}
+                {!isUnavailable && (
+                  <div className="row">
+                    {" "}
+                    {/* Using Infima grid for three columns */}
+                    {/* Option 1: Beelink Mini S12 */}
+                    <div
+                      className="col col--4"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
+                      <div
+                        style={{
+                          border: "1px solid #eee",
+                          padding: "20px",
+                          paddingTop: "40px",
+                          borderRadius: "8px",
+                          textAlign: "center",
+                          marginBottom: "15px",
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <h3>Beelink Mini S12</h3>
+                          <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
+                            L'essentiel pour bien démarrer votre domotique et
+                            découvrir Gladys.
+                          </p>
+                          {priceCheaperKit && (
+                            <p
+                              style={{
+                                fontSize: "30px",
+                                fontWeight: "bold",
+                                margin: "15px 0",
+                                color: "var(--ifm-color-primary)",
+                              }}
+                            >
+                              {priceCheaperKit}€
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={subscribeCheaperPc}
+                          disabled={loading || !priceCheaperKit}
+                          className={cx(
+                            "button button--outline button--primary button--lg",
+                            styles.starterKitInputButton
+                          )}
+                          style={{
+                            width: "100%",
+                            marginTop: "15px",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          Commander le S12
+                        </button>
+                      </div>
+                    </div>
+                    {/* Option 2: Beelink Mini S12 Pro */}
+                    <div
+                      className="col col--4"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
+                      <div
+                        style={{
+                          border: "2px solid var(--ifm-color-primary)",
+                          padding: "20px",
+                          paddingTop: "40px",
+                          borderRadius: "8px",
+                          textAlign: "center",
+                          marginBottom: "15px",
+                          position: "relative",
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "-15px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            backgroundColor: "var(--ifm-color-primary)",
+                            color: "white",
+                            padding: "5px 15px",
+                            borderRadius: "20px",
+                            fontSize: "0.9em",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Recommandé
+                        </span>
+                        <div>
+                          <h3>Beelink Mini S12 Pro</h3>
+                          <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
+                            Pour une expérience ultra-fluide, plus de puissance
+                            et de stockage.
+                          </p>
+                          {price && (
+                            <p
+                              style={{
+                                fontSize: "30px",
+                                fontWeight: "bold",
+                                margin: "15px 0",
+                                color: "var(--ifm-color-primary)",
+                              }}
+                            >
+                              {price}€
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={subscribe}
+                          disabled={loading || !price}
+                          className={cx(
+                            "button button--primary button--lg",
+                            styles.starterKitInputButton
+                          )}
+                          style={{
+                            width: "100%",
+                            marginTop: "15px",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          Commander le S12 Pro
+                        </button>
+                      </div>
+                    </div>
+                    {/* Option 3: Beelink S13 */}
+                    {priceS13 && (
+                      <div
+                        className="col col--4"
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <div
+                          style={{
+                            border: "1px solid #ddd",
+                            padding: "20px",
+                            paddingTop: "40px",
+                            borderRadius: "8px",
+                            textAlign: "center",
+                            marginBottom: "15px",
+                            position: "relative",
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            backgroundColor: "var(--ifm-color-primary-darkest)",
+                            color: "white",
+                          }}
+                        >
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              backgroundColor: "var(--ifm-color-warning)",
+                              color: "black",
+                              padding: "5px 15px",
+                              borderRadius: "20px",
+                              fontSize: "0.9em",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Perf. Max
                           </span>
                           <div>
-                            <h3>Beelink Mini S12 Pro</h3>
-                            <p style={{minHeight: '50px', fontSize: '0.9em'}}>Pour une expérience ultra-fluide, plus de puissance et de stockage.</p>
-                            {price && (
-                              <p style={{ fontSize: "32px", fontWeight: "bold", margin: "15px 0", color: 'var(--ifm-color-primary)' }}>{price}€</p>
-                            )}
+                            <h3 style={{ color: "white" }}>Beelink S13</h3>
+                            <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
+                              Le summum de la performance pour votre domotique
+                              et bien plus encore.
+                            </p>
+                            <p
+                              style={{
+                                fontSize: "30px",
+                                fontWeight: "bold",
+                                margin: "15px 0",
+                                color: "var(--ifm-color-warning)",
+                              }}
+                            >
+                              {priceS13}€
+                            </p>
                           </div>
                           <button
-                            onClick={subscribe}
-                            disabled={loading || !price}
-                            className={cx("button button--primary button--lg", styles.starterKitInputButton)}
-                            style={{width: '100%', marginTop: '15px'}}
+                            onClick={subscribeS13}
+                            disabled={loading || !priceS13}
+                            className={cx(
+                              "button button--warning button--lg",
+                              styles.starterKitInputButton
+                            )}
+                            style={{
+                              width: "100%",
+                              marginTop: "15px",
+                              fontSize: "1rem",
+                            }}
                           >
-                            Commander le S12 Pro
+                            Commander le S13
                           </button>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                )}
 
-                  {/* Kits Remaining - Placed after the two options */}
-                  {kitsRemaining !== null && typeof progressPercentage === 'number' && !isUnavailable && (
+                {/* Kits Remaining - Placed after the two options */}
+                {kitsRemaining !== null &&
+                  typeof progressPercentage === "number" &&
+                  !isUnavailable && (
                     <div
                       className={cx(styles.progressContainer, {
                         [styles.loadingAnimation]: loading,
                       })}
-                      style={{ marginTop: '30px' }}
+                      style={{ marginTop: "30px" }}
                     >
                       <div className={styles.progressBarBackground}>
                         <div
@@ -329,31 +543,32 @@ function Plus() {
                           [styles.pulse]: isLowStock,
                         })}
                       >
-                        🚨 <b>{kitsRemaining} {kitsRemaining === 1 ? 'kit' : 'kits'} de démarrage au total {kitsRemaining === 1 ? 'restant' : 'restants'} !</b>
+                        {" "}
+                        <b>
+                          {kitsRemaining} {kitsRemaining === 1 ? "kit" : "kits"}{" "}
+                          de démarrage au total{" "}
+                          {kitsRemaining === 1 ? "restant" : "restants"} !
+                        </b>
                       </p>
                     </div>
                   )}
-                  {timeLeft && !isUnavailable && (
-                    <p style={{textAlign: 'center', marginTop: '10px', fontSize: '0.9em'}}>
-                      Temps restant pour profiter de l'offre :{" "}
-                      <b>{new Intl.DurationFormat("fr", {
+                {timeLeft && !isUnavailable && (
+                  <p
+                    style={{
+                      textAlign: "center",
+                      marginTop: "10px",
+                      fontSize: "0.9em",
+                    }}
+                  >
+                    Temps restant pour profiter de l'offre :{" "}
+                    <b>
+                      {new Intl.DurationFormat("fr", {
                         style: "long",
-                      }).format(timeLeft)}</b>
-                    </p>
-                  )}
-                </div>
-              </form>
-            </div>
-            <div className="col col--6">
-              <img
-                src={useBaseUrl("img/starter-kit/beelink_without_bg.png")}
-                srcSet={`${useBaseUrl(
-                  "img/starter-kit/beelink_without_bg.png"
-                )} 1x, ${useBaseUrl(
-                  "img/starter-kit/beelink_without_bg.png"
-                )} 2x`}
-                className={cx(styles.starterKitImage, styles.specImageLeft)}
-              />
+                      }).format(timeLeft)}
+                    </b>
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <div className={cx("row", styles.starterKitRow)}>
@@ -443,25 +658,102 @@ function Plus() {
             <FAQ data={faqData} />
           </div>
           {/* Section Témoignages */}
-          <div className="container" style={{marginTop: '5rem', marginBottom: '3rem'}}>
-            <h2 className={styles.plusFeatureTitle} style={{textAlign: 'center', marginBottom: '3rem', fontSize: '36px'}}>Ce qu'ils pensent du Starter Kit</h2>
+          <div
+            className="container"
+            style={{
+              marginTop: "5rem",
+              marginBottom: "3rem",
+            }}
+          >
+            <h2
+              className={styles.plusFeatureTitle}
+              style={{
+                textAlign: "center",
+                marginBottom: "3rem",
+                fontSize: "36px",
+              }}
+            >
+              Ce qu'ils pensent du kit de démarrage
+            </h2>
             <div className="row">
-              <div className="col col--4" style={{display: 'flex', flexDirection: 'column', marginBottom: '1.5rem'}}>
-                <div style={{border: '1px solid #ddd', padding: '25px', borderRadius: '8px', textAlign: 'left', flexGrow: 1, boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}}>
-                  <p style={{fontStyle: 'italic', marginBottom: '15px'}}>{`"Le kit de démarrage est une pure merveille ! L'installation du Beelink et de Gladys s'est faite sans aucun souci grâce à la formation vidéo. Tout fonctionne parfaitement."`}</p>
-                  <p style={{fontWeight: 'bold', textAlign: 'right'}}>- Julien M.</p>
+              <div
+                className="col col--4"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "25px",
+                    borderRadius: "8px",
+                    textAlign: "left",
+                    flexGrow: 1,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <p style={{ fontStyle: "italic", marginBottom: "15px" }}>
+                    {
+                      "Une très bonne idée ce kit pour ceux qui n'y comprennent rien... c'est parfois juste ce qui manque pour sauter le pas. Une fois qu'on y a gouté..."
+                    }
+                  </p>
+                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
+                    - tiboys
+                  </p>
                 </div>
               </div>
-              <div className="col col--4" style={{display: 'flex', flexDirection: 'column', marginBottom: '1.5rem'}}>
-                <div style={{border: '1px solid #ddd', padding: '25px', borderRadius: '8px', textAlign: 'left', flexGrow: 1, boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}}>
-                  <p style={{fontStyle: 'italic', marginBottom: '15px'}}>{`"J'hésitais à me lancer dans la domotique, mais ce kit m'a convaincu. Le support de Pierre-Gilles est exceptionnel, il a répondu à ma question en moins d'une heure. Je suis ravi !"`}</p>
-                  <p style={{fontWeight: 'bold', textAlign: 'right'}}>- Sophie L.</p>
+              <div
+                className="col col--4"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "25px",
+                    borderRadius: "8px",
+                    textAlign: "left",
+                    flexGrow: 1,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <p
+                    style={{ fontStyle: "italic", marginBottom: "15px" }}
+                  >{`"Super offre clairement intéressant pour quelqu'un qui veut se lancer en domotique avec Gladys"`}</p>
+                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
+                    - McFlyPartages
+                  </p>
                 </div>
               </div>
-              <div className="col col--4" style={{display: 'flex', flexDirection: 'column', marginBottom: '1.5rem'}}>
-                <div style={{border: '1px solid #ddd', padding: '25px', borderRadius: '8px', textAlign: 'left', flexGrow: 1, boxShadow: '0 4px 6px rgba(0,0,0,0.1)'}}>
-                  <p style={{fontStyle: 'italic', marginBottom: '15px'}}>{`"Enfin une solution domotique accessible et performante. Le Beelink Mini S12 Pro est une petite bombe. Gladys est bien plus réactive que sur mon ancien Raspberry Pi."`}</p>
-                  <p style={{fontWeight: 'bold', textAlign: 'right'}}>- Marc D.</p>
+              <div
+                className="col col--4"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "25px",
+                    borderRadius: "8px",
+                    textAlign: "left",
+                    flexGrow: 1,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <p
+                    style={{ fontStyle: "italic", marginBottom: "15px" }}
+                  >{`"Bonjour tout le monde, je viens de souscrire un kit de démarrage, content de rejoindre la communauté !"`}</p>
+                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
+                    - Nagromdark
+                  </p>
                 </div>
               </div>
             </div>
@@ -471,7 +763,7 @@ function Plus() {
           <div className={cx("row", styles.starterKitRow)}>
             <div className="col col--12">
               <h2 className={cx(styles.plusTooExpensiveTitle)}>
-                Beelink mini S12 ou Pro ?
+                Quel kit Beelink choisir : S12, S12 Pro ou S13 ?
               </h2>
               <p>
                 Je comprends que certains puissent trouver le kit un peu cher.
@@ -491,6 +783,15 @@ function Plus() {
                 Cela dit, pour débuter, le Beelink Mini S12 reste une très bonne
                 option ! 😊
               </p>
+              <p>
+                Si vous recherchez le top de la performance, que ce soit pour
+                une utilisation intensive de Gladys, des applications
+                supplémentaires (Node-RED, AdGuard Home, etc.) ou simplement
+                pour avoir une machine qui durera de nombreuses années sans
+                jamais ralentir, le <strong>Beelink S13</strong> est fait pour
+                vous. Son processeur N150 plus puissant offre une marge de
+                manœuvre confortable pour tous vos projets.
+              </p>
               <div className={styles.tableContainer}>
                 <table className={styles.priceTable}>
                   <thead>
@@ -498,6 +799,7 @@ function Plus() {
                       <th>Caractéristiques</th>
                       <th>Beelink Mini S12</th>
                       <th>Beelink Mini S12 Pro</th>
+                      <th>Beelink S13</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -505,34 +807,41 @@ function Plus() {
                       <td>Processeur</td>
                       <td>Alder Lake-N95</td>
                       <td>Alder Lake-N N100</td>
+                      <td>Twin Lake-N150</td>
                     </tr>
                     <tr>
                       <td>Mémoire RAM</td>
                       <td>8 Go DDR4</td>
+                      <td>16 Go DDR4</td>
                       <td>16 Go DDR4</td>
                     </tr>
                     <tr>
                       <td>Stockage</td>
                       <td>256 Go M.2 SSD 2280</td>
                       <td>500 Go M.2 SSD 2280</td>
+                      <td>500 Go M.2 SSD 2280</td>
                     </tr>
                     <tr>
                       <td>WiFi</td>
                       <td>WiFi 5</td>
+                      <td>WiFi 6</td>
                       <td>WiFi 6</td>
                     </tr>
                     <tr>
                       <td>Bluetooth</td>
                       <td>Bluetooth 5.0</td>
                       <td>Bluetooth 5.2</td>
+                      <td>Bluetooth 5.2</td>
                     </tr>
                     <tr>
                       <td>Ports HDMI</td>
                       <td>Double HDMI</td>
                       <td>Double HDMI</td>
+                      <td>Double HDMI</td>
                     </tr>
                     <tr>
                       <td>LAN</td>
+                      <td>1000 Mbps</td>
                       <td>1000 Mbps</td>
                       <td>1000 Mbps</td>
                     </tr>
@@ -544,6 +853,10 @@ function Plus() {
                       </td>
                       <td>
                         {!isUnavailable && <b>{price} €</b>}
+                        {isUnavailable && <b>{unavailableMessage}</b>}
+                      </td>
+                      <td>
+                        {priceS13 && !isUnavailable && <b>{priceS13} €</b>}
                         {isUnavailable && <b>{unavailableMessage}</b>}
                       </td>
                     </tr>
@@ -565,6 +878,15 @@ function Plus() {
                           value="Commander S12 Pro"
                           disabled={isUnavailable || loading}
                           className={cx("button button--primary")}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="submit"
+                          onClick={subscribeS13}
+                          value="Commander S13"
+                          disabled={isUnavailable || loading || !priceS13}
+                          className={cx("button button--warning")}
                         />
                       </td>
                     </tr>
