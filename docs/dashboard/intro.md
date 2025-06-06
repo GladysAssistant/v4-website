@@ -1,30 +1,38 @@
 ---
 id: intro
-title: Gladys Assistant dashboard
+title: The Gladys Assistant Dashboard
 sidebar_label: Introduction
 ---
 
-The dashboard is the main page of Gladys Assistant.
+In Gladys Assistant, the dashboard is the main page of Gladys.
 
-This page is fully configurable and you can tweak it to meet your needs.
+You can create multiple dashboards and share these dashboards with your family members.
 
-![Gladys Assistant 4 dashboard](../../static/img/docs/en/dashboard/dashboard-gladys-4.jpg)
+![Gladys Assistant 4 Dashboard](../../static/img/home/main_screenshot/main_screenshot_en_j5czyj_c_scale,w_1839.png)
 
-Are you looking to display camera images? Monitor sensor values? Control his lights?
-You can do so on your dashboard.
+Display camera images? Monitor sensor values? Control your lights?
 
-In this section, we go through all types of widgets, and how each one works.
+Everything is possible!
 
-### Tablet mode
+## Dashboard Visibility
 
-If you're using Gladys on a touchscreen tablet somewhere in your home, it's likely that you'll want to display the Gladys dashboard full-screen, without the option of navigating away from that screen.
+When you create a dashboard, it can be "private" or "public":
 
-You can add this parameter to the URL and the dashboard will stay in full screen:
+- A "private" dashboard is visible only to yourself.
+- A "public" dashboard is visible to all users of the Gladys instance.
+
+![Create a dashboard](../../static/img/docs/en/dashboard/create-dashboard.png)
+
+### Tablet Mode
+
+If you use Gladys on a touchscreen tablet somewhere in your home, you will likely want to display the Gladys dashboard in full screen, without the ability to navigate away from this screen.
+
+It is possible to force a full-screen mode by adding a parameter to the URL:
 
 ```
 ?fullscreen=force
 ```
 
-### Any feedbacks?
+### Feedback?
 
-If you have any requirements that are not covered by the current Gladys dashboard, do not hesitate to contact us on [the forum](https://community.gladysassistant.com/). We can explore the possibility of developing specific widgets.
+If you have needs that are not covered by the current Gladys dashboard, do not hesitate to contact us on [the forum](https://en-community.gladysassistant.com/) to see if we can develop a specific widget.
