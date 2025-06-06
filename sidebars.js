@@ -98,7 +98,7 @@ module.exports = {
         "dashboard/weather",
         "dashboard/temperature-in-room",
         "dashboard/camera",
-        "dashboard/devices-in-room",
+        "dashboard/devices",
         "dashboard/chart",
         "dashboard/edf-tempo",
       ],
