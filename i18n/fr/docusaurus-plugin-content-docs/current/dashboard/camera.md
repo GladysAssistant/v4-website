@@ -1,14 +1,10 @@
 ---
 id: camera
-title: Box caméra
+title: Afficher une caméra sur le tableau de bord
 sidebar_label: Caméra
 ---
 
-Dans Gladys Assistant, il est possible d'afficher sur le tableau de bord les images de vos caméras.
-
-Ces images sont rafraichies à intervalle régulier suivant l'intervalle que vous avez spécifié dans la configuration de votre caméra.
-
-Vous pouvez aussi afficher le flux vidéo de la caméra en direct grâce au bouton "Live".
+Vous pouvez afficher une image de caméra sur le tableau de bord, et suivre en direct le flux vidéo de la caméra.
 
 ## Pré-requis
 
@@ -18,9 +14,9 @@ Vous devez avoir configuré une caméra, voir [la documentation](/fr/docs/integr
 
 Rendez-vous sur le tableau de bord de Gladys Assistant, puis cliquez sur le bouton "Editer".
 
-Sélectionnez la box "Caméra", et cliquez sur le bouton +.
+Sélectionnez le widget "Caméra" :
 
-![Ajouter la box caméra à Gladys](../../../../../static/img/docs/fr/dashboard/camera/select-box.png)
+![Ajouter le widget caméra à Gladys](../../../../../static/img/docs/fr/dashboard/camera/select-widget-camera.png)
 
 Ensuite, sélectionnez la caméra que vous voulez afficher.
 
@@ -31,7 +27,5 @@ Donnez un nom à cette box, c'est ce texte qui s'affichera sur le tableau de bor
 Cliquez sur "Sauvegarder".
 
 Voilà ! Vous devriez voir l'image de votre caméra.
-
-![Affichage caméra tableau de bord Gladys Assistant](../../../../../static/img/docs/fr/dashboard/camera/view-image.png)
 
 Cette image se rafraîchira automatiquement selon la fréquence que vous avez définie dans l'intégration caméra.

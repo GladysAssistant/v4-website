@@ -1,37 +1,31 @@
 ---
 id: camera
-title: Camera
+title: Display a camera on the dashboard
 sidebar_label: Camera
 ---
 
-In Gladys Assistant, you can display images from your cameras, straight on the dashboard.
-
-These images are refreshed at regular intervals. You can specify the interval in your camera configuration.
-
-You can also view the camera's live video feed using the "Live" button.
+You can display a camera image on the dashboard, and watch the live video stream from the camera.
 
 ## Prerequisites
 
-- You must have configured a camera, see [documentation](/docs/integrations/camera/) for camera integration.
+You must have configured a camera, see [the documentation](/docs/integrations/camera/) for the camera integration.
 
 ## Configuration
 
 Go to the Gladys Assistant dashboard, then click on the "Edit" button.
 
-Select the "Camera" widget, and click on the + button.
+Select the "Camera" widget:
 
-![Add camera box to Gladys](../../static/img/docs/en/dashboard/camera/select-box.png)
+![Add the camera widget to Gladys](../../static/img/docs/en/dashboard/camera/select-widget-camera.png)
 
-Select the camera you want to view.
+Next, select the camera you want to display.
 
-Give this widget a name, This will be the caption displayed on the dashboard, under the camera image.
+Give this widget a name; this text will be displayed on the dashboard below the camera image.
 
 ![Select the camera to display](../../static/img/docs/en/dashboard/camera/select-camera.png)
 
-Click on "Save".
+Click "Save".
 
-You should see the image from your camera.
+That's it! You should see your camera image.
 
-![Gladys Assistant Dashboard Camera View](../../static/img/docs/en/dashboard/camera/view-image.png)
-
-This image will refresh automatically, according to the frequency that you have defined in the camera integration.
+This image will refresh automatically according to the frequency you defined in the camera integration.
