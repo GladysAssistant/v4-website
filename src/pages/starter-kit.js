@@ -50,8 +50,8 @@ const faqData = [
       <>
         Non, le Beelink vient directement de l'usine. Je t'expliquerai dans la
         formation comment installer un OS (Ubuntu) et Gladys sur ce mini-PC. Si
-        tu as la moindre question, je suis disponible pour un appel pour
-        t'aider.
+        tu as la moindre question, on peut s'appeler ou discuter par email, je
+        suis toujours disponible pour débloquer quand il y a un souci 😄
       </>
     ),
   },
