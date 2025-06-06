@@ -267,6 +267,9 @@ const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
 
 function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
+  const shouldDisplayStarterKitLink =
+    lang === "fr" ||
+    (navigator && navigator.language && navigator.language.startsWith("fr"));
   return (
     <>
       <header className={classnames("shadow--lw")}>
@@ -306,7 +309,7 @@ function Home({ integrations, lang }) {
                     </Translate>
                   </Link>
                 </div>
-                {lang === "fr" && (
+                {shouldDisplayStarterKitLink && (
                   <div
                     className="margin-right--md"
                     style={{ display: "inline-block" }}
@@ -316,9 +319,16 @@ function Home({ integrations, lang }) {
                         "button button--primary",
                         styles.heroButton
                       )}
-                      href="/fr/starter-kit/"
+                      href={
+                        lang === "en" ? `/starter-kit` : `/${lang}/starter-kit`
+                      }
                     >
-                      Le kit de démarrage (dès 165€)
+                      <Translate
+                        id="home.starterKitButton"
+                        description="The getting started button of the homepage"
+                      >
+                        Discover the Starter Kit
+                      </Translate>
                     </Link>
                   </div>
                 )}
