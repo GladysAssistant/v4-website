@@ -259,13 +259,12 @@ function Plus() {
           <div className="row">
             <div className="col col--6">
               <form className={cx("margin-left--md", styles.plusForm)}>
-                <h1 className={styles.plusTitle}>
-                  Kit de démarrage officiel Gladys
-                </h1>
+                <h1 className={styles.plusTitle}>Kit de démarrage Gladys</h1>
                 <p>
                   Un mini-PC surpuissant
                   <br />+ la formation officielle Gladys
                   <br />+ un an de Gladys Plus
+                  <br />+ je t'aide si tu as des questions
                 </p>
                 <p>
                   Livraison <b>GRATUITE</b>
@@ -750,7 +749,7 @@ function Plus() {
                 >
                   <p
                     style={{ fontStyle: "italic", marginBottom: "15px" }}
-                  >{`"Bonjour tout le monde, je viens de souscrire un kit de démarrage, content de rejoindre la communauté !"`}</p>
+                  >{`"Je viens de souscrire un kit de démarrage, content de rejoindre la communauté !"`}</p>
                   <p style={{ fontWeight: "bold", textAlign: "right" }}>
                     - Nagromdark
                   </p>
@@ -778,11 +777,6 @@ function Plus() {
                 mais également très économe en énergie. Avec 16 Go de RAM et un
                 SSD de 500 Go, il garantit une expérience fluide et durable.
               </p>
-
-              <p>
-                Cela dit, pour débuter, le Beelink Mini S12 reste une très bonne
-                option ! 😊
-              </p>
               <p>
                 Si vous recherchez le top de la performance, que ce soit pour
                 une utilisation intensive de Gladys, des applications
@@ -799,7 +793,7 @@ function Plus() {
                       <th>Caractéristiques</th>
                       <th>Beelink Mini S12</th>
                       <th>Beelink Mini S12 Pro</th>
-                      <th>Beelink S13</th>
+                      <th>Beelink Mini S13</th>
                     </tr>
                   </thead>
                   <tbody>
