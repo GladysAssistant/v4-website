@@ -693,11 +693,11 @@ function Plus() {
                 >
                   <p style={{ fontStyle: "italic", marginBottom: "15px" }}>
                     {
-                      "Une très bonne idée ce kit pour ceux qui n'y comprennent rien... c'est parfois juste ce qui manque pour sauter le pas. Une fois qu'on y a gouté..."
+                      "Je suis passé d’un Raspberry Pi au Beelink Mini S12 Pro grâce au Kit de démarrage Gladys et j’en suis très content. J’ai constaté un gain en réactivité et j’ai plus confiance en mon système domotique maintenant, tout ça dans un format compact et silencieux. Et la migration s’est faite en quelques minutes grâce aux sauvegardes Gladys Plus."
                     }
                   </p>
                   <p style={{ fontWeight: "bold", textAlign: "right" }}>
-                    - tiboys
+                    - cicoub13
                   </p>
                 </div>
               </div>
