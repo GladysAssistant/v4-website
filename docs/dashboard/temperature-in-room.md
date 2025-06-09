@@ -1,29 +1,41 @@
 ---
 id: temperature-in-room
-title: Temperature in room
-sidebar_label: Temperature in room
+title: Display the average room temperature on the dashboard
+sidebar_label: Room Temperature
 ---
 
-In Gladys Assistant, you can display the average temperature of a room, right on your dashboard.
+In Gladys Assistant, you can display the average temperature of a room on your dashboard.
 
-This widget will look for the temperature of all the temperature sensors present in the room, and displays an average on the dashboard.
+This widget fetches the temperature from all temperature sensors present in the room and displays an average on the dashboard.
 
 ## Prerequisites
 
-You must first have configured at least one temperature sensor. It could be a sensor from any protocol (Z-Wave, MQTT, etc.), and have that sensor assigned to a room.
+You must have at least one temperature sensor configured beforehand.
+
+This can be a sensor of any protocol (Zigbee, Matter, MQTT, it doesn't matter), and this sensor must be assigned to a room.
+
+:::note
+Some sensors report a "Device Temperature", for example, a computer might report its CPU temperature. Gladys does not count these values as temperature values for this widget.
+:::
 
 ## Configuration
 
-Go to the dashboard, and click on "Edit".
+Go to the dashboard, and click "Edit".
 
-Select the "room temperature" widget, and click on the + button.
+Select the "Room Temperature" widget, and click the + button.
 
-![Add the temperature box to Gladys](../../static/img/docs/en/dashboard/temperature-in-room/select-box.png)
+![Add the temperature widget to Gladys](../../static/img/docs/en/dashboard/temperature-in-room/add-widget-temperature-in-room.png)
 
-Select the room you want to display.
+Next, select the room you want to display.
 
 ![Select the room to display](../../static/img/docs/en/dashboard/temperature-in-room/select-room.png)
 
-Click on "Save".
+You can configure custom thresholds where the widget color will change based on the temperature.
 
-You should see the average temperature of this room!
+Click "Save".
+
+![The room temperature widget](../../static/img/docs/en/dashboard/temperature-in-room/temperature-in-room.png)
+
+If you don't have any sensors in the room, or if these sensors haven't sent any values in the last hour, you will see:
+
+![No data](../../static/img/docs/en/dashboard/temperature-in-room/no-temperature.png)
