@@ -1,28 +1,30 @@
 ---
 id: weather
-title: Weather
+title: Display weather on the dashboard
 sidebar_label: Weather
 ---
 
-In Gladys Assistant, you can display the weather at your location on the dashboard.
+You can display the weather related to your location on the dashboard.
 
 ## Prerequisites
 
-- You must first have configured the [OpenWeather service](/docs/integrations/openweather/) to display the weather forecast in Gladys Assistant.
-- You must have configured your home in the settings, and have placed your home on the map, so that OpenWeatherMap has the latitude/longitude of your home.
+- You must have previously configured the [OpenWeather](/docs/integrations/openweather/) service to display the weather in Gladys Assistant.
+- You must have configured your home in the settings, and have placed your home on the map, so that OpenWeatherMap knows the latitude and longitude of your home.
 
 ## Configuration
 
-Go to the dashboard, then click on "Edit".
+Go to the dashboard, then click "Edit".
 
-Select the "Weather" widget and click on the + button.
+Add a "Weather" widget:
 
-![Add the weather box to Gladys](../../static/img/docs/en/dashboard/weather/add-weather-box.png)
+![Add weather widget to Gladys](../../static/img/docs/en/dashboard/weather/add-weather-widget.png)
 
-Select your home. This will allow the service to know your latitude/longitude.
+Next, select your home and display options:
 
-![Select your home in Gladys](../../static/img/docs/en/dashboard/weather/select-home.png)
+![Select your home in Gladys](../../static/img/docs/en/dashboard/weather/weather-options.png)
 
-Click on "Save".
+Click "Save".
 
-You should see the weather forecast!
+You should see the weather!
+
+![Weather on the dashboard](../../static/img/docs/en/dashboard/weather/weather-widget.png)
