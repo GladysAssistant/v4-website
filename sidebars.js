@@ -97,6 +97,7 @@ module.exports = {
         "dashboard/alarm",
         "dashboard/weather",
         "dashboard/temperature-in-room",
+        "dashboard/humidity-in-room",
         "dashboard/camera",
         "dashboard/devices",
         "dashboard/chart",
