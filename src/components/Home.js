@@ -292,7 +292,7 @@ function Home({ integrations, lang }) {
               <span className="container">
                 <div
                   className="margin-right--md"
-                  style={{ display: "inline-block" }}
+                  style={{ display: "inline-block", verticalAlign: "top" }}
                 >
                   <Link
                     className={classnames(
@@ -308,11 +308,19 @@ function Home({ integrations, lang }) {
                       Get Started
                     </Translate>
                   </Link>
+                  <div style={{ fontSize: '0.85em', marginTop: '0.5rem', opacity: 0.8, textAlign: 'center' }}>
+                    <Translate
+                      id="home.gettingStartedSubtext"
+                      description="The getting started button subtext"
+                    >
+                      5-min setup • No credit card
+                    </Translate>
+                  </div>
                 </div>
                 {shouldDisplayStarterKitLink && (
                   <div
                     className="margin-right--md"
-                    style={{ display: "inline-block" }}
+                    style={{ display: "inline-block", verticalAlign: "top" }}
                   >
                     <Link
                       className={classnames(
@@ -382,11 +390,6 @@ function Home({ integrations, lang }) {
         </div>
       </header>
       <main>
-        <div
-          className={classnames(styles.homeSection, styles.newsletterSection)}
-        >
-          <SubcribeNewsletter lang={lang} />
-        </div>
         <div className={classnames(styles.homeSection)}>
           <h2 className={styles.secondaryTitle}>
             <Translate
@@ -447,7 +450,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.sceneTitle"
                   description="Cool features scene title on the homepage"
                 >
-                  Wake Up to Your Perfect Morning
+                  Automate Your Entire Day
                 </Translate>
               </h4>
               <p>
