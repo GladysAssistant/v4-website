@@ -286,7 +286,7 @@ function Home({ integrations, lang }) {
                   id="home.description"
                   description="The home page description"
                 >
-                  Craft Your Perfect Smart Home Experience.
+                  One Platform. Every Device. Complete Privacy.
                 </Translate>
               </p>
               <span className="container">
@@ -305,7 +305,7 @@ function Home({ integrations, lang }) {
                       id="home.gettingStartedButton"
                       description="The getting started button of the homepage"
                     >
-                      Install for free
+                      Get Started
                     </Translate>
                   </Link>
                 </div>
@@ -393,7 +393,7 @@ function Home({ integrations, lang }) {
               id="home.coolFeatures.title"
               description="Cool features description on the homepage"
             >
-              Some cool features out of the box
+              Powerful Features, Zero Configuration
             </Translate>
           </h2>
           <div className={styles.coolFeatureFlexContainer}>
@@ -403,7 +403,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.dashboardTitle"
                   description="Cool features dashboard title on the homepage"
                 >
-                  Build great dashboards
+                  See Everything at a Glance
                 </Translate>
               </h4>
               <p>
@@ -411,9 +411,8 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.dashboardDescrition"
                   description="Cool features dashboard title on the homepage"
                 >
-                  You can create as many dashboards as you want in Gladys, and
-                  they are entirely customizable. Add your cameras, charts of
-                  sensors in your house, display who's at home and who's not.
+                  Temperature, security cameras, presence—monitor everything
+                  from one beautiful dashboard.
                 </Translate>
               </p>
             </div>
@@ -448,7 +447,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.sceneTitle"
                   description="Cool features scene title on the homepage"
                 >
-                  Automate your life with scenes
+                  Wake Up to Your Perfect Morning
                 </Translate>
               </h4>
               <p>
@@ -456,10 +455,8 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.sceneDescription"
                   description="Cool features scene title on the homepage"
                 >
-                  You want to wake up with nice music? The coffee ready? Gladys
-                  can help you with that. Scenes are fully editable in the UI,
-                  and can be triggered from an event coming, at a specific time,
-                  or manually.
+                  Coffee brewing, lights turning on, music playing—all
+                  automatic. No coding required.
                 </Translate>
               </p>
             </div>
@@ -471,7 +468,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.chatTitle"
                   description="Cool features chat title on the homepage"
                 >
-                  Always one message away
+                  Control Your Home by Voice
                 </Translate>
               </h4>
               <p>
@@ -479,10 +476,8 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.chatDescription"
                   description="Cool features chat title on the homepage"
                 >
-                  Gladys is a smart assistant. You can talk to her in the
-                  interface, or with our Telegram integration. Ask her to show
-                  you the image of the camera in the kitchen, and she'll answer
-                  back!
+                  "Turn on the light in the kitchen" - Gladys responds instantly
+                  via Telegram, Google Home, Alexa or Siri.
                 </Translate>
               </p>
             </div>
@@ -509,7 +504,7 @@ function Home({ integrations, lang }) {
               id="home.compatibilities.title"
               description="Cool features chat title on the homepage"
             >
-              Lots of compatibilities, built-in
+              Works With Everything You Own
             </Translate>
           </h2>
           <div className="row">
@@ -552,7 +547,7 @@ function Home({ integrations, lang }) {
               id="home.characteristics.title"
               description="Characteristics chat title on the homepage"
             >
-              The most intuitive smart home software
+              Built Different: Privacy-First, User-Focused
             </Translate>
           </h2>
           <div className={styles.featureFlexContainer}>
@@ -570,8 +565,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.privacyDescription"
                   description="Characteristics chat title on the homepage"
                 >
-                  Gladys is self-hosted, and all your data stays in your local
-                  machine at home, in a simple SQLite database.
+                  Gladys is self-hosted, and all your data stays on your local
+                  machine at home. No cloud required, no tracking, ever.
                 </Translate>
               </p>
             </div>
@@ -589,8 +584,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.easeOfUseDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  We built Gladys like we would build any consumer product: no
-                  SSH needed, no files to edit.
+                  No terminal commands. No config files. Just a beautiful
+                  interface that works.
                 </Translate>
               </p>
             </div>
@@ -608,8 +603,7 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.cleanUIDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  We built Gladys user interface with great care, and always
-                  start with the design when working on a new feature.
+                  Every pixel matters. We design first, then code.
                 </Translate>
               </p>
             </div>
@@ -629,8 +623,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.stableDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  Stability is one of the core values of the project, we built
-                  Gladys to run for tens of years.
+                  Built to last decades. Your smart home will never let you
+                  down.
                 </Translate>
               </p>
             </div>
@@ -648,8 +642,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.fastDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  Gladys is built with fast technologies (Preact + Node.js) and
-                  we care a lot about performances.
+                  Lightning-fast interface, instant actions. We're obsessed with
+                  performance.
                 </Translate>
               </p>
             </div>
@@ -667,8 +661,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.autoUpgradeDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  Gladys run as a Docker container. We use Watchtower to
-                  automatically upgrade Gladys.
+                  New features and bug fixes installed automatically. Zero
+                  hassle.
                 </Translate>
               </p>
             </div>
@@ -681,7 +675,7 @@ function Home({ integrations, lang }) {
               id="home.testimonial.title"
               description="Testimonia title on the homepage"
             >
-              Our users love Gladys
+              What Our Community Says
             </Translate>
           </h2>
           <div className={styles.testimonialContainer}>
