@@ -24,6 +24,7 @@ module.exports = {
       type: "category",
       label: "Integrations",
       items: [
+        "integrations/intro",
         "integrations/airplay",
         "integrations/alexa",
         "integrations/bluetooth",
