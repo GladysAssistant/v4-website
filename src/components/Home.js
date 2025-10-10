@@ -19,14 +19,14 @@ import Translate, { translate } from "@docusaurus/Translate";
 const COMPATIBILITIES = [
   [
     { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
-    { title: "Philips-Hue", imgSrc: "philips-hue.jpg", docKey: "philips-hue" },
+    { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
     { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
     { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
   ],
   [
-    { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
+    { title: "Shelly", imgSrc: "shelly.jpg", docKey: "shelly" },
     { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-    { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
+    { title: "Somfy", imgSrc: "somfy.jpg", docKey: "somfy-tahoma" },
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],
 ];
@@ -295,10 +295,10 @@ function Home({ integrations, lang }) {
                   style={{ display: "inline-block", verticalAlign: "top" }}
                 >
                   <Link
-                    className={classnames(
-                      "button button--secondary",
-                      styles.heroButton
-                    )}
+                    className={classnames("button", styles.heroButton, {
+                      "button--primary": lang === "en",
+                      "button--secondary": lang !== "en",
+                    })}
                     href={lang === "en" ? `/docs` : `/${lang}/docs`}
                   >
                     <Translate
@@ -308,7 +308,14 @@ function Home({ integrations, lang }) {
                       Get Started
                     </Translate>
                   </Link>
-                  <div style={{ fontSize: '0.85em', marginTop: '0.5rem', opacity: 0.8, textAlign: 'center' }}>
+                  <div
+                    style={{
+                      fontSize: "0.85em",
+                      marginTop: "0.5rem",
+                      opacity: 0.8,
+                      textAlign: "center",
+                    }}
+                  >
                     <Translate
                       id="home.gettingStartedSubtext"
                       description="The getting started button subtext"
@@ -494,6 +501,19 @@ function Home({ integrations, lang }) {
               />
             </div>
           </div>
+          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+            <Link
+              className="button button--primary button--lg"
+              href={lang === "en" ? `/docs` : `/${lang}/docs`}
+            >
+              <Translate
+                id="home.ctaAfterFeatures"
+                description="CTA after features section"
+              >
+                Try Gladys Now - It's Free
+              </Translate>
+            </Link>
+          </div>
         </div>
 
         <div
@@ -541,6 +561,23 @@ function Home({ integrations, lang }) {
                 </div>
               ))}
             </div>
+          </div>
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            <Link
+              className="button button--secondary button--lg"
+              href={
+                lang === "en"
+                  ? `/docs/integrations`
+                  : `/${lang}/docs/integrations`
+              }
+            >
+              <Translate
+                id="home.ctaAfterIntegrations"
+                description="CTA after integrations section"
+              >
+                Browse All Integrations →
+              </Translate>
+            </Link>
           </div>
         </div>
 
@@ -683,6 +720,49 @@ function Home({ integrations, lang }) {
           </h2>
           <div className={styles.testimonialContainer}>
             <TestimonialHomeSection lang={lang} testimonials={testimonials} />
+          </div>
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "3rem",
+              padding: "2.5rem 1.5rem",
+              backgroundColor: "var(--ifm-color-emphasis-100)",
+              borderRadius: "0.75rem",
+              maxWidth: "800px",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            <h3 style={{ fontSize: "1.75rem", marginBottom: "1rem" }}>
+              <Translate id="home.finalCta.title" description="Final CTA title">
+                Ready to Take Control of Your Smart Home?
+              </Translate>
+            </h3>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                marginBottom: "1.5rem",
+                opacity: 0.9,
+              }}
+            >
+              <Translate
+                id="home.finalCta.subtitle"
+                description="Final CTA subtitle"
+              >
+                Join the open-source smart home revolution
+              </Translate>
+            </p>
+            <Link
+              className="button button--primary button--lg"
+              href={lang === "en" ? `/docs` : `/${lang}/docs`}
+            >
+              <Translate
+                id="home.finalCta.button"
+                description="Final CTA button"
+              >
+                Get Started Free
+              </Translate>
+            </Link>
           </div>
         </div>
 
