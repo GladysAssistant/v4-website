@@ -76,7 +76,7 @@ If this error appears in your logs, please check the following:
 - Double-check your credentials and verify that the correct data center is selected.
 - Check the IoT Core package validity
 > The IoT Core trial package is only active for one month and must be renewed manually. 
-![Tuya Gladys integration, save configuration](../../static/img/docs/en/configuration/tuya/tuya-nachtwind-serviceexpired.png)
+![Tuya Gladys integration, save configuration](../../static/img/docs/en/configuration/tuya/tuya-nachtwind-serviceexpired.png)  
 Due to the fast-paced evolution of the Tuya Developer Platform, there is no single, permanent tutorial available for this process.  
 Open the Details section in the Tuya Developer Console and follow the on-screen wizard to extend your trial period.  
 After extending the trial, it may take up to 15 minutes before your hardware becomes accessible again.  
