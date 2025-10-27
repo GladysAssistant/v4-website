@@ -68,3 +68,21 @@ Sur le forum, Francis66 avait ce souci, et il l'a résolu de cette façon:
 - Pour la zone: j’avais renseigné Europe de l’ouest au lieu d’Europe Centrale
 
 Source: https://community.gladysassistant.com/t/configuration-de-lintegration-tuya/9140/7
+
+### Erreur : `Error: Unable to start service tuya TypeError: Cannot destructure property 'list' of 'result' as it is undefined.`
+
+Si cette erreur apparaît dans vos logs Gladys, vérifiez les points suivants :
+
+- **Connectivité Internet de l’appareil**
+  - Assurez-vous que le système dispose d’une bonne résolution DNS et que l’accès Internet n’est pas bloqué par Pi-hole ou un logiciel similaire.
+- **Identifiants et data center**
+  - Vérifiez vos identifiants Tuya et assurez-vous d’avoir sélectionné le bon data center.
+- **Validité du package IoT Core**
+  - Le package d’essai IoT Core est actif pendant **un mois** seulement et doit être renouvelé manuellement.
+
+> ![Intégration Tuya Gladys, sauvegarde de la configuration](../../../../../static/img/docs/en/configuration/tuya/tuya-nachtwind-serviceexpired.png)
+
+> En raison de l’évolution rapide de la plateforme développeur Tuya, il n’existe pas de tutoriel permanent pour ce processus.  
+> Ouvrez la section **Détails** dans la console développeur Tuya et suivez l’assistant à l’écran pour prolonger votre période d’essai.  
+> Après avoir prolongé la période d’essai, il peut s’écouler jusqu’à **15 minutes** avant que votre matériel ne soit à nouveau accessible.  
+> Ce processus est **uniquement nécessaire** lors de la **première connexion** de votre compte à Gladys.
