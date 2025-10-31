@@ -785,8 +785,8 @@ function Plus() {
 function PlusParent() {
   return (
     <Layout
-      title="Kit de démarrage officiel"
-      description="Le meilleur matériel pour commencer sur Gladys + la formation officielle + un an de Gladys Plus"
+      title="Kit de démarrage Gladys - Clé en main avec Gladys pré-installée"
+      description="Mini-PC Beelink S13 avec Gladys déjà installée + formation officielle + 6 mois de Gladys Plus offerts. Branchez et c'est parti !"
     >
       <Plus />
     </Layout>
