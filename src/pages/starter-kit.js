@@ -45,13 +45,14 @@ function FAQ({ data }) {
 
 const faqData = [
   {
-    title: <>Est-ce que Gladys est installée sur le Beelink ?</>,
+    title: <>Est-ce que Gladys est installée sur le Beelink S13 ?</>,
     description: (
       <>
-        Non, le Beelink vient directement de l'usine. Je t'expliquerai dans la
-        formation comment installer un OS (Ubuntu) et Gladys sur ce mini-PC. Si
-        tu as la moindre question, on peut s'appeler ou discuter par email, je
-        suis toujours disponible pour débloquer quand il y a un souci 😄
+        Oui ! Le Beelink S13 arrive chez toi avec Gladys déjà installée et
+        configurée. Tu n'as qu'à le brancher, suivre le guide de démarrage
+        rapide, et tu es prêt à utiliser Gladys. Plus besoin d'installer un OS
+        ou de configurer quoi que ce soit, tout est déjà fait ! Si tu as la
+        moindre question, je suis toujours disponible pour t'aider 😄
       </>
     ),
   },
@@ -60,19 +61,21 @@ const faqData = [
     description: (
       <>
         Si jamais ce kit ne te donnait pas satisfaction, tu peux retourner le
-        Beelink sous 1 mois. Si tu as la moindre question lors de l'installation
-        n'hésite pas à me contacter, je suis très disponible et toujours prêt à
-        aider.
+        Beelink S13 sous 1 mois. Comme Gladys est déjà installée, tu peux tester
+        le système complet dès réception. Si tu as la moindre question, n'hésite
+        pas à me contacter, je suis très disponible et toujours prêt à aider.
       </>
     ),
   },
   {
-    title: <>Pourquoi proposer ce kit ?</>,
+    title: <>Pourquoi proposer ce kit avec Gladys pré-installée ?</>,
     description: (
       <>
         Je propose ce kit pour démocratiser l'accès à Gladys en rendant la
-        première marche la plus basse possible. La domotique est une jungle, et
-        parfois, il est dur de s'y mettre !
+        première marche la plus basse possible. Avec Gladys pré-installée, tu
+        n'as plus besoin de te soucier de l'installation technique. La domotique
+        est une jungle, et je veux que tu puisses te concentrer sur l'essentiel
+        : profiter de ta maison connectée !
       </>
     ),
   },
@@ -261,7 +264,7 @@ function Plus() {
               <form className={cx("margin-left--md", styles.plusForm)}>
                 <h1 className={styles.plusTitle}>Kit de démarrage Gladys</h1>
                 <p>
-                  Un mini-PC surpuissant
+                  Un mini-PC surpuissant avec <b>Gladys pré-installée</b>
                   <br />+ la formation officielle Gladys
                   <br />+ un an de Gladys Plus
                   <br />+ je t'aide si tu as des questions
@@ -298,7 +301,7 @@ function Plus() {
                     textAlign: "center",
                   }}
                 >
-                  Choisissez votre kit de démarrage :
+                  Le nouveau kit de démarrage Gladys :
                 </h2>
                 {isUnavailable && (
                   <div style={{ marginBottom: "20px", textAlign: "center" }}>
@@ -314,75 +317,18 @@ function Plus() {
                   </div>
                 )}
                 {!isUnavailable && (
-                  <div className="row">
-                    {" "}
-                    {/* Using Infima grid for three columns */}
-                    {/* Option 1: Beelink Mini S12 */}
+                  <div className="row" style={{ justifyContent: "center" }}>
+                    {/* Beelink S13 - Main and only option */}
                     <div
-                      className="col col--4"
+                      className="col col--6"
                       style={{ display: "flex", flexDirection: "column" }}
                     >
                       <div
                         style={{
-                          border: "1px solid #eee",
-                          padding: "20px",
-                          paddingTop: "40px",
-                          borderRadius: "8px",
-                          textAlign: "center",
-                          marginBottom: "15px",
-                          flexGrow: 1,
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div>
-                          <h3>Beelink Mini S12</h3>
-                          <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
-                            L'essentiel pour bien démarrer votre domotique et
-                            découvrir Gladys.
-                          </p>
-                          {priceCheaperKit && (
-                            <p
-                              style={{
-                                fontSize: "30px",
-                                fontWeight: "bold",
-                                margin: "15px 0",
-                                color: "var(--ifm-color-primary)",
-                              }}
-                            >
-                              {priceCheaperKit ? priceCheaperKit + "€" : "..."}
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          onClick={subscribeCheaperPc}
-                          disabled={loading || !priceCheaperKit}
-                          className={cx(
-                            "button button--outline button--primary button--lg",
-                            styles.starterKitInputButton
-                          )}
-                          style={{
-                            width: "100%",
-                            marginTop: "15px",
-                            fontSize: "1rem",
-                          }}
-                        >
-                          Commander le S12
-                        </button>
-                      </div>
-                    </div>
-                    {/* Option 2: Beelink Mini S12 Pro */}
-                    <div
-                      className="col col--4"
-                      style={{ display: "flex", flexDirection: "column" }}
-                    >
-                      <div
-                        style={{
-                          border: "2px solid var(--ifm-color-primary)",
-                          padding: "20px",
-                          paddingTop: "40px",
-                          borderRadius: "8px",
+                          border: "3px solid var(--ifm-color-primary)",
+                          padding: "30px",
+                          paddingTop: "50px",
+                          borderRadius: "12px",
                           textAlign: "center",
                           marginBottom: "15px",
                           position: "relative",
@@ -390,6 +336,7 @@ function Plus() {
                           display: "flex",
                           flexDirection: "column",
                           justifyContent: "space-between",
+                          boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
                         }}
                       >
                         <span
@@ -398,102 +345,50 @@ function Plus() {
                             top: "-15px",
                             left: "50%",
                             transform: "translateX(-50%)",
-                            backgroundColor: "var(--ifm-color-primary)",
+                            backgroundColor: "var(--ifm-color-success)",
                             color: "white",
-                            padding: "5px 15px",
-                            borderRadius: "20px",
-                            fontSize: "0.9em",
+                            padding: "8px 20px",
+                            borderRadius: "25px",
+                            fontSize: "1em",
                             fontWeight: "bold",
                           }}
                         >
-                          Recommandé
+                          ✓ Gladys Pré-installée
                         </span>
                         <div>
-                          <h3>Beelink Mini S12 Pro</h3>
-                          <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
-                            Pour une expérience ultra-fluide, plus de puissance
-                            et de stockage.
+                          <h3
+                            style={{ fontSize: "32px", marginBottom: "20px" }}
+                          >
+                            Beelink S13
+                          </h3>
+                          <p
+                            style={{ fontSize: "1.1em", marginBottom: "20px" }}
+                          >
+                            Le mini-PC haute performance avec{" "}
+                            <b>Gladys déjà installée</b>. Branchez, configurez
+                            et c'est parti !
                           </p>
-                          {price && (
-                            <p
-                              style={{
-                                fontSize: "30px",
-                                fontWeight: "bold",
-                                margin: "15px 0",
-                                color: "var(--ifm-color-primary)",
-                              }}
-                            >
-                              {price ? price + "€" : "..."}
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          onClick={subscribe}
-                          disabled={loading || !price}
-                          className={cx(
-                            "button button--primary button--lg",
-                            styles.starterKitInputButton
-                          )}
-                          style={{
-                            width: "100%",
-                            marginTop: "15px",
-                            fontSize: "1rem",
-                          }}
-                        >
-                          Commander le S12 Pro
-                        </button>
-                      </div>
-                    </div>
-                    {/* Option 3: Beelink S13 */}
-                    <div
-                      className="col col--4"
-                      style={{ display: "flex", flexDirection: "column" }}
-                    >
-                      <div
-                        style={{
-                          border: "1px solid #ddd",
-                          padding: "20px",
-                          paddingTop: "40px",
-                          borderRadius: "8px",
-                          textAlign: "center",
-                          marginBottom: "15px",
-                          position: "relative",
-                          flexGrow: 1,
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          backgroundColor: "var(--ifm-color-primary-darkest)",
-                          color: "white",
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: "-15px",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            backgroundColor: "var(--ifm-color-warning)",
-                            color: "black",
-                            padding: "5px 15px",
-                            borderRadius: "20px",
-                            fontSize: "0.9em",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Perf. Max
-                        </span>
-                        <div>
-                          <h3 style={{ color: "white" }}>Beelink S13</h3>
-                          <p style={{ minHeight: "60px", fontSize: "0.9em" }}>
-                            Le summum de la performance pour votre domotique et
-                            bien plus encore.
-                          </p>
+                          <ul
+                            style={{
+                              textAlign: "left",
+                              marginBottom: "20px",
+                              fontSize: "0.95em",
+                            }}
+                          >
+                            <li>
+                              ✓ Processeur Intel N150 (dernière génération)
+                            </li>
+                            <li>✓ 16 Go de RAM DDR4</li>
+                            <li>✓ 500 Go SSD M.2 NVMe</li>
+                            <li>✓ WiFi 6 & Bluetooth 5.2</li>
+                            <li>✓ Double HDMI 4K@60Hz</li>
+                          </ul>
                           <p
                             style={{
-                              fontSize: "30px",
+                              fontSize: "36px",
                               fontWeight: "bold",
-                              margin: "15px 0",
-                              color: "var(--ifm-color-warning)",
+                              margin: "20px 0",
+                              color: "var(--ifm-color-primary)",
                             }}
                           >
                             {priceS13 ? priceS13 + "€" : "..."}
@@ -503,16 +398,17 @@ function Plus() {
                           onClick={subscribeS13}
                           disabled={loading || !priceS13}
                           className={cx(
-                            "button button--warning button--lg",
+                            "button button--primary button--lg",
                             styles.starterKitInputButton
                           )}
                           style={{
                             width: "100%",
-                            marginTop: "15px",
-                            fontSize: "1rem",
+                            marginTop: "20px",
+                            fontSize: "1.2rem",
+                            padding: "15px",
                           }}
                         >
-                          Commander le S13
+                          Commander le Kit S13
                         </button>
                       </div>
                     </div>
@@ -571,29 +467,35 @@ function Plus() {
           <div className={cx("row", styles.starterKitRow)}>
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
               <img
-                src={useBaseUrl("/img/starter-kit/specs.jpg")}
+                src={useBaseUrl("/img/starter-kit/beelink_s13_spec.jpg")}
                 className={cx(styles.specImage)}
               />
             </div>
             <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
               <h2 className={cx(styles.plusFeatureTitle)}>
-                Beelink mini S12 Pro
+                Beelink S13 - Gladys Pré-installée
               </h2>
-              <p>Un mini-PC surpuissant, à faible consommation :</p>
+              <p>Un mini-PC de dernière génération, prêt à l'emploi :</p>
               <p>
                 <ul>
-                  <li>Processeur Intel N100 Quad-Core à basse consommation</li>
-                  <li>16 Go de RAM DDR4.</li>
-                  <li>Disque SSD NVMe M.2 500Go</li>
-                  <li>Wi-Fi 6, Bluetooth 5.2 et LAN 1000Mbps</li>
-                  <li>Double HDMI</li>
+                  <li>
+                    Processeur Intel N150 (Twin Lake) - Dernière génération
+                  </li>
+                  <li>16 Go de RAM DDR4 3200MHz</li>
+                  <li>Disque SSD M.2 SATA3 500Go + slot M.2 PCIe disponible</li>
+                  <li>Wi-Fi 6, Bluetooth 5.2 et LAN Gigabit</li>
+                  <li>Double HDMI 4K@60Hz</li>
+                  <li>
+                    <b>Gladys déjà installée et configurée !</b>
+                  </li>
                 </ul>
               </p>
               <p>
-                <b>Note de Pierre-Gilles :</b> Je fais tourner ce mini-PC chez
-                moi, et je confirme que c'est une bête de course. Le CPU N100 et
-                le SSD NVMe font la différence, c'est simplement le jour et la
-                nuit comparé à un Pi par exemple.
+                <b>Note de Pierre-Gilles :</b> Le Beelink S13 représente le top
+                de la gamme des mini-PC pour la domotique. Avec Gladys
+                pré-installée, tu gagnes un temps précieux : plus besoin
+                d'installer Ubuntu ou de configurer quoi que ce soit. Tu le
+                branches, tu suis le guide de démarrage rapide, et c'est parti !
               </p>
             </div>
           </div>
@@ -760,95 +662,98 @@ function Plus() {
           <div className={cx("row", styles.starterKitRow)}>
             <div className="col col--12">
               <h2 className={cx(styles.plusTooExpensiveTitle)}>
-                Quel kit Beelink choisir : S12, S12 Pro ou S13 ?
+                Pourquoi le Beelink S13 avec Gladys pré-installée ?
               </h2>
               <p>
-                Je comprends que certains puissent trouver le kit un peu cher.
-                C'est pourquoi j'ai décidé de lancer une version plus accessible
-                à {priceCheaperKit} €, équipée d'un mini-PC moins puissant mais
-                tout à fait adapté pour commencer.
+                Le nouveau kit de démarrage Gladys est basé sur le{" "}
+                <b>Beelink S13</b>, un mini-PC de dernière génération qui offre
+                des performances exceptionnelles pour la domotique et bien plus
+                encore.
               </p>
 
               <p>
-                Si vous avez le budget, je recommande vivement le Beelink Mini
-                S12 Pro. Son processeur N100 est non seulement plus performant,
-                mais également très économe en énergie. Avec 16 Go de RAM et un
-                SSD de 500 Go, il garantit une expérience fluide et durable.
+                <b>La grande nouveauté :</b> Gladys est maintenant{" "}
+                <b>pré-installée</b> sur le mini-PC ! Fini les installations
+                complexes, tu reçois ton kit, tu le branches, tu suis le guide
+                de démarrage rapide et tu es prêt à utiliser Gladys en quelques
+                minutes.
               </p>
               <p>
-                Si vous recherchez le top de la performance, que ce soit pour
-                une utilisation intensive de Gladys, des applications
-                supplémentaires (Node-RED, AdGuard Home, etc.) ou simplement
-                pour avoir une machine qui durera de nombreuses années sans
-                jamais ralentir, le <strong>Beelink S13</strong> est fait pour
-                vous. Son processeur N150 plus puissant offre une marge de
-                manœuvre confortable pour tous vos projets.
+                Le processeur Intel N150 (Twin Lake) de dernière génération
+                offre une puissance largement suffisante pour faire tourner
+                Gladys de manière ultra-fluide, tout en laissant de la marge
+                pour des applications supplémentaires (Node-RED, AdGuard Home,
+                etc.). Avec 16 Go de RAM et 500 Go de stockage, c'est une
+                machine qui te servira pendant de nombreuses années.
               </p>
               <div className={styles.tableContainer}>
                 <table className={styles.priceTable}>
                   <thead>
                     <tr>
                       <th>Caractéristiques</th>
-                      <th>Beelink Mini S12</th>
-                      <th>Beelink Mini S12 Pro</th>
-                      <th>Beelink Mini S13</th>
+                      <th>Beelink S13 (Kit de démarrage)</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>Processeur</td>
-                      <td>Alder Lake-N95</td>
-                      <td>Alder Lake-N N100</td>
-                      <td>Twin Lake-N150</td>
+                      <td>Intel Twin Lake-N150 (dernière génération)</td>
                     </tr>
                     <tr>
                       <td>Mémoire RAM</td>
-                      <td>8 Go DDR4</td>
-                      <td>16 Go DDR4</td>
-                      <td>16 Go DDR4</td>
+                      <td>16 Go DDR4 3200MHz</td>
                     </tr>
                     <tr>
                       <td>Stockage</td>
-                      <td>256 Go M.2 SSD 2280</td>
-                      <td>500 Go M.2 SSD 2280</td>
-                      <td>500 Go M.2 SSD 2280</td>
+                      <td>500 Go M.2 SATA3 + slot M.2 PCIe disponible</td>
                     </tr>
                     <tr>
                       <td>WiFi</td>
-                      <td>WiFi 5</td>
-                      <td>WiFi 6</td>
                       <td>WiFi 6</td>
                     </tr>
                     <tr>
                       <td>Bluetooth</td>
-                      <td>Bluetooth 5.0</td>
-                      <td>Bluetooth 5.2</td>
                       <td>Bluetooth 5.2</td>
                     </tr>
                     <tr>
                       <td>Ports HDMI</td>
-                      <td>Double HDMI</td>
-                      <td>Double HDMI</td>
-                      <td>Double HDMI</td>
+                      <td>Double HDMI 4K@60Hz</td>
                     </tr>
                     <tr>
                       <td>LAN</td>
-                      <td>1000 Mbps</td>
-                      <td>1000 Mbps</td>
-                      <td>1000 Mbps</td>
+                      <td>Gigabit Ethernet (1000 Mbps)</td>
                     </tr>
                     <tr>
-                      <td>Prix du starter kit</td>
+                      <td>Gladys</td>
                       <td>
-                        {!isUnavailable && <b>{priceCheaperKit} €</b>}
-                        {isUnavailable && <b>{unavailableMessage}</b>}
+                        <b>✓ Pré-installée et configurée</b>
                       </td>
+                    </tr>
+                    <tr>
+                      <td>Formation Gladys</td>
+                      <td>✓ Incluse (accès à vie)</td>
+                    </tr>
+                    <tr>
+                      <td>Gladys Plus</td>
+                      <td>✓ 1 an inclus</td>
+                    </tr>
+                    <tr>
+                      <td>Support</td>
+                      <td>✓ Assistance personnalisée</td>
+                    </tr>
+                    <tr>
+                      <td>Prix du kit complet</td>
                       <td>
-                        {!isUnavailable && <b>{price} €</b>}
-                        {isUnavailable && <b>{unavailableMessage}</b>}
-                      </td>
-                      <td>
-                        {priceS13 && !isUnavailable && <b>{priceS13} €</b>}
+                        {priceS13 && !isUnavailable && (
+                          <b
+                            style={{
+                              fontSize: "1.3em",
+                              color: "var(--ifm-color-primary)",
+                            }}
+                          >
+                            {priceS13} €
+                          </b>
+                        )}
                         {isUnavailable && <b>{unavailableMessage}</b>}
                       </td>
                     </tr>
@@ -857,28 +762,11 @@ function Plus() {
                       <td>
                         <input
                           type="submit"
-                          onClick={subscribeCheaperPc}
-                          value="Commander S12"
-                          disabled={isUnavailable || loading}
-                          className={cx("button button--primary")}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="submit"
-                          onClick={subscribe}
-                          value="Commander S12 Pro"
-                          disabled={isUnavailable || loading}
-                          className={cx("button button--primary")}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="submit"
                           onClick={subscribeS13}
-                          value="Commander S13"
+                          value="Commander le Kit S13"
                           disabled={isUnavailable || loading || !priceS13}
-                          className={cx("button button--warning")}
+                          className={cx("button button--primary button--lg")}
+                          style={{ fontSize: "1.1em", padding: "10px 30px" }}
                         />
                       </td>
                     </tr>
