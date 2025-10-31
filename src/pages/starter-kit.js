@@ -785,7 +785,7 @@ function Plus() {
 function PlusParent() {
   return (
     <Layout
-      title="Kit de démarrage Gladys - Clé en main avec Gladys pré-installée"
+      title="Kit de démarrage Gladys clé en main"
       description="Mini-PC Beelink S13 avec Gladys déjà installée + formation officielle + 6 mois de Gladys Plus offerts. Branchez et c'est parti !"
     >
       <Plus />
