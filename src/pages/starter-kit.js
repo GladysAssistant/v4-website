@@ -61,9 +61,10 @@ const faqData = [
     description: (
       <>
         Si jamais ce kit ne te donnait pas satisfaction, tu peux retourner le
-        Beelink S13 sous 14 jours. Comme Gladys est déjà installée, tu peux tester
-        le système complet dès réception. Si tu as la moindre question, n'hésite
-        pas à me contacter, je suis très disponible et toujours prêt à aider.
+        Beelink S13 sous 14 jours. Comme Gladys est déjà installée, tu peux
+        tester le système complet dès réception. Si tu as la moindre question,
+        n'hésite pas à me contacter, je suis très disponible et toujours prêt à
+        aider.
       </>
     ),
   },
@@ -108,10 +109,8 @@ function Plus() {
   const [kitsRemaining, setKitsRemaining] = useState(null);
   const [progressPercentage, setProgressPercentage] = useState(null);
   const [isLowStock, setIsLowStock] = useState(null);
-  const [couponCode, setCouponCode] = useState("STARTERKIT");
-  const [cheaperKitCouponCode, setCheaperKitCouponCode] = useState(null);
   const [priceS13, setPriceS13] = useState(null);
-  const [s13CouponCode, setS13CouponCode] = useState(null);
+  const [s13Url, setS13Url] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const scrollTopTop = () => {
@@ -128,14 +127,9 @@ function Plus() {
       setIsUnavailable(true);
       setUnavailableMessage(data.message);
     } else {
-      setKitsRemaining(data.remaining);
-      setPrice(data.price);
-      setPriceCheaperKit(data.cheaper_mini_pc.price);
-      setCouponCode(data.validCoupon);
-      setCheaperKitCouponCode(data.cheaper_mini_pc.validCoupon);
       if (data.beelink_s13) {
         setPriceS13(data.beelink_s13.price);
-        setS13CouponCode(data.beelink_s13.validCoupon);
+        setS13Url(data.beelink_s13.url);
       }
       setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
       if (data.total !== undefined && data.remaining !== undefined) {
@@ -215,7 +209,7 @@ function Plus() {
     e.preventDefault();
     if (isBrowser) {
       const openStripe = () => {
-        window.location.href = `https://buy.stripe.com/5kQ9AUb184vI1N28f4fjG09?prefilled_promo_code=${s13CouponCode}`;
+        window.location.href = s13Url;
       };
       if (window.sa_loaded && !dntActive) {
         sa_event("starter_kit_click_buy_mini_s13", openStripe);
@@ -505,13 +499,13 @@ function Plus() {
                 Formation Gladys officielle
               </h2>
               <p>
-                Des heures de vidéos et tutoriels détaillés pour maîtriser Gladys
-                de A à Z.
+                Des heures de vidéos et tutoriels détaillés pour maîtriser
+                Gladys de A à Z.
               </p>
               <p>
                 Je t'explique comment utiliser toutes les fonctionnalités de
-                Gladys : créer des scènes, automatiser ton logement, connecter tes
-                appareils, et bien plus encore.
+                Gladys : créer des scènes, automatiser ton logement, connecter
+                tes appareils, et bien plus encore.
               </p>
               <p>
                 Je pars d'un logement vide, et je t'explique tous les choix que
@@ -736,7 +730,9 @@ function Plus() {
                     </tr>
                     <tr>
                       <td>Formation Gladys</td>
-                      <td>✓ Incluse (accès à vie)</td>
+                      <td>
+                        ✓ Incluse (accès à des tutoriels vidéos et écrits)
+                      </td>
                     </tr>
                     <tr>
                       <td>Gladys Plus</td>
