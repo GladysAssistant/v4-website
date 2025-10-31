@@ -120,16 +120,20 @@ const FAQQuestions = {
       response: (
         <>
           <p>
-            Pour accélérer le déploiement de Gladys, j'ai lancé un kit de
-            démarrage, contenant du hardware mais pas que ! 😎
+            Pour te permettre de démarrer avec Gladys en quelques minutes, j'ai
+            créé un kit clé en main avec <b>Gladys déjà pré-installée</b> ! 🚀
             <br />
             <br />
-            Ce kit est destiné à un public qui n'a pas d'installation Gladys
-            pour l'instant et qui souhaite se lancer facilement.
+            Le kit inclut un mini-PC Beelink S13 haute performance avec Gladys
+            pré-configurée, 6 mois de Gladys Plus offerts, et un accès à la
+            formation officielle avec des heures de vidéos et tutoriels.
             <br />
             <br />
-            Si ce kit te parle, dépêche toi :{" "}
-            <a href="/fr/starter-kit/">Je commande !</a>
+            Tu reçois le kit, tu le branches, et c'est parti ! Plus besoin
+            d'installer un OS ou de configurer quoi que ce soit.
+            <br />
+            <br />
+            <a href="/fr/starter-kit/">Découvrir le kit clé en main →</a>
           </p>
         </>
       ),
