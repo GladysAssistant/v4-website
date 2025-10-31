@@ -61,7 +61,7 @@ const faqData = [
     description: (
       <>
         Si jamais ce kit ne te donnait pas satisfaction, tu peux retourner le
-        Beelink S13 sous 1 mois. Comme Gladys est déjà installée, tu peux tester
+        Beelink S13 sous 14 jours. Comme Gladys est déjà installée, tu peux tester
         le système complet dès réception. Si tu as la moindre question, n'hésite
         pas à me contacter, je suis très disponible et toujours prêt à aider.
       </>
@@ -80,11 +80,11 @@ const faqData = [
     ),
   },
   {
-    title: <>Est-ce que l'abonnement Gladys Plus continu ensuite ?</>,
+    title: <>Est-ce que l'abonnement Gladys Plus continue ensuite ?</>,
     description: (
       <>
         Si tu es satisfait et que tu continues d'utiliser Gladys, l'abonnement
-        continuera au bout d'un an. Néanmoins, Gladys Plus est totalement sans
+        continuera au bout de 6 mois. Néanmoins, Gladys Plus est totalement sans
         engagement et tu peux annuler l'abonnement en un clic s'il ne te donne
         pas satisfaction.
       </>
@@ -266,13 +266,13 @@ function Plus() {
                 <p>
                   Un mini-PC surpuissant avec <b>Gladys pré-installée</b>
                   <br />+ la formation officielle Gladys
-                  <br />+ un an de Gladys Plus
+                  <br />+ 6 mois de Gladys Plus offerts
                   <br />+ je t'aide si tu as des questions
                 </p>
                 <p>
-                  Livraison <b>GRATUITE</b>
+                  Livraison en <b>Mondial Relay</b>
                   <br />
-                  <small>(Retour sous 1 mois si insatisfait)</small>
+                  <small>(Retour sous 14 jours si insatisfait)</small>
                 </p>
               </form>
             </div>
@@ -505,12 +505,17 @@ function Plus() {
                 Formation Gladys officielle
               </h2>
               <p>
-                Des heures de contenus vidéos et écrits où je t'explique comment
-                j'ai connecté mon logement de A à Z.
+                Des heures de vidéos et tutoriels détaillés pour maîtriser Gladys
+                de A à Z.
+              </p>
+              <p>
+                Je t'explique comment utiliser toutes les fonctionnalités de
+                Gladys : créer des scènes, automatiser ton logement, connecter tes
+                appareils, et bien plus encore.
               </p>
               <p>
                 Je pars d'un logement vide, et je t'explique tous les choix que
-                j'ai faits en termes de matériel.
+                j'ai faits en termes de matériel et de configuration.
               </p>
               <p>
                 Avoir accès à cette base de connaissance, c'est gagner du{" "}
@@ -537,9 +542,9 @@ function Plus() {
             </div>
             <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
               <h2 className={cx(styles.plusFeatureTitle)}>
-                Un an de Gladys Plus
+                6 mois de Gladys Plus offerts
               </h2>
-              <p>Profite du meilleur de Gladys Plus pendant 1 an !</p>
+              <p>Profite du meilleur de Gladys Plus pendant 6 mois !</p>
               <p>
                 <ul>
                   <li>Accès à distance chiffré de bout en bout</li>
@@ -735,7 +740,7 @@ function Plus() {
                     </tr>
                     <tr>
                       <td>Gladys Plus</td>
-                      <td>✓ 1 an inclus</td>
+                      <td>✓ 6 mois offerts</td>
                     </tr>
                     <tr>
                       <td>Support</td>
