@@ -30,12 +30,28 @@ function CvgPlus() {
                 </p>
                 <ul>
                   <li>
-                    Un proxy websockets entre son instance Gladys Assistant
-                    locale et le web, "le Gladys Gateway".
+                    Un accès à distance chiffré de bout en bout à son instance
+                    Gladys Assistant via le Gladys Gateway
                   </li>
-                  <li>Un service de sauvegarde automatisées</li>
-                  <li>Une API Owntracks</li>
-                  <li>Une API ouverte</li>
+                  <li>Un service de sauvegardes quotidiennes automatisées</li>
+                  <li>
+                    Une intégration avec les assistants vocaux Google Home et
+                    Alexa
+                  </li>
+                  <li>
+                    Une API HTTP ouverte pour connecter des services tiers
+                  </li>
+                  <li>
+                    Un streaming de caméra à distance (chiffré de bout en bout)
+                  </li>
+                  <li>
+                    Une intégration Enedis pour suivre sa consommation
+                    électrique
+                  </li>
+                  <li>
+                    Une intégration ChatGPT pour interagir avec l'IA dans Gladys
+                  </li>
+                  <li>Une API Owntracks pour le suivi de localisation</li>
                 </ul>
                 <p>
                   La souscription au service Gladys Plus n'apporte pas de
@@ -49,10 +65,19 @@ function CvgPlus() {
                   fonctionnement.
                 </p>
                 <h2>Tarif des prestations</h2>
-                <p>
-                  Gladys Plus est disponible au tarif de 9.99€/mois ou
-                  99.99€/an.
-                </p>
+                <p>Gladys Plus est disponible en deux formules :</p>
+                <ul>
+                  <li>
+                    <strong>Gladys Plus Lite :</strong> 6,99€/mois ou 69,99€/an
+                    - Accès aux fonctionnalités essentielles (accès à distance,
+                    API ouverte, assistant vocaux avec Google Home/Alexa)
+                  </li>
+                  <li>
+                    <strong>Gladys Plus :</strong> 9,99€/mois ou 99,99€/an -
+                    Accès à toutes les fonctionnalités (incluant sauvegardes,
+                    Enedis, ChatGPT, streaming caméra)
+                  </li>
+                </ul>
                 <h2>Durée de l'offre et résilation</h2>
                 <p>
                   L'abonnement Gladys Plus fait l'objet d'une reconduction
@@ -64,6 +89,26 @@ function CvgPlus() {
                   L'utilisateur dispose de 30 jours pour se faire rembourser si
                   il n'est pas satisfait de la prestation, et ce sans
                   justification.
+                </p>
+                <h2>Droit de rétractation pour les achats de matériel</h2>
+                <p>
+                  Conformément aux dispositions légales en vigueur,
+                  l'utilisateur dispose d'un délai de 14 jours à compter de la
+                  réception du matériel (kit de démarrage Gladys) pour exercer
+                  son droit de rétractation sans avoir à justifier de motifs ni
+                  à payer de pénalités.
+                </p>
+                <p>
+                  Pour exercer ce droit, l'utilisateur doit notifier sa décision
+                  de rétractation par email à hello@gladysassistant.com. Le
+                  matériel doit être retourné dans son emballage d'origine, en
+                  parfait état, complet et accompagné de tous les accessoires.
+                  Les frais de retour sont à la charge de l'utilisateur.
+                </p>
+                <p>
+                  Le remboursement sera effectué dans un délai de 14 jours à
+                  compter de la réception du matériel retourné, après
+                  vérification de son état.
                 </p>
                 <h2>Disponibilité</h2>
                 <p>
