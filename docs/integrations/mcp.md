@@ -10,7 +10,32 @@ The Model Context Protocol (MCP) is an open protocol developed by Anthropic that
 
 Gladys Assistant integrates an MCP server that enables your compatible AI agents (Claude Desktop, Perplexity, Mistral Le Chat, etc.) to communicate with your smart home. Currently available capabilities include:
 
-- 🌡️ Retrieve device states (temperature, humidity, opening, lights...)
+- 🌡️ Retrieve device states
+  - temperature
+  - humidity
+  - open/closed (contact)
+  - lamp
+  - smart plug
+  - air quality
+  - carbon monoxide (CO)
+  - carbon dioxide (CO₂)
+  - energy
+  - brightness
+  - motion
+  - PM10
+  - PM2.5
+  - angle
+  - distance
+  - leak
+  - level
+  - formaldehyde (HCHO)
+  - precipitation
+  - presence
+  - pressure
+  - rain
+  - smoke
+  - VOC (volatile organic compounds)
+  - volume
 - 📷 View your cameras and describe what it sees (if your client is compatible)
 - 💡 Turn lights on/off
 - 🔌 Control switches and outlets
