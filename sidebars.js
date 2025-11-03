@@ -38,6 +38,7 @@ module.exports = {
         "integrations/google-home",
         "integrations/homekit",
         "integrations/matter",
+        "integrations/mcp",
         "integrations/mqtt",
         "integrations/lan-manager",
         "integrations/nextcloud-talk",
