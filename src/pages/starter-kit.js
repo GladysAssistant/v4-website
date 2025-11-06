@@ -50,10 +50,10 @@ const faqData = [
       <>
         Oui ! Que tu choisisses le Beelink T5 ou le Beelink S13, ton mini-PC
         arrive chez toi avec Gladys déjà installée et configurée. Tu n'as qu'à
-        le brancher, suivre le guide de démarrage rapide, et tu es prêt à
-        utiliser Gladys. Plus besoin d'installer un OS ou de configurer quoi que
-        ce soit, tout est déjà fait ! Si tu as la moindre question, je suis
-        toujours disponible pour t'aider 😄
+        le brancher en Ethernet à ta box internet, suivre le guide de démarrage
+        rapide, et tu es prêt à utiliser Gladys. Plus besoin d'installer un OS
+        ou de configurer quoi que ce soit, tout est déjà fait ! Si tu as la
+        moindre question, je suis toujours disponible pour t'aider 😄
       </>
     ),
   },
@@ -394,7 +394,7 @@ function Plus() {
                             <li>✓ 4 Go de RAM LPDDR4</li>
                             <li>✓ 64 Go eMMC</li>
                             <li>✓ WiFi 5 & Bluetooth 5.0</li>
-                            <li>✓ Double HDMI 4K</li>
+                            <li>✓ Ethernet Gigabit</li>
                           </ul>
                           <p
                             style={{
@@ -498,7 +498,7 @@ function Plus() {
                             <li>✓ 16 Go de RAM DDR4</li>
                             <li>✓ 500 Go SSD M.2 NVMe</li>
                             <li>✓ WiFi 6 & Bluetooth 5.2</li>
-                            <li>✓ Double HDMI 4K@60Hz</li>
+                            <li>✓ Ethernet Gigabit</li>
                           </ul>
                           <p
                             style={{
@@ -606,7 +606,7 @@ function Plus() {
               <p>Un mini-PC compact et économique, parfait pour débuter :</p>
               <p>
                 <ul>
-                  <li>Processeur Intel Celeron N4020 (jusqu'à 2,8 GHz)</li>
+                  <li>Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)</li>
                   <li>4 Go de RAM LPDDR4</li>
                   <li>64 Go eMMC</li>
                   <li>Wi-Fi 5, Bluetooth 5.0 et LAN Gigabit</li>
@@ -634,7 +634,7 @@ function Plus() {
               <p>
                 <ul>
                   <li>
-                    Processeur Intel N150 (Twin Lake) - Dernière génération
+                    Processeur Intel N150 quad-core (Twin Lake) - Dernière génération
                   </li>
                   <li>16 Go de RAM DDR4 3200MHz</li>
                   <li>Disque SSD M.2 SATA3 500Go + slot M.2 PCIe disponible</li>
