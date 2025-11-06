@@ -45,11 +45,12 @@ function FAQ({ data }) {
 
 const faqData = [
   {
-    title: <>Est-ce que Gladys est installée sur le Beelink S13 ?</>,
+    title: <>Est-ce que Gladys est installée sur les mini-PC ?</>,
     description: (
       <>
-        Oui ! Le Beelink S13 arrive chez toi avec Gladys déjà installée et
-        configurée. Tu n'as qu'à le brancher, suivre le guide de démarrage
+        Oui ! Que tu choisisses le Beelink T5 ou le Beelink S13, ton mini-PC
+        arrive chez toi avec Gladys déjà installée et configurée. Tu n'as qu'à
+        le brancher en Ethernet à ta box internet, suivre le guide de démarrage
         rapide, et tu es prêt à utiliser Gladys. Plus besoin d'installer un OS
         ou de configurer quoi que ce soit, tout est déjà fait ! Si tu as la
         moindre question, je suis toujours disponible pour t'aider 😄
@@ -60,19 +61,18 @@ const faqData = [
     title: <>Satisfait ou remboursé ?</>,
     description: (
       <>
-        Si jamais ce kit ne te donnait pas satisfaction, tu peux retourner le
-        Beelink S13 sous 14 jours. Comme Gladys est déjà installée, tu peux
-        tester le système complet dès réception. Si tu as la moindre question,
-        n'hésite pas à me contacter, je suis très disponible et toujours prêt à
-        aider.
+        Si jamais ce kit ne te donnait pas satisfaction, tu peux retourner ton
+        mini-PC sous 14 jours. Comme Gladys est déjà installée, tu peux tester
+        le système complet dès réception. Si tu as la moindre question, n'hésite
+        pas à me contacter, je suis très disponible et toujours prêt à aider.
       </>
     ),
   },
   {
-    title: <>Pourquoi proposer ce kit avec Gladys pré-installée ?</>,
+    title: <>Pourquoi proposer ces kits avec Gladys pré-installée ?</>,
     description: (
       <>
-        Je propose ce kit pour démocratiser l'accès à Gladys en rendant la
+        Je propose ces kits pour démocratiser l'accès à Gladys en rendant la
         première marche la plus basse possible. Avec Gladys pré-installée, tu
         n'as plus besoin de te soucier de l'installation technique. La domotique
         est une jungle, et je veux que tu puisses te concentrer sur l'essentiel
@@ -111,6 +111,8 @@ function Plus() {
   const [isLowStock, setIsLowStock] = useState(null);
   const [priceS13, setPriceS13] = useState(null);
   const [s13Url, setS13Url] = useState(null);
+  const [priceT5, setPriceT5] = useState(null);
+  const [t5Url, setT5Url] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const scrollTopTop = () => {
@@ -130,6 +132,10 @@ function Plus() {
       if (data.beelink_s13) {
         setPriceS13(data.beelink_s13.price);
         setS13Url(data.beelink_s13.url);
+      }
+      if (data.beelink_t5) {
+        setPriceT5(data.beelink_t5.price);
+        setT5Url(data.beelink_t5.url);
       }
       setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
       if (data.total !== undefined && data.remaining !== undefined) {
@@ -219,6 +225,20 @@ function Plus() {
     }
   };
 
+  const subscribeT5 = (e) => {
+    e.preventDefault();
+    if (isBrowser) {
+      const openStripe = () => {
+        window.location.href = t5Url;
+      };
+      if (window.sa_loaded && !dntActive) {
+        sa_event("starter_kit_click_buy_mini_t5", openStripe);
+      } else {
+        openStripe();
+      }
+    }
+  };
+
   const updateEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -295,7 +315,7 @@ function Plus() {
                     textAlign: "center",
                   }}
                 >
-                  Le nouveau kit de démarrage Gladys :
+                  Choisis ton kit de démarrage Gladys :
                 </h2>
                 {isUnavailable && (
                   <div style={{ marginBottom: "20px", textAlign: "center" }}>
@@ -312,7 +332,111 @@ function Plus() {
                 )}
                 {!isUnavailable && (
                   <div className="row" style={{ justifyContent: "center" }}>
-                    {/* Beelink S13 - Main and only option */}
+                    {/* Beelink T5 - Budget option */}
+                    <div
+                      className="col col--6"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
+                      <div
+                        style={{
+                          border: "2px solid #ddd",
+                          padding: "30px",
+                          paddingTop: "50px",
+                          borderRadius: "12px",
+                          textAlign: "center",
+                          marginBottom: "15px",
+                          position: "relative",
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "-15px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            backgroundColor: "var(--ifm-color-success)",
+                            color: "white",
+                            padding: "8px 20px",
+                            borderRadius: "25px",
+                            fontSize: "1em",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          ✓ Gladys Pré-installée
+                        </span>
+                        <div>
+                          <h3
+                            style={{ fontSize: "32px", marginBottom: "20px" }}
+                          >
+                            Beelink T5
+                          </h3>
+                          <p
+                            style={{ fontSize: "1.1em", marginBottom: "20px" }}
+                          >
+                            Le mini-PC compact et économique avec{" "}
+                            <b>Gladys déjà installée</b>. Idéal pour débuter !
+                          </p>
+                          <ul
+                            style={{
+                              textAlign: "left",
+                              marginBottom: "20px",
+                              fontSize: "0.95em",
+                            }}
+                          >
+                            <li>
+                              ✓ Processeur Intel Celeron N4020 (jusqu'à 2,8 GHz)
+                            </li>
+                            <li>✓ 4 Go de RAM LPDDR4</li>
+                            <li>✓ 64 Go eMMC</li>
+                            <li>✓ WiFi 5 & Bluetooth 5.0</li>
+                            <li>✓ Ethernet Gigabit</li>
+                          </ul>
+                          <p
+                            style={{
+                              fontSize: "36px",
+                              fontWeight: "bold",
+                              margin: "20px 0",
+                              marginBottom: "5px",
+                              color: "var(--ifm-color-primary)",
+                            }}
+                          >
+                            {priceT5 ? priceT5 + "€" : "..."}
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "0.9em",
+                              marginTop: "0",
+                              marginBottom: "20px",
+                              color: "var(--ifm-color-emphasis-600)",
+                            }}
+                          >
+                            + frais de ports
+                          </p>
+                        </div>
+                        <button
+                          onClick={subscribeT5}
+                          disabled={loading || !priceT5}
+                          className={cx(
+                            "button button--primary button--lg",
+                            styles.starterKitInputButton
+                          )}
+                          style={{
+                            width: "100%",
+                            marginTop: "20px",
+                            fontSize: "1.2rem",
+                            padding: "15px",
+                          }}
+                        >
+                          Commander le Kit T5
+                        </button>
+                      </div>
+                    </div>
+                    {/* Beelink S13 - Performance option */}
                     <div
                       className="col col--6"
                       style={{ display: "flex", flexDirection: "column" }}
@@ -359,8 +483,7 @@ function Plus() {
                             style={{ fontSize: "1.1em", marginBottom: "20px" }}
                           >
                             Le mini-PC haute performance avec{" "}
-                            <b>Gladys déjà installée</b>. Branchez, configurez
-                            et c'est parti !
+                            <b>Gladys déjà installée</b>. Maximum de puissance !
                           </p>
                           <ul
                             style={{
@@ -375,17 +498,28 @@ function Plus() {
                             <li>✓ 16 Go de RAM DDR4</li>
                             <li>✓ 500 Go SSD M.2 NVMe</li>
                             <li>✓ WiFi 6 & Bluetooth 5.2</li>
-                            <li>✓ Double HDMI 4K@60Hz</li>
+                            <li>✓ Ethernet Gigabit</li>
                           </ul>
                           <p
                             style={{
                               fontSize: "36px",
                               fontWeight: "bold",
                               margin: "20px 0",
+                              marginBottom: "5px",
                               color: "var(--ifm-color-primary)",
                             }}
                           >
                             {priceS13 ? priceS13 + "€" : "..."}
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "0.9em",
+                              marginTop: "0",
+                              marginBottom: "20px",
+                              color: "var(--ifm-color-emphasis-600)",
+                            }}
+                          >
+                            + frais de ports
                           </p>
                         </div>
                         <button
@@ -461,10 +595,37 @@ function Plus() {
           <div className={cx("row", styles.starterKitRow)}>
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
               <img
-                src={useBaseUrl("/img/starter-kit/beelink_s13_spec.jpg")}
+                src={useBaseUrl("/img/starter-kit/beelink_t5.jpg")}
                 className={cx(styles.specImage)}
               />
             </div>
+            <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
+              <h2 className={cx(styles.plusFeatureTitle)}>
+                Beelink T5 - Gladys Pré-installée
+              </h2>
+              <p>Un mini-PC compact et économique, parfait pour débuter :</p>
+              <p>
+                <ul>
+                  <li>Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)</li>
+                  <li>4 Go de RAM LPDDR4</li>
+                  <li>64 Go eMMC</li>
+                  <li>Wi-Fi 5, Bluetooth 5.0 et LAN Gigabit</li>
+                  <li>Double HDMI 4K</li>
+                  <li>
+                    <b>Gladys déjà installée et configurée !</b>
+                  </li>
+                </ul>
+              </p>
+              <p>
+                <b>Note de Pierre-Gilles :</b> Le Beelink T5 est l'option idéale
+                pour débuter avec Gladys sans se ruiner. Avec Gladys
+                pré-installée, tu gagnes un temps précieux : plus besoin
+                d'installer Ubuntu ou de configurer quoi que ce soit. Tu le
+                branches, tu suis le guide de démarrage rapide, et c'est parti !
+              </p>
+            </div>
+          </div>
+          <div className={cx("row", styles.starterKitRow)}>
             <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
               <h2 className={cx(styles.plusFeatureTitle)}>
                 Beelink S13 - Gladys Pré-installée
@@ -473,7 +634,7 @@ function Plus() {
               <p>
                 <ul>
                   <li>
-                    Processeur Intel N150 (Twin Lake) - Dernière génération
+                    Processeur Intel N150 quad-core (Twin Lake) - Dernière génération
                   </li>
                   <li>16 Go de RAM DDR4 3200MHz</li>
                   <li>Disque SSD M.2 SATA3 500Go + slot M.2 PCIe disponible</li>
@@ -491,6 +652,12 @@ function Plus() {
                 d'installer Ubuntu ou de configurer quoi que ce soit. Tu le
                 branches, tu suis le guide de démarrage rapide, et c'est parti !
               </p>
+            </div>
+            <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
+              <img
+                src={useBaseUrl("/img/starter-kit/beelink_s13_spec.jpg")}
+                className={cx(styles.specImage)}
+              />
             </div>
           </div>
           <div className={cx("row", styles.starterKitRow)}>
@@ -661,69 +828,82 @@ function Plus() {
           <div className={cx("row", styles.starterKitRow)}>
             <div className="col col--12">
               <h2 className={cx(styles.plusTooExpensiveTitle)}>
-                Pourquoi le Beelink S13 avec Gladys pré-installée ?
+                Pourquoi nos kits avec Gladys pré-installée ?
               </h2>
               <p>
-                Le nouveau kit de démarrage Gladys est basé sur le{" "}
-                <b>Beelink S13</b>, un mini-PC de dernière génération qui offre
-                des performances exceptionnelles pour la domotique et bien plus
-                encore.
+                Les nouveaux kits de démarrage Gladys sont basés sur des mini-PC
+                Beelink de qualité, avec <b>Gladys pré-installée</b> ! Fini les
+                installations complexes, tu reçois ton kit, tu le branches, tu
+                suis le guide de démarrage rapide et tu es prêt à utiliser
+                Gladys en quelques minutes.
               </p>
 
               <p>
-                <b>La grande nouveauté :</b> Gladys est maintenant{" "}
-                <b>pré-installée</b> sur le mini-PC ! Fini les installations
-                complexes, tu reçois ton kit, tu le branches, tu suis le guide
-                de démarrage rapide et tu es prêt à utiliser Gladys en quelques
-                minutes.
+                Nous proposons deux options pour s'adapter à tous les besoins :
               </p>
-              <p>
-                Le processeur Intel N150 (Twin Lake) de dernière génération
-                offre une puissance largement suffisante pour faire tourner
-                Gladys de manière ultra-fluide, tout en laissant de la marge
-                pour des applications supplémentaires (Node-RED, AdGuard Home,
-                etc.). Avec 16 Go de RAM et 500 Go de stockage, c'est une
-                machine qui te servira pendant de nombreuses années.
-              </p>
+              <ul>
+                <li>
+                  <b>Beelink T5</b> : Un mini-PC compact et économique, parfait
+                  pour débuter avec Gladys. Processeur Intel Celeron N4020, 4 Go
+                  de RAM et 64 Go de stockage.
+                </li>
+                <li>
+                  <b>Beelink S13</b> : Le top de la gamme avec un processeur
+                  Intel N150 de dernière génération, 16 Go de RAM et 500 Go de
+                  stockage. Idéal pour une utilisation intensive et des
+                  applications supplémentaires (Node-RED, AdGuard Home, etc.).
+                </li>
+              </ul>
               <div className={styles.tableContainer}>
                 <table className={styles.priceTable}>
                   <thead>
                     <tr>
                       <th>Caractéristiques</th>
-                      <th>Beelink S13 (Kit de démarrage)</th>
+                      <th>Beelink T5</th>
+                      <th>Beelink S13</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>Processeur</td>
+                      <td>Intel Celeron N4020 (jusqu'à 2,8 GHz)</td>
                       <td>Intel Twin Lake-N150 (dernière génération)</td>
                     </tr>
                     <tr>
                       <td>Mémoire RAM</td>
+                      <td>4 Go LPDDR4</td>
                       <td>16 Go DDR4 3200MHz</td>
                     </tr>
                     <tr>
                       <td>Stockage</td>
+                      <td>64 Go eMMC</td>
                       <td>500 Go M.2 SATA3 + slot M.2 PCIe disponible</td>
                     </tr>
                     <tr>
                       <td>WiFi</td>
+                      <td>WiFi 5</td>
                       <td>WiFi 6</td>
                     </tr>
                     <tr>
                       <td>Bluetooth</td>
+                      <td>Bluetooth 5.0</td>
                       <td>Bluetooth 5.2</td>
                     </tr>
                     <tr>
                       <td>Ports HDMI</td>
+                      <td>Double HDMI 4K</td>
                       <td>Double HDMI 4K@60Hz</td>
                     </tr>
                     <tr>
                       <td>LAN</td>
                       <td>Gigabit Ethernet (1000 Mbps)</td>
+                      <td>Gigabit Ethernet (1000 Mbps)</td>
                     </tr>
                     <tr>
                       <td>Gladys</td>
+                      <td>
+                        <b>✓ Pré-installée et configurée</b>
+                      </td>
                       <td>
                         <b>✓ Pré-installée et configurée</b>
                       </td>
@@ -733,33 +913,77 @@ function Plus() {
                       <td>
                         ✓ Incluse (accès à des tutoriels vidéos et écrits)
                       </td>
+                      <td>
+                        ✓ Incluse (accès à des tutoriels vidéos et écrits)
+                      </td>
                     </tr>
                     <tr>
                       <td>Gladys Plus</td>
+                      <td>✓ 6 mois offerts</td>
                       <td>✓ 6 mois offerts</td>
                     </tr>
                     <tr>
                       <td>Support</td>
                       <td>✓ Assistance personnalisée</td>
+                      <td>✓ Assistance personnalisée</td>
                     </tr>
                     <tr>
                       <td>Prix du kit complet</td>
                       <td>
+                        {priceT5 && !isUnavailable && (
+                          <>
+                            <b
+                              style={{
+                                fontSize: "1.3em",
+                                color: "var(--ifm-color-primary)",
+                              }}
+                            >
+                              {priceT5} €
+                            </b>
+                            <br />
+                            <small
+                              style={{ color: "var(--ifm-color-emphasis-600)" }}
+                            >
+                              + frais de ports
+                            </small>
+                          </>
+                        )}
+                        {isUnavailable && <b>{unavailableMessage}</b>}
+                      </td>
+                      <td>
                         {priceS13 && !isUnavailable && (
-                          <b
-                            style={{
-                              fontSize: "1.3em",
-                              color: "var(--ifm-color-primary)",
-                            }}
-                          >
-                            {priceS13} €
-                          </b>
+                          <>
+                            <b
+                              style={{
+                                fontSize: "1.3em",
+                                color: "var(--ifm-color-primary)",
+                              }}
+                            >
+                              {priceS13} €
+                            </b>
+                            <br />
+                            <small
+                              style={{ color: "var(--ifm-color-emphasis-600)" }}
+                            >
+                              + frais de ports
+                            </small>
+                          </>
                         )}
                         {isUnavailable && <b>{unavailableMessage}</b>}
                       </td>
                     </tr>
                     <tr>
                       <td>Je commande</td>
+                      <td>
+                        <input
+                          type="submit"
+                          onClick={subscribeT5}
+                          value="Commander le Kit T5"
+                          disabled={isUnavailable || loading || !priceT5}
+                          className={cx("button button--primary button--lg")}
+                          style={{ fontSize: "1.1em", padding: "10px 30px" }}
+                        />
+                      </td>
                       <td>
                         <input
                           type="submit"
@@ -786,7 +1010,7 @@ function PlusParent() {
   return (
     <Layout
       title="Kit de démarrage Gladys clé en main"
-      description="Mini-PC Beelink S13 avec Gladys déjà installée + formation officielle + 6 mois de Gladys Plus offerts. Branchez et c'est parti !"
+      description="Mini-PC Beelink T5 ou S13 avec Gladys déjà installée + formation officielle + 6 mois de Gladys Plus offerts. Branchez et c'est parti !"
     >
       <Plus />
     </Layout>
