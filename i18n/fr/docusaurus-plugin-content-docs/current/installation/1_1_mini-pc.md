@@ -8,9 +8,9 @@ L’installation sur un mini-PC est la méthode recommandée pour profiter plein
 
 ## Quel matériel choisir ?
 
-La meilleure façon de débuter avec Gladys est d’opter pour [le kit de démarrage](/fr/starter-kit/). Il est économique, livré avec un ensemble de tutoriels et inclut un an d’abonnement à Gladys Plus.
+La meilleure façon de débuter avec Gladys est d’opter pour [le kit de démarrage](/fr/starter-kit/). C'est une box domotique avec Gladys Assistant déjà installé.
 
-Si vous préférez acheter un mini-PC par vous-même, le Beelink Mini S12 Pro est une très bonne option. Vous pouvez le trouver sur [Amazon](https://amzn.to/4gFpCwl).
+Si vous préférez acheter un mini-PC par vous-même, le Beelink Mini S13 est une très bonne option. Vous pouvez le trouver sur [Amazon](https://amzn.to/4hRtIE3).
 
 ## Installation d’Ubuntu Server sur le mini-PC
 
