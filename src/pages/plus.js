@@ -271,6 +271,7 @@ function Plus() {
                           styles.plusInputButton,
                           "button button--primary"
                         )}
+                        data-track="plus_click_start_free_trial"
                       />
                     </span>
                   )}
@@ -291,6 +292,7 @@ function Plus() {
                           styles.plusInputButton,
                           "button button--primary"
                         )}
+                        data-track="plus_click_subscribe_discount"
                       >
                         {subscribeButtonDiscount}
                       </button>
@@ -329,6 +331,7 @@ function Plus() {
                           "button button--primary"
                         )}
                         style={{ paddingTop: "9px" }}
+                        data-track="plus_click_view_pricing_table"
                       >
                         {subscribeButtonDiscount}
                       </a>
@@ -631,6 +634,7 @@ function Plus() {
                             : scrollTopTop
                         }
                         class="button button--primary button--block"
+                        data-track="plus_click_pricing_card_button"
                       >
                         {YEARLY_PLAN_ACTIVATED
                           ? subscribeButtonDiscount

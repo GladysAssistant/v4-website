@@ -193,6 +193,10 @@ function Plus() {
       } else {
         openStripe();
       }
+      // Track with OpenPanel
+      if (window.op && !dntActive) {
+        window.op.track("starter_kit_click_buy_mini_s12_pro");
+      }
     }
   };
 
@@ -208,6 +212,10 @@ function Plus() {
       } else {
         openStripe();
       }
+      // Track with OpenPanel
+      if (window.op && !dntActive) {
+        window.op.track("starter_kit_click_buy_mini_s12");
+      }
     }
   };
 
@@ -222,6 +230,10 @@ function Plus() {
       } else {
         openStripe();
       }
+      // Track with OpenPanel
+      if (window.op && !dntActive) {
+        window.op.track("starter_kit_click_buy_mini_s13");
+      }
     }
   };
 
@@ -235,6 +247,10 @@ function Plus() {
         sa_event("starter_kit_click_buy_mini_t5", openStripe);
       } else {
         openStripe();
+      }
+      // Track with OpenPanel
+      if (window.op && !dntActive) {
+        window.op.track("starter_kit_click_buy_mini_t5");
       }
     }
   };
