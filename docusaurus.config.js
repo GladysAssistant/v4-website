@@ -225,6 +225,7 @@ module.exports = {
       { min: 400, max: 2000, steps: 10 },
     ],
   ],
+  clientModules: [require.resolve('./src/openpanel.js')],
   scripts: [
     {
       async: true,
