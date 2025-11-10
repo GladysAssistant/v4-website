@@ -31,7 +31,9 @@ C'est la solution idéale si vous voulez éviter les complications techniques et
 
 ### Autres options d'installation
 
-Si vous préférez installer Gladys vous-même, c'est tout à fait possible ! Gladys peut tourner sur n'importe quelle machine sous Linux :
+Si vous préférez installer Gladys vous-même, c'est tout à fait possible !
+
+Gladys peut tourner sur n'importe quelle machine sous Linux :
 
 - **Mini-PC (Beelink, Intel NUC, etc.)**
 
