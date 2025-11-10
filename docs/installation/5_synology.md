@@ -40,7 +40,7 @@ docker run -d \
 -e SQLITE_FILE_PATH=/var/lib/gladysassistant/gladys-production.db \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /volume1/docker/gladysassistant/:/var/lib/gladysassistant \
--v /etc/timezone:/etc/timezone:ro \
+-v /etc/TZ:/etc/timezone:ro \
 -v /etc/localtime:/etc/localtime:ro \
 -v /dev:/dev \
 gladysassistant/gladys:v4
