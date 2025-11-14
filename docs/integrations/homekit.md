@@ -33,7 +33,7 @@ Here is the list of currently supported devices:
 - 🚪 Door/window sensors
 - 🪟 Roller shutters and curtains
 
-We regularly add support for new device types based on community feedback. Feel free to suggest yours on the [Gladys forum](https://en-community.gladysassistant.com/)!
+We regularly add support for new device types based on community feedback. Feel free to suggest yours on the [Gladys forum](https://community.gladysassistant.com/)!
 
 ## Adding New Devices After Initial Pairing
 
@@ -42,4 +42,4 @@ If you add a new device in Gladys after you’ve already linked to HomeKit:
 - If the device is **compatible**, it will be automatically added to HomeKit in a **default room**. You can then move it to the correct room manually.
 - If the new device **doesn’t appear**, try restarting the HomeKit integration by clicking the `Restart` button, then wait a few seconds for the bridge to reload.
 
-🛠️ Need help? Join us on the [Gladys community forum](https://en-community.gladysassistant.com/) — we’re here to support you!
+🛠️ Need help? Join us on the [Gladys community forum](https://community.gladysassistant.com/) — we’re here to support you!

@@ -75,11 +75,11 @@ If this error appears in your logs, please check the following:
   - Ensure that the system has proper DNS resolution and that internet access is not blocked by piHole or similar software.
 - Double-check your credentials and verify that the correct data center is selected.
 - Check the IoT Core package validity
-> The IoT Core trial package is only active for one month and must be renewed manually. 
-![Tuya Gladys integration, save configuration](../../static/img/docs/en/configuration/tuya/tuya-nachtwind-serviceexpired.png)  
-Due to the fast-paced evolution of the Tuya Developer Platform, there is no single, permanent tutorial available for this process.  
-Open the Details section in the Tuya Developer Console and follow the on-screen wizard to extend your trial period.  
-After extending the trial, it may take up to 15 minutes before your hardware becomes accessible again.  
-This process is **only** neccessary for connecting your account to Gladys for the **first time**
+  > The IoT Core trial package is only active for one month and must be renewed manually.
+  > ![Tuya Gladys integration, save configuration](../../static/img/docs/en/configuration/tuya/tuya-nachtwind-serviceexpired.png)  
+  > Due to the fast-paced evolution of the Tuya Developer Platform, there is no single, permanent tutorial available for this process.  
+  > Open the Details section in the Tuya Developer Console and follow the on-screen wizard to extend your trial period.  
+  > After extending the trial, it may take up to 15 minutes before your hardware becomes accessible again.  
+  > This process is **only** neccessary for connecting your account to Gladys for the **first time**
 
-If you have any questions, ask it on [our forum](https://en-community.gladysassistant.com/).
+If you have any questions, ask it on [our forum](https://community.gladysassistant.com/).

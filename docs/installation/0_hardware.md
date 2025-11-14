@@ -1,13 +1,66 @@
 ---
 id: hardware
-title: Smart Home - The ultimate guide for beginners
-sidebar_label: The ultimate smart home guide
+title: Getting started with Gladys Assistant
+sidebar_label: Getting started
 slug: /
 ---
 
-It can be difficult to know where to start when you're new to home automation. What equipment to choose? What budget to plan? Which home automation protocol to adopt?
+It can be difficult to know where to start when you're new to home automation.
 
-This guide will help you answer these questions and provide you with a starting point to create your connected home from scratch.
+## Choose Your Home Automation Hub
+
+Gladys Assistant is a self-hosted software, which means everything works locally on a home automation hub. This is one of its main strengths!
+
+You have several options to run Gladys:
+
+### Option 1: Official Starter Kit (Europe Only for now 🇪🇺)
+
+The easiest way to get started is with our **official starter kit**:
+
+- **Gladys pre-installed** on a powerful Beelink mini-PC
+- **Plug & play**: Receive it, plug it in, and you're ready in 5 minutes
+- **6 months of Gladys Plus included** for remote access
+- **Official training included** with hours of video tutorials
+- **Support included**: I'm here to help if you have questions
+
+👉 [Discover the starter kit](https://gladysassistant.com/fr/starter-kit/) (Ships to Europe only for now)
+
+**Note:** The starter kit currently ships only to European countries. If you're outside Europe, see the options below.
+
+### Option 2: DIY Installation on Mini-PC
+
+If you're outside Europe or prefer to install Gladys yourself:
+
+- **Beelink Mini S13** or similar mini-PC
+  - Powerful and stable hardware (Intel N150, 16GB RAM, 500GB NVMe SSD)
+  - Install Ubuntu Server via bootable USB + Gladys via Docker
+  - Available on [Amazon US](https://amzn.to/4gKDV2E) or your local retailer
+  - **Best price/performance ratio for a long-term setup**
+
+### Option 3: Existing Hardware
+
+If you already have compatible hardware:
+
+- **Synology NAS, Intel NUC, or any Docker-compatible Linux server**
+  - Reuse your existing hardware
+  - Follow our installation guides below
+
+### Option 4: Raspberry Pi (Not Recommended)
+
+- If you already own a Raspberry Pi, you can test Gladys on it
+- However, **I do not recommend this option in the long term**:
+  - Total cost is relatively high (Pi + power supply + case + SSD)
+  - Micro-SD cards are **strongly discouraged** (high risk of data corruption)
+  - Power supply instability makes Zigbee/Z-Wave dongles unreliable
+
+## Installing Gladys Assistant
+
+Depending on the hardware chosen, you can follow one of the following tutorials:
+
+- [Install Gladys Assistant on a Mini-PC](/docs/installation/mini-pc/)
+- [Install Gladys Assistant on a Synology NAS](/docs/installation/synology/)
+- [Install Gladys Assistant on an Unraid NAS](/docs/installation/unraid/)
+- [Install Gladys Assistant on a Raspberry Pi](/docs/installation/raspberry-pi/)
 
 ## Define Your Smart Home Project
 
@@ -28,39 +81,6 @@ A good way to organize is to create a table (in Excel, Google Sheets, or Notion)
 | Zigbee Motion Sensor 4 Pack                               | $75,99 | [Amazon US](https://amzn.to/4k2hb0X)                                                                                           |
 
 The idea is not necessarily to buy everything at once, but rather to plan and gradually equip your home, unless you have just moved in and want to install everything immediately.
-
-## Choose Your Home Automation Hub
-
-Gladys Assistant is a self-hosted software, which means everything works locally on a home automation hub. This is one of its main strengths!
-
-Gladys can run on any Linux machine:
-
-- **Beelink Mini S12 Pro** (Between $169 and $199 depending on deals)
-
-  - Powerful mini-PC (Intel 12th generation, 16GB RAM, 500GB NVMe SSD).
-  - Stable and performant in the long term.
-  - Installation of Ubuntu Server via bootable USB key + installation of Gladys via Docker.
-  - Available on [Amazon US](https://amzn.to/4gKDV2E)
-
-- **Any server, NAS, mini-PC**
-
-  - If you have a Synology NAS, an Intel NUC, or any other Docker-compatible Linux server, you can install Gladys on it.
-
-- **Raspberry Pi**
-  - If you already own a Raspberry Pi, it can be a solution to test Gladys.
-  - However, **I do not recommend this option in the long term** for several reasons:
-    - The total cost is relatively high, considering the Pi, power supply, case, and SSD.
-    - Using a micro-SD card for storage is **strongly discouraged**, as it leads to a high risk of data corruption.
-    - Instability issues with power supply via USB ports make using Zigbee/Z-Wave dongles difficult and unreliable.
-
-## Installing Gladys Assistant
-
-Depending on the hardware chosen, you can follow one of the following tutorials:
-
-- [Install Gladys Assistant on a Mini-PC](/docs/installation/mini-pc/)
-- [Install Gladys Assistant on a Synology NAS](/docs/installation/synology/)
-- [Install Gladys Assistant on an Unraid NAS](/docs/installation/unraid/)
-- [Install Gladys Assistant on a Raspberry Pi](/docs/installation/raspberry-pi/)
 
 ## Configuring Your Smart Home
 
@@ -86,4 +106,4 @@ There you go! You now have a Gladys smart home system at your place.
 
 You can now set up the various integrations available in Gladys.
 
-If you have any questions, join us now [on the forum](https://en-community.gladysassistant.com/)!
+If you have any questions, join us now [on the forum](https://community.gladysassistant.com/)!

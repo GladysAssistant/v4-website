@@ -9,7 +9,7 @@ import Translate, { translate } from "@docusaurus/Translate";
 
 const IMPROVE_COMPATIBILITY_LIST_LINKS = {
   fr: "https://community.gladysassistant.com/t/comment-alimenter-la-liste-de-compatibilites-sur-le-site/7964",
-  en: "https://en-community.gladysassistant.com/t/how-to-feed-the-compatibility-list-on-the-site/77",
+  en: "https://community.gladysassistant.com/t/how-to-feed-the-compatibility-list-on-the-site/77",
 };
 
 const truncate = (str, len) =>

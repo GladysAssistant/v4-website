@@ -55,7 +55,13 @@ module.exports = {
         {
           to: "docs/",
           activeBasePath: "docs",
-          label: "Docs",
+          label: "Getting started",
+          position: "left",
+        },
+        {
+          to: "docs/integrations/",
+          activeBasePath: "docs/integrations",
+          label: "Integrations",
           position: "left",
         },
         {
@@ -65,47 +71,18 @@ module.exports = {
           position: "left",
         },
         {
-          to: "plus/",
-          activeBasePath: "plus",
-          label: "Plus",
-          position: "left",
-        },
-        {
-          href: "https://formation.gladysassistant.com/?coupon=HOMEPAGE_SALE_2024",
-          activeBasePath: "formation",
-          label: "Formation",
-          position: "left",
-          // Only show this item for French locale
-          className: "navbar__link--fr-only",
-        },
-        {
-          type: "dropdown",
-          label: "Community",
-          position: "left",
-          items: [
-            {
-              label: "English Community (New!)",
-              href: "https://en-community.gladysassistant.com/",
-            },
-            {
-              label: "Communauté en français",
-              href: "https://community.gladysassistant.com/",
-            },
-          ],
-        },
-        {
           type: "localeDropdown",
+          position: "right",
+        },
+        {
+          href: "https://community.gladysassistant.com/",
+          label: "Community",
           position: "right",
         },
         {
           href: "https://github.com/gladysassistant/gladys",
           className: "header-github-link",
           "aria-label": "GitHub repository",
-          position: "right",
-        },
-        {
-          to: "https://plus.gladysassistant.com",
-          label: "Login",
           position: "right",
         },
       ],
@@ -162,6 +139,19 @@ module.exports = {
           ],
         },
         {
+          title: "Gladys Plus",
+          items: [
+            {
+              label: "What is Gladys Plus?",
+              href: "/plus",
+            },
+            {
+              label: "Login to Gladys Plus",
+              href: "https://plus.gladysassistant.com",
+            },
+          ],
+        },
+        {
           title: "More",
           items: [
             {
@@ -175,10 +165,6 @@ module.exports = {
             {
               label: "Contact Us",
               href: "/contact",
-            },
-            {
-              label: "Donate",
-              href: "https://www.buymeacoffee.com/gladysassistant",
             },
           ],
         },
@@ -225,7 +211,7 @@ module.exports = {
       { min: 400, max: 2000, steps: 10 },
     ],
   ],
-  clientModules: [require.resolve('./src/openpanel.js')],
+  clientModules: [require.resolve("./src/openpanel.js")],
   scripts: [
     {
       async: true,

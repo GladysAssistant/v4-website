@@ -59,4 +59,4 @@ If you're having issues:
 3. Ensure you're within the rate limits
 4. Check your internet connection
 
-For more help, visit the [CallMeBot website](https://www.callmebot.com/) or the [Gladys community forum](https://en-community.gladysassistant.com/).
+For more help, visit the [CallMeBot website](https://www.callmebot.com/) or the [Gladys community forum](https://community.gladysassistant.com/).

@@ -22,7 +22,7 @@ Gladys supports the following features:
 - **Temperature sensors**
 - **Humidity sensors**
 
-If you have a device that is not yet supported, feel free to share it on the [forum](https://en-community.gladysassistant.com/), and we’ll work on adding support.
+If you have a device that is not yet supported, feel free to share it on the [forum](https://community.gladysassistant.com/), and we’ll work on adding support.
 
 ## Matter vs Thread
 
