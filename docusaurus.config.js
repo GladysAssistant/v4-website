@@ -85,11 +85,6 @@ module.exports = {
           "aria-label": "GitHub repository",
           position: "right",
         },
-        {
-          to: "https://plus.gladysassistant.com",
-          label: "Login",
-          position: "right",
-        },
       ],
     },
     footer: {
@@ -140,6 +135,19 @@ module.exports = {
             {
               label: "Instagram",
               href: "https://instagram.com/gladysassistant",
+            },
+          ],
+        },
+        {
+          title: "Gladys Plus",
+          items: [
+            {
+              label: "What is Gladys Plus?",
+              href: "/plus",
+            },
+            {
+              label: "Login to Gladys Plus",
+              href: "https://plus.gladysassistant.com",
             },
           ],
         },
