@@ -51,8 +51,8 @@ const FAQQuestions = {
           demandée.
           <br />
           <br />
-          Tu peux l'installer sur n'importe quelle machine Linux : mini-PC,
-          NAS Synology, Raspberry Pi, serveur, ou même un vieux PC qui traîne. Si
+          Tu peux l'installer sur n'importe quelle machine Linux : mini-PC, NAS
+          Synology, Raspberry Pi, serveur, ou même un vieux PC qui traîne. Si
           Docker tourne dessus, Gladys tourne dessus ! 🚀
         </>
       ),
@@ -94,11 +94,10 @@ const FAQQuestions = {
       response: (
         <>
           <b>Très probablement !</b> Gladys supporte{" "}
-          <Link href="/fr/docs/integrations/">
-            des milliers d'appareils
-          </Link>{" "}
-          via Zigbee, Matter, MQTT, et des intégrations dédiées pour Shelly, Sonos,
-          Philips Hue, caméras RTSP, Google Home, Alexa, et bien d'autres.
+          <Link href="/fr/docs/integrations/">des milliers d'appareils</Link>{" "}
+          via Zigbee, Matter, MQTT, et des intégrations dédiées pour Shelly,
+          Sonos, Philips Hue, caméras RTSP, Google Home, Alexa, et bien
+          d'autres.
           <br />
           <br />
           Et comme Gladys est open-source, de nouvelles intégrations sont
@@ -118,10 +117,10 @@ const FAQQuestions = {
           <b>Oui, de plusieurs façons :</b>
           <br />
           <br />
-          <b>Option 1 (recommandée) :</b>{" "}
-          <a href="/fr/plus">Gladys Plus</a>, notre service cloud optionnel qui
-          te donne un accès sécurisé (chiffré de bout en bout) depuis n'importe
-          où, sans configuration. Fonctionne comme une app sur iOS et Android.
+          <b>Option 1 (recommandée) :</b> <a href="/fr/plus">Gladys Plus</a>,
+          notre service cloud optionnel qui te donne un accès sécurisé (chiffré
+          de bout en bout) depuis n'importe où, sans configuration. Fonctionne
+          comme une app sur iOS et Android.
           <br />
           <br />
           <b>Option 2 (pour les experts) :</b> Configure ton propre VPN ou
@@ -145,8 +144,8 @@ const FAQQuestions = {
           <br />
           <br />
           You can install it on any Linux machine: mini-PC, Synology NAS,
-          Raspberry Pi, server, or even an old computer gathering dust. If Docker
-          runs on it, Gladys runs on it! 🚀
+          Raspberry Pi, server, or even an old computer gathering dust. If
+          Docker runs on it, Gladys runs on it! 🚀
         </>
       ),
     },
@@ -184,10 +183,8 @@ const FAQQuestions = {
       response: (
         <>
           <b>Very likely!</b> Gladys supports{" "}
-          <Link href="/docs/integrations/">
-            thousands of devices
-          </Link>{" "}
-          via Zigbee, Matter, MQTT, and dedicated integrations for Shelly, Sonos,
+          <Link href="/docs/integrations/">thousands of devices</Link> via
+          Zigbee, Matter, MQTT, and dedicated integrations for Shelly, Sonos,
           Philips Hue, RTSP cameras, Google Home, Alexa, and many more.
           <br />
           <br />
@@ -795,15 +792,15 @@ function Home({ integrations, lang }) {
                   </p>
                   <div className="row">
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="ALW3uDB9P0s" />
+                      <YoutubeEmbedVideo id="MsSx8omWiZ8" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Gérez vos appareils Zigbee dans votre domotique
+                        Suivi d'énergie & serveur MCP dans Gladys
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="_bmsWALVePc" />
+                      <YoutubeEmbedVideo id="2_fGKdoiK2Q" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Live: Bilan de 2024 et projets pour 2025
+                        Gladys Assistant devient compatible Matter
                       </h4>
                     </div>
                     <div className="col col--4">
