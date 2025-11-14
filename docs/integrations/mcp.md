@@ -66,14 +66,16 @@ The MCP server URL is visible in the interface:
 http://YOUR_GLADYS_IP/api/v1/service/mcp/proxy
 ```
 
-#### Generating an API Key
+Authentication for your connection is done by adding the `Authorization` header with your local API key as the value (see below).
+
+#### Generating a local API Key (`<LOCAL_API_KEY>`)
 
 To secure the connection between your agent and Gladys, you must generate an API key:
 
 1. In Gladys' MCP interface, at the bottom of the page, enter a name for your client (e.g., "Claude Desktop", "VS Code"...)
 2. Click "Generate"
 3. **Important**: Copy the generated key immediately, you won't be able to see it again
-4. Keep this key in a safe place
+4. Add it to your client configuration by passing it in the `Authorization` header
 
 You can revoke this key at any time if needed.
 
@@ -86,10 +88,10 @@ If you want to use agents that require a public URL (Mistral Le Chat), you can g
 Gladys Plus provides a secure and authenticated route:
 
 ```
-https://api.gladysgateway.com/v1/api/mcp/<YOUR_API_KEY>
+https://api.gladysgateway.com/v1/api/mcp/<GLADYS_PLUS_API_KEY>
 ```
 
-#### Generating an API Key
+#### Generating a Gladys Plus API Key (`<GLADYS_PLUS_API_KEY>`)
 
 You must generate an Open API key (be careful, not one from the configuration interface), to do this follow the [Gladys Plus documentation](https://gladysassistant.com/docs/plus/open-api/#generate-an-api-key)
 
@@ -132,7 +134,7 @@ Note this path, you'll need it for configuration.
         "--transport",
         "streamablehttp",
         "--header",
-        "Authorization: <YOUR_API_KEY>"
+        "Authorization: <LOCAL_API_KEY>"
       ],
       "env": {}
     }
@@ -143,11 +145,13 @@ Note this path, you'll need it for configuration.
 Replace:
 - `/full/path/to/mcp-proxy` with the path obtained from `which mcp-proxy`
 - `<YOUR_GLADYS_IP>` with your Gladys IP address
-- `<YOUR_API_KEY>` with the key generated in Gladys
+- `<LOCAL_API_KEY>` with the key generated in Gladys
 
 5. Save and restart Claude Desktop
 
 If everything works, you should have access to all MCP functions in the chat.
+
+> **💡 Tip:** You can also use the Gladys Plus URL `https://api.gladysgateway.com/v1/api/mcp/<GLADYS_PLUS_API_KEY>` instead of the local URL to access your Gladys from anywhere.
 
 ### Configuration for Perplexity
 
@@ -165,7 +169,7 @@ If everything works, you should have access to all MCP functions in the chat.
     "--transport",
     "streamablehttp",
     "--header",
-    "Authorization: <YOUR_API_KEY>"
+    "Authorization: <LOCAL_API_KEY>"
   ],
   "env": {}
 }
@@ -176,6 +180,8 @@ Replace the same values as for Claude Desktop.
 6. Save and wait for Perplexity to detect the functions
 
 📖 More information: [Perplexity MCP Documentation](https://www.perplexity.ai/help-center/en/articles/11502712-local-and-remote-mcps-for-perplexity)
+
+> **💡 Tip:** You can also use the Gladys Plus URL `https://api.gladysgateway.com/v1/api/mcp/<GLADYS_PLUS_API_KEY>` instead of the local URL to access your Gladys from anywhere.
 
 ### VS Code with GitHub Copilot
 
@@ -189,20 +195,22 @@ GitHub Copilot in VS Code natively supports MCP servers via HTTP.
 6. Enter the URL: `http://<YOUR_GLADYS_IP>/api/v1/service/mcp/proxy`
 7. In headers, add:
    - Name: `Authorization`
-   - Value: your API key generated in Gladys
+   - Value: `<LOCAL_API_KEY>`
 8. Give your server a name (e.g., "Gladys")
 
 You can now chat with Copilot and ask it to interact with your home!
 
 📖 More information: [VS Code MCP Documentation](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
 
-### Mistral Le Chat only with Gladys Plus
+> **💡 Tip:** You can also use the Gladys Plus URL `https://api.gladysgateway.com/v1/api/mcp/<GLADYS_PLUS_API_KEY>` instead of the local URL to access your Gladys from anywhere.
+
+### Mistral Le Chat **only** with Gladys Plus
 
 Le Chat only allows connection to MCPs accessible on the internet.
 
 1. Go to **Intelligence** → **Connectors**
 2. Click **Add a connector**
-3. In the **Custom MCP Connector** tab, complete the form with the URL and Gladys Plus API key `https://api.gladysgateway.com/v1/api/mcp/<YOUR_API_KEY>`
+3. In the **Custom MCP Connector** tab, complete the form with the URL and Gladys Plus API key `https://api.gladysgateway.com/v1/api/mcp/<GLADYS_PLUS_API_KEY>`
 
 You can now interact with Gladys data in Le Chat
 
