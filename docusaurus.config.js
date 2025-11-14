@@ -166,10 +166,6 @@ module.exports = {
               label: "Contact Us",
               href: "/contact",
             },
-            {
-              label: "Donate",
-              href: "https://www.buymeacoffee.com/gladysassistant",
-            },
           ],
         },
       ],

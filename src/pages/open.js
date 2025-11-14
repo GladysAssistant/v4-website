@@ -236,7 +236,32 @@ function Open() {
                 </p>
               </div>
             </div>
-            {loading && <div class={styles.spinner}></div>}
+            {loading && (
+              <div className={styles.loadingContainer}>
+                <div className="row">
+                  <div className="col col--4">
+                    <div className={styles.skeletonCard}>
+                      <div className={styles.skeletonTitle}></div>
+                      <div className={styles.skeletonNumber}></div>
+                    </div>
+                  </div>
+                  <div className="col col--4">
+                    <div className={styles.skeletonCard}>
+                      <div className={styles.skeletonTitle}></div>
+                      <div className={styles.skeletonNumber}></div>
+                    </div>
+                  </div>
+                  <div className="col col--4">
+                    <div className={styles.skeletonCard}>
+                      <div className={styles.skeletonTitle}></div>
+                      <div className={styles.skeletonNumber}></div>
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.skeletonChart}></div>
+                <div className={styles.skeletonChart}></div>
+              </div>
+            )}
             {loading === false && (
               <div>
                 <div className="row">
