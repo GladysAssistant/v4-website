@@ -39,175 +39,180 @@ const testimonials = {
 const FAQQuestions = {
   fr: [
     {
-      title: <>Quel matériel requis pour installer Gladys Assistant ?</>,
+      title: <>Gladys est-elle vraiment gratuite ?</>,
       response: (
         <>
-          Gladys peut s'installer sur n'importe quelle machine Linux (un
-          Raspberry Pi, un NAS, un serveur, un vieux PC Linux, peu importe !),
-          du moment que Docker tourne sur la machine, Gladys peut tourner
-          dessus. <br />
-          <br />
-          PS: Gladys Assistant est <b>gratuite</b>, c'est un simple container
-          Docker à lancer{" "}
+          <b>Oui, 100% gratuite et open-source !</b> Gladys Assistant est un
+          logiciel libre que tu peux installer{" "}
           <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
-            en une commande
+            en une seule commande Docker
           </Link>
-          .
-        </>
-      ),
-    },
-    {
-      title: <>Qui utilise Gladys Assistant 4 ?</>,
-      response: (
-        <>
-          La v4 de Gladys Assistant est sortie en Novembre 2020. Depuis, le
-          projet est en pleine croissance et l'objectif est de devenir un
-          logiciel de référence dans le monde de la domotique open-source !
+          . Aucun abonnement requis, aucune limitation, aucune carte bancaire
+          demandée.
           <br />
-          <br /> Gladys Assistant est installée par tout type d'utilisateurs :{" "}
-          <br /> <br />
-          <ul>
-            <li>
-              Des novices complet, qui veulent automatiser leur maison avec un
-              produit simple, puissant et respectueux de leur vie privée.
-            </li>
-            <li>
-              Des développeurs qui trouvent ça fou de pouvoir coder pour leur
-              maison et qui contribuent à ce projet open-source !
-            </li>
-            <li>Des pros, qui gèrent des parcs de capteurs impressionnants</li>
-          </ul>
+          <br />
+          Tu peux l'installer sur n'importe quelle machine Linux : mini-PC,
+          NAS Synology, Raspberry Pi, serveur, ou même un vieux PC qui traîne. Si
+          Docker tourne dessus, Gladys tourne dessus ! 🚀
         </>
       ),
     },
     {
-      title: <>Comment contribuer au projet ?</>,
+      title: <>Est-ce compliqué à installer ?</>,
       response: (
         <>
-          Gladys Assistant est entièrement open-source et disponible sur{" "}
-          <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
-          Toute PR est la bienvenue 🙂 <br />
-          <br /> Si tu veux contribuer, lis notre tutoriel{" "}
-          <a href="/fr/docs/dev/developing-a-service/">
-            Contribuer sur Gladys Assistant
+          <b>Non, c'est étonnamment simple !</b> Si tu sais copier-coller une
+          commande dans un terminal, tu sais installer Gladys. Notre
+          documentation te guide pas à pas, avec des captures d'écran et des
+          vidéos.
+          <br />
+          <br />
+          <b>Encore plus simple :</b> Notre{" "}
+          <Link href="/fr/starter-kit/">kit de démarrage</Link> arrive avec
+          Gladys déjà installée. Tu branches, tu suis le guide de 5 minutes, et
+          c'est parti. Zéro configuration technique requise.
+        </>
+      ),
+    },
+    {
+      title: <>Mes données sont-elles vraiment privées ?</>,
+      response: (
+        <>
+          <b>Absolument.</b> Contrairement aux solutions cloud comme Google Home
+          ou Alexa, Gladys tourne 100% chez toi, sur ta machine. Tes données ne
+          quittent jamais ton réseau local.
+          <br />
+          <br />
+          Pas de serveurs tiers, pas de tracking, pas de revente de données.
+          C'est d'ailleurs pour ça que Gladys existe : reprendre le contrôle de
+          sa vie privée tout en profitant d'une maison intelligente. 🔒
+        </>
+      ),
+    },
+    {
+      title: <>Gladys fonctionne-t-elle avec mes appareils ?</>,
+      response: (
+        <>
+          <b>Très probablement !</b> Gladys supporte{" "}
+          <Link href="/fr/docs/integrations/">
+            des milliers d'appareils
+          </Link>{" "}
+          via Zigbee, Matter, MQTT, et des intégrations dédiées pour Shelly, Sonos,
+          Philips Hue, caméras RTSP, Google Home, Alexa, et bien d'autres.
+          <br />
+          <br />
+          Et comme Gladys est open-source, de nouvelles intégrations sont
+          ajoutées régulièrement par la communauté. Si ton appareil n'est pas
+          encore supporté, tu peux même{" "}
+          <a href="https://community.gladysassistant.com/">
+            demander son ajout
           </a>{" "}
-          et n'hésite pas à venir sur la{" "}
-          <a href="https://community.gladysassistant.com/">communauté</a> pour
-          parler du développement sur lequel tu veux te lancer. N'hésite pas si
-          tu as des questions, on est toujours là pour donner un coup de main !
+          ou le développer toi-même !
         </>
       ),
     },
     {
-      title: <>Comment accéder à Gladys depuis l'extérieur de mon réseau ?</>,
+      title: <>Puis-je accéder à Gladys depuis l'extérieur ?</>,
       response: (
         <>
-          Nous proposons <a href="/fr/plus">Gladys Plus</a>, un service qui
-          proxy le traffic à votre instance locale Gladys, tout ça en chiffré de
-          bout en bout pour respecter votre vie privée, et sans configuration !
-          Gladys Plus est une "Progressive Web App" que vous pouvez installer
-          sur votre smartphone (Android et iOS), et ainsi avoir accès à Gladys
-          de partout dans le monde.
-        </>
-      ),
-    },
-    {
-      title: <>Un kit de démarrage pour commencer ?</>,
-      response: (
-        <>
-          <p>
-            Pour te permettre de démarrer avec Gladys en quelques minutes, j'ai
-            créé un kit clé en main avec <b>Gladys déjà pré-installée</b> ! 🚀
-            <br />
-            <br />
-            Le kit inclut un mini-PC Beelink S13 haute performance avec Gladys
-            pré-configurée, 6 mois de Gladys Plus offerts, et un accès à la
-            formation officielle avec des heures de vidéos et tutoriels.
-            <br />
-            <br />
-            Tu reçois le kit, tu le branches, et c'est parti ! Plus besoin
-            d'installer un OS ou de configurer quoi que ce soit.
-            <br />
-            <br />
-            <a href="/fr/starter-kit/">Découvrir le kit clé en main →</a>
-          </p>
+          <b>Oui, de plusieurs façons :</b>
+          <br />
+          <br />
+          <b>Option 1 (recommandée) :</b>{" "}
+          <a href="/fr/plus">Gladys Plus</a>, notre service cloud optionnel qui
+          te donne un accès sécurisé (chiffré de bout en bout) depuis n'importe
+          où, sans configuration. Fonctionne comme une app sur iOS et Android.
+          <br />
+          <br />
+          <b>Option 2 (pour les experts) :</b> Configure ton propre VPN ou
+          reverse proxy. Gladys reste 100% gratuite, mais ça demande des
+          compétences techniques.
         </>
       ),
     },
   ],
   en: [
     {
-      title: <>What equipment is required to install Gladys Assistant?</>,
+      title: <>Is Gladys really free?</>,
       response: (
         <>
-          Gladys can be installed on any Linux machine (a Raspberry Pi, a NAS, a
-          server, an old Linux PC, anything!), as long as Docker is running on
-          the machine, Gladys can run on it. <br />
-          <br />
-          Gladys Assistant is <b>free to use</b>, it's just a simple Docker
-          container that can be started with{" "}
+          <b>Yes, 100% free and open-source!</b> Gladys Assistant is free
+          software you can install with{" "}
           <Link href="/docs/installation/docker/#start-gladys">
-            a simple command
+            a single Docker command
           </Link>
-          .
+          . No subscription required, no limitations, no credit card needed.
+          <br />
+          <br />
+          You can install it on any Linux machine: mini-PC, Synology NAS,
+          Raspberry Pi, server, or even an old computer gathering dust. If Docker
+          runs on it, Gladys runs on it! 🚀
         </>
       ),
     },
     {
-      title: <>Who uses Gladys Assistant 4?</>,
+      title: <>Is it hard to install?</>,
       response: (
         <>
-          Gladys Assistant 4 was released in November 2020. Since then, the
-          project has been growing and the goal is to become a reference
-          software in the world of open-source home automation!
+          <b>No, it's surprisingly simple!</b> If you can copy-paste a command
+          into a terminal, you can install Gladys. Our documentation guides you
+          step-by-step with screenshots and videos.
           <br />
           <br />
-          Gladys Assistant is installed by all types of users: <br /> <br />
-          <ul>
-            <li>
-              Complete novices who want to automate their home with a simple,
-              powerful, and privacy-respecting product.
-            </li>
-            <li>
-              Developers who think it's amazing to be able to code for their
-              home and who contribute to this open-source project!
-            </li>
-            <li>Pros who manage impressive sensor networks</li>
-          </ul>
+          The entire setup takes about 5 minutes. No coding required, no complex
+          configuration files. Just follow the guide and you're done.
         </>
       ),
     },
     {
-      title: <>How to contribute to the project?</>,
+      title: <>Is my data really private?</>,
       response: (
         <>
-          Gladys Assistant is entirely open-source and available on{" "}
-          <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
-          All PRs are welcome 🙂 <br />
-          <br /> If you want to contribute, read our tutorial{" "}
-          <a href="/docs/dev/developing-a-service/">
-            Contributing to Gladys Assistant
-          </a>{" "}
-          and don't hesitate to join the{" "}
-          <a href="https://community.gladysassistant.com/">community</a> to
-          discuss the development you want to work on. Don't hesitate if you
-          have questions, we're always here to help!
+          <b>Absolutely.</b> Unlike cloud solutions like Google Home or Alexa,
+          Gladys runs 100% locally on your machine. Your data never leaves your
+          home network.
+          <br />
+          <br />
+          No third-party servers, no tracking, no data selling. That's actually
+          why Gladys exists: to take back control of your privacy while enjoying
+          a smart home. 🔒
         </>
       ),
     },
     {
-      title: <>How to access Gladys from outside my network?</>,
+      title: <>Does Gladys work with my devices?</>,
       response: (
         <>
-          We offer <a href="/plus">Gladys Plus</a>, a service that proxies
-          traffic to your local Gladys instance, all end-to-end encrypted to
-          respect your privacy, and without configuration! Gladys Plus is a
-          "Progressive Web App" that you can install on your smartphone (Android
-          and iOS), and thus have access to Gladys from anywhere in the world.
+          <b>Very likely!</b> Gladys supports{" "}
+          <Link href="/docs/integrations/">
+            thousands of devices
+          </Link>{" "}
+          via Zigbee, Matter, MQTT, and dedicated integrations for Shelly, Sonos,
+          Philips Hue, RTSP cameras, Google Home, Alexa, and many more.
           <br />
           <br />
-          Using this service is <b>entirely optional</b>, you can use Gladys
-          Assistant without it with your own domain if you prefer.
+          And because Gladys is open-source, new integrations are regularly
+          added by the community. If your device isn't supported yet, you can{" "}
+          <a href="https://community.gladysassistant.com/">request it</a> or
+          even develop it yourself!
+        </>
+      ),
+    },
+    {
+      title: <>Can I access Gladys remotely?</>,
+      response: (
+        <>
+          <b>Yes, in two ways:</b>
+          <br />
+          <br />
+          <b>Option 1 (recommended):</b> <a href="/plus">Gladys Plus</a>, our
+          optional cloud service that gives you secure access (end-to-end
+          encrypted) from anywhere, with zero configuration. Works as an app on
+          iOS and Android.
+          <br />
+          <br />
+          <b>Option 2 (for experts):</b> Set up your own VPN or reverse proxy.
+          Gladys remains 100% free, but requires technical skills.
         </>
       ),
     },
