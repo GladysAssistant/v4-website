@@ -86,4 +86,4 @@ There you go! You now have a Gladys smart home system at your place.
 
 You can now set up the various integrations available in Gladys.
 
-If you have any questions, join us now [on the forum](https://en-community.gladysassistant.com/)!
+If you have any questions, join us now [on the forum](https://community.gladysassistant.com/)!

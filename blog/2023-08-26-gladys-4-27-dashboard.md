@@ -10,7 +10,7 @@ Hello everyone!
 
 Hope you spent good holidays ☀️
 
-On the Gladys Assistant front, I returned last week with an update to v4.26.1, which introduced a [set of fixes](https://en-community.gladysassistant.com/t/gladys-assistant-v4-26-1-mosquitto-fixed-at-v2-0-15-google-home-graph-improved/118) in response to your feedback over the summer.
+On the Gladys Assistant front, I returned last week with an update to v4.26.1, which introduced a [set of fixes](https://community.gladysassistant.com/t/gladys-assistant-v4-26-1-mosquitto-fixed-at-v2-0-15-google-home-graph-improved/118) in response to your feedback over the summer.
 
 Today I'm following up with a more important update in terms of features: Gladys Assistant 4.27.
 
@@ -94,7 +94,7 @@ I've added a few actions that were missing for this button:
 
 ## Missing Zigbee compatibility?
 
-If you have a Zigbee device that is not fully supported by Gladys, don't hesitate to post a message [on the forum](https://en-community.gladysassistant.com/).
+If you have a Zigbee device that is not fully supported by Gladys, don't hesitate to post a message [on the forum](https://community.gladysassistant.com/).
 
 ## How to upgrade?
 

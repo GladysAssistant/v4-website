@@ -103,15 +103,11 @@ const FAQQuestions = {
       response: (
         <>
           Nous proposons <a href="/fr/plus">Gladys Plus</a>, un service qui
-          proxy le traffic de{" "}
-          <a href="https://plus.gladysassistant.com">
-            plus.gladysassistant.com
-          </a>{" "}
-          à votre instance locale Gladys, tout ça en chiffré de bout en bout
-          pour respecter votre vie privée, et sans configuration ! Gladys Plus
-          est une "Progressive Web App" que vous pouvez installer sur votre
-          smartphone (Android et iOS), et ainsi avoir accès à Gladys de partout
-          dans le monde.
+          proxy le traffic à votre instance locale Gladys, tout ça en chiffré de
+          bout en bout pour respecter votre vie privée, et sans configuration !
+          Gladys Plus est une "Progressive Web App" que vous pouvez installer
+          sur votre smartphone (Android et iOS), et ainsi avoir accès à Gladys
+          de partout dans le monde.
         </>
       ),
     },
@@ -193,7 +189,7 @@ const FAQQuestions = {
             Contributing to Gladys Assistant
           </a>{" "}
           and don't hesitate to join the{" "}
-          <a href="https://en-community.gladysassistant.com/">community</a> to
+          <a href="https://community.gladysassistant.com/">community</a> to
           discuss the development you want to work on. Don't hesitate if you
           have questions, we're always here to help!
         </>
@@ -204,14 +200,10 @@ const FAQQuestions = {
       response: (
         <>
           We offer <a href="/plus">Gladys Plus</a>, a service that proxies
-          traffic from{" "}
-          <a href="https://plus.gladysassistant.com">
-            plus.gladysassistant.com
-          </a>{" "}
-          to your local Gladys instance, all end-to-end encrypted to respect
-          your privacy, and without configuration! Gladys Plus is a "Progressive
-          Web App" that you can install on your smartphone (Android and iOS),
-          and thus have access to Gladys from anywhere in the world.
+          traffic to your local Gladys instance, all end-to-end encrypted to
+          respect your privacy, and without configuration! Gladys Plus is a
+          "Progressive Web App" that you can install on your smartphone (Android
+          and iOS), and thus have access to Gladys from anywhere in the world.
           <br />
           <br />
           Using this service is <b>entirely optional</b>, you can use Gladys
@@ -300,8 +292,7 @@ function Home({ integrations, lang }) {
                 >
                   <Link
                     className={classnames("button", styles.heroButton, {
-                      "button--primary": lang === "en",
-                      "button--secondary": lang !== "en",
+                      "button--primary": true,
                     })}
                     href={lang === "en" ? `/docs` : `/${lang}/docs`}
                   >
@@ -335,7 +326,7 @@ function Home({ integrations, lang }) {
                   >
                     <Link
                       className={classnames(
-                        "button button--primary",
+                        "button button--secondary",
                         styles.heroButton
                       )}
                       href={

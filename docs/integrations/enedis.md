@@ -62,7 +62,7 @@ The Enedis API is updated every morning in theory.
 
 However, in practice the data is not always available at the same time, and on some days (public holidays for example), the data is not available.
 
-If however, you observe holes on your dashboard, which persist over time, please post a message on [the forum](https://en-community.gladysassistant.com/).
+If however, you observe holes on your dashboard, which persist over time, please post a message on [the forum](https://community.gladysassistant.com/).
 
 ### Synchronization is not done anymore?
 

@@ -49,6 +49,6 @@ You can also use [Node-RED](/docs/integrations/node-red/) and MQTT to build cust
 
 ## 💬 Questions, ideas, or want to contribute?
 
-Join the [Gladys community](https://en-community.gladysassistant.com/)!
+Join the [Gladys community](https://community.gladysassistant.com/)!
 
 Whether you want to ask a question, help with development, or suggest a new integration, **you’re always welcome**.
