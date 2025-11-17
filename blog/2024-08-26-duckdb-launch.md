@@ -102,7 +102,7 @@ If you're impatient and know what you're doing, you can also manually run Watcht
 ```sh
 docker run --rm \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    containrrr/watchtower \
+    nickfedor/watchtower \
     --run-once
 ```
 

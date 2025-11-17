@@ -154,7 +154,7 @@ Il est possible d’installer Gladys Assistant sur n’importe quelle machine Li
 
 Un des objectifs principaux de la v4, c’est d’être un produit stable et résilient, sur le long terme. Le produit évoluant fréquemment, il était nécessaire d’avoir un système de mises à jour automatiques et qui ne puisse pas compromettre l’installation d’un utilisateur.
 
-Gladys Assistant tourne donc dans Docker, un système de container Linux qui permet à l’application d’être distribuée sous la forme d’une image contenant l’application et ses dépendances. Nous utilisons l’excellent [Watchtower](https://github.com/containrrr/watchtower) pour mettre à jour le container, automatiquement.
+Gladys Assistant tourne donc dans Docker, un système de container Linux qui permet à l’application d’être distribuée sous la forme d’une image contenant l’application et ses dépendances. Nous utilisons l’excellent [Watchtower](https://github.com/nicholas-fedor/watchtower) pour mettre à jour le container, automatiquement.
 
 Ainsi, la distribution des mises à jour de Gladys est automatisée, et fonctionne de manière atomique.
 
