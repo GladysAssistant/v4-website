@@ -94,6 +94,7 @@ const faqData = [
 ];
 
 const targetDate = new Date(1733104800000);
+const blackFridayEndDate = new Date(1764633600000); // Dec 2, 2024 00:00:00 GMT
 
 function Plus() {
   const context = useDocusaurusContext();
@@ -114,7 +115,10 @@ function Plus() {
   const [priceT5, setPriceT5] = useState(null);
   const [t5Url, setT5Url] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
+  const [isBlackFridayActive, setIsBlackFridayActive] = useState(true);
 
+  console.log("isBlackFridayActive", isBlackFridayActive);
   const scrollTopTop = () => {
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
@@ -151,6 +155,33 @@ function Plus() {
 
   useEffect(() => {
     fetchData();
+
+    // Black Friday countdown
+    const updateBlackFridayCountdown = () => {
+      const now = new Date();
+      const distance = blackFridayEndDate - now;
+
+      console.log("distance", distance);
+
+      if (distance < 0) {
+        setIsBlackFridayActive(false);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setBlackFridayTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateBlackFridayCountdown();
+    const interval = setInterval(updateBlackFridayCountdown, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const isFr = () => {
@@ -279,6 +310,114 @@ function Plus() {
 
   return (
     <main>
+      {isBlackFridayActive && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            padding: "1.5rem 1rem",
+            textAlign: "center",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          }}
+        >
+          <div className="container" style={{ maxWidth: "1200px" }}>
+            <h2
+              style={{
+                fontSize: "2rem",
+                fontWeight: "bold",
+                margin: "0 0 0.5rem 0",
+                color: "white",
+              }}
+            >
+              🎁 BLACK FRIDAY : Offre Exceptionnelle !
+            </h2>
+            <p
+              style={{
+                fontSize: "1.2rem",
+                margin: "0 0 1rem 0",
+                opacity: 0.95,
+              }}
+            >
+              Mini-PC avec Gladys pré-installée + Formation + 6 mois Gladys Plus
+              offerts
+            </p>
+            {blackFridayTimeLeft && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "1rem",
+                  flexWrap: "wrap",
+                  marginTop: "1rem",
+                }}
+              >
+                {blackFridayTimeLeft.days > 0 && (
+                  <div
+                    style={{
+                      background: "rgba(255,255,255,0.2)",
+                      padding: "0.75rem 1.25rem",
+                      borderRadius: "8px",
+                      backdropFilter: "blur(10px)",
+                    }}
+                  >
+                    <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                      {blackFridayTimeLeft.days}
+                    </div>
+                    <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                      jours
+                    </div>
+                  </div>
+                )}
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.2)",
+                    padding: "0.75rem 1.25rem",
+                    borderRadius: "8px",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                    {blackFridayTimeLeft.hours}
+                  </div>
+                  <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                    heures
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.2)",
+                    padding: "0.75rem 1.25rem",
+                    borderRadius: "8px",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                    {blackFridayTimeLeft.minutes}
+                  </div>
+                  <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                    minutes
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.2)",
+                    padding: "0.75rem 1.25rem",
+                    borderRadius: "8px",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                    {blackFridayTimeLeft.seconds}
+                  </div>
+                  <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                    secondes
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="margin-top--xl margin-bottom--lg">
         <div
           className="container"
@@ -292,12 +431,29 @@ function Plus() {
           <div className="row">
             <div className="col col--6">
               <form className={cx("margin-left--md", styles.plusForm)}>
+                {isBlackFridayActive && (
+                  <div
+                    style={{
+                      display: "inline-block",
+                      background:
+                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      color: "white",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      fontSize: "0.9rem",
+                      fontWeight: "bold",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    BLACK FRIDAY
+                  </div>
+                )}
                 <h1 className={styles.plusTitle}>Kit de démarrage Gladys</h1>
                 <p>
                   Un mini-PC surpuissant avec <b>Gladys pré-installée</b>
                   <br />+ la formation officielle Gladys
                   <br />+ 6 mois de Gladys Plus offerts
-                  <br />+ je t'aide si tu as des questions
+                  <br />+ support personnalisé par le créateur de Gladys
                 </p>
                 <p>
                   Livraison en <b>Mondial Relay</b>
@@ -369,22 +525,43 @@ function Plus() {
                           boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                         }}
                       >
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: "-15px",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            backgroundColor: "var(--ifm-color-success)",
-                            color: "white",
-                            padding: "8px 20px",
-                            borderRadius: "25px",
-                            fontSize: "1em",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          ✓ Gladys Pré-installée
-                        </span>
+                        {isBlackFridayActive ? (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              background:
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
+                            }}
+                          >
+                            🎁 BLACK FRIDAY
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              backgroundColor: "var(--ifm-color-success)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            ✓ Gladys Pré-installée
+                          </span>
+                        )}
                         <div>
                           <h3
                             style={{ fontSize: "32px", marginBottom: "20px" }}
@@ -446,9 +623,15 @@ function Plus() {
                             marginTop: "20px",
                             fontSize: "1.2rem",
                             padding: "15px",
+                            background: isBlackFridayActive
+                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                              : undefined,
+                            border: "none",
                           }}
                         >
-                          Commander le Kit T5
+                          {isBlackFridayActive
+                            ? "🎁 Profiter de l'offre"
+                            : "Commander le Kit T5"}
                         </button>
                       </div>
                     </div>
@@ -473,22 +656,43 @@ function Plus() {
                           boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
                         }}
                       >
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: "-15px",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            backgroundColor: "var(--ifm-color-success)",
-                            color: "white",
-                            padding: "8px 20px",
-                            borderRadius: "25px",
-                            fontSize: "1em",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          ✓ Gladys Pré-installée
-                        </span>
+                        {isBlackFridayActive ? (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              background:
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
+                            }}
+                          >
+                            🎁 BLACK FRIDAY
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              backgroundColor: "var(--ifm-color-success)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            ✓ Gladys Pré-installée
+                          </span>
+                        )}
                         <div>
                           <h3
                             style={{ fontSize: "32px", marginBottom: "20px" }}
@@ -550,9 +754,15 @@ function Plus() {
                             marginTop: "20px",
                             fontSize: "1.2rem",
                             padding: "15px",
+                            background: isBlackFridayActive
+                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                              : undefined,
+                            border: "none",
                           }}
                         >
-                          Commander le Kit S13
+                          {isBlackFridayActive
+                            ? "🎁 Profiter de l'offre"
+                            : "Commander le Kit S13"}
                         </button>
                       </div>
                     </div>
@@ -622,7 +832,9 @@ function Plus() {
               <p>Un mini-PC compact et économique, parfait pour débuter :</p>
               <p>
                 <ul>
-                  <li>Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)</li>
+                  <li>
+                    Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)
+                  </li>
                   <li>4 Go de RAM LPDDR4</li>
                   <li>64 Go eMMC</li>
                   <li>Wi-Fi 5, Bluetooth 5.0 et LAN Gigabit</li>
@@ -650,7 +862,8 @@ function Plus() {
               <p>
                 <ul>
                   <li>
-                    Processeur Intel N150 quad-core (Twin Lake) - Dernière génération
+                    Processeur Intel N150 quad-core (Twin Lake) - Dernière
+                    génération
                   </li>
                   <li>16 Go de RAM DDR4 3200MHz</li>
                   <li>Disque SSD M.2 SATA3 500Go + slot M.2 PCIe disponible</li>
@@ -994,20 +1207,42 @@ function Plus() {
                         <input
                           type="submit"
                           onClick={subscribeT5}
-                          value="Commander le Kit T5"
+                          value={
+                            isBlackFridayActive
+                              ? "🎁 Profiter de l'offre"
+                              : "Commander le Kit T5"
+                          }
                           disabled={isUnavailable || loading || !priceT5}
                           className={cx("button button--primary button--lg")}
-                          style={{ fontSize: "1.1em", padding: "10px 30px" }}
+                          style={{
+                            fontSize: "1.1em",
+                            padding: "10px 30px",
+                            background: isBlackFridayActive
+                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                              : undefined,
+                            border: "none",
+                          }}
                         />
                       </td>
                       <td>
                         <input
                           type="submit"
                           onClick={subscribeS13}
-                          value="Commander le Kit S13"
+                          value={
+                            isBlackFridayActive
+                              ? "🎁 Profiter de l'offre"
+                              : "Commander le Kit S13"
+                          }
                           disabled={isUnavailable || loading || !priceS13}
                           className={cx("button button--primary button--lg")}
-                          style={{ fontSize: "1.1em", padding: "10px 30px" }}
+                          style={{
+                            fontSize: "1.1em",
+                            padding: "10px 30px",
+                            background: isBlackFridayActive
+                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                              : undefined,
+                            border: "none",
+                          }}
                         />
                       </td>
                     </tr>
