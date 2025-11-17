@@ -107,7 +107,7 @@ Si vous êtes impatient et que vous savez ce que vous faites, il est aussi possi
 ```sh
 docker run --rm \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    containrrr/watchtower \
+    nickfedor/watchtower \
     --run-once
 ```
 

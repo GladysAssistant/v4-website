@@ -55,7 +55,7 @@ services:
       - /dev:/dev
       - /run/udev:/run/udev:ro
   watchtower:
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     restart: always
     container_name: watchtower
     command: --cleanup --include-restarting

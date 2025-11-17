@@ -67,7 +67,7 @@ Dans notre exemple ce sera `http://192.168.53.137:8420`.
 ## Mise à jour automatique avec Watchtower
 
 Vous pouvez utiliser Watchtower pour mettre automatiquement Gladys à jour quand une nouvelle version est disponible.  
-Pour cela, nous allons installer le conteneur Watchtower disponible sur DockerHub https://hub.docker.com/r/containrrr/watchtower
+Pour cela, nous allons installer le conteneur Watchtower disponible sur DockerHub https://hub.docker.com/r/nickfedor/watchtower
 
 Executez la commande suivante pour créer le conteneur Watchtower
 
@@ -77,6 +77,6 @@ Executez la commande suivante pour créer le conteneur Watchtower
    --log-opt max-size=10m \
    --restart=always \
    -v /var/run/docker.sock:/var/run/docker.sock \
-   containrrr/watchtower \
+   nickfedor/watchtower \
    --cleanup --include-restarting
 ```
