@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "./homeStyles.module.css";
 import Link from "@docusaurus/Link";
@@ -263,13 +263,96 @@ const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
   </video>
 );
 
+const BLACK_FRIDAY_ACTIVE = true;
+const blackFridayEndDate = new Date(1764633600000);
+
 function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
+  const [isBlackFridayActive, setIsBlackFridayActive] =
+    useState(BLACK_FRIDAY_ACTIVE);
+  const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
+
   const shouldDisplayStarterKitLink =
     lang === "fr" ||
     (navigator && navigator.language && navigator.language.startsWith("fr"));
+
+  useEffect(() => {
+    // Black Friday countdown
+    const updateBlackFridayCountdown = () => {
+      const now = new Date();
+      const distance = blackFridayEndDate - now;
+
+      if (distance < 0) {
+        setIsBlackFridayActive(false);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setBlackFridayTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateBlackFridayCountdown();
+    const interval = setInterval(updateBlackFridayCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
+      {isBlackFridayActive && shouldDisplayStarterKitLink && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            padding: "1rem 1rem",
+            textAlign: "center",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          }}
+        >
+          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                fontWeight: "bold",
+                margin: "0 0 0.5rem 0",
+                color: "white",
+              }}
+            >
+              🎁{" "}
+              {lang === "fr"
+                ? "BLACK FRIDAY : Promo sur le kit de démarrage et Gladys Plus"
+                : "BLACK FRIDAY: Gladys Plus -30% off"}
+            </p>
+            {blackFridayTimeLeft && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "0.75rem",
+                  flexWrap: "wrap",
+                  fontSize: "0.9rem",
+                }}
+              >
+                {blackFridayTimeLeft.days > 0 && (
+                  <span style={{ opacity: 0.95 }}>
+                    {blackFridayTimeLeft.days} {lang === "fr" ? "j" : "d"}
+                  </span>
+                )}
+                <span style={{ opacity: 0.95 }}>
+                  {blackFridayTimeLeft.hours}h {blackFridayTimeLeft.minutes}m{" "}
+                  {blackFridayTimeLeft.seconds}s
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <header className={classnames("shadow--lw")}>
         <div className={styles.heroBanner}>
           <div className={styles.flexContainer}>
@@ -328,19 +411,38 @@ function Home({ integrations, lang }) {
                   >
                     <Link
                       className={classnames(
-                        "button button--secondary",
-                        styles.heroButton
+                        "button",
+                        styles.heroButton,
+                        isBlackFridayActive ? "" : "button--secondary"
                       )}
                       href={
                         lang === "en" ? `/starter-kit` : `/${lang}/starter-kit`
                       }
+                      style={
+                        isBlackFridayActive
+                          ? {
+                              background:
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              border: "none",
+                            }
+                          : undefined
+                      }
                     >
-                      <Translate
-                        id="home.starterKitButton"
-                        description="The getting started button of the homepage"
-                      >
-                        Discover the Starter Kit
-                      </Translate>
+                      {isBlackFridayActive ? (
+                        lang === "fr" ? (
+                          "🎁 Offres Black Friday"
+                        ) : (
+                          "🎁 Black Friday Deals"
+                        )
+                      ) : (
+                        <Translate
+                          id="home.starterKitButton"
+                          description="The getting started button of the homepage"
+                        >
+                          Discover the Starter Kit
+                        </Translate>
+                      )}
                     </Link>
                   </div>
                 )}
