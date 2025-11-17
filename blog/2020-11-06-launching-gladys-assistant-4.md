@@ -153,7 +153,7 @@ It is possible to install Gladys Assistant on any Linux machine: a Synology NAS,
 
 One of the main goals of v4 is to be a stable and resilient product over the long term. As the product evolves frequently, it was necessary to have an automatic update system that could not compromise a user's installation.
 
-Gladys Assistant therefore runs in Docker, a Linux container system that allows the application to be distributed in the form of an image containing the application and its dependencies. We use the excellent [Watchtower](https://github.com/nickfedor/watchtower) to update the container, automatically.
+Gladys Assistant therefore runs in Docker, a Linux container system that allows the application to be distributed in the form of an image containing the application and its dependencies. We use the excellent [Watchtower](https://github.com/nicholas-fedor/watchtower) to update the container, automatically.
 
 Thus, the distribution of Gladys updates is automated, and works atomically.
 
