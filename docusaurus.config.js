@@ -1,6 +1,16 @@
 module.exports = {
   future: {
-    experimental_faster: true,
+    v4: true,
+    experimental_faster: {
+      swcJsLoader: true,
+      swcJsMinimizer: true,
+      swcHtmlMinimizer: true,
+      lightningCssMinimizer: true,
+      rspackBundler: true,
+      rspackPersistentCache: true,
+      ssgWorkerThreads: true,
+      mdxCrossCompilerCache: true,
+    },
   },
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
