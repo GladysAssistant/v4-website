@@ -48,12 +48,13 @@ const faqData = [
     title: <>Est-ce que Gladys est installée sur les mini-PC ?</>,
     description: (
       <>
-        Oui ! Que tu choisisses le Beelink T5 ou le Beelink S13, ton mini-PC
-        arrive chez toi avec Gladys déjà installée et configurée. Tu n'as qu'à
-        le brancher en Ethernet à ta box internet, suivre le guide de démarrage
-        rapide, et tu es prêt à utiliser Gladys. Plus besoin d'installer un OS
-        ou de configurer quoi que ce soit, tout est déjà fait ! Si tu as la
-        moindre question, je suis toujours disponible pour t'aider 😄
+        Oui ! Que tu choisisses le Beelink T5, le Beelink mini S12 ou le Beelink
+        S13, ton mini-PC arrive chez toi avec Gladys déjà installée et
+        configurée. Tu n'as qu'à le brancher en Ethernet à ta box internet,
+        suivre le guide de démarrage rapide, et tu es prêt à utiliser Gladys.
+        Plus besoin d'installer un OS ou de configurer quoi que ce soit, tout
+        est déjà fait ! Si tu as la moindre question, je suis toujours
+        disponible pour t'aider 😄
       </>
     ),
   },
@@ -114,6 +115,8 @@ function Plus() {
   const [s13Url, setS13Url] = useState(null);
   const [priceT5, setPriceT5] = useState(null);
   const [t5Url, setT5Url] = useState(null);
+  const [priceMiniS, setPriceMiniS] = useState(null);
+  const [miniSUrl, setMiniSUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
   const [isBlackFridayActive, setIsBlackFridayActive] = useState(true);
@@ -140,6 +143,10 @@ function Plus() {
       if (data.beelink_t5) {
         setPriceT5(data.beelink_t5.price);
         setT5Url(data.beelink_t5.url);
+      }
+      if (data.beelink_mini_s12) {
+        setPriceMiniS(data.beelink_mini_s12.price);
+        setMiniSUrl(data.beelink_mini_s12.url);
       }
       setIsLowStock(progressPercentage >= 50 || data.remaining <= 5);
       if (data.total !== undefined && data.remaining !== undefined) {
@@ -282,6 +289,24 @@ function Plus() {
       // Track with OpenPanel
       if (window.op && !dntActive) {
         window.op.track("starter_kit_click_buy_mini_t5");
+      }
+    }
+  };
+
+  const subscribeMiniS = (e) => {
+    e.preventDefault();
+    if (isBrowser) {
+      const openStripe = () => {
+        window.location.href = miniSUrl;
+      };
+      if (window.sa_loaded && !dntActive) {
+        sa_event("starter_kit_click_buy_mini_s", openStripe);
+      } else {
+        openStripe();
+      }
+      // Track with OpenPanel
+      if (window.op && !dntActive) {
+        window.op.track("starter_kit_click_buy_mini_s");
       }
     }
   };
@@ -506,7 +531,7 @@ function Plus() {
                   <div className="row" style={{ justifyContent: "center" }}>
                     {/* Beelink T5 - Budget option */}
                     <div
-                      className="col col--6"
+                      className="col col--4"
                       style={{ display: "flex", flexDirection: "column" }}
                     >
                       <div
@@ -635,14 +660,143 @@ function Plus() {
                         </button>
                       </div>
                     </div>
-                    {/* Beelink S13 - Performance option */}
+                    {/* Beelink mini S - Best value */}
                     <div
-                      className="col col--6"
+                      className="col col--4"
                       style={{ display: "flex", flexDirection: "column" }}
                     >
                       <div
                         style={{
                           border: "3px solid var(--ifm-color-primary)",
+                          padding: "30px",
+                          paddingTop: "50px",
+                          borderRadius: "12px",
+                          textAlign: "center",
+                          marginBottom: "15px",
+                          position: "relative",
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+                        }}
+                      >
+                        {isBlackFridayActive ? (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              background:
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
+                            }}
+                          >
+                            🎁 BLACK FRIDAY
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              backgroundColor: "var(--ifm-color-success)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            ⭐ Meilleur rapport qualité/prix
+                          </span>
+                        )}
+                        <div>
+                          <h3
+                            style={{ fontSize: "32px", marginBottom: "20px" }}
+                          >
+                            Beelink mini S12
+                          </h3>
+                          <p
+                            style={{ fontSize: "1.1em", marginBottom: "20px" }}
+                          >
+                            Le mini-PC équilibré avec{" "}
+                            <b>Gladys déjà installée</b>. Le meilleur choix !
+                          </p>
+                          <ul
+                            style={{
+                              textAlign: "left",
+                              marginBottom: "20px",
+                              fontSize: "0.95em",
+                            }}
+                          >
+                            <li>✓ Processeur Intel N95</li>
+                            <li>✓ 8 Go de RAM DDR4</li>
+                            <li>✓ 256 Go SSD</li>
+                            <li>✓ WiFi 5 & Bluetooth 4.2</li>
+                            <li>✓ Ethernet Gigabit</li>
+                          </ul>
+                          <p
+                            style={{
+                              fontSize: "36px",
+                              fontWeight: "bold",
+                              margin: "20px 0",
+                              marginBottom: "5px",
+                              color: "var(--ifm-color-primary)",
+                            }}
+                          >
+                            {priceMiniS ? priceMiniS + "€" : "..."}
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "0.9em",
+                              marginTop: "0",
+                              marginBottom: "20px",
+                              color: "var(--ifm-color-emphasis-600)",
+                            }}
+                          >
+                            + frais de ports
+                          </p>
+                        </div>
+                        <button
+                          onClick={subscribeMiniS}
+                          disabled={loading || !priceMiniS}
+                          className={cx(
+                            "button button--primary button--lg",
+                            styles.starterKitInputButton
+                          )}
+                          style={{
+                            width: "100%",
+                            marginTop: "20px",
+                            fontSize: "1.2rem",
+                            padding: "15px",
+                            background: isBlackFridayActive
+                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                              : undefined,
+                            border: "none",
+                          }}
+                        >
+                          {isBlackFridayActive
+                            ? "🎁 Profiter de l'offre"
+                            : "Commander le Kit mini S"}
+                        </button>
+                      </div>
+                    </div>
+                    {/* Beelink S13 - Performance option */}
+                    <div
+                      className="col col--4"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
+                      <div
+                        style={{
+                          border: "2px solid #ddd",
                           padding: "30px",
                           paddingTop: "50px",
                           borderRadius: "12px",
@@ -856,6 +1010,47 @@ function Plus() {
           <div className={cx("row", styles.starterKitRow)}>
             <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
               <h2 className={cx(styles.plusFeatureTitle)}>
+                Beelink mini S12 - Gladys Pré-installée
+              </h2>
+              <p>Le mini-PC équilibré, le meilleur rapport qualité/prix :</p>
+              <p>
+                <ul>
+                  <li>Processeur Intel N95 quad-core</li>
+                  <li>8 Go de RAM DDR4</li>
+                  <li>256 Go SSD</li>
+                  <li>Wi-Fi 5, Bluetooth 4.2 et LAN Gigabit</li>
+                  <li>Double HDMI 4K</li>
+                  <li>
+                    <b>Gladys déjà installée et configurée !</b>
+                  </li>
+                </ul>
+              </p>
+              <p>
+                <b>Note de Pierre-Gilles :</b> Le Beelink mini S12 est le choix
+                idéal pour la plupart des utilisateurs. Il offre un excellent
+                équilibre entre performance et prix, avec suffisamment de
+                puissance pour faire tourner Gladys et toutes ses intégrations
+                sans problème. Avec Gladys pré-installée, tu gagnes un temps
+                précieux : tu le branches, tu suis le guide de démarrage rapide,
+                et c'est parti !
+              </p>
+            </div>
+            <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
+              <img
+                src={useBaseUrl("/img/starter-kit/beelink_mini_s12.jpg")}
+                className={cx(styles.specImage)}
+              />
+            </div>
+          </div>
+          <div className={cx("row", styles.starterKitRow)}>
+            <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
+              <img
+                src={useBaseUrl("/img/starter-kit/beelink_s13_spec.jpg")}
+                className={cx(styles.specImage)}
+              />
+            </div>
+            <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
+              <h2 className={cx(styles.plusFeatureTitle)}>
                 Beelink S13 - Gladys Pré-installée
               </h2>
               <p>Un mini-PC de dernière génération, prêt à l'emploi :</p>
@@ -881,12 +1076,6 @@ function Plus() {
                 d'installer Ubuntu ou de configurer quoi que ce soit. Tu le
                 branches, tu suis le guide de démarrage rapide, et c'est parti !
               </p>
-            </div>
-            <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
-              <img
-                src={useBaseUrl("/img/starter-kit/beelink_s13_spec.jpg")}
-                className={cx(styles.specImage)}
-              />
             </div>
           </div>
           <div className={cx("row", styles.starterKitRow)}>
@@ -1089,6 +1278,7 @@ function Plus() {
                     <tr>
                       <th>Caractéristiques</th>
                       <th>Beelink T5</th>
+                      <th>Beelink mini S12</th>
                       <th>Beelink S13</th>
                     </tr>
                   </thead>
@@ -1096,30 +1286,36 @@ function Plus() {
                     <tr>
                       <td>Processeur</td>
                       <td>Intel Celeron N4020 (jusqu'à 2,8 GHz)</td>
+                      <td>Intel N95 quad-core</td>
                       <td>Intel Twin Lake-N150 (dernière génération)</td>
                     </tr>
                     <tr>
                       <td>Mémoire RAM</td>
                       <td>4 Go LPDDR4</td>
-                      <td>16 Go DDR4 3200MHz</td>
+                      <td>8 Go DDR4</td>
+                      <td>16 Go DDR4</td>
                     </tr>
                     <tr>
                       <td>Stockage</td>
                       <td>64 Go eMMC</td>
-                      <td>500 Go M.2 SATA3 + slot M.2 PCIe disponible</td>
+                      <td>256 Go SSD</td>
+                      <td>500 Go SSD</td>
                     </tr>
                     <tr>
                       <td>WiFi</td>
+                      <td>WiFi 5</td>
                       <td>WiFi 5</td>
                       <td>WiFi 6</td>
                     </tr>
                     <tr>
                       <td>Bluetooth</td>
                       <td>Bluetooth 5.0</td>
+                      <td>Bluetooth 4.2</td>
                       <td>Bluetooth 5.2</td>
                     </tr>
                     <tr>
                       <td>Ports HDMI</td>
+                      <td>Double HDMI 4K</td>
                       <td>Double HDMI 4K</td>
                       <td>Double HDMI 4K@60Hz</td>
                     </tr>
@@ -1127,9 +1323,13 @@ function Plus() {
                       <td>LAN</td>
                       <td>Gigabit Ethernet (1000 Mbps)</td>
                       <td>Gigabit Ethernet (1000 Mbps)</td>
+                      <td>Gigabit Ethernet (1000 Mbps)</td>
                     </tr>
                     <tr>
                       <td>Gladys</td>
+                      <td>
+                        <b>✓ Pré-installée et configurée</b>
+                      </td>
                       <td>
                         <b>✓ Pré-installée et configurée</b>
                       </td>
@@ -1145,14 +1345,19 @@ function Plus() {
                       <td>
                         ✓ Incluse (accès à des tutoriels vidéos et écrits)
                       </td>
+                      <td>
+                        ✓ Incluse (accès à des tutoriels vidéos et écrits)
+                      </td>
                     </tr>
                     <tr>
                       <td>Gladys Plus</td>
                       <td>✓ 6 mois offerts</td>
                       <td>✓ 6 mois offerts</td>
+                      <td>✓ 6 mois offerts</td>
                     </tr>
                     <tr>
                       <td>Support</td>
+                      <td>✓ Assistance personnalisée</td>
                       <td>✓ Assistance personnalisée</td>
                       <td>✓ Assistance personnalisée</td>
                     </tr>
@@ -1168,6 +1373,27 @@ function Plus() {
                               }}
                             >
                               {priceT5} €
+                            </b>
+                            <br />
+                            <small
+                              style={{ color: "var(--ifm-color-emphasis-600)" }}
+                            >
+                              + frais de ports
+                            </small>
+                          </>
+                        )}
+                        {isUnavailable && <b>{unavailableMessage}</b>}
+                      </td>
+                      <td>
+                        {priceMiniS && !isUnavailable && (
+                          <>
+                            <b
+                              style={{
+                                fontSize: "1.3em",
+                                color: "var(--ifm-color-primary)",
+                              }}
+                            >
+                              {priceMiniS} €
                             </b>
                             <br />
                             <small
@@ -1213,6 +1439,27 @@ function Plus() {
                               : "Commander le Kit T5"
                           }
                           disabled={isUnavailable || loading || !priceT5}
+                          className={cx("button button--primary button--lg")}
+                          style={{
+                            fontSize: "1.1em",
+                            padding: "10px 30px",
+                            background: isBlackFridayActive
+                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                              : undefined,
+                            border: "none",
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="submit"
+                          onClick={subscribeMiniS}
+                          value={
+                            isBlackFridayActive
+                              ? "🎁 Profiter de l'offre"
+                              : "Commander le Kit mini S12"
+                          }
+                          disabled={isUnavailable || loading || !priceMiniS}
                           className={cx("button button--primary button--lg")}
                           style={{
                             fontSize: "1.1em",
