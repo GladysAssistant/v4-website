@@ -993,20 +993,20 @@ function Home({ integrations, lang }) {
                 <div className="col col--4">
                   <div
                     style={{
-                      border: "3px solid var(--ifm-color-primary)",
+                      border: "2px solid var(--ifm-color-emphasis-300)",
                       padding: "25px",
                       borderRadius: "12px",
                       textAlign: "center",
                       height: "100%",
                       background: "var(--ifm-card-background-color)",
-                      boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                     }}
                   >
                     <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
                       Beelink mini S12
                     </h3>
                     <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                      Le meilleur rapport qualité/prix
+                      Un bon rapport qualité/prix
                     </p>
                     <ul
                       style={{
@@ -1035,20 +1035,20 @@ function Home({ integrations, lang }) {
                 <div className="col col--4">
                   <div
                     style={{
-                      border: "2px solid var(--ifm-color-emphasis-300)",
+                      border: "3px solid var(--ifm-color-primary)",
                       padding: "25px",
                       borderRadius: "12px",
                       textAlign: "center",
                       height: "100%",
                       background: "var(--ifm-card-background-color)",
-                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                      boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
                     }}
                   >
                     <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
                       Beelink S13
                     </h3>
                     <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                      Le mini-PC haute performance
+                      ⭐ Le meilleur choix !
                     </p>
                     <ul
                       style={{

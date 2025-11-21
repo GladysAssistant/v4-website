@@ -606,9 +606,7 @@ function Plus() {
                               fontSize: "0.95em",
                             }}
                           >
-                            <li>
-                              ✓ Processeur Intel Celeron N4020 (jusqu'à 2,8 GHz)
-                            </li>
+                            <li>✓ Processeur Intel N4020</li>
                             <li>✓ 4 Go de RAM LPDDR4</li>
                             <li>✓ 64 Go eMMC</li>
                             <li>✓ WiFi 5 & Bluetooth 5.0</li>
@@ -660,136 +658,7 @@ function Plus() {
                         </button>
                       </div>
                     </div>
-                    {/* Beelink mini S - Best value */}
-                    <div
-                      className="col col--4"
-                      style={{ display: "flex", flexDirection: "column" }}
-                    >
-                      <div
-                        style={{
-                          border: "3px solid var(--ifm-color-primary)",
-                          padding: "30px",
-                          paddingTop: "50px",
-                          borderRadius: "12px",
-                          textAlign: "center",
-                          marginBottom: "15px",
-                          position: "relative",
-                          flexGrow: 1,
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
-                        }}
-                      >
-                        {isBlackFridayActive ? (
-                          <span
-                            style={{
-                              position: "absolute",
-                              top: "-15px",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              background:
-                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                              color: "white",
-                              padding: "8px 20px",
-                              borderRadius: "25px",
-                              fontSize: "1em",
-                              fontWeight: "bold",
-                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
-                            }}
-                          >
-                            🎁 BLACK FRIDAY
-                          </span>
-                        ) : (
-                          <span
-                            style={{
-                              position: "absolute",
-                              top: "-15px",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              backgroundColor: "var(--ifm-color-success)",
-                              color: "white",
-                              padding: "8px 20px",
-                              borderRadius: "25px",
-                              fontSize: "1em",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            ⭐ Meilleur rapport qualité/prix
-                          </span>
-                        )}
-                        <div>
-                          <h3
-                            style={{ fontSize: "32px", marginBottom: "20px" }}
-                          >
-                            Beelink mini S12
-                          </h3>
-                          <p
-                            style={{ fontSize: "1.1em", marginBottom: "20px" }}
-                          >
-                            Le mini-PC équilibré avec{" "}
-                            <b>Gladys déjà installée</b>. Le meilleur choix !
-                          </p>
-                          <ul
-                            style={{
-                              textAlign: "left",
-                              marginBottom: "20px",
-                              fontSize: "0.95em",
-                            }}
-                          >
-                            <li>✓ Processeur Intel N95</li>
-                            <li>✓ 8 Go de RAM DDR4</li>
-                            <li>✓ 256 Go SSD</li>
-                            <li>✓ WiFi 5 & Bluetooth 4.2</li>
-                            <li>✓ Ethernet Gigabit</li>
-                          </ul>
-                          <p
-                            style={{
-                              fontSize: "36px",
-                              fontWeight: "bold",
-                              margin: "20px 0",
-                              marginBottom: "5px",
-                              color: "var(--ifm-color-primary)",
-                            }}
-                          >
-                            {priceMiniS ? priceMiniS + "€" : "..."}
-                          </p>
-                          <p
-                            style={{
-                              fontSize: "0.9em",
-                              marginTop: "0",
-                              marginBottom: "20px",
-                              color: "var(--ifm-color-emphasis-600)",
-                            }}
-                          >
-                            + frais de ports
-                          </p>
-                        </div>
-                        <button
-                          onClick={subscribeMiniS}
-                          disabled={loading || !priceMiniS}
-                          className={cx(
-                            "button button--primary button--lg",
-                            styles.starterKitInputButton
-                          )}
-                          style={{
-                            width: "100%",
-                            marginTop: "20px",
-                            fontSize: "1.2rem",
-                            padding: "15px",
-                            background: isBlackFridayActive
-                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                              : undefined,
-                            border: "none",
-                          }}
-                        >
-                          {isBlackFridayActive
-                            ? "🎁 Profiter de l'offre"
-                            : "Commander le Kit mini S"}
-                        </button>
-                      </div>
-                    </div>
-                    {/* Beelink S13 - Performance option */}
+                    {/* Beelink mini S12 - Standard option */}
                     <div
                       className="col col--4"
                       style={{ display: "flex", flexDirection: "column" }}
@@ -851,13 +720,143 @@ function Plus() {
                           <h3
                             style={{ fontSize: "32px", marginBottom: "20px" }}
                           >
+                            Beelink mini S12
+                          </h3>
+                          <p
+                            style={{ fontSize: "1.1em", marginBottom: "20px" }}
+                          >
+                            Le mini-PC équilibré avec{" "}
+                            <b>Gladys déjà installée</b>. Bon rapport
+                            qualité/prix.
+                          </p>
+                          <ul
+                            style={{
+                              textAlign: "left",
+                              marginBottom: "20px",
+                              fontSize: "0.95em",
+                            }}
+                          >
+                            <li>✓ Processeur Intel N95</li>
+                            <li>✓ 8 Go de RAM DDR4</li>
+                            <li>✓ 256 Go SSD</li>
+                            <li>✓ WiFi 5 & Bluetooth 4.2</li>
+                            <li>✓ Ethernet Gigabit</li>
+                          </ul>
+                          <p
+                            style={{
+                              fontSize: "36px",
+                              fontWeight: "bold",
+                              margin: "20px 0",
+                              marginBottom: "5px",
+                              color: "var(--ifm-color-primary)",
+                            }}
+                          >
+                            {priceMiniS ? priceMiniS + "€" : "..."}
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "0.9em",
+                              marginTop: "0",
+                              marginBottom: "20px",
+                              color: "var(--ifm-color-emphasis-600)",
+                            }}
+                          >
+                            + frais de ports
+                          </p>
+                        </div>
+                        <button
+                          onClick={subscribeMiniS}
+                          disabled={loading || !priceMiniS}
+                          className={cx(
+                            "button button--primary button--lg",
+                            styles.starterKitInputButton
+                          )}
+                          style={{
+                            width: "100%",
+                            marginTop: "20px",
+                            fontSize: "1.2rem",
+                            padding: "15px",
+                            background: isBlackFridayActive
+                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                              : undefined,
+                            border: "none",
+                          }}
+                        >
+                          {isBlackFridayActive
+                            ? "🎁 Profiter de l'offre"
+                            : "Commander le Kit mini S"}
+                        </button>
+                      </div>
+                    </div>
+                    {/* Beelink S13 - Best choice */}
+                    <div
+                      className="col col--4"
+                      style={{ display: "flex", flexDirection: "column" }}
+                    >
+                      <div
+                        style={{
+                          border: "3px solid var(--ifm-color-primary)",
+                          padding: "30px",
+                          paddingTop: "50px",
+                          borderRadius: "12px",
+                          textAlign: "center",
+                          marginBottom: "15px",
+                          position: "relative",
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+                        }}
+                      >
+                        {isBlackFridayActive ? (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              background:
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
+                            }}
+                          >
+                            🎁 BLACK FRIDAY
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              backgroundColor: "var(--ifm-color-success)",
+                              color: "white",
+                              padding: "8px 20px",
+                              borderRadius: "25px",
+                              fontSize: "1em",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            ⭐ Meilleur choix
+                          </span>
+                        )}
+                        <div>
+                          <h3
+                            style={{ fontSize: "32px", marginBottom: "20px" }}
+                          >
                             Beelink S13
                           </h3>
                           <p
                             style={{ fontSize: "1.1em", marginBottom: "20px" }}
                           >
                             Le mini-PC haute performance avec{" "}
-                            <b>Gladys déjà installée</b>. Maximum de puissance !
+                            <b>Gladys déjà installée</b>. Le meilleur choix !
                           </p>
                           <ul
                             style={{
@@ -1000,10 +999,8 @@ function Plus() {
               </p>
               <p>
                 <b>Note de Pierre-Gilles :</b> Le Beelink T5 est l'option idéale
-                pour débuter avec Gladys sans se ruiner. Avec Gladys
-                pré-installée, tu gagnes un temps précieux : plus besoin
-                d'installer Ubuntu ou de configurer quoi que ce soit. Tu le
-                branches, tu suis le guide de démarrage rapide, et c'est parti !
+                pour débuter avec Gladys sans se ruiner. Parfait pour découvrir
+                la domotique avec Gladys sans investir trop au départ.
               </p>
             </div>
           </div>
@@ -1012,7 +1009,7 @@ function Plus() {
               <h2 className={cx(styles.plusFeatureTitle)}>
                 Beelink mini S12 - Gladys Pré-installée
               </h2>
-              <p>Le mini-PC équilibré, le meilleur rapport qualité/prix :</p>
+              <p>Le mini-PC équilibré, un bon rapport qualité/prix :</p>
               <p>
                 <ul>
                   <li>Processeur Intel N95 quad-core</li>
@@ -1026,13 +1023,9 @@ function Plus() {
                 </ul>
               </p>
               <p>
-                <b>Note de Pierre-Gilles :</b> Le Beelink mini S12 est le choix
-                idéal pour la plupart des utilisateurs. Il offre un excellent
+                <b>Note de Pierre-Gilles :</b> Le Beelink mini S12 offre un bon
                 équilibre entre performance et prix, avec suffisamment de
-                puissance pour faire tourner Gladys et toutes ses intégrations
-                sans problème. Avec Gladys pré-installée, tu gagnes un temps
-                précieux : tu le branches, tu suis le guide de démarrage rapide,
-                et c'est parti !
+                puissance pour faire tourner Gladys et ses intégrations de base.
               </p>
             </div>
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
@@ -1053,7 +1046,10 @@ function Plus() {
               <h2 className={cx(styles.plusFeatureTitle)}>
                 Beelink S13 - Gladys Pré-installée
               </h2>
-              <p>Un mini-PC de dernière génération, prêt à l'emploi :</p>
+              <p>
+                Le meilleur choix ! Un mini-PC de dernière génération, prêt à
+                l'emploi :
+              </p>
               <p>
                 <ul>
                   <li>
@@ -1064,17 +1060,14 @@ function Plus() {
                   <li>Disque SSD M.2 SATA3 500Go + slot M.2 PCIe disponible</li>
                   <li>Wi-Fi 6, Bluetooth 5.2 et LAN Gigabit</li>
                   <li>Double HDMI 4K@60Hz</li>
-                  <li>
-                    <b>Gladys déjà installée et configurée !</b>
-                  </li>
                 </ul>
               </p>
               <p>
-                <b>Note de Pierre-Gilles :</b> Le Beelink S13 représente le top
-                de la gamme des mini-PC pour la domotique. Avec Gladys
-                pré-installée, tu gagnes un temps précieux : plus besoin
-                d'installer Ubuntu ou de configurer quoi que ce soit. Tu le
-                branches, tu suis le guide de démarrage rapide, et c'est parti !
+                <b>Note de Pierre-Gilles :</b> Le Beelink S13 est mon choix
+                recommandé ! Il représente le meilleur équilibre entre
+                performance, fiabilité et évolutivité. C'est le mini-PC idéal
+                pour faire tourner Gladys avec toutes ses intégrations, même les
+                plus gourmandes.
               </p>
             </div>
           </div>
@@ -1257,19 +1250,25 @@ function Plus() {
               </p>
 
               <p>
-                Nous proposons deux options pour s'adapter à tous les besoins :
+                Nous proposons trois options pour s'adapter à tous les besoins :
               </p>
               <ul>
                 <li>
                   <b>Beelink T5</b> : Un mini-PC compact et économique, parfait
-                  pour débuter avec Gladys. Processeur Intel Celeron N4020, 4 Go
-                  de RAM et 64 Go de stockage.
+                  pour débuter avec Gladys. Processeur Intel N4020, 4 Go de RAM
+                  et 64 Go de stockage.
                 </li>
                 <li>
-                  <b>Beelink S13</b> : Le top de la gamme avec un processeur
-                  Intel N150 de dernière génération, 16 Go de RAM et 500 Go de
-                  stockage. Idéal pour une utilisation intensive et des
-                  applications supplémentaires (Node-RED, AdGuard Home, etc.).
+                  <b>Beelink mini S12</b> : Un bon rapport qualité/prix avec un
+                  processeur Intel N95, 8 Go de RAM et 256 Go de stockage SSD.
+                  Idéal pour les intégrations de base.
+                </li>
+                <li>
+                  <b>Beelink S13</b> ⭐ : <b>Mon choix recommandé !</b> Le
+                  meilleur équilibre avec un processeur Intel N150 de dernière
+                  génération, 16 Go de RAM et 500 Go de stockage. Parfait pour
+                  toutes les intégrations, même les plus gourmandes (Node-RED,
+                  AdGuard Home, etc.).
                 </li>
               </ul>
               <div className={styles.tableContainer}>
