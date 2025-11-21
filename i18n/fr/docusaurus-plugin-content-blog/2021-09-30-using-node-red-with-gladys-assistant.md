@@ -12,6 +12,8 @@ Aujourd'hui on se retrouve avec non pas un article, mais une vidéo Youtube où 
 
 Pour ceux qui ne connaissent pas [Node-RED](https://nodered.org), c'est un outil open-source "low code" qui permet de faire de faire des scénarios, avec des entrées et des sorties façon "programmation visuelle".
 
+<!-- truncate -->
+
 ## Pourquoi proposer ce tutoriel ?
 
 Je suis conscient que dans Gladys Assistant 4 nous n'avons pas encore toutes les compatibilités espérées (ça prend du temps!), et donc je pense que Node-RED peut-être une bonne solution pour palier à certains manques de Gladys 4.

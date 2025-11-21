@@ -27,6 +27,8 @@ L'objectif est de pouvoir faire des tableaux de bords différents selon certains
 - Un tableau de bord pour afficher sur une tablette dans l'entrée
 - Etc...
 
+<!-- truncate -->
+
 Chaque tableau de bord a une URL unique, ce qui vous permet d'avoir ces tableaux de bords en favoris, et surtout de mettre un tableau de bord sur une tablette en écran d'accueil si vous souhaitez avoir un écran de contrôle quelque part dans votre maison !
 
 Concrètement, vous avez maintenant un sélecteur sur l'écran d'accueil qui vous permet de sélectionner le tableau de bord que vous voulez afficher:
