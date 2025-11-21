@@ -37,6 +37,7 @@ module.exports = {
     metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
     colorMode: {
       defaultMode: "dark",
+      disableSwitch: true,
       respectPrefersColorScheme: false,
     },
     /* announcementBar: {
