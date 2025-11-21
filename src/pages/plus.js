@@ -482,17 +482,58 @@ function Plus() {
                   )}
                   {PRICING_TABLE_ACTIVATED && (
                     <span>
-                      {false && (
-                        <label
-                          style={{ display: "block", marginBottom: "10px" }}
+                      {isBlackFridayActive && (
+                        <div
+                          style={{
+                            textAlign: "center",
+                            marginBottom: "1rem",
+                            padding: "1rem",
+                            background:
+                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            borderRadius: "12px",
+                            color: "white",
+                            border: "3px dashed rgba(255,255,255,0.5)",
+                            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+                          }}
                         >
-                          <Translate
-                            id="gladysPlusPage.subscribe"
-                            description="Gladys Plus subscribe"
+                          <div
+                            style={{
+                              fontSize: "0.85rem",
+                              marginBottom: "0.5rem",
+                              textTransform: "uppercase",
+                              letterSpacing: "1px",
+                              opacity: 0.9,
+                            }}
                           >
-                            Enter discount here
-                          </Translate>
-                        </label>
+                            🎁{" "}
+                            {language === "fr"
+                              ? "Code promo Black Friday"
+                              : "Black Friday Promo Code"}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.5rem",
+                              fontWeight: "bold",
+                              fontFamily: "monospace",
+                              letterSpacing: "3px",
+                              background: "rgba(255,255,255,0.2)",
+                              padding: "0.5rem 1rem",
+                              borderRadius: "6px",
+                              display: "inline-block",
+                              marginBottom: "0.5rem",
+                            }}
+                          >
+                            BLACK_FRIDAY_2025
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              fontWeight: "600",
+                            }}
+                          >
+                            -30% {language === "fr" ? "de réduction" : "off"}
+                          </div>
+                        </div>
                       )}
 
                       <a
@@ -809,6 +850,59 @@ function Plus() {
                       </p>
                     </div>
                     <div class="card__footer">
+                      {isBlackFridayActive && (
+                        <div
+                          style={{
+                            textAlign: "center",
+                            marginBottom: "1rem",
+                            padding: "1rem",
+                            background:
+                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            borderRadius: "12px",
+                            color: "white",
+                            border: "3px dashed rgba(255,255,255,0.5)",
+                            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "0.85rem",
+                              marginBottom: "0.5rem",
+                              textTransform: "uppercase",
+                              letterSpacing: "1px",
+                              opacity: 0.9,
+                            }}
+                          >
+                            🎁{" "}
+                            {language === "fr"
+                              ? "Code promo Black Friday"
+                              : "Black Friday Promo Code"}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.5rem",
+                              fontWeight: "bold",
+                              fontFamily: "monospace",
+                              letterSpacing: "3px",
+                              background: "rgba(255,255,255,0.2)",
+                              padding: "0.5rem 1rem",
+                              borderRadius: "6px",
+                              display: "inline-block",
+                              marginBottom: "0.5rem",
+                            }}
+                          >
+                            BLACK_FRIDAY_2025
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              fontWeight: "600",
+                            }}
+                          >
+                            -30% {language === "fr" ? "de réduction" : "off"}
+                          </div>
+                        </div>
+                      )}
                       <button
                         onClick={
                           YEARLY_PLAN_ACTIVATED
