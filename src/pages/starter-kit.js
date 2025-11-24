@@ -219,95 +219,36 @@ function Plus() {
       ) === 1;
   }
 
-  const subscribe = (e) => {
+  const subscribeS13 = async (e) => {
     e.preventDefault();
-    const locale = isFr() ? "fr" : "en";
     if (isBrowser) {
-      const openStripe = () => {
-        window.location.href = `https://buy.stripe.com/fZe28D9V0fWi848005?prefilled_promo_code=${couponCode}`;
-      };
-      if (window.sa_loaded && !dntActive) {
-        sa_event("starter_kit_click_buy_mini_s12_pro", openStripe);
-      } else {
-        openStripe();
-      }
       // Track with OpenPanel
       if (window.op && !dntActive) {
-        window.op.track("starter_kit_click_buy_mini_s12_pro");
+        await window.op.track("starter_kit_click_buy_mini_s13");
       }
+      window.location.href = s13Url;
     }
   };
 
-  const subscribeCheaperPc = (e) => {
+  const subscribeT5 = async (e) => {
     e.preventDefault();
-    const locale = isFr() ? "fr" : "en";
     if (isBrowser) {
-      const openStripe = () => {
-        window.location.href = `https://buy.stripe.com/6oEcNhaZ45hEbgk28f?prefilled_promo_code=${cheaperKitCouponCode}`;
-      };
-      if (window.sa_loaded && !dntActive) {
-        sa_event("starter_kit_click_buy_mini_s12", openStripe);
-      } else {
-        openStripe();
-      }
       // Track with OpenPanel
       if (window.op && !dntActive) {
-        window.op.track("starter_kit_click_buy_mini_s12");
+        await window.op.track("starter_kit_click_buy_mini_t5");
       }
+      window.location.href = t5Url;
     }
   };
 
-  const subscribeS13 = (e) => {
+  const subscribeMiniS = async (e) => {
     e.preventDefault();
     if (isBrowser) {
-      const openStripe = () => {
-        window.location.href = s13Url;
-      };
-      if (window.sa_loaded && !dntActive) {
-        sa_event("starter_kit_click_buy_mini_s13", openStripe);
-      } else {
-        openStripe();
-      }
       // Track with OpenPanel
       if (window.op && !dntActive) {
-        window.op.track("starter_kit_click_buy_mini_s13");
+        await window.op.track("starter_kit_click_buy_mini_s");
       }
-    }
-  };
-
-  const subscribeT5 = (e) => {
-    e.preventDefault();
-    if (isBrowser) {
-      const openStripe = () => {
-        window.location.href = t5Url;
-      };
-      if (window.sa_loaded && !dntActive) {
-        sa_event("starter_kit_click_buy_mini_t5", openStripe);
-      } else {
-        openStripe();
-      }
-      // Track with OpenPanel
-      if (window.op && !dntActive) {
-        window.op.track("starter_kit_click_buy_mini_t5");
-      }
-    }
-  };
-
-  const subscribeMiniS = (e) => {
-    e.preventDefault();
-    if (isBrowser) {
-      const openStripe = () => {
-        window.location.href = miniSUrl;
-      };
-      if (window.sa_loaded && !dntActive) {
-        sa_event("starter_kit_click_buy_mini_s", openStripe);
-      } else {
-        openStripe();
-      }
-      // Track with OpenPanel
-      if (window.op && !dntActive) {
-        window.op.track("starter_kit_click_buy_mini_s");
-      }
+      window.location.href = miniSUrl;
     }
   };
 
