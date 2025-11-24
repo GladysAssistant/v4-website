@@ -223,16 +223,5 @@ module.exports = {
     ],
   ],
   clientModules: [require.resolve("./src/openpanel.js")],
-  scripts: [
-    {
-      async: true,
-      defer: true,
-      src: "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
-    },
-    {
-      async: true,
-      defer: true,
-      src: "https://abcdef.gladysassistant.com/latest.js",
-    },
-  ],
+  scripts: [],
 };
