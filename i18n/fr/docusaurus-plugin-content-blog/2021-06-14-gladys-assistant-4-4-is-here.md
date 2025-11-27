@@ -32,6 +32,8 @@ Les zones sont éditables bien-sûr
 
 ![Editer une zone](../../../static/img/articles/fr/gladys-4-4/edit-zone.jpg)
 
+<!-- truncate -->
+
 ### Démarrer une scène quand un utilisateur entre/quitte une zone
 
 Maintenant que vous avez des zones, il devient possible de faire une scène qui se lance quand vous entrez dans une zone:

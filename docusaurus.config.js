@@ -1,6 +1,16 @@
 module.exports = {
   future: {
-    experimental_faster: true,
+    v4: true,
+    experimental_faster: {
+      swcJsLoader: true,
+      swcJsMinimizer: true,
+      swcHtmlMinimizer: true,
+      lightningCssMinimizer: true,
+      rspackBundler: true,
+      rspackPersistentCache: true,
+      ssgWorkerThreads: true,
+      mdxCrossCompilerCache: true,
+    },
   },
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
@@ -27,6 +37,7 @@ module.exports = {
     metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
     colorMode: {
       defaultMode: "dark",
+      disableSwitch: true,
       respectPrefersColorScheme: false,
     },
     /* announcementBar: {
@@ -212,16 +223,5 @@ module.exports = {
     ],
   ],
   clientModules: [require.resolve("./src/openpanel.js")],
-  scripts: [
-    {
-      async: true,
-      defer: true,
-      src: "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
-    },
-    {
-      async: true,
-      defer: true,
-      src: "https://abcdef.gladysassistant.com/latest.js",
-    },
-  ],
+  scripts: [],
 };

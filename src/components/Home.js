@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "./homeStyles.module.css";
 import Link from "@docusaurus/Link";
@@ -263,13 +263,96 @@ const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
   </video>
 );
 
+const BLACK_FRIDAY_ACTIVE = true;
+const blackFridayEndDate = new Date(1764633600000);
+
 function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
+  const [isBlackFridayActive, setIsBlackFridayActive] =
+    useState(BLACK_FRIDAY_ACTIVE);
+  const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
+
   const shouldDisplayStarterKitLink =
     lang === "fr" ||
     (navigator && navigator.language && navigator.language.startsWith("fr"));
+
+  useEffect(() => {
+    // Black Friday countdown
+    const updateBlackFridayCountdown = () => {
+      const now = new Date();
+      const distance = blackFridayEndDate - now;
+
+      if (distance < 0) {
+        setIsBlackFridayActive(false);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setBlackFridayTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateBlackFridayCountdown();
+    const interval = setInterval(updateBlackFridayCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
+      {isBlackFridayActive && shouldDisplayStarterKitLink && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            padding: "1rem 1rem",
+            textAlign: "center",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          }}
+        >
+          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                fontWeight: "bold",
+                margin: "0 0 0.5rem 0",
+                color: "white",
+              }}
+            >
+              🎁{" "}
+              {lang === "fr"
+                ? "BLACK FRIDAY : Promo sur le kit de démarrage et Gladys Plus"
+                : "BLACK FRIDAY: Gladys Plus -30% off"}
+            </p>
+            {blackFridayTimeLeft && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "0.75rem",
+                  flexWrap: "wrap",
+                  fontSize: "0.9rem",
+                }}
+              >
+                {blackFridayTimeLeft.days > 0 && (
+                  <span style={{ opacity: 0.95 }}>
+                    {blackFridayTimeLeft.days} {lang === "fr" ? "j" : "d"}
+                  </span>
+                )}
+                <span style={{ opacity: 0.95 }}>
+                  {blackFridayTimeLeft.hours}h {blackFridayTimeLeft.minutes}m{" "}
+                  {blackFridayTimeLeft.seconds}s
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <header className={classnames("shadow--lw")}>
         <div className={styles.heroBanner}>
           <div className={styles.flexContainer}>
@@ -328,19 +411,38 @@ function Home({ integrations, lang }) {
                   >
                     <Link
                       className={classnames(
-                        "button button--secondary",
-                        styles.heroButton
+                        "button",
+                        styles.heroButton,
+                        isBlackFridayActive ? "" : "button--secondary"
                       )}
                       href={
                         lang === "en" ? `/starter-kit` : `/${lang}/starter-kit`
                       }
+                      style={
+                        isBlackFridayActive
+                          ? {
+                              background:
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              border: "none",
+                            }
+                          : undefined
+                      }
                     >
-                      <Translate
-                        id="home.starterKitButton"
-                        description="The getting started button of the homepage"
-                      >
-                        Discover the Starter Kit
-                      </Translate>
+                      {isBlackFridayActive ? (
+                        lang === "fr" ? (
+                          "🎁 Offres Black Friday"
+                        ) : (
+                          "🎁 Black Friday Deals"
+                        )
+                      ) : (
+                        <Translate
+                          id="home.starterKitButton"
+                          description="The getting started button of the homepage"
+                        >
+                          Discover the Starter Kit
+                        </Translate>
+                      )}
                     </Link>
                   </div>
                 )}
@@ -811,6 +913,228 @@ function Home({ integrations, lang }) {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {lang === "fr" && (
+          <div
+            className={classnames(styles.homeSection)}
+            style={{
+              background: "var(--ifm-color-emphasis-100)",
+              padding: "3rem 1rem",
+            }}
+          >
+            <div className="container">
+              <h2
+                className={styles.secondaryTitle}
+                style={{ marginBottom: "1rem" }}
+              >
+                Kit de démarrage Gladys
+              </h2>
+              <p
+                style={{
+                  textAlign: "center",
+                  fontSize: "1.2rem",
+                  marginBottom: "3rem",
+                  maxWidth: "800px",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              >
+                Un mini-PC avec <b>Gladys pré-installée</b> + la formation
+                officielle + 6 mois de Gladys Plus offerts
+              </p>
+
+              <div className="row" style={{ marginBottom: "3rem" }}>
+                {false && (
+                  <div className="col col--4">
+                    <div
+                      style={{
+                        border: "2px solid var(--ifm-color-emphasis-300)",
+                        padding: "25px",
+                        borderRadius: "12px",
+                        textAlign: "center",
+                        height: "100%",
+                        background: "var(--ifm-card-background-color)",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                      }}
+                    >
+                      <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+                        Beelink T5
+                      </h3>
+                      <p style={{ fontSize: "1em", marginBottom: "15px" }}>
+                        Le mini-PC compact et économique
+                      </p>
+                      <ul
+                        style={{
+                          textAlign: "left",
+                          marginBottom: "15px",
+                          fontSize: "0.9em",
+                        }}
+                      >
+                        <li>✓ Intel Celeron N4020</li>
+                        <li>✓ 4 Go RAM • 64 Go eMMC</li>
+                        <li>✓ Gladys déjà installée</li>
+                      </ul>
+                      <Link
+                        className="button button--primary button--lg"
+                        href="/fr/starter-kit"
+                        style={{
+                          width: "100%",
+                          marginTop: "15px",
+                        }}
+                      >
+                        Découvrir
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
+                <div className="col col--6">
+                  <div
+                    style={{
+                      border: "2px solid var(--ifm-color-emphasis-300)",
+                      padding: "25px",
+                      borderRadius: "12px",
+                      textAlign: "center",
+                      height: "100%",
+                      background: "var(--ifm-card-background-color)",
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+                      Beelink mini S12
+                    </h3>
+                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
+                      Un bon rapport qualité/prix
+                    </p>
+                    <ul
+                      style={{
+                        textAlign: "left",
+                        marginBottom: "15px",
+                        fontSize: "0.9em",
+                      }}
+                    >
+                      <li>✓ Intel N95</li>
+                      <li>✓ 8 Go RAM • 256 Go SSD</li>
+                      <li>✓ Gladys déjà installée</li>
+                    </ul>
+                    <Link
+                      className="button button--primary button--lg"
+                      href="/fr/starter-kit"
+                      style={{
+                        width: "100%",
+                        marginTop: "15px",
+                      }}
+                    >
+                      Découvrir
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="col col--6">
+                  <div
+                    style={{
+                      border: "3px solid var(--ifm-color-primary)",
+                      padding: "25px",
+                      borderRadius: "12px",
+                      textAlign: "center",
+                      height: "100%",
+                      background: "var(--ifm-card-background-color)",
+                      boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+                    }}
+                  >
+                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+                      Beelink S13
+                    </h3>
+                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
+                      ⭐ Le meilleur choix !
+                    </p>
+                    <ul
+                      style={{
+                        textAlign: "left",
+                        marginBottom: "15px",
+                        fontSize: "0.9em",
+                      }}
+                    >
+                      <li>✓ Intel N150</li>
+                      <li>✓ 16 Go RAM • 500 Go SSD</li>
+                      <li>✓ Gladys déjà installée</li>
+                    </ul>
+                    <Link
+                      className="button button--primary button--lg"
+                      href="/fr/starter-kit"
+                      style={{
+                        width: "100%",
+                        marginTop: "15px",
+                      }}
+                    >
+                      Découvrir
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row" style={{ marginTop: "3rem" }}>
+                <div className="col col--4">
+                  <div style={{ textAlign: "center", padding: "1rem" }}>
+                    <div
+                      style={{
+                        fontSize: "3rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      🎓
+                    </div>
+                    <h4>Formation officielle</h4>
+                    <p>Des heures de vidéos pour maîtriser Gladys de A à Z</p>
+                  </div>
+                </div>
+                <div className="col col--4">
+                  <div style={{ textAlign: "center", padding: "1rem" }}>
+                    <div
+                      style={{
+                        fontSize: "3rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      ⚡
+                    </div>
+                    <h4>Prêt à l'emploi</h4>
+                    <p>
+                      Gladys déjà installée et configurée, tu branches et c'est
+                      parti
+                    </p>
+                  </div>
+                </div>
+                <div className="col col--4">
+                  <div style={{ textAlign: "center", padding: "1rem" }}>
+                    <div
+                      style={{
+                        fontSize: "3rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      💎
+                    </div>
+                    <h4>6 mois Gladys Plus</h4>
+                    <p>
+                      Accès à distance, sauvegardes et intégrations premium
+                      offerts
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: "center", marginTop: "3rem" }}>
+                <Link
+                  className="button button--primary button--lg"
+                  href="/fr/starter-kit"
+                >
+                  Voir tous les kits de démarrage →
+                </Link>
               </div>
             </div>
           </div>

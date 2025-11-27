@@ -16,6 +16,8 @@ Depuis novembre, nous avons sorti **11 nouvelles versions de Gladys**. C'est pre
 
 Je n'ai pas fais de post sur le blog pour chaque version, mais vous pouvez retrouver toutes mes notes de versions dans la catégorie [Actualités](https://community.gladysassistant.com/c/francais/news/30) du forum.
 
+<!-- truncate -->
+
 ## Les nouveautés de cette version 4.2
 
 ### Zigbee2mqtt
