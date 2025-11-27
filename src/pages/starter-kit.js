@@ -13,6 +13,8 @@ import styles from "./styles.module.css";
 
 import { translate } from "@docusaurus/Translate";
 
+const SHOW_BEELINK_T5 = false;
+
 function Question({ title, description }) {
   return (
     <div>
@@ -48,13 +50,13 @@ const faqData = [
     title: <>Est-ce que Gladys est installée sur les mini-PC ?</>,
     description: (
       <>
-        Oui ! Que tu choisisses le Beelink T5, le Beelink mini S12 ou le Beelink
-        S13, ton mini-PC arrive chez toi avec Gladys déjà installée et
-        configurée. Tu n'as qu'à le brancher en Ethernet à ta box internet,
-        suivre le guide de démarrage rapide, et tu es prêt à utiliser Gladys.
-        Plus besoin d'installer un OS ou de configurer quoi que ce soit, tout
-        est déjà fait ! Si tu as la moindre question, je suis toujours
-        disponible pour t'aider 😄
+        Oui ! Que tu choisisses {SHOW_BEELINK_T5 ? "le Beelink T5, " : ""}le
+        Beelink mini S12 ou le Beelink S13, ton mini-PC arrive chez toi avec
+        Gladys déjà installée et configurée. Tu n'as qu'à le brancher en
+        Ethernet à ta box internet, suivre le guide de démarrage rapide, et tu
+        es prêt à utiliser Gladys. Plus besoin d'installer un OS ou de
+        configurer quoi que ce soit, tout est déjà fait ! Si tu as la moindre
+        question, je suis toujours disponible pour t'aider 😄
       </>
     ),
   },
@@ -133,7 +135,7 @@ function Plus() {
     );
     const data = await response.json();
     if (data.unavailable === true) {
-      setIsUnavailable(true);
+      // setIsUnavailable(true);
       setUnavailableMessage(data.message);
     } else {
       if (data.beelink_s13) {
@@ -471,134 +473,143 @@ function Plus() {
                 {!isUnavailable && (
                   <div className="row" style={{ justifyContent: "center" }}>
                     {/* Beelink T5 - Budget option */}
-                    <div
-                      className="col col--4"
-                      style={{ display: "flex", flexDirection: "column" }}
-                    >
+                    {SHOW_BEELINK_T5 && (
                       <div
-                        style={{
-                          border: "2px solid #ddd",
-                          padding: "30px",
-                          paddingTop: "50px",
-                          borderRadius: "12px",
-                          textAlign: "center",
-                          marginBottom: "15px",
-                          position: "relative",
-                          flexGrow: 1,
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                        }}
+                        className="col col--4"
+                        style={{ display: "flex", flexDirection: "column" }}
                       >
-                        {isBlackFridayActive ? (
-                          <span
-                            style={{
-                              position: "absolute",
-                              top: "-15px",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              background:
-                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                              color: "white",
-                              padding: "8px 20px",
-                              borderRadius: "25px",
-                              fontSize: "1em",
-                              fontWeight: "bold",
-                              boxShadow: "0 4px 12px rgba(102, 126, 234, 0.4)",
-                            }}
-                          >
-                            🎁 BLACK FRIDAY
-                          </span>
-                        ) : (
-                          <span
-                            style={{
-                              position: "absolute",
-                              top: "-15px",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              backgroundColor: "var(--ifm-color-success)",
-                              color: "white",
-                              padding: "8px 20px",
-                              borderRadius: "25px",
-                              fontSize: "1em",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            ✓ Gladys Pré-installée
-                          </span>
-                        )}
-                        <div>
-                          <h3
-                            style={{ fontSize: "32px", marginBottom: "20px" }}
-                          >
-                            Beelink T5
-                          </h3>
-                          <p
-                            style={{ fontSize: "1.1em", marginBottom: "20px" }}
-                          >
-                            Le mini-PC compact et économique avec{" "}
-                            <b>Gladys déjà installée</b>. Idéal pour débuter !
-                          </p>
-                          <ul
-                            style={{
-                              textAlign: "left",
-                              marginBottom: "20px",
-                              fontSize: "0.95em",
-                            }}
-                          >
-                            <li>✓ Processeur Intel N4020</li>
-                            <li>✓ 4 Go de RAM LPDDR4</li>
-                            <li>✓ 64 Go eMMC</li>
-                            <li>✓ WiFi 5 & Bluetooth 5.0</li>
-                            <li>✓ Ethernet Gigabit</li>
-                          </ul>
-                          <p
-                            style={{
-                              fontSize: "36px",
-                              fontWeight: "bold",
-                              margin: "20px 0",
-                              marginBottom: "5px",
-                              color: "var(--ifm-color-primary)",
-                            }}
-                          >
-                            {priceT5 ? priceT5 + "€" : "..."}
-                          </p>
-                          <p
-                            style={{
-                              fontSize: "0.9em",
-                              marginTop: "0",
-                              marginBottom: "20px",
-                              color: "var(--ifm-color-emphasis-600)",
-                            }}
-                          >
-                            + frais de ports
-                          </p>
-                        </div>
-                        <button
-                          onClick={subscribeT5}
-                          disabled={loading || !priceT5}
-                          className={cx(
-                            "button button--primary button--lg",
-                            styles.starterKitInputButton
-                          )}
+                        <div
                           style={{
-                            width: "100%",
-                            marginTop: "20px",
-                            fontSize: "1.2rem",
-                            padding: "15px",
-                            background: isBlackFridayActive
-                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                              : undefined,
-                            border: "none",
+                            border: "2px solid #ddd",
+                            padding: "30px",
+                            paddingTop: "50px",
+                            borderRadius: "12px",
+                            textAlign: "center",
+                            marginBottom: "15px",
+                            position: "relative",
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                           }}
                         >
-                          {isBlackFridayActive
-                            ? "🎁 Profiter de l'offre"
-                            : "Commander le Kit T5"}
-                        </button>
+                          {isBlackFridayActive ? (
+                            <span
+                              style={{
+                                position: "absolute",
+                                top: "-15px",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                background:
+                                  "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                color: "white",
+                                padding: "8px 20px",
+                                borderRadius: "25px",
+                                fontSize: "1em",
+                                fontWeight: "bold",
+                                boxShadow:
+                                  "0 4px 12px rgba(102, 126, 234, 0.4)",
+                              }}
+                            >
+                              🎁 BLACK FRIDAY
+                            </span>
+                          ) : (
+                            <span
+                              style={{
+                                position: "absolute",
+                                top: "-15px",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                backgroundColor: "var(--ifm-color-success)",
+                                color: "white",
+                                padding: "8px 20px",
+                                borderRadius: "25px",
+                                fontSize: "1em",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              ✓ Gladys Pré-installée
+                            </span>
+                          )}
+                          <div>
+                            <h3
+                              style={{
+                                fontSize: "32px",
+                                marginBottom: "20px",
+                              }}
+                            >
+                              Beelink T5
+                            </h3>
+                            <p
+                              style={{
+                                fontSize: "1.1em",
+                                marginBottom: "20px",
+                              }}
+                            >
+                              Le mini-PC compact et économique avec{" "}
+                              <b>Gladys déjà installée</b>. Idéal pour débuter !
+                            </p>
+                            <ul
+                              style={{
+                                textAlign: "left",
+                                marginBottom: "20px",
+                                fontSize: "0.95em",
+                              }}
+                            >
+                              <li>✓ Processeur Intel N4020</li>
+                              <li>✓ 4 Go de RAM LPDDR4</li>
+                              <li>✓ 64 Go eMMC</li>
+                              <li>✓ WiFi 5 & Bluetooth 5.0</li>
+                              <li>✓ Ethernet Gigabit</li>
+                            </ul>
+                            <p
+                              style={{
+                                fontSize: "36px",
+                                fontWeight: "bold",
+                                margin: "20px 0",
+                                marginBottom: "5px",
+                                color: "var(--ifm-color-primary)",
+                              }}
+                            >
+                              {priceT5 ? priceT5 + "€" : "..."}
+                            </p>
+                            <p
+                              style={{
+                                fontSize: "0.9em",
+                                marginTop: "0",
+                                marginBottom: "20px",
+                                color: "var(--ifm-color-emphasis-600)",
+                              }}
+                            >
+                              + frais de ports
+                            </p>
+                          </div>
+                          <button
+                            onClick={subscribeT5}
+                            disabled={loading || !priceT5}
+                            className={cx(
+                              "button button--primary button--lg",
+                              styles.starterKitInputButton
+                            )}
+                            style={{
+                              width: "100%",
+                              marginTop: "20px",
+                              fontSize: "1.2rem",
+                              padding: "15px",
+                              background: isBlackFridayActive
+                                ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                                : undefined,
+                              border: "none",
+                            }}
+                          >
+                            {isBlackFridayActive
+                              ? "🎁 Profiter de l'offre"
+                              : "Commander le Kit T5"}
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     {/* Beelink mini S12 - Standard option */}
                     <div
                       className="col col--4"
@@ -912,39 +923,45 @@ function Plus() {
               </div>
             </div>
           </div>
-          <div className={cx("row", styles.starterKitRow)}>
-            <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
-              <img
-                src={useBaseUrl("/img/starter-kit/beelink_t5.jpg")}
-                className={cx(styles.specImage)}
-              />
+          {/* Beelink T5 Details Section */}
+          {SHOW_BEELINK_T5 && (
+            <div className={cx("row", styles.starterKitRow)}>
+              <div
+                className={cx("col col--6", styles.flexColumnSecondOnMobile)}
+              >
+                <img
+                  src={useBaseUrl("/img/starter-kit/beelink_t5.jpg")}
+                  className={cx(styles.specImage)}
+                />
+              </div>
+              <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
+                <h2 className={cx(styles.plusFeatureTitle)}>
+                  Beelink T5 - Gladys Pré-installée
+                </h2>
+                <p>Un mini-PC compact et économique, parfait pour débuter :</p>
+                <p>
+                  <ul>
+                    <li>
+                      Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)
+                    </li>
+                    <li>4 Go de RAM LPDDR4</li>
+                    <li>64 Go eMMC</li>
+                    <li>Wi-Fi 5, Bluetooth 5.0 et LAN Gigabit</li>
+                    <li>Double HDMI 4K</li>
+                    <li>
+                      <b>Gladys déjà installée et configurée !</b>
+                    </li>
+                  </ul>
+                </p>
+                <p>
+                  <b>Note de Pierre-Gilles :</b> Le Beelink T5 est l'option
+                  idéale pour débuter avec Gladys sans se ruiner. Parfait pour
+                  découvrir la domotique avec Gladys sans investir trop au
+                  départ.
+                </p>
+              </div>
             </div>
-            <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
-              <h2 className={cx(styles.plusFeatureTitle)}>
-                Beelink T5 - Gladys Pré-installée
-              </h2>
-              <p>Un mini-PC compact et économique, parfait pour débuter :</p>
-              <p>
-                <ul>
-                  <li>
-                    Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)
-                  </li>
-                  <li>4 Go de RAM LPDDR4</li>
-                  <li>64 Go eMMC</li>
-                  <li>Wi-Fi 5, Bluetooth 5.0 et LAN Gigabit</li>
-                  <li>Double HDMI 4K</li>
-                  <li>
-                    <b>Gladys déjà installée et configurée !</b>
-                  </li>
-                </ul>
-              </p>
-              <p>
-                <b>Note de Pierre-Gilles :</b> Le Beelink T5 est l'option idéale
-                pour débuter avec Gladys sans se ruiner. Parfait pour découvrir
-                la domotique avec Gladys sans investir trop au départ.
-              </p>
-            </div>
-          </div>
+          )}
           <div className={cx("row", styles.starterKitRow)}>
             <div className={cx("col col--6", styles.flexColumnFirstOnMobile)}>
               <h2 className={cx(styles.plusFeatureTitle)}>
@@ -1191,14 +1208,17 @@ function Plus() {
               </p>
 
               <p>
-                Nous proposons trois options pour s'adapter à tous les besoins :
+                Nous proposons {SHOW_BEELINK_T5 ? "trois" : "deux"} options pour
+                s'adapter à tous les besoins :
               </p>
               <ul>
-                <li>
-                  <b>Beelink T5</b> : Un mini-PC compact et économique, parfait
-                  pour débuter avec Gladys. Processeur Intel N4020, 4 Go de RAM
-                  et 64 Go de stockage.
-                </li>
+                {SHOW_BEELINK_T5 && (
+                  <li>
+                    <b>Beelink T5</b> : Un mini-PC compact et économique,
+                    parfait pour débuter avec Gladys. Processeur Intel N4020, 4
+                    Go de RAM et 64 Go de stockage.
+                  </li>
+                )}
                 <li>
                   <b>Beelink mini S12</b> : Un bon rapport qualité/prix avec un
                   processeur Intel N95, 8 Go de RAM et 256 Go de stockage SSD.
@@ -1217,7 +1237,7 @@ function Plus() {
                   <thead>
                     <tr>
                       <th>Caractéristiques</th>
-                      <th>Beelink T5</th>
+                      {SHOW_BEELINK_T5 && <th>Beelink T5</th>}
                       <th>Beelink mini S12</th>
                       <th>Beelink S13</th>
                     </tr>
@@ -1225,51 +1245,55 @@ function Plus() {
                   <tbody>
                     <tr>
                       <td>Processeur</td>
-                      <td>Intel Celeron N4020 (jusqu'à 2,8 GHz)</td>
+                      {SHOW_BEELINK_T5 && (
+                        <td>Intel Celeron N4020 (jusqu'à 2,8 GHz)</td>
+                      )}
                       <td>Intel N95 quad-core</td>
                       <td>Intel Twin Lake-N150 (dernière génération)</td>
                     </tr>
                     <tr>
                       <td>Mémoire RAM</td>
-                      <td>4 Go LPDDR4</td>
+                      {SHOW_BEELINK_T5 && <td>4 Go LPDDR4</td>}
                       <td>8 Go DDR4</td>
                       <td>16 Go DDR4</td>
                     </tr>
                     <tr>
                       <td>Stockage</td>
-                      <td>64 Go eMMC</td>
+                      {SHOW_BEELINK_T5 && <td>64 Go eMMC</td>}
                       <td>256 Go SSD</td>
                       <td>500 Go SSD</td>
                     </tr>
                     <tr>
                       <td>WiFi</td>
-                      <td>WiFi 5</td>
+                      {SHOW_BEELINK_T5 && <td>WiFi 5</td>}
                       <td>WiFi 5</td>
                       <td>WiFi 6</td>
                     </tr>
                     <tr>
                       <td>Bluetooth</td>
-                      <td>Bluetooth 5.0</td>
+                      {SHOW_BEELINK_T5 && <td>Bluetooth 5.0</td>}
                       <td>Bluetooth 4.2</td>
                       <td>Bluetooth 5.2</td>
                     </tr>
                     <tr>
                       <td>Ports HDMI</td>
-                      <td>Double HDMI 4K</td>
+                      {SHOW_BEELINK_T5 && <td>Double HDMI 4K</td>}
                       <td>Double HDMI 4K</td>
                       <td>Double HDMI 4K@60Hz</td>
                     </tr>
                     <tr>
                       <td>LAN</td>
-                      <td>Gigabit Ethernet (1000 Mbps)</td>
+                      {SHOW_BEELINK_T5 && <td>Gigabit Ethernet (1000 Mbps)</td>}
                       <td>Gigabit Ethernet (1000 Mbps)</td>
                       <td>Gigabit Ethernet (1000 Mbps)</td>
                     </tr>
                     <tr>
                       <td>Gladys</td>
-                      <td>
-                        <b>✓ Pré-installée et configurée</b>
-                      </td>
+                      {SHOW_BEELINK_T5 && (
+                        <td>
+                          <b>✓ Pré-installée et configurée</b>
+                        </td>
+                      )}
                       <td>
                         <b>✓ Pré-installée et configurée</b>
                       </td>
@@ -1279,9 +1303,11 @@ function Plus() {
                     </tr>
                     <tr>
                       <td>Formation Gladys</td>
-                      <td>
-                        ✓ Incluse (accès à des tutoriels vidéos et écrits)
-                      </td>
+                      {SHOW_BEELINK_T5 && (
+                        <td>
+                          ✓ Incluse (accès à des tutoriels vidéos et écrits)
+                        </td>
+                      )}
                       <td>
                         ✓ Incluse (accès à des tutoriels vidéos et écrits)
                       </td>
@@ -1291,39 +1317,43 @@ function Plus() {
                     </tr>
                     <tr>
                       <td>Gladys Plus</td>
-                      <td>✓ 6 mois offerts</td>
+                      {SHOW_BEELINK_T5 && <td>✓ 6 mois offerts</td>}
                       <td>✓ 6 mois offerts</td>
                       <td>✓ 6 mois offerts</td>
                     </tr>
                     <tr>
                       <td>Support</td>
-                      <td>✓ Assistance personnalisée</td>
+                      {SHOW_BEELINK_T5 && <td>✓ Assistance personnalisée</td>}
                       <td>✓ Assistance personnalisée</td>
                       <td>✓ Assistance personnalisée</td>
                     </tr>
                     <tr>
                       <td>Prix du kit complet</td>
-                      <td>
-                        {priceT5 && !isUnavailable && (
-                          <>
-                            <b
-                              style={{
-                                fontSize: "1.3em",
-                                color: "var(--ifm-color-primary)",
-                              }}
-                            >
-                              {priceT5} €
-                            </b>
-                            <br />
-                            <small
-                              style={{ color: "var(--ifm-color-emphasis-600)" }}
-                            >
-                              + frais de ports
-                            </small>
-                          </>
-                        )}
-                        {isUnavailable && <b>{unavailableMessage}</b>}
-                      </td>
+                      {SHOW_BEELINK_T5 && (
+                        <td>
+                          {priceT5 && !isUnavailable && (
+                            <>
+                              <b
+                                style={{
+                                  fontSize: "1.3em",
+                                  color: "var(--ifm-color-primary)",
+                                }}
+                              >
+                                {priceT5} €
+                              </b>
+                              <br />
+                              <small
+                                style={{
+                                  color: "var(--ifm-color-emphasis-600)",
+                                }}
+                              >
+                                + frais de ports
+                              </small>
+                            </>
+                          )}
+                          {isUnavailable && <b>{unavailableMessage}</b>}
+                        </td>
+                      )}
                       <td>
                         {priceMiniS && !isUnavailable && (
                           <>
@@ -1369,27 +1399,29 @@ function Plus() {
                     </tr>
                     <tr>
                       <td>Je commande</td>
-                      <td>
-                        <input
-                          type="submit"
-                          onClick={subscribeT5}
-                          value={
-                            isBlackFridayActive
-                              ? "🎁 Profiter de l'offre"
-                              : "Commander le Kit T5"
-                          }
-                          disabled={isUnavailable || loading || !priceT5}
-                          className={cx("button button--primary button--lg")}
-                          style={{
-                            fontSize: "1.1em",
-                            padding: "10px 30px",
-                            background: isBlackFridayActive
-                              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                              : undefined,
-                            border: "none",
-                          }}
-                        />
-                      </td>
+                      {SHOW_BEELINK_T5 && (
+                        <td>
+                          <input
+                            type="submit"
+                            onClick={subscribeT5}
+                            value={
+                              isBlackFridayActive
+                                ? "🎁 Profiter de l'offre"
+                                : "Commander le Kit T5"
+                            }
+                            disabled={isUnavailable || loading || !priceT5}
+                            className={cx("button button--primary button--lg")}
+                            style={{
+                              fontSize: "1.1em",
+                              padding: "10px 30px",
+                              background: isBlackFridayActive
+                                ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                                : undefined,
+                              border: "none",
+                            }}
+                          />
+                        </td>
+                      )}
                       <td>
                         <input
                           type="submit"
@@ -1448,7 +1480,7 @@ function PlusParent() {
   return (
     <Layout
       title="Kit de démarrage Gladys clé en main"
-      description="Mini-PC Beelink T5 ou S13 avec Gladys déjà installée + formation officielle + 6 mois de Gladys Plus offerts. Branchez et c'est parti !"
+      description="Mini-PC Beelink mini S12 ou S13 avec Gladys déjà installée + formation officielle + 6 mois de Gladys Plus offerts. Branchez et c'est parti !"
     >
       <Plus />
     </Layout>

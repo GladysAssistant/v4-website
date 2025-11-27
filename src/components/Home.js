@@ -948,49 +948,51 @@ function Home({ integrations, lang }) {
               </p>
 
               <div className="row" style={{ marginBottom: "3rem" }}>
-                <div className="col col--4">
-                  <div
-                    style={{
-                      border: "2px solid var(--ifm-color-emphasis-300)",
-                      padding: "25px",
-                      borderRadius: "12px",
-                      textAlign: "center",
-                      height: "100%",
-                      background: "var(--ifm-card-background-color)",
-                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
-                      Beelink T5
-                    </h3>
-                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                      Le mini-PC compact et économique
-                    </p>
-                    <ul
+                {false && (
+                  <div className="col col--4">
+                    <div
                       style={{
-                        textAlign: "left",
-                        marginBottom: "15px",
-                        fontSize: "0.9em",
+                        border: "2px solid var(--ifm-color-emphasis-300)",
+                        padding: "25px",
+                        borderRadius: "12px",
+                        textAlign: "center",
+                        height: "100%",
+                        background: "var(--ifm-card-background-color)",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                       }}
                     >
-                      <li>✓ Intel Celeron N4020</li>
-                      <li>✓ 4 Go RAM • 64 Go eMMC</li>
-                      <li>✓ Gladys déjà installée</li>
-                    </ul>
-                    <Link
-                      className="button button--primary button--lg"
-                      href="/fr/starter-kit"
-                      style={{
-                        width: "100%",
-                        marginTop: "15px",
-                      }}
-                    >
-                      Découvrir
-                    </Link>
+                      <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+                        Beelink T5
+                      </h3>
+                      <p style={{ fontSize: "1em", marginBottom: "15px" }}>
+                        Le mini-PC compact et économique
+                      </p>
+                      <ul
+                        style={{
+                          textAlign: "left",
+                          marginBottom: "15px",
+                          fontSize: "0.9em",
+                        }}
+                      >
+                        <li>✓ Intel Celeron N4020</li>
+                        <li>✓ 4 Go RAM • 64 Go eMMC</li>
+                        <li>✓ Gladys déjà installée</li>
+                      </ul>
+                      <Link
+                        className="button button--primary button--lg"
+                        href="/fr/starter-kit"
+                        style={{
+                          width: "100%",
+                          marginTop: "15px",
+                        }}
+                      >
+                        Découvrir
+                      </Link>
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="col col--4">
+                <div className="col col--6">
                   <div
                     style={{
                       border: "2px solid var(--ifm-color-emphasis-300)",
@@ -1032,7 +1034,7 @@ function Home({ integrations, lang }) {
                   </div>
                 </div>
 
-                <div className="col col--4">
+                <div className="col col--6">
                   <div
                     style={{
                       border: "3px solid var(--ifm-color-primary)",

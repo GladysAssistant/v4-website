@@ -212,8 +212,8 @@ function Plus() {
               }}
             >
               {language === "fr"
-                ? "Utilisez le code promo BLACK_FRIDAY_2025 lors de votre inscription"
-                : "Use promo code BLACK_FRIDAY_2025 when subscribing"}
+                ? "Utilisez le code promo BLACK-FRIDAY-2025 lors de votre inscription"
+                : "Use promo code BLACK-FRIDAY-2025 when subscribing"}
             </p>
             <p
               style={{
@@ -523,7 +523,7 @@ function Plus() {
                               marginBottom: "0.5rem",
                             }}
                           >
-                            BLACK_FRIDAY_2025
+                            BLACK-FRIDAY-2025
                           </div>
                           <div
                             style={{
@@ -891,7 +891,7 @@ function Plus() {
                               marginBottom: "0.5rem",
                             }}
                           >
-                            BLACK_FRIDAY_2025
+                            BLACK-FRIDAY-2025
                           </div>
                           <div
                             style={{
