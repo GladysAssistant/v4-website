@@ -135,7 +135,7 @@ function Plus() {
     );
     const data = await response.json();
     if (data.unavailable === true) {
-      // setIsUnavailable(true);
+      setIsUnavailable(true);
       setUnavailableMessage(data.message);
     } else {
       if (data.beelink_s13) {
