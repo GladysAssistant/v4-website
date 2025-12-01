@@ -19,11 +19,12 @@ import testimonialsEn from "../components/testimonials/testimonial.plus.en.json"
 import styles from "./styles.module.css";
 
 import { translate } from "@docusaurus/Translate";
+import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
 const YEARLY_PLAN_ACTIVATED = false;
 const PRICING_TABLE_ACTIVATED = true;
-const BLACK_FRIDAY_ACTIVE = true;
-const blackFridayEndDate = new Date(1764633600000); // Same as starter-kit
+const BLACK_FRIDAY_ACTIVE = BLACK_FRIDAY_CONFIG.ENABLED;
+const blackFridayEndDate = BLACK_FRIDAY_CONFIG.END_DATE;
 
 const testimonials = {
   fr: testimonialsFr,
