@@ -10,7 +10,7 @@ Le Model Context Protocol (MCP) est un protocole ouvert développé par Anthropi
 
 Gladys Assistant intègre un serveur MCP qui permet à vos agents IA compatibles (Claude Desktop, Perplexity, Mistral Le Chat etc...) de communiquer avec votre maison connectée. À ce jour voici les capacités disponibles :
 
-- 🌡️ Récupérer les états d'appareils
+- 🌡️ Récupérer les états d'appareils (dernière valeur ou historique de valeurs)
   - température
   - humidité
   - ouverture
