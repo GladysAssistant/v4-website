@@ -15,6 +15,7 @@ import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
 
 import Translate, { translate } from "@docusaurus/Translate";
+import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
 const COMPATIBILITIES = [
   [
@@ -263,8 +264,8 @@ const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
   </video>
 );
 
-const BLACK_FRIDAY_ACTIVE = true;
-const blackFridayEndDate = new Date(1764633600000);
+const BLACK_FRIDAY_ACTIVE = BLACK_FRIDAY_CONFIG.ENABLED;
+const blackFridayEndDate = BLACK_FRIDAY_CONFIG.END_DATE;
 
 function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);

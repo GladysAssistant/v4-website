@@ -12,6 +12,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styles from "./styles.module.css";
 
 import { translate } from "@docusaurus/Translate";
+import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
 const SHOW_BEELINK_T5 = false;
 
@@ -97,7 +98,7 @@ const faqData = [
 ];
 
 const targetDate = new Date(1733104800000);
-const blackFridayEndDate = new Date(1764633600000); // Dec 2, 2024 00:00:00 GMT
+const blackFridayEndDate = BLACK_FRIDAY_CONFIG.END_DATE;
 
 function Plus() {
   const context = useDocusaurusContext();
@@ -121,7 +122,9 @@ function Plus() {
   const [miniSUrl, setMiniSUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
-  const [isBlackFridayActive, setIsBlackFridayActive] = useState(true);
+  const [isBlackFridayActive, setIsBlackFridayActive] = useState(
+    BLACK_FRIDAY_CONFIG.ENABLED
+  );
 
   console.log("isBlackFridayActive", isBlackFridayActive);
   const scrollTopTop = () => {
