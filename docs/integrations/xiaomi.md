@@ -4,6 +4,10 @@ title: Xiaomi
 sidebar_label: Xiaomi
 ---
 
+:::warning
+2025: This integration is no longer very useful; it is simpler to use Zigbee or Matter for this type of device.
+:::
+
 ## Activate developer mode
 
 Activating developer mode allows Gladys to access Xiaomi API.
@@ -55,7 +59,7 @@ Activate the developer mode with the button, write down the password, then hit "
 
 ![Xiaomi step 6](../../static/img/docs/en/configuration/xiaomi/xiaomi-tuto-7.jpg)
 
-In this menu, you'll find the mac address of your gateway, its SID and a useful to link the password you got in step 5. 
+In this menu, you'll find the mac address of your gateway, its SID and a useful to link the password you got in step 5.
 
 :::note
 The link to the password can be useful if you have several gateways.

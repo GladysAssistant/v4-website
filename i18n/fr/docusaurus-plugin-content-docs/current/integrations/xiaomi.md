@@ -4,6 +4,10 @@ title: Xiaomi Home
 sidebar_label: Xiaomi Home
 ---
 
+:::warning
+2025: Cette intégration n'a plus trop d'intérêt, il est plus simple d'utiliser Zigbee ou Matter pour ce genre d'appareils.
+:::
+
 ## Activation du mode développeur
 
 L'activation du mode développeur permet à Gladys d'accéder à l'API de la passerelle Xiaomi, donc de recevoir les messages des différentes sondes, ainsi que de piloter les matériels et la passerelle elle-même.

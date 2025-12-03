@@ -157,7 +157,7 @@ Si vous débutez et cherchez une solution simple et complète, j'ai conçu un ki
 - Un accès à une **formation complète** dans laquelle je vous présente mon installation pas à pas
 - Un an d'abonnement à **Gladys Plus**, avec sauvegardes automatiques, accès à distance chiffré, et bien plus
 
-Le tout à partir de [165,98€](/fr/starter-kit/).
+[Disponible dès maintenant ici](/fr/starter-kit/).
 
 En choisissant ce kit, vous gagnez du temps, vous soutenez un projet open source français, et vous profitez d'une solution pensée pour durer 😎
 

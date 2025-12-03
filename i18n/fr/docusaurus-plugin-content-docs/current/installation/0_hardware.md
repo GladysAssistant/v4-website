@@ -15,7 +15,7 @@ Gladys Assistant est un logiciel auto-hébergé, ce qui signifie que tout foncti
 
 ### Solution recommandée : Le kit de démarrage Gladys
 
-Pour démarrer simplement et rapidement, je propose **[le kit de démarrage Gladys](/fr/starter-kit/)** à partir de 119,99€.
+Pour démarrer simplement et rapidement, je propose **[le kit de démarrage Gladys](/fr/starter-kit/)**, un mini-PC avec Gladys pré-installée.
 
 **Pourquoi choisir le kit de démarrage ?**
 
