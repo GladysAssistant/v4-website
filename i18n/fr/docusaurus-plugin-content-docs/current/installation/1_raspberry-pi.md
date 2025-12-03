@@ -16,7 +16,7 @@ Cependant, ils sont de moins en moins compétitifs pour plusieurs raisons :
 
 Ma recommandation est d'acheter un mini-PC. Il y a des super options pour pas cher sur Amazon, AliExpress, etc.
 
-De mon côté, je propose un [kit de démarrage](/fr/starter-kit/) dès 119,99€ avec Gladys pré-installé.
+De mon côté, je propose un [kit de démarrage](/fr/starter-kit/) avec Gladys pré-installé.
 :::
 
 Pour installer Gladys sur un Raspberry Pi, je vous conseille d'installer Raspberry Pi OS dans sa dernière version sur le Raspberry Pi, puis d'installer Gladys avec notre tutoriel [Docker](/fr/docs/installation/docker).
