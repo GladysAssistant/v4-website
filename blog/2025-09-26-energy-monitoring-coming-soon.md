@@ -1,5 +1,5 @@
 ---
-title: Energy Monitoring Coming Soon to Gladys ⚡️
+title: Energy Monitoring Coming Soon to Gladys
 description: "Discover Gladys's new 'Energy Monitoring' integration: track your electricity consumption down to the cent and participate in testing!"
 authors: pierregilles
 image: /img/presentation/energy-monitoring-coming-soon-en.jpg
@@ -24,6 +24,8 @@ In June, **@Terdious offered to finance the development himself**. Just like tha
 He prepared a detailed specification, I proposed a quote, he accepted... and I was able to start this project this summer.
 
 Today, I'm super happy to reveal the **first part** of this development!
+
+<!--truncate-->
 
 ## What has been developed so far
 
