@@ -33,6 +33,7 @@ module.exports = {
         "integrations/camera",
         "integrations/callmebot",
         "integrations/enedis",
+        "integrations/energy-monitoring",
         "integrations/free-mobile",
         "integrations/google-cast",
         "integrations/google-home",
