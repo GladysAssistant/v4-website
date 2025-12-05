@@ -35,7 +35,7 @@ L'intégration Enedis vous permet de récupérer les valeurs relevées de votre 
 
 Cette intégration fonctionne sans matériel, mais elle a l'inconvénient de ne renvoyer la consommation qu'une fois par jour, contrairement au ZLinky qui renvoie les données en direct toutes les 60 secondes.
 
-Pour configurer Enedis, rendez-vous sur [ce tutoriel](/fr/integrations/enedis/).
+Pour configurer Enedis, rendez-vous sur [ce tutoriel](/fr/docs/integrations/enedis/).
 
 ### 3. **Avec une prise Zigbee mesurant la consommation**
 
@@ -66,7 +66,7 @@ L'ordre des étapes de ce tutoriel est important !
 
 ### Étape n°1 : Configuration de l'intégration Enedis (optionnel)
 
-Si vous comptez utiliser l'intégration Enedis, rendez-vous sur [ce tutoriel](/fr/integrations/enedis/) et suivez les instructions.
+Si vous comptez utiliser l'intégration Enedis, rendez-vous sur [ce tutoriel](/fr/docs/integrations/enedis/) et suivez les instructions.
 
 Si vous utilisez déjà l'intégration Enedis, vous devez vous rendre dans l'intégration et vérifier que l'appareil n'a pas besoin d'une mise à jour de ses fonctionnalités :
 

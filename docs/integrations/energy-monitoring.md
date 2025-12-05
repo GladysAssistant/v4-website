@@ -43,7 +43,7 @@ The Enedis integration allows you to retrieve the recorded values from your Link
 
 This integration works without hardware, but it has the drawback of only returning consumption once a day, unlike the ZLinky which sends data live every 60 seconds.
 
-To configure Enedis, go to [this tutorial](/integrations/enedis/).
+To configure Enedis, go to [this tutorial](/docs/integrations/enedis/).
 
 ### 3. **With a Zigbee plug that measures consumption (international)**
 
@@ -78,7 +78,7 @@ The order of steps in this tutorial is important!
 Skip this step if you're not in France.
 :::
 
-If you plan to use the Enedis integration, go to [this tutorial](/integrations/enedis/) and follow the instructions.
+If you plan to use the Enedis integration, go to [this tutorial](/docs/integrations/enedis/) and follow the instructions.
 
 If you're already using the Enedis integration, you need to go to the integration, "My meters" tab, and check if the device needs a feature update.
 
