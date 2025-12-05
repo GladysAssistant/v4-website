@@ -2,7 +2,7 @@
 title: Energy Monitoring is now live in Gladys Assistant 4.66 ⚡️
 description: "Track your electricity consumption in kWh and euros directly in Gladys Assistant!"
 authors: pierregilles
-image: /img/presentation/energy-monitoring-is-live-en.jpg
+image: /img/presentation/energy-monitoring-en.jpg
 slug: energy-monitoring-is-live
 ---
 

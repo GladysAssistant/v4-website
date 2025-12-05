@@ -2,7 +2,7 @@
 title: Le suivi de l'énergie est disponible dans Gladys Assistant 4.66 ⚡️
 description: "Suivez votre consommation électrique en kWh et en euros directement dans Gladys Assistant !"
 authors: pierregilles
-image: /img/presentation/energy-monitoring-is-live-fr.jpg
+image: /img/presentation/energy-monitoring-fr.jpg
 slug: energy-monitoring-is-live
 ---
 
