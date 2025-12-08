@@ -30,9 +30,9 @@ Pour utiliser cette fonctionnalité, mettez à jour vers Gladys 4.66 et consulte
 
 Le [serveur MCP](/fr/docs/integrations/mcp/) supporte maintenant l'interrogation de l'historique des appareils ! Votre assistant IA peut désormais répondre à des questions comme "Quelle était la température du salon hier ?" ou "Montre-moi ma consommation d'énergie de la semaine dernière."
 
-## Zigbee2mqtt 2.7.0
+## Zigbee2mqtt 2.7.1
 
-Nous avons mis à jour Zigbee2mqtt de la version 2.6.1 à 2.7.0, avec le tout nouveau frontend **Windfront** pour une interface plus moderne et réactive.
+Nous avons mis à jour Zigbee2mqtt de la version 2.6.1 à 2.7.1, avec le tout nouveau frontend **Windfront** pour une interface plus moderne et réactive.
 
 Consultez le [changelog complet](https://github.com/Koenkk/zigbee2mqtt/releases) pour toutes les améliorations.
 

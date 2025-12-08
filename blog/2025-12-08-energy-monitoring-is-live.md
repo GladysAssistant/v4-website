@@ -30,9 +30,9 @@ To use this feature, update to Gladys 4.66 and check out the full documentation:
 
 The [MCP server](/docs/integrations/mcp/) now supports querying device history! Your AI assistant can now answer questions like "What was the temperature in the living room yesterday?" or "Show me my energy consumption for the past week."
 
-## Zigbee2mqtt 2.7.0
+## Zigbee2mqtt 2.7.1
 
-We've upgraded Zigbee2mqtt from 2.6.1 to 2.7.0, featuring the brand new **Windfront** frontend for a more modern and responsive interface. Check out the [full changelog](https://github.com/Koenkk/zigbee2mqtt/releases) for all improvements.
+We've upgraded Zigbee2mqtt from 2.6.1 to 2.7.1, featuring the brand new **Windfront** frontend for a more modern and responsive interface. Check out the [full changelog](https://github.com/Koenkk/zigbee2mqtt/releases) for all improvements.
 
 ## Thank you
 
