@@ -9,6 +9,47 @@ Il peut être difficile de savoir par où commencer lorsque l'on débute en domo
 
 Ce guide vous aidera à répondre à ces questions et vous offrira un point de départ pour créer votre maison connectée de zéro.
 
+## Choisir votre box domotique
+
+Gladys Assistant est un logiciel auto-hébergé, ce qui signifie que tout fonctionne en local sur une box domotique chez vous. C'est l'une de ses principales forces : **vos données restent privées et votre maison fonctionne même sans Internet** !
+
+### Solution recommandée : Le kit de démarrage Gladys
+
+Pour démarrer simplement et rapidement, je propose **[le kit de démarrage Gladys](/fr/starter-kit/)**, un mini-PC avec Gladys pré-installée.
+
+**Pourquoi choisir le kit de démarrage ?**
+
+- ✅ **Prêt à l'emploi** : Gladys est déjà installé et configuré, branchez et c'est parti !
+- ✅ **Matériel testé et validé** : Mini-PC Beelink performant
+- ✅ **Support prioritaire** : Aide personnalisée si besoin par email ou appel
+- ✅ **6 mois de Gladys Plus inclus** : Accès à distance sécurisé, sauvegardes automatiques et plus encore
+- ✅ **Tutoriels dédiés** : Guides pas à pas pour bien démarrer avec votre box
+
+C'est la solution idéale si vous voulez éviter les complications techniques et vous concentrer sur la création de vos automatisations.
+
+[👉 Découvrir le kit de démarrage](/fr/starter-kit/)
+
+### Autres options d'installation
+
+Si vous préférez installer Gladys vous-même, c'est tout à fait possible !
+
+Gladys peut tourner sur n'importe quelle machine sous Linux :
+
+- **Mini-PC (Beelink, Intel NUC, etc.)**
+
+  - Installation manuelle d'Ubuntu Server + Docker
+  - Exemple : Beelink Mini S13 disponible sur [Amazon](https://amzn.to/4hRtIE3)
+  - Nécessite des connaissances techniques en Linux
+
+- **Serveur ou NAS existant**
+
+  - Si vous avez déjà un NAS Synology, un serveur Linux ou tout autre matériel compatible Docker
+  - Idéal pour réutiliser du matériel existant
+
+- **Raspberry Pi** (déconseillé)
+  - Possible si vous possédez déjà un Raspberry Pi, mais **non recommandé pour une utilisation long terme**
+  - Problèmes fréquents : coût total élevé (Pi + alimentation + boîtier + SSD), instabilité avec carte micro-SD, difficultés avec les dongles Zigbee/Z-Wave
+
 ## Définir votre projet de maison connectée
 
 Le plus important est de définir les automatisations que vous souhaitez mettre en place chez vous : des lumières connectées, une alarme pour sécuriser votre domicile, des économies d'énergie en coupant les appareils inutilisés ou le chauffage ?
@@ -29,32 +70,6 @@ Un bon moyen de s'organiser est de créer un tableau (sur Excel, Google Sheets o
 | Détecteur mouvement Zigbee Aqara P1            | 24,99€ | [Domadoo](https://www.domadoo.fr/fr/peripheriques/6138-aqara-detecteur-de-mouvement-et-luminosite-zigbee-30-aqara-motion-sensor-p1-ms-s02-6970504215979.html?domid=17) |
 
 L'idée n'est pas nécessairement d'acheter tout d'un coup, mais plutôt de planifier et d'équiper progressivement votre maison, sauf si vous venez d'emménager et souhaitez tout installer immédiatement.
-
-## Choisir votre box domotique
-
-Gladys Assistant est un logiciel auto-hébergé, ce qui signifie que tout fonctionne en local sur une box domotique. C'est l'une de ses principales forces !
-
-Gladys peut tourner sur n'importe quelle machine sous Linux :
-
-- **Beelink Mini S12 Pro** (Entre 179€ et 249€ selon promotions)
-
-  - Mini-PC puissant (Intel 12e génération, 16GB RAM, SSD NVMe 500 Gb).
-  - Stable et performant sur le long terme.
-  - Installation d'Ubuntu Server via clé USB bootable + installation de Gladys via Docker.
-  - Disponible sur [Amazon](https://amzn.to/47yVAaL)
-
-- **N’importe quel serveur, NAS, mini-PC**
-
-  - Si vous avez un NAS Synology, un Intel NUC ou tout autre serveur Linux compatible Docker, vous pouvez installer Gladys dessus.
-
-- **Raspberry Pi**
-  - Si vous possédez déjà un Raspberry Pi, cela peut être une solution pour tester Gladys.
-  - Cependant, **cette option est déconseillée sur le long terme** pour plusieurs raisons :
-    - Le coût total est relativement élevé, en tenant compte du Pi, de l'alimentation, du boîtier et du SSD.
-    - L'utilisation d'une carte micro-SD pour le stockage est **fortement déconseillée**, car elle entraîne un risque élevé de corruption des données.
-    - Les problèmes d'instabilité de l'alimentation via les ports USB rendent l'utilisation de dongles Zigbee/Z-Wave difficile et peu fiable.
-
-Si vous êtes intéressé par la gamme Beelink, je propose un kit de démarrage basé sur cette marque, [disponible dès 165€](/fr/starter-kit/).
 
 ## Installation de Gladys Assistant
 

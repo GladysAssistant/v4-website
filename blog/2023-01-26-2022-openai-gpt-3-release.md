@@ -105,7 +105,7 @@ Depending on your feedback, we will be able to integrate GTP-3 fully with Gladys
 
 So, what do you think? Excited? 😄
 
-I'm waiting for your feedback on [the forum](https://en-community.gladysassistant.com/)!
+I'm waiting for your feedback on [the forum](https://community.gladysassistant.com/)!
 
 ## How to upgrade?
 

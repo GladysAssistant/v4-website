@@ -183,4 +183,4 @@ Read: [Creating a PR on Github](https://docs.github.com/en/pull-requests/collabo
 
 ## Questions?
 
-Have questions? Come discuss them [on the forum](https://en-community.gladysassistant.com/)!
+Have questions? Come discuss them [on the forum](https://community.gladysassistant.com/)!

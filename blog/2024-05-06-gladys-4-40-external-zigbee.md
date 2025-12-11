@@ -26,7 +26,7 @@ This second option lets you test Gladys without touching your installation, and 
 
 That's the power of open-source systems 😊
 
-If you're a user of another home automation solution, I'd love to hear from you: come and test our Zigbee2mqtt integration, and tell us on [our forum](https://en-community.gladysassistant.com/) if there are any devices that aren't yet managed: it's a great help and helps us improve!
+If you're a user of another home automation solution, I'd love to hear from you: come and test our Zigbee2mqtt integration, and tell us on [our forum](https://community.gladysassistant.com/) if there are any devices that aren't yet managed: it's a great help and helps us improve!
 
 Thanks to AlexTrovato for his work on this development 🙌
 

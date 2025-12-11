@@ -47,7 +47,7 @@ docker run -d \
 -e SQLITE_FILE_PATH=/var/lib/gladysassistant/gladys-production.db \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v /volume1/docker/gladysassistant/:/var/lib/gladysassistant \
--v /etc/timezone:/etc/timezone:ro \
+-v /etc/TZ:/etc/timezone:ro \
 -v /etc/localtime:/etc/localtime:ro \
 -v /dev:/dev \
 gladysassistant/gladys:v4
@@ -67,7 +67,7 @@ Dans notre exemple ce sera `http://192.168.53.137:8420`.
 ## Mise à jour automatique avec Watchtower
 
 Vous pouvez utiliser Watchtower pour mettre automatiquement Gladys à jour quand une nouvelle version est disponible.  
-Pour cela, nous allons installer le conteneur Watchtower disponible sur DockerHub https://hub.docker.com/r/containrrr/watchtower
+Pour cela, nous allons installer le conteneur Watchtower disponible sur DockerHub https://hub.docker.com/r/nickfedor/watchtower
 
 Executez la commande suivante pour créer le conteneur Watchtower
 
@@ -77,6 +77,6 @@ Executez la commande suivante pour créer le conteneur Watchtower
    --log-opt max-size=10m \
    --restart=always \
    -v /var/run/docker.sock:/var/run/docker.sock \
-   containrrr/watchtower \
+   nickfedor/watchtower \
    --cleanup --include-restarting
 ```

@@ -20,6 +20,8 @@ Cette fonctionnalité ne nécessite aucune configuration, et fonctionne sans avo
 
 ![Affichage graphique Gladys Assistant](../../../static/img/articles/fr/gladys-4-7/chart-dashboard.jpg)
 
+<!-- truncate -->
+
 Pour afficher cette vue graphique rapidement quel que soit l'intervalle demandé, Gladys calcule en arrière-plan des données "agrégées" toutes les heures, avec 3 niveaux de granularités :
 
 - **Agrégation horaire :** Gladys garde 100 valeurs par capteur et par heure.

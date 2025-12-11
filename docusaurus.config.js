@@ -1,6 +1,16 @@
 module.exports = {
   future: {
-    experimental_faster: true,
+    v4: true,
+    experimental_faster: {
+      swcJsLoader: true,
+      swcJsMinimizer: true,
+      swcHtmlMinimizer: true,
+      lightningCssMinimizer: true,
+      rspackBundler: true,
+      rspackPersistentCache: true,
+      ssgWorkerThreads: true,
+      mdxCrossCompilerCache: true,
+    },
   },
   title: "Gladys Assistant",
   tagline: "A privacy-first, open-source home assistant",
@@ -27,6 +37,7 @@ module.exports = {
     metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
     colorMode: {
       defaultMode: "dark",
+      disableSwitch: true,
       respectPrefersColorScheme: false,
     },
     /* announcementBar: {
@@ -55,7 +66,13 @@ module.exports = {
         {
           to: "docs/",
           activeBasePath: "docs",
-          label: "Docs",
+          label: "Getting started",
+          position: "left",
+        },
+        {
+          to: "docs/integrations/",
+          activeBasePath: "docs/integrations",
+          label: "Integrations",
           position: "left",
         },
         {
@@ -65,47 +82,18 @@ module.exports = {
           position: "left",
         },
         {
-          to: "plus/",
-          activeBasePath: "plus",
-          label: "Plus",
-          position: "left",
-        },
-        {
-          href: "https://formation.gladysassistant.com/?coupon=HOMEPAGE_SALE_2024",
-          activeBasePath: "formation",
-          label: "Formation",
-          position: "left",
-          // Only show this item for French locale
-          className: "navbar__link--fr-only",
-        },
-        {
-          type: "dropdown",
-          label: "Community",
-          position: "left",
-          items: [
-            {
-              label: "English Community (New!)",
-              href: "https://en-community.gladysassistant.com/",
-            },
-            {
-              label: "Communauté en français",
-              href: "https://community.gladysassistant.com/",
-            },
-          ],
-        },
-        {
           type: "localeDropdown",
+          position: "right",
+        },
+        {
+          href: "https://community.gladysassistant.com/",
+          label: "Community",
           position: "right",
         },
         {
           href: "https://github.com/gladysassistant/gladys",
           className: "header-github-link",
           "aria-label": "GitHub repository",
-          position: "right",
-        },
-        {
-          to: "https://plus.gladysassistant.com",
-          label: "Login",
           position: "right",
         },
       ],
@@ -162,6 +150,19 @@ module.exports = {
           ],
         },
         {
+          title: "Gladys Plus",
+          items: [
+            {
+              label: "What is Gladys Plus?",
+              href: "/plus",
+            },
+            {
+              label: "Login to Gladys Plus",
+              href: "https://plus.gladysassistant.com",
+            },
+          ],
+        },
+        {
           title: "More",
           items: [
             {
@@ -175,10 +176,6 @@ module.exports = {
             {
               label: "Contact Us",
               href: "/contact",
-            },
-            {
-              label: "Donate",
-              href: "https://www.buymeacoffee.com/gladysassistant",
             },
           ],
         },
@@ -225,16 +222,6 @@ module.exports = {
       { min: 400, max: 2000, steps: 10 },
     ],
   ],
-  scripts: [
-    {
-      async: true,
-      defer: true,
-      src: "https://static.cloudflareinsights.com/beacon.min.js?token=15a3a6e27c2540f7ab92ed0e2e829906&spa=true",
-    },
-    {
-      async: true,
-      defer: true,
-      src: "https://abcdef.gladysassistant.com/latest.js",
-    },
-  ],
+  clientModules: [require.resolve("./src/openpanel.js")],
+  scripts: [],
 };

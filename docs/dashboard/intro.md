@@ -35,4 +35,4 @@ It is possible to force a full-screen mode by adding a parameter to the URL:
 
 ### Feedback?
 
-If you have needs that are not covered by the current Gladys dashboard, do not hesitate to contact us on [the forum](https://en-community.gladysassistant.com/) to see if we can develop a specific widget.
+If you have needs that are not covered by the current Gladys dashboard, do not hesitate to contact us on [the forum](https://community.gladysassistant.com/) to see if we can develop a specific widget.

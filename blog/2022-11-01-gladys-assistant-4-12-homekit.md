@@ -26,7 +26,7 @@ For now we only supports 3 types of devices:
 - Switch (On/Off)
 - Temperature sensor
 
-Additionnal compatibilities will be added on request on the [forum](https://en-community.gladysassistant.com/).
+Additionnal compatibilities will be added on request on the [forum](https://community.gladysassistant.com/).
 
 To connect your Gladys devices to HomeKit, follow [our documentation](/docs/integrations/homekit)!
 
@@ -60,7 +60,7 @@ With Watchtower, Gladys will update automatically.
 
 Thanks to everyone who contributed to this release and gave their feedback.
 
-If you want to talk about this release, you're all welcome on the [forum](https://en-community.gladysassistant.com/)!
+If you want to talk about this release, you're all welcome on the [forum](https://community.gladysassistant.com/)!
 
 ## Support us
 

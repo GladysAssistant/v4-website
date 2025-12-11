@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@theme/Layout";
 import Head from "@docusaurus/Head";
 import cx from "classnames";
@@ -19,9 +19,12 @@ import testimonialsEn from "../components/testimonials/testimonial.plus.en.json"
 import styles from "./styles.module.css";
 
 import { translate } from "@docusaurus/Translate";
+import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
 const YEARLY_PLAN_ACTIVATED = false;
 const PRICING_TABLE_ACTIVATED = true;
+const BLACK_FRIDAY_ACTIVE = BLACK_FRIDAY_CONFIG.ENABLED;
+const blackFridayEndDate = BLACK_FRIDAY_CONFIG.END_DATE;
 
 const testimonials = {
   fr: testimonialsFr,
@@ -64,6 +67,9 @@ function Plus() {
   const isDarkTheme = useColorMode().colorMode === "dark";
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(STATUS.INITIAL);
+  const [isBlackFridayActive, setIsBlackFridayActive] =
+    useState(BLACK_FRIDAY_ACTIVE);
+  const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
   const { i18n } = context;
   const language = i18n.currentLocale;
 
@@ -146,8 +152,158 @@ function Plus() {
     message: "Subscribe now",
   });
 
+  useEffect(() => {
+    // Black Friday countdown
+    const updateBlackFridayCountdown = () => {
+      const now = new Date();
+      const distance = blackFridayEndDate - now;
+
+      if (distance < 0) {
+        setIsBlackFridayActive(false);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setBlackFridayTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateBlackFridayCountdown();
+    const interval = setInterval(updateBlackFridayCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <main>
+      {isBlackFridayActive && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            padding: "1.5rem 1rem",
+            textAlign: "center",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          }}
+        >
+          <div className="container" style={{ maxWidth: "1200px" }}>
+            <h2
+              style={{
+                fontSize: "2rem",
+                fontWeight: "bold",
+                margin: "0 0 0.5rem 0",
+                color: "white",
+              }}
+            >
+              🎁{" "}
+              {language === "fr"
+                ? "BLACK FRIDAY : -30% sur la première année !"
+                : "BLACK FRIDAY: -30% off the first year!"}
+            </h2>
+            <p
+              style={{
+                fontSize: "1.2rem",
+                margin: "0 0 0.5rem 0",
+                opacity: 0.95,
+              }}
+            >
+              {language === "fr"
+                ? "Utilisez le code promo BLACK-FRIDAY-2025 lors de votre inscription"
+                : "Use promo code BLACK-FRIDAY-2025 when subscribing"}
+            </p>
+            <p
+              style={{
+                fontSize: "0.95rem",
+                margin: "0 0 1rem 0",
+                opacity: 0.85,
+              }}
+            >
+              {language === "fr"
+                ? "(Offre réservée aux nouveaux clients)"
+                : "(Offer for new customers only)"}
+            </p>
+            {blackFridayTimeLeft && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "1rem",
+                  flexWrap: "wrap",
+                  marginTop: "1rem",
+                }}
+              >
+                {blackFridayTimeLeft.days > 0 && (
+                  <div
+                    style={{
+                      background: "rgba(255,255,255,0.2)",
+                      padding: "0.75rem 1.25rem",
+                      borderRadius: "8px",
+                      backdropFilter: "blur(10px)",
+                    }}
+                  >
+                    <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                      {blackFridayTimeLeft.days}
+                    </div>
+                    <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                      {language === "fr" ? "jours" : "days"}
+                    </div>
+                  </div>
+                )}
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.2)",
+                    padding: "0.75rem 1.25rem",
+                    borderRadius: "8px",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                    {blackFridayTimeLeft.hours}
+                  </div>
+                  <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                    {language === "fr" ? "heures" : "hours"}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.2)",
+                    padding: "0.75rem 1.25rem",
+                    borderRadius: "8px",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                    {blackFridayTimeLeft.minutes}
+                  </div>
+                  <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                    {language === "fr" ? "minutes" : "minutes"}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.2)",
+                    padding: "0.75rem 1.25rem",
+                    borderRadius: "8px",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div style={{ fontSize: "1.8rem", fontWeight: "bold" }}>
+                    {blackFridayTimeLeft.seconds}
+                  </div>
+                  <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                    {language === "fr" ? "secondes" : "seconds"}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="margin-top--xl margin-bottom--lg">
         <div
           className="container"
@@ -161,6 +317,23 @@ function Plus() {
           <div className="row">
             <div className="col col--6">
               <form className={cx("margin-left--md", styles.plusForm)}>
+                {isBlackFridayActive && (
+                  <div
+                    style={{
+                      display: "inline-block",
+                      background:
+                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      color: "white",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      fontSize: "0.9rem",
+                      fontWeight: "bold",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    🎁 BLACK FRIDAY -30%
+                  </div>
+                )}
                 <h1 className={styles.plusTitle}>
                   <Translate
                     id="gladysPlusPage.title"
@@ -271,6 +444,7 @@ function Plus() {
                           styles.plusInputButton,
                           "button button--primary"
                         )}
+                        data-track="plus_click_start_free_trial"
                       />
                     </span>
                   )}
@@ -291,6 +465,7 @@ function Plus() {
                           styles.plusInputButton,
                           "button button--primary"
                         )}
+                        data-track="plus_click_subscribe_discount"
                       >
                         {subscribeButtonDiscount}
                       </button>
@@ -308,17 +483,58 @@ function Plus() {
                   )}
                   {PRICING_TABLE_ACTIVATED && (
                     <span>
-                      {false && (
-                        <label
-                          style={{ display: "block", marginBottom: "10px" }}
+                      {isBlackFridayActive && (
+                        <div
+                          style={{
+                            textAlign: "center",
+                            marginBottom: "1rem",
+                            padding: "1rem",
+                            background:
+                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            borderRadius: "12px",
+                            color: "white",
+                            border: "3px dashed rgba(255,255,255,0.5)",
+                            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+                          }}
                         >
-                          <Translate
-                            id="gladysPlusPage.subscribe"
-                            description="Gladys Plus subscribe"
+                          <div
+                            style={{
+                              fontSize: "0.85rem",
+                              marginBottom: "0.5rem",
+                              textTransform: "uppercase",
+                              letterSpacing: "1px",
+                              opacity: 0.9,
+                            }}
                           >
-                            Enter discount here
-                          </Translate>
-                        </label>
+                            🎁{" "}
+                            {language === "fr"
+                              ? "Code promo Black Friday"
+                              : "Black Friday Promo Code"}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.5rem",
+                              fontWeight: "bold",
+                              fontFamily: "monospace",
+                              letterSpacing: "3px",
+                              background: "rgba(255,255,255,0.2)",
+                              padding: "0.5rem 1rem",
+                              borderRadius: "6px",
+                              display: "inline-block",
+                              marginBottom: "0.5rem",
+                            }}
+                          >
+                            BLACK-FRIDAY-2025
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              fontWeight: "600",
+                            }}
+                          >
+                            -30% {language === "fr" ? "de réduction" : "off"}
+                          </div>
+                        </div>
                       )}
 
                       <a
@@ -328,9 +544,20 @@ function Plus() {
                           styles.plusInputButton,
                           "button button--primary"
                         )}
-                        style={{ paddingTop: "9px" }}
+                        style={{
+                          paddingTop: "9px",
+                          background: isBlackFridayActive
+                            ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                            : undefined,
+                          border: isBlackFridayActive ? "none" : undefined,
+                        }}
+                        data-track="plus_click_view_pricing_table"
                       >
-                        {subscribeButtonDiscount}
+                        {isBlackFridayActive
+                          ? language === "fr"
+                            ? "🎁 Profiter de -30%"
+                            : "🎁 Get -30% off"
+                          : subscribeButtonDiscount}
                       </a>
 
                       <div style={{ marginTop: "10px" }}>
@@ -624,6 +851,59 @@ function Plus() {
                       </p>
                     </div>
                     <div class="card__footer">
+                      {isBlackFridayActive && (
+                        <div
+                          style={{
+                            textAlign: "center",
+                            marginBottom: "1rem",
+                            padding: "1rem",
+                            background:
+                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            borderRadius: "12px",
+                            color: "white",
+                            border: "3px dashed rgba(255,255,255,0.5)",
+                            boxShadow: "0 4px 12px rgba(102, 126, 234, 0.3)",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: "0.85rem",
+                              marginBottom: "0.5rem",
+                              textTransform: "uppercase",
+                              letterSpacing: "1px",
+                              opacity: 0.9,
+                            }}
+                          >
+                            🎁{" "}
+                            {language === "fr"
+                              ? "Code promo Black Friday"
+                              : "Black Friday Promo Code"}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.5rem",
+                              fontWeight: "bold",
+                              fontFamily: "monospace",
+                              letterSpacing: "3px",
+                              background: "rgba(255,255,255,0.2)",
+                              padding: "0.5rem 1rem",
+                              borderRadius: "6px",
+                              display: "inline-block",
+                              marginBottom: "0.5rem",
+                            }}
+                          >
+                            BLACK-FRIDAY-2025
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              fontWeight: "600",
+                            }}
+                          >
+                            -30% {language === "fr" ? "de réduction" : "off"}
+                          </div>
+                        </div>
+                      )}
                       <button
                         onClick={
                           YEARLY_PLAN_ACTIVATED
@@ -631,6 +911,7 @@ function Plus() {
                             : scrollTopTop
                         }
                         class="button button--primary button--block"
+                        data-track="plus_click_pricing_card_button"
                       >
                         {YEARLY_PLAN_ACTIVATED
                           ? subscribeButtonDiscount

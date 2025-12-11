@@ -26,17 +26,6 @@ function Testimonial({ username, content, url, date }) {
       </div>
 
       <div className={cx("card__body", styles.testimonial)}>{content}</div>
-
-      <div className="card__footer">
-        {url && (
-          <a
-            className={cx(styles.testimonialMeta, styles.testimonialDate)}
-            href={url}
-          >
-            {date}
-          </a>
-        )}
-      </div>
     </div>
   );
 }

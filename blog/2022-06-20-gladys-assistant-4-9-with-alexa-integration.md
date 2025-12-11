@@ -63,7 +63,7 @@ With Watchtower, Gladys will update automatically.
 
 Thanks to everyone who contributed to this release and gave their feedback on the forum!
 
-If you want to talk about this release, you're all welcome on the [forum](https://en-community.gladysassistant.com/) !
+If you want to talk about this release, you're all welcome on the [forum](https://community.gladysassistant.com/) !
 
 ## Support us
 

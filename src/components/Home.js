@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import classnames from "classnames";
 import styles from "./homeStyles.module.css";
 import Link from "@docusaurus/Link";
@@ -15,18 +15,19 @@ import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
 
 import Translate, { translate } from "@docusaurus/Translate";
+import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
 const COMPATIBILITIES = [
   [
     { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
-    { title: "Philips-Hue", imgSrc: "philips-hue.jpg", docKey: "philips-hue" },
+    { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
     { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
     { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
   ],
   [
-    { title: "Tasmota", imgSrc: "tasmota.jpg", docKey: "tasmota" },
+    { title: "Shelly", imgSrc: "shelly.jpg", docKey: "shelly" },
     { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-    { title: "Alexa", imgSrc: "alexa.jpg", docKey: "alexa" },
+    { title: "Somfy", imgSrc: "somfy.jpg", docKey: "somfy-tahoma" },
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],
 ];
@@ -39,179 +40,177 @@ const testimonials = {
 const FAQQuestions = {
   fr: [
     {
-      title: <>Quel matériel requis pour installer Gladys Assistant ?</>,
+      title: <>Gladys est-elle vraiment gratuite ?</>,
       response: (
         <>
-          Gladys peut s'installer sur n'importe quelle machine Linux (un
-          Raspberry Pi, un NAS, un serveur, un vieux PC Linux, peu importe !),
-          du moment que Docker tourne sur la machine, Gladys peut tourner
-          dessus. <br />
-          <br />
-          PS: Gladys Assistant est <b>gratuite</b>, c'est un simple container
-          Docker à lancer{" "}
+          <b>Oui, 100% gratuite et open-source !</b> Gladys Assistant est un
+          logiciel libre que tu peux installer{" "}
           <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
-            en une commande
+            en une seule commande Docker
           </Link>
-          .
-        </>
-      ),
-    },
-    {
-      title: <>Qui utilise Gladys Assistant 4 ?</>,
-      response: (
-        <>
-          La v4 de Gladys Assistant est sortie en Novembre 2020. Depuis, le
-          projet est en pleine croissance et l'objectif est de devenir un
-          logiciel de référence dans le monde de la domotique open-source !
+          . Aucun abonnement requis, aucune limitation, aucune carte bancaire
+          demandée.
           <br />
-          <br /> Gladys Assistant est installée par tout type d'utilisateurs :{" "}
-          <br /> <br />
-          <ul>
-            <li>
-              Des novices complet, qui veulent automatiser leur maison avec un
-              produit simple, puissant et respectueux de leur vie privée.
-            </li>
-            <li>
-              Des développeurs qui trouvent ça fou de pouvoir coder pour leur
-              maison et qui contribuent à ce projet open-source !
-            </li>
-            <li>Des pros, qui gèrent des parcs de capteurs impressionnants</li>
-          </ul>
+          <br />
+          Tu peux l'installer sur n'importe quelle machine Linux : mini-PC, NAS
+          Synology, Raspberry Pi, serveur, ou même un vieux PC qui traîne. Si
+          Docker tourne dessus, Gladys tourne dessus ! 🚀
         </>
       ),
     },
     {
-      title: <>Comment contribuer au projet ?</>,
+      title: <>Est-ce compliqué à installer ?</>,
       response: (
         <>
-          Gladys Assistant est entièrement open-source et disponible sur{" "}
-          <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
-          Toute PR est la bienvenue 🙂 <br />
-          <br /> Si tu veux contribuer, lis notre tutoriel{" "}
-          <a href="/fr/docs/dev/developing-a-service/">
-            Contribuer sur Gladys Assistant
+          <b>Non, c'est étonnamment simple !</b> Si tu sais copier-coller une
+          commande dans un terminal, tu sais installer Gladys. Notre
+          documentation te guide pas à pas, avec des captures d'écran et des
+          vidéos.
+          <br />
+          <br />
+          <b>Encore plus simple :</b> Notre{" "}
+          <Link href="/fr/starter-kit/">kit de démarrage</Link> arrive avec
+          Gladys déjà installée. Tu branches, tu suis le guide de 5 minutes, et
+          c'est parti. Zéro configuration technique requise.
+        </>
+      ),
+    },
+    {
+      title: <>Mes données sont-elles vraiment privées ?</>,
+      response: (
+        <>
+          <b>Absolument.</b> Contrairement aux solutions cloud comme Google Home
+          ou Alexa, Gladys tourne 100% chez toi, sur ta machine. Tes données ne
+          quittent jamais ton réseau local.
+          <br />
+          <br />
+          Pas de serveurs tiers, pas de tracking, pas de revente de données.
+          C'est d'ailleurs pour ça que Gladys existe : reprendre le contrôle de
+          sa vie privée tout en profitant d'une maison intelligente. 🔒
+        </>
+      ),
+    },
+    {
+      title: <>Gladys fonctionne-t-elle avec mes appareils ?</>,
+      response: (
+        <>
+          <b>Très probablement !</b> Gladys supporte{" "}
+          <Link href="/fr/docs/integrations/">des milliers d'appareils</Link>{" "}
+          via Zigbee, Matter, MQTT, et des intégrations dédiées pour Shelly,
+          Sonos, Philips Hue, caméras RTSP, Google Home, Alexa, et bien
+          d'autres.
+          <br />
+          <br />
+          Et comme Gladys est open-source, de nouvelles intégrations sont
+          ajoutées régulièrement par la communauté. Si ton appareil n'est pas
+          encore supporté, tu peux même{" "}
+          <a href="https://community.gladysassistant.com/">
+            demander son ajout
           </a>{" "}
-          et n'hésite pas à venir sur la{" "}
-          <a href="https://community.gladysassistant.com/">communauté</a> pour
-          parler du développement sur lequel tu veux te lancer. N'hésite pas si
-          tu as des questions, on est toujours là pour donner un coup de main !
+          ou le développer toi-même !
         </>
       ),
     },
     {
-      title: <>Comment accéder à Gladys depuis l'extérieur de mon réseau ?</>,
+      title: <>Puis-je accéder à Gladys depuis l'extérieur ?</>,
       response: (
         <>
-          Nous proposons <a href="/fr/plus">Gladys Plus</a>, un service qui
-          proxy le traffic de{" "}
-          <a href="https://plus.gladysassistant.com">
-            plus.gladysassistant.com
-          </a>{" "}
-          à votre instance locale Gladys, tout ça en chiffré de bout en bout
-          pour respecter votre vie privée, et sans configuration ! Gladys Plus
-          est une "Progressive Web App" que vous pouvez installer sur votre
-          smartphone (Android et iOS), et ainsi avoir accès à Gladys de partout
-          dans le monde.
-        </>
-      ),
-    },
-    {
-      title: <>Un kit de démarrage pour commencer ?</>,
-      response: (
-        <>
-          <p>
-            Pour accélérer le déploiement de Gladys, j'ai lancé un kit de
-            démarrage, contenant du hardware mais pas que ! 😎
-            <br />
-            <br />
-            Ce kit est destiné à un public qui n'a pas d'installation Gladys
-            pour l'instant et qui souhaite se lancer facilement.
-            <br />
-            <br />
-            Si ce kit te parle, dépêche toi :{" "}
-            <a href="/fr/starter-kit/">Je commande !</a>
-          </p>
+          <b>Oui, de plusieurs façons :</b>
+          <br />
+          <br />
+          <b>Option 1 (recommandée) :</b> <a href="/fr/plus">Gladys Plus</a>,
+          notre service cloud optionnel qui te donne un accès sécurisé (chiffré
+          de bout en bout) depuis n'importe où, sans configuration. Fonctionne
+          comme une app sur iOS et Android.
+          <br />
+          <br />
+          <b>Option 2 (pour les experts) :</b> Configure ton propre VPN ou
+          reverse proxy. Gladys reste 100% gratuite, mais ça demande des
+          compétences techniques.
         </>
       ),
     },
   ],
   en: [
     {
-      title: <>What equipment is required to install Gladys Assistant?</>,
+      title: <>Is Gladys really free?</>,
       response: (
         <>
-          Gladys can be installed on any Linux machine (a Raspberry Pi, a NAS, a
-          server, an old Linux PC, anything!), as long as Docker is running on
-          the machine, Gladys can run on it. <br />
-          <br />
-          Gladys Assistant is <b>free to use</b>, it's just a simple Docker
-          container that can be started with{" "}
+          <b>Yes, 100% free and open-source!</b> Gladys Assistant is free
+          software you can install with{" "}
           <Link href="/docs/installation/docker/#start-gladys">
-            a simple command
+            a single Docker command
           </Link>
-          .
+          . No subscription required, no limitations, no credit card needed.
+          <br />
+          <br />
+          You can install it on any Linux machine: mini-PC, Synology NAS,
+          Raspberry Pi, server, or even an old computer gathering dust. If
+          Docker runs on it, Gladys runs on it! 🚀
         </>
       ),
     },
     {
-      title: <>Who uses Gladys Assistant 4?</>,
+      title: <>Is it hard to install?</>,
       response: (
         <>
-          Gladys Assistant 4 was released in November 2020. Since then, the
-          project has been growing and the goal is to become a reference
-          software in the world of open-source home automation!
+          <b>No, it's surprisingly simple!</b> If you can copy-paste a command
+          into a terminal, you can install Gladys. Our documentation guides you
+          step-by-step with screenshots and videos.
           <br />
           <br />
-          Gladys Assistant is installed by all types of users: <br /> <br />
-          <ul>
-            <li>
-              Complete novices who want to automate their home with a simple,
-              powerful, and privacy-respecting product.
-            </li>
-            <li>
-              Developers who think it's amazing to be able to code for their
-              home and who contribute to this open-source project!
-            </li>
-            <li>Pros who manage impressive sensor networks</li>
-          </ul>
+          The entire setup takes about 5 minutes. No coding required, no complex
+          configuration files. Just follow the guide and you're done.
         </>
       ),
     },
     {
-      title: <>How to contribute to the project?</>,
+      title: <>Is my data really private?</>,
       response: (
         <>
-          Gladys Assistant is entirely open-source and available on{" "}
-          <a href="https://github.com/GladysAssistant/gladys">GitHub</a>.<br />
-          All PRs are welcome 🙂 <br />
-          <br /> If you want to contribute, read our tutorial{" "}
-          <a href="/docs/dev/developing-a-service/">
-            Contributing to Gladys Assistant
-          </a>{" "}
-          and don't hesitate to join the{" "}
-          <a href="https://en-community.gladysassistant.com/">community</a> to
-          discuss the development you want to work on. Don't hesitate if you
-          have questions, we're always here to help!
+          <b>Absolutely.</b> Unlike cloud solutions like Google Home or Alexa,
+          Gladys runs 100% locally on your machine. Your data never leaves your
+          home network.
+          <br />
+          <br />
+          No third-party servers, no tracking, no data selling. That's actually
+          why Gladys exists: to take back control of your privacy while enjoying
+          a smart home. 🔒
         </>
       ),
     },
     {
-      title: <>How to access Gladys from outside my network?</>,
+      title: <>Does Gladys work with my devices?</>,
       response: (
         <>
-          We offer <a href="/plus">Gladys Plus</a>, a service that proxies
-          traffic from{" "}
-          <a href="https://plus.gladysassistant.com">
-            plus.gladysassistant.com
-          </a>{" "}
-          to your local Gladys instance, all end-to-end encrypted to respect
-          your privacy, and without configuration! Gladys Plus is a "Progressive
-          Web App" that you can install on your smartphone (Android and iOS),
-          and thus have access to Gladys from anywhere in the world.
+          <b>Very likely!</b> Gladys supports{" "}
+          <Link href="/docs/integrations/">thousands of devices</Link> via
+          Zigbee, Matter, MQTT, and dedicated integrations for Shelly, Sonos,
+          Philips Hue, RTSP cameras, Google Home, Alexa, and many more.
           <br />
           <br />
-          Using this service is <b>entirely optional</b>, you can use Gladys
-          Assistant without it with your own domain if you prefer.
+          And because Gladys is open-source, new integrations are regularly
+          added by the community. If your device isn't supported yet, you can{" "}
+          <a href="https://community.gladysassistant.com/">request it</a> or
+          even develop it yourself!
+        </>
+      ),
+    },
+    {
+      title: <>Can I access Gladys remotely?</>,
+      response: (
+        <>
+          <b>Yes, in two ways:</b>
+          <br />
+          <br />
+          <b>Option 1 (recommended):</b> <a href="/plus">Gladys Plus</a>, our
+          optional cloud service that gives you secure access (end-to-end
+          encrypted) from anywhere, with zero configuration. Works as an app on
+          iOS and Android.
+          <br />
+          <br />
+          <b>Option 2 (for experts):</b> Set up your own VPN or reverse proxy.
+          Gladys remains 100% free, but requires technical skills.
         </>
       ),
     },
@@ -265,13 +264,96 @@ const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
   </video>
 );
 
+const BLACK_FRIDAY_ACTIVE = BLACK_FRIDAY_CONFIG.ENABLED;
+const blackFridayEndDate = BLACK_FRIDAY_CONFIG.END_DATE;
+
 function Home({ integrations, lang }) {
   const [openPanel, setOpenPanel] = React.useState(1);
+  const [isBlackFridayActive, setIsBlackFridayActive] =
+    useState(BLACK_FRIDAY_ACTIVE);
+  const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
+
   const shouldDisplayStarterKitLink =
     lang === "fr" ||
     (navigator && navigator.language && navigator.language.startsWith("fr"));
+
+  useEffect(() => {
+    // Black Friday countdown
+    const updateBlackFridayCountdown = () => {
+      const now = new Date();
+      const distance = blackFridayEndDate - now;
+
+      if (distance < 0) {
+        setIsBlackFridayActive(false);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setBlackFridayTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateBlackFridayCountdown();
+    const interval = setInterval(updateBlackFridayCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
+      {isBlackFridayActive && shouldDisplayStarterKitLink && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            padding: "1rem 1rem",
+            textAlign: "center",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          }}
+        >
+          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                fontWeight: "bold",
+                margin: "0 0 0.5rem 0",
+                color: "white",
+              }}
+            >
+              🎁{" "}
+              {lang === "fr"
+                ? "BLACK FRIDAY : Promo sur le kit de démarrage et Gladys Plus"
+                : "BLACK FRIDAY: Gladys Plus -30% off"}
+            </p>
+            {blackFridayTimeLeft && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "0.75rem",
+                  flexWrap: "wrap",
+                  fontSize: "0.9rem",
+                }}
+              >
+                {blackFridayTimeLeft.days > 0 && (
+                  <span style={{ opacity: 0.95 }}>
+                    {blackFridayTimeLeft.days} {lang === "fr" ? "j" : "d"}
+                  </span>
+                )}
+                <span style={{ opacity: 0.95 }}>
+                  {blackFridayTimeLeft.hours}h {blackFridayTimeLeft.minutes}m{" "}
+                  {blackFridayTimeLeft.seconds}s
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <header className={classnames("shadow--lw")}>
         <div className={styles.heroBanner}>
           <div className={styles.flexContainer}>
@@ -286,49 +368,82 @@ function Home({ integrations, lang }) {
                   id="home.description"
                   description="The home page description"
                 >
-                  Craft Your Perfect Smart Home Experience.
+                  One Platform. Every Device. Complete Privacy.
                 </Translate>
               </p>
               <span className="container">
                 <div
                   className="margin-right--md"
-                  style={{ display: "inline-block" }}
+                  style={{ display: "inline-block", verticalAlign: "top" }}
                 >
                   <Link
-                    className={classnames(
-                      "button button--secondary",
-                      styles.heroButton
-                    )}
+                    className={classnames("button", styles.heroButton, {
+                      "button--primary": true,
+                    })}
                     href={lang === "en" ? `/docs` : `/${lang}/docs`}
                   >
                     <Translate
                       id="home.gettingStartedButton"
                       description="The getting started button of the homepage"
                     >
-                      Install for free
+                      Get Started
                     </Translate>
                   </Link>
+                  <div
+                    style={{
+                      fontSize: "0.85em",
+                      marginTop: "0.5rem",
+                      opacity: 0.8,
+                      textAlign: "center",
+                    }}
+                  >
+                    <Translate
+                      id="home.gettingStartedSubtext"
+                      description="The getting started button subtext"
+                    >
+                      5-min setup • No credit card
+                    </Translate>
+                  </div>
                 </div>
                 {shouldDisplayStarterKitLink && (
                   <div
                     className="margin-right--md"
-                    style={{ display: "inline-block" }}
+                    style={{ display: "inline-block", verticalAlign: "top" }}
                   >
                     <Link
                       className={classnames(
-                        "button button--primary",
-                        styles.heroButton
+                        "button",
+                        styles.heroButton,
+                        isBlackFridayActive ? "" : "button--secondary"
                       )}
                       href={
                         lang === "en" ? `/starter-kit` : `/${lang}/starter-kit`
                       }
+                      style={
+                        isBlackFridayActive
+                          ? {
+                              background:
+                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              color: "white",
+                              border: "none",
+                            }
+                          : undefined
+                      }
                     >
-                      <Translate
-                        id="home.starterKitButton"
-                        description="The getting started button of the homepage"
-                      >
-                        Discover the Starter Kit
-                      </Translate>
+                      {isBlackFridayActive ? (
+                        lang === "fr" ? (
+                          "🎁 Offres Black Friday"
+                        ) : (
+                          "🎁 Black Friday Deals"
+                        )
+                      ) : (
+                        <Translate
+                          id="home.starterKitButton"
+                          description="The getting started button of the homepage"
+                        >
+                          Discover the Starter Kit
+                        </Translate>
+                      )}
                     </Link>
                   </div>
                 )}
@@ -382,18 +497,13 @@ function Home({ integrations, lang }) {
         </div>
       </header>
       <main>
-        <div
-          className={classnames(styles.homeSection, styles.newsletterSection)}
-        >
-          <SubcribeNewsletter lang={lang} />
-        </div>
         <div className={classnames(styles.homeSection)}>
           <h2 className={styles.secondaryTitle}>
             <Translate
               id="home.coolFeatures.title"
               description="Cool features description on the homepage"
             >
-              Some cool features out of the box
+              Powerful Features, Zero Configuration
             </Translate>
           </h2>
           <div className={styles.coolFeatureFlexContainer}>
@@ -403,7 +513,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.dashboardTitle"
                   description="Cool features dashboard title on the homepage"
                 >
-                  Build great dashboards
+                  See Everything at a Glance
                 </Translate>
               </h4>
               <p>
@@ -411,9 +521,8 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.dashboardDescrition"
                   description="Cool features dashboard title on the homepage"
                 >
-                  You can create as many dashboards as you want in Gladys, and
-                  they are entirely customizable. Add your cameras, charts of
-                  sensors in your house, display who's at home and who's not.
+                  Temperature, security cameras, presence—monitor everything
+                  from one beautiful dashboard.
                 </Translate>
               </p>
             </div>
@@ -448,7 +557,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.sceneTitle"
                   description="Cool features scene title on the homepage"
                 >
-                  Automate your life with scenes
+                  Automate Your Entire Day
                 </Translate>
               </h4>
               <p>
@@ -456,10 +565,8 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.sceneDescription"
                   description="Cool features scene title on the homepage"
                 >
-                  You want to wake up with nice music? The coffee ready? Gladys
-                  can help you with that. Scenes are fully editable in the UI,
-                  and can be triggered from an event coming, at a specific time,
-                  or manually.
+                  Coffee brewing, lights turning on, music playing—all
+                  automatic. No coding required.
                 </Translate>
               </p>
             </div>
@@ -471,7 +578,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.chatTitle"
                   description="Cool features chat title on the homepage"
                 >
-                  Always one message away
+                  Control Your Home by Voice
                 </Translate>
               </h4>
               <p>
@@ -479,10 +586,8 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.chatDescription"
                   description="Cool features chat title on the homepage"
                 >
-                  Gladys is a smart assistant. You can talk to her in the
-                  interface, or with our Telegram integration. Ask her to show
-                  you the image of the camera in the kitchen, and she'll answer
-                  back!
+                  "Turn on the light in the kitchen" - Gladys responds instantly
+                  via Telegram, Google Home, Alexa or Siri.
                 </Translate>
               </p>
             </div>
@@ -495,6 +600,19 @@ function Home({ integrations, lang }) {
                 alt="Chat"
               />
             </div>
+          </div>
+          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+            <Link
+              className="button button--primary button--lg"
+              href={lang === "en" ? `/docs` : `/${lang}/docs`}
+            >
+              <Translate
+                id="home.ctaAfterFeatures"
+                description="CTA after features section"
+              >
+                Try Gladys Now - It's Free
+              </Translate>
+            </Link>
           </div>
         </div>
 
@@ -509,7 +627,7 @@ function Home({ integrations, lang }) {
               id="home.compatibilities.title"
               description="Cool features chat title on the homepage"
             >
-              Lots of compatibilities, built-in
+              Works With Everything You Own
             </Translate>
           </h2>
           <div className="row">
@@ -544,6 +662,23 @@ function Home({ integrations, lang }) {
               ))}
             </div>
           </div>
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            <Link
+              className="button button--secondary button--lg"
+              href={
+                lang === "en"
+                  ? `/docs/integrations`
+                  : `/${lang}/docs/integrations`
+              }
+            >
+              <Translate
+                id="home.ctaAfterIntegrations"
+                description="CTA after integrations section"
+              >
+                Browse All Integrations →
+              </Translate>
+            </Link>
+          </div>
         </div>
 
         <div className={classnames(styles.homeSection)}>
@@ -552,7 +687,7 @@ function Home({ integrations, lang }) {
               id="home.characteristics.title"
               description="Characteristics chat title on the homepage"
             >
-              The most intuitive smart home software
+              Built Different: Privacy-First, User-Focused
             </Translate>
           </h2>
           <div className={styles.featureFlexContainer}>
@@ -570,8 +705,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.privacyDescription"
                   description="Characteristics chat title on the homepage"
                 >
-                  Gladys is self-hosted, and all your data stays in your local
-                  machine at home, in a simple SQLite database.
+                  Gladys is self-hosted, and all your data stays on your local
+                  machine at home. No cloud required, no tracking, ever.
                 </Translate>
               </p>
             </div>
@@ -589,8 +724,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.easeOfUseDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  We built Gladys like we would build any consumer product: no
-                  SSH needed, no files to edit.
+                  No terminal commands. No config files. Just a beautiful
+                  interface that works.
                 </Translate>
               </p>
             </div>
@@ -608,8 +743,7 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.cleanUIDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  We built Gladys user interface with great care, and always
-                  start with the design when working on a new feature.
+                  Every pixel matters. We design first, then code.
                 </Translate>
               </p>
             </div>
@@ -629,8 +763,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.stableDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  Stability is one of the core values of the project, we built
-                  Gladys to run for tens of years.
+                  Built to last decades. Your smart home will never let you
+                  down.
                 </Translate>
               </p>
             </div>
@@ -648,8 +782,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.fastDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  Gladys is built with fast technologies (Preact + Node.js) and
-                  we care a lot about performances.
+                  Lightning-fast interface, instant actions. We're obsessed with
+                  performance.
                 </Translate>
               </p>
             </div>
@@ -667,8 +801,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.autoUpgradeDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  Gladys run as a Docker container. We use Watchtower to
-                  automatically upgrade Gladys.
+                  New features and bug fixes installed automatically. Zero
+                  hassle.
                 </Translate>
               </p>
             </div>
@@ -681,11 +815,54 @@ function Home({ integrations, lang }) {
               id="home.testimonial.title"
               description="Testimonia title on the homepage"
             >
-              Our users love Gladys
+              What Our Community Says
             </Translate>
           </h2>
           <div className={styles.testimonialContainer}>
             <TestimonialHomeSection lang={lang} testimonials={testimonials} />
+          </div>
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "3rem",
+              padding: "2.5rem 1.5rem",
+              backgroundColor: "var(--ifm-color-emphasis-100)",
+              borderRadius: "0.75rem",
+              maxWidth: "800px",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            <h3 style={{ fontSize: "1.75rem", marginBottom: "1rem" }}>
+              <Translate id="home.finalCta.title" description="Final CTA title">
+                Ready to Take Control of Your Smart Home?
+              </Translate>
+            </h3>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                marginBottom: "1.5rem",
+                opacity: 0.9,
+              }}
+            >
+              <Translate
+                id="home.finalCta.subtitle"
+                description="Final CTA subtitle"
+              >
+                Join the open-source smart home revolution
+              </Translate>
+            </p>
+            <Link
+              className="button button--primary button--lg"
+              href={lang === "en" ? `/docs` : `/${lang}/docs`}
+            >
+              <Translate
+                id="home.finalCta.button"
+                description="Final CTA button"
+              >
+                Get Started Free
+              </Translate>
+            </Link>
           </div>
         </div>
 
@@ -718,15 +895,15 @@ function Home({ integrations, lang }) {
                   </p>
                   <div className="row">
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="ALW3uDB9P0s" />
+                      <YoutubeEmbedVideo id="MsSx8omWiZ8" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Gérez vos appareils Zigbee dans votre domotique
+                        Suivi d'énergie & serveur MCP dans Gladys
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="_bmsWALVePc" />
+                      <YoutubeEmbedVideo id="2_fGKdoiK2Q" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Live: Bilan de 2024 et projets pour 2025
+                        Gladys Assistant devient compatible Matter
                       </h4>
                     </div>
                     <div className="col col--4">
@@ -737,6 +914,228 @@ function Home({ integrations, lang }) {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {lang === "fr" && (
+          <div
+            className={classnames(styles.homeSection)}
+            style={{
+              background: "var(--ifm-color-emphasis-100)",
+              padding: "3rem 1rem",
+            }}
+          >
+            <div className="container">
+              <h2
+                className={styles.secondaryTitle}
+                style={{ marginBottom: "1rem" }}
+              >
+                Kit de démarrage Gladys
+              </h2>
+              <p
+                style={{
+                  textAlign: "center",
+                  fontSize: "1.2rem",
+                  marginBottom: "3rem",
+                  maxWidth: "800px",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              >
+                Un mini-PC avec <b>Gladys pré-installée</b> + la formation
+                officielle + 6 mois de Gladys Plus offerts
+              </p>
+
+              <div className="row" style={{ marginBottom: "3rem" }}>
+                {false && (
+                  <div className="col col--4">
+                    <div
+                      style={{
+                        border: "2px solid var(--ifm-color-emphasis-300)",
+                        padding: "25px",
+                        borderRadius: "12px",
+                        textAlign: "center",
+                        height: "100%",
+                        background: "var(--ifm-card-background-color)",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                      }}
+                    >
+                      <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+                        Beelink T5
+                      </h3>
+                      <p style={{ fontSize: "1em", marginBottom: "15px" }}>
+                        Le mini-PC compact et économique
+                      </p>
+                      <ul
+                        style={{
+                          textAlign: "left",
+                          marginBottom: "15px",
+                          fontSize: "0.9em",
+                        }}
+                      >
+                        <li>✓ Intel Celeron N4020</li>
+                        <li>✓ 4 Go RAM • 64 Go eMMC</li>
+                        <li>✓ Gladys déjà installée</li>
+                      </ul>
+                      <Link
+                        className="button button--primary button--lg"
+                        href="/fr/starter-kit"
+                        style={{
+                          width: "100%",
+                          marginTop: "15px",
+                        }}
+                      >
+                        Découvrir
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
+                <div className="col col--6">
+                  <div
+                    style={{
+                      border: "2px solid var(--ifm-color-emphasis-300)",
+                      padding: "25px",
+                      borderRadius: "12px",
+                      textAlign: "center",
+                      height: "100%",
+                      background: "var(--ifm-card-background-color)",
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+                      Beelink mini S12
+                    </h3>
+                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
+                      Un bon rapport qualité/prix
+                    </p>
+                    <ul
+                      style={{
+                        textAlign: "left",
+                        marginBottom: "15px",
+                        fontSize: "0.9em",
+                      }}
+                    >
+                      <li>✓ Intel N95</li>
+                      <li>✓ 8 Go RAM • 256 Go SSD</li>
+                      <li>✓ Gladys déjà installée</li>
+                    </ul>
+                    <Link
+                      className="button button--primary button--lg"
+                      href="/fr/starter-kit"
+                      style={{
+                        width: "100%",
+                        marginTop: "15px",
+                      }}
+                    >
+                      Découvrir
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="col col--6">
+                  <div
+                    style={{
+                      border: "3px solid var(--ifm-color-primary)",
+                      padding: "25px",
+                      borderRadius: "12px",
+                      textAlign: "center",
+                      height: "100%",
+                      background: "var(--ifm-card-background-color)",
+                      boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+                    }}
+                  >
+                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+                      Beelink S13
+                    </h3>
+                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
+                      ⭐ Le meilleur choix !
+                    </p>
+                    <ul
+                      style={{
+                        textAlign: "left",
+                        marginBottom: "15px",
+                        fontSize: "0.9em",
+                      }}
+                    >
+                      <li>✓ Intel N150</li>
+                      <li>✓ 16 Go RAM • 500 Go SSD</li>
+                      <li>✓ Gladys déjà installée</li>
+                    </ul>
+                    <Link
+                      className="button button--primary button--lg"
+                      href="/fr/starter-kit"
+                      style={{
+                        width: "100%",
+                        marginTop: "15px",
+                      }}
+                    >
+                      Découvrir
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              <div className="row" style={{ marginTop: "3rem" }}>
+                <div className="col col--4">
+                  <div style={{ textAlign: "center", padding: "1rem" }}>
+                    <div
+                      style={{
+                        fontSize: "3rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      🎓
+                    </div>
+                    <h4>Formation officielle</h4>
+                    <p>Des heures de vidéos pour maîtriser Gladys de A à Z</p>
+                  </div>
+                </div>
+                <div className="col col--4">
+                  <div style={{ textAlign: "center", padding: "1rem" }}>
+                    <div
+                      style={{
+                        fontSize: "3rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      ⚡
+                    </div>
+                    <h4>Prêt à l'emploi</h4>
+                    <p>
+                      Gladys déjà installée et configurée, tu branches et c'est
+                      parti
+                    </p>
+                  </div>
+                </div>
+                <div className="col col--4">
+                  <div style={{ textAlign: "center", padding: "1rem" }}>
+                    <div
+                      style={{
+                        fontSize: "3rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      💎
+                    </div>
+                    <h4>6 mois Gladys Plus</h4>
+                    <p>
+                      Accès à distance, sauvegardes et intégrations premium
+                      offerts
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: "center", marginTop: "3rem" }}>
+                <Link
+                  className="button button--primary button--lg"
+                  href="/fr/starter-kit"
+                >
+                  Voir tous les kits de démarrage →
+                </Link>
               </div>
             </div>
           </div>

@@ -30,7 +30,7 @@ Tuya compatible lights like [Dalattin pack of 4 light bulbs for $20,99](https://
 
 To configure these devices, you can follow the tutorial [in Gladys documentation](/docs/integrations/tuya/).
 
-If you have other Tuya devices that are not yet managed, please come to [the forum](https://en-community.gladysassistant.com/) to talk about them.
+If you have other Tuya devices that are not yet managed, please come to [the forum](https://community.gladysassistant.com/) to talk about them.
 
 Many thanks to Lokkye on the forum for this development 🙌
 

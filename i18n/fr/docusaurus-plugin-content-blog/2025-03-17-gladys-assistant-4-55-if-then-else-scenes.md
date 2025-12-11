@@ -14,6 +14,8 @@ L'une des fonctionnalités les plus attendues est enfin là !
 
 Vous pouvez désormais ajouter des conditions "Si... Alors... Sinon" dans vos scènes, ce qui vous permet de créer des scénarios avancés avec plusieurs chemins d'exécution. Cette amélioration vous offre un contrôle plus fin sur vos automatisations, sans multiplier les scènes.
 
+<!-- truncate -->
+
 ### Exemples d'utilisation :
 
 - **Si** la température dépasse 25°C **alors** allumer le ventilateur, **sinon** fermer les volets.
