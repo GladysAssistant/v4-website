@@ -55,14 +55,6 @@ This is the recommended option for international users. Ideal for tracking a spe
 
 This option works worldwide. If you have a smart meter or devices that return consumption values in kWh, you can integrate them with Gladys Assistant using the MQTT integration.
 
-To do this, you need devices in the MQTT integration with 3 features:
-
-1. An "Energy sensor / Index" feature, which corresponds to your device's index in kWh.
-2. An "Energy sensor / 30-minute consumption" feature, which corresponds to your device's consumption in kWh over the last 30 minutes.
-3. An "Energy sensor / 30-minute cost" feature, which corresponds to your device's cost in euros or dollars over the last 30 minutes.
-
-The first feature must be filled via MQTT by you. The other two will be derived from the first and calculated automatically by Gladys.
-
 ## Configuration
 
 :::info
@@ -116,6 +108,8 @@ If you're on peak/off-peak hours, you'll need to select your contract's schedule
 
 In the case of Tempo, this will create dozens of prices because it will import the entire history of this contract with 6 prices per period!
 
+![Energy monitoring contract list](../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-contract-list.png)
+
 ### Manually create a contract
 
 If your contract is not in the list, click "Create".
@@ -143,7 +137,15 @@ In the Zigbee integration, if you had added Zigbee devices measuring consumption
 
 This will add the features necessary for energy monitoring.
 
-### Step 4: Verify your electrical network hierarchy
+### Step 4: Update your MQTT devices
+
+In the MQTT integration, if you have devices with "Index" features, you will see a new button on "Index" features to enable the energy monitoring feature:
+
+![Update MQTT device](../../static/img/docs/en/configuration/energy-monitoring/mqtt-create-features.png)
+
+This will add the features necessary for energy monitoring.
+
+### Step 5: Verify your electrical network hierarchy
 
 Go to the "Energy Monitoring" integration, and on the first tab, you should see your electrical network hierarchy.
 
@@ -164,7 +166,7 @@ An example hierarchy:
 
 The hierarchy is very important for Gladys to correctly calculate your consumption cost.
 
-### Step 5: Recalculate all historical consumption
+### Step 6: Recalculate all historical consumption
 
 If your devices have consumption history, you can launch a recalculation of historical 30-minute consumption and 30-minute costs from the "Settings" tab:
 
@@ -172,7 +174,7 @@ If your devices have consumption history, you can launch a recalculation of hist
 
 First click on the first button to calculate consumption from indexes, then click on the second button to calculate 30-minute costs.
 
-### Step 6: Display your consumption on the dashboard
+### Step 7: Display your consumption on the dashboard
 
 On your dashboard, you can now add a new "Energy Consumption" widget:
 

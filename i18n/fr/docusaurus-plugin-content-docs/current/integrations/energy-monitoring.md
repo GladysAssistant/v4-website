@@ -47,14 +47,6 @@ Idéal pour suivre un appareil en particulier, chez moi j'utilise cette prise NO
 
 Si vous avez un compteur exotique ou des appareils qui renvoient des valeurs de consommation en kWh, vous pouvez les intégrer avec Gladys Assistant en utilisant l'intégration MQTT.
 
-Pour cela, il faut avoir des appareils dans l'intégration MQTT avec 3 fonctionnalités :
-
-1. Une fonctionnalité "Capteur d'énergie / Index", qui correspond à l'index de votre appareil en kWh.
-2. Une fonctionnalité "Capteur d'énergie / Consommation 30 minutes", qui correspond à la consommation de votre appareil en kWh sur les 30 dernières minutes.
-3. Une fonctionnalité "Capteur d'énergie / Coût 30 minutes", qui correspond au coût de votre appareil en euros ou dollars sur les 30 dernières minutes.
-
-La première fonctionnalité doit être remplie en MQTT par vos soins. Les deux autres seront déduites de la première et calculées automatiquement par Gladys.
-
 ## Configuration
 
 :::info
@@ -100,7 +92,7 @@ Si vous utilisez l'intégration Enedis, vous devriez voir votre compteur ici, vo
 
 Sinon, vous pouvez cliquer sur "Créer un compteur électrique" pour que Gladys crée automatiquement un appareil qui sera le "parent" de tous vos capteurs d'énergie dans votre maison.
 
-Ensuite, sélectionnez votre contrat dans la liste, puis votre puissance souscrite :
+Ensuite, sélectionnez votre contrat dans la liste, donnez un nom au contrat (par exemple "Contrat Tempo actuel"), puis votre puissance souscrite (en kW) :
 
 ![Suivi de l'énergie création import prix](../../../../../static/img/docs/fr/configuration/energy-monitoring/energy-monitoring-create-price-import-contract.png)
 
@@ -137,7 +129,15 @@ Dans l'intégration Zigbee, si vous aviez ajouté des appareils Zigbee mesurant 
 
 Cela servira à ajouter les fonctionnalités nécessaires au suivi de l'énergie.
 
-### Étape n°4 : Vérifier la hiérarchie de votre réseau électrique
+### Étape n°4 : Mettre à jour vos appareils MQTT
+
+Dans l'intégration MQTT, si vous aviez ajouté des appareils MQTT avec des fonctionnalités "Capteur d'énergie / Index", vous devriez voir un bouton sur chaque fonctionnalité "Index" :
+
+![Mettre à jour appareil MQTT](../../../../../static/img/docs/fr/configuration/energy-monitoring/mqtt-create-features.png)
+
+Si vous cliquez sur ce bouton, Gladys créera automatiquement les fonctionnalités nécessaires au suivi de l'énergie pour cet index.
+
+### Étape n°5 : Vérifier la hiérarchie de votre réseau électrique
 
 Rendez-vous dans l'intégration "Suivi de l'énergie", et sur le premier onglet, vous devriez voir la hiérarchie de votre réseau électrique.
 
@@ -158,7 +158,7 @@ Un exemple de hiérarchie :
 
 La hiérarchie est très importante pour que Gladys puisse calculer correctement le coût de votre consommation.
 
-### Étape n°5 : Recalculer toutes les consommations historiques
+### Étape n°6 : Recalculer toutes les consommations historiques
 
 Si vos appareils ont un historique de consommation, vous pouvez lancer un recalcul des consommations et des coûts sur 30 minutes depuis l'onglet "Paramètres" :
 
@@ -166,7 +166,7 @@ Si vos appareils ont un historique de consommation, vous pouvez lancer un recalc
 
 Cliquez d'abord sur le premier bouton pour calculer la consommation depuis les index, puis cliquez sur le deuxième bouton pour calculer les coûts 30 minutes.
 
-### Étape n°6 : Afficher sa consommation sur le tableau de bord
+### Étape n°7 : Afficher sa consommation sur le tableau de bord
 
 Sur votre tableau de bord, il est maintenant possible d'ajouter un nouveau widget "Consommation Énergétique" :
 
