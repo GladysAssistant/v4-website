@@ -739,7 +739,7 @@ function Plus() {
                         >
                           {isBlackFridayActive
                             ? "🎁 Profiter de l'offre"
-                            : "Commander le Kit mini S"}
+                            : "Commander le kit mini S12"}
                         </button>
                       </div>
                     </div>
@@ -870,7 +870,7 @@ function Plus() {
                         >
                           {isBlackFridayActive
                             ? "🎁 Profiter de l'offre"
-                            : "Commander le Kit S13"}
+                            : "Commander le kit S13"}
                         </button>
                       </div>
                     </div>
