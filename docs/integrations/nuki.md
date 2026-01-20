@@ -12,7 +12,7 @@ This integration adds the ability to:
 Go to `Integrations / Nuki` in Gladys  
 There are two types of integration available. It is recommended to choose only one of the two.
 
-## NukiWeb API Key
+## NukiWeb API token
 
 _Prerequisite: Gladys must have internet access at all times_
 
@@ -22,7 +22,7 @@ _Prerequisite: Gladys must have internet access at all times_
 
 ![APIKey Nuki](../../static/img/docs/en/configuration/nuki/nukiweb-auth-en.png)  
 
-2. Configure the Nuki service in Gladys by adding the API key  
+2. Configure the Nuki service in Gladys by adding the API token  
 ![Configure Nuki](../../static/img/docs/en/configuration/nuki/nuki-integration-configuration-en.png)
 
 3. Perform an HTTP scan  

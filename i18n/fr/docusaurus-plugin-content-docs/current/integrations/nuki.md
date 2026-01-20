@@ -12,7 +12,7 @@ Cette intégration ajoute la possibilité de :
 Allez dans  `Intégrations / Nuki`  dans Gladys
 Il y a deux types d'intégration possible. Il est conseillé de n'en choisir qu'une seule des deux.
 
-## Clé API NukiWeb
+## Jeton API NukiWeb
 
 _Prérequis : Gladys doit avoir accès à internet à tout moment_
 
@@ -22,7 +22,7 @@ _Prérequis : Gladys doit avoir accès à internet à tout moment_
 
 ![APIKey Nuki](../../../../../static/img/docs/fr/configuration/nuki/nukiweb-auth.png)  
 
-2. Configurer le service Nuki dans Gladys en y ajoutant la clé API 
+2. Configurer le service Nuki dans Gladys en y ajoutant le jeton API 
 ![Configure Nuki](../../../../../static/img/docs/fr/configuration/nuki/nuki-integration-configuration.png)
 
 3. Faire un scan HTTP
