@@ -14,7 +14,7 @@ Le backend est une serveur Node.js.
 
 Comme prérequis système, il vous faut :
 
-- Node.js 18 LTS ([Télécharger](https://nodejs.org/en/download/)) sur MacOs.
+- Node.js 22 LTS ([Télécharger](https://nodejs.org/en/download/)) sur MacOs.
   Sur Ubuntu/Debian :
 ```bash
 curl -sLO https://deb.nodesource.com/nsolid_setup_deb.sh
