@@ -22,11 +22,11 @@ Please ensure your system uses WSL2 by running following command:
 wsl.exe --set-default-version 2
 ```
 
-From the Microsoft Store, search and install Ubuntu 20.04. This can take some time, dependong on your connection speed.
+From the Microsoft Store, search and install the latest Ubuntu LTS version. This can take some time, depending on your connection speed.
 
 ![Microsoft Store Ubuntu](../../static/img/docs/en/dev/ms-store-ubuntu20.04.png)
 
-Now you can run Ubuntu; from your start menu please launch Ubuntu 20.04 LTS.
+Now you can run Ubuntu; from your start menu please launch Ubuntu LTS.
 The first time you run Ubuntu, you will be asked to create a user.
 
 ### Install system dependencies
