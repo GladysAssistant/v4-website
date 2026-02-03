@@ -195,4 +195,4 @@ Lire: [Créer une PR sur Github](https://docs.github.com/en/pull-requests/collab
 
 ## Des questions ?
 
-Tu as des question ? Viens en parler [sur le forum](https://community.gladysassistant.com/) !
+Tu as des questions ? Viens en parler [sur le forum](https://community.gladysassistant.com/) !
