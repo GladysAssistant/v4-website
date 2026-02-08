@@ -45,6 +45,7 @@ module.exports = {
         "integrations/nextcloud-talk",
         "integrations/netatmo",
         "integrations/node-red",
+        "integrations/nuki",
         "integrations/openweather",
         "integrations/openai",
         "integrations/owntracks",
