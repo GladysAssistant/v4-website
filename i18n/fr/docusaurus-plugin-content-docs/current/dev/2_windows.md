@@ -43,11 +43,11 @@ sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
 sudo apt install sqlite3 make g++ git coreutils tzdata nmap openssl gzip udev -y
 ```
 
-- Installation de Node.js 18:
+- Installation de Node.js 22:
 
 ```bash
 curl -sLO https://deb.nodesource.com/nsolid_setup_deb.sh
-sudo bash nsolid_setup_deb.sh 18
+sudo bash nsolid_setup_deb.sh 22
 sudo apt install nodejs -y
 ```
 

@@ -14,12 +14,12 @@ The server is a Node.js backend.
 
 You'll need:
 
-- Node.js 18 LTS ([Download](https://nodejs.org/en/download/) on MacOs).
-- Node.js 18 LTS on Ubuntu/Debian:
+- Node.js 22 LTS ([Download](https://nodejs.org/en/download/) on MacOs).
+- Node.js 22 LTS on Ubuntu/Debian:
 
   ```bash
   curl -sLO https://deb.nodesource.com/nsolid_setup_deb.sh
-  sudo bash nsolid_setup_deb.sh 18
+  sudo bash nsolid_setup_deb.sh 22
   sudo apt install nodejs -y
   ```
 Alternatively you can use [nvm](https://github.com/nvm-sh/nvm) to install and manage nodejs version.
