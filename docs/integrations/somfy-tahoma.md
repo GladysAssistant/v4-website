@@ -29,49 +29,13 @@ This step-by-step guide will explain how to expose and control your Somfy roller
 - A Somfy box: **Connexoon** (io-homecontrol® protocol), **TaHoma** (io, RTS), **TaHoma Switch** (io, RTS, Zigbee)
 - A valid and active Somfy account
 
-### 1. Deploy Matterbridge with Docker
+### 1. Deploy Matterbridge
 
-On your Gladys server, create a `matterbridge` folder:
+First, you need to deploy Matterbridge in Gladys. Follow the [Matterbridge integration guide](/docs/integrations/matterbridge/) to enable and start Matterbridge.
 
-```bash
-mkdir ~/matterbridge && cd ~/matterbridge
-```
+Once Matterbridge is running, access its web interface at `http://YOUR-SERVER-IP-ADDRESS:8283`.
 
-Copy and paste the `docker-compose.yml` below (with nano for example, `nano docker-compose.yml`):
-
-```yaml
-services:
-  matterbridge:
-    image: luligu/matterbridge:latest
-    container_name: matterbridge
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - TZ=Europe/Paris
-    ports:
-      - "8283:8283" # Exposes the Matterbridge Web UI
-    volumes:
-      - "${HOME}/matterbridge:/root/Matterbridge" # Mounts the Matterbridge plugin directory
-      - "${HOME}/.matterbridge:/root/.matterbridge" # Mounts the Matterbridge storage directory
-```
-
-Launch the container:
-
-```bash
-docker compose up -d
-```
-
-Follow the logs to retrieve the commissioning QR code:
-
-```bash
-docker compose logs -f
-```
-
-![log excerpt showing `✔ Commissioned` and the QR code](../../static/img/docs/en/configuration/shelly/1-matterbridge-logs.png)
-
-**Access the Web interface**: open `http://YOUR-SERVER-IP-ADDRESS:8283`.
-
-Go to the main page of Matterbridge. You should first check if an update is available. If so, execute it and wait until it restarts
+Go to the main page of Matterbridge. You should first check if an update is available. If so, run it and wait until it restarts.
 
 ![Matterbridge upgrade](../../static/img/docs/en/configuration/shelly/2-matterbridge-upgrade.png)
 

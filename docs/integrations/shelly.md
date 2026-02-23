@@ -26,47 +26,11 @@ This step-by-step guide will explain how to:
 - Docker + Docker Compose available on the host machine
 - Terminal/SSH access & text editor
 
-### 1. Deploy Matterbridge in Docker
+### 1. Deploy Matterbridge
 
-On your Gladys server, create a `matterbridge` folder:
+First, you need to deploy Matterbridge in Gladys. Follow the [Matterbridge integration guide](/docs/integrations/matterbridge/) to enable and start Matterbridge.
 
-```bash
-mkdir ~/matterbridge && cd ~/matterbridge
-```
-
-Copy and paste the `docker-compose.yml` below (with `nano docker-compose.yml` for example):
-
-```yaml
-services:
-  matterbridge:
-    image: luligu/matterbridge:latest
-    container_name: matterbridge
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - TZ=Europe/Paris
-    ports:
-      - "8283:8283" # Exposes Matterbridge Web UI
-    volumes:
-      - "${HOME}/matterbridge:/root/Matterbridge" # Mounts the Matterbridge plugin directory
-      - "${HOME}/.matterbridge:/root/.matterbridge" # Mounts the Matterbridge storage directory
-```
-
-Start the container:
-
-```bash
-docker compose up -d
-```
-
-Follow the logs to get the commissioning QR code:
-
-```bash
-docker compose logs -f
-```
-
-![log excerpt showing `✔ Commissioned` and the QR code](../../static/img/docs/en/configuration/shelly/1-matterbridge-logs.png)
-
-**Access the Web interface**: open `http://YOUR-SERVER-IP-ADDRESS:8283`.
+Once Matterbridge is running, access its web interface at `http://YOUR-SERVER-IP-ADDRESS:8283`.
 
 Go to the main page of Matterbridge. You should first check if an update is available. If so, run it and wait until it restarts.
 
