@@ -39,6 +39,7 @@ module.exports = {
         "integrations/google-home",
         "integrations/homekit",
         "integrations/matter",
+        "integrations/matterbridge",
         "integrations/mcp",
         "integrations/mqtt",
         "integrations/lan-manager",

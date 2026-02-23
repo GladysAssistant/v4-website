@@ -24,54 +24,17 @@ Ce guide pas à pas vous expliquera comment exposer et piloter vos volets roulan
 
 - Gladys Assistant 4.58 installé et fonctionnel
 - Réseau local IPv6 activé
-- Docker + Docker Compose disponibles sur la machine hôte
 - Accès terminal/SSH & éditeur de texte
 - Une box Somfy : **Connexoon** (protocole io-homecontrol®), **TaHoma** (io, RTS), **TaHoma Switch** (io, RTS, Zigbee)
 - Un compte Somfy valide et actif
 
-### 1. Déployer Matterbridge avec Docker
+### 1. Déployer Matterbridge
 
-Sur votre serveur Gladys, créez un dossier `matterbridge` :
+Tout d'abord, vous devez déployer Matterbridge dans Gladys. Suivez le [guide d'intégration Matterbridge](/fr/docs/integrations/matterbridge/) pour activer et démarrer Matterbridge.
 
-```bash
-mkdir ~/matterbridge && cd ~/matterbridge
-```
+Une fois Matterbridge lancé, accédez à son interface web à l'adresse `http://ADRESSE-IP-DE-VOTRE-SERVEUR:8283`.
 
-Copiez‑collez le `docker-compose.yml` ci‑dessous (avec nano par exemple, `nano docker-compose.yml`):
-
-```yaml
-services:
-  matterbridge:
-    image: luligu/matterbridge:latest
-    container_name: matterbridge
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - TZ=Europe/Paris
-    ports:
-      - "8283:8283" # Expose l’UI Web de Matterbridge
-    volumes:
-      - "${HOME}/matterbridge:/root/Matterbridge" # Mounts the Matterbridge plugin directory
-      - "${HOME}/.matterbridge:/root/.matterbridge" # Mounts the Matterbridge storage directory
-```
-
-Lancez le conteneur :
-
-```bash
-docker compose up -d
-```
-
-Suivez les logs pour récupérer le code QR de commissionnement :
-
-```bash
-docker compose logs -f
-```
-
-![extrait de logs affichant `✔ Commissioned` et le QR‑code](../../../../../static/img/docs/fr/configuration/shelly/1-matterbridge-logs.png)
-
-**Accédez à l’interface Web** : ouvrez `http://ADRESSE-IP-DE-VOTRE-SERVEUR:8283`.
-
-Rendez‑vous sur la page principale de matterbridge. Vous devrez vérifier en tout premier lieu si une mise à jour est disponible. Si c'est le cas exécutez la et patientez jusqu'au redémarrage
+Rendez-vous sur la page principale de Matterbridge. Vous devrez vérifier en tout premier lieu si une mise à jour est disponible. Si c'est le cas, exécutez-la et patientez jusqu'au redémarrage.
 
 ![Matterbridge upgrade](../../../../../static/img/docs/fr/configuration/shelly/2-matterbridge-upgrade.png)
 
