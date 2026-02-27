@@ -35,6 +35,10 @@ Select the settings the USB port is to use in order to allow Gladys to communica
 This tells Zigbee2mqtt which configuration to run.
 
 :::warning
+If you own an [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) based dongle (like for example the Sonoff Zigbee 3.0 ZBDongle-E), it's recommended to [update](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) the firmware dongle. Otherwise, you should choose the `(legacy ezsp)` option in the list.
+:::
+
+:::warning
 If you run Gladys on an external disk connected in USB, you may have power issues as your Pi can struggle to give enough power to both the disk and the Zigbee USB key.
 
 We recommend you use a externaly powered USB charging tower.

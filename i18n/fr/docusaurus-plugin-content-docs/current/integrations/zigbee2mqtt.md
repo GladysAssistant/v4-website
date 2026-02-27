@@ -54,6 +54,10 @@ En cliquant dans le menu sur `Paramètres`, Gladys va automatiquement scanner le
 
 Cela permet de charger directement la configuration Zigbee2mqtt correspondante.
 
+:::warning
+Si vous avez un dongle basé sur [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (comme par exemple le Sonoff Zigbee 3.0 ZBDongle-E), il est recommandé de [mettre à jour](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) le firmware de votre dongle. Dans le cas contraire, vous devez choisir l'option `(legacy ezsp)` dans la liste.
+:::
+
 ## Activez Zigbee2Mqtt
 
 Une fois votre dongle configuré, Gladys a besoin d'installer deux containers (MQTT et Zigbee2Mqtt) pour utiliser le dongle et communiquer avec tous vos appareils. Ne vous inquiétez pas, tout cela a été automatisé.
