@@ -81,4 +81,4 @@ If you have connection issues, verify that:
 - Your MELCloud account is active
 - You have internet connectivity
 
-If you have any questions, ask on [the forum](https:/community.gladysassistant.com/).
+If you have any questions, ask on [the forum](https://community.gladysassistant.com/).
