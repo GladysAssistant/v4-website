@@ -40,6 +40,7 @@ module.exports = {
         "integrations/homekit",
         "integrations/matter",
         "integrations/matterbridge",
+        "integrations/melcloud",
         "integrations/mcp",
         "integrations/mqtt",
         "integrations/lan-manager",
