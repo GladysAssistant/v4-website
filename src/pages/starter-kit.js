@@ -123,7 +123,7 @@ function Plus() {
   const [loading, setLoading] = useState(true);
   const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
   const [isBlackFridayActive, setIsBlackFridayActive] = useState(
-    BLACK_FRIDAY_CONFIG.ENABLED
+    BLACK_FRIDAY_CONFIG.ENABLED,
   );
 
   console.log("isBlackFridayActive", isBlackFridayActive);
@@ -134,7 +134,7 @@ function Plus() {
 
   async function fetchData() {
     const response = await fetch(
-      "https://black-friday-discount.gladysassistant.workers.dev/"
+      "https://black-friday-discount.gladysassistant.workers.dev/",
     );
     const data = await response.json();
     if (data.unavailable === true) {
@@ -182,7 +182,7 @@ function Plus() {
 
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
       );
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -220,7 +220,7 @@ function Plus() {
     dntActive =
       parseInt(
         navigator.msDoNotTrack || window.doNotTrack || navigator.doNotTrack,
-        10
+        10,
       ) === 1;
   }
 
@@ -437,9 +437,9 @@ function Plus() {
               <img
                 src={useBaseUrl("img/starter-kit/beelink_without_bg.png")}
                 srcSet={`${useBaseUrl(
-                  "img/starter-kit/beelink_without_bg.png"
+                  "img/starter-kit/beelink_without_bg.png",
                 )} 1x, ${useBaseUrl(
-                  "img/starter-kit/beelink_without_bg.png"
+                  "img/starter-kit/beelink_without_bg.png",
                 )} 2x`}
                 className={cx(styles.starterKitImage, styles.specImageLeft)}
               />
@@ -593,7 +593,7 @@ function Plus() {
                             disabled={loading || !priceT5}
                             className={cx(
                               "button button--primary button--lg",
-                              styles.starterKitInputButton
+                              styles.starterKitInputButton,
                             )}
                             style={{
                               width: "100%",
@@ -724,7 +724,7 @@ function Plus() {
                           disabled={loading || !priceMiniS}
                           className={cx(
                             "button button--primary button--lg",
-                            styles.starterKitInputButton
+                            styles.starterKitInputButton,
                           )}
                           style={{
                             width: "100%",
@@ -823,10 +823,10 @@ function Plus() {
                             <li>
                               ✓ Processeur Intel N150 (dernière génération)
                             </li>
-                            <li>✓ 16 Go de RAM DDR4</li>
+                            <li>✓ 12 Go de RAM DDR4</li>
                             <li>✓ 500 Go SSD M.2 NVMe</li>
                             <li>✓ WiFi 6 & Bluetooth 5.2</li>
-                            <li>✓ Ethernet Gigabit</li>
+                            <li>✓ Ethernet 2.5G</li>
                           </ul>
                           <p
                             style={{
@@ -855,7 +855,7 @@ function Plus() {
                           disabled={loading || !priceS13}
                           className={cx(
                             "button button--primary button--lg",
-                            styles.starterKitInputButton
+                            styles.starterKitInputButton,
                           )}
                           style={{
                             width: "100%",
@@ -1017,9 +1017,9 @@ function Plus() {
                     Processeur Intel N150 quad-core (Twin Lake) - Dernière
                     génération
                   </li>
-                  <li>16 Go de RAM DDR4 3200MHz</li>
-                  <li>Disque SSD M.2 SATA3 500Go + slot M.2 PCIe disponible</li>
-                  <li>Wi-Fi 6, Bluetooth 5.2 et LAN Gigabit</li>
+                  <li>12 Go de RAM DDR4</li>
+                  <li>Disque SSD 500Go + slot M.2 disponible</li>
+                  <li>Wi-Fi 6, Bluetooth 5.2 et LAN 2.5G</li>
                   <li>Double HDMI 4K@60Hz</li>
                 </ul>
               </p>
@@ -1068,7 +1068,7 @@ function Plus() {
               <img
                 src={useBaseUrl("img/plus/mockup-1x.png")}
                 srcSet={`${useBaseUrl(
-                  "img/plus/mockup-1x.png"
+                  "img/plus/mockup-1x.png",
                 )} 1x, ${useBaseUrl("img/plus/mockup-2x.png")} 2x`}
                 className={cx(styles.specImage, styles.specImageLeft)}
               />
@@ -1230,7 +1230,7 @@ function Plus() {
                 <li>
                   <b>Beelink S13</b> ⭐ : <b>Mon choix recommandé !</b> Le
                   meilleur équilibre avec un processeur Intel N150 de dernière
-                  génération, 16 Go de RAM et 500 Go de stockage. Parfait pour
+                  génération, 12 Go de RAM et 500 Go de stockage. Parfait pour
                   toutes les intégrations, même les plus gourmandes (Node-RED,
                   AdGuard Home, etc.).
                 </li>
@@ -1258,7 +1258,7 @@ function Plus() {
                       <td>Mémoire RAM</td>
                       {SHOW_BEELINK_T5 && <td>4 Go LPDDR4</td>}
                       <td>8 Go DDR4</td>
-                      <td>16 Go DDR4</td>
+                      <td>12 Go DDR4</td>
                     </tr>
                     <tr>
                       <td>Stockage</td>
@@ -1288,7 +1288,7 @@ function Plus() {
                       <td>LAN</td>
                       {SHOW_BEELINK_T5 && <td>Gigabit Ethernet (1000 Mbps)</td>}
                       <td>Gigabit Ethernet (1000 Mbps)</td>
-                      <td>Gigabit Ethernet (1000 Mbps)</td>
+                      <td>2.5G Ethernet (2500 Mbps)</td>
                     </tr>
                     <tr>
                       <td>Gladys</td>
