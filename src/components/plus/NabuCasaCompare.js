@@ -174,7 +174,7 @@ function NabuCasaCompare() {
             <tr>
               <th scope="row">
                 <Translate id="gladysPlusPage.v2.compare.row.localvoice">
-                  Local / private voice assistant
+                  TTS Voice
                 </Translate>
               </th>
               <td>
