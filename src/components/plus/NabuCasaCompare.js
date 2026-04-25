@@ -181,7 +181,9 @@ function NabuCasaCompare() {
                 <No />
               </td>
               <td>
-                <No />
+                <Translate id="gladysPlusPage.v2.compare.yes.ttsElevenLabs">
+                  Yes (TTS using ElevenLabs API)
+                </Translate>
               </td>
               <td>
                 <Translate id="gladysPlusPage.v2.compare.yes.nabu">
