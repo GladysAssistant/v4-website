@@ -171,161 +171,24 @@ function PlusContent() {
           <PricingTable language={language} />
         </section>
 
-        {/* DETAILED FEATURES */}
-        <section
-          className={plusStyles.section}
-          aria-labelledby="features-title"
-        >
-          <h2 id="features-title" className={plusStyles.sectionTitle}>
-            <Translate id="gladysPlusPage.v2.features.title">
-              What Gladys Plus unlocks
-            </Translate>
-          </h2>
-
-          <div className={cx("row", styles.plusRow)}>
-            <div className="col col--6">
-              <img
-                alt=""
-                className={cx(isDarkTheme ? "" : styles.invertImageColor)}
-                src={useBaseUrl("/img/plus/plus-e2e-white.png")}
-                style={{ width: "80%", marginLeft: "10%" }}
-              />
-            </div>
-            <div className="col col--6">
-              <h3 className={cx(styles.plusFeatureTitle)}>
-                <Translate id="gladysPlusPage.endToEndEncryptedRemoteAccess">
-                  End-to-End Encrypted remote access
-                </Translate>
-              </h3>
-              <p>
-                <Translate id="gladysPlusPage.endToEndEncryptedRemoteAccessText">
-                  Access your local Gladys instance from your phone or any
-                  browser, from anywhere in the world, without configuration.
-                </Translate>
-              </p>
-              <p>
-                <Translate id="gladysPlusPage.endToEndEncryptedRemoteAccessText2">
-                  The data is end-to-end encrypted using modern cryptography
-                  algorithm, we don't have access to your instance.
-                </Translate>
-              </p>
-            </div>
-          </div>
-
-          <div className={cx("row", styles.plusRow)}>
-            <div className="col col--6">
-              <h3 className={cx(styles.plusFeatureTitle)}>
-                <Translate id="gladysPlusPage.automatedBackups">
-                  Automatic & encrypted backups
-                </Translate>
-              </h3>
-              <p>
-                <Translate id="gladysPlusPage.automatedBackupsText">
-                  Gladys Plus backup your local instance once every day, so you
-                  don't have to worry about losing your local data again.
-                </Translate>
-              </p>
-              <p>
-                <Translate id="gladysPlusPage.automatedBackupsText2">
-                  Your data is encrypted with a key you own, we are not able to
-                  read your data.
-                </Translate>
-              </p>
-            </div>
-            <div className="col col--6">
-              <img
-                alt=""
-                src={useBaseUrl("/img/plus/plus-backup-white.png")}
-                className={cx(isDarkTheme ? "" : styles.invertImageColor)}
-                style={{ width: "80%", marginLeft: "10%" }}
-              />
-            </div>
-          </div>
-
-          <div className={cx("row", styles.plusRow)}>
-            <div className="col col--6">
-              <pre>
-                <code>
-                  {`POST https://api.gladysgateway.com/v1/api/device/state
-
-{
-    "device_feature_external_id": "temperature",
-    "state": 30
-}`}
-                </code>
-              </pre>
-            </div>
-            <div className="col col--6">
-              <h3 className={cx(styles.plusFeatureTitle)}>
-                <Translate id="gladysPlusPage.restApi">
-                  Remote REST API, from anywhere
-                </Translate>
-              </h3>
-              <p>
-                <Translate id="gladysPlusPage.restApiText">
-                  Send HTTP request from anywhere in the world, safely proxied
-                  to your local instance.
-                </Translate>
-              </p>
-            </div>
-          </div>
-
-          <div className={cx("row", styles.plusRow)}>
-            <div className="col col--6">
-              <h3 className={cx(styles.plusFeatureTitle)}>
-                <Translate id="gladysPlusPage.voiceAssistant">
-                  Voice assistant
-                </Translate>
-              </h3>
-              <p>
-                <Translate id="gladysPlusPage.voiceAssistantText">
-                  Send requests to any Gladys devices from Google Assistant or
-                  Amazon Alexa by voice, or from your phone on the Google Home /
-                  Alexa app.
-                </Translate>
-              </p>
-            </div>
-            <div className="col col--6">
-              <img
-                alt="Google Assistant"
-                src={useBaseUrl("/img/plus/google-assistant.svg")}
-                style={{ width: "40%", marginLeft: "30%" }}
-              />
-            </div>
-          </div>
-
-          <div className={cx("row", styles.plusRow)}>
-            <div className="col col--12">
-              <h3 className={cx(styles.plusFeatureTitle, "text--center")}>
-                <Translate id="gladysPlusPage.v2.features.advanced">
-                  And much more: Enedis, Mistral AI, camera streaming, MCP
-                  server
-                </Translate>
-              </h3>
-              <p
-                className="text--center"
-                style={{ maxWidth: "42rem", margin: "0 auto" }}
-              >
-                <Translate id="gladysPlusPage.v2.features.advancedText">
-                  Gladys Plus also includes the integrations that make a daily
-                  difference: electricity usage tracking with Enedis, natural
-                  voice control with Mistral AI (hosted in France by Scaleway),
-                  remote access to your camera streams, and an MCP server to
-                  plug your favorite AIs into your home automation.
-                </Translate>
-              </p>
-            </div>
-          </div>
-
-          {language === "fr" && (
-            <div className={cx("container", styles.plusRow)}>
-              <YoutubeEmbedVideo id="TmjrBeufjyo" />
-            </div>
-          )}
-        </section>
-
         {/* COMPARE */}
         <NabuCasaCompare />
+
+        {language === "fr" && (
+          <section
+            className={plusStyles.section}
+            aria-labelledby="demo-video-title"
+          >
+            <h2 id="demo-video-title" className={plusStyles.sectionTitle}>
+              <Translate id="gladysPlusPage.v2.video.title">
+                Gladys Plus en vidéo
+              </Translate>
+            </h2>
+            <div style={{ maxWidth: "56rem", margin: "0 auto" }}>
+              <YoutubeEmbedVideo id="TmjrBeufjyo" />
+            </div>
+          </section>
+        )}
 
         {/* EUROPEAN HOSTING */}
         <EuropeanHosting />
