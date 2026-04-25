@@ -82,6 +82,12 @@ module.exports = {
           position: "left",
         },
         {
+          to: "plus/",
+          activeBasePath: "plus",
+          label: "Gladys Plus",
+          position: "left",
+        },
+        {
           type: "localeDropdown",
           position: "right",
         },
