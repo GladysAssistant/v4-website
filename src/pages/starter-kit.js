@@ -281,6 +281,44 @@ function Plus() {
 
   return (
     <main>
+      <div
+        style={{
+          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+          color: "#78350f",
+          padding: "1.25rem 1rem",
+          textAlign: "center",
+          borderBottom: "1px solid #fcd34d",
+        }}
+      >
+        <div className="container" style={{ maxWidth: "900px" }}>
+          <p
+            style={{
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+              margin: "0 0 0.25rem 0",
+              color: "#78350f",
+            }}
+          >
+            🌴{" "}
+            <span style={{ whiteSpace: "nowrap" }}>
+              Actuellement en congés !
+            </span>
+          </p>
+          <p
+            style={{
+              fontSize: "1rem",
+              margin: 0,
+              color: "#78350f",
+            }}
+          >
+            Tu peux toujours commander ton kit, la reprise des expéditions se
+            fera le <b>mercredi 6 mai 2026</b>.{" "}
+            <span style={{ whiteSpace: "nowrap" }}>
+              Merci pour ta patience !
+            </span>
+          </p>
+        </div>
+      </div>
       {isBlackFridayActive && (
         <div
           style={{
