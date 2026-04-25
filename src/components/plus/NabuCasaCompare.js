@@ -3,10 +3,14 @@ import Translate from "@docusaurus/Translate";
 import styles from "./styles.module.css";
 
 const Yes = () => (
-  <span className={styles.cmpYes} aria-label="Yes">✓</span>
+  <span className={styles.cmpYes} aria-label="Yes">
+    ✓
+  </span>
 );
 const No = () => (
-  <span className={styles.cmpNo} aria-label="No">—</span>
+  <span className={styles.cmpNo} aria-label="No">
+    —
+  </span>
 );
 
 function NabuCasaCompare() {
@@ -87,9 +91,15 @@ function NabuCasaCompare() {
                   Encrypted remote access
                 </Translate>
               </th>
-              <td><Yes /></td>
-              <td><Yes /></td>
-              <td><Yes /></td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <Yes />
+              </td>
             </tr>
             <tr>
               <th scope="row">
@@ -97,9 +107,15 @@ function NabuCasaCompare() {
                   Google Home / Alexa
                 </Translate>
               </th>
-              <td><Yes /></td>
-              <td><Yes /></td>
-              <td><Yes /></td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <Yes />
+              </td>
             </tr>
             <tr>
               <th scope="row">
@@ -107,8 +123,12 @@ function NabuCasaCompare() {
                   Open REST API
                 </Translate>
               </th>
-              <td><Yes /></td>
-              <td><Yes /></td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <Yes />
+              </td>
               <td>
                 <Translate id="gladysPlusPage.v2.compare.partial.webhooks">
                   Webhooks only
@@ -121,8 +141,12 @@ function NabuCasaCompare() {
                   Cloud backups (E2E)
                 </Translate>
               </th>
-              <td><No /></td>
-              <td><Yes /></td>
+              <td>
+                <No />
+              </td>
+              <td>
+                <Yes />
+              </td>
               <td>
                 <Translate id="gladysPlusPage.v2.compare.partial.ncbackups">
                   Yes (encrypted in transit)
@@ -135,8 +159,12 @@ function NabuCasaCompare() {
                   Remote camera streaming
                 </Translate>
               </th>
-              <td><No /></td>
-              <td><Yes /></td>
+              <td>
+                <No />
+              </td>
+              <td>
+                <Yes />
+              </td>
               <td>
                 <Translate id="gladysPlusPage.v2.compare.partial.webrtc">
                   WebRTC support
@@ -149,8 +177,12 @@ function NabuCasaCompare() {
                   Local / private voice assistant
                 </Translate>
               </th>
-              <td><No /></td>
-              <td><No /></td>
+              <td>
+                <No />
+              </td>
+              <td>
+                <No />
+              </td>
               <td>
                 <Translate id="gladysPlusPage.v2.compare.yes.nabu">
                   Yes (Nabu voice)
@@ -160,12 +192,18 @@ function NabuCasaCompare() {
             <tr>
               <th scope="row">
                 <Translate id="gladysPlusPage.v2.compare.row.ai">
-                  ChatGPT / Mistral integration
+                  AI integration (Mistral, hosted in France)
                 </Translate>
               </th>
-              <td><No /></td>
-              <td><Yes /></td>
-              <td><No /></td>
+              <td>
+                <No />
+              </td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <No />
+              </td>
             </tr>
             <tr>
               <th scope="row">
@@ -173,9 +211,15 @@ function NabuCasaCompare() {
                   MCP server
                 </Translate>
               </th>
-              <td><No /></td>
-              <td><Yes /></td>
-              <td><No /></td>
+              <td>
+                <No />
+              </td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <No />
+              </td>
             </tr>
             <tr>
               <th scope="row">
@@ -183,9 +227,15 @@ function NabuCasaCompare() {
                   Enedis (French electricity data)
                 </Translate>
               </th>
-              <td><No /></td>
-              <td><Yes /></td>
-              <td><No /></td>
+              <td>
+                <No />
+              </td>
+              <td>
+                <Yes />
+              </td>
+              <td>
+                <No />
+              </td>
             </tr>
             <tr>
               <th scope="row">
@@ -237,17 +287,17 @@ function NabuCasaCompare() {
           <Translate id="gladysPlusPage.v2.compare.honest.nc">
             Nabu Casa is excellent if you're on Home Assistant. They include
             cloud backups, a privacy-focused local voice assistant (Nabu), and
-            WebRTC for cameras at €7.50/month. They also fund a whole
-            ecosystem (HA, ESPHome, Z-Wave JS) via the Open Home Foundation.
+            WebRTC for cameras at €7.50/month. They also fund a whole ecosystem
+            (HA, ESPHome, Z-Wave JS) via the Open Home Foundation.
           </Translate>
         </p>
         <p>
           <Translate id="gladysPlusPage.v2.compare.honest.gladys">
             Gladys Plus only makes sense if you actually use Gladys Assistant.
             Plus Lite is cheaper than Nabu Casa for the basics. Plus is more
-            expensive but adds an open REST API, AI integrations
-            (ChatGPT/Mistral/MCP), French integrations like Enedis, and direct
-            contact with the maker (in French if you want). It's an indie
+            expensive but adds an open REST API, AI integrations (Mistral hosted
+            by Scaleway in France, MCP), French integrations like Enedis, and
+            direct contact with the maker (in French if you want). It's an indie
             project funded by you alone — no investors, no foundation.
           </Translate>
         </p>

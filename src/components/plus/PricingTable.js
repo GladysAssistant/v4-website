@@ -21,12 +21,14 @@ const Check = () => (
   </svg>
 );
 
-const CHECKOUT_URL = "https://direct-pay-gladys-plus.gladysassistant.workers.dev";
+const CHECKOUT_URL =
+  "https://direct-pay-gladys-plus.gladysassistant.workers.dev";
 
 function PriceLine({ period, monthlyPrice, yearlyPrice }) {
-  const display = period === "yearly"
-    ? (yearlyPrice / 12).toFixed(2).replace(".", ",")
-    : monthlyPrice.toFixed(2).replace(".", ",");
+  const display =
+    period === "yearly"
+      ? (yearlyPrice / 12).toFixed(2).replace(".", ",")
+      : monthlyPrice.toFixed(2).replace(".", ",");
   return (
     <>
       <div className={styles.pricingPriceLine}>
@@ -104,13 +106,11 @@ function Plan({
         className={cx(
           "button",
           highlighted ? "button--primary" : "button--secondary",
-          styles.pricingCta
+          styles.pricingCta,
         )}
         data-track={`plus_click_subscribe_${planKey}_${period}`}
       >
-        <Translate id="gladysPlusPage.v2.subscribeCta">
-          Subscribe
-        </Translate>
+        <Translate id="gladysPlusPage.v2.subscribeCta">Subscribe</Translate>
       </a>
     </div>
   );
@@ -168,7 +168,7 @@ function PricingTable({ language }) {
     }),
     translate({
       id: "gladysPlusPage.v2.feature.ai",
-      message: "Mistral AI & ChatGPT integration",
+      message: "AI integration (Mistral, hosted in France)",
     }),
     translate({
       id: "gladysPlusPage.v2.feature.enedis",
@@ -252,7 +252,8 @@ function PricingTable({ language }) {
 
       <div className={styles.pricingFootnote}>
         <Translate id="gladysPlusPage.v2.guarantee">
-          ✓ Satisfait ou remboursé · ✓ Sans engagement · ✓ 1 mois d'essai gratuit
+          ✓ Satisfait ou remboursé · ✓ Sans engagement · ✓ 1 mois d'essai
+          gratuit
         </Translate>
       </div>
 

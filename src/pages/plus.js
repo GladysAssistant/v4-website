@@ -19,6 +19,7 @@ import NabuCasaCompare from "../components/plus/NabuCasaCompare";
 import FAQPlus from "../components/plus/FAQPlus";
 import FinalCTA from "../components/plus/FinalCTA";
 import MiniStats from "../components/plus/MiniStats";
+import EuropeanHosting from "../components/plus/EuropeanHosting";
 
 import styles from "./styles.module.css";
 import plusStyles from "../components/plus/styles.module.css";
@@ -297,7 +298,7 @@ function PlusContent() {
             <div className="col col--12">
               <h3 className={cx(styles.plusFeatureTitle, "text--center")}>
                 <Translate id="gladysPlusPage.v2.features.advanced">
-                  And much more: Enedis, ChatGPT/Mistral, camera streaming, MCP
+                  And much more: Enedis, Mistral AI, camera streaming, MCP
                   server
                 </Translate>
               </h3>
@@ -308,9 +309,9 @@ function PlusContent() {
                 <Translate id="gladysPlusPage.v2.features.advancedText">
                   Gladys Plus also includes the integrations that make a daily
                   difference: electricity usage tracking with Enedis, natural
-                  voice control with ChatGPT or Mistral, remote access to your
-                  camera streams, and an MCP server to plug your favorite AIs
-                  into your home automation.
+                  voice control with Mistral AI (hosted in France by Scaleway),
+                  remote access to your camera streams, and an MCP server to
+                  plug your favorite AIs into your home automation.
                 </Translate>
               </p>
             </div>
@@ -325,6 +326,9 @@ function PlusContent() {
 
         {/* COMPARE */}
         <NabuCasaCompare />
+
+        {/* EUROPEAN HOSTING */}
+        <EuropeanHosting />
 
         {/* TESTIMONIALS */}
         <div style={{ margin: "5rem 0" }}>

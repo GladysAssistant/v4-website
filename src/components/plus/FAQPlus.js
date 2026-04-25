@@ -8,9 +8,10 @@ const dataFr = [
       <>
         Tu as envie d'accéder simplement et de façon sécurisée à ton instance
         Gladys de n'importe où dans le monde ? Avoir des sauvegardes
-        quotidiennes chiffrées ? Brancher Enedis, ChatGPT/Mistral, du streaming
-        caméra, ou un serveur MCP ? Soutenir un projet open-source français en
-        pleine croissance ? Gladys Plus est fait pour toi !
+        quotidiennes chiffrées ? Brancher Enedis, l'IA Mistral (hébergée en
+        France chez Scaleway), du streaming caméra, ou un serveur MCP ? Soutenir
+        un projet open-source français en pleine croissance ? Gladys Plus est
+        fait pour toi !
       </>
     ),
   },
@@ -22,9 +23,9 @@ const dataFr = [
         : accès à distance chiffré, Google Home/Alexa, API REST ouverte, comptes
         famille. C'est moins cher que Nabu Casa. <strong>Plus</strong>{" "}
         (9,99€/mois ou 99,99€/an) ajoute les sauvegardes chiffrées quotidiennes,
-        le streaming caméra à distance, l'intégration ChatGPT/Mistral,
-        l'intégration Enedis et le serveur MCP. Tu peux passer de l'un à l'autre
-        à tout moment.
+        le streaming caméra à distance, l'intégration IA (Mistral, hébergée en
+        France), l'intégration Enedis et le serveur MCP. Tu peux passer de l'un
+        à l'autre à tout moment.
       </>
     ),
   },
@@ -120,9 +121,9 @@ const dataEn = [
     description: (
       <>
         Want secure remote access to your Gladys instance from anywhere?
-        Encrypted daily backups? Enedis, ChatGPT/Mistral, camera streaming, or
-        an MCP server? Support a growing French open-source project? Gladys Plus
-        is for you!
+        Encrypted daily backups? Enedis, Mistral AI (hosted in France by
+        Scaleway), camera streaming, or an MCP server? Support a growing French
+        open-source project? Gladys Plus is for you!
       </>
     ),
   },
@@ -134,8 +135,9 @@ const dataEn = [
         basics: encrypted remote access, Google Home/Alexa, open REST API,
         family accounts. It's cheaper than Nabu Casa. <strong>Plus</strong>{" "}
         (€9.99/month or €99.99/year) adds daily encrypted backups, remote camera
-        streaming, ChatGPT/Mistral integration, Enedis integration, and an MCP
-        server. You can switch between the two at any time.
+        streaming, AI integration (Mistral, hosted in France), Enedis
+        integration, and an MCP server. You can switch between the two at any
+        time.
       </>
     ),
   },

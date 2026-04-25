@@ -47,9 +47,9 @@ function Personas() {
           </h3>
           <p className={styles.personaText}>
             <Translate id="gladysPlusPage.v2.personas.power.text">
-              Enedis to track your electricity usage, ChatGPT/Mistral to talk to
-              your home, remote camera streaming, MCP server to plug your
-              favorite AIs into your home automation.
+              Enedis to track your electricity usage, Mistral AI to talk to your
+              home, remote camera streaming, MCP server to plug your favorite
+              AIs into your home automation.
             </Translate>
           </p>
         </div>
