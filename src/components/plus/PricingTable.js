@@ -263,12 +263,6 @@ function PricingTable({ language }) {
           commitment
         </Translate>
       </div>
-
-      <div className={styles.grandfathered}>
-        <Translate id="gladysPlusPage.v2.grandfathered">
-          Already a Gladys Plus user? Your current price is locked for life.
-        </Translate>
-      </div>
     </div>
   );
 }
