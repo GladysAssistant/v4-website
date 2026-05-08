@@ -63,11 +63,32 @@ function PlusContent() {
                 </Translate>
               </p>
 
+              <div className={plusStyles.heroTrialBanner}>
+                <span
+                  className={plusStyles.heroTrialBannerIcon}
+                  aria-hidden="true"
+                >
+                  🎁
+                </span>
+                <div>
+                  <strong>
+                    <Translate id="gladysPlusPage.v2.hero.trial.headline">
+                      Try free for 1 month
+                    </Translate>
+                  </strong>
+                  <span className={plusStyles.heroTrialBannerSub}>
+                    <Translate id="gladysPlusPage.v2.hero.trial.sub">
+                      No credit card required. No commitment.
+                    </Translate>
+                  </span>
+                </div>
+              </div>
+
               <div className={plusStyles.heroPrice}>
                 <span className={plusStyles.heroPriceFrom}>
                   <Translate id="gladysPlusPage.v2.hero.from">From</Translate>
                 </span>
-                <span className={plusStyles.heroPriceMain}>6,99€</span>
+                <span className={plusStyles.heroPriceMain}>5,83€</span>
                 <span className={plusStyles.heroPricePeriod}>
                   <Translate id="gladysPlusPage.v2.hero.perMonth">
                     /month
@@ -94,12 +115,6 @@ function PlusContent() {
                     No commitment
                   </Translate>
                 </span>
-                <span className={plusStyles.heroBadge}>
-                  ✓{" "}
-                  <Translate id="gladysPlusPage.v2.hero.badge.trial">
-                    1 month free trial
-                  </Translate>
-                </span>
               </div>
 
               <div className={plusStyles.heroCtas}>
@@ -109,7 +124,7 @@ function PlusContent() {
                   data-track="plus_hero_choose_plan"
                 >
                   <Translate id="gladysPlusPage.v2.hero.cta.primary">
-                    Choose your plan →
+                    Start my free trial →
                   </Translate>
                 </a>
                 <a

@@ -110,8 +110,15 @@ function Plan({
         )}
         data-track={`plus_click_subscribe_${planKey}_${period}`}
       >
-        <Translate id="gladysPlusPage.v2.subscribeCta">Subscribe</Translate>
+        <Translate id="gladysPlusPage.v2.startTrialCta">
+          Start 1-month free trial
+        </Translate>
       </a>
+      <div className={styles.pricingNoCc}>
+        <Translate id="gladysPlusPage.v2.noCreditCard">
+          No credit card required
+        </Translate>
+      </div>
     </div>
   );
 }
@@ -252,8 +259,8 @@ function PricingTable({ language }) {
 
       <div className={styles.pricingFootnote}>
         <Translate id="gladysPlusPage.v2.guarantee">
-          ✓ Satisfait ou remboursé · ✓ Sans engagement · ✓ 1 mois d'essai
-          gratuit
+          ✓ 1 month free trial (no credit card) · ✓ Satisfied or refunded · ✓ No
+          commitment
         </Translate>
       </div>
 
