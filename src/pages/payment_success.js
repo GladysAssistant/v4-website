@@ -46,7 +46,9 @@ function PaymentSuccess() {
             >
               Don't hesitate to follow us on:
             </Translate>{" "}
-            <a href="https://twitter.com/gladysassistant">Twitter</a>,{" "}
+            <a href="https://www.youtube.com/@gladysassistant">YouTube</a>,{" "}
+            <a href="https://www.tiktok.com/@gladysassistant">TikTok</a>,{" "}
+            <a href="https://x.com/gladysassistant">X</a>,{" "}
             <a href="https://facebook.com/gladysassistant">Facebook</a>,{" "}
             <a href="https://instagram.com/gladysassistant">Instagram</a>.
           </p>
