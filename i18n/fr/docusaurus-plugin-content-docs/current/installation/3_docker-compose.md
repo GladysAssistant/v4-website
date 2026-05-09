@@ -29,9 +29,8 @@ Docker Compose version v2.24.5
 
 ## Créer le fichier de configuration Docker Compose
 
+Ecrivez le texte suivant dans le fichier `gladys-compose.yml`.
 ```yaml
-version: "3"
-
 services:
   gladys:
     image: gladysassistant/gladys:v4
@@ -77,7 +76,7 @@ Quelques paramètres que vous pouvez personnaliser :
 Pour lancer Gladys (et Watchtower), exécutez la commande suivante :
 
 ```bash
-sudo docker compose up -d
+sudo docker compose -f gladys-compose.yml up -d
 ```
 
 Note:
