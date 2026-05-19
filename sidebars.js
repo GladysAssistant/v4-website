@@ -5,6 +5,7 @@ module.exports = {
       label: "Installation",
       items: [
         "installation/hardware",
+        "installation/recommended-hardware",
         "installation/mini-pc",
         "installation/docker",
         "installation/docker-compose",
