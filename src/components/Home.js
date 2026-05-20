@@ -1184,10 +1184,11 @@ function Home({ integrations, lang }) {
               >
                 <div className={styles.pressCardHeader}>
                   <img
-                    src="https://www.google.com/s2/favicons?domain=igen.fr&sz=64"
+                    src={useBaseUrl("/img/press/igen.png")}
                     alt="iGen"
                     width="24"
                     height="24"
+                    loading="lazy"
                   />
                   <span>iGen.fr</span>
                 </div>
@@ -1206,10 +1207,11 @@ function Home({ integrations, lang }) {
               >
                 <div className={styles.pressCardHeader}>
                   <img
-                    src="https://www.google.com/s2/favicons?domain=antoineguilbert.fr&sz=64"
+                    src={useBaseUrl("/img/press/antoineguilbert.jpg")}
                     alt="Antoine Guilbert"
                     width="24"
                     height="24"
+                    loading="lazy"
                   />
                   <span>antoineguilbert.fr</span>
                 </div>
@@ -1228,10 +1230,11 @@ function Home({ integrations, lang }) {
               >
                 <div className={styles.pressCardHeader}>
                   <img
-                    src="https://www.google.com/s2/favicons?domain=mcflypartages.fr&sz=64"
+                    src={useBaseUrl("/img/press/mcflypartages.jpg")}
                     alt="McFly Partages"
                     width="24"
                     height="24"
+                    loading="lazy"
                   />
                   <span>mcflypartages.fr</span>
                 </div>
@@ -1250,7 +1253,7 @@ function Home({ integrations, lang }) {
               >
                 <div className={styles.pressCardThumbnail}>
                   <img
-                    src="https://i.ytimg.com/vi/iqkG3mRUeBU/hqdefault.jpg"
+                    src={useBaseUrl("/img/press/youtube-aylabs-thumbnail.jpg")}
                     alt="Je quitte HOME ASSISTANT ?!"
                     loading="lazy"
                   />
@@ -1260,10 +1263,11 @@ function Home({ integrations, lang }) {
                 </div>
                 <div className={styles.pressCardHeader}>
                   <img
-                    src="https://www.google.com/s2/favicons?domain=youtube.com&sz=64"
+                    src={useBaseUrl("/img/press/youtube.png")}
                     alt="YouTube"
                     width="24"
                     height="24"
+                    loading="lazy"
                   />
                   <span>AyLabs · YouTube</span>
                 </div>
