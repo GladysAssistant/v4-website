@@ -1179,7 +1179,7 @@ function Home({ integrations, lang }) {
               <a
                 href="https://www.igen.fr/domotique/2026/02/gladys-assistant-la-domotique-plus-avancee-que-maison-et-plus-accessible-que-home-assistant-154785"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 className={styles.pressCard}
               >
                 <div className={styles.pressCardHeader}>
@@ -1201,7 +1201,7 @@ function Home({ integrations, lang }) {
               <a
                 href="https://www.antoineguilbert.fr/gladys-assistant-alternative-home-assistant/"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 className={styles.pressCard}
               >
                 <div className={styles.pressCardHeader}>
@@ -1223,7 +1223,7 @@ function Home({ integrations, lang }) {
               <a
                 href="https://mcflypartages.fr/blog/gladys_assistant_intro/"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 className={styles.pressCard}
               >
                 <div className={styles.pressCardHeader}>
@@ -1245,7 +1245,7 @@ function Home({ integrations, lang }) {
               <a
                 href="https://www.youtube.com/watch?v=iqkG3mRUeBU"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 className={classnames(styles.pressCard, styles.pressCardVideo)}
               >
                 <div className={styles.pressCardThumbnail}>
