@@ -1166,6 +1166,120 @@ function Home({ integrations, lang }) {
             </div>
           </div>
         </div>
+        {lang === "fr" && (
+          <div
+            className={classnames(styles.homeSection, styles.pressSection)}
+          >
+            <h2 className={styles.secondaryTitle}>Ils parlent de nous</h2>
+            <p className={styles.pressIntro}>
+              La presse et les créateurs de contenu ont testé Gladys Assistant.
+              Découvre leurs avis.
+            </p>
+            <div className={styles.pressGrid}>
+              <a
+                href="https://www.igen.fr/domotique/2026/02/gladys-assistant-la-domotique-plus-avancee-que-maison-et-plus-accessible-que-home-assistant-154785"
+                target="_blank"
+                rel="noopener"
+                className={styles.pressCard}
+              >
+                <div className={styles.pressCardHeader}>
+                  <img
+                    src={useBaseUrl("/img/press/igen.png")}
+                    alt="iGen"
+                    width="24"
+                    height="24"
+                    loading="lazy"
+                  />
+                  <span>iGen.fr</span>
+                </div>
+                <h4 className={styles.pressCardTitle}>
+                  Gladys Assistant, la domotique plus avancée que Maison et plus
+                  accessible que Home Assistant
+                </h4>
+                <span className={styles.pressCardLink}>Lire l'article →</span>
+              </a>
+
+              <a
+                href="https://www.antoineguilbert.fr/gladys-assistant-alternative-home-assistant/"
+                target="_blank"
+                rel="noopener"
+                className={styles.pressCard}
+              >
+                <div className={styles.pressCardHeader}>
+                  <img
+                    src={useBaseUrl("/img/press/antoineguilbert.jpg")}
+                    alt="Antoine Guilbert"
+                    width="24"
+                    height="24"
+                    loading="lazy"
+                  />
+                  <span>antoineguilbert.fr</span>
+                </div>
+                <h4 className={styles.pressCardTitle}>
+                  J'ai testé Gladys Assistant : mon avis sur l'alternative à
+                  Home Assistant
+                </h4>
+                <span className={styles.pressCardLink}>Lire l'article →</span>
+              </a>
+
+              <a
+                href="https://mcflypartages.fr/blog/gladys_assistant_intro/"
+                target="_blank"
+                rel="noopener"
+                className={styles.pressCard}
+              >
+                <div className={styles.pressCardHeader}>
+                  <img
+                    src={useBaseUrl("/img/press/mcflypartages.jpg")}
+                    alt="McFly Partages"
+                    width="24"
+                    height="24"
+                    loading="lazy"
+                  />
+                  <span>mcflypartages.fr</span>
+                </div>
+                <h4 className={styles.pressCardTitle}>
+                  Gladys Assistant - Une solution domotique (Cocorico)
+                  accessible et prometteuse
+                </h4>
+                <span className={styles.pressCardLink}>Lire l'article →</span>
+              </a>
+
+              <a
+                href="https://www.youtube.com/watch?v=iqkG3mRUeBU"
+                target="_blank"
+                rel="noopener"
+                className={classnames(styles.pressCard, styles.pressCardVideo)}
+              >
+                <div className={styles.pressCardThumbnail}>
+                  <img
+                    src={useBaseUrl("/img/press/youtube-aylabs-thumbnail.jpg")}
+                    alt="Je quitte HOME ASSISTANT ?!"
+                    loading="lazy"
+                  />
+                  <div className={styles.pressCardPlayOverlay}>
+                    <span className={styles.pressCardPlayTriangle} />
+                  </div>
+                </div>
+                <div className={styles.pressCardHeader}>
+                  <img
+                    src={useBaseUrl("/img/press/youtube.png")}
+                    alt="YouTube"
+                    width="24"
+                    height="24"
+                    loading="lazy"
+                  />
+                  <span>AyLabs · YouTube</span>
+                </div>
+                <h4 className={styles.pressCardTitle}>
+                  Je quitte HOME ASSISTANT ?! (Découverte Gladys Assistant)
+                </h4>
+                <span className={styles.pressCardLink}>Voir la vidéo →</span>
+              </a>
+            </div>
+          </div>
+        )}
+
         <div
           className={classnames(styles.homeSection, styles.newsletterSection)}
         >
