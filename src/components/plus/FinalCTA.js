@@ -2,9 +2,11 @@ import React from "react";
 import cx from "classnames";
 import Translate from "@docusaurus/Translate";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import { getCheckoutUrl } from "./checkout";
 import styles from "./styles.module.css";
 
-function FinalCTA() {
+function FinalCTA({ language }) {
+  const checkoutHref = getCheckoutUrl(language);
   return (
     <section className={styles.finalCta} aria-labelledby="final-cta-title">
       <h2 id="final-cta-title" className={styles.finalCtaTitle}>
@@ -14,16 +16,16 @@ function FinalCTA() {
       </h2>
       <p className={styles.finalCtaText}>
         <Translate id="gladysPlusPage.v2.finalCta.text">
-          One month free trial — no credit card required, no commitment. Cancel
+          One month free trial, no credit card required, no commitment. Cancel
           anytime. Or start with the starter kit, which includes Gladys
           pre-installed and 6 free months of Gladys Plus.
         </Translate>
       </p>
       <div className={styles.finalCtaButtons}>
         <a
-          href="#pricing"
+          href={checkoutHref}
           className={cx("button button--primary button--lg")}
-          data-track="plus_final_cta_subscribe"
+          data-track="plus_final_cta_subscribe_plus_yearly"
         >
           <Translate id="gladysPlusPage.v2.finalCta.primary">
             Start free trial

@@ -21,14 +21,23 @@ const Check = () => (
   </svg>
 );
 
-const CHECKOUT_URL =
-  "https://direct-pay-gladys-plus.gladysassistant.workers.dev";
+import { getCheckoutUrl } from "./checkout";
+
+function formatEuro(amount) {
+  return amount.toFixed(2).replace(".", ",");
+}
+
+function yearlySavingsAmount(monthlyPrice, yearlyPrice) {
+  return formatEuro(monthlyPrice * 12 - yearlyPrice);
+}
 
 function PriceLine({ period, monthlyPrice, yearlyPrice }) {
   const display =
     period === "yearly"
-      ? (yearlyPrice / 12).toFixed(2).replace(".", ",")
-      : monthlyPrice.toFixed(2).replace(".", ",");
+      ? formatEuro(yearlyPrice / 12)
+      : formatEuro(monthlyPrice);
+  const savings = yearlySavingsAmount(monthlyPrice, yearlyPrice);
+
   return (
     <>
       <div className={styles.pricingPriceLine}>
@@ -39,12 +48,22 @@ function PriceLine({ period, monthlyPrice, yearlyPrice }) {
       </div>
       <div className={styles.pricingBilling}>
         {period === "yearly" ? (
-          <Translate
-            id="gladysPlusPage.v2.billingYearlyAmount"
-            values={{ amount: yearlyPrice.toFixed(2).replace(".", ",") }}
-          >
-            {"{amount}€ facturés annuellement"}
-          </Translate>
+          <>
+            <Translate
+              id="gladysPlusPage.v2.billingYearlyAmount"
+              values={{ amount: formatEuro(yearlyPrice) }}
+            >
+              {"{amount}€ billed yearly"}
+            </Translate>
+            <div className={styles.pricingSavings}>
+              <Translate
+                id="gladysPlusPage.v2.billingYearlySavings"
+                values={{ amount: savings }}
+              >
+                {"You save {amount}€/year"}
+              </Translate>
+            </div>
+          </>
         ) : (
           <Translate id="gladysPlusPage.v2.billingMonthly">
             Sans engagement · annulation à tout moment
@@ -67,10 +86,7 @@ function Plan({
   highlighted,
   badgeLabel,
 }) {
-  const isFr = language === "fr";
-  const checkoutHref = `${CHECKOUT_URL}?locale=${
-    isFr ? "fr" : "en"
-  }&plan=${planKey}&period=${period}`;
+  const checkoutHref = getCheckoutUrl(language, planKey, period);
 
   return (
     <div
@@ -163,7 +179,7 @@ function PricingTable({ language }) {
   const plusFeatures = [
     translate({
       id: "gladysPlusPage.v2.plus.includesLite",
-      message: "Everything in Plus Lite, plus:",
+      message: "Everything in Lite, plus:",
     }),
     translate({
       id: "gladysPlusPage.v2.feature.backups",
@@ -190,6 +206,11 @@ function PricingTable({ language }) {
   return (
     <div className={styles.pricingWrapper} id="pricing">
       <div className={styles.toggleWrapper}>
+        <div className={styles.toggleLabel}>
+          <Translate id="gladysPlusPage.v2.toggleLabel">
+            Choose your billing:
+          </Translate>
+        </div>
         <div
           className={styles.toggle}
           role="tablist"
@@ -228,7 +249,7 @@ function PricingTable({ language }) {
           language={language}
           period={period}
           planKey="lite"
-          name="Gladys Plus Lite"
+          name="Lite"
           tagline={translate({
             id: "gladysPlusPage.v2.lite.tagline",
             message: "L'essentiel pour l'accès à distance",
@@ -241,7 +262,7 @@ function PricingTable({ language }) {
           language={language}
           period={period}
           planKey="plus"
-          name="Gladys Plus"
+          name="Plus"
           tagline={translate({
             id: "gladysPlusPage.v2.plus.tagline",
             message: "Toutes les intégrations avancées",
