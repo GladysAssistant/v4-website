@@ -16,16 +16,15 @@ const dataFr = [
     ),
   },
   {
-    title: "Quelle différence entre Gladys Plus Lite et Gladys Plus ?",
+    title: "Quelle différence entre la formule Lite et la formule Plus ?",
     description: (
       <>
-        <strong>Plus Lite</strong> (6,99€/mois ou 69,99€/an) couvre l'essentiel
-        : accès à distance chiffré, Google Home/Alexa, API REST ouverte, comptes
-        famille. C'est moins cher que Nabu Casa. <strong>Plus</strong>{" "}
-        (9,99€/mois ou 99,99€/an) ajoute les sauvegardes chiffrées quotidiennes,
-        le streaming caméra à distance, l'intégration IA (Mistral, hébergée en
-        France), l'intégration Enedis et le serveur MCP. Tu peux passer de l'un
-        à l'autre à tout moment.
+        <strong>Lite</strong> (6,99€/mois ou 69,99€/an) couvre l'essentiel :
+        accès à distance chiffré, Google Home/Alexa, API REST ouverte, comptes
+        famille. <strong>Plus</strong> (9,99€/mois ou 99,99€/an) ajoute les
+        sauvegardes chiffrées quotidiennes, le streaming caméra à distance,
+        l'intégration IA (Mistral, hébergée en France), l'intégration Enedis et
+        le serveur MCP. Tu peux passer de l'un à l'autre à tout moment.
       </>
     ),
   },
@@ -37,19 +36,6 @@ const dataFr = [
         connectes ensuite à ton instance Gladys locale, tu vas dans{" "}
         <em>Paramètres → Gladys Plus</em>, tu te connectes avec ton email/mot de
         passe et c'est tout. Aucun reset, aucune perte de configuration.
-      </>
-    ),
-  },
-  {
-    title: "Quelle différence avec Nabu Casa ?",
-    description: (
-      <>
-        Nabu Casa est l'équivalent côté Home Assistant. Gladys Plus est
-        légèrement plus cher mais : (1) c'est un projet 100% français, (2) les
-        sauvegardes sont chiffrées de bout en bout avec ta clé, (3) les
-        intégrations françaises (Enedis, Freebox) sont natives, (4) tu parles
-        directement au créateur en français. C'est un choix de soutien à un
-        projet indé, pas une comparaison de specs.
       </>
     ),
   },
@@ -128,16 +114,15 @@ const dataEn = [
     ),
   },
   {
-    title: "What's the difference between Gladys Plus Lite and Gladys Plus?",
+    title: "What's the difference between the Lite and Plus plans?",
     description: (
       <>
-        <strong>Plus Lite</strong> (€6.99/month or €69.99/year) covers the
-        basics: encrypted remote access, Google Home/Alexa, open REST API,
-        family accounts. It's cheaper than Nabu Casa. <strong>Plus</strong>{" "}
-        (€9.99/month or €99.99/year) adds daily encrypted backups, remote camera
-        streaming, AI integration (Mistral, hosted in France), Enedis
-        integration, and an MCP server. You can switch between the two at any
-        time.
+        <strong>Lite</strong> (€6.99/month or €69.99/year) covers the basics:
+        encrypted remote access, Google Home/Alexa, open REST API, family
+        accounts. <strong>Plus</strong> (€9.99/month or €99.99/year) adds daily
+        encrypted backups, remote camera streaming, AI integration (Mistral,
+        hosted in France), Enedis integration, and an MCP server. You can switch
+        between the two at any time.
       </>
     ),
   },
@@ -149,18 +134,6 @@ const dataEn = [
         your local Gladys instance, go to <em>Settings → Gladys Plus</em>, sign
         in with your email/password and that's it. No reset, no configuration
         lost.
-      </>
-    ),
-  },
-  {
-    title: "What's the difference with Nabu Casa?",
-    description: (
-      <>
-        Nabu Casa is the Home Assistant equivalent. Gladys Plus is slightly more
-        expensive but: (1) it's a 100% French project, (2) backups are
-        end-to-end encrypted with your own key, (3) French integrations (Enedis,
-        Freebox) are first-class, (4) you talk directly to the creator. It's a
-        choice to support an indie project, not a spec comparison.
       </>
     ),
   },

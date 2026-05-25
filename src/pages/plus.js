@@ -15,7 +15,6 @@ import testimonialsEn from "../components/testimonials/testimonial.plus.en.json"
 import BlackFridayBanner from "../components/plus/BlackFridayBanner";
 import PricingTable from "../components/plus/PricingTable";
 import Personas from "../components/plus/Personas";
-import NabuCasaCompare from "../components/plus/NabuCasaCompare";
 import FAQPlus from "../components/plus/FAQPlus";
 import FinalCTA from "../components/plus/FinalCTA";
 import MiniStats from "../components/plus/MiniStats";
@@ -63,7 +62,11 @@ function PlusContent() {
                 </Translate>
               </p>
 
-              <div className={plusStyles.heroTrialBanner}>
+              <a
+                href="#pricing"
+                className={plusStyles.heroTrialBanner}
+                data-track="plus_hero_trial_banner"
+              >
                 <span
                   className={plusStyles.heroTrialBannerIcon}
                   aria-hidden="true"
@@ -82,7 +85,13 @@ function PlusContent() {
                     </Translate>
                   </span>
                 </div>
-              </div>
+                <span
+                  className={plusStyles.heroTrialBannerArrow}
+                  aria-hidden="true"
+                >
+                  →
+                </span>
+              </a>
 
               <div className={plusStyles.heroPrice}>
                 <span className={plusStyles.heroPriceFrom}>
@@ -137,16 +146,6 @@ function PlusContent() {
                   </Translate>
                 </a>
               </div>
-              <div className={plusStyles.heroCompare}>
-                <a
-                  href="#compare-title"
-                  data-track="plus_hero_compare_nabucasa"
-                >
-                  <Translate id="gladysPlusPage.v2.hero.cta.compare">
-                    Compare with Nabu Casa →
-                  </Translate>
-                </a>
-              </div>
             </div>
             <div className="col col--6">
               <img
@@ -178,16 +177,13 @@ function PlusContent() {
           </h2>
           <p className={plusStyles.sectionSubtitle}>
             <Translate id="gladysPlusPage.v2.pricing.subtitle">
-              Plus Lite for the essentials (cheaper than Nabu Casa). Plus for
-              the full experience including AI, camera streaming, Enedis and
-              encrypted backups.
+              Lite for the essentials: remote access, voice assistants and open
+              API. Plus for the full experience including AI, camera streaming,
+              Enedis and encrypted backups.
             </Translate>
           </p>
           <PricingTable language={language} />
         </section>
-
-        {/* COMPARE */}
-        <NabuCasaCompare />
 
         {language === "fr" && (
           <section

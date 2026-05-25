@@ -20,18 +20,18 @@ function Personas() {
       <div className={styles.personas}>
         <div className={styles.personaCard}>
           <div className={styles.personaIcon} aria-hidden="true">
-            📱
+            🌍
           </div>
           <h3 className={styles.personaTitle}>
             <Translate id="gladysPlusPage.v2.personas.mobile.title">
-              You want your mobile app, anywhere
+              You want to access Gladys from anywhere
             </Translate>
           </h3>
           <p className={styles.personaText}>
             <Translate id="gladysPlusPage.v2.personas.mobile.text">
-              Reach your home automation from outside, securely, without opening
-              any port or renewing certificates. Everything is end-to-end
-              encrypted.
+              Reach your home automation from anywhere in the world, securely,
+              without opening any port or renewing certificates. Everything is
+              end-to-end encrypted.
             </Translate>
           </p>
         </div>

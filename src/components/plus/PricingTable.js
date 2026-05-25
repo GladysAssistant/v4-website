@@ -163,7 +163,7 @@ function PricingTable({ language }) {
   const plusFeatures = [
     translate({
       id: "gladysPlusPage.v2.plus.includesLite",
-      message: "Everything in Plus Lite, plus:",
+      message: "Everything in Lite, plus:",
     }),
     translate({
       id: "gladysPlusPage.v2.feature.backups",
@@ -190,6 +190,11 @@ function PricingTable({ language }) {
   return (
     <div className={styles.pricingWrapper} id="pricing">
       <div className={styles.toggleWrapper}>
+        <div className={styles.toggleLabel}>
+          <Translate id="gladysPlusPage.v2.toggleLabel">
+            Choose your billing:
+          </Translate>
+        </div>
         <div
           className={styles.toggle}
           role="tablist"
@@ -228,7 +233,7 @@ function PricingTable({ language }) {
           language={language}
           period={period}
           planKey="lite"
-          name="Gladys Plus Lite"
+          name="Lite"
           tagline={translate({
             id: "gladysPlusPage.v2.lite.tagline",
             message: "L'essentiel pour l'accès à distance",
@@ -241,7 +246,7 @@ function PricingTable({ language }) {
           language={language}
           period={period}
           planKey="plus"
-          name="Gladys Plus"
+          name="Plus"
           tagline={translate({
             id: "gladysPlusPage.v2.plus.tagline",
             message: "Toutes les intégrations avancées",
