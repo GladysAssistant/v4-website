@@ -23,6 +23,7 @@ import EuropeanHosting from "../components/plus/EuropeanHosting";
 import ValueAnchor from "../components/plus/ValueAnchor";
 import FounderNote from "../components/plus/FounderNote";
 import StickyMobileCta from "../components/plus/StickyMobileCta";
+import { getCheckoutUrl } from "../components/plus/checkout";
 
 import styles from "./styles.module.css";
 import plusStyles from "../components/plus/styles.module.css";
@@ -36,6 +37,7 @@ function PlusContent() {
   const { i18n } = useDocusaurusContext();
   const isDarkTheme = useColorMode().colorMode === "dark";
   const language = i18n.currentLocale;
+  const recommendedCheckoutHref = getCheckoutUrl(language);
 
   return (
     <main className={plusStyles.plusPageMain}>
@@ -79,9 +81,9 @@ function PlusContent() {
               </p>
 
               <a
-                href="#pricing"
+                href={recommendedCheckoutHref}
                 className={plusStyles.heroTrialBanner}
-                data-track="plus_hero_trial_banner"
+                data-track="plus_hero_trial_banner_plus_yearly"
               >
                 <span
                   className={plusStyles.heroTrialBannerIcon}
@@ -126,21 +128,21 @@ function PlusContent() {
 
               <div className={plusStyles.heroCtas}>
                 <a
-                  href="#pricing"
+                  href={recommendedCheckoutHref}
                   className="button button--primary button--lg"
-                  data-track="plus_hero_choose_plan"
+                  data-track="plus_hero_start_trial_plus_yearly"
                 >
                   <Translate id="gladysPlusPage.v2.hero.cta.primary">
                     Start my free trial →
                   </Translate>
                 </a>
                 <a
-                  href={useBaseUrl("/starter-kit")}
+                  href="#pricing"
                   className="button button--secondary button--lg"
-                  data-track="plus_hero_starter_kit"
+                  data-track="plus_hero_view_pricing"
                 >
-                  <Translate id="gladysPlusPage.v2.hero.cta.secondary">
-                    Starter kit (6 months free)
+                  <Translate id="gladysPlusPage.v2.hero.viewPricing">
+                    See plans and pricing
                   </Translate>
                 </a>
               </div>
@@ -167,6 +169,10 @@ function PlusContent() {
         <Personas />
 
         <HowItWorks />
+
+        <div style={{ margin: "4rem 0" }}>
+          <TestimonialSection lang={language} testimonials={testimonials} />
+        </div>
 
         {/* PRICING */}
         <section className={plusStyles.section} aria-labelledby="pricing-title">
@@ -204,11 +210,6 @@ function PlusContent() {
         {/* EUROPEAN HOSTING */}
         <EuropeanHosting />
 
-        {/* TESTIMONIALS */}
-        <div style={{ margin: "5rem 0" }}>
-          <TestimonialSection lang={language} testimonials={testimonials} />
-        </div>
-
         {/* FAQ */}
         <FAQPlus lang={language} />
 
@@ -217,10 +218,10 @@ function PlusContent() {
         <FounderNote />
 
         {/* FINAL CTA */}
-        <FinalCTA />
+        <FinalCTA language={language} />
       </div>
 
-      <StickyMobileCta />
+      <StickyMobileCta language={language} />
     </main>
   );
 }

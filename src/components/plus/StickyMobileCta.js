@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import cx from "classnames";
 import Translate from "@docusaurus/Translate";
+import { getCheckoutUrl } from "./checkout";
 import styles from "./styles.module.css";
 
 const MOBILE_MAX_WIDTH = 996;
 const SCROLL_THRESHOLD = 480;
 
-function StickyMobileCta() {
+function StickyMobileCta({ language }) {
+  const checkoutHref = getCheckoutUrl(language);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -31,9 +33,9 @@ function StickyMobileCta() {
   return (
     <div className={styles.stickyMobileCta} role="region" aria-label="Quick action">
       <a
-        href="#pricing"
+        href={checkoutHref}
         className={cx("button button--primary button--block", styles.stickyMobileCtaBtn)}
-        data-track="plus_sticky_mobile_cta"
+        data-track="plus_sticky_mobile_cta_plus_yearly"
       >
         <Translate id="gladysPlusPage.v2.stickyCta.label">
           Start my free trial →

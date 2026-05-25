@@ -21,8 +21,7 @@ const Check = () => (
   </svg>
 );
 
-const CHECKOUT_URL =
-  "https://direct-pay-gladys-plus.gladysassistant.workers.dev";
+import { getCheckoutUrl } from "./checkout";
 
 function formatEuro(amount) {
   return amount.toFixed(2).replace(".", ",");
@@ -87,10 +86,7 @@ function Plan({
   highlighted,
   badgeLabel,
 }) {
-  const isFr = language === "fr";
-  const checkoutHref = `${CHECKOUT_URL}?locale=${
-    isFr ? "fr" : "en"
-  }&plan=${planKey}&period=${period}`;
+  const checkoutHref = getCheckoutUrl(language, planKey, period);
 
   return (
     <div
