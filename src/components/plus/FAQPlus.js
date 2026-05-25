@@ -1,5 +1,46 @@
 import React from "react";
+import Translate from "@docusaurus/Translate";
 import styles from "./styles.module.css";
+
+const e2eSummaryFr = (
+  <>
+    Tes commandes et sauvegardes sont chiffrées de bout en bout : même si les
+    serveurs Gladys Plus étaient compromis, personne ne peut lire tes données
+    sans la clé privée de ton instance locale.
+  </>
+);
+
+const e2eTechnicalFr = (
+  <>
+    J'ai passé beaucoup de temps à étudier l'état de l'art (Apple iMessage,
+    Dashlane, Insomnia, ProtonMail). Gladys Plus chiffre tes commandes en
+    AES-GCM 256 bits avec une clé unique par message, encapsulée en RSA-OAEP 2048
+    bits avec la clé publique de ton instance, signée en ECDSA P-256 avec une
+    date d'expiration anti-replay. Côté Gladys, tu valides manuellement chaque
+    clé publique pour bloquer le man-in-the-middle. Même si Gladys Plus est
+    compromis, l'attaquant ne peut rien faire sans ta clé privée.
+  </>
+);
+
+const e2eSummaryEn = (
+  <>
+    Your commands and backups are end-to-end encrypted: even if Gladys Plus
+    servers were compromised, nobody can read your data without your local
+    instance's private key.
+  </>
+);
+
+const e2eTechnicalEn = (
+  <>
+    I spent a lot of time studying the state of the art (Apple iMessage,
+    Dashlane, Insomnia, ProtonMail). Gladys Plus encrypts your commands in
+    AES-GCM 256-bit with a unique key per message, wrapped with RSA-OAEP 2048-bit
+    using your instance's public key, signed with ECDSA P-256 and an expiry date
+    to prevent replay attacks. On Gladys side, you manually validate each public
+    key to block man-in-the-middle attacks. Even if Gladys Plus is compromised,
+    an attacker can do nothing without your private key.
+  </>
+);
 
 const dataFr = [
   {
@@ -72,21 +113,6 @@ const dataFr = [
     ),
   },
   {
-    title: "Peux-tu parler du chiffrement de bout en bout ?",
-    description: (
-      <>
-        J'ai passé beaucoup de temps à étudier l'état de l'art (Apple iMessage,
-        Dashlane, Insomnia, ProtonMail). Gladys Plus chiffre tes commandes en
-        AES-GCM 256 bits avec une clé unique par message, encapsulée en RSA-OAEP
-        2048 bits avec la clé publique de ton instance, signée en ECDSA P-256
-        avec une date d'expiration anti-replay. Côté Gladys, tu valides
-        manuellement chaque clé publique pour bloquer le man-in-the-middle. Même
-        si Gladys Plus est compromis, l'attaquant ne peut rien faire sans ta clé
-        privée.
-      </>
-    ),
-  },
-  {
     title: "Pourquoi Gladys Plus est-il payant ?",
     description: (
       <>
@@ -98,6 +124,11 @@ const dataFr = [
         publicité, pas de revente de données.
       </>
     ),
+  },
+  {
+    title: "Peux-tu parler du chiffrement de bout en bout ?",
+    description: e2eSummaryFr,
+    technicalDetail: e2eTechnicalFr,
   },
 ];
 
@@ -167,33 +198,42 @@ const dataEn = [
     ),
   },
   {
-    title: "Can you explain how end-to-end encryption works?",
-    description: (
-      <>
-        I spent a lot of time studying the state of the art (Apple iMessage,
-        Dashlane, Insomnia, ProtonMail). Gladys Plus encrypts your commands in
-        AES-GCM 256-bit with a unique key per message, wrapped with RSA-OAEP
-        2048-bit using your instance's public key, signed with ECDSA P-256 and
-        an expiry date to prevent replay attacks. On Gladys side, you manually
-        validate each public key to block man-in-the-middle attacks. Even if
-        Gladys Plus is compromised, an attacker can do nothing without your
-        private key.
-      </>
-    ),
-  },
-  {
     title: "Why isn't Gladys Plus free?",
     description: (
       <>
         Gladys and all its source code is free and open-source forever. But
         open-source doesn't mean free to run: servers, domains, community, email
-        services, hardware — and the time I spend on the project. This project
+        services, hardware, and the time I spend on the project. This project
         respects your privacy and <b>lives only on these contributions</b>. No
         investors, no ads, no data resale.
       </>
     ),
   },
+  {
+    title: "Can you explain how end-to-end encryption works?",
+    description: e2eSummaryEn,
+    technicalDetail: e2eTechnicalEn,
+  },
 ];
+
+function FaqItem({ item, lang }) {
+  return (
+    <div className={styles.faqItem}>
+      <h3>{item.title}</h3>
+      <div className={styles.faqAnswer}>{item.description}</div>
+      {item.technicalDetail && (
+        <details className={styles.faqDetails}>
+          <summary>
+            <Translate id="gladysPlusPage.v2.faq.e2e.details">
+              Read the technical details →
+            </Translate>
+          </summary>
+          <div className={styles.faqTechnical}>{item.technicalDetail}</div>
+        </details>
+      )}
+    </div>
+  );
+}
 
 function FAQPlus({ lang }) {
   const data = lang === "en" ? dataEn : dataFr;
@@ -208,10 +248,7 @@ function FAQPlus({ lang }) {
       </h2>
       <div className={styles.faqGrid}>
         {data.map((item, i) => (
-          <div className={styles.faqItem} key={i}>
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-          </div>
+          <FaqItem item={item} lang={lang} key={i} />
         ))}
       </div>
     </section>

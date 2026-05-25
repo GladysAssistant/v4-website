@@ -12,7 +12,7 @@ function Personas() {
       </h2>
       <p className={styles.sectionSubtitle}>
         <Translate id="gladysPlusPage.v2.personas.subtitle">
-          Gladys Plus is built for three kinds of users — you probably recognize
+          Gladys Plus is built for three kinds of users, and you probably recognize
           yourself in one of them.
         </Translate>
       </p>

@@ -14,7 +14,7 @@ function FinalCTA() {
       </h2>
       <p className={styles.finalCtaText}>
         <Translate id="gladysPlusPage.v2.finalCta.text">
-          One month free trial — no credit card required, no commitment. Cancel
+          One month free trial, no credit card required, no commitment. Cancel
           anytime. Or start with the starter kit, which includes Gladys
           pre-installed and 6 free months of Gladys Plus.
         </Translate>

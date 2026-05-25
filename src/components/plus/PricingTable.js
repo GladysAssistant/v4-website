@@ -24,11 +24,21 @@ const Check = () => (
 const CHECKOUT_URL =
   "https://direct-pay-gladys-plus.gladysassistant.workers.dev";
 
+function formatEuro(amount) {
+  return amount.toFixed(2).replace(".", ",");
+}
+
+function yearlySavingsAmount(monthlyPrice, yearlyPrice) {
+  return formatEuro(monthlyPrice * 12 - yearlyPrice);
+}
+
 function PriceLine({ period, monthlyPrice, yearlyPrice }) {
   const display =
     period === "yearly"
-      ? (yearlyPrice / 12).toFixed(2).replace(".", ",")
-      : monthlyPrice.toFixed(2).replace(".", ",");
+      ? formatEuro(yearlyPrice / 12)
+      : formatEuro(monthlyPrice);
+  const savings = yearlySavingsAmount(monthlyPrice, yearlyPrice);
+
   return (
     <>
       <div className={styles.pricingPriceLine}>
@@ -39,12 +49,22 @@ function PriceLine({ period, monthlyPrice, yearlyPrice }) {
       </div>
       <div className={styles.pricingBilling}>
         {period === "yearly" ? (
-          <Translate
-            id="gladysPlusPage.v2.billingYearlyAmount"
-            values={{ amount: yearlyPrice.toFixed(2).replace(".", ",") }}
-          >
-            {"{amount}€ facturés annuellement"}
-          </Translate>
+          <>
+            <Translate
+              id="gladysPlusPage.v2.billingYearlyAmount"
+              values={{ amount: formatEuro(yearlyPrice) }}
+            >
+              {"{amount}€ billed yearly"}
+            </Translate>
+            <div className={styles.pricingSavings}>
+              <Translate
+                id="gladysPlusPage.v2.billingYearlySavings"
+                values={{ amount: savings }}
+              >
+                {"You save {amount}€/year"}
+              </Translate>
+            </div>
+          </>
         ) : (
           <Translate id="gladysPlusPage.v2.billingMonthly">
             Sans engagement · annulation à tout moment

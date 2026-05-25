@@ -18,7 +18,11 @@ import Personas from "../components/plus/Personas";
 import FAQPlus from "../components/plus/FAQPlus";
 import FinalCTA from "../components/plus/FinalCTA";
 import MiniStats from "../components/plus/MiniStats";
+import HowItWorks from "../components/plus/HowItWorks";
 import EuropeanHosting from "../components/plus/EuropeanHosting";
+import ValueAnchor from "../components/plus/ValueAnchor";
+import FounderNote from "../components/plus/FounderNote";
+import StickyMobileCta from "../components/plus/StickyMobileCta";
 
 import styles from "./styles.module.css";
 import plusStyles from "../components/plus/styles.module.css";
@@ -34,7 +38,7 @@ function PlusContent() {
   const language = i18n.currentLocale;
 
   return (
-    <main>
+    <main className={plusStyles.plusPageMain}>
       <BlackFridayBanner language={language} />
 
       <div
@@ -51,14 +55,26 @@ function PlusContent() {
             <div className="col col--6">
               <h1 className={plusStyles.heroTitle}>
                 <Translate id="gladysPlusPage.v2.hero.title">
-                  Gladys Plus
+                  Control your home from anywhere, securely
                 </Translate>
               </h1>
               <p className={plusStyles.heroSubtitle}>
                 <Translate id="gladysPlusPage.v2.hero.subtitle">
-                  Gladys Assistant is free and open-source, forever. Gladys Plus
-                  is the subscription that funds the project and unlocks remote
-                  access, encrypted backups, and all advanced integrations.
+                  Gladys Plus unlocks encrypted remote access, automatic
+                  backups, and advanced integrations for your Gladys Assistant.
+                  Try it free for 1 month, no credit card required.
+                </Translate>
+              </p>
+
+              <p className={plusStyles.heroSocialProof}>
+                <span
+                  className={plusStyles.heroSocialProofStar}
+                  aria-hidden="true"
+                >
+                  ★
+                </span>
+                <Translate id="gladysPlusPage.v2.hero.socialProof.github">
+                  3,100+ stars on GitHub · open-source since 2013
                 </Translate>
               </p>
 
@@ -92,24 +108,6 @@ function PlusContent() {
                   →
                 </span>
               </a>
-
-              <div className={plusStyles.heroPrice}>
-                <span className={plusStyles.heroPriceFrom}>
-                  <Translate id="gladysPlusPage.v2.hero.from">From</Translate>
-                </span>
-                <span className={plusStyles.heroPriceMain}>5,83€</span>
-                <span className={plusStyles.heroPricePeriod}>
-                  <Translate id="gladysPlusPage.v2.hero.perMonth">
-                    /month
-                  </Translate>
-                </span>
-              </div>
-              <div className={plusStyles.heroPriceAlt}>
-                <Translate id="gladysPlusPage.v2.hero.altPrice2">
-                  Two plans: Plus Lite (6,99€/mo) or Plus (9,99€/mo). Save 17%
-                  yearly.
-                </Translate>
-              </div>
 
               <div className={plusStyles.heroBadges}>
                 <span className={plusStyles.heroBadge}>
@@ -168,6 +166,8 @@ function PlusContent() {
         {/* PERSONAS */}
         <Personas />
 
+        <HowItWorks />
+
         {/* PRICING */}
         <section className={plusStyles.section} aria-labelledby="pricing-title">
           <h2 id="pricing-title" className={plusStyles.sectionTitle}>
@@ -212,9 +212,15 @@ function PlusContent() {
         {/* FAQ */}
         <FAQPlus lang={language} />
 
+        <ValueAnchor />
+
+        <FounderNote />
+
         {/* FINAL CTA */}
         <FinalCTA />
       </div>
+
+      <StickyMobileCta />
     </main>
   );
 }
@@ -224,11 +230,12 @@ function PlusParent() {
     <Layout
       title={translate({
         id: "gladysgladysPlusPage.title",
-        message: "Gladys Plus",
+        message: "Gladys Plus: secure remote access for your smart home",
       })}
       description={translate({
         id: "gladysgladysPlusPage.metaDescription",
-        message: "Add more features to Gladys Assistant with Gladys Plus",
+        message:
+          "Access Gladys Assistant from anywhere with end-to-end encryption. Daily backups, voice assistants, AI, and more. Try Gladys Plus free for 1 month, no credit card required.",
       })}
     >
       <PlusContent />
