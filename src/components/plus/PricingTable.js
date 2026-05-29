@@ -191,7 +191,7 @@ function PricingTable({ language }) {
     }),
     translate({
       id: "gladysPlusPage.v2.feature.ai",
-      message: "AI integration (Mistral, hosted in France)",
+      message: "Open-Weight AI models",
     }),
     translate({
       id: "gladysPlusPage.v2.feature.enedis",

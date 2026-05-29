@@ -49,8 +49,9 @@ const dataFr = [
       <>
         Tu as envie d'accéder simplement et de façon sécurisée à ton instance
         Gladys de n'importe où dans le monde ? Avoir des sauvegardes
-        quotidiennes chiffrées ? Brancher Enedis, l'IA Mistral (hébergée en
-        France chez Scaleway), du streaming caméra, ou un serveur MCP ? Soutenir
+        quotidiennes chiffrées ? Brancher Enedis, des modèles d'IA Open-Weight
+        (hébergés en France chez Scaleway), du streaming caméra, ou un serveur
+        MCP ? Soutenir
         un projet open-source français en pleine croissance ? Gladys Plus est
         fait pour toi !
       </>
@@ -64,7 +65,8 @@ const dataFr = [
         accès à distance chiffré, Google Home/Alexa, API REST ouverte, comptes
         famille. <strong>Plus</strong> (9,99€/mois ou 99,99€/an) ajoute les
         sauvegardes chiffrées quotidiennes, le streaming caméra à distance,
-        l'intégration IA (Mistral, hébergée en France), l'intégration Enedis et
+        des modèles d'IA Open-Weight (hébergés en France chez Scaleway),
+        l'intégration Enedis et
         le serveur MCP. Tu peux passer de l'un à l'autre à tout moment.
       </>
     ),
@@ -138,9 +140,9 @@ const dataEn = [
     description: (
       <>
         Want secure remote access to your Gladys instance from anywhere?
-        Encrypted daily backups? Enedis, Mistral AI (hosted in France by
-        Scaleway), camera streaming, or an MCP server? Support a growing French
-        open-source project? Gladys Plus is for you!
+        Encrypted daily backups? Enedis, Open-Weight AI models, camera
+        streaming, or an MCP server? Support a growing
+        French open-source project? Gladys Plus is for you!
       </>
     ),
   },
@@ -151,8 +153,9 @@ const dataEn = [
         <strong>Lite</strong> (€6.99/month or €69.99/year) covers the basics:
         encrypted remote access, Google Home/Alexa, open REST API, family
         accounts. <strong>Plus</strong> (€9.99/month or €99.99/year) adds daily
-        encrypted backups, remote camera streaming, AI integration (Mistral,
-        hosted in France), Enedis integration, and an MCP server. You can switch
+        encrypted backups, remote camera streaming, Open-Weight AI models,
+        Enedis integration, and an MCP server.
+        You can switch
         between the two at any time.
       </>
     ),

@@ -194,7 +194,7 @@ function NabuCasaCompare() {
             <tr>
               <th scope="row">
                 <Translate id="gladysPlusPage.v2.compare.row.ai">
-                  AI integration (Mistral, hosted in France)
+                  Open-Weight AI models
                 </Translate>
               </th>
               <td>
@@ -297,8 +297,9 @@ function NabuCasaCompare() {
           <Translate id="gladysPlusPage.v2.compare.honest.gladys">
             Gladys Plus only makes sense if you actually use Gladys Assistant.
             Plus Lite is cheaper than Nabu Casa for the basics. Plus is more
-            expensive but adds an open REST API, AI integrations (Mistral hosted
-            by Scaleway in France, MCP), French integrations like Enedis, and
+            expensive but adds an open REST API, Open-Weight AI models, MCP,
+            French integrations like Enedis,
+            and
             direct contact with the maker (in French if you want). It's an indie
             project funded by you alone — no investors, no foundation.
           </Translate>

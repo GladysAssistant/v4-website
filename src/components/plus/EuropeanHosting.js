@@ -33,14 +33,14 @@ function EuropeanHosting() {
             </div>
             <h3 className={styles.euCardTitle}>
               <Translate id="gladysPlusPage.v2.eu.ai.title">
-                AI models hosted in France
+                Open-Weight AI models
               </Translate>
             </h3>
             <p className={styles.euCardText}>
               <Translate id="gladysPlusPage.v2.eu.ai.text">
-                The Mistral AI models used by Gladys Plus are hosted by
-                Scaleway, a French cloud provider, in French data centers.
-                Nothing leaves the country for AI inference.
+                The Open-Weight AI models used by Gladys Plus are hosted by
+                Scaleway in European data centers. AI inference stays within the
+                EU.
               </Translate>
             </p>
           </div>
@@ -51,14 +51,13 @@ function EuropeanHosting() {
             </div>
             <h3 className={styles.euCardTitle}>
               <Translate id="gladysPlusPage.v2.eu.infra.title">
-                Infrastructure in France & Germany
+                Infrastructure in Europe
               </Translate>
             </h3>
             <p className={styles.euCardText}>
               <Translate id="gladysPlusPage.v2.eu.infra.text">
-                The Gladys Plus infrastructure (API, backups, relays) runs on
-                European data centers located in France and Germany, operated
-                under GDPR.
+                The Gladys Plus infrastructure (API, backups, relays) runs in
+                European data centers, operated under GDPR.
               </Translate>
             </p>
           </div>
