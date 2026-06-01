@@ -106,6 +106,7 @@ module.exports = {
         "dashboard/weather",
         "dashboard/chart",
         "dashboard/gauge",
+        "dashboard/voice-assistant",
         "dashboard/temperature-in-room",
         "dashboard/humidity-in-room",
         "dashboard/camera",
