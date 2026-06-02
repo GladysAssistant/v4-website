@@ -13,6 +13,7 @@ import styles from "./styles.module.css";
 
 import { translate } from "@docusaurus/Translate";
 import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
+import { appendConversionAttributionToUrl } from "../utils/conversionAttribution";
 
 const SHOW_BEELINK_T5 = false;
 const IS_IN_HOLIDAY = false;
@@ -232,7 +233,7 @@ function Plus() {
       if (window.op && !dntActive) {
         await window.op.track("starter_kit_click_buy_mini_s13");
       }
-      window.location.href = s13Url;
+      window.location.href = appendConversionAttributionToUrl(s13Url);
     }
   };
 
@@ -243,7 +244,7 @@ function Plus() {
       if (window.op && !dntActive) {
         await window.op.track("starter_kit_click_buy_mini_t5");
       }
-      window.location.href = t5Url;
+      window.location.href = appendConversionAttributionToUrl(t5Url);
     }
   };
 
@@ -254,7 +255,7 @@ function Plus() {
       if (window.op && !dntActive) {
         await window.op.track("starter_kit_click_buy_mini_s");
       }
-      window.location.href = miniSUrl;
+      window.location.href = appendConversionAttributionToUrl(miniSUrl);
     }
   };
 

@@ -1,3 +1,5 @@
+import { appendConversionAttributionToUrl } from "../../utils/conversionAttribution";
+
 export const CHECKOUT_URL =
   "https://direct-pay-gladys-plus.gladysassistant.workers.dev";
 
@@ -11,5 +13,10 @@ export function getCheckoutUrl(
   period = RECOMMENDED_PERIOD,
 ) {
   const isFr = language === "fr";
-  return `${CHECKOUT_URL}?locale=${isFr ? "fr" : "en"}&plan=${plan}&period=${period}`;
+  const checkoutUrl = new URL(CHECKOUT_URL);
+  checkoutUrl.searchParams.set("locale", isFr ? "fr" : "en");
+  checkoutUrl.searchParams.set("plan", plan);
+  checkoutUrl.searchParams.set("period", period);
+
+  return appendConversionAttributionToUrl(checkoutUrl.toString());
 }
