@@ -45,13 +45,12 @@ If you already have compatible hardware:
   - Reuse your existing hardware
   - Follow our installation guides below
 
-### Option 4: Raspberry Pi (Not Recommended)
+### Option 4: Raspberry Pi
 
-- If you already own a Raspberry Pi, you can test Gladys on it
-- However, **I do not recommend this option in the long term**:
-  - Total cost is relatively high (Pi + power supply + case + SSD)
-  - Micro-SD cards are **strongly discouraged** (high risk of data corruption)
-  - Power supply instability makes Zigbee/Z-Wave dongles unreliable
+- A great way to discover Gladys if you already have one on hand
+- Simplified setup with our official 64-bit image (Pi 3, 4, and 5)
+- 👉 [Raspberry Pi installation guide](/docs/installation/raspberry-pi/)
+- For everyday long-term use, a mini-PC is still the better choice
 
 ## Installing Gladys Assistant
 
