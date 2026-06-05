@@ -865,7 +865,7 @@ function Plus() {
                             <li>
                               ✓ Processeur Intel N150 (dernière génération)
                             </li>
-                            <li>✓ 12 Go de RAM DDR4</li>
+                            <li>✓ 16 Go de RAM DDR4</li>
                             <li>✓ 500 Go SSD M.2 NVMe</li>
                             <li>✓ WiFi 6 & Bluetooth 5.2</li>
                             <li>✓ Ethernet 2.5G</li>
@@ -1059,7 +1059,7 @@ function Plus() {
                     Processeur Intel N150 quad-core (Twin Lake) - Dernière
                     génération
                   </li>
-                  <li>12 Go de RAM DDR4</li>
+                  <li>16 Go de RAM DDR4</li>
                   <li>Disque SSD 500Go + slot M.2 disponible</li>
                   <li>Wi-Fi 6, Bluetooth 5.2 et LAN 2.5G</li>
                   <li>Double HDMI 4K@60Hz</li>
@@ -1272,7 +1272,7 @@ function Plus() {
                 <li>
                   <b>Beelink S13</b> ⭐ : <b>Mon choix recommandé !</b> Le
                   meilleur équilibre avec un processeur Intel N150 de dernière
-                  génération, 12 Go de RAM et 500 Go de stockage. Parfait pour
+                  génération, 16 Go de RAM et 500 Go de stockage. Parfait pour
                   toutes les intégrations, même les plus gourmandes (Node-RED,
                   AdGuard Home, etc.).
                 </li>
@@ -1300,7 +1300,7 @@ function Plus() {
                       <td>Mémoire RAM</td>
                       {SHOW_BEELINK_T5 && <td>4 Go LPDDR4</td>}
                       <td>8 Go DDR4</td>
-                      <td>12 Go DDR4</td>
+                      <td>16 Go DDR4</td>
                     </tr>
                     <tr>
                       <td>Stockage</td>
