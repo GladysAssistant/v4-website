@@ -46,9 +46,11 @@ Gladys peut tourner sur n'importe quelle machine sous Linux :
   - Si vous avez déjà un NAS Synology, un serveur Linux ou tout autre matériel compatible Docker
   - Idéal pour réutiliser du matériel existant
 
-- **Raspberry Pi** (déconseillé)
-  - Possible si vous possédez déjà un Raspberry Pi, mais **non recommandé pour une utilisation long terme**
-  - Problèmes fréquents : coût total élevé (Pi + alimentation + boîtier + SSD), instabilité avec carte micro-SD, difficultés avec les dongles Zigbee/Z-Wave
+- **Raspberry Pi**
+  - Idéal pour découvrir Gladys si vous en avez déjà un sous la main
+  - Installation simplifiée grâce à notre image officielle 64 bits (Pi 3, 4 et 5)
+  - 👉 [Tutoriel d'installation sur Raspberry Pi](/fr/docs/installation/raspberry-pi/)
+  - Pour une utilisation au quotidien sur le long terme, un mini-PC reste préférable
 
 ## Définir votre projet de maison connectée
 

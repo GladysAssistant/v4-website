@@ -13,23 +13,7 @@ Gladys Assistant is a self-hosted software, which means everything works locally
 
 You have several options to run Gladys:
 
-### Option 1: Official Starter Kit (Europe Only for now 🇪🇺)
-
-The easiest way to get started is with our **official starter kit**:
-
-- **Gladys pre-installed** on a powerful Beelink mini-PC
-- **Plug & play**: Receive it, plug it in, and you're ready in 5 minutes
-- **6 months of Gladys Plus included** for remote access
-- **Official training included** with hours of video tutorials
-- **Support included**: I'm here to help if you have questions
-
-👉 [Discover the starter kit](https://gladysassistant.com/fr/starter-kit/) (Ships to Europe only for now)
-
-**Note:** The starter kit currently ships only to European countries. If you're outside Europe, see the options below.
-
-### Option 2: DIY Installation on Mini-PC
-
-If you're outside Europe or prefer to install Gladys yourself:
+### Option 1: Mini-PC (Recommended)
 
 - **Beelink Mini S13** or similar mini-PC
   - Powerful and stable hardware (Intel N150, 16GB RAM, 500GB NVMe SSD)
@@ -37,7 +21,7 @@ If you're outside Europe or prefer to install Gladys yourself:
   - Available on [Amazon US](https://amzn.to/4gKDV2E) or your local retailer
   - **Best price/performance ratio for a long-term setup**
 
-### Option 3: Existing Hardware
+### Option 2: Existing Hardware
 
 If you already have compatible hardware:
 
@@ -45,13 +29,12 @@ If you already have compatible hardware:
   - Reuse your existing hardware
   - Follow our installation guides below
 
-### Option 4: Raspberry Pi (Not Recommended)
+### Option 3: Raspberry Pi
 
-- If you already own a Raspberry Pi, you can test Gladys on it
-- However, **I do not recommend this option in the long term**:
-  - Total cost is relatively high (Pi + power supply + case + SSD)
-  - Micro-SD cards are **strongly discouraged** (high risk of data corruption)
-  - Power supply instability makes Zigbee/Z-Wave dongles unreliable
+- A great way to discover Gladys if you already have one on hand
+- Simplified setup with our official 64-bit image (Pi 3, 4, and 5)
+- 👉 [Raspberry Pi installation guide](/docs/installation/raspberry-pi/)
+- For everyday long-term use, a mini-PC is still the better choice
 
 ## Installing Gladys Assistant
 
