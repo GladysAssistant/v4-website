@@ -43,6 +43,24 @@ function getAttributionFromCurrentUrl() {
   return attributionParams;
 }
 
+function getOpenPanelDeviceId() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const op = window.op;
+  if (!op?.getDeviceId) {
+    return null;
+  }
+
+  try {
+    const deviceId = op.getDeviceId();
+    return deviceId || null;
+  } catch (e) {
+    return null;
+  }
+}
+
 /** Reads URL attribution, merges into localStorage, returns stored attribution. */
 export function captureConversionAttribution() {
   if (typeof window === "undefined") {
@@ -63,7 +81,12 @@ export function captureConversionAttribution() {
         landing_referrer: document.referrer || "",
         captured_at: new Date().toISOString(),
       }
-    : existingAttribution;
+    : { ...existingAttribution };
+
+  const deviceId = getOpenPanelDeviceId();
+  if (deviceId) {
+    mergedAttribution.device_id = deviceId;
+  }
 
   if (Object.keys(mergedAttribution).length > 0) {
     window.localStorage.setItem(
