@@ -1,4 +1,7 @@
-module.exports = {
+module.exports = function createConfig() {
+  const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
+
+  return {
   future: {
     v4: true,
     experimental_faster: {
@@ -33,7 +36,10 @@ module.exports = {
     },
   },
   themeConfig: {
-    image: "img/presentation/gladys-cover-demo-2023.jpg",
+    image:
+      locale === "fr"
+        ? "img/presentation/gladys-assistant-og-image-2026-fr.jpg"
+        : "img/presentation/gladys-assistant-og-image-2026-en.jpg",
     metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
     colorMode: {
       defaultMode: "dark",
@@ -230,4 +236,5 @@ module.exports = {
   ],
   clientModules: [require.resolve("./src/openpanel.js")],
   scripts: [],
+  };
 };
