@@ -38,6 +38,14 @@ Nous fournissons un service de sauvegarde chiffré, entièrement automatisé, af
 
 Parfois, nous voulons envoyer une requête API à notre instance locale Gladys pour envoyer de nouvelles données de capteurs, ou des données de localisation Owntracks par exemple. L'Open API de Gladys Plus permet cela :)
 
+### Modèles d'IA open-weight
+
+Pilotez votre maison en langage naturel depuis le chat, Telegram, ou le widget [Assistant vocal](/fr/docs/dashboard/voice-assistant) sur le tableau de bord. Les modèles sont hébergés par Scaleway dans des data centers français. Consultez la [documentation de l'intégration IA](/fr/docs/integrations/openai).
+
+### Serveur MCP
+
+Connectez des agents IA compatibles (Claude Desktop, Perplexity, etc.) à votre domotique. Consultez la [documentation MCP](/fr/docs/integrations/mcp).
+
 ### Compatibilité avec Google Home
 
 Google Home est une intégration particulière.

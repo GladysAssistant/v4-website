@@ -1,39 +1,42 @@
 ---
 id: openai
-title: Using ChatGPT to control your connected home
-sidebar_label: ChatGPT
+title: Using AI to control your connected home
+sidebar_label: AI
 ---
 
-OpenAI definitely revolutionized the world of artificial intelligence when it launched ChatGPT last year.
+Gladys can control your smart home in natural language: turn on lights, read sensor values, launch scenes, and more.
 
-What if you could use ChatGPT to control your connected home?
-
-We wouldn't be far from having our very own Jarvis at home, just a quick message away!
+This feature relies on **open-weight AI models** hosted on a **sovereign European cloud** (Scaleway, France) via [Gladys Plus](/plus/). AI inference stays in Europe, within infrastructure operated under GDPR.
 
 ## Prerequisites
 
-As the OpenAI API is not free, this integration is part of Gladys Plus. Start by creating your account to get access to ChatGPT 🙂
+The AI integration is included in the **Gladys Plus** subscription (Plus plan). It is enabled automatically as soon as your instance is connected to Gladys Plus. [Create your account](/plus/) if you haven't yet.
 
-## Configuration
+You can talk to Gladys from:
 
-It's very simple, just activate ChatGPT in the OpenAI ChatGPT integration in "Integrations":
+- The **Chat** tab
+- The [Telegram integration](/docs/integrations/telegram)
+- The [Voice assistant](/docs/dashboard/voice-assistant) dashboard widget
 
-![Activate ChatGPT in Gladys](../../static/img/docs/en/configuration/openai/activate_chatgpt.jpg)
+## How does it work?
 
-Then you can chat with ChatGPT in the chat tab or via our Telegram integration.
+Behind the scenes, Gladys uses large language models (LLMs) that understand natural language. You don't need to learn a fixed list of commands: describe what you want in your own words, and Gladys figures out what to do.
 
-## Available commands
+The assistant can control your devices, read sensor values, launch existing scenes, create new automations, and answer general questions.
 
-There are currently 9 available commands:
+## Examples
 
-| Action                       | Example                                     |
-| ---------------------------- | ------------------------------------------- |
-| Display camera in a room     | Show me the living room camera              |
-| Turn on the light            | Turn on the kitchen light                   |
-| Turn off the light           | Turn off the kitchen light                  |
-| Turn on a smart plug         | Turn on the "washing machine" plug          |
-| Turn off a smart plug        | Turn off the "washing machine" plug         |
-| Get the temperature          | What’s the temperature in the garden?       |
-| Get the humidity             | What is the humidity level in the bathroom? |
-| Start a scene                | Start the "Cinema Mode" scene               |
-| Retrieve general information | Who is Jules Verne?                         |
+- "Turn on the kitchen light"
+- "What's the temperature in the garden?"
+- "Show me the living room camera"
+- "Start Cinema Mode"
+- "Create a scene that turns off all the lights at 11 p.m. every evening"
+- "Who invented the light bulb?"
+
+These are just examples. Feel free to experiment: if Gladys understands your request, it will act on it.
+
+## Where is my data processed?
+
+Open-weight models used by Gladys Plus are hosted by Scaleway in French data centers. Your requests are processed in Europe.
+
+Learn more on the [Gladys Plus page](/plus/) and in the [Gladys Plus documentation](/docs/plus/intro).

@@ -4,9 +4,24 @@ title: Talk to Gladys from the dashboard with the voice assistant
 sidebar_label: Voice assistant
 ---
 
-The **Voice assistant** widget lets you talk to Gladys directly from your dashboard: speak a question, read the live transcription and AI response, and hear the answer read aloud on your device.
+Introduced in [Gladys Assistant 4.77](https://community.gladysassistant.com/t/gladys-assistant-4-77-un-assistant-vocal-dans-gladys/10249), the **Voice assistant** widget lets you talk to Gladys directly from your dashboard: speak a question, read the live transcription and AI response, and hear the answer read aloud on your device.
 
-It uses Gladys Plus for speech-to-text, AI agent responses (open-weight models), and text-to-speech playback.
+It is especially handy on a wall-mounted tablet or a smartphone left on a counter. Your smart home becomes voice-controlled without a third-party assistant.
+
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/X-UtYMJoKV4" title="Gladys Assistant voice assistant demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+## What can you do?
+
+The voice assistant uses the same AI agent as the Gladys chat. You can, for example:
+
+- Turn lights on or off ("Turn on the kitchen light")
+- Start a scene ("Start Cinema Mode")
+- Read sensor values ("What's the temperature in the garden?")
+- Ask general questions
+
+See more [usage examples](/docs/integrations/openai#examples) in the AI integration documentation.
 
 ## Prerequisites
 
@@ -45,6 +60,16 @@ The assistant takes into account your recent exchanges with Gladys to provide mo
 | **Processing...** | Gladys is transcribing your message and generating a response. |
 | **Speaking...** | The response is being read aloud. |
 
+### Wall-mounted tablet tip
+
+If you use Gladys on a touchscreen tablet, you can display the dashboard in full screen by adding `?fullscreen=force` to the URL. See the [dashboard introduction](/docs/dashboard/intro#tablet-mode) for details.
+
+## Limitations
+
+This is a first proof of concept. The feature will evolve based on community feedback. Feel free to share your experience on [the forum announcement](https://community.gladysassistant.com/t/gladys-assistant-4-77-un-assistant-vocal-dans-gladys/10249).
+
+Speech synthesis is optimized for low latency. Some values (temperatures, units such as ppm or °C) may occasionally be mispronounced. We are monitoring improvements on the text-to-speech side.
+
 ## Troubleshooting
 
 | Problem | What to do |
@@ -59,3 +84,4 @@ The assistant takes into account your recent exchanges with Gladys to provide mo
 
 - [Gladys Plus](/docs/plus/intro)
 - [Using AI to control your connected home](/docs/integrations/openai)
+- [Dashboard introduction](/docs/dashboard/intro)
