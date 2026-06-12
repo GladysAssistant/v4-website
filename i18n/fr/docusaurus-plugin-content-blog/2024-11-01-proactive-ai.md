@@ -16,7 +16,7 @@ Depuis janvier 2023, vous pouviez déjà poser des questions à ChatGPT via Glad
 
 C’était un bon début, mais je veux aller encore plus loin ! Et si l’IA pouvait être proactive et prendre des décisions pour vous ?
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Imaginez les possibilités
 

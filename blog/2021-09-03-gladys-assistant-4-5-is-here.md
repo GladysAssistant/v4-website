@@ -28,6 +28,8 @@ And it'll switch to another dashboard, easy!
 
 ![Camera dashboard Gladys Assistant](../static/img/articles/en/gladys-4-5/camera-dashboard.jpg)
 
+{/* truncate */}
+
 ### Disabling a scene
 
 It was a highly requested feature, it's now possible to disable a scene in Gladys Assistant! Finally!

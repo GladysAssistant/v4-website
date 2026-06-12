@@ -20,7 +20,7 @@ You can embark on the adventure by following the tutorials:
 
 Now let's go back to the decisions that led to this fourth version of Gladys Assistant 🙂
 
-<!--truncate-->
+{/* truncate */}
 
 ## The story behind this v4
 

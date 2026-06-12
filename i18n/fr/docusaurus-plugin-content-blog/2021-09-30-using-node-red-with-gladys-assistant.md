@@ -12,7 +12,7 @@ Aujourd'hui on se retrouve avec non pas un article, mais une vidéo Youtube où 
 
 Pour ceux qui ne connaissent pas [Node-RED](https://nodered.org), c'est un outil open-source "low code" qui permet de faire de faire des scénarios, avec des entrées et des sorties façon "programmation visuelle".
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Pourquoi proposer ce tutoriel ?
 

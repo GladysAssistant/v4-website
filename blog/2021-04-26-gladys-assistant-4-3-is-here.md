@@ -14,6 +14,8 @@ Scenes are the backbone of home automation.
 
 Having a connected home is not just to control it remotely: it is also to automate what is done regularly, to bring a share of magic to our home and make our daily lives easier.
 
+{/* truncate */}
+
 ## What's new in version 4.3
 
 ### A new trigger "When the house is empty"

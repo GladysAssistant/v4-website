@@ -12,7 +12,7 @@ Like every year, it is time for a new annual review for Gladys Assistant !
 
 Let's go for the 2020 year in review :)
 
-<!--truncate-->
+{/* truncate */}
 
 ## What happened in 2020?
 

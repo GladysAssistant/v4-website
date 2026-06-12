@@ -21,7 +21,7 @@ Vous pouvez vous lancer dans l'aventure en suivant les tutoriels :
 
 Maintenant revenons sur les décisions qui ont menées à cette quatrième version de Gladys Assistant 🙂
 
-<!--truncate-->
+{/* truncate */}
 
 ## Historique
 

@@ -10,6 +10,8 @@ Hi !
 
 In this tutorial I want to show you that it's possible to integrate Gladys Assistant with other cool open-source software like Node-RED.
 
+{/* truncate */}
+
 ## Start Gladys Assistant
 
 You need to have a Gladys Assistant instance for this tutorial.

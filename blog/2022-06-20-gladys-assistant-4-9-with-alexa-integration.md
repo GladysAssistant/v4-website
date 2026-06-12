@@ -14,7 +14,7 @@ In this version, I'm bringing a new major integration to Gladys: Amazon Alexa.
 
 It means we are now compatible with all voice assistant: [Google Home](/docs/integrations/google-home) and [Amazon Alexa](/docs/integrations/alexa).
 
-<!--truncate-->
+{/* truncate */}
 
 ## What's new in Gladys Assistant 4.9?
 

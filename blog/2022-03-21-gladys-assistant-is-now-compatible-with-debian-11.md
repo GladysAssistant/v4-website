@@ -14,7 +14,7 @@ We also released a bunch of improvement that will make it more easy to install G
 
 No new features were added in this release, it's a lot of long-term work & bugfixes 🙂
 
-<!--truncate-->
+{/* truncate */}
 
 ## What's new in Gladys Assistant 4.8.1?
 

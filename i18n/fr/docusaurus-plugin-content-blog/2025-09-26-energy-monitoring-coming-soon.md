@@ -25,7 +25,7 @@ Il m’a préparé un cahier des charges précis, j’ai proposé un devis, il a
 
 Aujourd’hui, je suis super heureux de vous dévoiler la **première partie** de ce développement !
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Ce qui a été développé jusqu’ici
 

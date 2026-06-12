@@ -12,6 +12,8 @@ Today I'm pleased to announce Gladys Assistant 4.26, a release that brings compa
 
 It was already possible to use certain Tuya Zigbee devices with Gladys via our Zigbee2mqtt integration, but now Wi-Fi connected sockets and light bulbs are also compatible via an official Tuya integration 🎉🎉
 
+{/* truncate */}
+
 ## -40% on Gladys Plus with this launch
 
 To mark this launch, I'm offering 40% off your first Gladys Plus payment with the code **TUYA2023** !

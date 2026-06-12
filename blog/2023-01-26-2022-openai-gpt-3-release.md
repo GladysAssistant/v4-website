@@ -14,7 +14,7 @@ On the internet, everyone has tried to chat with this AI, whether it was to see 
 
 On my side, I think this AI is a great tool, a kind of overpowered search engine, accessible to language, which has access to an impressive dataset!
 
-<!--truncate-->
+{/* truncate */}
 
 ## What does this have to do with Gladys?
 

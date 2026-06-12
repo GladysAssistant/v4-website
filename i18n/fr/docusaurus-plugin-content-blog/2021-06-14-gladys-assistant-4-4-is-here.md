@@ -32,7 +32,7 @@ Les zones sont éditables bien-sûr
 
 ![Editer une zone](../../../static/img/articles/fr/gladys-4-4/edit-zone.jpg)
 
-<!-- truncate -->
+{/* truncate */}
 
 ### Démarrer une scène quand un utilisateur entre/quitte une zone
 

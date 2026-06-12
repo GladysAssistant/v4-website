@@ -14,6 +14,8 @@ One of the most anticipated features is finally here!
 
 You can now add "If... Then... Else" conditions to your scenes, allowing you to create advanced scenarios with multiple execution paths. This enhancement gives you finer control over your automations without needing to create multiple scenes.
 
+{/* truncate */}
+
 ### Example Use Cases:
 
 - **If** the temperature exceeds 25°C, **then** turn on the fan, **else** close the blinds.

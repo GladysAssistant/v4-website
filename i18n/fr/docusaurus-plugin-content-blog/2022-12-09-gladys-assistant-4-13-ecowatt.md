@@ -14,7 +14,7 @@ Et si nos maisons pouvaient automatiquement réagir quand le réseau électrique
 
 Ce n'est pas de la science-fiction, c'est possible depuis Gladys Assistant 4.13 !
 
-<!--truncate-->
+{/* truncate */}
 
 ## Les nouveautés de Gladys Assistant 4.13
 

@@ -12,7 +12,7 @@ I hope everyone spent great summer holidays 🙂
 
 Today I'm releasing Gladys Assistant v4.10, a big new release with amazing new features, both in integrations and in the core.
 
-<!--truncate-->
+{/* truncate */}
 
 ## What's new in Gladys Assistant 4.10?
 
