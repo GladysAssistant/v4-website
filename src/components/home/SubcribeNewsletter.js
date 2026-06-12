@@ -52,15 +52,15 @@ function SubcribeNewsletter({ lang }) {
             id="subscribeNewsletter.title"
             description="Subscribe newsletter banner title"
           >
-            Join the community, and get the latest news about the project!
+            Subscribe to the Gladys Assistant newsletter
           </Translate>
         </h2>
         <Translate
           id="subscribeNewsletter.text"
           description="Subscribe newsletter banner text"
         >
-          Emails are sent by Pierre-Gilles Leymarie, founder of the project. You
-          can unsubscribe at any time 🙂
+          A few emails per month about new releases and project news. Sent by
+          Pierre-Gilles Leymarie, founder of the project. Unsubscribe anytime 🙂
         </Translate>
       </div>
       <div className={cx("col col--4", styles.newsletterSectionInputCol)}>
@@ -142,7 +142,7 @@ function SubcribeNewsletter({ lang }) {
                 id="subscribeNewsletter.subscribeButton"
                 description="Subscribe newsletter banner subscribe button"
               >
-                Subscribe
+                Subscribe to the newsletter
               </Translate>
             )}
           </button>
