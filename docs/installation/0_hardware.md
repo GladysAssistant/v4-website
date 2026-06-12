@@ -15,11 +15,13 @@ You have several options to run Gladys:
 
 ### Option 1: Mini-PC (Recommended)
 
-- **Beelink Mini S13** or similar mini-PC
-  - Powerful and stable hardware (Intel N150, 16GB RAM, 500GB NVMe SSD)
-  - Install Ubuntu Server via bootable USB + Gladys via Docker
-  - Available on [Amazon US](https://amzn.to/4gKDV2E) or your local retailer
-  - **Best price/performance ratio for a long-term setup**
+Most users install Gladys themselves on a mini-PC running Linux. It's the best price/performance ratio for a long-term setup.
+
+- **New mini-PC** (Beelink, Intel NUC…): install Ubuntu Server, then Gladys via Docker. Example: [Beelink Mini S13 on Amazon](https://amzn.to/4gKDV2E)
+- **Refurbished mini-PC**: often cheaper on second-hand marketplaces. Look for at least 8 GB RAM and an SSD.
+- **Hardware you already own**: an old PC, an Intel NUC gathering dust… If Docker runs on it, Gladys runs on it.
+
+👉 [Mini-PC installation guide](/docs/installation/mini-pc/)
 
 ### Option 2: Existing Hardware
 

@@ -13,44 +13,43 @@ Ce guide vous aidera à répondre à ces questions et vous offrira un point de d
 
 Gladys Assistant est un logiciel auto-hébergé, ce qui signifie que tout fonctionne en local sur une box domotique chez vous. C'est l'une de ses principales forces : **vos données restent privées et votre maison fonctionne même sans Internet** !
 
-### Solution recommandée : Le kit de démarrage Gladys
+La grande majorité des utilisateurs installent Gladys **eux-mêmes** sur un mini-PC. Le kit de démarrage Gladys n'est qu'une option pour ceux qui préfèrent une solution clé en main.
 
-Pour démarrer simplement et rapidement, je propose **[le kit de démarrage Gladys](/fr/starter-kit/)**, un mini-PC avec Gladys pré-installée.
+### Option recommandée : un mini-PC sous Linux
 
-**Pourquoi choisir le kit de démarrage ?**
+C'est le meilleur rapport qualité/prix pour une installation durable. Vous installez Ubuntu Server, puis Gladys via Docker. Notre documentation vous guide à chaque étape.
 
-- ✅ **Prêt à l'emploi** : Gladys est déjà installé et configuré, branchez et c'est parti !
-- ✅ **Matériel testé et validé** : Mini-PC Beelink performant
-- ✅ **Support prioritaire** : Aide personnalisée si besoin par email ou appel
-- ✅ **6 mois de Gladys Plus inclus** : Accès à distance sécurisé, sauvegardes automatiques et plus encore
-- ✅ **Tutoriels dédiés** : Guides pas à pas pour bien démarrer avec votre box
+**Où trouver le matériel ?**
 
-C'est la solution idéale si vous voulez éviter les complications techniques et vous concentrer sur la création de vos automatisations.
+- **Mini-PC neuf** (Beelink, Intel NUC…) : comptez entre 330 € et 430 € pour un modèle performant comme le Beelink S13. Exemple : [Beelink Mini S13 sur Amazon](https://amzn.to/4hRtIE3)
+- **Mini-PC reconditionné** : souvent nettement moins cher sur Leboncoin, eBay ou chez les revendeurs spécialisés. Vérifiez qu'il a au moins 8 Go de RAM et un SSD.
+- **Matériel que vous avez déjà** : un vieux PC, un Intel NUC qui traîne… Si Docker tourne dessus, Gladys tourne dessus.
 
-[👉 Découvrir le kit de démarrage](/fr/starter-kit/)
+👉 [Tutoriel d'installation sur mini-PC](/fr/docs/installation/mini-pc/)
 
-### Autres options d'installation
+### Réutiliser un NAS ou un serveur existant
 
-Si vous préférez installer Gladys vous-même, c'est tout à fait possible !
+Si vous avez déjà un NAS Synology, un serveur Linux ou tout autre matériel compatible Docker, vous pouvez y installer Gladys sans acheter de nouvelle machine.
 
-Gladys peut tourner sur n'importe quelle machine sous Linux :
+- [Installer sur un NAS Synology](/fr/docs/installation/synology/)
+- [Installer sur un NAS Unraid](/fr/docs/installation/unraid/)
+- [Installer sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
 
-- **Mini-PC (Beelink, Intel NUC, etc.)**
+### Raspberry Pi : pour découvrir
 
-  - Installation manuelle d'Ubuntu Server + Docker
-  - Exemple : Beelink Mini S13 disponible sur [Amazon](https://amzn.to/4hRtIE3)
-  - Nécessite des connaissances techniques en Linux
+Idéal pour tester Gladys si vous avez déjà un Raspberry Pi (3, 4 ou 5). L'installation est simplifiée grâce à notre image officielle 64 bits.
 
-- **Serveur ou NAS existant**
+👉 [Tutoriel d'installation sur Raspberry Pi](/fr/docs/installation/raspberry-pi/)
 
-  - Si vous avez déjà un NAS Synology, un serveur Linux ou tout autre matériel compatible Docker
-  - Idéal pour réutiliser du matériel existant
+Pour une utilisation au quotidien sur le long terme, un mini-PC reste préférable (plus de RAM, SSD plus rapide, plus stable).
 
-- **Raspberry Pi**
-  - Idéal pour découvrir Gladys si vous en avez déjà un sous la main
-  - Installation simplifiée grâce à notre image officielle 64 bits (Pi 3, 4 et 5)
-  - 👉 [Tutoriel d'installation sur Raspberry Pi](/fr/docs/installation/raspberry-pi/)
-  - Pour une utilisation au quotidien sur le long terme, un mini-PC reste préférable
+### Option clé en main : le kit de démarrage Gladys
+
+Vous ne voulez pas vous occuper de l'installation ? Le **[kit de démarrage Gladys](/fr/starter-kit/)** est un mini-PC avec Gladys déjà pré-installé, livré avec formation et 6 mois de Gladys Plus.
+
+C'est une option **premium et optionnelle**, pensée pour ceux qui préfèrent brancher et configurer leur maison connectée sans passer par Ubuntu ni Docker. Ce n'est en aucun cas obligatoire pour utiliser Gladys.
+
+[Découvrir le kit de démarrage →](/fr/starter-kit/)
 
 ## Définir votre projet de maison connectée
 
