@@ -942,220 +942,38 @@ function Home({ integrations, lang }) {
           <div
             className={classnames(styles.homeSection)}
             style={{
-              background: "var(--ifm-color-emphasis-100)",
-              padding: "3rem 1rem",
+              padding: "2rem 1rem",
             }}
           >
-            <div className="container">
-              <h2
-                className={styles.secondaryTitle}
-                style={{ marginBottom: "1rem" }}
-              >
-                Kit de démarrage Gladys
-              </h2>
+            <div
+              className="container"
+              style={{
+                maxWidth: "800px",
+                margin: "0 auto",
+                textAlign: "center",
+                padding: "2rem 1.5rem",
+                backgroundColor: "var(--ifm-color-emphasis-100)",
+                borderRadius: "0.75rem",
+              }}
+            >
               <p
                 style={{
-                  textAlign: "center",
-                  fontSize: "1.2rem",
-                  marginBottom: "3rem",
-                  maxWidth: "800px",
-                  marginLeft: "auto",
-                  marginRight: "auto",
+                  fontSize: "1.1rem",
+                  marginBottom: "1.25rem",
+                  opacity: 0.95,
                 }}
               >
-                Un mini-PC avec <b>Gladys pré-installée</b> + la formation
-                officielle + 6 mois de Gladys Plus offerts
+                Vous préférez éviter l'installation ? Le{" "}
+                <Link href="/fr/starter-kit">kit de démarrage</Link> inclut un
+                mini-PC avec Gladys pré-installé, la formation officielle et 6
+                mois de Gladys Plus. Option clé en main, sans obligation.
               </p>
-
-              <div className="row" style={{ marginBottom: "3rem" }}>
-                {false && (
-                  <div className="col col--4">
-                    <div
-                      style={{
-                        border: "2px solid var(--ifm-color-emphasis-300)",
-                        padding: "25px",
-                        borderRadius: "12px",
-                        textAlign: "center",
-                        height: "100%",
-                        background: "var(--ifm-card-background-color)",
-                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
-                        Beelink T5
-                      </h3>
-                      <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                        Le mini-PC compact et économique
-                      </p>
-                      <ul
-                        style={{
-                          textAlign: "left",
-                          marginBottom: "15px",
-                          fontSize: "0.9em",
-                        }}
-                      >
-                        <li>✓ Intel Celeron N4020</li>
-                        <li>✓ 4 Go RAM • 64 Go eMMC</li>
-                        <li>✓ Gladys déjà installée</li>
-                      </ul>
-                      <Link
-                        className="button button--primary button--lg"
-                        href="/fr/starter-kit"
-                        style={{
-                          width: "100%",
-                          marginTop: "15px",
-                        }}
-                      >
-                        Découvrir
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
-                <div className="col col--6">
-                  <div
-                    style={{
-                      border: "2px solid var(--ifm-color-emphasis-300)",
-                      padding: "25px",
-                      borderRadius: "12px",
-                      textAlign: "center",
-                      height: "100%",
-                      background: "var(--ifm-card-background-color)",
-                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
-                      Beelink mini S12
-                    </h3>
-                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                      Un bon rapport qualité/prix
-                    </p>
-                    <ul
-                      style={{
-                        textAlign: "left",
-                        marginBottom: "15px",
-                        fontSize: "0.9em",
-                      }}
-                    >
-                      <li>✓ Intel N95</li>
-                      <li>✓ 8 Go RAM • 256 Go SSD</li>
-                      <li>✓ Gladys déjà installée</li>
-                    </ul>
-                    <Link
-                      className="button button--primary button--lg"
-                      href="/fr/starter-kit"
-                      style={{
-                        width: "100%",
-                        marginTop: "15px",
-                      }}
-                    >
-                      Découvrir
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="col col--6">
-                  <div
-                    style={{
-                      border: "3px solid var(--ifm-color-primary)",
-                      padding: "25px",
-                      borderRadius: "12px",
-                      textAlign: "center",
-                      height: "100%",
-                      background: "var(--ifm-card-background-color)",
-                      boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
-                    }}
-                  >
-                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
-                      Beelink S13
-                    </h3>
-                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                      ⭐ Le meilleur choix !
-                    </p>
-                    <ul
-                      style={{
-                        textAlign: "left",
-                        marginBottom: "15px",
-                        fontSize: "0.9em",
-                      }}
-                    >
-                      <li>✓ Intel N150</li>
-                      <li>✓ 16 Go RAM • 500 Go SSD</li>
-                      <li>✓ Gladys déjà installée</li>
-                    </ul>
-                    <Link
-                      className="button button--primary button--lg"
-                      href="/fr/starter-kit"
-                      style={{
-                        width: "100%",
-                        marginTop: "15px",
-                      }}
-                    >
-                      Découvrir
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              <div className="row" style={{ marginTop: "3rem" }}>
-                <div className="col col--4">
-                  <div style={{ textAlign: "center", padding: "1rem" }}>
-                    <div
-                      style={{
-                        fontSize: "3rem",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      🎓
-                    </div>
-                    <h4>Formation officielle</h4>
-                    <p>Des heures de vidéos pour maîtriser Gladys de A à Z</p>
-                  </div>
-                </div>
-                <div className="col col--4">
-                  <div style={{ textAlign: "center", padding: "1rem" }}>
-                    <div
-                      style={{
-                        fontSize: "3rem",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      ⚡
-                    </div>
-                    <h4>Prêt à l'emploi</h4>
-                    <p>
-                      Gladys déjà installée et configurée, tu branches et c'est
-                      parti
-                    </p>
-                  </div>
-                </div>
-                <div className="col col--4">
-                  <div style={{ textAlign: "center", padding: "1rem" }}>
-                    <div
-                      style={{
-                        fontSize: "3rem",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      💎
-                    </div>
-                    <h4>6 mois Gladys Plus</h4>
-                    <p>
-                      Accès à distance, sauvegardes et intégrations premium
-                      offerts
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ textAlign: "center", marginTop: "3rem" }}>
-                <Link
-                  className="button button--primary button--lg"
-                  href="/fr/starter-kit"
-                >
-                  Voir tous les kits de démarrage →
-                </Link>
-              </div>
+              <Link
+                className="button button--secondary"
+                href="/fr/starter-kit"
+              >
+                Découvrir le kit de démarrage →
+              </Link>
             </div>
           </div>
         )}
