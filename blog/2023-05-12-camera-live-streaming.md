@@ -18,7 +18,7 @@ The major feature of this version is the ability to watch your cameras live on t
 
 The video stream is encrypted from end to end before guaranteeing your privacy, as always 😉
 
-<!--truncate-->
+{/* truncate */}
 
 **Note:** This feature requires quite a lot of resources (playing a video stream, compressing it, encrypting it, live, it requires resources!), if the live doesn't start or takes really too long to start, it might be that your machine is not powerful enough for it. 32-bit Raspberry Pi's are not powerful enough for this, for example.
 

@@ -24,7 +24,7 @@ The community is pretty unanimous in saying that today, mini-PCs are a more than
 
 ## New "Devices" widget
 
-<!--truncate-->
+{/* truncate */}
 
 It was a point of frustration for many, until now it wasn't possible to create a "Devices" widget mixing devices from different rooms.
 

@@ -14,7 +14,7 @@ Nous sortons aussi dans cette mise à jour un ensemble de petits correctifs pour
 
 Vous l'aurez compris, pas de nouvelles fonctionnalités majeures dans cette version, mais un ensemble d'améliorations long-terme pour permettre la distribution de Gladys à plus d'utilisateurs, et préparer les usages futurs.
 
-<!--truncate-->
+{/* truncate */}
 
 ## Les nouveautés de Gladys Assistant 4.8.1
 

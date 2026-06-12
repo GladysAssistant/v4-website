@@ -22,7 +22,7 @@ Avouez que ça donne envie 😎
 
 Désormais, Gladys peut remplacer un système d'alarme complet en gérant les différents états de tout bon système d'alarme :
 
-<!--truncate-->
+{/* truncate */}
 
 ![Alarme tableau de bord Gladys](../../../static/img/articles/fr/gladys-4-30/alarm-dashboard.jpg)
 

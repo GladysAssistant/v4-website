@@ -22,7 +22,7 @@ Et bien, on l'a fait !
 
 [DuckDB](https://duckdb.org/) est un système de base de donnée OLAP, qui comme SQLite stocke les données dans un seul fichier.
 
-<!--truncate-->
+{/* truncate */}
 
 Si on devait définir DuckDB :
 

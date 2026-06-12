@@ -16,7 +16,7 @@ J'ai présenté cette version dans un live YouTube que vous pouvez revoir en rep
     <iframe src="https://www.youtube.com/embed/MT8iGphtm0M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-<!--truncate-->
+{/* truncate */}
 
 ## Les nouveautés de Gladys Assistant 4.12
 

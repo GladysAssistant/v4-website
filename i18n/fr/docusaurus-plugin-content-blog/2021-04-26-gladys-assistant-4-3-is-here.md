@@ -14,7 +14,7 @@ Les scènes, c'est le pilier de la domotique.
 
 Avoir une maison connectée, ce n'est pas juste pour la contrôler à distance: c'est aussi pour automatiser ce qui est fait régulièrement, pour apporter une part de magie dans notre maison et rendre notre quotidien plus simple.
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Les nouveautés de cette version 4.3
 

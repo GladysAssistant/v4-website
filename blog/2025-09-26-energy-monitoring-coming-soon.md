@@ -25,7 +25,7 @@ He prepared a detailed specification, I proposed a quote, he accepted... and I w
 
 Today, I'm super happy to reveal the **first part** of this development!
 
-<!--truncate-->
+{/* truncate */}
 
 ## What has been developed so far
 

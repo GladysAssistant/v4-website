@@ -12,7 +12,7 @@ Aujourd'hui, je suis très heureux de sortir **Gladys Assistant 4.58**, qui appo
 
 Si vous préférez en vidéo, j'étais en direct sur Youtube pour vous présenter cette version, le [replay est disponible ici](https://www.youtube.com/live/2_fGKdoiK2Q?si=MiU5UfUZ5xVU0-QI&t=57).
 
-<!--truncate-->
+{/* truncate */}
 
 ## Intégration Matter
 

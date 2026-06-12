@@ -24,7 +24,7 @@ La communauté est assez unanime pour dire qu'aujourd'hui, les mini-PC sont une 
 
 ## Nouveau widget "Appareils"
 
-<!--truncate-->
+{/* truncate */}
 
 C'était un point de frustration pour beaucoup, jusque-là il n'était pas possible de créer un widget "Appareils" mixant des appareils venant de différentes pièces.
 

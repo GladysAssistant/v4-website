@@ -20,6 +20,8 @@ We now have a native way of displaying charts on the dashboard, entirely automat
 
 ![Chart on dashboard on Gladys Assistant](../static/img/articles/en/gladys-4-7/chart-dashboard.jpg)
 
+{/* truncate */}
+
 To do this, Gladys is now aggregating all device data with 3 different levels of granulatity:
 
 - hourly data: Gladys keeps max 100 values per device feature and per hour.

@@ -12,7 +12,7 @@ J'espère que vous avez tous passé de bonnes vacances d'été 🙂
 
 Cette rentrée a été très productive côté Gladys, et je suis heureux de lancer aujourd'hui Gladys Assistant v4.10, une mise à jour avec beaucoup de nouveautés, autant côté intégrations que côté core.
 
-<!--truncate-->
+{/* truncate */}
 
 ## Les nouveautés de Gladys Assistant v4.10
 

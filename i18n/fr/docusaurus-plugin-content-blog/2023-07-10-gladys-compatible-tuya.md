@@ -12,7 +12,7 @@ Je suis heureux d'annoncer aujourd'hui Gladys Assistant 4.26, une version qui ap
 
 Il était déjà possible d'utiliser certaines appareils Tuya Zigbee avec Gladys via notre intégration Zigbee2mqtt, mais désormais, les prises connectées et ampoules Wi-Fi sont aussi compatibles via une intégration Tuya officielle 🎉🎉
 
-<!-- truncate -->
+{/* truncate */}
 
 ## Une prise connectée Tuya OFFERTE avec Gladys Plus !!
 

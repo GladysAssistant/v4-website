@@ -20,7 +20,7 @@ Back in September, I announced that [energy monitoring was coming to Gladys](/bl
 
 ![Energy monitoring dashboard](../static/img/docs/en/configuration/energy-monitoring/dashoard-zlinky-widget.png)
 
-<!--truncate-->
+{/* truncate */}
 
 To use this feature, update to Gladys 4.66 and check out the full documentation:
 

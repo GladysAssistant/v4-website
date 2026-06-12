@@ -16,7 +16,7 @@ Today I'm following up with a more important update in terms of features: Gladys
 
 ## Rename your devices on the dashboard
 
-<!--truncate-->
+{/* truncate */}
 
 This was a feature that had long been the talk of the town: what should be displayed on the dashboard to properly "define" a feature: the device name? Device name and room? The feature name? Or both?
 

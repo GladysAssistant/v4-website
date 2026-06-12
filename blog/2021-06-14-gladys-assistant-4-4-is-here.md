@@ -31,6 +31,8 @@ You can of course edit those zones:
 
 ![Edit a zone](../static/img/articles/en/gladys-4-4/edit-zone.jpg)
 
+{/* truncate */}
+
 ### Start a scene when a user enters/leaves a zone
 
 Now, using the zones you previously created, you can now create a zone that will be trigger when a user enters the zone:

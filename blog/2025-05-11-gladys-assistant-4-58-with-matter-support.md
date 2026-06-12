@@ -10,7 +10,7 @@ If you've been on the Gladys forum, you've probably noticed: the last few weeks 
 
 Today, I'm very happy to release **Gladys Assistant 4.58**, which brings Matter support, but that's far from being the only interesting thing in this version 😄
 
-<!--truncate-->
+{/* truncate */}
 
 ## Matter Integration
 

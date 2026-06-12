@@ -22,7 +22,7 @@ Désormais, lorsque vous configurerez Zigbee2mqtt dans Gladys, Gladys vous propo
 
 ![Gladys choix mode Zigbee2mqtt](../../../static/img/articles/fr/gladys-4-40/choose-zigbee-mode.png)
 
-<!--truncate-->
+{/* truncate */}
 
 Soit vous êtes un débutant qui commence de zéro, et Gladys peut s'occuper de toute la configuration de Zigbee2mqtt (c'est ce que faisait Gladys jusque-là).
 

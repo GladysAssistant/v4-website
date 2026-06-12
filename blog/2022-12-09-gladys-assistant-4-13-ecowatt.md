@@ -10,7 +10,7 @@ Gladys Assistant 4.13 is available, and it's a big release!
 
 We've improved the developer experience by a lot, upgraded Gladys to Node.js 18 (from 14!) and are providing a new integration for French users.
 
-<!--truncate-->
+{/* truncate */}
 
 ## What's new in Gladys Assistant 4.13?
 

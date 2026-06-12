@@ -14,7 +14,7 @@ Sur internet, tout le monde a tenté de discuter avec cette IA, que ce soit pour
 
 De mon côté, je pense que cette IA est un outil formidable, une sorte de moteur de recherche sur-puissant, accessible au language, qui a accès à un dataset impressionnant !
 
-<!--truncate-->
+{/* truncate */}
 
 ## Quel rapport avec Gladys ?
 

@@ -18,7 +18,7 @@ Le replay du live Youtube de lancement est disponible ici :
 <iframe src="https://www.youtube.com/embed/ijIa9ZYObJE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-<!--truncate-->
+{/* truncate */}
 
 ## Les nouveautés de Gladys Assistant 4.8
 

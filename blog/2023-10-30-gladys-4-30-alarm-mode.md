@@ -20,7 +20,7 @@ You've got to admit, it does make you want to 😎
 
 Gladys can now replace a complete alarm system by managing the various states of any good alarm system:
 
-<!--truncate-->
+{/* truncate */}
 
 ![Gladys dashboard alarm](../static/img/articles/en/gladys-4-30/alarm-dashboard.jpg)
 

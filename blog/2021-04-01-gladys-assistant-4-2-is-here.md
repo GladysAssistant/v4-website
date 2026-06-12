@@ -14,6 +14,8 @@ Since the launch of Gladys Assistant 4 last November, more and more contributors
 
 Since November, we've released **11 new versions of Gladys**. That's almost 3 new releases per month. We're working hard!
 
+{/* truncate */}
+
 ## What's new in version 4.2
 
 ### Zigbee2mqtt

@@ -16,7 +16,7 @@ J'enchaîne ensuite aujourd'hui avec une mise à jour plus importante en terme d
 
 ## Renommer vos appareils sur le tableau de bord
 
-<!--truncate-->
+{/* truncate */}
 
 C'était une fonctionnalité qui animait les foules depuis longtemps : que faut-il afficher sur le tableau de bord pour bien "définir" une fonctionnalité : le nom de l'appareil ? Le nom et la pièce ? Le nom de la fonctionnalité ? Les deux ?
 

@@ -12,7 +12,7 @@ Comme chaque année, il est l’heure d’un nouveau bilan annuel pour Gladys As
 
 C'est parti pour le bilan de l'année 2020 🙂
 
-<!--truncate-->
+{/* truncate */}
 
 ## Que s’est-il passé en 2020 ?
 

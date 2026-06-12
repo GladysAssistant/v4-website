@@ -20,7 +20,7 @@ En septembre dernier, j'annonçais que [le suivi de l'énergie arrivait dans Gla
 
 ![Tableau de bord suivi énergie](../../../static/img/docs/fr/configuration/energy-monitoring/dashoard-zlinky-widget.png)
 
-<!--truncate-->
+{/* truncate */}
 
 Pour utiliser cette fonctionnalité, mettez à jour vers Gladys 4.66 et consultez la documentation complète :
 
