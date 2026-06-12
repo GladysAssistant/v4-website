@@ -98,11 +98,11 @@ Click on "Start"
 
 ## First communication between Telegram and Gladys Assistant
 
-Enter your first question for your Gladys Assistant, for example : "What's the weather like?"
+Enter your first message for your Gladys Assistant, for example: "Turn on the kitchen light".
 
 Wait a bit and ......... magic!!!
 
-Your assistant answers you!
+Your assistant answers you! With [Gladys Plus](/plus/), the built-in AI understands natural language: you can control your home, create scenes, read sensors, and much more. See the [AI integration documentation](/docs/integrations/openai).
 
 ![Entrer une clé dans Gladys Assistant](../../static/img/docs/en/configuration/telegram/telegram_12_Communiquer_Gladys_1ere_com.jpg)
 

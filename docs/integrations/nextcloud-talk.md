@@ -50,8 +50,8 @@ Click on "Save".
 
 ## First communication between Telegram and Gladys Assistant
 
-On Nextcloud web or mobile application, enter your first question for your Gladys Assistant, for example : what's the weather like?
+On Nextcloud web or mobile application, enter your first message for your Gladys Assistant, for example: "Turn on the kitchen light".
 
 Wait a bit and ......... magic !!!
 
-Your assistant answers you ! Isn't fun ?
+Your assistant answers you! With [Gladys Plus](/plus/), the built-in AI understands natural language. See the [AI integration documentation](/docs/integrations/openai).

@@ -14,14 +14,9 @@ It is especially handy on a wall-mounted tablet or a smartphone left on a counte
 
 ## What can you do?
 
-The voice assistant uses the same AI agent as the Gladys chat. You can, for example:
+The voice assistant uses the same LLM-powered agent as the Gladys chat. There is no fixed list of commands: speak naturally, and Gladys understands.
 
-- Turn lights on or off ("Turn on the kitchen light")
-- Start a scene ("Start Cinema Mode")
-- Read sensor values ("What's the temperature in the garden?")
-- Ask general questions
-
-See more [usage examples](/docs/integrations/openai#examples) in the AI integration documentation.
+You can control devices, read sensors, launch or create scenes, view cameras, and ask general questions. See [usage examples](/docs/integrations/openai#examples) in the AI integration documentation.
 
 ## Prerequisites
 

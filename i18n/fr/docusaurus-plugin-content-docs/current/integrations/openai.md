@@ -4,7 +4,7 @@ title: Utiliser l'IA pour contrôler sa maison connectée
 sidebar_label: IA
 ---
 
-Gladys peut piloter votre maison connectée en langage naturel : allumer des lumières, consulter des capteurs, lancer des scènes, et plus encore.
+Gladys peut piloter votre maison connectée en langage naturel. Il n'y a pas de liste de commandes fixes : parlez à Gladys comme à une personne, l'IA comprend et agit.
 
 Cette fonctionnalité s'appuie sur des **modèles d'IA open-weight** hébergés sur un **cloud souverain européen** (Scaleway, France) via [Gladys Plus](/fr/plus/). L'inférence IA reste en Europe, dans une infrastructure opérée sous RGPD.
 
@@ -22,7 +22,7 @@ Vous pouvez parler à Gladys depuis :
 
 Derrière le capot, Gladys s'appuie sur des grands modèles de langage (LLM) qui comprennent le langage naturel. Pas besoin d'apprendre une liste de commandes fixes : décrivez ce que vous voulez avec vos mots, Gladys se charge de comprendre.
 
-L'assistant peut piloter vos appareils, lire des capteurs, lancer des scènes existantes, créer de nouvelles automatisations, et répondre à des questions générales.
+Le LLM comprend un large éventail de demandes : piloter des appareils, lire des capteurs, lancer ou créer des scènes, analyser des images de caméra, demander des conseils, et bien plus encore. Plus vous avez d'appareils dans Gladys, plus Gladys peut faire de choses pour vous.
 
 ## Exemples
 
@@ -33,7 +33,7 @@ L'assistant peut piloter vos appareils, lire des capteurs, lancer des scènes ex
 - « Crée une scène qui éteint toutes les lumières à 23 h tous les soirs »
 - « Qui a inventé l'ampoule électrique ? »
 
-Ce ne sont que des exemples. N'hésitez pas à expérimenter : si Gladys comprend votre demande, elle s'exécute.
+Ce ne sont que des exemples pour vous lancer. En pratique, vous pouvez demander presque tout ce qui touche à votre maison ou au quotidien. N'hésitez pas à expérimenter.
 
 ## Où sont traitées mes données ?
 

@@ -51,8 +51,8 @@ Puis cliquez sur "Sauvegarder".
 
 ## Première communication entre Nextcloud Talk et Gladys Assistant
 
-Sur Nextcloud web ou l'application mobile, saisissez votre première question dans la conversation avec votre Assistant Gladys, par exemple : quel temps fait-il ?
+Sur Nextcloud web ou l'application mobile, saisissez votre premier message dans la conversation avec votre Assistant Gladys, par exemple : « Allume la lumière dans la cuisine ».
 
 Patientez un peu et ......... magie !!!
 
-Votre assistant vous répond ! C'est cool, non ?
+Votre assistant vous répond ! Avec [Gladys Plus](/fr/plus/), l'IA intégrée comprend le langage naturel. Consultez la [documentation de l'intégration IA](/fr/docs/integrations/openai).

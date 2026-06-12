@@ -40,7 +40,7 @@ Parfois, nous voulons envoyer une requête API à notre instance locale Gladys p
 
 ### Modèles d'IA open-weight
 
-Pilotez votre maison en langage naturel depuis le chat, Telegram, ou le widget [Assistant vocal](/fr/docs/dashboard/voice-assistant) sur le tableau de bord. Les modèles sont hébergés par Scaleway dans des data centers français. Consultez la [documentation de l'intégration IA](/fr/docs/integrations/openai).
+Parlez à Gladys en langage naturel depuis le chat, Telegram, ou le widget [Assistant vocal](/fr/docs/dashboard/voice-assistant) sur le tableau de bord. Propulsé par des LLM hébergés par Scaleway dans des data centers français, sans liste de commandes fixes. Consultez la [documentation de l'intégration IA](/fr/docs/integrations/openai).
 
 ### Serveur MCP
 

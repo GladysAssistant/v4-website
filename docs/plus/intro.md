@@ -22,7 +22,7 @@ We provide an encrypted backup service, fully automated, so you can restore your
 
 - **Outside world Open API**: Sometimes, we want to send API request to our home to send new sensors data, or Owntracks location data for example.
 
-- **Open-weight AI models**: Control your home in natural language from the chat, Telegram, or the [voice assistant](/docs/dashboard/voice-assistant) dashboard widget. Models are hosted by Scaleway in French data centers. See the [AI integration documentation](/docs/integrations/openai).
+- **Open-weight AI models**: Talk to Gladys in natural language from the chat, Telegram, or the [voice assistant](/docs/dashboard/voice-assistant) dashboard widget. Powered by LLMs hosted by Scaleway in French data centers, with no fixed list of commands. See the [AI integration documentation](/docs/integrations/openai).
 
 - **MCP server**: Connect compatible AI agents (Claude Desktop, Perplexity, etc.) to your smart home. See the [MCP documentation](/docs/integrations/mcp).
 

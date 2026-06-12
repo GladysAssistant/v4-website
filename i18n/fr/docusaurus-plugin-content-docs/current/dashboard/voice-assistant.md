@@ -14,14 +14,9 @@ C'est particulièrement pratique sur une tablette murale ou un smartphone posé 
 
 ## Que pouvez-vous faire ?
 
-L'assistant vocal s'appuie sur le même agent IA que le chat Gladys. Vous pouvez par exemple :
+L'assistant vocal s'appuie sur le même agent IA (LLM) que le chat Gladys. Il n'y a pas de liste de commandes fixes : parlez naturellement, Gladys comprend.
 
-- Allumer ou éteindre des lumières (« Allume la lumière dans la cuisine »)
-- Lancer une scène (« Lance le mode Cinéma »)
-- Consulter des capteurs (« Quelle est la température dans le jardin ? »)
-- Poser des questions générales
-
-Consultez d'autres [exemples d'utilisation](/fr/docs/integrations/openai#exemples) dans la documentation de l'intégration IA.
+Vous pouvez piloter des appareils, lire des capteurs, lancer ou créer des scènes, consulter des caméras, poser des questions générales, et bien plus. Consultez des [exemples d'utilisation](/fr/docs/integrations/openai#exemples) dans la documentation de l'intégration IA.
 
 ## Prérequis
 

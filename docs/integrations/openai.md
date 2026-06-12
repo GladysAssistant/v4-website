@@ -4,7 +4,7 @@ title: Using AI to control your connected home
 sidebar_label: AI
 ---
 
-Gladys can control your smart home in natural language: turn on lights, read sensor values, launch scenes, and more.
+Gladys can control your smart home in natural language. There is no fixed list of commands: talk to Gladys like you would to a person, and the AI figures out what to do.
 
 This feature relies on **open-weight AI models** hosted on a **sovereign European cloud** (Scaleway, France) via [Gladys Plus](/plus/). AI inference stays in Europe, within infrastructure operated under GDPR.
 
@@ -22,7 +22,7 @@ You can talk to Gladys from:
 
 Behind the scenes, Gladys uses large language models (LLMs) that understand natural language. You don't need to learn a fixed list of commands: describe what you want in your own words, and Gladys figures out what to do.
 
-The assistant can control your devices, read sensor values, launch existing scenes, create new automations, and answer general questions.
+The LLM understands a wide range of requests: controlling devices, reading sensors, launching or creating scenes, analyzing camera images, asking for advice, and much more. The more devices you have in Gladys, the more Gladys can do for you.
 
 ## Examples
 
@@ -33,7 +33,7 @@ The assistant can control your devices, read sensor values, launch existing scen
 - "Create a scene that turns off all the lights at 11 p.m. every evening"
 - "Who invented the light bulb?"
 
-These are just examples. Feel free to experiment: if Gladys understands your request, it will act on it.
+These are just examples to get you started. In practice, you can ask almost anything related to your home or everyday life. Feel free to experiment.
 
 ## Where is my data processed?
 
