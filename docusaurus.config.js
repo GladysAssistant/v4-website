@@ -1,6 +1,7 @@
-const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
+module.exports = function createConfig() {
+  const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
 
-module.exports = {
+  return {
   future: {
     v4: true,
     experimental_faster: {
@@ -235,4 +236,5 @@ module.exports = {
   ],
   clientModules: [require.resolve("./src/openpanel.js")],
   scripts: [],
+  };
 };
