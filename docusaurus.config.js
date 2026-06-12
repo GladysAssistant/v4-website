@@ -1,3 +1,5 @@
+const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
+
 module.exports = {
   future: {
     v4: true,
@@ -33,7 +35,10 @@ module.exports = {
     },
   },
   themeConfig: {
-    image: "img/presentation/gladys-cover-demo-2023.jpg",
+    image:
+      locale === "fr"
+        ? "img/presentation/gladys-assistant-og-image-2026-fr.jpg"
+        : "img/presentation/gladys-assistant-og-image-2026-en.jpg",
     metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
     colorMode: {
       defaultMode: "dark",
