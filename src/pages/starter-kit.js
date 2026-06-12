@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@theme/Layout";
 import Head from "@docusaurus/Head";
+import Link from "@docusaurus/Link";
 import cx from "classnames";
 
 import { useColorMode } from "@docusaurus/theme-common";
@@ -1119,17 +1120,37 @@ function Plus() {
               <h2 className={cx(styles.plusFeatureTitle)}>
                 6 mois de Gladys Plus offerts
               </h2>
-              <p>Profite du meilleur de Gladys Plus pendant 6 mois !</p>
               <p>
-                <ul>
-                  <li>Accès à distance chiffré de bout en bout</li>
-                  <li>Sauvegarde quotidienne</li>
-                  <li>Intégration Google Home/Alexa</li>
-                  <li>API HTTP ouverte</li>
-                  <li>Streaming de caméra à distance (chiffré)</li>
-                  <li>Intégration Enedis</li>
-                  <li>Parle avec l'IA dans notre intégration ChatGPT</li>
-                </ul>
+                Le kit inclut <b>6 mois de l'abonnement Gladys Plus complet</b>{" "}
+                (9,99€/mois, soit près de <b>60€ offerts</b>). C'est le cloud
+                européen qui débloque le meilleur de Gladys : accès à distance
+                sans ouvrir de port, sauvegardes automatiques, et les
+                intégrations premium du quotidien.
+              </p>
+              <ul>
+                <li>Accès à distance chiffré de bout en bout</li>
+                <li>Sauvegardes quotidiennes chiffrées, restauration en un clic</li>
+                <li>Google Home & Amazon Alexa</li>
+                <li>API REST ouverte</li>
+                <li>Comptes pour toute la famille</li>
+                <li>Streaming caméra à distance (chiffré)</li>
+                <li>
+                  Modèles d'IA Open-Weight hébergés en France chez Scaleway
+                </li>
+                <li>Intégration Enedis (suivi de ta consommation électrique)</li>
+                <li>
+                  Serveur MCP pour brancher tes IA préférées sur ta domotique
+                </li>
+              </ul>
+              <p>
+                <b>Hébergé en Europe 🇪🇺</b> — L'infrastructure Gladys Plus et
+                l'inférence IA tournent dans des data centers européens. Tes
+                données restent chiffrées de bout en bout.
+              </p>
+              <p>
+                Au bout des 6 mois, l'abonnement continue seulement si tu le
+                souhaites. Sans engagement, résiliable en un clic.{" "}
+                <Link to="/plus">Découvrir Gladys Plus en détail →</Link>
               </p>
             </div>
           </div>

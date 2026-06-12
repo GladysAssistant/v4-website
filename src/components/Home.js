@@ -22,7 +22,7 @@ const COMPATIBILITIES = [
     { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
     { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
     { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
-    { title: "Google Home", imgSrc: "google-home.jpg", docKey: "google-home" },
+    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
   ],
   [
     { title: "Shelly", imgSrc: "shelly.jpg", docKey: "shelly" },
@@ -44,17 +44,17 @@ const FAQQuestions = {
       response: (
         <>
           <b>Oui, 100% gratuite et open-source !</b> Gladys Assistant est un
-          logiciel libre que tu peux installer{" "}
+          logiciel libre que vous pouvez installer{" "}
           <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
             en une seule commande Docker
           </Link>
-          . Aucun abonnement requis, aucune limitation, aucune carte bancaire
-          demandée.
+          . Aucun abonnement requis pour utiliser Gladys, aucune limitation, aucune
+          carte bancaire demandée.
           <br />
           <br />
-          Tu peux l'installer sur n'importe quelle machine Linux : mini-PC, NAS
-          Synology, Raspberry Pi, serveur, ou même un vieux PC qui traîne. Si
-          Docker tourne dessus, Gladys tourne dessus ! 🚀
+          Vous pouvez l'installer sur n'importe quelle machine Linux : mini-PC,
+          NAS Synology, Raspberry Pi, serveur, ou même un vieux PC. Si Docker
+          tourne dessus, Gladys tourne dessus ! 🚀
         </>
       ),
     },
@@ -62,16 +62,16 @@ const FAQQuestions = {
       title: <>Est-ce compliqué à installer ?</>,
       response: (
         <>
-          <b>Non, c'est étonnamment simple !</b> Si tu sais copier-coller une
-          commande dans un terminal, tu sais installer Gladys. Notre
-          documentation te guide pas à pas, avec des captures d'écran et des
-          vidéos.
+          <b>Cela demande un peu de technique, mais c'est guidé.</b> Il faut
+          d'abord préparer une machine Linux (Ubuntu Server, par exemple), puis
+          lancer Gladys via Docker. Notre documentation vous accompagne pas à
+          pas, avec des captures d'écran et des vidéos.
           <br />
           <br />
-          <b>Encore plus simple :</b> Notre{" "}
-          <Link href="/fr/starter-kit/">kit de démarrage</Link> arrive avec
-          Gladys déjà installée. Tu branches, tu suis le guide de 5 minutes, et
-          c'est parti. Zéro configuration technique requise.
+          <b>Pour aller plus vite :</b> le{" "}
+          <Link href="/fr/starter-kit/">kit de démarrage</Link> arrive avec Gladys
+          déjà installée. Vous branchez, vous suivez le guide, et vous pouvez
+          vous concentrer sur votre maison connectée.
         </>
       ),
     },
@@ -79,14 +79,15 @@ const FAQQuestions = {
       title: <>Mes données sont-elles vraiment privées ?</>,
       response: (
         <>
-          <b>Absolument.</b> Contrairement aux solutions cloud comme Google Home
-          ou Alexa, Gladys tourne 100% chez toi, sur ta machine. Tes données ne
-          quittent jamais ton réseau local.
+          <b>Oui, par conception.</b> Gladys tourne chez vous, sur votre machine.
+          Vos données domotiques (capteurs, scènes, historiques) restent sur
+          votre réseau local.
           <br />
           <br />
-          Pas de serveurs tiers, pas de tracking, pas de revente de données.
-          C'est d'ailleurs pour ça que Gladys existe : reprendre le contrôle de
-          sa vie privée tout en profitant d'une maison intelligente. 🔒
+          Pas de cloud obligatoire, pas de tracking, pas de revente de données.
+          Des services optionnels comme{" "}
+          <a href="/fr/plus">Gladys Plus</a> existent (accès à distance, IA…),
+          mais le cœur de Gladys reste auto-hébergé. 🔒
         </>
       ),
     },
@@ -95,19 +96,25 @@ const FAQQuestions = {
       response: (
         <>
           <b>Très probablement !</b> Gladys supporte{" "}
-          <Link href="/fr/docs/integrations/">des milliers d'appareils</Link>{" "}
-          via Zigbee, Matter, MQTT, et des intégrations dédiées pour Shelly,
-          Sonos, Philips Hue, caméras RTSP, Google Home, Alexa, et bien
-          d'autres.
+          <Link href="/fr/docs/integrations/">des milliers d'appareils</Link> via
+          les protocoles ouverts Zigbee, Matter et MQTT, ainsi que des
+          intégrations dédiées (Shelly, Sonos, Tuya, caméras RTSP, et bien
+          d'autres).
           <br />
           <br />
-          Et comme Gladys est open-source, de nouvelles intégrations sont
-          ajoutées régulièrement par la communauté. Si ton appareil n'est pas
-          encore supporté, tu peux même{" "}
-          <a href="https://community.gladysassistant.com/">
-            demander son ajout
+          Votre appareil n'est pas encore listé ? Consultez notre{" "}
+          <Link href="/fr/docs/integrations/">
+            vision des intégrations
+          </Link>{" "}
+          : Matterbridge couvre de nombreux équipements legacy, et notre{" "}
+          <a href="https://community.gladysassistant.com/t/lusine-a-plugins-matterbridge-rendez-nimporte-quel-appareil-compatible-avec-gladys/10234">
+            usine à plugins IA
           </a>{" "}
-          ou le développer toi-même !
+          peut en développer de nouveaux automatiquement. Vous pouvez aussi{" "}
+          <a href="https://community.gladysassistant.com/">
+            en discuter sur le forum
+          </a>
+          .
         </>
       ),
     },
@@ -119,13 +126,13 @@ const FAQQuestions = {
           <br />
           <br />
           <b>Option 1 (recommandée) :</b> <a href="/fr/plus">Gladys Plus</a>,
-          notre service cloud optionnel qui te donne un accès sécurisé (chiffré
-          de bout en bout) depuis n'importe où, sans configuration. Fonctionne
-          comme une app sur iOS et Android.
+          notre service optionnel qui vous donne un accès sécurisé (chiffré de
+          bout en bout) depuis n'importe où. Fonctionne comme une app sur iOS et
+          Android.
           <br />
           <br />
-          <b>Option 2 (pour les experts) :</b> Configure ton propre VPN ou
-          reverse proxy. Gladys reste 100% gratuite, mais ça demande des
+          <b>Option 2 (pour les experts) :</b> Configurez votre propre VPN ou
+          reverse proxy. Gladys reste 100% gratuite, mais cela demande des
           compétences techniques.
         </>
       ),
@@ -141,12 +148,13 @@ const FAQQuestions = {
           <Link href="/docs/installation/docker/#start-gladys">
             a single Docker command
           </Link>
-          . No subscription required, no limitations, no credit card needed.
+          . No subscription is required to use Gladys, no limitations, no credit
+          card needed.
           <br />
           <br />
           You can install it on any Linux machine: mini-PC, Synology NAS,
-          Raspberry Pi, server, or even an old computer gathering dust. If
-          Docker runs on it, Gladys runs on it! 🚀
+          Raspberry Pi, server, or even an old computer. If Docker runs on it,
+          Gladys runs on it! 🚀
         </>
       ),
     },
@@ -154,13 +162,16 @@ const FAQQuestions = {
       title: <>Is it hard to install?</>,
       response: (
         <>
-          <b>No, it's surprisingly simple!</b> If you can copy-paste a command
-          into a terminal, you can install Gladys. Our documentation guides you
-          step-by-step with screenshots and videos.
+          <b>It takes some technical steps, but we guide you through them.</b> You
+          first need a Linux machine (Ubuntu Server, for example), then you run
+          Gladys via Docker. Our documentation walks you through each step with
+          screenshots and videos.
           <br />
           <br />
-          The entire setup takes about 5 minutes. No coding required, no complex
-          configuration files. Just follow the guide and you're done.
+          <b>Want a faster start?</b> The{" "}
+          <Link href="/starter-kit/">starter kit</Link> (France) ships with Gladys
+          pre-installed. Plug it in, follow the guide, and focus on your smart
+          home.
         </>
       ),
     },
@@ -168,14 +179,14 @@ const FAQQuestions = {
       title: <>Is my data really private?</>,
       response: (
         <>
-          <b>Absolutely.</b> Unlike cloud solutions like Google Home or Alexa,
-          Gladys runs 100% locally on your machine. Your data never leaves your
-          home network.
+          <b>Yes, by design.</b> Gladys runs at home, on your machine. Your
+          smart home data (sensors, scenes, history) stays on your local
+          network.
           <br />
           <br />
-          No third-party servers, no tracking, no data selling. That's actually
-          why Gladys exists: to take back control of your privacy while enjoying
-          a smart home. 🔒
+          No mandatory cloud, no tracking, no data selling. Optional services
+          like <a href="/plus">Gladys Plus</a> exist (remote access, AI…), but
+          the core of Gladys remains self-hosted. 🔒
         </>
       ),
     },
@@ -184,15 +195,22 @@ const FAQQuestions = {
       response: (
         <>
           <b>Very likely!</b> Gladys supports{" "}
-          <Link href="/docs/integrations/">thousands of devices</Link> via
-          Zigbee, Matter, MQTT, and dedicated integrations for Shelly, Sonos,
-          Philips Hue, RTSP cameras, Google Home, Alexa, and many more.
+          <Link href="/docs/integrations/">thousands of devices</Link> through
+          open protocols like Zigbee, Matter, and MQTT, plus dedicated
+          integrations (Shelly, Sonos, Tuya, RTSP cameras, and many more).
           <br />
           <br />
-          And because Gladys is open-source, new integrations are regularly
-          added by the community. If your device isn't supported yet, you can{" "}
-          <a href="https://community.gladysassistant.com/">request it</a> or
-          even develop it yourself!
+          Device not listed yet? Read our{" "}
+          <Link href="/docs/integrations/">integrations vision</Link>:
+          Matterbridge covers many legacy devices, and our{" "}
+          <a href="https://community.gladysassistant.com/t/lusine-a-plugins-matterbridge-rendez-nimporte-quel-appareil-compatible-avec-gladys/10234">
+            AI plugin factory
+          </a>{" "}
+          can build new plugins automatically. You can also{" "}
+          <a href="https://community.gladysassistant.com/">
+            ask on the forum
+          </a>
+          .
         </>
       ),
     },
@@ -204,9 +222,8 @@ const FAQQuestions = {
           <br />
           <br />
           <b>Option 1 (recommended):</b> <a href="/plus">Gladys Plus</a>, our
-          optional cloud service that gives you secure access (end-to-end
-          encrypted) from anywhere, with zero configuration. Works as an app on
-          iOS and Android.
+          optional service that gives you secure access (end-to-end encrypted)
+          from anywhere. Works as an app on iOS and Android.
           <br />
           <br />
           <b>Option 2 (for experts):</b> Set up your own VPN or reverse proxy.
@@ -368,7 +385,8 @@ function Home({ integrations, lang }) {
                   id="home.description"
                   description="The home page description"
                 >
-                  One Platform. Every Device. Complete Privacy.
+                  Open-source, local smart home. Matter-ready, voice-controlled,
+                  private by design.
                 </Translate>
               </p>
               <span className="container">
@@ -401,7 +419,7 @@ function Home({ integrations, lang }) {
                       id="home.gettingStartedSubtext"
                       description="The getting started button subtext"
                     >
-                      5-min setup • No credit card
+                      Free • Guided setup
                     </Translate>
                   </div>
                 </div>
@@ -503,7 +521,7 @@ function Home({ integrations, lang }) {
               id="home.coolFeatures.title"
               description="Cool features description on the homepage"
             >
-              Powerful Features, Zero Configuration
+              Powerful Features, Ready to Use
             </Translate>
           </h2>
           <div className={styles.coolFeatureFlexContainer}>
@@ -587,17 +605,17 @@ function Home({ integrations, lang }) {
                   description="Cool features chat title on the homepage"
                 >
                   "Turn on the light in the kitchen" - Gladys responds instantly
-                  via Telegram, Google Home, Alexa or Siri.
+                  via its built-in voice assistant or by message on your phone.
                 </Translate>
               </p>
             </div>
             <div className={styles.coolFeatureItem}>
               <PausedOverlay
-                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/chat_${lang}.mp4`}
+                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/assistant-vocal-short-extra-small.mp4`}
                 imgSrc={useBaseUrl(
-                  `/img/home/video_thumbnails/chat_${lang}.png`
+                  `/img/home/video_thumbnails/assistant-vocal-short.jpg`
                 )}
-                alt="Chat"
+                alt="Voice assistant"
               />
             </div>
           </div>
@@ -637,8 +655,8 @@ function Home({ integrations, lang }) {
                   id="home.integrations.description"
                   description="Integrations description of the homepage"
                 >
-                  All integrations are open-source and developed by the
-                  community.
+                  Open protocols, dedicated integrations, and an AI-powered
+                  Matterbridge plugin factory for everything else.
                 </Translate>
               </p>
               {COMPATIBILITIES.map((row) => (
@@ -705,8 +723,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.privacyDescription"
                   description="Characteristics chat title on the homepage"
                 >
-                  Gladys is self-hosted, and all your data stays on your local
-                  machine at home. No cloud required, no tracking, ever.
+                  Gladys is self-hosted: your smart home data stays on your local
+                  machine. No mandatory cloud, no tracking.
                 </Translate>
               </p>
             </div>
@@ -724,8 +742,8 @@ function Home({ integrations, lang }) {
                   id="home.characteristics.easeOfUseDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
-                  No terminal commands. No config files. Just a beautiful
-                  interface that works.
+                  No terminal for day-to-day use: a clear interface to control
+                  your home. Installation is guided via Docker.
                 </Translate>
               </p>
             </div>
@@ -895,21 +913,22 @@ function Home({ integrations, lang }) {
                   </p>
                   <div className="row">
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="MsSx8omWiZ8" />
+                      <YoutubeEmbedVideo id="X-UtYMJoKV4" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Suivi d'énergie & serveur MCP dans Gladys
+                        Alexa est officiellement dépassée : voici le futur
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="2_fGKdoiK2Q" />
+                      <YoutubeEmbedVideo id="iVFXXDO798A" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Gladys Assistant devient compatible Matter
+                        Home Assistant vs Gladys Assistant : Le Comparatif Honnête
+                        2026
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="M4vOjQXMiZI" disablePadding />
+                      <YoutubeEmbedVideo id="gn-bBBs39G0" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Live coding : Une intégration Sonos en une journée ?
+                        Comment rendre n'importe quel lave-linge "Intelligent" ?
                       </h4>
                     </div>
                   </div>
@@ -923,220 +942,38 @@ function Home({ integrations, lang }) {
           <div
             className={classnames(styles.homeSection)}
             style={{
-              background: "var(--ifm-color-emphasis-100)",
-              padding: "3rem 1rem",
+              padding: "2rem 1rem",
             }}
           >
-            <div className="container">
-              <h2
-                className={styles.secondaryTitle}
-                style={{ marginBottom: "1rem" }}
-              >
-                Kit de démarrage Gladys
-              </h2>
+            <div
+              className="container"
+              style={{
+                maxWidth: "800px",
+                margin: "0 auto",
+                textAlign: "center",
+                padding: "2rem 1.5rem",
+                backgroundColor: "var(--ifm-color-emphasis-100)",
+                borderRadius: "0.75rem",
+              }}
+            >
               <p
                 style={{
-                  textAlign: "center",
-                  fontSize: "1.2rem",
-                  marginBottom: "3rem",
-                  maxWidth: "800px",
-                  marginLeft: "auto",
-                  marginRight: "auto",
+                  fontSize: "1.1rem",
+                  marginBottom: "1.25rem",
+                  opacity: 0.95,
                 }}
               >
-                Un mini-PC avec <b>Gladys pré-installée</b> + la formation
-                officielle + 6 mois de Gladys Plus offerts
+                Vous préférez éviter l'installation ? Le{" "}
+                <Link href="/fr/starter-kit">kit de démarrage</Link> inclut un
+                mini-PC avec Gladys pré-installé, la formation officielle et 6
+                mois de Gladys Plus. Option clé en main, sans obligation.
               </p>
-
-              <div className="row" style={{ marginBottom: "3rem" }}>
-                {false && (
-                  <div className="col col--4">
-                    <div
-                      style={{
-                        border: "2px solid var(--ifm-color-emphasis-300)",
-                        padding: "25px",
-                        borderRadius: "12px",
-                        textAlign: "center",
-                        height: "100%",
-                        background: "var(--ifm-card-background-color)",
-                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
-                        Beelink T5
-                      </h3>
-                      <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                        Le mini-PC compact et économique
-                      </p>
-                      <ul
-                        style={{
-                          textAlign: "left",
-                          marginBottom: "15px",
-                          fontSize: "0.9em",
-                        }}
-                      >
-                        <li>✓ Intel Celeron N4020</li>
-                        <li>✓ 4 Go RAM • 64 Go eMMC</li>
-                        <li>✓ Gladys déjà installée</li>
-                      </ul>
-                      <Link
-                        className="button button--primary button--lg"
-                        href="/fr/starter-kit"
-                        style={{
-                          width: "100%",
-                          marginTop: "15px",
-                        }}
-                      >
-                        Découvrir
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
-                <div className="col col--6">
-                  <div
-                    style={{
-                      border: "2px solid var(--ifm-color-emphasis-300)",
-                      padding: "25px",
-                      borderRadius: "12px",
-                      textAlign: "center",
-                      height: "100%",
-                      background: "var(--ifm-card-background-color)",
-                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
-                      Beelink mini S12
-                    </h3>
-                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                      Un bon rapport qualité/prix
-                    </p>
-                    <ul
-                      style={{
-                        textAlign: "left",
-                        marginBottom: "15px",
-                        fontSize: "0.9em",
-                      }}
-                    >
-                      <li>✓ Intel N95</li>
-                      <li>✓ 8 Go RAM • 256 Go SSD</li>
-                      <li>✓ Gladys déjà installée</li>
-                    </ul>
-                    <Link
-                      className="button button--primary button--lg"
-                      href="/fr/starter-kit"
-                      style={{
-                        width: "100%",
-                        marginTop: "15px",
-                      }}
-                    >
-                      Découvrir
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="col col--6">
-                  <div
-                    style={{
-                      border: "3px solid var(--ifm-color-primary)",
-                      padding: "25px",
-                      borderRadius: "12px",
-                      textAlign: "center",
-                      height: "100%",
-                      background: "var(--ifm-card-background-color)",
-                      boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
-                    }}
-                  >
-                    <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
-                      Beelink S13
-                    </h3>
-                    <p style={{ fontSize: "1em", marginBottom: "15px" }}>
-                      ⭐ Le meilleur choix !
-                    </p>
-                    <ul
-                      style={{
-                        textAlign: "left",
-                        marginBottom: "15px",
-                        fontSize: "0.9em",
-                      }}
-                    >
-                      <li>✓ Intel N150</li>
-                      <li>✓ 16 Go RAM • 500 Go SSD</li>
-                      <li>✓ Gladys déjà installée</li>
-                    </ul>
-                    <Link
-                      className="button button--primary button--lg"
-                      href="/fr/starter-kit"
-                      style={{
-                        width: "100%",
-                        marginTop: "15px",
-                      }}
-                    >
-                      Découvrir
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              <div className="row" style={{ marginTop: "3rem" }}>
-                <div className="col col--4">
-                  <div style={{ textAlign: "center", padding: "1rem" }}>
-                    <div
-                      style={{
-                        fontSize: "3rem",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      🎓
-                    </div>
-                    <h4>Formation officielle</h4>
-                    <p>Des heures de vidéos pour maîtriser Gladys de A à Z</p>
-                  </div>
-                </div>
-                <div className="col col--4">
-                  <div style={{ textAlign: "center", padding: "1rem" }}>
-                    <div
-                      style={{
-                        fontSize: "3rem",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      ⚡
-                    </div>
-                    <h4>Prêt à l'emploi</h4>
-                    <p>
-                      Gladys déjà installée et configurée, tu branches et c'est
-                      parti
-                    </p>
-                  </div>
-                </div>
-                <div className="col col--4">
-                  <div style={{ textAlign: "center", padding: "1rem" }}>
-                    <div
-                      style={{
-                        fontSize: "3rem",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      💎
-                    </div>
-                    <h4>6 mois Gladys Plus</h4>
-                    <p>
-                      Accès à distance, sauvegardes et intégrations premium
-                      offerts
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ textAlign: "center", marginTop: "3rem" }}>
-                <Link
-                  className="button button--primary button--lg"
-                  href="/fr/starter-kit"
-                >
-                  Voir tous les kits de démarrage →
-                </Link>
-              </div>
+              <Link
+                className="button button--secondary"
+                href="/fr/starter-kit"
+              >
+                Découvrir le kit de démarrage →
+              </Link>
             </div>
           </div>
         )}
