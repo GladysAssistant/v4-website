@@ -401,7 +401,7 @@ function Home({ integrations, lang }) {
                       id="home.gettingStartedSubtext"
                       description="The getting started button subtext"
                     >
-                      5-min setup • No credit card
+                      Free • Guided setup
                     </Translate>
                   </div>
                 </div>
@@ -587,17 +587,17 @@ function Home({ integrations, lang }) {
                   description="Cool features chat title on the homepage"
                 >
                   "Turn on the light in the kitchen" - Gladys responds instantly
-                  via Telegram, Google Home, Alexa or Siri.
+                  via its built-in voice assistant or by message on your phone.
                 </Translate>
               </p>
             </div>
             <div className={styles.coolFeatureItem}>
               <PausedOverlay
-                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/chat_${lang}.mp4`}
+                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/assistant-vocal-short-extra-small.mp4`}
                 imgSrc={useBaseUrl(
-                  `/img/home/video_thumbnails/chat_${lang}.png`
+                  `/img/home/video_thumbnails/assistant-vocal-short.jpg`
                 )}
-                alt="Chat"
+                alt="Voice assistant"
               />
             </div>
           </div>
@@ -895,21 +895,22 @@ function Home({ integrations, lang }) {
                   </p>
                   <div className="row">
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="MsSx8omWiZ8" />
+                      <YoutubeEmbedVideo id="X-UtYMJoKV4" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Suivi d'énergie & serveur MCP dans Gladys
+                        Alexa est officiellement dépassée : voici le futur
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="2_fGKdoiK2Q" />
+                      <YoutubeEmbedVideo id="iVFXXDO798A" />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Gladys Assistant devient compatible Matter
+                        Home Assistant vs Gladys Assistant : Le Comparatif Honnête
+                        2026
                       </h4>
                     </div>
                     <div className="col col--4">
-                      <YoutubeEmbedVideo id="M4vOjQXMiZI" disablePadding />
+                      <YoutubeEmbedVideo id="gn-bBBs39G0" disablePadding />
                       <h4 className={styles.homeYouTubeVideoTitle}>
-                        Live coding : Une intégration Sonos en une journée ?
+                        Comment rendre n'importe quel lave-linge "Intelligent" ?
                       </h4>
                     </div>
                   </div>
