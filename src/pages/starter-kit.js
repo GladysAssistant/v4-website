@@ -1128,7 +1128,10 @@ function Plus() {
                   <li>API HTTP ouverte</li>
                   <li>Streaming de caméra à distance (chiffré)</li>
                   <li>Intégration Enedis</li>
-                  <li>Parle avec l'IA dans notre intégration ChatGPT</li>
+                  <li>
+                    Parle avec l'IA via des modèles Open-Weight hébergés en
+                    France chez Scaleway
+                  </li>
                 </ul>
               </p>
             </div>

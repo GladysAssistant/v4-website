@@ -49,7 +49,8 @@ function CvgPlus() {
                     électrique
                   </li>
                   <li>
-                    Une intégration ChatGPT pour interagir avec l'IA dans Gladys
+                    Des modèles d'IA Open-Weight (hébergés en France chez
+                    Scaleway) pour interagir avec l'IA dans Gladys
                   </li>
                   <li>Une API Owntracks pour le suivi de localisation</li>
                 </ul>
@@ -75,7 +76,7 @@ function CvgPlus() {
                   <li>
                     <strong>Gladys Plus :</strong> 9,99€/mois ou 99,99€/an -
                     Accès à toutes les fonctionnalités (incluant sauvegardes,
-                    Enedis, ChatGPT, streaming caméra)
+                    Enedis, modèles d'IA Open-Weight, streaming caméra)
                   </li>
                 </ul>
                 <h2>Durée de l'offre et résilation</h2>
