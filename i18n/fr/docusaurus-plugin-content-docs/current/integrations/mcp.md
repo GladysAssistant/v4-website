@@ -2,6 +2,7 @@
 id: mcp
 title: Connecter un client MCP à Gladys
 sidebar_label: MCP
+description: "Connectez Claude Desktop, Perplexity ou Mistral à votre domotique Gladys via le Model Context Protocol (MCP). Contrôlez les lumières, lisez les capteurs, lancez des scènes depuis vos agents IA."
 ---
 
 Le Model Context Protocol (MCP) est un protocole ouvert développé par Anthropic qui permet d'exposer des outils et fonctions que les agents IA peuvent utiliser pour obtenir des informations ou interagir avec des appareils du monde réel.

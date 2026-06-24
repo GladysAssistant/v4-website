@@ -2,6 +2,7 @@
 id: openai
 title: Utiliser l'IA pour contrôler sa maison connectée
 sidebar_label: IA
+description: "Pilotez votre domotique Gladys en langage naturel avec des modèles d'IA open-weight hébergés en France (Scaleway). Via le chat, Telegram ou l'assistant vocal. Inclus dans Gladys Plus."
 ---
 
 Gladys peut piloter votre maison connectée en langage naturel. Il n'y a pas de liste de commandes fixes : parlez à Gladys comme à une personne, l'IA comprend et agit.

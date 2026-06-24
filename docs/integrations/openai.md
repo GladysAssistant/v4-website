@@ -2,6 +2,7 @@
 id: openai
 title: Using AI to control your connected home
 sidebar_label: AI
+description: "Control your Gladys smart home in natural language with open-weight AI models hosted in France (Scaleway). Talk via chat, Telegram, or the voice assistant widget. Included in Gladys Plus."
 ---
 
 Gladys can control your smart home in natural language. There is no fixed list of commands: talk to Gladys like you would to a person, and the AI figures out what to do.

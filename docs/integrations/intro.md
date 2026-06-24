@@ -3,6 +3,7 @@ id: intro
 title: Gladys Assistant Integrations
 sidebar_label: Introduction
 slug: /integrations/
+description: "Gladys Assistant supports Zigbee (Zigbee2MQTT), Matter, MQTT, Shelly, Sonos, cameras, and thousands of devices. Open protocols first, with Matterbridge and an AI plugin factory for legacy hardware."
 ---
 
 Gladys Assistant is an **open-source project**, developed and maintained by a **community of home automation enthusiasts**.  
