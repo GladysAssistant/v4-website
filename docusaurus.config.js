@@ -214,6 +214,8 @@ module.exports = function createConfig() {
         },
         blog: {
           showReadingTime: true,
+          blogDescription:
+            "Follow the latest from Gladys Assistant: new releases, integrations, AI features, tutorials and updates from the open-source, privacy-first home assistant.",
           // Please change this to your repo.
           editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
           editLocalizedFiles: true,
