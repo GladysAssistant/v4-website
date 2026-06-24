@@ -2,6 +2,7 @@
 id: mcp
 title: Connect an MCP client to Gladys
 sidebar_label: MCP
+description: "Connect Claude Desktop, Perplexity, or Mistral to your Gladys smart home via the Model Context Protocol (MCP). Control lights, read sensors, launch scenes, and view cameras from AI agents."
 ---
 
 The Model Context Protocol (MCP) is an open protocol developed by Anthropic that allows exposing tools and functions that AI agents can use to retrieve information or interact with real-world devices.

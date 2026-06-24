@@ -27,6 +27,8 @@ import { getCheckoutUrl } from "../components/plus/checkout";
 
 import styles from "./styles.module.css";
 import plusStyles from "../components/plus/styles.module.css";
+import JsonLd from "../components/seo/JsonLd";
+import { getPlusPageSchema } from "../data/structuredData";
 
 const testimonials = {
   fr: testimonialsFr,
@@ -227,6 +229,8 @@ function PlusContent() {
 }
 
 function PlusParent() {
+  const { i18n } = useDocusaurusContext();
+
   return (
     <Layout
       title={translate({
@@ -239,6 +243,7 @@ function PlusParent() {
           "Access Gladys Assistant from anywhere with end-to-end encryption. Daily backups, voice assistants, AI, and more. Try Gladys Plus free for 1 month, no credit card required.",
       })}
     >
+      <JsonLd data={getPlusPageSchema(i18n.currentLocale)} />
       <PlusContent />
     </Layout>
   );

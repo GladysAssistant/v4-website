@@ -3,6 +3,7 @@ id: hardware
 title: Getting started with Gladys Assistant
 sidebar_label: Getting started
 slug: /
+description: "How to install Gladys Assistant: run it on a mini-PC, Raspberry Pi, Synology NAS, or any Linux machine with Docker. Free, open-source, self-hosted home automation."
 ---
 
 It can be difficult to know where to start when you're new to home automation.

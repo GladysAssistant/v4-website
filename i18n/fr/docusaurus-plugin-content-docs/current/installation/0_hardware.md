@@ -3,6 +3,7 @@ id: hardware
 title: Commencer avec Gladys
 sidebar_label: Commencer
 slug: /
+description: "Comment installer Gladys Assistant : sur mini-PC, Raspberry Pi, NAS Synology ou toute machine Linux avec Docker. Domotique gratuite, open-source et auto-hébergée."
 ---
 
 Il peut être difficile de savoir par où commencer lorsque l'on débute en domotique. Quel matériel choisir ? Quel budget prévoir ? Quel protocole domotique adopter ?
