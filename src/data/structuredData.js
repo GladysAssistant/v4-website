@@ -164,6 +164,21 @@ function toFaqPage(faqs, pageUrl) {
   };
 }
 
+function getOrganizationNode() {
+  return {
+    "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
+    name: "Gladys Assistant",
+    url: SITE_URL,
+    logo: `${SITE_URL}/img/logo.svg`,
+    sameAs: SAME_AS,
+    founder: {
+      "@type": "Person",
+      name: "Pierre-Gilles Leymarie",
+    },
+  };
+}
+
 export function getHomepageSchema(lang) {
   const prefix = lang === "fr" ? "/fr" : "";
   const pageUrl = `${SITE_URL}${prefix}/`;
@@ -171,18 +186,7 @@ export function getHomepageSchema(lang) {
   return {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${SITE_URL}/#organization`,
-        name: "Gladys Assistant",
-        url: SITE_URL,
-        logo: `${SITE_URL}/img/logo.svg`,
-        sameAs: SAME_AS,
-        founder: {
-          "@type": "Person",
-          name: "Pierre-Gilles Leymarie",
-        },
-      },
+      getOrganizationNode(),
       {
         "@type": "SoftwareApplication",
         "@id": `${SITE_URL}/#software`,
@@ -216,6 +220,7 @@ export function getPlusPageSchema(lang) {
   return {
     "@context": "https://schema.org",
     "@graph": [
+      getOrganizationNode(),
       {
         "@type": "Product",
         "@id": `${pageUrl}#product`,
