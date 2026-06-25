@@ -1,6 +1,7 @@
 ---
 id: unraid
 title: Installer Gladys Assistant sur un NAS Unraid
+description: "Installez Gladys Assistant sur un NAS Unraid depuis le store d'apps : configurez le conteneur Docker en réseau host et automatisez votre maison."
 sidebar_label: Installation sur NAS Unraid
 ---
 

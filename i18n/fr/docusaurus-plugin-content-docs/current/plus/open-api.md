@@ -1,6 +1,7 @@
 ---
 id: open-api
 title: Open API
+description: "Utilisez l'Open API de Gladys Plus pour envoyer des données à votre maison depuis l'extérieur de votre réseau : localisation, valeurs de capteurs et événements, via une clé API."
 sidebar_label: Open API
 ---
 

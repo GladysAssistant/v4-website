@@ -1,6 +1,7 @@
 ---
 id: google-home
 title: Utiliser Google Home avec Gladys Assistant
+description: "Pilotez vos appareils Gladys Assistant avec Google Home via Gladys Plus, la passerelle cloud certifiée Google. Le contrôle vocal de votre maison connectée."
 sidebar_label: Google Home
 ---
 

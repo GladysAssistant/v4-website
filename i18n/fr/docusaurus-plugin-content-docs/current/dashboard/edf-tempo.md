@@ -1,6 +1,7 @@
 ---
 id: edf-tempo
 title: Afficher les jours EDF Tempo sur votre tableau de bord
+description: "Affichez les jours EDF Tempo sur votre tableau de bord Gladys Assistant : couleur du jour et du lendemain, heures pleines et creuses, pour optimiser votre facture."
 sidebar_label: EDF Tempo
 ---
 

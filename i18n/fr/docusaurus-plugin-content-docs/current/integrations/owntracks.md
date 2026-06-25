@@ -1,6 +1,7 @@
 ---
 id: owntracks
 title: Owntracks
+description: "Suivez la position de votre téléphone dans Gladys Assistant avec OwnTracks et Gladys Plus pour automatiser la présence et déclencher des scènes géolocalisées."
 sidebar_label: Owntracks
 ---
 

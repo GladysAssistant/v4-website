@@ -1,6 +1,7 @@
 ---
 id: continue-only-if-action
 title: Condition on variables
+description: "Use the Continue only if action in Gladys Assistant scenes to keep running only when a variable meets a condition, with math functions support."
 sidebar_label: Condition on variables
 ---
 

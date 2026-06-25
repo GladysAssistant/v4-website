@@ -1,6 +1,7 @@
 ---
 id: setup-development-environment-mac-linux
 title: Setup a Mac/Linux development environment
+description: "Set up a Gladys Assistant development environment on Mac or Linux: install Node.js, the server backend and frontend to start contributing."
 sidebar_label: Mac/Linux
 ---
 

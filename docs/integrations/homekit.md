@@ -1,6 +1,7 @@
 ---
 id: homekit
 title: Connect Gladys to HomeKit and use Siri
+description: "Connect Gladys Assistant to Apple HomeKit and control your devices with Siri: scan the QR code, add Gladys as a HomeKit bridge and import your devices."
 sidebar_label: HomeKit
 ---
 

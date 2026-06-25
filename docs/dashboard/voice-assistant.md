@@ -1,6 +1,7 @@
 ---
 id: voice-assistant
 title: Talk to Gladys from the dashboard with the voice assistant
+description: "Talk to Gladys Assistant from your dashboard with the voice assistant widget: speak, read the live transcription and AI answer, and hear it read aloud."
 sidebar_label: Voice assistant
 ---
 

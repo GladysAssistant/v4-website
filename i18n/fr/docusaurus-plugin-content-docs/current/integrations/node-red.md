@@ -1,6 +1,7 @@
 ---
 id: node-red
 title: Node-RED
+description: "Intégrez Node-RED à Gladys Assistant pour connecter matériel, API et services en ligne : activez le conteneur et créez des automatisations puissantes."
 sidebar_label: Node-RED
 ---
 

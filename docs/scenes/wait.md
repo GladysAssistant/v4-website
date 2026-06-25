@@ -1,6 +1,7 @@
 ---
 id: wait-action
 title: Wait
+description: "Use the Wait action in a Gladys Assistant scene to pause for a fixed or calculated duration, based on variables and math functions."
 sidebar_label: Wait
 ---
 

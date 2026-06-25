@@ -1,6 +1,7 @@
 ---
 id: developing-a-service
 title: Contribuer sur Gladys Assistant
+description: "Contribuez à Gladys Assistant : découvrez la stack open-source (Preact, Node.js, SQLite, DuckDB) et apprenez à développer un nouveau service ou une intégration."
 sidebar_label: Contribuer sur Gladys Assistant
 ---
 

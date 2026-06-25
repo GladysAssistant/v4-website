@@ -1,6 +1,7 @@
 ---
 id: scheduled-trigger
 title: Scheduled Trigger
+description: "Schedule Gladys Assistant scenes to run every month, week, day, at intervals or on a specific day for fully time-based home automation."
 sidebar_label: Scheduled Trigger
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: netatmo
 title: Connecter ses thermostats Netatmo à sa maison connectée
+description: "Connectez vos thermostats, vannes et stations météo Netatmo à Gladys Assistant via Netatmo Connect pour superviser et piloter votre maison connectée."
 sidebar_label: Netatmo
 toc_min_heading_level: 2
 toc_max_heading_level: 5

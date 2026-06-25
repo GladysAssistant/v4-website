@@ -1,6 +1,7 @@
 ---
 id: house-no-longer-empty
 title: When the house is no longer empty
+description: "Trigger a Gladys Assistant scene when the house is no longer empty, or add a condition to run automations only when someone is home."
 sidebar_label: House is no longer empty
 ---
 

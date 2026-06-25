@@ -1,6 +1,7 @@
 ---
 id: philips-hue
 title: Connecter ses Philips Hue dans Gladys Assistant
+description: "Connectez votre pont et vos ampoules Philips Hue à Gladys Assistant pour les piloter localement depuis votre tableau de bord et vos scènes."
 sidebar_label: Philips Hue
 ---
 

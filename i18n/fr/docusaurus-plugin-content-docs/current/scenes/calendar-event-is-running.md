@@ -1,6 +1,7 @@
 ---
 id: calendar-event-is-running-condition
 title: Condition sur un évènement de calendrier
+description: "Ajoutez une condition à une scène Gladys Assistant selon un événement de calendrier en cours, pour n'exécuter vos automatisations qu'en vacances, au sport ou en réunion."
 sidebar_label: Un évènement du calendrier est en cours
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: time-condition
 title: Condition temporelle
+description: "Ajoutez une condition horaire à une scène Gladys Assistant pour ne continuer que pendant une plage horaire choisie et certains jours de la semaine."
 sidebar_label: Condition temporelle
 ---
 

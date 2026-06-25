@@ -1,6 +1,7 @@
 ---
 id: edf-tempo
 title: Display EDF Tempo days on your dashboard
+description: "Show EDF Tempo days on your Gladys Assistant dashboard: current and next-day color, peak and off-peak hours, to optimize your electricity bill."
 sidebar_label: EDF Tempo
 ---
 

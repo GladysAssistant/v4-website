@@ -1,6 +1,7 @@
 ---
 id: device-state-changed-trigger
 title: Déclencher une scène lorsque l'état d'un appareil change
+description: "Déclenchez une scène Gladys Assistant quand l'état d'un appareil change, comme une baisse de température ou une lampe qui s'allume, avec des conditions personnalisées."
 sidebar_label: Déclencheur sur l'état d'un appareil
 ---
 

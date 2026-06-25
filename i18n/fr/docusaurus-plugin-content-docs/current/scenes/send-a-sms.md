@@ -1,6 +1,7 @@
 ---
 id: send-a-sms-action
 title: Envoyer un SMS
+description: "Envoyez un SMS sur votre téléphone dans une scène Gladys Assistant avec l'opérateur Free Mobile, et injectez des valeurs de capteurs et des variables dans le message."
 sidebar_label: Envoyer un SMS
 ---
 

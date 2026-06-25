@@ -40,7 +40,10 @@ module.exports = function createConfig() {
       locale === "fr"
         ? "img/presentation/gladys-assistant-og-image-2026-fr.jpg"
         : "img/presentation/gladys-assistant-og-image-2026-en.jpg",
-    metadata: [{ name: "twitter:site", content: "@gladysassistant" }],
+    metadata: [
+      { name: "twitter:site", content: "@gladysassistant" },
+      { property: "og:site_name", content: "Gladys Assistant" },
+    ],
     colorMode: {
       defaultMode: "dark",
       disableSwitch: true,
@@ -211,9 +214,11 @@ module.exports = function createConfig() {
           // Please change this to your repo.
           editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
           editLocalizedFiles: true,
+          showLastUpdateTime: true,
         },
         blog: {
           showReadingTime: true,
+          showLastUpdateTime: true,
           blogDescription:
             "Follow the latest from Gladys Assistant: new releases, integrations, AI features, tutorials and updates from the open-source, privacy-first home assistant.",
           // Please change this to your repo.
@@ -226,6 +231,12 @@ module.exports = function createConfig() {
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
+        },
+        sitemap: {
+          lastmod: "date",
+          changefreq: "weekly",
+          priority: 0.5,
+          filename: "sitemap.xml",
         },
       },
     ],

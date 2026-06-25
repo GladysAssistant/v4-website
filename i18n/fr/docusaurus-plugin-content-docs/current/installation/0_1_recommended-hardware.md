@@ -1,6 +1,7 @@
 ---
 id: recommended-hardware
 title: Le matériel recommandé
+description: "Le meilleur matériel Zigbee pour une maison connectée Gladys Assistant fiable : dongle coordinateur recommandé et appareils les mieux notés dans chaque catégorie."
 sidebar_label: Matériel recommandé
 ---
 

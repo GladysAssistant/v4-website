@@ -1,6 +1,7 @@
 ---
 id: send-a-zigbee2mqtt-message-action
 title: Envoyer un message Zigbee2Mqtt
+description: "Envoyez un message Zigbee2MQTT dans une scène Gladys Assistant pour piloter directement des appareils Zigbee, comme déclencher une sirène, avec injection de variables."
 sidebar_label: Envoyer un message Zigbee2Mqtt
 ---
 

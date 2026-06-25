@@ -1,6 +1,7 @@
 ---
 id: xiaomi
 title: Xiaomi
+description: "Connect Xiaomi devices to Gladys Assistant via the Mi Home gateway. Note: Zigbee or Matter is now recommended for these devices."
 sidebar_label: Xiaomi
 ---
 

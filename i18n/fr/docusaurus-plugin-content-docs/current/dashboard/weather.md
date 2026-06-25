@@ -1,6 +1,7 @@
 ---
 id: weather
 title: Afficher la météo sur le tableau de bord
+description: "Affichez la météo locale sur votre tableau de bord Gladys Assistant grâce à l'intégration OpenWeather et à la position de votre maison."
 sidebar_label: Météo
 ---
 

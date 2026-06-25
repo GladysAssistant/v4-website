@@ -1,6 +1,7 @@
 ---
 id: back-at-home
 title: When a user comes back home
+description: "Trigger a Gladys Assistant scene when a user comes back home, based on presence detection, to automate your smart home on arrival."
 sidebar_label: Back at home
 ---
 

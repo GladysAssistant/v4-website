@@ -1,6 +1,7 @@
 ---
 id: humidity-in-room
 title: Afficher la humidité moyenne d'une pièce sur le tableau de bord
+description: "Affichez l'humidité moyenne d'une pièce sur votre tableau de bord Gladys Assistant, calculée à partir de tous les capteurs, avec des seuils de couleur personnalisés."
 sidebar_label: Humidité de la pièce
 ---
 

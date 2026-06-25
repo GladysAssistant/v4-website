@@ -1,6 +1,7 @@
 ---
 id: turn-on-off-the-switches-action
 title: Allumer/éteindre des prises télécommandées dans une scène
+description: "Pilotez des prises télécommandées dans une scène Gladys Assistant pour automatiser lampes, rubans LED ou une cafetière, avec un exemple pas à pas."
 sidebar_label: Allumer/éteindre des prises
 ---
 

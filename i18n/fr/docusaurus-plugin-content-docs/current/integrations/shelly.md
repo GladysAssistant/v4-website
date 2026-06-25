@@ -1,6 +1,7 @@
 ---
 id: shelly
 title: Intégrer Shelly à Gladys via Matterbridge
+description: "Intégrez vos modules Shelly dans Gladys Assistant via Matterbridge : déployez le pont, appairez-le dans Gladys et pilotez vos Shelly en Matter."
 sidebar_label: Shelly
 ---
 

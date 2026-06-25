@@ -1,6 +1,7 @@
 ---
 id: cypress-tests
 title: Run Cypress tests in Gladys
+description: "Run Cypress end-to-end frontend tests in Gladys Assistant: start the backend, launch the frontend and execute the test suite."
 sidebar_label: Frontend tests
 ---
 

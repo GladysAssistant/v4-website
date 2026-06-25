@@ -1,6 +1,7 @@
 ---
 id: sunset-sunrise
 title: Sun trigger
+description: "Trigger a Gladys Assistant scene at sunrise or sunset, with an optional delay before or after, to automate your lights with the sun."
 sidebar_label: Sun trigger
 ---
 

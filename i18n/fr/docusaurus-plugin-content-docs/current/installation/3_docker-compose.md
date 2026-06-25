@@ -1,6 +1,7 @@
 ---
 id: docker-compose
 title: Installer Gladys Assistant avec Docker Compose
+description: "Installez Gladys Assistant manuellement avec Docker Compose sur un mini-PC, un NAS Synology, une VM Linux ou toute machine équipée de Docker."
 sidebar_label: Installation avec Docker-Compose
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: docker
 title: Installation avec Docker
+description: "Installez Gladys Assistant avec Docker sur n'importe quel système (mini-PC, NAS, serveur Linux, VM) en une seule commande. Gratuit, open-source et auto-hébergé."
 sidebar_label: Installation avec Docker
 ---
 

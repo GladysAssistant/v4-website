@@ -1,6 +1,7 @@
 ---
 id: broadlink
 title: Broadlink
+description: "Control Broadlink devices with Gladys Assistant and replace your infrared remotes: discover devices and create virtual remote controls."
 sidebar_label: Broadlink
 ---
 

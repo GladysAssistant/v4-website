@@ -1,6 +1,7 @@
 ---
 id: node-red
 title: Node-RED
+description: "Integrate Node-RED with Gladys Assistant to connect hardware, APIs and online services: enable the container and build powerful automations."
 sidebar_label: Node-RED
 ---
 

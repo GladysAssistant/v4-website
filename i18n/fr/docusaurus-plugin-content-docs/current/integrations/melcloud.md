@@ -1,6 +1,7 @@
 ---
 id: melcloud
 title: MELCloud (Climatisation Mitsubishi)
+description: "Pilotez votre climatisation Mitsubishi depuis Gladys Assistant avec l'intégration MELCloud : connectez votre compte et gérez vos unités de clim."
 sidebar_label: MELCloud
 ---
 

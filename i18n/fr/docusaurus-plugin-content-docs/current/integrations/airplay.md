@@ -1,6 +1,7 @@
 ---
 id: airplay
 title: Connecter une enceinte Airplay à sa maison connectée
+description: "Connectez n'importe quelle enceinte AirPlay ou un HomePod à Gladys Assistant : configurez l'enceinte, détectez-la dans Gladys et diffusez l'audio chez vous."
 sidebar_label: Airplay
 ---
 

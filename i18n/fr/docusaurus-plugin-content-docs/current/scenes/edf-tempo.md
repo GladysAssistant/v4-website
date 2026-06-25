@@ -1,6 +1,7 @@
 ---
 id: edf-tempo
 title: Faire des économies sur sa facture d'électricité avec EDF Tempo et Gladys
+description: "Économisez sur votre facture d'électricité avec EDF Tempo et Gladys Assistant : ajoutez une condition Tempo à vos scènes pour automatiser selon la couleur du jour."
 sidebar_label: EDF Tempo
 ---
 

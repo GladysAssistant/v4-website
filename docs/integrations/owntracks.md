@@ -1,6 +1,7 @@
 ---
 id: owntracks
 title: Owntracks
+description: "Track your phone's location in Gladys Assistant with OwnTracks and Gladys Plus to automate presence and trigger location-based scenes."
 sidebar_label: Owntracks
 ---
 

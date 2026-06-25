@@ -1,6 +1,7 @@
 ---
 id: alarm
 title: Comment configurer le mode alarme ?
+description: "Créez un véritable système d'alarme avec Gladys Assistant : modes armé, désarmé, partiel et panique, délai d'armement, code et stratégies par scènes."
 sidebar_label: Alarme
 ---
 

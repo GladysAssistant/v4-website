@@ -1,6 +1,7 @@
 ---
 id: faq
 title: FAQ
+description: "Questions fréquentes sur Gladys Assistant : mise à jour avec Watchtower, qui utilise Gladys et comment contribuer au projet open-source."
 sidebar_label: FAQ
 ---
 

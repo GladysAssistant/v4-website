@@ -1,6 +1,7 @@
 ---
 id: nextcloud-talk
 title: Nextcloud Talk
+description: "Use Nextcloud Talk to chat with Gladys Assistant: create a bot account, get your conversation token and send instructions to your smart home."
 sidebar_label: Nextcloud Talk
 ---
 

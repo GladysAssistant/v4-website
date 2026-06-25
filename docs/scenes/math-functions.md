@@ -1,6 +1,7 @@
 ---
 id: math-functions
 title: Math functions available
+description: "Reference of the math functions available in Gladys Assistant scenes (addition, modulo, power) to build dynamic, calculated automations."
 sidebar_label: Math functions
 ---
 

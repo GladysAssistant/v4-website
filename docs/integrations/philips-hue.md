@@ -1,6 +1,7 @@
 ---
 id: philips-hue
 title: Philips Hue
+description: "Connect your Philips Hue bridge and lights to Gladys Assistant to control them locally from your dashboard and scenes."
 sidebar_label: Philips Hue
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: somfy-tahoma
 title: Integrating Somfy devices with Gladys via Matterbridge
+description: "Integrate Somfy TaHoma devices into Gladys Assistant via Matterbridge to control your roller shutters, blinds and openings over Matter."
 sidebar_label: Somfy
 ---
 

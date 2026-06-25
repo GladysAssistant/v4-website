@@ -1,6 +1,7 @@
 ---
 id: intro
 title: Le tableau de bord de Gladys Assistant
+description: "Découvrez le tableau de bord de Gladys Assistant : créez plusieurs tableaux, partagez-les en famille, pilotez appareils, caméras et capteurs, avec le mode tablette."
 sidebar_label: Introduction
 ---
 

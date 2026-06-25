@@ -1,6 +1,7 @@
 ---
 id: matterbridge
 title: Matterbridge
+description: "Connectez des appareils non-Matter (Shelly, Somfy) à Gladys Assistant avec Matterbridge : activez le conteneur, installez des plugins et appairez-les en Matter."
 sidebar_label: Matterbridge
 ---
 

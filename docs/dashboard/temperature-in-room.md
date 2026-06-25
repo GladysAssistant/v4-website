@@ -1,6 +1,7 @@
 ---
 id: temperature-in-room
 title: Display the average room temperature on the dashboard
+description: "Display the average temperature of a room on your Gladys Assistant dashboard, aggregated from all temperature sensors in the room."
 sidebar_label: Room Temperature
 ---
 

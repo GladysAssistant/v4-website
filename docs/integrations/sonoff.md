@@ -1,6 +1,7 @@
 ---
 id: sonoff
 title: Sonoff
+description: "Connect Sonoff devices to Gladys Assistant using Tasmota firmware and an eWeLink account to control them locally in your smart home."
 sidebar_label: Sonoff
 ---
 

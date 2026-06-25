@@ -1,6 +1,7 @@
 ---
 id: tp-link
 title: TP-Link
+description: "Connect your TP-Link Kasa lights and plugs to Gladys Assistant: scan your Wi-Fi network, add devices and control them from your smart home."
 sidebar_label: TP-Link
 ---
 

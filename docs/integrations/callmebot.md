@@ -1,6 +1,7 @@
 ---
 id: callmebot
 title: Send Gladys messages to WhatsApp and Signal with CallMeBot
+description: "Send Gladys Assistant notifications to WhatsApp and Signal with CallMeBot: get your API key and set up one-way messaging from your smart home."
 sidebar_label: CallMeBot
 ---
 

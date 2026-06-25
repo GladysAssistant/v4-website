@@ -1,6 +1,7 @@
 ---
 id: tuya
 title: Tuya
+description: "Connectez vos appareils Tuya à Gladys Assistant : créez un projet cloud Tuya IoT, autorisez l'API et pilotez vos appareils connectés Tuya."
 sidebar_label: Tuya
 ---
 

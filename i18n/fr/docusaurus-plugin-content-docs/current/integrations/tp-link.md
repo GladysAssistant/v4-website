@@ -1,6 +1,7 @@
 ---
 id: tp-link
 title: TP-Link
+description: "Connectez vos ampoules et prises TP-Link Kasa à Gladys Assistant : scannez votre réseau Wi-Fi, ajoutez vos appareils et pilotez-les dans votre maison connectée."
 sidebar_label: TP-Link
 ---
 

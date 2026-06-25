@@ -1,6 +1,7 @@
 ---
 id: voice-assistant
 title: Parler à Gladys depuis le tableau de bord avec l'assistant vocal
+description: "Parlez à Gladys Assistant depuis votre tableau de bord avec le widget assistant vocal : posez une question, lisez la transcription et la réponse de l'IA, et écoutez-la."
 sidebar_label: Assistant vocal
 ---
 

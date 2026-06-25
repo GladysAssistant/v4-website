@@ -1,6 +1,7 @@
 ---
 id: send-a-message-action
 title: Send a message
+description: "Send a message to a Gladys Assistant user in a scene via Telegram or the web chat, and inject sensor values and variables into the text."
 sidebar_label: Send a message
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: zigbee2mqtt
 title: Connect Zigbee devices with an USB Zigbee dongle and Zigbee2mqtt
+description: "Connect Zigbee devices to Gladys Assistant with a USB Zigbee dongle and Zigbee2MQTT, with no third-party bridge and full local control."
 sidebar_label: Zigbee2Mqtt
 ---
 

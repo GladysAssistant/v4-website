@@ -1,6 +1,7 @@
 ---
 id: tasmota
 title: Tasmota
+description: "Connect Tasmota devices to Gladys Assistant: flash the open-source firmware on your ESP8266 device, configure MQTT and control it in Gladys."
 sidebar_label: Tasmota
 ---
 

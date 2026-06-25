@@ -1,6 +1,7 @@
 ---
 id: developing-a-service
 title: Contributing on Gladys Assistant
+description: "Contribute to Gladys Assistant: discover the open-source stack (Preact, Node.js, SQLite, DuckDB) and learn how to develop a new service or integration."
 sidebar_label: Contributing on Gladys Assistant
 ---
 

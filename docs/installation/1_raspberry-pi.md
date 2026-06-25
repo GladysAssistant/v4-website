@@ -1,6 +1,7 @@
 ---
 id: raspberry-pi
 title: Installing Gladys Assistant on a Raspberry Pi
+description: "Install Gladys Assistant on a Raspberry Pi 3, 4 or 5 in minutes with our official 64-bit image. The easiest way to discover Gladys."
 sidebar_label: Install on a Raspberry Pi
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: http-request
 title: Make HTTP requests in a scene
+description: "Make HTTP requests in Gladys Assistant scenes to call external APIs and services, control unmanaged devices, or trigger an IFTTT action."
 sidebar_label: HTTP Request
 ---
 

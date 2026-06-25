@@ -1,6 +1,7 @@
 ---
 id: mqtt-api
 title: MQTT API
+description: "Reference for the Gladys Assistant MQTT API: every topic to push device states (temperature, text, binary) and control your smart home over MQTT."
 sidebar_label: MQTT API
 ---
 

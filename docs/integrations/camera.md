@@ -1,6 +1,7 @@
 ---
 id: camera
 title: Camera
+description: "Add IP cameras to Gladys Assistant using their RTSP or HTTP stream and view them live on your dashboard."
 sidebar_label: Camera
 ---
 

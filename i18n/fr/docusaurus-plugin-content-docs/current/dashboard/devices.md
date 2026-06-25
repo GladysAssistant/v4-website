@@ -1,6 +1,7 @@
 ---
 id: devices
 title: Afficher ses appareils sur le tableau de bord
+description: "Pilotez vos appareils et affichez les valeurs de vos capteurs directement depuis le tableau de bord de Gladys Assistant avec le widget Appareils."
 sidebar_label: Appareils
 ---
 

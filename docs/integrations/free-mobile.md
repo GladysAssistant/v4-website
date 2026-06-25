@@ -1,6 +1,7 @@
 ---
 id: free-mobile
 title: How to configure Free Mobile with Gladys Assistant
+description: "Send SMS to your phone from Gladys Assistant with the French Free Mobile operator: enable SMS notifications, get your API key and send your first SMS."
 sidebar_label: Free Mobile
 ---
 

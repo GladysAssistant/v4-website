@@ -1,6 +1,7 @@
 ---
 id: setup-development-environment-windows
 title: Setup a Windows development environment
+description: "Set up a Gladys Assistant development environment on Windows with WSL2, Docker Desktop and VS Code to start contributing to the project."
 sidebar_label: Windows
 ---
 

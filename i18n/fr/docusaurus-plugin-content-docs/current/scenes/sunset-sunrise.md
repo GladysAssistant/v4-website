@@ -1,6 +1,7 @@
 ---
 id: sunset-sunrise
 title: Déclenchement lié au soleil
+description: "Déclenchez une scène Gladys Assistant au lever ou au coucher du soleil, avec un délai optionnel avant ou après, pour automatiser vos lumières avec le soleil."
 sidebar_label: Déclenchement solaire
 ---
 

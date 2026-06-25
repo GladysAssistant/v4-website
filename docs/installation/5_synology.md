@@ -1,6 +1,7 @@
 ---
 id: synology
 title: Install Gladys Assistant on a Synology NAS
+description: "Install Gladys Assistant on a Synology NAS with Docker: set up storage, deploy the container via SSH and start your self-hosted smart home."
 sidebar_label: Install on a Synology NAS
 ---
 

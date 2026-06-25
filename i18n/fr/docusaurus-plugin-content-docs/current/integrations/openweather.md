@@ -1,6 +1,7 @@
 ---
 id: openweather
 title: OpenWeather
+description: "Affichez les prévisions météo dans Gladys Assistant avec OpenWeather : créez un compte, récupérez votre clé API et ajoutez un widget météo au tableau de bord."
 sidebar_label: OpenWeather
 ---
 

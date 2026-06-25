@@ -1,6 +1,7 @@
 ---
 id: docker
 title: Install Gladys Assistant with Docker
+description: "Install Gladys Assistant with Docker on any system (mini-PC, NAS, Linux server, VM) in a single command. Free, open-source and self-hosted."
 sidebar_label: Install with Docker
 ---
 

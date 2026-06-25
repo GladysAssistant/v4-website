@@ -1,6 +1,7 @@
 ---
 id: send-a-message-action
 title: Envoyer un message
+description: "Envoyez un message à un utilisateur Gladys Assistant dans une scène via Telegram ou le chat web, et injectez des valeurs de capteurs et des variables dans le texte."
 sidebar_label: Envoyer un message
 ---
 

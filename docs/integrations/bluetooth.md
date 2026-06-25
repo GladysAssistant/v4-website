@@ -1,6 +1,7 @@
 ---
 id: bluetooth
 title: Manage presence with Bluetooth detection
+description: "Detect presence at home with Bluetooth in Gladys Assistant: use a Bluetooth key fob to automatically know when you are home or away."
 sidebar_label: Bluetooth
 ---
 

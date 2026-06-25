@@ -1,6 +1,7 @@
 ---
 id: camera
 title: Display a camera on the dashboard
+description: "Display a camera on your Gladys Assistant dashboard and watch the live video stream, with automatic image refresh from your IP camera."
 sidebar_label: Camera
 ---
 

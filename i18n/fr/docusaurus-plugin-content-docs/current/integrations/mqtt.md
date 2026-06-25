@@ -1,6 +1,7 @@
 ---
 id: mqtt
 title: MQTT
+description: "Connectez vos appareils MQTT à Gladys Assistant : configurez un broker MQTT et échangez des données dans les deux sens entre Gladys, capteurs et actionneurs."
 sidebar_label: MQTT
 ---
 

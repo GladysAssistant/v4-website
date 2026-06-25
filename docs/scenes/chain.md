@@ -1,6 +1,7 @@
 ---
 id: chain-action
 title: Chain Scenes
+description: "Chain scenes in Gladys Assistant by triggering one scene from another, with built-in loop protection for safe, reusable automations."
 sidebar_label: Chain Scenes
 ---
 

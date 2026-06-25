@@ -1,6 +1,7 @@
 ---
 id: openweather
 title: OpenWeather
+description: "Display weather forecasts in Gladys Assistant with OpenWeather: create an account, get your API key and add a weather widget to your dashboard."
 sidebar_label: OpenWeather
 ---
 

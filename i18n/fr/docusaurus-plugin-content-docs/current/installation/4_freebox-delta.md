@@ -1,6 +1,7 @@
 ---
 id: freebox-delta
 title: Installer Gladys Assistant sur une Freebox Delta
+description: "Installez Gladys Assistant sur une Freebox Delta en créant une machine virtuelle Docker. Guide d'installation auto-hébergée pas à pas."
 sidebar_label: Installation sur Freebox Delta
 ---
 

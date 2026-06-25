@@ -1,6 +1,7 @@
 ---
 id: user-presence
 title: Définir la présence d'un utilisateur dans une scène
+description: "Définissez la présence ou l'absence d'un utilisateur dans une scène Gladys Assistant pour piloter les automatisations de retour et de départ depuis n'importe quelle source."
 sidebar_label: Présence utilisateur
 ---
 

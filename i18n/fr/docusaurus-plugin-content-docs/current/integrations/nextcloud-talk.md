@@ -1,6 +1,7 @@
 ---
 id: nextcloud-talk
 title: Nextcloud Talk
+description: "Utilisez Nextcloud Talk pour dialoguer avec Gladys Assistant : créez un compte bot, récupérez le token de conversation et envoyez des instructions à votre maison."
 sidebar_label: Nextcloud Talk
 ---
 

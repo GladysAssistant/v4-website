@@ -1,6 +1,7 @@
 ---
 id: get-last-device-state-action
 title: Retrieve the last state
+description: "Retrieve the last state of a device in a Gladys Assistant scene and store it in a variable to use in conditions and following actions."
 sidebar_label: Retrieve the last state
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: synology
 title: Installer Gladys Assistant sur un NAS Synology
+description: "Installez Gladys Assistant sur un NAS Synology avec Docker : créez le stockage, déployez le conteneur en SSH et lancez votre maison connectée auto-hébergée."
 sidebar_label: Installation sur NAS Synology
 ---
 

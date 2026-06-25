@@ -1,6 +1,7 @@
 ---
 id: phone
 title: Using Gladys Assistant on your phone
+description: "Use Gladys Assistant on your phone as a PWA: install it on Android and iOS, with remote access through Gladys Plus, end-to-end encrypted."
 sidebar_label: On your phone
 ---
 

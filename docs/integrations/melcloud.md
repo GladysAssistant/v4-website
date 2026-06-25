@@ -1,6 +1,7 @@
 ---
 id: melcloud
 title: MELCloud (Mitsubishi AC)
+description: "Control your Mitsubishi air conditioning from Gladys Assistant with the MELCloud integration: connect your account and manage your AC units."
 sidebar_label: MELCloud
 ---
 

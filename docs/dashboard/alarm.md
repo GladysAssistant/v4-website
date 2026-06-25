@@ -1,6 +1,7 @@
 ---
 id: alarm
 title: How to set up your own alarm system with Gladys?
+description: "Build a complete home alarm system with Gladys Assistant: arm, disarm, partial and panic modes, arming delay, alarm code and scene-based strategies."
 sidebar_label: Alarm
 ---
 

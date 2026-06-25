@@ -1,6 +1,7 @@
 ---
 id: turn-on-off-the-lights-action
 title: Turn the lights on/off in a scene
+description: "Turn your lights on or off in a Gladys Assistant scene to automate wake-up, cinema mode, leaving home and more."
 sidebar_label: Turn the light on/off
 ---
 

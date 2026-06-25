@@ -1,6 +1,7 @@
 ---
 id: camera
 title: Caméra
+description: "Ajoutez des caméras IP à Gladys Assistant via leur flux RTSP ou HTTP et regardez-les en direct sur votre tableau de bord."
 sidebar_label: Caméra
 ---
 
