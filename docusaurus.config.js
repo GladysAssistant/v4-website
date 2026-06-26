@@ -124,14 +124,6 @@ module.exports = function createConfig() {
               to: "docs",
             },
             {
-              label: "Gladys vs Home Assistant",
-              to: "home-assistant-vs-gladys-assistant/",
-            },
-            {
-              label: "Home Assistant alternative",
-              to: "home-assistant-alternative/",
-            },
-            {
               label: "Kit de démarrage officiel",
               href: "/starter-kit/",
               className: "footer__link-item footer__link--fr-only",
@@ -156,19 +148,15 @@ module.exports = function createConfig() {
           ],
         },
         {
-          title: "Socials",
+          title: "Compare",
           items: [
             {
-              label: "Twitter",
-              href: "https://twitter.com/gladysassistant",
+              label: "Gladys vs Home Assistant",
+              to: "home-assistant-vs-gladys-assistant/",
             },
             {
-              label: "Facebook",
-              href: "https://facebook.com/gladysassistant",
-            },
-            {
-              label: "Instagram",
-              href: "https://instagram.com/gladysassistant",
+              label: "Home Assistant alternative",
+              to: "home-assistant-alternative/",
             },
           ],
         },
@@ -199,6 +187,18 @@ module.exports = function createConfig() {
             {
               label: "Contact Us",
               href: "/contact",
+            },
+            {
+              label: "Twitter",
+              href: "https://twitter.com/gladysassistant",
+            },
+            {
+              label: "Facebook",
+              href: "https://facebook.com/gladysassistant",
+            },
+            {
+              label: "Instagram",
+              href: "https://instagram.com/gladysassistant",
             },
           ],
         },
