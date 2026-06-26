@@ -34,6 +34,21 @@ function VerdictCard({ data, isGladys }) {
 }
 
 function ComparisonContent({ content, faq, lang }) {
+  const videoSection = YOUTUBE_VIDEO_ID ? (
+    <section className={styles.section} aria-labelledby="video-title">
+      <h2 id="video-title" className={styles.sectionTitle}>
+        {content.videoTitle}
+      </h2>
+      <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
+        <YoutubeEmbedVideo id={YOUTUBE_VIDEO_ID} />
+      </div>
+    </section>
+  ) : null;
+
+  // The video is in French, so feature it right under the hero on the French
+  // page. On the English page it stays lower (French audio is less useful there).
+  const showVideoAtTop = lang === "fr";
+
   return (
     <main className={styles.main}>
       <div className={`container ${styles.container}`}>
@@ -47,6 +62,9 @@ function ComparisonContent({ content, faq, lang }) {
             ))}
           </div>
         </header>
+
+        {/* VIDEO (top placement on the French page) */}
+        {showVideoAtTop && videoSection}
 
         {/* VERDICT */}
         <section className={styles.section} aria-labelledby="verdict-title">
@@ -131,17 +149,8 @@ function ComparisonContent({ content, faq, lang }) {
           </div>
         </section>
 
-        {/* VIDEO (optional) */}
-        {YOUTUBE_VIDEO_ID && (
-          <section className={styles.section} aria-labelledby="video-title">
-            <h2 id="video-title" className={styles.sectionTitle}>
-              {content.videoTitle}
-            </h2>
-            <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
-              <YoutubeEmbedVideo id={YOUTUBE_VIDEO_ID} />
-            </div>
-          </section>
-        )}
+        {/* VIDEO (lower placement on the English page) */}
+        {!showVideoAtTop && videoSection}
 
         {/* FAQ */}
         <section className={styles.section} aria-labelledby="faq-title">
