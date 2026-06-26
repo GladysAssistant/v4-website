@@ -1,6 +1,7 @@
 ---
 id: broadlink
 title: Broadlink
+description: "Contrôlez vos appareils Broadlink avec Gladys Assistant et remplacez vos télécommandes infrarouges : détectez les appareils et créez des télécommandes virtuelles."
 sidebar_label: Broadlink
 ---
 

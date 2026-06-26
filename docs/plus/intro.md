@@ -1,6 +1,7 @@
 ---
 id: intro
 title: Gladys Plus
+description: "Discover Gladys Plus: encrypted remote access, daily backups, Open API, open-weight AI, MCP server and Google Home for your Gladys Assistant smart home."
 sidebar_label: Intro
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: airplay
 title: How to connect any Airplay speaker to your smart home system
+description: "Connect any AirPlay speaker or HomePod to Gladys Assistant: configure your speaker, discover it in Gladys and play audio across your smart home."
 sidebar_label: Airplay
 ---
 

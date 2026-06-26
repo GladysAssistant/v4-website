@@ -1,6 +1,7 @@
 ---
 id: google-home
 title: How to configure Google Home with Gladys Assistant
+description: "Control your Gladys Assistant devices with Google Home through Gladys Plus, the Google-certified cloud gateway. Voice control for your smart home."
 sidebar_label: Google Home
 ---
 

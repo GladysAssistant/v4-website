@@ -1,6 +1,7 @@
 ---
 id: zone
 title: Quand un utilisateur entre/sort d'une zone
+description: "Déclenchez une scène Gladys Assistant quand un utilisateur entre ou sort d'une zone géographique définie sur la carte pour des automatisations géolocalisées."
 sidebar_label: Utilisateur entre/sort d'une zone
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: recommended-hardware
 title: Recommended Hardware
+description: "The best Zigbee hardware to build a reliable Gladys Assistant smart home: recommended coordinator dongle and top-rated devices in every category."
 sidebar_label: Recommended hardware
 ---
 

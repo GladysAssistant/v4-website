@@ -1,6 +1,7 @@
 ---
 id: wait-action
 title: Attendre
+description: "Utilisez l'action Attendre dans une scène Gladys Assistant pour patienter une durée fixe ou calculée, basée sur des variables et des fonctions mathématiques."
 sidebar_label: Attendre
 ---
 

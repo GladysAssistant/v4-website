@@ -1,6 +1,7 @@
 ---
 id: enedis
 title: View your electricity consumption in Gladys with Enedis
+description: "View your electricity consumption in Gladys Assistant with the Enedis integration: connect your Linky meter data via Gladys Plus (France only)."
 sidebar_label: Enedis
 ---
 

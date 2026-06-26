@@ -1,6 +1,7 @@
 ---
 id: homekit
 title: Connecter Gladys à HomeKit et utiliser Siri
+description: "Connectez Gladys Assistant à Apple HomeKit et pilotez vos appareils avec Siri : scannez le QR code, ajoutez Gladys comme pont HomeKit et importez vos appareils."
 sidebar_label: HomeKit
 ---
 

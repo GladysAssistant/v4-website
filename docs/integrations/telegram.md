@@ -1,6 +1,7 @@
 ---
 id: telegram
 title: Send Gladys notifications to Telegram
+description: "Send Gladys Assistant notifications to Telegram and control your smart home by chatting with Gladys: create a bot and link your account."
 sidebar_label: Telegram
 ---
 

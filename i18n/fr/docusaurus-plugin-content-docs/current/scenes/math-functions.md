@@ -1,6 +1,7 @@
 ---
 id: math-functions
 title: Fonctions mathématiques disponibles
+description: "Référence des fonctions mathématiques disponibles dans les scènes Gladys Assistant (addition, modulo, puissance) pour des automatisations dynamiques et calculées."
 sidebar_label: Fonctions mathématiques
 ---
 

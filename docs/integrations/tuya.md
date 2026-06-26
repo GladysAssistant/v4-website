@@ -1,6 +1,7 @@
 ---
 id: tuya
 title: Tuya
+description: "Connect Tuya devices to Gladys Assistant: create a Tuya IoT cloud project, authorize the API and control your Tuya smart home devices."
 sidebar_label: Tuya
 ---
 

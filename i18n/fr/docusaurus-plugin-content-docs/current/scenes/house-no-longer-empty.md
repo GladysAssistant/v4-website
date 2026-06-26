@@ -1,6 +1,7 @@
 ---
 id: house-no-longer-empty
 title: Quand la maison n'est plus vide
+description: "Déclenchez une scène Gladys Assistant quand la maison n'est plus vide, ou ajoutez une condition pour n'exécuter vos automatisations que si quelqu'un est présent."
 sidebar_label: Maison n'est plus vide
 ---
 

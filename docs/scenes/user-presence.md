@@ -1,6 +1,7 @@
 ---
 id: user-presence
 title: Define the presence of a user in a scene
+description: "Define a user's presence or absence in a Gladys Assistant scene to drive return-home and away automations from any presence source."
 sidebar_label: User presence
 ---
 

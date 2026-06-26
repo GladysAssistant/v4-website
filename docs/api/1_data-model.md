@@ -1,6 +1,7 @@
 ---
 id: data-model
 title: Data model
+description: "Explore the Gladys Assistant 4 database model: tables, relationships and the full schema diagram for developers building on top of Gladys."
 sibebar_label: Data model
 ---
 

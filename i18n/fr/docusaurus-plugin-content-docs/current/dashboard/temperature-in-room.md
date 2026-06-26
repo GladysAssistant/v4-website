@@ -1,6 +1,7 @@
 ---
 id: temperature-in-room
 title: Afficher la température moyenne d'une pièce sur le tableau de bord
+description: "Affichez la température moyenne d'une pièce sur votre tableau de bord Gladys Assistant, calculée à partir de tous les capteurs de température de la pièce."
 sidebar_label: Température de la pièce
 ---
 

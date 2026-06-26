@@ -1,6 +1,7 @@
 ---
 id: mini-pc
 title: Installer Gladys Assistant sur un Mini-PC
+description: "Installez Gladys Assistant sur un mini-PC, la méthode recommandée : choisissez votre matériel, installez Ubuntu Server et lancez Gladys avec Docker."
 sidebar_label: Installation sur Mini-PC
 ---
 

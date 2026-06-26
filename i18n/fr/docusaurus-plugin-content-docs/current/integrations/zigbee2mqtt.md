@@ -1,6 +1,7 @@
 ---
 id: zigbee2mqtt
 title: Gérez ses appareils Zigbee dans sa domotique avec une clé USB Zigbee et Zigbee2mqtt
+description: "Connectez vos appareils Zigbee à Gladys Assistant avec un dongle USB Zigbee et Zigbee2MQTT, sans pont tiers et avec un contrôle 100 % local."
 sidebar_label: Zigbee2Mqtt
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: rest-api
 title: HTTP API
+description: "Utilisez l'API REST HTTP de Gladys Assistant : authentifiez-vous, récupérez un token d'accès et automatisez votre maison connectée depuis vos propres scripts."
 sidebar_label: HTTP API
 ---
 

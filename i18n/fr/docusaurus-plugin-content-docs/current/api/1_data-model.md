@@ -1,6 +1,7 @@
 ---
 id: data-model
 title: Modélisation DB
+description: "Explorez le modèle de données de Gladys Assistant 4 : tables, relations et schéma complet de la base pour les développeurs qui veulent bâtir sur Gladys."
 sidebar_label: Modélisation
 ---
 

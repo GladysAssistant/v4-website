@@ -1,6 +1,7 @@
 ---
 id: unraid
 title: Install Gladys Assistant on a Unraid NAS
+description: "Install Gladys Assistant on an Unraid NAS from the Apps store: configure the Docker container with host networking and start automating your home."
 sidebar_label: Install on an Unraid NAS
 ---
 

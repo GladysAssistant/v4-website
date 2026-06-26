@@ -1,6 +1,7 @@
 ---
 id: gauge
 title: Display a gauge on the dashboard
+description: "Add a gauge widget to your Gladys Assistant dashboard to display a sensor's current value between its minimum and maximum range."
 sidebar_label: Gauge
 ---
 

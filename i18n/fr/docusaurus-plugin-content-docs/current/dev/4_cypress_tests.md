@@ -1,6 +1,7 @@
 ---
 id: cypress-tests
 title: Faire tourner les tests Cypress dans Gladys
+description: "Lancez les tests end-to-end Cypress du frontend de Gladys Assistant : démarrez le backend, lancez le frontend et exécutez la suite de tests."
 sidebar_label: Les tests frontends
 ---
 

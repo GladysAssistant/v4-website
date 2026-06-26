@@ -1,6 +1,7 @@
 ---
 id: google-cast
 title: Faire parler Gladys Assistant sur une enceinte Google
+description: "Faites parler Gladys Assistant sur une enceinte Google Cast : ajoutez l'appareil, affectez-le à une pièce et utilisez l'action Parler sur une enceinte dans vos scènes."
 sidebar_label: Google Cast
 ---
 

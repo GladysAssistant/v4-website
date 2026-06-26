@@ -1,6 +1,7 @@
 ---
 id: intro
 title: Gladys Plus
+description: "Découvrez Gladys Plus : accès distant chiffré, sauvegardes quotidiennes, Open API, IA open-weight, serveur MCP et Google Home pour votre maison Gladys Assistant."
 sidebar_label: Intro
 ---
 

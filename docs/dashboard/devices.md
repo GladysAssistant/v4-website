@@ -1,6 +1,7 @@
 ---
 id: devices
 title: Display devices on the dashboard
+description: "Control your devices and view sensor values directly from the Gladys Assistant dashboard with the Devices widget."
 sidebar_label: Devices
 ---
 

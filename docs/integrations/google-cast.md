@@ -1,6 +1,7 @@
 ---
 id: google-cast
 title: Make Gladys Assistant Speak on a Google Speaker
+description: "Make Gladys Assistant speak on a Google Cast speaker: add your device, assign it to a room and use the Speak on a Speaker action in your scenes."
 sidebar_label: Google Cast
 ---
 

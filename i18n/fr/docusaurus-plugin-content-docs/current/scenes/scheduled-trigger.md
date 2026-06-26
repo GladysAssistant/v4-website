@@ -1,6 +1,7 @@
 ---
 id: scheduled-trigger
 title: Programmer une scène
+description: "Planifiez vos scènes Gladys Assistant chaque mois, semaine, jour, à intervalles ou un jour précis pour une automatisation entièrement basée sur le temps."
 sidebar_label: Programmer une scène
 ---
 

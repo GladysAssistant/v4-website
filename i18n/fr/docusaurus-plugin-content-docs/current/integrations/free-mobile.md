@@ -1,6 +1,7 @@
 ---
 id: free-mobile
 title: Comment configurer Free Mobile avec Gladys Assistant
+description: "Envoyez des SMS sur votre téléphone depuis Gladys Assistant avec l'opérateur Free Mobile : activez les notifications SMS, récupérez votre clé et envoyez votre premier SMS."
 sidebar_label: Free Mobile
 ---
 

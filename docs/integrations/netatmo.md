@@ -1,6 +1,7 @@
 ---
 id: netatmo
 title: Connect your Netatmo thermostats to your smart home system installation
+description: "Connect your Netatmo thermostats, valves and weather stations to Gladys Assistant via Netatmo Connect to monitor and control your smart home."
 sidebar_label: Netatmo
 toc_min_heading_level: 2
 toc_max_heading_level: 5

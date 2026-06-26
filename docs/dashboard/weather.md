@@ -1,6 +1,7 @@
 ---
 id: weather
 title: Display weather on the dashboard
+description: "Display the local weather on your Gladys Assistant dashboard using the OpenWeather integration and your home's location."
 sidebar_label: Weather
 ---
 

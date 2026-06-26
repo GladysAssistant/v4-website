@@ -1,6 +1,7 @@
 ---
 id: turn-on-off-the-switches-action
 title: Switch remote control sockets on/off in a scene
+description: "Control remote sockets in a Gladys Assistant scene to automate lamps, LED strips or a coffee machine, with a step-by-step example."
 sidebar_label: Switch sockets on/off
 ---
 

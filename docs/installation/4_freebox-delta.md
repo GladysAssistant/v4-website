@@ -1,6 +1,7 @@
 ---
 id: freebox-delta
 title: Install Gladys Assistant on a Freebox Delta
+description: "Install Gladys Assistant on a Freebox Delta by creating a Docker virtual machine. Step-by-step self-hosted setup guide."
 sidebar_label: Install on a Freebox Delta
 ---
 

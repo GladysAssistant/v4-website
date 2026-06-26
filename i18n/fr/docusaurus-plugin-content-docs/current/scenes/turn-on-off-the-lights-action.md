@@ -1,6 +1,7 @@
 ---
 id: turn-on-off-the-lights-action
 title: Allumer/éteindre la lumière dans une scène
+description: "Allumez ou éteignez vos lumières dans une scène Gladys Assistant pour automatiser le réveil, le mode cinéma, le départ de la maison et bien plus."
 sidebar_label: Allumer/éteindre la lumière
 ---
 

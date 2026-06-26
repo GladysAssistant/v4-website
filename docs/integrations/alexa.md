@@ -1,6 +1,7 @@
 ---
 id: alexa
 title: How to configure Alexa with Gladys Assistant
+description: "Control your Gladys Assistant devices with Amazon Alexa through Gladys Plus, the certified cloud gateway. Voice control for your smart home."
 sidebar_label: Alexa
 ---
 

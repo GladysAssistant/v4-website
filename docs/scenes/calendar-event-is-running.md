@@ -1,6 +1,7 @@
 ---
 id: calendar-event-is-running-condition
 title: Condition in a scene on calendar event
+description: "Add a condition to a Gladys Assistant scene based on a running calendar event, to run automations only during holidays, sport or meetings."
 sidebar_label: Calendar event is running
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: caldav
 title: CalDAV
+description: "Synchronisez le calendrier de Gladys Assistant avec iCloud, Google Agenda, Synology ou Nextcloud en CalDAV pour déclencher des scènes selon vos événements."
 sidebar_label: CalDAV
 ---
 

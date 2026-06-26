@@ -1,6 +1,7 @@
 ---
 id: phone
 title: Utiliser Gladys Assistant sur son smartphone
+description: "Utilisez Gladys Assistant sur votre téléphone en PWA : installez-la sur Android et iOS, avec un accès distant chiffré de bout en bout via Gladys Plus."
 sidebar_label: Sur votre smartphone
 ---
 

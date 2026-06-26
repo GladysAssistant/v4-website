@@ -1,6 +1,7 @@
 ---
 id: calendar-event-is-coming-trigger
 title: Déclencher une scène quand un évènement arrive dans le calendrier
+description: "Déclenchez une scène Gladys Assistant à l'approche ou à la fin d'un événement de calendrier, avec de puissants filtres de nom, via vos calendriers CalDAV."
 sidebar_label: Un évènement du calendrier arrive
 ---
 

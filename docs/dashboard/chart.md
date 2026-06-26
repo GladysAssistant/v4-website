@@ -1,6 +1,7 @@
 ---
 id: chart
 title: Display a chart on the dashboard
+description: "Add a chart widget to your Gladys Assistant dashboard to visualize sensor data: line, bar, area or binary charts with custom time grouping."
 sidebar_label: Chart
 ---
 

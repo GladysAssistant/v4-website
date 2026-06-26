@@ -1,6 +1,7 @@
 ---
 id: matter
 title: Intégrer des appareils Matter dans Gladys Assistant
+description: "Intégrez vos appareils Matter dans Gladys Assistant : pilotez lampes, prises, volets, thermostats et capteurs de différents fabricants."
 sidebar_label: Matter
 ---
 

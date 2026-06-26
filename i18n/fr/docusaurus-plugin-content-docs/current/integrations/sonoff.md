@@ -1,6 +1,7 @@
 ---
 id: sonoff
 title: Sonoff
+description: "Connectez vos appareils Sonoff à Gladys Assistant avec le firmware Tasmota et un compte eWeLink pour les piloter localement dans votre maison connectée."
 sidebar_label: Sonoff
 ---
 

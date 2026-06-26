@@ -1,6 +1,7 @@
 ---
 id: energy-monitoring
 title: Surveillez votre consommation énergétique avec Gladys Assistant
+description: "Suivez la consommation d'énergie de votre maison dans Gladys Assistant en kWh, avec un Lixee ZLinky pour le compteur Linky ou d'autres capteurs compatibles."
 sidebar_label: Suivi de l'énergie
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: intro
 title: The Gladys Assistant Dashboard
+description: "Discover the Gladys Assistant dashboard: create multiple dashboards, share them with your family, control devices, view cameras and sensors, with tablet mode."
 sidebar_label: Introduction
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: lan-manager
 title: Gérer la présence en scannant votre réseau
+description: "Détectez la présence dans Gladys Assistant en scannant votre réseau Wi-Fi à la recherche de votre téléphone ou ordinateur pour savoir si vous êtes chez vous."
 sidebar_label: Lan-Manager
 ---
 

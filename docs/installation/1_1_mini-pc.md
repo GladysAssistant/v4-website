@@ -1,6 +1,7 @@
 ---
 id: mini-pc
 title: Install Gladys Assistant on a Mini-PC
+description: "Install Gladys Assistant on a mini-PC, the recommended setup: choose your hardware, install Ubuntu Server and run Gladys with Docker."
 sidebar_label: Install on a Mini-PC
 ---
 

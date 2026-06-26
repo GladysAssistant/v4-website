@@ -1,6 +1,7 @@
 ---
 id: chart
 title: Afficher un graphique sur le tableau de bord
+description: "Ajoutez un graphique à votre tableau de bord Gladys Assistant pour visualiser vos capteurs : courbe, barres, aire ou binaire, avec regroupement par intervalle."
 sidebar_label: Graphique
 ---
 

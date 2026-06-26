@@ -1,6 +1,7 @@
 ---
 id: sonos
 title: Connecter une enceinte Sonos à sa maison connectée
+description: "Connectez vos enceintes Sonos à Gladys Assistant : détectez-les sur votre réseau et pilotez-les depuis votre tableau de bord et vos scènes."
 sidebar_label: Sonos
 ---
 

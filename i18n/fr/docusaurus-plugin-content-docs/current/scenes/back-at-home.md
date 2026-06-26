@@ -1,6 +1,7 @@
 ---
 id: back-at-home
 title: Retour à la maison
+description: "Déclenchez une scène Gladys Assistant quand un utilisateur rentre à la maison, grâce à la détection de présence, pour automatiser votre maison à l'arrivée."
 sidebar_label: Retour à la maison
 ---
 

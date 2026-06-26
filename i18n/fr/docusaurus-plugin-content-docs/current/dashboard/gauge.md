@@ -1,6 +1,7 @@
 ---
 id: gauge
 title: Afficher une jauge sur le tableau de bord
+description: "Ajoutez une jauge à votre tableau de bord Gladys Assistant pour afficher la valeur actuelle d'un capteur entre son minimum et son maximum."
 sidebar_label: Jauge
 ---
 

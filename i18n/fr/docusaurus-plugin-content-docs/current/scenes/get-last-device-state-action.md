@@ -1,6 +1,7 @@
 ---
 id: get-last-device-state-action
 title: Récupérer le dernier état
+description: "Récupérez le dernier état d'un appareil dans une scène Gladys Assistant et stockez-le dans une variable pour vos conditions et actions suivantes."
 sidebar_label: Récupérer le dernier état
 ---
 

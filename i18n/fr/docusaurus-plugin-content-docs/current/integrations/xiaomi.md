@@ -1,6 +1,7 @@
 ---
 id: xiaomi
 title: Xiaomi Home
+description: "Connectez vos appareils Xiaomi à Gladys Assistant via la passerelle Mi Home. Note : le Zigbee ou Matter est désormais recommandé pour ces appareils."
 sidebar_label: Xiaomi Home
 ---
 

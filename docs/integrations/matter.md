@@ -1,6 +1,7 @@
 ---
 id: matter
 title: Integrate Matter Devices in Gladys Assistant
+description: "Integrate Matter devices into Gladys Assistant: control lights, plugs, shutters, thermostats and sensors from different manufacturers."
 sidebar_label: Matter
 ---
 

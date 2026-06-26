@@ -1,6 +1,7 @@
 ---
 id: zone
 title: When a user enters/leaves a zone
+description: "Trigger a Gladys Assistant scene when a user enters or leaves a geographic zone defined on the map for location-based automations."
 sidebar_label: User enters/leaves a zone
 ---
 

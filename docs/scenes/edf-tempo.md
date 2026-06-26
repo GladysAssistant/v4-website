@@ -1,6 +1,7 @@
 ---
 id: edf-tempo
 title: Save on your electricity bill with EDF Tempo and Gladys
+description: "Save on your electricity bill with EDF Tempo and Gladys Assistant: add a Tempo condition to your scenes to run automations only on the right days."
 sidebar_label: EDF Tempo
 ---
 

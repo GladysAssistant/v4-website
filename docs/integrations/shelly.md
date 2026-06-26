@@ -1,6 +1,7 @@
 ---
 id: shelly
 title: Integrating Shelly with Gladys via Matterbridge
+description: "Integrate Shelly modules into Gladys Assistant via Matterbridge: deploy the bridge, commission it in Gladys and control your Shelly devices over Matter."
 sidebar_label: Shelly
 ---
 

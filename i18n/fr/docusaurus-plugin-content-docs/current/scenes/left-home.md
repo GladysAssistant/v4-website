@@ -1,6 +1,7 @@
 ---
 id: left-home
 title: Départ de la maison
+description: "Déclenchez une scène Gladys Assistant quand un utilisateur quitte la maison, grâce à la détection de présence, pour automatiser votre maison au départ."
 sidebar_label: Départ de la maison
 ---
 

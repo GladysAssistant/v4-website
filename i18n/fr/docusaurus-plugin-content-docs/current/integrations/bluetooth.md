@@ -1,6 +1,7 @@
 ---
 id: bluetooth
 title: Gérer la présence avec la détection Bluetooth
+description: "Détectez la présence à la maison en Bluetooth avec Gladys Assistant : utilisez un porte-clés Bluetooth pour savoir automatiquement si vous êtes chez vous."
 sidebar_label: Bluetooth
 ---
 

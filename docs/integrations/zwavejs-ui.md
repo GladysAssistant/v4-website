@@ -1,6 +1,7 @@
 ---
 id: zwavejs-ui
 title: Integrate your Z-Wave devices with Z-Wave JS UI
+description: "Integrate your Z-Wave devices into Gladys Assistant with Z-Wave JS UI over MQTT to control them and receive state changes in real time."
 sidebar_label: Z-Wave JS UI
 ---
 

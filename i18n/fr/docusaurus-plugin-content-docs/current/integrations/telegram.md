@@ -1,6 +1,7 @@
 ---
 id: telegram
 title: Envoyer des notifications Gladys sur Telegram
+description: "Envoyez les notifications de Gladys Assistant sur Telegram et pilotez votre maison en discutant avec Gladys : créez un bot et liez votre compte."
 sidebar_label: Telegram
 ---
 

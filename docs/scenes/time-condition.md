@@ -1,6 +1,7 @@
 ---
 id: time-condition
 title: Time condition
+description: "Add a time condition to a Gladys Assistant scene to continue only during a chosen time range and on selected days of the week."
 sidebar_label: Time condition
 ---
 

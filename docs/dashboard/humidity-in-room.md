@@ -1,6 +1,7 @@
 ---
 id: humidity-in-room
 title: Display the average humidity of a room on the dashboard
+description: "Display the average humidity of a room on your Gladys Assistant dashboard, aggregated from all humidity sensors, with custom color thresholds."
 sidebar_label: Room humidity
 ---
 

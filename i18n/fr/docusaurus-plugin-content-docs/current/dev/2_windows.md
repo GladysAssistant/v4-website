@@ -1,6 +1,7 @@
 ---
 id: setup-development-environment-windows
 title: Mettre en place un environnement de développement sous Windows
+description: "Installez un environnement de développement Gladys Assistant sur Windows avec WSL2, Docker Desktop et VS Code pour contribuer au projet."
 sidebar_label: Windows
 ---
 

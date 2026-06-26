@@ -1,6 +1,7 @@
 ---
 id: send-a-sms-action
 title: Send a SMS
+description: "Send an SMS to your phone in a Gladys Assistant scene with the French Free Mobile operator, and inject sensor values and variables into the message."
 sidebar_label: Send a SMS
 ---
 

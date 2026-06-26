@@ -1,6 +1,7 @@
 ---
 id: chain-action
 title: Lancer une scène depuis une scène
+description: "Enchaînez des scènes dans Gladys Assistant en déclenchant une scène depuis une autre, avec une protection anti-boucle intégrée pour des automatisations réutilisables."
 sidebar_label: Chaîner des scènes
 ---
 

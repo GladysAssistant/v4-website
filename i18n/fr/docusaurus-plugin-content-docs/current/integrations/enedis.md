@@ -1,6 +1,7 @@
 ---
 id: enedis
 title: Visualiser sa consommation électrique dans Gladys avec Enedis
+description: "Visualisez votre consommation électrique dans Gladys Assistant avec l'intégration Enedis : récupérez les données de votre compteur Linky via Gladys Plus (France)."
 sidebar_label: Enedis
 ---
 

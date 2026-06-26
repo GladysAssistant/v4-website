@@ -1,6 +1,7 @@
 ---
 id: nuki
 title: Connect your Nuki lock to your smart home
+description: "Connect your Nuki smart lock to Gladys Assistant to lock, unlock and monitor battery and status, via the Nuki Web API or MQTT."
 sidebar_label: Nuki
 ---
 

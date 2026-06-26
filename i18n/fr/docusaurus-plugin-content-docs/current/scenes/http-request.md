@@ -1,6 +1,7 @@
 ---
 id: http-request
 title: Faire des requêtes HTTP dans une scène
+description: "Effectuez des requêtes HTTP dans les scènes Gladys Assistant pour appeler des API externes, piloter des appareils non gérés ou déclencher une action IFTTT."
 sidebar_label: Requête HTTP
 ---
 

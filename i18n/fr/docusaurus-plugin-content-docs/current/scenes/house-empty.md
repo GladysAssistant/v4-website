@@ -1,6 +1,7 @@
 ---
 id: house-empty
 title: Quand la maison est vide
+description: "Déclenchez une scène Gladys Assistant quand la maison devient vide, ou ajoutez une condition pour n'exécuter vos automatisations que si personne n'est là."
 sidebar_label: Maison vide
 ---
 

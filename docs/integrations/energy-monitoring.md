@@ -1,6 +1,7 @@
 ---
 id: energy-monitoring
 title: Monitor your energy consumption in Gladys Assistant
+description: "Monitor your home energy consumption in Gladys Assistant in kWh, with a Lixee ZLinky for Linky meters or other compatible energy sensors."
 sidebar_label: Energy Monitoring
 ---
 

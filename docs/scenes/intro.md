@@ -1,6 +1,7 @@
 ---
 id: intro
 title: Scenes in Gladys Assistant
+description: "Create powerful scenes in Gladys Assistant: chain actions, run them manually or with triggers, and automate your smart home your way."
 sidebar_label: Introduction
 ---
 

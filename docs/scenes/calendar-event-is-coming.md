@@ -1,6 +1,7 @@
 ---
 id: calendar-event-is-coming-trigger
 title: Trigger a scene when a calendar event is coming
+description: "Trigger a Gladys Assistant scene when a calendar event is coming or ending, with powerful name filters, using your CalDAV calendars."
 sidebar_label: Calendar event is coming
 ---
 

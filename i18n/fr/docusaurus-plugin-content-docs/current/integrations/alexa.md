@@ -1,6 +1,7 @@
 ---
 id: alexa
 title: Utiliser Alexa avec Gladys Assistant
+description: "Pilotez vos appareils Gladys Assistant avec Amazon Alexa via Gladys Plus, la passerelle cloud certifiée. Le contrôle vocal de votre maison connectée."
 sidebar_label: Alexa
 ---
 

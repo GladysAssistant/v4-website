@@ -1,6 +1,7 @@
 ---
 id: callmebot
 title: Envoyez des messages Gladys vers WhatsApp et Signal avec CallMeBot
+description: "Envoyez des notifications Gladys Assistant vers WhatsApp et Signal avec CallMeBot : obtenez votre clé API et configurez la messagerie sortante."
 sidebar_label: CallMeBot
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: sonos
 title: How to connect a Sonos speaker to your smart home system
+description: "Connect your Sonos speakers to Gladys Assistant: discover them on your network and control them from your dashboard and scenes."
 sidebar_label: Sonos
 ---
 

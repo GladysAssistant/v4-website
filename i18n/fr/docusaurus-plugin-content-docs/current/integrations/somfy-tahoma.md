@@ -1,6 +1,7 @@
 ---
 id: somfy-tahoma
 title: Intégrer ses équipements Somfy à Gladys via Matterbridge
+description: "Intégrez vos appareils Somfy TaHoma dans Gladys Assistant via Matterbridge pour piloter vos volets roulants, stores et ouvertures en Matter."
 sidebar_label: Somfy
 ---
 

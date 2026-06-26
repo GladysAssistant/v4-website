@@ -1,6 +1,7 @@
 ---
 id: device-state-changed-trigger
 title: Trigger a scene when a device state changes
+description: "Trigger a Gladys Assistant scene when a device state changes, such as a temperature drop or a light turning on, with custom conditions."
 sidebar_label: Device state change
 ---
 

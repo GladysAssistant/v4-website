@@ -1,6 +1,7 @@
 ---
 id: left-home
 title: When a user leaves home
+description: "Trigger a Gladys Assistant scene when a user leaves home, based on presence detection, to automate your smart home on departure."
 sidebar_label: Left home
 ---
 

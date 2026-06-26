@@ -1,6 +1,7 @@
 ---
 id: matterbridge
 title: Matterbridge
+description: "Connect non-Matter devices (Shelly, Somfy) to Gladys Assistant with Matterbridge: enable the container, install plugins and pair them over Matter."
 sidebar_label: Matterbridge
 ---
 

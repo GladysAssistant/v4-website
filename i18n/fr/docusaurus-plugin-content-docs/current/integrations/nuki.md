@@ -1,6 +1,7 @@
 ---
 id: nuki
 title: Connecter sa serrure Nuki à sa maison connectée
+description: "Connectez votre serrure connectée Nuki à Gladys Assistant pour verrouiller, déverrouiller et suivre la batterie et l'état, via l'API Nuki Web ou MQTT."
 sidebar_label: Nuki
 ---
 

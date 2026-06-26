@@ -1,6 +1,7 @@
 ---
 id: camera
 title: Afficher une caméra sur le tableau de bord
+description: "Affichez une caméra sur votre tableau de bord Gladys Assistant et regardez le flux vidéo en direct, avec rafraîchissement automatique de l'image."
 sidebar_label: Caméra
 ---
 

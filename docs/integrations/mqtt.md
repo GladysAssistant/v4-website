@@ -1,6 +1,7 @@
 ---
 id: mqtt
 title: MQTT
+description: "Connect MQTT devices to Gladys Assistant: configure an MQTT broker and exchange data in both directions between Gladys and your sensors and actuators."
 sidebar_label: MQTT
 ---
 

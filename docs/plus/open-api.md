@@ -1,6 +1,7 @@
 ---
 id: open-api
 title: Open API
+description: "Use the Gladys Plus Open API to send data to your smart home from outside your network: location, sensor values and events, with a secure API key."
 sidebar_label: Open API
 ---
 

@@ -1,6 +1,7 @@
 ---
 id: intro
 title: Les scènes dans Gladys Assistant
+description: "Créez des scènes puissantes dans Gladys Assistant : enchaînez des actions, lancez-les manuellement ou via des déclencheurs, et automatisez votre maison à votre façon."
 sidebar_label: Introduction
 ---
 
