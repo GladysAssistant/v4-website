@@ -166,6 +166,14 @@ module.exports = function createConfig() {
               label: "Jeedom alternative",
               to: "jeedom-alternative/",
             },
+            {
+              label: "Alexa alternative",
+              to: "alexa-alternative/",
+            },
+            {
+              label: "Google Home alternative",
+              to: "google-home-alternative/",
+            },
           ],
         },
         {
@@ -281,6 +289,8 @@ module.exports = function createConfig() {
                   path === "/home-assistant-alternative/" ||
                   path === "/jeedom-vs-gladys-assistant/" ||
                   path === "/jeedom-alternative/" ||
+                  path === "/alexa-alternative/" ||
+                  path === "/google-home-alternative/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
