@@ -148,19 +148,15 @@ module.exports = function createConfig() {
           ],
         },
         {
-          title: "Socials",
+          title: "Compare",
           items: [
             {
-              label: "Twitter",
-              href: "https://twitter.com/gladysassistant",
+              label: "Gladys vs Home Assistant",
+              to: "home-assistant-vs-gladys-assistant/",
             },
             {
-              label: "Facebook",
-              href: "https://facebook.com/gladysassistant",
-            },
-            {
-              label: "Instagram",
-              href: "https://instagram.com/gladysassistant",
+              label: "Home Assistant alternative",
+              to: "home-assistant-alternative/",
             },
           ],
         },
@@ -191,6 +187,18 @@ module.exports = function createConfig() {
             {
               label: "Contact Us",
               href: "/contact",
+            },
+            {
+              label: "Twitter",
+              href: "https://twitter.com/gladysassistant",
+            },
+            {
+              label: "Facebook",
+              href: "https://facebook.com/gladysassistant",
+            },
+            {
+              label: "Instagram",
+              href: "https://instagram.com/gladysassistant",
             },
           ],
         },
@@ -261,6 +269,8 @@ module.exports = function createConfig() {
                   path === "/docs/integrations/" ||
                   path === "/plus/" ||
                   path === "/starter-kit/" ||
+                  path === "/home-assistant-vs-gladys-assistant/" ||
+                  path === "/home-assistant-alternative/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
