@@ -107,6 +107,11 @@ const aiSmartHomeContent = {
           href: "/alexa-alternative/",
           text: "A private, local alternative to cloud voice assistants like Alexa.",
         },
+        {
+          label: "Build a local smart home",
+          href: "/local-smart-home/",
+          text: "The bigger picture: how AI fits into a fully local, private smart home.",
+        },
       ],
     },
     faqTitle: "Frequently asked questions",
@@ -217,6 +222,11 @@ const aiSmartHomeContent = {
           label: "Alternative à Alexa",
           href: "/alexa-alternative/",
           text: "Une alternative locale et privée aux assistants vocaux cloud comme Alexa.",
+        },
+        {
+          label: "Créer une maison connectée locale",
+          href: "/local-smart-home/",
+          text: "La vue d'ensemble : comment l'IA s'intègre dans une maison connectée 100% locale et privée.",
         },
       ],
     },
