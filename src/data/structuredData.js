@@ -8,6 +8,14 @@ import {
   alternativeFaqEn as jeedomAlternativeFaqEn,
   alternativeFaqFr as jeedomAlternativeFaqFr,
 } from "./jeedomAlternativeData";
+import {
+  alternativeFaqEn as alexaAlternativeFaqEn,
+  alternativeFaqFr as alexaAlternativeFaqFr,
+} from "./alexaAlternativeData";
+import {
+  alternativeFaqEn as googleHomeAlternativeFaqEn,
+  alternativeFaqFr as googleHomeAlternativeFaqFr,
+} from "./googleHomeAlternativeData";
 
 const SITE_URL = "https://gladysassistant.com";
 
@@ -398,6 +406,88 @@ export function getJeedomAlternativePageSchema(lang) {
       },
       toFaqPage(
         lang === "fr" ? jeedomAlternativeFaqFr : jeedomAlternativeFaqEn,
+        pageUrl
+      ),
+    ],
+  };
+}
+
+export function getAlexaAlternativePageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/alexa-alternative/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "La meilleure alternative à Alexa, respectueuse de la vie privée : Gladys Assistant"
+            : "The best privacy-friendly Alexa alternative: Gladys Assistant",
+        description:
+          lang === "fr"
+            ? "Pourquoi Gladys Assistant est une alternative locale et respectueuse de la vie privée à Alexa : vos données restent chez vous, sans cloud obligatoire, open source et auto-hébergée."
+            : "Why Gladys Assistant is a local, privacy-friendly Alexa alternative: your data stays at home, no mandatory cloud, open-source and self-hosted.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+          { "@type": "Product", name: "Amazon Alexa" },
+        ],
+      },
+      toFaqPage(
+        lang === "fr" ? alexaAlternativeFaqFr : alexaAlternativeFaqEn,
+        pageUrl
+      ),
+    ],
+  };
+}
+
+export function getGoogleHomeAlternativePageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/google-home-alternative/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "La meilleure alternative à Google Home, respectueuse de la vie privée : Gladys Assistant"
+            : "The best privacy-friendly Google Home alternative: Gladys Assistant",
+        description:
+          lang === "fr"
+            ? "Pourquoi Gladys Assistant est une alternative locale et respectueuse de la vie privée à Google Home : vos données restent chez vous, sans cloud obligatoire, open source et auto-hébergée."
+            : "Why Gladys Assistant is a local, privacy-friendly Google Home alternative: your data stays at home, no mandatory cloud, open-source and self-hosted.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+          { "@type": "Product", name: "Google Home" },
+        ],
+      },
+      toFaqPage(
+        lang === "fr" ? googleHomeAlternativeFaqFr : googleHomeAlternativeFaqEn,
         pageUrl
       ),
     ],
