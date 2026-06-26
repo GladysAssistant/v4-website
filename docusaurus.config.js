@@ -158,6 +158,14 @@ module.exports = function createConfig() {
               label: "Home Assistant alternative",
               to: "home-assistant-alternative/",
             },
+            {
+              label: "Gladys vs Jeedom",
+              to: "jeedom-vs-gladys-assistant/",
+            },
+            {
+              label: "Jeedom alternative",
+              to: "jeedom-alternative/",
+            },
           ],
         },
         {
@@ -271,6 +279,8 @@ module.exports = function createConfig() {
                   path === "/starter-kit/" ||
                   path === "/home-assistant-vs-gladys-assistant/" ||
                   path === "/home-assistant-alternative/" ||
+                  path === "/jeedom-vs-gladys-assistant/" ||
+                  path === "/jeedom-alternative/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
