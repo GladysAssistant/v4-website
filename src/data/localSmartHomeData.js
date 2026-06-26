@@ -80,8 +80,8 @@ const localSmartHomeContent = {
         },
         {
           icon: "🎙️",
-          title: "Local voice (optional)",
-          text: "Add hands-free control without a cloud speaker, so even your voice commands stay inside your home.",
+          title: "Voice & AI on your terms (optional)",
+          text: "Hands-free voice and AI assistance are optional. When you use them, requests go through a private, secure cloud run by an independent project, with no ads and no data resale, never a big-tech assistant that profiles you.",
         },
         {
           icon: "🔐",
@@ -94,7 +94,7 @@ const localSmartHomeContent = {
       title: "Gladys Assistant: a local-first foundation",
       paragraphs: [
         "Gladys Assistant is a free, open-source, self-hosted smart home platform built exactly on these principles. It installs in a single Docker command on a Raspberry Pi, mini-PC or NAS, and runs entirely on your local network.",
-        "Everything is configured from a clean interface, with no configuration files. It's built around open standards (Zigbee, Matter, MQTT), it has a full local automation engine and its own voice assistant, and your data never leaves your home, unless you choose to enable optional, end-to-end encrypted remote access with Gladys Plus.",
+        "Everything is configured from a clean interface, with no configuration files. It's built around open standards (Zigbee, Matter, MQTT) and a full local automation engine, so your everyday scenes run entirely at home. Optional features like voice, AI and remote access do rely on the cloud, but a private, secure one from an independent project: no ads, no data resale, and end-to-end encrypted remote access.",
       ],
       link: { label: "Get started with Gladys →", href: "/docs/" },
     },
@@ -208,8 +208,8 @@ const localSmartHomeContent = {
         },
         {
           icon: "🎙️",
-          title: "Le vocal en local (optionnel)",
-          text: "Ajoutez le contrôle mains libres sans enceinte cloud, pour que même vos commandes vocales restent chez vous.",
+          title: "Le vocal et l'IA à vos conditions (optionnel)",
+          text: "Le vocal mains libres et l'assistance IA sont optionnels. Quand vous les utilisez, les requêtes passent par un cloud souverain hébergé en France, sans publicité ni revente de données, et jamais par l'assistant d'un géant de la tech qui vous profile.",
         },
         {
           icon: "🔐",
@@ -222,7 +222,7 @@ const localSmartHomeContent = {
       title: "Gladys Assistant : une fondation locale d'abord",
       paragraphs: [
         "Gladys Assistant est une plateforme domotique gratuite, open source et auto-hébergée, bâtie exactement sur ces principes. Elle s'installe en une seule commande Docker sur un Raspberry Pi, un mini-PC ou un NAS, et tourne entièrement sur votre réseau local.",
-        "Tout se configure depuis une interface épurée, sans fichiers de configuration. Elle repose sur des standards ouverts (Zigbee, Matter, MQTT), dispose d'un vrai moteur d'automatisation local et de son propre assistant vocal, et vos données ne quittent jamais votre domicile, sauf si vous choisissez d'activer l'accès distant optionnel, chiffré de bout en bout, avec Gladys Plus.",
+        "Tout se configure depuis une interface épurée, sans fichiers de configuration. Elle repose sur des standards ouverts (Zigbee, Matter, MQTT) et un vrai moteur d'automatisation local : vos scènes du quotidien tournent entièrement chez vous. Les fonctions optionnelles comme le vocal, l'IA et l'accès distant reposent, elles, sur le cloud, mais un cloud souverain hébergé en France, porté par un projet indépendant : sans publicité, sans revente de données, et un accès distant chiffré de bout en bout.",
       ],
       link: { label: "Commencer avec Gladys →", href: "/docs/" },
     },

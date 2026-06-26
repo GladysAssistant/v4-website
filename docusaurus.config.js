@@ -124,10 +124,6 @@ module.exports = function createConfig() {
               to: "docs",
             },
             {
-              label: "Build a local smart home",
-              to: "local-smart-home/",
-            },
-            {
               label: "Kit de démarrage officiel",
               href: "/starter-kit/",
               className: "footer__link-item footer__link--fr-only",
@@ -148,6 +144,15 @@ module.exports = function createConfig() {
               label: "Installation sur une Freebox Delta",
               to: "docs/installation/freebox-delta/",
               className: "footer__link-item footer__link--fr-only",
+            },
+          ],
+        },
+        {
+          title: "Guides",
+          items: [
+            {
+              label: "Build a local smart home",
+              to: "local-smart-home/",
             },
           ],
         },
