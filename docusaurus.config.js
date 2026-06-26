@@ -124,6 +124,14 @@ module.exports = function createConfig() {
               to: "docs",
             },
             {
+              label: "Gladys vs Home Assistant",
+              to: "home-assistant-vs-gladys-assistant/",
+            },
+            {
+              label: "Home Assistant alternative",
+              to: "home-assistant-alternative/",
+            },
+            {
               label: "Kit de démarrage officiel",
               href: "/starter-kit/",
               className: "footer__link-item footer__link--fr-only",
@@ -261,6 +269,8 @@ module.exports = function createConfig() {
                   path === "/docs/integrations/" ||
                   path === "/plus/" ||
                   path === "/starter-kit/" ||
+                  path === "/home-assistant-vs-gladys-assistant/" ||
+                  path === "/home-assistant-alternative/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
