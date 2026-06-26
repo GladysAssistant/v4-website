@@ -148,6 +148,15 @@ module.exports = function createConfig() {
           ],
         },
         {
+          title: "Guides",
+          items: [
+            {
+              label: "Build a local smart home",
+              to: "local-smart-home/",
+            },
+          ],
+        },
+        {
           title: "Compare",
           items: [
             {
@@ -291,6 +300,7 @@ module.exports = function createConfig() {
                   path === "/jeedom-alternative/" ||
                   path === "/alexa-alternative/" ||
                   path === "/google-home-alternative/" ||
+                  path === "/local-smart-home/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
