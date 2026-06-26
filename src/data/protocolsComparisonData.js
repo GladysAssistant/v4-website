@@ -73,7 +73,7 @@ const protocolsContent = {
       {
         feature: "Device choice",
         zigbee: "Huge and very affordable",
-        zwave: "Wide, often pricier",
+        zwave: "Narrower and pricier",
         matter: "Growing fast, newer",
       },
       {
@@ -95,10 +95,22 @@ const protocolsContent = {
         matter: "CSA (Apple, Google, Amazon, Samsung…)",
       },
       {
+        feature: "Licensing",
+        zigbee: "Open, very open via Zigbee2MQTT",
+        zwave: "Proprietary for years, opened ~2020",
+        matter: "Open standard with a public SDK",
+      },
+      {
         feature: "Maturity",
         zigbee: "Mature",
-        zwave: "Mature",
+        zwave: "Mature but aging",
         matter: "New (since 2022), maturing",
+      },
+      {
+        feature: "Outlook",
+        zigbee: "Thriving",
+        zwave: "Declining for new devices",
+        matter: "Fastest-growing",
       },
       {
         feature: "Needs",
@@ -113,7 +125,7 @@ const protocolsContent = {
         name: "Zigbee",
         tagline: "The popular, affordable mesh",
         intro:
-          "Zigbee is a low-power wireless mesh protocol on the 2.4 GHz band. Mains-powered devices relay messages for battery ones, so the network gets stronger as you add devices. It powers a huge, affordable ecosystem (Aqara, IKEA, Sonoff, Philips Hue and many more).",
+          "Zigbee is a low-power wireless mesh protocol on the 2.4 GHz band. Mains-powered devices relay messages for battery ones, so the network gets stronger as you add devices. It powers a huge, affordable ecosystem (Aqara, IKEA, Sonoff, Philips Hue and many more), and it's still thriving. Along with Matter-over-Thread, it's one of the two protocols worth betting on today.",
         strengths: [
           "A massive choice of inexpensive devices.",
           "Self-healing mesh that extends as you add mains-powered devices.",
@@ -128,18 +140,18 @@ const protocolsContent = {
       {
         id: "zwave",
         name: "Z-Wave",
-        tagline: "The reliable, certified mesh",
+        tagline: "The aging, certified veteran",
         intro:
-          "Z-Wave is a low-power wireless mesh protocol on sub-GHz frequencies (868 MHz in Europe, 908 MHz in the US). Its strict certification means devices from different brands tend to work together reliably, which made it a favorite for serious home automation.",
+          "Z-Wave is the veteran of the three: a low-power wireless mesh protocol on sub-GHz frequencies (868 MHz in Europe, 908 MHz in the US). Strict certification earned it a reputation for reliable cross-brand behavior, and it has a large installed base. But it's also the aging option, it was proprietary for most of its life and only opened up as a ratified standard around 2020, its devices are pricier, and many manufacturers are now shifting new products to Matter and Thread.",
         strengths: [
-          "Excellent cross-brand interoperability thanks to strict certification.",
+          "Strict certification gives reliable cross-brand behavior.",
           "Sub-GHz radio means less Wi-Fi interference and good wall penetration.",
-          "Fully local, popular for locks and sensors.",
+          "A large installed base, especially in professionally installed systems.",
         ],
         limits: [
-          "Fewer devices, usually more expensive than Zigbee.",
-          "Frequencies are region-locked: EU and US devices aren't interchangeable.",
-          "A classic network is limited to around 232 devices (plenty for a home, but worth knowing).",
+          "Fewer devices and noticeably pricier than Zigbee, with a new-device catalog that's shrinking as makers move to Matter and Thread, especially in Europe.",
+          "Proprietary for most of its history; it only opened up as a ratified standard around 2020.",
+          "Region-locked frequencies (EU and US devices aren't interchangeable), a classic network caps at ~232 devices, and it has a reputation for being fiddly to integrate.",
         ],
       },
       {
@@ -147,7 +159,7 @@ const protocolsContent = {
         name: "Matter & Thread",
         tagline: "The interoperability standard",
         intro:
-          "Matter is the newest of the three, and it's different: it isn't a radio protocol, but an application standard that runs over Wi-Fi or over Thread, a low-power mesh radio comparable to Zigbee and Z-Wave. Backed by Apple, Google, Amazon and Samsung, its goal is for one device to work across every major ecosystem.",
+          "Matter is the newest of the three, and it's different: it isn't a radio protocol, but an application standard that runs over Wi-Fi or over Thread, a low-power mesh radio comparable to Zigbee and Z-Wave. Backed by Apple, Google, Amazon and Samsung, its goal is for one device to work across every major ecosystem. Together with Zigbee, Matter-over-Thread is widely seen as the future of the smart home.",
         strengths: [
           "Cross-ecosystem by design: one device can work with Apple Home, Google Home, Alexa and more.",
           "Local control is part of the standard.",
@@ -163,22 +175,22 @@ const protocolsContent = {
     choose: {
       title: "So which one should you choose?",
       intro:
-        "There's no single winner, the right answer depends on your devices and priorities:",
+        "For a brand-new smart home today, the two to bet on are Zigbee and Matter-over-Thread. Here's the quick guidance:",
       cards: [
         {
           icon: "🟢",
           title: "Choose Zigbee if…",
-          text: "You want the widest, cheapest choice of devices and a big local mesh, and you're happy using an open hub to get the best interoperability.",
-        },
-        {
-          icon: "🔵",
-          title: "Choose Z-Wave if…",
-          text: "You value rock-solid cross-brand reliability and less Wi-Fi interference, and you don't mind paying a bit more for fewer options.",
+          text: "You want the widest, cheapest choice of devices and a big local mesh right now. It's the safe, proven pick today, ideally with an open hub for the best interoperability.",
         },
         {
           icon: "🟣",
           title: "Choose Matter / Thread if…",
-          text: "You want future-proof, cross-ecosystem devices and care about backing the standard the whole industry is rallying behind.",
+          text: "You want future-proof, cross-ecosystem devices and care about backing the standard the whole industry is rallying behind. It's where the market is heading.",
+        },
+        {
+          icon: "🔵",
+          title: "Choose Z-Wave if…",
+          text: "You already have a Z-Wave setup, or specifically need its certified sub-GHz devices, knowing it's the legacy option, with a pricier and shrinking catalog.",
         },
       ],
     },
@@ -288,7 +300,7 @@ const protocolsContent = {
       {
         feature: "Choix d'appareils",
         zigbee: "Immense et très abordable",
-        zwave: "Large, souvent plus cher",
+        zwave: "Plus restreint et plus cher",
         matter: "En forte croissance, plus récent",
       },
       {
@@ -310,10 +322,22 @@ const protocolsContent = {
         matter: "CSA (Apple, Google, Amazon, Samsung…)",
       },
       {
+        feature: "Licence",
+        zigbee: "Ouvert, très ouvert via Zigbee2MQTT",
+        zwave: "Propriétaire pendant des années, ouvert vers 2020",
+        matter: "Standard ouvert avec un SDK public",
+      },
+      {
         feature: "Maturité",
         zigbee: "Mature",
-        zwave: "Mature",
+        zwave: "Mature mais vieillissant",
         matter: "Récent (depuis 2022), en maturation",
+      },
+      {
+        feature: "Perspectives",
+        zigbee: "En plein essor",
+        zwave: "En recul pour les nouveaux appareils",
+        matter: "Croissance la plus rapide",
       },
       {
         feature: "Nécessite",
@@ -328,7 +352,7 @@ const protocolsContent = {
         name: "Zigbee",
         tagline: "Le maillé populaire et abordable",
         intro:
-          "Zigbee est un protocole sans fil maillé et basse consommation, sur la bande 2,4 GHz. Les appareils sur secteur relaient les messages de ceux sur pile, donc le réseau se renforce à mesure que vous ajoutez des appareils. Il alimente un écosystème immense et abordable (Aqara, IKEA, Sonoff, Philips Hue et bien d'autres).",
+          "Zigbee est un protocole sans fil maillé et basse consommation, sur la bande 2,4 GHz. Les appareils sur secteur relaient les messages de ceux sur pile, donc le réseau se renforce à mesure que vous ajoutez des appareils. Il alimente un écosystème immense et abordable (Aqara, IKEA, Sonoff, Philips Hue et bien d'autres), et il est toujours en plein essor. Avec le Matter-over-Thread, c'est l'un des deux protocoles sur lesquels miser aujourd'hui.",
         strengths: [
           "Un choix énorme d'appareils peu coûteux.",
           "Un maillage auto-réparateur qui s'étend avec les appareils sur secteur.",
@@ -343,18 +367,18 @@ const protocolsContent = {
       {
         id: "zwave",
         name: "Z-Wave",
-        tagline: "Le maillé fiable et certifié",
+        tagline: "Le vétéran certifié, mais vieillissant",
         intro:
-          "Z-Wave est un protocole sans fil maillé et basse consommation, sur des fréquences sous-GHz (868 MHz en Europe, 908 MHz aux États-Unis). Sa certification stricte fait que des appareils de marques différentes fonctionnent généralement bien ensemble, ce qui en a fait un favori pour la domotique sérieuse.",
+          "Z-Wave est le vétéran des trois : un protocole sans fil maillé et basse consommation, sur des fréquences sous-GHz (868 MHz en Europe, 908 MHz aux États-Unis). Sa certification stricte lui a valu une réputation de fiabilité inter-marques, et il dispose d'une large base installée. Mais c'est aussi l'option vieillissante : il a été propriétaire pendant la majeure partie de sa vie et ne s'est ouvert comme standard ratifié que vers 2020, ses appareils sont plus chers, et beaucoup de fabricants basculent désormais leurs nouveaux produits vers Matter et Thread.",
         strengths: [
-          "Une excellente interopérabilité inter-marques grâce à une certification stricte.",
+          "Une certification stricte qui assure une fiabilité inter-marques.",
           "Une radio sous-GHz, donc moins d'interférences Wi-Fi et une bonne pénétration des murs.",
-          "100 % local, populaire pour les serrures et les capteurs.",
+          "Une large base installée, surtout dans les systèmes installés par des professionnels.",
         ],
         limits: [
-          "Moins d'appareils, en général plus chers que le Zigbee.",
-          "Des fréquences verrouillées par région : les appareils UE et US ne sont pas interchangeables.",
-          "Un réseau classique est limité à environ 232 appareils (largement suffisant pour une maison, mais bon à savoir).",
+          "Moins d'appareils et nettement plus chers que le Zigbee, avec un catalogue de nouveaux appareils qui se réduit à mesure que les fabricants passent à Matter et Thread, surtout en Europe.",
+          "Propriétaire durant la majeure partie de son histoire ; il ne s'est ouvert comme standard ratifié que vers 2020.",
+          "Des fréquences verrouillées par région (les appareils UE et US ne sont pas interchangeables), un réseau classique plafonne à ~232 appareils, et il a la réputation d'être pénible à intégrer.",
         ],
       },
       {
@@ -362,7 +386,7 @@ const protocolsContent = {
         name: "Matter & Thread",
         tagline: "Le standard d'interopérabilité",
         intro:
-          "Matter est le plus récent des trois, et il est différent : ce n'est pas un protocole radio, mais un standard applicatif qui fonctionne sur le Wi-Fi ou sur Thread, une radio maillée basse consommation comparable à Zigbee et Z-Wave. Porté par Apple, Google, Amazon et Samsung, son but est qu'un même appareil fonctionne dans tous les grands écosystèmes.",
+          "Matter est le plus récent des trois, et il est différent : ce n'est pas un protocole radio, mais un standard applicatif qui fonctionne sur le Wi-Fi ou sur Thread, une radio maillée basse consommation comparable à Zigbee et Z-Wave. Porté par Apple, Google, Amazon et Samsung, son but est qu'un même appareil fonctionne dans tous les grands écosystèmes. Avec le Zigbee, le Matter-over-Thread est largement vu comme l'avenir de la maison connectée.",
         strengths: [
           "Multi-écosystème par conception : un appareil peut fonctionner avec Apple Home, Google Home, Alexa et plus.",
           "Le contrôle local fait partie du standard.",
@@ -378,22 +402,22 @@ const protocolsContent = {
     choose: {
       title: "Alors, lequel choisir ?",
       intro:
-        "Il n'y a pas de vainqueur unique : la bonne réponse dépend de vos appareils et de vos priorités :",
+        "Pour une maison connectée toute neuve aujourd'hui, les deux sur lesquels miser sont le Zigbee et le Matter-over-Thread. Voici le guide express :",
       cards: [
         {
           icon: "🟢",
           title: "Choisissez Zigbee si…",
-          text: "Vous voulez le choix d'appareils le plus large et le moins cher, et un grand maillage local, en utilisant un hub ouvert pour la meilleure interopérabilité.",
-        },
-        {
-          icon: "🔵",
-          title: "Choisissez Z-Wave si…",
-          text: "Vous tenez à une fiabilité inter-marques à toute épreuve et à moins d'interférences Wi-Fi, et payer un peu plus pour moins d'options ne vous dérange pas.",
+          text: "Vous voulez dès maintenant le choix d'appareils le plus large et le moins cher, et un grand maillage local. C'est le choix sûr et éprouvé aujourd'hui, idéalement avec un hub ouvert pour la meilleure interopérabilité.",
         },
         {
           icon: "🟣",
           title: "Choisissez Matter / Thread si…",
-          text: "Vous voulez des appareils pérennes et multi-écosystèmes, et tenez à miser sur le standard derrière lequel toute l'industrie se rassemble.",
+          text: "Vous voulez des appareils pérennes et multi-écosystèmes, et tenez à miser sur le standard derrière lequel toute l'industrie se rassemble. C'est là que va le marché.",
+        },
+        {
+          icon: "🔵",
+          title: "Choisissez Z-Wave si…",
+          text: "Vous avez déjà une installation Z-Wave, ou avez spécifiquement besoin de ses appareils certifiés sous-GHz, en sachant que c'est l'option legacy, au catalogue plus cher et en recul.",
         },
       ],
     },
@@ -455,7 +479,7 @@ export const protocolsFaqEn = [
   {
     question: "Zigbee vs Z-Wave: which is better?",
     answer:
-      "It depends. Zigbee has far more devices, usually cheaper, on the 2.4 GHz band. Z-Wave has fewer, pricier devices on sub-GHz frequencies, with strict certification for reliable interoperability and less Wi-Fi interference. Both are local, mesh-based protocols.",
+      "For a new setup, Zigbee usually makes more sense today: a far larger, cheaper and still-growing catalog on the 2.4 GHz band. Z-Wave remains reliable on sub-GHz frequencies with less Wi-Fi interference and strict certification, but its devices are pricier and its new-device range is shrinking as makers shift to Matter and Thread. Both are local, mesh-based protocols.",
   },
   {
     question: "Do Zigbee, Z-Wave and Matter work without the cloud?",
@@ -488,7 +512,7 @@ export const protocolsFaqFr = [
   {
     question: "Zigbee vs Z-Wave : lequel est le meilleur ?",
     answer:
-      "Cela dépend. Zigbee a beaucoup plus d'appareils, généralement moins chers, sur la bande 2,4 GHz. Z-Wave a moins d'appareils, plus chers, sur des fréquences sous-GHz, avec une certification stricte pour une interopérabilité fiable et moins d'interférences Wi-Fi. Les deux sont des protocoles locaux et maillés.",
+      "Pour une nouvelle installation, le Zigbee a généralement plus de sens aujourd'hui : un catalogue bien plus large, moins cher et encore en croissance, sur la bande 2,4 GHz. Le Z-Wave reste fiable sur des fréquences sous-GHz, avec moins d'interférences Wi-Fi et une certification stricte, mais ses appareils sont plus chers et sa gamme de nouveaux appareils se réduit à mesure que les fabricants passent à Matter et Thread. Les deux sont des protocoles locaux et maillés.",
   },
   {
     question: "Zigbee, Z-Wave et Matter fonctionnent-ils sans le cloud ?",
