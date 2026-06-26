@@ -104,8 +104,8 @@ const alternativeContent = {
           text: "Lightweight and runs on modest hardware. Mature and stable, but the interface feels dated.",
         },
         {
-          title: "Jeedom",
-          text: "The project you're comparing against: a French, plugin-based, freemium platform. Flexible, but many plugins are paid.",
+          title: "Homey Pro",
+          text: "A polished experience, but it relies on proprietary paid hardware rather than being fully open and self-hosted.",
         },
       ],
       outro:
@@ -221,8 +221,8 @@ const alternativeContent = {
           text: "Léger et tourne sur du matériel modeste. Mature et stable, mais l'interface est datée.",
         },
         {
-          title: "Jeedom",
-          text: "Le projet que vous comparez : une plateforme française à base de plugins, au modèle freemium. Flexible, mais beaucoup de plugins sont payants.",
+          title: "Homey Pro",
+          text: "Une expérience soignée, mais qui repose sur du matériel propriétaire payant plutôt que sur un vrai auto-hébergement ouvert.",
         },
       ],
       outro:
