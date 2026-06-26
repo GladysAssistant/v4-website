@@ -127,10 +127,10 @@ const alternativeContent = {
     meta: {
       title: "La meilleure alternative à Home Assistant : Gladys Assistant",
       description:
-        "Vous cherchez une alternative à Home Assistant ? Gladys Assistant est une solution domotique open source, plus simple et respectueuse de la vie privée : sans YAML, sans cloud, avec des mises à jour automatiques et stables. Gratuite et auto-hébergée.",
+        "Vous cherchez une alternative à Home Assistant ? Gladys Assistant est une solution domotique open source, plus simple et respectueuse de la vie privée : sans YAML, sans cloud, avec des mises à jour automatiques et stables. Gratuite et auto-hébergée.",
     },
     hero: {
-      title: "Vous cherchez une alternative à Home Assistant ?",
+      title: "Vous cherchez une alternative à Home Assistant ?",
       subtitle:
         "Découvrez Gladys Assistant, la solution domotique open source plus simple et respectueuse de votre vie privée.",
       intro: [
