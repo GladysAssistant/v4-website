@@ -158,6 +158,10 @@ module.exports = function createConfig() {
               label: "Control your home with AI",
               to: "ai-smart-home/",
             },
+            {
+              label: "Zigbee vs Matter vs Z-Wave",
+              to: "zigbee-vs-matter-vs-zwave/",
+            },
           ],
         },
         {
@@ -299,6 +303,7 @@ module.exports = function createConfig() {
                   path === "/plus/" ||
                   path === "/starter-kit/" ||
                   path === "/ai-smart-home/" ||
+                  path === "/zigbee-vs-matter-vs-zwave/" ||
                   path === "/home-assistant-vs-gladys-assistant/" ||
                   path === "/home-assistant-alternative/" ||
                   path === "/jeedom-vs-gladys-assistant/" ||
