@@ -23,7 +23,7 @@ function HomePage() {
         id: "home.metaDescription",
         description: "home page meta description",
         message:
-          "Gladys Assistant is a modern, privacy-first & open-source home automation software that runs anywhere.",
+          "Gladys Assistant is a privacy-first, open-source home automation platform. Self-hosted, no cloud required — a simpler alternative to Home Assistant.",
       })}
     >
       <JsonLd data={getHomepageSchema(i18n.currentLocale)} />

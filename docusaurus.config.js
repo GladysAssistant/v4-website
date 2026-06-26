@@ -237,6 +237,46 @@ module.exports = function createConfig() {
           changefreq: "weekly",
           priority: 0.5,
           filename: "sitemap.xml",
+          createSitemapItems: async (params) => {
+            const { defaultCreateSitemapItems, ...rest } = params;
+            const items = await defaultCreateSitemapItems(rest);
+            // Give search engines a clearer priority hierarchy instead of a
+            // flat 0.5 on every URL. Low-value listing pages (tags, archive,
+            // pagination) are demoted; key landing pages are promoted.
+            return items
+              .filter(
+                (item) =>
+                  !item.url.includes("/tags/") &&
+                  !item.url.includes("/page/")
+              )
+              .map((item) => {
+                const path = item.url
+                  .replace("https://gladysassistant.com", "")
+                  .replace("/fr/", "/");
+                if (path === "/") {
+                  return { ...item, priority: 1.0, changefreq: "daily" };
+                }
+                if (
+                  path === "/docs/" ||
+                  path === "/docs/integrations/" ||
+                  path === "/plus/" ||
+                  path === "/starter-kit/" ||
+                  path === "/blog/"
+                ) {
+                  return { ...item, priority: 0.8 };
+                }
+                if (
+                  path === "/blog/archive/" ||
+                  path === "/blog/authors/"
+                ) {
+                  return { ...item, priority: 0.3 };
+                }
+                if (path.startsWith("/blog/") || path.startsWith("/docs/")) {
+                  return { ...item, priority: 0.7 };
+                }
+                return item;
+              });
+          },
         },
       },
     ],

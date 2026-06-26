@@ -91,7 +91,8 @@ function Home() {
       description={translate({
         id: "contact.metaDescription",
         description: "Contact page meta description",
-        message: "If you want to contact us",
+        message:
+          "Get in touch with the Gladys Assistant team: questions, ideas, partnership requests, or support for your open-source, privacy-first smart home.",
       })}
     >
       <main>

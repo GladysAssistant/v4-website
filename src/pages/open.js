@@ -204,7 +204,8 @@ function Open() {
       description={translate({
         id: "openPage.metaDescription",
         description: "gladys open page meta description",
-        message: "See some interesting statistics about Gladys usage !",
+        message:
+          "Explore Gladys Assistant's open metrics in real time: active instances, Gladys Plus users, monthly recurring revenue, and community statistics.",
       })}
     >
       <main>

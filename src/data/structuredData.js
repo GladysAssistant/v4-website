@@ -171,11 +171,32 @@ function getOrganizationNode() {
     name: "Gladys Assistant",
     url: SITE_URL,
     logo: `${SITE_URL}/img/logo.svg`,
+    description:
+      "Privacy-first, open-source, self-hosted home automation platform. A simpler alternative to Home Assistant, focused on local control and European privacy standards.",
+    foundingDate: "2013",
     sameAs: SAME_AS,
     founder: {
       "@type": "Person",
       name: "Pierre-Gilles Leymarie",
     },
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "hello@gladysassistant.com",
+      contactType: "customer support",
+      availableLanguage: ["English", "French"],
+    },
+  };
+}
+
+function getWebSiteNode(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  return {
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: "Gladys Assistant",
+    url: `${SITE_URL}${prefix}/`,
+    inLanguage: lang === "fr" ? "fr" : "en",
+    publisher: { "@id": `${SITE_URL}/#organization` },
   };
 }
 
@@ -187,6 +208,7 @@ export function getHomepageSchema(lang) {
     "@context": "https://schema.org",
     "@graph": [
       getOrganizationNode(),
+      getWebSiteNode(lang),
       {
         "@type": "SoftwareApplication",
         "@id": `${SITE_URL}/#software`,
@@ -221,6 +243,7 @@ export function getPlusPageSchema(lang) {
     "@context": "https://schema.org",
     "@graph": [
       getOrganizationNode(),
+      getWebSiteNode(lang),
       {
         "@type": "Product",
         "@id": `${pageUrl}#product`,
