@@ -25,7 +25,7 @@ const comparisonContent = {
       title: "Gladys Assistant vs Jeedom",
       subtitle: "An honest comparison between two French open-source home assistants",
       intro: [
-        "Hesitating between Gladys Assistant and Jeedom? Both are French, both are open-source, and both let you build a smart home that runs at home rather than in someone else's cloud. This comparison will save you hours.",
+        "Hesitating between Gladys Assistant and Jeedom? Both are open-source and both let you build a smart home that runs at home rather than in someone else's cloud. This comparison will save you hours.",
         "Full transparency: I'm Pierre-Gilles, the creator of Gladys Assistant, so I'm obviously biased. But I'll be fair about both projects. Jeedom is a serious, mature platform with a huge plugin ecosystem, and I'll credit it where it deserves it.",
         "The real difference isn't \"open-source vs proprietary\" or \"local vs cloud\", because they're alike on those. It's about philosophy: Jeedom is built around a vast, flexible plugin marketplace, while Gladys is built around a polished, curated, product-grade experience. That difference is exactly what should guide your choice.",
       ],
@@ -179,15 +179,15 @@ const comparisonContent = {
         id: "community",
         title: "Community & support",
         gladys: [
-          "Both projects are French, so on both sides you'll find a welcoming French-speaking community and support in French, which is a real advantage over many English-only projects.",
-          "What's more specific to Gladys is direct support from the founder. If you have a question, even a deep one about the code, you can email me, post on the forum, or reach out on social media, and you'll get a personal answer. The roadmap is shaped by real user feedback rather than by what's easiest to build.",
+          "Gladys is fully available in English: the interface, the documentation and the community all work in English, so you're never stuck translating a French-only tutorial just to get something done.",
+          "You also get direct support from the founder. If you have a question, even a deep one about the code, you can email me, post on the forum, or reach out on social media, and you'll get a personal answer. The roadmap is shaped by real user feedback rather than by what's easiest to build.",
         ],
         ha: [
-          "Jeedom has a large, very active French community, a busy forum, and plenty of tutorials, so you'll usually find someone who has already solved your problem.",
-          "Paid support is also available through the Market. With that scale, day-to-day support is mostly community-driven rather than a direct line to the creators.",
+          "Jeedom has a large and very active community with a busy forum and plenty of tutorials, so someone has usually already solved your problem, as long as you read French.",
+          "That's the catch for an English-speaking audience: Jeedom is essentially a French-only project. Its interface, documentation and community are overwhelmingly in French, which can be a real barrier if you don't speak it. Paid support is also available through the Market, but day-to-day help is community-driven rather than a direct line to the creators.",
         ],
         takeaway:
-          "Both offer something rare: a strong French-speaking community and French support. Jeedom wins on community size and content; Gladys offers a more personal, founder-led relationship.",
+          "For an English speaker this matters a lot: Jeedom is essentially French-only, while Gladys is fully available in English, with personal, founder-led support on top.",
       },
       {
         id: "pricing",
@@ -434,9 +434,9 @@ const comparisonContent = {
 
 export const comparisonFaqEn = [
   {
-    question: "Are Gladys and Jeedom both French open-source projects?",
+    question: "Is Jeedom available in English?",
     answer:
-      "Yes. Both Gladys Assistant and Jeedom are French, open-source, self-hosted home automation platforms with active French-speaking communities. They differ mainly in philosophy: Gladys focuses on a polished, curated experience, while Jeedom is built around a large plugin marketplace.",
+      "Jeedom is essentially a French-only project: its interface, documentation and community are overwhelmingly in French, which can be a real barrier if you don't speak it. Gladys Assistant, by contrast, is fully available in English, interface, documentation and community alike.",
   },
   {
     question: "Which is easier for beginners, Gladys or Jeedom?",
