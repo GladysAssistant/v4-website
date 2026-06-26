@@ -162,6 +162,10 @@ module.exports = function createConfig() {
               label: "Zigbee vs Matter vs Z-Wave",
               to: "zigbee-vs-matter-vs-zwave/",
             },
+            {
+              label: "Reduce your electricity bill",
+              to: "home-energy-monitoring/",
+            },
           ],
         },
         {
@@ -304,6 +308,7 @@ module.exports = function createConfig() {
                   path === "/starter-kit/" ||
                   path === "/ai-smart-home/" ||
                   path === "/zigbee-vs-matter-vs-zwave/" ||
+                  path === "/home-energy-monitoring/" ||
                   path === "/home-assistant-vs-gladys-assistant/" ||
                   path === "/home-assistant-alternative/" ||
                   path === "/jeedom-vs-gladys-assistant/" ||
