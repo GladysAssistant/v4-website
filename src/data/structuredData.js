@@ -1,5 +1,13 @@
 import { comparisonFaqEn, comparisonFaqFr } from "./comparisonData";
 import { alternativeFaqEn, alternativeFaqFr } from "./alternativeData";
+import {
+  comparisonFaqEn as jeedomComparisonFaqEn,
+  comparisonFaqFr as jeedomComparisonFaqFr,
+} from "./jeedomComparisonData";
+import {
+  alternativeFaqEn as jeedomAlternativeFaqEn,
+  alternativeFaqFr as jeedomAlternativeFaqFr,
+} from "./jeedomAlternativeData";
 
 const SITE_URL = "https://gladysassistant.com";
 
@@ -310,6 +318,88 @@ export function getAlternativePageSchema(lang) {
         ],
       },
       toFaqPage(lang === "fr" ? alternativeFaqFr : alternativeFaqEn, pageUrl),
+    ],
+  };
+}
+
+export function getJeedomComparisonPageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/jeedom-vs-gladys-assistant/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "Gladys vs Jeedom : le comparatif honnête"
+            : "Gladys vs Jeedom: an honest comparison",
+        description:
+          lang === "fr"
+            ? "Comparatif honnête entre Gladys Assistant et Jeedom par le créateur de Gladys : installation, simplicité, intégrations, scénarios, communauté et prix."
+            : "An honest comparison between Gladys Assistant and Jeedom by Gladys' creator: installation, ease of use, integrations, scenarios, community and pricing.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+          { "@type": "SoftwareApplication", name: "Jeedom" },
+        ],
+      },
+      toFaqPage(
+        lang === "fr" ? jeedomComparisonFaqFr : jeedomComparisonFaqEn,
+        pageUrl
+      ),
+    ],
+  };
+}
+
+export function getJeedomAlternativePageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/jeedom-alternative/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "La meilleure alternative à Jeedom : Gladys Assistant"
+            : "The best Jeedom alternative: Gladys Assistant",
+        description:
+          lang === "fr"
+            ? "Pourquoi Gladys Assistant est une alternative française à Jeedom, plus simple et avec des intégrations gratuites : sans plugins payants, sans YAML, sans cloud, auto-hébergée et stable."
+            : "Why Gladys Assistant is a simpler French Jeedom alternative with free integrations: no paid plugins, no YAML, no cloud, self-hosted and stable.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+          { "@type": "SoftwareApplication", name: "Jeedom" },
+        ],
+      },
+      toFaqPage(
+        lang === "fr" ? jeedomAlternativeFaqFr : jeedomAlternativeFaqEn,
+        pageUrl
+      ),
     ],
   };
 }
