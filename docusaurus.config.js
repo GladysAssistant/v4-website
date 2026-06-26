@@ -124,6 +124,10 @@ module.exports = function createConfig() {
               to: "docs",
             },
             {
+              label: "Build a local smart home",
+              to: "local-smart-home/",
+            },
+            {
               label: "Kit de démarrage officiel",
               href: "/starter-kit/",
               className: "footer__link-item footer__link--fr-only",
@@ -291,6 +295,7 @@ module.exports = function createConfig() {
                   path === "/jeedom-alternative/" ||
                   path === "/alexa-alternative/" ||
                   path === "/google-home-alternative/" ||
+                  path === "/local-smart-home/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
