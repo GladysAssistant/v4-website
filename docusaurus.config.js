@@ -154,6 +154,10 @@ module.exports = function createConfig() {
               label: "Build a local smart home",
               to: "local-smart-home/",
             },
+            {
+              label: "Control your home with AI",
+              to: "ai-smart-home/",
+            },
           ],
         },
         {
@@ -294,6 +298,7 @@ module.exports = function createConfig() {
                   path === "/docs/integrations/" ||
                   path === "/plus/" ||
                   path === "/starter-kit/" ||
+                  path === "/ai-smart-home/" ||
                   path === "/home-assistant-vs-gladys-assistant/" ||
                   path === "/home-assistant-alternative/" ||
                   path === "/jeedom-vs-gladys-assistant/" ||

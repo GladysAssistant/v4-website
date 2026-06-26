@@ -123,6 +123,11 @@ const localSmartHomeContent = {
           href: "/home-assistant-vs-gladys-assistant/",
           text: "How the two main open-source, local-first platforms really compare.",
         },
+        {
+          label: "Control your home with AI",
+          href: "/ai-smart-home/",
+          text: "Keep the convenience of AI and voice control, on a private cloud, not a big-tech assistant.",
+        },
       ],
     },
     faqTitle: "Frequently asked questions",
@@ -245,6 +250,11 @@ const localSmartHomeContent = {
           label: "Alternative à Home Assistant",
           href: "/home-assistant-alternative/",
           text: "Une plateforme open source locale et plus simple, sans le YAML ni la courbe d'apprentissage raide.",
+        },
+        {
+          label: "Contrôler sa maison avec l'IA",
+          href: "/ai-smart-home/",
+          text: "Gardez le confort de l'IA et du contrôle vocal, sur un cloud privé, pas l'assistant d'un géant de la tech.",
         },
         {
           label: "Gladys vs Home Assistant",
