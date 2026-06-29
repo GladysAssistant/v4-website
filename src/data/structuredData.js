@@ -23,6 +23,8 @@ import {
 import { aiSmartHomeFaqEn, aiSmartHomeFaqFr } from "./aiSmartHomeData";
 import { protocolsFaqEn, protocolsFaqFr } from "./protocolsComparisonData";
 import { energyFaqEn, energyFaqFr } from "./energyMonitoringData";
+import { alarmFaqEn, alarmFaqFr } from "./alarmSystemData";
+import { presenceFaqEn, presenceFaqFr } from "./presenceSimulationData";
 
 const SITE_URL = "https://gladysassistant.com";
 
@@ -658,6 +660,84 @@ export function getEnergyMonitoringPageSchema(lang) {
         ],
       },
       toFaqPage(lang === "fr" ? energyFaqFr : energyFaqEn, pageUrl),
+    ],
+  };
+}
+
+export function getAlarmSystemPageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/diy-home-alarm-system/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "Alarme maison DIY : créez la vôtre, locale et privée"
+            : "DIY home alarm system: build your own, local and private",
+        description:
+          lang === "fr"
+            ? "Créez une vraie alarme maison DIY avec Gladys : modes armé, partiel et panique, détecteurs de mouvement et d'ouverture, photos de caméra et alertes instantanées, en local sur du matériel qui vous appartient et avec vos données gardées chez vous."
+            : "Build a real DIY home alarm system with Gladys: armed, partial and panic modes, motion and door sensors, camera snapshots and instant alerts, all running locally on hardware you own with your data kept at home.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "Thing", name: "DIY home alarm system" },
+          { "@type": "Thing", name: "Local private home security" },
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+        ],
+      },
+      toFaqPage(lang === "fr" ? alarmFaqFr : alarmFaqEn, pageUrl),
+    ],
+  };
+}
+
+export function getPresenceSimulationPageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/presence-simulation/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "Simulation de présence : faites croire que votre maison est occupée"
+            : "Presence simulation: make your home look occupied while away",
+        description:
+          lang === "fr"
+            ? "Mettez en place une simulation de présence avec Gladys : allumez et éteignez aléatoirement lumières, volets et TV pendant votre absence pour dissuader les cambrioleurs, avec des scènes locales, gratuites et privées."
+            : "Set up presence simulation with Gladys: randomly turn lights, shutters and TV on and off while you're away to deter burglars, all built from local scenes, free and private.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "Thing", name: "Presence simulation" },
+          { "@type": "Thing", name: "Burglary deterrence" },
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+        ],
+      },
+      toFaqPage(lang === "fr" ? presenceFaqFr : presenceFaqEn, pageUrl),
     ],
   };
 }
