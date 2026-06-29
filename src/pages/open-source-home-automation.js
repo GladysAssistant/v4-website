@@ -51,13 +51,17 @@ function GladysScreenshot({ lang }) {
   );
 }
 
-function Card({ icon, title, text }) {
+function Card({ icon, logo, logoAlt, title, text }) {
   return (
     <div className={styles.card}>
-      {icon && (
-        <span className={styles.cardIcon} aria-hidden="true">
-          {icon}
-        </span>
+      {logo ? (
+        <img className={styles.cardLogo} src={useBaseUrl(logo)} alt={logoAlt || ""} />
+      ) : (
+        icon && (
+          <span className={styles.cardIcon} aria-hidden="true">
+            {icon}
+          </span>
+        )
       )}
       <div className={styles.cardTitle}>{title}</div>
       <p>{text}</p>
