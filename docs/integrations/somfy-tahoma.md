@@ -1,9 +1,17 @@
 ---
 id: somfy-tahoma
-title: Integrating Somfy devices with Gladys via Matterbridge
-description: "Integrate Somfy TaHoma devices into Gladys Assistant via Matterbridge to control your roller shutters, blinds and openings over Matter."
+title: "Somfy and Matter: control your TaHoma devices in Gladys"
+description: "How to make your Somfy TaHoma, TaHoma Switch and Connexoon devices work with Matter in Gladys Assistant, and control your roller shutters, blinds and openings via Matterbridge."
 sidebar_label: Somfy
+keywords:
+  - somfy matter
+  - tahoma matter
+  - tahoma switch matter
+  - somfy tahoma matter
+  - somfy io matter
 ---
+
+import JsonLd from '@site/src/components/seo/JsonLd';
 
 Somfy is a French industrial group specializing in motorization, automation of home and building openings, as well as in the connected home.
 
@@ -20,6 +28,12 @@ Thanks to the open-source project [Matterbridge](https://github.com/luligu/matte
 This is what we will do for Somfy devices.
 
 This step-by-step guide will explain how to expose and control your Somfy roller shutters, blinds, and other openings.
+
+## Is Somfy compatible with Matter?
+
+Somfy devices (io-homecontrol® and RTS) are **not natively exposed over Matter** to third-party controllers: there is no built-in Matter bridge in the **TaHoma**, **TaHoma Switch** or **Connexoon** boxes today, and control still goes through the Somfy cloud.
+
+The good news is that you don't have to wait for Somfy. Using the open-source [Matterbridge](https://github.com/luligu/matterbridge) project, Gladys turns your Somfy **TaHoma**, **TaHoma Switch** and **Connexoon** devices into Matter devices, so you can control your roller shutters, blinds, awnings and other openings directly from Gladys Assistant. The rest of this guide shows you how, step by step.
 
 ### Prerequisites
 
@@ -130,3 +144,74 @@ Thanks to the **Matter** standard and the **Matterbridge** project which make th
 
 - [Integrating Matter devices in Gladys Assistant](/docs/integrations/matter/)
 - [Matterbridge GitHub Repository](https://github.com/luligu/matterbridge)
+
+## Frequently asked questions
+
+### Is Somfy compatible with Matter?
+
+Somfy boxes don't natively expose your io-homecontrol® and RTS devices over Matter to third-party controllers. There is no built-in Matter bridge in the TaHoma, TaHoma Switch or Connexoon. However, you can make them Matter-compatible with the open-source Matterbridge project and control them in Gladys Assistant.
+
+### Is the Somfy TaHoma Switch compatible with Matter?
+
+The TaHoma Switch doesn't act as a native Matter bridge for your io and RTS devices. Using Matterbridge and the `matterbridge-somfy-tahoma` plugin, Gladys can still expose your TaHoma Switch devices over Matter and control them.
+
+### Do I need the Somfy cloud and an internet connection?
+
+Yes, for now. The Matterbridge Somfy/TaHoma plugin communicates with the Somfy cloud, so an active internet connection and a valid Somfy account are required. Support for the Somfy box local API is in development and will eventually allow fully local control.
+
+### Which Somfy devices can I control in Gladys?
+
+Once bridged through Matter, you can control your roller shutters, blinds, awnings and other openings managed by your Somfy box (Connexoon, TaHoma or TaHoma Switch) over the io-homecontrol® and RTS protocols.
+
+### Can I see the position (%) of my shutters?
+
+Matterbridge controls openings autonomously and doesn't query the Somfy servers for the current position when devices are operated from their remote controls or the TaHoma mobile app. Retrieving live positions is being investigated.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Is Somfy compatible with Matter?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Somfy boxes don't natively expose your io-homecontrol and RTS devices over Matter to third-party controllers: there is no built-in Matter bridge in the TaHoma, TaHoma Switch or Connexoon. However, you can make them Matter-compatible with the open-source Matterbridge project and control them in Gladys Assistant.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is the Somfy TaHoma Switch compatible with Matter?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "The TaHoma Switch doesn't act as a native Matter bridge for your io and RTS devices. Using Matterbridge and the matterbridge-somfy-tahoma plugin, Gladys can still expose your TaHoma Switch devices over Matter and control them.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do I need the Somfy cloud and an internet connection?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, for now. The Matterbridge Somfy/TaHoma plugin communicates with the Somfy cloud, so an active internet connection and a valid Somfy account are required. Support for the Somfy box local API is in development and will eventually allow fully local control.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Which Somfy devices can I control in Gladys?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Once bridged through Matter, you can control your roller shutters, blinds, awnings and other openings managed by your Somfy box (Connexoon, TaHoma or TaHoma Switch) over the io-homecontrol and RTS protocols.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I see the position (%) of my Somfy shutters in Gladys?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Matterbridge controls openings autonomously and doesn't query the Somfy servers for the current position when devices are operated from their remote controls or the TaHoma mobile app. Retrieving live positions is being investigated.",
+        },
+      },
+    ],
+  }}
+/>

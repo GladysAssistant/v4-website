@@ -1,9 +1,17 @@
 ---
 id: somfy-tahoma
-title: Intégrer ses équipements Somfy à Gladys via Matterbridge
-description: "Intégrez vos appareils Somfy TaHoma dans Gladys Assistant via Matterbridge pour piloter vos volets roulants, stores et ouvertures en Matter."
+title: "Somfy et Matter : piloter ses volets TaHoma dans Gladys"
+description: "Comment rendre vos appareils Somfy TaHoma, TaHoma Switch et Connexoon compatibles Matter dans Gladys Assistant, et piloter vos volets roulants, stores et ouvertures via Matterbridge."
 sidebar_label: Somfy
+keywords:
+  - somfy matter
+  - tahoma matter
+  - tahoma switch matter
+  - somfy tahoma matter
+  - somfy io matter
 ---
+
+import JsonLd from '@site/src/components/seo/JsonLd';
 
 Somfy est un groupe industriel français, spécialisé dans la motorisation, l'automatisation des ouvertures de l'habitat et du bâtiment, ainsi que dans la maison connectée.
 
@@ -20,6 +28,12 @@ Grâce au projet open‑source [Matterbridge](https://github.com/luligu/matterbr
 C'est ce que nous allons faire pour les appareils Somfy.
 
 Ce guide pas à pas vous expliquera comment exposer et piloter vos volets roulants, stores, et autres ouvrants Somfy.
+
+## Somfy est-il compatible Matter ?
+
+Les appareils Somfy (io-homecontrol® et RTS) **ne sont pas exposés nativement en Matter** vers des contrôleurs tiers : il n'existe pas de pont Matter intégré dans les box **TaHoma**, **TaHoma Switch** ou **Connexoon** aujourd'hui, et le pilotage passe toujours par le cloud Somfy.
+
+La bonne nouvelle, c'est que vous n'avez pas à attendre Somfy. Grâce au projet open-source [Matterbridge](https://github.com/luligu/matterbridge), Gladys transforme vos appareils Somfy **TaHoma**, **TaHoma Switch** et **Connexoon** en appareils Matter, pour piloter vos volets roulants, stores, bannes et autres ouvrants directement depuis Gladys Assistant. La suite de ce guide vous montre comment, étape par étape.
 
 ### Prérequis
 
@@ -129,3 +143,74 @@ Merci au standard **Matter** et au projet **Matterbridge** qui rendent l’écos
 
 - [Intégrer des appareils Matter dans Gladys Assistant](/fr/docs/integrations/matter/)
 - [Repository GitHub Matterbridge](https://github.com/luligu/matterbridge)
+
+## Questions fréquentes
+
+### Somfy est-il compatible Matter ?
+
+Les box Somfy n'exposent pas nativement vos appareils io-homecontrol® et RTS en Matter vers des contrôleurs tiers. Il n'y a pas de pont Matter intégré dans la TaHoma, la TaHoma Switch ou la Connexoon. Vous pouvez toutefois les rendre compatibles Matter grâce au projet open-source Matterbridge et les piloter dans Gladys Assistant.
+
+### La TaHoma Switch de Somfy est-elle compatible Matter ?
+
+La TaHoma Switch ne joue pas le rôle de pont Matter natif pour vos appareils io et RTS. En utilisant Matterbridge et le plugin `matterbridge-somfy-tahoma`, Gladys peut tout de même exposer vos appareils TaHoma Switch en Matter et les piloter.
+
+### Faut-il le cloud Somfy et une connexion internet ?
+
+Oui, pour l'instant. Le plugin Matterbridge Somfy/TaHoma communique avec le cloud Somfy : une connexion internet active et un compte Somfy valide sont donc nécessaires. Le support de l'API locale de la box Somfy est en cours de développement et permettra à terme un pilotage entièrement local.
+
+### Quels appareils Somfy puis-je piloter dans Gladys ?
+
+Une fois exposés en Matter, vous pouvez piloter vos volets roulants, stores, bannes et autres ouvrants gérés par votre box Somfy (Connexoon, TaHoma ou TaHoma Switch) via les protocoles io-homecontrol® et RTS.
+
+### Puis-je voir la position (%) de mes volets ?
+
+Matterbridge gère les ouvrants de manière autonome et n'interroge pas les serveurs Somfy pour connaître la position actuelle lorsque les appareils sont pilotés depuis leurs télécommandes ou l'application mobile TaHoma. La récupération des positions en temps réel est à l'étude.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Somfy est-il compatible Matter ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Les box Somfy n'exposent pas nativement vos appareils io-homecontrol et RTS en Matter vers des contrôleurs tiers : il n'y a pas de pont Matter intégré dans la TaHoma, la TaHoma Switch ou la Connexoon. Vous pouvez toutefois les rendre compatibles Matter grâce au projet open-source Matterbridge et les piloter dans Gladys Assistant.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "La TaHoma Switch de Somfy est-elle compatible Matter ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "La TaHoma Switch ne joue pas le rôle de pont Matter natif pour vos appareils io et RTS. En utilisant Matterbridge et le plugin matterbridge-somfy-tahoma, Gladys peut tout de même exposer vos appareils TaHoma Switch en Matter et les piloter.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Faut-il le cloud Somfy et une connexion internet ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oui, pour l'instant. Le plugin Matterbridge Somfy/TaHoma communique avec le cloud Somfy : une connexion internet active et un compte Somfy valide sont donc nécessaires. Le support de l'API locale de la box Somfy est en cours de développement et permettra à terme un pilotage entièrement local.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Quels appareils Somfy puis-je piloter dans Gladys ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Une fois exposés en Matter, vous pouvez piloter vos volets roulants, stores, bannes et autres ouvrants gérés par votre box Somfy (Connexoon, TaHoma ou TaHoma Switch) via les protocoles io-homecontrol et RTS.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Puis-je voir la position (%) de mes volets Somfy dans Gladys ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Matterbridge gère les ouvrants de manière autonome et n'interroge pas les serveurs Somfy pour connaître la position actuelle lorsque les appareils sont pilotés depuis leurs télécommandes ou l'application mobile TaHoma. La récupération des positions en temps réel est à l'étude.",
+        },
+      },
+    ],
+  }}
+/>
