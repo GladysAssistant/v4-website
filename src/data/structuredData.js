@@ -752,14 +752,28 @@ export function getPlusPageSchema(lang) {
       getOrganizationNode(),
       getWebSiteNode(lang),
       {
-        "@type": "Product",
-        "@id": `${pageUrl}#product`,
+        // Gladys Plus is a digital subscription, not a shippable retail
+        // product. We model it as a Service (with priced Offers) rather than a
+        // Product, so Google doesn't treat it as a merchant/shopping listing
+        // and require shipping & return-policy fields that don't apply.
+        "@type": "Service",
+        "@id": `${pageUrl}#service`,
         name: "Gladys Plus",
+        serviceType:
+          lang === "fr"
+            ? "Abonnement domotique"
+            : "Home automation subscription",
         description:
           lang === "fr"
             ? "Abonnement optionnel pour Gladys Assistant : accès distant chiffré, sauvegardes, IA, Enedis et serveur MCP."
             : "Optional subscription for Gladys Assistant: encrypted remote access, backups, AI, Enedis, and MCP server.",
-        brand: { "@id": `${SITE_URL}/#organization` },
+        image: [
+          `${SITE_URL}/img/presentation/gladys-assistant-og-image-2026-${
+            lang === "fr" ? "fr" : "en"
+          }.jpg`,
+        ],
+        brand: { "@type": "Brand", name: "Gladys Assistant" },
+        provider: { "@id": `${SITE_URL}/#organization` },
         offers: [
           {
             "@type": "Offer",
