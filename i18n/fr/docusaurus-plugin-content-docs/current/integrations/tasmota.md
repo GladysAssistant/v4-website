@@ -33,7 +33,7 @@ Pour connecter un appareil Tasmota à Gladys, trois étapes :
 - **Réutilisez du matériel bon marché** : de nombreuses prises et interrupteurs connectés abordables (Sonoff et autres appareils à base d'ESP) peuvent être reflashés plutôt que jetés.
 - **Fiable et rapide** : les commandes locales ne dépendent pas de votre connexion Internet, vos automatisations s'exécutent instantanément.
 
-:::tip Tasmota ou Zigbee ?
+:::tip[Tasmota ou Zigbee ?]
 Tasmota fonctionne sur des appareils Wi-Fi, chacun se connectant directement à votre box — pratique pour quelques prises et interrupteurs sur secteur. Pour des capteurs sur batterie et de grands parcs d'appareils, un maillage [Zigbee](./zigbee2mqtt.md) basse consommation est souvent préférable. Les deux sont locaux et fonctionnent très bien dans Gladys, et vous pouvez les mélanger. Consultez notre [guide d'achat des clés Zigbee](/fr/best-zigbee-dongle/) si vous partez sur le Zigbee.
 :::
 

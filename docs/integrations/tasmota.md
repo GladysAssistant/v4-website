@@ -32,7 +32,7 @@ To connect a Tasmota device to Gladys, there are three steps:
 - **Reuse cheap hardware**: many affordable smart plugs and switches (Sonoff, and other ESP-based devices) can be re-flashed instead of being thrown away.
 - **Reliable and fast**: local commands don't depend on your internet connection, so automations run instantly.
 
-:::tip Tasmota or Zigbee?
+:::tip[Tasmota or Zigbee?]
 Tasmota runs on Wi-Fi devices, so each one connects directly to your router — convenient for a few mains-powered plugs and switches. For battery-powered sensors and large fleets of devices, a low-power [Zigbee](./zigbee2mqtt.md) mesh is usually a better fit. Both are local and both work great in Gladys, and you can mix them. See our [Zigbee dongle buyer's guide](/best-zigbee-dongle/) if you go the Zigbee route.
 :::
 
