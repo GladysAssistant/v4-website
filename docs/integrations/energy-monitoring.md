@@ -17,7 +17,7 @@ There are several ways to achieve this:
 
 ### 1. **With a Lixee ZLinky TIC via Zigbee (France only)**
 
-:::note For French users
+:::note[For French users]
 This option is specific to France and the Linky smart meter.
 :::
 
@@ -36,7 +36,7 @@ Each color represents an energy price (I'm on Tempo pricing), you can clearly se
 
 ### 2. **Through the Enedis integration on Gladys Plus (France only)**
 
-:::note For French users
+:::note[For French users]
 This option is specific to France and requires a Linky meter with an Enedis account.
 :::
 
@@ -67,7 +67,7 @@ The order of steps in this tutorial is important!
 
 ### Step 1: Configure the Enedis integration (optional, France only)
 
-:::note For French users
+:::note[For French users]
 Skip this step if you're not in France.
 :::
 
