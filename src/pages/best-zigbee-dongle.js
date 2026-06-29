@@ -1,6 +1,7 @@
 import React from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
@@ -12,9 +13,19 @@ import bestZigbeeDongleContent, {
 
 import styles from "./comparison.module.css";
 
-function DongleCard({ name, tag, text, href, linkLabel }) {
+function DongleCard({ name, tag, image, imageAlt, text, href, linkLabel }) {
   return (
     <div className={styles.card}>
+      {image && (
+        <div className={styles.dongleImageWrap}>
+          <img
+            className={styles.dongleImage}
+            src={useBaseUrl(image)}
+            alt={imageAlt || name}
+            loading="lazy"
+          />
+        </div>
+      )}
       {tag && <span className={styles.cardTag}>{tag}</span>}
       <div className={styles.cardTitle}>{name}</div>
       <p>{text}</p>

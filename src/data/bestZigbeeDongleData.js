@@ -63,6 +63,8 @@ const bestZigbeeDongleContent = {
         {
           name: "Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E)",
           tag: "Best value",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-e.png",
+          imageAlt: "Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E",
           text: "The affordable dongle we tested with Gladys, based on a Silicon Labs EFR32MG21 (EmberZNet) chip, with an external antenna. Tip: update its EmberZNet firmware for the best stability.",
           href: amazonUS("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E"),
           linkLabel: "View on Amazon →",
@@ -70,6 +72,8 @@ const bestZigbeeDongleContent = {
         {
           name: "Sonoff ZBDongle-P",
           tag: "Most proven",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-p.jpeg",
+          imageAlt: "Sonoff ZBDongle-P Zigbee USB dongle",
           text: "The Texas Instruments CC2652P version, trusted for years in the Zigbee2MQTT community. Rock-solid, well-documented and budget-friendly.",
           href: amazonUS("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
           linkLabel: "View on Amazon →",
@@ -77,20 +81,26 @@ const bestZigbeeDongleContent = {
         {
           name: "SMLIGHT SLZB-06",
           tag: "Best range & placement",
+          image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
+          imageAlt: "SMLIGHT SLZB-06 Ethernet Zigbee coordinator",
           text: "A network coordinator that connects over Ethernet or PoE instead of USB, so you can place it centrally in your home for the best Zigbee range, far from interference. Supported by Gladys since 4.81.",
           href: amazonUS("SMLIGHT SLZB-06 Zigbee coordinator"),
           linkLabel: "View on Amazon →",
         },
         {
-          name: "ConBee III (Dresden Elektronik)",
+          name: "ConBee II (Dresden Elektronik)",
           tag: "Premium USB",
+          image: "/img/external/zigbee-dongles/conbee-ii.jpg",
+          imageAlt: "ConBee II Zigbee USB stick by Dresden Elektronik",
           text: "A premium, widely-supported USB coordinator with strong range and a long track record. A great choice if you want a polished, well-supported stick.",
-          href: amazonUS("ConBee III Zigbee USB stick"),
+          href: amazonUS("ConBee II Zigbee USB stick"),
           linkLabel: "View on Amazon →",
         },
         {
           name: "Home Assistant Connect ZBT-1",
           tag: "Multiprotocol hardware",
+          image: "/img/external/zigbee-dongles/connect-zbt-1.jpg",
+          imageAlt: "Home Assistant Connect ZBT-1 Zigbee USB dongle",
           text: "Nabu Casa's Silicon Labs-based coordinator (formerly SkyConnect). It works great with Zigbee2MQTT and is a supported coordinator type in Gladys.",
           href: amazonUS("Home Assistant Connect ZBT-1"),
           linkLabel: "View on Amazon →",
@@ -185,6 +195,8 @@ const bestZigbeeDongleContent = {
         {
           name: "Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E)",
           tag: "Meilleur rapport qualité/prix",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-e.png",
+          imageAlt: "Clé Zigbee Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E",
           text: "La clé abordable que nous avons testée avec Gladys, basée sur une puce Silicon Labs EFR32MG21 (EmberZNet), avec antenne externe. Conseil : mettez à jour son firmware EmberZNet pour une stabilité optimale.",
           href: SONOFF_E_FR,
           linkLabel: "Voir sur Amazon →",
@@ -192,6 +204,8 @@ const bestZigbeeDongleContent = {
         {
           name: "Sonoff ZBDongle-P",
           tag: "La plus éprouvée",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-p.jpeg",
+          imageAlt: "Clé Zigbee Sonoff ZBDongle-P",
           text: "La version Texas Instruments CC2652P, plébiscitée depuis des années par la communauté Zigbee2MQTT. Fiable, bien documentée et économique.",
           href: amazonFR("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
           linkLabel: "Voir sur Amazon →",
@@ -199,20 +213,26 @@ const bestZigbeeDongleContent = {
         {
           name: "SMLIGHT SLZB-06",
           tag: "Meilleure portée & placement",
+          image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
+          imageAlt: "Coordinateur Zigbee Ethernet SMLIGHT SLZB-06",
           text: "Un coordinateur réseau qui se connecte en Ethernet ou PoE plutôt qu'en USB : vous pouvez le placer au centre de la maison pour une portée Zigbee optimale, loin des interférences. Pris en charge par Gladys depuis la 4.81.",
           href: amazonFR("SMLIGHT SLZB-06 coordinateur Zigbee"),
           linkLabel: "Voir sur Amazon →",
         },
         {
-          name: "ConBee III (Dresden Elektronik)",
+          name: "ConBee II (Dresden Elektronik)",
           tag: "USB premium",
+          image: "/img/external/zigbee-dongles/conbee-ii.jpg",
+          imageAlt: "Clé USB Zigbee ConBee II de Dresden Elektronik",
           text: "Un coordinateur USB premium très bien pris en charge, avec une bonne portée et une longue réputation. Un excellent choix pour une clé soignée et bien suivie.",
-          href: amazonFR("ConBee III clé USB Zigbee"),
+          href: amazonFR("ConBee II clé USB Zigbee"),
           linkLabel: "Voir sur Amazon →",
         },
         {
           name: "Home Assistant Connect ZBT-1",
           tag: "Matériel multiprotocole",
+          image: "/img/external/zigbee-dongles/connect-zbt-1.jpg",
+          imageAlt: "Clé Zigbee Home Assistant Connect ZBT-1",
           text: "Le coordinateur de Nabu Casa à base Silicon Labs (anciennement SkyConnect). Il fonctionne très bien avec Zigbee2MQTT et fait partie des coordinateurs pris en charge par Gladys.",
           href: amazonFR("Home Assistant Connect ZBT-1"),
           linkLabel: "Voir sur Amazon →",
@@ -270,7 +290,7 @@ export const bestZigbeeDongleFaqEn = [
   {
     question: "Which Zigbee dongle works best with Gladys and Zigbee2MQTT?",
     answer:
-      "Any modern Zigbee 3.0 coordinator based on a Texas Instruments (CC2652) or Silicon Labs (EFR32 / EmberZNet) chip works well. Popular choices are the Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E and ZBDongle-P), the SMLIGHT SLZB-06, the ConBee III and the Home Assistant Connect ZBT-1. Gladys lets you select your exact model in the Zigbee2MQTT integration.",
+      "Any modern Zigbee 3.0 coordinator based on a Texas Instruments (CC2652) or Silicon Labs (EFR32 / EmberZNet) chip works well. Popular choices are the Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E and ZBDongle-P), the SMLIGHT SLZB-06, the ConBee II and the Home Assistant Connect ZBT-1. Gladys lets you select your exact model in the Zigbee2MQTT integration.",
   },
   {
     question: "What is the best Zigbee dongle for a Raspberry Pi?",
@@ -303,7 +323,7 @@ export const bestZigbeeDongleFaqFr = [
   {
     question: "Quelle clé Zigbee fonctionne le mieux avec Gladys et Zigbee2MQTT ?",
     answer:
-      "N'importe quel coordinateur Zigbee 3.0 moderne basé sur une puce Texas Instruments (CC2652) ou Silicon Labs (EFR32 / EmberZNet) fonctionne bien. Les choix populaires sont la Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E et ZBDongle-P), la SMLIGHT SLZB-06, la ConBee III et la Home Assistant Connect ZBT-1. Gladys vous laisse sélectionner votre modèle exact dans l'intégration Zigbee2MQTT.",
+      "N'importe quel coordinateur Zigbee 3.0 moderne basé sur une puce Texas Instruments (CC2652) ou Silicon Labs (EFR32 / EmberZNet) fonctionne bien. Les choix populaires sont la Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E et ZBDongle-P), la SMLIGHT SLZB-06, la ConBee II et la Home Assistant Connect ZBT-1. Gladys vous laisse sélectionner votre modèle exact dans l'intégration Zigbee2MQTT.",
   },
   {
     question: "Quelle est la meilleure clé Zigbee pour un Raspberry Pi ?",
