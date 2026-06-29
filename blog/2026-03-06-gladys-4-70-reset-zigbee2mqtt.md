@@ -16,7 +16,7 @@ A new version of Gladys is out, focused on UX and stability improvements for the
 
 ### A reset button for Zigbee2mqtt
 
-A new **"Reset"** button appears in the Zigbee2mqtt integration. It lets users with a corrupted integration — or who simply want to switch dongles — completely reset the integration in a single click.
+A new **"Reset"** button appears in the Zigbee2mqtt integration. It lets users with a corrupted integration, or who simply want to switch dongles, completely reset the integration in a single click.
 
 ![Reset button in the Zigbee2mqtt integration](../static/img/articles/gladys-4-70-reset-zigbee2mqtt/01.png)
 

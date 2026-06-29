@@ -1143,7 +1143,7 @@ function Plus() {
                 </li>
               </ul>
               <p>
-                <b>Hébergé en Europe 🇪🇺</b> — L'infrastructure Gladys Plus et
+                <b>Hébergé en Europe 🇪🇺</b> : L'infrastructure Gladys Plus et
                 l'inférence IA tournent dans des data centers européens. Tes
                 données restent chiffrées de bout en bout.
               </p>

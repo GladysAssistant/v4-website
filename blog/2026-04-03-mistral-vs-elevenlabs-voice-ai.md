@@ -1,6 +1,6 @@
 ---
 title: "Mistral vs ElevenLabs: Is the Voice AI Revolution French? 🇫🇷"
-description: "Mistral's local Voxtral text-to-speech vs ElevenLabs — plus a move to Mistral Small 3.2 on Scaleway for Gladys Plus, with higher AI quotas."
+description: "Mistral's local Voxtral text-to-speech vs ElevenLabs, plus a move to Mistral Small 3.2 on Scaleway for Gladys Plus, with higher AI quotas."
 authors: pierregilles
 image: /img/presentation/mistral-vs-elevenlabs-voice-ai-en.jpg
 slug: mistral-vs-elevenlabs-voice-ai
@@ -8,7 +8,7 @@ slug: mistral-vs-elevenlabs-voice-ai
 
 Hey everyone,
 
-Last week, Mistral released a new Text-to-Speech model (Voxtral) capable of running 100% locally, without sending any data to the cloud. I wanted to test it head-to-head against ElevenLabs — and honestly, the results are really good!
+Last week, Mistral released a new Text-to-Speech model (Voxtral) capable of running 100% locally, without sending any data to the cloud. I wanted to test it head-to-head against ElevenLabs, and honestly, the results are really good!
 
 {/* truncate */}
 

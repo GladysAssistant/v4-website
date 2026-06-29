@@ -8,7 +8,7 @@ slug: gladys-4-78-ai-weekly-home-report
 
 Hey everyone 🙂
 
-I just released Gladys Assistant 4.78! Here's what's new — starting with the headline feature: an **AI-powered weekly report** of your home.
+I just released Gladys Assistant 4.78! Here's what's new, starting with the headline feature: an **AI-powered weekly report** of your home.
 
 {/* truncate */}
 
@@ -34,7 +34,7 @@ Of course, we can make this report evolve if you have ideas!
 
 You can now add a Link widget to your dashboard to access an external interface in one click: Zigbee2mqtt, Tasmota, your router's interface, a NAS, a camera, etc.
 
-Each link is customizable — title, URL, and icon (website, server, NAS, Wi-Fi, web interface…):
+Each link is customizable, title, URL, and icon (website, server, NAS, Wi-Fi, web interface…):
 
 ![Link widget configuration](../static/img/articles/gladys-4-78-ai-weekly-home-report/02.png)
 

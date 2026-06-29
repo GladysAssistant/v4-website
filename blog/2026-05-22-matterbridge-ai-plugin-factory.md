@@ -57,7 +57,7 @@ Then enter the plugin name in the **"Plugin Name"** field and click **"Add +"**:
 
 ![Add the plugin](../static/img/articles/matterbridge-ai-plugin-factory/07.jpg)
 
-The plugin is installed — you can test it!
+The plugin is installed, you can test it!
 
 ## Step 3: Give feedback
 
@@ -67,4 +67,4 @@ If the plugin doesn't work as expected, leave a comment on the GitHub ticket. Th
 
 ---
 
-Don't hesitate to open tickets — that's exactly what it's for! And if you have questions about how the factory works, ask away.
+Don't hesitate to open tickets, that's exactly what it's for! And if you have questions about how the factory works, ask away.

@@ -122,7 +122,7 @@ Le coordinateur Zigbee est **l'appareil le plus important** de votre installatio
       <img src="https://www.zigbee2mqtt.io/images/devices/E3.png" alt="Nous E2 détecteur d'ouverture Zigbee" loading="lazy" />
     </div>
     <span class="product-card__badge">Recommandé</span>
-    <h4 class="product-card__title">Nous E3 — Détecteur d'ouverture Zigbee 3.0</h4>
+    <h4 class="product-card__title">Nous E3 : Détecteur d'ouverture Zigbee 3.0</h4>
     <p class="product-card__description">Détecteur d'ouverture porte/fenêtre Zigbee 3.0 100 % local. Format compact, longue autonomie sur pile, très bon rapport qualité/prix. Excellent support Zigbee2MQTT.</p>
     <a class="product-card__cta" href="https://www.domadoo.fr/fr/peripheriques/6193-nous-detecteur-d-ouverture-de-porte-ou-fenetre-zigbee-30-5907772033876.html?domid=17" target="_blank" rel="noopener">Voir le produit sur Domadoo</a>
   </div>
@@ -177,7 +177,7 @@ Le coordinateur Zigbee est **l'appareil le plus important** de votre installatio
       <img src="https://www.zigbee2mqtt.io/images/devices/MINI-ZBRBS.png" alt="SONOFF Module Volet Roulant Zigbee MINI-ZBRBS" loading="lazy" />
     </div>
     <span class="product-card__badge">Alternative</span>
-    <h4 class="product-card__title">SONOFF MINI-ZBRBS — Module Volet Roulant Zigbee</h4>
+    <h4 class="product-card__title">SONOFF MINI-ZBRBS : Module Volet Roulant Zigbee</h4>
     <p class="product-card__description">Micromodule volet roulant Zigbee 3.0 de SONOFF, format compact pour boîte d'encastrement. Bonne alternative au Sunricher, signé d'une marque très bien supportée par Zigbee2MQTT.</p>
     <a class="product-card__cta" href="https://www.domadoo.fr/fr/produits-de-domotique/8384-sonoff-module-volet-roulant-zigbee-mini-zbrbs.html?domid=17" target="_blank" rel="noopener">Voir le produit sur Domadoo</a>
   </div>
@@ -230,7 +230,7 @@ Ces interrupteurs **remplacent vos interrupteurs muraux existants** et permetten
       <img src="https://www.zigbee2mqtt.io/images/devices/SNZB-05P.png" alt="SONOFF SNZB-05P détecteur d'inondation Zigbee" loading="lazy" />
     </div>
     <span class="product-card__badge">Recommandé</span>
-    <h4 class="product-card__title">SONOFF SNZB-05P — Détecteur d'inondation Zigbee IP67</h4>
+    <h4 class="product-card__title">SONOFF SNZB-05P : Détecteur d'inondation Zigbee IP67</h4>
     <p class="product-card__description">Détecteur de fuite d'eau Zigbee certifié IP67, avec sonde déportée extensible (jusqu'à plusieurs mètres). Parfait à placer sous l'évier, derrière la machine à laver ou près du ballon d'eau chaude.</p>
     <a class="product-card__cta" href="https://www.domadoo.fr/fr/produits-de-domotique/7183-sonoff-detecteur-d-inondation-zigbee-ip67-extensible-snzb-05p-6920075741810.html?domid=17" target="_blank" rel="noopener">Voir le produit sur Domadoo</a>
   </div>
@@ -244,7 +244,7 @@ Ces interrupteurs **remplacent vos interrupteurs muraux existants** et permetten
       <img src="https://www.zigbee2mqtt.io/images/devices/SMSZB-120.jpg" alt="Frient Détecteur de fumée intelligent Zigbee SMSZB-120" loading="lazy" />
     </div>
     <span class="product-card__badge">Recommandé</span>
-    <h4 class="product-card__title">Frient — Détecteur de fumée intelligent Zigbee 3.0 (SMSZB-120)</h4>
+    <h4 class="product-card__title">Frient : Détecteur de fumée intelligent Zigbee 3.0 (SMSZB-120)</h4>
     <p class="product-card__description">Détecteur de fumée Zigbee certifié EN 14604, qualité professionnelle, conforme aux normes des DAAF français. Très bien noté dans la communauté Zigbee2MQTT, pile longue durée incluse.</p>
     <a class="product-card__cta" href="https://www.domadoo.fr/fr/peripheriques/5409-frient-detecteur-de-fumee-intelligent-zigbee-30-smszb-120-5713594002330.html?domid=17" target="_blank" rel="noopener">Voir le produit sur Domadoo</a>
   </div>

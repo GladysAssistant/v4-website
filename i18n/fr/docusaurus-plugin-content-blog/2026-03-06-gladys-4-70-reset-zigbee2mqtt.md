@@ -16,7 +16,7 @@ Je viens de sortir une nouvelle version de Gladys, avec des améliorations d'UX 
 
 ### Un bouton de réinitialisation pour Zigbee2mqtt
 
-Un nouveau bouton **« Réinitialiser »** fait son apparition dans l'intégration Zigbee2mqtt. Il permet aux utilisateurs qui ont une intégration corrompue — ou qui souhaitent changer de dongle — de réinitialiser totalement l'intégration en un clic.
+Un nouveau bouton **« Réinitialiser »** fait son apparition dans l'intégration Zigbee2mqtt. Il permet aux utilisateurs qui ont une intégration corrompue, ou qui souhaitent changer de dongle, de réinitialiser totalement l'intégration en un clic.
 
 ![Bouton de réinitialisation dans l'intégration Zigbee2mqtt](../../../static/img/articles/gladys-4-70-reset-zigbee2mqtt/01.png)
 

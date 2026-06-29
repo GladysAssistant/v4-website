@@ -25,7 +25,7 @@ function NabuCasaCompare() {
         <Translate id="gladysPlusPage.v2.compare.subtitle">
           Nabu Casa is the official Home Assistant Cloud, made by the team
           driving Home Assistant. It's a great product. Here's how Gladys Plus
-          compares — without cherry-picking.
+          compares, without cherry-picking.
         </Translate>
       </p>
 
@@ -301,7 +301,7 @@ function NabuCasaCompare() {
             French integrations like Enedis,
             and
             direct contact with the maker (in French if you want). It's an indie
-            project funded by you alone — no investors, no foundation.
+            project funded by you alone, with no investors and no foundation.
           </Translate>
         </p>
       </div>

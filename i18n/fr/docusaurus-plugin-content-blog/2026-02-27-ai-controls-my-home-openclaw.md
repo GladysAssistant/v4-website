@@ -8,7 +8,7 @@ slug: ai-controls-my-home-openclaw
 
 Salut à tous !
 
-Vous avez sûrement entendu parler d'**OpenClaw**, le framework IA qui a explosé sur GitHub il y a quelques semaines, et qui vient d'être racheté par OpenAI. J'ai fait le test de le connecter à Gladys pour voir ce qu'il avait dans le ventre — et honnêtement, c'est vraiment bluffant.
+Vous avez sûrement entendu parler d'**OpenClaw**, le framework IA qui a explosé sur GitHub il y a quelques semaines, et qui vient d'être racheté par OpenAI. J'ai fait le test de le connecter à Gladys pour voir ce qu'il avait dans le ventre, et honnêtement, c'est vraiment bluffant.
 
 {/* truncate */}
 
@@ -18,4 +18,4 @@ J'ai branché OpenClaw sur Gladys pour tester les possibilités de laisser un ag
 
 **Une mise en garde :** je vous déconseille d'installer OpenClaw sur votre serveur Gladys. C'est un logiciel encore en début de vie, qui touche un peu à tout, et qui a été pas mal décrié pour ses failles de sécurité. Pour ce test, j'ai déployé OpenClaw sur une VM isolée dans le Cloud pour rester dans un environnement cloisonné 🔐
 
-C'est un aperçu fascinant de là où va la domotique pilotée par IA — mais la sécurité et la vie privée passent avant tout.
+C'est un aperçu fascinant de là où va la domotique pilotée par IA, mais la sécurité et la vie privée passent avant tout.

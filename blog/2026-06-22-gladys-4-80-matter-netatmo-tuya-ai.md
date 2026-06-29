@@ -36,7 +36,7 @@ This version further improves Matter compatibility:
 Matter.js was also updated to version [0.17.3](https://github.com/matter-js/matter.js/blob/main/CHANGELOG.md#0170-2026-05-20), a major step forward bringing notably:
 
 - Support for the **Matter 1.5 / 1.5.1** specification, improving compatibility with the newest devices.
-- A **20–50% reduction in memory usage**, letting Gladys run even more smoothly.
+- A **20-50% reduction in memory usage**, letting Gladys run even more smoothly.
 
 ## 📡 Integrations
 

@@ -13,7 +13,7 @@ On the dashboard, Gladys allows you to display which users are present or absent
 
 You can use scenes to define a user's presence or absence.
 
-- This can be done manually, by launching the scene when you leave or arrive home (useful, but perhaps a bit restrictive – automation is preferred!).
+- This can be done manually, by launching the scene when you leave or arrive home (useful, but perhaps a bit restrictive, automation is preferred!).
 - Or, automate presence detection: This could be a button at the entrance, motion detection if you're home alone, a Tasker app that sends an MQTT message when you're connected to home Wi-Fi, or a Nut tracker. The choice is yours!
 
 We have tutorials for [Bluetooth detection](/docs/integrations/bluetooth/) and [network scan](/docs/integrations/lan-manager/).
