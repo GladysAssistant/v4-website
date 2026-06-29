@@ -159,6 +159,10 @@ module.exports = function createConfig() {
               to: "ai-smart-home/",
             },
             {
+              label: "Open-source home automation",
+              to: "open-source-home-automation/",
+            },
+            {
               label: "Zigbee vs Matter vs Z-Wave",
               to: "zigbee-vs-matter-vs-zwave/",
             },
@@ -326,6 +330,7 @@ module.exports = function createConfig() {
                   path === "/alexa-alternative/" ||
                   path === "/google-home-alternative/" ||
                   path === "/local-smart-home/" ||
+                  path === "/open-source-home-automation/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };

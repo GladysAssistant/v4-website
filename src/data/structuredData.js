@@ -21,6 +21,10 @@ import {
   localSmartHomeFaqFr,
 } from "./localSmartHomeData";
 import { aiSmartHomeFaqEn, aiSmartHomeFaqFr } from "./aiSmartHomeData";
+import {
+  openSourceHomeAutomationFaqEn,
+  openSourceHomeAutomationFaqFr,
+} from "./openSourceHomeAutomationData";
 import { protocolsFaqEn, protocolsFaqFr } from "./protocolsComparisonData";
 import { energyFaqEn, energyFaqFr } from "./energyMonitoringData";
 import { alarmFaqEn, alarmFaqFr } from "./alarmSystemData";
@@ -539,6 +543,50 @@ export function getLocalSmartHomePageSchema(lang) {
       },
       toFaqPage(
         lang === "fr" ? localSmartHomeFaqFr : localSmartHomeFaqEn,
+        pageUrl
+      ),
+    ],
+  };
+}
+
+export function getOpenSourceHomeAutomationPageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/open-source-home-automation/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "Domotique open source : le guide complet (2026)"
+            : "Open-source home automation: the complete guide (2026)",
+        description:
+          lang === "fr"
+            ? "Ce qu'est la domotique open source, pourquoi elle surpasse les écosystèmes cloud fermés, et les meilleurs logiciels domotiques open source (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz)."
+            : "What open-source home automation is, why it beats closed cloud ecosystems, and the best open-source smart home platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz).",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "Thing", name: "Open-source home automation" },
+          { "@type": "Thing", name: "Self-hosted smart home" },
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+        ],
+      },
+      toFaqPage(
+        lang === "fr"
+          ? openSourceHomeAutomationFaqFr
+          : openSourceHomeAutomationFaqEn,
         pageUrl
       ),
     ],
