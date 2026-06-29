@@ -6,10 +6,19 @@
 // guide that recommends real, Zigbee2MQTT-compatible coordinators and links
 // out to the integration doc for the how-to.
 
-// Existing Gladys affiliate link for the Sonoff dongle (already used in the
-// zigbee2mqtt doc).
-const SONOFF_AMAZON = "https://amzn.to/3JZwzJy";
-const Z2M_ADAPTERS = "https://www.zigbee2mqtt.io/guide/adapters/";
+// Amazon affiliate links (Gladys is an Amazon Associate).
+// Tags: gladproj-20 on amazon.com (EN), gladproj-21 on amazon.fr (FR).
+// We use the exact product link where we have a verified ASIN (the Sonoff
+// ZBDongle-E on amazon.fr), and affiliate-tagged search links keyed to the
+// precise product name otherwise, so every link is valid, lands on the right
+// marketplace and carries the affiliate tag.
+const amazonUS = (query) =>
+  `https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=gladproj-20`;
+const amazonFR = (query) =>
+  `https://www.amazon.fr/s?k=${encodeURIComponent(query)}&tag=gladproj-21`;
+
+// Verified product ASIN (Sonoff ZBDongle-E) on amazon.fr.
+const SONOFF_E_FR = "https://www.amazon.fr/dp/B0B6P22YJC?tag=gladproj-21";
 
 const bestZigbeeDongleContent = {
   en: {
@@ -55,36 +64,36 @@ const bestZigbeeDongleContent = {
           name: "Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E)",
           tag: "Best value",
           text: "The affordable dongle we tested with Gladys, based on a Silicon Labs EFR32MG21 (EmberZNet) chip, with an external antenna. Tip: update its EmberZNet firmware for the best stability.",
-          href: SONOFF_AMAZON,
+          href: amazonUS("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E"),
           linkLabel: "View on Amazon →",
         },
         {
           name: "Sonoff ZBDongle-P",
           tag: "Most proven",
           text: "The Texas Instruments CC2652P version, trusted for years in the Zigbee2MQTT community. Rock-solid, well-documented and budget-friendly.",
-          href: `${Z2M_ADAPTERS}zstack.html`,
-          linkLabel: "Supported adapters →",
+          href: amazonUS("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
+          linkLabel: "View on Amazon →",
         },
         {
           name: "SMLIGHT SLZB-06",
           tag: "Best range & placement",
           text: "A network coordinator that connects over Ethernet or PoE instead of USB, so you can place it centrally in your home for the best Zigbee range, far from interference. Supported by Gladys since 4.81.",
-          href: `${Z2M_ADAPTERS}`,
-          linkLabel: "Supported adapters →",
+          href: amazonUS("SMLIGHT SLZB-06 Zigbee coordinator"),
+          linkLabel: "View on Amazon →",
         },
         {
           name: "ConBee III (Dresden Elektronik)",
           tag: "Premium USB",
           text: "A premium, widely-supported USB coordinator with strong range and a long track record. A great choice if you want a polished, well-supported stick.",
-          href: `${Z2M_ADAPTERS}deconz.html`,
-          linkLabel: "Supported adapters →",
+          href: amazonUS("ConBee III Zigbee USB stick"),
+          linkLabel: "View on Amazon →",
         },
         {
           name: "Home Assistant Connect ZBT-1",
           tag: "Multiprotocol hardware",
           text: "Nabu Casa's Silicon Labs-based coordinator (formerly SkyConnect). It works great with Zigbee2MQTT and is a supported coordinator type in Gladys.",
-          href: `${Z2M_ADAPTERS}emberznet.html`,
-          linkLabel: "Supported adapters →",
+          href: amazonUS("Home Assistant Connect ZBT-1"),
+          linkLabel: "View on Amazon →",
         },
       ],
       outro:
@@ -177,36 +186,36 @@ const bestZigbeeDongleContent = {
           name: "Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E)",
           tag: "Meilleur rapport qualité/prix",
           text: "La clé abordable que nous avons testée avec Gladys, basée sur une puce Silicon Labs EFR32MG21 (EmberZNet), avec antenne externe. Conseil : mettez à jour son firmware EmberZNet pour une stabilité optimale.",
-          href: SONOFF_AMAZON,
+          href: SONOFF_E_FR,
           linkLabel: "Voir sur Amazon →",
         },
         {
           name: "Sonoff ZBDongle-P",
           tag: "La plus éprouvée",
           text: "La version Texas Instruments CC2652P, plébiscitée depuis des années par la communauté Zigbee2MQTT. Fiable, bien documentée et économique.",
-          href: `${Z2M_ADAPTERS}zstack.html`,
-          linkLabel: "Adaptateurs compatibles →",
+          href: amazonFR("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
+          linkLabel: "Voir sur Amazon →",
         },
         {
           name: "SMLIGHT SLZB-06",
           tag: "Meilleure portée & placement",
           text: "Un coordinateur réseau qui se connecte en Ethernet ou PoE plutôt qu'en USB : vous pouvez le placer au centre de la maison pour une portée Zigbee optimale, loin des interférences. Pris en charge par Gladys depuis la 4.81.",
-          href: `${Z2M_ADAPTERS}`,
-          linkLabel: "Adaptateurs compatibles →",
+          href: amazonFR("SMLIGHT SLZB-06 coordinateur Zigbee"),
+          linkLabel: "Voir sur Amazon →",
         },
         {
           name: "ConBee III (Dresden Elektronik)",
           tag: "USB premium",
           text: "Un coordinateur USB premium très bien pris en charge, avec une bonne portée et une longue réputation. Un excellent choix pour une clé soignée et bien suivie.",
-          href: `${Z2M_ADAPTERS}deconz.html`,
-          linkLabel: "Adaptateurs compatibles →",
+          href: amazonFR("ConBee III clé USB Zigbee"),
+          linkLabel: "Voir sur Amazon →",
         },
         {
           name: "Home Assistant Connect ZBT-1",
           tag: "Matériel multiprotocole",
           text: "Le coordinateur de Nabu Casa à base Silicon Labs (anciennement SkyConnect). Il fonctionne très bien avec Zigbee2MQTT et fait partie des coordinateurs pris en charge par Gladys.",
-          href: `${Z2M_ADAPTERS}emberznet.html`,
-          linkLabel: "Adaptateurs compatibles →",
+          href: amazonFR("Home Assistant Connect ZBT-1"),
+          linkLabel: "Voir sur Amazon →",
         },
       ],
       outro:
