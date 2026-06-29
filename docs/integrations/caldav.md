@@ -1,11 +1,24 @@
 ---
 id: caldav
-title: CalDAV
-description: "Sync your Gladys Assistant calendar with iCloud, Google Calendar, Synology or Nextcloud via CalDAV to trigger scenes from your events."
+title: "CalDAV in Gladys: sync iCloud, Google Calendar, Synology and Nextcloud"
+description: "Connect your calendar to Gladys Assistant over CalDAV. Step by step setup for iCloud, Google Calendar, Synology and Nextcloud, including the app password, to trigger scenes from your events."
 sidebar_label: CalDAV
+keywords:
+  - caldav
+  - caldav google calendar
+  - caldav icloud
+  - caldav nextcloud
+  - caldav synology
+  - caldav app password
 ---
 
-Use CalDav to synchronise your Gladys calendar with external services (Google Calendar, iCloud, Nextcloud...).
+import JsonLd from '@site/src/components/seo/JsonLd';
+
+CalDAV is an open standard that lets applications read and sync calendar events from a calendar server. Most calendar services support it, including iCloud, Google Calendar, Synology Calendar and Nextcloud, which is why it is a convenient, vendor neutral way to bring your existing calendar into another app.
+
+In Gladys, you use CalDAV to synchronise your calendar with these external services. Once your events are in Gladys, you can use them to trigger [scenes](/docs/scenes/intro/): turn the heating on before a meeting, send a reminder when an event starts, or change your house mode when you are on holiday.
+
+Most services require an app specific password rather than your main account password. The steps below show how to generate it and where to paste it for each service.
 
 ## Available services (tested & others)
 
@@ -142,3 +155,74 @@ For all others services
 3. Then enter your password (if applicable)
 
 ![Others services](../../static/img/docs/en/configuration/caldav/other_config.png)
+
+## Frequently asked questions
+
+### What is CalDAV?
+
+CalDAV is an open standard, built on top of WebDAV, that lets applications access and synchronise calendar data from a calendar server. It is supported by most calendar providers, so an app like Gladys can read your events from iCloud, Google Calendar, Synology or Nextcloud without a service specific integration.
+
+### Do I need my account password or an app password?
+
+For most services you need an app specific password, not your main account password. iCloud, Google and Nextcloud all let you generate a dedicated password for Gladys from their security settings, which you can revoke at any time without changing your main password. The setup steps above show where to generate it for each service.
+
+### How do I connect Google Calendar with CalDAV?
+
+Sign in to your Google account, open the security settings and create an app password for "Calendar". Then in Gladys go to the CalDAV config page, choose "Google Calendar", keep the default URL, enter your Google email and paste the generated app password. Gladys will sync your events.
+
+### How do I connect my iCloud calendar?
+
+Sign in at appleid.apple.com and generate an app specific password. In Gladys, open the CalDAV config page, choose "iCloud Calendar", keep the default URL, enter your Apple ID email and paste the password. If the password does not work, make sure you generated an app specific password and not your normal Apple ID password.
+
+### Can I use CalDAV with any other calendar service?
+
+Yes. If your service supports CalDAV, choose "Other" in Gladys, then enter its CalDAV URL, your username or email and your password. This covers self hosted servers like Baïkal or Radicale, and most providers that expose a CalDAV endpoint.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What is CalDAV?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "CalDAV is an open standard, built on top of WebDAV, that lets applications access and synchronise calendar data from a calendar server. It is supported by most calendar providers, so an app like Gladys can read your events from iCloud, Google Calendar, Synology or Nextcloud without a service specific integration.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do I need my account password or an app password for CalDAV?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "For most services you need an app specific password, not your main account password. iCloud, Google and Nextcloud all let you generate a dedicated password for Gladys from their security settings, which you can revoke at any time without changing your main password.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How do I connect Google Calendar with CalDAV?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sign in to your Google account, open the security settings and create an app password for Calendar. Then in Gladys go to the CalDAV config page, choose Google Calendar, keep the default URL, enter your Google email and paste the generated app password. Gladys will sync your events.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How do I connect my iCloud calendar with CalDAV?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sign in at appleid.apple.com and generate an app specific password. In Gladys, open the CalDAV config page, choose iCloud Calendar, keep the default URL, enter your Apple ID email and paste the password. If it does not work, make sure you generated an app specific password and not your normal Apple ID password.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I use CalDAV with any other calendar service?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. If your service supports CalDAV, choose Other in Gladys, then enter its CalDAV URL, your username or email and your password. This covers self hosted servers like Baikal or Radicale, and most providers that expose a CalDAV endpoint.",
+        },
+      },
+    ],
+  }}
+/>
