@@ -167,6 +167,10 @@ module.exports = function createConfig() {
               to: "zigbee-vs-matter-vs-zwave/",
             },
             {
+              label: "Best Zigbee dongle",
+              to: "best-zigbee-dongle/",
+            },
+            {
               label: "Reduce your electricity bill",
               to: "home-energy-monitoring/",
             },
@@ -331,6 +335,7 @@ module.exports = function createConfig() {
                   path === "/google-home-alternative/" ||
                   path === "/local-smart-home/" ||
                   path === "/open-source-home-automation/" ||
+                  path === "/best-zigbee-dongle/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
