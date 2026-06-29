@@ -21,7 +21,9 @@ Les volets sont à l'honneur dans cette version :
 
 ## 🤖 IA
 
-Un nouvel affichage du quota vous donne une visibilité complète sur votre utilisation de l'IA : vous pouvez désormais voir vos requêtes texte et image restantes, leurs dates de réinitialisation, ainsi que votre statut en temps réel dans **Intégrations → OpenAI**. Fini de deviner ce qu'il vous reste.
+Un nouvel affichage du quota vous donne une visibilité complète sur votre utilisation de l'IA : vous pouvez désormais voir vos requêtes texte et image restantes, leurs dates de réinitialisation, ainsi que votre statut en temps réel dans **Intégrations → Intelligence Artificielle**. Fini de deviner ce qu'il vous reste.
+
+![Utilisation des quotas IA dans Gladys](../../../static/img/articles/gladys-4-81-shutters-ai-quota-zigbee2mqtt/01-ai-quota.png)
 
 ## 📡 Zigbee2MQTT
 
@@ -29,6 +31,8 @@ Deux belles améliorations pour les utilisateurs de Zigbee :
 
 - 🔑 L'interface affiche désormais vos identifiants MQTT (hôte, port, nom d'utilisateur et mot de passe), avec un bouton pour afficher ou masquer le mot de passe et une copie en un clic, ce qui facilite grandement la connexion d'outils externes.
 - 🔌 Ajout du support de plusieurs types de coordinateurs (dongles) manquants, notamment les modèles Home Assistant, SONOFF, SMLIGHT, Texas Instruments et ZigStar.
+
+![Identifiants MQTT de Zigbee2MQTT dans Gladys](../../../static/img/articles/gladys-4-81-shutters-ai-quota-zigbee2mqtt/02-zigbee2mqtt-credentials.png)
 
 ## 🎬 Scènes
 
