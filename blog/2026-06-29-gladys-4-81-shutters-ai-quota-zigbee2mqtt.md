@@ -21,7 +21,9 @@ Shutters get a lot of love in this version:
 
 ## 🤖 AI
 
-A new quota display gives you full visibility on your AI usage: you can now see your remaining text and image requests, their reset dates, and your real-time status under **Integrations → OpenAI**. No more guessing how much you have left.
+A new quota display gives you full visibility on your AI usage: you can now see your remaining text and image requests, their reset dates, and your real-time status under **Integrations → Artificial Intelligence**. No more guessing how much you have left.
+
+![AI quota usage in Gladys](../static/img/articles/gladys-4-81-shutters-ai-quota-zigbee2mqtt/01-ai-quota.png)
 
 ## 📡 Zigbee2MQTT
 
@@ -29,6 +31,8 @@ Two nice improvements for Zigbee users:
 
 - 🔑 The interface now displays your MQTT credentials (host, port, username, and password), with a toggle to show or hide the password and one-click copy, making it much easier to connect external tools.
 - 🔌 Added support for several missing coordinator types (dongles), including Home Assistant, SONOFF, SMLIGHT, Texas Instruments, and ZigStar models.
+
+![Zigbee2MQTT MQTT credentials in Gladys](../static/img/articles/gladys-4-81-shutters-ai-quota-zigbee2mqtt/02-zigbee2mqtt-credentials.png)
 
 ## 🎬 Scenes
 
