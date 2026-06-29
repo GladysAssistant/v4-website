@@ -166,6 +166,14 @@ module.exports = function createConfig() {
               label: "Reduce your electricity bill",
               to: "home-energy-monitoring/",
             },
+            {
+              label: "DIY home alarm system",
+              to: "diy-home-alarm-system/",
+            },
+            {
+              label: "Presence simulation",
+              to: "presence-simulation/",
+            },
           ],
         },
         {
@@ -307,6 +315,8 @@ module.exports = function createConfig() {
                   path === "/plus/" ||
                   path === "/starter-kit/" ||
                   path === "/ai-smart-home/" ||
+                  path === "/diy-home-alarm-system/" ||
+                  path === "/presence-simulation/" ||
                   path === "/zigbee-vs-matter-vs-zwave/" ||
                   path === "/home-energy-monitoring/" ||
                   path === "/home-assistant-vs-gladys-assistant/" ||
