@@ -175,6 +175,10 @@ module.exports = function createConfig() {
               to: "home-energy-monitoring/",
             },
             {
+              label: "EDF Tempo colour of the day",
+              to: "edf-tempo/",
+            },
+            {
               label: "DIY home alarm system",
               to: "diy-home-alarm-system/",
             },
@@ -336,6 +340,7 @@ module.exports = function createConfig() {
                   path === "/local-smart-home/" ||
                   path === "/open-source-home-automation/" ||
                   path === "/best-zigbee-dongle/" ||
+                  path === "/edf-tempo/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
