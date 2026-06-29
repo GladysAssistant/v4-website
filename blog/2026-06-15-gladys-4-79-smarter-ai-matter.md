@@ -8,7 +8,7 @@ slug: gladys-4-79-smarter-ai-matter
 
 Hey everyone,
 
-Gladys v4.79 is out 🙂 — with a smarter AI agent, a better voice assistant, and support for more Matter devices.
+Gladys v4.79 is out 🙂, with a smarter AI agent, a better voice assistant, and support for more Matter devices.
 
 {/* truncate */}
 
@@ -26,7 +26,7 @@ This version brings several improvements to the AI agent:
   - **Web Request:** the agent can query APIs or web pages. It's a personal need I implemented, and it's incredibly handy!
   - **Compare Times:** compares times of day.
 
-These new tools unlock very powerful things — for example, fetching a store's opening hours and telling you whether it's currently open! Super useful in scenes via the "Ask the AI" action. The possibilities are endless.
+These new tools unlock very powerful things, for example, fetching a store's opening hours and telling you whether it's currently open! Super useful in scenes via the "Ask the AI" action. The possibilities are endless.
 
 ## 🎙️ Voice assistant
 

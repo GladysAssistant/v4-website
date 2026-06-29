@@ -14,7 +14,7 @@ Une nouvelle version de Gladys Assistant est disponible : **v4.73.0 !** Cette re
 
 ## 🧩 Mise à jour de Matter.js en 0.16.11
 
-Gladys embarque désormais la dernière version de Matter.js (`0.16.11`). C'est une grosse mise à jour — nous montons depuis la 0.13.0 — qui améliore la compatibilité et la stabilité des appareils Matter.
+Gladys embarque désormais la dernière version de Matter.js (`0.16.11`). C'est une grosse mise à jour, nous montons depuis la 0.13.0, qui améliore la compatibilité et la stabilité des appareils Matter.
 
 Pensez à vérifier que vos appareils Matter fonctionnent toujours après cette version, car il y a une migration de fichier de Matter.js qui a pu être capricieuse chez certains utilisateurs.
 

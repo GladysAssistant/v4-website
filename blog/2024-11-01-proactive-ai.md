@@ -20,7 +20,7 @@ That was a good start, but I want to take it further! What if AI could be proact
 
 {/* truncate */}
 
-Imagine a car pulls up in front of your house. A dedicated security guard would watch, recognize your car—its shape, color, license plate—and know immediately that it’s you. But hiring a 24/7 guard isn’t within reach for everyone!
+Imagine a car pulls up in front of your house. A dedicated security guard would watch, recognize your car, its shape, color, license plate, and know immediately that it’s you. But hiring a 24/7 guard isn’t within reach for everyone!
 
 What if AI could play that role?
 
@@ -53,7 +53,7 @@ For instance, you could send a CO2 sensor value and request an action if the lev
 
 ![Analyzing Co2 Level Gladys](../static/img/articles/en/gladys-4-48/ask-ai-sensor.png)
 
-No need to look up recommended CO2 levels in a room—the AI draws on its extensive knowledge (essentially all of the internet!) to assess the situation and act intelligently.
+No need to look up recommended CO2 levels in a room, the AI draws on its extensive knowledge (essentially all of the internet!) to assess the situation and act intelligently.
 
 It’s even possible to inject values retrieved from other APIs to:
 

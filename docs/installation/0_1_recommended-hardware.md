@@ -33,7 +33,7 @@ The Zigbee coordinator is **the most important device** of your installation: it
     </div>
     <span class="product-card__badge">Ethernet alternative</span>
     <h4 class="product-card__title">SMLight SLZB-06</h4>
-    <p class="product-card__description">Ethernet/PoE Zigbee coordinator. Useful if you want to move the dongle away from your server (e.g. in a tech closet) to get better Zigbee mesh coverage. <strong>⚠️ With this model, you'll have to install and run Zigbee2MQTT yourself</strong> (Docker, dedicated machine…) — Gladys' Zigbee2MQTT integration won't start it automatically, unlike with the USB dongle.</p>
+    <p class="product-card__description">Ethernet/PoE Zigbee coordinator. Useful if you want to move the dongle away from your server (e.g. in a tech closet) to get better Zigbee mesh coverage. <strong>⚠️ With this model, you'll have to install and run Zigbee2MQTT yourself</strong> (Docker, dedicated machine…), Gladys' Zigbee2MQTT integration won't start it automatically, unlike with the USB dongle.</p>
     <a class="product-card__cta" href="https://www.amazon.com/s?k=SMLight+SLZB-06&tag=gladproj-21" target="_blank" rel="noopener">View on Amazon</a>
   </div>
 </div>
@@ -122,7 +122,7 @@ The Zigbee coordinator is **the most important device** of your installation: it
       <img src="https://www.zigbee2mqtt.io/images/devices/E2.jpg" alt="Nous E2 Zigbee Door & Window Sensor" loading="lazy" />
     </div>
     <span class="product-card__badge">Recommended</span>
-    <h4 class="product-card__title">Nous E2 — Zigbee 3.0 Door & Window Sensor</h4>
+    <h4 class="product-card__title">Nous E2: Zigbee 3.0 Door & Window Sensor</h4>
     <p class="product-card__description">Fully local Zigbee 3.0 door/window sensor. Compact form factor, long battery life, excellent value, and great Zigbee2MQTT support.</p>
     <a class="product-card__cta" href="https://www.amazon.com/s?k=Nous+E2+Zigbee+door+sensor&tag=gladproj-21" target="_blank" rel="noopener">View on Amazon</a>
   </div>
@@ -146,7 +146,7 @@ The Zigbee coordinator is **the most important device** of your installation: it
     </div>
     <span class="product-card__badge">Recommended</span>
     <h4 class="product-card__title">Aqara Wireless Mini Switch</h4>
-    <p class="product-card__description">Tiny wireless button with single press / double press / long press detection. Three actions on a single button — perfect for custom automations.</p>
+    <p class="product-card__description">Tiny wireless button with single press / double press / long press detection. Three actions on a single button, perfect for custom automations.</p>
     <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+Wireless+Mini+Switch+WXKG11LM&tag=gladproj-21" target="_blank" rel="noopener">View on Amazon</a>
   </div>
   <div class="product-card">
@@ -177,7 +177,7 @@ The Zigbee coordinator is **the most important device** of your installation: it
       <img src="https://www.zigbee2mqtt.io/images/devices/MINI-ZBRBS.png" alt="SONOFF MINI-ZBRBS Zigbee Roller Shutter Module" loading="lazy" />
     </div>
     <span class="product-card__badge">Alternative</span>
-    <h4 class="product-card__title">SONOFF MINI-ZBRBS — Zigbee Roller Shutter Module</h4>
+    <h4 class="product-card__title">SONOFF MINI-ZBRBS: Zigbee Roller Shutter Module</h4>
     <p class="product-card__description">Compact in-wall Zigbee 3.0 roller shutter module from SONOFF. A great alternative to the Sunricher, from a brand very well supported by Zigbee2MQTT.</p>
     <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+MINI-ZBRBS+roller+shutter&tag=gladproj-21" target="_blank" rel="noopener">View on Amazon</a>
   </div>
@@ -230,7 +230,7 @@ These switches **replace your existing wall switches** and let you control a lig
       <img src="https://www.zigbee2mqtt.io/images/devices/SNZB-05P.png" alt="SONOFF SNZB-05P Zigbee Water Leak Sensor" loading="lazy" />
     </div>
     <span class="product-card__badge">Recommended</span>
-    <h4 class="product-card__title">SONOFF SNZB-05P — Zigbee Water Leak Sensor (IP67)</h4>
+    <h4 class="product-card__title">SONOFF SNZB-05P: Zigbee Water Leak Sensor (IP67)</h4>
     <p class="product-card__description">IP67-rated Zigbee water leak sensor with an extendable remote probe. Perfect to place under the sink, behind the washing machine or near the water heater.</p>
     <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+SNZB-05P&tag=gladproj-21" target="_blank" rel="noopener">View on Amazon</a>
   </div>
@@ -244,7 +244,7 @@ These switches **replace your existing wall switches** and let you control a lig
       <img src="https://www.zigbee2mqtt.io/images/devices/SMSZB-120.jpg" alt="Frient Intelligent Smoke Alarm SMSZB-120" loading="lazy" />
     </div>
     <span class="product-card__badge">Recommended</span>
-    <h4 class="product-card__title">Frient — Intelligent Smoke Alarm Zigbee 3.0 (SMSZB-120)</h4>
+    <h4 class="product-card__title">Frient: Intelligent Smoke Alarm Zigbee 3.0 (SMSZB-120)</h4>
     <p class="product-card__description">EN 14604 certified, professional-grade Zigbee smoke detector. Very well rated in the Zigbee2MQTT community, long-life battery included.</p>
     <a class="product-card__cta" href="https://www.amazon.com/s?k=Frient+Smoke+Alarm+SMSZB-120&tag=gladproj-21" target="_blank" rel="noopener">View on Amazon</a>
   </div>

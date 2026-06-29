@@ -14,6 +14,6 @@ Je vous présente aujourd'hui une automatisation bien pratique que j'ai mise en 
 
 [![Comment rendre n'importe quel lave-linge intelligent](../../../static/img/articles/make-any-washing-machine-smart/youtube.jpg)](https://youtu.be/gn-bBBs39G0)
 
-L'idée est simple : en mesurant la consommation électrique de la prise, Gladys sait exactement quand un cycle de lavage démarre et quand il se termine — et peut ensuite vous envoyer une notification pour ne plus jamais oublier votre linge dans la machine. Aucun appareil spécial requis, juste une prise Zigbee avec mesure de consommation et une scène Gladys.
+L'idée est simple : en mesurant la consommation électrique de la prise, Gladys sait exactement quand un cycle de lavage démarre et quand il se termine, et peut ensuite vous envoyer une notification pour ne plus jamais oublier votre linge dans la machine. Aucun appareil spécial requis, juste une prise Zigbee avec mesure de consommation et une scène Gladys.
 
 Je vous montre toute la mise en place dans la vidéo ci-dessus. Si vous avez des questions, n'hésitez pas à les mettre en commentaire de la vidéo 🙏

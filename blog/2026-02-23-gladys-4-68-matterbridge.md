@@ -8,7 +8,7 @@ slug: gladys-4-68-matterbridge
 
 Hey everyone,
 
-A new version of Gladys is out, with several improvements and fixes — including a one-click way to run **Matterbridge** and open the door to many more compatible devices.
+A new version of Gladys is out, with several improvements and fixes, including a one-click way to run **Matterbridge** and open the door to many more compatible devices.
 
 {/* truncate */}
 

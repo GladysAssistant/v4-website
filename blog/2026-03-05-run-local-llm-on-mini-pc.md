@@ -16,4 +16,4 @@ Can you really run a capable AI model locally, on a small mini-PC, without sendi
 
 Running AI locally is a topic that's very close to the heart of the Gladys project: privacy first, your data stays at home. In this video I show how I got an AI model running on a mini-PC, what kind of hardware it takes, and what you can realistically expect.
 
-If you have questions, feel free to leave them in the comments on YouTube — it really helps with visibility 😉
+If you have questions, feel free to leave them in the comments on YouTube, it really helps with visibility 😉

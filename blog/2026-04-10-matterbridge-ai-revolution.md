@@ -1,6 +1,6 @@
 ---
 title: "Matterbridge + AI: Make Any Device Work With Gladys, Without Writing Code"
-description: "Combining Matterbridge with AI, we can make almost any device compatible with Gladys — without writing code. Here's the vision."
+description: "Combining Matterbridge with AI, we can make almost any device compatible with Gladys, without writing code. Here's the vision."
 authors: pierregilles
 image: /img/presentation/matterbridge-ai-revolution-en.jpg
 slug: matterbridge-ai-revolution
@@ -8,7 +8,7 @@ slug: matterbridge-ai-revolution
 
 Hey everyone,
 
-I spent a lot of last week tinkering with Matterbridge, and I had a real "aha" moment I wanted to share: we're going to be able to make **any device** Matter-compatible — and therefore Gladys-compatible — without writing a single line of code.
+I spent a lot of last week tinkering with Matterbridge, and I had a real "aha" moment I wanted to share: we're going to be able to make **any device** Matter-compatible, and therefore Gladys-compatible, without writing a single line of code.
 
 {/* truncate */}
 
@@ -28,7 +28,7 @@ In Gladys, I've always taken the approach of building large, tailor-made integra
 
 **What if those integrations could simply be Matterbridge plugins, developed by an AI?**
 
-The Matterbridge plugin system is well-defined, well-documented, and full of examples. And these integrations often already exist elsewhere in open source (Node-RED, Home Assistant): we can simply ask the AI to translate, say, a Node-RED plugin into a Matterbridge plugin. There's nothing to invent — it's just "translating code"!
+The Matterbridge plugin system is well-defined, well-documented, and full of examples. And these integrations often already exist elsewhere in open source (Node-RED, Home Assistant): we can simply ask the AI to translate, say, a Node-RED plugin into a Matterbridge plugin. There's nothing to invent, it's just "translating code"!
 
 ## What I tested
 
@@ -42,6 +42,6 @@ The logical next step: **what if we fully automated the creation of Matterbridge
 
 ![The Matterbridge plugin factory concept](../static/img/articles/matterbridge-ai-revolution/01.jpg)
 
-With a system like that, we could industrialize the development of integrations and close the gap between Gladys and projects like Home Assistant. I genuinely think this is a revolution — and it confirms my decision to invest heavily in Matter this year, because it really is the future of the connected home.
+With a system like that, we could industrialize the development of integrations and close the gap between Gladys and projects like Home Assistant. I genuinely think this is a revolution, and it confirms my decision to invest heavily in Matter this year, because it really is the future of the connected home.
 
 What do you think?

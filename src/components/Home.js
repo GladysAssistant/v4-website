@@ -539,7 +539,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.dashboardDescrition"
                   description="Cool features dashboard title on the homepage"
                 >
-                  Temperature, security cameras, presence—monitor everything
+                  Temperature, security cameras, presence: monitor everything
                   from one beautiful dashboard.
                 </Translate>
               </p>
@@ -583,7 +583,7 @@ function Home({ integrations, lang }) {
                   id="home.coolFeatures.sceneDescription"
                   description="Cool features scene title on the homepage"
                 >
-                  Coffee brewing, lights turning on, music playing—all
+                  Coffee brewing, lights turning on, music playing: all
                   automatic. No coding required.
                 </Translate>
               </p>

@@ -8,7 +8,7 @@ slug: matterbridge-ai-revolution
 
 Salut à tous,
 
-J'ai pas mal bidouillé la semaine dernière autour de Matterbridge, et j'ai eu une vraie révélation que je voulais vous partager : on va pouvoir rendre **n'importe quel appareil** compatible Matter — et donc compatible Gladys — sans écrire une seule ligne de code.
+J'ai pas mal bidouillé la semaine dernière autour de Matterbridge, et j'ai eu une vraie révélation que je voulais vous partager : on va pouvoir rendre **n'importe quel appareil** compatible Matter, et donc compatible Gladys, sans écrire une seule ligne de code.
 
 {/* truncate */}
 
@@ -42,6 +42,6 @@ La suite logique : **et si on automatisait complètement la création de plugins
 
 ![Le concept d'usine à plugins Matterbridge](../../../static/img/articles/matterbridge-ai-revolution/01.jpg)
 
-Avec un système pareil, on pourrait industrialiser le développement d'intégrations et réduire l'écart entre Gladys et des projets comme Home Assistant. Je pense que c'est une vraie révolution — et ça me conforte dans mon choix d'investir beaucoup de ressources sur Matter cette année, car c'est vraiment l'avenir de la maison connectée.
+Avec un système pareil, on pourrait industrialiser le développement d'intégrations et réduire l'écart entre Gladys et des projets comme Home Assistant. Je pense que c'est une vraie révolution, et ça me conforte dans mon choix d'investir beaucoup de ressources sur Matter cette année, car c'est vraiment l'avenir de la maison connectée.
 
 Qu'en pensez-vous ?

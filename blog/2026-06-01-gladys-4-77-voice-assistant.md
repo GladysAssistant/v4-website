@@ -8,7 +8,7 @@ slug: gladys-4-77-voice-assistant
 
 Hey everyone,
 
-A new version of Gladys is available, with several nice improvements — including a brand-new **Voice Assistant** widget you can drop right onto your dashboard 🎙️
+A new version of Gladys is available, with several nice improvements, including a brand-new **Voice Assistant** widget you can drop right onto your dashboard 🎙️
 
 {/* truncate */}
 
@@ -18,7 +18,7 @@ You can now add a **Voice Assistant** widget directly to your dashboard.
 
 [![Voice Assistant widget demo](../static/img/articles/gladys-4-77-voice-assistant/youtube.jpg)](https://youtube.com/shorts/7LBeCTegKsY)
 
-Handy on a wall-mounted tablet or a smartphone. I'd love your feedback — it's first and foremost a proof of concept that could grow into more voice features in Gladys if you find it useful!
+Handy on a wall-mounted tablet or a smartphone. I'd love your feedback, it's first and foremost a proof of concept that could grow into more voice features in Gladys if you find it useful!
 
 ## 📊 Gauge widget: customizable color thresholds
 
