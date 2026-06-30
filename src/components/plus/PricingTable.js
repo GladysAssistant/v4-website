@@ -41,7 +41,7 @@ function PriceLine({ period, monthlyPrice, yearlyPrice, currency }) {
       <div className={styles.pricingPriceLine}>
         <span className={styles.pricingPrice}>{display}</span>
         <span className={styles.pricingPeriod}>
-          <Translate id="gladysPlusPage.v2.perMonthShort">/ mois</Translate>
+          <Translate id="gladysPlusPage.v2.perMonthShort">/ month</Translate>
         </span>
       </div>
       <div className={styles.pricingBilling}>
@@ -64,7 +64,7 @@ function PriceLine({ period, monthlyPrice, yearlyPrice, currency }) {
           </>
         ) : (
           <Translate id="gladysPlusPage.v2.billingMonthly">
-            Sans engagement · annulation à tout moment
+            No commitment · cancel anytime
           </Translate>
         )}
       </div>
@@ -255,7 +255,7 @@ function PricingTable({ language }) {
           name="Lite"
           tagline={translate({
             id: "gladysPlusPage.v2.lite.tagline",
-            message: "L'essentiel pour l'accès à distance",
+            message: "The essentials for remote access",
           })}
           monthlyPrice={prices.lite.monthly}
           yearlyPrice={prices.lite.yearly}
@@ -269,7 +269,7 @@ function PricingTable({ language }) {
           name="Plus"
           tagline={translate({
             id: "gladysPlusPage.v2.plus.tagline",
-            message: "Toutes les intégrations avancées",
+            message: "All the advanced integrations",
           })}
           monthlyPrice={prices.plus.monthly}
           yearlyPrice={prices.plus.yearly}
@@ -278,7 +278,7 @@ function PricingTable({ language }) {
           highlighted
           badgeLabel={translate({
             id: "gladysPlusPage.v2.plus.badge",
-            message: "Plus populaire",
+            message: "Most popular",
           })}
         />
       </div>

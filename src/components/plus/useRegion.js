@@ -21,6 +21,26 @@ export default function useRegion() {
   const [region, setRegion] = useState("eu");
 
   useEffect(() => {
+    // Debug/testing override: add ?region=us (or ?region=eu) to the URL to
+    // force the displayed currency without being in that country. The choice is
+    // persisted so it sticks while navigating the funnel; clear it with
+    // ?region=eu or by clearing localStorage. This only affects the display,
+    // never the billed amount (the checkout Worker decides that server-side).
+    try {
+      const forced = new URLSearchParams(window.location.search).get("region");
+      if (forced === "us" || forced === "eu") {
+        setRegion(forced);
+        try {
+          window.localStorage.setItem("gladys_region", forced);
+        } catch (e) {
+          // ignore write failures
+        }
+        return undefined;
+      }
+    } catch (e) {
+      // window unavailable (SSR) or bad URL; fall through to normal detection.
+    }
+
     let cached = null;
     try {
       cached = window.localStorage.getItem("gladys_region");
