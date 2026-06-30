@@ -244,8 +244,8 @@ function Open() {
                 </p>
               </div>
             </div>
-            <div className="row">
-              <div className="col col--10 col--offset-1">
+            <div className={"row " + styles.openPageChartRow}>
+              <div className="col col--12">
                 <div className="alert alert--info" role="note">
                   <h2 style={{ marginTop: 0 }}>
                     <Translate
@@ -369,7 +369,7 @@ function Open() {
                     </div>
                   </div>
                 </div>
-                <div class={"row " + styles.openPageChartRow}>
+                <div className={"row " + styles.openPageChartRow}>
                   <div className={"col col--12 " + styles.openPageCard}>
                     <div className="card">
                       <div className="card__body">
@@ -456,19 +456,29 @@ function Open() {
                     </div>
                   </div>
                 </div>
-                <div class={"row " + styles.openPageChartRow}>
+                <div className={"row " + styles.openPageChartRow}>
                   <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card" style={{ height: "270px" }}>
+                    <div className="card">
                       <div className="card__body">
                         <h2 className="text--center">
                           <Translate
                             id="openPage.lastYearReviews"
                             description="Last year reviews"
                           >
-                            Last years reviews
+                            Project history
                           </Translate>
                         </h2>
                         <ul>
+                          <li className={styles.openPageList}>
+                            <a href={`${urlPrefix}/blog`}>
+                              <Translate
+                                id="openPage.latestReleases"
+                                description="Open page latest releases link"
+                              >
+                                Latest news & releases →
+                              </Translate>
+                            </a>
+                          </li>
                           <li className={styles.openPageList}>
                             <a href={`${urlPrefix}/blog/2024-year-in-review`}>
                               <Translate
@@ -531,7 +541,7 @@ function Open() {
                     </div>
                   </div>
                   <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card" style={{ height: "270px" }}>
+                    <div className="card">
                       <div className="card__body">
                         <h2 className="text--center">
                           <Translate
@@ -554,7 +564,7 @@ function Open() {
                     </div>
                   </div>
                   <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card" style={{ height: "270px" }}>
+                    <div className="card">
                       <div className="card__header">
                         <h2
                           className="text--center"
