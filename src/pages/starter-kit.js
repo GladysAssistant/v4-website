@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "@theme/Layout";
 import Head from "@docusaurus/Head";
 import Link from "@docusaurus/Link";
+import { Redirect } from "@docusaurus/router";
 import cx from "classnames";
 
 import { useColorMode } from "@docusaurus/theme-common";
@@ -281,6 +282,13 @@ function Plus() {
     description: "Gladys Plus suscribe button discount",
     message: "Subscribe now",
   });
+
+  // The starter kit ships from France only, so it is a French-locale offer.
+  // Send English-locale visitors to the canonical French page instead of
+  // funneling them to a product that cannot ship to them.
+  if (language === "en") {
+    return <Redirect to="/fr/starter-kit/" />;
+  }
 
   return (
     <main>

@@ -166,12 +166,6 @@ const FAQQuestions = {
           first need a Linux machine (Ubuntu Server, for example), then you run
           Gladys via Docker. Our documentation walks you through each step with
           screenshots and videos.
-          <br />
-          <br />
-          <b>Want a faster start?</b> The{" "}
-          <Link href="/starter-kit/">starter kit</Link> (France) ships with Gladys
-          pre-installed. Plug it in, follow the guide, and focus on your smart
-          home.
         </>
       ),
     },

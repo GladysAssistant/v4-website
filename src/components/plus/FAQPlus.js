@@ -197,16 +197,6 @@ const buildDataEn = (prices, currency) => [
     ),
   },
   {
-    title: "What happens after the 6 free months from the starter kit?",
-    description: (
-      <>
-        If you bought the Gladys starter kit, you get 6 free months of Gladys
-        Plus. Before the period ends, you'll receive an email and freely decide
-        whether to subscribe or not. No hidden auto-charge: you decide.
-      </>
-    ),
-  },
-  {
     title: "Why isn't Gladys Plus free?",
     description: (
       <>

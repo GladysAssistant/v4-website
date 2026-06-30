@@ -53,7 +53,7 @@ const homepageFaqEn = [
   {
     question: "Is it hard to install?",
     answer:
-      "It takes some technical steps, but documentation guides you through each one with screenshots and videos. You need a Linux machine and Docker. A French starter kit is also available with Gladys pre-installed.",
+      "It takes some technical steps, but documentation guides you through each one with screenshots and videos. You need a Linux machine and Docker.",
   },
   {
     question: "Is my data really private?",
@@ -125,11 +125,6 @@ const plusFaqEn = [
     question: "Satisfied or refunded?",
     answer:
       "Yes. If you are not satisfied, email the founder for a full refund, no questions asked.",
-  },
-  {
-    question: "What happens after the 6 free months from the starter kit?",
-    answer:
-      "Starter kit buyers get 6 free months of Gladys Plus. Before the period ends, you receive an email and freely decide whether to subscribe. No hidden auto-charge.",
   },
   {
     question: "Why isn't Gladys Plus free?",
