@@ -65,6 +65,29 @@ async function getUsage() {
   };
 }
 
+// Returns a straight line (one value per point) fitted to the data with a
+// least-squares linear regression. Overlaying it on the instance chart shows
+// the long-term direction, so a one-off spike (the viral Feb 2026 video) and
+// the churn that follows it don't read as the project declining.
+function computeTrendLine(points) {
+  const n = points.length;
+  const ys = points.map((p) => Number(p));
+  if (n < 2) {
+    return ys;
+  }
+  const meanX = (n - 1) / 2;
+  const meanY = ys.reduce((sum, y) => sum + y, 0) / n;
+  let sxy = 0;
+  let sxx = 0;
+  for (let i = 0; i < n; i += 1) {
+    sxy += (i - meanX) * (ys[i] - meanY);
+    sxx += (i - meanX) ** 2;
+  }
+  const slope = sxx === 0 ? 0 : sxy / sxx;
+  const intercept = meanY - slope * meanX;
+  return ys.map((_, i) => Math.round(intercept + slope * i));
+}
+
 function Open() {
   const context = useDocusaurusContext();
   const [usageChartCanva, setUsageChartCanva] = useState(null);
@@ -112,9 +135,26 @@ function Open() {
         labels: usageChartData.labels,
         datasets: [
           {
-            label: "Number of Gladys instances",
+            label: translate({
+              id: "openPage.chart.activeInstances",
+              description: "Instance chart active instances series label",
+              message: "Active instances",
+            }),
             borderColor: "#74b9ff",
             data: usageChartData.points,
+            fill: false,
+          },
+          {
+            label: translate({
+              id: "openPage.chart.trend",
+              description: "Instance chart trend line label",
+              message: "Long-term trend",
+            }),
+            borderColor: "#00b894",
+            borderDash: [6, 6],
+            borderWidth: 2,
+            pointRadius: 0,
+            data: computeTrendLine(usageChartData.points),
             fill: false,
           },
         ],
@@ -384,6 +424,21 @@ function Open() {
                         <div style={{ height: "400px" }}>
                           <canvas ref={usageChartRef}></canvas>
                         </div>
+                        <p
+                          className="text--center text--secondary"
+                          style={{ marginTop: "1rem", marginBottom: 0 }}
+                        >
+                          <Translate
+                            id="openPage.chart.spikeNote"
+                            description="Open page instance chart spike explanation"
+                          >
+                            The February 2026 peak came from a viral "Home
+                            Assistant vs Gladys" video that brought a wave of
+                            curious users. The base that stayed is still well
+                            above where we started, and the long-term trend
+                            keeps pointing up.
+                          </Translate>
+                        </p>
                       </div>
                     </div>
                   </div>
