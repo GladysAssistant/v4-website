@@ -1,6 +1,8 @@
 import React from "react";
 import Translate from "@docusaurus/Translate";
 import styles from "./styles.module.css";
+import useRegion from "./useRegion";
+import { PRICES, formatPrice } from "./pricing";
 
 const e2eSummaryFr = (
   <>
@@ -42,7 +44,7 @@ const e2eTechnicalEn = (
   </>
 );
 
-const dataFr = [
+const buildDataFr = (prices, currency) => [
   {
     title: "Pourquoi s'inscrire à Gladys Plus ?",
     description: (
@@ -61,9 +63,11 @@ const dataFr = [
     title: "Quelle différence entre la formule Lite et la formule Plus ?",
     description: (
       <>
-        <strong>Lite</strong> (6,99€/mois ou 69,99€/an) couvre l'essentiel :
+        <strong>Lite</strong> ({formatPrice(prices.lite.monthly, currency)}/mois
+        ou {formatPrice(prices.lite.yearly, currency)}/an) couvre l'essentiel :
         accès à distance chiffré, Google Home/Alexa, API REST ouverte, comptes
-        famille. <strong>Plus</strong> (9,99€/mois ou 99,99€/an) ajoute les
+        famille. <strong>Plus</strong> ({formatPrice(prices.plus.monthly, currency)}/mois
+        ou {formatPrice(prices.plus.yearly, currency)}/an) ajoute les
         sauvegardes chiffrées quotidiennes, le streaming caméra à distance,
         des modèles d'IA Open-Weight (hébergés en France chez Scaleway),
         l'intégration Enedis et
@@ -134,7 +138,7 @@ const dataFr = [
   },
 ];
 
-const dataEn = [
+const buildDataEn = (prices, currency) => [
   {
     title: "Why should I subscribe to Gladys Plus?",
     description: (
@@ -150,9 +154,11 @@ const dataEn = [
     title: "What's the difference between the Lite and Plus plans?",
     description: (
       <>
-        <strong>Lite</strong> (€6.99/month or €69.99/year) covers the basics:
+        <strong>Lite</strong> ({formatPrice(prices.lite.monthly, currency)}/month
+        or {formatPrice(prices.lite.yearly, currency)}/year) covers the basics:
         encrypted remote access, Google Home/Alexa, open REST API, family
-        accounts. <strong>Plus</strong> (€9.99/month or €99.99/year) adds daily
+        accounts. <strong>Plus</strong> ({formatPrice(prices.plus.monthly, currency)}/month
+        or {formatPrice(prices.plus.yearly, currency)}/year) adds daily
         encrypted backups, remote camera streaming, Open-Weight AI models,
         Enedis integration, and an MCP server.
         You can switch
@@ -187,16 +193,6 @@ const dataEn = [
       <>
         Yes. If you're not satisfied, just email me and I'll refund you, no
         questions asked. Feel free to share what didn't work so I can improve 🙂
-      </>
-    ),
-  },
-  {
-    title: "What happens after the 6 free months from the starter kit?",
-    description: (
-      <>
-        If you bought the Gladys starter kit, you get 6 free months of Gladys
-        Plus. Before the period ends, you'll receive an email and freely decide
-        whether to subscribe or not. No hidden auto-charge: you decide.
       </>
     ),
   },
@@ -239,7 +235,13 @@ function FaqItem({ item, lang }) {
 }
 
 function FAQPlus({ lang }) {
-  const data = lang === "en" ? dataEn : dataFr;
+  const region = useRegion();
+  const prices = PRICES[region];
+  const { currency } = prices;
+  const data =
+    lang === "en"
+      ? buildDataEn(prices, currency)
+      : buildDataFr(prices, currency);
   return (
     <section
       id="faq"

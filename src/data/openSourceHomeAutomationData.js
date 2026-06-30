@@ -310,7 +310,7 @@ export const openSourceHomeAutomationFaqEn = [
   {
     question: "Do I need to be a developer to use open-source home automation?",
     answer:
-      "No. While some platforms are quite technical, Gladys Assistant is designed for non-developers: it installs in a single Docker command, everything is configured by clicking in the interface with no configuration files, and a starter kit ships with it pre-installed.",
+      "No. While some platforms are quite technical, Gladys Assistant is designed for non-developers: it installs in a single Docker command, everything is configured by clicking in the interface with no configuration files.",
   },
   {
     question: "What license is Gladys Assistant released under?",

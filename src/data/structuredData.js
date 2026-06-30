@@ -53,7 +53,7 @@ const homepageFaqEn = [
   {
     question: "Is it hard to install?",
     answer:
-      "It takes some technical steps, but documentation guides you through each one with screenshots and videos. You need a Linux machine and Docker. A French starter kit is also available with Gladys pre-installed.",
+      "It takes some technical steps, but documentation guides you through each one with screenshots and videos. You need a Linux machine and Docker.",
   },
   {
     question: "Is my data really private?",
@@ -109,7 +109,7 @@ const plusFaqEn = [
   {
     question: "What's the difference between the Lite and Plus plans?",
     answer:
-      "Lite (€6.99/month) covers encrypted remote access, Google Home/Alexa, open REST API, and family accounts. Plus (€9.99/month) adds daily encrypted backups, remote camera streaming, Open-Weight AI models, Enedis integration, and an MCP server.",
+      "Lite covers encrypted remote access, Google Home/Alexa, open REST API, and family accounts. Plus adds daily encrypted backups, remote camera streaming, Open-Weight AI models, Enedis integration, and an MCP server. See the pricing section for current rates in your region.",
   },
   {
     question: "How do I activate Gladys Plus on my existing Gladys instance?",
@@ -125,11 +125,6 @@ const plusFaqEn = [
     question: "Satisfied or refunded?",
     answer:
       "Yes. If you are not satisfied, email the founder for a full refund, no questions asked.",
-  },
-  {
-    question: "What happens after the 6 free months from the starter kit?",
-    answer:
-      "Starter kit buyers get 6 free months of Gladys Plus. Before the period ends, you receive an email and freely decide whether to subscribe. No hidden auto-charge.",
   },
   {
     question: "Why isn't Gladys Plus free?",
@@ -152,7 +147,7 @@ const plusFaqFr = [
   {
     question: "Quelle différence entre la formule Lite et la formule Plus ?",
     answer:
-      "Lite (6,99 €/mois) couvre l'accès distant chiffré, Google Home/Alexa, l'API REST ouverte et les comptes famille. Plus (9,99 €/mois) ajoute les sauvegardes chiffrées, le streaming caméra, l'IA Open-Weight, Enedis et le serveur MCP.",
+      "Lite couvre l'accès distant chiffré, Google Home/Alexa, l'API REST ouverte et les comptes famille. Plus ajoute les sauvegardes chiffrées, le streaming caméra, l'IA Open-Weight, Enedis et le serveur MCP. Voir la section tarifs pour les prix actuels dans votre région.",
   },
   {
     question: "Comment activer Gladys Plus depuis mon instance Gladys existante ?",
@@ -909,26 +904,34 @@ export function getPlusPageSchema(lang) {
         ],
         brand: { "@type": "Brand", name: "Gladys Assistant" },
         provider: { "@id": `${SITE_URL}/#organization` },
-        offers: [
-          {
-            "@type": "Offer",
-            name: "Gladys Plus Lite",
-            price: "6.99",
-            priceCurrency: "EUR",
-            priceValidUntil: "2027-12-31",
-            availability: "https://schema.org/InStock",
-            url: pageUrl,
-          },
-          {
-            "@type": "Offer",
-            name: "Gladys Plus",
-            price: "9.99",
-            priceCurrency: "EUR",
-            priceValidUntil: "2027-12-31",
-            availability: "https://schema.org/InStock",
-            url: pageUrl,
-          },
-        ],
+        // Prices are only advertised in the schema for the French locale, where
+        // the page always shows EUR. The English page is multi-currency (USD for
+        // US/Canada, EUR elsewhere, resolved client-side), so a fixed EUR Offer
+        // would conflict with the price a US visitor actually sees and is billed.
+        ...(lang === "fr"
+          ? {
+              offers: [
+                {
+                  "@type": "Offer",
+                  name: "Gladys Plus Lite",
+                  price: "6.99",
+                  priceCurrency: "EUR",
+                  priceValidUntil: "2027-12-31",
+                  availability: "https://schema.org/InStock",
+                  url: pageUrl,
+                },
+                {
+                  "@type": "Offer",
+                  name: "Gladys Plus",
+                  price: "9.99",
+                  priceCurrency: "EUR",
+                  priceValidUntil: "2027-12-31",
+                  availability: "https://schema.org/InStock",
+                  url: pageUrl,
+                },
+              ],
+            }
+          : {}),
       },
       toFaqPage(lang === "fr" ? plusFaqFr : plusFaqEn, pageUrl),
     ],

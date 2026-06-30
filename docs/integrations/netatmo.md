@@ -1,11 +1,19 @@
 ---
 id: netatmo
-title: Connect your Netatmo thermostats to your smart home system installation
+title: "Connect Netatmo thermostats & weather stations to Gladys"
 description: "Connect your Netatmo thermostats, valves and weather stations to Gladys Assistant via Netatmo Connect to monitor and control your smart home."
 sidebar_label: Netatmo
+keywords:
+  - netatmo connect
+  - netatmo gladys
+  - netatmo api
+  - netatmo thermostat integration
+  - netatmo weather station
 toc_min_heading_level: 2
 toc_max_heading_level: 5
 ---
+
+import JsonLd from '@site/src/components/seo/JsonLd';
 
 ## **Prerequisites**
 
@@ -334,3 +342,50 @@ And there you have it! You can now add the devices and features you want to enjo
 ![Netatmo Dashboard - Weather](../../static/img/docs/en/configuration/netatmo/en-netatmo-dashboard-weather.jpg)
 
 Please post a message on [the forum](https://en-community.gladysassistant.com), if you need any help.
+
+## Frequently asked questions
+
+### How do I connect Netatmo to Gladys?
+
+First add your devices in the Netatmo Energy or Netatmo Weather app, then create an app on the Netatmo Connect developer portal to get a client ID and secret. In Gladys, open the Netatmo integration, paste those credentials in the Setup tab, enable the Energy and/or Weather API and authorize the connection. Your devices then appear in the Discovery tab.
+
+### Which Netatmo devices work with Gladys?
+
+Gladys supports the Netatmo Energy line (the NAPlug hub, NATherm1 thermostat and NRV valves) and the Netatmo Weather line (the NAMain indoor station and its outdoor, anemometer, rain gauge and additional indoor modules). You can read their measurements and control the heating setpoint from a dashboard or a scene.
+
+### Do I need a Netatmo Connect developer account?
+
+Yes. Netatmo Connect is free, and creating an app there gives you the client ID and secret that Gladys uses to talk to the Netatmo API on your behalf.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How do I connect Netatmo to Gladys?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "First add your devices in the Netatmo Energy or Netatmo Weather app, then create an app on the Netatmo Connect developer portal to get a client ID and secret. In Gladys, open the Netatmo integration, paste those credentials in the Setup tab, enable the Energy and/or Weather API and authorize the connection. Your devices then appear in the Discovery tab.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Which Netatmo devices work with Gladys?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Gladys supports the Netatmo Energy line (the NAPlug hub, NATherm1 thermostat and NRV valves) and the Netatmo Weather line (the NAMain indoor station and its outdoor, anemometer, rain gauge and additional indoor modules). You can read their measurements and control the heating setpoint from a dashboard or a scene.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do I need a Netatmo Connect developer account?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Netatmo Connect is free, and creating an app there gives you the client ID and secret that Gladys uses to talk to the Netatmo API on your behalf.",
+        },
+      },
+    ],
+  }}
+/>
