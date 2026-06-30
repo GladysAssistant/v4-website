@@ -109,7 +109,7 @@ const plusFaqEn = [
   {
     question: "What's the difference between the Lite and Plus plans?",
     answer:
-      "Lite (€6.99/month) covers encrypted remote access, Google Home/Alexa, open REST API, and family accounts. Plus (€9.99/month) adds daily encrypted backups, remote camera streaming, Open-Weight AI models, Enedis integration, and an MCP server.",
+      "Lite covers encrypted remote access, Google Home/Alexa, open REST API, and family accounts. Plus adds daily encrypted backups, remote camera streaming, Open-Weight AI models, Enedis integration, and an MCP server. See the pricing section for current rates in your region.",
   },
   {
     question: "How do I activate Gladys Plus on my existing Gladys instance?",
@@ -152,7 +152,7 @@ const plusFaqFr = [
   {
     question: "Quelle différence entre la formule Lite et la formule Plus ?",
     answer:
-      "Lite (6,99 €/mois) couvre l'accès distant chiffré, Google Home/Alexa, l'API REST ouverte et les comptes famille. Plus (9,99 €/mois) ajoute les sauvegardes chiffrées, le streaming caméra, l'IA Open-Weight, Enedis et le serveur MCP.",
+      "Lite couvre l'accès distant chiffré, Google Home/Alexa, l'API REST ouverte et les comptes famille. Plus ajoute les sauvegardes chiffrées, le streaming caméra, l'IA Open-Weight, Enedis et le serveur MCP. Voir la section tarifs pour les prix actuels dans votre région.",
   },
   {
     question: "Comment activer Gladys Plus depuis mon instance Gladys existante ?",

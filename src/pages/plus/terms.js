@@ -1,7 +1,12 @@
 import React from "react";
 import Layout from "@theme/Layout";
+import useRegion from "../../components/plus/useRegion";
+import { PRICES, formatPrice } from "../../components/plus/pricing";
 
 function CvgPlus() {
+  const region = useRegion();
+  const prices = PRICES[region];
+  const { currency } = prices;
   return (
     <Layout
       title="Conditions générales de ventes de Gladys Plus"
@@ -69,14 +74,18 @@ function CvgPlus() {
                 <p>Gladys Plus est disponible en deux formules :</p>
                 <ul>
                   <li>
-                    <strong>Gladys Plus Lite :</strong> 6,99€/mois ou 69,99€/an
-                    - Accès aux fonctionnalités essentielles (accès à distance,
-                    API ouverte, assistant vocaux avec Google Home/Alexa)
+                    <strong>Gladys Plus Lite :</strong>{" "}
+                    {formatPrice(prices.lite.monthly, currency)}/mois ou{" "}
+                    {formatPrice(prices.lite.yearly, currency)}/an - Accès aux
+                    fonctionnalités essentielles (accès à distance, API ouverte,
+                    assistant vocaux avec Google Home/Alexa)
                   </li>
                   <li>
-                    <strong>Gladys Plus :</strong> 9,99€/mois ou 99,99€/an -
-                    Accès à toutes les fonctionnalités (incluant sauvegardes,
-                    Enedis, modèles d'IA Open-Weight, streaming caméra)
+                    <strong>Gladys Plus :</strong>{" "}
+                    {formatPrice(prices.plus.monthly, currency)}/mois ou{" "}
+                    {formatPrice(prices.plus.yearly, currency)}/an - Accès à
+                    toutes les fonctionnalités (incluant sauvegardes, Enedis,
+                    modèles d'IA Open-Weight, streaming caméra)
                   </li>
                 </ul>
                 <h2>Durée de l'offre et résilation</h2>

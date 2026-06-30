@@ -22,26 +22,24 @@ const Check = () => (
 );
 
 import { getCheckoutUrl } from "./checkout";
+import useRegion from "./useRegion";
+import { PRICES, formatPrice } from "./pricing";
 
-function formatEuro(amount) {
-  return amount.toFixed(2).replace(".", ",");
+function yearlySavings(monthlyPrice, yearlyPrice, currency) {
+  return formatPrice(monthlyPrice * 12 - yearlyPrice, currency);
 }
 
-function yearlySavingsAmount(monthlyPrice, yearlyPrice) {
-  return formatEuro(monthlyPrice * 12 - yearlyPrice);
-}
-
-function PriceLine({ period, monthlyPrice, yearlyPrice }) {
+function PriceLine({ period, monthlyPrice, yearlyPrice, currency }) {
   const display =
     period === "yearly"
-      ? formatEuro(yearlyPrice / 12)
-      : formatEuro(monthlyPrice);
-  const savings = yearlySavingsAmount(monthlyPrice, yearlyPrice);
+      ? formatPrice(yearlyPrice / 12, currency)
+      : formatPrice(monthlyPrice, currency);
+  const savings = yearlySavings(monthlyPrice, yearlyPrice, currency);
 
   return (
     <>
       <div className={styles.pricingPriceLine}>
-        <span className={styles.pricingPrice}>{display}€</span>
+        <span className={styles.pricingPrice}>{display}</span>
         <span className={styles.pricingPeriod}>
           <Translate id="gladysPlusPage.v2.perMonthShort">/ mois</Translate>
         </span>
@@ -51,16 +49,16 @@ function PriceLine({ period, monthlyPrice, yearlyPrice }) {
           <>
             <Translate
               id="gladysPlusPage.v2.billingYearlyAmount"
-              values={{ amount: formatEuro(yearlyPrice) }}
+              values={{ amount: formatPrice(yearlyPrice, currency) }}
             >
-              {"{amount}€ billed yearly"}
+              {"{amount} billed yearly"}
             </Translate>
             <div className={styles.pricingSavings}>
               <Translate
                 id="gladysPlusPage.v2.billingYearlySavings"
                 values={{ amount: savings }}
               >
-                {"You save {amount}€/year"}
+                {"You save {amount}/year"}
               </Translate>
             </div>
           </>
@@ -82,6 +80,7 @@ function Plan({
   tagline,
   monthlyPrice,
   yearlyPrice,
+  currency,
   features,
   highlighted,
   badgeLabel,
@@ -105,6 +104,7 @@ function Plan({
           period={period}
           monthlyPrice={monthlyPrice}
           yearlyPrice={yearlyPrice}
+          currency={currency}
         />
       </div>
 
@@ -141,6 +141,9 @@ function Plan({
 
 function PricingTable({ language }) {
   const [period, setPeriod] = useState("yearly");
+  const region = useRegion();
+  const prices = PRICES[region];
+  const { currency } = prices;
 
   const monthlyLabel = translate({
     id: "gladysPlusPage.v2.toggleMonthly",
@@ -254,8 +257,9 @@ function PricingTable({ language }) {
             id: "gladysPlusPage.v2.lite.tagline",
             message: "L'essentiel pour l'accès à distance",
           })}
-          monthlyPrice={6.99}
-          yearlyPrice={69.99}
+          monthlyPrice={prices.lite.monthly}
+          yearlyPrice={prices.lite.yearly}
+          currency={currency}
           features={liteFeatures}
         />
         <Plan
@@ -267,8 +271,9 @@ function PricingTable({ language }) {
             id: "gladysPlusPage.v2.plus.tagline",
             message: "Toutes les intégrations avancées",
           })}
-          monthlyPrice={9.99}
-          yearlyPrice={99.99}
+          monthlyPrice={prices.plus.monthly}
+          yearlyPrice={prices.plus.yearly}
+          currency={currency}
           features={plusFeatures}
           highlighted
           badgeLabel={translate({
