@@ -87,6 +87,11 @@ function Open() {
     ? Math.round(usageChartData.chartmogul_data.current / 100)
     : null;
 
+  const communityMembers = usageChartData
+    ? usageChartData.forum_users.find((user) => user.user_type === "total")
+        ?.count
+    : null;
+
   async function fetchData() {
     const data = await getUsage();
     setUsageChartData(data);
@@ -231,10 +236,39 @@ function Open() {
                     id="openPage.description"
                     description="Open page description"
                   >
-                    Gladys Assistant is completely transparent: how much people
-                    are using Gladys? What's the current revenue of the project?
+                    Gladys Assistant is radically transparent. Here are our real
+                    numbers, live: how many homes run Gladys, our community, and
+                    how the project is funded. No investors, no ads, no data
+                    resale, just a project funded by the people who use it.
                   </Translate>
                 </p>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col col--10 col--offset-1">
+                <div className="alert alert--info" role="note">
+                  <h2 style={{ marginTop: 0 }}>
+                    <Translate
+                      id="openPage.lockin.title"
+                      description="Open page no lock-in title"
+                    >
+                      Your home never depends on us
+                    </Translate>
+                  </h2>
+                  <p style={{ marginBottom: 0 }}>
+                    <Translate
+                      id="openPage.lockin.body"
+                      description="Open page no lock-in body"
+                    >
+                      Gladys is open-source (Apache 2.0) and runs 100% locally on
+                      your own hardware. Even if Gladys Plus disappeared
+                      tomorrow, your automations keep running and your data stays
+                      in your home. Gladys Plus is a convenience, never a
+                      lock-in, and that is exactly why we can afford to be this
+                      transparent.
+                    </Translate>
+                  </p>
+                </div>
               </div>
             </div>
             {loading && (
@@ -274,7 +308,7 @@ function Open() {
                             id="openPage.homeRunningGladys"
                             description="Open Page home running Gladys"
                           >
-                            Home running Gladys
+                            Homes running Gladys
                           </Translate>
                         </div>
                         <h3
@@ -291,17 +325,17 @@ function Open() {
                       <div className="card__body">
                         <div className="text--center">
                           <Translate
-                            id="openPage.gladysPlusUsers"
-                            description="Open Page gladys plus users Gladys"
+                            id="openPage.communityMembers"
+                            description="Open Page community members"
                           >
-                            Gladys Plus users
+                            Community members
                           </Translate>
                         </div>
                         <h3
                           className="text--center"
                           style={{ fontSize: "4rem" }}
                         >
-                          {numberOfGladysPlusUsers}
+                          {communityMembers}
                         </h3>
                       </div>
                     </div>
@@ -311,18 +345,26 @@ function Open() {
                       <div className="card__body">
                         <div className="text--center">
                           <Translate
-                            id="openPage.mrr"
-                            description="Open Page MRR"
+                            id="openPage.onlineSince"
+                            description="Open Page online since"
                           >
-                            MRR
+                            Online since
                           </Translate>
                         </div>
                         <h3
                           className="text--center"
                           style={{ fontSize: "4rem" }}
                         >
-                          {mrr} €
+                          2019
                         </h3>
+                        <div className="text--center text--secondary">
+                          <Translate
+                            id="openPage.onlineSinceSubtitle"
+                            description="Open Page online since subtitle"
+                          >
+                            with near-zero downtime
+                          </Translate>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -342,6 +384,74 @@ function Open() {
                         <div style={{ height: "400px" }}>
                           <canvas ref={usageChartRef}></canvas>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className={"row " + styles.openPageChartRow}>
+                  <div className={"col col--12 " + styles.openPageCard}>
+                    <div className="card">
+                      <div className="card__body">
+                        <h2 className="text--center">
+                          <Translate
+                            id="openPage.funding.title"
+                            description="Open Page funding title"
+                          >
+                            How the project is funded
+                          </Translate>
+                        </h2>
+                        <p className="text--center">
+                          <Translate
+                            id="openPage.funding.intro"
+                            description="Open Page funding intro"
+                          >
+                            Gladys Plus is the only thing funding Gladys, and it
+                            is powered entirely by its subscribers. No outside
+                            money.
+                          </Translate>
+                        </p>
+                        <div className="row">
+                          <div className="col col--6 text--center">
+                            <div>
+                              <Translate
+                                id="openPage.funding.supporters"
+                                description="Open Page supporters"
+                              >
+                                Gladys Plus supporters
+                              </Translate>
+                            </div>
+                            <h3 style={{ fontSize: "3.5rem", marginBottom: 0 }}>
+                              {numberOfGladysPlusUsers}
+                            </h3>
+                          </div>
+                          <div className="col col--6 text--center">
+                            <div>
+                              <Translate
+                                id="openPage.funding.mrr"
+                                description="Open Page MRR label"
+                              >
+                                Monthly recurring revenue
+                              </Translate>
+                            </div>
+                            <h3 style={{ fontSize: "3.5rem", marginBottom: 0 }}>
+                              {mrr} €
+                            </h3>
+                          </div>
+                        </div>
+                        <p
+                          className="text--center"
+                          style={{ marginTop: "1.5rem", marginBottom: 0 }}
+                        >
+                          <Translate
+                            id="openPage.funding.note"
+                            description="Open Page funding note"
+                            values={{ count: numberOfGladysPlusUsers }}
+                          >
+                            {
+                              "That's it: {count} people keeping an independent, privacy-first project alive. Every subscription funds servers, infrastructure and development, nothing else. No investors to please, no growth at all costs."
+                            }
+                          </Translate>
+                        </p>
                       </div>
                     </div>
                   </div>
