@@ -909,26 +909,34 @@ export function getPlusPageSchema(lang) {
         ],
         brand: { "@type": "Brand", name: "Gladys Assistant" },
         provider: { "@id": `${SITE_URL}/#organization` },
-        offers: [
-          {
-            "@type": "Offer",
-            name: "Gladys Plus Lite",
-            price: "6.99",
-            priceCurrency: "EUR",
-            priceValidUntil: "2027-12-31",
-            availability: "https://schema.org/InStock",
-            url: pageUrl,
-          },
-          {
-            "@type": "Offer",
-            name: "Gladys Plus",
-            price: "9.99",
-            priceCurrency: "EUR",
-            priceValidUntil: "2027-12-31",
-            availability: "https://schema.org/InStock",
-            url: pageUrl,
-          },
-        ],
+        // Prices are only advertised in the schema for the French locale, where
+        // the page always shows EUR. The English page is multi-currency (USD for
+        // US/Canada, EUR elsewhere, resolved client-side), so a fixed EUR Offer
+        // would conflict with the price a US visitor actually sees and is billed.
+        ...(lang === "fr"
+          ? {
+              offers: [
+                {
+                  "@type": "Offer",
+                  name: "Gladys Plus Lite",
+                  price: "6.99",
+                  priceCurrency: "EUR",
+                  priceValidUntil: "2027-12-31",
+                  availability: "https://schema.org/InStock",
+                  url: pageUrl,
+                },
+                {
+                  "@type": "Offer",
+                  name: "Gladys Plus",
+                  price: "9.99",
+                  priceCurrency: "EUR",
+                  priceValidUntil: "2027-12-31",
+                  availability: "https://schema.org/InStock",
+                  url: pageUrl,
+                },
+              ],
+            }
+          : {}),
       },
       toFaqPage(lang === "fr" ? plusFaqFr : plusFaqEn, pageUrl),
     ],

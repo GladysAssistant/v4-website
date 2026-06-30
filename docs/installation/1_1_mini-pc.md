@@ -60,7 +60,7 @@ Install Ubuntu Server, then add Docker and run the official Gladys image. The mi
     mainEntity: [
       {
         "@type": "Question",
-        name: "Why use a mini-PC instead of a Raspberry Pi for Gladys?",
+        name: "Why use a mini-PC instead of a Raspberry Pi?",
         acceptedAnswer: {
           "@type": "Answer",
           text: "A mini-PC gives you more CPU power, more RAM and faster, more reliable storage than a Raspberry Pi, usually for a similar total price once you add a case, power supply and SSD. It is the setup we recommend to run Gladys smoothly over the long term.",
@@ -76,7 +76,7 @@ Install Ubuntu Server, then add Docker and run the official Gladys image. The mi
       },
       {
         "@type": "Question",
-        name: "What operating system should I install on the mini-PC?",
+        name: "What operating system should I install?",
         acceptedAnswer: {
           "@type": "Answer",
           text: "Install Ubuntu Server, then add Docker and run the official Gladys image. The mini-PC then works as a small, always-on home server for your smart home.",

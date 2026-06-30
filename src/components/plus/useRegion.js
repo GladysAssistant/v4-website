@@ -1,6 +1,39 @@
 import { useEffect, useState } from "react";
 
 const NORTH_AMERICA = new Set(["US", "CA"]);
+const CACHE_KEY = "gladys_region";
+// Re-detect at most once a day so a user who changes country (travel, VPN) is
+// not stuck on the old currency forever, while avoiding a request on every view.
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+
+function readCachedRegion() {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(CACHE_KEY) || "null");
+    if (
+      parsed &&
+      (parsed.region === "us" || parsed.region === "eu") &&
+      typeof parsed.detectedAt === "number" &&
+      Date.now() - parsed.detectedAt < CACHE_TTL_MS
+    ) {
+      return parsed.region;
+    }
+  } catch (e) {
+    // Unavailable (private mode), unparseable, or a legacy plain-string value:
+    // ignore and re-detect.
+  }
+  return null;
+}
+
+function writeCachedRegion(region) {
+  try {
+    window.localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({ region, detectedAt: Date.now() })
+    );
+  } catch (e) {
+    // ignore write failures
+  }
+}
 
 /**
  * Display-only region detection (US/CA vs rest of world), used to show the
@@ -13,7 +46,8 @@ const NORTH_AMERICA = new Set(["US", "CA"]);
  *
  * Detection uses Cloudflare's `/cdn-cgi/trace` endpoint, available on any domain
  * proxied through Cloudflare (which Cloudflare Pages domains are), so it needs
- * no extra serverless function.
+ * no extra serverless function. The result is cached for CACHE_TTL_MS and
+ * re-checked afterwards.
  */
 export default function useRegion() {
   // Default to "eu" so the server-rendered HTML and first client paint match
@@ -30,24 +64,15 @@ export default function useRegion() {
       const forced = new URLSearchParams(window.location.search).get("region");
       if (forced === "us" || forced === "eu") {
         setRegion(forced);
-        try {
-          window.localStorage.setItem("gladys_region", forced);
-        } catch (e) {
-          // ignore write failures
-        }
+        writeCachedRegion(forced);
         return undefined;
       }
     } catch (e) {
       // window unavailable (SSR) or bad URL; fall through to normal detection.
     }
 
-    let cached = null;
-    try {
-      cached = window.localStorage.getItem("gladys_region");
-    } catch (e) {
-      // localStorage may be unavailable (private mode); ignore.
-    }
-    if (cached === "us" || cached === "eu") {
+    const cached = readCachedRegion();
+    if (cached) {
       setRegion(cached);
       return undefined;
     }
@@ -62,11 +87,7 @@ export default function useRegion() {
         const loc = text.match(/loc=([A-Z]{2})/)?.[1];
         const next = loc && NORTH_AMERICA.has(loc) ? "us" : "eu";
         setRegion(next);
-        try {
-          window.localStorage.setItem("gladys_region", next);
-        } catch (e) {
-          // ignore write failures
-        }
+        writeCachedRegion(next);
       })
       .catch(() => {
         // Network/endpoint failure: keep the "eu" default.
