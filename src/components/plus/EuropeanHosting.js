@@ -1,8 +1,18 @@
 import React from "react";
 import Translate from "@docusaurus/Translate";
 import styles from "./styles.module.css";
+import useRegion from "./useRegion";
 
 function EuropeanHosting() {
+  // "Hosted in Europe" is an EU data-residency selling point that doesn't land
+  // for North American visitors (and implies transatlantic latency for their
+  // remote access), so hide it for US/Canada. The end-to-end encryption message
+  // it carries is already covered elsewhere on the page.
+  const region = useRegion();
+  if (region === "us") {
+    return null;
+  }
+
   return (
     <section
       className={styles.section}
