@@ -1,13 +1,27 @@
 ---
 id: zwavejs-ui
-title: Integrate your Z-Wave devices with Z-Wave JS UI
-description: "Integrate your Z-Wave devices into Gladys Assistant with Z-Wave JS UI over MQTT to control them and receive state changes in real time."
+title: "Z-Wave JS UI with Gladys: local Z-Wave over MQTT"
+description: "Integrate your Z-Wave devices into Gladys Assistant with Z-Wave JS UI over MQTT. Local control, real-time state changes, and US 908 MHz stick support."
 sidebar_label: Z-Wave JS UI
+keywords:
+  - z-wave js ui
+  - zwave js ui setup
+  - zwave js ui add device
+  - zwave mqtt
+  - z-wave gladys
+  - z-wave usb stick
+  - local z-wave control
 ---
 
-Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), a software application for controlling Z-Wave devices.
+import JsonLd from '@site/src/components/seo/JsonLd';
+
+Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), a software application for controlling Z-Wave devices. It runs **locally** on your own hardware, so your Z-Wave network keeps working with no cloud account.
 
 Gladys connects to the same MQTT broker as Z-Wave JS UI and receives MQTT messages whenever a device's status changes.
+
+:::note Choosing a Z-Wave USB stick for your region
+Z-Wave uses a different radio frequency depending on where you live, so your stick must match your country: **908.42 MHz in the US and Canada**, 868.42 MHz in Europe. For North America, popular sticks include the Zooz ZST10 700 / ZST39 and the Aeotec Z-Stick 7 (US version). Make sure you buy the US/Canada model, not the EU one.
+:::
 
 ## Installing Z-Wave JS UI
 
@@ -56,3 +70,62 @@ You can then add them to Gladys with a single click!
 - **Binary Sensors** – Support various on/off detection scenarios.
 
 If your device is not currently supported, let us know on the forum!
+
+## Frequently asked questions
+
+### How do I add a Z-Wave device to Gladys?
+
+First pair the device with Z-Wave JS UI (its own inclusion process). Once it is on your Z-Wave network, open the "Discovered" tab in the Gladys Z-Wave JS UI integration to see the devices your instance exposes, and add the ones you want to Gladys with a single click.
+
+### Which Z-Wave USB stick should I use in the US or Canada?
+
+Pick a stick built for the North American 908.42 MHz frequency, such as the Zooz ZST10 700 / ZST39 or the Aeotec Z-Stick 7 (US version). A European 868.42 MHz stick will not talk to US or Canadian Z-Wave devices, so always check the region before buying.
+
+### Does Gladys connect to Z-Wave directly or through Z-Wave JS UI?
+
+Gladys connects through Z-Wave JS UI over MQTT. Z-Wave JS UI drives the USB stick and publishes device states to an MQTT broker, and Gladys subscribes to that broker to read states and send commands in real time.
+
+### Does Z-Wave with Gladys work locally without the cloud?
+
+Yes. Z-Wave JS UI, the MQTT broker and Gladys all run on your own hardware, so your Z-Wave automations keep running with no internet connection and no manufacturer cloud.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How do I add a Z-Wave device to Gladys?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "First pair the device with Z-Wave JS UI using its own inclusion process. Once it is on your Z-Wave network, open the Discovered tab in the Gladys Z-Wave JS UI integration to see the devices your instance exposes, and add the ones you want to Gladys with a single click.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Which Z-Wave USB stick should I use in the US or Canada?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Pick a stick built for the North American 908.42 MHz frequency, such as the Zooz ZST10 700 or ZST39, or the Aeotec Z-Stick 7 US version. A European 868.42 MHz stick will not talk to US or Canadian Z-Wave devices, so always check the region before buying.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Does Gladys connect to Z-Wave directly or through Z-Wave JS UI?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Gladys connects through Z-Wave JS UI over MQTT. Z-Wave JS UI drives the USB stick and publishes device states to an MQTT broker, and Gladys subscribes to that broker to read states and send commands in real time.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Does Z-Wave with Gladys work locally without the cloud?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Z-Wave JS UI, the MQTT broker and Gladys all run on your own hardware, so your Z-Wave automations keep running with no internet connection and no manufacturer cloud.",
+        },
+      },
+    ],
+  }}
+/>
