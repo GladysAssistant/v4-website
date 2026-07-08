@@ -1043,7 +1043,7 @@ function Plus() {
                               fontWeight: "bold",
                             }}
                           >
-                            ✓ Gladys Pré-installée
+                            ⚖️ Équilibré
                           </span>
                         )}
                         <div>
@@ -1174,10 +1174,9 @@ function Plus() {
                               borderRadius: "25px",
                               fontSize: "1em",
                               fontWeight: "bold",
-                              whiteSpace: "nowrap",
                             }}
                           >
-                            ⭐ Recommandé · Gladys pré-installée
+                            ⭐ Recommandé
                           </span>
                         )}
                         <div>
