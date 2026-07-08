@@ -1551,90 +1551,7 @@ function Plus() {
             >
               Ce qu'ils pensent du kit de démarrage
             </h2>
-            <div className="row">
-              <div
-                className="col col--4"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <div
-                  style={{
-                    border: "1px solid #ddd",
-                    padding: "25px",
-                    borderRadius: "8px",
-                    textAlign: "left",
-                    flexGrow: 1,
-                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <p style={{ fontStyle: "italic", marginBottom: "15px" }}>
-                    {
-                      "Je suis passé d’un Raspberry Pi au Beelink Mini S12 Pro grâce au Kit de démarrage Gladys et j’en suis très content. J’ai constaté un gain en réactivité et j’ai plus confiance en mon système domotique maintenant, tout ça dans un format compact et silencieux. Et la migration s’est faite en quelques minutes grâce aux sauvegardes Gladys Plus."
-                    }
-                  </p>
-                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
-                    - cicoub13
-                  </p>
-                </div>
-              </div>
-              <div
-                className="col col--4"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <div
-                  style={{
-                    border: "1px solid #ddd",
-                    padding: "25px",
-                    borderRadius: "8px",
-                    textAlign: "left",
-                    flexGrow: 1,
-                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <p
-                    style={{ fontStyle: "italic", marginBottom: "15px" }}
-                  >{`"Super offre clairement intéressant pour quelqu'un qui veut se lancer en domotique avec Gladys"`}</p>
-                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
-                    - McFlyPartages
-                  </p>
-                </div>
-              </div>
-              <div
-                className="col col--4"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <div
-                  style={{
-                    border: "1px solid #ddd",
-                    padding: "25px",
-                    borderRadius: "8px",
-                    textAlign: "left",
-                    flexGrow: 1,
-                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <p
-                    style={{ fontStyle: "italic", marginBottom: "15px" }}
-                  >{`"Je viens de souscrire un kit de démarrage, content de rejoindre la communauté !"`}</p>
-                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
-                    - Nagromdark
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Témoignage novice détaillé */}
+            {/* Témoignage novice détaillé, mis en avant */}
             <div className="row">
               <div
                 className="col col--8 col--offset-2"
@@ -1661,6 +1578,37 @@ function Plus() {
                   </p>
                   <p style={{ fontWeight: "bold", textAlign: "right" }}>
                     - Chris75
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="row">
+              <div
+                className="col col--8 col--offset-2"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "25px",
+                    borderRadius: "8px",
+                    textAlign: "left",
+                    flexGrow: 1,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <p style={{ fontStyle: "italic", marginBottom: "15px" }}>
+                    {
+                      "Je suis passé d’un Raspberry Pi au Beelink Mini S12 Pro grâce au Kit de démarrage Gladys et j’en suis très content. J’ai constaté un gain en réactivité et j’ai plus confiance en mon système domotique maintenant, tout ça dans un format compact et silencieux. Et la migration s’est faite en quelques minutes grâce aux sauvegardes Gladys Plus."
+                    }
+                  </p>
+                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
+                    - cicoub13
                   </p>
                 </div>
               </div>
