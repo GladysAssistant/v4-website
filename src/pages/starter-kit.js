@@ -1478,6 +1478,7 @@ function Plus() {
                   href="https://formation.gladysassistant.com/b/T6f3j"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-track="starter_kit_view_formation_program"
                 >
                   Voir le programme de la formation →
                 </a>
