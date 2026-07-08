@@ -650,10 +650,11 @@ function Plus() {
 
               <div className={styles.valueRow}>
                 <div className={styles.valueLabel}>Formation vidéo pas à pas</div>
-                <div className={styles.valueTag}>incluse</div>
+                <div className={styles.valueTag}>valeur 29,90€</div>
                 <div className={styles.valueDesc}>
                   Des tutoriels vidéo pour prendre Gladys en main de A à Z, même
-                  si tu débutes complètement en domotique.
+                  si tu débutes complètement en domotique. Vendue 29,90€ si tu
+                  l'achètes séparément, elle est incluse dans le kit.
                 </div>
               </div>
 
@@ -1469,6 +1470,10 @@ function Plus() {
                 Avoir accès à cette base de connaissance, c'est gagner du{" "}
                 <b>temps</b> et de <b>l'argent</b> sur ton installation
                 domotique.
+              </p>
+              <p>
+                Cette formation est <b>vendue 29,90€ séparément</b>, et elle est{" "}
+                <b>incluse gratuitement</b> dans le kit de démarrage.
               </p>
             </div>
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
