@@ -255,7 +255,7 @@ export const alternativeFaqEn = [
   {
     question: "Is there a simpler Jeedom alternative for beginners?",
     answer:
-      "Gladys Assistant is designed for simplicity: a clean modern interface, no configuration files, automatic atomic updates, rich documentation with videos, and a starter kit with everything pre-installed. It's one of the easiest open-source options to get started with.",
+      "Gladys Assistant is designed for simplicity: a clean modern interface, no configuration files, automatic atomic updates, rich documentation with videos. It's one of the easiest open-source options to get started with.",
   },
   {
     question: "Can I migrate from Jeedom to Gladys?",

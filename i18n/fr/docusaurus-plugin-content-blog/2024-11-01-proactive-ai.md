@@ -20,7 +20,7 @@ C’était un bon début, mais je veux aller encore plus loin ! Et si l’IA pou
 
 ## Imaginez les possibilités
 
-Imaginez qu’une voiture arrive devant chez vous. Un agent de sécurité dévoué surveillerait, reconnaîtrait votre voiture – sa forme, sa couleur, sa plaque – et saurait immédiatement que c’est bien vous. Mais embaucher un agent 24/24, ce n’est pas à la portée de tous !
+Imaginez qu’une voiture arrive devant chez vous. Un agent de sécurité dévoué surveillerait, reconnaîtrait votre voiture, sa forme, sa couleur, sa plaque, et saurait immédiatement que c’est bien vous. Mais embaucher un agent 24/24, ce n’est pas à la portée de tous !
 
 Et si l’IA pouvait remplir ce rôle ?
 

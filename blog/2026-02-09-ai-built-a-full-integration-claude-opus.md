@@ -20,6 +20,6 @@ I show the whole process in my latest YouTube video:
 
 The final pull request is here: [GladysAssistant/Gladys#2430](https://github.com/GladysAssistant/Gladys/pull/2430)
 
-This matters for Gladys: it means we can dramatically lower the barrier to contributing new integrations. If you have comments, drop them under the YouTube video — it really helps the channel, and I'll answer quickly!
+This matters for Gladys: it means we can dramatically lower the barrier to contributing new integrations. If you have comments, drop them under the YouTube video, it really helps the channel, and I'll answer quickly!
 
 Have a great week 🚀

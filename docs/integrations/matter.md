@@ -33,7 +33,7 @@ In short, Matter focuses on the “what” and the “how” of smart device int
 
 Thread, on the other hand, is a **low-level mesh network protocol**, designed for communication between low-power wireless devices. It acts as an alternative to Zigbee or Wi-Fi, but unlike them, it is based on IP standards (IPv6), making it natively Internet-compatible.
 
-Thread handles the “how it travels” part — that is, transporting messages over a reliable, fast, and secure wireless network.
+Thread handles the “how it travels” part, that is, transporting messages over a reliable, fast, and secure wireless network.
 
 Some Matter devices use Thread as their network protocol, but not all! Matter devices can also use Wi-Fi, Ethernet, or even Bluetooth.
 

@@ -14,7 +14,7 @@ I'm really proud to see Gladys featured on **Antoine Guilbert's blog**, a French
 
 The article is great: well-researched, beautifully written, and it perfectly captures the vision behind Gladys and what we're trying to build with the project.
 
-I really recommend giving it a read — it's a genuinely pleasant one:
+I really recommend giving it a read, it's a genuinely pleasant one:
 
 👉 [Read the article on AntoineGuilbert.fr](https://www.antoineguilbert.fr/gladys-assistant-alternative-home-assistant/)
 

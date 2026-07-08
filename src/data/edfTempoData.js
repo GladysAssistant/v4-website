@@ -12,7 +12,7 @@ export const TEMPO_API_URL =
 const edfTempoContent = {
   en: {
     meta: {
-      title: "EDF Tempo: today's colour (and tomorrow's) — live",
+      title: "EDF Tempo: today's colour (and tomorrow's), live",
       description:
         "Is today an EDF Tempo blue, white or red day? See the live Tempo colour of the day and tomorrow's colour, learn what each colour costs, and how to automate Tempo at home with Gladys.",
     },

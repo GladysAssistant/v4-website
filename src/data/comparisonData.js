@@ -56,7 +56,7 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "Lit + Web Components" },
       {
         feature: "Installation",
-        gladys: "One Docker command, rich docs and videos, or a starter kit pre-installed",
+        gladys: "One Docker command, rich docs and videos",
         ha: "Home Assistant OS, the HA Green box, or Docker",
       },
       {
@@ -121,7 +121,6 @@ const comparisonContent = {
         title: "Installation",
         gladys: [
           "Gladys is genuinely simple to install. It runs with a single Docker command (a `docker run` line or a `docker-compose` file you copy, paste and launch), and the documentation walks you through every step with screenshots and installation videos.",
-          "If you'd rather skip setup entirely, the official starter kit is a Beelink mini-PC that arrives with Gladys already installed and configured. You plug it in, follow the quick-start guide, and you're up and running in minutes.",
           "And because Gladys is just a container, you stay free to use your mini-PC, NAS or Raspberry Pi for other things too.",
         ],
         ha: [
@@ -195,7 +194,7 @@ const comparisonContent = {
         title: "Pricing & business model",
         gladys: [
           "Gladys is 100% free and open-source at its core, forever. There's an optional Gladys Plus subscription for remote access, encrypted automated backups, voice assistants (Google Home, Alexa), AI and Enedis energy data.",
-          "I also sell starter kits, not to make margin but to make Gladys more accessible. The business model is really the subscription, with no investors, no ads and no data resale.",
+          "The business model is really the subscription, with no investors, no ads and no data resale.",
         ],
         ha: [
           "Home Assistant is also 100% free and open-source at its core, with an optional Nabu Casa Cloud subscription (remote access, voice) and a growing line of hardware like the HA Green box.",

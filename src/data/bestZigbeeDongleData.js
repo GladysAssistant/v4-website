@@ -149,7 +149,10 @@ const bestZigbeeDongleContent = {
       title: "Build your local Zigbee network",
       text: "Gladys is free, open-source, and installs in a single Docker command. Plug in a dongle and control your Zigbee devices locally, no hub required.",
       primary: { label: "Get started", href: "/docs/" },
-      secondary: { label: "Discover the starter kit", href: "/starter-kit/" },
+      secondary: {
+        label: "Set up Zigbee2MQTT",
+        href: "/docs/integrations/zigbee2mqtt/",
+      },
     },
   },
 

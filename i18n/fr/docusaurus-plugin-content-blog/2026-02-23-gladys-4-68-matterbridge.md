@@ -8,7 +8,7 @@ slug: gladys-4-68-matterbridge
 
 Salut à tous,
 
-Une nouvelle version de Gladys est disponible, avec plusieurs améliorations et corrections — dont la possibilité de lancer **Matterbridge** en un clic, ouvrant la porte à encore plus d'appareils compatibles.
+Une nouvelle version de Gladys est disponible, avec plusieurs améliorations et corrections, dont la possibilité de lancer **Matterbridge** en un clic, ouvrant la porte à encore plus d'appareils compatibles.
 
 {/* truncate */}
 

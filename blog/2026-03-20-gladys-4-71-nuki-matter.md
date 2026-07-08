@@ -28,7 +28,7 @@ Thanks [@ProtZ](https://community.gladysassistant.com/) for this thorough work!
 Matter keeps evolving quickly in Gladys:
 
 - **Clearer pairing process:** pairing instructions are now easier to read and more accessible for new users.
-- **New Boolean & Switch clusters:** to support the IKEA BILRESA and the Aqara Door and Window Sensor P2. I developed this compatibility by testing through Matterbridge — feedback on IKEA / Aqara devices is very welcome 🙂
+- **New Boolean & Switch clusters:** to support the IKEA BILRESA and the Aqara Door and Window Sensor P2. I developed this compatibility by testing through Matterbridge, feedback on IKEA / Aqara devices is very welcome 🙂
 - **HEPA filter monitoring:** Matter-compatible air purifiers can now expose their HEPA filter status in Gladys. Thanks **@Nagromdark**!
 
 I'm continuing to invest heavily in Matter, and I'm currently preparing a major update of the `matter-js` library for even more stability and compatibility.
@@ -41,7 +41,7 @@ A message now clearly indicates that this integration only works with Bluetooth 
 
 ## 🛠️ Missing icons for energy production sensors
 
-`ENERGY_PRODUCTION_SENSOR` features had missing icons in some views. This is now fixed — thanks **@Terdious**!
+`ENERGY_PRODUCTION_SENSOR` features had missing icons in some views. This is now fixed, thanks **@Terdious**!
 
 ---
 

@@ -28,11 +28,12 @@ async function getUsage() {
   const labels = [];
   const points = [];
 
-  data.gladys_4_instances.forEach((elem, index) => {
-    if (index < data.gladys_4_instances.length - 1) {
-      labels.push(elem.month);
-      points.push(elem.nb_instances);
-    }
+  // Keep every month, including the current (still-running) one. The last
+  // point is flagged as "in progress" in the chart instead of being dropped,
+  // so the most recent recovery stays visible.
+  data.gladys_4_instances.forEach((elem) => {
+    labels.push(elem.month);
+    points.push(elem.nb_instances);
   });
 
   const forumPageViewsLabels = [];
@@ -65,6 +66,39 @@ async function getUsage() {
   };
 }
 
+// "2026-06" -> "Jun 2026" (localized short month + year).
+function formatMonthLabel(month, locale) {
+  const [year, monthIndex] = month.split("-").map(Number);
+  const date = new Date(year, monthIndex - 1, 1);
+  return date.toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US", {
+    month: "short",
+    year: "numeric",
+  });
+}
+
+// Returns a straight line (one value per point) fitted to the data with a
+// least-squares linear regression. Overlaying it on the instance chart shows
+// the long-term direction, so a one-off spike (the viral Feb 2026 video) and
+// the churn that follows it don't read as the project declining.
+function computeTrendLine(points) {
+  const n = points.length;
+  const ys = points.map((p) => Number(p));
+  if (n < 2) {
+    return ys;
+  }
+  const meanX = (n - 1) / 2;
+  const meanY = ys.reduce((sum, y) => sum + y, 0) / n;
+  let sxy = 0;
+  let sxx = 0;
+  for (let i = 0; i < n; i += 1) {
+    sxy += (i - meanX) * (ys[i] - meanY);
+    sxx += (i - meanX) ** 2;
+  }
+  const slope = sxx === 0 ? 0 : sxy / sxx;
+  const intercept = meanY - slope * meanX;
+  return ys.map((_, i) => Math.round(intercept + slope * i));
+}
+
 function Open() {
   const context = useDocusaurusContext();
   const [usageChartCanva, setUsageChartCanva] = useState(null);
@@ -73,7 +107,6 @@ function Open() {
   const [usageChartData, setUsageChartData] = useState(null);
   const { i18n } = context;
   const language = i18n.currentLocale;
-  const urlPrefix = language === "fr" ? "/fr" : "";
 
   const numberOfInstances = usageChartData
     ? usageChartData.points[usageChartData.points.length - 1]
@@ -86,6 +119,15 @@ function Open() {
   const mrr = usageChartData
     ? Math.round(usageChartData.chartmogul_data.current / 100)
     : null;
+
+  const communityMembers = usageChartData
+    ? usageChartData.forum_users.find((user) => user.user_type === "total")
+        ?.count
+    : null;
+
+  // Gladys has been developed in the open since 2013. Compute the count of
+  // years live so the longevity stat never goes stale.
+  const yearsInTheOpen = new Date().getFullYear() - 2013;
 
   async function fetchData() {
     const data = await getUsage();
@@ -101,15 +143,60 @@ function Open() {
     if (!usageChartData) {
       return;
     }
+    const lastIndex = usageChartData.points.length - 1;
+    const currentTag = translate({
+      id: "openPage.chart.currentMonthShort",
+      description: "Instance chart current month short tag",
+      message: "current",
+    });
+    const currentMonthTooltip = translate({
+      id: "openPage.chart.currentMonthTooltip",
+      description: "Instance chart current month tooltip",
+      message: "Current month, still in progress",
+    });
+    const displayLabels = usageChartData.labels.map((month, index) => {
+      const base = formatMonthLabel(month, language);
+      return index === lastIndex ? `${base} (${currentTag})` : base;
+    });
     const config = {
       type: "line",
       data: {
-        labels: usageChartData.labels,
+        labels: displayLabels,
         datasets: [
           {
-            label: "Number of Gladys instances",
+            label: translate({
+              id: "openPage.chart.activeInstances",
+              description: "Instance chart active instances series label",
+              message: "Active instances",
+            }),
             borderColor: "#74b9ff",
+            backgroundColor: "#74b9ff",
             data: usageChartData.points,
+            fill: false,
+            tension: 0.3,
+            // Dash the very last segment and highlight the last point so the
+            // still-running current month reads as provisional, not final.
+            segment: {
+              borderDash: (ctx) =>
+                ctx.p1DataIndex === lastIndex ? [6, 6] : undefined,
+            },
+            pointRadius: (ctx) => (ctx.dataIndex === lastIndex ? 6 : 3),
+            pointBackgroundColor: (ctx) =>
+              ctx.dataIndex === lastIndex ? "#e17055" : "#74b9ff",
+            pointBorderColor: (ctx) =>
+              ctx.dataIndex === lastIndex ? "#e17055" : "#74b9ff",
+          },
+          {
+            label: translate({
+              id: "openPage.chart.trend",
+              description: "Instance chart trend line label",
+              message: "Long-term trend",
+            }),
+            borderColor: "#00b894",
+            borderDash: [6, 6],
+            borderWidth: 2,
+            pointRadius: 0,
+            data: computeTrendLine(usageChartData.points),
             fill: false,
           },
         ],
@@ -124,6 +211,12 @@ function Open() {
         plugins: {
           tooltip: {
             position: "nearest",
+            callbacks: {
+              afterLabel: (ctx) =>
+                ctx.dataIndex === lastIndex && ctx.datasetIndex === 0
+                  ? currentMonthTooltip
+                  : undefined,
+            },
           },
         },
         indexAxis: "x",
@@ -134,7 +227,11 @@ function Open() {
           y: {
             title: {
               display: true,
-              text: "Number of instances",
+              text: translate({
+                id: "openPage.chart.yAxis",
+                description: "Instance chart y axis title",
+                message: "Number of instances",
+              }),
             },
             beginAtZero: true,
           },
@@ -211,52 +308,77 @@ function Open() {
       <main>
         <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
           <div className="container">
-            <div className="row">
-              <div className="col col--12">
-                <h1
-                  className="text--center"
-                  style={{
-                    fontSize: "50px",
-                  }}
+            <div className={styles.openHero}>
+              <span className={styles.openEyebrow}>
+                <span className={styles.liveDot} aria-hidden="true"></span>
+                <Translate
+                  id="openPage.eyebrow"
+                  description="Open page live eyebrow"
                 >
+                  Live numbers, updated automatically
+                </Translate>
+              </span>
+              <h1 className={styles.openTitle}>
+                <Translate id="openPage.h1" description="Gladys open page H1">
+                  Everything about Gladys, in the open
+                </Translate>
+              </h1>
+              <p className={styles.openLead}>
+                <Translate
+                  id="openPage.description"
+                  description="Open page description"
+                >
+                  No investors, no ads, no data resale. Gladys has been built in
+                  the open since 2013 and runs entirely on your own hardware.
+                  These are the real numbers behind the project, live.
+                </Translate>
+              </p>
+            </div>
+            <div className={styles.lockinCallout}>
+              <div className={styles.lockinIcon} aria-hidden="true">
+                🔒
+              </div>
+              <div>
+                <h2 className={styles.lockinTitle}>
                   <Translate
-                    id="openPage.title"
-                    description="Gladys open page title"
+                    id="openPage.lockin.title"
+                    description="Open page no lock-in title"
                   >
-                    Open metrics
+                    Your home never depends on us
                   </Translate>
-                </h1>
-                <p className="text--center">
+                </h2>
+                <p className={styles.lockinBody}>
                   <Translate
-                    id="openPage.description"
-                    description="Open page description"
+                    id="openPage.lockin.body"
+                    description="Open page no lock-in body"
                   >
-                    Gladys Assistant is completely transparent: how much people
-                    are using Gladys? What's the current revenue of the project?
+                    Gladys is open-source (Apache 2.0) and runs 100% locally on
+                    your own hardware. If Gladys Plus disappeared tomorrow, your
+                    automations would keep running and your data would stay in
+                    your home. Gladys Plus is a convenience, never a lock-in, and
+                    that is exactly why we can afford to be this transparent.
                   </Translate>
                 </p>
               </div>
             </div>
             {loading && (
               <div className={styles.loadingContainer}>
-                <div className="row">
-                  <div className="col col--4">
-                    <div className={styles.skeletonCard}>
-                      <div className={styles.skeletonTitle}></div>
-                      <div className={styles.skeletonNumber}></div>
-                    </div>
+                <div className={styles.metricsGrid}>
+                  <div className={styles.skeletonCard}>
+                    <div className={styles.skeletonTitle}></div>
+                    <div className={styles.skeletonNumber}></div>
                   </div>
-                  <div className="col col--4">
-                    <div className={styles.skeletonCard}>
-                      <div className={styles.skeletonTitle}></div>
-                      <div className={styles.skeletonNumber}></div>
-                    </div>
+                  <div className={styles.skeletonCard}>
+                    <div className={styles.skeletonTitle}></div>
+                    <div className={styles.skeletonNumber}></div>
                   </div>
-                  <div className="col col--4">
-                    <div className={styles.skeletonCard}>
-                      <div className={styles.skeletonTitle}></div>
-                      <div className={styles.skeletonNumber}></div>
-                    </div>
+                  <div className={styles.skeletonCard}>
+                    <div className={styles.skeletonTitle}></div>
+                    <div className={styles.skeletonNumber}></div>
+                  </div>
+                  <div className={styles.skeletonCard}>
+                    <div className={styles.skeletonTitle}></div>
+                    <div className={styles.skeletonNumber}></div>
                   </div>
                 </div>
                 <div className={styles.skeletonChart}></div>
@@ -265,220 +387,245 @@ function Open() {
             )}
             {loading === false && (
               <div>
-                <div className="row">
-                  <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card">
-                      <div className="card__body">
-                        <div className="text--center">
-                          <Translate
-                            id="openPage.homeRunningGladys"
-                            description="Open Page home running Gladys"
-                          >
-                            Home running Gladys
-                          </Translate>
-                        </div>
-                        <h3
-                          className="text--center"
-                          style={{ fontSize: "4rem" }}
-                        >
-                          {numberOfInstances}
-                        </h3>
-                      </div>
+                <div className={styles.metricsGrid}>
+                  <div className={styles.metricCard}>
+                    <div className={styles.metricIcon} aria-hidden="true">
+                      🏠
+                    </div>
+                    <div className={styles.metricValue}>{numberOfInstances}</div>
+                    <div className={styles.metricLabel}>
+                      <Translate
+                        id="openPage.homeRunningGladys"
+                        description="Open Page home running Gladys"
+                      >
+                        Homes running Gladys
+                      </Translate>
+                    </div>
+                    <div className={styles.metricSub}>
+                      <Translate
+                        id="openPage.metric.homesSub"
+                        description="Open page homes metric subtitle"
+                      >
+                        Live, self-reported
+                      </Translate>
                     </div>
                   </div>
-                  <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card">
-                      <div className="card__body">
-                        <div className="text--center">
-                          <Translate
-                            id="openPage.gladysPlusUsers"
-                            description="Open Page gladys plus users Gladys"
-                          >
-                            Gladys Plus users
-                          </Translate>
-                        </div>
-                        <h3
-                          className="text--center"
-                          style={{ fontSize: "4rem" }}
-                        >
+                  <div className={styles.metricCard}>
+                    <div className={styles.metricIcon} aria-hidden="true">
+                      💬
+                    </div>
+                    <div className={styles.metricValue}>{communityMembers}</div>
+                    <div className={styles.metricLabel}>
+                      <Translate
+                        id="openPage.communityMembers"
+                        description="Open Page community members"
+                      >
+                        Community members
+                      </Translate>
+                    </div>
+                    <div className={styles.metricSub}>
+                      <Translate
+                        id="openPage.metric.communitySub"
+                        description="Open page community metric subtitle"
+                      >
+                        On the forum and beyond
+                      </Translate>
+                    </div>
+                  </div>
+                  <div className={styles.metricCard}>
+                    <div className={styles.metricIcon} aria-hidden="true">
+                      🌱
+                    </div>
+                    <div className={styles.metricValue}>{yearsInTheOpen}</div>
+                    <div className={styles.metricLabel}>
+                      <Translate
+                        id="openPage.metric.yearsLabel"
+                        description="Open page years metric label"
+                      >
+                        Years in the open
+                      </Translate>
+                    </div>
+                    <div className={styles.metricSub}>
+                      <Translate
+                        id="openPage.metric.yearsSub"
+                        description="Open page years metric subtitle"
+                      >
+                        Since 2013, still independent
+                      </Translate>
+                    </div>
+                  </div>
+                  <div className={styles.metricCard}>
+                    <div className={styles.metricIcon} aria-hidden="true">
+                      ❤️
+                    </div>
+                    <div className={styles.metricValue}>
+                      {numberOfGladysPlusUsers}
+                    </div>
+                    <div className={styles.metricLabel}>
+                      <Translate
+                        id="openPage.funding.supporters"
+                        description="Open Page supporters"
+                      >
+                        Gladys Plus supporters
+                      </Translate>
+                    </div>
+                    <div className={styles.metricSub}>
+                      <Translate
+                        id="openPage.metric.supportersSub"
+                        description="Open page supporters metric subtitle"
+                      >
+                        Funding the whole project
+                      </Translate>
+                    </div>
+                  </div>
+                </div>
+                <section className={styles.openSection}>
+                  <div className={styles.openPanel}>
+                    <h2 className={styles.openPanelTitle}>
+                      <Translate
+                        id="openPage.numberOfHomeRunningGladys"
+                        description="Chart title"
+                      >
+                        Homes running Gladys over time
+                      </Translate>
+                    </h2>
+                    <div style={{ height: "400px" }}>
+                      <canvas ref={usageChartRef}></canvas>
+                    </div>
+                    <p className={styles.chartCaption}>
+                      <Translate
+                        id="openPage.chart.spikeNote"
+                        description="Open page instance chart spike explanation"
+                      >
+                        The February 2026 peak came from a viral "Home Assistant
+                        vs Gladys" video that brought a wave of curious users.
+                        The base that stayed is still well above where we
+                        started, and the long-term trend keeps pointing up. The
+                        last, dotted point is the current month, still in
+                        progress.
+                      </Translate>
+                    </p>
+                  </div>
+                </section>
+                <section className={styles.openSection}>
+                  <div className={styles.fundingPanel}>
+                    <h2 className={styles.openPanelTitle}>
+                      <Translate
+                        id="openPage.funding.title"
+                        description="Open Page funding title"
+                      >
+                        How the project is funded
+                      </Translate>
+                    </h2>
+                    <p className={styles.openPanelIntro}>
+                      <Translate
+                        id="openPage.funding.intro"
+                        description="Open Page funding intro"
+                      >
+                        Gladys Plus is the only thing funding Gladys, and it runs
+                        entirely on its subscribers. No outside money, no strings
+                        attached.
+                      </Translate>
+                    </p>
+                    <div className={styles.fundingStats}>
+                      <div className={styles.fundingStat}>
+                        <div className={styles.fundingStatValue}>
                           {numberOfGladysPlusUsers}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card">
-                      <div className="card__body">
-                        <div className="text--center">
+                        </div>
+                        <div className={styles.fundingStatLabel}>
                           <Translate
-                            id="openPage.mrr"
-                            description="Open Page MRR"
+                            id="openPage.funding.supporters"
+                            description="Open Page supporters"
                           >
-                            MRR
+                            Gladys Plus supporters
                           </Translate>
                         </div>
-                        <h3
-                          className="text--center"
-                          style={{ fontSize: "4rem" }}
+                      </div>
+                      <div className={styles.fundingStat}>
+                        <div className={styles.fundingStatValue}>{mrr} €</div>
+                        <div className={styles.fundingStatLabel}>
+                          <Translate
+                            id="openPage.funding.mrr"
+                            description="Open Page MRR label"
+                          >
+                            Monthly recurring revenue
+                          </Translate>
+                        </div>
+                      </div>
+                    </div>
+                    <p className={styles.fundingNote}>
+                      <Translate
+                        id="openPage.funding.note"
+                        description="Open Page funding note"
+                        values={{ count: numberOfGladysPlusUsers }}
+                      >
+                        {
+                          "That's it: {count} people keeping an independent, privacy-first project alive. Every subscription funds servers, infrastructure and development, nothing else. No investors to please, no growth at all costs."
+                        }
+                      </Translate>
+                    </p>
+                  </div>
+                </section>
+                <section className={styles.openSection}>
+                  <h2 className={styles.openSectionHeading}>
+                    <Translate
+                      id="openPage.community.title"
+                      description="Open page community section title"
+                    >
+                      A living community
+                    </Translate>
+                  </h2>
+                  <div className={styles.communityGrid}>
+                    <div className={styles.openPanel}>
+                      <h3 className={styles.openPanelSubtitle}>
+                        <Translate
+                          id="openPage.nbOfForumUsers"
+                          description="Gladys open page number of forum users"
                         >
-                          {mrr} €
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class={"row " + styles.openPageChartRow}>
-                  <div className={"col col--12 " + styles.openPageCard}>
-                    <div className="card">
-                      <div className="card__body">
-                        <h2 className="text--center">
-                          <Translate
-                            id="openPage.numberOfHomeRunningGladys"
-                            description="Chart title"
-                          >
-                            Number of home running Gladys
-                          </Translate>
-                        </h2>
-                        <div style={{ height: "400px" }}>
-                          <canvas ref={usageChartRef}></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class={"row " + styles.openPageChartRow}>
-                  <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card" style={{ height: "270px" }}>
-                      <div className="card__body">
-                        <h2 className="text--center">
-                          <Translate
-                            id="openPage.lastYearReviews"
-                            description="Last year reviews"
-                          >
-                            Last years reviews
-                          </Translate>
-                        </h2>
-                        <ul>
-                          <li className={styles.openPageList}>
-                            <a href={`${urlPrefix}/blog/2024-year-in-review`}>
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2024 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a href={`${urlPrefix}/blog/2023-year-in-review`}>
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2023 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a href={`${urlPrefix}/blog/2022-year-in-review`}>
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2022 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a href={`${urlPrefix}/blog/2021-year-in-review`}>
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2021 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                          <li className={styles.openPageList}>
-                            <a
-                              href={`${urlPrefix}/blog/bilan-2020-gladys-assistant`}
+                          Forum members
+                        </Translate>
+                      </h3>
+                      <div className={styles.forumUserList}>
+                        {usageChartData &&
+                          usageChartData.forum_users &&
+                          usageChartData.forum_users.map((user) => (
+                            <div
+                              className={styles.forumUserRow}
+                              key={user.user_type}
                             >
-                              <Translate
-                                id="openPage.yearlyReview"
-                                description="Yearly reviews"
-                                values={{ year: 2020 }}
-                              >
-                                {"{year} yearly review"}
-                              </Translate>
-                            </a>
-                          </li>
-                        </ul>
+                              <span className={styles.forumUserType}>
+                                {user.user_type}
+                              </span>
+                              <span className={styles.forumUserCount}>
+                                {user.count}
+                              </span>
+                            </div>
+                          ))}
                       </div>
                     </div>
-                  </div>
-                  <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card" style={{ height: "270px" }}>
-                      <div className="card__body">
-                        <h2 className="text--center">
-                          <Translate
-                            id="openPage.nbOfForumUsers"
-                            description="Gladys open page number of forum users"
-                          >
-                            No. of forum users
-                          </Translate>
-                        </h2>
-                        <ul>
-                          {usageChartData &&
-                            usageChartData.forum_users &&
-                            usageChartData.forum_users.map((user) => (
-                              <li className={styles.openPageList}>
-                                <b>{user.user_type}:</b> {user.count}
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={"col col--4 " + styles.openPageCard}>
-                    <div className="card" style={{ height: "270px" }}>
-                      <div className="card__header">
-                        <h2
-                          className="text--center"
-                          style={{ marginBottom: 0 }}
+                    <div className={styles.openPanel}>
+                      <h3 className={styles.openPanelSubtitle}>
+                        <Translate
+                          id="openPage.forumPageViews"
+                          description="Gladys open forum page views"
                         >
-                          <Translate
-                            id="openPage.forumPageViews"
-                            description="Gladys open forum page views"
-                          >
-                            Forum page views
-                          </Translate>
-                        </h2>
-                        <div className="text--center">
-                          <Translate
-                            id="openPage.lastWeek"
-                            description="Gladys Open page last week"
-                          >
-                            (Last week)
-                          </Translate>
-                        </div>
-                      </div>
-                      <div className="card__body">
-                        <div
-                          style={{
-                            height: "150px",
-                            width: "100%",
-                          }}
+                          Forum page views
+                        </Translate>
+                      </h3>
+                      <div className={styles.openPanelHint}>
+                        <Translate
+                          id="openPage.lastWeek"
+                          description="Gladys Open page last week"
                         >
-                          <canvas ref={forumChartRef}></canvas>
-                        </div>
+                          (Last week)
+                        </Translate>
+                      </div>
+                      <div style={{ height: "200px", width: "100%" }}>
+                        <canvas ref={forumChartRef}></canvas>
                       </div>
                     </div>
                   </div>
-                </div>
+                </section>
               </div>
             )}
           </div>

@@ -8,7 +8,7 @@ slug: gladys-4-72-faster-ai-stable-homekit
 
 Salut à tous !
 
-Gladys Assistant 4.72.0 est disponible 🎉 — avec une IA plus rapide, un HomeKit plus stable, et une longue liste de correctifs.
+Gladys Assistant 4.72.0 est disponible 🎉, avec une IA plus rapide, un HomeKit plus stable, et une longue liste de correctifs.
 
 {/* truncate */}
 

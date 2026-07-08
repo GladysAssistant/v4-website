@@ -297,7 +297,7 @@ export const localSmartHomeFaqEn = [
   {
     question: "Do I need to be technical to build a local smart home?",
     answer:
-      "Less than you might think. Gladys installs in a single Docker command, everything is configured by clicking in the interface, and a starter kit ships with it pre-installed. You mainly need a small machine (Raspberry Pi, mini-PC or NAS) and devices that use open standards.",
+      "Less than you might think. Gladys installs in a single Docker command, everything is configured by clicking in the interface. You mainly need a small machine (Raspberry Pi, mini-PC or NAS) and devices that use open standards.",
   },
   {
     question: "Can I still access my smart home remotely if it's local?",

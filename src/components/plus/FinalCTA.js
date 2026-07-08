@@ -17,8 +17,7 @@ function FinalCTA({ language }) {
       <p className={styles.finalCtaText}>
         <Translate id="gladysPlusPage.v2.finalCta.text">
           One month free trial, no credit card required, no commitment. Cancel
-          anytime. Or start with the starter kit, which includes Gladys
-          pre-installed and 6 free months of Gladys Plus.
+          anytime.
         </Translate>
       </p>
       <div className={styles.finalCtaButtons}>
@@ -31,15 +30,17 @@ function FinalCTA({ language }) {
             Start free trial
           </Translate>
         </a>
-        <a
-          href={useBaseUrl("/starter-kit")}
-          className={cx("button button--secondary button--lg")}
-          data-track="plus_final_cta_starter_kit"
-        >
-          <Translate id="gladysPlusPage.v2.finalCta.secondary">
-            See the starter kit
-          </Translate>
-        </a>
+        {language === "fr" && (
+          <a
+            href={useBaseUrl("/starter-kit")}
+            className={cx("button button--secondary button--lg")}
+            data-track="plus_final_cta_starter_kit"
+          >
+            <Translate id="gladysPlusPage.v2.finalCta.secondary">
+              See the starter kit
+            </Translate>
+          </a>
+        )}
       </div>
     </section>
   );

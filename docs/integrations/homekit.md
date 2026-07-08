@@ -43,4 +43,4 @@ If you add a new device in Gladys after you’ve already linked to HomeKit:
 - If the device is **compatible**, it will be automatically added to HomeKit in a **default room**. You can then move it to the correct room manually.
 - If the new device **doesn’t appear**, try restarting the HomeKit integration by clicking the `Restart` button, then wait a few seconds for the bridge to reload.
 
-🛠️ Need help? Join us on the [Gladys community forum](https://community.gladysassistant.com/) — we’re here to support you!
+🛠️ Need help? Join us on the [Gladys community forum](https://community.gladysassistant.com/), we’re here to support you!

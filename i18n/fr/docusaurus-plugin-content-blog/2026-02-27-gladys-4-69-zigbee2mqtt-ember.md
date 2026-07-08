@@ -8,7 +8,7 @@ slug: gladys-4-69-zigbee2mqtt-ember
 
 Salut à tous,
 
-Une nouvelle version de Gladys Assistant est disponible 🥳 — avec le nouveau driver Ember de Zigbee2mqtt et le suivi énergétique Tasmota.
+Une nouvelle version de Gladys Assistant est disponible 🥳, avec le nouveau driver Ember de Zigbee2mqtt et le suivi énergétique Tasmota.
 
 {/* truncate */}
 

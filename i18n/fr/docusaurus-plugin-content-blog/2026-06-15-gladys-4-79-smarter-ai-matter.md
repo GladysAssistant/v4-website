@@ -8,7 +8,7 @@ slug: gladys-4-79-smarter-ai-matter
 
 Salut à tous,
 
-La version v4.79 de Gladys est sortie 🙂 — avec un agent IA plus malin, un assistant vocal amélioré, et le support de plus d'appareils Matter.
+La version v4.79 de Gladys est sortie 🙂, avec un agent IA plus malin, un assistant vocal amélioré, et le support de plus d'appareils Matter.
 
 {/* truncate */}
 
@@ -26,7 +26,7 @@ Cette version apporte plusieurs améliorations à l'agent IA :
   - **Web Request :** l'agent peut interroger des APIs ou des pages web. C'est un besoin personnel que j'ai implémenté, et c'est ultra pratique !
   - **Compare Times :** comparaison d'horaires.
 
-Ces nouveaux outils permettent de faire des choses très puissantes — par exemple aller chercher les horaires d'ouverture d'un commerce et vous dire s'il est actuellement ouvert ! Super pratique dans les scènes via l'action « Demander à l'IA ». Les possibilités sont infinies.
+Ces nouveaux outils permettent de faire des choses très puissantes, par exemple aller chercher les horaires d'ouverture d'un commerce et vous dire s'il est actuellement ouvert ! Super pratique dans les scènes via l'action « Demander à l'IA ». Les possibilités sont infinies.
 
 ## 🎙️ Assistant vocal
 

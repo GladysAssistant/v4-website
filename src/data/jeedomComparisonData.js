@@ -60,7 +60,7 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "jQuery / traditional web UI" },
       {
         feature: "Installation",
-        gladys: "One Docker command, rich docs and videos, or a starter kit pre-installed",
+        gladys: "One Docker command, rich docs and videos",
         ha: "Debian image, Raspberry Pi, or a Jeedom box (Atlas, Luna, Smart)",
       },
       {
@@ -120,7 +120,6 @@ const comparisonContent = {
         title: "Installation",
         gladys: [
           "Gladys runs with a single Docker command (a `docker run` line or a `docker-compose` file you copy, paste and launch), and the documentation walks you through every step with screenshots and installation videos.",
-          "If you'd rather skip setup entirely, the official starter kit is a Beelink mini-PC that arrives with Gladys already installed and configured. You plug it in, follow the quick-start guide, and you're up and running in minutes.",
           "And because Gladys is just a container, you stay free to use your mini-PC, NAS or Raspberry Pi for other things too.",
         ],
         ha: [
@@ -194,7 +193,7 @@ const comparisonContent = {
         title: "Pricing & business model",
         gladys: [
           "Gladys is 100% free and open-source at its core, forever, and every integration is free too. There's an optional Gladys Plus subscription for remote access, encrypted automated backups, voice assistants (Google Home, Alexa), AI and Enedis energy data.",
-          "I also sell starter kits, not to make margin but to make Gladys more accessible. The business model is really the subscription, with no investors, no ads and no data resale.",
+          "The business model is really the subscription, with no investors, no ads and no data resale.",
         ],
         ha: [
           "Jeedom's core is also open-source, and it earns money differently: through hardware sales (its boxes), paid plugins on the Market, and a paid remote-access service.",

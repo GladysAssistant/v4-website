@@ -14,11 +14,11 @@ Quick news: I just came back from holidays, and the **official starter kit is ba
 
 It's available to ship in two versions:
 
-- **Beelink S12** — 8 GB RAM / Intel N95 CPU / 256 GB SSD
-- **Beelink S13** — 16 GB RAM / Intel N150 CPU / 500 GB SSD
+- **Beelink S12**: 8 GB RAM / Intel N95 CPU / 256 GB SSD
+- **Beelink S13**: 16 GB RAM / Intel N150 CPU / 500 GB SSD
 
 👉 [Discover the official starter kit](/starter-kit/)
 
 The starter kit is the easiest way to run Gladys: a small, silent, low-power mini-PC, pre-configured and ready to go, with no command line or Docker setup required.
 
-And if you're looking for a different model, anything is possible — I do custom builds as long as the mini-PC you want is available on Amazon. Just reach out 😉
+And if you're looking for a different model, anything is possible, I do custom builds as long as the mini-PC you want is available on Amazon. Just reach out 😉

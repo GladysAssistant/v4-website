@@ -3,7 +3,16 @@ id: callmebot
 title: Send Gladys messages to WhatsApp and Signal with CallMeBot
 description: "Send Gladys Assistant notifications to WhatsApp and Signal with CallMeBot: get your API key and set up one-way messaging from your smart home."
 sidebar_label: CallMeBot
+keywords:
+  - callmebot
+  - callmebot api
+  - callmebot whatsapp
+  - callmebot whatsapp api key
+  - callmebot signal
+  - send whatsapp from home automation
 ---
+
+import JsonLd from '@site/src/components/seo/JsonLd';
 
 CallMeBot is a service that allows Gladys to send messages to various messaging platforms like WhatsApp and Signal.
 
@@ -61,3 +70,50 @@ If you're having issues:
 4. Check your internet connection
 
 For more help, visit the [CallMeBot website](https://www.callmebot.com/) or the [Gladys community forum](https://community.gladysassistant.com/).
+
+## Frequently asked questions
+
+### How do I get a CallMeBot API key?
+
+For WhatsApp, open CallMeBot's WhatsApp page, send the activation message to their number and wait for the reply containing your API key. For Signal, start a chat with their Signal bot and follow the steps to receive your key. You then paste that key into the CallMeBot integration in Gladys.
+
+### Can Gladys send WhatsApp messages from a scene?
+
+Yes. Once CallMeBot is configured with your phone number and API key, add a "Send message" action to any scene and Gladys will push the notification to your WhatsApp whenever the scene runs.
+
+### Can CallMeBot receive replies or send images?
+
+No. CallMeBot in Gladys is one-way only: Gladys can send messages but cannot receive replies, and it does not support sending images. Rate limits set by CallMeBot also apply.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How do I get a CallMeBot API key?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "For WhatsApp, open CallMeBot's WhatsApp page, send the activation message to their number and wait for the reply containing your API key. For Signal, start a chat with their Signal bot and follow the steps to receive your key. You then paste that key into the CallMeBot integration in Gladys.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can Gladys send WhatsApp messages from a scene?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Once CallMeBot is configured with your phone number and API key, add a Send message action to any scene and Gladys will push the notification to your WhatsApp whenever the scene runs.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can CallMeBot receive replies or send images?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "No. CallMeBot in Gladys is one-way only: Gladys can send messages but cannot receive replies, and it does not support sending images. Rate limits set by CallMeBot also apply.",
+        },
+      },
+    ],
+  }}
+/>

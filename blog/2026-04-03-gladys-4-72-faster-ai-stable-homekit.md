@@ -8,7 +8,7 @@ slug: gladys-4-72-faster-ai-stable-homekit
 
 Hey everyone!
 
-Gladys Assistant 4.72.0 is available 🎉 — with a faster AI, a more stable HomeKit, and a long list of fixes.
+Gladys Assistant 4.72.0 is available 🎉, with a faster AI, a more stable HomeKit, and a long list of fixes.
 
 {/* truncate */}
 
@@ -17,7 +17,7 @@ Gladys Assistant 4.72.0 is available 🎉 — with a faster AI, a more stable Ho
 - **Zigbee: dual on/off support for the IKEA BILRESA button.** The IKEA BILRESA button is now fully supported via Zigbee2mqtt.
 - **AI: lower latency and cost.** Camera images sent to the AI are now resized before sending, which reduces both the latency and the cost of API calls.
 - **Integration list: tags added.** Integrations are now tagged (local, cloud, Gladys Plus) to make their operating mode clearer.
-- **ZwaveJS UI: out of alpha.** The ZwaveJS UI integration is stable enough — the alpha warning banner has been removed.
+- **ZwaveJS UI: out of alpha.** The ZwaveJS UI integration is stable enough, the alpha warning banner has been removed.
 - **MQTT: renamed to "MQTT Virtual Devices"** to make the integration easier to understand for users coming from Home Assistant.
 - **Node-RED: warning before container deletion.** A message now warns that deleting the Node-RED container also deletes all associated data.
 

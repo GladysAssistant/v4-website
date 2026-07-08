@@ -50,7 +50,7 @@ Vous utilisez Gladys en mobilité via Telegram ou Nextcloud Talk ? L'agent amél
 
 ### Essayez maintenant, c'est gratuit
 
-Tout d'abord, mettez à jour Gladys en v4.76.0. Ensuite, il vous faut Gladys Plus — et je vous offre [1 mois d'essai complet, sans carte bancaire](/fr/plus/). Chaque compte dispose de **3 000 requêtes par mois + 500 requêtes d'analyse d'images.** C'est largement suffisant pour explorer ce que l'agent sait faire, et je suis curieux de lire vos retours sur ce qui marche, ce qui surprend, et ce que vous aimeriez voir ensuite !
+Tout d'abord, mettez à jour Gladys en v4.76.0. Ensuite, il vous faut Gladys Plus, et je vous offre [1 mois d'essai complet, sans carte bancaire](/fr/plus/). Chaque compte dispose de **3 000 requêtes par mois + 500 requêtes d'analyse d'images.** C'est largement suffisant pour explorer ce que l'agent sait faire, et je suis curieux de lire vos retours sur ce qui marche, ce qui surprend, et ce que vous aimeriez voir ensuite !
 
 Pour le modèle d'IA, j'ai atteint avec cet outil les limites de Mistral Small 3.2, et pour l'instant je suis passé à Gemma 4, toujours chez Scaleway, hébergé en France, avec vos données entièrement privées 🔒
 

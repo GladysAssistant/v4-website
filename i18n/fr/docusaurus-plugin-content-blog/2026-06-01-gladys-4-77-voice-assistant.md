@@ -8,7 +8,7 @@ slug: gladys-4-77-voice-assistant
 
 Salut à tous,
 
-Une nouvelle version de Gladys est disponible, avec plusieurs améliorations sympas — dont un tout nouveau widget **Assistant Vocal** à poser directement sur votre tableau de bord 🎙️
+Une nouvelle version de Gladys est disponible, avec plusieurs améliorations sympas, dont un tout nouveau widget **Assistant Vocal** à poser directement sur votre tableau de bord 🎙️
 
 {/* truncate */}
 

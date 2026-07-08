@@ -8,7 +8,7 @@ slug: gladys-4-78-ai-weekly-home-report
 
 Salut à tous 🙂
 
-Je viens de publier Gladys Assistant 4.78 ! Voilà les nouveautés — en commençant par la fonctionnalité phare : un **bilan hebdomadaire de votre maison généré par l'IA**.
+Je viens de publier Gladys Assistant 4.78 ! Voilà les nouveautés, en commençant par la fonctionnalité phare : un **bilan hebdomadaire de votre maison généré par l'IA**.
 
 {/* truncate */}
 
@@ -34,7 +34,7 @@ Bien sûr, on peut faire évoluer ce bilan si vous avez des idées !
 
 Vous pouvez maintenant ajouter un widget Lien sur votre tableau de bord pour accéder en un clic à une interface externe : Zigbee2mqtt, Tasmota, l'interface de votre box, un NAS, une caméra, etc.
 
-Chaque lien est personnalisable — titre, URL et icône (site web, serveur, NAS, Wi-Fi, interface web…) :
+Chaque lien est personnalisable, titre, URL et icône (site web, serveur, NAS, Wi-Fi, interface web…) :
 
 ![Configuration du widget Lien](../../../static/img/articles/gladys-4-78-ai-weekly-home-report/02.png)
 

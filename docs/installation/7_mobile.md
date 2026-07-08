@@ -1,9 +1,18 @@
 ---
 id: phone
-title: Using Gladys Assistant on your phone
-description: "Use Gladys Assistant on your phone as a PWA: install it on Android and iOS, with remote access through Gladys Plus, end-to-end encrypted."
+title: "Gladys Assistant on your phone: install on iPhone & Android"
+description: "Use Gladys Assistant on your phone as an app: install the PWA on iPhone and Android, with secure remote access through Gladys Plus, end-to-end encrypted."
 sidebar_label: On your phone
+keywords:
+  - gladys app
+  - home automation app
+  - gladys ios
+  - gladys android
+  - smart home app
+  - remote access home automation
 ---
+
+import JsonLd from '@site/src/components/seo/JsonLd';
 
 Gladys Assistant is a PWA ([Progressive Web App](https://en.wikipedia.org/wiki/Progressive_web_application)), it's a web application that can be installed on any device: on iOS, on Android, on MacOS, on Windows, on Linux.
 
@@ -50,3 +59,50 @@ Give a name to the app, and click "add":
 Success! You have Gladys Plus on your home screen.
 
 ![iOS Step 4](../../static/img/docs/en/installation/phone/ios-step-4.jpg)
+
+## Frequently asked questions
+
+### Is there a Gladys mobile app for iPhone and Android?
+
+Gladys is a Progressive Web App, so you install it straight from your browser instead of an app store. Once added to your home screen on iPhone or Android, it looks and behaves like a native app, with its own icon and full-screen view.
+
+### Can I access Gladys from my phone outside my home?
+
+Yes, with Gladys Plus. By default Gladys only answers on your local network, but Gladys Plus securely proxies the connection so you can control your home from anywhere, end-to-end encrypted, with no port forwarding or configuration.
+
+### Does Gladys work on both iOS and Android?
+
+Yes. The same web app installs on iPhone, iPad and Android phones and tablets, and also on macOS, Windows and Linux.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Is there a Gladys mobile app for iPhone and Android?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Gladys is a Progressive Web App, so you install it straight from your browser instead of an app store. Once added to your home screen on iPhone or Android, it looks and behaves like a native app, with its own icon and full-screen view.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I access Gladys from my phone outside my home?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, with Gladys Plus. By default Gladys only answers on your local network, but Gladys Plus securely proxies the connection so you can control your home from anywhere, end-to-end encrypted, with no port forwarding or configuration.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Does Gladys work on both iOS and Android?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. The same web app installs on iPhone, iPad and Android phones and tablets, and also on macOS, Windows and Linux.",
+        },
+      },
+    ],
+  }}
+/>

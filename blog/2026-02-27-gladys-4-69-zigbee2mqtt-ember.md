@@ -8,7 +8,7 @@ slug: gladys-4-69-zigbee2mqtt-ember
 
 Hey everyone,
 
-A new version of Gladys Assistant is available 🥳 — featuring the new Zigbee2mqtt Ember driver and Tasmota energy tracking.
+A new version of Gladys Assistant is available 🥳, featuring the new Zigbee2mqtt Ember driver and Tasmota energy tracking.
 
 {/* truncate */}
 
@@ -18,11 +18,11 @@ Zigbee2mqtt now offers a new driver, **Ember**, for certain dongles such as the 
 
 If you use EZSP, Zigbee2mqtt won't touch your installation without your action, to avoid breaking your setup. **Stability is a core value of the project**, and this update was designed not to impact your daily use.
 
-If you want to switch to Ember, you can — but you'll probably need to update your Zigbee dongle's firmware first. For example, for the Sonoff Dongle-E, the integration lets you choose between "Ember" (the new default) and the old EZSP driver:
+If you want to switch to Ember, you can, but you'll probably need to update your Zigbee dongle's firmware first. For example, for the Sonoff Dongle-E, the integration lets you choose between "Ember" (the new default) and the old EZSP driver:
 
 ![Selecting the Zigbee driver](../static/img/articles/gladys-4-69-zigbee2mqtt-ember/01.png)
 
-If you test the new driver and your firmware isn't compatible, don't panic — you'll see a clear message:
+If you test the new driver and your firmware isn't compatible, don't panic, you'll see a clear message:
 
 ![Firmware incompatibility message](../static/img/articles/gladys-4-69-zigbee2mqtt-ember/02.png)
 

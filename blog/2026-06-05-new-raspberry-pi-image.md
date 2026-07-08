@@ -22,7 +22,7 @@ For the occasion, I also rewrote the installation tutorial on the site, with eve
 
 ## My take on the Raspberry Pi
 
-I'll be honest: I still don't think the Raspberry Pi is the best long-term option — a mini-PC remains more powerful and more reliable for a daily setup. I also strongly advise against using a microSD card: in practice, data corruption often happens after a few months. If you go with a Pi, plan for an NVMe SSD instead.
+I'll be honest: I still don't think the Raspberry Pi is the best long-term option, a mini-PC remains more powerful and more reliable for a daily setup. I also strongly advise against using a microSD card: in practice, data corruption often happens after a few months. If you go with a Pi, plan for an NVMe SSD instead.
 
 But for people who already have a Pi on hand, it's an excellent way to discover Gladys without dealing with Docker or the command line 🙂
 

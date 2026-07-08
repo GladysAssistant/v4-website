@@ -14,8 +14,8 @@ Petite news : je viens de rentrer de congés, et j'ai remis **le kit de démarra
 
 Il est disponible à la livraison en deux versions :
 
-- **Beelink S12** — 8 Go de RAM / CPU Intel N95 / 256 Go SSD
-- **Beelink S13** — 16 Go de RAM / CPU Intel N150 / 500 Go SSD
+- **Beelink S12** : 8 Go de RAM / CPU Intel N95 / 256 Go SSD
+- **Beelink S13** : 16 Go de RAM / CPU Intel N150 / 500 Go SSD
 
 👉 [Découvrir le kit de démarrage officiel](/fr/starter-kit/)
 
