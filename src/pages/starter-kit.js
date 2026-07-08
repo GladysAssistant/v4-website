@@ -1174,9 +1174,10 @@ function Plus() {
                               borderRadius: "25px",
                               fontSize: "1em",
                               fontWeight: "bold",
+                              whiteSpace: "nowrap",
                             }}
                           >
-                            ⭐ Recommandé
+                            ⭐ Recommandé · Gladys pré-installée
                           </span>
                         )}
                         <div>
