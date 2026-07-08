@@ -16,6 +16,8 @@ import styles from "./styles.module.css";
 import { translate } from "@docusaurus/Translate";
 import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 import { appendConversionAttributionToUrl } from "../utils/conversionAttribution";
+import JsonLd from "../components/seo/JsonLd";
+import { getStarterKitPageSchema } from "../data/structuredData";
 
 const SHOW_BEELINK_T5 = false;
 const IS_IN_HOLIDAY = false;
@@ -30,17 +32,24 @@ function Question({ title, description }) {
 }
 
 function FAQ({ data }) {
+  const half = Math.ceil(data.length / 2);
   return (
     <section id="faq" style={{ marginTop: "15px" }}>
       <div className="container">
+        <h2
+          className={styles.plusFeatureTitle}
+          style={{ textAlign: "center", marginBottom: "2rem" }}
+        >
+          Questions fréquentes
+        </h2>
         <div className="row">
           <div className="col col--6">
-            {data.slice(0, 2).map((oneElement) => (
+            {data.slice(0, half).map((oneElement) => (
               <Question {...oneElement} />
             ))}
           </div>
           <div className="col col--6">
-            {data.slice(2).map((oneElement) => (
+            {data.slice(half).map((oneElement) => (
               <Question {...oneElement} />
             ))}
           </div>
@@ -96,6 +105,86 @@ const faqData = [
         continuera au bout de 6 mois. Néanmoins, Gladys Plus est totalement sans
         engagement et tu peux annuler l'abonnement en un clic s'il ne te donne
         pas satisfaction.
+      </>
+    ),
+  },
+  {
+    title: <>Pourquoi c'est plus cher que le même mini-PC sur Amazon ?</>,
+    description: (
+      <>
+        Parce que tu n'achètes pas le même produit. Sur Amazon, tu achètes un
+        mini-PC vide : à toi d'installer un OS, Docker, Gladys, de tout
+        configurer et de déboguer si ça coince. Ici, tu achètes un système
+        domotique complet qui marche dès la sortie du carton : Gladys installée,
+        configurée et testée à la main, 6 mois de Gladys Plus inclus (valeur
+        ~60€), la formation vidéo, mon support direct et une garantie de bon
+        fonctionnement. Tu peux voir le détail dans la section «&nbsp;Ce que
+        contient vraiment le kit&nbsp;» plus haut. Et tu finances un projet
+        open-source français 🇫🇷
+      </>
+    ),
+  },
+  {
+    title: <>Et si je n'y connais vraiment rien en informatique ?</>,
+    description: (
+      <>
+        C'est exactement pour toi que ce kit existe. Tu n'as rien à installer :
+        tu branches le mini-PC en Ethernet à ta box, tu ouvres ton navigateur et
+        tu suis le guide de démarrage. La formation vidéo pas à pas t'accompagne
+        ensuite, et si tu bloques, tu m'écris directement : c'est moi,
+        Pierre-Gilles, le créateur de Gladys, qui te réponds. Pas un chatbot.
+      </>
+    ),
+  },
+  {
+    title: <>Que se passe-t-il à la fin des 6 mois de Gladys Plus ?</>,
+    description: (
+      <>
+        À la fin des 6 mois offerts, tu reçois un email un peu avant la fin de
+        la période et tu choisis librement de t'abonner ou pas. Aucun
+        prélèvement automatique caché : tu décides. Et même sans abonnement,
+        Gladys continue de fonctionner en local sur ton mini-PC : tu ne perds
+        rien de ta domotique, seules les fonctionnalités cloud (accès à
+        distance, sauvegardes) sont mises en pause.
+      </>
+    ),
+  },
+  {
+    title: <>Que se passe-t-il en cas de panne du mini-PC ?</>,
+    description: (
+      <>
+        Ton mini-PC est couvert par la garantie constructeur, et je suis là pour
+        t'aider directement en cas de souci. Et surtout, tant que tu as Gladys
+        Plus, tes sauvegardes chiffrées sont automatiques : en cas de pépin
+        matériel, tu peux restaurer toute ta configuration sur un nouvel
+        appareil en quelques clics. Tu ne repars jamais de zéro.
+      </>
+    ),
+  },
+  {
+    title: <>Est-ce que je peux l'offrir ?</>,
+    description: (
+      <>
+        Bien sûr, et c'est une très bonne idée de cadeau 🎁 Le kit est pensé
+        pour être utilisable sans aucune compétence technique : la personne qui
+        le reçoit branche le mini-PC, ouvre son navigateur et c'est parti. Si tu
+        veux l'offrir à tes parents ou à un proche, écris-moi avant de commander,
+        je t'aide à préparer ça au mieux.
+      </>
+    ),
+  },
+  {
+    title: <>En combien de temps je reçois mon kit ?</>,
+    description: (
+      <>
+        Chaque kit est préparé sur commande, rien n'est fait à la chaîne. Dès
+        que ta commande arrive, je commande ton mini-PC auprès de mon
+        fournisseur (je le reçois sous 24 à 48h), puis j'installe et configure
+        Gladys spécialement pour toi (une demi-journée maximum). J'expédie
+        ensuite le colis via Mondial Relay, avec le délai de livraison habituel.
+        En pratique, compte quelques jours ouvrés entre ta commande et la
+        réception. Si tu as une contrainte de date (un cadeau par exemple),
+        écris-moi et je fais au mieux 🙂
       </>
     ),
   },
@@ -292,6 +381,7 @@ function Plus() {
 
   return (
     <main>
+      <JsonLd data={getStarterKitPageSchema(language)} />
       {IS_IN_HOLIDAY && (
         <div
           style={{
@@ -450,63 +540,297 @@ function Plus() {
             marginBottom: "5rem",
           }}
         >
-          <div className="row">
-            <div className="col col--6">
-              <form className={cx("margin-left--md", styles.plusForm)}>
-                {isBlackFridayActive && (
-                  <div
-                    style={{
-                      display: "inline-block",
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      color: "white",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "6px",
-                      fontSize: "0.9rem",
-                      fontWeight: "bold",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    BLACK FRIDAY
-                  </div>
-                )}
-                <h1 className={styles.plusTitle}>Kit de démarrage Gladys</h1>
-                <p>
-                  Un mini-PC surpuissant avec <b>Gladys pré-installée</b>
-                  <br />+ la formation officielle Gladys
-                  <br />+ 6 mois de Gladys Plus offerts
-                  <br />+ support personnalisé par le créateur de Gladys
-                </p>
-                <p>
-                  Livraison en <b>Mondial Relay</b>
-                  <br />
-                  <small>(Retour sous 14 jours si insatisfait)</small>
-                </p>
-              </form>
-            </div>
-            <div className="col col--6 docusaurus-hide-md">
-              <img
-                src={useBaseUrl("img/starter-kit/beelink_without_bg.png")}
-                srcSet={`${useBaseUrl(
-                  "img/starter-kit/beelink_without_bg.png",
-                )} 1x, ${useBaseUrl(
-                  "img/starter-kit/beelink_without_bg.png",
-                )} 2x`}
-                className={cx(styles.starterKitImage, styles.specImageLeft)}
-              />
-            </div>
-          </div>
+          {/* 1. HERO */}
+          <section className={styles.heroCro}>
+            {isBlackFridayActive && (
+              <div
+                style={{
+                  display: "inline-block",
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "6px",
+                  fontSize: "0.9rem",
+                  fontWeight: "bold",
+                  marginBottom: "1rem",
+                }}
+              >
+                BLACK FRIDAY
+              </div>
+            )}
+            <h1 className={styles.heroTitle}>
+              Ta maison connectée, prête à l'emploi
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Tu branches, tu ouvres ton navigateur, c'est en route. Aucune
+              installation, aucune compétence technique.
+            </p>
 
+            {/* TODO: vidéo unboxing (déballage → branchement → dashboard en
+                temps réel, non coupé). Quand elle sera tournée, réinsérer ici
+                le bloc <div className={styles.heroVideo}> avec la vidéo. En
+                attendant, le hero reste épuré (pas de placeholder visible). */}
+
+            <div className={styles.heroCtaWrapper}>
+              <a
+                href="#offres"
+                className="button button--primary button--lg"
+                style={{ fontSize: "1.2rem", padding: "14px 40px" }}
+              >
+                Commander mon kit
+              </a>
+            </div>
+
+            <div className={styles.reassuranceBanner}>
+              <span>✓ Retour 14 jours</span>
+              <span>✓ Garantie constructeur</span>
+              <span>✓ Support direct avec le créateur</span>
+              <span>✓ 6 mois de Gladys Plus inclus</span>
+            </div>
+          </section>
+
+          {/* 2. CE QUE CONTIENT VRAIMENT LE KIT (anti-comparaison Amazon) */}
+          <section style={{ marginTop: "5rem" }}>
+            <h2
+              className={styles.plusFeatureTitle}
+              style={{ textAlign: "center", marginBottom: "0.5rem" }}
+            >
+              Ce que contient vraiment le kit
+            </h2>
+            <p
+              style={{
+                textAlign: "center",
+                color: "var(--ifm-color-emphasis-700)",
+                maxWidth: "700px",
+                margin: "0 auto",
+              }}
+            >
+              Tu n'achètes pas un mini-PC. Tu achètes un système domotique
+              complet, prêt à fonctionner. Voici ce qu'il y a dedans, ligne par
+              ligne.
+            </p>
+
+            <div className={styles.valueList}>
+              <div className={styles.valueRow}>
+                <div className={styles.valueLabel}>
+                  Mini-PC Beelink (S12 ou S13)
+                </div>
+                <div className={styles.valueTag}>au prix du marché</div>
+                <div className={styles.valueDesc}>
+                  Un vrai mini-PC de qualité, silencieux et compact. Le même
+                  matériel que tu trouverais ailleurs, ni surfacturé ni bridé.
+                </div>
+              </div>
+
+              <div className={styles.valueRow}>
+                <div className={styles.valueLabel}>
+                  Gladys installée, configurée et testée à la main
+                </div>
+                <div className={styles.valueTag}>
+                  ~1h de config technique évitée
+                </div>
+                <div className={styles.valueDesc}>
+                  Pas d'OS à installer, pas de Docker, pas de ligne de commande.
+                  Chaque kit est préparé et vérifié manuellement avant l'envoi.
+                </div>
+              </div>
+
+              <div className={styles.valueRow}>
+                <div className={styles.valueLabel}>
+                  6 mois d'abonnement Gladys Plus inclus
+                </div>
+                <div className={styles.valueTag}>valeur ~60€</div>
+                <div className={styles.valueDesc}>
+                  Gladys Plus, c'est 9,99€/mois. Soit près de 60€ inclus : accès
+                  à distance sécurisé, sauvegardes automatiques et intégrations
+                  premium, sans rien configurer.
+                </div>
+              </div>
+
+              <div className={styles.valueRow}>
+                <div className={styles.valueLabel}>Formation vidéo pas à pas</div>
+                <div className={styles.valueTag}>valeur 29,90€</div>
+                <div className={styles.valueDesc}>
+                  Des tutoriels vidéo pour prendre Gladys en main de A à Z, même
+                  si tu débutes complètement en domotique. Vendue 29,90€ si tu
+                  l'achètes séparément, elle est incluse dans le kit.
+                </div>
+              </div>
+
+              <div className={styles.valueRow}>
+                <div className={styles.valueLabel}>
+                  Support direct avec moi (le créateur)
+                </div>
+                <div className={styles.valueTag}>pas un chatbot</div>
+                <div className={styles.valueDesc}>
+                  Une question, un blocage&nbsp;? Tu m'écris et c'est moi,
+                  Pierre-Gilles, qui te réponds personnellement.
+                </div>
+              </div>
+
+              <div className={styles.valueRow}>
+                <div className={styles.valueLabel}>
+                  Système testé et garanti fonctionnel à la livraison
+                </div>
+                <div className={styles.valueTag}>garanti</div>
+                <div className={styles.valueDesc}>
+                  Ton kit arrive prêt à l'emploi. S'il ne te convient pas, tu es
+                  remboursé sous 14 jours.
+                </div>
+              </div>
+            </div>
+
+            <p className={styles.honestNote}>
+              Oui, tu peux acheter le même mini-PC nu sur Amazon. Ce que tu
+              achètes ici, c'est un système domotique complet qui marche dès la
+              sortie du carton, et tu finances un projet open-source français
+              🇫🇷
+            </p>
+          </section>
+
+          {/* 3. POUR QUI ? */}
+          <section style={{ marginTop: "5rem" }}>
+            <h2
+              className={styles.plusFeatureTitle}
+              style={{ textAlign: "center", marginBottom: "2.5rem" }}
+            >
+              Pour qui&nbsp;?
+            </h2>
+            <div className="row">
+              <div
+                className="col col--4"
+                style={{ display: "flex", marginBottom: "1.5rem" }}
+              >
+                <div className={styles.useCaseCard}>
+                  <div className={styles.useCaseIcon}>🚀</div>
+                  <h3>Tu débutes en domotique et tu ne veux pas bricoler</h3>
+                  <p>
+                    Tu veux une maison connectée qui marche, pas un projet
+                    informatique. Tu branches, tu suis le guide, c'est parti.
+                  </p>
+                </div>
+              </div>
+              <div
+                className="col col--4"
+                style={{ display: "flex", marginBottom: "1.5rem" }}
+              >
+                <div className={styles.useCaseCard}>
+                  <div className={styles.useCaseIcon}>🏡</div>
+                  <h3>
+                    Tu veux surveiller une résidence secondaire à distance
+                  </h3>
+                  <p>
+                    Gel, fuite d'eau, intrusion&nbsp;: garde un œil sur ta
+                    maison où que tu sois. L'accès à distance Gladys Plus est
+                    inclus pendant 6 mois.
+                  </p>
+                </div>
+              </div>
+              <div
+                className="col col--4"
+                style={{ display: "flex", marginBottom: "1.5rem" }}
+              >
+                <div className={styles.useCaseCard}>
+                  <div className={styles.useCaseIcon}>🎁</div>
+                  <h3>Tu veux équiper tes parents ou l'offrir</h3>
+                  <p>
+                    Un cadeau utile et sans prise de tête&nbsp;: le kit est
+                    pensé pour être installé sans aucune compétence technique.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 4. COMPARATIF KIT VS INSTALLATION MANUELLE */}
+          <section style={{ marginTop: "5rem" }}>
+            <h2
+              className={styles.plusFeatureTitle}
+              style={{ textAlign: "center", marginBottom: "0.5rem" }}
+            >
+              Kit clé en main ou installation manuelle&nbsp;?
+            </h2>
+            <p
+              style={{
+                textAlign: "center",
+                color: "var(--ifm-color-emphasis-700)",
+                maxWidth: "700px",
+                margin: "0 auto",
+              }}
+            >
+              Gladys est un logiciel open-source&nbsp;: tu peux tout installer
+              toi-même gratuitement. Le kit, c'est le même Gladys, mais sans
+              aucune étape technique. À toi de choisir ta voie.
+            </p>
+            <div className={styles.tableContainer}>
+              <table className={styles.compareTable}>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Installation manuelle</th>
+                    <th>Kit de démarrage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Prix du logiciel</td>
+                    <td>Gratuit (open-source)</td>
+                    <td>Gratuit (open-source)</td>
+                  </tr>
+                  <tr>
+                    <td>Matériel à acheter</td>
+                    <td>À toi de choisir et commander</td>
+                    <td>Mini-PC inclus, déjà choisi</td>
+                  </tr>
+                  <tr>
+                    <td>Installation & configuration</td>
+                    <td>À faire toi-même (OS, Docker, Gladys…)</td>
+                    <td>Déjà faite et testée à la main</td>
+                  </tr>
+                  <tr>
+                    <td>Compétences requises</td>
+                    <td>Bases en informatique / ligne de commande</td>
+                    <td>Aucune</td>
+                  </tr>
+                  <tr>
+                    <td>Gladys Plus</td>
+                    <td>Optionnel, à souscrire</td>
+                    <td>6 mois inclus (valeur ~60€)</td>
+                  </tr>
+                  <tr>
+                    <td>Support</td>
+                    <td>Communauté & documentation</td>
+                    <td>Communauté + mon support direct</td>
+                  </tr>
+                  <tr>
+                    <td>Pour qui&nbsp;?</td>
+                    <td>Tu aimes bricoler et tout maîtriser</td>
+                    <td>Tu veux que ça marche, tout de suite</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p style={{ textAlign: "center" }}>
+              Envie de tout faire toi-même&nbsp;? La documentation d'installation
+              est complète et gratuite&nbsp;:{" "}
+              <Link to="/docs/">voir le guide d'installation →</Link>
+            </p>
+          </section>
+
+          {/* 5. LES DEUX OFFRES */}
           {/* Nouvelle Row pour la section de choix des kits */}
           <div className="row">
             <div className="col col--12">
               <div>
                 <h2
+                  id="offres"
                   style={{
                     fontSize: "28px",
-                    marginTop: "2rem",
+                    marginTop: "5rem",
                     marginBottom: "3rem",
                     textAlign: "center",
+                    scrollMarginTop: "80px",
                   }}
                 >
                   Choisis ton kit de démarrage Gladys :
@@ -719,7 +1043,7 @@ function Plus() {
                               fontWeight: "bold",
                             }}
                           >
-                            ✓ Gladys Pré-installée
+                            ⚖️ Équilibré
                           </span>
                         )}
                         <div>
@@ -763,11 +1087,14 @@ function Plus() {
                             style={{
                               fontSize: "0.9em",
                               marginTop: "0",
-                              marginBottom: "20px",
+                              marginBottom: "5px",
                               color: "var(--ifm-color-emphasis-600)",
                             }}
                           >
                             + frais de ports
+                          </p>
+                          <p className={styles.offerIncludedValue}>
+                            dont 6 mois de Gladys Plus inclus (valeur ~60€)
                           </p>
                         </div>
                         <button
@@ -849,7 +1176,7 @@ function Plus() {
                               fontWeight: "bold",
                             }}
                           >
-                            ⭐ Meilleur choix
+                            ⭐ Recommandé
                           </span>
                         )}
                         <div>
@@ -894,11 +1221,14 @@ function Plus() {
                             style={{
                               fontSize: "0.9em",
                               marginTop: "0",
-                              marginBottom: "20px",
+                              marginBottom: "5px",
                               color: "var(--ifm-color-emphasis-600)",
                             }}
                           >
                             + frais de ports
+                          </p>
+                          <p className={styles.offerIncludedValue}>
+                            dont 6 mois de Gladys Plus inclus (valeur ~60€)
                           </p>
                         </div>
                         <button
@@ -925,6 +1255,35 @@ function Plus() {
                         </button>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* Moyens de paiement + délai d'expédition */}
+                {!isUnavailable && (
+                  <div style={{ marginTop: "1.5rem" }}>
+                    <div className={styles.paymentBadges}>
+                      <span
+                        style={{
+                          fontSize: "0.9rem",
+                          color: "var(--ifm-color-emphasis-700)",
+                        }}
+                      >
+                        Paiement 100% sécurisé via Stripe&nbsp;:
+                      </span>
+                      <span className={styles.paymentBadge}>Visa</span>
+                      <span className={styles.paymentBadge}>Mastercard</span>
+                      <span className={styles.paymentBadge}>CB</span>
+                      <span className={styles.paymentBadge}>Amex</span>
+                      <span className={styles.paymentBadge}>PayPal</span>
+                      <span className={styles.paymentBadge}>Apple&nbsp;Pay</span>
+                      <span className={styles.paymentBadge}>Google&nbsp;Pay</span>
+                    </div>
+                    <p className={styles.shippingNote}>
+                      Chaque kit est préparé sur commande&nbsp;: je commande ton
+                      mini-PC (réception sous 24-48h), j'installe et configure
+                      Gladys pour toi (une demi-journée max), puis j'expédie en
+                      Mondial Relay. Détail des délais dans la FAQ.
+                    </p>
                   </div>
                 )}
 
@@ -985,6 +1344,8 @@ function Plus() {
               >
                 <img
                   src={useBaseUrl("/img/starter-kit/beelink_t5.jpg")}
+                  alt="Mini-PC Beelink T5 avec Gladys pré-installée"
+                  loading="lazy"
                   className={cx(styles.specImage)}
                 />
               </div>
@@ -1043,6 +1404,8 @@ function Plus() {
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
               <img
                 src={useBaseUrl("/img/starter-kit/beelink_mini_s12.jpg")}
+                alt="Mini-PC Beelink mini S12 avec Gladys pré-installée"
+                loading="lazy"
                 className={cx(styles.specImage)}
               />
             </div>
@@ -1051,6 +1414,8 @@ function Plus() {
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
               <img
                 src={useBaseUrl("/img/starter-kit/beelink_s13_spec.jpg")}
+                alt="Mini-PC Beelink S13 avec Gladys pré-installée, le kit recommandé"
+                loading="lazy"
                 className={cx(styles.specImage)}
               />
             </div>
@@ -1106,10 +1471,24 @@ function Plus() {
                 <b>temps</b> et de <b>l'argent</b> sur ton installation
                 domotique.
               </p>
+              <p>
+                Cette formation est <b>vendue 29,90€ séparément</b>, et elle est{" "}
+                <b>incluse gratuitement</b> dans le kit de démarrage.{" "}
+                <a
+                  href="https://formation.gladysassistant.com/b/T6f3j"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-track="starter_kit_view_formation_program"
+                >
+                  Voir le programme de la formation →
+                </a>
+              </p>
             </div>
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
               <img
                 src={useBaseUrl("/img/starter-kit/formation.png")}
+                alt="Formation vidéo officielle Gladys incluse dans le kit"
+                loading="lazy"
                 className={cx(styles.specImage, styles.specImageRight)}
               />
             </div>
@@ -1121,6 +1500,8 @@ function Plus() {
                 srcSet={`${useBaseUrl(
                   "img/plus/mockup-1x.png",
                 )} 1x, ${useBaseUrl("img/plus/mockup-2x.png")} 2x`}
+                alt="Application Gladys Plus incluse 6 mois avec le kit"
+                loading="lazy"
                 className={cx(styles.specImage, styles.specImageLeft)}
               />
             </div>
@@ -1183,9 +1564,41 @@ function Plus() {
             >
               Ce qu'ils pensent du kit de démarrage
             </h2>
+            {/* Témoignage novice détaillé, mis en avant */}
             <div className="row">
               <div
-                className="col col--4"
+                className="col col--8 col--offset-2"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "25px",
+                    borderRadius: "8px",
+                    textAlign: "left",
+                    flexGrow: 1,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <p style={{ fontStyle: "italic", marginBottom: "15px" }}>
+                    {
+                      "Je suis un débutant en domotique et je me suis dirigé vers le kit de démarrage de Gladys car il m'apportait ce que je cherchais : facilité d'installation (le hub serveur est déjà configuré et utilisable dès sa réception) et facilité d'apprentissage du logiciel Gladys qui est opérationnel en quelques heures. De plus, son auteur (Pierre-Gilles) a répondu très rapidement à mes questions avant la commande. L'interface de Gladys est très conviviale avec un agréable design. Il y a beaucoup d'intégrations possibles pour différentes technologies assez facile à mettre en œuvre et pour couronner le tout, grâce à l'IA embarquée, ma maison est devenue pilotable à la voix et à distance ! Bref je recommande vivement cette solution (open source) pour un novice, et en cas de soucis, la communauté est très réactive. Merci @ Pierre-Gilles pour tes compétences et ton sérieux"
+                    }
+                  </p>
+                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
+                    - Chris75
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="row">
+              <div
+                className="col col--8 col--offset-2"
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -1212,59 +1625,41 @@ function Plus() {
                   </p>
                 </div>
               </div>
-              <div
-                className="col col--4"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <div
-                  style={{
-                    border: "1px solid #ddd",
-                    padding: "25px",
-                    borderRadius: "8px",
-                    textAlign: "left",
-                    flexGrow: 1,
-                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <p
-                    style={{ fontStyle: "italic", marginBottom: "15px" }}
-                  >{`"Super offre clairement intéressant pour quelqu'un qui veut se lancer en domotique avec Gladys"`}</p>
-                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
-                    - McFlyPartages
-                  </p>
-                </div>
-              </div>
-              <div
-                className="col col--4"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <div
-                  style={{
-                    border: "1px solid #ddd",
-                    padding: "25px",
-                    borderRadius: "8px",
-                    textAlign: "left",
-                    flexGrow: 1,
-                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <p
-                    style={{ fontStyle: "italic", marginBottom: "15px" }}
-                  >{`"Je viens de souscrire un kit de démarrage, content de rejoindre la communauté !"`}</p>
-                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
-                    - Nagromdark
-                  </p>
-                </div>
-              </div>
             </div>
+
+            {/*
+              TODO Pierre-Gilles : ajouter d'autres témoignages de VRAIS
+              acheteurs DÉBUTANTS (voix novice type "je n'y connais rien et en
+              10 minutes ça marchait"), pas seulement des migrations de power
+              users. N'invente rien : remplace le texte et le nom, puis
+              décommente ce bloc. Structure prête ci-dessous :
+
+            <div className="row">
+              <div
+                className="col col--4"
+                style={{ display: "flex", flexDirection: "column", marginBottom: "1.5rem" }}
+              >
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    padding: "25px",
+                    borderRadius: "8px",
+                    textAlign: "left",
+                    flexGrow: 1,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <p style={{ fontStyle: "italic", marginBottom: "15px" }}>
+                    "TODO témoignage novice 1"
+                  </p>
+                  <p style={{ fontWeight: "bold", textAlign: "right" }}>
+                    - TODO Prénom
+                  </p>
+                </div>
+              </div>
+              (dupliquer le bloc col--4 ci-dessus pour les témoignages 2 et 3)
+            </div>
+            */}
           </div>
           {/* Fin Section Témoignages */}
 
@@ -1546,6 +1941,45 @@ function Plus() {
           </div>
         </div>
       </div>
+
+      {/* 8. CTA FINAL + RAPPEL RÉASSURANCE */}
+      <section className="container">
+        <div className={styles.finalCta}>
+          <h2 style={{ marginBottom: "1rem" }}>
+            Prêt à démarrer ta maison connectée&nbsp;?
+          </h2>
+          <p style={{ fontSize: "1.1rem", marginBottom: "1.5rem" }}>
+            Un mini-PC avec Gladys installée, configurée et testée, 6 mois de
+            Gladys Plus inclus, la formation vidéo et mon support direct. Tu
+            branches, et c'est parti.
+          </p>
+          <div style={{ marginBottom: "1.5rem" }}>
+            <a
+              href="#offres"
+              className="button button--primary button--lg"
+              style={{ fontSize: "1.2rem", padding: "14px 40px" }}
+            >
+              Commander mon kit
+            </a>
+          </div>
+          <div
+            className={styles.reassuranceBanner}
+            style={{ marginBottom: "1.5rem" }}
+          >
+            <span>✓ Retour 14 jours</span>
+            <span>✓ Garantie constructeur</span>
+            <span>✓ 6 mois de Gladys Plus inclus</span>
+          </div>
+          <p style={{ marginBottom: 0 }}>
+            Une question avant de commander&nbsp;? Écris-moi directement&nbsp;:{" "}
+            <a href="mailto:hello@gladysassistant.com">
+              hello@gladysassistant.com
+            </a>{" "}
+            ou via la <Link to="/contact">page contact</Link>. C'est moi,
+            Pierre-Gilles, qui te réponds.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }
@@ -1553,8 +1987,8 @@ function Plus() {
 function PlusParent() {
   return (
     <Layout
-      title="Kit de démarrage Gladys clé en main"
-      description="Mini-PC Beelink mini S12 ou S13 avec Gladys déjà installée + formation officielle + 6 mois de Gladys Plus offerts. Branchez et c'est parti !"
+      title="Kit domotique clé en main, sans installation | Gladys"
+      description="La box domotique Gladys prête à l'emploi : un mini-PC avec Gladys installée, configurée et testée, 6 mois de Gladys Plus inclus, formation vidéo et support direct. Tu branches, tu ouvres ton navigateur, c'est parti. Aucune compétence technique."
     >
       <Plus />
     </Layout>

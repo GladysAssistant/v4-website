@@ -937,3 +937,45 @@ export function getPlusPageSchema(lang) {
     ],
   };
 }
+
+export function getStarterKitPageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/starter-kit/`;
+
+  // The two kit prices are fetched at runtime from a Cloudflare worker and are
+  // not available at build time. Rather than hardcode (and risk shipping a
+  // stale/invented price), we expose the Product with priced-less Offers:
+  // availability + URL only. No price means no shopping rich result, which is
+  // the intended, honest tradeoff.
+  const offer = (name) => ({
+    "@type": "Offer",
+    name,
+    availability: "https://schema.org/InStock",
+    itemCondition: "https://schema.org/NewCondition",
+    priceCurrency: "EUR",
+    url: pageUrl,
+    seller: { "@id": `${SITE_URL}/#organization` },
+  });
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Product",
+        "@id": `${pageUrl}#product`,
+        name: "Kit de démarrage Gladys",
+        description:
+          lang === "fr"
+            ? "Box domotique clé en main : un mini-PC Beelink avec Gladys installée, configurée et testée, 6 mois de Gladys Plus inclus, formation vidéo et support direct. Aucune installation ni compétence technique requise."
+            : "Turnkey home automation box: a Beelink mini-PC with Gladys installed, configured and tested, 6 months of Gladys Plus included, video training and direct support. No installation or technical skills required.",
+        image: [`${SITE_URL}/img/starter-kit/beelink_s13_spec.jpg`],
+        brand: { "@type": "Brand", name: "Gladys Assistant" },
+        category: lang === "fr" ? "Box domotique" : "Home automation kit",
+        url: pageUrl,
+        offers: [offer("Kit de démarrage Gladys - Beelink mini S12"), offer("Kit de démarrage Gladys - Beelink S13")],
+      },
+    ],
+  };
+}
