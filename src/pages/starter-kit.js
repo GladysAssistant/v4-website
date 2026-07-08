@@ -1473,7 +1473,14 @@ function Plus() {
               </p>
               <p>
                 Cette formation est <b>vendue 29,90€ séparément</b>, et elle est{" "}
-                <b>incluse gratuitement</b> dans le kit de démarrage.
+                <b>incluse gratuitement</b> dans le kit de démarrage.{" "}
+                <a
+                  href="https://formation.gladysassistant.com/b/T6f3j"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Voir le programme de la formation →
+                </a>
               </p>
             </div>
             <div className={cx("col col--6", styles.flexColumnSecondOnMobile)}>
