@@ -32,6 +32,7 @@ module.exports = {
         "integrations/broadlink",
         "integrations/caldav",
         "integrations/camera",
+        "integrations/reolink",
         "integrations/callmebot",
         "integrations/enedis",
         "integrations/energy-monitoring",
