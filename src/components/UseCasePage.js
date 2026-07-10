@@ -116,6 +116,43 @@ export default function UseCasePage({ content, faq, schemaData, lang }) {
             <p className={styles.blockOutro}>{content.problem.outro}</p>
           </section>
 
+          {/* OPTIONAL COMPARISON TABLE (only pages that define it) */}
+          {content.comparison && (
+            <section className={styles.section} aria-labelledby="comparison-title">
+              <h2 id="comparison-title" className={styles.sectionTitle}>
+                {content.comparison.title}
+              </h2>
+              {content.comparison.intro && (
+                <p className={styles.blockIntro}>{content.comparison.intro}</p>
+              )}
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th scope="col">{content.comparison.cols.feature}</th>
+                      <th scope="col" className={styles.gladysCol}>
+                        {content.comparison.cols.gladys}
+                      </th>
+                      <th scope="col">{content.comparison.cols.other}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {content.comparison.rows.map((row, i) => (
+                      <tr key={i}>
+                        <th scope="row">{row.feature}</th>
+                        <td>{row.gladys}</td>
+                        <td>{row.other}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {content.comparison.outro && (
+                <p className={styles.blockOutro}>{content.comparison.outro}</p>
+              )}
+            </section>
+          )}
+
           {/* FEATURES */}
           <section className={styles.section} aria-labelledby="features-title">
             <h2 id="features-title" className={styles.sectionTitle}>

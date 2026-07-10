@@ -128,6 +128,16 @@ const bestZigbeeDongleContent = {
           text: "The step-by-step guide to setting up your dongle with Zigbee2MQTT.",
         },
         {
+          label: "IKEA smart home with Gladys",
+          href: "/ikea-smart-home/",
+          text: "Use your IKEA Tradfri and Dirigera devices locally, over Zigbee2MQTT or Matter.",
+        },
+        {
+          label: "Home weather station",
+          href: "/home-weather-station/",
+          text: "Build a local weather station from Zigbee and Matter sensors Gladys reads directly.",
+        },
+        {
           label: "Zigbee vs Matter vs Z-Wave",
           href: "/zigbee-vs-matter-vs-zwave/",
           text: "Which wireless standard to choose for your smart home devices.",
@@ -261,6 +271,16 @@ const bestZigbeeDongleContent = {
           label: "Connecter des appareils Zigbee à Gladys",
           href: "/fr/docs/integrations/zigbee2mqtt/",
           text: "Le guide pas à pas pour configurer votre clé avec Zigbee2MQTT.",
+        },
+        {
+          label: "Maison connectée IKEA avec Gladys",
+          href: "/fr/ikea-smart-home/",
+          text: "Utilisez vos appareils IKEA Tradfri et Dirigera en local, via Zigbee2MQTT ou Matter.",
+        },
+        {
+          label: "Station météo maison",
+          href: "/fr/home-weather-station/",
+          text: "Montez une station météo locale avec des capteurs Zigbee et Matter lus par Gladys.",
         },
         {
           label: "Zigbee vs Matter vs Z-Wave",

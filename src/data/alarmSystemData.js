@@ -7,16 +7,16 @@
 const alarmContent = {
   en: {
     meta: {
-      title: "DIY home alarm system: build your own, local and private",
+      title: "DIY home alarm system: local, private, and yours to own",
       description:
-        "Build a real DIY home alarm system with Gladys Assistant: armed, partial and panic modes, motion and door sensors, camera snapshots and instant alerts, all running locally on hardware you own, open-source and with your data kept at home.",
+        "Build a real DIY home alarm system with Gladys Assistant, a local alternative to monitored alarms like Verisure or ADT: you own your hardware and installation, everything runs locally, with armed, partial and panic modes, affordable sensors and instant alerts.",
     },
     screenshotCaption:
       "Arm, disarm and monitor your home from Gladys, locally and on your own terms.",
     hero: {
       title: "Build your own home alarm system, local and private",
       subtitle:
-        "A real DIY alarm with motion sensors, door contacts, cameras and instant alerts, running locally on hardware you own.",
+        "A real DIY alarm with motion sensors, door contacts, cameras and instant alerts, running locally on hardware you own and control.",
       intro: [
         "Traditional alarm systems lock you into proprietary hardware, a company's cloud, and rules you can't change. Your home security shouldn't be a black box you rent from someone else.",
         "With Gladys Assistant you build a real alarm system from affordable, off-the-shelf sensors. It runs locally on your own machine, alerts you instantly, and behaves exactly the way you decide.",
@@ -28,8 +28,8 @@ const alarmContent = {
       },
     },
     problem: {
-      title: "The problem with traditional alarm systems",
-      intro: "Off-the-shelf monitored alarms are convenient, but the trade-offs are steep:",
+      title: "The problem with traditional monitored alarms",
+      intro: "Off-the-shelf monitored alarms (Verisure, ADT, Ring Alarm and the like) are convenient, but the trade-offs are steep:",
       points: [
         "Proprietary hardware and sensors locked to a single vendor.",
         "Your security data and camera feeds routed through a company's cloud.",
@@ -39,6 +39,55 @@ const alarmContent = {
       ],
       outro:
         "A self-hosted alarm flips all of that: your rules, your hardware, your data, kept at home.",
+    },
+    comparison: {
+      title: "Gladys DIY alarm vs a monitored subscription alarm",
+      intro:
+        "How a self-hosted Gladys alarm compares to a traditional monitored alarm (Verisure, ADT, Ring Alarm and similar):",
+      cols: {
+        feature: "",
+        gladys: "Gladys DIY alarm",
+        other: "Monitored subscription alarm",
+      },
+      rows: [
+        {
+          feature: "Ownership",
+          gladys: "You own the hardware and your installation",
+          other: "You rent the whole system",
+        },
+        {
+          feature: "Your data",
+          gladys: "Stays on your local network",
+          other: "Routed through their cloud",
+        },
+        {
+          feature: "Works offline",
+          gladys: "Yes, fully local",
+          other: "Limited without their service",
+        },
+        {
+          feature: "Sensors & hardware",
+          gladys: "Any Zigbee or Matter sensor, your choice",
+          other: "Proprietary, locked to them",
+        },
+        {
+          feature: "Rules & automations",
+          gladys: "Your own, fully customizable",
+          other: "Theirs, fixed scenarios",
+        },
+        {
+          feature: "Subscription",
+          gladys: "Optional Gladys Plus for remote access, backups and camera streaming",
+          other: "Mandatory, the system is the subscription",
+        },
+        {
+          feature: "If the company shuts down",
+          gladys: "Keeps working, it's yours",
+          other: "Can be left useless",
+        },
+      ],
+      outro:
+        "Both can involve a subscription. The difference is what you get for it: with Gladys you own your hardware and your installation, everything runs locally, and your data stays home, instead of renting a system you never control.",
     },
     features: {
       title: "What your Gladys alarm can do",
@@ -136,16 +185,16 @@ const alarmContent = {
 
   fr: {
     meta: {
-      title: "Alarme maison DIY : créez la vôtre, locale et privée",
+      title: "Alarme maison locale : l'alternative à Homiris et Verisure",
       description:
-        "Créez une vraie alarme maison DIY avec Gladys Assistant : modes armé, partiel et panique, détecteurs de mouvement et d'ouverture, photos de caméra et alertes instantanées, le tout en local sur du matériel qui vous appartient, open source et avec vos données gardées chez vous.",
+        "Créez une vraie alarme maison DIY avec Gladys Assistant, l'alternative locale aux alarmes télésurveillées type Homiris ou Verisure : vous restez propriétaire de votre matériel et de votre installation, tout tourne en local, avec des capteurs abordables et des alertes instantanées.",
     },
     screenshotCaption:
       "Armez, désarmez et surveillez votre maison depuis Gladys, en local et selon vos règles.",
     hero: {
       title: "Créez votre propre alarme maison, locale et privée",
       subtitle:
-        "Une vraie alarme DIY avec détecteurs de mouvement, contacts d'ouverture, caméras et alertes instantanées, qui tourne en local sur du matériel qui vous appartient.",
+        "Une vraie alarme DIY avec détecteurs de mouvement, contacts d'ouverture, caméras et alertes instantanées, qui tourne en local sur du matériel qui vous appartient et que vous contrôlez de bout en bout.",
       intro: [
         "Les systèmes d'alarme classiques vous enferment dans du matériel propriétaire, le cloud d'une entreprise, et des règles que vous ne pouvez pas changer. La sécurité de votre maison ne devrait pas être une boîte noire que vous louez à quelqu'un d'autre.",
         "Avec Gladys Assistant, vous construisez une vraie alarme à partir de capteurs abordables du commerce. Elle tourne en local sur votre propre machine, vous alerte instantanément, et se comporte exactement comme vous l'avez décidé.",
@@ -157,9 +206,9 @@ const alarmContent = {
       },
     },
     problem: {
-      title: "Le problème des systèmes d'alarme classiques",
+      title: "Le problème des alarmes télésurveillées classiques",
       intro:
-        "Les alarmes télésurveillées du commerce sont pratiques, mais les compromis sont lourds :",
+        "Les alarmes télésurveillées classiques (Homiris, Verisure et compagnie) sont pratiques, mais les compromis sont lourds :",
       points: [
         "Du matériel et des capteurs propriétaires, verrouillés sur un seul fournisseur.",
         "Vos données de sécurité et vos flux de caméra qui transitent par le cloud d'une entreprise.",
@@ -169,6 +218,55 @@ const alarmContent = {
       ],
       outro:
         "Une alarme auto-hébergée inverse tout cela : vos règles, votre matériel, vos données, gardées chez vous.",
+    },
+    comparison: {
+      title: "Alarme DIY Gladys vs alarme télésurveillée sur abonnement",
+      intro:
+        "Comment une alarme Gladys auto-hébergée se compare à une alarme télésurveillée classique (Homiris, Verisure et similaires) :",
+      cols: {
+        feature: "",
+        gladys: "Alarme DIY Gladys",
+        other: "Alarme télésurveillée sur abonnement",
+      },
+      rows: [
+        {
+          feature: "Propriété",
+          gladys: "Vous possédez le matériel et votre installation",
+          other: "Vous louez tout le système",
+        },
+        {
+          feature: "Vos données",
+          gladys: "Restent sur votre réseau local",
+          other: "Transitent par leur cloud",
+        },
+        {
+          feature: "Fonctionne hors ligne",
+          gladys: "Oui, 100 % local",
+          other: "Limité sans leur service",
+        },
+        {
+          feature: "Capteurs & matériel",
+          gladys: "N'importe quel capteur Zigbee ou Matter, à votre choix",
+          other: "Propriétaire, verrouillé chez eux",
+        },
+        {
+          feature: "Règles & automatisations",
+          gladys: "Les vôtres, entièrement personnalisables",
+          other: "Les leurs, scénarios figés",
+        },
+        {
+          feature: "Abonnement",
+          gladys: "Gladys Plus en option pour l'accès distant, les sauvegardes et le streaming caméra",
+          other: "Obligatoire, le système est l'abonnement",
+        },
+        {
+          feature: "Si l'entreprise ferme",
+          gladys: "Continue de fonctionner, il est à vous",
+          other: "Peut devenir inutilisable",
+        },
+      ],
+      outro:
+        "Les deux peuvent impliquer un abonnement. La différence, c'est ce qu'il recouvre : avec Gladys, vous possédez votre matériel et votre installation, tout tourne en local et vos données restent chez vous, au lieu de louer un système que vous ne contrôlez jamais.",
     },
     features: {
       title: "Ce que votre alarme Gladys peut faire",
@@ -292,6 +390,11 @@ export const alarmFaqEn = [
       "A Gladys alarm is very capable and flexible, but it's a system you build and maintain yourself. For many people a well-built local alarm is plenty; if you want professional monitoring too, you can combine both.",
   },
   {
+    question: "Is Gladys an alternative to a subscription alarm like Verisure?",
+    answer:
+      "Yes, but in a different way. With Gladys you own your hardware and your installation, and your alarm runs locally on your own machine, with your data kept at home. Gladys offers an optional subscription, Gladys Plus, for encrypted remote access and camera streaming, so it isn't about avoiding a subscription altogether, it's that you stay the owner of your system and your data instead of renting a monitored service you never control.",
+  },
+  {
     question: "Is my security data private?",
     answer:
       "Yes. Gladys is self-hosted, so your sensor data and camera feeds stay on your local network, with no mandatory cloud and no data resale.",
@@ -323,6 +426,11 @@ export const alarmFaqFr = [
     question: "Une alarme DIY vaut-elle une alarme professionnelle ?",
     answer:
       "Une alarme Gladys est très capable et flexible, mais c'est un système que vous construisez et maintenez vous-même. Pour beaucoup de gens, une bonne alarme locale suffit largement ; si vous voulez aussi une télésurveillance professionnelle, vous pouvez combiner les deux.",
+  },
+  {
+    question: "Gladys est-il une alternative à Homiris ou Verisure ?",
+    answer:
+      "Oui, mais autrement. Avec Gladys, vous possédez votre matériel et votre installation, et votre alarme tourne en local sur votre propre machine, avec vos données gardées chez vous. Gladys propose un abonnement optionnel, Gladys Plus, pour l'accès distant chiffré et le streaming caméra : il ne s'agit donc pas d'éviter tout abonnement, mais de rester propriétaire de votre système et de vos données, au lieu de louer un service télésurveillé que vous ne contrôlez jamais.",
   },
   {
     question: "Mes données de sécurité sont-elles privées ?",
