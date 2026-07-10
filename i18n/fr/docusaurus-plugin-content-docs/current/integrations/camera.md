@@ -29,7 +29,7 @@ Voilà un exemple d'une API HTTP pour récuperer une image d'une caméra :
 http://user:password@192.168.1.20/video?profile=0
 ```
 
-Si vous ne trouvez pas dans votre manuel, je peux vous conseiller ce site [https://www.ispyconnect.com/sources.aspx](https://www.ispyconnect.com/sources.aspx) qui est une base de donnée de toutes les informations de connexion des caméras qui existent dans le commerce.
+Si vous ne trouvez pas dans votre manuel, je peux vous conseiller ce site [https://www.ispyconnect.com/cameras](https://www.ispyconnect.com/cameras) qui est une base de donnée de toutes les informations de connexion des caméras qui existent dans le commerce.
 
 Il propose même un générateur d'URL en fonction de la marque, le modèle de votre caméra, et les informations de connexion (nom d'utilisateur + mot de passe) de votre caméra.
 
@@ -143,7 +143,7 @@ Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
 
 ### Comment trouver l'URL RTSP de ma caméra ?
 
-Consultez d'abord le manuel de votre caméra ou le site du fabricant, car le chemin diffère selon les marques. Si vous ne le trouvez pas, la [base de données iSpyConnect](https://www.ispyconnect.com/sources.aspx) liste les informations de connexion et génère même les URL pour la plupart des modèles. Vous pouvez aussi chercher "modèle de votre caméra + RTSP" en ligne. Pour une caméra Reolink, consultez notre [guide Reolink dédié](/docs/integrations/reolink).
+Consultez d'abord le manuel de votre caméra ou le site du fabricant, car le chemin diffère selon les marques. Si vous ne le trouvez pas, la [base de données iSpyConnect](https://www.ispyconnect.com/cameras) liste les informations de connexion et génère même les URL pour la plupart des modèles. Vous pouvez aussi chercher "modèle de votre caméra + RTSP" en ligne. Pour une caméra Reolink, consultez notre [guide Reolink dédié](/docs/integrations/reolink).
 
 ### Quelles caméras sont compatibles avec Gladys ?
 

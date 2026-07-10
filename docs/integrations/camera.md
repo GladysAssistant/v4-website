@@ -33,7 +33,7 @@ Here is an example of an HTTP URL:
 http://user:password@192.168.1.20/video?profile=0
 ```
 
-If you can't find this information on your camera manual, try using this website: [https://www.ispyconnect.com/sources.aspx](https://www.ispyconnect.com/sources.aspx) (this is a database of cameras with their relevant connection information).
+If you can't find this information on your camera manual, try using this website: [https://www.ispyconnect.com/cameras](https://www.ispyconnect.com/cameras) (this is a database of cameras with their relevant connection information).
 
 There is a even a built-in URL generator.
 
@@ -119,7 +119,7 @@ It should work in Telegram as well, if you have configured Telegram in Gladys.
 
 ### How do I find the RTSP URL of my camera?
 
-Check your camera's user manual or the manufacturer's website first, as the path differs between brands. If you can't find it, the [iSpyConnect camera database](https://www.ispyconnect.com/sources.aspx) lists connection details and even generates URLs for most models, or you can search "your camera model + RTSP" online. For Reolink cameras, see our [dedicated Reolink guide](/docs/integrations/reolink).
+Check your camera's user manual or the manufacturer's website first, as the path differs between brands. If you can't find it, the [iSpyConnect camera database](https://www.ispyconnect.com/cameras) lists connection details and even generates URLs for most models, or you can search "your camera model + RTSP" online. For Reolink cameras, see our [dedicated Reolink guide](/docs/integrations/reolink).
 
 ### Which cameras work with Gladys?
 
