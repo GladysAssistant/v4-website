@@ -29,6 +29,14 @@ import {
   bestZigbeeDongleFaqEn,
   bestZigbeeDongleFaqFr,
 } from "./bestZigbeeDongleData";
+import {
+  ikeaSmartHomeFaqEn,
+  ikeaSmartHomeFaqFr,
+} from "./ikeaSmartHomeData";
+import {
+  homeWeatherStationFaqEn,
+  homeWeatherStationFaqFr,
+} from "./homeWeatherStationData";
 import { edfTempoFaqEn, edfTempoFaqFr } from "./edfTempoData";
 import { protocolsFaqEn, protocolsFaqFr } from "./protocolsComparisonData";
 import { energyFaqEn, energyFaqFr } from "./energyMonitoringData";
@@ -669,6 +677,92 @@ export function getOpenSourceHomeAutomationPageSchema(lang) {
         lang === "fr"
           ? openSourceHomeAutomationFaqFr
           : openSourceHomeAutomationFaqEn,
+        pageUrl
+      ),
+    ],
+  };
+}
+
+export function getIkeaSmartHomePageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/ikea-smart-home/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "Maison connectée IKEA avec Gladys : Dirigera, Tradfri et Matter"
+            : "IKEA smart home with Gladys: Dirigera, Tradfri and Matter",
+        description:
+          lang === "fr"
+            ? "Pilotez vos appareils connectés IKEA (ampoules Tradfri, capteurs, stores) en local avec Gladys Assistant, avec ou sans le hub Dirigera, via Zigbee2MQTT ou Matter."
+            : "Control your IKEA smart home devices (Tradfri bulbs, sensors, blinds) locally with Gladys Assistant, with or without the Dirigera hub, over Zigbee2MQTT or Matter.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "Thing", name: "IKEA smart home" },
+          { "@type": "Thing", name: "IKEA Dirigera" },
+          { "@type": "Thing", name: "IKEA Tradfri" },
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+        ],
+      },
+      toFaqPage(
+        lang === "fr" ? ikeaSmartHomeFaqFr : ikeaSmartHomeFaqEn,
+        pageUrl
+      ),
+    ],
+  };
+}
+
+export function getHomeWeatherStationPageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/home-weather-station/`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline:
+          lang === "fr"
+            ? "Quelle station météo connectée pour une maison connectée (Zigbee, Matter, Netatmo)"
+            : "Best home weather station for a smart home (Zigbee, Matter, Netatmo)",
+        description:
+          lang === "fr"
+            ? "Guide des capteurs météo sans fil pour Gladys Assistant : capteurs Zigbee et Matter locaux, station Netatmo, et OpenWeather pour les prévisions."
+            : "A guide to wireless weather sensors for Gladys Assistant: local Zigbee and Matter sensors, the Netatmo station, and OpenWeather for forecast data.",
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about: [
+          { "@type": "Thing", name: "Home weather station" },
+          { "@type": "Thing", name: "Weather sensor" },
+          { "@type": "Thing", name: "Zigbee" },
+          { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+        ],
+      },
+      toFaqPage(
+        lang === "fr" ? homeWeatherStationFaqFr : homeWeatherStationFaqEn,
         pageUrl
       ),
     ],
