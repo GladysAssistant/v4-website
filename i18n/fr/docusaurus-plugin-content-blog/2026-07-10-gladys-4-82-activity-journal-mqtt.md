@@ -16,6 +16,8 @@ On est clairement à un tournant dans la façon de développer : les modèles d'
 
 **Les agents IA cloud de Cursor**, pilotables depuis mobile. Il y a une dizaine de jours, Cursor a lancé son application iOS : on peut désormais déléguer une tâche de développement à un agent depuis son téléphone, et le laisser travailler en autonomie, sans ordinateur. La refonte complète de l'intégration MQTT a été réalisée **entièrement** par un agent Cursor pendant que j'étais en déplacement.
 
+Je vous fais une démo de Cursor iOS [sur YouTube ici](https://www.youtube.com/watch?v=YAvLE5CnBlQ).
+
 {/* truncate */}
 
 ## 🏠 Nouvelle page Activité : l'historique de votre maison en direct
