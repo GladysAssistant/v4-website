@@ -9,6 +9,10 @@ Gladys Assistant est un projet open-source, et tout son code est disponible sur 
 
 N'importe qui peut lire et modifier ce code pour ajouter des fonctionnalités, des nouvelles intégrations ou corriger un bug.
 
+:::tip Vous voulez créer une intégration ? Commencez par les intégrations externes.
+La façon la **plus simple et la plus rapide** de créer une intégration, et de la publier à tous les utilisateurs en un clic, est de créer une [**intégration externe**](/fr/docs/dev/external-integrations/). Sans pull request, sans review de code, sans validation du mainteneur : vous l'écrivez dans le langage que vous voulez, vous l'empaquetez dans un conteneur Docker, et vous la publiez sur GitHub. La page ci-dessous décrit le chemin alternatif qui consiste à contribuer une intégration directement dans le cœur de Gladys, idéal pour les protocoles ouverts qui ont leur place dans le projet cœur.
+:::
+
 ## Les technologies utilisées
 
 Gladys est un projet Node.js assez classique qui utilise :

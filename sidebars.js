@@ -124,6 +124,7 @@ module.exports = {
       type: "category",
       label: "Development",
       items: [
+        "dev/external-integrations",
         "dev/developing-a-service",
         "dev/setup-development-environment-mac-linux",
         "dev/setup-development-environment-windows",
