@@ -182,7 +182,7 @@ Every external integration is described by a single file named `gladys-assistant
 | `name` | Yes | Display name, 3 to 30 characters. |
 | `description` | Yes | An object keyed by language. `en` is mandatory, each text is 10 to 100 characters. |
 | `version` | Yes | Strict [semantic version](https://semver.org/). Bumping it notifies users an update is available. |
-| `docker_image` | Yes | A well formed image reference with an explicit tag or digest. |
+| `docker_image` | Yes | A well-formed image reference with an explicit tag or digest. |
 | `gladys_version` | Yes | A semver range (npm syntax) used to filter compatible instances. |
 | `cover_image` | No | Direct HTTPS URL to a cover image (see rules below). |
 | `config_schema` | No | The list of configuration fields shown to the user. |
