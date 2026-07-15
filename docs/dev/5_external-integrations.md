@@ -9,7 +9,7 @@ sidebar_label: External integrations (recommended)
 
 There is **no pull request to open, no code review to wait for, and no maintainer approval**. You write your integration in the language you like, package it as a Docker image, publish a public GitHub repository, and it becomes installable by anyone, from any Gladys instance.
 
-This page is a complete, step by step tutorial for developers.
+This page is a complete, step-by-step tutorial for developers.
 
 ## Why external integrations?
 
@@ -40,7 +40,7 @@ You do not have to implement any of this plumbing yourself: the official [JavaSc
 A few important design rules to keep in mind:
 
 - **Your integration never creates or deletes devices.** It *publishes* the devices it discovers, and the user decides, from the Gladys interface, which ones to create, modify, or delete. This keeps the user in control and the interface consistent.
-- Gladys runs your container with strict limits: **256 MB of memory, 0.5 CPU, a read only root filesystem, no extra Linux capabilities, and a single writable `/data` mount**. Design your integration to live within these limits.
+- Gladys runs your container with strict limits: **256 MB of memory, 0.5 CPU, a read-only root filesystem, no extra Linux capabilities, and a single writable `/data` mount**. Design your integration to live within these limits.
 
 ## Prerequisites
 
@@ -219,7 +219,7 @@ Once installed, watch the status move from `LOADING` to `RUNNING`, open the gene
 Gladys renders a generic interface for every external integration, with three tabs:
 
 - **Devices**: the devices the user created, with standard controls.
-- **Discovery**: the devices your integration published, each with a one click "create" button.
+- **Discovery**: the devices your integration published, each with a one-click "create" button.
 - **Configuration**: the form generated from your `config_schema`, plus supervision controls (start, stop, restart, update, view logs, uninstall).
 
 ### Container environment
@@ -251,11 +251,11 @@ The maintainer approves nothing and is never a bottleneck.
 
 ## Step 6: Users install in one click
 
-From the Gladys catalog, external integrations appear alongside the built in ones, with a **community badge** and a live status indicator. A user clicks **Install**, and Gladys pulls your image, starts the container, and shows the generated interface. Users can also install directly from a GitHub repository URL, without waiting for the next index cycle.
+From the Gladys catalog, external integrations appear alongside the built-in ones, with a **community badge** and a live status indicator. A user clicks **Install**, and Gladys pulls your image, starts the container, and shows the generated interface. Users can also install directly from a GitHub repository URL, without waiting for the next index cycle.
 
 ## Updating your integration
 
-Shipping a new version is a two line change:
+Shipping a new version is a two-line change:
 
 1. Build and push a new image tag, for example `yourname/my-integration:1.1.0`.
 2. Bump `version` and `docker_image` in the manifest, and push.
@@ -271,7 +271,7 @@ The indexer is fully transparent. If your integration does not appear in the cat
 External integrations are safe to run without review because the **Docker sandbox is the primary line of defense**:
 
 - resource limits (256 MB memory, 0.5 CPU, 100 processes),
-- a read only root filesystem with no extra capabilities,
+- a read-only root filesystem with no extra capabilities,
 - an isolated bridge network,
 - no access to the host devices.
 
