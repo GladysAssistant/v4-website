@@ -17,7 +17,7 @@ Historically, adding an integration to Gladys meant [contributing to the core pr
 
 External integrations remove that friction entirely:
 
-| | Core integration | External integration |
+| | Internal integration | External integration |
 | --- | --- | --- |
 | Where the code lives | Inside the Gladys repository | Your own GitHub repository |
 | Language | Node.js only | Any language (Docker container) |
@@ -46,8 +46,8 @@ A few important design rules to keep in mind:
 
 - A Gladys Assistant instance running on version **4.62.0 or later** (external integrations were introduced in this version).
 - [Docker](https://www.docker.com/) installed on your development machine.
-- [Node.js 20 or later](https://nodejs.org/) if you use the JavaScript SDK.
-- A public [Docker registry](https://hub.docker.com/) account (Docker Hub, GitHub Container Registry, etc.) to host your image.
+- [Node.js 24 or later](https://nodejs.org/) if you use the JavaScript SDK.
+- A public Docker registry to host your image. The simplest option is the [GitHub Container Registry](https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-container-registry) (`ghcr.io`), which keeps your image in the same place as your code. Docker Hub or any other public registry works too.
 - A [GitHub](https://github.com/) account to publish your repository.
 
 ## Step 1: Start from the template
@@ -159,7 +159,7 @@ Every external integration is described by a single file named `gladys-assistant
     "fr": "Controlez mes appareils depuis Gladys Assistant."
   },
   "version": "1.0.0",
-  "docker_image": "yourname/my-integration:1.0.0",
+  "docker_image": "ghcr.io/yourname/my-integration:1.0.0",
   "gladys_version": ">=4.62.0",
   "cover_image": "https://raw.githubusercontent.com/yourname/my-integration/main/cover.jpg",
   "config_schema": [
@@ -198,7 +198,9 @@ If you provide a `cover_image`, it must be:
 - JPEG or PNG,
 - exactly **800 x 534 pixels**,
 - under **150 KB**,
-- served over HTTPS with a direct URL (no redirects), on a public server.
+- served over HTTPS with a direct URL (no redirects).
+
+The simplest option is to commit the image directly to your GitHub repository and use its raw URL (`https://raw.githubusercontent.com/...`), as shown in the manifest example above.
 
 A missing or invalid cover does not reject your integration: it is indexed with a placeholder and flagged as a warning.
 
@@ -207,7 +209,7 @@ A missing or invalid cover does not reject your integration: it is indexed with 
 Build your Docker image:
 
 ```bash
-docker build -t yourname/my-integration:1.0.0 .
+docker build -t ghcr.io/yourname/my-integration:1.0.0 .
 ```
 
 You do not need to publish anything to test it. In Gladys, external integrations support a **developer install mode**: install directly from an image name plus an inline manifest. This lets you iterate locally before going public.
@@ -235,10 +237,10 @@ Gladys injects these environment variables into your container. The SDK reads th
 
 Publishing is intentionally trivial. There is **no submission, no review, and no waiting on a maintainer**.
 
-1. **Push your Docker image** to any public registry:
+1. **Push your Docker image** to a public registry. The simplest option is the GitHub Container Registry (`ghcr.io`), which keeps the image in the same place as your code (remember to make the package public):
 
    ```bash
-   docker push yourname/my-integration:1.0.0
+   docker push ghcr.io/yourname/my-integration:1.0.0
    ```
 
 2. **Push your code** (with the `gladys-assistant-integration.json` manifest at the root) to a **public GitHub repository**.
@@ -257,7 +259,7 @@ From the Gladys catalog, external integrations appear alongside the built-in one
 
 Shipping a new version is a two-line change:
 
-1. Build and push a new image tag, for example `yourname/my-integration:1.1.0`.
+1. Build and push a new image tag, for example `ghcr.io/yourname/my-integration:1.1.0`.
 2. Bump `version` and `docker_image` in the manifest, and push.
 
 At the next index cycle, users see that an update is available and can apply it in one click.

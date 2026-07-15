@@ -13,11 +13,11 @@ Cette page est un tutoriel complet, étape par étape, pour les développeurs.
 
 ## Pourquoi les intégrations externes ?
 
-Historiquement, ajouter une intégration à Gladys signifiait [contribuer au projet cœur](/fr/docs/dev/developing-a-service/) : forker le dépôt, coder le service dans le code de Gladys, écrire des tests unitaires, ouvrir une pull request, et attendre qu'un mainteneur la relise et la merge. Ce chemin existe toujours et reste idéal pour les protocoles qui ont leur place dans le cœur, mais il a des frictions : il faut connaître les rouages internes de Gladys, respecter les conventions de code, et le mainteneur est un goulot d'étranglement.
+Historiquement, ajouter une intégration à Gladys signifiait [contribuer directement au code de Gladys](/fr/docs/dev/developing-a-service/) : forker le dépôt, coder le service dans le code de Gladys, écrire des tests unitaires, ouvrir une pull request, et attendre qu'un mainteneur la relise et la merge. Ce chemin existe toujours et reste idéal pour les protocoles qui ont leur place directement dans Gladys, mais il a des frictions : il faut connaître les rouages internes de Gladys, respecter les conventions de code, et le mainteneur est un goulot d'étranglement.
 
 Les intégrations externes suppriment entièrement cette friction :
 
-| | Intégration cœur | Intégration externe |
+| | Intégration interne | Intégration externe |
 | --- | --- | --- |
 | Où vit le code | Dans le dépôt de Gladys | Votre propre dépôt GitHub |
 | Langage | Node.js uniquement | N'importe quel langage (conteneur Docker) |
@@ -46,8 +46,8 @@ Quelques règles de conception importantes à garder en tête :
 
 - Une instance Gladys Assistant en version **4.62.0 ou supérieure** (les intégrations externes ont été introduites dans cette version).
 - [Docker](https://www.docker.com/) installé sur votre machine de développement.
-- [Node.js 20 ou supérieur](https://nodejs.org/) si vous utilisez le SDK JavaScript.
-- Un compte sur un [registre Docker](https://hub.docker.com/) public (Docker Hub, GitHub Container Registry, etc.) pour héberger votre image.
+- [Node.js 24 ou supérieur](https://nodejs.org/) si vous utilisez le SDK JavaScript.
+- Un registre Docker public pour héberger votre image. Le plus simple est le [GitHub Container Registry](https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-container-registry) (`ghcr.io`) : votre image reste au même endroit que votre code. Docker Hub ou tout autre registre public fonctionnent aussi.
 - Un compte [GitHub](https://github.com/) pour publier votre dépôt.
 
 ## Étape 1 : Partir du template
@@ -159,7 +159,7 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
     "fr": "Contrôlez mes appareils depuis Gladys Assistant."
   },
   "version": "1.0.0",
-  "docker_image": "votrenom/mon-integration:1.0.0",
+  "docker_image": "ghcr.io/votrenom/mon-integration:1.0.0",
   "gladys_version": ">=4.62.0",
   "cover_image": "https://raw.githubusercontent.com/votrenom/mon-integration/main/cover.jpg",
   "config_schema": [
@@ -198,7 +198,9 @@ Si vous fournissez une `cover_image`, elle doit être :
 - au format JPEG ou PNG,
 - exactement de **800 x 534 pixels**,
 - de moins de **150 Ko**,
-- servie en HTTPS avec une URL directe (sans redirection), sur un serveur public.
+- servie en HTTPS via une URL directe (sans redirection).
+
+Le plus simple est de committer l'image directement dans votre dépôt GitHub et d'utiliser son URL brute (`https://raw.githubusercontent.com/...`), comme dans l'exemple de manifeste ci-dessus.
 
 Une couverture manquante ou invalide ne rejette pas votre intégration : elle est indexée avec une image par défaut et signalée en avertissement.
 
@@ -207,7 +209,7 @@ Une couverture manquante ou invalide ne rejette pas votre intégration : elle es
 Construisez votre image Docker :
 
 ```bash
-docker build -t votrenom/mon-integration:1.0.0 .
+docker build -t ghcr.io/votrenom/mon-integration:1.0.0 .
 ```
 
 Vous n'avez rien besoin de publier pour la tester. Dans Gladys, les intégrations externes supportent un **mode d'installation développeur** : installez directement à partir d'un nom d'image et d'un manifeste en ligne. Cela vous permet d'itérer en local avant de rendre l'intégration publique.
@@ -235,10 +237,10 @@ Gladys injecte ces variables d'environnement dans votre conteneur. Le SDK les li
 
 La publication est volontairement triviale. Il n'y a **aucune soumission, aucune review, et aucune attente d'un mainteneur**.
 
-1. **Poussez votre image Docker** vers n'importe quel registre public :
+1. **Poussez votre image Docker** vers un registre public. Le plus simple est le GitHub Container Registry (`ghcr.io`), qui garde l'image au même endroit que votre code (pensez à rendre le package public) :
 
    ```bash
-   docker push votrenom/mon-integration:1.0.0
+   docker push ghcr.io/votrenom/mon-integration:1.0.0
    ```
 
 2. **Poussez votre code** (avec le manifeste `gladys-assistant-integration.json` à la racine) vers un **dépôt GitHub public**.
@@ -257,7 +259,7 @@ Depuis le catalogue de Gladys, les intégrations externes apparaissent à côté
 
 Livrer une nouvelle version tient en deux lignes :
 
-1. Construisez et poussez un nouveau tag d'image, par exemple `votrenom/mon-integration:1.1.0`.
+1. Construisez et poussez un nouveau tag d'image, par exemple `ghcr.io/votrenom/mon-integration:1.1.0`.
 2. Augmentez `version` et `docker_image` dans le manifeste, et poussez.
 
 Au prochain cycle d'indexation, les utilisateurs voient qu'une mise à jour est disponible et peuvent l'appliquer en un clic.
