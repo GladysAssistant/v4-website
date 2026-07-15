@@ -15,7 +15,7 @@ This page is a complete, step-by-step tutorial for developers.
 
 Historically, adding an integration to Gladys meant [contributing to the core project](/docs/dev/developing-a-service/): forking the repository, coding the service in the Gladys codebase, writing unit tests, opening a pull request, and waiting for a maintainer to review and merge it. That path still exists and is great for protocols that belong in the core, but it has friction: you need to know the Gladys internals, respect the coding conventions, and the maintainer is a bottleneck.
 
-External integrations remove that friction entirely:
+External integrations remove that bottleneck (automated manifest validation still runs, but with no human in the loop):
 
 | | Internal integration | External integration |
 | --- | --- | --- |

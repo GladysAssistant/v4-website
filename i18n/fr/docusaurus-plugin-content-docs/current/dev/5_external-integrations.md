@@ -15,7 +15,7 @@ Cette page est un tutoriel complet, étape par étape, pour les développeurs.
 
 Historiquement, ajouter une intégration à Gladys signifiait [contribuer directement au code de Gladys](/fr/docs/dev/developing-a-service/) : forker le dépôt, coder le service dans le code de Gladys, écrire des tests unitaires, ouvrir une pull request, et attendre qu'un mainteneur la relise et la merge. Ce chemin existe toujours et reste idéal pour les protocoles qui ont leur place directement dans Gladys, mais il a des frictions : il faut connaître les rouages internes de Gladys, respecter les conventions de code, et le mainteneur est un goulot d'étranglement.
 
-Les intégrations externes suppriment entièrement cette friction :
+Les intégrations externes suppriment ce goulot d'étranglement (une validation automatique du manifeste subsiste, mais sans aucune intervention humaine) :
 
 | | Intégration interne | Intégration externe |
 | --- | --- | --- |
