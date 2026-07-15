@@ -26,7 +26,7 @@ External integrations remove that friction entirely:
 | Installation for users | Built in | **One click** from the catalog |
 | Isolation | Runs in the Gladys process | Runs in a **sandboxed Docker container** |
 
-Because an external integration runs in its own hardened container, a bug or a crash in your code **can never take down the user's Gladys instance**. This is what makes it safe to publish without review.
+Because an external integration runs in its own hardened container, supervised by Gladys, a bug or a crash in your code **stays contained**: it cannot take down the user's Gladys instance or the other integrations. This stability guarantee is what makes it safe to publish without review.
 
 ## How it works
 
@@ -275,7 +275,9 @@ External integrations are safe to run without review because the **Docker sandbo
 - an isolated bridge network,
 - no access to the host devices.
 
-In v1, there is no moderation, no blocklist, and no manual removal. Before installing, users can see the repository's GitHub stars, its age, and the community badge, and every installation shows a clear warning. Because your container is fully sandboxed, even a malicious or buggy integration cannot compromise the core Gladys system.
+In v1, there is no moderation, no blocklist, and no manual removal. Before installing, users can see the repository's GitHub stars, its age, and the community badge, and every installation shows a clear warning.
+
+This sandbox limits host-level damage and keeps a buggy integration from destabilizing the Gladys core. It does not remove the application-level access the integration holds: it has its own token, access to the REST and WebSocket API scoped to it, and, in v1, full outbound network access. A malicious integration can therefore act within the bounds of that access, so **only install images you trust.**
 
 ## Questions?
 

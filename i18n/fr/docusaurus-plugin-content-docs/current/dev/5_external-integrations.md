@@ -26,7 +26,7 @@ Les intégrations externes suppriment entièrement cette friction :
 | Installation pour les utilisateurs | Intégrée | **En un clic** depuis le catalogue |
 | Isolation | Tourne dans le processus Gladys | Tourne dans un **conteneur Docker isolé** |
 
-Parce qu'une intégration externe tourne dans son propre conteneur renforcé, un bug ou un plantage dans votre code **ne peut jamais faire tomber l'instance Gladys de l'utilisateur**. C'est ce qui rend sa publication sûre, sans review.
+Parce qu'une intégration externe tourne dans son propre conteneur renforcé, supervisé par Gladys, un bug ou un plantage dans votre code **reste confiné au conteneur** : il ne peut pas faire tomber l'instance Gladys de l'utilisateur ni les autres intégrations. C'est cette garantie de stabilité qui rend sa publication sûre, sans review.
 
 ## Comment ça marche
 
@@ -275,7 +275,9 @@ Les intégrations externes peuvent tourner sans review en toute sécurité car l
 - un réseau bridge isolé,
 - aucun accès aux périphériques de l'hôte.
 
-En v1, il n'y a aucune modération, aucune blocklist, et aucun retrait manuel. Avant d'installer, les utilisateurs voient le nombre d'étoiles GitHub du dépôt, son ancienneté, et le badge communauté, et chaque installation affiche un avertissement clair. Parce que votre conteneur est totalement isolé, même une intégration malveillante ou buggée ne peut pas compromettre le système cœur de Gladys.
+En v1, il n'y a aucune modération, aucune blocklist, et aucun retrait manuel. Avant d'installer, les utilisateurs voient le nombre d'étoiles GitHub du dépôt, son ancienneté, et le badge communauté, et chaque installation affiche un avertissement clair.
+
+Ce bac à sable limite les dégâts au niveau de l'hôte et empêche une intégration buggée de déstabiliser le cœur de Gladys. Il ne supprime pas pour autant l'accès applicatif dont dispose l'intégration : elle possède un token qui lui est propre, l'accès à l'API REST et WebSocket qui lui est dédiée, et, en v1, un accès réseau sortant complet. Une intégration malveillante peut donc agir dans les limites de cet accès : **n'installez que des images en lesquelles vous avez confiance.**
 
 ## Des questions ?
 
