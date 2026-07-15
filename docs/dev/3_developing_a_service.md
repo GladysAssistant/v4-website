@@ -9,7 +9,7 @@ Gladys Assistant is an open-source project, and all its code is available on [Gi
 
 Anyone can read and modify this code to add features, new integrations, or fix a bug.
 
-:::tip Looking to build an integration? Start with external integrations.
+:::tip[Looking to build an integration? Start with external integrations]
 The **simplest and fastest** way to create an integration, and to publish it to every user in one click, is to build an [**external integration**](/docs/dev/external-integrations/). No pull request, no code review, no maintainer approval: you write it in the language you like, package it as a Docker container, and publish it on GitHub. This page below describes the alternative path of contributing an integration directly to the Gladys core, which is best for open protocols that belong in the core project.
 :::
 
