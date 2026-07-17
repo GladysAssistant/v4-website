@@ -16,7 +16,7 @@ La version **4.83.0** est disponible ! Après la grosse release 4.82 (journal d�
 
 Sur une installation avec des centaines de millions d’états, filtrer l’activité sur une catégorie peu fréquente (ouvertures, boutons…) pouvait bloquer l’interface pendant plusieurs dizaines de secondes.
 
-La page **Activité** charge désormais l’historique par fenêtres de temps progressives : les premiers événements s’affichent tout de suite, et la recherche continue en arrière-plan avec un bandeau du type « Recherche d’activité — {mois}… ».
+La page **Activité** charge désormais l’historique par fenêtres de temps progressives : les premiers événements s’affichent tout de suite, et la recherche continue en arrière-plan avec un bandeau du type « Recherche d’activité — `{mois}`… ».
 
 Sur une base de **448 millions d’états**, un filtre « Ouvertures » qui mettait 20–33 s à répondre affiche maintenant les premiers résultats en ~100 ms.
 

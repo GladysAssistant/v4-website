@@ -16,7 +16,7 @@ Version **4.83.0** is available! After the major 4.82 release (Activity journal 
 
 On an installation with hundreds of millions of states, filtering activity on an infrequent category (openings, buttons…) could freeze the interface for several tens of seconds.
 
-The **Activity** page now loads the history in progressive time windows: the first events are displayed immediately, and the search continues in the background with a banner like « Searching for activity — {month}… ».
+The **Activity** page now loads the history in progressive time windows: the first events are displayed immediately, and the search continues in the background with a banner like « Searching for activity — `{month}`… ».
 
 On a database of **448 million states**, an « Openings » filter that took 20–33 s to respond now displays the first results in ~100 ms.
 
