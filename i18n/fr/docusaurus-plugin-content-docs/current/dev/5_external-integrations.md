@@ -46,7 +46,7 @@ Quelques règles de conception importantes à garder en tête :
 
 ## Prérequis
 
-- Une instance Gladys Assistant en version **4.62.0 ou ultérieure** (les intégrations externes ont été introduites dans cette version).
+- Une instance Gladys Assistant en version **4.84.0 ou ultérieure** (les intégrations externes ont été introduites dans cette version).
 - [Docker](https://www.docker.com/) installé sur votre machine de développement.
 - [Node.js 24 ou ultérieur](https://nodejs.org/) si vous utilisez le SDK JavaScript (le SDK requiert Node.js 20 ou ultérieur, mais la version 24 est recommandée).
 - Un registre Docker public pour héberger votre image. L'option la plus simple est le [GitHub Container Registry](https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-container-registry) (`ghcr.io`), qui garde votre image au même endroit que votre code, et sur lequel le template officiel publie automatiquement. Docker Hub ou n'importe quel autre registre public fonctionne aussi, tant que l'image est téléchargeable de façon anonyme.
@@ -309,7 +309,7 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
   },
   "version": "1.0.0",
   "docker_image": "ghcr.io/yourname/my-integration:1.0.0",
-  "gladys_version": ">=4.62.0",
+  "gladys_version": ">=4.84.0",
   "cover_image": "https://raw.githubusercontent.com/yourname/my-integration/main/cover.jpg",
   "transports": ["local", "cloud"],
   "config_schema": [
