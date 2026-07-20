@@ -305,7 +305,7 @@ Every external integration is described by a single file named `gladys-assistant
   "name": "My Integration",
   "description": {
     "en": "Control my devices from Gladys Assistant.",
-    "fr": "Controlez mes appareils depuis Gladys Assistant."
+    "fr": "Contrôlez mes appareils depuis Gladys Assistant."
   },
   "version": "1.0.0",
   "docker_image": "ghcr.io/yourname/my-integration:1.0.0",
@@ -316,7 +316,8 @@ Every external integration is described by a single file named `gladys-assistant
     {
       "key": "api_key",
       "type": "secret",
-      "label": { "en": "API key", "fr": "Cle d'API" },
+      "label": { "en": "API key", "fr": "Clé d'API" },
+      "placeholder": { "en": "sk-1234...", "fr": "sk-1234..." },
       "required": true
     }
   ]
