@@ -1,53 +1,55 @@
 ---
 id: external-integrations
 title: Créer une intégration externe
-description: "La façon la plus simple de créer et publier une intégration Gladys Assistant. Sans pull request, sans review, sans attente : empaquetez votre intégration dans un conteneur Docker, publiez-la sur GitHub, et n'importe quel utilisateur peut l'installer en un clic."
+description: "La façon la plus simple de créer et publier une intégration Gladys Assistant. Sans pull request, sans review de code, sans attente : empaquetez votre intégration dans un conteneur Docker, publiez-la sur GitHub, et n'importe quel utilisateur peut l'installer en un clic."
 sidebar_label: Intégrations externes (recommandé)
 ---
 
 **Les intégrations externes sont la façon la plus simple et la plus rapide de créer une intégration pour Gladys Assistant, et de la publier à tous les utilisateurs en un clic.**
 
-Il n'y a **aucune pull request à ouvrir, aucune review de code à attendre, et aucune validation du mainteneur**. Vous écrivez votre intégration dans le langage que vous voulez, vous l'empaquetez dans une image Docker, vous publiez un dépôt GitHub public, et elle devient installable par n'importe qui, depuis n'importe quelle instance Gladys.
+Il n'y a **aucune pull request à ouvrir, aucune review de code à attendre, et aucune validation du mainteneur**. Vous écrivez votre intégration dans le langage de votre choix, vous l'empaquetez dans une image Docker, vous publiez un dépôt GitHub public, et elle devient installable par n'importe qui, depuis n'importe quelle instance Gladys.
 
-Cette page est un tutoriel complet, étape par étape, pour les développeurs.
+Cette page est un tutoriel complet, étape par étape, à destination des développeurs.
 
 ## Pourquoi les intégrations externes ?
 
-Historiquement, ajouter une intégration à Gladys signifiait [contribuer directement au code de Gladys](/fr/docs/dev/developing-a-service/) : forker le dépôt, coder le service dans le code de Gladys, écrire des tests unitaires, ouvrir une pull request, et attendre qu'un mainteneur la relise et la merge. Ce chemin existe toujours et reste idéal pour les protocoles qui ont leur place directement dans Gladys, mais il a des frictions : il faut connaître les rouages internes de Gladys, respecter les conventions de code, et le mainteneur est un goulot d'étranglement.
+Historiquement, ajouter une intégration à Gladys signifiait [contribuer au projet cœur](/fr/docs/dev/developing-a-service/) : forker le dépôt, coder le service dans la base de code de Gladys, écrire des tests unitaires, ouvrir une pull request, et attendre qu'un mainteneur la review et la merge. Ce chemin existe toujours et reste idéal pour les protocoles qui ont leur place dans le cœur, mais il a des frictions : il faut connaître les rouages internes de Gladys, respecter les conventions de code, et le mainteneur est un goulot d'étranglement.
 
-Les intégrations externes suppriment ce goulot d'étranglement (une validation automatique du manifeste subsiste, mais sans aucune intervention humaine) :
+Les intégrations externes suppriment ce goulot d'étranglement (une validation automatique du manifeste reste effectuée, mais sans humain dans la boucle) :
 
 | | Intégration interne | Intégration externe |
 | --- | --- | --- |
 | Où vit le code | Dans le dépôt de Gladys | Votre propre dépôt GitHub |
 | Langage | Node.js uniquement | N'importe quel langage (conteneur Docker) |
-| Review requise | Oui, un mainteneur doit merger votre PR | **Aucune review, aucune validation** |
-| Publication | Livrée avec la prochaine version de Gladys | **Disponible instantanément**, indexée automatiquement |
+| Review nécessaire | Oui, un mainteneur doit merger votre PR | **Aucune review, aucune validation** |
+| Publication | Livrée avec la prochaine version de Gladys | **Disponible immédiatement**, indexée automatiquement |
 | Installation pour les utilisateurs | Intégrée | **En un clic** depuis le catalogue |
-| Isolation | Tourne dans le processus Gladys | Tourne dans un **conteneur Docker isolé** |
+| Isolation | Tourne dans le processus Gladys | Tourne dans un **conteneur Docker sécurisé** |
 
-Parce qu'une intégration externe tourne dans son propre conteneur renforcé, supervisé par Gladys, un bug ou un plantage dans votre code **reste confiné au conteneur** : il ne peut pas faire tomber l'instance Gladys de l'utilisateur ni les autres intégrations. C'est cette garantie de stabilité qui rend sa publication sûre, sans review.
+Comme une intégration externe tourne dans son propre conteneur durci, supervisé par Gladys, un bug ou un crash dans votre code **reste confiné** : il ne peut pas faire tomber l'instance Gladys de l'utilisateur ni les autres intégrations. C'est cette garantie de stabilité qui permet de publier sans review.
 
 ## Comment ça marche
 
-Une intégration externe est un **conteneur Docker** qui communique avec Gladys via deux canaux :
+Une intégration externe est un **conteneur Docker** qui dialogue avec Gladys via deux canaux :
 
-- Une **API REST hôte** exposée par Gladys sur `/api/integration/v1/*`, utilisée pour publier les appareils découverts, pousser les états des appareils, et lire ou écrire votre configuration.
-- Un **canal WebSocket**, utilisé par Gladys pour envoyer des commandes à votre intégration en temps réel (allumer un interrupteur, interroger un appareil, lancer un scan) et pour vous notifier des événements de cycle de vie des appareils (un appareil a été créé, modifié ou supprimé par l'utilisateur).
+- Une **API REST hôte** exposée par Gladys sur `/api/integration/v1/*`, utilisée pour publier les appareils découverts, pousser les états des appareils, envoyer des images de caméra, et lire ou écrire votre configuration.
+- Un **canal WebSocket**, utilisé par Gladys pour envoyer des commandes à votre intégration en temps réel (allumer un interrupteur, interroger un appareil, lancer un scan, capturer une image de caméra) et pour vous notifier des événements de cycle de vie des appareils (un appareil a été créé, modifié ou supprimé par l'utilisateur).
 
-Vous n'avez pas à implémenter toute cette tuyauterie vous-même : le [SDK JavaScript officiel](https://github.com/GladysAssistant/integration-sdk-js) gère l'authentification, la connexion WebSocket, la reconnexion automatique avec backoff exponentiel, et la resynchronisation de l'état pour vous.
+Vous n'avez à implémenter aucune de cette plomberie vous-même : le [SDK JavaScript officiel](https://github.com/GladysAssistant/integration-sdk-js) gère pour vous l'authentification, la connexion WebSocket, la reconnexion automatique avec backoff exponentiel, les accusés de réception des commandes, et la resynchronisation de l'état. Vous pouvez écrire votre intégration dans n'importe quel langage, mais le SDK vous fait gagner beaucoup de temps.
+
+Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras**, les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud**, la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), et les **sous-conteneurs avec accès au matériel**. Chacun de ces points est couvert dans sa propre section ci-dessous.
 
 Quelques règles de conception importantes à garder en tête :
 
-- **Votre intégration ne crée ni ne supprime jamais d'appareil.** Elle *publie* les appareils qu'elle découvre, et c'est l'utilisateur qui décide, depuis l'interface de Gladys, lesquels créer, modifier ou supprimer. L'utilisateur garde le contrôle et l'interface reste cohérente.
-- Gladys lance votre conteneur avec des limites strictes : **256 Mo de mémoire, 0,5 CPU, un système de fichiers racine en lecture seule, aucune capacité Linux supplémentaire, et un unique point de montage `/data` accessible en écriture**. Concevez votre intégration pour vivre dans ces limites.
+- **Votre intégration ne crée ni ne supprime jamais d'appareils.** Elle *publie* les appareils qu'elle découvre, et l'utilisateur décide, depuis l'interface de Gladys, lesquels créer, modifier ou supprimer. Cela garde l'utilisateur aux commandes et l'interface cohérente.
+- Gladys exécute votre conteneur avec des limites strictes : **256 Mo de mémoire, 0,5 CPU, un système de fichiers racine en lecture seule, aucune capacité Linux supplémentaire, et un unique volume `/data` accessible en écriture**. Concevez votre intégration pour vivre dans ces limites (les sous-conteneurs peuvent déclarer leurs propres limites, plus élevées, voir plus bas).
 
 ## Prérequis
 
-- Une instance Gladys Assistant en version **4.62.0 ou supérieure** (les intégrations externes ont été introduites dans cette version).
+- Une instance Gladys Assistant en version **4.62.0 ou ultérieure** (les intégrations externes ont été introduites dans cette version).
 - [Docker](https://www.docker.com/) installé sur votre machine de développement.
-- [Node.js 24 ou supérieur](https://nodejs.org/) si vous utilisez le SDK JavaScript.
-- Un registre Docker public pour héberger votre image. Le plus simple est le [GitHub Container Registry](https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-container-registry) (`ghcr.io`) : votre image reste au même endroit que votre code. Docker Hub ou tout autre registre public fonctionnent aussi.
+- [Node.js 24 ou ultérieur](https://nodejs.org/) si vous utilisez le SDK JavaScript (le SDK requiert Node.js 20 ou ultérieur, mais la version 24 est recommandée).
+- Un registre Docker public pour héberger votre image. L'option la plus simple est le [GitHub Container Registry](https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-container-registry) (`ghcr.io`), qui garde votre image au même endroit que votre code, et sur lequel le template officiel publie automatiquement. Docker Hub ou n'importe quel autre registre public fonctionne aussi, tant que l'image est téléchargeable de façon anonyme.
 - Un compte [GitHub](https://github.com/) pour publier votre dépôt.
 
 ## Étape 1 : Partir du template
@@ -56,7 +58,7 @@ La façon la plus rapide de démarrer est le dépôt template officiel :
 
 👉 [GladysAssistant/integration-template-js](https://github.com/GladysAssistant/integration-template-js)
 
-Cliquez sur **"Use this template"** sur GitHub pour créer votre propre dépôt. Il contient déjà une intégration fonctionnelle, un `Dockerfile`, et un manifeste valide, pour que vous puissiez vous concentrer sur la logique de votre appareil.
+Cliquez sur **« Use this template »** sur GitHub pour créer votre propre dépôt. Il contient déjà une intégration fonctionnelle (des capteurs, un interrupteur, une lampe variable, une prise connectée, un détecteur de mouvement et une caméra), un `Dockerfile`, un manifeste valide, et un workflow GitHub Actions de publication prêt à l'emploi, pour que vous puissiez vous concentrer sur la logique de vos appareils.
 
 ## Étape 2 : Écrire votre intégration avec le SDK
 
@@ -69,23 +71,29 @@ npm install @gladysassistant/integration-sdk
 Voici un exemple complet et fonctionnel d'une intégration d'interrupteur virtuel :
 
 ```js
-import { GladysIntegration } from "@gladysassistant/integration-sdk";
+import {
+  GladysIntegration,
+  DEVICE_FEATURE_CATEGORIES,
+  DEVICE_FEATURE_TYPES,
+  logger,
+} from "@gladysassistant/integration-sdk";
 
 const gladys = new GladysIntegration();
 
 // Appelé quand l'utilisateur demande à Gladys de scanner de nouveaux appareils.
-// Publiez la liste complète des appareils que votre intégration peut proposer.
+// Publiez la liste complète des appareils que votre intégration peut offrir.
 gladys.onScanRequest(async () => {
+  const ids = gladys.externalIds("switch", "0x00158d0001a2b3c4");
   await gladys.publishDiscoveredDevices([
     {
       name: "Interrupteur virtuel",
-      external_id: gladys.externalId("switch"),
+      external_id: ids.device,
       features: [
         {
           name: "Marche/Arrêt",
-          external_id: gladys.externalId("switch:binary"),
-          category: "switch",
-          type: "binary",
+          external_id: ids.feature("binary"),
+          category: DEVICE_FEATURE_CATEGORIES.SWITCH,
+          type: DEVICE_FEATURE_TYPES.SWITCH.BINARY,
           min: 0,
           max: 1,
           read_only: false,
@@ -104,46 +112,187 @@ gladys.onSetValue(async (device, feature, value) => {
   await gladys.publishState(feature.external_id, value);
 });
 
-// Authentifie, ouvre le WebSocket, et resynchronise.
+// Réagissez aux changements de configuration faits par l'utilisateur.
+gladys.onConfigUpdated(async (config) => {
+  logger.info("Configuration mise à jour", config);
+});
+
+// Quittez proprement sur SIGTERM/SIGINT (arrêt, redémarrage ou mise à jour Docker).
+gladys.handleShutdown();
+
+// Authentifiez-vous, ouvrez le WebSocket, et resynchronisez.
 await gladys.connect();
 ```
 
-C'est toute l'intégration. Le SDK lit les identifiants que Gladys injecte dans le conteneur sous forme de variables d'environnement, donc il n'y a aucune configuration à brancher à la main.
+Voilà toute l'intégration. Le SDK lit les identifiants que Gladys injecte dans le conteneur sous forme de variables d'environnement, il n'y a donc aucune configuration à câbler à la main. Utiliser les constantes exportées `DEVICE_FEATURE_CATEGORIES` et `DEVICE_FEATURE_TYPES` (plutôt que des chaînes brutes) garde vos fonctionnalités alignées avec les catégories et types que Gladys comprend.
 
-### L'API du SDK en résumé
+### L'API du SDK en un coup d'œil
 
 Enregistrez vos gestionnaires d'événements **avant** d'appeler `connect()`.
 
 **Connexion**
 
-- `connect()` : authentifie, ouvre le WebSocket, resynchronise l'état, et se reconnecte automatiquement.
-- `disconnect()` : ferme la connexion proprement.
+- `new GladysIntegration(options?)` : le constructeur lit par défaut `GLADYS_HOST_API_URL`, `GLADYS_INTEGRATION_TOKEN` et `GLADYS_INTEGRATION_SELECTOR` depuis l'environnement. Vous pouvez les surcharger (ainsi que les délais de reconnexion ou le timeout des requêtes) via `options`.
+- `connect()` : s'authentifie, ouvre le WebSocket, resynchronise l'état, et continue de se reconnecter automatiquement (backoff exponentiel, de 1 s à 60 s).
+- `disconnect()` : ferme proprement la connexion et arrête de se reconnecter.
+- `handleShutdown(cleanup?)` : quitte proprement sur `SIGTERM`/`SIGINT`, en exécutant d'abord votre callback de nettoyage optionnel. Important pour que Docker puisse arrêter et redémarrer votre conteneur proprement.
 
 **Appareils**
 
 - `publishDiscoveredDevices(devices)` : publie la liste complète des appareils que vous proposez (affichée à l'utilisateur dans l'onglet Découverte).
-- `getDevices()` : renvoie les appareils que l'utilisateur a réellement créés.
-- `externalId(suffix)` : construit un identifiant externe correctement formaté pour un appareil ou une fonctionnalité.
+- `getDevices()` : retourne les appareils réellement créés par l'utilisateur.
+- `externalIds(type, platformId)` : retourne `{ device, feature(key) }`, la façon recommandée de construire des identifiants stables et correctement formatés pour un appareil et ses fonctionnalités.
+- `externalId(suffix)` : l'aide de plus bas niveau si vous préférez construire un identifiant unique vous-même.
 
 **État**
 
-- `publishState(featureExternalId, value)` : publie une mise à jour d'état (un nombre ou un objet).
-- `publishStates(states)` : publie un lot de mises à jour (jusqu'à 100 par requête).
+- `publishState(featureExternalId, value)` : publie une mise à jour d'état unique (un nombre ou un objet).
+- `publishStates(states)` : publie un lot de mises à jour (jusqu'à 100 par requête). L'API hôte limite les mises à jour d'état à **300 états par minute** par intégration, publiez donc des *changements* d'état, pas des instantanés complets.
 
-**Configuration**
+**Configuration et statut**
 
 - `getConfig()` / `setConfig(partialConfig)` : lit et écrit vos valeurs de configuration.
-- `getStatus()` : renvoie la version de Gladys et le statut du service.
+- `getStatus()` : retourne la version de Gladys et le statut du service.
+- `setConnectionStatus(connected, message?)` : rapporte votre statut de connexion applicatif (par exemple « token cloud expiré »), indépendamment du lien WebSocket avec Gladys.
 
-**Événements**
+**Événements (gestionnaires)**
 
-- `onSetValue(cb)` : une valeur de fonctionnalité a changé (une commande de l'utilisateur).
+- `onSetValue(cb)` : la valeur d'une fonctionnalité a changé (une commande de l'utilisateur).
 - `onPoll(cb)` : Gladys vous demande d'interroger un appareil.
 - `onScanRequest(cb)` : Gladys vous demande de découvrir des appareils.
+- `onGetImage(cb)` : Gladys demande une image de caméra fraîche (voir Caméras).
 - `onDeviceCreated(cb)` / `onDeviceUpdated(cb)` / `onDeviceDeleted(cb)` : événements de cycle de vie des appareils.
 - `onConfigUpdated(cb)` : la configuration a changé.
+- `onAction(key, cb)` : un bouton d'action du manifeste a été pressé (voir Actions).
+- `onOAuthAuthorizeUrl(cb)` / `onOAuthCallback(cb)` : connexion OAuth2 cloud (voir OAuth2).
+- `onHardwareUpdated(cb)` : une autorisation matérielle pour un sous-conteneur a changé.
 
-Vous pouvez aussi inspecter l'état local directement : `gladys.devices`, `gladys.config`, `gladys.connected`, et écouter `gladys.on("connected")` et `gladys.on("disconnected")`.
+Les commandes sont acquittées automatiquement en cas de succès ; lever une exception dans un gestionnaire acquitte la commande en échec. Vous pouvez aussi inspecter l'état local directement via `gladys.devices`, `gladys.config` et `gladys.connected`.
+
+Les capacités suivantes sont optionnelles. Passez directement à l'[Étape 3](#étape-3--écrire-le-manifeste) si vous n'avez besoin que des appareils, des états et de la configuration.
+
+### Caméras
+
+Les caméras utilisent la catégorie `camera` avec un type de fonctionnalité `image`, et disposent de leur propre canal dédié (les données d'image ne passent jamais par `publishState`, elles restent donc hors de l'historique des états et hors de la limite de 300 états par minute). Il existe deux chemins complémentaires :
+
+- **Pousser** un instantané périodique avec `publishCameraImage(externalId, image)` (limité à 12 images par minute et par appareil).
+- **Tirer** à la demande en répondant au gestionnaire `onGetImage`. Son accusé de réception est attendu jusqu'à **15 secondes** (au lieu des 5 standard), ce qui laisse le temps à une capture de type `ffmpeg` de s'exécuter.
+
+```js
+gladys.onGetImage(async (device) => {
+  const jpeg = await captureSnapshot(device);
+  return `image/jpg;base64,${jpeg.toString("base64")}`;
+});
+
+// Ou poussez un instantané de façon proactive :
+await gladys.publishCameraImage(ids.device, `image/jpg;base64,${jpeg.toString("base64")}`);
+```
+
+Les images sont des chaînes `image/jpg;base64,...` et doivent rester sous 150 Ko.
+
+### Services cloud OAuth2
+
+Pour les fournisseurs cloud qui utilisent OAuth2, déclarez un champ de configuration de type `oauth2` dans votre manifeste, puis construisez l'URL d'autorisation et gérez le callback :
+
+```js
+let state;
+
+gladys.onOAuthAuthorizeUrl(async (key, redirectUri) => {
+  state = crypto.randomUUID();
+  return `https://api.provider.com/oauth2/authorize?client_id=${gladys.config.client_id}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=read&state=${state}`;
+});
+
+gladys.onOAuthCallback(async (key, { code, state: returnedState, redirectUri }) => {
+  if (returnedState !== state) throw new Error("état invalide");
+  const tokens = await exchangeCodeForTokens(code, redirectUri);
+  await gladys.setConfig({ access_token: tokens.access_token, refresh_token: tokens.refresh_token });
+  await gladys.setConnectionStatus(true);
+});
+```
+
+Le rafraîchissement du token est de la responsabilité de votre intégration. Quand il expire, signalez-le avec `setConnectionStatus(false, { en: "Token expired, please reconnect.", fr: "Token expiré, reconnectez-vous." })`.
+
+### Boutons d'action
+
+Déclarez `actions` dans votre manifeste pour exposer des opérations à la demande avec un résultat visible. Chaque action est rendue sous forme de bouton (avec un mini-formulaire optionnel) dans l'onglet Configuration :
+
+```js
+gladys.onAction("detect_protocol", async (fields) => {
+  const version = await tryProtocolVersions(fields.ip);
+  return { en: `Protocol ${version} detected`, fr: `Protocole ${version} détecté` };
+});
+```
+
+La valeur résolue (une chaîne ou un objet multilingue) est affichée sous le bouton ; lever une exception affiche le message d'erreur à la place. Chaque action a son propre `timeout_seconds` (de 5 à 120, 30 par défaut).
+
+### Transports local/cloud
+
+Les intégrations à double canal (Tuya cloud + LAN, Shelly, eWeLink, etc.) peuvent atteindre le même appareil via différents transports, par appareil et changeant au fil du temps. Déclarez les canaux que vous prenez en charge dans le champ `transports` du manifeste, puis publiez le transport courant de chaque appareil :
+
+```js
+import { DEVICE_TRANSPORTS } from "@gladysassistant/integration-sdk";
+
+await gladys.publishTransports([
+  { external_id: ids.device, transport: DEVICE_TRANSPORTS.LOCAL },
+]);
+```
+
+Les valeurs valides sont `local`, `cloud` et `unreachable`. Une clé de configuration réservée, `GLADYS_PREFER_LOCAL` (booléen, `true` par défaut), reflète la préférence de l'utilisateur et est accessible via `gladys.config` et `onConfigUpdated`.
+
+### Découverte réseau
+
+Les conteneurs d'intégration tournent sur un réseau bridge isolé, si bien que le trafic broadcast LAN, mDNS et SSDP ne leur parvient jamais directement. La découverte est médiée par le cœur de Gladys : **le cœur capture (il a la position réseau), et votre intégration interprète (elle a la connaissance du protocole)**.
+
+Déclarez les captures dont vous avez besoin dans le champ `network_discovery` du manifeste, puis demandez un scan à la demande (typiquement depuis `onScanRequest`) :
+
+```js
+gladys.onScanRequest(async () => {
+  const announcements = await gladys.scanNetwork("udp-broadcast", { timeoutSeconds: 10 });
+  const devices = announcements.map(({ source_ip, payload_base64 }) => {
+    const announcement = decodePayload(Buffer.from(payload_base64, "base64"));
+    const ids = gladys.externalIds("plug", announcement.id);
+    return {
+      name: `Appareil ${announcement.id}`,
+      external_id: ids.device,
+      params: [{ name: "IP_ADDRESS", value: source_ip }],
+      features: [],
+    };
+  });
+  await gladys.publishDiscoveredDevices(devices);
+});
+```
+
+Les scans sont synchrones et bornés (`timeoutSeconds` de 1 à 30). Les types pris en charge sont `udp-broadcast`, `mdns` et `ssdp`.
+
+### Sous-conteneurs et matériel
+
+Certaines intégrations ont besoin de services compagnons (un broker MQTT, Frigate, un pont de protocole) ou d'un accès à un dongle USB ou à un Coral TPU. Déclarez-les dans le champ `containers` du manifeste (jusqu'à cinq), puis gérez leur cycle de vie via le SDK :
+
+```js
+await gladys.startContainer("mqtt", { env: { MQTT_PASSWORD: password } });
+
+const containers = await gladys.getContainers();
+const frigate = containers.find((c) => c.name === "frigate");
+const coral = frigate.devices.find((d) => d.class === "coral-usb");
+const detector = coral.granted && coral.available ? "edgetpu" : "cpu";
+```
+
+`getContainers()`, `startContainer(name, options?)`, `stopContainer(name)` et `restartContainer(name)` contrôlent les conteneurs compagnons. Quand l'utilisateur accorde ou révoque l'accès à un matériel, le gestionnaire `onHardwareUpdated` se déclenche pour que vous puissiez régénérer la configuration et redémarrer le conteneur concerné.
+
+### Journalisation
+
+Le SDK fournit un logger structuré pour que les logs de votre conteneur soient lisibles directement depuis `docker logs` :
+
+```js
+import { logger, createLogger } from "@gladysassistant/integration-sdk";
+
+logger.info("Démarrage de l'intégration...");
+
+const log = createLogger({ name: "weather-station" });
+log.child("poll").debug("rafraîchissement");
+```
+
+Le niveau de log provient de la variable d'environnement `LOG_LEVEL` (`debug`, `info`, `warn`, `error`, `silent` ; `info` par défaut). Le SDK journalise aussi son propre cycle de vie de connexion sous le nom `gladys-sdk`, si bien que les problèmes de connectivité sont diagnostiquables sans aucune configuration supplémentaire.
 
 ## Étape 3 : Écrire le manifeste
 
@@ -153,134 +302,167 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Mon Integration",
+  "name": "Mon Intégration",
   "description": {
     "en": "Control my devices from Gladys Assistant.",
-    "fr": "Contrôlez mes appareils depuis Gladys Assistant."
+    "fr": "Controlez mes appareils depuis Gladys Assistant."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/votrenom/mon-integration:1.0.0",
+  "docker_image": "ghcr.io/yourname/my-integration:1.0.0",
   "gladys_version": ">=4.62.0",
-  "cover_image": "https://raw.githubusercontent.com/votrenom/mon-integration/main/cover.jpg",
+  "cover_image": "https://raw.githubusercontent.com/yourname/my-integration/main/cover.jpg",
+  "transports": ["local", "cloud"],
   "config_schema": [
     {
       "key": "api_key",
       "type": "secret",
-      "label": { "en": "API key", "fr": "Clé d'API" },
+      "label": { "en": "API key", "fr": "Cle d'API" },
       "required": true
     }
   ]
 }
 ```
 
-### Les champs du manifeste
+### Champs du manifeste
 
 | Champ | Requis | Description |
 | --- | --- | --- |
 | `manifest_version` | Oui | Doit valoir `1`. |
-| `type` | Oui | Doit valoir `"device"` (seule valeur supportée en v1). |
-| `name` | Oui | Nom affiché, de 3 à 30 caractères. |
+| `type` | Oui | Doit valoir `"device"` (la seule valeur prise en charge en v1). |
+| `name` | Oui | Nom d'affichage, de 3 à 30 caractères. |
 | `description` | Oui | Un objet indexé par langue. `en` est obligatoire, chaque texte fait de 10 à 100 caractères. |
-| `version` | Oui | [Version sémantique](https://semver.org/) stricte. L'augmenter notifie les utilisateurs qu'une mise à jour est disponible. |
-| `docker_image` | Oui | Une référence d'image bien formée avec un tag ou un digest explicite. |
+| `version` | Oui | [Version sémantique](https://semver.org/) stricte. L'incrémenter notifie les utilisateurs qu'une mise à jour est disponible. |
+| `docker_image` | Oui | Une référence d'image bien formée avec un tag ou un digest explicite. Elle doit exister et être téléchargeable de façon anonyme. |
 | `gladys_version` | Oui | Une plage semver (syntaxe npm) utilisée pour filtrer les instances compatibles. |
 | `cover_image` | Non | URL HTTPS directe vers une image de couverture (voir les règles ci-dessous). |
 | `config_schema` | Non | La liste des champs de configuration affichés à l'utilisateur. |
+| `transports` | Non | Sous-ensemble non vide de `local` et `cloud`, si votre intégration est à double canal. |
+| `actions` | Non | De 1 à 10 boutons d'action, chacun avec une `key`, un `label` multilingue, un `timeout_seconds` (de 5 à 120) et des `fields` optionnels. |
+| `network_discovery` | Non | De 1 à 5 méthodes de capture médiée (`udp-broadcast`, `mdns`, `ssdp`). |
+| `containers` | Non | Jusqu'à 5 conteneurs compagnons, chacun avec `name`, `docker_image`, `start` (`auto` ou `manual`), et optionnellement `env`, `volumes`, `ports`, `devices`, `memory_mb` (de 32 à 4096), `cpu` (de 0,1 à 2). |
 
 ### Le schéma de configuration
 
-`config_schema` est une liste plate de champs. Chaque champ supporte ces types : `string`, `number`, `boolean`, `select`, et `secret`. Gladys génère automatiquement le formulaire de configuration à partir de cette liste, vous n'écrivez donc aucun code frontend. Les valeurs marquées `secret` sont stockées de façon sécurisée et ne sont jamais renvoyées au frontend.
+`config_schema` est une liste plate de champs. Chaque champ a une `key` (en minuscules, correspondant à `[a-z0-9_]`), un `type`, et un `label` multilingue (avec `en` obligatoire). Les types pris en charge sont `string`, `number`, `boolean`, `select`, `multi_select`, `secret` et `oauth2`. Selon le type, un champ peut aussi déclarer `placeholder`, `required`, `default`, `min`/`max` (pour les nombres) et `options` (pour `select`/`multi_select`).
 
-### Les règles de l'image de couverture
+Gladys génère automatiquement le formulaire de configuration à partir de cette liste, vous n'écrivez donc jamais de code frontend. Les valeurs marquées `secret` sont stockées de façon sécurisée et ne sont jamais renvoyées au frontend.
+
+### Règles de l'image de couverture
 
 Si vous fournissez une `cover_image`, elle doit être :
 
 - au format JPEG ou PNG,
 - exactement de **800 x 534 pixels**,
 - de moins de **150 Ko**,
-- servie en HTTPS via une URL directe (sans redirection).
+- servie en HTTPS avec une URL directe (sans redirection).
 
-Le plus simple est de committer l'image directement dans votre dépôt GitHub et d'utiliser son URL brute (`https://raw.githubusercontent.com/...`), comme dans l'exemple de manifeste ci-dessus.
+L'option la plus simple est de commiter l'image directement dans votre dépôt GitHub et d'utiliser son URL brute (`https://raw.githubusercontent.com/...`), comme montré dans l'exemple de manifeste ci-dessus.
 
-Une couverture manquante ou invalide ne rejette pas votre intégration : elle est indexée avec une image par défaut et signalée en avertissement.
+Une couverture manquante ou invalide ne rejette pas votre intégration : elle est indexée avec une image par défaut et signalée par un avertissement.
 
 ## Étape 4 : Construire et tester en local
 
-Construisez votre image Docker :
+Vous pouvez tout itérer sur votre machine avant de publier quoi que ce soit.
+
+**Exécuter l'intégration directement (boucle la plus rapide).** Pendant le développement, exécutez votre code comme un simple processus Node.js contre une instance Gladys en cours d'exécution. Installez votre intégration dans Gladys en mode développeur pour obtenir un token et un selector, puis démarrez-la avec les trois variables d'environnement que Gladys injecterait sinon :
 
 ```bash
-docker build -t ghcr.io/votrenom/mon-integration:1.0.0 .
+npm install
+GLADYS_HOST_API_URL="http://localhost:1443" \
+GLADYS_INTEGRATION_TOKEN="<token>" \
+GLADYS_INTEGRATION_SELECTOR="my-integration" \
+LOG_LEVEL=debug \
+npm start
 ```
 
-Vous n'avez rien besoin de publier pour la tester. Dans Gladys, les intégrations externes supportent un **mode d'installation développeur** : installez directement à partir d'un nom d'image et d'un manifeste en ligne. Cela vous permet d'itérer en local avant de rendre l'intégration publique.
+**Construire l'image Docker** pour tester l'artefact réel, conteneurisé :
 
-Une fois installée, observez le statut passer de `LOADING` à `RUNNING`, ouvrez l'onglet **Configuration** généré, lancez un **scan** depuis l'onglet **Découverte**, créez un appareil, et actionnez-le pour vérifier que votre gestionnaire `onSetValue` reçoit bien la commande.
+```bash
+docker build -t ghcr.io/yourname/my-integration:1.0.0 .
+```
 
-### Les trois onglets de chaque intégration externe
+**Valider votre manifeste hors ligne** avec exactement les vérifications que fait l'indexeur du store, avant d'attendre le cycle horaire :
+
+```bash
+npx github:GladysAssistant/integration-store .
+```
+
+Il se termine avec le code 0 si votre `gladys-assistant-integration.json` est valide, et affiche les raisons sinon.
+
+Une fois installée dans Gladys, regardez le statut passer de `LOADING` à `RUNNING`, ouvrez l'onglet **Configuration** généré, lancez un **scan** depuis l'onglet **Découverte**, créez un appareil, et actionnez-le pour vérifier que votre gestionnaire `onSetValue` reçoit bien la commande.
+
+### Les trois onglets de toute intégration externe
 
 Gladys affiche une interface générique pour chaque intégration externe, avec trois onglets :
 
-- **Appareils** : les appareils créés par l'utilisateur, avec les contrôles standards.
-- **Découverte** : les appareils publiés par votre intégration, chacun avec un bouton "créer" en un clic.
-- **Configuration** : le formulaire généré à partir de votre `config_schema`, plus les contrôles de supervision (démarrer, arrêter, redémarrer, mettre à jour, voir les logs, désinstaller).
+- **Appareils** : les appareils que l'utilisateur a créés, avec des contrôles standards.
+- **Découverte** : les appareils que votre intégration a publiés, chacun avec un bouton « créer » en un clic.
+- **Configuration** : le formulaire généré à partir de votre `config_schema`, vos boutons d'action, ainsi que les contrôles de supervision (démarrer, arrêter, redémarrer, mettre à jour, voir les logs, désinstaller).
 
-### L'environnement du conteneur
+### Environnement du conteneur
 
 Gladys injecte ces variables d'environnement dans votre conteneur. Le SDK les lit pour vous :
 
 - `GLADYS_HOST_API_URL` : l'URL de base de l'API hôte.
 - `GLADYS_INTEGRATION_TOKEN` : le token bearer utilisé pour s'authentifier.
-- `GLADYS_INTEGRATION_SELECTOR` : le sélecteur unique de votre instance d'intégration.
+- `GLADYS_INTEGRATION_SELECTOR` : le selector unique de votre instance d'intégration.
 - `TZ` : le fuseau horaire de l'instance Gladys.
 
 ## Étape 5 : Publier votre intégration
 
 La publication est volontairement triviale. Il n'y a **aucune soumission, aucune review, et aucune attente d'un mainteneur**.
 
-1. **Poussez votre image Docker** vers un registre public. Le plus simple est le GitHub Container Registry (`ghcr.io`), qui garde l'image au même endroit que votre code (pensez à rendre le package public) :
+Si vous êtes parti du template officiel, toute la publication est automatisée par un workflow GitHub Actions :
 
-   ```bash
-   docker push ghcr.io/votrenom/mon-integration:1.0.0
-   ```
+1. **Ajoutez le topic GitHub** `gladys-assistant-integration` à votre dépôt (l'engrenage à côté de « About » sur la page d'accueil du dépôt). C'est ce qui permet à l'indexeur de le découvrir.
 
-2. **Poussez votre code** (avec le manifeste `gladys-assistant-integration.json` à la racine) vers un **dépôt GitHub public**.
+2. **Lancez le workflow Release** : allez dans l'onglet **Actions**, sélectionnez **Release**, cliquez sur **Run workflow**, et choisissez l'incrément de version (`patch`, `minor` ou `major`). Le workflow va alors :
+   - incrémenter la version dans `package.json` et dans le manifeste (`version` et `docker_image`),
+   - créer et pousser un tag git `vX.Y.Z`,
+   - construire des images **multi-architectures** (`linux/amd64` et `linux/arm64`),
+   - les publier sur `ghcr.io` avec les tags `:X.Y.Z` et `:latest` (pensez à rendre le package public).
 
-3. **Ajoutez le topic GitHub** `gladys-assistant-integration` à votre dépôt (dans les Settings, ou via l'engrenage à côté de "About" sur la page d'accueil du dépôt).
+Et c'est tout. Un indexeur automatisé (une GitHub Action qui tourne toutes les heures) découvre chaque dépôt public portant le topic, lit et valide le manifeste, vérifie que l'image Docker est téléchargeable, ré-héberge l'image de couverture, et publie un catalogue mis à jour. En moins d'une heure, **votre intégration apparaît dans le store de chaque instance Gladys**, installable en un clic.
 
-C'est tout. Un indexeur automatique (une GitHub Action qui tourne toutes les heures) découvre chaque dépôt public portant ce topic, lit et valide le manifeste, ré-héberge l'image de couverture, et publie un catalogue mis à jour. En moins d'une heure, **votre intégration apparaît dans le store de chaque instance Gladys**, installable en un clic.
+**Publier manuellement** (sans le workflow du template) fonctionne aussi : construisez et poussez vous-même votre image multi-architectures sur un registre public, mettez à jour `version` et `docker_image` dans le manifeste, puis taguez et poussez :
 
-Le mainteneur n'approuve rien et n'est jamais un goulot d'étranglement.
+```bash
+docker push ghcr.io/yourname/my-integration:1.0.0
+git tag v1.0.0
+git push --tags
+```
+
+Pensez simplement à incrémenter `version` et `docker_image` dans le manifeste avant de taguer, sinon l'indexeur continue de servir l'ancienne version.
+
+Le mainteneur ne valide rien et n'est jamais un goulot d'étranglement.
 
 ## Étape 6 : Les utilisateurs installent en un clic
 
-Depuis le catalogue de Gladys, les intégrations externes apparaissent à côté des intégrations natives, avec un **badge communauté** et un indicateur de statut en direct. L'utilisateur clique sur **Installer**, et Gladys télécharge votre image, démarre le conteneur, et affiche l'interface générée. Les utilisateurs peuvent aussi installer directement depuis l'URL d'un dépôt GitHub, sans attendre le prochain cycle d'indexation.
+Depuis le catalogue de Gladys, les intégrations externes apparaissent aux côtés des intégrations intégrées, avec un **badge communautaire** et un indicateur de statut en direct. Un utilisateur clique sur **Installer**, et Gladys télécharge votre image, démarre le conteneur, et affiche l'interface générée. Les utilisateurs peuvent aussi installer directement depuis une URL de dépôt GitHub, sans attendre le prochain cycle d'indexation.
 
 ## Mettre à jour votre intégration
 
-Livrer une nouvelle version tient en deux lignes :
+Livrer une nouvelle version tient en un clic : relancez le workflow **Release** et choisissez le niveau d'incrément. Il reconstruit l'image multi-architectures, pousse les nouveaux tags, et met à jour le manifeste pour vous. Au prochain cycle d'indexation, les utilisateurs voient qu'une mise à jour est disponible et peuvent l'appliquer en un clic.
 
-1. Construisez et poussez un nouveau tag d'image, par exemple `ghcr.io/votrenom/mon-integration:1.1.0`.
-2. Augmentez `version` et `docker_image` dans le manifeste, et poussez.
-
-Au prochain cycle d'indexation, les utilisateurs voient qu'une mise à jour est disponible et peuvent l'appliquer en un clic.
+Si vous publiez manuellement, faites les deux mêmes choses à la main : construisez et poussez un nouveau tag d'image (par exemple `ghcr.io/yourname/my-integration:1.1.0`), puis incrémentez `version` et `docker_image` dans le manifeste et poussez.
 
 ## Dépannage
 
-L'indexeur est totalement transparent. Si votre intégration n'apparaît pas dans le catalogue, consultez le fichier `rejected.json` publié : il liste chaque dépôt ayant échoué à la validation, avec la raison (manifeste invalide, référence d'image mal formée, plage `gladys_version` incompatible, etc.). Corrigez le problème, poussez, et attendez le prochain cycle.
+L'indexeur est totalement transparent. Si votre intégration n'apparaît pas dans le catalogue, consultez le fichier `rejected.json` publié : il liste chaque dépôt qui a échoué à la validation, avec la raison et un niveau de sévérité (manifeste invalide, référence d'image mal formée ou non téléchargeable, plage `gladys_version` incompatible, couverture trop lourde ou aux mauvaises dimensions, etc.). Vous pouvez détecter la plupart de ces problèmes avant de publier en lançant `npx github:GladysAssistant/integration-store .` en local. Corrigez le problème, republiez, et attendez le prochain cycle.
 
-## Le modèle de sécurité
+## Modèle de sécurité
 
-Les intégrations externes peuvent tourner sans review en toute sécurité car le **bac à sable Docker est la première ligne de défense** :
+Les intégrations externes peuvent être exécutées sans review car le **bac à sable Docker est la première ligne de défense** :
 
-- des limites de ressources (256 Mo de mémoire, 0,5 CPU, 100 processus),
+- des limites de ressources (256 Mo de mémoire, 0,5 CPU, 100 processus) pour le conteneur principal,
 - un système de fichiers racine en lecture seule sans capacité supplémentaire,
 - un réseau bridge isolé,
-- aucun accès aux périphériques de l'hôte.
+- aucun accès direct aux périphériques de l'hôte (le matériel n'est accessible que via des sous-conteneurs explicitement autorisés par l'utilisateur).
 
-En v1, il n'y a aucune modération, aucune blocklist, et aucun retrait manuel. Avant d'installer, les utilisateurs voient le nombre d'étoiles GitHub du dépôt, son ancienneté, et le badge communauté, et chaque installation affiche un avertissement clair.
+En v1, il n'y a ni modération, ni liste de blocage, ni retrait manuel. Avant d'installer, les utilisateurs voient le nombre d'étoiles GitHub du dépôt, son ancienneté et le badge communautaire, et chaque installation affiche un avertissement clair.
 
-Ce bac à sable limite les dégâts au niveau de l'hôte et empêche une intégration buggée de déstabiliser le cœur de Gladys. Il ne supprime pas pour autant l'accès applicatif dont dispose l'intégration : elle possède un token qui lui est propre, l'accès à l'API REST et WebSocket qui lui est dédiée, et, en v1, un accès réseau sortant complet. Une intégration malveillante peut donc agir dans les limites de cet accès : **n'installez que des images en lesquelles vous avez confiance.**
+Ce bac à sable limite les dégâts au niveau de l'hôte et empêche une intégration boguée de déstabiliser le cœur de Gladys. Il ne supprime pas l'accès applicatif que détient l'intégration : elle a son propre token, un accès à l'API REST et WebSocket qui lui est réservé, et, en v1, un accès réseau sortant complet. Une intégration malveillante peut donc agir dans les limites de cet accès, alors **n'installez que des images de confiance.**
 
 ## Des questions ?
 
-Tu as des questions ou tu veux partager ton intégration ? Viens en parler [sur le forum](https://community.gladysassistant.com/), la communauté est là pour t'aider !
+Vous avez des questions ou vous voulez partager votre intégration ? Venez en parler [sur le forum](https://community.gladysassistant.com/), la communauté est là pour vous aider !
