@@ -122,18 +122,6 @@ Nous utilisons une configuration `eslint` assez stricte.
 
 Utilisez `VSCode` pour le développement afin de voir les problèmes de linting en temps réel, ou exécutez `npm run eslint` dans le dossier `server` (et dans `front`) pour voir toutes les erreurs de linting.
 
-## Inspiration : Live Coding sur YouTube
-
-J'ai fait récemment un live YouTube de 7 heures (c'est complet !!) où j'explique comment coder une intégration de A à Z.
-
-Je pars des spécifications fonctionnelles, aux spécifications techniques, au développement du frontend, du backend, des tests, du flow Git, TOUT est dedans !
-
-Vous trouverez ce live coding ici :
-
-<div class="youtubeVideoContainerInBlog">
-<iframe src="https://www.youtube.com/embed/M4vOjQXMiZI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
-
 ## Soumettre votre contribution
 
 Une fois votre changement prêt et testé, félicitations ! Vous pouvez ouvrir une pull request sur GitHub.
