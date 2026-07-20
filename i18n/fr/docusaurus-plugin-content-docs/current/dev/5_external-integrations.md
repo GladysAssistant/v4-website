@@ -381,6 +381,8 @@ npm start
 docker build -t ghcr.io/yourname/my-integration:1.0.0 .
 ```
 
+**Ou construisez-la sur GitHub en un clic.** Si vous préférez ne pas construire en local (ou si vous n'avez pas de builder multi-architectures configuré), le template fournit aussi un workflow **Build** que vous pouvez lancer à la main : allez dans l'onglet **Actions**, sélectionnez **Build**, cliquez sur **Run workflow**, et définissez éventuellement un tag d'image (il prend par défaut le nom de votre branche). GitHub construit l'image multi-architectures (`linux/amd64` et `linux/arm64`) et la pousse sur `ghcr.io` sous ce tag, sans jamais toucher `:latest`. Vous pouvez ensuite installer ce tag précis dans votre instance Gladys pour tester une vraie image, sans Docker en local. C'est une image de test, pas une release : utilisez l'[Étape 5](#étape-5--publier-votre-intégration) quand vous êtes prêt à publier pour tout le monde.
+
 **Valider votre manifeste hors ligne** avec exactement les vérifications que fait l'indexeur du store, avant d'attendre le cycle horaire :
 
 ```bash
