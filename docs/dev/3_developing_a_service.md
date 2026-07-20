@@ -20,7 +20,7 @@ The **simplest and fastest** way to create an integration, and to publish it to 
 - **Fix a bug**, anywhere in the backend or the frontend.
 - **Add a feature to the backend**: a new scene action, a new REST endpoint, a new capability in the Gladys API.
 - **Improve the user interface**: new dashboard boxes, better screens, accessibility, and translations.
-- **Add or improve a core integration** for an open protocol (Zigbee, MQTT, Z-Wave, and so on). For anything else, prefer an [external integration](/docs/dev/external-integrations/).
+- **Add or improve a core integration** for an open protocol (Zigbee, Matter, MQTT). For anything else, prefer an [external integration](/docs/dev/external-integrations/).
 
 ## Technologies Used
 

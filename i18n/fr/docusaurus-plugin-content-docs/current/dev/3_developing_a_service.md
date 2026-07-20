@@ -20,7 +20,7 @@ La façon la **plus simple et la plus rapide** de créer une intégration, et de
 - **Corriger un bug**, n'importe où dans le backend ou le frontend.
 - **Ajouter une fonctionnalité au backend** : une nouvelle action de scène, un nouveau point d'API REST, une nouvelle capacité dans l'API Gladys.
 - **Améliorer l'interface** : de nouvelles boîtes de tableau de bord, de meilleurs écrans, de l'accessibilité et des traductions.
-- **Ajouter ou améliorer une intégration interne** pour un protocole ouvert (Zigbee, MQTT, Z-Wave, etc.). Pour tout le reste, préférez une [intégration externe](/fr/docs/dev/external-integrations/).
+- **Ajouter ou améliorer une intégration interne** pour un protocole ouvert (Zigbee, Matter, MQTT). Pour tout le reste, préférez une [intégration externe](/fr/docs/dev/external-integrations/).
 
 ## Les technologies utilisées
 

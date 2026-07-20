@@ -17,7 +17,7 @@ Connecter des appareils à Gladys ne doit pas dépendre d'un cloud fermé ou d'u
 
 Concrètement, cela se traduit par deux approches complémentaires :
 
-1. **Des intégrations natives** pour les protocoles ouverts et les marques populaires (Zigbee, Matter, MQTT, Shelly, Sonos…), intégrées à Gladys
+1. **Des intégrations natives** pour les protocoles ouverts (Zigbee, Matter, MQTT), intégrées à Gladys
 2. **Des intégrations externes** : des intégrations communautaires empaquetées dans des conteneurs Docker et installables en un clic, pour couvrir n'importe quel autre appareil ou service
 
 ## Les protocoles ouverts en priorité
