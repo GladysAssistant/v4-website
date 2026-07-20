@@ -3,7 +3,7 @@ id: intro
 title: Gladys Assistant Integrations
 sidebar_label: Introduction
 slug: /integrations/
-description: "Gladys Assistant supports Zigbee (Zigbee2MQTT), Matter, MQTT, Shelly, Sonos, cameras, and thousands of devices. Open protocols first, with Matterbridge and an AI plugin factory for legacy hardware."
+description: "Gladys Assistant supports Zigbee (Zigbee2MQTT), Matter, MQTT, Shelly, Sonos, cameras, and thousands of devices. Open protocols first, plus external integrations to add any other device or service in one click."
 ---
 
 Gladys Assistant is an **open-source project**, developed and maintained by a **community of home automation enthusiasts**.  
@@ -13,13 +13,12 @@ The full source code is available on [GitHub](https://github.com/GladysAssistant
 
 ## Our vision
 
-Connecting devices to Gladys should not depend on a closed cloud or a single manufacturer. We focus on **open protocols** first, **Matter** as the long-term standard, and **practical solutions** for everything else.
+Connecting devices to Gladys should not depend on a closed cloud or a single manufacturer. We focus on **open protocols** first, **Matter** as the long-term standard, and **external integrations** for everything else.
 
-In practice, that means three complementary approaches:
+In practice, that means two complementary approaches:
 
-1. **Native integrations** for open protocols (Zigbee, Matter, MQTT…)
-2. **Matterbridge** to bring legacy or proprietary devices into your Matter ecosystem
-3. **An AI-powered plugin factory** to develop new Matterbridge plugins automatically when your device is not supported yet
+1. **Native integrations** for open protocols and popular brands (Zigbee, Matter, MQTT, Shelly, Sonos…), built into Gladys
+2. **External integrations**: community integrations packaged as Docker containers and installable in one click, to cover any other device or service
 
 ## Open protocols first
 
@@ -38,33 +37,19 @@ This open-source, local protocol is backed by the biggest names in the industry.
 
 Want to learn more? Read the [Matter documentation](/docs/integrations/matter/).
 
-## Legacy devices with Matterbridge
+## External integrations
 
-Smart home technology evolves fast. Many users still own devices that are not Matter-compatible.
+Your device or service is not covered by a native integration? **External integrations** are the fastest way to add it, and anyone can create and publish one.
 
-[Matterbridge](https://github.com/Luligu/matterbridge) is an open-source bridge that exposes non-Matter devices to Gladys through Matter. We use it today for equipment such as:
+An external integration is a small program packaged as a **Docker container** and published on a public GitHub repository. Gladys runs it in a secure sandbox and talks to it through a dedicated API. From a user's point of view:
 
-- [Somfy](/docs/integrations/somfy-tahoma/) roller shutters
-- Older generations of [Shelly](/docs/integrations/shelly/) devices
+- Browse the catalog of community integrations directly in Gladys
+- Install the one you need in **one click**: Gladys pulls the image, starts it, and generates its interface
+- Or install directly from a GitHub repository URL
 
-See the [Matterbridge documentation](/docs/integrations/matterbridge/) to enable it in Gladys.
+Because each one runs in its own isolated container, external integrations can be written in any language and published by anyone, without review, while staying safe for your Gladys instance.
 
-## The Matterbridge plugin factory
-
-Your device is not supported yet, and it does not use an open protocol like Zigbee or Matter?
-
-We built an **[AI-powered Matterbridge plugin factory](https://community.gladysassistant.com/t/lusine-a-plugins-matterbridge-rendez-nimporte-quel-appareil-compatible-avec-gladys/10234)**. No development skills required:
-
-1. **Open a GitHub issue** on the [plugin factory repository](https://github.com/GladysAssistant/matterbridge-ai-plugin-factory/issues) and describe your device
-2. **The AI develops the plugin** overnight
-3. **Download and install it** in Matterbridge, then test it in Gladys
-4. **Leave feedback** on the issue if something needs fixing: the AI iterates on the next run
-
-:::note
-Matterbridge must be installed and configured first. Follow the [Matterbridge documentation](/docs/integrations/matterbridge/) if you have not set it up yet.
-:::
-
-This factory already produces plugins for major ecosystems (Philips Hue, Tasmota, ESPHome, Netatmo, Tado, SwitchBot, and many more). The pipeline runs every morning: the more requests we receive, the faster Gladys covers new devices.
+Want to build one? External integrations are designed to be the **simplest way to create and publish an integration**, with no pull request and no validation. See the [external integrations developer guide](/docs/dev/external-integrations/).
 
 ## Other options
 
@@ -77,4 +62,4 @@ For custom or experimental setups, you can also use:
 
 Join the [Gladys community](https://community.gladysassistant.com/)!
 
-Whether you want to ask a question, test a new plugin, or suggest an integration, you are always welcome.
+Whether you want to ask a question, test a new integration, or suggest one, you are always welcome.
