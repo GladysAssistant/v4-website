@@ -13,7 +13,7 @@ Le code source est entièrement disponible sur [GitHub](https://github.com/Glady
 
 ## Notre vision
 
-Connecter des appareils à Gladys ne doit pas dépendre d'un cloud fermé ou d'un seul fabricant. Nous misons d'abord sur les **protocoles ouverts**, sur **Matter** comme standard à long terme, et sur les **intégrations externes** pour tout le reste.
+Connecter des appareils à Gladys ne doit pas dépendre d'un cloud fermé ou d'un seul fabricant. Nous misons d'abord sur les **protocoles ouverts**, sur **Matter et Zigbee** comme standard à long terme, et sur les **intégrations externes** pour tout le reste.
 
 Concrètement, cela se traduit par deux approches complémentaires :
 

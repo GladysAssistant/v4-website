@@ -13,7 +13,7 @@ The full source code is available on [GitHub](https://github.com/GladysAssistant
 
 ## Our vision
 
-Connecting devices to Gladys should not depend on a closed cloud or a single manufacturer. We focus on **open protocols** first, **Matter** as the long-term standard, and **external integrations** for everything else.
+Connecting devices to Gladys should not depend on a closed cloud or a single manufacturer. We focus on **open protocols** first, **Matter and Zigbee** as the long-term standards, and **external integrations** for everything else.
 
 In practice, that means two complementary approaches:
 
