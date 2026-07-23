@@ -33,6 +33,8 @@ module.exports = {
         "integrations/caldav",
         "integrations/camera",
         "integrations/reolink",
+        "integrations/imou",
+        "integrations/lsc",
         "integrations/callmebot",
         "integrations/enedis",
         "integrations/energy-monitoring",

@@ -1,11 +1,20 @@
 ---
 id: melcloud
-title: MELCloud (Mitsubishi AC)
-description: "Control your Mitsubishi air conditioning from Gladys Assistant with the MELCloud integration: connect your account and manage your AC units."
+title: "MELCloud in Gladys: control your Mitsubishi air conditioning"
+description: "Connect MELCloud to Gladys Assistant to control your Mitsubishi Electric air conditioning and heat pumps: on/off, mode, target temperature, and automations in scenes."
 sidebar_label: MELCloud
+keywords:
+  - melcloud
+  - melcloud gladys
+  - melcloud mitsubishi
+  - mitsubishi air conditioning home automation
+  - melcloud integration
+  - control mitsubishi ac
 ---
 
-MELCloud is Mitsubishi Electric's cloud service that allows you to control your Mitsubishi air conditioning units remotely. With this integration, you can control your Mitsubishi AC directly from Gladys Assistant.
+import JsonLd from '@site/src/components/seo/JsonLd';
+
+MELCloud is Mitsubishi Electric's cloud service that allows you to control your Mitsubishi air conditioning units and heat pumps remotely. With this integration, you can control your Mitsubishi AC directly from Gladys Assistant, and use it in your automations.
 
 ## Prerequisites
 
@@ -68,7 +77,19 @@ You can also use your MELCloud devices in Gladys scenes to automate your air con
 - Turn off the AC when you leave home
 - Set a specific temperature at a scheduled time
 
-## FAQ
+## Frequently asked questions
+
+### What is MELCloud?
+
+MELCloud is Mitsubishi Electric's cloud service used to control compatible Mitsubishi air conditioning units and heat pumps from a phone or computer. The Gladys MELCloud integration connects to that service so you can control the same units from Gladys and use them in your home automations.
+
+### Can I control my Mitsubishi air conditioning with Gladys?
+
+Yes. Once MELCloud is connected, Gladys exposes your Mitsubishi units with their main features: switch them on or off, change the mode (cooling, heating, etc.) and set the target temperature, from the dashboard, the chat or a scene.
+
+### Can I automate my Mitsubishi AC in scenes?
+
+Yes. MELCloud devices can be used in Gladys scenes: for example turn the AC on when the temperature rises above a threshold, turn it off when everyone leaves home, or set a specific temperature at a scheduled time.
 
 ### My devices are not appearing
 
@@ -83,3 +104,36 @@ If you have connection issues, verify that:
 - You have internet connectivity
 
 If you have any questions, ask on [the forum](https://community.gladysassistant.com/).
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What is MELCloud?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "MELCloud is Mitsubishi Electric's cloud service used to control compatible Mitsubishi air conditioning units and heat pumps from a phone or computer. The Gladys MELCloud integration connects to that service so you can control the same units from Gladys and use them in your home automations.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I control my Mitsubishi air conditioning with Gladys?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Once MELCloud is connected, Gladys exposes your Mitsubishi units with their main features: switch them on or off, change the mode (cooling, heating, etc.) and set the target temperature, from the dashboard, the chat or a scene.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I automate my Mitsubishi AC in scenes?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. MELCloud devices can be used in Gladys scenes: for example turn the AC on when the temperature rises above a threshold, turn it off when everyone leaves home, or set a specific temperature at a scheduled time.",
+        },
+      },
+    ],
+  }}
+/>
