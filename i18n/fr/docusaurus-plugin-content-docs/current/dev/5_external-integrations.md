@@ -37,7 +37,9 @@ Une intégration externe est un **conteneur Docker** qui dialogue avec Gladys vi
 
 Vous n'avez à implémenter aucune de cette plomberie vous-même : le [SDK JavaScript officiel](https://github.com/GladysAssistant/integration-sdk-js) gère pour vous l'authentification, la connexion WebSocket, la reconnexion automatique avec backoff exponentiel, les accusés de réception des commandes, et la resynchronisation de l'état. Vous pouvez écrire votre intégration dans n'importe quel langage, mais le SDK vous fait gagner beaucoup de temps.
 
-Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras**, les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud**, la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), et les **sous-conteneurs avec accès au matériel**. Chacun de ces points est couvert dans sa propre section ci-dessous.
+Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras**, les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud**, la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), les **sous-conteneurs avec accès au matériel**, et les **canaux de messagerie**. Chacun de ces points est couvert dans sa propre section ci-dessous.
+
+La plupart des intégrations sont de type `device` (elles exposent des appareils à Gladys). Un second type, `communication`, permet de construire un canal de messagerie à la place (un pont de chat ou de notifications, comme Telegram) ; voir [Canaux de messagerie](#canaux-de-messagerie).
 
 Quelques règles de conception importantes à garder en tête :
 
@@ -58,7 +60,7 @@ La façon la plus rapide de démarrer est le dépôt template officiel :
 
 👉 [GladysAssistant/integration-template-js](https://github.com/GladysAssistant/integration-template-js)
 
-Cliquez sur **« Use this template »** sur GitHub pour créer votre propre dépôt. Il contient déjà une intégration fonctionnelle (des capteurs, un interrupteur, une lampe variable, une prise connectée, un détecteur de mouvement et une caméra), un `Dockerfile`, un manifeste valide, et un workflow GitHub Actions de publication prêt à l'emploi, pour que vous puissiez vous concentrer sur la logique de vos appareils.
+Cliquez sur **« Use this template »** sur GitHub pour créer votre propre dépôt. Il contient déjà une intégration fonctionnelle (des capteurs, un interrupteur, une lampe variable, une prise connectée, un détecteur de mouvement et une caméra), un `Dockerfile`, un manifeste valide, la documentation obligatoire `docs/en.md` et `docs/fr.md`, et un workflow GitHub Actions de publication prêt à l'emploi, pour que vous puissiez vous concentrer sur la logique de vos appareils.
 
 ## Étape 2 : Écrire votre intégration avec le SDK
 
@@ -124,7 +126,7 @@ gladys.handleShutdown();
 await gladys.connect();
 ```
 
-Voilà toute l'intégration. Le SDK lit les identifiants que Gladys injecte dans le conteneur sous forme de variables d'environnement, il n'y a donc aucune configuration à câbler à la main. Utiliser les constantes exportées `DEVICE_FEATURE_CATEGORIES` et `DEVICE_FEATURE_TYPES` (plutôt que des chaînes brutes) garde vos fonctionnalités alignées avec les catégories et types que Gladys comprend.
+Voilà toute l'intégration. Le SDK lit les identifiants que Gladys injecte dans le conteneur sous forme de variables d'environnement, il n'y a donc aucune configuration à câbler à la main. Utiliser les constantes exportées `DEVICE_FEATURE_CATEGORIES`, `DEVICE_FEATURE_TYPES` et `DEVICE_FEATURE_UNITS` (plutôt que des chaînes brutes) garde vos fonctionnalités alignées avec les catégories, types et unités que Gladys comprend.
 
 ### L'API du SDK en un coup d'œil
 
@@ -132,7 +134,7 @@ Enregistrez vos gestionnaires d'événements **avant** d'appeler `connect()`.
 
 **Connexion**
 
-- `new GladysIntegration(options?)` : le constructeur lit par défaut `GLADYS_HOST_API_URL`, `GLADYS_INTEGRATION_TOKEN` et `GLADYS_INTEGRATION_SELECTOR` depuis l'environnement. Vous pouvez les surcharger (ainsi que les délais de reconnexion ou le timeout des requêtes) via `options`.
+- `new GladysIntegration(options?)` : le constructeur lit par défaut `GLADYS_HOST_API_URL`, `GLADYS_INTEGRATION_TOKEN` et `GLADYS_INTEGRATION_SELECTOR` depuis l'environnement. Vous pouvez les surcharger (ainsi que les délais de reconnexion, le timeout des requêtes ou le logger) via `options`.
 - `connect()` : s'authentifie, ouvre le WebSocket, resynchronise l'état, et continue de se reconnecter automatiquement (backoff exponentiel, de 1 s à 60 s).
 - `disconnect()` : ferme proprement la connexion et arrête de se reconnecter.
 - `handleShutdown(cleanup?)` : quitte proprement sur `SIGTERM`/`SIGINT`, en exécutant d'abord votre callback de nettoyage optionnel. Important pour que Docker puisse arrêter et redémarrer votre conteneur proprement.
@@ -262,7 +264,7 @@ gladys.onScanRequest(async () => {
 });
 ```
 
-Les scans sont synchrones et bornés (`timeoutSeconds` de 1 à 30). Les types pris en charge sont `udp-broadcast`, `mdns` et `ssdp`.
+Les scans sont synchrones et bornés (`timeoutSeconds` de 1 à 30). Les types pris en charge sont `udp-broadcast` (écoute passive), `udp-active-broadcast` (le cœur envoie une charge utile que vous fournissez et relaie les réponses unicast, limité à une toutes les 10 secondes avec une charge utile jusqu'à 512 octets), `mdns` et `ssdp`.
 
 ### Sous-conteneurs et matériel
 
@@ -293,6 +295,30 @@ log.child("poll").debug("rafraîchissement");
 ```
 
 Le niveau de log provient de la variable d'environnement `LOG_LEVEL` (`debug`, `info`, `warn`, `error`, `silent` ; `info` par défaut). Le SDK journalise aussi son propre cycle de vie de connexion sous le nom `gladys-sdk`, si bien que les problèmes de connectivité sont diagnostiquables sans aucune configuration supplémentaire.
+
+### Canaux de messagerie
+
+Au lieu d'exposer des appareils, une intégration peut être un **canal de messagerie** : mettez `"type": "communication"` dans le manifeste pour construire un pont de chat ou de notifications (Telegram, Matrix, etc.). Plutôt que des appareils, vous échangez des messages avec des **contacts** que les utilisateurs relient à leur compte Gladys :
+
+```js
+// Gladys vous demande de délivrer un message sortant à un contact.
+gladys.onSendMessage(async (contactId, message) => {
+  await sendToProvider(contactId, message.text);
+});
+
+// Reliez un contact du fournisseur à un utilisateur Gladys à partir d'un code d'appairage.
+const contact = await gladys.linkContact(code, providerUserId, "Alice");
+
+// Transférez un message entrant du fournisseur vers Gladys.
+await gladys.publishMessage(contactId, "La maison est maintenant vide.");
+```
+
+- `onSendMessage(cb)` : Gladys vous demande de délivrer un message à un contact.
+- `publishMessage(contactId, text, opts?)` : transfère un message entrant vers Gladys (texte du message jusqu'à 4096 caractères).
+- `linkContact(code, contactId, name?)` : relie un contact du fournisseur à un utilisateur Gladys à partir d'un code d'appairage, et retourne le selector de l'utilisateur, son prénom et sa langue.
+- `getContacts()` : liste les contacts actuellement reliés à ce canal.
+
+Une intégration `communication` a un écran de Configuration (issu de son `config_schema`) mais pas d'onglet Appareils ni Découverte.
 
 ## Étape 3 : Écrire le manifeste
 
@@ -329,7 +355,7 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | Champ | Requis | Description |
 | --- | --- | --- |
 | `manifest_version` | Oui | Doit valoir `1`. |
-| `type` | Oui | Doit valoir `"device"` (la seule valeur prise en charge en v1). |
+| `type` | Oui | `"device"` (expose des appareils) ou `"communication"` (un canal de messagerie). |
 | `name` | Oui | Nom d'affichage, de 3 à 30 caractères. |
 | `description` | Oui | Un objet indexé par langue. `en` est obligatoire, chaque texte fait de 10 à 100 caractères. |
 | `version` | Oui | [Version sémantique](https://semver.org/) stricte. L'incrémenter notifie les utilisateurs qu'une mise à jour est disponible. |
@@ -339,12 +365,14 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | `config_schema` | Non | La liste des champs de configuration affichés à l'utilisateur. |
 | `transports` | Non | Sous-ensemble non vide de `local` et `cloud`, si votre intégration est à double canal. |
 | `actions` | Non | De 1 à 10 boutons d'action, chacun avec une `key`, un `label` multilingue, un `timeout_seconds` (de 5 à 120) et des `fields` optionnels. |
-| `network_discovery` | Non | De 1 à 5 méthodes de capture médiée (`udp-broadcast`, `mdns`, `ssdp`). |
-| `containers` | Non | Jusqu'à 5 conteneurs compagnons, chacun avec `name`, `docker_image`, `start` (`auto` ou `manual`), et optionnellement `env`, `volumes`, `ports`, `devices`, `memory_mb` (de 32 à 4096), `cpu` (de 0,1 à 2). |
+| `network_discovery` | Non | De 1 à 5 méthodes de capture médiée (`udp-broadcast`, `udp-active-broadcast`, `mdns`, `ssdp`). |
+| `containers` | Non | Jusqu'à 5 conteneurs compagnons, chacun avec `name`, `docker_image`, `start` (`auto` ou `manual`), et optionnellement `env`, `volumes`, `ports`, `devices` (`coral-usb`, `coral-pcie`, `gpu`, `video`), `read_only`, `command`, `memory_mb` (de 32 à 4096), `cpu` (de 0,1 à 2), `shm_mb` (de 64 à 512). |
 
 ### Le schéma de configuration
 
-`config_schema` est une liste plate de champs. Chaque champ a une `key` (en minuscules, correspondant à `[a-z0-9_]`), un `type`, et un `label` multilingue (avec `en` obligatoire). Les types pris en charge sont `string`, `number`, `boolean`, `select`, `multi_select`, `secret` et `oauth2`. Selon le type, un champ peut aussi déclarer `placeholder`, `required`, `default`, `min`/`max` (pour les nombres) et `options` (pour `select`/`multi_select`).
+`config_schema` est une liste plate de champs. Chaque champ a une `key` (en minuscules, correspondant à `[a-z0-9_]`), un `type`, et un `label` multilingue (avec `en` obligatoire). Les types pris en charge sont `string`, `number`, `boolean`, `select`, `multi_select`, `secret`, `oauth2` et `section`. Selon le type, un champ peut aussi déclarer `placeholder` (pour `string`/`number`/`secret`), `required`, `default`, `min`/`max` (pour les nombres) et `options` (pour `select`/`multi_select`).
+
+Un `select` ou un `multi_select` peut soit lister des `options` statiques, soit tirer ses choix dynamiquement des appareils de l'utilisateur avec `source: "devices"`, et s'afficher en `dropdown` ou en `radio` (`display`). Un champ `section` est purement présentationnel : il affiche une `description` et jusqu'à cinq liens de documentation (`links`), et ne stocke aucune valeur.
 
 Gladys génère automatiquement le formulaire de configuration à partir de cette liste, vous n'écrivez donc jamais de code frontend. Les valeurs marquées `secret` sont stockées de façon sécurisée et ne sont jamais renvoyées au frontend.
 
@@ -360,6 +388,10 @@ Si vous fournissez une `cover_image`, elle doit être :
 L'option la plus simple est de commiter l'image directement dans votre dépôt GitHub et d'utiliser son URL brute (`https://raw.githubusercontent.com/...`), comme montré dans l'exemple de manifeste ci-dessus.
 
 Une couverture manquante ou invalide ne rejette pas votre intégration : elle est indexée avec une image par défaut et signalée par un avertissement.
+
+### Documentation (obligatoire)
+
+Chaque intégration doit fournir deux fichiers de documentation à la racine de son dépôt : `docs/en.md` et `docs/fr.md`, d'au moins **300 caractères** chacun. Le store les ré-héberge et les affiche aux utilisateurs dans le catalogue, si bien qu'un dépôt sans ces fichiers est **rejeté**. Couvrez l'essentiel : ce que fait l'intégration, ses prérequis, comment la configurer, et le dépannage. Le template inclut déjà les deux fichiers, prêts à compléter.
 
 ## Étape 4 : Construire et tester en local
 
@@ -451,7 +483,7 @@ Si vous publiez manuellement, faites les deux mêmes choses à la main : constru
 
 ## Dépannage
 
-L'indexeur est totalement transparent. Si votre intégration n'apparaît pas dans le catalogue, consultez le fichier `rejected.json` publié : il liste chaque dépôt qui a échoué à la validation, avec la raison et un niveau de sévérité (manifeste invalide, référence d'image mal formée ou non téléchargeable, plage `gladys_version` incompatible, couverture trop lourde ou aux mauvaises dimensions, etc.). Vous pouvez détecter la plupart de ces problèmes avant de publier en lançant `npx github:GladysAssistant/integration-store .` en local. Corrigez le problème, republiez, et attendez le prochain cycle.
+L'indexeur est totalement transparent. Si votre intégration n'apparaît pas dans le catalogue, consultez le fichier `rejected.json` publié : il liste chaque dépôt qui a échoué à la validation, avec la raison et un niveau de sévérité (manifeste invalide, référence d'image mal formée ou non téléchargeable, plage `gladys_version` incompatible, couverture trop lourde ou aux mauvaises dimensions, `docs/en.md` ou `docs/fr.md` manquant, etc.). Vous pouvez détecter la plupart de ces problèmes avant de publier en lançant `npx github:GladysAssistant/integration-store .` en local. Corrigez le problème, republiez, et attendez le prochain cycle.
 
 ## Modèle de sécurité
 

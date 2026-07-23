@@ -37,7 +37,9 @@ An external integration is a **Docker container** that talks to Gladys through t
 
 You do not have to implement any of this plumbing yourself: the official [JavaScript SDK](https://github.com/GladysAssistant/integration-sdk-js) handles authentication, the WebSocket connection, automatic reconnection with exponential backoff, command acknowledgments, and state resynchronization for you. You can write your integration in any language, but the SDK saves you a lot of work.
 
-On top of the basics (devices, states, configuration), the platform also supports **cameras**, **OAuth2 cloud services**, **on-demand action buttons**, **local/cloud transport badges**, **mediated network discovery** (mDNS, SSDP, UDP broadcast), and **sub-containers with hardware access**. Each of these is covered in its own section below.
+On top of the basics (devices, states, configuration), the platform also supports **cameras**, **OAuth2 cloud services**, **on-demand action buttons**, **local/cloud transport badges**, **mediated network discovery** (mDNS, SSDP, UDP broadcast), **sub-containers with hardware access**, and **messaging channels**. Each of these is covered in its own section below.
+
+Most integrations are of type `device` (they expose devices to Gladys). A second type, `communication`, lets you build a messaging channel instead (a chat or notification bridge, like Telegram); see [Messaging channels](#messaging-channels).
 
 A few important design rules to keep in mind:
 
@@ -58,7 +60,7 @@ The fastest way to get started is the official template repository:
 
 👉 [GladysAssistant/integration-template-js](https://github.com/GladysAssistant/integration-template-js)
 
-Click **"Use this template"** on GitHub to create your own repository. It already contains a working integration (sensors, a switch, a dimmable light, a smart plug, a motion sensor and a camera), a `Dockerfile`, a valid manifest, and a ready-to-use GitHub Actions release workflow, so you can focus on your device logic.
+Click **"Use this template"** on GitHub to create your own repository. It already contains a working integration (sensors, a switch, a dimmable light, a smart plug, a motion sensor and a camera), a `Dockerfile`, a valid manifest, the required `docs/en.md` and `docs/fr.md` documentation, and a ready-to-use GitHub Actions release workflow, so you can focus on your device logic.
 
 ## Step 2: Write your integration with the SDK
 
@@ -124,7 +126,7 @@ gladys.handleShutdown();
 await gladys.connect();
 ```
 
-That is the entire integration. The SDK reads the credentials Gladys injects into the container as environment variables, so there is no configuration to wire up by hand. Using the exported `DEVICE_FEATURE_CATEGORIES` and `DEVICE_FEATURE_TYPES` constants (instead of raw strings) keeps your features aligned with the categories and types Gladys understands.
+That is the entire integration. The SDK reads the credentials Gladys injects into the container as environment variables, so there is no configuration to wire up by hand. Using the exported `DEVICE_FEATURE_CATEGORIES`, `DEVICE_FEATURE_TYPES`, and `DEVICE_FEATURE_UNITS` constants (instead of raw strings) keeps your features aligned with the categories, types, and units Gladys understands.
 
 ### The SDK API in a nutshell
 
@@ -132,7 +134,7 @@ Register your event handlers **before** calling `connect()`.
 
 **Connection**
 
-- `new GladysIntegration(options?)`: the constructor reads `GLADYS_HOST_API_URL`, `GLADYS_INTEGRATION_TOKEN`, and `GLADYS_INTEGRATION_SELECTOR` from the environment by default. You can override them (and the reconnection delays or request timeout) through `options`.
+- `new GladysIntegration(options?)`: the constructor reads `GLADYS_HOST_API_URL`, `GLADYS_INTEGRATION_TOKEN`, and `GLADYS_INTEGRATION_SELECTOR` from the environment by default. You can override them (and the reconnection delays, request timeout, or logger) through `options`.
 - `connect()`: authenticates, opens the WebSocket, resynchronizes state, and keeps reconnecting automatically (exponential backoff, 1s to 60s).
 - `disconnect()`: closes the connection cleanly and stops reconnecting.
 - `handleShutdown(cleanup?)`: exits gracefully on `SIGTERM`/`SIGINT`, running your optional cleanup callback first. Important so Docker can stop and restart your container cleanly.
@@ -262,7 +264,7 @@ gladys.onScanRequest(async () => {
 });
 ```
 
-Scans are synchronous and bounded (`timeoutSeconds` from 1 to 30). Supported types are `udp-broadcast`, `mdns`, and `ssdp`.
+Scans are synchronous and bounded (`timeoutSeconds` from 1 to 30). Supported types are `udp-broadcast` (passive listening), `udp-active-broadcast` (the core sends a payload you provide and relays the unicast replies, rate-limited to one every 10 seconds with a payload up to 512 bytes), `mdns`, and `ssdp`.
 
 ### Sub-containers and hardware
 
@@ -293,6 +295,30 @@ log.child("poll").debug("refreshing");
 ```
 
 The log level comes from the `LOG_LEVEL` environment variable (`debug`, `info`, `warn`, `error`, `silent`; default `info`). The SDK also logs its own connection lifecycle under the `gladys-sdk` name, so connectivity problems are diagnosable without any extra setup.
+
+### Messaging channels
+
+Instead of exposing devices, an integration can be a **messaging channel**: set `"type": "communication"` in the manifest to build a chat or notification bridge (Telegram, Matrix, and so on). Rather than devices, you exchange messages with **contacts** that users link to their Gladys account:
+
+```js
+// Gladys asks you to deliver an outgoing message to a contact.
+gladys.onSendMessage(async (contactId, message) => {
+  await sendToProvider(contactId, message.text);
+});
+
+// Link a provider contact to a Gladys user from a pairing code.
+const contact = await gladys.linkContact(code, providerUserId, "Alice");
+
+// Forward an incoming message from the provider to Gladys.
+await gladys.publishMessage(contactId, "The house is now empty.");
+```
+
+- `onSendMessage(cb)`: Gladys asks you to deliver a message to a contact.
+- `publishMessage(contactId, text, opts?)`: forwards an incoming message to Gladys (message text up to 4096 characters).
+- `linkContact(code, contactId, name?)`: links a provider contact to a Gladys user from a pairing code, and returns the user selector, first name, and language.
+- `getContacts()`: lists the contacts currently linked to this channel.
+
+A `communication` integration has a Configuration screen (from its `config_schema`) but no Devices or Discovery tab.
 
 ## Step 3: Write the manifest
 
@@ -329,7 +355,7 @@ Every external integration is described by a single file named `gladys-assistant
 | Field | Required | Description |
 | --- | --- | --- |
 | `manifest_version` | Yes | Must be `1`. |
-| `type` | Yes | Must be `"device"` (the only supported value in v1). |
+| `type` | Yes | `"device"` (exposes devices) or `"communication"` (a messaging channel). |
 | `name` | Yes | Display name, 3 to 30 characters. |
 | `description` | Yes | An object keyed by language. `en` is mandatory, each text is 10 to 100 characters. |
 | `version` | Yes | Strict [semantic version](https://semver.org/). Bumping it notifies users an update is available. |
@@ -339,12 +365,14 @@ Every external integration is described by a single file named `gladys-assistant
 | `config_schema` | No | The list of configuration fields shown to the user. |
 | `transports` | No | Non-empty subset of `local` and `cloud`, if your integration is dual-channel. |
 | `actions` | No | 1 to 10 action buttons, each with a `key`, a multi-language `label`, a `timeout_seconds` (5 to 120), and optional `fields`. |
-| `network_discovery` | No | 1 to 5 mediated capture methods (`udp-broadcast`, `mdns`, `ssdp`). |
-| `containers` | No | Up to 5 companion containers, each with `name`, `docker_image`, `start` (`auto` or `manual`), and optional `env`, `volumes`, `ports`, `devices`, `memory_mb` (32 to 4096), `cpu` (0.1 to 2). |
+| `network_discovery` | No | 1 to 5 mediated capture methods (`udp-broadcast`, `udp-active-broadcast`, `mdns`, `ssdp`). |
+| `containers` | No | Up to 5 companion containers, each with `name`, `docker_image`, `start` (`auto` or `manual`), and optional `env`, `volumes`, `ports`, `devices` (`coral-usb`, `coral-pcie`, `gpu`, `video`), `read_only`, `command`, `memory_mb` (32 to 4096), `cpu` (0.1 to 2), `shm_mb` (64 to 512). |
 
 ### The config schema
 
-`config_schema` is a flat list of fields. Each field has a `key` (lowercase, matching `[a-z0-9_]`), a `type`, and a multi-language `label` (with `en` mandatory). Supported types are `string`, `number`, `boolean`, `select`, `multi_select`, `secret`, and `oauth2`. Depending on the type, a field can also declare `placeholder`, `required`, `default`, `min`/`max` (for numbers), and `options` (for `select`/`multi_select`).
+`config_schema` is a flat list of fields. Each field has a `key` (lowercase, matching `[a-z0-9_]`), a `type`, and a multi-language `label` (with `en` mandatory). Supported types are `string`, `number`, `boolean`, `select`, `multi_select`, `secret`, `oauth2`, and `section`. Depending on the type, a field can also declare `placeholder` (for `string`/`number`/`secret`), `required`, `default`, `min`/`max` (for numbers), and `options` (for `select`/`multi_select`).
+
+A `select` or `multi_select` can either list static `options` or pull its choices dynamically from the user's devices with `source: "devices"`, and render as a `dropdown` or `radio` (`display`). A `section` field is presentational only: it shows a `description` and up to five documentation `links`, and stores no value.
 
 Gladys automatically generates the configuration form from this list, so you never write any frontend code. Values marked `secret` are stored securely and are never returned to the frontend.
 
@@ -360,6 +388,10 @@ If you provide a `cover_image`, it must be:
 The simplest option is to commit the image directly to your GitHub repository and use its raw URL (`https://raw.githubusercontent.com/...`), as shown in the manifest example above.
 
 A missing or invalid cover does not reject your integration: it is indexed with a placeholder and flagged as a warning.
+
+### Documentation (required)
+
+Every integration must ship two documentation files at the root of its repository: `docs/en.md` and `docs/fr.md`, each at least **300 characters**. The store re-hosts them and shows them to users in the catalog, so a repository without them is **rejected**. Cover the essentials: what the integration does, its prerequisites, how to configure it, and troubleshooting. The template already includes both files, ready to fill in.
 
 ## Step 4: Build and test locally
 
@@ -451,7 +483,7 @@ If you publish manually, do the same two things by hand: build and push a new im
 
 ## Troubleshooting
 
-The indexer is fully transparent. If your integration does not appear in the catalog, check the published `rejected.json` file: it lists every repository that failed validation, along with the reason and a severity level (invalid manifest, malformed or unpullable image reference, incompatible `gladys_version` range, oversized or wrongly-sized cover, and so on). You can catch most of these before publishing by running `npx github:GladysAssistant/integration-store .` locally. Fix the issue, release again, and wait for the next cycle.
+The indexer is fully transparent. If your integration does not appear in the catalog, check the published `rejected.json` file: it lists every repository that failed validation, along with the reason and a severity level (invalid manifest, malformed or unpullable image reference, incompatible `gladys_version` range, oversized or wrongly-sized cover, missing `docs/en.md` or `docs/fr.md`, and so on). You can catch most of these before publishing by running `npx github:GladysAssistant/integration-store .` locally. Fix the issue, release again, and wait for the next cycle.
 
 ## Security model
 
