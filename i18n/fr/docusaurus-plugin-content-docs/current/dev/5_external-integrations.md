@@ -37,7 +37,7 @@ Une intégration externe est un **conteneur Docker** qui dialogue avec Gladys vi
 
 Vous n'avez à implémenter aucune de cette plomberie vous-même : le [SDK JavaScript officiel](https://github.com/GladysAssistant/integration-sdk-js) gère pour vous l'authentification, la connexion WebSocket, la reconnexion automatique avec backoff exponentiel, les accusés de réception des commandes, et la resynchronisation de l'état. Vous pouvez écrire votre intégration dans n'importe quel langage, mais le SDK vous fait gagner beaucoup de temps.
 
-Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras**, les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud**, la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), les **sous-conteneurs avec accès au matériel**, et les **canaux de messagerie**. Chacun de ces points est couvert dans sa propre section ci-dessous.
+Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras**, les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud** (avec un état dégradé), la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), les **sous-conteneurs avec accès au matériel**, les **canaux de messagerie**, et les **webhooks entrants** (via Gladys Plus). Chacun de ces points est couvert dans sa propre section ci-dessous.
 
 La plupart des intégrations sont de type `device` (elles exposent des appareils à Gladys). Un second type, `communication`, permet de construire un canal de messagerie à la place (un pont de chat ou de notifications, comme Telegram) ; voir [Canaux de messagerie](#canaux-de-messagerie).
 
@@ -168,6 +168,8 @@ Enregistrez vos gestionnaires d'événements **avant** d'appeler `connect()`.
 - `onAction(key, cb)` : un bouton d'action du manifeste a été pressé (voir Actions).
 - `onOAuthAuthorizeUrl(cb)` / `onOAuthCallback(cb)` : connexion OAuth2 cloud (voir OAuth2).
 - `onHardwareUpdated(cb)` : une autorisation matérielle pour un sous-conteneur a changé.
+- `onSendMessage(cb)` : délivrer un message à un contact (voir Canaux de messagerie).
+- `onWebhook(key, cb)` / `onWebhookUpdated(cb)` : webhooks entrants (voir Webhooks entrants).
 
 Les commandes sont acquittées automatiquement en cas de succès ; lever une exception dans un gestionnaire acquitte la commande en échec. Vous pouvez aussi inspecter l'état local directement via `gladys.devices`, `gladys.config` et `gladys.connected`.
 
@@ -241,6 +243,19 @@ await gladys.publishTransports([
 
 Les valeurs valides sont `local`, `cloud` et `unreachable`. Une clé de configuration réservée, `GLADYS_PREFER_LOCAL` (booléen, `true` par défaut), reflète la préférence de l'utilisateur et est accessible via `gladys.config` et `onConfigUpdated`.
 
+Une entrée de transport peut aussi porter un **état dégradé**, orthogonal au transport lui-même, pour signaler une situation « ça marche, mais pas de façon nominale ». Ajoutez `degraded: true` et un `message` multilingue (avec `en` obligatoire, jusqu'à 200 caractères) :
+
+```js
+await gladys.publishTransports([
+  {
+    external_id: ids.device,
+    transport: DEVICE_TRANSPORTS.CLOUD,
+    degraded: true,
+    message: { en: "Local session refused, falling back to cloud", fr: "Session locale refusée, repli sur le cloud" },
+  },
+]);
+```
+
 ### Découverte réseau
 
 Les conteneurs d'intégration tournent sur un réseau bridge isolé, si bien que le trafic broadcast LAN, mDNS et SSDP ne leur parvient jamais directement. La découverte est médiée par le cœur de Gladys : **le cœur capture (il a la position réseau), et votre intégration interprète (elle a la connaissance du protocole)**.
@@ -264,7 +279,15 @@ gladys.onScanRequest(async () => {
 });
 ```
 
-Les scans sont synchrones et bornés (`timeoutSeconds` de 1 à 30). Les types pris en charge sont `udp-broadcast` (écoute passive), `udp-active-broadcast` (le cœur envoie une charge utile que vous fournissez et relaie les réponses unicast, limité à une toutes les 10 secondes avec une charge utile jusqu'à 512 octets), `mdns` et `ssdp`.
+Les scans sont synchrones et bornés (`timeoutSeconds` de 1 à 30). Les types pris en charge sont `udp-broadcast` (écoute passive), `udp-active-broadcast` (le cœur envoie une charge utile que vous fournissez et relaie les réponses unicast, limité à une toutes les 10 secondes avec une charge utile jusqu'à 512 octets), `mdns` et `ssdp`. Pour `udp-active-broadcast`, passez le `port` et le `payload` à envoyer :
+
+```js
+const replies = await gladys.scanNetwork("udp-active-broadcast", {
+  port: 6667,
+  payload: buildProbe(),
+  timeoutSeconds: 10,
+});
+```
 
 ### Sous-conteneurs et matériel
 
@@ -302,8 +325,8 @@ Au lieu d'exposer des appareils, une intégration peut être un **canal de messa
 
 ```js
 // Gladys vous demande de délivrer un message sortant à un contact.
-gladys.onSendMessage(async (contactId, message) => {
-  await sendToProvider(contactId, message.text);
+gladys.onSendMessage(async (contact, message) => {
+  await sendToProvider(contact.id, message.text);
 });
 
 // Reliez un contact du fournisseur à un utilisateur Gladys à partir d'un code d'appairage.
@@ -313,12 +336,34 @@ const contact = await gladys.linkContact(code, providerUserId, "Alice");
 await gladys.publishMessage(contactId, "La maison est maintenant vide.");
 ```
 
-- `onSendMessage(cb)` : Gladys vous demande de délivrer un message à un contact.
+- `onSendMessage(cb)` : Gladys vous demande de délivrer un message. Son premier argument est le `contact` cible (`{ id }` pour un canal bidirectionnel, ou les champs de contact de l'utilisateur pour un canal en envoi seul).
 - `publishMessage(contactId, text, opts?)` : transfère un message entrant vers Gladys (texte du message jusqu'à 4096 caractères).
-- `linkContact(code, contactId, name?)` : relie un contact du fournisseur à un utilisateur Gladys à partir d'un code d'appairage, et retourne le selector de l'utilisateur, son prénom et sa langue.
+- `linkContact(code, contactId, name?)` : relie un contact du fournisseur à un utilisateur Gladys à partir d'un code d'appairage à usage unique (valable 15 minutes), et retourne le selector de l'utilisateur, son prénom et sa langue.
 - `getContacts()` : liste les contacts actuellement reliés à ce canal.
 
 Une intégration `communication` a un écran de Configuration (issu de son `config_schema`) mais pas d'onglet Appareils ni Découverte.
+
+### Webhooks entrants (Gladys Plus)
+
+Quand l'instance de l'utilisateur est connectée à **Gladys Plus**, votre intégration peut recevoir des **webhooks entrants** sur des URLs HTTPS publiques, ce qui est pratique pour les fournisseurs cloud qui poussent des événements ou qui ont besoin d'une URL de callback. Déclarez-en jusqu'à trois dans le champ `webhooks` du manifeste, puis traitez-les :
+
+```js
+// Fire-and-forget : acquitté immédiatement, les erreurs du gestionnaire sont ignorées.
+gladys.onWebhook("events", async ({ body }) => {
+  await refreshFromApi();
+});
+
+// Sync : vous retournez la réponse HTTP (statut de 200 à 499, corps jusqu'à 64 Ko).
+gladys.onWebhook("callback", async ({ query }) => ({
+  status: 200,
+  contentType: "application/json",
+  body: JSON.stringify({ "hub.challenge": query["hub.challenge"] }),
+}));
+```
+
+- `getWebhooks()` : retourne `{ available, webhooks: [{ key, mode, url }] }`. L'URL publique n'existe que lorsque Gladys Plus est relié, enregistrez-la donc auprès du service tiers à l'exécution.
+- `onWebhook(key, cb)` : le callback reçoit `{ method, query, body, contentType }`.
+- `onWebhookUpdated(cb)` : se déclenche quand Gladys Plus est relié ou délié, ou qu'une URL change, pour que vous puissiez ré-enregistrer vos webhooks.
 
 ## Étape 3 : Écrire le manifeste
 
@@ -367,6 +412,7 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | `actions` | Non | De 1 à 10 boutons d'action, chacun avec une `key`, un `label` multilingue, un `timeout_seconds` (de 5 à 120) et des `fields` optionnels. |
 | `network_discovery` | Non | De 1 à 5 méthodes de capture médiée (`udp-broadcast`, `udp-active-broadcast`, `mdns`, `ssdp`). |
 | `containers` | Non | Jusqu'à 5 conteneurs compagnons, chacun avec `name`, `docker_image`, `start` (`auto` ou `manual`), et optionnellement `env`, `volumes`, `ports`, `devices` (`coral-usb`, `coral-pcie`, `gpu`, `video`), `read_only`, `command`, `memory_mb` (de 32 à 4096), `cpu` (de 0,1 à 2), `shm_mb` (de 64 à 512). |
+| `webhooks` | Non | Jusqu'à 3 webhooks entrants (Gladys Plus), chacun avec une `key`, un `label` multilingue, et un `mode` (`fire_and_forget` ou `sync`). |
 
 ### Le schéma de configuration
 

@@ -37,7 +37,7 @@ An external integration is a **Docker container** that talks to Gladys through t
 
 You do not have to implement any of this plumbing yourself: the official [JavaScript SDK](https://github.com/GladysAssistant/integration-sdk-js) handles authentication, the WebSocket connection, automatic reconnection with exponential backoff, command acknowledgments, and state resynchronization for you. You can write your integration in any language, but the SDK saves you a lot of work.
 
-On top of the basics (devices, states, configuration), the platform also supports **cameras**, **OAuth2 cloud services**, **on-demand action buttons**, **local/cloud transport badges**, **mediated network discovery** (mDNS, SSDP, UDP broadcast), **sub-containers with hardware access**, and **messaging channels**. Each of these is covered in its own section below.
+On top of the basics (devices, states, configuration), the platform also supports **cameras**, **OAuth2 cloud services**, **on-demand action buttons**, **local/cloud transport badges** (with a degraded state), **mediated network discovery** (mDNS, SSDP, UDP broadcast), **sub-containers with hardware access**, **messaging channels**, and **incoming webhooks** (through Gladys Plus). Each of these is covered in its own section below.
 
 Most integrations are of type `device` (they expose devices to Gladys). A second type, `communication`, lets you build a messaging channel instead (a chat or notification bridge, like Telegram); see [Messaging channels](#messaging-channels).
 
@@ -168,6 +168,8 @@ Register your event handlers **before** calling `connect()`.
 - `onAction(key, cb)`: a manifest action button was pressed (see Actions).
 - `onOAuthAuthorizeUrl(cb)` / `onOAuthCallback(cb)`: OAuth2 cloud login (see OAuth2).
 - `onHardwareUpdated(cb)`: a hardware grant for a sub-container changed.
+- `onSendMessage(cb)`: deliver a message to a contact (see Messaging channels).
+- `onWebhook(key, cb)` / `onWebhookUpdated(cb)`: incoming webhooks (see Incoming webhooks).
 
 Commands acknowledge automatically on success; throwing from a handler acknowledges the command as failed. You can also inspect the local state directly through `gladys.devices`, `gladys.config`, and `gladys.connected`.
 
@@ -241,6 +243,19 @@ await gladys.publishTransports([
 
 Valid values are `local`, `cloud`, and `unreachable`. A reserved config key, `GLADYS_PREFER_LOCAL` (boolean, default `true`), reflects the user's preference and is available through `gladys.config` and `onConfigUpdated`.
 
+A transport entry can also carry a **degraded state**, orthogonal to the transport itself, to signal a "works, but not nominal" condition. Add `degraded: true` and a multi-language `message` (with `en` mandatory, up to 200 characters):
+
+```js
+await gladys.publishTransports([
+  {
+    external_id: ids.device,
+    transport: DEVICE_TRANSPORTS.CLOUD,
+    degraded: true,
+    message: { en: "Local session refused, falling back to cloud", fr: "Session locale refusée, repli sur le cloud" },
+  },
+]);
+```
+
 ### Network discovery
 
 Integration containers run on an isolated bridge network, so LAN broadcast, mDNS, and SSDP traffic never reaches them directly. Discovery is mediated by the Gladys core: **the core captures (it has the network position), and your integration interprets (it has the protocol knowledge)**.
@@ -264,7 +279,15 @@ gladys.onScanRequest(async () => {
 });
 ```
 
-Scans are synchronous and bounded (`timeoutSeconds` from 1 to 30). Supported types are `udp-broadcast` (passive listening), `udp-active-broadcast` (the core sends a payload you provide and relays the unicast replies, rate-limited to one every 10 seconds with a payload up to 512 bytes), `mdns`, and `ssdp`.
+Scans are synchronous and bounded (`timeoutSeconds` from 1 to 30). Supported types are `udp-broadcast` (passive listening), `udp-active-broadcast` (the core sends a payload you provide and relays the unicast replies, rate-limited to one every 10 seconds with a payload up to 512 bytes), `mdns`, and `ssdp`. For `udp-active-broadcast`, pass the `port` and the `payload` to send:
+
+```js
+const replies = await gladys.scanNetwork("udp-active-broadcast", {
+  port: 6667,
+  payload: buildProbe(),
+  timeoutSeconds: 10,
+});
+```
 
 ### Sub-containers and hardware
 
@@ -302,8 +325,8 @@ Instead of exposing devices, an integration can be a **messaging channel**: set 
 
 ```js
 // Gladys asks you to deliver an outgoing message to a contact.
-gladys.onSendMessage(async (contactId, message) => {
-  await sendToProvider(contactId, message.text);
+gladys.onSendMessage(async (contact, message) => {
+  await sendToProvider(contact.id, message.text);
 });
 
 // Link a provider contact to a Gladys user from a pairing code.
@@ -313,12 +336,34 @@ const contact = await gladys.linkContact(code, providerUserId, "Alice");
 await gladys.publishMessage(contactId, "The house is now empty.");
 ```
 
-- `onSendMessage(cb)`: Gladys asks you to deliver a message to a contact.
+- `onSendMessage(cb)`: Gladys asks you to deliver a message. Its first argument is the target `contact` (`{ id }` for a bidirectional channel, or the user's contact fields for a send-only channel).
 - `publishMessage(contactId, text, opts?)`: forwards an incoming message to Gladys (message text up to 4096 characters).
-- `linkContact(code, contactId, name?)`: links a provider contact to a Gladys user from a pairing code, and returns the user selector, first name, and language.
+- `linkContact(code, contactId, name?)`: links a provider contact to a Gladys user from a single-use pairing code (valid 15 minutes), and returns the user selector, first name, and language.
 - `getContacts()`: lists the contacts currently linked to this channel.
 
 A `communication` integration has a Configuration screen (from its `config_schema`) but no Devices or Discovery tab.
+
+### Incoming webhooks (Gladys Plus)
+
+When the user's instance is connected to **Gladys Plus**, your integration can receive **incoming webhooks** on public HTTPS URLs, which is handy for cloud providers that push events or need a callback URL. Declare up to three in the manifest `webhooks` field, then handle them:
+
+```js
+// Fire-and-forget: acknowledged immediately, handler errors are swallowed.
+gladys.onWebhook("events", async ({ body }) => {
+  await refreshFromApi();
+});
+
+// Sync: you return the HTTP response (status 200 to 499, body up to 64 KB).
+gladys.onWebhook("callback", async ({ query }) => ({
+  status: 200,
+  contentType: "application/json",
+  body: JSON.stringify({ "hub.challenge": query["hub.challenge"] }),
+}));
+```
+
+- `getWebhooks()`: returns `{ available, webhooks: [{ key, mode, url }] }`. The public URL only exists when Gladys Plus is linked, so register it with the third-party service at runtime.
+- `onWebhook(key, cb)`: the callback receives `{ method, query, body, contentType }`.
+- `onWebhookUpdated(cb)`: fires when Gladys Plus is linked or unlinked, or a URL changes, so you can re-register your webhooks.
 
 ## Step 3: Write the manifest
 
@@ -367,6 +412,7 @@ Every external integration is described by a single file named `gladys-assistant
 | `actions` | No | 1 to 10 action buttons, each with a `key`, a multi-language `label`, a `timeout_seconds` (5 to 120), and optional `fields`. |
 | `network_discovery` | No | 1 to 5 mediated capture methods (`udp-broadcast`, `udp-active-broadcast`, `mdns`, `ssdp`). |
 | `containers` | No | Up to 5 companion containers, each with `name`, `docker_image`, `start` (`auto` or `manual`), and optional `env`, `volumes`, `ports`, `devices` (`coral-usb`, `coral-pcie`, `gpu`, `video`), `read_only`, `command`, `memory_mb` (32 to 4096), `cpu` (0.1 to 2), `shm_mb` (64 to 512). |
+| `webhooks` | No | Up to 3 incoming webhooks (Gladys Plus), each with a `key`, a multi-language `label`, and a `mode` (`fire_and_forget` or `sync`). |
 
 ### The config schema
 
