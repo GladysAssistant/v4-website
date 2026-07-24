@@ -54,6 +54,7 @@ sudo docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
+-v /run/dbus:/run/dbus:ro \
 gladysassistant/gladys:v4
 ```
 
@@ -68,7 +69,19 @@ Note:
 - `--network=host` => Use host network stack
 - `-e` => Set environment variables
 - `-v` => Mount volumes
+- `-v /run/dbus:/run/dbus:ro` => Give Gladys read access to the host system D-Bus socket. This is what allows the **Reboot / Shutdown host** buttons (System settings) to power off or reboot the host machine through systemd-logind. If you omit this volume, those buttons are automatically disabled.
 - `TZ=Europe/Paris` => Timezone used by container. Feel free to consult [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) on wikipedia if you need to change this value.
+
+## Reboot / Shutdown the host from Gladys
+
+From the **Settings → System** page, Gladys can reboot or power off the machine it runs on (for example your Raspberry Pi). This is handy to add a shutdown/reboot button to a dashboard through a scene, or to restart the host remotely.
+
+This feature talks to `systemd-logind` over the host system D-Bus socket, so it requires:
+
+- a host running **systemd** (standard on Raspberry Pi OS, Debian, Ubuntu…),
+- the container started with `--privileged` and the D-Bus socket mounted: `-v /run/dbus:/run/dbus:ro` (both already included in the command above).
+
+If these conditions are not met, the buttons stay disabled with an explanatory tooltip. After a **reboot**, the Gladys container comes back automatically thanks to `--restart=always`; after a **shutdown**, the machine stays off until you power it back on manually.
 
 ## Auto-Upgrade Gladys with Watchtower
 

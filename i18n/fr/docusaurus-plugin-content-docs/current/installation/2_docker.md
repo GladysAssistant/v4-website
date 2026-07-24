@@ -46,6 +46,7 @@ sudo docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
+-v /run/dbus:/run/dbus:ro \
 gladysassistant/gladys:v4
 ```
 
@@ -60,6 +61,19 @@ gladysassistant/gladys:v4
 - Cette image a été buildée pour toutes les architectures connues du marché. Vous pouvez donc lancer cette commande que vous soyez sur un Raspberry Pi, sur un NAS Synology, sur une VM Ubuntu, etc... Tout est possible !
 
 - Le `--network=host` n'est pas forcément adapté à tous les systèmes, il ne fonctionne pas sous MacOS ou Windows par exemple.
+
+- `-v /run/dbus:/run/dbus:ro` : Donne à Gladys un accès en lecture au socket D-Bus système de l'hôte. C'est ce qui permet aux boutons **Redémarrer / Éteindre l'hôte** (réglages Système) d'éteindre ou de redémarrer la machine hôte via systemd-logind. Si vous omettez ce volume, ces boutons sont automatiquement désactivés.
+
+## Redémarrer / Éteindre l'hôte depuis Gladys
+
+Depuis la page **Réglages → Système**, Gladys peut redémarrer ou éteindre la machine sur laquelle il tourne (par exemple votre Raspberry Pi). Pratique pour ajouter un bouton d'arrêt/redémarrage sur un dashboard via une scène, ou pour relancer l'hôte à distance.
+
+Cette fonctionnalité communique avec `systemd-logind` via le socket D-Bus système de l'hôte, elle nécessite donc :
+
+- un hôte utilisant **systemd** (standard sur Raspberry Pi OS, Debian, Ubuntu…),
+- le conteneur lancé avec `--privileged` et le socket D-Bus monté : `-v /run/dbus:/run/dbus:ro` (déjà inclus dans la commande ci-dessus).
+
+Si ces conditions ne sont pas réunies, les boutons restent désactivés avec une infobulle explicative. Après un **redémarrage**, le conteneur Gladys revient automatiquement grâce à `--restart=always` ; après une **extinction**, la machine reste éteinte jusqu'à ce que vous la rallumiez manuellement.
 
 ## Mise à jour automatique avec Watchtower
 
