@@ -151,10 +151,21 @@ Register your event handlers **before** calling `connect()`.
 - `publishState(featureExternalId, value)`: publishes a single state update (a number or an object).
 - `publishStates(states)`: publishes a batch of updates (up to 100 per request). The host API rate-limits state updates at **300 states per minute** per integration, so publish state *changes*, not full snapshots.
 
+The limit is sized for changes, so keep the last value you sent for each feature and publish only what actually moved:
+
+```js
+const lastValues = new Map();
+const changed = readings.filter(({ id, value }) => lastValues.get(id) !== value);
+changed.forEach(({ id, value }) => lastValues.set(id, value));
+await gladys.publishStates(
+  changed.map(({ id, value }) => ({ device_feature_external_id: id, state: value })),
+);
+```
+
 **Configuration and status**
 
 - `getConfig()` / `setConfig(partialConfig)`: reads and writes your configuration values.
-- `getStatus()`: returns the Gladys version and the service status.
+- `getStatus()`: returns the Gladys version.
 - `setConnectionStatus(connected, message?)`: reports your application-level connection status (for example, "cloud token expired"), independent of the WebSocket link to Gladys.
 
 **Events (handlers)**
@@ -171,7 +182,9 @@ Register your event handlers **before** calling `connect()`.
 - `onSendMessage(cb)`: deliver a message to a contact (see Messaging channels).
 - `onWebhook(key, cb)` / `onWebhookUpdated(cb)`: incoming webhooks (see Incoming webhooks).
 
-Commands acknowledge automatically on success; throwing from a handler acknowledges the command as failed. You can also inspect the local state directly through `gladys.devices`, `gladys.config`, and `gladys.connected`.
+Commands acknowledge automatically on success; throwing from a handler acknowledges the command as failed. You can also inspect the local state directly through `gladys.devices`, `gladys.config`, and `gladys.connected`, and listen to the `connected` and `disconnected` events.
+
+Every method returns a promise, and host API errors are thrown as a `GladysApiError` carrying `status`, `code`, and `message`, so you can catch them and react precisely.
 
 The following capabilities are optional. Skip straight to [Step 3](#step-3-write-the-manifest) if you only need devices, states and configuration.
 
@@ -317,7 +330,9 @@ const log = createLogger({ name: "weather-station" });
 log.child("poll").debug("refreshing");
 ```
 
-The log level comes from the `LOG_LEVEL` environment variable (`debug`, `info`, `warn`, `error`, `silent`; default `info`). The SDK also logs its own connection lifecycle under the `gladys-sdk` name, so connectivity problems are diagnosable without any extra setup.
+The log level comes from the `LOG_LEVEL` environment variable (`debug`, `info`, `warn`, `error`, `silent`; default `info`). The SDK also logs its own connection lifecycle under the `gladys-sdk` name, so connectivity problems are diagnosable without any extra setup. It stays quiet otherwise: set `DEBUG=gladys-integration-sdk` to get its internal debug logs on stderr.
+
+Two guarantees worth knowing: the SDK **persists nothing on disk** (everything resynchronizes on reconnection, and `/data` stays entirely yours), and it **silently ignores message types it does not know**, so a newer Gladys never breaks an older integration.
 
 ### Messaging channels
 
@@ -326,7 +341,8 @@ Instead of exposing devices, an integration can be a **messaging channel**: set 
 ```js
 // Gladys asks you to deliver an outgoing message to a contact.
 gladys.onSendMessage(async (contact, message) => {
-  await sendToProvider(contact.id, message.text);
+  // message.file is an attached image in base64, or null.
+  await sendToProvider(contact.id, message.text, message.file);
 });
 
 // Link a provider contact to a Gladys user from a pairing code.
@@ -336,7 +352,7 @@ const contact = await gladys.linkContact(code, providerUserId, "Alice");
 await gladys.publishMessage(contactId, "The house is now empty.");
 ```
 
-- `onSendMessage(cb)`: Gladys asks you to deliver a message. Its first argument is the target `contact` (`{ id }` for a bidirectional channel, or the user's contact fields for a send-only channel).
+- `onSendMessage(cb)`: Gladys asks you to deliver a message. Its first argument is the target `contact` (`{ id }` for a bidirectional channel, or the user's contact fields for a send-only channel), and the message carries a `text` and an optional `file` (an attached image in base64, or `null`).
 - `publishMessage(contactId, text, opts?)`: forwards an incoming message to Gladys (message text up to 4096 characters).
 - `linkContact(code, contactId, name?)`: links a provider contact to a Gladys user from a single-use pairing code (valid 15 minutes), and returns the user selector, first name, and language.
 - `getContacts()`: lists the contacts currently linked to this channel.

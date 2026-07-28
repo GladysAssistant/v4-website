@@ -151,10 +151,21 @@ Enregistrez vos gestionnaires d'événements **avant** d'appeler `connect()`.
 - `publishState(featureExternalId, value)` : publie une mise à jour d'état unique (un nombre ou un objet).
 - `publishStates(states)` : publie un lot de mises à jour (jusqu'à 100 par requête). L'API hôte limite les mises à jour d'état à **300 états par minute** par intégration, publiez donc des *changements* d'état, pas des instantanés complets.
 
+La limite est dimensionnée pour des changements : gardez la dernière valeur envoyée pour chaque fonctionnalité et ne publiez que ce qui a réellement bougé :
+
+```js
+const lastValues = new Map();
+const changed = readings.filter(({ id, value }) => lastValues.get(id) !== value);
+changed.forEach(({ id, value }) => lastValues.set(id, value));
+await gladys.publishStates(
+  changed.map(({ id, value }) => ({ device_feature_external_id: id, state: value })),
+);
+```
+
 **Configuration et statut**
 
 - `getConfig()` / `setConfig(partialConfig)` : lit et écrit vos valeurs de configuration.
-- `getStatus()` : retourne la version de Gladys et le statut du service.
+- `getStatus()` : retourne la version de Gladys.
 - `setConnectionStatus(connected, message?)` : rapporte votre statut de connexion applicatif (par exemple « token cloud expiré »), indépendamment du lien WebSocket avec Gladys.
 
 **Événements (gestionnaires)**
@@ -171,7 +182,9 @@ Enregistrez vos gestionnaires d'événements **avant** d'appeler `connect()`.
 - `onSendMessage(cb)` : délivrer un message à un contact (voir Canaux de messagerie).
 - `onWebhook(key, cb)` / `onWebhookUpdated(cb)` : webhooks entrants (voir Webhooks entrants).
 
-Les commandes sont acquittées automatiquement en cas de succès ; lever une exception dans un gestionnaire acquitte la commande en échec. Vous pouvez aussi inspecter l'état local directement via `gladys.devices`, `gladys.config` et `gladys.connected`.
+Les commandes sont acquittées automatiquement en cas de succès ; lever une exception dans un gestionnaire acquitte la commande en échec. Vous pouvez aussi inspecter l'état local directement via `gladys.devices`, `gladys.config` et `gladys.connected`, et écouter les événements `connected` et `disconnected`.
+
+Toutes les méthodes retournent une promesse, et les erreurs de l'API hôte sont levées sous forme de `GladysApiError` portant `status`, `code` et `message`, pour que vous puissiez les attraper et réagir précisément.
 
 Les capacités suivantes sont optionnelles. Passez directement à l'[Étape 3](#étape-3--écrire-le-manifeste) si vous n'avez besoin que des appareils, des états et de la configuration.
 
@@ -317,7 +330,9 @@ const log = createLogger({ name: "weather-station" });
 log.child("poll").debug("rafraîchissement");
 ```
 
-Le niveau de log provient de la variable d'environnement `LOG_LEVEL` (`debug`, `info`, `warn`, `error`, `silent` ; `info` par défaut). Le SDK journalise aussi son propre cycle de vie de connexion sous le nom `gladys-sdk`, si bien que les problèmes de connectivité sont diagnostiquables sans aucune configuration supplémentaire.
+Le niveau de log provient de la variable d'environnement `LOG_LEVEL` (`debug`, `info`, `warn`, `error`, `silent` ; `info` par défaut). Le SDK journalise aussi son propre cycle de vie de connexion sous le nom `gladys-sdk`, si bien que les problèmes de connectivité sont diagnostiquables sans aucune configuration supplémentaire. Il reste silencieux par ailleurs : mettez `DEBUG=gladys-integration-sdk` pour obtenir ses logs de debug internes sur stderr.
+
+Deux garanties utiles à connaître : le SDK **ne persiste rien sur le disque** (tout se resynchronise à la reconnexion, et `/data` reste entièrement à vous), et il **ignore silencieusement les types de messages qu'il ne connaît pas**, si bien qu'un Gladys plus récent ne casse jamais une intégration plus ancienne.
 
 ### Canaux de messagerie
 
@@ -326,7 +341,8 @@ Au lieu d'exposer des appareils, une intégration peut être un **canal de messa
 ```js
 // Gladys vous demande de délivrer un message sortant à un contact.
 gladys.onSendMessage(async (contact, message) => {
-  await sendToProvider(contact.id, message.text);
+  // message.file est une image jointe en base64, ou null.
+  await sendToProvider(contact.id, message.text, message.file);
 });
 
 // Reliez un contact du fournisseur à un utilisateur Gladys à partir d'un code d'appairage.
@@ -336,7 +352,7 @@ const contact = await gladys.linkContact(code, providerUserId, "Alice");
 await gladys.publishMessage(contactId, "La maison est maintenant vide.");
 ```
 
-- `onSendMessage(cb)` : Gladys vous demande de délivrer un message. Son premier argument est le `contact` cible (`{ id }` pour un canal bidirectionnel, ou les champs de contact de l'utilisateur pour un canal en envoi seul).
+- `onSendMessage(cb)` : Gladys vous demande de délivrer un message. Son premier argument est le `contact` cible (`{ id }` pour un canal bidirectionnel, ou les champs de contact de l'utilisateur pour un canal en envoi seul), et le message porte un `text` et un `file` optionnel (une image jointe en base64, ou `null`).
 - `publishMessage(contactId, text, opts?)` : transfère un message entrant vers Gladys (texte du message jusqu'à 4096 caractères).
 - `linkContact(code, contactId, name?)` : relie un contact du fournisseur à un utilisateur Gladys à partir d'un code d'appairage à usage unique (valable 15 minutes), et retourne le selector de l'utilisateur, son prénom et sa langue.
 - `getContacts()` : liste les contacts actuellement reliés à ce canal.
