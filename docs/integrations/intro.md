@@ -49,7 +49,11 @@ An external integration is a small program packaged as a **Docker container** an
 
 Because each one runs in its own isolated container, external integrations can be written in any language and published by anyone, without review, while staying safe for your Gladys instance.
 
+👉 **[Browse the full catalog of external integrations](/docs/integrations/external/)**, updated live from the community store.
+
 Want to build one? External integrations are designed to be the **simplest way to create and publish an integration**, with no pull request and no validation. See the [external integrations developer guide](/docs/dev/external-integrations/).
+
+The rest of this section documents the **native integrations**, the ones built into Gladys.
 
 ## Other options
 

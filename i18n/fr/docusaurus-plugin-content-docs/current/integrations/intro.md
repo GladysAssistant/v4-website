@@ -49,7 +49,11 @@ Une intégration externe est un petit programme empaqueté dans un **conteneur D
 
 Comme chacune tourne dans son propre conteneur isolé, les intégrations externes peuvent être écrites dans n'importe quel langage et publiées par n'importe qui, sans review, tout en restant sûres pour votre instance Gladys.
 
+👉 **[Parcourez le catalogue complet des intégrations externes](/fr/docs/integrations/external/)**, mis à jour en direct depuis le store communautaire.
+
 Vous voulez en créer une ? Les intégrations externes sont conçues pour être la **façon la plus simple de créer et publier une intégration**, sans pull request et sans validation. Consultez le [guide développeur des intégrations externes](/fr/docs/dev/external-integrations/).
+
+Le reste de cette section documente les **intégrations natives**, celles qui sont intégrées à Gladys.
 
 ## Autres options
 
