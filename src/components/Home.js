@@ -25,9 +25,9 @@ const COMPATIBILITIES = [
     { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
   ],
   [
-    { title: "Shelly", imgSrc: "shelly.jpg", docKey: "shelly" },
+    { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/#netatmo" },
     { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-    { title: "Somfy", imgSrc: "somfy.jpg", docKey: "somfy-tahoma" },
+    { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/#zendure" },
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],
 ];
@@ -649,8 +649,8 @@ function Home({ integrations, lang }) {
                   id="home.integrations.description"
                   description="Integrations description of the homepage"
                 >
-                  Open protocols, dedicated integrations, and an AI-powered
-                  Matterbridge plugin factory for everything else.
+                  Open protocols, native integrations, and community external
+                  integrations for everything else.
                 </Translate>
               </p>
               {COMPATIBILITIES.map((row) => (

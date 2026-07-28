@@ -28,11 +28,24 @@ const sortIntegrations = (integrations) =>
     (a, b) => b.stars - a.stars || a.name.localeCompare(b.name)
   );
 
+// "Airzone Cloud" -> "airzone-cloud", so each card can be linked
+// directly with /docs/integrations/external/#airzone-cloud.
+const anchorId = (name) =>
+  name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
 function ExternalIntegrationCard({ integration, locale }) {
   const description =
     integration.description[locale] || integration.description.en;
   return (
-    <div className={classnames("card", styles.card)}>
+    <div
+      id={anchorId(integration.name)}
+      className={classnames("card", styles.card)}
+    >
       <div className="card__image">
         <img
           src={integration.cover_url}

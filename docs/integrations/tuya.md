@@ -5,6 +5,14 @@ description: "Connect Tuya devices to Gladys Assistant: create a Tuya IoT cloud 
 sidebar_label: Tuya
 ---
 
+:::info[Tuya is now an external integration]
+The Tuya integration has moved out of the Gladys core: it is now maintained as an **external integration**, installable in one click from the catalog inside Gladys. It is the recommended way to connect your Tuya devices going forward.
+
+👉 <a href="/docs/integrations/external/#tuya">Find the Tuya integration in the external integrations catalog</a>
+
+The tutorial below documents the legacy built-in integration.
+:::
+
 ## Connect Tuya in Gladys
 
 1. Create an account on [iot.tuya.com](http://iot.tuya.com).
