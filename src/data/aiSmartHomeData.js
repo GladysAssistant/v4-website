@@ -3,7 +3,7 @@
 // your home with AI / AI home automation" intent, and Gladys' single biggest
 // differentiator. It pulls together the AI capabilities documented across the
 // site and blog (natural-language control, AI agent, proactive AI, weekly
-// report, MCP server, AI plugin factory) into one citable page, with a strong
+// report, MCP server) into one citable page, with a strong
 // privacy angle (open-weight models hosted in Europe, optional local LLM).
 
 const aiSmartHomeContent = {
@@ -56,11 +56,6 @@ const aiSmartHomeContent = {
           icon: "🔌",
           title: "Connect your own AI agent (MCP)",
           text: "Gladys includes an MCP server, so you can connect Claude Desktop, Perplexity or Mistral Le Chat to your home to read sensors, view cameras and control devices.",
-        },
-        {
-          icon: "🏭",
-          title: "AI plugin factory",
-          text: "Got a device no standard supports? Describe it in a GitHub ticket and an AI builds a Matterbridge plugin for it overnight, no coding required.",
         },
       ],
     },
@@ -172,11 +167,6 @@ const aiSmartHomeContent = {
           icon: "🔌",
           title: "Branchez votre propre IA (MCP)",
           text: "Gladys intègre un serveur MCP : vous pouvez connecter Claude Desktop, Perplexity ou Mistral Le Chat à votre maison pour lire vos capteurs, voir vos caméras et piloter vos appareils.",
-        },
-        {
-          icon: "🏭",
-          title: "Une usine à plugins par IA",
-          text: "Un appareil qu'aucun standard ne supporte ? Décrivez-le dans un ticket GitHub et une IA développe un plugin Matterbridge pour lui pendant la nuit, sans coder.",
         },
       ],
     },
