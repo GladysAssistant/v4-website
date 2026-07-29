@@ -115,6 +115,7 @@ function ExternalIntegrations() {
   const [integrations, setIntegrations] = useState(
     sortIntegrations(snapshot.integrations)
   );
+  const [generatedAt, setGeneratedAt] = useState(snapshot.generated_at);
 
   // Try to refresh the committed snapshot with the live store index.
   // If the request fails (offline, CORS), the build-time snapshot stays.
@@ -126,10 +127,27 @@ function ExternalIntegrations() {
           setIntegrations(
             sortIntegrations(index.integrations.map(trimIntegration))
           );
+          setGeneratedAt(index.generated_at);
         }
       })
       .catch(() => {});
   }, []);
+
+  // Rendered on the client only: the server-rendered HTML would otherwise
+  // carry a date formatted in the build machine's timezone.
+  const [formattedDate, setFormattedDate] = useState(null);
+  useEffect(() => {
+    if (!generatedAt) {
+      setFormattedDate(null);
+      return;
+    }
+    setFormattedDate(
+      new Date(generatedAt).toLocaleString(currentLocale, {
+        dateStyle: "long",
+        timeStyle: "short",
+      })
+    );
+  }, [generatedAt, currentLocale]);
 
   return (
     <div>
@@ -141,6 +159,20 @@ function ExternalIntegrations() {
         >
           {"{count} external integrations are available in the store today:"}
         </Translate>
+        {formattedDate && (
+          <>
+            {" "}
+            <em className={styles.updatedAt}>
+              <Translate
+                id="externalIntegrations.updatedAt"
+                description="Date the store catalog was last generated"
+                values={{ date: formattedDate }}
+              >
+                {"(catalog updated on {date})"}
+              </Translate>
+            </em>
+          </>
+        )}
       </p>
       <div className={styles.grid}>
         {integrations.map((integration) => (
