@@ -143,11 +143,65 @@ function PillarContent({ content, faq, lang }) {
           <h2 id="platforms-title" className={styles.sectionTitle}>
             {content.howTo.title}
           </h2>
-          <div className={styles.cardGrid}>
+          {content.howTo.intro && (
+            <p className={styles.blockIntro}>{content.howTo.intro}</p>
+          )}
+          {content.howTo.table && (
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    {content.howTo.table.headers.map((header, i) => (
+                      <th key={i}>{header}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {content.howTo.table.rows.map((row, r) => (
+                    <tr key={r}>
+                      {row.map((cell, c) =>
+                        c === 0 ? (
+                          <th
+                            key={c}
+                            scope="row"
+                            className={r === 0 ? styles.gladysCol : undefined}
+                          >
+                            {cell}
+                          </th>
+                        ) : (
+                          <td key={c}>{cell}</td>
+                        )
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <div className={styles.cardGrid} style={{ marginTop: "1.75rem" }}>
             {content.howTo.cards.map((card, i) => (
               <Card key={i} {...card} />
             ))}
           </div>
+        </section>
+
+        {/* HUB / HARDWARE */}
+        <section className={styles.section} aria-labelledby="hardware-title">
+          <h2 id="hardware-title" className={styles.sectionTitle}>
+            {content.hardware.title}
+          </h2>
+          <p className={styles.blockIntro}>{content.hardware.intro}</p>
+          <ul className={styles.bulletList}>
+            {content.hardware.points.map((point, i) => (
+              <li key={i}>{point}</li>
+            ))}
+          </ul>
+          <p className={styles.blockOutro}>{content.hardware.outro}</p>
+          <p className={styles.compareLink}>
+            <Link to={content.hardware.link.href}>
+              {content.hardware.link.label}
+            </Link>
+          </p>
         </section>
 
         {/* GLADYS AS THE FOUNDATION */}

@@ -1,11 +1,20 @@
 ---
 id: melcloud
-title: MELCloud (Climatisation Mitsubishi)
-description: "Pilotez votre climatisation Mitsubishi depuis Gladys Assistant avec l'intégration MELCloud : connectez votre compte et gérez vos unités de clim."
+title: "MELCloud dans Gladys : pilotez votre climatisation Mitsubishi"
+description: "Connectez MELCloud à Gladys Assistant pour piloter votre climatisation et vos pompes à chaleur Mitsubishi Electric : marche/arrêt, mode, température cible et automatisations dans les scènes."
 sidebar_label: MELCloud
+keywords:
+  - melcloud
+  - melcloud gladys
+  - melcloud mitsubishi
+  - climatisation mitsubishi domotique
+  - intégration melcloud
+  - piloter climatisation mitsubishi
 ---
 
-MELCloud est le service cloud de Mitsubishi Electric qui permet de contrôler vos climatiseurs Mitsubishi à distance. Avec cette intégration, vous pouvez contrôler votre climatisation Mitsubishi directement depuis Gladys Assistant.
+import JsonLd from '@site/src/components/seo/JsonLd';
+
+MELCloud est le service cloud de Mitsubishi Electric qui permet de contrôler vos climatiseurs et pompes à chaleur Mitsubishi à distance. Avec cette intégration, vous pouvez contrôler votre climatisation Mitsubishi directement depuis Gladys Assistant, et l'utiliser dans vos automatisations.
 
 ## Prérequis
 
@@ -68,7 +77,19 @@ Vous pouvez également utiliser vos appareils MELCloud dans les scènes Gladys p
 - Éteindre la climatisation quand vous quittez la maison
 - Définir une température spécifique à une heure programmée
 
-## FAQ
+## Questions fréquentes
+
+### Qu'est-ce que MELCloud ?
+
+MELCloud est le service cloud de Mitsubishi Electric qui permet de piloter les climatiseurs et pompes à chaleur Mitsubishi compatibles depuis un téléphone ou un ordinateur. L'intégration MELCloud de Gladys se connecte à ce service pour que vous puissiez piloter ces mêmes appareils depuis Gladys et les utiliser dans vos automatisations.
+
+### Puis-je piloter ma climatisation Mitsubishi avec Gladys ?
+
+Oui. Une fois MELCloud connecté, Gladys expose vos unités Mitsubishi avec leurs principales fonctionnalités : les allumer ou les éteindre, changer le mode (refroidissement, chauffage, etc.) et définir la température cible, depuis le tableau de bord, le chat ou une scène.
+
+### Puis-je automatiser ma climatisation Mitsubishi dans les scènes ?
+
+Oui. Les appareils MELCloud peuvent être utilisés dans les scènes Gladys : par exemple allumer la climatisation quand la température dépasse un seuil, l'éteindre quand tout le monde quitte la maison, ou définir une température précise à une heure programmée.
 
 ### Mes appareils n'apparaissent pas
 
@@ -83,3 +104,36 @@ Si vous avez des problèmes de connexion, vérifiez que :
 - Vous avez une connexion internet
 
 Si vous avez des questions, posez-les sur [le forum](https://community.gladysassistant.com/).
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Qu'est-ce que MELCloud ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "MELCloud est le service cloud de Mitsubishi Electric qui permet de piloter les climatiseurs et pompes à chaleur Mitsubishi compatibles depuis un téléphone ou un ordinateur. L'intégration MELCloud de Gladys se connecte à ce service pour que vous puissiez piloter ces mêmes appareils depuis Gladys et les utiliser dans vos automatisations.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Puis-je piloter ma climatisation Mitsubishi avec Gladys ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oui. Une fois MELCloud connecté, Gladys expose vos unités Mitsubishi avec leurs principales fonctionnalités : les allumer ou les éteindre, changer le mode (refroidissement, chauffage, etc.) et définir la température cible, depuis le tableau de bord, le chat ou une scène.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Puis-je automatiser ma climatisation Mitsubishi dans les scènes ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oui. Les appareils MELCloud peuvent être utilisés dans les scènes Gladys : par exemple allumer la climatisation quand la température dépasse un seuil, l'éteindre quand tout le monde quitte la maison, ou définir une température précise à une heure programmée.",
+        },
+      },
+    ],
+  }}
+/>

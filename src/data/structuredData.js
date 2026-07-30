@@ -653,12 +653,12 @@ export function getOpenSourceHomeAutomationPageSchema(lang) {
         "@id": `${pageUrl}#article`,
         headline:
           lang === "fr"
-            ? "Domotique open source : le guide complet (2026)"
-            : "Open-source home automation: the complete guide (2026)",
+            ? "Meilleurs logiciels domotiques open source : 6 comparés (2026)"
+            : "Best Open-Source Home Automation Platforms: 6 Compared (2026)",
         description:
           lang === "fr"
-            ? "Ce qu'est la domotique open source, pourquoi elle surpasse les écosystèmes cloud fermés, et les meilleurs logiciels domotiques open source (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz)."
-            : "What open-source home automation is, why it beats closed cloud ecosystems, and the best open-source smart home platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz).",
+            ? "Comparez les meilleures plateformes domotiques open source (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED) : interface, facilité et licence, pour choisir le bon logiciel domotique libre et auto-hébergé."
+            : "Compare the best open-source home automation platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED): interface, ease of use and license, to choose the right free, self-hosted smart home software.",
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

@@ -9,9 +9,9 @@
 const openSourceHomeAutomationContent = {
   en: {
     meta: {
-      title: "Open-source home automation: the complete guide (2026)",
+      title: "Best Open-Source Home Automation Platforms: 6 Compared (2026)",
       description:
-        "What open-source home automation is, why it beats closed cloud ecosystems, and the best open-source smart home platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz). A practical guide to running your home on free, self-hosted software.",
+        "Compare the best open-source home automation platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED): interface, ease of use and license, to choose the right free, self-hosted smart home software.",
     },
     hero: {
       title: "Open-source home automation",
@@ -57,7 +57,20 @@ const openSourceHomeAutomationContent = {
         "Open source and convenience aren't opposites: optional features like remote access or AI can still exist, they just become a choice rather than a requirement.",
     },
     howTo: {
-      title: "The main open-source home automation platforms",
+      title: "The best open-source home automation software compared",
+      intro:
+        "Several mature open-source platforms can run your smart home. Here is how the main ones compare, from the easiest to the most flexible:",
+      table: {
+        headers: ["Platform", "Interface & setup", "Ease of use", "License", "Best for"],
+        rows: [
+          ["Gladys Assistant", "Clean UI, no config files", "Very easy", "Apache 2.0", "Open source without the learning curve"],
+          ["Home Assistant", "UI, YAML for advanced setups", "Moderate to advanced", "Apache 2.0", "The largest integration catalog"],
+          ["openHAB", "Text config and UI", "Advanced", "EPL 2.0", "Vendor-neutral, powerful rules"],
+          ["Jeedom", "UI with plugin marketplace", "Moderate", "GPL (core)", "Local boxes and a plugin ecosystem"],
+          ["Domoticz", "Lightweight, utilitarian UI", "Moderate", "GPLv3", "Very low-power hardware"],
+          ["Node-RED", "Visual flow editor", "Moderate", "Apache 2.0", "Building advanced automation logic"],
+        ],
+      },
       cards: [
         {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
@@ -96,6 +109,23 @@ const openSourceHomeAutomationContent = {
           text: "Not a full platform but an open-source flow-based automation tool, often paired with the others to build advanced logic visually.",
         },
       ],
+    },
+    hardware: {
+      title: "Do you need a special hub or hardware?",
+      intro:
+        "One of the big advantages of open-source home automation is that you are not tied to a proprietary hub. The software runs on hardware you already own or can buy cheaply:",
+      points: [
+        "A small computer to host it: a Raspberry Pi, a mini-PC or a NAS is enough to run the platform 24/7 on your own network.",
+        "USB radio dongles for wireless devices: add a Zigbee or Z-Wave USB stick to talk to hundreds of sensors and switches locally, with no vendor bridge required.",
+        "Matter and Thread for newer gear: Matter devices on Wi-Fi or Ethernet join your network directly, while Thread devices need a Thread Border Router to reach it. That border router can be a device you already own (some speakers, TV boxes and hubs act as one) or an open-source setup on your own host with an 802.15.4 radio, so it still doesn't lock you into a brand.",
+        "Your existing Wi-Fi and IP devices: many cameras, plugs and TVs connect directly over your local network.",
+      ],
+      outro:
+        "So there is no mandatory, proprietary box to buy: a cheap mini-computer plus a USB radio dongle is all most setups need.",
+      link: {
+        label: "See the best Zigbee dongle to pick →",
+        href: "/best-zigbee-dongle/",
+      },
     },
     gladys: {
       title: "Gladys Assistant: open source, made simple",
@@ -148,9 +178,9 @@ const openSourceHomeAutomationContent = {
 
   fr: {
     meta: {
-      title: "Domotique open source : le guide complet (2026)",
+      title: "Meilleurs logiciels domotiques open source : 6 comparés (2026)",
       description:
-        "Ce qu'est la domotique open source, pourquoi elle surpasse les écosystèmes cloud fermés, et les meilleurs logiciels domotiques open source (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz). Un guide pratique pour piloter votre maison avec un logiciel libre et auto-hébergé.",
+        "Comparez les meilleures plateformes domotiques open source (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED) : interface, facilité et licence, pour choisir le bon logiciel domotique libre et auto-hébergé.",
     },
     hero: {
       title: "La domotique open source",
@@ -196,7 +226,20 @@ const openSourceHomeAutomationContent = {
         "Open source et confort ne s'opposent pas : des fonctions optionnelles comme l'accès distant ou l'IA peuvent exister, elles deviennent simplement un choix plutôt qu'une obligation.",
     },
     howTo: {
-      title: "Les principaux logiciels domotiques open source",
+      title: "Les meilleurs logiciels domotiques open source comparés",
+      intro:
+        "Plusieurs plateformes open source matures peuvent piloter votre maison. Voici comment se comparent les principales, de la plus simple à la plus flexible :",
+      table: {
+        headers: ["Plateforme", "Interface & prise en main", "Facilité", "Licence", "Idéal pour"],
+        rows: [
+          ["Gladys Assistant", "Interface épurée, sans fichiers de config", "Très facile", "Apache 2.0", "L'open source sans la courbe d'apprentissage"],
+          ["Home Assistant", "Interface, YAML pour les cas avancés", "Modérée à avancée", "Apache 2.0", "Le plus grand catalogue d'intégrations"],
+          ["openHAB", "Config texte et interface", "Avancée", "EPL 2.0", "Neutralité et moteur de règles puissant"],
+          ["Jeedom", "Interface avec marketplace de plugins", "Modérée", "GPL (cœur)", "Box locales et écosystème de plugins"],
+          ["Domoticz", "Interface légère et utilitaire", "Modérée", "GPLv3", "Matériel très peu puissant"],
+          ["Node-RED", "Éditeur de flux visuel", "Modérée", "Apache 2.0", "Bâtir une logique d'automatisation avancée"],
+        ],
+      },
       cards: [
         {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
@@ -235,6 +278,23 @@ const openSourceHomeAutomationContent = {
           text: "Pas une plateforme complète mais un outil open source d'automatisation par flux, souvent associé aux autres pour bâtir une logique avancée de façon visuelle.",
         },
       ],
+    },
+    hardware: {
+      title: "Faut-il un hub ou du matériel particulier ?",
+      intro:
+        "L'un des grands avantages de la domotique open source, c'est que vous n'êtes pas lié à un hub propriétaire. Le logiciel tourne sur du matériel que vous possédez déjà ou que vous pouvez acheter à bas prix :",
+      points: [
+        "Un petit ordinateur pour l'héberger : un Raspberry Pi, un mini-PC ou un NAS suffit à faire tourner la plateforme 24h/24 sur votre réseau.",
+        "Des clés radio USB pour les appareils sans fil : ajoutez une clé Zigbee ou Z-Wave pour dialoguer en local avec des centaines de capteurs et d'interrupteurs, sans passerelle de marque.",
+        "Matter et Thread pour le matériel récent : les appareils Matter en Wi-Fi ou Ethernet rejoignent directement votre réseau, tandis que les appareils Thread ont besoin d'un routeur de bordure Thread (Thread Border Router) pour y accéder. Ce routeur de bordure peut être un appareil que vous possédez déjà (certaines enceintes, box TV et hubs en font office) ou une installation open source sur votre propre machine avec une radio 802.15.4 : vous n'êtes donc toujours pas enfermé dans une marque.",
+        "Vos appareils Wi-Fi et IP existants : de nombreuses caméras, prises et TV se connectent directement sur votre réseau local.",
+      ],
+      outro:
+        "Il n'y a donc aucune box propriétaire obligatoire à acheter : un mini-ordinateur bon marché et une clé radio USB suffisent à la plupart des installations.",
+      link: {
+        label: "Voir la meilleure clé Zigbee à choisir →",
+        href: "/best-zigbee-dongle/",
+      },
     },
     gladys: {
       title: "Gladys Assistant : l'open source, en plus simple",
@@ -298,6 +358,11 @@ export const openSourceHomeAutomationFaqEn = [
       "The main open-source platforms are Gladys Assistant, Home Assistant, openHAB, Jeedom and Domoticz. Home Assistant has the largest integration catalog, while Gladys Assistant focuses on simplicity with a clean interface, no configuration files and a one-command install. The best choice depends on whether you prioritize raw flexibility or ease of use.",
   },
   {
+    question: "Do you need a hub for open-source home automation?",
+    answer:
+      "No proprietary hub is required. An open-source platform runs on a small computer you own, such as a Raspberry Pi, a mini-PC or a NAS. To control wireless devices you simply add a USB radio dongle (Zigbee or Z-Wave). Newer gear connects through the open Matter and Thread standards: Matter devices on Wi-Fi or Ethernet join your network directly, while Thread devices also need a Thread Border Router, which can be a device you already own or an open-source setup on your own host with an 802.15.4 radio. Either way, there is no brand-specific box to buy.",
+  },
+  {
     question: "Is open-source home automation free?",
     answer:
       "Yes, the core software is free. Platforms like Gladys Assistant (Apache 2.0) and Home Assistant cost nothing to download and run on your own hardware. Some projects offer optional paid services (such as remote access or AI), but you're never forced into a subscription to keep your home automation working.",
@@ -329,6 +394,11 @@ export const openSourceHomeAutomationFaqFr = [
     question: "Quel est le meilleur logiciel domotique open source ?",
     answer:
       "Les principales plateformes open source sont Gladys Assistant, Home Assistant, openHAB, Jeedom et Domoticz. Home Assistant possède le plus grand catalogue d'intégrations, tandis que Gladys Assistant mise sur la simplicité avec une interface épurée, sans fichiers de configuration et une installation en une commande. Le meilleur choix dépend de si vous privilégiez la flexibilité maximale ou la facilité d'usage.",
+  },
+  {
+    question: "Faut-il un hub pour la domotique open source ?",
+    answer:
+      "Aucun hub propriétaire n'est nécessaire. Une plateforme open source tourne sur un petit ordinateur qui vous appartient, comme un Raspberry Pi, un mini-PC ou un NAS. Pour piloter les appareils sans fil, il suffit d'ajouter une clé radio USB (Zigbee ou Z-Wave). Le matériel récent se connecte via les standards ouverts Matter et Thread : les appareils Matter en Wi-Fi ou Ethernet rejoignent directement votre réseau, tandis que les appareils Thread nécessitent en plus un routeur de bordure Thread, qui peut être un appareil que vous possédez déjà ou une installation open source sur votre propre machine avec une radio 802.15.4. Dans tous les cas, il n'y a aucune box de marque à acheter.",
   },
   {
     question: "La domotique open source est-elle gratuite ?",
