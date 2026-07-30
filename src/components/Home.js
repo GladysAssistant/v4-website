@@ -25,9 +25,9 @@ const COMPATIBILITIES = [
     { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
   ],
   [
-    { title: "Shelly", imgSrc: "shelly.jpg", docKey: "shelly" },
+    { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/#netatmo" },
     { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-    { title: "Somfy", imgSrc: "somfy.jpg", docKey: "somfy-tahoma" },
+    { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/#zendure" },
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],
 ];
@@ -98,21 +98,21 @@ const FAQQuestions = {
           <b>Très probablement !</b> Gladys supporte{" "}
           <Link href="/fr/docs/integrations/">des milliers d'appareils</Link> via
           les protocoles ouverts Zigbee, Matter et MQTT, ainsi que des
-          intégrations dédiées (Shelly, Sonos, Tuya, caméras RTSP, et bien
-          d'autres).
+          intégrations natives (Sonos, caméras RTSP, et bien d'autres).
           <br />
           <br />
-          Votre appareil n'est pas encore listé ? Consultez notre{" "}
-          <Link href="/fr/docs/integrations/">
-            vision des intégrations
+          Votre appareil n'est pas encore listé ? Découvrez les{" "}
+          <Link href="/fr/docs/integrations/external/">
+            intégrations externes
           </Link>{" "}
-          : Matterbridge couvre de nombreux équipements legacy, et notre{" "}
-          <a href="https://community.gladysassistant.com/t/lusine-a-plugins-matterbridge-rendez-nimporte-quel-appareil-compatible-avec-gladys/10234">
-            usine à plugins IA
-          </a>{" "}
-          peut en développer de nouveaux automatiquement. Vous pouvez aussi{" "}
+          : des intégrations créées par la communauté, installables en un clic,
+          dont la liste s'agrandit en continu. Et si la vôtre manque,{" "}
+          <Link href="/fr/docs/dev/external-integrations/">
+            créez-la vous-même
+          </Link>{" "}
+          dans le langage de votre choix, ou{" "}
           <a href="https://community.gladysassistant.com/">
-            en discuter sur le forum
+            demandez sur le forum
           </a>
           .
         </>
@@ -190,21 +190,19 @@ const FAQQuestions = {
         <>
           <b>Very likely!</b> Gladys supports{" "}
           <Link href="/docs/integrations/">thousands of devices</Link> through
-          open protocols like Zigbee, Matter, and MQTT, plus dedicated
-          integrations (Shelly, Sonos, Tuya, RTSP cameras, and many more).
+          open protocols like Zigbee, Matter, and MQTT, plus native
+          integrations (Sonos, RTSP cameras, and many more).
           <br />
           <br />
-          Device not listed yet? Read our{" "}
-          <Link href="/docs/integrations/">integrations vision</Link>:
-          Matterbridge covers many legacy devices, and our{" "}
-          <a href="https://community.gladysassistant.com/t/lusine-a-plugins-matterbridge-rendez-nimporte-quel-appareil-compatible-avec-gladys/10234">
-            AI plugin factory
-          </a>{" "}
-          can build new plugins automatically. You can also{" "}
-          <a href="https://community.gladysassistant.com/">
-            ask on the forum
-          </a>
-          .
+          Device not listed yet? Have a look at{" "}
+          <Link href="/docs/integrations/external/">
+            external integrations
+          </Link>
+          : community-built integrations, installable in one click, with a list
+          that keeps growing. And if yours is missing,{" "}
+          <Link href="/docs/dev/external-integrations/">build it yourself</Link>{" "}
+          in the language you like, or{" "}
+          <a href="https://community.gladysassistant.com/">ask on the forum</a>.
         </>
       ),
     },
@@ -649,8 +647,8 @@ function Home({ integrations, lang }) {
                   id="home.integrations.description"
                   description="Integrations description of the homepage"
                 >
-                  Open protocols, dedicated integrations, and an AI-powered
-                  Matterbridge plugin factory for everything else.
+                  Open protocols, native integrations, and community external
+                  integrations for everything else.
                 </Translate>
               </p>
               {COMPATIBILITIES.map((row) => (

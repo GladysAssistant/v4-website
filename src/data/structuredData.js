@@ -71,7 +71,7 @@ const homepageFaqEn = [
   {
     question: "Does Gladys work with my devices?",
     answer:
-      "Very likely. Gladys supports thousands of devices through Zigbee (Zigbee2MQTT), Matter, MQTT, and dedicated integrations (Shelly, Sonos, Tuya, RTSP cameras). Unsupported devices can be bridged via Matterbridge or the AI-powered plugin factory.",
+      "Very likely. Gladys supports thousands of devices through Zigbee (Zigbee2MQTT), Matter, MQTT, and native integrations (Sonos, RTSP cameras). Anything else is covered by external integrations, community-built integrations installable in one click, and anyone can create one.",
   },
   {
     question: "Can I access Gladys remotely?",
@@ -99,7 +99,7 @@ const homepageFaqFr = [
   {
     question: "Gladys fonctionne-t-elle avec mes appareils ?",
     answer:
-      "Très probablement. Gladys supporte des milliers d'appareils via Zigbee (Zigbee2MQTT), Matter, MQTT et des intégrations dédiées (Shelly, Sonos, Tuya, caméras RTSP). Matterbridge et l'usine à plugins IA couvrent les appareils non supportés.",
+      "Très probablement. Gladys supporte des milliers d'appareils via Zigbee (Zigbee2MQTT), Matter, MQTT et des intégrations natives (Sonos, caméras RTSP). Tout le reste est couvert par les intégrations externes, des intégrations communautaires installables en un clic, et n'importe qui peut en créer une.",
   },
   {
     question: "Puis-je accéder à Gladys depuis l'extérieur ?",

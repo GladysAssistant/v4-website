@@ -12,6 +12,14 @@ J'ai pas mal bidouillé la semaine dernière autour de Matterbridge, et j'ai eu 
 
 {/* truncate */}
 
+:::info[Cet article n'est plus l'approche recommandée]
+Depuis la publication de cet article, Gladys a gagné les **intégrations externes** : des intégrations empaquetées dans des conteneurs Docker, publiées sur GitHub, et installables en un clic depuis le catalogue dans Gladys. C'est désormais la façon recommandée d'ajouter un appareil non supporté nativement, et n'importe qui peut en créer une, dans n'importe quel langage, sans review.
+
+👉 [Parcourez le catalogue des intégrations externes](/fr/docs/integrations/external/) ou [apprenez à en créer une](/fr/docs/dev/external-integrations/).
+
+Cet article est conservé pour l'historique.
+:::
+
 ## Un peu de contexte
 
 Je vous avais déjà parlé de Matterbridge : un projet qui permet d'installer des plugins pour ajouter dans Matter des appareils non-Matter. Aujourd'hui, Matterbridge vous permet déjà d'utiliser dans Gladys :

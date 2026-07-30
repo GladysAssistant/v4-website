@@ -12,6 +12,14 @@ Vous avez des appareils qui ne sont pas compatibles avec Gladys, et qui n'utilis
 
 {/* truncate */}
 
+:::info[Cet article n'est plus l'approche recommandée]
+Depuis la publication de cet article, Gladys a gagné les **intégrations externes** : des intégrations empaquetées dans des conteneurs Docker, publiées sur GitHub, et installables en un clic depuis le catalogue dans Gladys. C'est désormais la façon recommandée d'ajouter un appareil non supporté nativement, et n'importe qui peut en créer une, dans n'importe quel langage, sans review.
+
+👉 [Parcourez le catalogue des intégrations externes](/fr/docs/integrations/external/) ou [apprenez à en créer une](/fr/docs/dev/external-integrations/).
+
+Cet article est conservé pour l'historique.
+:::
+
 > **Prérequis :** Matterbridge doit être installé et configuré. Si ce n'est pas encore le cas, suivez d'abord [ce tutoriel dans la documentation](/fr/docs/integrations/matterbridge/).
 
 ## Comment ça fonctionne ?
