@@ -5,6 +5,14 @@ description: "Connectez vos appareils Tuya à Gladys Assistant : créez un proje
 sidebar_label: Tuya
 ---
 
+:::info[Tuya est désormais une intégration externe]
+L'intégration Tuya a quitté le cœur de Gladys : elle est maintenant maintenue comme **intégration externe**, installable en un clic depuis le catalogue dans Gladys. C'est la façon recommandée de connecter vos appareils Tuya à partir de maintenant.
+
+👉 <a href="/fr/docs/integrations/external/#tuya">Retrouvez l'intégration Tuya dans le catalogue des intégrations externes</a>
+
+Le tutoriel ci-dessous documente l'ancienne intégration intégrée au cœur.
+:::
+
 ## Connecter Tuya à Gladys
 
 1. Créer un compte sur [iot.tuya.com](http://iot.tuya.com).
