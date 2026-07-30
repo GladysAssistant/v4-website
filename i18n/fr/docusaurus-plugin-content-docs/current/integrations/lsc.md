@@ -26,23 +26,33 @@ Il n'y a pas de réponse unique pour toute la gamme LSC, vérifiez donc votre mo
 - Recherchez le numéro de modèle exact avec « RTSP » ou « ONVIF » pour voir ce que rapportent les autres utilisateurs.
 - Si votre caméra est compatible ONVIF/RTSP, il y a généralement un réglage pour l'activer (et parfois définir un mot de passe de flux dédié) dans l'application ou une petite interface web à l'adresse IP de la caméra.
 
-Si le modèle n'a aucune option RTSP ou ONVIF, il ne peut pas être ajouté à Gladys directement, car il ne communique qu'avec le cloud Tuya.
+Si le modèle n'expose ni RTSP/ONVIF ni flux HTTP accessible sur votre réseau local, il ne peut pas être ajouté à Gladys directement, car il ne communique qu'avec le cloud Tuya.
 
 ## URL RTSP LSC à essayer
 
 Quand votre caméra LSC (basée sur Tuya) expose bien le RTSP, elle utilise généralement le port `554` avec l'un de ces chemins courants. Remplacez `username`, `password` et l'adresse IP par vos propres valeurs :
 
-```
+```text
 rtsp://username:password@192.168.1.20:554/
 rtsp://username:password@192.168.1.20:554/live/ch00_0
 rtsp://username:password@192.168.1.20:554/onvif1
 ```
 
+Les caractères réservés présents dans le nom d'utilisateur ou le mot de passe doivent être encodés en pourcentage dans l'URL, sinon celle-ci ne sera pas interprétée correctement. Le cas le plus courant est `@`, qui devient `%40`, mais cela vaut aussi pour `:` (`%3A`), `/` (`%2F`), `?` (`%3F`), `#` (`%23`) et l'espace (`%20`). En cas de doute, utilisez un mot de passe de flux composé uniquement de lettres et de chiffres.
+
 Le chemin exact dépend du chipset : si la première URL ne répond pas, essayez les autres. Un outil de découverte ONVIF (ou la section ONVIF de l'application de la caméra) vous donnera aussi le chemin RTSP précis de votre modèle.
 
 ## Tester l'URL dans VLC
 
-Avant d'ajouter la caméra à Gladys, vérifiez que votre URL RTSP fonctionne dans [VLC](https://www.videolan.org/vlc/index.fr.html) : ouvrez **Fichier → Ouvrir un flux réseau**, collez l'URL et vérifiez que le flux se lit. Si ça fonctionne dans VLC, ça fonctionnera dans Gladys. Si aucune des URL ne se lit dans VLC, votre modèle n'expose probablement pas de RTSP.
+Avant d'ajouter la caméra à Gladys, vérifiez que votre URL RTSP fonctionne dans [VLC](https://www.videolan.org/vlc/index.fr.html) : ouvrez **Fichier → Ouvrir un flux réseau**, collez l'URL et vérifiez que le flux se lit. VLC est un bon moyen de valider l'URL, les identifiants et l'accès réseau : si le flux se lit, il devrait aussi fonctionner dans Gladys, à condition que Gladys prenne en charge le codec et le type de flux de votre caméra.
+
+Si aucune des URL ne se lit dans VLC, c'est un bon indice que votre modèle n'expose pas de RTSP, mais ce n'est pas une preuve. Écartez d'abord les causes habituelles :
+
+- Les identifiants sont bien dans l'URL et correctement encodés en pourcentage (sinon VLC peut afficher sa propre fenêtre d'authentification au lieu de lire le flux).
+- Le mot de passe est le mot de passe de flux/ONVIF dédié si l'application vous a demandé d'en définir un, et non celui de votre compte LSC.
+- Le chemin du flux correspond à votre modèle : les chemins dépendent du chipset, essayez donc les trois ci-dessus ainsi que tout chemin remonté par un outil de découverte ONVIF.
+- La caméra est joignable depuis votre ordinateur (même réseau, bonne adresse IP, port `554` non bloqué).
+- Le RTSP/ONVIF est activé dans l'application ou dans l'interface web de la caméra, quand l'option existe.
 
 ## Ajouter votre caméra LSC à Gladys
 
@@ -57,7 +67,7 @@ Le tutoriel complet avec captures d'écran est sur la [page de l'intégration ca
 
 ## Vous préférez une caméra qui fonctionne toujours en local ?
 
-Si vous êtes encore en train de choisir et que vous voulez une caméra garantie compatible en local avec Gladys, les [caméras Reolink](/docs/integrations/reolink) exposent un flux RTSP documenté sur tous les modèles filaires et sont les caméras que nous [recommandons pour Gladys](/docs/installation/recommended-hardware).
+Si vous êtes encore en train de choisir et que vous voulez une caméra qui fonctionne en local avec Gladys sans avoir à chercher, la plupart des [caméras Reolink](/docs/integrations/reolink) exposent un flux RTSP documenté (Reolink publie le format des URL et la [liste des modèles compatibles](https://support.reolink.com/hc/en-us/articles/900000617826/), qui couvre l'essentiel de sa gamme filaire), et ce sont les caméras que nous [recommandons pour Gladys](/docs/installation/recommended-hardware).
 
 ## Questions fréquentes
 

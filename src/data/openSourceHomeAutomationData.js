@@ -117,7 +117,7 @@ const openSourceHomeAutomationContent = {
       points: [
         "A small computer to host it: a Raspberry Pi, a mini-PC or a NAS is enough to run the platform 24/7 on your own network.",
         "USB radio dongles for wireless devices: add a Zigbee or Z-Wave USB stick to talk to hundreds of sensors and switches locally, with no vendor bridge required.",
-        "Matter and Thread for newer gear: these open standards let you add recent devices without a brand-specific hub.",
+        "Matter and Thread for newer gear: Matter devices on Wi-Fi or Ethernet join your network directly, while Thread devices need a Thread Border Router to reach it. That border router can be a device you already own (some speakers, TV boxes and hubs act as one) or an open-source setup on your own host with an 802.15.4 radio, so it still doesn't lock you into a brand.",
         "Your existing Wi-Fi and IP devices: many cameras, plugs and TVs connect directly over your local network.",
       ],
       outro:
@@ -286,7 +286,7 @@ const openSourceHomeAutomationContent = {
       points: [
         "Un petit ordinateur pour l'héberger : un Raspberry Pi, un mini-PC ou un NAS suffit à faire tourner la plateforme 24h/24 sur votre réseau.",
         "Des clés radio USB pour les appareils sans fil : ajoutez une clé Zigbee ou Z-Wave pour dialoguer en local avec des centaines de capteurs et d'interrupteurs, sans passerelle de marque.",
-        "Matter et Thread pour le matériel récent : ces standards ouverts permettent d'ajouter des appareils récents sans hub propriétaire.",
+        "Matter et Thread pour le matériel récent : les appareils Matter en Wi-Fi ou Ethernet rejoignent directement votre réseau, tandis que les appareils Thread ont besoin d'un routeur de bordure Thread (Thread Border Router) pour y accéder. Ce routeur de bordure peut être un appareil que vous possédez déjà (certaines enceintes, box TV et hubs en font office) ou une installation open source sur votre propre machine avec une radio 802.15.4 : vous n'êtes donc toujours pas enfermé dans une marque.",
         "Vos appareils Wi-Fi et IP existants : de nombreuses caméras, prises et TV se connectent directement sur votre réseau local.",
       ],
       outro:
@@ -360,7 +360,7 @@ export const openSourceHomeAutomationFaqEn = [
   {
     question: "Do you need a hub for open-source home automation?",
     answer:
-      "No proprietary hub is required. An open-source platform runs on a small computer you own, such as a Raspberry Pi, a mini-PC or a NAS. To control wireless devices you simply add a USB radio dongle (Zigbee or Z-Wave), and newer gear can connect through the open Matter and Thread standards, so there is no brand-specific box to buy.",
+      "No proprietary hub is required. An open-source platform runs on a small computer you own, such as a Raspberry Pi, a mini-PC or a NAS. To control wireless devices you simply add a USB radio dongle (Zigbee or Z-Wave). Newer gear connects through the open Matter and Thread standards: Matter devices on Wi-Fi or Ethernet join your network directly, while Thread devices also need a Thread Border Router, which can be a device you already own or an open-source setup on your own host with an 802.15.4 radio. Either way, there is no brand-specific box to buy.",
   },
   {
     question: "Is open-source home automation free?",
@@ -398,7 +398,7 @@ export const openSourceHomeAutomationFaqFr = [
   {
     question: "Faut-il un hub pour la domotique open source ?",
     answer:
-      "Aucun hub propriétaire n'est nécessaire. Une plateforme open source tourne sur un petit ordinateur qui vous appartient, comme un Raspberry Pi, un mini-PC ou un NAS. Pour piloter les appareils sans fil, il suffit d'ajouter une clé radio USB (Zigbee ou Z-Wave), et le matériel récent peut se connecter via les standards ouverts Matter et Thread : il n'y a donc aucune box de marque à acheter.",
+      "Aucun hub propriétaire n'est nécessaire. Une plateforme open source tourne sur un petit ordinateur qui vous appartient, comme un Raspberry Pi, un mini-PC ou un NAS. Pour piloter les appareils sans fil, il suffit d'ajouter une clé radio USB (Zigbee ou Z-Wave). Le matériel récent se connecte via les standards ouverts Matter et Thread : les appareils Matter en Wi-Fi ou Ethernet rejoignent directement votre réseau, tandis que les appareils Thread nécessitent en plus un routeur de bordure Thread, qui peut être un appareil que vous possédez déjà ou une installation open source sur votre propre machine avec une radio 802.15.4. Dans tous les cas, il n'y a aucune box de marque à acheter.",
   },
   {
     question: "La domotique open source est-elle gratuite ?",

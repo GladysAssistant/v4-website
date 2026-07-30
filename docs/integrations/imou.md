@@ -23,7 +23,7 @@ Imou cameras expose a standard **RTSP** stream, so they connect through the gene
 
 Imou cameras expose two RTSP streams on port `554`: a high resolution **main** stream and a lighter **sub** stream. Replace `username`, `password` and the IP address with your own values:
 
-```
+```text
 # Main (high resolution) stream:
 rtsp://username:password@192.168.1.20:554/cam/realmonitor?channel=1&subtype=0
 
@@ -36,6 +36,7 @@ A few things worth knowing:
 - The `channel=1` value is the channel number. On a standalone camera it is always `1`. If the camera is connected through an Imou/Dahua NVR, increment it for each channel (`channel=2`, `channel=3`, and so on).
 - `subtype=0` is the main stream, `subtype=1` is the sub stream. For a smooth live view on your dashboard, the **sub** stream is often enough and puts less load on your Gladys server. Use the **main** stream when you want full resolution.
 - The username is usually `admin`, and the password is the device password you set when pairing the camera in the Imou Life app (not your Imou account password).
+- Reserved characters in the username or the password must be percent-encoded in the URL, otherwise it will not be parsed correctly. The most common one is `@`, which becomes `%40`, but the same applies to `:` (`%3A`), `/` (`%2F`), `?` (`%3F`), `#` (`%23`) and space (`%20`). If in doubt, set a password with letters and digits only.
 - Some battery powered Imou models do not keep an RTSP stream running to save power. On those, RTSP may not be available and the camera cannot be added to Gladys.
 
 ## Enable RTSP on your Imou camera
@@ -50,7 +51,15 @@ It is good practice to keep a dedicated password for the RTSP stream so you can 
 
 ## Test the URL in VLC
 
-Before adding the camera to Gladys, confirm your RTSP URL works in [VLC](https://www.videolan.org/vlc/): open **File → Open Network...**, paste the URL and check that the stream plays. If it works in VLC, it will work in Gladys.
+Before adding the camera to Gladys, confirm your RTSP URL works in [VLC](https://www.videolan.org/vlc/): open **File → Open Network...**, paste the URL and check that the stream plays. VLC is a good way to validate the URL, the credentials and the network path: if the stream plays there, it should also work in Gladys, as long as Gladys supports the codec and stream type your camera uses.
+
+If VLC does not play the stream, that does not necessarily mean the camera has no RTSP. Check the following before giving up:
+
+- The credentials are in the URL and correctly percent-encoded (VLC may otherwise silently pop up its own authentication dialog).
+- The password is the device/ONVIF password, not your Imou account password.
+- The stream path matches your model (`channel` and `subtype` values, and the channel number if you go through an NVR).
+- The camera is reachable from your computer (same network, correct IP, port `554` not blocked).
+- RTSP/ONVIF is actually enabled in the Imou Life app.
 
 ## Add your Imou camera to Gladys
 

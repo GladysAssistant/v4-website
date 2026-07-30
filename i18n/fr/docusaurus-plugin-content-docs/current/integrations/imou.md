@@ -23,7 +23,7 @@ Les caméras Imou exposent un flux **RTSP** standard : elles se connectent donc 
 
 Les caméras Imou exposent deux flux RTSP sur le port `554` : un flux **principal** en haute résolution et un flux **secondaire** plus léger. Remplacez `username`, `password` et l'adresse IP par vos propres valeurs :
 
-```
+```text
 # Flux principal (haute résolution) :
 rtsp://username:password@192.168.1.20:554/cam/realmonitor?channel=1&subtype=0
 
@@ -36,6 +36,7 @@ Quelques points utiles :
 - La valeur `channel=1` est le numéro de canal. Sur une caméra seule il vaut toujours `1`. Si la caméra passe par un NVR Imou/Dahua, incrémentez-le pour chaque canal (`channel=2`, `channel=3`, etc.).
 - `subtype=0` correspond au flux principal, `subtype=1` au flux secondaire. Pour un affichage fluide sur votre tableau de bord, le flux **secondaire** suffit souvent et sollicite moins votre serveur Gladys. Utilisez le flux **principal** pour la pleine résolution.
 - Le nom d'utilisateur est généralement `admin`, et le mot de passe est le mot de passe de l'appareil que vous avez défini lors de l'association de la caméra dans l'application Imou Life (et non le mot de passe de votre compte Imou).
+- Les caractères réservés présents dans le nom d'utilisateur ou le mot de passe doivent être encodés en pourcentage dans l'URL, sinon celle-ci ne sera pas interprétée correctement. Le cas le plus courant est `@`, qui devient `%40`, mais cela vaut aussi pour `:` (`%3A`), `/` (`%2F`), `?` (`%3F`), `#` (`%23`) et l'espace (`%20`). En cas de doute, utilisez un mot de passe composé uniquement de lettres et de chiffres.
 - Certains modèles Imou sur batterie ne maintiennent pas de flux RTSP actif pour économiser l'énergie. Sur ceux-là, le RTSP peut ne pas être disponible et la caméra ne peut pas être ajoutée à Gladys.
 
 ## Activer le RTSP sur votre caméra Imou
@@ -50,7 +51,15 @@ C'est une bonne pratique de garder un mot de passe dédié pour le flux RTSP, af
 
 ## Tester l'URL dans VLC
 
-Avant d'ajouter la caméra à Gladys, vérifiez que votre URL RTSP fonctionne dans [VLC](https://www.videolan.org/vlc/index.fr.html) : ouvrez **Fichier → Ouvrir un flux réseau**, collez l'URL et vérifiez que le flux se lit. Si ça fonctionne dans VLC, ça fonctionnera dans Gladys.
+Avant d'ajouter la caméra à Gladys, vérifiez que votre URL RTSP fonctionne dans [VLC](https://www.videolan.org/vlc/index.fr.html) : ouvrez **Fichier → Ouvrir un flux réseau**, collez l'URL et vérifiez que le flux se lit. VLC est un bon moyen de valider l'URL, les identifiants et l'accès réseau : si le flux se lit, il devrait aussi fonctionner dans Gladys, à condition que Gladys prenne en charge le codec et le type de flux de votre caméra.
+
+Si VLC ne lit pas le flux, cela ne veut pas forcément dire que la caméra n'expose pas de RTSP. Vérifiez les points suivants avant d'abandonner :
+
+- Les identifiants sont bien dans l'URL et correctement encodés en pourcentage (sinon VLC peut afficher sa propre fenêtre d'authentification).
+- Le mot de passe est celui de l'appareil/ONVIF, pas celui de votre compte Imou.
+- Le chemin du flux correspond à votre modèle (valeurs `channel` et `subtype`, et le numéro de canal si vous passez par un NVR).
+- La caméra est joignable depuis votre ordinateur (même réseau, bonne adresse IP, port `554` non bloqué).
+- Le RTSP/ONVIF est bien activé dans l'application Imou Life.
 
 ## Ajouter votre caméra Imou à Gladys
 
