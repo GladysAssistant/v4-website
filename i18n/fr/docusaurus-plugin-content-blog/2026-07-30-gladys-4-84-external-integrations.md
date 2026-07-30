@@ -1,6 +1,6 @@
 ---
 title: "Gladys 4.84 : les intégrations externes sont là 🚀"
-description: "Gladys 4.84 introduit les intégrations externes : n'importe qui peut créer et publier une intégration, dans le langage de son choix, installable en un clic. En quelques jours, 20 intégrations sont déjà disponibles."
+description: "Gladys 4.84 introduit les intégrations externes : clonez le template, publiez votre intégration sur GitHub, et elle devient installable en un clic par tous. En quelques jours, 20 intégrations sont déjà disponibles."
 authors: pierregilles
 image: /img/presentation/gladys-4-84-external-integrations-fr.jpg
 slug: gladys-4-84-external-integrations
@@ -39,6 +39,8 @@ Voici ce que la communauté a déjà publié :
 
 **Messagerie** : CallMeBot, Free Mobile SMS, ntfy, Telegram
 
+![Le catalogue des intégrations externes, avec une carte par intégration communautaire](../../../static/img/articles/gladys-4-84-external-integrations/01-external-integrations-catalog-fr.png)
+
 Merci à [@callemand](https://github.com/callemand), [@cicoub13](https://github.com/cicoub13), [@Dreamthy](https://github.com/Dreamthy), [@Terdious](https://github.com/Terdious) et [@William-De71](https://github.com/William-De71) pour ces premières intégrations !
 
 👉 **[Parcourez le catalogue complet sur le site](/fr/docs/integrations/external/)**, mis à jour en direct.
@@ -49,10 +51,11 @@ C'est là que j'ai besoin de vous.
 
 Si vous avez un appareil qui n'est pas supporté par Gladys, vous pouvez maintenant **le rendre compatible vous-même**, et le partager avec toute la communauté. Voilà ce que ça implique concrètement :
 
-- **Le langage de votre choix.** Node.js, Python, Go, Rust… tant que ça tourne dans un conteneur Docker, ça marche. Un SDK JavaScript officiel existe si vous voulez aller vite.
+- **Un template à cloner.** Le [template officiel](https://github.com/GladysAssistant/integration-template-js) contient déjà une intégration qui fonctionne (capteurs, interrupteur, lampe variable, prise, caméra), le SDK JavaScript, un Dockerfile et un workflow GitHub Actions qui construit et publie votre image en un clic. Vous partez d'une base qui tourne, et vous remplacez la logique par la vôtre.
+- **Avec l'IA, c'est encore plus rapide.** Le plus simple aujourd'hui : clonez le template, et demandez à Claude de réécrire l'intégration pour votre appareil en partant de cette base. C'est exactement comme ça que j'ai porté l'intégration CallMeBot en intégration externe, et de mon expérience, le résultat était bon du premier coup.
+- **Vous n'êtes pas seul face à votre protocole.** Beaucoup d'appareils ont déjà une bibliothèque ou une intégration open-source ailleurs. Vous pouvez vous en inspirer, ou réutiliser directement la dépendance qui existe : c'est souvent le gros du travail en moins.
 - **Aucune pull request, aucune review, aucune validation de ma part.** Vous publiez un dépôt GitHub public avec un fichier manifeste, vous ajoutez le topic `gladys-assistant-integration`, et c'est tout.
 - **Publication en une heure.** Un indexeur automatique passe toutes les heures, valide votre manifeste, et publie votre intégration dans le catalogue de **toutes les instances Gladys**.
-- **Un template prêt à l'emploi**, avec un exemple qui fonctionne (capteurs, interrupteur, lampe variable, prise, caméra) et un workflow GitHub Actions qui construit et publie votre image en un clic.
 
 Il n'y a jamais eu de moyen aussi simple de contribuer à Gladys. Si chacun apporte l'intégration dont il a besoin, on peut couvrir en quelques mois ce qu'on n'aurait jamais couvert en années.
 
@@ -93,7 +96,7 @@ L'assistant IA continue de s'améliorer, avec plusieurs demandes venues directem
 
 ## 🛠️ Technique
 
-- Installation des dépendances des services **parallélisée** (4 en simultané), ce qui accélère nettement le démarrage.
+- Installation des dépendances des services **parallélisée** (4 en simultané), ce qui accélère nettement le build de Gladys. Côté développement uniquement : ça ne change rien à votre instance.
 - Les échecs d'un service de messagerie sont désormais isolés : un service en erreur n'empêche plus les autres de recevoir le message.
 - Côté CI : images Docker de branche publiées automatiquement sur le registre GitHub, et commande `/build-arm64` pour générer une image ARM64 à la demande sur une PR.
 

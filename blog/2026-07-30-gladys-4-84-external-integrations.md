@@ -1,6 +1,6 @@
 ---
 title: "Gladys 4.84: External Integrations Are Here 🚀"
-description: "Gladys 4.84 introduces external integrations: anyone can build and publish an integration, in the language they like, installable in one click. In a few days, 20 integrations are already available."
+description: "Gladys 4.84 introduces external integrations: clone the template, publish your integration on GitHub, and anyone can install it in one click. In a few days, 20 integrations are already available."
 authors: pierregilles
 image: /img/presentation/gladys-4-84-external-integrations-en.jpg
 slug: gladys-4-84-external-integrations
@@ -39,6 +39,8 @@ Here is what the community has already published:
 
 **Messaging**: CallMeBot, Free Mobile SMS, ntfy, Telegram
 
+![The external integrations catalog, with a card per community integration](../static/img/articles/gladys-4-84-external-integrations/01-external-integrations-catalog-en.png)
+
 Thanks to [@callemand](https://github.com/callemand), [@cicoub13](https://github.com/cicoub13), [@Dreamthy](https://github.com/Dreamthy), [@Terdious](https://github.com/Terdious) and [@William-De71](https://github.com/William-De71) for these first integrations!
 
 👉 **[Browse the full catalog on the website](/docs/integrations/external/)**, updated live.
@@ -49,10 +51,11 @@ This is where I need you.
 
 If you own a device Gladys doesn't support, you can now **make it work yourself**, and share it with the whole community. Here is what that means in practice:
 
-- **The language you like.** Node.js, Python, Go, Rust… as long as it runs in a Docker container, it works. An official JavaScript SDK is there if you want to move fast.
+- **A template to clone.** The [official template](https://github.com/GladysAssistant/integration-template-js) already contains a working integration (sensors, a switch, a dimmable light, a plug, a camera), the JavaScript SDK, a Dockerfile and a GitHub Actions workflow that builds and publishes your image in one click. You start from something that runs, and replace the logic with yours.
+- **With AI, it's even faster.** The simplest path today: clone the template, and ask Claude to rewrite the integration for your device starting from that base. That's exactly how I ported the CallMeBot integration to an external integration, and in my experience the result was good on the first try.
+- **You're not alone with your protocol.** Many devices already have an open-source library or integration somewhere else. You can take inspiration from it, or reuse the existing dependency directly: that's often the bulk of the work already done.
 - **No pull request, no review, no approval from me.** You publish a public GitHub repository with a manifest file, you add the `gladys-assistant-integration` topic, and that's it.
 - **Published within an hour.** An automatic indexer runs every hour, validates your manifest, and publishes your integration in the catalog of **every Gladys instance**.
-- **A ready-to-use template**, with a working example (sensors, a switch, a dimmable light, a plug, a camera) and a GitHub Actions workflow that builds and publishes your image in one click.
 
 There has never been an easier way to contribute to Gladys. If everyone brings the integration they need, we can cover in a few months what we would never have covered in years.
 
@@ -93,7 +96,7 @@ The AI assistant keeps getting better, with several requests coming straight fro
 
 ## 🛠️ Technical
 
-- Service dependency installs are now **parallelized** (4 at a time), which noticeably speeds up startup.
+- Service dependency installs are now **parallelized** (4 at a time), which noticeably speeds up the Gladys build. This is on the development side only: it changes nothing on your instance.
 - Messaging service failures are now isolated: one failing service no longer prevents the others from delivering the message.
 - On the CI side: branch Docker images are automatically pushed to the GitHub registry, and a `/build-arm64` command builds an ARM64 image on demand on a PR.
 
