@@ -44,7 +44,17 @@ Enter the **email and password of your Gladys Plus account** (the same credentia
 
 If it's the first time you connect, Gladys will ask you to configure two-factor authentication (2FA) to secure your account, and will then display your **backup key**: save this key somewhere safe outside of Gladys (a password manager for example), it is needed to restore your encrypted backups.
 
-## Step 5: Go back to Gladys Plus
+## Step 5: Authorize your user locally
+
+Still in the "Gladys Plus" tab, scroll down to the **"Remote users"** section: it lists all the users of your Gladys Plus account. **Authorize your user by turning on the switch next to their name.**
+
+![Authorize a remote user locally](../../static/img/docs/en/plus/connect-gladys-plus/accept-user.png)
+
+**Why this step?** Gladys Plus is end-to-end encrypted: each Gladys Plus user has their own encryption keys, whose fingerprints are displayed under their name. By authorizing a user here, you validate locally, on your instance, that their keys are accepted. This local validation is what protects your home against man-in-the-middle attacks: nobody, not even the Gladys Plus servers, can grant access to your instance without this validation done at your home.
+
+For the same reason, if a user's keys change (for example when their two-factor authentication is reset), their access is automatically revoked and needs to be authorized again here.
+
+## Step 6: Go back to Gladys Plus
 
 Your instance is now connected! Go back to [plus.gladysassistant.com](https://plus.gladysassistant.com) and click on the **"I connected my instance, try again"** button on the "One last step!" page.
 
@@ -52,6 +62,6 @@ You will then be asked to **select your Gladys user**: choose the local user you
 
 ## Troubleshooting
 
-- **The "One last step!" page comes back even though you already completed this step in the past**: this can happen when your two-factor authentication (2FA) was reset. Simply log in again in the "Gladys Plus" tab of your local instance (steps 1 to 4 above).
-- **"The user was not accepted locally" error**: in your local instance, go to the settings, "Gladys Plus" tab, "Users" section, and accept the user.
+- **The "One last step!" page comes back even though you already completed this step in the past**: this can happen when your two-factor authentication (2FA) was reset. Simply log in again in the "Gladys Plus" tab of your local instance (steps 1 to 5 above).
+- **"The user has not been authorized locally" error**: in your local instance, go to the settings, "Gladys Plus" tab, "Remote users" section, and turn on the switch next to the user's name (see step 5 above).
 - **Need help?** Contact us at [hello@gladysassistant.com](mailto:hello@gladysassistant.com) or ask on the [community forum](https://community.gladysassistant.com/).

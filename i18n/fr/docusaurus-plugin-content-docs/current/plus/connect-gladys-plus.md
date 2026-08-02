@@ -44,7 +44,17 @@ Entrez **l'e-mail et le mot de passe de votre compte Gladys Plus** (les mêmes i
 
 Si c'est votre première connexion, Gladys vous demandera de configurer la double authentification (2FA) pour sécuriser votre compte, puis affichera votre **clé de sauvegarde** : enregistrez cette clé en lieu sûr en dehors de Gladys (un gestionnaire de mots de passe par exemple), elle est nécessaire pour restaurer vos sauvegardes chiffrées.
 
-## Étape 5 : Retournez sur Gladys Plus
+## Étape 5 : Autorisez votre utilisateur localement
+
+Toujours dans l'onglet « Gladys Plus », descendez jusqu'à la section **« Utilisateurs distants »** : elle liste tous les utilisateurs de votre compte Gladys Plus. **Autorisez votre utilisateur en activant l'interrupteur en face de son nom.**
+
+![Autoriser un utilisateur distant localement](../../../../../static/img/docs/fr/plus/connect-gladys-plus/accept-user.png)
+
+**Pourquoi cette étape ?** Gladys Plus est chiffré de bout en bout : chaque utilisateur Gladys Plus possède ses propres clés de chiffrement, dont les empreintes sont affichées sous son nom. En autorisant un utilisateur ici, vous validez localement, sur votre instance, que ses clés sont acceptées. C'est cette validation locale qui protège votre maison des attaques « de l'homme du milieu » (man-in-the-middle) : personne, pas même les serveurs Gladys Plus, ne peut donner accès à votre instance sans cette validation faite chez vous.
+
+Pour la même raison, si les clés d'un utilisateur changent (par exemple lorsque sa double authentification est réinitialisée), son accès est automatiquement révoqué et devra être autorisé à nouveau ici.
+
+## Étape 6 : Retournez sur Gladys Plus
 
 Votre instance est maintenant connectée ! Retournez sur [plus.gladysassistant.com](https://plus.gladysassistant.com) et cliquez sur le bouton **« J'ai connecté mon instance, réessayer »** de la page « Plus qu'une étape ! ».
 
@@ -52,6 +62,6 @@ Il vous sera alors demandé de **sélectionner votre utilisateur Gladys** : choi
 
 ## En cas de problème
 
-- **La page « Plus qu'une étape ! » réapparaît alors que vous aviez déjà fait cette étape par le passé** : cela peut arriver lorsque votre double authentification (2FA) a été réinitialisée. Reconnectez-vous simplement dans l'onglet « Gladys Plus » de votre instance locale (étapes 1 à 4 ci-dessus).
-- **Erreur « L'utilisateur n'a pas été accepté localement »** : dans votre instance locale, allez dans les paramètres, onglet « Gladys Plus », section « Utilisateurs », et acceptez l'utilisateur.
+- **La page « Plus qu'une étape ! » réapparaît alors que vous aviez déjà fait cette étape par le passé** : cela peut arriver lorsque votre double authentification (2FA) a été réinitialisée. Reconnectez-vous simplement dans l'onglet « Gladys Plus » de votre instance locale (étapes 1 à 5 ci-dessus).
+- **Erreur « L'utilisateur n'a pas encore été autorisé localement »** : dans votre instance locale, allez dans les paramètres, onglet « Gladys Plus », section « Utilisateurs distants », et activez l'interrupteur en face de son nom (voir l'étape 5 ci-dessus).
 - **Besoin d'aide ?** Écrivez-nous à [hello@gladysassistant.com](mailto:hello@gladysassistant.com) ou posez votre question sur le [forum de la communauté](https://community.gladysassistant.com/).
