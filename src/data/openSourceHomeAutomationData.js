@@ -76,7 +76,7 @@ const openSourceHomeAutomationContent = {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
           logoAlt: "Gladys Assistant logo",
           title: "Gladys Assistant",
-          text: "A self-hosted platform (Apache 2.0) focused on simplicity: a clean interface, no configuration files, scenes built by clicking, and a one-command Docker install. Great if you want open source without the steep learning curve.",
+          text: "A self-hosted platform (Apache 2.0) focused on simplicity: a clean interface, no configuration files, scenes built by clicking, and a one-command Docker install. Its external integrations let anyone publish an integration on GitHub, installable in one click and sandboxed. Great if you want open source without the steep learning curve.",
         },
         {
           logo: "/img/external/open-source-platforms/home-assistant.png",
@@ -245,7 +245,7 @@ const openSourceHomeAutomationContent = {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
           logoAlt: "Logo Gladys Assistant",
           title: "Gladys Assistant",
-          text: "Une plateforme auto-hébergée (Apache 2.0) axée sur la simplicité : interface épurée, aucun fichier de configuration, scènes créées au clic et installation en une commande Docker. Idéale pour faire de l'open source sans la courbe d'apprentissage raide.",
+          text: "Une plateforme auto-hébergée (Apache 2.0) axée sur la simplicité : interface épurée, aucun fichier de configuration, scènes créées au clic et installation en une commande Docker. Ses intégrations externes permettent à n'importe qui de publier une intégration sur GitHub, installable en un clic et isolée dans son bac à sable. Idéale pour faire de l'open source sans la courbe d'apprentissage raide.",
         },
         {
           logo: "/img/external/open-source-platforms/home-assistant.png",
@@ -355,7 +355,7 @@ export const openSourceHomeAutomationFaqEn = [
   {
     question: "What is the best open-source home automation software?",
     answer:
-      "The main open-source platforms are Gladys Assistant, Home Assistant, openHAB, Jeedom and Domoticz. Home Assistant has the largest integration catalog, while Gladys Assistant focuses on simplicity with a clean interface, no configuration files and a one-command install. The best choice depends on whether you prioritize raw flexibility or ease of use.",
+      "The main open-source platforms are Gladys Assistant, Home Assistant, openHAB, Jeedom and Domoticz. Home Assistant has the largest integration catalog, while Gladys Assistant focuses on simplicity with a clean interface, no configuration files and a one-command install, plus external integrations that anyone can publish and that install in one click. The best choice depends on whether you prioritize raw flexibility or ease of use.",
   },
   {
     question: "Do you need a hub for open-source home automation?",
@@ -393,7 +393,7 @@ export const openSourceHomeAutomationFaqFr = [
   {
     question: "Quel est le meilleur logiciel domotique open source ?",
     answer:
-      "Les principales plateformes open source sont Gladys Assistant, Home Assistant, openHAB, Jeedom et Domoticz. Home Assistant possède le plus grand catalogue d'intégrations, tandis que Gladys Assistant mise sur la simplicité avec une interface épurée, sans fichiers de configuration et une installation en une commande. Le meilleur choix dépend de si vous privilégiez la flexibilité maximale ou la facilité d'usage.",
+      "Les principales plateformes open source sont Gladys Assistant, Home Assistant, openHAB, Jeedom et Domoticz. Home Assistant possède le plus grand catalogue d'intégrations, tandis que Gladys Assistant mise sur la simplicité avec une interface épurée, sans fichiers de configuration, une installation en une commande, et des intégrations externes que n'importe qui peut publier et qui s'installent en un clic. Le meilleur choix dépend de si vous privilégiez la flexibilité maximale ou la facilité d'usage.",
   },
   {
     question: "Faut-il un hub pour la domotique open source ?",

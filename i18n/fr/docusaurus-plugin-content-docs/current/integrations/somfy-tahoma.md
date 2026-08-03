@@ -24,8 +24,11 @@ Actuellement, la gestion complète de la maison se limite à cette application e
 Alors pour aller plus loin dans les interactions, Gladys va permettre une gestion plus étendue grâce à ses diverses intégrations.
 
 La version 4.58 de **Gladys Assistant** introduit le support officiel du standard **Matter**.
-Grâce au projet open‑source [Matterbridge](https://github.com/luligu/matterbridge), vous pouvez rendre compatibles avec Matter des appareils qui ne le sont pas nativement, et ainsi les contrôler dans Gladys aussi facilement que des appareils natifs.
-C'est ce que nous allons faire pour les appareils Somfy.
+Pour les appareils Somfy, ce guide s'appuie sur le projet open‑source [Matterbridge](https://github.com/luligu/matterbridge) pour les exposer en Matter, et ainsi les contrôler dans Gladys aussi facilement que des appareils natifs.
+
+:::tip
+Plus généralement, lorsqu'un appareil ou un service n'a pas d'intégration native dans Gladys, les [intégrations externes](/fr/docs/integrations/external/) sont la voie recommandée : vous les installez en un clic depuis Gladys, et n'importe qui peut [en créer une](/fr/docs/dev/external-integrations/).
+:::
 
 Ce guide pas à pas vous expliquera comment exposer et piloter vos volets roulants, stores, et autres ouvrants Somfy.
 
@@ -118,7 +121,7 @@ Le bridge apparaît maintenant dans l'onglet **Paramètres** :
 
 ### 4. Aller plus loin
 
-- Activer d’autres plugins Matterbridge : Zigbee2MQTT, Shelly, Home Assistant, etc.
+- Parcourir le [catalogue des intégrations externes](/fr/docs/integrations/external/) pour ajouter vos autres appareils et services
 - Ajouter ces équipements sur votre tableau de bord
 - Créer des scènes Gladys (ex. : fermer tous les volets de l'étage quand il commence à faire nuit puis ceux du rez-de-chaussée 30mn plus tard).
 

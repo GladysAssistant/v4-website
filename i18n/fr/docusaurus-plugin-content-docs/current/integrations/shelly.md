@@ -11,7 +11,11 @@ Shelly est une marque populaire dans le domaine de la domotique, connue pour ses
 
 La version 4.58 de **Gladys Assistant** introduit le support officiel du standard **Matter**. Si la génération 4 des appareils Shelly est entièrement compatible avec Matter, les versions précédentes ne le sont malheureusement pas toutes.
 
-Heureusement, grâce au projet open‑source [Matterbridge](https://github.com/luligu/matterbridge), vous pouvez rendre compatibles avec Matter des appareils qui ne le sont pas nativement, et ainsi les contrôler dans Gladys aussi facilement que des appareils natifs.
+Pour ces générations précédentes, ce guide s'appuie sur le projet open‑source [Matterbridge](https://github.com/luligu/matterbridge) pour exposer vos modules Shelly en Matter, et ainsi les contrôler dans Gladys aussi facilement que des appareils natifs.
+
+:::tip
+Plus généralement, lorsqu'un appareil ou un service n'a pas d'intégration native dans Gladys, les [intégrations externes](/fr/docs/integrations/external/) sont la voie recommandée : vous les installez en un clic depuis Gladys, et n'importe qui peut [en créer une](/fr/docs/dev/external-integrations/).
+:::
 
 Ce guide pas à pas vous expliquera comment :
 
@@ -82,7 +86,7 @@ Le bridge apparaît maintenant dans l'onglet **Paramètres**.
 
 ### 4. Aller plus loin
 
-- Activer d’autres plugins Matterbridge : Zigbee2MQTT, Somfy Tahoma, Home Assistant, etc.
+- Parcourir le [catalogue des intégrations externes](/fr/docs/integrations/external/) pour ajouter vos autres appareils et services
 - Ajouter ces équipements sur votre tableau de bord
 - Créer des scènes Gladys (ex. : couper toutes les lumières la nuit).
 

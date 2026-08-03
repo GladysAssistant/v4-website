@@ -36,12 +36,13 @@ const comparisonContent = {
           "You prefer a clean interface where everything happens with clicks, with no configuration files and no YAML.",
           "You value stability: updates are fully automatic and atomic.",
           "You want a responsive project where your feedback actually shapes the product.",
+          "You want to be able to add any device: anyone can publish an external integration, and you install it in one click.",
         ],
       },
       ha: {
         title: "Choose Home Assistant if…",
         points: [
-          "You own very specific or niche devices that need a dedicated integration.",
+          "You own very niche devices nobody has built a Gladys integration for yet.",
           "You're a power user who loves to tinker and customize to the extreme.",
           "You're comfortable editing YAML and going under the hood.",
           "You want the largest possible catalog of integrations, even if quality varies.",
@@ -71,13 +72,19 @@ const comparisonContent = {
       },
       {
         feature: "Integrations",
-        gladys: "Curated and polished, built around open standards (Zigbee, Matter, MQTT)",
+        gladys:
+          "Native ones built around open standards (Zigbee, Matter, MQTT), plus community external integrations installed in one click",
         ha: "Huge catalog, community-built, quality varies",
       },
       {
         feature: "Supported devices",
-        gladys: "Thousands via Zigbee, Matter and MQTT",
+        gladys: "Thousands via Zigbee, Matter and MQTT, plus the external integrations catalog",
         ha: "The widest catalog available",
+      },
+      {
+        feature: "Adding a missing integration",
+        gladys: "Anyone can publish one: clone the template, push to GitHub, no pull request and no review",
+        ha: "Write a custom component in Python, or install a community one via HACS",
       },
       {
         feature: "Automations",
@@ -149,16 +156,19 @@ const comparisonContent = {
         id: "integrations",
         title: "Integrations & compatibility",
         gladys: [
-          "Gladys focuses on what matters: a curated set of integrations built around open standards like Zigbee, Matter and MQTT. Each one is carefully built and tested end to end, designed like a polished consumer product rather than by developers for developers.",
+          "Gladys' native integrations focus on what matters: open standards like Zigbee, Matter and MQTT, each one carefully built and tested end to end, designed like a polished consumer product rather than by developers for developers.",
           "Through Zigbee and Matter alone, that already means thousands of compatible devices. The bet is that open standards, Matter especially, will dominate, so Gladys invests heavily where the market is heading, not in closed, cloud-only ecosystems that lock you in.",
-          "For anything not natively supported yet, Matterbridge can bridge devices onto a Matter network, including a Home Assistant plugin.",
+          "And for everything else, there are external integrations. This is the biggest change in the project's history: anyone can now write and publish a Gladys integration on GitHub, without a pull request, a review, or my approval. They appear in the catalog inside every Gladys instance, next to the native ones, and the community published more of them in a few days than we had built in the core in six years.",
+          "For you as a user, nothing changes: you browse the catalog in Gladys, you click Install, and Gladys pulls the integration, starts it and generates its whole interface (device list, discovery, configuration form). Then you start, stop, update it or read its logs from the same place. No command line, no YAML, no technical skills required.",
+          "Freedom on one side, Gladys' rigor on the other: each external integration runs in an isolated sandbox (limited RAM and CPU, read-only filesystem, isolated network). If one crashes, it crashes alone, and it can never take your instance down with it. That's exactly what makes it safe to open the door to everyone.",
+          "And if the integration you need doesn't exist yet, you no longer have to wait for anyone: you clone the official template, adapt it to your device, publish it, and it lands in the catalog of every Gladys instance within the hour.",
         ],
         ha: [
           "Home Assistant has a massive catalog with thousands of community integrations, so even niche devices are often supported out of the box.",
-          "The flip side is variable quality: some integrations are excellent, others less so, and it's up to you to find the right one and test that it works.",
+          "The flip side is variable quality: some integrations are excellent, others less so, and it's up to you to find the right one and test that it works. Custom components installed through HACS also run inside Home Assistant itself, so a badly behaved one can affect the whole instance.",
         ],
         takeaway:
-          "If you value integrations that just work and are built to last, Gladys' curated approach is hard to beat. If you own very niche hardware and enjoy testing community add-ons, Home Assistant's sheer catalog is appealing. As the whole industry adopts Matter, the gap keeps shrinking.",
+          "Home Assistant still has the larger catalog today, and if you own very niche hardware there's a good chance it's already covered. But Gladys is no longer limited to what I have time to build: native integrations for open standards, plus an open catalog of community external integrations that anyone can extend, installed in one click and sandboxed by design. Between Matter on one side and external integrations on the other, the gap is closing fast.",
       },
       {
         id: "automations",
@@ -208,8 +218,8 @@ const comparisonContent = {
       paragraphs: [
         "Here's the part most comparisons miss: you don't have to choose. You can run Gladys Assistant and Home Assistant on the same setup at the same time.",
         "With Zigbee2MQTT, a single Zigbee instance can talk to both Gladys and Home Assistant, so the same device shows up in both interfaces. The same goes for Matter: a device paired to a hub (like an Apple TV) can be controlled from both. You can have several controllers at once.",
-        "You can even use Matterbridge to expose all your Home Assistant devices onto a Matter network, then pull them into Gladys, effectively using Home Assistant as a backend and Gladys as your interface. And of course both expose rich APIs, so they can talk over MQTT or HTTP.",
-        "So if you love the Gladys interface but need a niche Home Assistant integration, run them side by side. There's really no excuse: everything is possible.",
+        "Both also expose rich APIs, so they can talk to each other over MQTT or HTTP, with one acting as a backend and the other as your interface.",
+        "So if you love the Gladys interface but need a niche Home Assistant integration, run them side by side, or turn it into a Gladys external integration yourself and share it with everyone. There's really no excuse: everything is possible.",
       ],
     },
     faqTitle: "Frequently asked questions",
@@ -246,12 +256,13 @@ const comparisonContent = {
           "Vous préférez une interface épurée où tout se fait au clic, sans fichiers de configuration ni YAML.",
           "Vous tenez à la stabilité : les mises à jour sont totalement automatiques et atomiques.",
           "Vous voulez un projet à l'écoute, où vos retours façonnent vraiment le produit.",
+          "Vous voulez pouvoir ajouter n'importe quel appareil : n'importe qui peut publier une intégration externe, et vous l'installez en un clic.",
         ],
       },
       ha: {
         title: "Choisissez Home Assistant si…",
         points: [
-          "Vous avez des équipements très spécifiques qui demandent une intégration dédiée.",
+          "Vous avez des équipements très spécifiques pour lesquels personne n'a encore créé d'intégration Gladys.",
           "Vous êtes un power user qui adore bidouiller et personnaliser à l'extrême.",
           "Vous êtes à l'aise avec le YAML et aller sous le capot.",
           "Vous voulez le plus grand catalogue d'intégrations possible, même si la qualité est variable.",
@@ -281,13 +292,19 @@ const comparisonContent = {
       },
       {
         feature: "Intégrations",
-        gladys: "Soignées et abouties, centrées sur les standards ouverts (Zigbee, Matter, MQTT)",
+        gladys:
+          "Natives et centrées sur les standards ouverts (Zigbee, Matter, MQTT), plus les intégrations externes de la communauté, installées en un clic",
         ha: "Catalogue immense, communautaire, qualité variable",
       },
       {
         feature: "Appareils supportés",
-        gladys: "Des milliers via Zigbee, Matter et MQTT",
+        gladys: "Des milliers via Zigbee, Matter et MQTT, plus le catalogue d'intégrations externes",
         ha: "Le catalogue le plus large",
+      },
+      {
+        feature: "Ajouter une intégration manquante",
+        gladys: "N'importe qui peut en publier une : on clone le template, on pousse sur GitHub, sans pull request ni validation",
+        ha: "Écrire un custom component en Python, ou en installer un communautaire via HACS",
       },
       {
         feature: "Automatisations",
@@ -360,16 +377,19 @@ const comparisonContent = {
         id: "integrations",
         title: "Intégrations & compatibilité",
         gladys: [
-          "Gladys se concentre sur l'essentiel : un ensemble d'intégrations soignées, construites autour des standards ouverts comme Zigbee, Matter et MQTT. Chacune est testée de bout en bout et pensée comme un produit grand public abouti, pas par des développeurs pour des développeurs.",
+          "Les intégrations natives de Gladys se concentrent sur l'essentiel : les standards ouverts comme Zigbee, Matter et MQTT. Chacune est testée de bout en bout et pensée comme un produit grand public abouti, pas par des développeurs pour des développeurs.",
           "Rien qu'avec Zigbee et Matter, cela représente déjà des milliers d'appareils compatibles. Le pari, c'est que les standards ouverts, Matter en particulier, vont dominer ; Gladys investit donc là où va le marché, et non dans les écosystèmes fermés et cloud-only qui vous enferment.",
-          "Pour tout ce qui n'est pas encore supporté nativement, Matterbridge permet de relier des appareils à un réseau Matter, y compris via un plugin Home Assistant.",
+          "Et pour tout le reste, il y a les intégrations externes. C'est le plus grand changement de l'histoire du projet : n'importe qui peut désormais écrire et publier une intégration Gladys sur GitHub, sans pull request, sans revue et sans mon autorisation. Elles apparaissent dans le catalogue de chaque instance Gladys, à côté des intégrations natives, et la communauté en a publié en quelques jours plus que ce que nous avions construit dans le cœur en six ans.",
+          "Pour vous, utilisateur, rien ne change : vous parcourez le catalogue dans Gladys, vous cliquez sur Installer, et Gladys télécharge l'intégration, la démarre et génère toute son interface (liste des appareils, découverte, formulaire de configuration). Ensuite vous la démarrez, l'arrêtez, la mettez à jour ou consultez ses logs au même endroit. Pas de ligne de commande, pas de YAML, aucune compétence technique requise.",
+          "La liberté d'un côté, la rigueur de Gladys de l'autre : chaque intégration externe tourne dans un bac à sable isolé (RAM et CPU limités, système de fichiers en lecture seule, réseau isolé). Si l'une plante, elle plante toute seule et ne peut jamais emporter votre instance avec elle. C'est précisément ce qui permet d'ouvrir la porte à tout le monde sans risque.",
+          "Et si l'intégration dont vous avez besoin n'existe pas encore, vous n'avez plus à attendre après qui que ce soit : vous clonez le template officiel, vous l'adaptez à votre appareil, vous le publiez, et il arrive dans l'heure dans le catalogue de toutes les instances Gladys.",
         ],
         ha: [
           "Home Assistant dispose d'un catalogue immense, avec des milliers d'intégrations communautaires, si bien que même les appareils de niche sont souvent supportés directement.",
-          "La contrepartie, c'est une qualité variable : certaines intégrations sont excellentes, d'autres moins, et c'est à vous de trouver la bonne et de vérifier qu'elle fonctionne.",
+          "La contrepartie, c'est une qualité variable : certaines intégrations sont excellentes, d'autres moins, et c'est à vous de trouver la bonne et de vérifier qu'elle fonctionne. Les custom components installés via HACS tournent en plus à l'intérieur de Home Assistant lui-même : un module mal écrit peut donc affecter toute l'instance.",
         ],
         takeaway:
-          "Si vous voulez des intégrations qui fonctionnent et durent, l'approche soignée de Gladys est difficile à battre. Si vous avez du matériel très spécifique et aimez tester des modules communautaires, le catalogue de Home Assistant est attirant. Et avec l'adoption de Matter par toute l'industrie, l'écart se réduit sans cesse.",
+          "Home Assistant garde aujourd'hui le catalogue le plus large, et si vous avez du matériel très spécifique il y a de bonnes chances qu'il soit déjà couvert. Mais Gladys n'est plus limitée à ce que j'ai le temps de développer : des intégrations natives pour les standards ouverts, plus un catalogue ouvert d'intégrations externes que n'importe qui peut enrichir, installables en un clic et isolées par conception. Entre Matter d'un côté et les intégrations externes de l'autre, l'écart se réduit vite.",
       },
       {
         id: "automatisations",
@@ -419,8 +439,8 @@ const comparisonContent = {
       paragraphs: [
         "Voici ce que la plupart des comparatifs oublient : vous n'êtes pas obligé de choisir. Vous pouvez faire tourner Gladys Assistant et Home Assistant en même temps sur la même installation.",
         "Avec Zigbee2MQTT, une seule instance Zigbee peut parler à la fois à Gladys et à Home Assistant, donc le même appareil apparaît dans les deux interfaces. Même chose avec Matter : un appareil associé à un hub (comme une Apple TV) peut être contrôlé depuis les deux. On peut avoir plusieurs contrôleurs en même temps.",
-        "Vous pouvez même utiliser Matterbridge pour exposer tous vos appareils Home Assistant sur un réseau Matter, puis les récupérer dans Gladys, en utilisant Home Assistant comme backend et Gladys comme interface. Et bien sûr, les deux exposent des API riches, donc ils peuvent communiquer en MQTT ou HTTP.",
-        "Donc si vous aimez l'interface de Gladys mais avez besoin d'une intégration spécifique de Home Assistant, faites tourner les deux côte à côte. Il n'y a vraiment pas d'excuse : tout est possible.",
+        "Les deux exposent aussi des API riches : ils peuvent donc communiquer en MQTT ou HTTP, l'un servant de backend et l'autre d'interface.",
+        "Donc si vous aimez l'interface de Gladys mais avez besoin d'une intégration spécifique de Home Assistant, faites tourner les deux côte à côte, ou transformez-la vous-même en intégration externe Gladys et partagez-la avec tout le monde. Il n'y a vraiment pas d'excuse : tout est possible.",
       ],
     },
     faqTitle: "Questions fréquentes",
@@ -448,12 +468,22 @@ export const comparisonFaqEn = [
   {
     question: "Will Gladys work with my devices?",
     answer:
-      "Very likely. Gladys supports thousands of devices through open standards like Zigbee, Matter and MQTT, plus dedicated integrations for popular brands. And with Matterbridge, you can even bring in devices that aren't natively supported yet.",
+      "Very likely. Gladys supports thousands of devices through open standards like Zigbee, Matter and MQTT, plus dedicated integrations for popular brands. Anything else is usually covered by an external integration, a community integration you install in one click from the catalog inside Gladys. And if nobody has built the one you need yet, you can create it yourself from the official template.",
+  },
+  {
+    question: "What if there is no Gladys integration for my device?",
+    answer:
+      "Since version 4.84, anyone can create one. You clone the official template, adapt it to your device, publish it on a public GitHub repository, and it is listed within the hour in the catalog of every Gladys instance. There is no pull request, no review and no approval to wait for. Each external integration runs in an isolated sandbox, so it can never destabilize your Gladys.",
+  },
+  {
+    question: "Do external integrations make Gladys as complicated as Home Assistant?",
+    answer:
+      "No. Installing one is a single click from the catalog inside Gladys: no command line, no YAML, no configuration file. Gladys generates the whole interface for the integration, and you start, stop, update it or read its logs from the same screen as any native integration.",
   },
   {
     question: "Can I run Gladys and Home Assistant at the same time?",
     answer:
-      "Yes. With Zigbee2MQTT or Matter multi-admin, the same devices can appear in both. You can even use Matterbridge to expose Home Assistant devices to Gladys, or connect the two over MQTT or HTTP.",
+      "Yes. With Zigbee2MQTT or Matter multi-admin, the same devices can appear in both. You can also connect the two over MQTT or HTTP, since both expose rich APIs.",
   },
   {
     question: "Is Gladys free like Home Assistant?",
@@ -481,12 +511,22 @@ export const comparisonFaqFr = [
   {
     question: "Gladys fonctionnera-t-il avec mes appareils ?",
     answer:
-      "Très probablement. Gladys supporte des milliers d'appareils via les standards ouverts comme Zigbee, Matter et MQTT, ainsi que des intégrations dédiées pour les marques populaires. Et avec Matterbridge, vous pouvez même intégrer des appareils qui ne sont pas encore supportés nativement.",
+      "Très probablement. Gladys supporte des milliers d'appareils via les standards ouverts comme Zigbee, Matter et MQTT, ainsi que des intégrations dédiées pour les marques populaires. Le reste est généralement couvert par une intégration externe, une intégration communautaire que vous installez en un clic depuis le catalogue intégré à Gladys. Et si personne n'a encore créé celle dont vous avez besoin, vous pouvez la créer vous-même à partir du template officiel.",
+  },
+  {
+    question: "Et s'il n'existe pas d'intégration Gladys pour mon appareil ?",
+    answer:
+      "Depuis la version 4.84, n'importe qui peut en créer une. Vous clonez le template officiel, vous l'adaptez à votre appareil, vous le publiez sur un dépôt GitHub public, et elle est référencée dans l'heure dans le catalogue de toutes les instances Gladys. Pas de pull request, pas de revue, aucune validation à attendre. Chaque intégration externe tourne dans un bac à sable isolé : elle ne peut donc jamais déstabiliser votre Gladys.",
+  },
+  {
+    question: "Les intégrations externes rendent-elles Gladys aussi compliquée que Home Assistant ?",
+    answer:
+      "Non. L'installation se fait en un clic depuis le catalogue intégré à Gladys : pas de ligne de commande, pas de YAML, aucun fichier de configuration. Gladys génère toute l'interface de l'intégration, et vous la démarrez, l'arrêtez, la mettez à jour ou consultez ses logs depuis le même écran que n'importe quelle intégration native.",
   },
   {
     question: "Puis-je faire tourner Gladys et Home Assistant en même temps ?",
     answer:
-      "Oui. Avec Zigbee2MQTT ou le multi-admin Matter, les mêmes appareils peuvent apparaître dans les deux. Vous pouvez même utiliser Matterbridge pour exposer les appareils de Home Assistant dans Gladys, ou connecter les deux en MQTT ou HTTP.",
+      "Oui. Avec Zigbee2MQTT ou le multi-admin Matter, les mêmes appareils peuvent apparaître dans les deux. Vous pouvez aussi connecter les deux en MQTT ou HTTP, puisqu'ils exposent chacun des API riches.",
   },
   {
     question: "Gladys est-il gratuit comme Home Assistant ?",

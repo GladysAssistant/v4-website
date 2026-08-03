@@ -24,8 +24,11 @@ Currently, complete home management is limited to this application and a connect
 To go further in interactions, Gladys will allow more extensive management thanks to its various integrations.
 
 Version 4.58 of **Gladys Assistant** introduces official support for the **Matter** standard.
-Thanks to the open-source project [Matterbridge](https://github.com/luligu/matterbridge), you can make devices that are not natively compatible with Matter compatible, and thus control them in Gladys as easily as native devices.
-This is what we will do for Somfy devices.
+For Somfy devices, this guide uses the open-source [Matterbridge](https://github.com/luligu/matterbridge) project to expose them over Matter, so you can control them in Gladys as easily as native devices.
+
+:::tip
+More generally, when a device or service has no native integration in Gladys, [external integrations](/docs/integrations/external/) are the recommended path: you install them in one click from Gladys, and anyone can [create one](/docs/dev/external-integrations/).
+:::
 
 This step-by-step guide will explain how to expose and control your Somfy roller shutters, blinds, and other openings.
 
@@ -119,7 +122,7 @@ The bridge now appears in the **Settings** tab:
 
 ### 4. Going further
 
-- Activate other Matterbridge plugins: Zigbee2MQTT, Shelly, Home Assistant, etc.
+- Browse the [external integrations catalog](/docs/integrations/external/) to add your other devices and services
 - Add these devices to your dashboard
 - Create Gladys scenes (e.g., close all upstairs shutters when it starts to get dark, then those on the ground floor 30 minutes later).
 
