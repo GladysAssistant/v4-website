@@ -1,0 +1,115 @@
+---
+title: "Intégration Apple TV pour Gladys Assistant"
+sidebar_label: "Apple TV"
+description: "Découvrez, appairez et contrôlez vos Apple TV sur le réseau local. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/valentinhttr--gladys-apple-tv.jpg"
+keywords:
+  - "apple tv"
+  - "gladys apple tv"
+  - "apple tv gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/valentinhttr/gladys-apple-tv instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="apple-tv" />
+
+Cette intégration externe découvre, appaire et contrôle les Apple TV sans envoyer les données de votre maison vers un service cloud. Elle expose des fonctionnalités Gladys standard pour l'alimentation, la navigation et la lecture, ainsi que l'application active et les métadonnées du média en cours.
+
+## Avant de commencer
+
+Gladys 4.84.2 ou une version ultérieure est nécessaire afin que l'intégration puisse conserver les identifiants d'appairage pyatv dans son volume de données protégé. Gladys et l'Apple TV doivent pouvoir communiquer sur le réseau local. Un bail DHCP fixe est recommandé, car Gladys conserve la dernière adresse IP découverte avec l'appareil.
+
+## Découvrir et créer un appareil
+
+Ouvrez l'onglet **Découverte** de l'intégration et lancez une recherche. Gladys écoute les annonces mDNS AirPlay pour le conteneur isolé. L'intégration interroge ensuite ces adresses avec pyatv et ne conserve que les Apple TV.
+
+Si l'Apple TV est sur un autre VLAN et que le multicast n'est pas relayé, ajoutez son adresse IPv4 dans **Adresses IPv4 manuelles**, enregistrez puis relancez la découverte. Plusieurs adresses peuvent être séparées par des virgules.
+
+La saisie manuelle et mDNS ne fournissent que des adresses candidates. Les deux parcours utilisent ensuite la même interrogation unicast node-pyatv, enregistrent le même paramètre d'hôte et utilisent le même code de commande après la création de l'appareil.
+
+Cliquez sur **Créer** pour chaque Apple TV à utiliser. Gladys reste la source de vérité pour l'appareil et sa pièce.
+
+## Appairage
+
+L'intégration configure automatiquement les protocoles nécessaires à l'état média et aux commandes :
+
+1. Dans Configuration, lancez **1. Démarrer l'appairage** et saisissez le nom exact de l'Apple TV affiché dans Gladys, ou son adresse IP enregistrée.
+2. Attendez que l'Apple TV affiche un code PIN.
+3. Lancez **2. Saisir le code affiché** et entrez le PIN sous deux minutes.
+4. Si l'Apple TV affiche un nouveau code, relancez **2. Saisir le code affiché** avec ce nouveau PIN.
+
+Sur les versions récentes de tvOS, la première autorisation active l'état média avec MRP transporté par AirPlay. La seconde active les applications, le clavier et les commandes avec Companion. L'intégration effectue automatiquement ces choix de protocoles.
+
+Les identifiants sont enregistrés dans le fichier privé `/data/pyatv.conf` de l'intégration et survivent aux redémarrages et mises à jour. Ils ne sont ni stockés dans les paramètres de l'appareil Gladys, ni écrits dans les journaux par cette intégration.
+
+## Contrôles et actions
+
+L'appareil Gladys contient l'alimentation, les flèches, Sélectionner, Menu/Retour, Accueil, Lecture, Pause, Stop, Précédent, Suivant et les boutons **Volume +/−**. Les états comprennent l'alimentation, la lecture, l'application active, le titre, l'artiste, l'album, le type de média, la position et la durée. Les mises à jour instantanées sont actives par défaut avec une interrogation périodique de secours.
+
+La plupart des installations HDMI-CEC prennent en charge les commandes de volume relatives sans fournir de niveau absolu fiable. Pour une Apple TV reliée à une sortie capable de lire et régler un niveau absolu, activez **Curseur de volume absolu**, enregistrez la configuration puis relancez la découverte. Laissez-le désactivé si le curseur expire ou indique toujours zéro ; les boutons Volume +/− restent les commandes adaptées.
+
+Les actions de configuration permettent aussi de lancer une application à partir de son identifiant (par exemple `com.netflix.Netflix`), d'ouvrir une URL ou un lien profond, et de remplacer, compléter ou effacer le texte lorsque le clavier à l'écran est actif. Identifiez l'Apple TV cible avec son nom Gladys exact ou son adresse IP.
+
+## Exemple de scène : lumières d'ambiance au démarrage de Netflix
+
+La fonctionnalité numérique **Lecture** et la fonctionnalité texte **Application active** peuvent être combinées avec les actions Gladys existantes :
+
+1. Ajoutez un déclencheur **Nouvel état d'un appareil** sur `Apple TV > Lecture`, égal à `1`, avec le franchissement de seuil activé.
+2. Ajoutez une action **Récupérer le dernier état** pour `Apple TV > Application active`.
+3. Dans le groupe d'actions suivant, ajoutez **Continuer uniquement si** et comparez le `last_value_string` de l'action précédente à `Netflix`.
+4. Dans le groupe suivant, allumez ou réglez les lumières Gladys souhaitées.
+
+Utilisez le nom exact affiché par **Application active**, car tvOS peut le faire varier selon l'application ou la langue. Les métadonnées texte sont publiées avant l'état Lecture : l'application est donc déjà à jour lorsque la scène démarre. Si les mises à jour instantanées sont indisponibles, le lancement peut intervenir après au maximum un intervalle d'interrogation.
+
+La détection de la lecture et de l'application active dépend des métadonnées publiées par tvOS et par l'application. Certaines applications ou phases de lecture ne les exposent pas : pyatv peut alors indiquer légitimement `idle` ou une application vide même si une vidéo est visible. Netflix est notamment connu pour indiquer `idle` pendant les introductions, aperçus et écrans d'épisode suivant.
+
+## Dépannage
+
+- **Aucun appareil trouvé :** vérifiez qu'AirPlay est actif, contrôlez le pare-feu et les règles VLAN, puis essayez une adresse IPv4 manuelle. Les annonces mDNS IPv6 sont ignorées, car le scanner unicast de pyatv n'accepte actuellement que des cibles IPv4.
+- **La lecture reste toujours sur idle après une mise à jour :** recommencez l'appairage complet et saisissez tous les codes demandés afin d'autoriser le tunnel média AirPlay.
+- **Une commande demande un appairage :** relancez l'appairage et terminez chaque étape demandant un code. L'intégration sélectionne automatiquement les protocoles selon le modèle et la version de tvOS.
+- **Le clavier ou le lancement d'application échoue :** ces fonctions nécessitent Companion et un écran compatible.
+- **Le volume absolu échoue ou reste à zéro :** désactivez son curseur facultatif et utilisez Volume +/−. HDMI-CEC n'expose souvent que les commandes relatives.
+- **Appareil inaccessible :** vérifiez son bail DHCP, réveillez-le avec la télécommande physique et relancez la découverte si son adresse a changé.
+
+Toutes les commandes ne sont pas disponibles sur chaque génération. Une opération non prise en charge est signalée comme une commande Gladys en échec et ne peut jamais faire tomber le serveur Gladys.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Apple TV dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Découverte réseau | `section` | Non | Gladys capture les annonces mDNS AirPlay, puis l'intégration interroge chaque adresse avec pyatv. Ajoutez des adresses manuelles uniquement si le multicast ne traverse pas vos VLAN. |
+| Adresses IPv4 manuelles | `string` | Non | Adresses IPv4 Apple TV facultatives séparées par des virgules, pour les réseaux routés ou VLAN. |
+| Durée de découverte (secondes) | `number` | Non |  |
+| Intervalle d'interrogation | `select` | Non | Intervalle de secours ; les mises à jour instantanées sont aussi activées par défaut. |
+| Activer les mises à jour instantanées | `boolean` | Non |  |
+| Activer le curseur de volume absolu | `boolean` | Non | À activer uniquement si la sortie audio de l'Apple TV expose un niveau lisible et réglable. Les installations HDMI-CEC ne prennent généralement en charge que les boutons Volume +/−. |
+
+## Comment installer Apple TV dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Apple TV apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/valentinhttr/gladys-apple-tv:1.0.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/valentinhttr/gladys-apple-tv](https://github.com/valentinhttr/gladys-apple-tv).
+
+Apple TV nécessite Gladys `>=4.84.2`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Apple TV est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [valentinhttr](https://github.com/valentinhttr), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/valentinhttr/gladys-apple-tv) — [source de cette documentation](https://github.com/valentinhttr/gladys-apple-tv/blob/HEAD/docs/fr.md)

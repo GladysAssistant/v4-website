@@ -1,0 +1,115 @@
+---
+title: "Apple TV integration for Gladys Assistant"
+sidebar_label: "Apple TV"
+description: "Discover, pair and control Apple TV devices on your local network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/valentinhttr--gladys-apple-tv.jpg"
+keywords:
+  - "apple tv"
+  - "gladys apple tv"
+  - "apple tv gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/valentinhttr/gladys-apple-tv instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="apple-tv" />
+
+This external integration discovers, pairs and controls Apple TV devices without sending your home data to a cloud service. It exposes standard Gladys device features for power, navigation and media playback, along with the active app and current media metadata.
+
+## Before you start
+
+Gladys 4.84.2 or newer is required so the integration can persist pyatv pairing credentials in its protected data volume. Gladys and the Apple TV must be able to reach each other over the local network. A stable DHCP lease is recommended because Gladys stores the last discovered IP address with the device.
+
+## Discover and create a device
+
+Open the integration's **Discovery** tab and start a scan. Gladys listens for AirPlay mDNS announcements on behalf of the isolated integration container. The integration then probes those IP addresses with pyatv and keeps only Apple TV devices.
+
+If the Apple TV is on another VLAN and multicast is not relayed, add its IPv4 address to **Manual IPv4 addresses** in Configuration, save, and scan again. Several addresses can be separated with commas.
+
+Manual and mDNS discovery only provide candidate addresses. Both paths then use the same node-pyatv unicast probe, persist the same host parameter and use the same command code after the device is created.
+
+Select **Create** for every Apple TV you want to use. Gladys remains the source of truth for the device and its room.
+
+## Pairing
+
+The integration automatically configures the protocols needed for media state and remote controls:
+
+1. In Configuration, run **1. Start pairing** and enter the exact Apple TV name shown in Gladys, or its saved IP address.
+2. Wait for the Apple TV to display a PIN.
+3. Run **2. Enter displayed PIN** and enter the PIN within two minutes.
+4. If the Apple TV displays another PIN, run **2. Enter displayed PIN** again with the new code.
+
+On recent tvOS versions, the first authorization enables media state through MRP tunneled over AirPlay. The second authorization enables application, keyboard and remote-control operations through Companion. The integration handles these protocol choices automatically.
+
+Credentials are saved in the integration's private `/data/pyatv.conf` file and survive container restarts and upgrades. They are not stored in the Gladys device parameters or printed by this integration.
+
+## Controls and actions
+
+The Gladys device contains power, arrows, Select, Menu/Back, Home, Play, Pause, Stop, Previous, Next and **Volume up/down** buttons. State includes power, playback status, active app, title, artist, album, media type, position and duration. Push updates are enabled by default, with a configurable polling fallback.
+
+Most HDMI-CEC installations support relative volume commands but do not report a trustworthy absolute level. For an Apple TV connected to an output that supports both reading and setting an absolute level, enable **Absolute volume slider**, save the configuration and scan the device again. Leave it disabled when the slider times out or always reports zero; the Volume up/down buttons remain the correct controls.
+
+Configuration actions can also launch an application from its bundle identifier (for example `com.netflix.Netflix`), open a web URL or application deep link, and set, append or clear text while the on-screen keyboard is focused. Identify the target Apple TV with its exact Gladys name or IP address.
+
+## Scene example: ambient lights when Netflix starts playing
+
+The numeric **Playback** feature and the text **Active app** feature can be combined without an Apple TV-specific scene engine:
+
+1. Add a **New device state** trigger on `Apple TV > Playback`, equal to `1`, with threshold-only enabled.
+2. Add a **Get last device state** action for `Apple TV > Active app`.
+3. In the next action group, add **Only continue if** and compare the previous action's `last_value_string` with `Netflix`.
+4. In the following action group, turn on or adjust the desired Gladys lights.
+
+Use the exact application name shown by the **Active app** feature, as tvOS can vary it by application or locale. Text metadata is published before Playback, so the application value is already current when the scene starts. When push updates are unavailable, the scene can start up to one polling interval after playback begins.
+
+Playback and active-app detection depend on metadata published by tvOS and the running application. Some applications or playback phases do not expose it; pyatv can then legitimately report `idle` or an empty active app even while video is visible. Netflix is known to report `idle` during intros, previews and next-episode screens.
+
+## Troubleshooting
+
+- **No device found:** confirm AirPlay is enabled, check local firewall and VLAN rules, then try a manual IPv4 address. IPv6 mDNS records are ignored because pyatv's unicast scanner currently accepts IPv4 targets only.
+- **Playback always stays idle after upgrading:** run the complete pairing flow again and enter every PIN requested, so the AirPlay media tunnel is authorized.
+- **A command requests pairing:** start pairing again and complete every PIN step. The integration automatically selects the protocols for the Apple TV model and tvOS version.
+- **Keyboard or app launch fails:** these functions require Companion pairing and an appropriate screen state.
+- **Absolute volume fails or stays at zero:** disable its optional slider and use Volume up/down. HDMI-CEC often exposes relative commands only.
+- **Device is unreachable:** verify its saved DHCP address, wake it with the physical remote, and scan again if the address changed.
+
+Not every command is available on every Apple TV generation. Unsupported operations are reported as failed Gladys commands and never crash the Gladys server.
+
+## Configuration settings
+
+These are the settings Apple TV asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Network discovery | `section` | No | Gladys captures AirPlay mDNS announcements, then this integration probes each address directly with pyatv. Add manual addresses only when multicast cannot cross your VLANs. |
+| Manual IPv4 addresses | `string` | No | Optional comma-separated Apple TV IPv4 addresses, for routed networks or VLANs. |
+| Discovery duration (seconds) | `number` | No |  |
+| Polling interval | `select` | No | Fallback refresh interval; push updates are also enabled by default. |
+| Enable real-time updates | `boolean` | No |  |
+| Enable absolute volume slider | `boolean` | No | Enable only when the Apple TV audio output exposes a readable and settable volume level. HDMI-CEC setups usually support only the Volume up/down buttons. |
+
+## How to install Apple TV in Gladys
+
+1. In Gladys, open **Integrations**: Apple TV appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/valentinhttr/gladys-apple-tv:1.0.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/valentinhttr/gladys-apple-tv](https://github.com/valentinhttr/gladys-apple-tv).
+
+Apple TV requires Gladys `>=4.84.2`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Apple TV is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [valentinhttr](https://github.com/valentinhttr), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/valentinhttr/gladys-apple-tv) — [source of this documentation](https://github.com/valentinhttr/gladys-apple-tv/blob/HEAD/docs/en.md)
