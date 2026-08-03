@@ -44,7 +44,7 @@ For example, this is for a Xiaomi camera:
 If you don't find the iformation you are looking for on this website, I suggest you to Google "your camera name + RTSP". This should bring up search results that you can use to see if there is an open stream available.
 
 :::tip
-Using a Reolink camera? We have a dedicated guide with the exact RTSP URL format for Reolink: [Reolink camera in Gladys](/docs/integrations/reolink).
+Using a Reolink camera? We have a dedicated guide with the exact RTSP URL format for Reolink: [Reolink camera in Gladys](/docs/integrations/external/reolink/).
 :::
 
 ## Trying to display the stream in VLC
@@ -119,7 +119,7 @@ It should work in Telegram as well, if you have configured Telegram in Gladys.
 
 ### How do I find the RTSP URL of my camera?
 
-Check your camera's user manual or the manufacturer's website first, as the path differs between brands. If you can't find it, the [iSpyConnect camera database](https://www.ispyconnect.com/cameras) lists connection details and even generates URLs for most models, or you can search "your camera model + RTSP" online. For Reolink cameras, see our [dedicated Reolink guide](/docs/integrations/reolink).
+Check your camera's user manual or the manufacturer's website first, as the path differs between brands. If you can't find it, the [iSpyConnect camera database](https://www.ispyconnect.com/cameras) lists connection details and even generates URLs for most models, or you can search "your camera model + RTSP" online. For Reolink cameras, see our [dedicated Reolink guide](/docs/integrations/external/reolink/).
 
 ### Which cameras work with Gladys?
 

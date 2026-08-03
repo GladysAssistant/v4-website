@@ -1,0 +1,126 @@
+---
+title: "Intégration TP-Link Kasa pour Gladys Assistant"
+sidebar_label: "TP-Link Kasa"
+description: "Contrôlez vos prises, interrupteurs et ampoules TP-Link Kasa sur votre réseau local. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/cicoub13--gladys-tp-link.png"
+keywords:
+  - "tp-link kasa"
+  - "gladys tp-link kasa"
+  - "tp-link kasa gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/cicoub13/gladys-tp-link instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="tp-link-kasa" />
+
+Contrôlez vos prises, interrupteurs et ampoules connectés **TP-Link Kasa** depuis
+Gladys, sur votre réseau local. L'intégration s'exécute dans son propre conteneur
+et communique avec vos appareils via le protocole LAN Kasa classique.
+
+## Appareils pris en charge
+
+| Appareil                | Fonctionnalité          |
+| ----------------------- | ----------------------- |
+| Prises et interrupteurs | Marche/Arrêt (`switch`) |
+| Ampoules                | Marche/Arrêt (`light`)  |
+
+Les autres types TP-Link sont détectés lors d'un scan et signalés dans les logs,
+mais ne sont pas publiés car ils n'ont pas encore de fonctionnalité contrôlable.
+
+> **Multiprises non prises en charge.** Les barrettes Kasa à plusieurs prises
+> (HS300, HS107, KP303, KP400) sont détectées et volontairement ignorées : leurs
+> prises se pilotent individuellement, ce que cette intégration ne sait pas
+> encore faire. Les publier reviendrait à proposer un seul interrupteur qui
+> éteindrait toute la barrette d'un coup.
+
+> **Local uniquement, protocole historique.** Cette intégration utilise le
+> protocole LAN Kasa classique. Les firmwares Kasa récents qui n'exposent que le
+> protocole chiffré KLAP ne sont pas pris en charge.
+
+## Comment fonctionne la découverte
+
+Les appareils Kasa ne répondent qu'à une **sonde de découverte active**, et
+l'intégration s'exécute dans un conteneur isolé qui ne peut pas diffuser sur
+votre réseau. Le scan est donc **médié par Gladys** : l'intégration forge la
+requête de découverte Kasa chiffrée, le cœur de Gladys (qui, lui, est sur votre
+réseau domestique) la diffuse en broadcast et relaie les réponses des appareils.
+Vous ne saisissez aucune adresse IP — le scan trouve vos appareils, et l'adresse
+IP depuis laquelle chacun a répondu est mémorisée pour le piloter ensuite.
+
+Attribuez à vos appareils Kasa une **réservation DHCP** sur votre routeur afin
+que leur adresse IP reste stable ; si elle change, un nouveau scan récupère
+automatiquement la nouvelle adresse.
+
+## Configuration
+
+1. Ouvrez l'onglet **Configuration** de l'intégration.
+2. Choisissez un **Intervalle de rafraîchissement** — la fréquence
+   d'interrogation de chaque appareil pour rafraîchir son état (par défaut :
+   toutes les minutes). Enregistrez.
+
+   > Cet intervalle est enregistré sur chaque appareil au moment où il est
+   > découvert. Le modifier plus tard ne change **pas** les appareils déjà
+   > créés : relancez un scan pour appliquer la nouvelle valeur.
+
+3. Ouvrez l'onglet **Découverte** et cliquez sur **scanner** : vos appareils
+   Kasa apparaissent.
+4. Cliquez sur **créer** pour ceux que vous souhaitez ajouter. Ils apparaissent
+   dans l'onglet **Appareils** avec une commande Marche/Arrêt.
+
+Relancez un scan à tout moment lorsque vous ajoutez un nouvel appareil.
+
+## Dépannage
+
+- **Un appareil n'apparaît pas au scan.** Vérifiez qu'il est allumé et sur le
+  même réseau/sous-réseau que votre hôte Gladys, puis relancez un scan. Seuls les
+  appareils Kasa au protocole classique répondent (voir ci-dessous).
+- **Un appareil apparaît mais ne change jamais d'état.** Son firmware ne parle
+  peut-être que le protocole KLAP récent, non pris en charge.
+- **« Rien ne se passe » quand je clique sur scanner.** Gladys n'autorise qu'un
+  scan toutes les 10 secondes : patientez un instant avant de relancer. Le
+  message d'erreur s'affiche dans le bandeau de l'intégration.
+- **Un appareil est marqué « injoignable ».** Il est éteint, débranché, ou son
+  adresse IP a changé. Vérifiez qu'il est alimenté, puis relancez un scan pour
+  récupérer sa nouvelle adresse.
+- **« Un autre appareil répond à cette adresse ».** Votre box a réattribué
+  l'adresse IP de cet appareil à un autre. Relancez un scan : l'intégration
+  refuse volontairement de piloter un appareil dont elle n'a pas pu vérifier
+  l'identité, plutôt que d'agir sur le mauvais.
+- **Besoin de plus de détails ?** L'intégration journalise tout ce qu'elle fait.
+  Consultez les logs de l'intégration depuis l'interface Gladys (ou `docker logs`
+  sur l'hôte) avec `LOG_LEVEL=debug` pour le détail complet.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par TP-Link Kasa dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence d'interrogation de chaque appareil pour rafraîchir son état. |
+
+## Comment installer TP-Link Kasa dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : TP-Link Kasa apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/cicoub13/gladys-tp-link:1.2.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/cicoub13/gladys-tp-link](https://github.com/cicoub13/gladys-tp-link).
+
+TP-Link Kasa nécessite Gladys `>=4.84.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+TP-Link Kasa est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [cicoub13](https://github.com/cicoub13), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/cicoub13/gladys-tp-link) — [source de cette documentation](https://github.com/cicoub13/gladys-tp-link/blob/HEAD/docs/fr.md)

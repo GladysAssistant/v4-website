@@ -42,7 +42,7 @@ Si vous ne trouvez rien sur ce site, une recherche Google peut vous aider, en ch
 Si vous ne trouvez rien, peut-être que votre caméra utilise un protocole fermé, et dans ce cas là vous n'avez pas beaucoup de choix que de changer de caméra.
 
 :::tip
-Vous avez une caméra Reolink ? Nous avons un guide dédié avec le format exact des URL RTSP Reolink : [Caméra Reolink dans Gladys](/docs/integrations/reolink).
+Vous avez une caméra Reolink ? Nous avons un guide dédié avec le format exact des URL RTSP Reolink : [Caméra Reolink dans Gladys](/fr/docs/integrations/external/reolink/).
 :::
 
 ## Testez la connexion à votre caméra avec VLC
@@ -143,7 +143,7 @@ Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
 
 ### Comment trouver l'URL RTSP de ma caméra ?
 
-Consultez d'abord le manuel de votre caméra ou le site du fabricant, car le chemin diffère selon les marques. Si vous ne le trouvez pas, la [base de données iSpyConnect](https://www.ispyconnect.com/cameras) liste les informations de connexion et génère même les URL pour la plupart des modèles. Vous pouvez aussi chercher "modèle de votre caméra + RTSP" en ligne. Pour une caméra Reolink, consultez notre [guide Reolink dédié](/docs/integrations/reolink).
+Consultez d'abord le manuel de votre caméra ou le site du fabricant, car le chemin diffère selon les marques. Si vous ne le trouvez pas, la [base de données iSpyConnect](https://www.ispyconnect.com/cameras) liste les informations de connexion et génère même les URL pour la plupart des modèles. Vous pouvez aussi chercher "modèle de votre caméra + RTSP" en ligne. Pour une caméra Reolink, consultez notre [guide Reolink dédié](/fr/docs/integrations/external/reolink/).
 
 ### Quelles caméras sont compatibles avec Gladys ?
 

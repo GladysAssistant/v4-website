@@ -28,6 +28,26 @@ const sortIntegrations = (integrations) =>
     (a, b) => b.stars - a.stars || a.name.localeCompare(b.name)
   );
 
+// Slug of the dedicated page of each integration, from the committed snapshot.
+// An integration published after the last `yarn load-external-integrations` run
+// has no page yet: its card links to GitHub only.
+const pageSlugs = new Map(
+  snapshot.integrations.map((integration) => [
+    integration.store_slug,
+    integration.slug,
+  ])
+);
+
+const pageUrl = (integration, locale) => {
+  const slug = pageSlugs.get(integration.store_slug);
+  if (!slug) {
+    return null;
+  }
+  return locale === "en"
+    ? `/docs/integrations/external/${slug}/`
+    : `/${locale}/docs/integrations/external/${slug}/`;
+};
+
 // "Airzone Cloud" -> "airzone-cloud", so each card can be linked
 // directly with /docs/integrations/external/#airzone-cloud.
 const anchorId = (name) =>
@@ -41,19 +61,23 @@ const anchorId = (name) =>
 function ExternalIntegrationCard({ integration, locale }) {
   const description =
     integration.description[locale] || integration.description.en;
+  const url = pageUrl(integration, locale);
+  const cover = (
+    <img
+      src={integration.cover_url}
+      alt={integration.name}
+      title={integration.name}
+      loading="lazy"
+      className={styles.cover}
+    />
+  );
   return (
     <div
       id={anchorId(integration.name)}
       className={classnames("card", styles.card)}
     >
       <div className="card__image">
-        <img
-          src={integration.cover_url}
-          alt={integration.name}
-          title={integration.name}
-          loading="lazy"
-          className={styles.cover}
-        />
+        {url ? <Link to={url}>{cover}</Link> : cover}
       </div>
       <div className={classnames("card__body", styles.cardBody)}>
         <div className={styles.cardTitle}>
@@ -65,7 +89,9 @@ function ExternalIntegrationCard({ integration, locale }) {
               className={styles.avatar}
             />
           )}
-          <h4 className={styles.name}>{integration.name}</h4>
+          <h4 className={styles.name}>
+            {url ? <Link to={url}>{integration.name}</Link> : integration.name}
+          </h4>
           {integration.type === "communication" ? (
             <span className="badge badge--info">
               <Translate
@@ -92,17 +118,28 @@ function ExternalIntegrationCard({ integration, locale }) {
         <span className={styles.stars} title="GitHub stars">
           ★ {integration.stars}
         </span>
-        <Link
-          className="button button--primary button--sm"
-          to={integration.repo_url}
-        >
-          <Translate
-            id="externalIntegrations.viewOnGitHub"
-            description="Button to open an external integration repository on GitHub"
+        {url ? (
+          <Link className="button button--primary button--sm" to={url}>
+            <Translate
+              id="externalIntegrations.readDocumentation"
+              description="Button to open the page of an external integration"
+            >
+              Documentation
+            </Translate>
+          </Link>
+        ) : (
+          <Link
+            className="button button--primary button--sm"
+            to={integration.repo_url}
           >
-            View on GitHub
-          </Translate>
-        </Link>
+            <Translate
+              id="externalIntegrations.viewOnGitHub"
+              description="Button to open an external integration repository on GitHub"
+            >
+              View on GitHub
+            </Translate>
+          </Link>
+        )}
       </div>
     </div>
   );

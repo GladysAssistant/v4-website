@@ -102,7 +102,7 @@ const homeWeatherStationContent = {
           text: "A complete connected weather station: indoor and outdoor modules, with optional wind and rain gauges. It runs through Netatmo's cloud, and Gladys reads its values through the Netatmo integration. The realistic choice if you want wind and rain today.",
           buyHref: amazonUS("Netatmo Weather Station"),
           buyLabel: "View on Amazon →",
-          docHref: "/docs/integrations/netatmo/",
+          docHref: "/docs/integrations/external/netatmo/",
           docLabel: "Netatmo integration",
         },
         {
@@ -146,7 +146,7 @@ const homeWeatherStationContent = {
         },
         {
           label: "Netatmo in Gladys",
-          href: "/docs/integrations/netatmo/",
+          href: "/docs/integrations/external/netatmo/",
           text: "Connect a Netatmo Weather Station and read its modules in Gladys.",
         },
         {
@@ -254,7 +254,7 @@ const homeWeatherStationContent = {
           text: "Une station météo connectée complète : modules intérieur et extérieur, avec anémomètre et pluviomètre en option. Elle passe par le cloud Netatmo, et Gladys lit ses valeurs via l'intégration Netatmo. Le choix réaliste si vous voulez le vent et la pluie aujourd'hui.",
           buyHref: amazonFR("Station météo Netatmo"),
           buyLabel: "Voir sur Amazon →",
-          docHref: "/fr/docs/integrations/netatmo/",
+          docHref: "/fr/docs/integrations/external/netatmo/",
           docLabel: "Intégration Netatmo",
         },
         {
@@ -298,7 +298,7 @@ const homeWeatherStationContent = {
         },
         {
           label: "Netatmo dans Gladys",
-          href: "/fr/docs/integrations/netatmo/",
+          href: "/fr/docs/integrations/external/netatmo/",
           text: "Connecter une station météo Netatmo et lire ses modules dans Gladys.",
         },
         {

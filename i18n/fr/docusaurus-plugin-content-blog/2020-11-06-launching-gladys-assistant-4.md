@@ -79,7 +79,7 @@ A ce jour, Gladys Assistant supporte les périphériques :
 
 - Z-Wave
 - Xiaomi ([doc](/fr/docs/integrations/xiaomi/))
-- Philips Hue ([doc](/fr/docs/integrations/philips-hue/))
+- Philips Hue ([doc](/fr/docs/integrations/external/philips-hue/))
 - Sonoff (Tasmota) ([doc](/fr/docs/integrations/tasmota/))
 - Les Caméras RTSP, HTTP et USB ([doc](/fr/docs/integrations/camera/))
 - Le protocole MQTT ([doc](/fr/docs/integrations/mqtt/))

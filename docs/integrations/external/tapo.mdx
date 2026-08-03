@@ -1,0 +1,218 @@
+---
+title: "Tapo integration for Gladys Assistant"
+sidebar_label: "Tapo"
+description: "Your Tapo cameras and doorbells in Gladys: images, doorbell press and motion. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-tapo.jpg"
+keywords:
+  - "tapo"
+  - "gladys tapo"
+  - "tapo gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/William-De71/gladys-tapo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="tapo" />
+
+This integration adds your **TP-Link Tapo** cameras and doorbells to Gladys: the camera image on your dashboard, doorbell presses and motion detection as scene triggers, and the battery level of the wire-free models.
+
+## How it works
+
+Two channels, each doing what it is good at:
+
+- **The TP-Link cloud** is used to find the list of your cameras and to report their events (ring, motion, battery). It is the same account as in the Tapo app. It does **not**, however, report the local address of the cameras.
+- **A scan of your network** then locates each camera, exactly like the Tapo app does on startup. This is what saves you from typing any IP address.
+- **Your local network** delivers the images. They never travel through the cloud: Gladys talks to the camera directly, at your home.
+
+To capture an image, the integration automatically picks one of two modes, depending on what the camera accepts:
+
+| Mode            | When it is used                               | What it requires                         |
+| --------------- | --------------------------------------------- | ---------------------------------------- |
+| **RTSP**        | The camera exposes an RTSP stream (port 554)  | A camera account created in the Tapo app |
+| **Proprietary** | The camera exposes no RTSP stream (port 8800) | Nothing beyond your Tapo account         |
+
+The second mode is TP-Link's internal protocol, the one the mobile app uses. It makes it possible to get an image out of the models — often battery-powered — that offer no standard stream.
+
+## Setup
+
+### 1. Enter your Tapo account
+
+In the **Configuration** screen of the integration, enter the email and password of your TP-Link / Tapo account, then pick the closest cloud region (Europe by default).
+
+### 2. Create a camera account (recommended)
+
+If your cameras are wired (C100, C200, C210, C500…), RTSP is the better mode: lighter and more robust. It requires a camera account created in the Tapo app:
+
+1. Open the Tapo app and select your camera.
+2. Go to **Camera settings** → **Advanced settings** → **Camera account**.
+3. Set a username and a password.
+4. Copy them into the **Camera account (RTSP)** section of the Gladys configuration.
+
+Beware: this camera account is **not** your Tapo account, and it is created **per camera**. Two ways to fill it in:
+
+- if you used the **same credentials** on every camera, simply fill the **Default account username / password** fields;
+- otherwise fill in **Accounts per camera**, separating cameras with a **comma**, each in the form `name|username|password`:
+
+```
+Camera_jardin|gladys|MyPassword, Camera_salon|gladys|OtherPassword
+```
+
+The input is a single line, so the comma is what separates the cameras. A password containing a comma must therefore go in the default fields. Use the camera name exactly as it appears in the Tapo app. These accounts take precedence over the default one. If you leave everything empty, the integration will use the proprietary mode for every camera.
+
+On some models you also need to enable **Third-Party Compatibility** (in the Tapo app, under _Me_ → _Tapo Lab_) before the RTSP stream becomes reachable.
+
+### 3. Run a scan
+
+Click **Test the connection** to check that your credentials are accepted: Gladys reports how many cameras were found and how many answer on your network.
+
+Then go to the **Discover** screen and run a scan. Your cameras show up there, ready to be added. Once created, add the **Camera** widget to your dashboard.
+
+## What battery cameras do — and do not do
+
+Battery and solar models (C610, C425, D230…) expose neither RTSP nor ONVIF: they only speak TP-Link's proprietary protocol. That has two practical consequences.
+
+### No live video
+
+These cameras show **regularly refreshed images**, not a continuous stream. Gladys' live view relies on a URL handed to ffmpeg, and a proprietary session is encrypted and driven by the integration itself — it cannot be expressed as a URL. Wired RTSP cameras do get live video.
+
+This is a limit of the protocol rather than of the integration: no tool does better on these models, short of going through an external relay such as go2rtc.
+
+### The battery is protected automatically
+
+Capturing an image is by far the most demanding thing asked of a camera. On a solar model, capturing too often drains the battery faster than the panel refills it — and a lithium cell taken too low may stop accepting charge altogether, which cannot be fixed remotely.
+
+So the integration backs off on its own:
+
+| Battery             | Automatic refresh | Widget, scene, doorbell |
+| ------------------- | ----------------- | ----------------------- |
+| above 60%           | yes               | yes                     |
+| between 40% and 60% | paused            | yes                     |
+| below 40%           | paused            | no                      |
+
+A camera that went below the first threshold only resumes at **80%**, deliberately well above the pause threshold: resuming just over it would restart the drain immediately, and repeated shallow cycles wear the battery faster than one proper cycle. Avoid setting that level to 100%: a solar camera charges in bursts and rarely reads exactly full, which would leave it paused for good.
+
+The battery level and the events keep being read in every case: they cost almost nothing, and they are what tells when the camera has recharged.
+
+A battery camera that **stops answering** — deep sleep, refused session, network down — is also brought back to on-demand: its last known level can no longer be trusted, and a silent camera is more likely to be empty than fine.
+
+### A capture interval of their own
+
+Battery cameras have their **own refresh interval**, independent of the wired ones. Spacing out the captures of a solar model therefore costs nothing to the freshness of your mains-powered cameras.
+
+| Setting                         | Default       | Applies to           |
+| ------------------------------- | ------------- | -------------------- |
+| Image refresh interval          | 60s           | wired cameras only   |
+| Battery camera refresh interval | 900s (15 min) | battery/solar models |
+
+This is the single most effective setting: what costs the battery is **waking the camera up**, far more than the image itself. In winter, or if your panel gets little sun, lengthen that interval and raise the pause threshold.
+
+## Features created
+
+Each camera becomes one device in Gladys:
+
+- **Image** — the picture shown by the camera widget, refreshed on demand.
+- **Doorbell** — a press on the button, usable as a scene trigger.
+- **Motion** — motion detection, also usable as a trigger.
+- **Battery** — the remaining level, as a percentage (battery models).
+
+When someone rings, the integration immediately captures an image and pushes it to Gladys: the widget already shows the visitor by the time you open the notification.
+
+### How events reach Gladys
+
+Two possible paths, chosen automatically per camera:
+
+| Path        | How it works                                            | Delay              |
+| ----------- | ------------------------------------------------------- | ------------------ |
+| **ONVIF**   | The camera tells Gladys the moment it detects something | near instant       |
+| **Polling** | Gladys regularly asks the camera what it detected       | up to one interval |
+
+ONVIF is clearly preferable for triggering a scene: a motion arrives within a second instead of waiting for the next check. All it needs is the **camera account** to be filled in — those are the credentials ONVIF uses, not your Tapo account.
+
+It is also the only path that reports the **end** of a motion: the sensor goes back down when the camera says so, rather than after a fixed delay.
+
+Wired cameras (C210, C200, C500…) generally offer ONVIF, which gives them a motion sensor they did not have before. Battery models do not offer it and stay on polling: that is not a problem, their detections still come through, just with a slight delay.
+
+There is nothing to configure: if the camera account is filled in and the camera accepts ONVIF, the integration uses it; otherwise it polls the camera as before.
+
+## Options
+
+- **Image quality** — HD gives a sharper image, SD is lighter and faster to capture.
+- **Camera addresses** — only needed when the cloud does not report the local address of a camera. One per line, in the form `name|ip`.
+- **Event check interval** — how often the integration looks for a ring or a motion. Shorter reacts faster but talks to your cameras more often. This setting only affects cameras without ONVIF: those that use it tell Gladys on their own, with nothing to wait for.
+- **Capture timeout** — how long a camera is given to deliver an image.
+
+The **Refresh the images** action forces a new capture of every camera, handy to verify your setup.
+
+## Troubleshooting
+
+**"Connection refused"** — check the email and password of your Tapo account. Two-step verification on your TP-Link account prevents this login.
+
+**A camera is found but does not answer locally** — the integration logs state which case you hit: unknown address, or no port answering. If the scan does not locate it (another VLAN, broadcast filtered by your router), type its address into the **Camera addresses** field: it always wins.
+
+**The widget shows an error even though the camera answers** — if the camera uses RTSP, make sure its camera account is filled in. This is by far the most common cause: the logs then show `TAPO_RTSP_ACCOUNT_MISSING`. Remember that this account is specific to each camera.
+
+**No image from a battery doorbell** — these models go into deep sleep to save their battery and can take several seconds to answer. Raise the **capture timeout** if needed.
+
+**Motion takes a while to come through** — the camera is most likely on the polling path. Check that its **camera account** is filled in: that is what lets ONVIF work, and therefore what makes motion instant. Battery models do not offer ONVIF at all.
+
+**No motion detected on an ONVIF camera** — in the Tapo app, check that motion detection is enabled and privacy mode is off: a camera in privacy mode reports nothing at all.
+
+**Cameras without an RTSP stream** — battery models and doorbells (C610, C425, D230…) expose neither RTSP nor ONVIF. That is not a blocker: the integration automatically falls back to the TP-Link proprietary protocol, the one the Tapo app uses, and captures their images without any camera account. The only difference: no live video for those cameras, just regularly refreshed images.
+
+They sometimes wake up slowly: if a capture fails with a timeout message, raise the **capture timeout**.
+
+## Privacy
+
+Your Tapo credentials are stored by Gladys and are only used to reach the TP-Link cloud and your cameras. Images are captured on your local network and sent straight to your Gladys: they never go through any third-party server.
+
+## Configuration settings
+
+These are the settings Tapo asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | This integration finds your cameras through your TP-Link cloud account, then captures their images on your local network. Enter your Tapo account below, then go to the Discover screen and run a scan: your cameras appear there, ready to be added.  Two capture modes, chosen automatically per camera by probing it: the standard RTSP stream when the camera exposes one, otherwise the TP-Link proprietary protocol — which also covers battery models and doorbells that offer no RTSP stream. |
+| Tapo account email | `string` | Yes | The email address of your TP-Link / Tapo account, the one you use in the Tapo app. |
+| Tapo account password | `secret` | Yes | The password of your TP-Link / Tapo account. It is used to list your cameras and, for cameras without RTSP, to open the local stream. |
+| Cloud region | `select` | No | The TP-Link cloud server closest to you. Change it only if the connection test fails. |
+| Camera account (RTSP and ONVIF) | `section` | No | Cameras that expose an RTSP stream need the camera account you created in the Tapo app (Camera settings > Advanced settings > Camera account). It is also what unlocks ONVIF, which lets a camera report a motion the instant it happens instead of being polled. This is NOT your Tapo account, and it is created PER CAMERA. The simplest way to enter it: use the "Save a camera account" action at the bottom of this page, once per camera. The two fields below only serve as a default, for users who reused the same credentials everywhere. |
+| Default account username | `string` | No | Used for every RTSP camera that has no specific account below. |
+| Default account password | `secret` | No | Used for every RTSP camera that has no specific account below. |
+| Accounts per camera (advanced) | `secret` | No | Filled in automatically by the "Save a camera account" action below — use that action rather than typing here. Format, if you edit it by hand: cameras separated by a comma, each as `name\|username\|password`. |
+| Image quality | `select` | No | HD gives a sharper image, SD is lighter and faster to capture. |
+| Advanced | `section` | No | Fill these fields only if a camera is not found automatically, or to adjust how often events are checked. |
+| Camera addresses | `string` | No | Cameras separated by a comma, each as `name\|ip` — for example `Camera_jardin\|192.168.1.42, Camera_salon\|192.168.1.43`. Gladys looks for the addresses on your network by itself; fill this in for a camera the scan does not find (another VLAN, broadcast filtered by your router). An address typed here always wins. |
+| Event check interval (s) | `number` | No | How often the integration checks for a doorbell press or a motion detection. A shorter interval reacts faster but talks to your cameras more often. Only affects cameras without ONVIF: cameras that support it push their events instantly, with nothing to wait for. |
+| Capture timeout (s) | `number` | No | How long a camera is given to deliver an image. Cameras using the proprietary protocol — battery models waking from deep sleep — need more time than an RTSP one. Above 14s the dashboard live view may time out first, but the scheduled refresh still succeeds. |
+| Image refresh interval (s) | `number` | No | How often a new image is captured for the dashboard, on MAINS-POWERED cameras only. Battery and solar cameras have their own setting below, so keeping your wired images fresh costs nothing to the others. |
+| Battery protection | `section` | No | Capturing images is what drains a battery or solar camera. These settings apply ONLY to battery and solar models — wired cameras keep their own interval and are never throttled. Once a camera goes below the pause limit, capturing only resumes at the recharge level: a partial recharge would restart the drain, and repeated shallow cycles wear the battery faster. |
+| Battery camera refresh interval (s) | `number` | No | How often a battery or solar camera is captured, independently of your wired cameras. Waking a camera up is what costs the battery, so this is the single most effective setting: 900s (15 min) lets a solar panel refill between two captures. Lower it only if your cameras recharge faster than they discharge. |
+| Pause automatic capture below (%) | `number` | No | Below this level the automatic refresh stops. Opening the camera widget or a doorbell press still captures an image. |
+| Stop every capture below (%) | `number` | No | Below this level no image is captured at all, not even on request. The battery level and the events keep being read: they cost almost nothing and tell when the camera has recharged. |
+| Resume automatic capture at (%) | `number` | No | Once a camera has been paused, it stays paused until it reaches this level — deliberately well above the pause limit, so it does not immediately fall back into the drain it was pulled out of. Avoid 100%: a solar camera charges in bursts and rarely reads exactly full, which would keep it paused for good. |
+
+## How to install Tapo in Gladys
+
+1. In Gladys, open **Integrations**: Tapo appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-tapo:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-tapo](https://github.com/William-De71/gladys-tapo).
+
+Tapo requires Gladys `>=4.84.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Tapo is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [William-De71](https://github.com/William-De71), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/William-De71/gladys-tapo) — [source of this documentation](https://github.com/William-De71/gladys-tapo/blob/HEAD/docs/en.md)

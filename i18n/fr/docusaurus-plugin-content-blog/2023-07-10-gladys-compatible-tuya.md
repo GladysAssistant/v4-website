@@ -24,7 +24,7 @@ Aussi, les prises NOUS Wi-Fi Tuya avec contrôle de la consommation électrique,
 
 ![Prise NOUS Wi-Fi Tuya](../../../static/img/articles/fr/gladys-4-26/nous-prise-intelligente-wifi-mesure-de-consommation-10a.jpg)
 
-Pour configurer ces appareils, vous pouvez suivre le tutoriel [dans la documentation de Gladys](/fr/docs/integrations/tuya/).
+Pour configurer ces appareils, vous pouvez suivre le tutoriel [dans la documentation de Gladys](/fr/docs/integrations/external/tuya/).
 
 Si vous avez d'autres appareils Tuya qui ne sont pas encoré géré, n'hésitez pas à venir sur [le forum](https://community.gladysassistant.com/) pour en parler.
 

@@ -22,12 +22,12 @@ const COMPATIBILITIES = [
     { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
     { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
     { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
-    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "tuya" },
+    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "external/tuya/" },
   ],
   [
-    { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/#netatmo" },
+    { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/netatmo/" },
     { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-    { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/#zendure" },
+    { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/zendure/" },
     { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
   ],
 ];
