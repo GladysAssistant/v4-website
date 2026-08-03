@@ -6,7 +6,7 @@ image: /img/presentation/open-ai-gpt-3-release.jpg
 slug: open-ai-gpt-3-in-gladys-assistant
 ---
 
-:::info Article from January 2023 — the AI in Gladys has changed a lot since then
+:::info[Article from January 2023 — the AI in Gladys has changed a lot since then]
 Gladys no longer relies on OpenAI. The AI assistant now runs on **open-weight models hosted in France** (Scaleway) through [Gladys Plus](/plus/), so your requests stay in Europe.
 
 It is also no longer limited to answering questions: Gladys **actually controls your home** today. It turns on lights, reads sensors, shows your cameras, and can run or even create scenes for you.

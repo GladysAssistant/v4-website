@@ -15,6 +15,16 @@ toc_max_heading_level: 5
 
 import JsonLd from '@site/src/components/seo/JsonLd';
 
+:::warning[This native integration is outdated — use the external Netatmo integration instead]
+Netatmo is now available as an **external integration**, published by [@Terdious](https://github.com/Terdious), the author of this native integration. It installs in **one click** from the catalog inside Gladys.
+
+It supports more devices than the native integration documented below (Netatmo cameras in particular), and it ships new versions independently of Gladys releases, so new devices arrive much faster.
+
+👉 Install it from the [external integrations catalog](/docs/integrations/external/), or directly from its [GitHub repository](https://github.com/Terdious/gladys-netatmo).
+
+The documentation below covers the native integration, kept for existing installations.
+:::
+
 ## **Prerequisites**
 
 ### **Step 1 - Compatible Devices and Netatmo Mobile Apps**
@@ -278,7 +288,7 @@ You can change the display name of the device from this screen.
 
 The devices supported today are listed in [step 1 of the prerequisites](/docs/integrations/netatmo#step-1---compatible-devices-and-netatmo-mobile-apps).
 
-If you own a Netatmo device that is not supported yet, come and tell us on the [forum](https://community.gladysassistant.com/): requests from users are what drives which devices get added next. Gladys is open-source, so pull requests are welcome too.
+If you own a Netatmo device that is not in that list, switch to the [external Netatmo integration](https://github.com/Terdious/gladys-netatmo): that is where new devices are added now. You can also ask on the [forum](https://community.gladysassistant.com/).
 
 ## Conclusion
 The status feedback of all devices described in [step 1 of the prerequisites](/docs/integrations/netatmo#step-1---compatible-devices-and-netatmo-mobile-apps) is now functional.

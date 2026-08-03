@@ -7,6 +7,16 @@ toc_min_heading_level: 2
 toc_max_heading_level: 5
 ---
 
+:::warning[Cette intégration native est obsolète — utilisez plutôt l'intégration externe Netatmo]
+Netatmo est désormais disponible en **intégration externe**, publiée par [@Terdious](https://github.com/Terdious), l'auteur de cette intégration native. Elle s'installe en **un clic** depuis le catalogue intégré à Gladys.
+
+Elle prend en charge plus d'appareils que l'intégration native documentée ci-dessous (les caméras Netatmo notamment), et elle est mise à jour indépendamment des versions de Gladys, ce qui permet aux nouveaux appareils d'arriver beaucoup plus vite.
+
+👉 Installez-la depuis le [catalogue des intégrations externes](/fr/docs/integrations/external/), ou directement depuis son [dépôt GitHub](https://github.com/Terdious/gladys-netatmo).
+
+La documentation ci-dessous concerne l'intégration native, conservée pour les installations existantes.
+:::
+
 ## **Prérequis**
 
 ### **Etape 1 - Appareils compatibles et applications mobiles Netatmo**
@@ -273,7 +283,7 @@ Depuis cet écran, vous pouvez modifier le nom d'affichage de l'appareil.
 
 Les appareils supportés à ce jour sont listés dans [l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo).
 
-Si vous possédez un appareil Netatmo qui n'est pas encore supporté, venez nous le dire sur le [forum](https://community.gladysassistant.com/) : ce sont les demandes des utilisateurs qui déterminent les prochains appareils ajoutés. Gladys étant open-source, les pull requests sont également les bienvenues.
+Si vous possédez un appareil Netatmo qui n'est pas dans cette liste, passez à l'[intégration externe Netatmo](https://github.com/Terdious/gladys-netatmo) : c'est là que les nouveaux appareils sont ajoutés désormais. Vous pouvez également poser la question sur le [forum](https://community.gladysassistant.com/).
 
 ## Conclusion
 Les retours d'états de tous les appareils décrits à [l'étape 1 des prérequis](/fr/docs/integrations/netatmo#etape-1---appareils-compatibles-et-applications-mobiles-netatmo) sont maintenant fonctionnels.
