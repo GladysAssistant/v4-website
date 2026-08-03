@@ -45,19 +45,11 @@ C'est par exemple le cas de tous les bridges Matter proposés par des fabricants
 
 C'est aussi le cas de tous les appareils Wi-Fi comme des prises connectées ou des ampoules directement connectées au Wi-Fi.
 
-### Matterbridge
+### Si votre appareil n'est pas compatible Matter
 
-[Matterbridge](https://github.com/Luligu/matterbridge) est un projet open-source qui a pour objectif d'importer dans un réseau Matter des appareils qui ne sont pas compatibles Matter à la base.
+Matter n'est pas indispensable pour utiliser un appareil dans Gladys. Si votre appareil ou service n'a pas d'intégration native, regardez le [catalogue des intégrations externes](/docs/integrations/external/) : des intégrations communautaires que vous installez en un clic, sans ligne de commande ni fichier de configuration.
 
-À ce jour, Matterbridge supporte :
-
-- [Shelly](https://github.com/Luligu/matterbridge-shelly)
-- [Somfy Tahoma](https://github.com/Luligu/matterbridge-somfy-tahoma)
-- [Zigbee2mqtt](https://github.com/Luligu/matterbridge-zigbee2mqtt)
-- [Home Assistant](https://github.com/Luligu/matterbridge-homeassistant)
-- [Webhooks](https://github.com/Luligu/matterbridge-webhooks)
-- [BTHome](https://github.com/Luligu/matterbridge-bthome)
-- [Loxone](https://github.com/andrasg/matterbridge-loxone)
+Et si celle dont vous avez besoin n'existe pas encore, vous pouvez la créer : voir le [guide développeur des intégrations externes](/docs/dev/external-integrations/).
 
 ### Si votre appareil utilise Thread uniquement
 
