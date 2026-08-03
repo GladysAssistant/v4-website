@@ -85,7 +85,7 @@ const alternativeContent = {
       paragraphs: [
         "I'm the creator of Gladys, so let me be transparent. Home Assistant still has a larger catalog of integrations, so if you own very niche or cloud-only devices, it may support them out of the box when Gladys doesn't yet. It also lets you share automations as YAML blueprints and gives power users more knobs to turn.",
         "But Gladys already supports thousands of devices through Zigbee and Matter, the open standards the whole industry is moving toward. And that catalog is no longer limited by what I have time to build: with external integrations, anyone can package an integration, publish it on GitHub without asking anyone's permission, and it shows up in the catalog of every Gladys instance. You install it in one click, with no command line and no YAML, and it runs sandboxed so it can't destabilize your setup.",
-        "For anything left, Matterbridge can bridge non-Matter devices, and you can even run Gladys and Home Assistant side by side, using one as a backend and the other as your interface. In other words, choosing Gladys rarely means giving anything up.",
+        "And if the integration you need doesn't exist yet, you can build it from the official template instead of waiting for it. You can also run Gladys and Home Assistant side by side, using one as a backend and the other as your interface. In other words, choosing Gladys rarely means giving anything up.",
       ],
       compareLink: {
         label: "See the full Gladys vs Home Assistant comparison →",
@@ -208,7 +208,7 @@ const alternativeContent = {
       paragraphs: [
         "Je suis le créateur de Gladys, alors soyons transparents. Home Assistant dispose encore d'un catalogue d'intégrations plus large : si vous avez des appareils très spécifiques ou cloud-only, il a plus de chances de les supporter directement, là où Gladys ne le fait pas encore. Il permet aussi de partager des automatisations via des blueprints YAML et offre plus de réglages aux power users.",
         "Mais Gladys supporte déjà des milliers d'appareils via Zigbee et Matter, les standards ouverts vers lesquels toute l'industrie se dirige. Et ce catalogue n'est plus limité par ce que j'ai le temps de développer : avec les intégrations externes, n'importe qui peut empaqueter une intégration, la publier sur GitHub sans demander la permission à personne, et elle apparaît dans le catalogue de toutes les instances Gladys. Vous l'installez en un clic, sans ligne de commande ni YAML, et elle tourne isolée dans son bac à sable, sans pouvoir déstabiliser votre installation.",
-        "Pour ce qu'il reste, Matterbridge permet de relier des appareils non-Matter, et vous pouvez même faire tourner Gladys et Home Assistant côte à côte, l'un servant de backend et l'autre d'interface. Autrement dit, choisir Gladys ne veut presque jamais dire renoncer à quoi que ce soit.",
+        "Et si l'intégration dont vous avez besoin n'existe pas encore, vous pouvez la créer à partir du template officiel plutôt que de l'attendre. Vous pouvez aussi faire tourner Gladys et Home Assistant côte à côte, l'un servant de backend et l'autre d'interface. Autrement dit, choisir Gladys ne veut presque jamais dire renoncer à quoi que ce soit.",
       ],
       compareLink: {
         label: "Voir le comparatif complet Gladys vs Home Assistant →",
@@ -277,7 +277,7 @@ export const alternativeFaqEn = [
   {
     question: "Can I migrate from Home Assistant to Gladys?",
     answer:
-      "You don't have to migrate everything at once. Using Zigbee2MQTT or Matter, the same devices can appear in both at the same time, so you can run them side by side. Matterbridge can even expose your Home Assistant devices to Gladys.",
+      "You don't have to migrate everything at once. Using Zigbee2MQTT or Matter, the same devices can appear in both at the same time, so you can run them side by side. For anything Gladys doesn't cover yet, an external integration can usually fill the gap, and both platforms can also talk over MQTT or HTTP.",
   },
   {
     question: "Are there free alternatives to Home Assistant?",
@@ -315,7 +315,7 @@ export const alternativeFaqFr = [
   {
     question: "Puis-je migrer de Home Assistant vers Gladys ?",
     answer:
-      "Vous n'êtes pas obligé de tout migrer d'un coup. Avec Zigbee2MQTT ou Matter, les mêmes appareils peuvent apparaître dans les deux en même temps : vous pouvez donc les faire tourner côte à côte. Matterbridge peut même exposer vos appareils Home Assistant dans Gladys.",
+      "Vous n'êtes pas obligé de tout migrer d'un coup. Avec Zigbee2MQTT ou Matter, les mêmes appareils peuvent apparaître dans les deux en même temps : vous pouvez donc les faire tourner côte à côte. Pour ce que Gladys ne couvre pas encore, une intégration externe comble généralement le manque, et les deux plateformes peuvent aussi communiquer en MQTT ou HTTP.",
   },
   {
     question: "Existe-t-il des alternatives gratuites à Home Assistant ?",

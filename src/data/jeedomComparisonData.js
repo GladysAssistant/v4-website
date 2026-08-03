@@ -160,7 +160,7 @@ const comparisonContent = {
           "For everything else, Gladys has its own store, but built on a different model: external integrations. Anyone can package an integration, publish it on a public GitHub repository and see it listed in the catalog of every Gladys instance, with no pull request, no review, no approval from me, and no fee, ever. They are free and open-source by construction.",
           "As a user, you never see any of that machinery: you browse the catalog inside Gladys, click Install, and Gladys pulls the integration, starts it and generates its entire interface. You then start, stop, update it or read its logs from the same screen as a native integration. No command line, no YAML, no technical skills required.",
           "Freedom on one side, Gladys' rigor on the other: each external integration runs in an isolated sandbox (limited RAM and CPU, read-only filesystem, isolated network), so a community integration can never take your instance down with it.",
-          "And for anything still not covered, Matterbridge can bridge devices onto a Matter network, including a Jeedom or Home Assistant plugin.",
+          "And if the integration you need doesn't exist yet, you don't have to wait for anyone: you clone the official template, adapt it to your device, publish it, and it lands in the catalog of every Gladys instance within the hour.",
         ],
         ha: [
           "This is where Jeedom shines: a huge plugin marketplace covering an enormous range of protocols and brands, including deep, mature Z-Wave support. If a device exists, there's often a Jeedom plugin for it.",
@@ -218,7 +218,7 @@ const comparisonContent = {
       paragraphs: [
         "Here's the part most comparisons miss: you don't have to choose. You can run Gladys Assistant and Jeedom on the same setup at the same time.",
         "With Zigbee2MQTT, a single Zigbee instance can talk to both Gladys and Jeedom, so the same device shows up in both interfaces. The same goes for Matter: a device paired to a hub can be controlled from several controllers at once.",
-        "You can also bridge devices between them with Matterbridge, or simply have them talk over MQTT or HTTP, since both expose APIs. So if you love the Gladys interface but need a specific Jeedom plugin, run them side by side.",
+        "You can also simply have them talk over MQTT or HTTP, since both expose APIs. So if you love the Gladys interface but need a specific Jeedom plugin, run them side by side, or turn that integration into a Gladys external integration yourself.",
         "There's really no excuse: everything is possible, and it's a great way to migrate gradually rather than all at once.",
       ],
     },
@@ -378,7 +378,7 @@ const comparisonContent = {
           "Pour tout le reste, Gladys a aussi son store, mais bâti sur un autre modèle : les intégrations externes. N'importe qui peut empaqueter une intégration, la publier sur un dépôt GitHub public et la voir référencée dans le catalogue de toutes les instances Gladys, sans pull request, sans revue, sans mon autorisation, et sans frais, jamais. Elles sont gratuites et open source par construction.",
           "En tant qu'utilisateur, vous ne voyez rien de cette mécanique : vous parcourez le catalogue dans Gladys, vous cliquez sur Installer, et Gladys télécharge l'intégration, la démarre et génère toute son interface. Vous la démarrez, l'arrêtez, la mettez à jour ou consultez ses logs depuis le même écran qu'une intégration native. Pas de ligne de commande, pas de YAML, aucune compétence technique requise.",
           "La liberté d'un côté, la rigueur de Gladys de l'autre : chaque intégration externe tourne dans un bac à sable isolé (RAM et CPU limités, système de fichiers en lecture seule, réseau isolé), donc une intégration communautaire ne peut jamais emporter votre instance avec elle.",
-          "Et pour ce qui ne serait toujours pas couvert, Matterbridge permet de relier des appareils à un réseau Matter, y compris via un plugin Jeedom ou Home Assistant.",
+          "Et si l'intégration dont vous avez besoin n'existe pas encore, vous n'avez à attendre personne : vous clonez le template officiel, vous l'adaptez à votre appareil, vous le publiez, et il arrive dans l'heure dans le catalogue de toutes les instances Gladys.",
         ],
         ha: [
           "C'est là que Jeedom brille : un marché de plugins immense couvrant un éventail énorme de protocoles et de marques, avec notamment un support Z-Wave mature et approfondi. Si un appareil existe, il y a souvent un plugin Jeedom pour lui.",
@@ -436,7 +436,7 @@ const comparisonContent = {
       paragraphs: [
         "Voici ce que la plupart des comparatifs oublient : vous n'êtes pas obligé de choisir. Vous pouvez faire tourner Gladys Assistant et Jeedom en même temps sur la même installation.",
         "Avec Zigbee2MQTT, une seule instance Zigbee peut parler à la fois à Gladys et à Jeedom, donc le même appareil apparaît dans les deux interfaces. Même chose avec Matter : un appareil associé à un hub peut être contrôlé depuis plusieurs contrôleurs en même temps.",
-        "Vous pouvez aussi faire le pont entre les deux avec Matterbridge, ou simplement les faire communiquer en MQTT ou HTTP, puisque les deux exposent des API. Donc si vous aimez l'interface de Gladys mais avez besoin d'un plugin Jeedom précis, faites tourner les deux côte à côte.",
+        "Vous pouvez aussi simplement les faire communiquer en MQTT ou HTTP, puisque les deux exposent des API. Donc si vous aimez l'interface de Gladys mais avez besoin d'un plugin Jeedom précis, faites tourner les deux côte à côte, ou transformez vous-même cette intégration en intégration externe Gladys.",
         "Il n'y a vraiment pas d'excuse : tout est possible, et c'est une excellente façon de migrer progressivement plutôt que d'un seul coup.",
       ],
     },
@@ -475,7 +475,7 @@ export const comparisonFaqEn = [
   {
     question: "Does Gladys support Z-Wave like Jeedom?",
     answer:
-      "Jeedom has particularly deep, mature Z-Wave support, which is one of its strengths. Gladys focuses on open standards like Zigbee, Matter and MQTT, which already cover thousands of devices, and Matterbridge can bridge other devices onto a Matter network.",
+      "Jeedom has particularly deep, mature Z-Wave support, which is one of its strengths. Gladys focuses on open standards like Zigbee, Matter and MQTT, which already cover thousands of devices, and external integrations cover the rest: anyone can publish one, and you install it in one click.",
   },
   {
     question: "Can I run Gladys and Jeedom at the same time?",
@@ -513,7 +513,7 @@ export const comparisonFaqFr = [
   {
     question: "Gladys supporte-t-il le Z-Wave comme Jeedom ?",
     answer:
-      "Jeedom dispose d'un support Z-Wave particulièrement mature et approfondi, c'est l'une de ses forces. Gladys mise sur les standards ouverts comme Zigbee, Matter et MQTT, qui couvrent déjà des milliers d'appareils, et Matterbridge permet de relier d'autres appareils à un réseau Matter.",
+      "Jeedom dispose d'un support Z-Wave particulièrement mature et approfondi, c'est l'une de ses forces. Gladys mise sur les standards ouverts comme Zigbee, Matter et MQTT, qui couvrent déjà des milliers d'appareils, et les intégrations externes couvrent le reste : n'importe qui peut en publier une, et vous l'installez en un clic.",
   },
   {
     question: "Puis-je faire tourner Gladys et Jeedom en même temps ?",
