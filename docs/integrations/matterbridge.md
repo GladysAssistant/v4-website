@@ -6,7 +6,7 @@ sidebar_label: Matterbridge
 ---
 
 :::tip
-To add a device or a service that has no native integration, [external integrations](/docs/integrations/external/) are the recommended path: you install them in one click from Gladys, and anyone can [create one](/docs/dev/external-integrations/). This page documents Matterbridge for the setups that rely on it, such as the [Shelly](/docs/integrations/shelly/) and [Somfy TaHoma](/docs/integrations/somfy-tahoma/) guides.
+To add a device or a service that has no native integration, [external integrations](/docs/integrations/external/) are the recommended path: you install them in one click from Gladys, and anyone can [create one](/docs/dev/external-integrations/). This page documents Matterbridge for the setups that rely on it, such as the [Somfy TaHoma](/docs/integrations/somfy-tahoma/) guide.
 :::
 
 [Matterbridge](https://github.com/Luligu/matterbridge) is a Matter bridge that allows you to connect non-Matter devices to a Matter ecosystem. Thanks to its many plugins, Matterbridge can expose devices from various manufacturers (Shelly, Somfy, etc.) to Gladys via the Matter protocol.
