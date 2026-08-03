@@ -88,6 +88,4 @@ Le tout pour un prix imbattable de [259,97€](/fr/starter-kit/) !
 
 ## Comment mettre à jour ?
 
-Assurez-vous d’utiliser Watchtower pour des mises à jour automatiques. Consultez la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
-
-Avec Watchtower, Gladys se mettra à jour automatiquement.
+Pour mettre à jour Gladys, nous recommandons d'utiliser Watchtower : il met à jour votre conteneur automatiquement dès qu'une nouvelle version est disponible. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).

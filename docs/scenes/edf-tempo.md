@@ -6,7 +6,7 @@ sidebar_label: EDF Tempo
 ---
 
 In France, EDF provides a service [EDF Tempo](https://particulier.edf.fr/fr/accueil/gestion-contrat/options/tempo.html) where the cost of electricity is generally cheaper all year round, except on certain "white" and "red" days when the price of electricity is much higher.
-In 2024, there are 301 blue days, 43 white days and 22 red days.
+Each Tempo year, which runs from 1 September to 31 August, counts 300 blue days, 43 white days and 22 red days.
 This type of contract is practical for users who can easily shift their usage.
 
 ### Automatic scenarios with Gladys

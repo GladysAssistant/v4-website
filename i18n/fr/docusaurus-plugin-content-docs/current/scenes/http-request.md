@@ -21,7 +21,7 @@ Vous pouvez ajouter des `headers` si vous en avez besoin pour l'authentification
 
 ## Exemple concret: Déclencher une action IFTTT depuis une scène Gladys Assistant
 
-Vous connaissez probablement [IFTTT](https://ifttt.com/), un service qui permet de connecter différents services entre eux. Leur business model ayant changé récemment, il n'est possible que de créer 3 actions par compte, mais c'est amplement suffisant si vous voulez l'utiliser uniquement pour palier à un manque de Gladys par exemple.
+Vous connaissez probablement [IFTTT](https://ifttt.com/), un service qui permet de connecter différents services entre eux. Leur offre gratuite est limitée à quelques applets par compte, mais c'est amplement suffisant si vous voulez l'utiliser uniquement pour palier à un manque de Gladys par exemple.
 
 Dans cet exemple, nous allons utiliser IFTTT pour enregistrer une valeur dans Google Sheet à chaque fois qu'une scène est appelée.
 

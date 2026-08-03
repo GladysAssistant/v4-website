@@ -7,11 +7,13 @@ sidebar_label: FAQ
 
 ## Comment mettre à jour Gladys ?
 
-Nous recommandons l'utilisation de [Watchtower](https://containrrr.dev/watchtower/), un conteneur Docker qui fonctionne en parallèle de Gladys et vérifie toutes les 24 heures si une nouvelle mise à jour est disponible.
+Nous recommandons l'utilisation de [Watchtower](https://github.com/nicholas-fedor/watchtower), un conteneur Docker qui fonctionne en parallèle de Gladys et vérifie régulièrement si une nouvelle mise à jour est disponible, puis met à jour le conteneur automatiquement.
+
+Vous trouverez la commande exacte à lancer dans le [guide d'installation Docker](/fr/docs/installation/docker/#mise-à-jour-automatique-avec-watchtower).
 
 ## Qui utilise Gladys Assistant 4 ?
 
-La version 4 de Gladys Assistant est sortie en [novembre 2020](/fr/blog/lancement-gladys-assistant-4/).
+La version 4 de Gladys Assistant est sortie en [novembre 2020](/fr/blog/lancement-gladys-assistant-4/), et est développée activement depuis, avec une nouvelle version toutes les quelques semaines.
 
 Gladys Assistant est utilisé par une grande variété d'utilisateurs :
 

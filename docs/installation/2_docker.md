@@ -96,7 +96,7 @@ To find your machine's IP address on your local network, you can use application
 - [Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner) on Android
 - [iNet - Network Scanner](https://apps.apple.com/us/app/inet-network-scanner/id340793353) on iOS
 
-:::tip Set your own timezone
+:::tip[Set your own timezone]
 The command above uses `TZ=Europe/Paris`. Replace it with your own value (for example `America/New_York` or `America/Toronto`) from the [timezone list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) so scenes and schedules run at the right local time.
 :::
 

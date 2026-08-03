@@ -7,7 +7,7 @@ sidebar_label: EDF Tempo
 
 En France, EDF fournit un service [EDF Tempo](https://particulier.edf.fr/fr/accueil/gestion-contrat/options/tempo.html) où le coût de l'électricité est globalement moins cher toute l'année, sauf certains jours "blancs" et "rouges" où le prix de l'électricité est bien plus cher.
 
-En 2024, il y a 301 jours bleus, 43 jours blancs et 22 jours rouges.
+Chaque année Tempo, qui court du 1er septembre au 31 août, compte 300 jours bleus, 43 jours blancs et 22 jours rouges.
 
 Ce type de contrat est pratique pour les utilisateurs pouvant facilement décaler leurs usages.
 
