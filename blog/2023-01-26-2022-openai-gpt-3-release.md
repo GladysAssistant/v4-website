@@ -6,6 +6,14 @@ image: /img/presentation/open-ai-gpt-3-release.jpg
 slug: open-ai-gpt-3-in-gladys-assistant
 ---
 
+:::info Article from January 2023 — the AI in Gladys has changed a lot since then
+Gladys no longer relies on OpenAI. The AI assistant now runs on **open-weight models hosted in France** (Scaleway) through [Gladys Plus](/plus/), so your requests stay in Europe.
+
+It is also no longer limited to answering questions: Gladys **actually controls your home** today. It turns on lights, reads sensors, shows your cameras, and can run or even create scenes for you.
+
+👉 See the [current AI documentation](/docs/integrations/openai) for what Gladys can do today.
+:::
+
 Hi everyone!
 
 Unless you live in a cave, you've probably heard about ChatGPT/GPT-3, an artificial intelligence developed by OpenAI.
@@ -85,8 +93,6 @@ As the GPT-3 API is not free, I offer this integration to all [Gladys Plus](/plu
 
 If you want to test, you have to switch to Gladys Plus, and as a bonus you will support the growth of an amazing open-source project 😊
 
-On the occasion of this launch, I launched the promo code **SMART2023** which gives -40% discount on your first Gladys Plus payment, for 59,99€ per year ( 4,99€/month ).
-
 No excuses!
 
 ➡️ [Learn more about Gladys Plus](/plus) ⬅️
@@ -109,8 +115,4 @@ I'm waiting for your feedback on [the forum](https://community.gladysassistant.c
 
 ## How to upgrade?
 
-If you installed Gladys with the official Raspberry Pi OS image, your instance will update **automatically** in the coming hours. It can take up to 24 hours, don't panic.
-
-If you installed Gladys with Docker, make sure you are using Watchtower. See the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).
-
-With Watchtower, Gladys will update automatically.
+To update Gladys, we recommend using Watchtower: it upgrades your container automatically as soon as a new version is released. See the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).

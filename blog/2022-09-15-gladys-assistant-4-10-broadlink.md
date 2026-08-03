@@ -127,11 +127,7 @@ The full details can be read in the [CHANGELOG](https://github.com/GladysAssista
 
 ## How to upgrade?
 
-If you installed Gladys with the official Raspberry Pi OS image, your instance will update **automatically** in the coming hours. It can take up to 24 hours, don't panic.
-
-If you installed Gladys with Docker, make sure you are using Watchtower. See the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).
-
-With Watchtower, Gladys will update automatically.
+To update Gladys, we recommend using Watchtower: it upgrades your container automatically as soon as a new version is released. See the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).
 
 ## Thanks to contributors
 

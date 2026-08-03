@@ -184,6 +184,6 @@ Il y a plein de façons de supporter le projet :
 - Participer aux discussions sur le forum, aider les nouveaux.
 - Contribuer au projet en proposant de nouvelles intégrations/fonctionnalités.
 - Améliorer la documentation, qui est opensource.
-- Profiter de la [la formation Gladys (-25% actuellement !)](https://formation.gladysassistant.com/?coupon=DUCKDB_LAUNCH)
+- Profiter de [la formation Gladys](https://formation.gladysassistant.com)
 
 Merci à tous ceux qui supportent Gladys 🙏

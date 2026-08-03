@@ -14,14 +14,6 @@ Il était déjà possible d'utiliser certaines appareils Tuya Zigbee avec Gladys
 
 {/* truncate */}
 
-## Une prise connectée Tuya OFFERTE avec Gladys Plus !!
-
-A l'occasion de ce lancement, je vous propose -40% sur le premier paiement à Gladys Plus avec le code **TUYA2023**.
-
-Pour les 21 prochains abonnés, et uniquement cette semaine, j'enverrais une prise connectée avec contrôle de la consommation Tuya 🥳🥳
-
-Dépêchez-vous, ça se passe [sur Gladys Plus ici](/fr/plus/) !!
-
 ## Les appareils compatibles
 
 Les ampoules NOUS Wi-Fi Tuya E27 [à 7,64€ l'ampoule chez Domadoo](https://www.domadoo.fr/fr/peripheriques/6294-nous-ampoule-intelligente-rgb-wifi-tuya-format-e27-5907772033142.html?domid=17) sont compatibles.
@@ -48,11 +40,7 @@ Merci à Lokkye pour ce développement 🙌
 
 ## Comment mettre à jour ?
 
-Si vous avez installé Gladys avec l’image Raspberry Pi OS officielle, vos instances se mettront à jour **automatiquement** dans les heures à venir. Cela peut prendre jusqu’à 24h, pas de panique.
-
-Si vous avez installé Gladys avec Docker, vérifiez que vous utilisez bien Watchtower. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
-
-Avec Watchtower, Gladys se mettra automatiquement à jour.
+Pour mettre à jour Gladys, nous recommandons d'utiliser Watchtower : il met à jour votre conteneur automatiquement dès qu'une nouvelle version est disponible. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
 
 ## Supporter le projet
 
@@ -61,6 +49,6 @@ Il y a plein de façons de supporter le projet :
 - Participer aux discussions sur le forum, aider les nouveaux.
 - Contribuer au projet en proposant des nouvelles intégrations/fonctionnalités.
 - Améliorer la documentation, qui est open-source.
-- S'inscrire à [Gladys Plus](/fr/plus) actuellement en promotion à -40% la première année !!
+- S'inscrire à [Gladys Plus](/fr/plus/)
 
 Merci à tous ceux qui supportent Gladys 🙏

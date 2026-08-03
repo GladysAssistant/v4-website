@@ -6,6 +6,14 @@ image: /img/presentation/open-ai-gpt-3-release.jpg
 slug: open-ai-gpt-3-in-gladys-assistant
 ---
 
+:::info Article de janvier 2023 — l'IA de Gladys a beaucoup changé depuis
+Gladys ne repose plus sur OpenAI. L'assistant IA fonctionne aujourd'hui avec des **modèles open-weight hébergés en France** (Scaleway) via [Gladys Plus](/fr/plus/) : vos requêtes restent en Europe.
+
+Elle ne se contente plus non plus de répondre à des questions : Gladys **pilote réellement votre maison** désormais. Elle allume les lumières, lit les capteurs, affiche vos caméras, et peut lancer ou même créer des scènes pour vous.
+
+👉 Consultez la [documentation IA actuelle](/fr/docs/integrations/openai/) pour découvrir ce que Gladys sait faire aujourd'hui.
+:::
+
 Salut à tous !
 
 A part si vous vivez dans une grotte, vous avez probablement entendu parler de ChatGPT/GPT-3, une intelligence artificielle développée par OpenAI.
@@ -99,8 +107,6 @@ L'API GPT-3 étant payante, je propose cette intégration à tous les utilisateu
 
 Si vous voulez tester, il faut passer à Gladys Plus, et en bonus vous soutiendrez la croissance d'un projet français 🇫🇷
 
-A l'occasion de ce lancement, j'ai lancé le code promo **SMART2023** qui donne -40% de réduction sur votre premier paiement Gladys Plus, pour 59,99€ l'année ( soit 4,99€/ mois ).
-
 Pas d'excuses !
 
 ➡️ ➡️ [En savoir plus sur Gladys Plus](/fr/plus) ⬅️ ⬅️
@@ -123,8 +129,4 @@ J'attends vos retour sur [le forum](https://community.gladysassistant.com/t/lia-
 
 ## Comment mettre à jour ?
 
-Si vous avez installé Gladys avec l’image Raspberry Pi OS officielle, vos instances se mettront à jour **automatiquement** dans les heures à venir. Cela peut prendre jusqu’à 24h, pas de panique.
-
-Si vous avez installé Gladys avec Docker, vérifiez que vous utilisez bien Watchtower. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
-
-Avec Watchtower, Gladys se mettra automatiquement à jour.
+Pour mettre à jour Gladys, nous recommandons d'utiliser Watchtower : il met à jour votre conteneur automatiquement dès qu'une nouvelle version est disponible. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).

@@ -14,12 +14,6 @@ It was already possible to use certain Tuya Zigbee devices with Gladys via our Z
 
 {/* truncate */}
 
-## -40% on Gladys Plus with this launch
-
-To mark this launch, I'm offering 40% off your first Gladys Plus payment with the code **TUYA2023** !
-
-Hurry up, it's happening [on Gladys Plus here](/plus/)!!!
-
 ## Compatible devices
 
 For now we only support 2 types of devices: sockets & lights.
@@ -46,11 +40,7 @@ Thanks to Lokkye for this development 🙌
 
 ## How to upgrade?
 
-If you installed Gladys with the official Raspberry Pi OS image, your instance will update **automatically** in the coming hours. It can take up to 24 hours, don't panic.
-
-If you installed Gladys with Docker, make sure you are using Watchtower. See the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).
-
-With Watchtower, Gladys will update automatically.
+To update Gladys, we recommend using Watchtower: it upgrades your container automatically as soon as a new version is released. See the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).
 
 ## Support us
 
@@ -59,4 +49,4 @@ If you want to support us, there are many ways:
 - Answer posts on the forum, give your feedback.
 - Help us improve the documentation.
 - Develop new features/integrations on Gladys, we are 100% open-source.
-- Subscribe to [Gladys Plus](/plus), at -40% right now!!
+- Subscribe to [Gladys Plus](/plus/)

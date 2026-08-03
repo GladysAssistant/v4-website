@@ -7,13 +7,13 @@ sidebar_label: FAQ
 
 ### How to update Gladys?
 
-We recommend using [Watchtower](https://containrrr.dev/watchtower/).
+We recommend using [Watchtower](https://github.com/nicholas-fedor/watchtower), a Docker container which runs in parallel to Gladys. It checks regularly for new Gladys releases and updates the container automatically.
 
-Watchtower is a Docker container which runs in parallel to Gladys. It checks, every 24 hours, for new Gladys releases and updates.
+See the [Docker installation guide](/docs/installation/docker#auto-upgrade-gladys-with-watchtower) for the exact command to run.
 
 ### Who uses Gladys Assistant 4?
 
-Gladys Assistant v4 was released in [November 2020](/blog/lancement-gladys-assistant-4). Since then, hundreds of you have used Gladys Assistant. The goal is to grow to thousands of users in the coming months!
+Gladys Assistant v4 was released in [November 2020](/blog/lancement-gladys-assistant-4) and has been actively developed ever since, with a new release every few weeks.
 
 Gladys Assistant is installed by all types of users:
 

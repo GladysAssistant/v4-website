@@ -115,11 +115,7 @@ Sans rentrer dans le détail, voilà la liste des différents commits correctifs
 
 ## Comment mettre à jour ?
 
-Si vous avez installé Gladys avec l’image Raspberry Pi OS officielle, vos instances se mettront à jour **automatiquement** dans les heures à venir. Cela peut prendre jusqu’à 24h, pas de panique.
-
-Si vous avez installé Gladys avec Docker, vérifiez que vous utilisez bien Watchtower. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
-
-Avec Watchtower, Gladys se mettra automatiquement à jour.
+Pour mettre à jour Gladys, nous recommandons d'utiliser Watchtower : il met à jour votre conteneur automatiquement dès qu'une nouvelle version est disponible. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
 
 ## Remerciements aux contributeurs
 

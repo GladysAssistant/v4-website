@@ -76,6 +76,4 @@ Thanks to everyone who contributed to this update! 🙌
 
 ## How to update?
 
-Make sure to use Watchtower for automatic updates. Check the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).
-
-With Watchtower, Gladys will update automatically.
+To update Gladys, we recommend using Watchtower: it upgrades your container automatically as soon as a new version is released. See the [documentation](/docs/installation/docker#auto-upgrade-gladys-with-watchtower).
