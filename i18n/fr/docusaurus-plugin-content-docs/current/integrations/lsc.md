@@ -67,7 +67,7 @@ Le tutoriel complet avec captures d'écran est sur la [page de l'intégration ca
 
 ## Vous préférez une caméra qui fonctionne toujours en local ?
 
-Si vous êtes encore en train de choisir et que vous voulez une caméra qui fonctionne en local avec Gladys sans avoir à chercher, la plupart des [caméras Reolink](/docs/integrations/reolink) exposent un flux RTSP documenté (Reolink publie le format des URL et la [liste des modèles compatibles](https://support.reolink.com/hc/en-us/articles/900000617826/), qui couvre l'essentiel de sa gamme filaire), et ce sont les caméras que nous [recommandons pour Gladys](/docs/installation/recommended-hardware).
+Si vous êtes encore en train de choisir et que vous voulez une caméra qui fonctionne en local avec Gladys sans avoir à chercher, la plupart des [caméras Reolink](/fr/docs/integrations/external/reolink/) exposent un flux RTSP documenté (Reolink publie le format des URL et la [liste des modèles compatibles](https://support.reolink.com/hc/en-us/articles/900000617826/), qui couvre l'essentiel de sa gamme filaire), et ce sont les caméras que nous [recommandons pour Gladys](/docs/installation/recommended-hardware).
 
 ## Questions fréquentes
 

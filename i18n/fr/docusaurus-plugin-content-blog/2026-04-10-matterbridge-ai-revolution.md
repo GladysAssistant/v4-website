@@ -25,7 +25,7 @@ Cet article est conservé pour l'historique.
 Je vous avais déjà parlé de Matterbridge : un projet qui permet d'installer des plugins pour ajouter dans Matter des appareils non-Matter. Aujourd'hui, Matterbridge vous permet déjà d'utiliser dans Gladys :
 
 - des [volets Somfy](/fr/docs/integrations/somfy-tahoma/)
-- des [appareils Shelly](/fr/docs/integrations/shelly/) de génération 1, 2 et 3
+- des [appareils Shelly](/fr/docs/integrations/external/shelly/) de génération 1, 2 et 3
 - et bientôt votre aspirateur robot Roborock
 
 Mais Matterbridge est encore jeune, et n'a pas de plugin pour tout.

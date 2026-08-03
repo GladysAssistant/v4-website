@@ -1,0 +1,40 @@
+name: Refresh external integrations
+
+# The store index is the source of truth for the external integrations catalog
+# and for the pages under /docs/integrations/external/. This regenerates them
+# every week and opens a pull request when something changed.
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: yarn install --frozen-lockfile
+      - run: yarn load-external-integrations
+      # A pull request opened with GITHUB_TOKEN does not trigger the CI
+      # workflow, so the build runs here instead.
+      - run: ./build.sh
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/refresh-external-integrations
+          title: "chore: refresh the external integrations catalog"
+          commit-message: "chore: refresh the external integrations catalog"
+          body: |
+            Automatic refresh of the external integrations store snapshot and of
+            the generated pages under `/docs/integrations/external/`.
+
+            Run `yarn load-external-integrations` locally to reproduce.
+          labels: automated
+          delete-branch: true

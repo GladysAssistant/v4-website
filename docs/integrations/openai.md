@@ -16,7 +16,7 @@ The AI integration is included in the **Gladys Plus** subscription (Plus plan). 
 You can talk to Gladys from:
 
 - The **Chat** tab
-- The [Telegram integration](/docs/integrations/telegram)
+- The [Telegram integration](/docs/integrations/external/telegram/)
 - The [Voice assistant](/docs/dashboard/voice-assistant) dashboard widget
 
 ## How does it work?

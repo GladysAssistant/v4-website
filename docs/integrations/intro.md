@@ -28,7 +28,7 @@ These are the integrations we recommend for any new installation:
 - [Matter](/docs/integrations/matter/): the industry standard, 100% local, supported by the biggest brands
 - [MQTT](/docs/integrations/mqtt/): the universal glue for DIY projects and custom sensors
 
-Browse this documentation for dedicated guides: [Shelly](/docs/integrations/shelly/), [Sonos](/docs/integrations/sonos/), [cameras](/docs/integrations/camera/), and more in the sidebar.
+Browse this documentation for dedicated guides: [Shelly](/docs/integrations/external/shelly/), [Sonos](/docs/integrations/sonos/), [cameras](/docs/integrations/camera/), and more in the sidebar.
 
 ## Matter: the future of the smart home
 

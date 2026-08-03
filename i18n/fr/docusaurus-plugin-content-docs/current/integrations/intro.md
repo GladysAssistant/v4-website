@@ -28,7 +28,7 @@ Ce sont les intégrations que nous recommandons pour toute nouvelle installation
 - [Matter](/fr/docs/integrations/matter/) : le standard industriel, 100 % local, porté par les plus grands acteurs
 - [MQTT](/fr/docs/integrations/mqtt/) : la colle universelle pour le DIY et les capteurs sur mesure
 
-Parcourez cette documentation pour les guides dédiés : [Shelly](/fr/docs/integrations/shelly/), [Sonos](/fr/docs/integrations/sonos/), [caméras](/fr/docs/integrations/camera/), et bien d'autres dans le menu latéral.
+Parcourez cette documentation pour les guides dédiés : [Shelly](/fr/docs/integrations/external/shelly/), [Sonos](/fr/docs/integrations/sonos/), [caméras](/fr/docs/integrations/camera/), et bien d'autres dans le menu latéral.
 
 ## Matter : l'avenir de la domotique
 

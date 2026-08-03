@@ -16,7 +16,7 @@ L'intégration IA est incluse dans l'abonnement **Gladys Plus** (formule Plus). 
 Vous pouvez parler à Gladys depuis :
 
 - L'onglet **Discussion**
-- L'[intégration Telegram](/fr/docs/integrations/telegram)
+- L'[intégration Telegram](/fr/docs/integrations/external/telegram/)
 - Le widget [Assistant vocal](/fr/docs/dashboard/voice-assistant) sur le tableau de bord
 
 ## Comment ça fonctionne ?
