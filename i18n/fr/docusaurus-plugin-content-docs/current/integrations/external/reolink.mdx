@@ -1,0 +1,175 @@
+---
+title: "Intégration externe Reolink pour Gladys Assistant"
+sidebar_label: "Reolink"
+description: "Vos caméras Reolink dans Gladys : images, détections, projecteur et sirène. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-reolink.jpg"
+keywords:
+  - "reolink"
+  - "gladys reolink"
+  - "reolink gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-reolink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="reolink" />
+
+Cette intégration ajoute vos caméras **Reolink** à Gladys : l'image sur le tableau de bord, la vidéo en direct, les détections comme déclencheurs de scènes, et le contrôle du projecteur, de la sirène ou des positions PTZ selon le modèle.
+
+Tout se passe **sur votre réseau local**. Aucun compte Reolink n'est nécessaire et aucune image ne transite par un cloud.
+
+## Ce dont vous avez besoin
+
+- Une ou plusieurs caméras Reolink sur le même réseau que Gladys.
+- L'identifiant et le mot de passe que vous utilisez pour vous connecter à ces caméras (celui de l'application Reolink, en général `admin`).
+
+C'est tout. Il n'y a pas de compte à créer ni de clé d'API à demander.
+
+## Installation
+
+1. Dans Gladys, ouvrez **Intégrations → Installer une intégration** et installez Reolink.
+2. Dans l'écran de configuration, renseignez l'**identifiant** et le **mot de passe** de vos caméras.
+3. Cliquez sur **Tester la connexion** : Gladys cherche vos caméras et affiche ce que chacune sait faire.
+4. Allez dans **Découverte** et lancez un scan : vos caméras y apparaissent, prêtes à être ajoutées.
+
+### Si une caméra n'est pas trouvée
+
+Gladys cherche vos caméras avec une diffusion réseau. Certains routeurs la filtrent, et une caméra sur un autre VLAN ne la reçoit jamais. Dans ce cas, saisissez son adresse dans **Adresses des caméras**, dans la section Avancé :
+
+```
+192.168.1.42, 192.168.1.43
+```
+
+Si une caméra n'utilise pas le port standard, ajoutez-le : `192.168.1.42:8000`.
+
+### Si vos caméras n'ont pas toutes le même mot de passe
+
+Renseignez les exceptions dans **Comptes par caméra** :
+
+```
+192.168.1.42|gladys|MonMotDePasse
+```
+
+Les caméras absentes de cette liste utilisent le compte global.
+
+## Ce que vous obtenez
+
+Chaque caméra reçoit **les fonctionnalités qu'elle possède réellement**. L'intégration interroge la caméra pour le savoir, plutôt que de se fier au nom du modèle : deux caméras d'une même gamme peuvent différer.
+
+| Fonctionnalité  | Sur quelles caméras                |
+| --------------- | ---------------------------------- |
+| Image           | Toutes                             |
+| Vidéo en direct | Toutes                             |
+| Mouvement       | Toutes                             |
+| Sonnette        | Sonnettes vidéo                    |
+| Batterie        | Modèles sur batterie et solaires   |
+| Projecteur      | Modèles avec projecteur blanc      |
+| Sirène          | Modèles avec haut-parleur d'alarme |
+| Infrarouge      | La plupart des modèles             |
+| Position PTZ    | Caméras motorisées                 |
+
+### Les détections
+
+Les caméras Reolink ne tiennent pas d'historique d'événements : elles indiquent leur **état courant**. Gladys les interroge donc régulièrement, et l'intervalle de vérification est aussi le délai de détection. Il est réglé sur 15 secondes par défaut ; vous pouvez le descendre pour réagir plus vite, au prix d'une sollicitation plus fréquente des caméras.
+
+Une détection déclenche aussi la capture d'une image, pour que le widget montre ce qui s'est passé sans attendre.
+
+> **Détection personne / véhicule / animal.** Les caméras récentes distinguent ces trois types de détection, mais Gladys ne sait pas encore les afficher correctement : elles apparaîtraient comme des fonctionnalités sans nom ni icône. Elles sont donc mises en attente, et reviendront dès que Gladys les prendra en charge. La détection de mouvement, elle, fonctionne sur toutes les caméras.
+
+### Les positions PTZ
+
+Sur une caméra motorisée, la fonctionnalité « Position » attend un **numéro**, celui de la position enregistrée dans l'application Reolink. L'action **Lister les positions PTZ** affiche les numéros disponibles pour chaque caméra.
+
+Dans une scène, envoyer `2` sur cette fonctionnalité déplace la caméra vers la position 2.
+
+## Protection de la batterie
+
+Capturer une image est ce qui vide le plus une caméra sur batterie ou solaire. L'intégration lève donc le pied avant que la batterie n'atteigne un niveau critique :
+
+- **sous 60 %** : le rafraîchissement automatique s'arrête. Ouvrir le widget ou une détection capture toujours une image ;
+- **sous 40 %** : plus aucune image n'est capturée ;
+- **retour à la normale** dès que la caméra est remise en charge, ou une fois **80 %** atteints en solaire.
+
+Ces 80 % sont volontairement bien au-dessus du seuil de pause : une reprise juste au-dessus relancerait la décharge aussitôt. Évitez de régler ce niveau à 100 % — une caméra solaire se recharge par à-coups et atteint rarement le plein exact, ce qui la laisserait en pause indéfiniment, sans chargeur sur lequel la poser.
+
+Le niveau de batterie et les détections continuent d'être lus dans tous les cas : cela ne coûte presque rien, et c'est ce qui permet de savoir quand la caméra est rechargée.
+
+Une caméra sur batterie qui **cesse de répondre** — veille profonde, session refusée, réseau coupé — est également ramenée au mode « à la demande » : son dernier niveau connu n'est plus fiable, et une caméra muette a plus de chances d'être vide que pleine.
+
+### Un intervalle de capture propre aux caméras sur batterie
+
+Les caméras sur batterie ont leur **propre intervalle de rafraîchissement**, indépendant de celui des caméras filaires. Espacer les captures d'un modèle solaire ne dégrade donc pas la fraîcheur des images de vos caméras sur secteur.
+
+| Réglage                                                 | Par défaut     | Concerne                       |
+| ------------------------------------------------------- | -------------- | ------------------------------ |
+| Intervalle de rafraîchissement des images               | 60 s           | caméras sur secteur uniquement |
+| Intervalle de rafraîchissement des caméras sur batterie | 900 s (15 min) | caméras sur batterie/solaires  |
+
+C'est le réglage le plus efficace de tous : c'est le **réveil** de la caméra qui coûte de la batterie, bien plus que l'image elle-même. En hiver, ou si votre panneau est peu exposé, allongez cet intervalle et montez le seuil de pause.
+
+Tous les seuils sont réglables, et les caméras filaires ne sont jamais concernées.
+
+## Questions fréquentes
+
+**L'image du tableau de bord est figée.**
+Vérifiez l'intervalle de rafraîchissement dans la section Avancé. Si la caméra est sur batterie, elle est peut-être en pause : consultez son niveau de batterie.
+
+**La vidéo en direct ne démarre pas.**
+Le direct passe par le flux RTSP de la caméra. Vérifiez que RTSP est activé dans les paramètres de la caméra (application Reolink → Paramètres → Réseau avancé → Serveur RTSP).
+
+**Une caméra a été trouvée mais Gladys dit que les identifiants sont refusés.**
+Le compte utilisé doit pouvoir lire les paramètres de la caméra. Un utilisateur restreint fonctionne, mais un compte « invité » n'a pas toujours les droits nécessaires.
+
+**Mon projecteur s'éteint tout seul.**
+La caméra applique son propre programme horaire. L'intégration élargit ce programme quand vous allumez le projecteur depuis Gladys, mais un changement fait ensuite dans l'application Reolink reprend la main.
+
+**Mes caméras sur batterie reliées à un Home Hub n'apparaissent pas.**
+Cette version gère les caméras autonomes. Un NVR ou un Home Hub expose plusieurs caméras derrière une seule adresse, ce qui n'est pas encore pris en charge.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Reolink dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | Cette intégration parle à vos caméras directement sur votre réseau — sans compte Reolink, rien ne passe par le cloud. Renseignez ci-dessous le compte utilisé pour vous connecter à vos caméras, puis allez dans l'écran Découverte et lancez un scan.  Chaque caméra reçoit les fonctionnalités qu'elle possède réellement : image et mouvement pour toutes, plus batterie, projecteur, sirène ou positions PTZ selon le modèle. |
+| Identifiant des caméras | `string` | Oui | L'utilisateur avec lequel Gladys se connecte, celui que vous utilisez dans l'application Reolink. `admin` dans la plupart des installations. Un utilisateur restreint fonctionne aussi, à condition qu'il puisse lire les paramètres de la caméra. |
+| Mot de passe des caméras | `secret` | Oui | Le mot de passe de cet utilisateur. Si vos caméras n'ont pas toutes le même, renseignez le champ des comptes par caméra plus bas. |
+| Qualité de l'image | `select` | Non | HD capture le flux pleine résolution et le réduit si nécessaire ; SD demande directement le flux léger de la caméra — moins net, mais plus rapide et plus économe pour une caméra sur batterie. |
+| Avancé | `section` | Non | Ne remplissez ces champs que si une caméra n'est pas trouvée automatiquement, ou pour ajuster la fréquence d'interrogation des caméras. |
+| Adresses des caméras | `string` | Non | Adresses séparées par une virgule, par exemple `192.168.1.42, 192.168.1.43`. Gladys cherche vos caméras sur le réseau tout seul ; remplissez ce champ pour une caméra que le scan ne trouve pas (autre VLAN, broadcast filtré par votre routeur). Ajoutez `:port` si une caméra n'utilise pas le port standard, par exemple `192.168.1.42:8000`. |
+| Comptes par caméra | `secret` | Non | Utile uniquement lorsqu'une caméra a des identifiants différents de ceux ci-dessus. Caméras séparées par une virgule, chacune sous la forme `adresse\|identifiant\|motdepasse` — par exemple `192.168.1.42\|gladys\|MonMotDePasse`. |
+| Intervalle de vérification des détections (s) | `number` | Non | Fréquence à laquelle l'intégration demande à vos caméras si quelque chose est détecté. Les caméras rapportent leur état courant et non un historique : cet intervalle EST donc le délai de détection — plus court, il réagit plus vite mais sollicite davantage vos caméras. |
+| Délai de capture (s) | `number` | Non | Temps accordé à une caméra pour répondre. Les modèles sur batterie sortant de veille ont besoin de plus de temps qu'une caméra filaire. Au-delà de 14 s, la vue live du tableau de bord peut expirer avant, mais le rafraîchissement automatique aboutit quand même. |
+| Intervalle de rafraîchissement des images (s) | `number` | Non | Fréquence à laquelle une nouvelle image est capturée pour le tableau de bord, pour les caméras SUR SECTEUR uniquement. Les caméras sur batterie ou solaires ont leur propre réglage ci-dessous : garder vos images filaires fraîches ne coûte donc rien aux autres. |
+| Protection de la batterie | `section` | Non | La capture d'images est ce qui vide une caméra sur batterie ou solaire. Ces réglages s'appliquent UNIQUEMENT aux modèles sur batterie ou solaires — les caméras filaires gardent leur propre intervalle et ne sont jamais ralenties. Une fois passée sous la limite de pause, la capture reprend dès que la caméra est remise en charge, ou lorsqu'elle atteint le niveau de recharge : une recharge partielle relancerait la décharge, et les cycles courts répétés usent la batterie plus vite. |
+| Intervalle de rafraîchissement des caméras sur batterie (s) | `number` | Non | Fréquence à laquelle une caméra sur batterie ou solaire est capturée, indépendamment de vos caméras filaires. C'est le réveil de la caméra qui coûte de la batterie : ce réglage est donc le plus efficace de tous. 900 s (15 min) laisse à un panneau solaire le temps de recharger entre deux captures. Ne le baissez que si vos caméras se rechargent plus vite qu'elles ne se déchargent. |
+| Suspendre la capture automatique sous (%) | `number` | Non | Sous ce niveau, le rafraîchissement automatique s'arrête. Ouvrir le widget de la caméra ou une détection capture toujours une image. |
+| Bloquer toute capture sous (%) | `number` | Non | Sous ce niveau, plus aucune image n'est capturée, même à la demande. Le niveau de batterie et les détections continuent d'être lus : cela ne coûte presque rien et permet de savoir quand la caméra est rechargée. |
+| Reprendre la capture automatique à (%) | `number` | Non | Une fois une caméra mise en pause, elle le reste jusqu'à ce niveau — volontairement bien au-dessus de la limite de pause, pour qu'elle ne retombe pas aussitôt dans la décharge dont elle vient de sortir. Une caméra remise sur son chargeur reprend immédiatement : ce réglage ne concerne donc que la recharge solaire. Évitez 100 % : une caméra solaire se recharge par à-coups et atteint rarement le plein exact, ce qui la laisserait en pause indéfiniment. |
+
+## Comment installer Reolink dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Reolink apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-reolink:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-reolink](https://github.com/William-De71/gladys-reolink).
+
+Reolink nécessite Gladys `>=4.84.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Reolink est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-reolink) — [source de cette documentation](https://github.com/William-De71/gladys-reolink/blob/HEAD/docs/fr.md)

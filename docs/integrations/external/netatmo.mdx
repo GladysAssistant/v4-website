@@ -1,0 +1,205 @@
+---
+title: "Netatmo external integration for Gladys Assistant"
+sidebar_label: "Netatmo"
+description: "Connect your Netatmo devices (weather station, thermostats, cameras) to Gladys Assistant. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-netatmo.png"
+keywords:
+  - "netatmo"
+  - "gladys netatmo"
+  - "netatmo gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/Terdious/gladys-netatmo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="netatmo" />
+
+Connect your **Netatmo** devices — weather station, thermostats and radiator
+valves, indoor/outdoor cameras and their accessories — to Gladys Assistant.
+
+This integration talks to the Netatmo cloud on your behalf: you create your own
+Netatmo Connect application once, connect your account, and Gladys discovers
+your devices and keeps their values up to date.
+
+---
+
+## Prerequisites
+
+- A **Netatmo account**, with your devices already installed and working in the
+  Netatmo app (Gladys reads what Netatmo exposes — a device must be online in
+  Netatmo first).
+- A Gladys Assistant instance that supports external integrations.
+
+---
+
+## Step 1 — Create your Netatmo Connect application
+
+Gladys never ships a shared Netatmo key: you use **your own** Netatmo Connect
+application, so your data stays between your Gladys and your Netatmo account.
+
+1. Go to **[Netatmo Connect](https://dev.netatmo.com/)** and sign in with your
+   Netatmo account.
+2. Open **[My Apps → Create](https://dev.netatmo.com/apps/)** and create a new
+   application (any name and description — e.g. "Gladys").
+3. Once created, the application page shows two values you will copy into
+   Gladys:
+   - **client id**
+   - **client secret**
+
+You do **not** need to configure scopes or a redirect URI on the portal: Gladys
+requests the required scopes (read + write, covering Energy, Weather and
+Security including cameras) automatically during the connection, and handles the
+OAuth2 redirect itself.
+
+---
+
+## Step 2 — Configure and connect in Gladys
+
+On the integration's **Configuration** screen:
+
+1. Paste your **client id** and **client secret**.
+2. Click **Save**.
+3. Click **Connect**: a Netatmo window opens, sign in and authorize Gladys. You
+   are redirected back and the status becomes **Connected**.
+
+> **Tip:** always **Save** the client id / secret _before_ clicking Connect. If
+> Connect reports that the credentials must be saved first, save the form and
+> click Connect again.
+
+The access and refresh tokens are stored by the integration itself and never
+appear on the form. Gladys refreshes them automatically; if the session ever
+expires beyond repair, the Configuration screen tells you to reconnect.
+
+---
+
+## Step 3 — Choose the device families
+
+Under **Devices to discover**, enable the families you own:
+
+| Toggle       | Discovers                                                               |
+| ------------ | ----------------------------------------------------------------------- |
+| **Energy**   | Thermostat (`NATherm1`), relay plug (`NAPlug`), radiator valves (`NRV`) |
+| **Weather**  | Station (`NAMain`) + outdoor, wind, rain and extra indoor modules       |
+| **Security** | Indoor (`NACamera`) and outdoor (`NOC`) cameras, plus their accessories |
+
+Enabling a family and **saving** re-runs the discovery automatically — no manual
+re-scan needed. Newly surfaced devices appear on the **Discovery** screen, where
+you create the ones you want.
+
+**Camera live stream quality** (`poor` / `low` / `medium` / `high`, default
+`high`) sets the quality of the camera live stream.
+
+Values refresh every **2 minutes** (Netatmo rate limits).
+
+---
+
+## Cameras
+
+When the Security family is enabled, each camera is created with:
+
+- a **dashboard image** (a snapshot, refreshed automatically) — Gladys fetches
+  it from the **local network first** (falling back to the Netatmo VPN URL);
+- a **monitoring** switch (turn the camera's monitoring on/off);
+- a **live stream** button (HLS), built local-first as well.
+
+### Live stream — latency and audio
+
+- **Latency (~10 s):** this is inherent to the Netatmo live HLS stream — the
+  exact same delay exists on Netatmo's own web and mobile apps. Prefer the
+  dashboard camera box latency `low`, and `medium` camera quality (720p) if you
+  want smoother playback.
+- **No sound?** The camera microphone must be **enabled** in the Netatmo app:
+  _Manage my home → select the camera's room → Camera → Advanced settings →
+  enable the Microphone_. If it is off there, no client (Gladys, Netatmo web,
+  Netatmo app) gets audio. Gladys transports the audio whenever the stream
+  carries it — there is nothing to configure on the Gladys side.
+
+---
+
+## Security accessories (camera-bridged)
+
+When the Security family is enabled, the accessories linked to your cameras are
+discovered too:
+
+- **Door / window tag** (`NACamDoorTag`) — an opening sensor (open/closed), plus
+  battery and RF signal.
+- **Indoor siren** (`NIS`) — a read-only sounding sensor, plus battery and RF.
+- **Smoke alarm** (`NSD`) — discovered with its battery and signal. Its **smoke
+  state** is delivered by webhooks (real-time events), which arrive in a later
+  milestone; polling alone cannot report it.
+
+---
+
+## Updating the integration
+
+The **"Force update"** button in the Supervision tab pulls a new **Docker image
+(the runtime)**. The **version shown** and the **configuration fields** come
+from the **manifest** you installed. If an update adds new configuration fields,
+re-install / re-paste the updated manifest to pick them up.
+
+---
+
+## Migrating from the built-in Netatmo service
+
+If you used the Netatmo service built into Gladys, this external integration
+replaces it. Devices are **re-discovered as new** (their identifiers changed
+from `netatmo:*` to `ext:netatmo:*`), so their history is not carried over —
+create the devices again from the Discovery screen.
+
+---
+
+## Troubleshooting
+
+- **"Save first" when connecting:** save the client id / secret, then click
+  Connect again.
+- **Session expired:** click Connect again to re-authorize your Netatmo account.
+- **A device shows an "unreachable" badge:** Netatmo reports it as offline (dead
+  battery, powered off, out of range). Gladys stops publishing its last-known
+  values so you are not misled by stale data; the badge clears when the device
+  comes back.
+- **A camera value or monitoring command fails once with a "reconnect" message:**
+  your Netatmo authorization is missing the camera scope — reconnect your
+  account.
+- **No camera sound:** see the microphone tip in the Cameras section above.
+
+## Configuration settings
+
+These are the settings Netatmo asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Netatmo Connect application | `section` | No | Gladys talks to Netatmo through YOUR own Netatmo Connect application. Create a Netatmo account, then a developer application to obtain the client id and client secret below. The scopes (read + write) are requested automatically at connection — nothing to configure on the portal. See the step-by-step in the Documentation. |
+| Netatmo application client id | `string` | Yes | The client id of the application created on dev.netatmo.com (Netatmo Connect). |
+| Netatmo application client secret | `secret` | Yes | The client secret of the application created on dev.netatmo.com (Netatmo Connect). |
+| Netatmo account | `oauth2` | Yes | Sign in with your Netatmo account to authorize Gladys to access your devices. |
+| Devices to discover | `section` | No | Choose which Netatmo device families Gladys should discover. Enabling a family and saving re-runs the discovery automatically — no manual re-scan needed. Security covers the cameras and their accessories (door/window tag, siren, smoke alarm). |
+| Energy devices (thermostats, valves) | `boolean` | No | Discover the Netatmo Energy devices: thermostats, relay plugs and radiator valves. |
+| Weather devices (stations and modules) | `boolean` | No | Discover the Netatmo Weather devices: stations, outdoor, wind, rain and indoor modules. |
+| Security devices (cameras) | `boolean` | No | Discover the Netatmo Security devices: indoor (NACamera) and outdoor (NOC) cameras. |
+| Camera live stream quality | `select` | No | Quality of the camera live stream (per-camera override via the camera_quality device param). |
+
+## How to install Netatmo in Gladys
+
+1. In Gladys, open **Integrations**: Netatmo appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/terdious/gladys-netatmo:1.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/Terdious/gladys-netatmo](https://github.com/Terdious/gladys-netatmo).
+
+Netatmo requires Gladys `>=4.83.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Netatmo is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [Terdious](https://github.com/Terdious), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/Terdious/gladys-netatmo) — [source of this documentation](https://github.com/Terdious/gladys-netatmo/blob/HEAD/docs/en.md)

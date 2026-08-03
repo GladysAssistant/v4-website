@@ -1,0 +1,154 @@
+---
+title: "Intégration externe Tuya pour Gladys Assistant"
+sidebar_label: "Tuya"
+description: "Prises, compteurs, clims et fil pilote Tuya / Smart Life, cloud + contrôle local optionnel. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-tuya.png"
+keywords:
+  - "tuya"
+  - "gladys tuya"
+  - "tuya gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/Terdious/gladys-tuya instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="tuya" />
+
+Pilotez vos appareils Tuya / Smart Life depuis Gladys, via le **cloud** et, quand c'est possible, directement sur votre **réseau local (LAN)** pour un fonctionnement plus rapide et indépendant d'internet.
+
+## Appareils pris en charge
+
+- **Prises connectées** (dont la prise LSC FR avec mesure de conso) : marche/arrêt, verrou enfant, puissance, tension, courant, énergie.
+- **Compteurs d'énergie** (dont triphasé) : puissance, tension, courant, énergie importée/exportée.
+- **Climatiseurs** : marche/arrêt, mode (auto / froid / chaud / déshu / ventilation), consigne, température ambiante.
+- **Thermostats fil pilote** (gamme RP5, Konyks eCosy) : mode de chauffe, consigne, température ambiante, verrou enfant, énergie.
+- **Interrupteurs, lumières et volets** via les correspondances génériques.
+
+Chaque appareil affiche un macaron **Local** ou **Cloud** pour savoir comment il communique.
+
+---
+
+## 1. Créer un projet Tuya IoT Cloud
+
+L'intégration a besoin d'un projet Tuya IoT Cloud (gratuit) pour atteindre vos appareils.
+
+1. Rendez-vous sur la [Tuya IoT Platform](https://iot.tuya.com/) et connectez-vous (créez un compte si besoin).
+2. Ouvrez **Cloud → Development** et cliquez sur **Create Cloud Project**.
+   - Donnez-lui le nom que vous voulez.
+   - **Industry / Development method** : laissez les valeurs par défaut (Smart Home).
+   - **Data Center** : choisissez la région la plus proche (ex. _Central Europe_ pour la France). **Retenez ce choix** — vous choisirez la même région dans Gladys.
+3. Une fois le projet créé, ouvrez-le. Dans l'onglet **Overview**, notez l'**Access ID / Client ID** et l'**Access Secret / Client Secret**.
+4. Ouvrez l'onglet **Service API** et vérifiez que **IoT Core** est autorisé (souscrivez-y sinon — c'est gratuit).
+
+## 2. Lier votre compte de l'application Smart Life / Tuya
+
+Vos appareils doivent appartenir à un compte de l'app Tuya que le projet peut voir.
+
+1. Dans le projet, ouvrez **Devices → Link Tuya App Account → Add App Account**.
+2. Scannez le QR code avec votre application **Smart Life** ou **Tuya Smart** (Moi → icône de scan en haut à droite).
+3. De retour sur la plateforme, ouvrez **Devices → Link Tuya App Account** : vos appareils apparaissent.
+4. Notez votre **App account UID** (affiché à côté du compte lié).
+
+## 3. Renseigner la configuration dans Gladys
+
+Dans l'écran de configuration de l'intégration, renseignez :
+
+| Champ               | Où le trouver                                         |
+| ------------------- | ----------------------------------------------------- |
+| **Endpoint**        | La région (Data Center) choisie à l'étape 1           |
+| **Client ID**       | Overview du projet → Access ID / Client ID            |
+| **Client Secret**   | Overview du projet → Access Secret / Client Secret    |
+| **App account UID** | Devices → Link Tuya App Account → l'UID du compte lié |
+
+Enregistrez. Le statut **Connexion** en bas de l'écran doit passer à **Connecté**. En cas d'erreur, le message vous indique quoi corriger (identifiants incorrects, mauvaise région…).
+
+## 4. Découvrir vos appareils
+
+Ouvrez l'onglet **Découverte**, laissez Gladys lister vos appareils Tuya, puis créez ceux que vous voulez. Chaque appareil apparaît avec ses fonctionnalités et un macaron Local/Cloud.
+
+---
+
+## Mode local (LAN)
+
+Le contrôle local est plus rapide et continue de fonctionner sans internet. Il est activé par le bouton **« Préférer la connexion locale »** (activé par défaut).
+
+- Quand il est activé, Gladys essaie d'atteindre chaque appareil sur votre réseau ; si elle y parvient, l'appareil affiche un macaron **Local** et son état se met à jour **instantanément**. Sinon, l'appareil bascule automatiquement sur le **Cloud**.
+- Le contrôle local nécessite que Gladys connaisse l'adresse IP et le protocole de chaque appareil. La plupart sont trouvés automatiquement par le scan réseau lors de la découverte.
+- Un appareil qui _pourrait_ fonctionner en local (son IP est connue et la préférence activée) mais qui tourne actuellement via le cloud garde un macaron **Cloud** avec un **point orange** — survolez-le pour savoir pourquoi (appareil basculé après des échecs, info réseau incomplète…). Un vrai appareil cloud-only garde un macaron Cloud bleu simple.
+
+### Un appareil reste en Cloud alors qu'il est sur votre réseau
+
+Certains appareils ne sont pas trouvés par le scan automatique (sous-réseau différent, en veille pendant le scan…). Vous pouvez les ajouter à la main :
+
+1. Ouvrez l'écran **Configuration** → action **Détecter le protocole local (IP manuelle)**.
+2. Saisissez l'appareil (son nom dans Gladys ou son identifiant Tuya) et son **adresse IP**.
+3. Exécutez. En cas de succès, l'appareil passe en local au cycle suivant.
+
+> Astuce : attribuez une IP fixe (réservation DHCP) à vos appareils Tuya sur votre box pour qu'ils restent joignables.
+
+---
+
+## Événements cloud en temps réel (Pulsar) — optionnel
+
+Pour les appareils utilisés **via le cloud**, Gladys peut recevoir leurs changements d'état **instantanément** (en ~1–2 s) au lieu d'attendre le prochain relevé. Cela utilise le **Message Service** de Tuya (aussi appelé Pulsar). Les appareils déjà pilotés en local ont déjà un retour instantané et n'en ont pas besoin.
+
+Deux étapes pour l'activer :
+
+1. **Sur la Tuya IoT Platform** : ouvrez votre projet → **Service API** → souscrivez au **Message Service** (gratuit). Sans cela, la connexion est refusée et Gladys écrit un message explicite dans les journaux.
+2. **Dans Gladys** : activez le bouton **« Événements cloud en temps réel (Pulsar) »** dans la configuration, puis enregistrez.
+
+> Un appareil ne remonte via Pulsar que ce qu'il envoie réellement au cloud Tuya : certains remontent tout leur état, d'autres seulement une partie (ex. marche/arrêt), d'autres rien — ceux-là conservent simplement le rafraîchissement cloud classique. C'est un comportement de l'appareil/firmware, pas une limite de Gladys.
+
+---
+
+## Actions utiles
+
+- **Détecter le protocole local (IP manuelle)** : active le mode local pour un appareil que le scan n'a pas trouvé (voir ci-dessus).
+- **Se déconnecter du cloud Tuya** : coupe la connexion au cloud jusqu'au prochain enregistrement de la configuration.
+
+## Dépannage
+
+- **La connexion affiche une erreur** → vérifiez les quatre identifiants et que l'**Endpoint** correspond bien au Data Center de votre projet.
+- **Un appareil n'a pas d'état / ne se pilote pas** → regardez son macaron. En Cloud sans rien qui remonte, l'appareil est peut-être hors ligne dans l'app Tuya.
+- **Les événements cloud en temps réel ne démarrent pas** → vérifiez que le **Message Service** est bien souscrit sur votre projet Tuya (un 401 dans les journaux signifie que non).
+- **Les journaux** sont disponibles dans l'onglet **Journaux** de l'intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Tuya dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | Cette intégration communique avec vos appareils via un projet Tuya IoT Cloud. Créez-en un (gratuit) sur la Tuya IoT Platform, souscrivez au service "IoT Core", liez votre compte de l'application Smart Life / Tuya, puis reportez les quatre valeurs ci-dessous. Le pas à pas complet est dans le lien Documentation ci-dessus. |
+| Endpoint | `select` | Oui | Région du data center Tuya de votre projet cloud. |
+| Client ID | `string` | Oui | Access ID / Client ID de votre projet cloud Tuya IoT. |
+| Client Secret | `secret` | Oui | Access Secret / Client Secret de votre projet cloud Tuya IoT. |
+| App account User ID | `string` | Oui | UID du compte de l'application Smart Life / Tuya lié à votre projet cloud. |
+| Événements cloud en temps réel (optionnel) | `section` | Non | Pour les appareils utilisés via le cloud, Gladys peut recevoir leurs changements d'état instantanément au lieu d'attendre le prochain relevé. Cela nécessite d'avoir souscrit au "Message Service" sur votre projet Tuya IoT, puis d'activer l'option ci-dessous. Les appareils déjà pilotés en local ont déjà un retour instantané et n'en ont pas besoin. |
+| Événements cloud en temps réel (Pulsar) | `boolean` | Non | Retour d'état cloud instantané via le Tuya Message Service. Nécessite 'Message Service' activé sur votre projet Tuya IoT. |
+
+## Comment installer Tuya dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Tuya apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/terdious/gladys-tuya:1.11.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/Terdious/gladys-tuya](https://github.com/Terdious/gladys-tuya).
+
+Tuya nécessite Gladys `>=4.62.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Tuya est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [Terdious](https://github.com/Terdious), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/Terdious/gladys-tuya) — [source de cette documentation](https://github.com/Terdious/gladys-tuya/blob/HEAD/docs/fr.md)

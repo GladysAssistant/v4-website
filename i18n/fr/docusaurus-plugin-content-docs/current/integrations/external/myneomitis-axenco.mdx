@@ -1,0 +1,317 @@
+---
+title: "Intégration MyNeomitis (Axenco) pour Gladys Assistant"
+sidebar_label: "MyNeomitis (Axenco)"
+description: "Pilotez vos radiateurs et thermostats Neomitis / Axenco depuis Gladys. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/Dreamthy--gladys-neomitis.png"
+keywords:
+  - "myneomitis (axenco)"
+  - "gladys myneomitis (axenco)"
+  - "myneomitis (axenco) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/Dreamthy/gladys-neomitis instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="myneomitis-axenco" />
+
+Cette intégration pilote depuis Gladys les radiateurs, thermostats et modules
+**Neomitis / Axenco** gérés par l'application mobile **MyNeomitis**. Elle est le
+portage en JavaScript de l'intégration Home Assistant `myneomitis` et de la
+librairie `pyaxencoapi` : mêmes appels REST, même canal temps réel, mêmes
+modèles pris en charge.
+
+Elle passe par le **cloud Axenco** (il n'existe pas d'API locale) : vos
+appareils doivent déjà être appairés dans l'application MyNeomitis, et une
+connexion Internet est nécessaire.
+
+## Installation
+
+1. Installez l'intégration depuis le magasin de Gladys.
+2. Ouvrez l'onglet **Configuration** et saisissez l'**adresse e-mail** et le
+   **mot de passe** de votre compte MyNeomitis — les mêmes que dans
+   l'application mobile. Il n'y a pas d'OAuth2 chez Axenco.
+3. Laissez l'**intervalle de rafraîchissement** sur 300 s sauf besoin
+   particulier : les changements arrivent normalement en temps réel par
+   WebSocket, cet intervalle n'est qu'un filet de sécurité si un message est
+   perdu.
+4. Allez dans **Découverte** : tous les appareils reconnus de votre compte
+   apparaissent. Créez ceux que vous voulez utiliser.
+
+L'indicateur de connexion de l'écran Configuration passe au vert une fois la
+session Axenco établie. S'il reste rouge, le message affiché distingue un
+identifiant refusé d'un cloud injoignable.
+
+## Appareils pris en charge
+
+| Modèle      | Type                                      | Ce que Gladys expose                                     |
+| ----------- | ----------------------------------------- | -------------------------------------------------------- |
+| `EV30`      | Thermostat / radiateur                    | Températures + 7 modes                                   |
+| `ECTRL`     | Thermostat / radiateur                    | Températures + 8 modes                                   |
+| `ESTAT`     | Thermostat / radiateur                    | Températures + 8 modes                                   |
+| `RSS-ECTRL` | Thermostat / radiateur                    | Températures + 8 modes                                   |
+| `NTD`       | Sous-thermostat (derrière une passerelle) | Températures + 6 modes + état chauffage/rafraîchissement |
+| `ETRV`      | Tête thermostatique (sous-appareil)       | Températures + 5 modes                                   |
+| `EWS`       | Module sans fil, contact sec              | 3 modes : Marche / Arrêt / Auto                          |
+| `EWS`       | Module sans fil, fil pilote               | 7 modes (`deviceType: 1`), sinon 10                      |
+| `UFH`       | Plancher chauffant/rafraîchissant         | Bascule Chauffage / Rafraîchissement                     |
+
+Le mode d'un `EWS` dépend de son câblage : Axenco le signale par
+`state.deviceType` (`0` = contact sec, autre = fil pilote), et l'intégration
+choisit la bonne liste de modes toute seule.
+
+Les sous-appareils (`NTD`, `ETRV`, `UFH`) sont pilotés à travers leur
+passerelle : l'intégration retrouve celle-ci dans le champ `parents` de
+l'appareil et l'adresse par son `rfid`.
+
+## Features créées dans Gladys
+
+Un appareil Axenco devient **un appareil Gladys portant plusieurs features** —
+Gladys n'a pas d'entité `climate` regroupant température, consigne et mode
+comme Home Assistant.
+
+- **Température actuelle** — capteur, en °C, historisée (graphiques).
+- **Température cible** — consigne réglable. Ses bornes viennent de l'appareil
+  lui-même (`comfLimitMin` / `comfLimitMax`), pas d'un 7–30 °C figé : un
+  radiateur limité à 16–21 °C affichera bien 16–21 °C.
+- **Mode actuel** — texte en lecture seule : « Confort », « Éco », « Boost »…
+  En Auto, il précise le côté du programme en cours : « Auto (Confort) » ou
+  « Auto (Éco) ». L'interrupteur, lui, reste un seul « Auto ».
+- **Un interrupteur par mode** — « Auto », « Confort », « Éco », « Hors gel »,
+  « Boost », « Veille »… selon le modèle. Auto est un mode comme les autres
+  (`targetMode: 0`) : le sélectionner sort des modes manuels, et inversement.
+- **Consigne Confort / Consigne Éco / Consigne Hors gel** — les températures
+  que les modes utilisent, réglables. À ne pas confondre avec la Température
+  cible ci-dessus, qui est la dérogation ponctuelle. Ni `pyaxencoapi` ni
+  l'intégration Home Assistant ne les exposent.
+  Réservées aux appareils qui **régulent** une température. Un `EWS` rapporte
+  bien ces trois champs, mais les refuse en écriture : il pilote un fil pilote
+  et n'a pas de sonde, donc rien à réguler. Un `UFH` est exclu pour la même
+  raison, les sous-appareils parce que la charge indexée par `rfid` n'a jamais
+  été observée.
+- **Rafraîchissement** — interrupteur chauffage/rafraîchissement, réglable sur
+  `UFH`, en lecture seule sur `NTD`.
+- **Capteurs en lecture seule** — **Signal** (qualité de réception, en barres
+  d'antenne), **Présence**, **Fenêtre ouverte**, **Verrouillage clavier** et
+  **Défaut système**. Ces valeurs voyagent déjà dans l'état que l'appareil
+  envoie : aucun appel supplémentaire, aucun réglage à faire. Chaque appareil
+  n'expose que celles qu'il rapporte réellement. Le défaut système est publié
+  tel quel — 0 signifie « aucun défaut » sur tous les appareils observés, une
+  valeur non nulle est probablement un code. Ni `pyaxencoapi` ni l'intégration
+  Home Assistant ne les exposent.
+
+Les interrupteurs de mode sont **exclusifs** : en activer un envoie ce mode à
+Axenco et éteint les autres dans la foulée. Les **éteindre** directement ne
+fait rien — un appareil Axenco est toujours dans un mode, il n'existe pas de
+« aucun mode » à envoyer ; l'interrupteur revient donc à son état réel.
+
+Régler la **température cible** crée une **dérogation** : une consigne
+différente de celle paramétrée pour le mode en cours. L'intégration envoie le
+même appel que l'application officielle, `targetTemp` + `overrideTemp` +
+`targetMode: 8` d'un seul coup. `climate.py` écrit le mode d'abord puis la
+température ; ce premier appel est sans effet, mesuré.
+
+## Pourquoi une liste de modes est impossible, et pas seulement peu pratique
+
+C'est la question la plus légitime devant sept interrupteurs. La réponse est
+dans le code de Gladys, pas dans un choix esthétique.
+
+Le tableau de bord choisit le widget d'une feature réglable en cherchant son
+`type` dans une table **statique** (`front/src/components/boxs/device-in-room/DeviceRow.jsx`).
+Tous les widgets qui dessinent une liste ont leurs options **écrites en dur
+dans le front** :
+
+| Type essayé                   | Ce que le widget affiche réellement                       |
+| ----------------------------- | --------------------------------------------------------- |
+| `HEATER` / `PILOT_WIRE_MODE`  | 6 options fil pilote figées ; `min`/`max` ignorés         |
+| `AIR_CONDITIONING` / `MODE`   | 3 boutons figés (auto / froid / chaud)                    |
+| `VACUUM_CLEANER` / `RUN_MODE` | 3 valeurs figées                                          |
+| `FAN` / `*_SETTING`           | options issues d'une énumération figée, libellés du front |
+| `SENSOR` / `INTEGER`          | rendu en capteur : non modifiable                         |
+| `TEXT` / `TEXT`               | rendu en capteur : non modifiable                         |
+
+Gladys possède pourtant le mécanisme qu'il faudrait : `supported_options`, une
+liste `{value, label, sort_order}` attachée à une feature. Elle est bien
+validée et enregistrée côté serveur (`normalizeSupportedOptions.js`,
+`device.syncFeatureSupportedOptions.js`), et l'intégration pourrait la fournir.
+Mais **aucun composant du tableau de bord ne l'exploite correctement** : le
+seul qui la lit rend son libellé avec
+
+```jsx
+<Text id={`…${AC_MODE_TRANSLATION_KEYS[mode.value]}`} default={mode.label} />
+```
+
+or `preact-i18n` n'a pas de prop `default` — son composant `Text` ne lit que
+`{ id, children, plural, fields }` et se rabat sur `children[0]`. Sans enfant,
+`translate()` renvoie `null` : **le bouton s'affiche vide**. Et les valeurs qui
+possèdent, elles, une clé de traduction héritent des libellés climatiseur
+(« Clim. », « Chauffage »…), sans rapport avec le mode Axenco correspondant.
+
+Le seul widget modifiable dont **les libellés et l'ensemble des valeurs nous
+appartiennent** est donc l'interrupteur binaire (`BinaryDeviceFeature`, type
+`binary`), dont le libellé est simplement le nom de la feature. D'où ce choix.
+
+**Ses limites, assumées :** beaucoup de lignes sur les modèles à huit modes,
+et éteindre un interrupteur ne veut rien dire. En contrepartie, tous les modes
+de tous les modèles sont atteignables, avec le bon libellé, et chacun est
+utilisable tel quel dans une scène ou par le cerveau de Gladys.
+
+**Si Gladys corrige le rendu** (`<Text>` sans prop inexistante, et une table de
+traduction qui ne masque pas `label`), la bonne représentation devient une
+feature unique `AIR_CONDITIONING` / `MODE` accompagnée de ses
+`supported_options`. Le passage sera limité à `src/devices/features.js` et
+`src/devices/index.js`.
+
+## Utilisation dans les scènes
+
+Chaque interrupteur de mode est une feature comme une autre : une scène peut
+« allumer » _Salon – Éco_ le soir et _Salon – Confort_ le matin. La feature
+_Mode actuel_ étant du texte, elle sert plutôt à l'affichage et aux
+notifications qu'aux conditions.
+
+## Limites connues
+
+- **Cloud uniquement.** Aucune API locale n'existe. Chaque appareil porte un
+  badge indiquant s'il est joignable ; un appareil hors ligne côté Axenco
+  apparaît comme injoignable dans Gladys.
+- **« Auto » est `targetMode: 0`, pas 60.** `pyaxencoapi` documente 60, et
+  l'intégration Home Assistant l'envoie ; mesuré sur du matériel réel, 60 et 61
+  répondent 2xx et ne changent rien. La vraie valeur a été capturée dans le
+  trafic réseau de l'application officielle : `{"targetMode": 0}`. Un appareil
+  en Auto renvoie 60 ou 61, donc les trois codes se décodent en Auto en
+  lecture — c'est cette asymétrie lecture/écriture qui faisait paraître la
+  librairie de référence correcte.
+
+- **Un code inconnu reste visible.** Un mode qu'Axenco renverrait sans que
+  l'intégration le connaisse s'affiche « Inconnu (42) » dans _Mode actuel_
+  plutôt que d'être ignoré silencieusement — c'est ainsi que le cas du 61
+  a été repéré.
+- **`EWS` fil pilote : la liste de modes dépend du `deviceType`.**
+  `pyaxencoapi` et `select.py` annoncent dix presets pour tout EWS fil pilote —
+  c'est l'union de ce que sait faire le matériel Axenco, pas ce qu'un module
+  donné propose. Un module vérifié reçoit sa vraie liste ; tous les autres
+  gardent celle de la source.
+  Un seul l'a été à ce jour : **`deviceType: 1`** (EWSFPNEOA), mesuré au
+  WebSocket et recoupé avec sa notice. Il émet **sept ordres** — confort, éco,
+  éco -1, éco -2, hors gel, veille, boost — plus le mode auto par le drapeau
+  `autoProgram`. À noter : le menu de l'application MyNeomitis n'en montre que
+  six, il masque éco -1 et éco -2, alors que la notice les nomme
+  explicitement (« Mode Éco, Éco-1 ou Éco-2 ») et que le module pilote « un fil
+  pilote 4 ou 6 ordres ». `comfort_plus` en revanche est bien absent, ignoré
+  deux fois par le matériel. Et d'après la notice, **Boost n'a d'effet que si
+  le radiateur raccordé sait interpréter cet ordre** sur le fil pilote.
+  Si votre EWS rapporte un autre `deviceType`, envoyez la sortie de
+  `node scripts/sweep-modes.mjs <id> --apply` et votre liste sera ajoutée. Le
+  défaut reste volontairement la liste large : un mode inutile est visible et
+  sans danger, un mode masqué est une perte silencieuse de fonctionnalité.
+- **`UFH` : divergence assumée avec la source Home Assistant.** `select.py`
+  écrit le mode d'un UFH avec `set_device_mode` sur son `_id`, alors qu'un UFH
+  est un sous-appareil et que son mode vit sur `changeOverUser`. Cette
+  intégration utilise la route sous-appareil dédiée que `pyaxencoapi` fournit
+  précisément pour ce cas (`set_sub_device_mode_ufh`).
+- **Le programme hebdomadaire n'est pas exposé.** L'appel existe côté client
+  (`setDeviceProgram`), mais Gladys n'a pas de représentation pour un planning
+  d'appareil : continuez à le gérer dans l'application MyNeomitis. Le mode
+  « Auto » suit ce programme.
+- **`has_feedback` est optimiste.** Après une commande, l'intégration publie la
+  valeur demandée sans attendre la confirmation d'Axenco ; le push WebSocket qui
+  suit corrige l'affichage si l'appareil a fait autre chose.
+
+## État de vérification par modèle
+
+Tout ce qui suit concerne le **protocole**, identique pour tous les modèles :
+`auto` s'écrit `targetMode: 0`, la dérogation n'est pas un mode sélectionnable,
+et une consigne s'envoie `targetTemp` + `overrideTemp` + `targetMode: 8`. Ces
+trois points valent donc aussi pour les modèles ci-dessous marqués « hérité ».
+
+Ce qui reste propre à chaque modèle, c'est la **liste des modes**.
+
+| Modèle                               | Liste des modes           | Routage des commandes            |
+| ------------------------------------ | ------------------------- | -------------------------------- |
+| `EV30`                               | mesuré + capture de l'app | mesuré                           |
+| `EWS` fil pilote (`deviceType: 1`)   | mesuré + capture + notice | mesuré                           |
+| `EWS` relais (`deviceType: 0`)       | hérité de `select.py`     | hérité                           |
+| `EWS` fil pilote, autre `deviceType` | hérité de `pyaxencoapi`   | hérité                           |
+| `ECTRL`, `ESTAT`, `RSS-ECTRL`        | hérité de `pyaxencoapi`   | hérité                           |
+| `NTD`, `ETRV`                        | hérité de `pyaxencoapi`   | hérité, passerelle jamais testée |
+| `UFH`                                | hérité de `pyaxencoapi`   | hérité, passerelle jamais testée |
+
+« Hérité » veut dire : le comportement de la librairie de référence, conservé
+tel quel faute de matériel pour le vérifier. Or cette librairie s'est trompée
+sur deux points au moins, donc traitez ces lignes comme des hypothèses.
+
+Le cas le plus douteux est `comfort_plus` (code 20), que `pyaxencoapi` attribue
+aux `ECTRL` / `ESTAT` / `RSS-ECTRL`. Il est ignoré par un EV30 et par un EWS,
+tous deux mesurés. Il est conservé pour ces trois modèles parce que rien ne
+prouve qu'il n'y existe pas — un mode inutile est visible et sans danger, un
+mode masqué est une perte silencieuse.
+
+**Si vous possédez un de ces modèles**, deux commandes suffisent à faire
+corriger la liste :
+
+```bash
+node scripts/dump-devices.mjs                      # l'état brut de vos appareils
+node scripts/sweep-modes.mjs <deviceId> --apply    # ce que l'appareil accepte vraiment
+```
+
+Envoyez les deux sorties, avec la liste des modes que montre l'application
+MyNeomitis pour cet appareil. Le balayage ne gère pour l'instant que les
+appareils principaux : un `NTD`, un `ETRV` ou un `UFH` passe par sa passerelle,
+dont je n'ai jamais observé la forme des réponses.
+
+## Dépannage
+
+- **« MyNeomitis a refusé ces identifiants »** — vérifiez l'e-mail et le mot de
+  passe dans l'application mobile. L'intégration ne réessaie pas en boucle
+  serrée sur une erreur d'authentification.
+- **Aucun appareil dans Découverte** — seuls les modèles du tableau ci-dessus
+  sont repris. Les logs du conteneur indiquent combien d'appareils ont été vus
+  et combien ont été ignorés.
+- **« Pas de valeur récente »** — Axenco n'émet que sur changement. L'état
+  connu est publié à la création de l'appareil et à chaque rafraîchissement
+  périodique ; attendez un cycle.
+- **Plus de mises à jour temps réel** — le canal WebSocket se reconnecte tout
+  seul, et le rafraîchissement périodique prend le relais entre-temps. Passez
+  `LOG_LEVEL` à `debug` pour voir les événements reçus.
+
+## Suppression
+
+Désinstallez l'intégration depuis Gladys : le conteneur est supprimé et les
+appareils créés disparaissent avec lui. Rien n'est modifié côté compte
+MyNeomitis — vos appareils restent appairés dans l'application mobile.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par MyNeomitis (Axenco) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre compte MyNeomitis | `section` | Non | Utilisez la même adresse e-mail et le même mot de passe que l'application mobile MyNeomitis. L'intégration passe par le cloud Axenco : vos radiateurs doivent déjà être appairés dans l'application. |
+| Adresse e-mail | `string` | Oui | L'adresse e-mail de votre compte MyNeomitis. |
+| Mot de passe | `secret` | Oui | Le mot de passe de votre compte MyNeomitis. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Filet de sécurité : les mises à jour arrivent normalement en temps réel, ceci est la fréquence de relecture complète malgré tout. |
+
+## Comment installer MyNeomitis (Axenco) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : MyNeomitis (Axenco) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/dreamthy/gladys-neomitis:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/Dreamthy/gladys-neomitis](https://github.com/Dreamthy/gladys-neomitis).
+
+MyNeomitis (Axenco) nécessite Gladys `>=4.62.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+MyNeomitis (Axenco) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [Dreamthy](https://github.com/Dreamthy), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/Dreamthy/gladys-neomitis) — [source de cette documentation](https://github.com/Dreamthy/gladys-neomitis/blob/HEAD/docs/fr.md)

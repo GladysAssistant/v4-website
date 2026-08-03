@@ -1,0 +1,142 @@
+---
+title: "Zendure integration for Gladys Assistant"
+sidebar_label: "Zendure"
+description: "Connect your Zendure solar batteries (SolarFlow) to Gladys Assistant through the Zendure cloud. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-zendure.png"
+keywords:
+  - "zendure"
+  - "gladys zendure"
+  - "zendure gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/Terdious/gladys-zendure instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="zendure" />
+
+Connect your **Zendure SolarFlow / Hyper** solar batteries to Gladys Assistant.
+Gathers read-only telemetry (battery level, charge/discharge power, home output
+and solar production) from the Zendure cloud, and — optionally — directly from
+each device's **local MQTT broker** for LAN-speed, offline-resilient updates
+with automatic cloud fallback.
+
+## Supported models
+
+SolarFlow 800, SolarFlow 800 Pro, SolarFlow 1600, SolarFlow 2400,
+SolarFlow 2400 AC, SolarFlow 2400 Pro, and Hyper 2000 (experimental — telemetry
+mapping to be confirmed by a community tester).
+
+## Getting your Zendure cloud key
+
+The integration authenticates against the Zendure cloud with an **authorization
+key** (a base64 token) that you generate once from the Zendure mobile app:
+
+1. Open the **Zendure** mobile app and sign in with your account.
+2. Go to the developer / Home Assistant integration section of the app and
+   generate (or copy) your **authorization key** (also called the "HA key").
+3. Copy that key.
+
+> The key is a secret tied to your Zendure account: keep it private. Gladys
+> stores it encrypted and never logs it.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration in Gladys.
+2. Paste your key into **Zendure cloud authorization key**.
+3. Set the **Refresh interval** (seconds) — how often the telemetry is refreshed
+   when no real-time update is flowing. The default (30 s) is fine.
+4. (Optional) Enable **local MQTT (zenSDK)** — see below.
+5. **Save.** Your batteries appear in the **Discovery** tab, ready to be added.
+
+### Local MQTT (recommended if you use it)
+
+When you enable local MQTT in the Zendure app (developer mode), each device
+publishes its telemetry to a local broker on your network. Turning on **Enable
+local MQTT** in Gladys makes the integration read from that broker:
+
+- **Faster**: local values update every 1–3 s instead of ~30 s over the cloud.
+- **Resilient**: telemetry keeps flowing during a Zendure cloud or internet
+  outage.
+- **Automatic fallback**: if a device goes silent on the local broker, the
+  integration falls back to the cloud on its own, and returns to local as soon
+  as local messages resume — no action needed.
+
+## Transport badges
+
+Each device shows a badge telling you **how it is currently reached**:
+
+- **Local** (green) — served by its local MQTT broker (nominal when local MQTT
+  is enabled).
+- **Cloud** (blue) — served by the Zendure cloud (nominal when local MQTT is
+  off).
+- **Cloud + orange dot (degraded)** — the device _should_ be local but is
+  temporarily on the cloud fallback (its local broker went silent). Hover the
+  badge for the reason. This clears by itself when the device resumes locally.
+- **Unreachable** (red) — the Zendure cloud reports the device offline, or it is
+  silent on every source.
+
+## One cloud consumer per Zendure account
+
+Zendure allows **only one cloud consumer per account** at a time. If another app
+uses the same account's cloud connection (Home Assistant, a second Gladys
+instance…), the two fight over the connection and telemetry becomes
+intermittent. Prefer the **local MQTT** path for any second consumer — the local
+broker has no such limit. The integration warns once in its logs when it detects
+this take-over pattern.
+
+## Troubleshooting
+
+- **One device shows no values (or is slower than the others) while the rest
+  work.** Check its transport badge. If it fell back to **Cloud (degraded)**
+  while local MQTT is enabled, its firmware may have silently stopped publishing
+  locally. In the Zendure app, toggle that device's **MQTT control OFF**, save,
+  then **ON** again — it resumes publishing within a minute. The integration
+  falls back to the cloud in the meantime and returns to local automatically.
+- **`Too Many Requests` in the logs.** The integration paces its updates under
+  the Gladys core rate limit and self-throttles when needed; occasional bursts
+  are harmless. Persistent floods usually mean a **second integration instance**
+  (e.g. a prod and a test container side by side) sharing the same core budget —
+  run only one.
+- **Everything is silent right after configuration.** Make sure the cloud key is
+  correct: an invalid or expired key shows a "Zendure cloud is unreachable or
+  the cloud key is invalid" status on the Configuration screen.
+- **Full detail.** Set `LOG_LEVEL=debug` and read the integration logs from the
+  Gladys UI (or `docker logs` on the host). Every telemetry-source switch is
+  logged on a `telemetry:` line.
+
+## Configuration settings
+
+These are the settings Zendure asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Paste your Zendure cloud authorization key below (generated from the Zendure mobile app). Your SolarFlow / Hyper batteries then appear in the Discovery tab. Optionally enable local MQTT for LAN-speed, offline-resilient telemetry with automatic cloud fallback. The full step-by-step is in the Documentation link above. |
+| Zendure cloud authorization key | `secret` | Yes | The authorization key generated from the Zendure mobile app (base64 token used to reach the Zendure cloud API). |
+| Refresh interval (s) | `number` | No | How often device telemetry is polled, in seconds. |
+| Enable local MQTT (zenSDK) | `boolean` | No | Read telemetry from the device's local MQTT broker when available, instead of the Zendure cloud. |
+
+## How to install Zendure in Gladys
+
+1. In Gladys, open **Integrations**: Zendure appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/terdious/gladys-zendure:1.2.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/Terdious/gladys-zendure](https://github.com/Terdious/gladys-zendure).
+
+Zendure requires Gladys `>=4.62.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Zendure is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [Terdious](https://github.com/Terdious), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/Terdious/gladys-zendure) — [source of this documentation](https://github.com/Terdious/gladys-zendure/blob/HEAD/docs/en.md)
