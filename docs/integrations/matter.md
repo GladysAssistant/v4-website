@@ -45,19 +45,11 @@ This is the case for all Matter bridges offered by manufacturers like Philips Hu
 
 It's also true for all Wi-Fi devices like smart plugs or bulbs directly connected to Wi-Fi.
 
-### Matterbridge
+### If your device isn't Matter-compatible
 
-[Matterbridge](https://github.com/Luligu/matterbridge) is an open-source project that aims to import into a Matter network devices that are not natively Matter-compatible.
+You don't need Matter to use a device in Gladys. If your device or service has no native integration, look at the [external integrations catalog](/docs/integrations/external/): community integrations you install in one click, without any command line or configuration file.
 
-As of today, Matterbridge supports:
-
-- [Shelly](https://github.com/Luligu/matterbridge-shelly)
-- [Somfy Tahoma](https://github.com/Luligu/matterbridge-somfy-tahoma)
-- [Zigbee2mqtt](https://github.com/Luligu/matterbridge-zigbee2mqtt)
-- [Home Assistant](https://github.com/Luligu/matterbridge-homeassistant)
-- [Webhooks](https://github.com/Luligu/matterbridge-webhooks)
-- [BTHome](https://github.com/Luligu/matterbridge-bthome)
-- [Loxone](https://github.com/andrasg/matterbridge-loxone)
+And if the one you need doesn't exist yet, you can create it: see the [external integrations developer guide](/docs/dev/external-integrations/).
 
 ### If your device uses Thread only
 

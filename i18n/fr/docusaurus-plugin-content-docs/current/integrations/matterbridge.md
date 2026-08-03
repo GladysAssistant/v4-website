@@ -5,6 +5,10 @@ description: "Connectez des appareils non-Matter (Shelly, Somfy) à Gladys Assis
 sidebar_label: Matterbridge
 ---
 
+:::tip
+Pour ajouter un appareil ou un service qui n'a pas d'intégration native, les [intégrations externes](/fr/docs/integrations/external/) sont la voie recommandée : vous les installez en un clic depuis Gladys, et n'importe qui peut [en créer une](/fr/docs/dev/external-integrations/). Cette page documente Matterbridge pour les installations qui s'appuient dessus, comme les guides [Shelly](/fr/docs/integrations/shelly/) et [Somfy TaHoma](/fr/docs/integrations/somfy-tahoma/).
+:::
+
 [Matterbridge](https://github.com/Luligu/matterbridge) est un pont Matter qui permet de connecter des appareils non-Matter à un écosystème Matter. Grâce à ses nombreux plugins, Matterbridge peut exposer des appareils de différents fabricants (Shelly, Somfy, etc.) vers Gladys via le protocole Matter.
 
 ## Activer Matterbridge
