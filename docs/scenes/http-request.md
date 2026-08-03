@@ -21,7 +21,7 @@ You can add headers if you need them for authentication for example.
 
 ## Concrete example: Trigger an IFTTT action from a Gladys Assistant scene
 
-You are probably familiar with [IFTTT] (https://ifttt.com/), a service that allows different services to be connected to each other. Their business model having changed recently, it is only possible to create 3 actions per account, but this is more than enough if you want to use it only to compensate for a lack of Gladys functionality.
+You are probably familiar with [IFTTT](https://ifttt.com/), a service that allows different services to be connected to each other. Its free plan is limited to a handful of applets per account, but this is more than enough if you want to use it only to compensate for a lack of Gladys functionality.
 
 In this example, we'll use IFTTT to save a value to Google Sheet each time a scene is called.
 

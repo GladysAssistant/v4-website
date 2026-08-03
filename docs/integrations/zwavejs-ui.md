@@ -19,7 +19,7 @@ Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.
 
 Gladys connects to the same MQTT broker as Z-Wave JS UI and receives MQTT messages whenever a device's status changes.
 
-:::note Choosing a Z-Wave USB stick for your region
+:::note[Choosing a Z-Wave USB stick for your region]
 Z-Wave uses a different radio frequency depending on where you live, so your stick must match your country: **908.42 MHz in the US and Canada**, 868.42 MHz in Europe. For North America, popular sticks include the Zooz ZST10 700 / ZST39 and the Aeotec Z-Stick 7 (US version). Make sure you buy the US/Canada model, not the EU one.
 :::
 

@@ -10,17 +10,13 @@ Salut à tous !
 
 Nouvelle version de Gladys aujourd'hui avec des changements vraiment sympa qui améliorent l'utilisation de Gladys au quotidien
 
-Juste avant de commencer, je voulais vous parler d'un super deal que j'ai trouvé sur Amazon l'autre jour, et qui à mon avis vaut vraiment le coup pour commencer en domotique avec du matériel fiable et performant :
-
-Les mini-PC Beelink sont [en promotion flash, à 155€ (-26%)](https://www.amazon.fr/Beelink-Business-Windows11-128G-Ethernet/dp/B0B2J9VDH8?tag=gladproj-21) pour un mini-PC 8GB de RAM, 128GB de SSD, processeur Intel Quad-Core, Ethernet Gigabit, USB 3.0, Wi-Fi et Bluetooth.
-
-La version 16GB de RAM est elle à [203€ (-34%)](https://www.amazon.fr/Beelink-Business-Windows11-128G-Ethernet/dp/B09K3WKZWH?tag=gladproj-21&th=1).
-
-![Beelink mini-PC deal](../../../static/img/articles/fr/gladys-4-25/beelink-deal.jpg)
+Juste avant de commencer : si vous cherchez du matériel pour faire tourner Gladys, un mini-PC Beelink est un excellent moyen de démarrer en domotique avec du matériel fiable et performant.
 
 Certains dans la communauté en ont même commandés plusieurs, c'est pour dire 😂
 
 La communauté est assez unanime pour dire qu'aujourd'hui, les mini-PC sont une alternative plus que sérieuses aux Raspberry Pi, difficilement trouvable, et au final à un prix similaire quand on prend toute en compte ( Carte + SSD + alimentation + boîtier ).
+
+👉 Retrouvez nos recommandations actuelles dans le [guide du matériel recommandé](/fr/docs/installation/recommended-hardware/).
 
 ## Nouveau widget "Appareils"
 
@@ -92,11 +88,7 @@ Grâce à une PR de bertrandda, il est désormais possible de réinitialiser la 
 
 ## Comment mettre à jour ?
 
-Si vous avez installé Gladys avec l’image Raspberry Pi OS officielle, vos instances se mettront à jour **automatiquement** dans les heures à venir. Cela peut prendre jusqu’à 24h, pas de panique.
-
-Si vous avez installé Gladys avec Docker, vérifiez que vous utilisez bien Watchtower. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
-
-Avec Watchtower, Gladys se mettra automatiquement à jour.
+Pour mettre à jour Gladys, nous recommandons d'utiliser Watchtower : il met à jour votre conteneur automatiquement dès qu'une nouvelle version est disponible. Voir la [documentation](/fr/docs/installation/docker#mise-à-jour-automatique-avec-watchtower).
 
 ## Remerciements aux contributeurs
 
@@ -109,6 +101,6 @@ Il y a plein de façons de supporter le projet :
 - Participer aux discussions sur le forum, aider les nouveaux.
 - Contribuer au projet en proposant des nouvelles intégrations/fonctionnalités.
 - Améliorer la documentation, qui est open-source.
-- S'inscrire à [Gladys Plus](/fr/plus) actuellement en promotion à -40% la première année !!
+- S'inscrire à [Gladys Plus](/fr/plus/)
 
 Merci à tous ceux qui supportent Gladys 🙏

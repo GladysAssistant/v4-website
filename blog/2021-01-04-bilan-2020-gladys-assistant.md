@@ -48,7 +48,7 @@ On social networks:
 - [Gladys Assistant Facebook](https://www.facebook.com/gladysassistant) counts 745 likes
 - [@gladysassistant on instagram](https://www.instagram.com/gladysassistant) brings together 555 subscribers
 
-And finally 1,775 followers on [my personal Twitter] (https://twitter.com/pierregillesl)!
+And finally 1,775 followers on [my personal Twitter](https://twitter.com/pierregillesl)!
 
 ### The newsletter
 

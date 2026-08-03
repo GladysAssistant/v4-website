@@ -17,11 +17,11 @@ Installing on a mini-PC is the recommended method to fully enjoy Gladys. These s
 
 ## Which Hardware to Choose?
 
-I recommend the Beelink Mini S12 Pro. It's an incredible machine, at an affordable price.
+I recommend the Beelink Mini S13. It's an incredible machine, at an affordable price.
 
-I've been using it for the past year, and I've had great performance, and no issues at all.
+I've been running Gladys on a Beelink mini-PC for years now, with great performance and no issues at all.
 
-You can find it on [Amazon US](https://amzn.to/4gKDV2E) for $169.
+You can find it on [Amazon](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21).
 
 ## Installing Ubuntu Server on the Mini-PC
 
@@ -47,7 +47,7 @@ A mini-PC gives you more CPU power, more RAM and faster, more reliable storage t
 
 ### Which mini-PC do you recommend for Gladys?
 
-We use and recommend the Beelink Mini S12 Pro, available on Amazon US for around $169. It is powerful, quiet, energy-efficient and has run Gladys reliably for over a year.
+We use and recommend the Beelink Mini S13. It is powerful, quiet, energy-efficient and runs Gladys reliably over the long term.
 
 ### What operating system should I install?
 
@@ -71,7 +71,7 @@ Install Ubuntu Server, then add Docker and run the official Gladys image. The mi
         name: "Which mini-PC do you recommend for Gladys?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "We use and recommend the Beelink Mini S12 Pro, available on Amazon US for around $169. It is powerful, quiet, energy-efficient and has run Gladys reliably for over a year.",
+          text: "We use and recommend the Beelink Mini S13. It is powerful, quiet, energy-efficient and runs Gladys reliably over the long term.",
         },
       },
       {
