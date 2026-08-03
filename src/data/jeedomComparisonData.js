@@ -27,7 +27,7 @@ const comparisonContent = {
       intro: [
         "Hesitating between Gladys Assistant and Jeedom? Both are open-source and both let you build a smart home that runs at home rather than in someone else's cloud. This comparison will save you hours.",
         "Full transparency: I'm Pierre-Gilles, the creator of Gladys Assistant, so I'm obviously biased. But I'll be fair about both projects. Jeedom is a serious, mature platform with a huge plugin ecosystem, and I'll credit it where it deserves it.",
-        "The real difference isn't \"open-source vs proprietary\" or \"local vs cloud\", because they're alike on those. It's about philosophy: Jeedom is built around a vast, flexible plugin marketplace, while Gladys is built around a polished, curated, product-grade experience. That difference is exactly what should guide your choice.",
+        "The real difference isn't \"open-source vs proprietary\" or \"local vs cloud\", because they're alike on those. It's about philosophy: Jeedom is built around a vast plugin marketplace where many of the best plugins are paid, while Gladys is built around a polished, product-grade experience, with an integration store that is entirely free and open, and that anyone can publish to. That difference is exactly what should guide your choice.",
       ],
     },
     verdict: {
@@ -38,7 +38,8 @@ const comparisonContent = {
           "You want a clean, modern interface and something that simply works out of the box.",
           "You'd rather every integration be free and open, with no per-plugin fees.",
           "You value stability: updates are fully automatic and atomic.",
-          "You like betting on open standards (Zigbee, Matter, MQTT) over a sprawling plugin catalog.",
+          "You like betting on open standards (Zigbee, Matter, MQTT) rather than on a paid plugin catalog.",
+          "You want an open store where anyone can publish an integration for free, installed in one click.",
         ],
       },
       ha: {
@@ -75,13 +76,19 @@ const comparisonContent = {
       },
       {
         feature: "Integrations",
-        gladys: "Curated and polished, built around open standards (Zigbee, Matter, MQTT)",
+        gladys:
+          "Native ones built around open standards (Zigbee, Matter, MQTT), plus community external integrations installed in one click",
         ha: "Huge plugin marketplace, broad protocol coverage including Z-Wave",
       },
       {
         feature: "Integration pricing",
-        gladys: "All integrations are free and open-source",
+        gladys: "All integrations are free and open-source, native and community alike",
         ha: "Freemium: many plugins are excellent but paid",
+      },
+      {
+        feature: "Publishing an integration",
+        gladys: "Anyone can: clone the template, push to GitHub, no pull request, no review, no fee",
+        ha: "Submit a plugin to the Market, which you can also sell",
       },
       {
         feature: "Automations",
@@ -148,16 +155,19 @@ const comparisonContent = {
         id: "integrations",
         title: "Integrations & plugins",
         gladys: [
-          "Gladys focuses on what matters: a curated set of integrations built around open standards like Zigbee, Matter and MQTT. Each one is carefully built and tested end to end, and they're all free and open-source, with no per-plugin fees.",
+          "Gladys' native integrations focus on what matters: open standards like Zigbee, Matter and MQTT. Each one is carefully built and tested end to end, and they're all free and open-source, with no per-plugin fees.",
           "Through Zigbee and Matter alone, that already means thousands of compatible devices. The bet is that open standards, Matter especially, will dominate, so Gladys invests heavily where the market is heading.",
-          "For anything not natively supported yet, Matterbridge can bridge devices onto a Matter network, including a Jeedom or Home Assistant plugin.",
+          "For everything else, Gladys has its own store, but built on a different model: external integrations. Anyone can package an integration, publish it on a public GitHub repository and see it listed in the catalog of every Gladys instance, with no pull request, no review, no approval from me, and no fee, ever. They are free and open-source by construction.",
+          "As a user, you never see any of that machinery: you browse the catalog inside Gladys, click Install, and Gladys pulls the integration, starts it and generates its entire interface. You then start, stop, update it or read its logs from the same screen as a native integration. No command line, no YAML, no technical skills required.",
+          "Freedom on one side, Gladys' rigor on the other: each external integration runs in an isolated sandbox (limited RAM and CPU, read-only filesystem, isolated network), so a community integration can never take your instance down with it.",
+          "And for anything still not covered, Matterbridge can bridge devices onto a Matter network, including a Jeedom or Home Assistant plugin.",
         ],
         ha: [
           "This is where Jeedom shines: a huge plugin marketplace covering an enormous range of protocols and brands, including deep, mature Z-Wave support. If a device exists, there's often a Jeedom plugin for it.",
           "The trade-off is the freemium model: many of the best plugins are paid, so the real cost of your setup depends on which plugins you need. Quality also varies between official and community plugins.",
         ],
         takeaway:
-          "If you want the widest catalog and strong Z-Wave, Jeedom's marketplace is hard to beat, as long as you're comfortable paying for some plugins. If you prefer free, open, curated integrations centered on Zigbee and Matter, Gladys is the cleaner choice.",
+          "If you want the widest catalog and strong Z-Wave, Jeedom's marketplace is hard to beat, as long as you're comfortable paying for some plugins. If you want integrations that stay free and open, on open standards, with a community store anyone can extend and install in one click, Gladys is the cleaner choice.",
       },
       {
         id: "automations",
@@ -234,7 +244,7 @@ const comparisonContent = {
       intro: [
         "Vous hésitez entre Gladys Assistant et Jeedom ? Les deux sont français, les deux sont open source, et les deux vous permettent de construire une maison connectée qui tourne chez vous plutôt que dans le cloud de quelqu'un d'autre. Ce comparatif va vous faire gagner des heures.",
         "En toute transparence : je suis Pierre-Gilles, le créateur de Gladys Assistant, donc je suis forcément un peu partial. Mais je serai juste envers les deux projets. Jeedom est une plateforme sérieuse et mature, avec un écosystème de plugins immense, et je le reconnaîtrai là où il le mérite.",
-        "La vraie différence, ce n'est pas « open source ou propriétaire » ni « local ou cloud », car ils se ressemblent sur ces points. C'est une question de philosophie : Jeedom est construit autour d'un vaste marché de plugins très flexible, là où Gladys est construit autour d'une expérience soignée, aboutie, pensée comme un produit. C'est justement cette différence qui doit guider votre choix.",
+        "La vraie différence, ce n'est pas « open source ou propriétaire » ni « local ou cloud », car ils se ressemblent sur ces points. C'est une question de philosophie : Jeedom est construit autour d'un vaste marché de plugins dont beaucoup des meilleurs sont payants, là où Gladys est construite autour d'une expérience soignée, pensée comme un produit, avec un store d'intégrations entièrement gratuit et ouvert, où n'importe qui peut publier. C'est justement cette différence qui doit guider votre choix.",
       ],
     },
     verdict: {
@@ -245,7 +255,8 @@ const comparisonContent = {
           "Vous voulez une interface moderne et épurée, et quelque chose qui fonctionne dès le départ.",
           "Vous préférez que chaque intégration soit gratuite et ouverte, sans frais par plugin.",
           "Vous tenez à la stabilité : les mises à jour sont totalement automatiques et atomiques.",
-          "Vous aimez miser sur les standards ouverts (Zigbee, Matter, MQTT) plutôt que sur un catalogue de plugins tentaculaire.",
+          "Vous aimez miser sur les standards ouverts (Zigbee, Matter, MQTT) plutôt que sur un catalogue de plugins payants.",
+          "Vous voulez un store ouvert où n'importe qui peut publier une intégration gratuitement, installable en un clic.",
         ],
       },
       ha: {
@@ -282,13 +293,19 @@ const comparisonContent = {
       },
       {
         feature: "Intégrations",
-        gladys: "Soignées et abouties, centrées sur les standards ouverts (Zigbee, Matter, MQTT)",
+        gladys:
+          "Natives et centrées sur les standards ouverts (Zigbee, Matter, MQTT), plus les intégrations externes de la communauté, installées en un clic",
         ha: "Marché de plugins immense, large couverture de protocoles dont le Z-Wave",
       },
       {
         feature: "Prix des intégrations",
-        gladys: "Toutes les intégrations sont gratuites et open source",
+        gladys: "Toutes les intégrations sont gratuites et open source, natives comme communautaires",
         ha: "Freemium : beaucoup de plugins sont excellents mais payants",
+      },
+      {
+        feature: "Publier une intégration",
+        gladys: "N'importe qui peut : on clone le template, on pousse sur GitHub, sans pull request, sans validation, sans frais",
+        ha: "Soumettre un plugin au Market, que l'on peut aussi vendre",
       },
       {
         feature: "Automatisations",
@@ -356,16 +373,19 @@ const comparisonContent = {
         id: "integrations",
         title: "Intégrations & plugins",
         gladys: [
-          "Gladys se concentre sur l'essentiel : un ensemble d'intégrations soignées, construites autour des standards ouverts comme Zigbee, Matter et MQTT. Chacune est testée de bout en bout, et elles sont toutes gratuites et open source, sans frais par plugin.",
+          "Les intégrations natives de Gladys se concentrent sur l'essentiel : les standards ouverts comme Zigbee, Matter et MQTT. Chacune est testée de bout en bout, et elles sont toutes gratuites et open source, sans frais par plugin.",
           "Rien qu'avec Zigbee et Matter, cela représente déjà des milliers d'appareils compatibles. Le pari, c'est que les standards ouverts, Matter en particulier, vont dominer ; Gladys investit donc là où va le marché.",
-          "Pour tout ce qui n'est pas encore supporté nativement, Matterbridge permet de relier des appareils à un réseau Matter, y compris via un plugin Jeedom ou Home Assistant.",
+          "Pour tout le reste, Gladys a aussi son store, mais bâti sur un autre modèle : les intégrations externes. N'importe qui peut empaqueter une intégration, la publier sur un dépôt GitHub public et la voir référencée dans le catalogue de toutes les instances Gladys, sans pull request, sans revue, sans mon autorisation, et sans frais, jamais. Elles sont gratuites et open source par construction.",
+          "En tant qu'utilisateur, vous ne voyez rien de cette mécanique : vous parcourez le catalogue dans Gladys, vous cliquez sur Installer, et Gladys télécharge l'intégration, la démarre et génère toute son interface. Vous la démarrez, l'arrêtez, la mettez à jour ou consultez ses logs depuis le même écran qu'une intégration native. Pas de ligne de commande, pas de YAML, aucune compétence technique requise.",
+          "La liberté d'un côté, la rigueur de Gladys de l'autre : chaque intégration externe tourne dans un bac à sable isolé (RAM et CPU limités, système de fichiers en lecture seule, réseau isolé), donc une intégration communautaire ne peut jamais emporter votre instance avec elle.",
+          "Et pour ce qui ne serait toujours pas couvert, Matterbridge permet de relier des appareils à un réseau Matter, y compris via un plugin Jeedom ou Home Assistant.",
         ],
         ha: [
           "C'est là que Jeedom brille : un marché de plugins immense couvrant un éventail énorme de protocoles et de marques, avec notamment un support Z-Wave mature et approfondi. Si un appareil existe, il y a souvent un plugin Jeedom pour lui.",
           "La contrepartie, c'est le modèle freemium : beaucoup des meilleurs plugins sont payants, donc le coût réel de votre installation dépend des plugins dont vous avez besoin. La qualité varie aussi entre plugins officiels et communautaires.",
         ],
         takeaway:
-          "Si vous voulez le catalogue le plus large et un Z-Wave solide, le marché de Jeedom est difficile à battre, à condition d'accepter de payer certains plugins. Si vous préférez des intégrations gratuites, ouvertes et soignées centrées sur Zigbee et Matter, Gladys est le choix le plus net.",
+          "Si vous voulez le catalogue le plus large et un Z-Wave solide, le marché de Jeedom est difficile à battre, à condition d'accepter de payer certains plugins. Si vous voulez des intégrations qui restent gratuites et ouvertes, bâties sur les standards ouverts, avec un store communautaire que chacun peut enrichir et qui s'installe en un clic, Gladys est le choix le plus net.",
       },
       {
         id: "scenarios",
@@ -445,7 +465,12 @@ export const comparisonFaqEn = [
   {
     question: "Are Jeedom plugins free?",
     answer:
-      "Jeedom's core is free and open-source, but it uses a freemium model: many of the best plugins are paid. With Gladys, every integration is free and open-source, so the cost is simply the optional Gladys Plus subscription if you want it.",
+      "Jeedom's core is free and open-source, but it uses a freemium model: many of the best plugins are paid. With Gladys, every integration is free and open-source, including the community external integrations you install from the store, so the only cost is the optional Gladys Plus subscription if you want it.",
+  },
+  {
+    question: "Does Gladys have a plugin store like Jeedom?",
+    answer:
+      "Yes, with a different model. Gladys external integrations are community integrations published on GitHub and listed automatically in the catalog of every Gladys instance. They are always free, there is no pull request or review to go through to publish one, and each runs in an isolated sandbox so it cannot destabilize your instance. You install one in a single click, with no command line and no YAML.",
   },
   {
     question: "Does Gladys support Z-Wave like Jeedom?",
@@ -478,7 +503,12 @@ export const comparisonFaqFr = [
   {
     question: "Les plugins Jeedom sont-ils gratuits ?",
     answer:
-      "Le cœur de Jeedom est gratuit et open source, mais il fonctionne en freemium : beaucoup des meilleurs plugins sont payants. Avec Gladys, chaque intégration est gratuite et open source ; le seul coût éventuel est l'abonnement optionnel Gladys Plus, si vous le souhaitez.",
+      "Le cœur de Jeedom est gratuit et open source, mais il fonctionne en freemium : beaucoup des meilleurs plugins sont payants. Avec Gladys, chaque intégration est gratuite et open source, y compris les intégrations externes communautaires que vous installez depuis le store ; le seul coût éventuel est l'abonnement optionnel Gladys Plus, si vous le souhaitez.",
+  },
+  {
+    question: "Gladys a-t-elle un store de plugins comme Jeedom ?",
+    answer:
+      "Oui, mais sur un autre modèle. Les intégrations externes de Gladys sont des intégrations communautaires publiées sur GitHub et référencées automatiquement dans le catalogue de toutes les instances Gladys. Elles sont toujours gratuites, il n'y a ni pull request ni validation à passer pour en publier une, et chacune tourne dans un bac à sable isolé qui l'empêche de déstabiliser votre instance. L'installation se fait en un seul clic, sans ligne de commande ni YAML.",
   },
   {
     question: "Gladys supporte-t-il le Z-Wave comme Jeedom ?",
