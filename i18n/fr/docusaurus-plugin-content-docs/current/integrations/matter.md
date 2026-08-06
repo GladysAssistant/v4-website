@@ -7,7 +7,7 @@ sidebar_label: Matter
 
 Le protocole Matter est une petite révolution dans le monde de la maison connectée : il permet enfin d'unifier la communication entre les appareils intelligents de différents fabricants.
 
-Gladys Assistant est compatible avec Matter, et vous pouvez donc intégrer des appareils Matter dans votre installation.
+Gladys Assistant est compatible avec Matter, et vous pouvez donc intégrer des appareils Matter dans votre installation. Gladys joue le rôle de **contrôleur Matter**, sur votre propre machine : dans la plupart des cas, vous n'avez aucun hub à acheter. Si vous vous demandez quel boîtier il vous faut, lisez notre guide sur [quel hub Matter choisir](/fr/matter-hub/).
 
 ## Compatibilités
 

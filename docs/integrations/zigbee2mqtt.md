@@ -12,6 +12,10 @@ keywords:
   - zigbee usb dongle raspberry pi
   - local zigbee hub
   - how to connect zigbee devices
+  - zigbee2mqtt port
+  - error while starting zigbee-herdsman
+  - zigbee2mqtt mac channel access failure
+  - zigbee2mqtt failed to connect to the adapter
 ---
 
 import JsonLd from '@site/src/components/seo/JsonLd';
@@ -98,6 +102,44 @@ Click on the **Edit** button of a device. You can then edit its name, the room i
 
 You can now use these Zigbee devices from the [Dashboard](../dashboard/devices.md) or from the [Scenes](../scenes/intro.md) automatically. Depending on the feature of each device, you will have access to measures, states or actions.
 
+## Troubleshooting common Zigbee2MQTT errors
+
+Most Zigbee2MQTT problems come from three things: the wrong USB port, the wrong adapter type, or 2.4 GHz interference. Here are the errors you are most likely to meet, and what they actually mean.
+
+### Error while starting zigbee-herdsman
+
+Zigbee2MQTT could not talk to your dongle at all. Check, in this order:
+
+1. The **USB port** selected in `Integrations / Zigbee2Mqtt / Settings` is the one your dongle is on. If you moved the dongle to another port, or rebooted with a disk plugged in, the port name may have changed.
+2. The **dongle model** selected in the settings matches your hardware. A Silicon Labs dongle configured as a Texas Instruments one (or the opposite) fails here.
+3. Nothing else is using the dongle. Only one Zigbee2MQTT instance can hold the adapter.
+4. The dongle has enough power. Unplug it, plug it back in through a **powered USB hub** or a short USB extension cable, and restart the integration.
+
+### Failed to connect to the adapter (SRSP - SYS - ping after 6000ms)
+
+This one is specific to Texas Instruments (CC2652 / ZBDongle-P) coordinators: the adapter is there, but it does not answer. It is almost always a wrong port, a wrong adapter type in the settings, or a dongle that needs to be physically unplugged and replugged. If it persists, reflashing the coordinator firmware solves the remaining cases.
+
+### Adapter EZSP protocol version (8) is not supported by host
+
+Your EmberZNet (Silicon Labs) dongle, typically a **Sonoff ZBDongle-E**, runs a firmware older than what the current Zigbee2MQTT expects. You have two options:
+
+- [Update the dongle firmware](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing), which is the recommended path, or
+- select the `(legacy ezsp)` option in the dongle model list in Gladys, which tells Zigbee2MQTT to speak the old protocol.
+
+### MQTT failed to connect, exiting (connection refused: not authorized)
+
+Zigbee2MQTT started, but the MQTT broker rejected its credentials. In Gladys, both containers are managed for you, so you rarely need to touch a configuration file: go back to the `Setup` section, disable Zigbee2MQTT, then enable it again. Gladys recreates both containers with matching credentials. If you also use the MQTT integration with your own broker, make sure you did not point Zigbee2MQTT at it with a different username or password.
+
+### MAC channel access failure
+
+This is a radio problem, not a software one: the coordinator cannot get a free slot on the air. The usual causes and fixes:
+
+- The dongle is plugged directly into the machine, next to USB 3.0 ports, an SSD or the Raspberry Pi itself. Move it away with a **USB extension cable of about one metre**, which is the single most effective fix.
+- Your Wi-Fi and your Zigbee network overlap on the 2.4 GHz band. Move your Wi-Fi channel, or your Zigbee channel, so they do not sit on top of each other.
+- The device is too far from the coordinator. Add a mains powered Zigbee device (a plug or a bulb) in between: those act as routers and extend the mesh.
+
+If your problem is not listed here, the [Zigbee2MQTT documentation](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html) covers startup failures in depth, and the [Gladys forum](https://community.gladysassistant.com/) is a good place to search for your exact message.
+
 ## Frequently asked questions
 
 ### How do I add a device to Zigbee2MQTT in Gladys?
@@ -106,7 +148,7 @@ Once Zigbee2MQTT is enabled, open the `Discover` menu and click `Permit joining`
 
 ### What USB Zigbee dongle should I use with a Raspberry Pi or NAS?
 
-Any adapter on the [Zigbee2MQTT supported adapters list](https://www.zigbee2mqtt.io/guide/adapters/) works. An affordable dongle we tested with Gladys is the Sonoff Zigbee 3.0 USB dongle. Plug it into the machine running Gladys (your Raspberry Pi or NAS); if you boot from a USB disk, use a powered USB hub so the dongle gets enough power.
+Any adapter on the [Zigbee2MQTT supported adapters list](https://www.zigbee2mqtt.io/guide/adapters/) works. An affordable dongle we tested with Gladys is the Sonoff Zigbee 3.0 USB dongle. Plug it into the machine running Gladys (your Raspberry Pi or NAS); if you boot from a USB disk, use a powered USB hub so the dongle gets enough power. Our [Zigbee dongle buyer's guide](/best-zigbee-dongle/) compares the most common models.
 
 ### Does Zigbee2MQTT with Gladys work without the cloud?
 
@@ -115,6 +157,14 @@ Yes. Zigbee2MQTT runs locally on your own hardware and talks to your devices thr
 ### Which port and settings should I select for my Zigbee dongle?
 
 In Gladys go to `Integrations / Zigbee2Mqtt`, then `Settings`. Gladys scans your USB ports and suggests them in a drop-down, so you simply pick the one matching your dongle and select your dongle model so Zigbee2MQTT loads the right configuration.
+
+### Why does Zigbee2MQTT fail to start?
+
+Nearly always because Zigbee2MQTT cannot reach the coordinator: the wrong USB port is selected, the dongle model in the settings does not match your hardware, the dongle is short on power, or its firmware is too old (the `EZSP protocol version is not supported` error on Sonoff ZBDongle-E dongles). Check the port and the model in the integration settings first, then unplug and replug the dongle through a powered hub or a USB extension cable.
+
+### Why do my Zigbee devices keep disconnecting?
+
+Interference on the 2.4 GHz band is the main cause, and it shows up as `MAC channel access failure` in the logs. Move the dongle away from the machine with a one metre USB extension cable, keep it clear of USB 3.0 ports and SSDs, make sure your Wi-Fi and Zigbee channels do not overlap, and add mains powered Zigbee devices, which act as routers and extend the mesh.
 
 <JsonLd
   data={{
@@ -151,6 +201,22 @@ In Gladys go to `Integrations / Zigbee2Mqtt`, then `Settings`. Gladys scans your
         acceptedAnswer: {
           "@type": "Answer",
           text: "In Gladys go to Integrations then Zigbee2Mqtt, then Settings. Gladys scans your USB ports and suggests them in a drop-down, so you pick the one matching your dongle and select your dongle model so Zigbee2MQTT loads the right configuration.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Why does Zigbee2MQTT fail to start?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Nearly always because Zigbee2MQTT cannot reach the coordinator: the wrong USB port is selected, the dongle model in the settings does not match your hardware, the dongle is short on power, or its firmware is too old (the EZSP protocol version is not supported error on Sonoff ZBDongle-E dongles). Check the port and the model in the integration settings first, then unplug and replug the dongle through a powered hub or a USB extension cable.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Why do my Zigbee devices keep disconnecting?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Interference on the 2.4 GHz band is the main cause, and it shows up as MAC channel access failure in the logs. Move the dongle away from the machine with a one metre USB extension cable, keep it clear of USB 3.0 ports and SSDs, make sure your Wi-Fi and Zigbee channels do not overlap, and add mains powered Zigbee devices, which act as routers and extend the mesh.",
         },
       },
     ],

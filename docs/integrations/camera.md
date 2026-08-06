@@ -44,7 +44,12 @@ For example, this is for a Xiaomi camera:
 If you don't find the iformation you are looking for on this website, I suggest you to Google "your camera name + RTSP". This should bring up search results that you can use to see if there is an open stream available.
 
 :::tip
-Using a Reolink camera? We have a dedicated guide with the exact RTSP URL format for Reolink: [Reolink camera in Gladys](/docs/integrations/external/reolink/).
+We have dedicated guides, with the exact RTSP URL format, for the most common camera brands:
+
+- [Reolink](/docs/integrations/external/reolink/)
+- [Imou](/docs/integrations/imou)
+- [LSC Smart Connect (Action)](/docs/integrations/lsc)
+- [Rollei IPC-88 (Aldi)](/docs/integrations/rollei)
 :::
 
 ## Trying to display the stream in VLC
