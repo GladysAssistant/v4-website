@@ -40,61 +40,58 @@ This integration lets you control your **Spotify Connect** devices from Gladys A
 1. Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) and sign in.
 2. Click **Create app**.
 3. Give it a name and a description (for example "Gladys").
-4. In **Redirect URIs**, add Gladys' redirect address (see "The redirect address" below), then click **Add**.
+4. In **Redirect URIs**, enter `https://my.gladysassistant.com/redirect/oauth` (see "The redirect address" below), then click **Add**.
 5. Tick the **Web API**, then save (**Save**).
 6. Open the app **Settings**: copy the **Client ID**, and reveal and copy the **Client Secret**.
 
 ## The redirect address (Redirect URI)
 
-This is the trickiest step: Spotify only agrees to send you back to Gladys if the redirect address is declared beforehand in your application, and it must be **identical character for character** to the one Gladys uses.
+Spotify only agrees to send you back to Gladys if the redirect address is declared beforehand in your application, and it must be **identical character for character** to the one Gladys uses.
 
-Since April 2025, Spotify also requires that address to be either **HTTPS**, or **HTTP on a loopback address** (`127.0.0.1`). An address such as `http://192.168.1.50:1444/...` is therefore always rejected. The integration handles this: it always replaces the host with `127.0.0.1`, whatever address you use to reach Gladys.
+Since April 2025, Spotify also requires that address to be **HTTPS** (or on the `127.0.0.1` loopback address). An address such as `http://192.168.1.50:1444/...` is therefore always rejected — which covers most self-hosted installations.
 
-The address has the following shape:
-
-```
-http://127.0.0.1:<PORT>/dashboard/integration/device/external/<selector>/oauth-callback
-```
-
-- `<PORT>` is the port of your Gladys interface (for example `1444`).
-- `<selector>` is the integration identifier (for example `ext-dev-spotify` in developer mode).
-
-Concrete example:
+Gladys solves this with an **HTTPS redirect page** shared by every instance. The address to declare in Spotify is therefore **fixed, and the same for everyone**:
 
 ```
-http://127.0.0.1:1444/dashboard/integration/device/external/ext-dev-spotify/oauth-callback
+https://my.gladysassistant.com/redirect/oauth
 ```
 
-To get the **exact** value for your installation, click **"Connect with Spotify"** once: the Spotify page that opens contains, in its address, the `redirect_uri=...` parameter. Decode it (`:` and `/` appear as `%3A` and `%2F`) and copy it **as is** into the **Redirect URIs** field of your Spotify application, then **Add** and **Save**.
+Copy it as is into the **Redirect URIs** field of your Spotify application, then **Add** and **Save**. The integration configuration screen also displays it, with a copy button.
 
-Points to respect (Spotify compares character for character):
+> ℹ️ This address depends neither on your port, nor on your IP address, nor on the integration `selector`: the same value works whether you reach Gladys locally or through Gladys Plus. You no longer have to update it when your installation changes.
 
-- the same **port** as your Gladys;
-- the **full path** up to `/oauth-callback` (do not stop at the host and port);
-- **no** trailing slash after `oauth-callback`;
-- `http` (not `https`) and `127.0.0.1` (not `localhost`).
+### How it works
 
-> ℹ️ The `selector` differs between developer mode (`ext-dev-spotify`) and the integration installed from the store. The redirect address therefore changes too: simply add the new value in Spotify when the time comes (you can declare several Redirect URIs).
+After you authorize, Spotify sends your browser back to that HTTPS page. The page reads your Gladys address — carried in the `state` parameter, the only one an OAuth provider hands back untouched — and bounces you to your instance, whatever it is, including over plain HTTP on your local network.
+
+This is the same approach as `my.home-assistant.io` for Home Assistant.
+
+On privacy, to be precise: the page is **static**, nothing runs server-side and nothing is stored. The authorization code does however appear in the address requested on a Gladys-operated domain; that code alone is useless, since exchanging it for tokens requires your Client Secret, which never leaves your installation. Tokens themselves transit neither through the redirect page nor through the Gladys frontend.
+
+> ℹ️ If you already reach Gladys over HTTPS, the configuration screen offers an advanced option to use your own instance address instead of the redirect page. You then have to declare that address in Spotify.
 
 ## Connection
 
 1. Open the Spotify integration configuration screen in Gladys.
 2. Paste your **Client ID** and **Client Secret**, then save.
 3. Click **"Connect with Spotify"**: you are redirected to Spotify to authorize Gladys.
-4. After authorizing, what happens next depends on the machine you browse from (see below).
+4. After authorizing, you go through the redirect page, which sends you back to your Gladys automatically.
+5. The connection is established and your Spotify Connect devices become available for discovery.
 
-### You browse from the machine running Gladys
+This works whichever way you reach Gladys: locally by its IP address, from the machine itself, or through Gladys Plus.
 
-You return straight to Gladys: the connection is established and your Spotify Connect devices become available for discovery. Nothing else to do.
+Access tokens are stored and refreshed automatically: you only need to connect once.
 
-### Gladys runs on a server you reach by its IP address
+### If the automatic return fails
 
-`127.0.0.1` always means **the machine running your browser**, not the server. After authorizing Spotify, your browser therefore tries to reach Gladys on your own computer and shows an **error page** ("this site can't be reached", "connection refused"…). **This is expected, and the authorization did go through**: the connection code is in the address shown.
+This should no longer happen, but the integration keeps a fallback method — for instance if the redirect page is unreachable, or on a Gladys version older than the one that introduced it.
+
+If, on the way back from Spotify, your browser shows an **error page** ("this site can't be reached", "connection refused"…) instead of returning to Gladys: **the authorization did go through**, and the connection code is in the address shown.
 
 1. In the address bar of the error page, **select and copy the full address**. It looks like:
 
    ```
-   http://127.0.0.1:1444/dashboard/integration/device/external/ext-spotify/oauth-callback?code=AQD...&state=8f2c...
+   http://192.168.1.50:1444/dashboard/integration/device/external/ext-spotify/oauth-callback?code=AQD...&state=8f2c...
    ```
 
 2. Go back to Gladys, to the Spotify integration configuration screen.
@@ -104,16 +101,14 @@ You return straight to Gladys: the connection is established and your Spotify Co
 
 > ⚠️ The code in that address is **single-use** and expires after a few minutes. If it fails, simply click "Connect with Spotify" again and retry with the new address.
 
-Access tokens are stored and refreshed automatically: you only need to connect once, whichever method you used.
-
 ## Device discovery
 
 Only devices **currently online** (Spotify app open, speaker awake and connected) are returned by the Spotify API. If a device does not appear, open Spotify on it and run discovery again.
 
 ## Troubleshooting
 
-- **Spotify shows "redirect_uri: Not matching configuration"** (or does not show the authorization screen): the address declared in your Spotify application does not exactly match the one Gladys uses. Re-read "The redirect address": it is almost always the **path** (`/dashboard/integration/.../oauth-callback`) that is missing, or a different port.
-- **"The integration refused the connection"** (or "connection refused", "site can't be reached") when returning from Spotify: this is the normal case when Gladys runs on a remote server. Copy the address of the error page and use the **"Finish the connection"** action (see the "Connection" section).
+- **Spotify shows "redirect_uri: Not matching configuration"** (or does not show the authorization screen): the address declared in your Spotify application does not exactly match the one Gladys uses. Check that the **Redirect URIs** field contains `https://my.gladysassistant.com/redirect/oauth`, with no trailing slash, and that you clicked **Add** then **Save**. If you enabled the "instance address" option, that is the address to declare instead.
+- **"Connection refused" or "site can't be reached"** when returning from Spotify: the automatic return did not complete. Copy the address of the error page and use the **"Finish the connection"** action (see "If the automatic return fails").
 - **"Spotify OAuth state mismatch"**: the address you pasted comes from an earlier authorization request. Keep only **one** authorization tab open at a time (each click generates a new request, only the last one is valid), then start over.
 - **"This URL carries no authorization code"**: you most likely copied the address after reloading the error page, which dropped the query parameters. Click "Connect with Spotify" again and copy the address **without reloading** the page.
 - **The code expired** (`invalid_grant` error when finishing the connection): the code is valid for a few minutes and single-use. Click "Connect with Spotify" again.
@@ -130,17 +125,17 @@ These are the settings Spotify asks for in its configuration screen in Gladys.
 
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
-| Connect your Spotify account | `section` | No | This integration controls your Spotify Connect devices through the Spotify Web API. A Spotify Premium account is required to control playback. First create a free Spotify application, paste its Client ID and Client Secret below, then click "Connect with Spotify". |
+| Connect your Spotify account | `section` | No | This integration controls your Spotify Connect devices through the Spotify Web API. A Spotify Premium account is required to control playback. First create a free Spotify application, declare the redirect URI shown below in it, paste its Client ID and Client Secret here, then click "Connect with Spotify". |
 | Client ID | `string` | Yes |  |
 | Client Secret | `secret` | Yes |  |
 | Connect with Spotify | `oauth2` | No | Once the Client ID and Client Secret are saved, click Connect to authorize Gladys on your Spotify account. |
-| Browser could not return to Gladys? | `section` | No | Spotify only accepts a redirect address on 127.0.0.1, which means the machine running your browser. If you reach Gladys through a server IP address, the return lands on a blank or error page: this is expected, and the authorization did succeed. Copy the full address from your browser address bar, paste it below, save, then click "Finish the connection". |
+| Browser could not return to Gladys? | `section` | No | The return from Spotify is normally automatic. If your browser lands on a blank or error page instead of coming back to Gladys, the authorization did still succeed: copy the full address from your browser address bar, paste it below, save, then click "Finish the connection". |
 | Returned address | `string` | No |  |
 
 ## How to install Spotify in Gladys
 
 1. In Gladys, open **Integrations**: Spotify appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-spotify:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-spotify:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-spotify](https://github.com/William-De71/gladys-spotify).
 

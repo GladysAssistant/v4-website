@@ -1,0 +1,169 @@
+---
+title: "Saunier Duval integration for Gladys Assistant"
+sidebar_label: "Saunier Duval"
+description: "Control your Saunier Duval heating (MiGo): temperatures, humidity, boiler state and setpoint. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-Vaillant-SaunierDuval.png"
+keywords:
+  - "saunier duval"
+  - "gladys saunier duval"
+  - "saunier duval gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="saunier-duval" />
+
+This integration connects Gladys Assistant to your Saunier Duval heating system
+through the Vaillant Group cloud — the same service the **MiGo** app on your
+phone uses.
+
+It lets you:
+
+- read the room temperature measured by the thermostat;
+- read the humidity measured by the thermostat (model dependent);
+- read the outdoor temperature;
+- read the boiler state (heating, or idle);
+- read the target temperature;
+- **change** the target temperature;
+- **change** the boiler state (turn heating on or off).
+
+## Supported hardware
+
+Any Saunier Duval installation already driven from the MiGo app:
+
+- a **MiGo** or **MiGo Link** gateway paired with a boiler (ThemaPlus Condens,
+  Isotwin, Duomax…);
+- controllers based on a **VRC700** (MiPro, MiPro Sense).
+
+One installation can hold several heating zones: Gladys then creates one
+thermostat per zone.
+
+> **Bulex** accounts (Belgium) use the same backend but a different country list
+> than the one offered here. This integration targets Saunier Duval accounts.
+
+## Requirements
+
+1. A MiGo gateway already installed and **paired in the MiGo app**. This
+   integration reads the account, it does not set it up.
+2. The email address and the password of that MiGo account.
+3. The **country** the account was registered in. This is the most common cause
+   of failure: a wrong country makes the login fail even with a valid password.
+
+## Configuration
+
+Open the integration configuration in Gladys and fill in:
+
+| Field                  | Description                                                                              |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| **Email address**      | The login of your MiGo account.                                                          |
+| **Password**           | The account password. Gladys stores it encrypted and never sends it back to the browser. |
+| **Country**            | The country the account was registered in (France by default).                           |
+| **When heating is on** | The mode a zone returns to when you switch heating back on.                              |
+| **Temporary override** | How long a target temperature lasts when the zone follows its schedule.                  |
+| **Refresh interval**   | How often the readings are fetched, in seconds.                                          |
+
+Then click **Test the connection**: the button lists the installations found on
+the account with their current temperatures. If that test passes, everything
+else will work.
+
+## Devices created
+
+For each installation, Gladys creates two devices.
+
+**The thermostat** (one per heating zone):
+
+| Feature            | Read / write |
+| ------------------ | ------------ |
+| Temperature        | Read         |
+| Humidity           | Read         |
+| Target temperature | Read + write |
+| Heating (on / off) | Read + write |
+
+**The boiler** (one per installation):
+
+| Feature             | Read / write |
+| ------------------- | ------------ |
+| Outdoor temperature | Read         |
+| Boiler state        | Read         |
+| Water pressure      | Read         |
+
+Humidity and water pressure are only created when your installation actually
+reports them.
+
+## How the target temperature is applied
+
+The behaviour depends on the mode the zone currently runs in, so that the value
+you pick in Gladys is the one the controller aims for:
+
+- **The zone follows its weekly schedule** → a temporary override is applied,
+  exactly like turning the dial on the thermostat. It lasts the configured
+  number of hours, then the schedule takes over again.
+- **The zone runs in manual mode** → the manual setpoint itself is changed,
+  permanently.
+- **The zone is switched off** → heating is turned back on in manual mode at the
+  requested temperature: asking for a temperature means asking for heat.
+
+The **Heating** switch turns the zone off (`OFF` mode) or back on in the mode
+chosen in the configuration (weekly schedule by default).
+
+## Known limitations
+
+- **The gateway is slow.** It only pushes its readings to the cloud every few
+  minutes: lowering the refresh interval below 300 seconds gains nothing and
+  multiplies the calls.
+- **Changes take a moment to show up.** After a command, the cloud can take one
+  to two minutes to reflect the new value.
+- **Unofficial API.** Saunier Duval does not document this API: it is the one
+  its mobile app uses. It can change without notice.
+- **One account at a time.** The integration reads every installation of an
+  account, but only one account can be configured.
+
+## Troubleshooting
+
+- **"Login refused"**: check the email address, the password and above all the
+  **country**. Try signing in from the MiGo app to confirm the account works.
+- **No device appears**: run **Test the connection**. If no installation is
+  found, the gateway is not attached to this account.
+- **Values stopped updating**: check the logs of the integration container
+  (`LOG_LEVEL=debug` shows every API call).
+
+## Configuration settings
+
+These are the settings Saunier Duval asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect your MiGo account | `section` | No | This integration talks to the Saunier Duval cloud, the same service the MiGo app uses. Sign in with the email address and the password of that app, and pick the country your account was created in. Your gateway (MiGo, MiGo Link) must already be paired in the app. |
+| Email address | `string` | Yes | The email address of your MiGo / Saunier Duval account. |
+| Password | `secret` | Yes | The password of your MiGo account. It is stored encrypted by Gladys and never sent back to the browser. |
+| Country | `select` | Yes | The country your account was registered in. A wrong country makes the login fail. |
+| When heating is turned on | `select` | No | Which mode the zone goes back to when you switch heating on: its weekly schedule, or a fixed manual temperature. |
+| Temporary override duration (h) | `number` | No | When the zone follows its schedule, changing the target temperature applies a temporary override. This is how long it lasts, in hours. |
+| Refresh interval (s) | `number` | No | How often the temperatures are read from the cloud, in seconds. The gateway itself only reports every few minutes, so there is little value in going below 300. |
+
+## How to install Saunier Duval in Gladys
+
+1. In Gladys, open **Integrations**: Saunier Duval appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/philippema/gladys-vaillant-saunierduval:2.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval](https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval).
+
+Saunier Duval requires Gladys `>=4.62.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Saunier Duval is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [PhilippeMA](https://github.com/PhilippeMA), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval) — [source of this documentation](https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval/blob/HEAD/docs/en.md)

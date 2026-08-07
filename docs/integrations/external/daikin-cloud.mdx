@@ -1,0 +1,266 @@
+---
+title: "Daikin Cloud integration for Gladys Assistant"
+sidebar_label: "Daikin Cloud"
+description: "Control your Daikin air conditioners through the official Onecta cloud API. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-daikin-cloud.png"
+keywords:
+  - "daikin cloud"
+  - "gladys daikin cloud"
+  - "daikin cloud gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-daikin-cloud instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="daikin-cloud" />
+
+Control your Daikin air conditioners from Gladys, through the **official Daikin
+Onecta cloud API** — the same cloud the Onecta mobile app talks to. No hardware
+to add, no reverse engineering: your units keep working exactly as they do
+today, Gladys just becomes another remote control.
+
+## What you get
+
+For every air conditioner of your Daikin account, Gladys creates one device
+with the features your model actually supports:
+
+| Feature             | What it does                                                         |
+| ------------------- | -------------------------------------------------------------------- |
+| On/Off              | Turn the unit on and off                                             |
+| Mode                | Auto, Cooling, Heating, Drying, Fan only                             |
+| Target temperature  | The setpoint of the mode currently active                            |
+| Fan speed           | The fan speed, on the scale your unit declares (often 1-5)           |
+| Horizontal airflow  | The left/right airflow direction                                     |
+| Vertical airflow    | The up/down airflow direction                                        |
+| Powerful mode       | Daikin's "Powerful" mode (switch)                                    |
+| Econo mode          | Daikin's "Econo" mode (switch)                                       |
+| Streamer mode       | The "Streamer" air purification mode (switch)                        |
+| Keep dry            | The indoor unit's "Keep dry" advanced function                       |
+| Room temperature    | The temperature the unit measures (sensor, kept in history)          |
+| Outdoor temperature | The temperature the outdoor unit measures (sensor, kept in history)  |
+| Energy today        | Electrical consumption for the day, in kWh (sensor, kept in history) |
+| Energy this month   | Electrical consumption for the current month, in kWh                 |
+| Energy this year    | Electrical consumption for the current year, in kWh                  |
+
+A model without louvers gets no airflow direction, a model without a fan gets
+no fan speed, a model without the Streamer function gets no Streamer switch:
+only what the hardware reports is published. The choices offered in the
+interface are also restricted to what the unit accepts — a unit without a
+"Drying" mode never shows one.
+
+One detail about the fan: **Fan speed** only shows a value while the unit is
+actually running on a manual level. In Auto or Quiet there is no level to show,
+so the control stays empty until you set one — and setting one switches the unit
+to manual.
+
+Daikin's Auto and Quiet airflow modes are not exposed: the Gladys fan mode list
+offers five fixed labels that cannot be restricted, where "Medium" would have
+had to mean "manual" — a control that explains nothing. Set the fan back to Auto
+from the Onecta app if you need it.
+
+The features describe what your unit can do across **all** its operation
+modes, not what it can do at this instant. Daikin declares no manual fan level
+in Drying, for example: without that, a device discovered while the unit was
+dehumidifying would have lost its speed control for good. In exchange, a
+command sent in a mode that cannot take it is refused with a clear message
+rather than failing silently.
+
+**The electrical consumption** comes from the per-period counters Daikin keeps.
+They are totals that **reset**: today's goes back to zero at midnight, the
+monthly one on the first of the month. They are sensors, not the ever-growing
+index of an electricity meter — do not wire them into a widget expecting an
+index. Daikin splits those counters per mode (heating, cooling…); the
+integration sums them, because what a dashboard wants is what the unit consumed,
+not how it was split.
+
+Daikin reports some functions read-only depending on the model and firmware —
+"Keep dry" almost always is. Those are published as sensors, without a switch
+the API would refuse anyway.
+
+> **The fan controls need Gladys 4.79 or newer**, and the per-axis airflow
+> direction (plus the restricted mode lists) need 4.84.3. In between, the
+> louvers fold into a single "Oscillation" feature. On an older Gladys the
+> integration still works and simply publishes less.
+
+Heat pumps (Altherma…) are partially supported: their on/off, mode and outdoor
+temperature work, but their water temperature setpoint is not exposed — this
+integration targets air conditioners.
+
+## Before you start: create your Daikin application
+
+The Onecta API is free, but each user needs their own application. It takes two
+minutes:
+
+1. Go to the [Daikin developer portal](https://developer.cloud.daikineurope.com/)
+   and create an account (you can use the same email as your Onecta account).
+2. Open **My apps** → **New app**.
+3. Give the app a name (for example `Gladys`).
+4. In **Redirect URIs**, paste the address Gladys shows you. Open the
+   **Configuration** tab of the Daikin Cloud integration in Gladys: the address
+   is displayed right under the **Connect** button, with a copy button next to
+   it. By default it is:
+
+   ```
+   https://my.gladysassistant.com/redirect/oauth
+   ```
+
+   This page is hosted by Gladys and simply bounces the browser back to your
+   own instance — Daikin, like most providers, refuses a plain `http://`
+   address, which is how most people reach their Gladys at home. If you already
+   serve Gladys over HTTPS, you can untick the option in the Configuration
+   screen and declare your own address instead; whatever address is shown is
+   the one to paste here, character for character.
+
+5. Save the app, then copy its **Client ID** and its **Client secret**.
+
+## Configuration
+
+1. In Gladys, open **Integrations → Daikin Cloud → Configuration**.
+2. Paste the **Client ID** and the **Client secret** of your Daikin app.
+3. **Save** — the credentials must be stored before the connection can start.
+4. Click **Connect** next to _Daikin account_. A new tab opens on the Daikin
+   sign-in page: log in with the account your air conditioners are paired with
+   in the Onecta app, and accept the authorization.
+5. You come back to Gladys, the integration reads your account, and your units
+   appear in the **Discovery** tab. Add the ones you want.
+
+Gladys stores the resulting tokens itself and renews them automatically. You
+should not have to go through this flow again.
+
+## Refresh interval and API quota
+
+Daikin limits a developer account to **200 API calls per day and 20 per
+minute**. This is the one constraint to keep in mind, and it drives how the
+integration behaves:
+
+- one refresh reads **all** your units in a single call, so the number of units
+  does not change the cost;
+- every command you send (on/off, a temperature, a fan speed…) costs one more
+  call — and changing a fan speed to a fixed level costs two;
+- the default interval of **900 seconds (15 minutes)** spends 96 calls a day and
+  leaves the rest for your commands.
+
+You can raise the interval up to 6 hours, or lower it down to 10 minutes if you
+rarely control your units from Gladys. Going lower than that would spend the
+whole daily budget before the day ends, which is why the field stops there.
+
+Because of this quota, the integration does **not** use the per-device polling
+of Gladys (which is one minute at the slowest): it runs its own schedule.
+
+## Actions
+
+**Test the connection** reads your Daikin account right away and reports, for
+every unit, how many features were published **and which characteristics your
+unit declares that this integration does not use**. That is what tells "the
+integration ignores this function" apart from "your model does not report it to
+the API" — two problems with completely different answers. If a function you see
+in Onecta is missing, run this action: when its name appears neither in the
+published features nor in the ignored characteristics, the Daikin API does not
+expose it for your model.
+
+## API quota left
+
+Under the **Connect** button, the Configuration screen permanently shows what is
+left of today's Daikin quota:
+
+> Connected. 184/200 Daikin API calls left today.
+
+The count is the one Daikin returns on every call, refreshed each time the cloud
+is read — so at least once per refresh interval, and immediately after clicking
+_Test the connection_.
+
+## Device status badge
+
+Each device carries a badge showing how Gladys reaches it:
+
+- **Cloud** — normal operation.
+- **Cloud with an orange dot** — the unit is reachable but reports a fault;
+  check it in the Onecta app.
+- **Unreachable** — Daikin cannot reach the unit (its Wi-Fi adapter is offline,
+  a power cut, a router change…). Commands are refused with a clear message and
+  no state is published, so your charts do not get a flat line that looks like a
+  real measurement.
+
+## Troubleshooting
+
+**"Fill in the client ID and the client secret first, then save."**
+The credentials are empty or were not saved. Fill both fields, click Save, then
+Connect.
+
+**The Daikin page says the redirect URI is invalid.**
+The address declared in your Daikin app does not match the one Gladys uses.
+Copy it again from under the Connect button — including the protocol and
+without a trailing slash.
+
+**"The Daikin session expired, please reconnect your account."**
+The refresh token was revoked (password changed, app deleted on the portal,
+account access removed). Click Connect again.
+
+**"Daikin API quota reached, increase the refresh interval."**
+You hit the 200 calls a day, most likely by combining a short interval with a
+lot of commands, or by running several integrations on the same Daikin app. The
+quota resets on its own; raise the refresh interval to avoid hitting it again.
+
+**A change made in the Onecta app takes a while to show up in Gladys.**
+Expected: Daikin's API has no push notifications, so Gladys only sees a change
+at the next refresh. Lower the interval, or use the _Test the connection_ action
+to force a read.
+
+**A function I use in the Onecta app is missing (Econo, Streamer, Keep dry…).**
+The Onecta app talks to Daikin's internal API. This integration talks to the
+**public** Onecta API, through the `onecta:basic.integration` scope, and that
+scope returns a smaller payload: a function can simply be absent from what the
+API sends for your unit. When it is there, this integration publishes it; when
+it is not, nothing can drive it — no integration built on the public API can,
+and that is not a limitation of this one. It depends on the model and the
+firmware, so check rather than assume: run **Test the connection**. A name that
+appears neither in the published features nor in the ignored characteristics is
+one the API does not expose for your unit.
+
+**Nothing appears in the Discovery tab.**
+Make sure the units are visible in the Onecta app with the same account, then
+run _Test the connection_: the message tells you how many units the API
+returned.
+
+The integration logs every call it makes: check the integration logs in the
+Gladys interface for the full detail.
+
+## Configuration settings
+
+These are the settings Daikin Cloud asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Create your Daikin application | `section` | No | The Onecta API is free but personal: create an account on the Daikin developer portal, add an application, and copy its Client ID and Client secret below. The portal asks for a Redirect URI: paste there the address displayed under the Connect button. |
+| Client ID | `string` | Yes | The Client ID of your application on the Daikin developer portal. |
+| Client secret | `secret` | Yes | The Client secret of your application. Save the configuration before connecting your account. |
+| Link your Daikin account | `section` | No | Click Save BEFORE clicking Connect: the integration reads the client ID and the secret from the SAVED configuration, so connecting with an unsaved form fails. Then sign in with the Daikin account your air conditioners are paired with in the Onecta app. The address displayed under the button is the Redirect URI to declare on the developer portal. |
+| Daikin account | `oauth2` | Yes |  |
+| Refresh rate and API quota | `section` | No | Daikin allows 200 API calls per day and 20 per minute. Every refresh reads all your units in a single call, and each command you send costs one more call. 900 seconds (15 minutes) uses 96 calls a day and leaves room for commands; lower it only if you rarely control your units from Gladys. |
+| Refresh interval (s) | `number` | No | How often the Daikin cloud is read, in seconds. |
+
+## How to install Daikin Cloud in Gladys
+
+1. In Gladys, open **Integrations**: Daikin Cloud appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-daikin-cloud:1.0.7`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-daikin-cloud](https://github.com/prohand/gladys-daikin-cloud).
+
+Daikin Cloud requires Gladys `>=4.62.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Daikin Cloud is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-daikin-cloud) — [source of this documentation](https://github.com/prohand/gladys-daikin-cloud/blob/HEAD/docs/en.md)
