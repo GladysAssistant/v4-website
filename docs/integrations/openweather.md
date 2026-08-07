@@ -7,6 +7,12 @@ sidebar_label: OpenWeather
 
 This integration let you display the weather forecast in Gladys Assistant.
 
+:::info[Since Gladys 4.85, weather can also come from an external integration]
+
+Weather providers can now be built as [external integrations](/docs/integrations/external/), which cover any provider (Météo France, Open-Meteo, AccuWeather…) and support weather alerts, provider images and the weather-alert scene triggers. Installing one takes precedence over this built-in OpenWeather service automatically, which is why it is now marked as deprecated in the catalog.
+
+:::
+
 ## Create an OpenWeather account
 
 To configure OpenWeather, first go to [https://openweathermap.org/api](https://openweathermap.org/api).

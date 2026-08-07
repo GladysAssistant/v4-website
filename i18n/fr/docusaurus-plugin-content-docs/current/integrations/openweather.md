@@ -7,6 +7,12 @@ sidebar_label: OpenWeather
 
 Cette intégration vous permet de récupérer la météo dans Gladys Assistant.
 
+:::info[Depuis Gladys 4.85, la météo peut aussi venir d'une intégration externe]
+
+Les fournisseurs météo peuvent désormais être développés sous forme d'[intégrations externes](/fr/docs/integrations/external/), qui couvrent n'importe quel fournisseur (Météo France, Open-Meteo, AccuWeather…) et gèrent les alertes météo, les images du fournisseur et les déclencheurs de scène sur alerte météo. En installer une prend automatiquement le pas sur ce service OpenWeather intégré, qui est pour cette raison marqué comme déprécié dans le catalogue.
+
+:::
+
 ## Créez un compte OpenWeather
 
 Rendez-vous sur le site d'OpenWeather : [https://openweathermap.org/api](https://openweathermap.org/api).
