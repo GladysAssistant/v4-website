@@ -42,7 +42,12 @@ Si vous ne trouvez rien sur ce site, une recherche Google peut vous aider, en ch
 Si vous ne trouvez rien, peut-être que votre caméra utilise un protocole fermé, et dans ce cas là vous n'avez pas beaucoup de choix que de changer de caméra.
 
 :::tip
-Vous avez une caméra Reolink ? Nous avons un guide dédié avec le format exact des URL RTSP Reolink : [Caméra Reolink dans Gladys](/fr/docs/integrations/external/reolink/).
+Nous avons des guides dédiés, avec le format exact des URL RTSP, pour les marques de caméras les plus courantes :
+
+- [Reolink](/fr/docs/integrations/external/reolink/)
+- [Imou](/fr/docs/integrations/imou/)
+- [LSC Smart Connect (Action)](/fr/docs/integrations/lsc/)
+- [Rollei IPC-88 (Aldi)](/fr/docs/integrations/rollei/)
 :::
 
 ## Testez la connexion à votre caméra avec VLC

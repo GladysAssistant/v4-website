@@ -7,7 +7,7 @@ sidebar_label: Matter
 
 Le protocole Matter est une petite révolution dans le monde de la maison connectée : il permet enfin d'unifier la communication entre les appareils intelligents de différents fabricants.
 
-Gladys Assistant est compatible avec Matter, et vous pouvez donc intégrer des appareils Matter dans votre installation.
+Gladys Assistant est compatible avec Matter, et vous pouvez donc intégrer des appareils Matter dans votre installation. Gladys joue le rôle de **contrôleur Matter**, sur votre propre machine : pour un appareil Matter en Wi-Fi ou en Ethernet, vous n'avez aucun hub à acheter. Les appareils Thread font exception, comme expliqué plus bas. Si vous vous demandez quel boîtier il vous faut, lisez notre guide sur [quel hub Matter choisir](/fr/matter-hub/).
 
 ## Compatibilités
 
@@ -55,7 +55,7 @@ Et si celle dont vous avez besoin n'existe pas encore, vous pouvez la créer : v
 
 Si votre appareil utilise Thread, il faudra le connecter à un routeur Thread avant de pouvoir l'utiliser dans Gladys.
 
-Le routeur Thread (ou "Thread Border Router" en anglais) fait le pont entre vos appareils Thread et votre réseau local à la maison.
+Le routeur Thread (ou "Thread Border Router" en anglais) fait le pont entre vos appareils Thread et votre réseau local à la maison. **Gladys n'est pas un Thread Border Router** : c'est un contrôleur Matter, il vous faut donc un routeur de bordure sur votre réseau pour un appareil Thread.
 
 Beaucoup d'appareils du commerce sont des routeurs Thread :
 
@@ -71,6 +71,14 @@ Beaucoup d'appareils du commerce sont des routeurs Thread :
 - Amazon Echo Show (21, 15, 10 et 8)
 
 Il est aussi possible de mettre en place un routeur Thread soi-même avec un dongle USB Thread et OpenThread.
+
+:::warning
+Un Thread Border Router seul ne suffit pas aujourd'hui pour ajouter un appareil Matter over Thread dans Gladys. L'appairage de ce type d'appareil passe par le Bluetooth, que Gladys ne gère pas encore : le premier appairage doit donc se faire avec un **contrôleur Matter complet**, comme une Apple TV, une Amazon Echo compatible Matter ou un appareil Google Nest. Une fois l'appareil appairé là-bas, demandez à ce contrôleur un nouveau code d'appairage et ajoutez l'appareil dans Gladys, qui le pilotera ensuite en local.
+
+Cela signifie aussi qu'un dongle Thread flashé en OpenThread, ou la radio Thread d'un coordinateur multiprotocole comme le SMLIGHT SLZB-MR1 ou le SONOFF Dongle Max, route bien le trafic Thread mais ne remplace pas ce contrôleur.
+
+Cela pourra évoluer à l'avenir si l'appairage Bluetooth est ajouté à Gladys.
+:::
 
 ## Configuration dans Gladys Assistant
 

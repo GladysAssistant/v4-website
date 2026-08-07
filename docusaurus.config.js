@@ -171,6 +171,10 @@ module.exports = function createConfig() {
               to: "best-zigbee-dongle/",
             },
             {
+              label: "Which Matter hub to choose",
+              to: "matter-hub/",
+            },
+            {
               label: "Reduce your electricity bill",
               to: "home-energy-monitoring/",
             },
@@ -340,6 +344,7 @@ module.exports = function createConfig() {
                   path === "/local-smart-home/" ||
                   path === "/open-source-home-automation/" ||
                   path === "/best-zigbee-dongle/" ||
+                  path === "/matter-hub/" ||
                   path === "/edf-tempo/" ||
                   path === "/blog/"
                 ) {

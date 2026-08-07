@@ -80,10 +80,10 @@ const bestZigbeeDongleContent = {
         },
         {
           name: "SMLIGHT SLZB-06",
-          tag: "Best range & placement",
+          tag: "Best placement options",
           image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
           imageAlt: "SMLIGHT SLZB-06 Ethernet Zigbee coordinator",
-          text: "A network coordinator that connects over Ethernet or PoE instead of USB, so you can place it centrally in your home for the best Zigbee range, far from interference. Supported by Gladys since 4.81.",
+          text: "A coordinator with USB-C, Ethernet and PoE, so you can either plug it into your server or place it centrally in your home. Its coordinator type is selectable in Gladys since 4.81; connect it over USB, as Gladys does not yet offer a network (TCP) connection.",
           href: amazonUS("SMLIGHT SLZB-06 Zigbee coordinator"),
           linkLabel: "View on Amazon →",
         },
@@ -108,6 +108,19 @@ const bestZigbeeDongleContent = {
       ],
       outro:
         "The full, always up-to-date list of compatible coordinators is on the Zigbee2MQTT supported adapters page.",
+    },
+    multiprotocol: {
+      title: "What about Matter and Thread dongles?",
+      paragraphs: [
+        "A growing family of coordinators carries two radios: one for Zigbee, one for Thread. The SMLIGHT SLZB-MR1 is the best known, with a Zigbee radio and a Thread radio side by side, plus USB-C, Ethernet and PoE. On paper it runs your Zigbee network and acts as a Thread border router at the same time.",
+        "Two things are worth knowing before you buy one for that reason. First, running both radios at once is still experimental territory, whatever the software you use. Second, and more importantly, a Thread radio will not get you Matter over Thread in Gladys today: a border router only carries the traffic, while the first pairing of a Matter over Thread device goes over Bluetooth, which Gladys does not handle yet. That step still needs a full Matter controller such as an Apple TV, a Matter compatible Echo or a Google Nest device, which then shares the device with Gladys.",
+        "None of that applies to Matter over Wi-Fi and Ethernet, which needs no dongle at all: those devices are already on your network and pair with Gladys directly.",
+        "So buy a multiprotocol coordinator if you want one box for both networks and you enjoy tinkering. Buy a plain, proven Zigbee coordinator if what you want is a Zigbee network that just works.",
+      ],
+      link: {
+        label: "Which Matter hub do you actually need? →",
+        href: "/matter-hub/",
+      },
     },
     gladys: {
       title: "How it works with Gladys Assistant",
@@ -225,10 +238,10 @@ const bestZigbeeDongleContent = {
         },
         {
           name: "SMLIGHT SLZB-06",
-          tag: "Meilleure portée & placement",
+          tag: "Le plus polyvalent",
           image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
           imageAlt: "Coordinateur Zigbee Ethernet SMLIGHT SLZB-06",
-          text: "Un coordinateur réseau qui se connecte en Ethernet ou PoE plutôt qu'en USB : vous pouvez le placer au centre de la maison pour une portée Zigbee optimale, loin des interférences. Pris en charge par Gladys depuis la 4.81.",
+          text: "Un coordinateur avec USB-C, Ethernet et PoE : vous pouvez le brancher sur votre serveur ou le placer au centre de la maison. Son type de coordinateur est sélectionnable dans Gladys depuis la 4.81 ; branchez-le en USB, Gladys ne propose pas encore de connexion réseau (TCP).",
           href: amazonFR("SMLIGHT SLZB-06 coordinateur Zigbee"),
           linkLabel: "Voir sur Amazon →",
         },
@@ -253,6 +266,19 @@ const bestZigbeeDongleContent = {
       ],
       outro:
         "La liste complète et toujours à jour des coordinateurs compatibles se trouve sur la page des adaptateurs pris en charge par Zigbee2MQTT.",
+    },
+    multiprotocol: {
+      title: "Et les dongles Matter et Thread ?",
+      paragraphs: [
+        "Une famille grandissante de coordinateurs embarque deux radios : une pour le Zigbee, une pour le Thread. Le SMLIGHT SLZB-MR1 est le plus connu, avec une radio Zigbee et une radio Thread côte à côte, plus l'USB-C, l'Ethernet et le PoE. Sur le papier, il fait tourner votre réseau Zigbee et sert de routeur de bordure Thread en même temps.",
+        "Deux points méritent d'être connus avant d'en acheter un pour cette raison. D'abord, faire tourner les deux radios simultanément reste un terrain expérimental, quel que soit le logiciel utilisé. Ensuite, et surtout, une radio Thread ne vous donnera pas le Matter over Thread dans Gladys aujourd'hui : un routeur de bordure ne fait que transporter le trafic, alors que le premier appairage d'un appareil Matter over Thread passe par le Bluetooth, que Gladys ne gère pas encore. Cette étape réclame toujours un contrôleur Matter complet, comme une Apple TV, une Echo compatible Matter ou un appareil Google Nest, qui partage ensuite l'appareil avec Gladys.",
+        "Rien de tout cela ne concerne le Matter en Wi-Fi et en Ethernet, qui ne demande aucun dongle : ces appareils sont déjà sur votre réseau et s'appairent directement avec Gladys.",
+        "Achetez donc un coordinateur multiprotocole si vous voulez un seul boîtier pour les deux réseaux et que vous aimez bricoler. Achetez un coordinateur Zigbee simple et éprouvé si ce que vous voulez, c'est un réseau Zigbee qui fonctionne.",
+      ],
+      link: {
+        label: "De quel hub Matter avez-vous vraiment besoin ? →",
+        href: "/fr/matter-hub/",
+      },
     },
     gladys: {
       title: "Comment ça marche avec Gladys Assistant",
@@ -336,6 +362,16 @@ export const bestZigbeeDongleFaqEn = [
       "Yes. Network coordinators such as the SMLIGHT SLZB-06 connect over Ethernet or PoE instead of USB. This lets you place the coordinator centrally in your home, away from interference, which often improves range and reliability more than changing the dongle model.",
   },
   {
+    question: "Is the SMLIGHT SLZB-MR1 a good choice?",
+    answer:
+      "The SLZB-MR1 is a dual-radio coordinator: one Zigbee radio and one Thread radio, with USB-C, Ethernet and PoE. It works as a Zigbee coordinator with Zigbee2MQTT and its type is selectable in Gladys, connected over USB. Running Zigbee and Thread simultaneously is still experimental, and its Thread radio will not let Gladys pair Matter over Thread devices on its own: that first pairing goes over Bluetooth, through a full Matter controller such as an Apple TV, a Matter compatible Echo or a Google Nest device. Buy it for the Zigbee side and the flexibility, not as a way into Matter.",
+  },
+  {
+    question: "Do I need a Matter or Thread dongle for Gladys?",
+    answer:
+      "No, and a Thread dongle would not help anyway. Matter devices on Wi-Fi or Ethernet are already on your network and pair with Gladys directly, with no dongle at all. Thread devices do need a Thread border router, but a bare border router is not enough with Gladys today: the initial pairing of a Matter over Thread device goes over Bluetooth, which Gladys does not handle yet, so it has to be done on a full Matter controller such as an Apple TV, a Matter compatible Echo or a Google Nest device, and the device is then shared with Gladys. A Zigbee dongle is for Zigbee devices, which are a separate, still very large ecosystem.",
+  },
+  {
     question: "Do I need a Zigbee hub or bridge with Gladys?",
     answer:
       "No. A USB Zigbee dongle plus Zigbee2MQTT replaces any proprietary hub. Gladys installs and configures Zigbee2MQTT for you, so your Zigbee devices are controlled directly and entirely locally, with no manufacturer bridge or cloud account.",
@@ -367,6 +403,16 @@ export const bestZigbeeDongleFaqFr = [
     question: "Puis-je utiliser un coordinateur Zigbee en Ethernet plutôt qu'en USB ?",
     answer:
       "Oui. Des coordinateurs réseau comme la SMLIGHT SLZB-06 se connectent en Ethernet ou PoE plutôt qu'en USB. Cela permet de placer le coordinateur au centre de la maison, loin des interférences, ce qui améliore souvent la portée et la fiabilité davantage que de changer de modèle de clé.",
+  },
+  {
+    question: "Le SMLIGHT SLZB-MR1 est-il un bon choix ?",
+    answer:
+      "Le SLZB-MR1 est un coordinateur à deux radios : une radio Zigbee et une radio Thread, avec USB-C, Ethernet et PoE. Il fonctionne comme coordinateur Zigbee avec Zigbee2MQTT et son type est sélectionnable dans Gladys, en le branchant en USB. Faire tourner le Zigbee et le Thread en même temps reste expérimental, et sa radio Thread ne permettra pas à Gladys d'appairer seule des appareils Matter over Thread : ce premier appairage passe par le Bluetooth, via un contrôleur Matter complet comme une Apple TV, une Echo compatible Matter ou un appareil Google Nest. Achetez-le pour la partie Zigbee et la polyvalence, pas comme porte d'entrée vers Matter.",
+  },
+  {
+    question: "Faut-il un dongle Matter ou Thread pour Gladys ?",
+    answer:
+      "Non, et un dongle Thread ne vous aiderait de toute façon pas. Les appareils Matter en Wi-Fi ou Ethernet sont déjà sur votre réseau et s'appairent directement avec Gladys, sans aucun dongle. Les appareils Thread, eux, ont bien besoin d'un routeur de bordure Thread, mais un simple routeur de bordure ne suffit pas avec Gladys aujourd'hui : le premier appairage d'un appareil Matter over Thread passe par le Bluetooth, que Gladys ne gère pas encore, il doit donc se faire sur un contrôleur Matter complet comme une Apple TV, une Echo compatible Matter ou un appareil Google Nest, l'appareil étant ensuite partagé avec Gladys. Une clé Zigbee sert aux appareils Zigbee, qui forment un écosystème distinct et toujours très large.",
   },
   {
     question: "Faut-il une box ou un pont Zigbee avec Gladys ?",

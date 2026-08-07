@@ -7,7 +7,7 @@ sidebar_label: Matter
 
 The Matter protocol is a small revolution in the world of smart homes: it finally allows unified communication between smart devices from different manufacturers.
 
-Gladys Assistant is compatible with Matter, so you can integrate Matter devices into your setup.
+Gladys Assistant is compatible with Matter, so you can integrate Matter devices into your setup. Gladys acts as your **Matter controller**, running on your own machine: for a Matter device on Wi-Fi or Ethernet, you do not need to buy a hub at all. Thread devices are the exception, and are covered below. If you are wondering which box you need, read our guide on [which Matter hub to choose](/matter-hub/).
 
 ## Compatibility
 
@@ -55,7 +55,7 @@ And if the one you need doesn't exist yet, you can create it: see the [external 
 
 If your device uses Thread, you need to connect it to a Thread router before using it in Gladys.
 
-A Thread router (or “Thread Border Router”) bridges your Thread devices to your home network.
+A Thread router (or “Thread Border Router”) bridges your Thread devices to your home network. **Gladys is not a Thread Border Router**: it is a Matter controller, so a Thread device needs one on your network.
 
 Many commercial devices are Thread routers:
 
@@ -71,6 +71,14 @@ Many commercial devices are Thread routers:
 - Amazon Echo Show (21, 15, 10, and 8)
 
 You can also set up your own Thread router using a USB Thread dongle and OpenThread.
+
+:::warning
+A Thread Border Router on its own is not enough to add a Matter over Thread device to Gladys today. Pairing such a device goes through Bluetooth, which Gladys does not handle yet, so the initial pairing has to be done with a **full Matter controller**: an Apple TV, a Matter compatible Amazon Echo or a Google Nest device. Once the device is paired there, ask that controller for a new pairing code and add the device to Gladys, which then controls it locally.
+
+This also means a Thread dongle flashed with OpenThread, or the Thread radio of a multiprotocol coordinator such as the SMLIGHT SLZB-MR1 or the SONOFF Dongle Max, routes Thread traffic but does not replace that controller.
+
+This may change in the future if Bluetooth pairing is added to Gladys.
+:::
 
 ## Configuration in Gladys Assistant
 

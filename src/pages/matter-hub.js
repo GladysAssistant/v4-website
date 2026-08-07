@@ -1,41 +1,23 @@
 import React from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getBestZigbeeDonglePageSchema } from "../data/structuredData";
-import bestZigbeeDongleContent, {
-  bestZigbeeDongleFaqEn,
-  bestZigbeeDongleFaqFr,
-} from "../data/bestZigbeeDongleData";
+import { getMatterHubPageSchema } from "../data/structuredData";
+import matterHubContent, {
+  matterHubFaqEn,
+  matterHubFaqFr,
+} from "../data/matterHubData";
 
 import styles from "./comparison.module.css";
 
-function DongleCard({ name, tag, image, imageAlt, text, href, linkLabel }) {
+function JobCard({ name, tag, text }) {
   return (
     <div className={styles.card}>
-      {image && (
-        <div className={styles.dongleImageWrap}>
-          <img
-            className={styles.dongleImage}
-            src={useBaseUrl(image)}
-            alt={imageAlt || name}
-            loading="lazy"
-          />
-        </div>
-      )}
       {tag && <span className={styles.cardTag}>{tag}</span>}
       <div className={styles.cardTitle}>{name}</div>
       <p>{text}</p>
-      {href && (
-        <p className={styles.compareLink}>
-          <a href={href} target="_blank" rel="noopener noreferrer sponsored">
-            {linkLabel}
-          </a>
-        </p>
-      )}
     </div>
   );
 }
@@ -78,55 +60,74 @@ function GuideContent({ content, faq }) {
           </div>
         </header>
 
-        {/* WHAT TO LOOK FOR */}
-        <section className={styles.section} aria-labelledby="criteria-title">
-          <h2 id="criteria-title" className={styles.sectionTitle}>
-            {content.criteria.title}
+        {/* THE THREE JOBS */}
+        <section className={styles.section} aria-labelledby="jobs-title">
+          <h2 id="jobs-title" className={styles.sectionTitle}>
+            {content.jobs.title}
           </h2>
-          <p className={styles.blockIntro}>{content.criteria.intro}</p>
+          <p className={styles.blockIntro}>{content.jobs.intro}</p>
+          <div className={styles.cardGrid}>
+            {content.jobs.items.map((item, i) => (
+              <JobCard key={i} {...item} />
+            ))}
+          </div>
+          <p className={styles.blockOutro}>{content.jobs.outro}</p>
+        </section>
+
+        {/* DO YOU NEED ONE */}
+        <section className={styles.section} aria-labelledby="decision-title">
+          <h2 id="decision-title" className={styles.sectionTitle}>
+            {content.decision.title}
+          </h2>
+          <p className={styles.blockIntro}>{content.decision.intro}</p>
           <ul className={styles.bulletList}>
-            {content.criteria.points.map((point, i) => (
+            {content.decision.points.map((point, i) => (
               <li key={i}>{point}</li>
             ))}
           </ul>
-          <p className={styles.blockOutro}>{content.criteria.outro}</p>
+          <p className={styles.blockOutro}>{content.decision.outro}</p>
         </section>
 
-        {/* RECOMMENDED DONGLES */}
-        <section className={styles.section} aria-labelledby="dongles-title">
-          <h2 id="dongles-title" className={styles.sectionTitle}>
-            {content.dongles.title}
+        {/* COMPARISON TABLE */}
+        <section className={styles.section} aria-labelledby="comparison-title">
+          <h2 id="comparison-title" className={styles.sectionTitle}>
+            {content.comparison.title}
           </h2>
-          <p className={styles.blockIntro}>{content.dongles.intro}</p>
-          <div className={styles.cardGrid}>
-            {content.dongles.items.map((item, i) => (
-              <DongleCard key={i} {...item} />
-            ))}
+          <p className={styles.blockIntro}>{content.comparison.intro}</p>
+          <div className={styles.tableWrapper}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  {content.comparison.table.headers.map((header, i) => (
+                    <th key={i}>{header}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {content.comparison.table.rows.map((row, r) => (
+                  <tr key={r}>
+                    {row.map((cell, c) =>
+                      c === 0 ? (
+                        <th
+                          key={c}
+                          scope="row"
+                          className={r === 0 ? styles.gladysCol : undefined}
+                        >
+                          {cell}
+                        </th>
+                      ) : (
+                        <td key={c}>{cell}</td>
+                      )
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <p className={styles.blockOutro}>{content.dongles.outro}</p>
+          <p className={styles.blockOutro}>{content.comparison.outro}</p>
         </section>
 
-        {/* MATTER / THREAD MULTIPROTOCOL COORDINATORS */}
-        <section
-          className={styles.section}
-          aria-labelledby="multiprotocol-title"
-        >
-          <h2 id="multiprotocol-title" className={styles.sectionTitle}>
-            {content.multiprotocol.title}
-          </h2>
-          <div className={styles.whyNotBoth}>
-            {content.multiprotocol.paragraphs.map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))}
-            <p className={styles.compareLink}>
-              <Link to={content.multiprotocol.link.href}>
-                {content.multiprotocol.link.label}
-              </Link>
-            </p>
-          </div>
-        </section>
-
-        {/* HOW IT WORKS WITH GLADYS */}
+        {/* GLADYS AS A MATTER HUB */}
         <section className={styles.section} aria-labelledby="gladys-title">
           <h2 id="gladys-title" className={styles.sectionTitle}>
             {content.gladys.title}
@@ -193,15 +194,15 @@ function GuideContent({ content, faq }) {
   );
 }
 
-export default function BestZigbeeDonglePage() {
+export default function MatterHubPage() {
   const { i18n } = useDocusaurusContext();
   const lang = i18n.currentLocale === "fr" ? "fr" : "en";
-  const content = bestZigbeeDongleContent[lang];
-  const faq = lang === "fr" ? bestZigbeeDongleFaqFr : bestZigbeeDongleFaqEn;
+  const content = matterHubContent[lang];
+  const faq = lang === "fr" ? matterHubFaqFr : matterHubFaqEn;
 
   return (
     <Layout title={content.meta.title} description={content.meta.description}>
-      <JsonLd data={getBestZigbeeDonglePageSchema(lang)} />
+      <JsonLd data={getMatterHubPageSchema(lang)} />
       <GuideContent content={content} faq={faq} />
     </Layout>
   );
