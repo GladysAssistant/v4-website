@@ -37,9 +37,9 @@ const matterHubContent = {
           text: "The software that pairs your Matter devices, holds their credentials and sends them commands. Apple Home, Google Home, Alexa and SmartThings are controllers, and so is Gladys, running on your own machine. You need exactly one to get started, and a device can be shared with several.",
         },
         {
-          tag: "Only for Thread devices",
+          tag: "Required for Thread devices",
           name: "A Thread border router",
-          text: "A bridge between the low-power Thread radio network and your home IP network. Only Thread devices need one. Many homes already have one without knowing it, inside an Apple TV, a HomePod, a Nest Hub or an Echo.",
+          text: "A bridge between the low-power Thread radio network and your home IP network. Only Thread devices need one, and Gladys is not one. Many homes already have one without knowing it, inside an Apple TV, a HomePod, a Nest Hub or an Echo. With Gladys today, that box also has to be a full Matter controller, because the first pairing of a Matter over Thread device happens over Bluetooth, which Gladys does not handle yet.",
         },
         {
           tag: "For older devices",
@@ -48,14 +48,14 @@ const matterHubContent = {
         },
       ],
       outro:
-        "Most people asking for a Matter hub are looking for the first one, a controller, and can skip buying hardware entirely.",
+        "Most people asking for a Matter hub are looking for the first one, a controller. If their devices are on Wi-Fi or Ethernet, they can skip buying hardware entirely. Thread is the one case where a box is still required.",
     },
     decision: {
       title: "Do you need to buy a hub at all?",
       intro: "Look at what your devices use to communicate:",
       points: [
         "Matter over Wi-Fi or Ethernet: no hub to buy. The device is already on your network, and Gladys pairs with it directly using its 11-digit code. This covers most Matter plugs, bulbs, and every manufacturer bridge.",
-        "Matter over Thread: you need a Thread border router on your network, but probably not a new one. Check the Apple, Google and Amazon devices you already own before buying anything.",
+        "Matter over Thread: you need a Thread border router on your network, and with Gladys today it has to be a full Matter controller such as an Apple TV, a Matter compatible Echo or a Google Nest device. The first pairing of a Thread device goes over Bluetooth, which Gladys does not handle yet: you pair the device there, then share it with Gladys with a new pairing code. Check the Apple, Google and Amazon devices you already own before buying anything.",
         "Zigbee or Z-Wave devices: Matter is not involved at all. These need their own coordinator, which with Gladys means a USB Zigbee dongle and Zigbee2MQTT, not a Matter hub.",
         "Cloud-only devices, such as Somfy io or many older brands: no hub will make them speak Matter. A bridge such as Matterbridge, or a direct integration, is the way in.",
       ],
@@ -72,7 +72,7 @@ const matterHubContent = {
           [
             "Gladys on your own machine",
             "Yes",
-            "No, use an existing one",
+            "No, Thread needs another controller",
             "Yes, entirely",
           ],
           ["Apple TV 4K / HomePod", "Yes", "Yes", "Mostly, Apple account"],
@@ -83,7 +83,7 @@ const matterHubContent = {
         ],
       },
       outro:
-        "The commercial hubs are good Thread border routers, and a fine way to get one. What they are not is a neutral place to build your automations: each one keeps your devices inside its own ecosystem and its own account. That is the job Gladys takes over.",
+        "The commercial hubs are good Thread border routers, and today they are also how a Thread device gets paired in the first place, since Gladys is not a border router and does not yet do the Bluetooth pairing that Matter over Thread requires. What they are not is a neutral place to build your automations: each one keeps your devices inside its own ecosystem and its own account. That is the job Gladys takes over, and thanks to multi-admin you can leave a Thread device paired to the box and still drive it entirely from Gladys.",
     },
     gladys: {
       title: "Gladys as your Matter hub",
@@ -91,6 +91,7 @@ const matterHubContent = {
         "Gladys Assistant is a Matter controller that runs on your own hardware: a Raspberry Pi, a mini-PC or a NAS. You enable Matter in the integration settings, enter the 11-digit pairing code of your device, and it appears in Gladys, ready to be placed on a dashboard or used in a scene.",
         "From there, control is local. Commands go from your Gladys to your device on your own network, with no ecosystem account in between and no cloud round trip. Your Matter lights, plugs, shutters, thermostats and sensors sit next to your Zigbee devices and your cameras, in one interface.",
         "Two practical points. Matter runs on IPv6, so IPv6 must be enabled on your machine and your router. And if a device is already paired with another controller, Apple Home for instance, you pair Gladys with a new code generated by that controller rather than the code printed on the box.",
+        "One limit worth stating plainly: Gladys is not a Thread border router, and it does not yet handle the Bluetooth pairing a Matter over Thread device needs. Those devices are still added through a full Matter controller, an Apple TV, a Matter compatible Echo or a Google Nest device, and then shared with Gladys. Everything else, Matter over Wi-Fi, Matter over Ethernet and manufacturer bridges, works with Gladys alone.",
       ],
       link: {
         label: "Read the Matter integration guide →",
@@ -173,9 +174,9 @@ const matterHubContent = {
           text: "Le logiciel qui appaire vos appareils Matter, conserve leurs identifiants et leur envoie des commandes. Apple Home, Google Home, Alexa et SmartThings sont des contrôleurs, et Gladys aussi, sur votre propre machine. Il en faut exactement un pour démarrer, et un appareil peut être partagé entre plusieurs.",
         },
         {
-          tag: "Seulement pour le Thread",
+          tag: "Indispensable pour le Thread",
           name: "Un routeur de bordure Thread",
-          text: "Une passerelle entre le réseau radio basse consommation Thread et votre réseau IP domestique. Seuls les appareils Thread en ont besoin. Beaucoup de foyers en ont déjà un sans le savoir, dans une Apple TV, un HomePod, un Nest Hub ou une Echo.",
+          text: "Une passerelle entre le réseau radio basse consommation Thread et votre réseau IP domestique. Seuls les appareils Thread en ont besoin, et Gladys n'en est pas un. Beaucoup de foyers en ont déjà un sans le savoir, dans une Apple TV, un HomePod, un Nest Hub ou une Echo. Avec Gladys aujourd'hui, ce boîtier doit aussi être un contrôleur Matter complet : le premier appairage d'un appareil Matter over Thread passe par le Bluetooth, que Gladys ne gère pas encore.",
         },
         {
           tag: "Pour les appareils plus anciens",
@@ -184,14 +185,14 @@ const matterHubContent = {
         },
       ],
       outro:
-        "La plupart des gens qui cherchent un hub Matter cherchent en fait le premier, un contrôleur, et peuvent se passer complètement d'un achat de matériel.",
+        "La plupart des gens qui cherchent un hub Matter cherchent en fait le premier, un contrôleur. Si leurs appareils sont en Wi-Fi ou en Ethernet, ils peuvent se passer complètement d'un achat de matériel. Le Thread est le seul cas où un boîtier reste nécessaire.",
     },
     decision: {
       title: "Avez-vous vraiment besoin d'acheter un hub ?",
       intro: "Regardez ce que vos appareils utilisent pour communiquer :",
       points: [
         "Matter en Wi-Fi ou Ethernet : aucun hub à acheter. L'appareil est déjà sur votre réseau, et Gladys s'y appaire directement avec son code à 11 chiffres. C'est le cas de la plupart des prises et ampoules Matter, et de tous les ponts de fabricants.",
-        "Matter en Thread : il vous faut un routeur de bordure Thread sur votre réseau, mais probablement pas un neuf. Vérifiez les appareils Apple, Google et Amazon que vous possédez déjà avant d'acheter.",
+        "Matter en Thread : il vous faut un routeur de bordure Thread sur votre réseau, et avec Gladys aujourd'hui ce doit être un contrôleur Matter complet, comme une Apple TV, une Echo compatible Matter ou un appareil Google Nest. Le premier appairage d'un appareil Thread passe par le Bluetooth, que Gladys ne gère pas encore : vous appairez l'appareil sur ce contrôleur, puis vous le partagez avec Gladys grâce à un nouveau code d'appairage. Vérifiez les appareils Apple, Google et Amazon que vous possédez déjà avant d'acheter.",
         "Appareils Zigbee ou Z-Wave : Matter n'entre pas en jeu. Ils ont besoin de leur propre coordinateur, ce qui avec Gladys signifie une clé USB Zigbee et Zigbee2MQTT, pas un hub Matter.",
         "Appareils uniquement cloud, comme le Somfy io ou beaucoup de marques plus anciennes : aucun hub ne les fera parler Matter. Un pont comme Matterbridge, ou une intégration directe, est la bonne porte d'entrée.",
       ],
@@ -208,7 +209,7 @@ const matterHubContent = {
           [
             "Gladys sur votre machine",
             "Oui",
-            "Non, utilisez un routeur existant",
+            "Non, le Thread passe par un autre contrôleur",
             "Oui, entièrement",
           ],
           ["Apple TV 4K / HomePod", "Oui", "Oui", "En grande partie, compte Apple"],
@@ -234,7 +235,7 @@ const matterHubContent = {
         ],
       },
       outro:
-        "Les hubs du commerce sont de bons routeurs de bordure Thread, et une façon tout à fait valable d'en obtenir un. Ce qu'ils ne sont pas, c'est un endroit neutre où bâtir vos automatisations : chacun garde vos appareils dans son écosystème et son compte. C'est ce rôle que Gladys reprend.",
+        "Les hubs du commerce sont de bons routeurs de bordure Thread, et c'est aussi par eux qu'un appareil Thread se fait appairer aujourd'hui, puisque Gladys n'est pas un routeur de bordure et ne gère pas encore l'appairage Bluetooth qu'exige le Matter over Thread. Ce qu'ils ne sont pas, c'est un endroit neutre où bâtir vos automatisations : chacun garde vos appareils dans son écosystème et son compte. C'est ce rôle que Gladys reprend, et grâce au multi-admin vous pouvez laisser l'appareil Thread appairé au boîtier tout en le pilotant entièrement depuis Gladys.",
     },
     gladys: {
       title: "Gladys comme hub Matter",
@@ -242,6 +243,7 @@ const matterHubContent = {
         "Gladys Assistant est un contrôleur Matter qui tourne sur votre propre matériel : un Raspberry Pi, un mini-PC ou un NAS. Vous activez Matter dans les paramètres de l'intégration, vous saisissez le code d'appairage à 11 chiffres de votre appareil, et il apparaît dans Gladys, prêt à être posé sur un tableau de bord ou utilisé dans une scène.",
         "À partir de là, le pilotage est local. Les commandes vont de votre Gladys à votre appareil sur votre propre réseau, sans compte d'écosystème au milieu et sans aller-retour par le cloud. Vos lumières, prises, volets, thermostats et capteurs Matter côtoient vos appareils Zigbee et vos caméras, dans une seule interface.",
         "Deux points pratiques. Matter fonctionne en IPv6 : l'IPv6 doit donc être activé sur votre machine et sur votre box. Et si un appareil est déjà appairé à un autre contrôleur, Apple Home par exemple, vous appairez Gladys avec un nouveau code généré par ce contrôleur, et non avec le code imprimé sur la boîte.",
+        "Une limite qu'il vaut mieux dire clairement : Gladys n'est pas un routeur de bordure Thread, et elle ne gère pas encore l'appairage Bluetooth dont a besoin un appareil Matter over Thread. Ces appareils passent donc toujours par un contrôleur Matter complet, une Apple TV, une Echo compatible Matter ou un appareil Google Nest, avant d'être partagés avec Gladys. Tout le reste, le Matter en Wi-Fi, en Ethernet et les ponts de fabricants, fonctionne avec Gladys seule.",
       ],
       link: {
         label: "Lire le guide de l'intégration Matter →",
@@ -301,27 +303,27 @@ export const matterHubFaqEn = [
   {
     question: "Do I need a Matter hub?",
     answer:
-      "You need a Matter controller, which is software, not necessarily a box. Apple Home, Google Home, Alexa and SmartThings are controllers, and so is Gladys running on your own Raspberry Pi, mini-PC or NAS. You only need to buy hardware if your devices use Thread, in which case you need a Thread border router on your network.",
+      "You need a Matter controller, which is software, not necessarily a box. Apple Home, Google Home, Alexa and SmartThings are controllers, and so is Gladys running on your own Raspberry Pi, mini-PC or NAS. For a Matter device on Wi-Fi or Ethernet, that is all you need and there is no hardware to buy. You only need a box if your devices use Thread: Matter over Thread requires a Thread border router, and with Gladys today that box also has to be a full Matter controller such as an Apple TV, a Matter compatible Echo or a Google Nest device, because the first pairing goes over Bluetooth and Gladys does not handle that yet.",
   },
   {
     question: "What is the difference between a Matter hub and a Thread border router?",
     answer:
-      "A Matter controller pairs and controls your devices. A Thread border router connects the low-power Thread radio network to your home IP network. Commercial hubs usually do both, which is why the two get confused, but they are separate jobs: Matter devices on Wi-Fi or Ethernet need a controller and no border router at all.",
+      "A Matter controller pairs and controls your devices. A Thread border router connects the low-power Thread radio network to your home IP network. Commercial hubs usually do both, which is why the two get confused, but they are separate jobs: Matter devices on Wi-Fi or Ethernet need a controller and no border router at all. Gladys is a controller, not a border router.",
   },
   {
     question: "Which devices are Thread border routers?",
     answer:
-      "Common ones include the Apple TV 4K (Ethernet model) and HomePod, the Google Nest Hub second generation, Nest Hub Max, Nest Wifi Pro and TV Streamer 4K, and the Amazon Echo fourth generation, Echo Hub, Echo Studio and Echo Show. You can also build your own with a USB Thread dongle and OpenThread.",
+      "Common ones include the Apple TV 4K (Ethernet model) and HomePod, the Google Nest Hub second generation, Nest Hub Max, Nest Wifi Pro and TV Streamer 4K, and the Amazon Echo fourth generation, Echo Hub, Echo Studio and Echo Show. You can also build one yourself with a USB Thread dongle and OpenThread, but be aware that a border router only routes traffic: it does not do the Bluetooth pairing a new Matter over Thread device needs, so with Gladys today you still go through one of the full controllers above.",
   },
   {
     question: "Can I use Matter without Apple, Google or Amazon?",
     answer:
-      "Yes. Gladys Assistant is a Matter controller you host yourself, so you can pair and control Matter devices with no ecosystem account. You may still need a Thread border router for Thread-only devices, but for Matter over Wi-Fi or Ethernet, Gladys alone is enough.",
+      "For Matter over Wi-Fi and Ethernet, yes: Gladys Assistant is a Matter controller you host yourself, so you can pair and control those devices with no ecosystem account, and Gladys alone is enough. For Matter over Thread, not yet: Gladys is not a Thread border router and does not handle the Bluetooth pairing those devices require, so one of those boxes is still needed to bring the device onto your Thread network. Once it is paired there, you share it with Gladys and control it locally from Gladys.",
   },
   {
     question: "Do I need a Matter dongle?",
     answer:
-      "No. Matter travels over your existing Wi-Fi and Ethernet network, so no USB dongle is involved. Dongles marketed as Matter or Thread coordinators contain a Thread radio, which is only useful if you want to build your own Thread border router. For Zigbee devices, you need a Zigbee dongle, which is a different thing entirely.",
+      "No. Matter travels over your existing Wi-Fi and Ethernet network, so no USB dongle is involved. Dongles marketed as Matter or Thread coordinators contain a Thread radio, which only lets you build a Thread border router: it does not replace a Matter controller, since the Bluetooth pairing step for Matter over Thread is not something Gladys does yet. For Zigbee devices, you need a Zigbee dongle, which is a different thing entirely.",
   },
   {
     question: "Is the IKEA DIRIGERA a Matter hub?",
@@ -331,7 +333,7 @@ export const matterHubFaqEn = [
   {
     question: "Can Gladys be my Matter hub?",
     answer:
-      "Yes. Gladys is a Matter controller: enable Matter in the integration settings, enter the 11-digit pairing code of your device, and control it from your dashboard and your scenes. Matter runs on IPv6, so make sure IPv6 is enabled on your machine and your router. Gladys is not a Thread border router, so Thread-only devices still need one on your network.",
+      "Yes for Matter over Wi-Fi and Ethernet. Gladys is a Matter controller: enable Matter in the integration settings, enter the 11-digit pairing code of your device, and control it from your dashboard and your scenes. Matter runs on IPv6, so make sure IPv6 is enabled on your machine and your router. Gladys is not a Thread border router, and it does not yet do the Bluetooth pairing that Matter over Thread requires, so those devices are paired with a full Matter controller, an Apple TV, a Matter compatible Echo or a Google Nest device, and then shared with Gladys.",
   },
   {
     question: "Can a device be connected to two Matter hubs at once?",
@@ -344,27 +346,27 @@ export const matterHubFaqFr = [
   {
     question: "Ai-je besoin d'un hub Matter ?",
     answer:
-      "Il vous faut un contrôleur Matter, qui est un logiciel, pas nécessairement un boîtier. Apple Home, Google Home, Alexa et SmartThings sont des contrôleurs, et Gladys aussi, sur votre propre Raspberry Pi, mini-PC ou NAS. Vous n'avez besoin d'acheter du matériel que si vos appareils utilisent le Thread : il vous faut alors un routeur de bordure Thread sur votre réseau.",
+      "Il vous faut un contrôleur Matter, qui est un logiciel, pas nécessairement un boîtier. Apple Home, Google Home, Alexa et SmartThings sont des contrôleurs, et Gladys aussi, sur votre propre Raspberry Pi, mini-PC ou NAS. Pour un appareil Matter en Wi-Fi ou en Ethernet, cela suffit et il n'y a aucun matériel à acheter. Vous n'avez besoin d'un boîtier que si vos appareils utilisent le Thread : le Matter over Thread exige un routeur de bordure Thread, et avec Gladys aujourd'hui ce boîtier doit aussi être un contrôleur Matter complet, comme une Apple TV, une Echo compatible Matter ou un appareil Google Nest, car le premier appairage passe par le Bluetooth, que Gladys ne gère pas encore.",
   },
   {
     question: "Quelle différence entre un hub Matter et un routeur de bordure Thread ?",
     answer:
-      "Un contrôleur Matter appaire et pilote vos appareils. Un routeur de bordure Thread relie le réseau radio basse consommation Thread à votre réseau IP domestique. Les hubs du commerce font en général les deux, d'où la confusion, mais ce sont deux rôles distincts : les appareils Matter en Wi-Fi ou Ethernet ont besoin d'un contrôleur et d'aucun routeur de bordure.",
+      "Un contrôleur Matter appaire et pilote vos appareils. Un routeur de bordure Thread relie le réseau radio basse consommation Thread à votre réseau IP domestique. Les hubs du commerce font en général les deux, d'où la confusion, mais ce sont deux rôles distincts : les appareils Matter en Wi-Fi ou Ethernet ont besoin d'un contrôleur et d'aucun routeur de bordure. Gladys est un contrôleur, pas un routeur de bordure.",
   },
   {
     question: "Quels appareils sont des routeurs de bordure Thread ?",
     answer:
-      "Parmi les plus courants : l'Apple TV 4K (modèle Ethernet) et le HomePod, les Google Nest Hub 2e génération, Nest Hub Max, Nest Wifi Pro et TV Streamer 4K, ainsi que les Amazon Echo 4e génération, Echo Hub, Echo Studio et Echo Show. Vous pouvez aussi fabriquer le vôtre avec une clé USB Thread et OpenThread.",
+      "Parmi les plus courants : l'Apple TV 4K (modèle Ethernet) et le HomePod, les Google Nest Hub 2e génération, Nest Hub Max, Nest Wifi Pro et TV Streamer 4K, ainsi que les Amazon Echo 4e génération, Echo Hub, Echo Studio et Echo Show. Vous pouvez aussi en fabriquer un avec une clé USB Thread et OpenThread, mais sachez qu'un routeur de bordure ne fait que router le trafic : il n'assure pas l'appairage Bluetooth dont a besoin un nouvel appareil Matter over Thread, si bien qu'avec Gladys aujourd'hui vous passez toujours par l'un des contrôleurs complets ci-dessus.",
   },
   {
     question: "Peut-on utiliser Matter sans Apple, Google ni Amazon ?",
     answer:
-      "Oui. Gladys Assistant est un contrôleur Matter que vous hébergez vous-même : vous pouvez appairer et piloter des appareils Matter sans aucun compte d'écosystème. Un routeur de bordure Thread reste nécessaire pour les appareils uniquement Thread, mais pour du Matter en Wi-Fi ou Ethernet, Gladys seule suffit.",
+      "Pour du Matter en Wi-Fi et en Ethernet, oui : Gladys Assistant est un contrôleur Matter que vous hébergez vous-même, vous pouvez appairer et piloter ces appareils sans aucun compte d'écosystème, et Gladys seule suffit. Pour du Matter over Thread, pas encore : Gladys n'est pas un routeur de bordure Thread et ne gère pas l'appairage Bluetooth qu'exigent ces appareils, il faut donc encore l'un de ces boîtiers pour faire entrer l'appareil sur votre réseau Thread. Une fois qu'il y est appairé, vous le partagez avec Gladys et vous le pilotez en local depuis Gladys.",
   },
   {
     question: "Faut-il un dongle Matter ?",
     answer:
-      "Non. Matter circule sur votre réseau Wi-Fi et Ethernet existant : aucune clé USB n'entre en jeu. Les dongles vendus comme coordinateurs Matter ou Thread contiennent une radio Thread, utile uniquement si vous voulez fabriquer votre propre routeur de bordure Thread. Pour des appareils Zigbee, il vous faut une clé Zigbee, ce qui est tout autre chose.",
+      "Non. Matter circule sur votre réseau Wi-Fi et Ethernet existant : aucune clé USB n'entre en jeu. Les dongles vendus comme coordinateurs Matter ou Thread contiennent une radio Thread, qui permet seulement de fabriquer un routeur de bordure Thread : elle ne remplace pas un contrôleur Matter, puisque l'étape d'appairage Bluetooth du Matter over Thread n'est pas encore gérée par Gladys. Pour des appareils Zigbee, il vous faut une clé Zigbee, ce qui est tout autre chose.",
   },
   {
     question: "L'IKEA DIRIGERA est-il un hub Matter ?",
@@ -374,7 +376,7 @@ export const matterHubFaqFr = [
   {
     question: "Gladys peut-elle être mon hub Matter ?",
     answer:
-      "Oui. Gladys est un contrôleur Matter : activez Matter dans les paramètres de l'intégration, saisissez le code d'appairage à 11 chiffres de votre appareil, et pilotez-le depuis votre tableau de bord et vos scènes. Matter fonctionne en IPv6 : vérifiez que l'IPv6 est activé sur votre machine et sur votre box. Gladys n'est pas un routeur de bordure Thread : les appareils uniquement Thread en réclament donc toujours un sur votre réseau.",
+      "Oui pour le Matter en Wi-Fi et en Ethernet. Gladys est un contrôleur Matter : activez Matter dans les paramètres de l'intégration, saisissez le code d'appairage à 11 chiffres de votre appareil, et pilotez-le depuis votre tableau de bord et vos scènes. Matter fonctionne en IPv6 : vérifiez que l'IPv6 est activé sur votre machine et sur votre box. Gladys n'est pas un routeur de bordure Thread, et elle ne gère pas encore l'appairage Bluetooth qu'exige le Matter over Thread : ces appareils sont donc appairés sur un contrôleur Matter complet, une Apple TV, une Echo compatible Matter ou un appareil Google Nest, avant d'être partagés avec Gladys.",
   },
   {
     question: "Un appareil peut-il être connecté à deux hubs Matter à la fois ?",
