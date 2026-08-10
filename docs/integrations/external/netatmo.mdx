@@ -122,6 +122,64 @@ When the Security family is enabled, each camera is created with:
 
 ---
 
+## Gladys Plus webhooks (real time) — optional
+
+By default Gladys polls Netatmo **every 2 minutes**. With webhooks, Netatmo
+**tells** Gladys as soon as something happens: values are then refreshed in
+**2-3 seconds** instead of waiting for the next cycle — without increasing the
+number of Netatmo API calls.
+
+Since a local Gladys is not reachable from the Internet, **Gladys Plus** relays
+the events, so an active Gladys Plus subscription is required.
+
+### Setup (a single step)
+
+1. On the integration **Configuration** screen, find the **"Gladys Plus
+   webhooks"** block (shown automatically).
+2. Paste your Gladys Plus **Open API key** there. That's it.
+
+**Nothing to paste on the Netatmo website:** the integration registers the URL
+at Netatmo itself, and re-registers it on every reconnection. To check, open the
+integration **Logs**: you should see
+
+```
+Netatmo webhook registered — events will trigger an immediate refresh
+```
+
+Without a key (or without Gladys Plus), the integration behaves exactly as
+before, polling every 2 minutes.
+
+### What it brings
+
+- **Values land almost instantly** — for example a thermostat setpoint changed
+  from the Netatmo app, or a camera monitoring state.
+- **Detections you can use in your scenes** (see below).
+
+### Real-time detections (scene triggers)
+
+Some events are **momentary**: they exist only in the event stream, no API poll
+can report them. They are published as dedicated features, usable as **scene
+triggers**:
+
+| Device                     | Feature              | Fired by                       |
+| -------------------------- | -------------------- | ------------------------------ |
+| Indoor and outdoor cameras | **Motion**           | motion detected                |
+| Indoor and outdoor cameras | **Person detected**  | a person detected / recognized |
+| Outdoor camera (Presence)  | **Animal detected**  | an animal detected             |
+| Outdoor camera (Presence)  | **Vehicle detected** | a vehicle detected             |
+| Smoke alarm                | **Smoke**            | a smoke detection              |
+
+Each detection goes to **Yes** and returns to **No** by itself after one minute
+(Netatmo sends no "detection over" event). In a scene, use the "value becomes
+Yes" trigger.
+
+> ⚠️ **If your cameras already existed in Gladys**, these new features do not
+> appear on their own: go to the **Discovery** screen and click **Update** on
+> each camera (or smoke alarm) to add them. Without webhooks configured, these
+> features simply stay at "No".
+
+---
+
 ## Security accessories (camera-bridged)
 
 When the Security family is enabled, the accessories linked to your cameras are
@@ -130,9 +188,9 @@ discovered too:
 - **Door / window tag** (`NACamDoorTag`) — an opening sensor (open/closed), plus
   battery and RF signal.
 - **Indoor siren** (`NIS`) — a read-only sounding sensor, plus battery and RF.
-- **Smoke alarm** (`NSD`) — discovered with its battery and signal. Its **smoke
-  state** is delivered by webhooks (real-time events), which arrive in a later
-  milestone; polling alone cannot report it.
+- **Smoke alarm** (`NSD`) — discovered with its battery and signal, plus a
+  **Smoke** feature fed by the webhooks (see the section above): polling alone
+  cannot report that state.
 
 ---
 
@@ -187,7 +245,7 @@ These are the settings Netatmo asks for in its configuration screen in Gladys.
 ## How to install Netatmo in Gladys
 
 1. In Gladys, open **Integrations**: Netatmo appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/terdious/gladys-netatmo:1.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/terdious/gladys-netatmo:1.2.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/Terdious/gladys-netatmo](https://github.com/Terdious/gladys-netatmo).
 

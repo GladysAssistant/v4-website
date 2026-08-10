@@ -1,0 +1,200 @@
+---
+title: "Home Connect integration for Gladys Assistant"
+sidebar_label: "Home Connect"
+description: "Monitor and control your Bosch, Siemens, Neff and Gaggenau appliances via Home Connect. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-homeconnect.png"
+keywords:
+  - "home connect"
+  - "gladys home connect"
+  - "home connect gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-homeconnect instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="home-connect" />
+
+This integration connects Gladys to **Home Connect**, the cloud platform behind
+Bosch, Siemens, Neff, Gaggenau, Balay, Constructa, Profilo and Thermador home
+appliances.
+
+Every appliance that shows up in the Home Connect app shows up in Gladys:
+dishwashers, washing machines, dryers, washer-dryers, ovens, microwaves,
+warming drawers, hobs, hoods, fridges, freezers, wine coolers, coffee machines,
+cleaning robots and cook processors.
+
+> **There is no local mode.** Home Connect appliances talk to the BSH cloud, and
+> only to it. If your internet connection is down, this integration is down.
+> That is a property of the appliances, not of the integration.
+
+## 1. Create a Home Connect developer application
+
+The Home Connect API is free, but each Gladys instance needs its **own**
+application credentials — BSH grants them per developer, not per product.
+
+1. Create a free account on the
+   [Home Connect developer portal](https://developer.home-connect.com/) and log
+   in. Use **the same email address as your Home Connect app account**: the
+   portal links the two, and only then can you see your own appliances.
+2. Go to **Applications → Register Application** and fill in:
+   - **Application ID**: anything, e.g. `gladys`.
+   - **OAuth Flow**: **Authorization Code Grant Flow**.
+   - **Home Connect User Account for Testing**: the email address of your Home
+     Connect app account.
+   - **Redirect URI**: see step 2 below — you need Gladys to tell you first.
+   - **Success Redirect URI**: leave empty.
+3. Once registered, the portal shows your **Client ID** and **Client Secret**.
+
+## 2. Configure the integration in Gladys
+
+1. Install the integration, then open its **Configuration** tab.
+2. Paste the **Client ID** and the **Client Secret**.
+3. Click **Save**, then click **Connect** on the _Home Connect account_ field.
+   Gladys opens the Home Connect sign-in page.
+
+If Home Connect answers _"redirect_uri mismatch"_, the URI Gladys uses is not
+the one registered in the portal. Click the **Test the connection** button once:
+it prints the exact redirect URI Gladys used. Paste it into the **Redirect URI**
+field of your developer application, save on the portal, and click **Connect**
+again.
+
+4. Sign in with your Home Connect account and allow the requested permissions.
+5. Back in Gladys, open the **Discovery** tab: your appliances are listed, ready
+   to be added.
+
+## 3. What you get per appliance
+
+Features are built from what each appliance actually reports, so no two
+appliances get the same list. Typically:
+
+| Feature                                         | Kind        | Appliances                   |
+| ----------------------------------------------- | ----------- | ---------------------------- |
+| Power                                           | on/off      | most appliances              |
+| Program running                                 | on/off      | appliances that run programs |
+| Active program / Selected program               | text        | appliances that run programs |
+| Operation state (`Run`, `Ready`, `Finished`…)   | text        | all                          |
+| Remaining time, elapsed time, progress          | sensor      | appliances that run programs |
+| Door                                            | opening     | most appliances              |
+| Remote start allowed, remote control, local use | sensor      | most appliances              |
+| Refrigerator / freezer setpoint                 | thermostat  | fridges, freezers            |
+| Super mode, eco mode, holiday mode              | on/off      | refrigeration                |
+| Cavity temperature                              | temperature | ovens                        |
+| Light, ambient light, brightness                | light       | hoods, ovens, fridges        |
+| Child lock                                      | lock        | appliances that support it   |
+| Beverage counters                               | counter     | coffee machines              |
+| Alerts (salt low, water tank empty, filter…)    | binary      | per appliance family         |
+| Connected                                       | binary      | all                          |
+
+**Door** follows the Gladys convention for opening sensors: the feature reads
+_Closed_ when the door is shut and _Open_ when it is not — a locked door counts
+as closed. **Alerts** read _Off_ until Home Connect actually raises them, so a
+dishwasher that never ran low on salt shows a cleared alert rather than an empty
+value.
+
+### Starting a program
+
+**Program running** starts the program **currently selected on the appliance**
+(or in the Home Connect app) — it does not choose one for you. This mirrors what
+the appliances allow: a remote start is a trigger, not a program picker.
+
+For it to work, the appliance must have **remote start armed**: on most models
+you press and hold the _Remote start_ button until the display confirms. Without
+it, Home Connect refuses the command and Gladys shows the refusal message.
+
+Turning **Program running** off aborts the running program.
+
+## 4. How it stays up to date
+
+The integration holds a permanent **event stream** open to Home Connect, so a
+door opening or a program finishing reaches Gladys in about a second — including
+changes made on the appliance itself.
+
+Polling (default: every 15 minutes) runs behind it as a safety net, because Home
+Connect closes the stream roughly once a day. Home Connect enforces a request
+quota, so keep the interval high unless you have a reason not to.
+
+## 5. Testing without an appliance
+
+Enable **Use the Home Connect simulator** in the configuration. The integration
+then talks to `simulator.home-connect.com`, which serves the same API against
+the virtual appliances of your developer account. Remember to turn it back off.
+
+## 6. Troubleshooting
+
+**"Enter your Home Connect Client ID and Client Secret"** — the credentials are
+missing or empty.
+
+**"Click Connect to link your Home Connect account"** — the credentials are
+there, but the OAuth flow was never completed.
+
+**"The integration refused the connection. Try again."** in the authorization
+callback window — the authorization code exchange failed. Open the integration
+logs: the message there carries the exact reason Home Connect gave (missing
+Client Secret, redirect URI not registered in the developer portal, code already
+used…). If the integration or the machine restarted while you were signing in at
+Home Connect, simply click **Connect** again — an authorization stays valid for
+fifteen minutes.
+
+After a successful **Connect**, the window closes right away and the connection
+status reads "Account connected, reading your appliances…": the account is read
+in the background, which takes a few seconds per appliance.
+
+**"Home Connect authorization expired, click Connect again"** — the refresh
+token was refused. It expires after about two months without use, and it is also
+revoked when you remove Gladys from the authorized applications of your Home
+Connect account. Click **Connect** again.
+
+**"Home Connect rate limit reached"** — too many requests. The integration backs
+off on its own; raise the refresh interval if it keeps happening.
+
+**An appliance shows an orange "unreachable" badge** — Home Connect itself
+cannot reach it. Check that it is powered on and connected to your Wi-Fi, in the
+Home Connect app.
+
+**A command is refused** — Gladys shows the reason Home Connect gave. The
+frequent ones are _remote start not enabled_, _door open_ and _appliance
+powered off_.
+
+The integration logs everything it does. Set `LOG_LEVEL=debug` and read the
+integration logs from the Gladys interface for the full detail.
+
+## Configuration settings
+
+These are the settings Home Connect asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Before you start | `section` | No | Home Connect has no local API: everything goes through the BSH cloud. Create a free developer account, register an application of type "Home Connect Application" with the Authorization Code Grant Flow, and paste its Client ID and Client Secret below. The redirect URI to register is shown by the "Test the connection" action once you start the connection. |
+| Client ID | `string` | Yes | Client ID of your Home Connect application. |
+| Client Secret | `secret` | No | Client Secret of your Home Connect application. Leave empty only if you registered a public client without a secret. |
+| Home Connect account | `oauth2` | Yes | Sign in with the Home Connect account your appliances are paired with, then allow Gladys. |
+| Language | `select` | No | Language of the device feature names and of the program names returned by Home Connect. |
+| Refresh interval (s) | `number` | No | Safety net behind the real-time event stream. Home Connect enforces a daily request quota, so keep it high unless you have a reason not to. |
+| OAuth scopes | `string` | No | Space-separated Home Connect scopes requested during authorization. Narrow it down if your developer application was registered with fewer permissions. |
+| Use the Home Connect simulator | `boolean` | No | Talk to simulator.home-connect.com instead of the production API, to test without real appliances. |
+
+## How to install Home Connect in Gladys
+
+1. In Gladys, open **Integrations**: Home Connect appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-homeconnect:1.0.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-homeconnect](https://github.com/prohand/gladys-homeconnect).
+
+Home Connect requires Gladys `>=4.85.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Home Connect is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-homeconnect) — [source of this documentation](https://github.com/prohand/gladys-homeconnect/blob/HEAD/docs/en.md)

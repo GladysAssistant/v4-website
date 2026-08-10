@@ -31,17 +31,30 @@ The VigiEau API is free and public: **no account, no API key**. It covers
 ## What you get
 
 **One device per watched location**, named "Vigilance sécheresse — _your
-location_", each carrying five sensors. You can watch up to **ten locations**: a
+location_", each carrying seven sensors. You can watch up to **ten locations**: a
 house, a second home and an allotment garden are rarely under the same
 prefectoral decree.
 
-| Sensor                   | Value                                        |
-| ------------------------ | -------------------------------------------- |
-| **Drought alert level**  | 0 to 3 — the worst of the three water types  |
-| **Level (text)**         | "Alerte renforcée", "Crise"…                 |
-| **Surface water level**  | 0 to 3 — rivers and lakes (`SUP` zones)      |
-| **Groundwater level**    | 0 to 3 — aquifers (`SOU` zones)              |
-| **Drinking water level** | 0 to 3 — the tap water network (`AEP` zones) |
+| Sensor                       | Value                                                                   |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| **Drought alert level**      | 0 to 3 — the worst of the three water types                             |
+| **Level (text)**             | "Alerte renforcée", "Crise"…                                            |
+| **Surface water level**      | 0 to 3 — rivers and lakes (`SUP` zones)                                 |
+| **Groundwater level**        | 0 to 3 — aquifers (`SOU` zones)                                         |
+| **Drinking water level**     | 0 to 3 — the tap water network (`AEP` zones)                            |
+| **Dernière mise à jour**     | "15/06/2026 09:26" — the last successful VigiEau read for this location |
+| **Arrêté en vigueur depuis** | "15/06/2026" — the day the decree setting this level came into force    |
+
+> **The two dates do not say the same thing.** VigiEau publishes no timestamp of
+> its own data: nothing in the API says "this information dates from…". So
+> **Dernière mise à jour** is the moment _the integration_ last queried VigiEau
+> successfully for this location — what tells a frozen sensor from a level that
+> simply has not changed. It only moves on a successful read: after an outage it
+> stays on its previous value, alongside the level. **Arrêté en vigueur depuis**
+> is a date from the source: the day the applicable prefectoral decree came into
+> force. When nothing is in force, the sensor reads "Aucun arrêté en vigueur"
+> rather than keeping the date of a decree that has been lifted. Both are shown
+> in Paris time, whatever the server's timezone.
 
 The numeric scale follows the prefectoral decrees, folded onto the four values
 Gladys knows how to name:
@@ -72,7 +85,9 @@ separately, in addition to the overall level.
    **Discovery** tab, ready to be added. If you already know the point, fill the
    optional **Latitude** and **Longitude** fields in instead: they are used as
    they are, with no geocoding.
-3. Repeat for every location you want to watch, up to ten.
+3. Repeat for every location you want to watch, up to ten. If the locations you
+   want are your **Gladys houses**, the **"Add my Gladys houses"** button spares
+   you all typing: see "Adding your Gladys houses in one click" below.
 4. In **"General settings"**, pick your **user profile**: household, company, local authority or farm.
    Restrictions differ per profile, and VigiEau returns the ones that apply to
    yours. This setting applies to **every location**.
@@ -83,6 +98,31 @@ separately, in addition to the overall level.
 
 > Until one location has a usable point, no device is offered. That is
 > deliberate: no device beats a device pinned to an empty location.
+
+### Adding your Gladys houses in one click
+
+You have already told Gladys where you live: that is the map in
+**Settings > Houses**. The **"Add my Gladys houses"** button reads those houses
+and creates a location for each one that is not watched yet — no address to
+type, no risk of geocoding the wrong town. The location takes the name the house
+has in Gladys, and the address shown in the listing is looked up for you from
+the point.
+
+A few rules, which the message under the button repeats every time:
+
+- **Reading your houses' coordinates is an authorization.** Where you live is
+  personal data: the integration asks for it in its manifest, and Gladys shows
+  you that request when you install it. If the button answers that Gladys
+  refuses to share those coordinates, the installed version never asked for it:
+  update the integration, or remove and re-install it and accept the request.
+- **A house you never placed on the map has no coordinates.** It is named in the
+  answer and nothing is watched in its place: locate it in
+  **Settings > Houses**, then click again.
+- **A house already watched is not added twice.** Click as often as you like:
+  the message tells you which location already watches it.
+- **It is not a sync.** The houses are read once, when you click. A location
+  created this way is an ordinary one: move the house in Gladys afterwards and
+  the location stays where it was — delete it and click again.
 
 ### Viewing your locations
 
@@ -201,6 +241,9 @@ point read off a map.
 - **Add a location (search for an address)** — geocodes the address and creates
   the location, or creates it straight on the latitude and longitude you type
   (both optional). See "Why an address and not a postal code" above.
+- **Add my Gladys houses** — reads the houses configured in Gladys and adds a
+  location for each one that is not watched yet, with nothing to type. Requires
+  Gladys 4.85.0 or newer, and the authorization accepted at install time.
 - **Show the locations** — lists every configured location, numbered, with its
   name, address and coordinates. Those numbers are the ones the deletion offers.
 - **Test the VigiEau connection (all locations)** — runs a live request and
@@ -267,9 +310,11 @@ point read off a map.
   connection** action: it queries the API live and shows any error.
 - **Every feature is called "Risk level"** — that is how Gladys displays them:
   the "Features" list on the device page shows the generic category label, not
-  the name published by the integration. In order they are: overall level,
-  text, surface water, groundwater, drinking water. On a dashboard or in a
-  scene, the four levels do show their real names.
+  the name published by the integration. The three text sensors — level (text),
+  last update, decree in force since — share the same fate and carry an
+  identical generic label. In order they are: overall level, text, surface
+  water, groundwater, drinking water, last update, decree in force since. On a
+  dashboard or in a scene, they all do show their real names.
 - **"VigiEau cannot tell which zone applies here"** — the configured point does
   not fall inside a single zone. The message names the location: add it again
   with a more precise address (number and street rather than just the town
@@ -313,11 +358,11 @@ These are the settings VigiEau asks for in its configuration screen in Gladys.
 ## How to install VigiEau in Gladys
 
 1. In Gladys, open **Integrations**: VigiEau appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-vigieau:2.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-vigieau:2.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-vigieau](https://github.com/prohand/gladys-vigieau).
 
-VigiEau requires Gladys `>=4.62.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+VigiEau requires Gladys `>=4.85.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 
