@@ -128,6 +128,68 @@ Quand la famille Sécurité est activée, chaque caméra est créée avec :
 
 ---
 
+## Webhooks Gladys Plus (temps réel) — optionnel
+
+Par défaut, Gladys interroge Netatmo **toutes les 2 minutes**. Avec les
+webhooks, Netatmo **prévient** Gladys dès qu'il se passe quelque chose : les
+valeurs sont alors rafraîchies en **2-3 secondes** au lieu d'attendre le
+prochain cycle — sans augmenter le nombre d'appels à l'API Netatmo.
+
+Comme une installation Gladys locale n'est pas joignable depuis Internet, c'est
+**Gladys Plus** qui relaie les événements. Il faut donc un abonnement Gladys
+Plus actif.
+
+### Mise en place (une seule étape)
+
+1. Sur l'écran **Configuration** de l'intégration, repérez le bloc
+   **« Webhooks Gladys Plus »** (affiché automatiquement).
+2. Collez-y votre **clé Open API** Gladys Plus. C'est tout.
+
+**Vous n'avez rien à coller sur le site Netatmo :** l'intégration enregistre
+elle-même l'URL auprès de Netatmo, et la ré-enregistre à chaque reconnexion.
+Pour vérifier, ouvrez les **Journaux** de l'intégration : vous devez y voir
+
+```
+Netatmo webhook registered — events will trigger an immediate refresh
+```
+
+Sans clé (ou sans Gladys Plus), l'intégration fonctionne exactement comme avant,
+en interrogation toutes les 2 minutes.
+
+### Ce que ça apporte
+
+- **Les valeurs remontent quasi instantanément** — par exemple une consigne de
+  thermostat changée depuis l'application Netatmo, ou l'état de surveillance
+  d'une caméra.
+- **Des détections utilisables dans vos scènes** (voir ci-dessous).
+
+### Détections en temps réel (déclencheurs de scène)
+
+Certains événements sont **ponctuels** : ils n'existent que dans le flux
+d'événements, aucune interrogation de l'API ne peut les remonter. Ils sont
+publiés comme des fonctionnalités dédiées, utilisables comme **déclencheurs de
+scène** :
+
+| Appareil                        | Fonctionnalité        | Déclenchée par                   |
+| ------------------------------- | --------------------- | -------------------------------- |
+| Caméra intérieure et extérieure | **Mouvement**         | un mouvement détecté             |
+| Caméra intérieure et extérieure | **Personne détectée** | une personne détectée / reconnue |
+| Caméra extérieure (Presence)    | **Animal détecté**    | un animal détecté                |
+| Caméra extérieure (Presence)    | **Véhicule détecté**  | un véhicule détecté              |
+| Détecteur de fumée              | **Fumée**             | une détection de fumée           |
+
+Chaque détection passe à **Oui** puis revient automatiquement à **Non** au bout
+d'une minute (Netatmo n'envoie pas d'événement de « fin de détection »). Dans
+une scène, utilisez donc le déclencheur « la valeur passe à Oui ».
+
+> ⚠️ **Si vos caméras existaient déjà dans Gladys**, ces nouvelles
+> fonctionnalités n'apparaissent pas toutes seules : allez sur l'écran
+> **Découverte** et cliquez sur **Mettre à jour** sur chaque caméra (ou
+> détecteur de fumée) pour les ajouter. Sans webhooks configurés, ces
+> fonctionnalités restent simplement à « Non ».
+
+---
+
 ## Accessoires de sécurité (bridgés par caméra)
 
 Quand la famille Sécurité est activée, les accessoires liés à vos caméras sont
@@ -137,9 +199,9 @@ Quand la famille Sécurité est activée, les accessoires liés à vos caméras 
   (ouvert/fermé), plus la batterie et le signal RF.
 - **Sirène intérieure** (`NIS`) — un capteur sirène en lecture seule, plus la
   batterie et le signal RF.
-- **Détecteur de fumée** (`NSD`) — découvert avec sa batterie et son signal. Son
-  **état de fumée** est délivré par les webhooks (événements temps réel), qui
-  arriveront dans un jalon ultérieur ; le polling seul ne peut pas le remonter.
+- **Détecteur de fumée** (`NSD`) — découvert avec sa batterie et son signal,
+  plus la fonctionnalité **Fumée** alimentée par les webhooks (voir la section
+  ci-dessus) : le polling seul ne peut pas remonter cet état.
 
 ---
 
@@ -197,7 +259,7 @@ Voici les paramètres demandés par Netatmo dans son écran de configuration dan
 ## Comment installer Netatmo dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Netatmo apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/terdious/gladys-netatmo:1.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/terdious/gladys-netatmo:1.2.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/Terdious/gladys-netatmo](https://github.com/Terdious/gladys-netatmo).
 

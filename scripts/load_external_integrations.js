@@ -150,14 +150,28 @@ const trimIntegration = (integration, slug) => ({
     : null,
 });
 
-const yaml = (value) =>
-  `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
-
-const cell = (value) =>
+const oneLine = (value) =>
   String(value === undefined || value === null ? "" : value)
-    .replace(/\|/g, "\\|")
     .replace(/\r?\n/g, " ")
     .trim();
+
+const yaml = (value) =>
+  `"${oneLine(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+
+// Manifest values are written by the integration author too, so they get the
+// same treatment as the documentation below: a configuration description
+// containing `{{gladys_host}}` would otherwise reach the MDX compiler as a JSX
+// expression and fail the build.
+const text = (value) =>
+  oneLine(value).replace(/[<{}]/g, (character) => `\\${character}`);
+
+const cell = (value) => text(value).replace(/\|/g, "\\|");
+
+// MDX leaves the content of a code span alone: only its delimiters matter.
+const code = (value) => oneLine(value).replace(/`/g, "");
+
+// A space or a parenthesis would cut a Markdown link destination short.
+const url = (value) => oneLine(value).replace(/[ ()<>]/g, encodeURIComponent);
 
 // The documentation is written by the integration author, so it can contain
 // anything: `<`, `{` and `}` outside code would be read as JSX by the MDX
@@ -220,14 +234,14 @@ const configTable = (integration, texts, locale) => {
     const description = field.description
       ? field.description[locale] || field.description.en
       : "";
-    return `| ${cell(label || field.key)} | \`${cell(field.type)}\` | ${
+    return `| ${cell(label || field.key)} | \`${code(field.type)}\` | ${
       field.required ? texts.required : texts.optional
     } | ${cell(description)} |`;
   });
   return [
     `## ${texts.configTitle}`,
     "",
-    texts.configIntro(integration.name),
+    texts.configIntro(text(integration.name)),
     "",
     `| ${texts.configColumns.join(" | ")} |`,
     `| --- | --- | --- | --- |`,
@@ -244,6 +258,12 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
     ? texts.titleWithNative(integration.name)
     : texts.title(integration.name);
   const ownerName = owner(integration.store_slug);
+  // Everything below the frontmatter is Markdown compiled as MDX: what the
+  // manifest provides has to be escaped for the context it lands in (prose,
+  // code span or link destination). The frontmatter itself is YAML, quoted by
+  // `yaml()`.
+  const name = text(integration.name);
+  const repoUrl = url(integration.repo_url);
   const metaDescription =
     description.length > 120
       ? description
@@ -274,7 +294,7 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
     "",
     `${GENERATED_MARKER}: built by \`yarn load-external-integrations\` from the`,
     `integration store. Do not edit by hand, edit ${docPath} in`,
-    `${integration.repo_url} instead. */}`,
+    `${repoUrl} instead. */}`,
     "",
     `import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";`,
     "",
@@ -283,31 +303,25 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
     authorDoc || texts.docSourceMissing,
     "",
     configTable(integration, texts, locale),
-    `## ${texts.installTitle(integration.name)}`,
+    `## ${texts.installTitle(name)}`,
     "",
     ...texts
-      .installSteps(
-        integration.name,
-        integration.docker_image,
-        integration.repo_url
-      )
+      .installSteps(name, code(integration.docker_image), repoUrl)
       .map((step, index) => `${index + 1}. ${step}`),
     "",
-    texts.installRequirement(integration.name, integration.gladys_version),
+    texts.installRequirement(name, code(integration.gladys_version)),
     "",
     texts.installNoGladys,
     "",
     `## ${texts.aboutTitle}`,
     "",
     texts.aboutBody(
-      integration.name,
-      ownerName,
-      `https://github.com/${ownerName}`
+      name,
+      text(ownerName),
+      url(`https://github.com/${ownerName}`)
     ),
     "",
-    ...texts
-      .aboutLinks(integration.repo_url, docPath)
-      .map((link) => `- ${link}`),
+    ...texts.aboutLinks(repoUrl, docPath).map((link) => `- ${link}`),
   ].join("\n")}\n`;
 };
 
