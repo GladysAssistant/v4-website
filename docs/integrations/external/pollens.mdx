@@ -22,7 +22,8 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 This integration exposes the **pollen risk** of the locations you choose as
 Gladys devices: one device per location, with a 0-to-5 risk level for each pollen
-type.
+type. You add your **Gladys houses in one click**, or a location by typing its
+**town**.
 
 No account to create, no API key to paste.
 
@@ -45,6 +46,30 @@ there is no country to pick anywhere in this integration.
 > France, but its API requires an account and an authentication token that every
 > user would have to create before the integration works at all. CAMS was chosen
 > because it is official _and_ usable with zero setup.
+
+## Adding your Gladys houses, in one click
+
+You have already told Gladys where you live: that is the map in **Settings >
+Houses**. The **"Add my Gladys houses"** button reads those houses and creates a
+location for each one that is not watched yet — no town to type.
+
+Four things worth knowing:
+
+- **The access is a permission.** Where you live is personal data: Gladys only
+  shares it if you accepted the request on the integration's install screen. If
+  the button answers that the access is refused, remove and re-install the
+  integration, accepting the request shown there.
+- **A house you never placed on the map has no coordinates.** It is named in the
+  answer; locate it in Settings > Houses and click the button again.
+- **A house outside the CAMS European domain** is named too, and left out: no
+  pollen forecast covers it (see "Geographic coverage" below).
+- **This is not a sync.** The houses are read at the moment you click. What comes
+  out is an ordinary location, which you rename and remove like any other, and a
+  house moved in Gladys afterwards does not move its location.
+
+Clicking again is safe: a house already watched is reported, not added twice.
+
+Reading the houses requires **Gladys 4.85.0 or newer**.
 
 ## Adding a location
 
@@ -97,19 +122,20 @@ second one.
 
 ## What the device measures
 
-Each device exposes nine measurements:
+Each device exposes ten measurements:
 
-| Measurement                | Description                                 |
-| -------------------------- | ------------------------------------------- |
-| Overall pollen risk        | The highest of the six risks below (0 to 5) |
-| Overall pollen risk (text) | The same level, spelled out                 |
-| Dominant pollen            | The name of the pollen driving that risk    |
-| Alder pollen risk          | Risk from 0 to 5                            |
-| Birch pollen risk          | Risk from 0 to 5                            |
-| Grass pollen risk          | Risk from 0 to 5                            |
-| Mugwort pollen risk        | Risk from 0 to 5                            |
-| Olive pollen risk          | Risk from 0 to 5                            |
-| Ragweed pollen risk        | Risk from 0 to 5                            |
+| Measurement                | Description                                     |
+| -------------------------- | ----------------------------------------------- |
+| Overall pollen risk        | The highest of the six risks below (0 to 5)     |
+| Overall pollen risk (text) | The same level, spelled out                     |
+| Dominant pollen            | The name of the pollen driving that risk        |
+| Last data update           | The date and hour the displayed forecast is for |
+| Alder pollen risk          | Risk from 0 to 5                                |
+| Birch pollen risk          | Risk from 0 to 5                                |
+| Grass pollen risk          | Risk from 0 to 5                                |
+| Mugwort pollen risk        | Risk from 0 to 5                                |
+| Olive pollen risk          | Risk from 0 to 5                                |
+| Ragweed pollen risk        | Risk from 0 to 5                                |
 
 > These are the names with the **Language of the device names** setting on
 > English. It defaults to **French** (`Risque pollinique — Bouleau`) — see
@@ -137,6 +163,26 @@ of your town.
 
 When the model has no value for a species at that position, **nothing is
 published** for that species — a missing measurement is not a zero risk.
+
+### How old are these numbers?
+
+The **Last data update** measurement answers that. It shows the date and hour
+the displayed forecast is for, as `2026-08-06 13:00`.
+
+It is the date of the **data**, not of the last request: CAMS publishes its
+forecast once a day and Open-Meteo interpolates it hour by hour, so a successful
+refresh usually re-reads exactly the same numbers. What you want to know is how
+old those numbers are, not when they were last fetched.
+
+The hour shown is the **location's own**: a forecast is read against the clock of
+the town it covers. For a location in your timezone that is simply your time; for
+one further away it is the local time over there. It is also why this measurement
+sits **on every device** rather than on a single one shared by the whole
+integration: two locations do not necessarily carry the same.
+
+If the date stays stuck in the past, the refresh is failing: the **Test the
+pollen provider** button shows the same date for every location, and says what
+is going wrong if anything is.
 
 > On a dashboard, the "device in a room" box labels a risk value with the names
 > Gladys knows, which stop at 3: levels 4 and 5 show up as "Unknown" there. The
@@ -188,8 +234,10 @@ a value.
 ## Troubleshooting
 
 - **"Test the pollen provider" button**: it queries the source live for _every_
-  location and prints one line per location, numbered like the listing. The
-  quickest way to tell a network problem from a configuration one.
+  location and prints one line per location, numbered like the listing. Each
+  line ends with the date of the data it read, so a source stuck in the past
+  shows up here too. The quickest way to tell a network problem from a
+  configuration one.
 - **The logs**: read the integration logs from the Gladys UI, or with
   `docker logs`. Set `LOG_LEVEL` to `debug` to see the URLs being queried and
   the exact device payload sent to Gladys.
@@ -209,16 +257,16 @@ These are the settings Pollens asks for in its configuration screen in Gladys.
 | General settings | `section` | No | These settings apply to every configured location. |
 | Language of the device names | `select` | No | The language the pollen names are written in: "Bouleau" or "Birch". Everything else this integration displays already follows your Gladys language, but the name of a device and of its features is stored as it is published, so it has to be chosen here. A device already added to Gladys keeps the names it was created with: delete it and add it again from the Discovery tab to rename it. |
 | Refresh interval (s) | `number` | No | How often each location is refreshed, in seconds. The forecast is updated once a day and interpolated hourly, so there is nothing to gain below one hour. |
-| Your locations | `section` | No | Use the buttons below to add, list and remove your locations. They are not fields of this form: a list you build as you go cannot be one, so everything about them happens under a button, and the answer displayed there is what shows you the list. |
+| Your locations | `section` | No | Use the buttons below to add, list and remove your locations. "Add my Gladys houses" turns the houses you already placed on the map in Gladys into locations, in one click. They are not fields of this form: a list you build as you go cannot be one, so everything about them happens under a button, and the answer displayed there is what shows you the list. |
 
 ## How to install Pollens in Gladys
 
 1. In Gladys, open **Integrations**: Pollens appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-pollen:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-pollen:1.0.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-pollen](https://github.com/prohand/gladys-pollen).
 
-Pollens requires Gladys `>=4.62.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Pollens requires Gladys `>=4.85.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

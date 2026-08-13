@@ -1,7 +1,7 @@
 ---
 title: "Intégration Saunier Duval pour Gladys Assistant"
 sidebar_label: "Saunier Duval"
-description: "Pilotez votre chauffage Saunier Duval (MiGo) : températures, humidité, état et consigne. Gratuite, open source, installable en un clic."
+description: "Pilotez votre chaudière Saunier Duval via votre compte MiGo / MiGo Link. Gratuite, open source, installable en un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-Vaillant-SaunierDuval.png"
 keywords:
   - "saunier duval"
@@ -20,124 +20,196 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 <ExternalIntegrationHeader slug="saunier-duval" />
 
-Cette intégration relie Gladys Assistant à votre chauffage Saunier Duval via le
-cloud du groupe Vaillant — le même service que celui utilisé par l'application
-**MiGo** sur votre téléphone.
+Cette intégration relie votre chaudière **Saunier Duval** à Gladys Assistant :
+températures, consignes, modes de chauffage et eau chaude sanitaire deviennent
+des appareils Gladys, utilisables dans vos scènes et vos graphiques.
 
-Elle vous permet de :
+Elle passe par le **cloud Saunier Duval**, celui de l'application mobile
+**MiGo** / **MiGo Link**. Il n'existe pas d'accès local à ces chaudières :
+tout transite par Internet, et votre passerelle doit donc être en ligne.
 
-- lire la température ambiante mesurée par le thermostat ;
-- lire l'humidité mesurée par le thermostat (selon le modèle) ;
-- lire la température extérieure ;
-- lire l'état de la chaudière (en train de chauffer ou à l'arrêt) ;
-- lire la température de consigne ;
-- **modifier** la température de consigne ;
-- **modifier** l'état de la chaudière (allumer ou éteindre le chauffage).
+## Ce dont vous avez besoin
 
-## Matériel compatible
+- Une chaudière Saunier Duval reliée à une passerelle **MiGo** ou **MiGo Link**
+  (ou un thermostat connecté MiPro Sense / Exacontrol relié à une passerelle).
+- Le **compte** que vous utilisez déjà dans l'application mobile : la même
+  adresse e-mail et le même mot de passe.
+- Le **pays** dans lequel ce compte a été créé.
 
-Toute installation Saunier Duval déjà pilotée depuis l'application MiGo :
+Vous n'avez rien à installer sur la chaudière, ni à demander de clé d'API.
 
-- passerelle **MiGo** ou **MiGo Link** associée à une chaudière (ThemaPlus
-  Condens, Isotwin, Duomax…) ;
-- régulations basées sur un contrôleur **VRC700** (MiPro, MiPro Sense).
+## Installation
 
-Une même installation peut comporter plusieurs zones de chauffage : Gladys crée
-alors un thermostat par zone.
+1. Dans Gladys, ouvrez **Intégrations → Installer une intégration** et
+   installez **Saunier Duval**.
+2. Ouvrez l'écran de configuration de l'intégration et renseignez :
+   - **E-mail** : l'adresse de votre compte MiGo / MiGo Link ;
+   - **Mot de passe** : celui du même compte. Gladys le stocke chiffré et ne le
+     renvoie jamais au navigateur ;
+   - **Pays du compte** : celui dans lequel le compte a été créé. C'est
+     important : un compte créé en France ne peut pas se connecter via un autre
+     pays, la connexion serait refusée sans autre explication ;
+   - **Intervalle de rafraîchissement** : toutes les combien de secondes la
+     chaudière est interrogée. 300 s (5 minutes) est un bon réglage — une
+     chaudière est un système lent, et la plateforme Saunier Duval limite le
+     nombre d'appels ;
+   - **Durée de forçage par défaut** : la durée d'où part chaque zone. Vous la
+     réglez ensuite zone par zone, voir « Changer une température » plus bas.
+3. Cliquez sur **Tester la connexion**. Le message vous indique le nombre
+   d'installations trouvées sur votre compte.
+4. Ouvrez l'onglet **Appareils** de l'intégration : vos appareils y sont déjà
+   listés. Choisissez ceux que vous souhaitez créer dans Gladys.
 
-> Les comptes **Bulex** (Belgique) utilisent le même service, mais un pays
-> différent de ceux proposés ici. Cette intégration cible les comptes Saunier
-> Duval.
+## Les appareils créés
 
-## Prérequis
+Pour chaque installation, l'intégration crée :
 
-1. Une passerelle MiGo déjà installée et **appairée dans l'application MiGo**.
-   Cette intégration ne fait pas l'appairage : elle lit le compte, elle ne le
-   configure pas.
-2. L'adresse e-mail et le mot de passe de ce compte MiGo.
-3. Le **pays** dans lequel le compte a été créé. C'est la cause d'erreur la plus
-   fréquente : un pays incorrect fait échouer la connexion, même avec un mot de
-   passe valide.
+| Appareil                                 | Ce qu'il expose                                                                                                                                                                           |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Chaudière**                            | Température extérieure (instantanée et moyenne 24 h), pression d'eau du circuit de chauffage, activité en cours (chauffage, eau chaude, veille), nombre de codes de défaut et leur détail |
+| **Zone** (une par zone de chauffage)     | Température ambiante, humidité (si votre thermostat la mesure), consigne de température, mode, durée du forçage, et si le chauffage tourne actuellement                                   |
+| **Circuit** (un par circuit hydraulique) | Température de départ réellement produite, consigne de départ calculée par la loi d'eau, état du circuit                                                                                  |
+| **Eau chaude**                           | Température de l'eau, consigne, mode, bouton **Boost**, et si la chaudière est en train de chauffer l'eau                                                                                 |
 
-## Configuration
+Les zones portent le nom que vous leur avez donné dans la chaudière (« Salon »,
+« Étage »…). Une zone déclarée inactive dans la chaudière est ignorée : elle ne
+renvoie aucune valeur.
 
-Dans Gladys, ouvrez la configuration de l'intégration et renseignez :
+La **pression d'eau** est la valeur à surveiller : si elle descend sous ~1 bar,
+l'installation demande un appoint. Une scène Gladys peut vous prévenir.
 
-| Champ                              | Description                                                                                        |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Adresse e-mail**                 | L'identifiant de votre compte MiGo.                                                                |
-| **Mot de passe**                   | Le mot de passe du compte. Il est stocké chiffré par Gladys et n'est jamais renvoyé au navigateur. |
-| **Pays**                           | Le pays d'enregistrement du compte (France par défaut).                                            |
-| **Quand le chauffage est allumé**  | Le mode auquel la zone revient quand vous rallumez le chauffage.                                   |
-| **Durée d'un forçage temporaire**  | La durée d'une consigne posée alors que la zone suit son programme.                                |
-| **Intervalle de rafraîchissement** | La fréquence de lecture des mesures, en secondes.                                                  |
+## Changer une température
 
-Cliquez ensuite sur **Tester la connexion** : le bouton affiche les
-installations trouvées sur le compte et les températures lues. Si ce test passe,
-tout le reste fonctionnera.
+La valeur affichée dans le champ « Température de consigne » est celle que vous
+éditez : la **température manuelle**, celle que montre l'application Saunier
+Duval — ou la température du forçage temporaire tant qu'il est en cours.
 
-## Appareils créés
+Ce n'est volontairement pas la « demande du moment » de la chaudière : celle-ci
+tombe à 0 dès que le chauffage n'a rien à faire (zone programmée hors de ses
+plages, mode été), et un champ de saisie initialisé à 0 ne servirait à rien.
 
-Pour chaque installation, Gladys crée deux appareils.
+La chaudière n'a pas une consigne unique : ce qui est écrit dépend du mode dans
+lequel se trouve la zone.
 
-**Le thermostat** (un par zone de chauffage) :
+- **Zone en mode programmé** (« Auto ») : changer la température déclenche un
+  **forçage temporaire**. La nouvelle consigne s'applique pendant la durée que
+  vous avez choisie, puis le programme horaire reprend la main. C'est
+  exactement ce que fait l'application mobile quand vous tournez la molette sur
+  une zone programmée : votre programmation n'est jamais écrasée.
+- **Zone en mode manuel** : la consigne est écrite durablement, jusqu'au
+  prochain changement.
+- **Zone à l'arrêt** : la commande est refusée avec un message clair. Changez
+  d'abord le mode de la zone.
 
-| Fonctionnalité             | Lecture / écriture |
-| -------------------------- | ------------------ |
-| Température                | Lecture            |
-| Humidité                   | Lecture            |
-| Température de consigne    | Lecture + écriture |
-| Chauffage (marche / arrêt) | Lecture + écriture |
+### Durée du forçage
 
-**La chaudière** (une par installation) :
+Chaque zone porte une commande **« Durée du forçage »**, réglable de **30
+minutes à 24 heures**, comme dans l'application. Vous la réglez avant de
+changer la température : c'est cette durée que le forçage suivant utilisera.
 
-| Fonctionnalité         | Lecture / écriture |
-| ---------------------- | ------------------ |
-| Température extérieure | Lecture            |
-| État de la chaudière   | Lecture            |
-| Pression d'eau         | Lecture            |
+Elle est exprimée en **minutes** et non en heures, pour une raison précise : le
+curseur de Gladys avance par pas d'une unité, donc en heures les demi-heures
+seraient hors d'atteinte. En minutes, toutes les valeurs de l'application
+restent accessibles. Une valeur qui ne tombe pas juste est ramenée à la
+demi-heure la plus proche (100 minutes → 1 h 30), exactement comme le fait la
+chaudière.
 
-L'humidité et la pression d'eau ne sont créées que si votre installation les
-remonte réellement.
+Cette commande ne parle pas à la chaudière : la plateforme n'accepte la durée
+qu'au moment où le forçage démarre, avec la température. C'est donc un réglage
+de l'intégration, que Gladys mémorise et qui est relu après un redémarrage. La
+valeur de départ d'une zone est celle de l'écran de configuration.
 
-## Comment la consigne est appliquée
+### Correspondance des modes
 
-Le comportement dépend du mode dans lequel se trouve la zone, afin que la valeur
-choisie dans Gladys soit bien celle que le régulateur vise :
+| Mode Gladys | Zone de chauffage                                           | Eau chaude        |
+| ----------- | ----------------------------------------------------------- | ----------------- |
+| Arrêt       | Arrêt                                                       | Arrêt             |
+| Chauffage   | Manuel (ou « Jour » sur les régulateurs MiPro / Exacontrol) | Manuel / « Jour » |
+| Auto        | Programmé                                                   | Programmé         |
 
-- **La zone suit son programme hebdomadaire** → un forçage temporaire est
-  appliqué, exactement comme si vous tourniez la molette du thermostat. Il dure
-  le nombre d'heures configuré, puis le programme reprend la main.
-- **La zone est en mode manuel** → la consigne manuelle est modifiée
-  durablement.
-- **La zone est éteinte** → le chauffage est rallumé en mode manuel à la
-  température demandée : demander une température, c'est demander de la chaleur.
+Ce sont les **trois seuls** modes proposés, sur la zone de chauffage comme sur
+l'eau chaude : les mêmes que dans l'application Saunier Duval, et dans le même
+ordre. Gladys connaît d'autres valeurs — « Refroidissement » pour un
+thermostat, « Éco », « Absence », « Boost » pour un chauffe-eau — mais
+l'intégration lui déclare les modes que votre chaudière accepte réellement,
+donc ces boutons n'apparaissent pas.
 
-Le bouton **Chauffage** éteint la zone (mode `OFF`) ou la rallume dans le mode
-choisi dans la configuration (programme hebdomadaire par défaut).
+En revanche, **les mots ne sont pas les mêmes des deux côtés**, et cela ne
+dépend pas de l'intégration : chaque catégorie a son vocabulaire dans Gladys.
+Ce sont pourtant bien les trois mêmes notions.
 
-## Limites connues
+| Application Saunier Duval | Zone de chauffage (Gladys) | Eau chaude (Gladys) |
+| ------------------------- | -------------------------- | ------------------- |
+| Manuel                    | Chauffage                  | Manuel              |
+| Programmation             | Auto                       | Programmation       |
+| Chauffage éteint / Arrêt  | Arrêt                      | Arrêt               |
 
-- **La passerelle est lente.** Elle ne remonte ses mesures au cloud que toutes
-  les quelques minutes : descendre l'intervalle de rafraîchissement sous 300
-  secondes n'apporte rien et multiplie les appels.
-- **Un changement met un moment à apparaître.** Après une commande, le cloud
-  peut mettre une à deux minutes à refléter la nouvelle valeur.
-- **API non publique.** Saunier Duval ne documente pas cette API : elle est
-  utilisée par l'application mobile. Elle peut évoluer sans préavis.
-- **Un seul compte à la fois.** L'intégration lit toutes les installations d'un
-  compte, mais un seul compte peut être configuré.
+Sur les anciens régulateurs, le mode « Abaissement » (chauffage permanent à la
+température réduite) est lu comme « Chauffage » lui aussi — Gladys n'a pas de
+valeur qui lui corresponde exactement.
+
+## Boost eau chaude
+
+Le **Boost** demande à la chaudière de chauffer le ballon tout de suite, en
+dehors du programme. La chaudière l'arrête d'elle-même une fois le ballon
+chaud : Gladys repassera l'état à « désactivé » au rafraîchissement suivant.
+
+> Sur les versions de Gladys antérieures au correctif
+> [#2815](https://github.com/GladysAssistant/Gladys/pull/2815), le bouton grisé
+> du couple affiche l'état inverse de la réalité (« Boost actif » alors que le
+> boost est éteint). Le bouton cliquable, lui, est correct. C'est un défaut
+> d'affichage du cœur de Gladys, pas de l'intégration : mettre Gladys à jour le
+> corrige.
+
+## Points d'attention
+
+- **Délai d'affichage.** Après une commande, Gladys affiche immédiatement la
+  valeur demandée, puis la remplace par celle que la chaudière confirme au
+  cycle suivant. Il est normal qu'un ou deux rafraîchissements soient
+  nécessaires pour voir l'effet réel.
+- **Limitation d'appels.** La plateforme Saunier Duval limite le nombre de
+  requêtes, et vous la partagez avec l'application mobile. Un cycle de
+  rafraîchissement coûte **une seule requête par installation** : toutes les
+  valeurs publiées viennent d'une même réponse. La liste des installations,
+  l'état de la passerelle et les codes de défaut sont relus séparément, toutes
+  les 30 minutes seulement — c'est pourquoi une passerelle qui vient de passer
+  hors ligne peut mettre jusqu'à une demi-heure à être signalée comme telle.
+  Ne descendez pas l'intervalle sans raison : 60 secondes est le minimum
+  autorisé, 300 secondes le réglage recommandé.
+- **Un seul compte.** L'intégration lit toutes les installations rattachées au
+  compte. Si vous en avez plusieurs, chaque installation produit son propre
+  jeu d'appareils, préfixés par son nom.
+- **API non officielle.** Saunier Duval ne documente ni ne soutient cette API :
+  c'est celle de son application mobile. Elle peut changer sans préavis. Cette
+  intégration n'est ni affiliée ni approuvée par Saunier Duval ou le groupe
+  Vaillant.
+
+## Après une mise à jour de l'intégration
+
+Un appareil déjà créé ne change pas tout seul. L'onglet **Découverte** affiche
+un bouton **Mettre à jour** sur les appareils dont la structure a bougé, et
+c'est ce bouton qui réapplique tout : nouvelles fonctionnalités, unités, et
+liste des modes proposés.
+
+Attention à un cas particulier : Gladys détecte une « structure modifiée » en
+comparant les fonctionnalités, leurs unités et leurs bornes — **pas la liste
+des modes**. Si une mise à jour de l'intégration ne change que les modes
+proposés, aucun bouton **Mettre à jour** n'apparaît, et l'appareil garde son
+ancienne liste. Dans ce cas, supprimez l'appareil et recréez-le depuis
+l'onglet Découverte : il n'y a pas d'autre moyen.
 
 ## En cas de problème
 
-- **« Connexion refusée »** : vérifiez l'adresse e-mail, le mot de passe et
-  surtout le **pays**. Essayez de vous connecter dans l'application MiGo pour
-  confirmer que le compte fonctionne.
-- **Aucun appareil n'apparaît** : lancez **Tester la connexion**. Si aucune
-  installation n'est trouvée, c'est que la passerelle n'est pas rattachée à ce
-  compte.
-- **Les valeurs ne bougent plus** : consultez les logs du conteneur de
-  l'intégration (`LOG_LEVEL=debug` pour le détail des appels).
+- **« Connexion refusée »** : vérifiez l'e-mail, le mot de passe et surtout le
+  **pays** du compte. Vérifiez aussi que vous arrivez à vous connecter avec ces
+  identifiants dans l'application mobile.
+- **Aucune installation trouvée** : le compte n'a pas de chaudière rattachée,
+  ou la passerelle a été associée à un autre compte.
+- **Valeurs figées** : la passerelle est probablement hors ligne. Vérifiez-le
+  dans l'application mobile ; l'intégration ne peut lire que ce que la
+  plateforme connaît.
+- **Diagnostic détaillé** : passez la variable d'environnement `LOG_LEVEL` de
+  l'intégration à `debug` pour voir chaque appel dans les logs du conteneur.
 
 ## Paramètres de configuration
 
@@ -145,22 +217,21 @@ Voici les paramètres demandés par Saunier Duval dans son écran de configurati
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Connectez votre compte MiGo | `section` | Non | Cette intégration utilise le cloud Saunier Duval, le même service que l'application MiGo. Connectez-vous avec l'adresse e-mail et le mot de passe de cette application, et choisissez le pays dans lequel votre compte a été créé. Votre passerelle (MiGo, MiGo Link) doit déjà être appairée dans l'application. |
-| Adresse e-mail | `string` | Oui | L'adresse e-mail de votre compte MiGo / Saunier Duval. |
-| Mot de passe | `secret` | Oui | Le mot de passe de votre compte MiGo. Il est stocké chiffré par Gladys et n'est jamais renvoyé au navigateur. |
-| Pays | `select` | Oui | Le pays dans lequel votre compte a été créé. Un pays incorrect fait échouer la connexion. |
-| Quand le chauffage est allumé | `select` | Non | Le mode auquel la zone revient quand vous allumez le chauffage : son programme hebdomadaire, ou une température manuelle fixe. |
-| Durée d'un forçage temporaire (h) | `number` | Non | Quand la zone suit son programme, modifier la température de consigne applique un forçage temporaire. Voici sa durée, en heures. |
-| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture des températures depuis le cloud, en secondes. La passerelle ne remonte ses mesures que toutes les quelques minutes : descendre sous 300 n'apporte pas grand-chose. |
+| Pour commencer | `section` | Non | Utilisez l'e-mail et le mot de passe du compte MiGo ou MiGo Link dont vous vous servez déjà dans l'application mobile. Votre chaudière doit être reliée à une passerelle MiGo ou MiGo Link : tout passe par le cloud Saunier Duval, il n'y a pas d'accès local. |
+| E-mail | `string` | Oui | Adresse e-mail de votre compte MiGo / MiGo Link. |
+| Mot de passe | `secret` | Oui | Mot de passe de votre compte MiGo / MiGo Link. Stocké chiffré par Gladys et jamais renvoyé au navigateur. |
+| Pays du compte | `select` | Oui | Le pays dans lequel votre compte a été créé. Un compte créé en France ne peut pas se connecter via un autre pays. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la chaudière, en secondes. La plateforme Saunier Duval limite le nombre d'appels : gardez un intervalle confortable, une chaudière est un système lent. |
+| Durée de forçage par défaut (h) | `number` | Non | Lorsqu'une zone suit son programme horaire, changer sa température déclenche un forçage temporaire, puis le programme reprend la main. Ceci est la durée initiale d'une zone : chaque zone dispose ensuite de sa propre commande « Durée du forçage », de 30 minutes à 24 heures par pas de 30 minutes. Demi-heures uniquement. |
 
 ## Comment installer Saunier Duval dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Saunier Duval apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-vaillant-saunierduval:2.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-vaillant-saunierduval:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval](https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval).
 
-Saunier Duval nécessite Gladys `>=4.62.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Saunier Duval nécessite Gladys `>=4.85.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

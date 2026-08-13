@@ -1,0 +1,101 @@
+---
+title: "Intégration Immich Slideshow pour Gladys Assistant"
+sidebar_label: "Immich Slideshow"
+description: "Diffuse un album ou les souvenirs Immich en diaporama caméra sur le dashboard Gladys. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Immich.jpg"
+keywords:
+  - "immich slideshow"
+  - "gladys immich slideshow"
+  - "immich slideshow gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/gboulvin/Gladys-Immich instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="immich-slideshow" />
+
+## Objectif
+
+Cette intégration externe Gladys transforme un **album Immich** ou la collection **Souvenirs — ce jour-là** en caméra virtuelle. Ajoutez cette caméra au dashboard Gladys pour afficher un diaporama de photos qui change automatiquement. Les photos restent sur votre serveur Immich : l’intégration ne demande que les aperçus Immich et ne télécharge jamais les originaux.
+
+L’intégration nécessite Gladys **4.85.0 ou version ultérieure**. Elle s’appuie sur le canal d’images des caméras afin de proposer immédiatement un diaporama fonctionnel sur le dashboard actuel. La sélection des photos est séparée de l’adaptateur caméra et pourra être reliée à la future API de fournisseur du widget Photo annoncée par Gladys.
+
+## Prérequis
+
+Vous avez besoin d’un serveur Immich joignable et d’une clé API créée dans **Immich → Paramètres du compte → Clés API**. Attribuez le minimum de permissions suivant :
+
+| Permission    | Utilité                                                  |
+| ------------- | -------------------------------------------------------- |
+| `album.read`  | Lister les albums et lire l’album sélectionné.           |
+| `asset.view`  | Télécharger l’aperçu de chaque image affichée.           |
+| `memory.read` | Lire la source facultative des souvenirs « ce jour-là ». |
+
+Le conteneur Gladys doit pouvoir atteindre l’URL indiquée dans le formulaire. Pour un serveur local, utilisez son adresse réseau et son port, par exemple `http://192.168.1.20:2283`. N’utilisez pas `localhost` : il désigne le conteneur isolé de l’intégration, et non l’hôte Gladys ou le serveur Immich.
+
+## Configuration
+
+Ouvrez **Intégrations → Immich Slideshow → Configuration**, puis renseignez l’URL et la clé API. Choisissez **Album** ou **Souvenirs — ce jour-là**. Pour un album, copiez son UUID depuis l’URL affichée dans Immich et collez-le dans **UUID de l’album**. Le bouton **Tester la connexion Immich** vérifie que Gladys peut lister les albums avec cette clé.
+
+Réglez l’intervalle entre les photos, la fréquence de mise à jour de la source et le plafond d’images conservées. L’actualisation de la liste est distincte de l’intervalle d’affichage : un grand album n’est interrogé que périodiquement et seuls les aperçus effectivement affichés sont téléchargés. Les vidéos sont ignorées. Par défaut, les images les plus récentes passent en premier ; activez l’ordre aléatoire pour mélanger chaque liste rechargée.
+
+Enregistrez la configuration, ouvrez l’onglet **Découverte** de l’intégration et créez la caméra **Immich slideshow**. Ajoutez ensuite cette caméra à une boîte caméra sur un dashboard Gladys. La première image est publiée immédiatement, puis la caméra est mise à jour selon l’intervalle configuré. Utilisez **Actualiser le diaporama maintenant** après l’ajout de photos ou pour récupérer sans attendre les nouveaux souvenirs du jour.
+
+## Confidentialité et traitement des images
+
+La clé API est déclarée comme un `secret` Gladys : elle est stockée de manière sécurisée et n’est jamais retournée au navigateur du dashboard. Les requêtes vers Immich contiennent l’en-tête `x-api-key` dans le conteneur de l’intégration. Avant publication dans le canal caméra Gladys, les aperçus sont orientés correctement, redimensionnés et compressés en JPEG afin de conserver un dashboard fluide et de respecter la limite de taille du canal.
+
+## Dépannage
+
+Si le test de connexion indique une clé ou des permissions invalides, recréez une clé API Immich avec les trois permissions précédentes. Si le serveur est inaccessible, vérifiez l’URL depuis le réseau de l’hôte Gladys et assurez-vous qu’un pare-feu, un proxy inverse ou la configuration Docker ne bloque pas l’accès du conteneur d’intégration à Immich. Un album vide ou une collection de souvenirs vide est un état normal : ajoutez des photos ou sélectionnez une autre source. Les journaux consultables dans l’onglet Configuration donnent la catégorie de l’erreur HTTP sans afficher la clé API.
+
+## Modèle dashboard actuel et futur widget Photo
+
+Dans Gladys 4.85, le widget **Photo** accepte une liste d’URL gérée manuellement ; il n’expose pas encore d’API de source de photos externe. Ce projet fournit donc aujourd’hui un véritable diaporama sur le dashboard via une caméra virtuelle. La couche indépendante `src/photoProvider.js` résout déjà albums et souvenirs sous forme de métadonnées normalisées, dont les légendes, afin de pouvoir se raccorder au futur contrat de fournisseur du widget Photo sans réécrire le client Immich.
+
+## Références
+
+[1] [Points de terminaison de l’API Immich](https://api.immich.app/endpoints)
+[2] [Intégrations externes Gladys](https://gladysassistant.com/docs/dev/external-integrations/)
+[3] [Annonce du widget Photo Gladys 4.85](https://community.gladysassistant.com/t/gladys-assistant-4-85-0-widget-photo-navigation-dans-les-graphiques-chauffe-eau-homekit/10483)
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Immich Slideshow dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connecter Immich | `section` | Non | Créez une clé API Immich avec les permissions album.read, asset.view et memory.read. Gladys stocke cette clé de manière sécurisée ; elle n’est jamais envoyée au navigateur du dashboard. |
+| URL du serveur Immich | `string` | Oui | Par exemple : http://192.168.1.20:2283. Le conteneur d’intégration Gladys doit pouvoir joindre cette adresse. |
+| Clé API Immich | `secret` | Oui |  |
+| Source des photos | `select` | Oui | Choisissez un album précis ou les souvenirs Immich de cette date les années précédentes. |
+| UUID de l’album | `string` | Non | Requis uniquement pour la source Album. Copiez l’UUID dans l’URL de l’album Immich ; laissez vide pour Souvenirs. |
+| Intervalle entre les photos (secondes) | `number` | Oui | Durée d’affichage de chaque image sur la caméra du dashboard. Le minimum respecte les limites du canal caméra Gladys. |
+| Intervalle d’actualisation de la source (secondes) | `number` | Oui | Fréquence à laquelle l’intégration redemande l’album ou les souvenirs du jour à Immich. Les diapositives existantes défilent entre deux actualisations. |
+| Nombre maximal d’images | `number` | Oui | Limite les grands albums pour préserver la réactivité. Les images les plus récentes sont sélectionnées, sauf si l’ordre aléatoire est activé. |
+| Mélanger les images | `boolean` | Non | Lorsqu’il est désactivé, le diaporama commence par l’image la plus récente. |
+
+## Comment installer Immich Slideshow dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Immich Slideshow apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/gboulvin/gladys-immich:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/gboulvin/Gladys-Immich](https://github.com/gboulvin/Gladys-Immich).
+
+Immich Slideshow nécessite Gladys `>=4.85.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Immich Slideshow est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [gboulvin](https://github.com/gboulvin), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/gboulvin/Gladys-Immich) — [source de cette documentation](https://github.com/gboulvin/Gladys-Immich/blob/HEAD/docs/fr.md)

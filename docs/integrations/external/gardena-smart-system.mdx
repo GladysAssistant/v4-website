@@ -1,0 +1,218 @@
+---
+title: "GARDENA smart system integration for Gladys Assistant"
+sidebar_label: "GARDENA smart system"
+description: "Control your GARDENA mowers, valves, power sockets and sensors from Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/Nagromdark--gladys-gardena.png"
+keywords:
+  - "gardena smart system"
+  - "gladys gardena smart system"
+  - "gardena smart system gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/Nagromdark/gladys-gardena instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="gardena-smart-system" />
+
+Control your GARDENA garden from Gladys: robotic mowers, water valves, outdoor
+power sockets and soil sensors. The integration talks to the **official public
+GARDENA smart system API**, the same one the GARDENA app uses, so everything
+stays in sync in both directions.
+
+## What you need
+
+- a **GARDENA smart gateway** already installed, with your devices paired and
+  working in the GARDENA app;
+- a free account on the **Husqvarna developer portal** (GARDENA belongs to the
+  Husqvarna Group) — the API is free for personal use.
+
+The integration never talks to your devices directly: GARDENA devices speak a
+proprietary radio protocol to the gateway, and the gateway only talks to the
+GARDENA cloud. An Internet connection is therefore required.
+
+## Step 1 — Create your API application
+
+1. Go to [https://developer.husqvarnagroup.cloud/](https://developer.husqvarnagroup.cloud/) and click **Sign in**.
+2. Sign in with **your usual GARDENA account** (the one from the GARDENA app).
+   There is no separate account to create.
+3. Open **My applications** and click **New application**. Give it any name,
+   for example `Gladys`. The redirect URI is not used by this integration: you
+   can leave it empty or put `http://localhost`.
+4. On the application page, click **Connect new API** and connect the
+   **GARDENA smart system API**. This step is easy to miss, and without it the
+   API answers `403 Forbidden` to every request.
+5. Copy the **Application key** and the **Application secret** shown on that
+   page.
+
+> Keep the Authentication API connected as well — it is usually added
+> automatically, and it is the one that issues the token.
+
+## Step 2 — Configure the integration in Gladys
+
+1. Paste the **Application key** and the **Application secret** in the
+   configuration screen, then save.
+2. Click **Test the connection**: the integration authenticates and lists the
+   locations (gardens) of your account.
+3. Go to the **Discover** tab: every GARDENA device of your account appears.
+   Create the ones you want to use in Gladys.
+
+Optional settings:
+
+| Setting                    | What it does                                                                                                                                                                                 |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Location id**            | Restrict the integration to a single garden. Leave empty to use all of them.                                                                                                                 |
+| **GARDENA API refresh**    | Minimum delay between two full reads of the GARDENA API, the safety net behind the real-time stream. This is what spends your weekly request quota — see the table below. Default: one hour. |
+| **Default duration**       | How long a valve waters, or a socket stays on, when you switch it on from Gladys.                                                                                                            |
+| **Power socket switch-on** | Switch off automatically after the default duration, or stay on until switched off.                                                                                                          |
+| **Mower start**            | Starting the mower can obey its own calendar, or override it for a fixed duration.                                                                                                           |
+| **Mower stop**             | Stopping the mower can park it until its next scheduled task, or cancel the schedule until further notice.                                                                                   |
+
+## What you get in Gladys
+
+| GARDENA device                   | Features created                                                                        |
+| -------------------------------- | --------------------------------------------------------------------------------------- |
+| smart Mower (SILENO...)          | Mowing (on/off), activity, state, last error, operating hours, battery, signal          |
+| smart Water Control              | Watering (on/off), activity, watering time left, battery, signal                        |
+| smart Irrigation Control         | One watering switch, activity and time left **per outlet**, named as in the GARDENA app |
+| smart Power (outdoor socket)     | On/Off, activity, time left, signal                                                     |
+| smart Sensor / smart Soil Sensor | Soil humidity, soil temperature, ambient temperature, light intensity, battery, signal  |
+
+Switching a valve on starts a **manual watering of the configured duration**:
+the GARDENA API has no "open forever" command on a valve, which is exactly what
+you want from a home automation system connected to a water tap.
+
+The on/off state of a mower, a valve or a socket always reflects what GARDENA
+reports, not what Gladys asked for: a mower that came home because of the rain,
+or a valve opened from the GARDENA app, shows up correctly in Gladys.
+
+## Real time
+
+The integration keeps a websocket open to GARDENA for each location, which is
+the supported way to follow a garden: a change made on the device, in the
+GARDENA app or by a schedule reaches Gladys within a second or two. The
+scheduled refresh is only a safety net for a missed message.
+
+GARDENA closes that websocket about every two hours, on purpose: the
+integration reconnects on its own, and resynchronizes each time.
+
+Gladys ticks its devices every minute (its shortest supported interval), but
+that tick does **not** call GARDENA: the integration answers from the picture it
+already holds, and only re-reads the GARDENA API once the picture is older than
+the **GARDENA API refresh** setting. Whatever the number of devices in your
+garden, one refresh costs one API call.
+
+## Staying inside the GARDENA request quota
+
+GARDENA grants a **limited number of API requests per week** to a free personal
+application. This integration is built around that constraint: the real-time
+websocket costs nothing per event, so the requests it spends are almost entirely
+the periodic safety-net refresh.
+
+What one week costs, whatever the number of devices in your garden (a refresh
+reads the whole location in a single call):
+
+| GARDENA API refresh  | Refreshes | Websocket URLs | Tokens | **Total / week** |
+| -------------------- | --------- | -------------- | ------ | ---------------- |
+| 15 minutes           | 672       | 84             | 7      | **763**          |
+| 30 minutes           | 336       | 84             | 7      | **427**          |
+| **1 hour (default)** | **168**   | **84**         | **7**  | **259**          |
+| 2 hours              | 84        | 84             | 7      | **175**          |
+| 6 hours              | 28        | 84             | 7      | **119**          |
+
+The two fixed costs are unavoidable: GARDENA closes the real-time stream about
+every two hours and a new URL must be requested (~84 a week), and the access
+token is renewed daily (7 a week, on the separate authentication API).
+
+Commands add one request each — switching a valve or a socket, starting the
+mower. A hundred commands a week is a hundred requests: with the default
+refresh, that still leaves a wide margin.
+
+Two habits keep you safe:
+
+- **do not lower the refresh below one hour** unless you know your quota allows
+  it. The real-time stream already brings every change within seconds; the
+  refresh only catches what a dropped websocket could have missed;
+- **avoid restarting the integration in a loop**: each start costs one location
+  listing plus one full read.
+
+If GARDENA ever answers "too many requests", the integration **suspends its REST
+refreshes for one hour** on its own and keeps running on the real-time stream,
+instead of insisting and digging the hole deeper.
+
+## Actions
+
+- **Test the connection** — authenticates and lists the locations of the
+  account. Use it first when something looks wrong.
+- **Refresh the devices** — re-reads the account, for example after adding a
+  device in the GARDENA app.
+- **Stop all watering** — closes every valve of the chosen device until its next
+  scheduled task. Handy in a scene, or when you want to walk in the garden.
+
+## Troubleshooting
+
+**"GARDENA refused the credentials"** — the Application key or secret is wrong,
+or the **GARDENA smart system API is not connected to your application** on the
+developer portal (step 1.4). This is by far the most common cause.
+
+**A device shows an orange "unreachable" badge** — the GARDENA gateway does not
+see it anymore (radio link offline): the device is out of range, switched off,
+or its batteries are empty. Gladys keeps the last known values instead of
+pretending they are current.
+
+**"GARDENA is rate-limiting the integration"** — the API is throttling. The
+integration spaces its calls out and retries, but if you increased the refresh
+frequency a lot, put it back to a higher value: the real-time stream already
+gives you the changes.
+
+**No device in the Discover tab** — check that your devices show up in the
+GARDENA app, and that the location filter (if you set one) matches the right
+garden.
+
+---
+
+_GARDENA is a registered trademark of the Husqvarna Group. This is an
+independent community integration, neither affiliated with, endorsed by nor
+supported by GARDENA or the Husqvarna Group._
+
+## Configuration settings
+
+These are the settings GARDENA smart system asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect your GARDENA account | `section` | No | This integration uses the official public GARDENA smart system API. Create a free account on the Husqvarna developer portal, sign in with your GARDENA (Husqvarna) account, create an application, connect the "GARDENA smart system API" to it, then copy its Application key and Application secret below. |
+| Application key | `string` | Yes | The Application key of your application on the Husqvarna developer portal. |
+| Application secret | `secret` | Yes | The Application secret of the same application. It is stored encrypted and never sent back to the browser. |
+| Location id (optional) | `string` | No | Restrict the integration to a single GARDENA location (garden). Leave empty to use every location of the account. |
+| GARDENA API refresh (s) | `number` | No | Minimum delay between two full reads of the GARDENA API, the safety net behind the real-time stream. GARDENA counts a weekly request quota and this is what spends it: one hour costs about 170 calls a week, fifteen minutes would cost about 670. Changes already arrive in real time, so keep it high. |
+| Default duration (min) | `number` | No | How long a valve waters, or a power socket stays on, when you switch it on from Gladys. |
+| Power socket switch-on | `select` | No | What happens when a GARDENA power socket is switched on from Gladys. |
+| Mower start | `select` | No | What starting the mower from Gladys means: let it obey its own calendar, or override it for a fixed duration. |
+| Mowing duration (min) | `number` | No | Used when the mower start mode overrides the schedule. |
+| Mower stop | `select` | No | What stopping the mower from Gladys means: park it until the next scheduled task, or cancel the schedule entirely. |
+
+## How to install GARDENA smart system in Gladys
+
+1. In Gladys, open **Integrations**: GARDENA smart system appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/nagromdark/gladys-gardena:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/Nagromdark/gladys-gardena](https://github.com/Nagromdark/gladys-gardena).
+
+GARDENA smart system requires Gladys `>=4.85.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+GARDENA smart system is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [Nagromdark](https://github.com/Nagromdark), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/Nagromdark/gladys-gardena) — [source of this documentation](https://github.com/Nagromdark/gladys-gardena/blob/HEAD/docs/en.md)
