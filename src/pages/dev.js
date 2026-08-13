@@ -51,6 +51,11 @@ const TIER_LABELS = {
     description: "Development pace tier",
     message: "Ludicrous speed",
   }),
+  singularity: translate({
+    id: "devPage.tier.singularity",
+    description: "Development pace tier",
+    message: "Singularity",
+  }),
 };
 
 // selectMessage comes from usePluralForm: Docusaurus does not read ICU plural

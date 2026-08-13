@@ -19,6 +19,7 @@ export const TIERS = [
   { key: "onFire", emoji: "🔥", min: 20 },
   { key: "supersonic", emoji: "🚀", min: 35 },
   { key: "ludicrous", emoji: "🛸", min: 50 },
+  { key: "singularity", emoji: "🌌", min: 100 },
 ];
 
 export function getTier(commitsPerWeek) {
