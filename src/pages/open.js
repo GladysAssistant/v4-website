@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import Layout from "@theme/Layout";
+import Link from "@docusaurus/Link";
 import Translate from "@docusaurus/Translate";
 import {
   Chart,
@@ -504,6 +505,16 @@ function Open() {
                         last, dotted point is the current month, still in
                         progress.
                       </Translate>
+                    </p>
+                    <p className={styles.chartCaption}>
+                      <Link to="/dev/">
+                        <Translate
+                          id="openPage.chart.devActivityLink"
+                          description="Link from the open page to the dev activity page"
+                        >
+                          See how fast Gladys is being built right now →
+                        </Translate>
+                      </Link>
                     </p>
                   </div>
                 </section>

@@ -1,0 +1,40 @@
+name: Refresh dev activity
+
+# The /dev/ page reads its numbers at build time (see build.sh), so every
+# deploy already refreshes them. This just makes sure the page keeps moving on
+# days where nothing else is pushed, by asking Cloudflare Pages for a rebuild.
+#
+# One-time setup: create a deploy hook on the Cloudflare Pages project
+# (Settings > Builds & deployments > Deploy hooks, branch master) and store its
+# URL as the CLOUDFLARE_PAGES_DEPLOY_HOOK repository secret. Without the
+# secret this workflow does nothing and the data still refreshes on each
+# deploy.
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-dev-activity
+  cancel-in-progress: false
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger a Cloudflare Pages deploy
+        env:
+          DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "CLOUDFLARE_PAGES_DEPLOY_HOOK is not set: nothing to do."
+            echo "See the comment at the top of this workflow to enable it."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST "$DEPLOY_HOOK" > /dev/null
+          echo "Cloudflare Pages deploy triggered."
