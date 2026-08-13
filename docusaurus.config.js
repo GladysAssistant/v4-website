@@ -246,6 +246,10 @@ module.exports = function createConfig() {
               href: "/open",
             },
             {
+              label: "Development activity",
+              href: "/dev",
+            },
+            {
               label: "Contact Us",
               href: "/contact",
             },

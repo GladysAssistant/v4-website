@@ -1,0 +1,45 @@
+name: Refresh dev activity
+
+# The /dev/ page refreshes its GitHub numbers in the browser, but the snapshot
+# committed in src/data/devActivity.json is what gets server-rendered, and it
+# is the only source for the accepted feature requests coming from the forum.
+# This keeps it fresh with a daily pull request.
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: yarn install --frozen-lockfile
+      - run: yarn load-dev-activity
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # A pull request opened with GITHUB_TOKEN does not trigger the CI
+      # workflow, so the build runs here instead.
+      - run: ./build.sh
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/refresh-dev-activity
+          title: "chore: refresh the development activity snapshot"
+          commit-message: "chore: refresh the development activity snapshot"
+          body: |
+            Daily refresh of `src/data/devActivity.json`, the snapshot behind
+            the [/dev/](https://gladysassistant.com/dev/) page: weekly commits,
+            releases, open and merged pull requests, contributors and the
+            accepted feature requests from the forum.
+
+            Run `yarn load-dev-activity` locally to reproduce.
+          labels: automated
+          delete-branch: true

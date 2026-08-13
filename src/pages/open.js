@@ -505,6 +505,16 @@ function Open() {
                         progress.
                       </Translate>
                     </p>
+                    <p className={styles.chartCaption}>
+                      <a href="/dev/">
+                        <Translate
+                          id="openPage.chart.devActivityLink"
+                          description="Link from the open page to the dev activity page"
+                        >
+                          See how fast Gladys is being built right now →
+                        </Translate>
+                      </a>
+                    </p>
                   </div>
                 </section>
                 <section className={styles.openSection}>
