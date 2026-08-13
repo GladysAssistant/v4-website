@@ -39,7 +39,7 @@ commits, releases, pull requests, contributors) and of the accepted feature
 requests on the forum. A GitHub Action refreshes it daily, and you can
 regenerate it locally with:
 
-```
+```bash
 yarn load-dev-activity
 ```
 

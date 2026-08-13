@@ -33,23 +33,37 @@ const MAX_FORUM_REQUESTS = 24;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const MAX_ATTEMPTS = 6;
+const REQUEST_TIMEOUT_MS = 20000;
+
 async function getJson(url, { retryOn202 = false } = {}) {
+  const isGitHub = url.startsWith(GITHUB_API);
   const headers = {
-    Accept: "application/vnd.github+json",
+    Accept: isGitHub ? "application/vnd.github+json" : "application/json",
     "User-Agent": "gladysassistant-website",
   };
   // Optional: lifts the 60 requests/hour anonymous limit. The workflow passes
-  // the automatic GITHUB_TOKEN, a local run works fine without one.
-  if (process.env.GITHUB_TOKEN) {
+  // the automatic GITHUB_TOKEN, a local run works fine without one. Only ever
+  // sent to the GitHub API, never to the forum.
+  if (isGitHub && process.env.GITHUB_TOKEN) {
     headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
 
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    const response = await fetch(url, { headers });
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
+    const response = await fetch(url, {
+      headers,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
     // The statistics endpoints answer 202 while GitHub computes the cache.
     if (response.status === 202 && retryOn202) {
       console.log(`   202 from ${url}, waiting for GitHub to compute it...`);
       await sleep(3000);
+      continue;
+    }
+    // A single 502 from GitHub should not fail the daily refresh.
+    if (response.status >= 500 && attempt < MAX_ATTEMPTS - 1) {
+      console.log(`   ${response.status} from ${url}, retrying...`);
+      await sleep(2000 * (attempt + 1));
       continue;
     }
     if (!response.ok) {
@@ -116,6 +130,11 @@ async function getWeeks() {
   const weeks = await getJson(`${GITHUB_API}/stats/commit_activity`, {
     retryOn202: true,
   });
+  // GitHub answers 202 with an empty body while it builds the statistics
+  // cache; fail with something readable rather than a map() stack trace.
+  if (!Array.isArray(weeks)) {
+    throw new Error("Unexpected commit activity payload from GitHub");
+  }
   // Compact keys: this file lands in git, and 52 weeks of verbose objects make
   // for a needlessly noisy diff.
   return weeks.map((week) => ({

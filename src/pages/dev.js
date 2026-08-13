@@ -3,6 +3,7 @@ import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import Translate, { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { usePluralForm } from "@docusaurus/theme-common";
 
 import devActivitySnapshot from "../data/devActivity.json";
 import {
@@ -52,7 +53,9 @@ const TIER_LABELS = {
   }),
 };
 
-function achievementText(achievement) {
+// selectMessage comes from usePluralForm: Docusaurus does not read ICU plural
+// syntax, plural forms are pipe-delimited and picked by count.
+function achievementText(achievement, selectMessage) {
   switch (achievement.key) {
     case "record":
       return {
@@ -109,13 +112,17 @@ function achievementText(achievement) {
           description: "Achievement title",
           message: "Ship it",
         }),
-        detail: translate(
-          {
-            id: "devPage.achievement.releases.detail",
-            description: "Achievement detail",
-            message: "{count} releases in the last 90 days",
-          },
-          { count: achievement.value }
+        detail: selectMessage(
+          achievement.value,
+          translate(
+            {
+              id: "devPage.achievement.releases.detail",
+              description: "Achievement detail",
+              message:
+                "One release in the last 90 days|{count} releases in the last 90 days",
+            },
+            { count: achievement.value }
+          )
         ),
       };
     case "cadence":
@@ -125,13 +132,17 @@ function achievementText(achievement) {
           description: "Achievement title",
           message: "Metronome",
         }),
-        detail: translate(
-          {
-            id: "devPage.achievement.cadence.detail",
-            description: "Achievement detail",
-            message: "A release every {count} days on average",
-          },
-          { count: achievement.value }
+        detail: selectMessage(
+          achievement.value,
+          translate(
+            {
+              id: "devPage.achievement.cadence.detail",
+              description: "Achievement detail",
+              message:
+                "A release every day on average|A release every {count} days on average",
+            },
+            { count: achievement.value }
+          )
         ),
       };
     case "contributors":
@@ -173,13 +184,17 @@ function achievementText(achievement) {
           description: "Achievement title",
           message: "Community roadmap",
         }),
-        detail: translate(
-          {
-            id: "devPage.achievement.roadmap.detail",
-            description: "Achievement detail",
-            message: "{count} feature requests accepted",
-          },
-          { count: achievement.value }
+        detail: selectMessage(
+          achievement.value,
+          translate(
+            {
+              id: "devPage.achievement.roadmap.detail",
+              description: "Achievement detail",
+              message:
+                "One feature request accepted|{count} feature requests accepted",
+            },
+            { count: achievement.value }
+          )
         ),
       };
     default:
@@ -203,9 +218,14 @@ function mapPullRequest(pullRequest) {
   };
 }
 
+// A stalled request would leave the page on the snapshot forever; eight
+// seconds is well past a healthy GitHub response.
+const LIVE_TIMEOUT_MS = 8000;
+
 async function fetchJson(url) {
   const response = await fetch(url, {
     headers: { Accept: "application/vnd.github+json" },
+    signal: AbortSignal.timeout(LIVE_TIMEOUT_MS),
   });
   if (!response.ok) {
     throw new Error(String(response.status));
@@ -238,23 +258,22 @@ async function fetchLiveActivity() {
   if (Array.isArray(releases) && releases.length > 0) {
     live.releases = releases
       .filter((release) => !release.draft)
-      .map((release) => ({
-        tag: release.tag_name,
-        name: release.name || release.tag_name,
-        url: release.html_url,
-        publishedAt: release.published_at,
-        prerelease: release.prerelease,
+      .map((release) => {
         // Release notes are not re-parsed in the browser: the snapshot already
         // carries the change counts for the releases it knows about.
-        changes:
-          devActivitySnapshot.releases.find(
-            (known) => known.tag === release.tag_name
-          )?.changes || 0,
-        highlights:
-          devActivitySnapshot.releases.find(
-            (known) => known.tag === release.tag_name
-          )?.highlights || [],
-      }));
+        const known = devActivitySnapshot.releases.find(
+          (candidate) => candidate.tag === release.tag_name
+        );
+        return {
+          tag: release.tag_name,
+          name: release.name || release.tag_name,
+          url: release.html_url,
+          publishedAt: release.published_at,
+          prerelease: release.prerelease,
+          changes: known?.changes || 0,
+          highlights: known?.highlights || [],
+        };
+      });
   }
   if (Array.isArray(openPullRequests)) {
     const open = openPullRequests
@@ -310,7 +329,10 @@ function Heatmap({ weeks, now, locale }) {
   );
   return (
     <div className={styles.heatmapScroll}>
-      <div className={styles.heatmap}>
+      <div
+        className={styles.heatmap}
+        style={{ "--dev-weeks": columns.length }}
+      >
         <div className={styles.heatmapMonths}>
           {months.map((month) => (
             <span
@@ -368,6 +390,7 @@ function PullRequestLabels({ labels }) {
 function DevPage() {
   const { i18n } = useDocusaurusContext();
   const locale = i18n.currentLocale;
+  const { selectMessage } = usePluralForm();
 
   const [data, setData] = useState(devActivitySnapshot);
   // Rendered server-side with the snapshot timestamp so the markup produced at
@@ -532,16 +555,21 @@ function DevPage() {
               </div>
               <div className={styles.progressLegend}>
                 {stats.tier.next ? (
-                  <Translate
-                    id="devPage.pace.next"
-                    description="Progress to the next pace tier"
-                    values={{
-                      count: stats.tier.next.min - stats.commitsLast7Days,
-                      tier: TIER_LABELS[stats.tier.next.key],
-                    }}
-                  >
-                    {"{count} commits away from {tier}"}
-                  </Translate>
+                  selectMessage(
+                    stats.tier.next.min - stats.commitsLast7Days,
+                    translate(
+                      {
+                        id: "devPage.pace.next",
+                        description: "Progress to the next pace tier",
+                        message:
+                          "One commit away from {tier}|{count} commits away from {tier}",
+                      },
+                      {
+                        count: stats.tier.next.min - stats.commitsLast7Days,
+                        tier: TIER_LABELS[stats.tier.next.key],
+                      }
+                    )
+                  )
                 ) : (
                   <Translate
                     id="devPage.pace.max"
@@ -572,15 +600,17 @@ function DevPage() {
                   Commits in 30 days
                 </Translate>
               }
-              sub={
-                <Translate
-                  id="devPage.stat.commits30Sub"
-                  description="Stat sublabel"
-                  values={{ count: stats.activeDaysLast30 }}
-                >
-                  {"{count} active days"}
-                </Translate>
-              }
+              sub={selectMessage(
+                stats.activeDaysLast30,
+                translate(
+                  {
+                    id: "devPage.stat.commits30Sub",
+                    description: "Stat sublabel",
+                    message: "One active day|{count} active days",
+                  },
+                  { count: stats.activeDaysLast30 }
+                )
+              )}
             />
             <StatCard
               emoji="📈"
@@ -633,15 +663,19 @@ function DevPage() {
                 </Translate>
               }
               sub={
-                stats.releaseCadence ? (
-                  <Translate
-                    id="devPage.stat.releasesSub"
-                    description="Stat sublabel"
-                    values={{ count: stats.releaseCadence }}
-                  >
-                    {"One every {count} days"}
-                  </Translate>
-                ) : null
+                stats.releaseCadence
+                  ? selectMessage(
+                      stats.releaseCadence,
+                      translate(
+                        {
+                          id: "devPage.stat.releasesSub",
+                          description: "Stat sublabel",
+                          message: "One every day|One every {count} days",
+                        },
+                        { count: stats.releaseCadence }
+                      )
+                    )
+                  : null
               }
             />
             <StatCard
@@ -738,7 +772,7 @@ function DevPage() {
             </h2>
             <div className={styles.badgeGrid}>
               {achievements.map((achievement) => {
-                const text = achievementText(achievement);
+                const text = achievementText(achievement, selectMessage);
                 return (
                   <div key={achievement.key} className={styles.badge}>
                     <span className={styles.badgeEmoji} aria-hidden="true">
@@ -771,13 +805,18 @@ function DevPage() {
                   GitHub, click a version to read it.
                 </Translate>
               ) : (
-                <Translate
-                  id="devPage.releases.intro"
-                  description="Release intro"
-                  values={{ count: stats.daysSinceLastRelease }}
-                >
-                  {"Last release {count} days ago. Click a version to read its full release note on GitHub."}
-                </Translate>
+                selectMessage(
+                  stats.daysSinceLastRelease,
+                  translate(
+                    {
+                      id: "devPage.releases.intro",
+                      description: "Release intro",
+                      message:
+                        "Last release yesterday. Click a version to read its full release note on GitHub.|Last release {count} days ago. Click a version to read its full release note on GitHub.",
+                    },
+                    { count: stats.daysSinceLastRelease }
+                  )
+                )
               )}
             </p>
             <ol className={styles.timeline}>
@@ -822,13 +861,18 @@ function DevPage() {
                     </div>
                     {release.changes ? (
                       <div className={styles.releaseChanges}>
-                        <Translate
-                          id="devPage.releases.changes"
-                          description="Number of changes in a release"
-                          values={{ count: release.changes }}
-                        >
-                          {"{count} changes merged"}
-                        </Translate>
+                        {selectMessage(
+                          release.changes,
+                          translate(
+                            {
+                              id: "devPage.releases.changes",
+                              description: "Number of changes in a release",
+                              message:
+                                "One change merged|{count} changes merged",
+                            },
+                            { count: release.changes }
+                          )
+                        )}
                       </div>
                     ) : null}
                     {release.highlights && release.highlights.length > 0 ? (
@@ -865,13 +909,18 @@ function DevPage() {
               </Translate>
             </h2>
             <p className={styles.sectionIntro}>
-              <Translate
-                id="devPage.inProgress.intro"
-                description="Section intro"
-                values={{ count: stats.openPullRequestsCount }}
-              >
-                {"{count} pull requests are open on the repository. Here are the ones that moved most recently."}
-              </Translate>
+              {selectMessage(
+                stats.openPullRequestsCount,
+                translate(
+                  {
+                    id: "devPage.inProgress.intro",
+                    description: "Section intro",
+                    message:
+                      "One pull request is open on the repository right now.|{count} pull requests are open on the repository. Here are the ones that moved most recently.",
+                  },
+                  { count: stats.openPullRequestsCount }
+                )
+              )}
             </p>
             <div className={styles.cardGrid}>
               {openPullRequests.map((pullRequest) => (
@@ -927,13 +976,18 @@ function DevPage() {
                   </Translate>
                 </h2>
                 <p className={styles.panelIntro}>
-                  <Translate
-                    id="devPage.shipped.intro"
-                    description="Section intro"
-                    values={{ count: stats.mergedLast30Days }}
-                  >
-                    {"{count} pull requests merged in the last 30 days."}
-                  </Translate>
+                  {selectMessage(
+                    stats.mergedLast30Days,
+                    translate(
+                      {
+                        id: "devPage.shipped.intro",
+                        description: "Section intro",
+                        message:
+                          "One pull request merged in the last 30 days.|{count} pull requests merged in the last 30 days.",
+                      },
+                      { count: stats.mergedLast30Days }
+                    )
+                  )}
                 </p>
               </div>
               <ul className={styles.shippedList}>
