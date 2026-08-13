@@ -1,9 +1,14 @@
 name: Refresh dev activity
 
-# The /dev/ page refreshes its GitHub numbers in the browser, but the snapshot
-# committed in src/data/devActivity.json is what gets server-rendered, and it
-# is the only source for the accepted feature requests coming from the forum.
-# This keeps it fresh with a daily pull request.
+# The /dev/ page reads its numbers at build time (see build.sh), so every
+# deploy already refreshes them. This just makes sure the page keeps moving on
+# days where nothing else is pushed, by asking Cloudflare Pages for a rebuild.
+#
+# One-time setup: create a deploy hook on the Cloudflare Pages project
+# (Settings > Builds & deployments > Deploy hooks, branch master) and store its
+# URL as the CLOUDFLARE_PAGES_DEPLOY_HOOK repository secret. Without the
+# secret this workflow does nothing and the data still refreshes on each
+# deploy.
 
 on:
   schedule:
@@ -11,45 +16,25 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: refresh-dev-activity
   cancel-in-progress: false
 
 jobs:
-  refresh:
+  redeploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-        with:
-          # create-pull-request pushes with its own token, so the job token has
-          # no reason to stay readable in .git/config while yarn and the build
-          # run third-party code.
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - run: yarn install --frozen-lockfile
-      - run: yarn load-dev-activity
+      - name: Trigger a Cloudflare Pages deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # A pull request opened with GITHUB_TOKEN does not trigger the CI
-      # workflow, so the build runs here instead.
-      - run: ./build.sh
-      - uses: peter-evans/create-pull-request@v7
-        with:
-          branch: chore/refresh-dev-activity
-          title: "chore: refresh the development activity snapshot"
-          commit-message: "chore: refresh the development activity snapshot"
-          body: |
-            Daily refresh of `src/data/devActivity.json`, the snapshot behind
-            the [/dev/](https://gladysassistant.com/dev/) page: weekly commits,
-            releases, open and merged pull requests, contributors and the
-            accepted feature requests from the forum.
-
-            Run `yarn load-dev-activity` locally to reproduce.
-          labels: automated
-          delete-branch: true
+          DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "CLOUDFLARE_PAGES_DEPLOY_HOOK is not set: nothing to do."
+            echo "See the comment at the top of this workflow to enable it."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST "$DEPLOY_HOOK" > /dev/null
+          echo "Cloudflare Pages deploy triggered."

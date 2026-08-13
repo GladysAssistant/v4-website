@@ -10,7 +10,13 @@
  * Run with `yarn load-dev-activity`. Refreshed daily by the
  * `refresh-dev-activity` workflow.
  */
-require("dotenv").config();
+// Only useful to read a local GITHUB_TOKEN from .env, and this script runs
+// during the deploy build, where a missing dev dependency must not break it.
+try {
+  require("dotenv").config();
+} catch (error) {
+  // no .env support, that is fine
+}
 const fs = require("fs");
 const path = require("path");
 
