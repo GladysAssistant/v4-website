@@ -311,15 +311,37 @@ function WeeklyBars({ weeks, locale }) {
       description: "Accessible label of the weekly commits chart",
       message: "Commits per week over the last 52 weeks",
     })}>
-      {weeks.map((week) => {
+      {weeks.map((week, index) => {
         const height = Math.max(3, Math.round((week.t / max) * 100));
+        // The last bucket is the week in progress: it is meant to look
+        // unfinished rather than to look like a slowdown.
+        const inProgress = index === weeks.length - 1;
+        const title = translate(
+          {
+            id: "devPage.rhythm.barTooltip",
+            description: "Tooltip of a bar in the weekly commits chart",
+            message: "Week of {date}: {count} commits",
+          },
+          { date: formatDayLabel(week.w * 1000, locale), count: week.t }
+        );
         return (
           <div
             key={week.w}
             className={styles.barSlot}
-            title={`${formatDayLabel(week.w * 1000, locale)} · ${week.t}`}
+            title={
+              inProgress
+                ? `${title} ${translate({
+                    id: "devPage.rhythm.barInProgress",
+                    description: "Tooltip suffix for the week in progress",
+                    message: "(week in progress)",
+                  })}`
+                : title
+            }
           >
-            <div className={styles.bar} style={{ height: `${height}%` }} />
+            <div
+              className={`${styles.bar} ${inProgress ? styles.barInProgress : ""}`}
+              style={{ height: `${height}%` }}
+            />
           </div>
         );
       })}
@@ -533,16 +555,16 @@ function DevPage() {
               <p className={styles.paceCount}>
                 <Translate
                   id="devPage.pace.count"
-                  description="Commits in the last 7 days"
+                  description="Commits in the current week"
                   values={{
                     count: (
                       <strong key="count" className={styles.paceNumber}>
-                        {stats.commitsLast7Days}
+                        {stats.commitsThisWeek}
                       </strong>
                     ),
                   }}
                 >
-                  {"{count} commits in the last 7 days"}
+                  {"{count} commits this week"}
                 </Translate>
               </p>
               <div
@@ -561,7 +583,7 @@ function DevPage() {
               <div className={styles.progressLegend}>
                 {stats.tier.next ? (
                   selectMessage(
-                    stats.tier.next.min - stats.commitsLast7Days,
+                    stats.tier.next.min - stats.commitsThisWeek,
                     translate(
                       {
                         id: "devPage.pace.next",
@@ -570,7 +592,7 @@ function DevPage() {
                           "One commit away from {tier}|{count} commits away from {tier}",
                       },
                       {
-                        count: stats.tier.next.min - stats.commitsLast7Days,
+                        count: stats.tier.next.min - stats.commitsThisWeek,
                         tier: TIER_LABELS[stats.tier.next.key],
                       }
                     )
@@ -738,6 +760,17 @@ function DevPage() {
                 >
                   {"{count} commits over the last 52 weeks. Each bar is a week, each square below is a day."}
                 </Translate>
+              </p>
+              <p className={styles.panelHint}>
+                <Link to="https://github.com/GladysAssistant/Gladys/graphs/commit-activity">
+                  <Translate
+                    id="devPage.rhythm.sameAsGithub"
+                    description="Link to the GitHub commit activity graph"
+                  >
+                    Same numbers as GitHub Insights → Commits, straight from the
+                    same API →
+                  </Translate>
+                </Link>
               </p>
             </div>
             <WeeklyBars weeks={data.weeks || []} locale={locale} />

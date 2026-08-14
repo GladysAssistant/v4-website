@@ -97,7 +97,11 @@ export function computeStats(data, now) {
   const weeklyTotals = weeks.map((week) => week.t);
   const days = buildDailySeries(weeks, nowDate);
 
-  const commitsLast7Days = sumLastDays(days, 7);
+  // The current week, Sunday to now: the same number GitHub prints as the last
+  // bar of Insights > Commits, because it comes from the same payload.
+  const commitsThisWeek = weeklyTotals.length
+    ? weeklyTotals[weeklyTotals.length - 1]
+    : 0;
   const commitsLast30Days = sumLastDays(days, 30);
   const commitsLastYear = weeklyTotals.reduce((total, week) => total + week, 0);
 
@@ -149,7 +153,7 @@ export function computeStats(data, now) {
   ).length;
 
   return {
-    commitsLast7Days,
+    commitsThisWeek,
     commitsLast30Days,
     commitsLastYear,
     recentAverage: Math.round(recentAverage),
@@ -171,9 +175,9 @@ export function computeStats(data, now) {
     contributorsCount: data.contributorsCount || 0,
     forumRequestsCount: (data.forumRequests || []).length,
     stars: data.repository ? data.repository.stars : 0,
-    // The pace tile drives the tier: a trailing 7-day count reacts faster than
-    // the weekly bucket, which resets every Sunday.
-    tier: getTier(commitsLast7Days),
+    // The tier climbs with the week and starts over every Sunday, on the same
+    // count GitHub shows.
+    tier: getTier(commitsThisWeek),
   };
 }
 
