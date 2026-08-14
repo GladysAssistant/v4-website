@@ -11,14 +11,17 @@ Il n'y a **aucune pull request à ouvrir, aucune review de code à attendre, et 
 
 Cette page est un tutoriel complet, étape par étape, à destination des développeurs.
 
-:::tip[Nouveautés de Gladys 4.85 (SDK 0.11.0)]
+:::tip[Nouveautés de Gladys 4.86 (SDK 0.12.0)]
 
-- **[Fournisseurs météo](#fournisseurs-météo)** : un nouveau type d'intégration `weather`. Répondez à un seul gestionnaire avec le format pivot météo, et votre fournisseur alimente le widget du tableau de bord, l'assistant conversationnel et les déclencheurs de scène sur alerte météo — en prenant le pas sur le service OpenWeather intégré, sans aucune configuration.
-- **[Coordonnées des maisons](#coordonnées-des-maisons)** : déclarez `location: true` et lisez les coordonnées des maisons de l'utilisateur, au lieu de redemander une latitude et une longitude.
-- **[Ports nommés et placeholders de formulaire](#guider-vos-utilisateurs-dans-le-formulaire)** : `{{gladys_host}}` et `{{port:<name>}}` dans vos textes de section, pour écrire une adresse de l'instance elle-même.
-- **[Ports non navigables](#sous-conteneurs-et-matériel)** : `browsable: false` pour un port qui n'expose aucune interface web.
-- **[Une seule URL de redirection HTTPS pour OAuth2](#services-cloud-oauth2)**, que l'utilisateur atteigne Gladys en local ou via Gladys Plus.
-- **De nouvelles catégories d'appareils** dans les constantes du SDK : borne de recharge, chauffe-eau, mode et état de fonctionnement de thermostat, batterie de stockage, vanne d'eau, sonnette, vitesse de ventilation et oscillation de climatisation.
+- **[Catégories du store](#catégories-du-store)** : un nouveau champ `categories` dans le manifeste, qui range votre intégration dans les rayons du catalogue redessiné. Le déclarer impose une plage `gladys_version` qui démarre à `4.86.0`.
+- **[Caméras PTZ](#caméras-motorisées-ptz)** : les fonctionnalités `move`, `preset` et les positions absolues, et Gladys affiche la croix directionnelle et le sélecteur de préréglages sur le widget caméra.
+- **[Wake-on-LAN](#wake-on-lan)** : `gladys.wakeOnLan(mac)` et l'autorisation `network_wake`, pour que le cœur émette le magic packet depuis le réseau de l'hôte.
+- **[Liaison de compte](#lier-un-compte-sans-redirection)** : un champ de configuration `account_link`, le bouton « Connecter » des fournisseurs qui ne redirigent jamais vers Gladys (une connexion par QR code validée dans l'application du fabricant).
+- **[Listes de choix découvertes sur les appareils](#listes-de-choix-découvertes-sur-les-appareils)** : le type de fonctionnalité `text`/`select` et ses `supported_options`, pour les applications d'une TV, les pièces d'un aspirateur ou les scènes natives d'un appareil.
+- **De nouvelles catégories d'appareils** dans les constantes du SDK : capteur de réseau électrique, capteur de sortie maison, maintenance (consommables), et les capteurs de gaz NO₂, O₃ et SO₂.
+- **[Installation depuis une image construite en local](#étape-4--construire-et-tester-en-local)** : le mode développeur installe directement le résultat d'un `docker build`, sans passer par un registre.
+
+Vous avez déjà publié une intégration ? Passez `@gladysassistant/integration-sdk` en `^0.12.0` (changements purement additifs, rien à adapter), déclarez vos `categories`, et passez `gladys_version` à `">=4.86.0"`.
 
 :::
 
@@ -48,7 +51,7 @@ Une intégration externe est un **conteneur Docker** qui dialogue avec Gladys vi
 
 Vous n'avez à implémenter aucune de cette plomberie vous-même : le [SDK JavaScript officiel](https://github.com/GladysAssistant/integration-sdk-js) gère pour vous l'authentification, la connexion WebSocket, la reconnexion automatique avec backoff exponentiel, les accusés de réception des commandes, et la resynchronisation de l'état. Vous pouvez écrire votre intégration dans n'importe quel langage, mais le SDK vous fait gagner beaucoup de temps.
 
-Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras**, les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud** (avec un état dégradé), la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), les **sous-conteneurs avec accès au matériel**, les **canaux de messagerie**, les **fournisseurs météo**, les **coordonnées des maisons de l'utilisateur**, et les **webhooks entrants** (via Gladys Plus). Chacun de ces points est couvert dans sa propre section ci-dessous.
+Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras** (y compris le **contrôle PTZ**), les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud** (avec un état dégradé), la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), le **Wake-on-LAN**, les **sous-conteneurs avec accès au matériel**, les **canaux de messagerie**, les **fournisseurs météo**, les **coordonnées des maisons de l'utilisateur**, et les **webhooks entrants** (via Gladys Plus). Chacun de ces points est couvert dans sa propre section ci-dessous.
 
 Une intégration déclare dans son manifeste l'un des **trois types** suivants :
 
@@ -63,7 +66,7 @@ Quelques règles de conception importantes à garder en tête :
 
 ## Prérequis
 
-- Une instance Gladys Assistant en version **4.84.0 ou ultérieure** (les intégrations externes ont été introduites dans cette version). Les capacités les plus récentes — les [fournisseurs météo](#fournisseurs-météo), les [coordonnées des maisons](#coordonnées-des-maisons), et les [ports nommés et placeholders](#guider-vos-utilisateurs-dans-le-formulaire) du formulaire de configuration — nécessitent la version **4.85.0 ou ultérieure** : ajustez l'intervalle `gladys_version` de votre manifeste en conséquence.
+- Une instance Gladys Assistant en version **4.84.0 ou ultérieure** (les intégrations externes ont été introduites dans cette version). Les [fournisseurs météo](#fournisseurs-météo), les [coordonnées des maisons](#coordonnées-des-maisons) et les [ports nommés et placeholders](#guider-vos-utilisateurs-dans-le-formulaire) du formulaire de configuration nécessitent la version **4.85.0 ou ultérieure** ; les capacités les plus récentes — les [catégories du store](#catégories-du-store), les [caméras PTZ](#caméras-motorisées-ptz), le [Wake-on-LAN](#wake-on-lan) et la [liaison de compte](#lier-un-compte-sans-redirection) — nécessitent la version **4.86.0 ou ultérieure**. Ajustez l'intervalle `gladys_version` de votre manifeste en conséquence.
 - [Docker](https://www.docker.com/) installé sur votre machine de développement.
 - [Node.js 24 ou ultérieur](https://nodejs.org/) si vous utilisez le SDK JavaScript (le SDK requiert Node.js 20 ou ultérieur, mais la version 24 est recommandée).
 - Un registre Docker public pour héberger votre image. L'option la plus simple est le [GitHub Container Registry](https://docs.github.com/packages/working-with-a-github-packages-registry/working-with-the-container-registry) (`ghcr.io`), qui garde votre image au même endroit que votre code, et sur lequel le template officiel publie automatiquement. Docker Hub ou n'importe quel autre registre public fonctionne aussi, tant que l'image est téléchargeable de façon anonyme.
@@ -143,7 +146,7 @@ await gladys.connect();
 
 Voilà toute l'intégration. Le SDK lit les identifiants que Gladys injecte dans le conteneur sous forme de variables d'environnement, il n'y a donc aucune configuration à câbler à la main. Utiliser les constantes exportées `DEVICE_FEATURE_CATEGORIES`, `DEVICE_FEATURE_TYPES` et `DEVICE_FEATURE_UNITS` (plutôt que des chaînes brutes) garde vos fonctionnalités alignées avec les catégories, types et unités que Gladys comprend.
 
-Ces constantes sont une copie conforme de celles du cœur de Gladys, resynchronisées à chaque version du SDK : les dernières ont ajouté les **bornes de recharge**, les **chauffe-eau**, les **modes et états de fonctionnement de thermostat**, les **batteries de stockage**, les **vannes d'eau**, les **sonnettes**, ainsi que la **vitesse de ventilation et l'oscillation** des climatisations. C'est en gardant `@gladysassistant/integration-sdk` à jour que vous en profitez (la version actuelle est la `0.11.0`).
+Ces constantes sont une copie conforme de celles du cœur de Gladys, resynchronisées à chaque version du SDK : les dernières ont ajouté les fonctionnalités **PTZ des caméras**, les **capteurs de réseau électrique** (`input-power`, `output-power`, un `power` signé, et les index d'import/export), les **capteurs de sortie maison** (la puissance qu'un onduleur ou une batterie délivre à la maison, plus sa sortie secourue), la catégorie **maintenance** (la durée de vie restante d'un consommable : brosse d'aspirateur, sac, serpillière…), les capteurs de gaz **NO₂, O₃ et SO₂**, et avant cela les bornes de recharge, les chauffe-eau, les modes et états de fonctionnement de thermostat, les batteries de stockage, les vannes d'eau, les sonnettes, ainsi que la vitesse de ventilation et l'oscillation des climatisations. C'est en gardant `@gladysassistant/integration-sdk` à jour que vous en profitez (la version actuelle est la `0.12.0`).
 
 ### L'API du SDK en un coup d'œil
 
@@ -200,6 +203,11 @@ await gladys.publishStates(
 - `onWeatherGet(cb)` / `onWeatherGetImage(cb)` : Gladys demande la météo, ou une image du fournisseur (voir Fournisseurs météo).
 - `onWebhook(key, cb)` / `onWebhookUpdated(cb)` : webhooks entrants (voir Webhooks entrants).
 
+**Réseau**
+
+- `scanNetwork(type, options?)` : lance une capture réseau médiée déclarée dans votre manifeste (voir Découverte réseau).
+- `wakeOnLan(mac, options?)` : demande au cœur d'émettre un magic packet Wake-on-LAN depuis le réseau de l'hôte (voir Wake-on-LAN).
+
 **Fournisseurs météo**
 
 - `requestWeatherRefresh()` : un signal sans réponse attendue qui demande au cœur de re-solliciter votre météo immédiatement, au lieu d'attendre sa prochaine vérification planifiée (voir Fournisseurs météo).
@@ -229,6 +237,78 @@ await gladys.publishCameraImage(ids.device, `image/jpg;base64,${jpeg.toString("b
 
 Les images sont des chaînes `image/jpg;base64,...` et doivent rester sous 150 Ko.
 
+#### Caméras motorisées (PTZ)
+
+*Nécessite Gladys 4.86.0 ou ultérieur.*
+
+Piloter une caméra motorisée ne demande aucune nouvelle plomberie : le contrôle PTZ est fait de fonctionnalités de commande ordinaires sur le même appareil, et les commandes de mouvement arrivent par `onSetValue` comme n'importe quelle fonctionnalité. Gladys affiche une croix directionnelle et un sélecteur de préréglages sur la vue en direct du widget caméra, en ne montrant **que les mouvements que vous avez déclarés**.
+
+```js
+const ids = gladys.externalIds("camera", "front-door");
+
+await gladys.publishDiscoveredDevices([
+  {
+    name: "Porte d'entrée",
+    external_id: ids.device,
+    features: [
+      { name: "Image", external_id: ids.feature("image"), category: DEVICE_FEATURE_CATEGORIES.CAMERA,
+        type: DEVICE_FEATURE_TYPES.CAMERA.IMAGE, min: 0, max: 1, read_only: true, has_feedback: false, keep_history: false },
+      {
+        name: "Déplacement",
+        external_id: ids.feature("move"),
+        category: DEVICE_FEATURE_CATEGORIES.CAMERA,
+        type: DEVICE_FEATURE_TYPES.CAMERA.MOVE,
+        min: 0,
+        max: 6,
+        read_only: false,
+        has_feedback: false,
+        keep_history: false,
+        // Les mouvements que cette caméra sait réellement faire (0, l'arrêt, est
+        // toujours pris en charge et n'est jamais listé) :
+        supported_options: [
+          { value: 1, label: { en: "Left", fr: "Gauche" }, sort_order: 1 },
+          { value: 2, label: { en: "Right", fr: "Droite" }, sort_order: 2 },
+        ],
+      },
+    ],
+  },
+]);
+```
+
+- **`CAMERA.MOVE`** est une fonctionnalité unique pour tous les mouvements : la valeur désigne le mouvement (`0` arrêt — toujours pris en charge, jamais listé comme option —, `1` panoramique gauche, `2` panoramique droite, `3` inclinaison haut, `4` inclinaison bas, `5` zoom avant, `6` zoom arrière), et `supported_options` (`[{ value, label, sort_order }]`) déclare le sous-ensemble que cette caméra prend en charge.
+- **`CAMERA.PRESET`** rappelle une position enregistrée. La liste des préréglages et leurs libellés vivent dans `supported_options`, et la valeur qui vous est envoyée est l'entier de l'option, que vous faites correspondre au jeton de votre protocole.
+- **`CAMERA.PAN_POSITION`, `CAMERA.TILT_POSITION`, `CAMERA.ZOOM_POSITION`** sont des fonctionnalités numériques optionnelles en lecture/écriture, pour les caméras qui rapportent une position absolue, avec des bornes déclarées via `min`/`max` (l'unité est la vôtre : espace ONVIF normalisé, degrés…).
+
+**Règle de sécurité** : bornez toujours un mouvement continu par un chien de garde (environ 5 secondes), pour qu'une commande d'arrêt perdue ne puisse jamais laisser la caméra tourner contre sa butée mécanique, et préférez un pas relatif quand votre caméra en propose un.
+
+Republier un appareil déjà créé met silencieusement à jour les `supported_options` de ses fonctionnalités, exactement comme ses `params` : un préréglage renommé sur la caméra apparaît sans aucune action de l'utilisateur.
+
+### Listes de choix découvertes sur les appareils
+
+*Nécessite Gladys 4.86.0 ou ultérieur.*
+
+Certaines capacités sont une liste de choix que seul l'appareil connaît : les applications installées sur une TV, ses entrées HDMI, les pièces d'un aspirateur robot, les scènes enregistrées dans un appareil. Le type de fonctionnalité `text`/`select` couvre exactement ce cas — un choix parmi des valeurs que votre intégration découvre, déclarées par appareil via `supported_options` :
+
+```js
+{
+  name: "Application",
+  external_id: ids.feature("app"),
+  category: DEVICE_FEATURE_CATEGORIES.TEXT,
+  type: DEVICE_FEATURE_TYPES.TEXT.SELECT,
+  min: 0,
+  max: 0,
+  read_only: false,
+  has_feedback: true,
+  keep_history: false,
+  supported_options: [
+    { value: "netflix", label: { en: "Netflix", fr: "Netflix" }, sort_order: 1 },
+    { value: "youtube", label: { en: "YouTube", fr: "YouTube" }, sort_order: 2 },
+  ],
+}
+```
+
+L'état est la valeur de l'option sélectionnée, stockée sous forme de chaîne et conservée sans historique. Gardez ce type pour les listes qu'aucun jeu de valeurs générique ne peut décrire : les capacités de type énumération que les standards couvrent déjà (modes de climatisation, vitesses de ventilation, modes de thermostat…) conservent leur propre catégorie et leur propre type, avec des valeurs entières.
+
 ### Services cloud OAuth2
 
 Pour les fournisseurs cloud qui utilisent OAuth2, déclarez un champ de configuration de type `oauth2` dans votre manifeste, puis construisez l'URL d'autorisation et gérez le callback :
@@ -252,6 +332,28 @@ gladys.onOAuthCallback(async (key, { code, state: returnedState, redirectUri }) 
 Le rafraîchissement du token est de la responsabilité de votre intégration. Quand il expire, signalez-le avec `setConnectionStatus(false, { en: "Token expired, please reconnect.", fr: "Token expiré, reconnectez-vous." })`.
 
 **Ne codez jamais l'URL de redirection en dur** : utilisez le `redirectUri` que Gladys vous transmet, et renvoyez-le à l'octet près lors de l'échange des tokens. Les fournisseurs exigent désormais une URL de callback en HTTPS (Spotify l'impose depuis 2025), ce qu'un Gladys joignable sur `http://192.168.1.50:1443` ne pourra jamais satisfaire : le flux passe donc par une page HTTPS fixe hébergée par Gladys, qui renvoie le navigateur vers l'instance. La conséquence pratique pour vous et vos utilisateurs : **une seule URL de redirection est à déclarer chez le fournisseur**, que Gladys soit atteint en local ou via Gladys Plus. L'écran de configuration affiche l'URL exacte à copier dans l'application développeur du fournisseur.
+
+#### Lier un compte sans redirection
+
+*Nécessite Gladys 4.86.0 ou ultérieur.*
+
+Certains fournisseurs relient un compte **sans jamais rediriger** vers Gladys : une connexion par QR code validée dans l'application du fabricant (style Xiaomi Home), un appairage confirmé sur l'appareil lui-même. Déclarez alors le champ en `account_link` plutôt qu'en `oauth2` :
+
+```json
+{ "key": "account", "type": "account_link", "label": { "en": "Link my account", "fr": "Lier mon compte" } }
+```
+
+L'écran de configuration affiche le même bouton « Connecter », et `onOAuthAuthorizeUrl` est appelé de la même façon — mais `redirectUri` vaut `undefined` (il n'y en a pas), aucun `state` anti-CSRF n'est nécessaire (il n'y a pas d'aller-retour à protéger), et `onOAuthCallback` n'est jamais appelé. Retournez l'URL de connexion du fournisseur, surveillez vous-même la validation (typiquement en interrogeant le fournisseur en long-polling), puis signalez-la via `setConnectionStatus(true)` : c'est ce qui pilote le badge de connexion affiché à l'utilisateur.
+
+```js
+gladys.onOAuthAuthorizeUrl(async () => {
+  const { loginUrl, ticket } = await startQrLogin();
+  waitForApproval(ticket).then(() => gladys.setConnectionStatus(true));
+  return loginUrl;
+});
+```
+
+Un champ `account_link` est interdit dans un `contact_schema` : lier un compte chez un fournisseur concerne l'intégration entière, jamais un utilisateur en particulier.
 
 ### Boutons d'action
 
@@ -325,6 +427,21 @@ const replies = await gladys.scanNetwork("udp-active-broadcast", {
   timeoutSeconds: 10,
 });
 ```
+
+### Wake-on-LAN
+
+*Nécessite Gladys 4.86.0 ou ultérieur.*
+
+Même problème de position réseau, côté émission : un magic packet est un broadcast UDP, qui ne franchit jamais le bridge vers le réseau local. Déclarez `"network_wake": true` dans votre manifeste (affiché sur l'écran d'installation, comme les autres contrats d'autorisation — un accès non déclaré reçoit un `403`) et demandez au cœur de l'émettre :
+
+```js
+await gladys.wakeOnLan("64:e4:d5:b4:12:66"); // les formats « : », « - » et sans séparateur sont acceptés
+
+// L'appareil ignore le broadcast limité ? Visez le broadcast du sous-réseau, ou changez le port :
+await gladys.wakeOnLan("64:e4:d5:b4:12:66", { address: "192.168.1.255", port: 9 });
+```
+
+Le cœur construit toujours lui-même le magic packet standard de 102 octets (6 × `0xFF` suivis de la MAC répétée 16 fois) : vous ne fournissez jamais la charge utile, et le point d'entrée n'est donc pas un proxy UDP générique. Il est limité à **un réveil toutes les 2 secondes** par intégration (`429` au-delà), ce qui suffit à la boucle habituelle « on réessaie jusqu'à ce que l'appareil réponde ». Un appel résolu signifie que le paquet a été **émis**, pas que l'appareil s'est réveillé : interrogez l'appareil pour le confirmer.
 
 ### Sous-conteneurs et matériel
 
@@ -557,8 +674,9 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
   },
   "version": "1.0.0",
   "docker_image": "ghcr.io/yourname/my-integration:1.0.0",
-  "gladys_version": ">=4.84.0",
+  "gladys_version": ">=4.86.0",
   "cover_image": "https://raw.githubusercontent.com/yourname/my-integration/main/cover.jpg",
+  "categories": ["lighting", "energy"],
   "transports": ["local", "cloud"],
   "config_schema": [
     {
@@ -584,19 +702,41 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | `docker_image` | Oui | Une référence d'image bien formée avec un tag ou un digest explicite. Elle doit exister et être téléchargeable de façon anonyme. |
 | `gladys_version` | Oui | Une plage semver (syntaxe npm) utilisée pour filtrer les instances compatibles. |
 | `cover_image` | Non | URL HTTPS directe vers une image de couverture (voir les règles ci-dessous). |
+| `categories` | Non | De 1 à 3 catégories de navigation du catalogue (voir ci-dessous). Nécessite une plage `gladys_version` qui démarre à `4.86.0`. |
 | `config_schema` | Non | La liste des champs de configuration affichés à l'utilisateur. |
 | `transports` | Non | Sous-ensemble non vide de `local` et `cloud`, si votre intégration est à double canal. |
 | `actions` | Non | De 1 à 10 boutons d'action, chacun avec une `key`, un `label` multilingue, un `timeout_seconds` (de 5 à 120) et des `fields` optionnels. |
 | `network_discovery` | Non | De 1 à 5 méthodes de capture médiée (`udp-broadcast`, `udp-active-broadcast`, `mdns`, `ssdp`). |
 | `containers` | Non | Jusqu'à 5 conteneurs compagnons, chacun avec `name`, `docker_image`, `start` (`auto` ou `manual`), et optionnellement `env`, `volumes`, `ports` (jusqu'à 3, chacun avec `container_port`, `protocol`, un `label` multilingue, un `name` optionnel et `browsable`), `devices` (`coral-usb`, `coral-pcie`, `gpu`, `video`), `read_only`, `command`, `memory_mb` (de 32 à 4096), `cpu` (de 0,1 à 2), `shm_mb` (de 64 à 512). |
 | `location` | Non | `true` demande l'accès aux coordonnées des maisons de l'utilisateur (`GET /house`). Affiché sur l'écran d'installation, appliqué côté serveur. |
+| `network_wake` | Non | `true` demande l'autorisation d'émettre des magic packets Wake-on-LAN via le cœur. Affiché sur l'écran d'installation, appliqué côté serveur. |
 | `messaging` | Obligatoire pour `communication` | `{ "receive": true }` pour un canal de chat bidirectionnel, `{ "receive": false }` pour un canal de notification en envoi seul. Interdit pour les autres types. |
 | `contact_schema` | Obligatoire quand `messaging.receive` vaut `false` | Les identifiants propres à chaque utilisateur d'un canal en envoi seul, même format de champs que `config_schema` (hors champs `oauth2`). Interdit sinon. |
 | `webhooks` | Non | Jusqu'à 3 webhooks entrants (Gladys Plus), chacun avec une `key`, un `label` multilingue, et un `mode` (`fire_and_forget` ou `sync`). |
 
+### Catégories du store
+
+*Nécessite Gladys 4.86.0 ou ultérieur.*
+
+Depuis Gladys 4.86, le catalogue se parcourt : une barre latérale de catégories, des filtres à facettes (native, communautaire, local, cloud, Gladys Plus) et un tri « Plus récentes ». Le champ `categories` est ce qui range votre intégration dans le bon rayon — un domaine d'usage, découplé du `type` technique du manifeste :
+
+```json
+"categories": ["lighting", "energy"],
+"gladys_version": ">=4.86.0"
+```
+
+Les règles :
+
+- **1 à 3 catégories**, parmi le vocabulaire officiel : `climate`, `lighting`, `energy`, `security`, `multimedia`, `appliances`, `environment`, `protocols`, `network`, `notifications`, `assistants`, `services`.
+- **`gladys_version` doit démarrer à `4.86.0`** dès que vous déclarez le champ. Les versions plus anciennes du cœur rejettent tout champ inconnu du manifeste, donc le validateur du store refuse un manifeste qui déclare `categories` avec un minimum plus bas — les deux vont ensemble.
+- Une clé inconnue est **ignorée avec un avertissement** plutôt que de rejeter le manifeste : une intégration publiée avec un vocabulaire plus récent que le Gladys qui tourne s'installe quand même.
+- Sans ce champ, votre intégration reste visible sous « Toutes » et dans la recherche, mais elle n'apparaît sur aucun rayon.
+
+Les intégrations publiées avant la 4.86 ont été catégorisées une première fois via un fichier de correspondance conservé dans le [dépôt du store](https://github.com/GladysAssistant/integration-store), mais **c'est votre manifeste qui fait foi** dès qu'il déclare le champ : c'est l'occasion de vérifier que les catégories attribuées vous conviennent, et de les ajuster si non.
+
 ### Le schéma de configuration
 
-`config_schema` est une liste plate de champs. Chaque champ a une `key` (en minuscules, correspondant à `[a-z0-9_]`), un `type`, et un `label` multilingue (avec `en` obligatoire). Les types pris en charge sont `string`, `number`, `boolean`, `select`, `multi_select`, `secret`, `oauth2` et `section`. Selon le type, un champ peut aussi déclarer `placeholder` (pour `string`/`number`/`secret`), `required`, `default`, `min`/`max` (pour les nombres) et `options` (pour `select`/`multi_select`).
+`config_schema` est une liste plate de champs. Chaque champ a une `key` (en minuscules, correspondant à `[a-z0-9_]`), un `type`, et un `label` multilingue (avec `en` obligatoire). Les types pris en charge sont `string`, `number`, `boolean`, `select`, `multi_select`, `secret`, `oauth2`, `account_link` et `section`. Selon le type, un champ peut aussi déclarer `placeholder` (pour `string`/`number`/`secret`), `required`, `default`, `min`/`max` (pour les nombres) et `options` (pour `select`/`multi_select`).
 
 Un `select` ou un `multi_select` peut soit lister des `options` statiques, soit tirer ses choix dynamiquement des appareils de l'utilisateur avec `source: "devices"`, et s'afficher en `dropdown` ou en `radio` (`display`). Un champ `section` est purement présentationnel : il affiche une `description` et jusqu'à cinq liens de documentation (`links`), et ne stocke aucune valeur.
 
@@ -703,6 +843,8 @@ npm start
 docker build -t ghcr.io/yourname/my-integration:1.0.0 .
 ```
 
+Depuis Gladys 4.86, le mode développeur installe cette image **directement depuis votre démon Docker local**, avec un manifeste optionnel et sans rien pousser sur un registre : construisez-la sur la machine qui fait tourner Gladys, puis installez le tag depuis le lien « Mode développeur : installer depuis une image Docker » du catalogue. C'est la façon la plus rapide de tester un vrai conteneur.
+
 **Ou construisez-la sur GitHub en un clic.** Si vous préférez ne pas construire en local (ou si vous n'avez pas de builder multi-architectures configuré), le template fournit aussi un workflow **Build** que vous pouvez lancer à la main : allez dans l'onglet **Actions**, sélectionnez **Build**, cliquez sur **Run workflow**, et définissez éventuellement un tag d'image (il prend par défaut le nom de votre branche). GitHub construit l'image multi-architectures (`linux/amd64` et `linux/arm64`) et la pousse sur `ghcr.io` sous ce tag, sans jamais toucher `:latest`. Vous pouvez ensuite installer ce tag précis dans votre instance Gladys pour tester une vraie image, sans Docker en local. C'est une image de test, pas une release : utilisez l'[Étape 5](#étape-5--publier-votre-intégration) quand vous êtes prêt à publier pour tout le monde.
 
 **Valider votre manifeste hors ligne** avec exactement les vérifications que fait l'indexeur du store, avant d'attendre le cycle horaire :
@@ -764,9 +906,9 @@ Le mainteneur ne valide rien et n'est jamais un goulot d'étranglement.
 
 ## Étape 6 : Les utilisateurs installent en un clic
 
-Depuis le catalogue de Gladys, les intégrations externes apparaissent aux côtés des intégrations intégrées, avec un **badge communautaire**, les badges local/cloud déduits de vos `transports`, et un indicateur de statut en direct. Un utilisateur clique sur **Installer**, et Gladys télécharge votre image, démarre le conteneur, et affiche l'interface générée. Les utilisateurs peuvent aussi installer directement depuis une URL de dépôt GitHub, sans attendre le prochain cycle d'indexation.
+Depuis le catalogue de Gladys, les intégrations externes apparaissent aux côtés des intégrations intégrées, avec un **badge communautaire**, les badges local/cloud déduits de vos `transports`, et un indicateur de statut en direct. Les utilisateurs parcourent le catalogue par catégorie (la vôtre vient du champ `categories` de votre manifeste), le filtrent, et le trient par nouveauté. Un utilisateur clique sur **Installer**, et Gladys télécharge votre image, démarre le conteneur, et affiche l'interface générée. Les utilisateurs peuvent aussi installer directement depuis une URL de dépôt GitHub, sans attendre le prochain cycle d'indexation.
 
-Avant l'installation, l'écran montre tout ce que votre manifeste a déclaré : votre documentation, les sous-conteneurs qui vont tourner et les ports qu'ils vont exposer, le matériel que vous demandez, les captures réseau, les webhooks, et l'accès aux coordonnées des maisons. Ne déclarez que ce dont vous vous servez réellement : chaque ligne est une question à laquelle l'utilisateur doit répondre avant de vous faire confiance.
+Avant l'installation, l'écran montre tout ce que votre manifeste a déclaré : votre documentation, les sous-conteneurs qui vont tourner et les ports qu'ils vont exposer, le matériel que vous demandez, les captures réseau, l'autorisation Wake-on-LAN, les webhooks, et l'accès aux coordonnées des maisons. Ne déclarez que ce dont vous vous servez réellement : chaque ligne est une question à laquelle l'utilisateur doit répondre avant de vous faire confiance.
 
 ## Mettre à jour votre intégration
 
@@ -774,11 +916,13 @@ Livrer une nouvelle version tient en un clic : relancez le workflow **Release** 
 
 Si vous publiez manuellement, faites les deux mêmes choses à la main : construisez et poussez un nouveau tag d'image (par exemple `ghcr.io/yourname/my-integration:1.1.0`), puis incrémentez `version` et `docker_image` dans le manifeste et poussez.
 
+Suivre une nouvelle version de Gladys est un exercice tout aussi court : passez `@gladysassistant/integration-sdk` à la version suivante (les versions du SDK sont additives, le code existant continue de fonctionner), déclarez les champs de manifeste dont les nouvelles capacités ont besoin, relevez la plage `gladys_version` en conséquence, validez avec `npx github:GladysAssistant/integration-store .`, et publiez. Pour la 4.86, cela veut dire `^0.12.0`, un champ `categories`, et `">=4.86.0"`.
+
 ## Dépannage
 
 Installer votre intégration depuis l'URL de son dépôt (ou en mode développeur) affiche les **erreurs de validation détaillées** de votre manifeste, champ par champ, pour les corriger sans attendre le prochain cycle d'indexation.
 
-L'indexeur est totalement transparent. Si votre intégration n'apparaît pas dans le catalogue, consultez le fichier `rejected.json` publié : il liste chaque dépôt qui a échoué à la validation, avec la raison et un niveau de sévérité (manifeste invalide, référence d'image mal formée ou non téléchargeable, plage `gladys_version` incompatible, couverture trop lourde ou aux mauvaises dimensions, `docs/en.md` ou `docs/fr.md` manquant, etc.). Vous pouvez détecter la plupart de ces problèmes avant de publier en lançant `npx github:GladysAssistant/integration-store .` en local. Corrigez le problème, republiez, et attendez le prochain cycle.
+L'indexeur est totalement transparent. Si votre intégration n'apparaît pas dans le catalogue, consultez le fichier `rejected.json` publié : il liste chaque dépôt qui a échoué à la validation, avec la raison et un niveau de sévérité (manifeste invalide, référence d'image mal formée ou non téléchargeable, plage `gladys_version` incompatible, `categories` déclaré avec un minimum `gladys_version` inférieur à 4.86.0, couverture trop lourde ou aux mauvaises dimensions, `docs/en.md` ou `docs/fr.md` manquant, etc.). Les avertissements méritent aussi une lecture : une clé de catégorie inconnue est ignorée, et une intégration qui n'en déclare aucune est indexée sans catégorie. Vous pouvez détecter la plupart de ces problèmes avant de publier en lançant `npx github:GladysAssistant/integration-store .` en local. Corrigez le problème, republiez, et attendez le prochain cycle.
 
 ## Modèle de sécurité
 
