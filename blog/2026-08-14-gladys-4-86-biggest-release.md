@@ -96,7 +96,7 @@ Scenes got their biggest upgrade in a long time.
 
 - **Loops.** A new **"As long as… repeat…"** block repeats a group of actions while its conditions hold. Conditions are re-evaluated before every iteration, so a "Get last state" action placed before a condition refreshes its value on every loop. A **maximum number of iterations** acts as a safety limit.
 - **Set a variable.** A new action defines a variable (fixed text or a computation), reusable in every following action of the scene.
-- **Get calendar events.** A new action fetches the events of the day, of tomorrow, or of the next X hours from your shared calendars, and hands the next actions a ready-to-use sentence, the number of events and the event list — perfect for a morning announcement on your speaker.
+- **Get calendar events.** A new action fetches the events of the day, of tomorrow, or of the next X hours from your shared calendars, and hands the next actions a ready-to-use sentence, the number of events and the event list. Perfect for a morning announcement on your speaker.
 - **Multi-select in the device state trigger.** One trigger can now watch **several features of the same type**: the scene starts as soon as one of them matches.
 - **Choose the channel** of the "Send a message" action, instead of always broadcasting to every configured messaging service.
 - **Send text to a device** directly from the "Control a device" action.
@@ -134,7 +134,7 @@ Gladys now models a full home energy flow, with new device feature categories:
 - **Grid sensor**: import power, export power, signed grid power (import +, export −), and import/export indexes
 - **Home output sensor**: home output power and index, including off-grid output
 
-On top of that, Gladys can now **compute a production index from meter readings**, the same way it already did for consumption — so you get proper production history even from devices that only report a raw index.
+On top of that, Gladys can now **compute a production index from meter readings**, the same way it already did for consumption, so you get proper production history even from devices that only report a raw index.
 
 ## 🧠 New device feature types
 
@@ -157,12 +157,12 @@ Setting the location of your house no longer requires hunting on a map: **type y
 
 ## 🔌 Integrations and external integrations
 
-- **External integrations** can now be installed and updated **from a locally built Docker image** — no registry needed, which makes developing one much faster.
+- **External integrations** can now be installed and updated **from a locally built Docker image**. No registry needed, which makes developing one much faster.
 - A new **Wake-on-LAN permission**: an integration can ask to send magic packets through Gladys on your local network, and you approve it explicitly.
 - Docker images left behind by external integrations are now **cleaned up**.
 - A new **account link** configuration field, for providers that don't use OAuth2.
 - **Zigbee2MQTT**: support for HS1SA-E features, the container restart policy is reconciled on startup, and the scene action now makes it clear that the topic must include the `zigbee2mqtt/` prefix.
-- **Z-Wave JS UI**: the built-in integration is now flagged as **deprecated** in the catalog, and every one of its devices gets a **Migrate** button to move it — with its history — to another integration.
+- **Z-Wave JS UI**: the built-in integration is now flagged as **deprecated** in the catalog, and every one of its devices gets a **Migrate** button to move it, with its history, to another integration.
 - Published MQTT and Zigbee2MQTT payloads are now **logged**, with a warning on invalid JSON. Debugging an automation just got a lot easier.
 
 ## 🛠️ Under the hood
@@ -183,11 +183,11 @@ Plus a long tail of interface fixes: the water heater boost control no longer ov
 
 I want to be clear about what's happening here, because it's the most important part of this release.
 
-A release of this size used to be a **multi-month** effort. This one took **one week** — and not by cutting corners: the specs are written, the tests are there, the code is reviewed, and the test suite actually got *faster* along the way. AI removed the part of the work that was pure friction: boilerplate, tests, refactors, review passes, CI plumbing.
+A release of this size used to be a **multi-month** effort. This one took **one week**, and not by cutting corners: the specs are written, the tests are there, the code is reviewed, and the test suite actually got *faster* along the way. AI removed the part of the work that was pure friction: boilerplate, tests, refactors, review passes, CI plumbing.
 
 What that means for you is simple: **the features you ask for on the forum now ship in days, not quarters**. Several items in this release came straight from a forum thread this week.
 
-👉 **[Follow the project's pace on the development activity page](/dev/)** — it's updated automatically, and honestly, it's become my favorite page of the website.
+👉 **[Follow the project's pace on the development activity page](/dev/)**. It's updated automatically, and honestly, it's become my favorite page of the website.
 
 ## ❤️ Thank you
 

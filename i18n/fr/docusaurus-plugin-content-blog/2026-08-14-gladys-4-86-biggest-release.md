@@ -96,7 +96,7 @@ Les scènes reçoivent leur plus grosse mise à jour depuis longtemps.
 
 - **Les boucles.** Un nouveau bloc **« Tant que… Répéter… »** répète un groupe d'actions tant que ses conditions sont remplies. Les conditions sont réévaluées avant chaque itération : une action « Récupérer le dernier état » placée avant une condition rafraîchit donc sa valeur à chaque tour de boucle. Un **nombre maximum d'itérations** sert de limite de sécurité.
 - **Définir une variable.** Une nouvelle action définit une variable (texte fixe ou calcul), réutilisable dans toutes les actions suivantes de la scène.
-- **Récupérer les événements de l'agenda.** Une nouvelle action récupère les événements du jour, de demain, ou des X prochaines heures dans vos agendas partagés, et fournit aux actions suivantes une phrase prête à l'emploi, le nombre d'événements et la liste des événements — parfait pour une annonce matinale sur votre enceinte.
+- **Récupérer les événements de l'agenda.** Une nouvelle action récupère les événements du jour, de demain, ou des X prochaines heures dans vos agendas partagés, et fournit aux actions suivantes une phrase prête à l'emploi, le nombre d'événements et la liste des événements. Parfait pour une annonce matinale sur votre enceinte.
 - **Sélection multiple dans le déclencheur d'état d'appareil.** Un déclencheur peut maintenant surveiller **plusieurs fonctionnalités du même type** : la scène démarre dès que l'une d'elles remplit la condition.
 - **Choisir le canal** de l'action « Envoyer un message », au lieu de systématiquement diffuser sur tous les services de messagerie configurés.
 - **Envoyer du texte à un appareil** directement depuis l'action « Contrôler un appareil ».
@@ -134,7 +134,7 @@ Gladys modélise désormais tout le flux énergétique de la maison, avec de nou
 - **Capteur réseau** : puissance importée, puissance exportée, puissance réseau signée (import +, export −), et index d'import/export
 - **Capteur de sortie maison** : puissance et index de sortie de la maison, y compris en hors réseau
 
-Par-dessus, Gladys sait maintenant **calculer un index de production à partir des relevés du compteur**, comme elle le faisait déjà pour la consommation — vous obtenez donc un vrai historique de production, même avec des appareils qui ne remontent qu'un index brut.
+Par-dessus, Gladys sait maintenant **calculer un index de production à partir des relevés du compteur**, comme elle le faisait déjà pour la consommation. Vous obtenez donc un vrai historique de production, même avec des appareils qui ne remontent qu'un index brut.
 
 ## 🧠 De nouveaux types de fonctionnalités
 
@@ -157,12 +157,12 @@ Définir la position de votre maison ne demande plus de chercher sur une carte :
 
 ## 🔌 Intégrations et intégrations externes
 
-- Les **intégrations externes** peuvent maintenant être installées et mises à jour **depuis une image Docker construite en local** — sans registre, ce qui accélère énormément le développement.
+- Les **intégrations externes** peuvent maintenant être installées et mises à jour **depuis une image Docker construite en local**, sans registre, ce qui accélère énormément le développement.
 - Une nouvelle **permission Wake-on-LAN** : une intégration peut demander à envoyer des paquets magiques via Gladys sur votre réseau local, et vous l'approuvez explicitement.
 - Les images Docker laissées derrière elles par les intégrations externes sont maintenant **nettoyées**.
 - Un nouveau champ de configuration **lien de compte**, pour les fournisseurs qui n'utilisent pas OAuth2.
 - **Zigbee2MQTT** : prise en charge des fonctionnalités du HS1SA-E, la politique de redémarrage du conteneur est réconciliée au démarrage, et l'action de scène indique clairement que le topic doit inclure le préfixe `zigbee2mqtt/`.
-- **Z-Wave JS UI** : l'intégration intégrée est désormais marquée **dépréciée** dans le catalogue, et chacun de ses appareils dispose d'un bouton **Migrer** pour le déplacer — avec son historique — vers une autre intégration.
+- **Z-Wave JS UI** : l'intégration intégrée est désormais marquée **dépréciée** dans le catalogue, et chacun de ses appareils dispose d'un bouton **Migrer** pour le déplacer, avec son historique, vers une autre intégration.
 - Les payloads publiés en MQTT et Zigbee2MQTT sont maintenant **journalisés**, avec un avertissement en cas de JSON invalide. Déboguer une automatisation devient nettement plus simple.
 
 ## 🛠️ Sous le capot
@@ -183,11 +183,11 @@ Sans oublier une longue série de corrections d'interface : le contrôle de boos
 
 Je veux être clair sur ce qui se passe ici, parce que c'est la partie la plus importante de cette release.
 
-Une version de cette taille était auparavant un chantier de **plusieurs mois**. Celle-là a pris **une semaine** — et pas en rognant sur la qualité : les specs sont écrites, les tests sont là, le code est relu, et la suite de tests est même devenue *plus rapide* au passage. L'IA a supprimé la partie du travail qui n'était que friction : le boilerplate, les tests, les refactos, les passes de revue, la plomberie de CI.
+Une version de cette taille était auparavant un chantier de **plusieurs mois**. Celle-là a pris **une semaine**, et pas en rognant sur la qualité : les specs sont écrites, les tests sont là, le code est relu, et la suite de tests est même devenue *plus rapide* au passage. L'IA a supprimé la partie du travail qui n'était que friction : le boilerplate, les tests, les refactos, les passes de revue, la plomberie de CI.
 
 Ce que ça change pour vous est simple : **les fonctionnalités que vous demandez sur le forum sortent maintenant en quelques jours, pas en quelques trimestres**. Plusieurs éléments de cette version viennent directement d'un fil du forum de cette semaine.
 
-👉 **[Suivez le rythme du projet sur la page d'activité de développement](/fr/dev/)** — elle est mise à jour automatiquement, et honnêtement, c'est devenue ma page préférée du site.
+👉 **[Suivez le rythme du projet sur la page d'activité de développement](/fr/dev/)**. Elle est mise à jour automatiquement, et honnêtement, c'est devenue ma page préférée du site.
 
 ## ❤️ Merci
 
