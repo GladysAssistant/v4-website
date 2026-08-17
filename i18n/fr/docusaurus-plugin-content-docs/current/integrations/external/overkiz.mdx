@@ -27,13 +27,16 @@ Contrôlez vos appareils Overkiz depuis Gladys Assistant : les box Somfy TaHoma,
 - **Volets et ouvrants** : volets roulants, stores, screens, stores vénitiens, rideaux, pergolas, portes de garage, portails et fenêtres — ouvrir, fermer, stopper et régler la position.
 - **Lampes** : marche/arrêt et luminosité.
 - **Interrupteurs et prises** : marche/arrêt.
-- **Capteurs** : température, humidité, luminosité, contact (ouverture), présence (mouvement), fumée, fuite d'eau, CO2, puissance/consommation électrique et niveau de batterie.
+- **Capteurs** : température, humidité, luminosité, contact (ouverture), présence (mouvement), fumée, fuite d'eau, CO2 et puissance/consommation électrique.
+- **Batterie** : sur tous les appareils qui la remontent, volets et lampes compris. Les appareils dotés d'une jauge publient un niveau en pourcentage ; ceux qui ne rapportent qu'un statut — la majorité des capteurs IO et RTS — publient à la place un indicateur « batterie faible ».
+- **Chauffe-eau** : mode de fonctionnement (éco, manuel, auto, absence), boost, température de consigne, eau chaude restante (en litres soutirables à 40 °C), chauffe en cours et température de l'eau. Nécessite **Gladys 4.85 ou supérieur**, version qui introduit la catégorie chauffe-eau.
 
 Les états sont rafraîchis en quasi temps réel via l'API d'événements Overkiz : un volet actionné depuis une télécommande physique est reflété dans Gladys en quelques secondes.
 
 ## Ce qui n'est pas encore supporté
 
-- **Chauffage et eau chaude** : radiateurs, planchers chauffants, chauffe-eau et pompes à chaleur (`HeatingSystem`, `WaterHeatingSystem`) ne sont pas encore convertis en appareils Gladys. Les box **Atlantic Cozytouch**, **Thermor**, **Sauter** et **Hitachi Hi Kumo** se connectent bien, mais l'essentiel de leurs appareils n'apparaîtra pas encore dans la découverte.
+- **Chauffage** : radiateurs, planchers chauffants et pompes à chaleur (`HeatingSystem`) ne sont pas encore convertis en appareils Gladys. Les box **Atlantic Cozytouch**, **Thermor**, **Sauter** et **Hitachi Hi Kumo** se connectent bien et leurs chauffe-eau sont supportés, mais leurs appareils de chauffage n'apparaîtront pas encore dans la découverte.
+- **Les chauffe-eau autres qu'Atlantic / Thermor / Sauter** sont convertis pour ce qu'ils rapportent, mais leurs commandes spécifiques (Hitachi Hi Kumo notamment) ne sont pas encore câblées : les capteurs fonctionneront, certaines commandes manqueront.
 - **Serrures, alarmes et ventilation** (`DoorLock`, `Alarm`, `AirFlow`).
 - Sur les prises et modules mesurant la consommation, Overkiz publie souvent la puissance sur un **sous-appareil** distinct : il apparaît alors comme un appareil séparé dans la découverte, portant le même nom que son parent.
 
@@ -54,8 +57,9 @@ Les états sont rafraîchis en quasi temps réel via l'API d'événements Overki
 ## Dépannage
 
 - **Connexion impossible** : vérifiez le serveur sélectionné et vos identifiants en vous connectant à l'application du fabricant. Somfy peut verrouiller temporairement le compte après trop de tentatives échouées.
-- **Un appareil est absent** : seuls les types d'appareils listés ci-dessus sont supportés. Relancez un scan depuis l'onglet Découverte après avoir ajouté un appareil à votre box.
+- **Un appareil est absent** : seuls les types d'appareils listés ci-dessus sont supportés. Relancez un scan depuis l'onglet Découverte après avoir ajouté un appareil à votre box. Si votre appareil devrait être supporté mais ne l'est pas, utilisez l'action **Lister les appareils bruts** : elle écrit dans les logs de l'intégration ce qu'Overkiz dit de chacun de vos appareils, ce dont un mapping a besoin. Ce contenu comprend le numéro de série de votre box : anonymisez-le avant de le partager.
 - **Les états semblent figés** : la période d'interrogation des événements peut être réduite dans l'onglet Configuration (10 s minimum). Attention, le cloud Overkiz limite les interrogations trop agressives.
+- **Mon chauffe-eau propose moins de modes que l'appareil** : seuls les modes réellement exposés par votre appareil sont proposés. Le boost est une commande à part et non un mode, parce que c'est ainsi que ces appareils le rapportent.
 
 ## Paramètres de configuration
 
@@ -63,7 +67,7 @@ Voici les paramètres demandés par Overkiz dans son écran de configuration dan
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Compte Overkiz | `section` | Non | Connectez-vous avec les identifiants de votre box Overkiz. Choisissez le serveur correspondant à votre box, puis saisissez l'email et le mot de passe de votre compte fournisseur. Les volets, lampes, interrupteurs et capteurs sont supportés ; les appareils de chauffage et d'eau chaude ne le sont pas encore. |
+| Compte Overkiz | `section` | Non | Connectez-vous avec les identifiants de votre box Overkiz. Choisissez le serveur correspondant à votre box, puis saisissez l'email et le mot de passe de votre compte fournisseur. Les volets, lampes, interrupteurs, capteurs et chauffe-eau sont supportés ; les appareils de chauffage ne le sont pas encore. |
 | Serveur (type de box) | `select` | Oui |  |
 | Email / identifiant | `string` | Oui |  |
 | Mot de passe | `secret` | Oui |  |
@@ -72,11 +76,11 @@ Voici les paramètres demandés par Overkiz dans son écran de configuration dan
 ## Comment installer Overkiz dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Overkiz apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/cicoub13/gladys-overkiz:1.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/cicoub13/gladys-overkiz:1.3.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/cicoub13/gladys-overkiz](https://github.com/cicoub13/gladys-overkiz).
 
-Overkiz nécessite Gladys `>=4.84.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Overkiz nécessite Gladys `>=4.85.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

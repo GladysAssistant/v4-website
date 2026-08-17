@@ -1,0 +1,662 @@
+---
+title: "Intégration Devmel pour Gladys Assistant"
+sidebar_label: "Devmel"
+description: "Pilotez volets, interrupteurs, lampes et capteurs d'une passerelle radio Devmel AirSend. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-devmel.png"
+keywords:
+  - "devmel"
+  - "gladys devmel"
+  - "devmel gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-devmel instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="devmel" />
+
+Cette intégration relie Gladys à une passerelle radio **Devmel AirSend** ou
+**AirSend Duo**, et à travers elle aux équipements 433 MHz / 868 MHz qu'elle
+pilote : volets roulants, interrupteurs, lampes variables, portails, et les
+capteurs qui émettent en retour (Somfy RTS, Chacon DiO, Nice, FAAC,
+Bubendorff…).
+
+## Avant de commencer
+
+Vos appareils s'appairent dans l'**application mobile AirSend** ou sur
+[airsend.cloud](https://airsend.cloud), pas dans Gladys : cette intégration
+rejoue les ordres radio qu'ils connaissent déjà. Faites-les d'abord
+fonctionner là-bas.
+
+Tout passe ensuite par le canal local ci-dessous : l'intégration pilote votre
+boîtier sur votre propre réseau, et n'appelle jamais airsend.cloud pour envoyer
+un ordre.
+
+### Local
+
+Le canal local dialogue avec le **service web AirSend**, le petit serveur HTTP
+fourni par Devmel pour piloter le boîtier depuis votre réseau.
+
+**Il est inclus.** L'intégration le fait tourner dans son propre conteneur, sur
+`http://127.0.0.1:33863`, et le surveille : rien à installer à côté de Gladys,
+aucune URL à renseigner. C'est l'interrupteur **Utiliser le service AirSend
+intégré**, activé par défaut, qui le commande.
+
+La seule chose que le canal local attend de vous est donc la **chaîne de
+connexion** exportée par airsend.cloud, de la forme :
+
+```
+sp://motdepasse@[fe80::xxxx:xxxx:xxxx:xxxx]?gw=0&rhost=192.168.1.50
+```
+
+Conservez toujours la partie `?gw=0&rhost=<IPv4 du boîtier>` : sans elle le
+boîtier n'est joignable qu'en IPv6 lien-local et le service renvoie des
+erreurs inattendues.
+
+#### Utiliser un service que vous faites déjà tourner
+
+Si le service web AirSend tourne déjà quelque part sur votre réseau — l'add-on
+Home Assistant, le démon Jeedom, un conteneur à vous — renseignez simplement le
+champ **URL du service AirSend** (`http://192.168.1.50:33863/`). Une URL saisie
+là l'emporte : l'intégration l'utilise et ne démarre rien de son côté.
+
+## Configuration
+
+1. Ouvrez l'onglet **Configuration** de l'intégration.
+2. Collez la **chaîne de connexion** de votre boîtier. C'est suffisant : le
+   service AirSend tourne déjà dans l'intégration.
+3. Collez votre **liste d'appareils** (voir plus bas).
+4. Enregistrez, puis cliquez sur **Tester la connexion** : le résultat indique
+   l'état du service intégré, du canal local, et le nombre d'appareils compris.
+5. Les appareils apparaissent dans l'onglet **Découverte**, prêts à être
+   ajoutés à Gladys.
+
+L'**URL du service AirSend** ne sert que dans le cas décrit plus haut : un
+service à vous.
+
+Chaque appareil affiche en pastille le canal qui a porté son dernier ordre :
+`local` quand votre boîtier a répondu, `unreachable` quand il n'a pas pu être
+joint.
+
+## La liste d'appareils
+
+Sur airsend.cloud, ouvrez **Import/Export** et exportez vos appareils en
+**JSON**. Cet export est lu tel quel, y compris sur une seule ligne, ce qui est
+exactement ce qu'attend le champ **Appareils**.
+
+### L'export JSON
+
+Il se présente ainsi — une liste, et le canal radio écrit à plat :
+
+```json
+{
+  "devices": [
+    {
+      "name": "Baie vitrée",
+      "localip": "fe80::dcf6:e5ff:fe8f:89cd",
+      "type": 4098,
+      "pid": 25455,
+      "addr": 8295
+    }
+  ]
+}
+```
+
+Collez-le tel quel, y compris sur une seule ligne. `pid` et `addr` sont le
+canal radio de l'appareil : `pid` en est l'identifiant de canal (le protocole,
+partagé par tous les appareils pilotés de la même façon) et `addr` sa source
+(l'adresse de l'émetteur). `localip` est l'adresse du boîtier auquel l'appareil
+est rattaché ; le boîtier reste joint par la chaîne de connexion `sp://` saisie
+plus haut.
+
+Une entrée sans canal radio est ignorée : le boîtier n'aurait rien à émettre
+pour elle. Le boîtier lui-même (`type: 0`) fait exception — il répond toujours
+sur le canal 1.
+
+### Écrire la liste à la main
+
+La même liste peut s'écrire à la main, indexée par nom, avec le canal imbriqué
+sous `channel` plutôt que le couple `pid` / `addr` à plat. Cela reste du JSON :
+
+```json
+{
+  "devices": {
+    "Boîtier AirSend": { "type": 0, "sensors": true, "refresh": 300 },
+    "Volet salon": {
+      "type": 4098,
+      "invert": true,
+      "channel": { "id": 25455, "source": 94311 }
+    },
+    "Lumière pergola": { "type": 4100, "channel": { "id": 26848, "source": 1442421508 } },
+    "Capteur extérieur": {
+      "type": 1,
+      "features": ["temperature", "humidity"],
+      "channel": { "id": 1368, "source": 542 }
+    }
+  }
+}
+```
+
+### Types d'appareils
+
+| `type` | Appareil               | Ce que vous obtenez dans Gladys                        |
+| ------ | ---------------------- | ------------------------------------------------------ |
+| `0`    | Boîtier AirSend        | Ses capteurs de température et de luminosité           |
+| `1`    | Capteur / télécommande | Ce qu'il émet (voir `features` ci-dessous)             |
+| `4096` | Bouton                 | Un bouton poussoir qui envoie TOGGLE                   |
+| `4097` | Interrupteur           | Marche/Arrêt                                           |
+| `4098` | Volet                  | Ouvrir / Stop / Fermer (**+** position si chronométré) |
+| `4099` | Volet avec position    | Ouvrir / Stop / Fermer **+** une position 0-100 %      |
+| `4100` | Lampe variable         | Marche/Arrêt **+** luminosité                          |
+
+### Options d'un appareil
+
+| Option              | Signification                                                                  |
+| ------------------- | ------------------------------------------------------------------------------ |
+| `type`              | Type d'appareil (tableau ci-dessus), **obligatoire**                           |
+| `channel`           | Canal radio (`id`, `source`, `mac`, `seed`), **obligatoire**                   |
+| `pid`               | Le `channel.id` de l'export JSON (utilisez l'un ou l'autre)                    |
+| `addr`              | Le `channel.source` de l'export JSON                                           |
+| `remotes`           | Autres émetteurs qui pilotent l'appareil (voir « La télécommande murale »)     |
+| `spurl`             | Chaîne de connexion propre à cet appareil, si différente de la globale         |
+| `wait`              | Attendre la confirmation radio avant de répondre (`false` par défaut)          |
+| `repeat`            | Émissions supplémentaires des ordres envoyés à cet appareil (voir plus bas)    |
+| `invert`            | Inverser ouverture et fermeture, pour les volets posés à l'envers              |
+| `travel_up`         | Sur un volet : durée d'une ouverture complète, en secondes (voir plus bas)     |
+| `travel_down`       | Sur un volet : durée d'une fermeture complète, en secondes                     |
+| `travel`            | Les deux à la fois, pour un moteur qui se comporte pareil dans les deux sens   |
+| `favorite_position` | Sur un volet : la position programmée dans le moteur, en %                     |
+| `sensors`           | Sur un boîtier (`type: 0`), exposer ses capteurs de température et lumière     |
+| `refresh`           | Intervalle de lecture de ces capteurs, en secondes                             |
+| `features`          | Sur un capteur (`type: 1`) : `temperature`, `humidity`, `illuminance`, `click` |
+
+Un boîtier déclaré sans `sensors: true` ne crée aucun appareil dans Gladys :
+il n'est là que pour porter la chaîne de connexion.
+
+## Faire passer un ordre
+
+Rien n'accuse réception d'un ordre radio. Un volet 433 MHz n'a pas de voie de
+retour : le boîtier émet, et personne ne dira jamais si le moteur a entendu. Une
+trame perdue dans le bruit — un micro-ondes, la télécommande du voisin, une
+porte de garage — n'est donc pas une erreur affichée quelque part, c'est un clic
+sans effet. C'est exactement ce que décrit « il faut cliquer deux ou trois fois
+sur Ouvrir pour que ça parte ».
+
+Trois choses y répondent, sans rien à régler :
+
+- **les ordres passent un par un.** Un boîtier n'a qu'une radio : pendant qu'il
+  émet, il n'entend rien, et un deuxième ordre envoyé dans la foulée arrive sur
+  un boîtier occupé. Les ordres font donc la queue, espacés d'un quart de
+  seconde, dans l'ordre où vous les avez donnés ;
+- **un ordre que le boîtier n'a pas pu porter est renvoyé.** Un refus, lui, ne
+  l'est pas : une chaîne de connexion rejetée et un canal inconnu répondront
+  exactement pareil la seconde fois ;
+- **un ordre est répété sur l'air**, comme une vraie télécommande le répète tant
+  qu'on garde le doigt appuyé. Par défaut, chaque ordre part deux fois.
+
+Le champ **Répétitions des commandes** règle ce nombre d'émissions
+supplémentaires : montez-le à `2` ou `3` si un appareil ignore encore Gladys de
+temps en temps, `0` n'envoie chaque ordre qu'une fois. Un appareil têtu peut
+avoir la sienne, sans changer celle des autres :
+
+```json
+{ "devices": { "Baie vitrée": { "type": 4098, "pid": 25455, "addr": 8295, "repeat": 3 } } }
+```
+
+Seuls les ordres qui veulent dire la même chose deux fois sont répétés — Ouvrir,
+Stop, Fermer, une position. Un TOGGLE de bouton poussoir, lui, part une seule
+fois : entendu deux fois, il revient d'où il part.
+
+### Gladys ne se prend pas pour la télécommande
+
+Tout ce que l'intégration émet lui revient : le boîtier répond à l'ordre, et
+comme il écoute en permanence, il s'entend lui-même émettre. Cet écho porte
+l'ordre qui vient d'être envoyé — et le relire comme un ordre neuf défait ce que
+l'ordre était en train de faire. Un volet chronométré envoyé à 40 % en est
+l'exemple : l'écho de son « Ouvrir » le renvoyait à 100 % et annulait le Stop
+prévu à mi-course, si bien que le volet montait tout en haut. L'intégration
+reconnaît maintenant ses propres ordres et ne les rejoue pas.
+
+Deux conséquences visibles :
+
+- une télécommande murale émet depuis une **autre adresse** : elle n'est jamais
+  prise pour cet écho, et continue de piloter le volet dans Gladys ;
+- quand le boîtier répond qu'il n'a **pas pu émettre**, l'intégration l'écrit
+  dans ses journaux, en nommant l'appareil. C'est la seule trace d'un ordre parti
+  dans le vide, et elle vaut le coup d'œil si vous cliquez souvent deux fois.
+
+## La position d'un volet
+
+Un volet 433 MHz ne dit jamais où il est : la radio transporte des ordres, pas
+des positions. Ce qu'il a, en revanche, c'est une **durée** — un moteur donné
+met toujours le même temps pour aller d'une butée à l'autre. Chronométrez cette
+course une fois, et la position devient calculable.
+
+Chronomètre en main, du démarrage du volet jusqu'à son arrêt tout seul, notez
+les deux durées :
+
+```json
+{
+  "devices": {
+    "Volet salon": {
+      "type": 4098,
+      "travel_up": 22,
+      "travel_down": 20,
+      "channel": { "id": 25455, "source": 94311 }
+    }
+  }
+}
+```
+
+L'intégration suit alors le volet seconde par seconde, que l'ordre vienne de
+Gladys ou d'une télécommande murale entendue à la radio (ce qui suppose le
+canal d'écoute décrit plus bas). Trois conséquences :
+
+- un **`4098` obtient lui aussi une position** — la fonctionnalité apparaît dès
+  que le volet est chronométré, et son curseur pilote le moteur par un
+  Ouvrir/Stop minuté : l'intégration lance le volet dans le bon sens et lui
+  envoie le Stop au moment où la course dit qu'il est arrivé ;
+- **le stop ne ment plus** : un volet arrêté à mi-course remonte la position
+  qu'il a réellement atteinte, au lieu de conserver les 100 % annoncés par
+  l'ordre ;
+- **l'estimation se répare toute seule** : un volet qu'on laisse aller jusqu'à
+  sa butée est exactement à 0 % ou à 100 %, puisque le moteur s'y arrête
+  physiquement. Chaque ouverture ou fermeture complète efface l'erreur
+  accumulée par les courses partielles précédentes.
+
+Comptez ±5 % de précision : un moteur ralentit en charge et par temps froid. Si
+un volet dérive, un scénario qui l'ouvre entièrement une fois par jour suffit à
+le remettre d'aplomb.
+
+Un volet que vous n'avez pas chronométré garde le comportement précédent :
+Gladys affiche la destination du dernier ordre, ce qui est tout ce qu'un
+protocole unidirectionnel peut offrir.
+
+Deux détails qui comptent :
+
+- tant qu'il n'a pas fait sa première course complète, la position d'un volet
+  chronométré est **inconnue**, et l'intégration ne publie rien plutôt que
+  d'inventer une valeur. Ouvrez-le ou fermez-le une fois et c'est réglé.
+  Demander une position avant cela envoie le volet à la butée la plus proche,
+  ce qui est précisément ce qui établit la référence ;
+- la position **survit aux redémarrages** de l'intégration : elle repart de la
+  valeur conservée par Gladys.
+
+### La position favorite
+
+Beaucoup de moteurs ont une position à eux, programmée dans le matériel (le
+bouton « my » de Somfy). La radio dit « va à ta position » sans jamais dire
+laquelle. Mesurez-la une fois et déclarez-la avec `"favorite_position": 40` :
+appuyer sur ce bouton remonte alors 40 % dans Gladys. Sans elle, le volet est
+signalé arrêté quelque part entre les deux — la réponse honnête.
+
+## Écouter la radio
+
+Le boîtier AirSend peut retransmettre chaque trame qu'il entend — une
+télécommande murale actionnée à la main, un capteur météo qui se réveille —
+pour que Gladys suive ce qui se passe dans la maison, et pas seulement ce
+qu'il a lui-même commandé. C'est ce qui fait bouger la position d'un volet
+quand on l'ouvre depuis sa télécommande.
+
+C'est **actif par défaut**, et il n'y a rien à régler : l'intégration abonne le
+boîtier au protocole radio de vos appareils et reçoit les trames chez elle.
+Rien à installer, rien à lier.
+
+L'abonnement est **réarmé après chaque ordre**, et renouvelé toutes les dix
+minutes. Émettre sort le boîtier de la réception, et un abonnement qui n'a pas
+survécu à une commande, c'est une télécommande murale que Gladys cesse de suivre
+sans rien en dire — jusqu'au renouvellement suivant.
+
+### Le canal d'écoute
+
+Ce que le boîtier écoute est un **protocole**, pas un appareil : il n'a qu'une
+radio, et l'abonner le fait basculer en réception permanente **d'un seul
+protocole** à la fois. Le canal `1` est l'écoute générique 433 MHz, qui couvre
+les protocoles conçus pour y entrer — mais pas les autres, et un volet Somfy
+écouté sur le canal `1` reste silencieux exactement comme une télécommande sur
+laquelle personne n'appuie.
+
+L'intégration n'a donc pas à le deviner : elle demande au service AirSend quel
+canal décode quel protocole, et abonne le boîtier à celui de vos appareils.
+Laissez le champ **Canal d'écoute** vide.
+
+Renseignez-le seulement pour écouter autre chose : le `pid` d'un protocole que
+vous n'avez pas encore déclaré, `1` pour l'écoute générique, ou `0` pour couper
+l'écoute.
+
+Pour vérifier, cliquez sur **Tester la connexion** : la ligne _Écoute_ dit quel
+protocole est écouté, quels appareils il couvre, et vers où les trames sont
+poussées — ou pourquoi elles ne le sont pas.
+
+### Le 868 MHz et le code tournant
+
+Le canal `1`, l'écoute générique, **c'est du 433 MHz**. Un protocole 868 MHz —
+Profalux, Somfy io — n'y est pas entendu du tout. Or tant que vous n'avez rien
+déclaré, il n'y a rien à déduire, et l'intégration se rabat sur ce canal `1` par
+défaut : le boîtier écoute alors la mauvaise bande, et le silence qui en résulte
+ressemble trait pour trait à une télécommande sur laquelle personne n'appuie.
+L'intégration le dit désormais dans ses logs et dans **Tester la connexion**.
+
+Deux façons d'en sortir : déclarer un appareil sur le protocole en question, ou
+renseigner son `pid` dans le champ **Canal d'écoute**.
+
+Le **code tournant** de ces télécommandes, lui, n'est pas ce qui vous empêche de
+recevoir les trames. Il protège l'_émission_ : pour commander un volet Profalux,
+le boîtier AirSend doit avoir été appairé au moteur, comme une télécommande
+supplémentaire. En _réception_, il ne gêne rien : le compteur et les champs
+`mac` / `seed` changent à chaque trame, et l'intégration les ignore
+délibérément — un émetteur est identifié par son `pid` et son `addr`, qui eux ne
+bougent pas.
+
+Ce que le code tournant change, en revanche, c'est le **décodage** : le service
+AirSend ne décode ces protocoles que partiellement. La trame arrive, l'émetteur
+est nommé, mais elle ne porte aucune note exploitable. Ces trames-là sont
+maintenant journalisées avec leur `pid` et leur `addr` : c'est la preuve que la
+radio fonctionne, et de quoi rattacher l'émetteur à un appareil.
+
+### La télécommande murale
+
+Un même volet est piloté par plusieurs émetteurs : le boîtier AirSend, et la
+télécommande vissée au mur. Ils parlent le même protocole depuis des **adresses
+différentes**, donc le boîtier les entend sur des canaux différents, et une
+trame venue du mur n'appartient à aucun appareil déclaré. Elle est notée dans
+les logs de l'intégration, avec son `pid` et son `addr`.
+
+Rattachez cette adresse à l'appareil qu'elle pilote, et appuyer sur la
+télécommande murale met à jour le volet dans Gladys comme le ferait Gladys :
+
+```json
+{
+  "devices": {
+    "Baie vitrée": {
+      "type": 4098,
+      "travel_up": 30,
+      "travel_down": 26,
+      "channel": { "id": 25455, "source": 8295 },
+      "remotes": [94311]
+    }
+  }
+}
+```
+
+Une adresse seule est lue sur le protocole de l'appareil lui-même ; une
+télécommande sur un autre protocole s'écrit en entier :
+`"remotes": [{ "pid": 1368, "addr": 542 }]`.
+
+#### Laissez l'intégration écrire la ligne
+
+Recopier un couple `pid`/`addr` depuis un log dans du JSON sur une seule ligne,
+en choisissant la bonne écriture, est exactement le genre de chose qu'on rate
+une fois sur deux. L'action **Rattacher une télécommande** le fait pour vous :
+
+1. appuyez sur la télécommande murale (l'intégration retient les émetteurs
+   qu'elle entend, même ceux que personne ne déclare) ;
+2. dans l'écran de configuration, lancez **Rattacher une télécommande** et
+   choisissez l'appareil qu'elle pilote ;
+3. l'action répond avec votre liste d'appareils, inchangée, télécommande
+   rattachée en `{"pid": …, "addr": …}` : collez-la dans le champ **Appareils**
+   et enregistrez.
+
+Elle rattache le **dernier** émetteur entendu qu'aucun appareil ne déclare, et
+cite les autres sans y toucher. Elle dit aussi ce que ses trames ont donné au
+décodage, et prévient quand la télécommande parle un autre protocole que
+l'appareil : le boîtier n'en écoute qu'un à la fois.
+
+#### Une trame écartée, ou sans adresse
+
+Le boîtier note chaque trame qu'il décode, et l'intégration ignore celles qu'il
+note mal — exactement comme le plugin Jeedom officiel. Deux formes très
+différentes dans les journaux :
+
+```text
+Ignored a radio frame (unreliable, graded 0): pid 14177, carrying no note the service could decode.
+Ignored a radio frame (unreliable, graded 2): pid 25455, addr 94311, carrying level 100 (up).
+```
+
+**Une trame avec une adresse, notée trop bas** (deuxième ligne) : le boîtier a
+décodé l'émetteur et l'ordre, il n'est simplement pas sûr de lui — une
+télécommande en limite de portée, une bande encombrée. Activez **Accepter les
+trames peu fiables** : elles sont alors utilisées quand même, au prix d'une
+fausse détection de temps en temps.
+
+**Une trame sans adresse** (première ligne, `pid` seul) : le boîtier a capté le
+protocole **sans le décoder**. Il n'y a ni émetteur à nommer, ni ordre à
+rejouer, et aucun réglage ne rend exploitable ce qui n'a pas été décodé. C'est
+la signature d'un boîtier à l'écoute du **mauvais décodeur** : renseignez ce
+`pid` dans le champ **Canal d'écoute**, pour que le boîtier écoute ce protocole
+sur son propre décodeur, puis relancez **Tester la connexion**. Si les trames
+reviennent alors avec une adresse, rattachez-la comme d'habitude.
+
+Si même sur son propre canal le protocole reste sans adresse, c'est que le
+service AirSend ne le décode que partiellement (code tournant 868 MHz) : rien ne
+le rendra exploitable côté logiciel. En dernier recours, un appareil peut suivre
+**toutes** les trames non attribuées d'un protocole :
+
+```json
+{
+  "devices": {
+    "Baie vitrée": { "type": 4098, "pid": 25455, "addr": 8295, "remotes": [{ "pid": 14177 }] }
+  }
+}
+```
+
+Un `remotes` réduit au seul `pid` ne désigne plus une télécommande mais un
+protocole entier : la télécommande du voisin sur le même protocole pilotera
+votre volet. À n'utiliser qu'en connaissance de cause.
+
+#### La télécommande est rattachée, et rien ne bouge
+
+Une fois l'émetteur déclaré, la trame arrive bien à l'appareil — reste à savoir
+si elle **porte un ordre**. Commencez par **Tester la connexion** : la ligne
+_Entendu_ répond sans passer par les logs (voir « Ce que le boîtier a entendu »).
+Elle distingue trois cas qui se ressemblent et n'ont rien à voir :
+
+- `déclaré sur « Baie vitrée », mais ses trames ne portent aucun ordre
+rejouable` — la trame est arrivée, l'appareil ne sait qu'en faire. C'est le lot
+  des protocoles 868 MHz à code tournant : le service ne les décode que
+  partiellement, la trame prouve que la radio marche mais ne porte aucun ordre à
+  rejouer. **La position ne peut pas suivre**, et le rattachement n'y changera
+  rien : à la première trame de cet émetteur, l'intégration le dit aussi dans ses
+  logs, au niveau info (`no note the service could decode`) ;
+- `aucun appareil ne le déclare` — l'émetteur est bien entendu, il n'est
+  simplement rattaché à rien : relancez **Rattacher une télécommande** ;
+- l'émetteur n'apparaît pas du tout — la trame n'arrive plus. Si la télécommande
+  a été déclarée sur un autre protocole que l'appareil, la ligne _Écoute_ la
+  nomme comme non entendue, et son `pid` mis dans le **Canal d'écoute** rétablit
+  l'écoute de son côté.
+
+**Rien dans les logs après un appui ?** La ligne n'est écrite qu'à la réception
+d'une trame : appuyez sur la télécommande, puis relisez les logs de
+l'intégration. S'il n'y a toujours rien, c'est que la trame n'est jamais
+arrivée, et il n'y a que trois raisons possibles :
+
+- **l'écoute n'est pas en place.** Cliquez sur **Tester la connexion** : la
+  ligne _Écoute_ dit quel protocole est écouté et vers où les trames sont
+  poussées — ou pourquoi elles ne le sont pas ;
+- **la télécommande parle un autre protocole.** Le boîtier n'en écoute qu'un
+  seul à la fois, celui de vos appareils déclarés (voir « Le canal d'écoute »).
+  Une télécommande murale utilise normalement le protocole du volet qu'elle
+  pilote ; si la vôtre est d'une autre marque, mettez son `pid` dans le champ
+  **Canal d'écoute** le temps de la repérer ;
+- **la trame a été entendue, mais jugée trop douteuse pour être publiée.** La
+  radio est bruyante, et le boîtier note chaque trame qu'il décode. Activez
+  **Journaux détaillés (debug)** : ces trames-là y sont tracées, avec leur
+  `pid`, leur `addr` et la raison de leur abandon.
+
+### Ce que le boîtier a entendu
+
+Toutes les vérifications ci-dessus répondent à « les trames peuvent-elles
+entrer ? ». La ligne _Entendu_ de **Tester la connexion** répond à la question
+suivante, la seule qui compte une fois la télécommande rattachée : **sont-elles
+entrées, et est-ce que quelque chose a bougé ?**
+
+L'intégration retient les émetteurs qu'elle entend, du plus récent au plus
+ancien, avec le nombre de trames, leur ancienneté, ce qu'elles ont donné au
+décodage et ce que les appareils en ont fait :
+
+```text
+Entendu : 1 émetteur entendu : pid 14177, addr 3359265281 (3 trames, dernière
+il y a 4 s, aucune note décodée) — déclaré sur Baie vitrée, mais ses trames ne
+portent aucun ordre rejouable (protocole seulement partiellement décodé) : la
+position ne peut pas suivre.
+```
+
+Trois verdicts possibles pour un émetteur :
+
+| Verdict                            | Ce que ça veut dire                                                           |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
+| `suivi par <appareil>`             | tout marche : ses trames pilotent bien l'appareil                             |
+| `aucun appareil ne le déclare`     | l'émetteur est entendu, mais rattaché à rien — **Rattacher une télécommande** |
+| `ne portent aucun ordre rejouable` | la trame arrive à l'appareil et ne porte rien à rejouer (code tournant)       |
+
+Le registre est vidé au démarrage de l'intégration : « aucune trame radio depuis
+le démarrage » veut dire « rien depuis », pas « jamais ». Appuyez sur la
+télécommande, puis relancez l'action.
+
+#### Trois silences qui ne se ressemblent pas
+
+« Aucune trame » recouvre trois problèmes très différents, et la ligne
+_Entendu_ les distingue désormais :
+
+| Ce qu'elle dit                                    | Ce qui se passe                                                                       |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `aucune trame radio depuis le démarrage`          | rien n'entre du tout : ni les trames de la maison, ni les échos de vos propres ordres |
+| `aucune trame d'un autre émetteur, mais N échos`  | la route fonctionne — le boîtier n'entend simplement rien sur le protocole écouté     |
+| `N trames reçues et écartées avant tout appareil` | la radio fonctionne : ce sont les trames qui n'étaient pas exploitables               |
+
+D'où le test à faire quand la ligne dit « aucune trame » : **actionnez un
+appareil depuis Gladys**, puis relancez l'action. Tout ce que l'intégration émet
+lui revient, donc l'écho de cet ordre doit apparaître dans le compteur.
+
+- l'écho revient → la route des trames est bonne, et c'est le **protocole
+  écouté** qui n'est pas celui de votre télécommande. Relisez la ligne _Écoute_ :
+  elle dit quel canal est écouté et quels appareils il couvre. Une télécommande
+  868 MHz (Profalux, Somfy io) n'est jamais entendue sur le canal `1`, qui est du
+  433 MHz ;
+- l'écho ne revient pas non plus → le problème est en amont de la radio : le
+  service AirSend ne poste rien à l'intégration. Regardez la ligne _Écoute_ (le
+  boîtier a-t-il accepté l'abonnement ?) et la ligne _Local_ (le service
+  répond-il ?), puis les journaux détaillés.
+
+### Les journaux détaillés
+
+La radio est la seule partie de l'intégration que personne ne peut observer :
+une télécommande qui ne remonte pas est soit inaudible, soit écartée comme peu
+fiable, soit entendue mais indécodable — et seuls les journaux de niveau debug
+distinguent ces trois cas.
+
+Le champ **Journaux détaillés (debug)** de l'écran de configuration les active.
+Il prend effet immédiatement, sans redémarrer l'intégration : cochez, appuyez
+sur la télécommande, lisez les logs, décochez. C'est verbeux, ce n'est pas fait
+pour rester allumé.
+
+Votre chaîne de connexion `sp://` n'est jamais journalisée, quel que soit le
+niveau.
+
+Si vous préférez la variable d'environnement du conteneur, `LOG_LEVEL` marche
+toujours et reste prioritaire : l'interrupteur monte le niveau à debug tant
+qu'il est activé, puis rend la main à votre `LOG_LEVEL` quand vous le coupez.
+
+### Si vous faites tourner le service AirSend ailleurs
+
+Le service web AirSend pousse les trames depuis la machine où il tourne. Quand
+c'est l'intégration qui le fait tourner (le cas par défaut), il les pousse
+directement chez elle. Un service qui tourne **sur une autre machine**, lui, ne
+sait pas joindre l'intégration : les trames doivent alors passer par une URL
+publique, fournie par Gladys Plus. Liez votre compte Gladys Plus et collez
+votre clé Open API dans le bloc **Webhooks** de l'écran de configuration.
+
+## Actions
+
+- **Tester la connexion** — vérifie le canal local, dit quel protocole est
+  écouté, **ce que le boîtier a entendu** et quels appareils ont été lus. Le
+  moyen le plus rapide de repérer une chaîne de connexion mal saisie, une liste
+  d'appareils qui n'a pas été comprise, ou une télécommande rattachée dont les
+  trames ne portent aucun ordre.
+- **Rattacher une télécommande** — appuyez sur la télécommande, choisissez
+  l'appareil qu'elle pilote : l'action écrit la liste d'appareils à recoller,
+  télécommande comprise (voir « La télécommande murale »).
+- **Identifier un appareil** — choisissez un appareil, un PING lui est envoyé.
+  Tous les équipements 433 MHz n'y réagissent pas.
+
+## Bon à savoir
+
+- Le 433 MHz est un protocole **unidirectionnel** pour la plupart des
+  équipements : rien ne confirme qu'un ordre a été reçu, et Gladys affiche la
+  valeur envoyée. L'écoute (ci-dessus) transforme cette hypothèse en état réel,
+  et chronométrer un volet (ci-dessus) lui donne une position.
+- Les capteurs sont lus **dans le boîtier**, par le canal local.
+- Le service intégré joint votre boîtier **depuis le conteneur de
+  l'intégration**, à travers votre réseau : le `rhost=<IPv4>` de la chaîne de
+  connexion est l'adresse qu'il compose, et elle doit être routable depuis
+  l'hôte Gladys.
+- Changer le `type` d'un appareil dans la liste crée un nouvel appareil dans
+  Gladys (l'identifiant change) — sauf entre `4098` et `4099`, qui le
+  partagent.
+
+## En cas de problème
+
+| Symptôme                               | À vérifier                                                                                 |
+| -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `Invalid connection string`            | L'URL `sp://`, et que son mot de passe correspond au boîtier                               |
+| `Invalid input`                        | Le `channel` de l'appareil (`id`/`pid` et `source`/`addr`)                                 |
+| `no radio channel` (logs)              | L'entrée n'a pas de canal : il lui faut `channel.id`, ou le couple `pid`/`addr`            |
+| `no radio confirmation`                | Normal sans retour d'état : laissez `wait: false`                                          |
+| Aucun appareil dans « Découverte »     | **Tester la connexion** : la liste n'a sans doute pas été lue                              |
+| Le boîtier est injoignable             | La partie `?gw=0&rhost=<IPv4>` de la chaîne de connexion                                   |
+| `Service AirSend intégré indisponible` | Les logs de l'intégration : le service y journalise son démarrage                          |
+| Le boîtier répond à la main, pas ici   | L'IPv4 `rhost=` doit être joignable **depuis le conteneur**, pas seulement de votre PC     |
+| Il faut cliquer plusieurs fois         | Montez **Répétitions des commandes** à `2` ou `3`, ou le `repeat` de l'appareil            |
+| Un volet n'affiche pas de position     | Chronométrez-le : `travel_up` / `travel_down`, puis ouvrez-le ou fermez-le à fond une fois |
+| La position dérive avec le temps       | Rechronométrez la course, et ouvrez le volet à fond une fois par jour pour le recaler      |
+| Aucune trame d'une télécommande 868    | **Tester la connexion** : le canal `1` est du 433 MHz. Déclarez l'appareil, ou son `pid`   |
+| Télécommande rattachée, rien ne bouge  | **Tester la connexion**, ligne _Entendu_ : elle dit si les trames portent un ordre         |
+| `unreliable, graded N` (logs)          | Trame notée trop bas : **Accepter les trames peu fiables**, ou rapprochez le boîtier       |
+| Une trame avec un `pid` et sans `addr` | Le protocole n'est pas décodé : mettez ce `pid` dans **Canal d'écoute**                    |
+
+L'intégration journalise tout ce qu'elle fait : consultez les logs de
+l'intégration depuis l'interface de Gladys (ou `docker logs` sur l'hôte), et
+cochez **Journaux détaillés (debug)** dans sa configuration pour le détail
+complet.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Devmel dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | Le service AirSend est inclus : il tourne dans cette intégration, sur http://127.0.0.1:33863, et il n'y a rien à installer sur votre réseau. Il lui faut seulement la chaîne de connexion sp:// de votre boîtier. Les appareils se configurent dans l'application AirSend, puis s'exportent depuis airsend.cloud (Import/Export, JSON) : collez cet export ci-dessous, l'intégration le lit tel quel. |
+| Utiliser le service AirSend intégré | `boolean` | Non | Fait tourner le service AirSend dans l'intégration, sur http://127.0.0.1:33863. Laissez activé, sauf si vous faites déjà tourner ce service ailleurs sur votre réseau. |
+| URL du service AirSend | `string` | Non | Uniquement si vous faites tourner le service AirSend vous-même (add-on Home Assistant, démon Jeedom, votre propre conteneur) : son adresse sur votre réseau, par exemple http://192.168.1.50:33863/. Laissez vide pour utiliser celui intégré. |
+| Chaîne de connexion locale | `secret` | Non | L'URL sp:// exportée par airsend.cloud, par exemple sp://motdepasse@[fe80::...]?gw=0&rhost=192.168.1.50 |
+| Appareils | `string` | Non | Votre export JSON airsend.cloud, collé tel quel : une entrée par appareil, avec son type et son canal radio (écrit pid/addr). Voir la documentation. |
+| Canal d'écoute | `number` | Non | Laissez vide : le boîtier écoute alors le protocole radio des appareils que vous avez déclarés, ce qui remonte vers Gladys ce qu'il entend (télécommandes murales, capteurs). Ne le renseignez que pour écouter un autre protocole, par son pid : 1 correspond à l'écoute générique 433 MHz, sur laquelle aucune télécommande 868 MHz (Profalux, Somfy io) n'est entendue. 0 désactive l'écoute. |
+| Répétitions des commandes | `number` | Non | Nombre d'émissions supplémentaires d'un ordre radio, comme une vraie télécommande le répète tant qu'on appuie. Rien n'accuse réception d'un ordre radio : une trame perdue dans le bruit, c'est un clic sans effet. Montez à 2 ou 3 si un appareil ignore parfois Gladys. 0 n'envoie chaque ordre qu'une fois. Un appareil peut la surcharger avec sa propre valeur repeat. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture des capteurs du boîtier, en secondes. Un appareil peut la surcharger avec sa propre valeur refresh. |
+| Accepter les trames peu fiables | `boolean` | Non | Le boîtier note chaque trame qu'il décode, et celles qu'il note mal sont ignorées — comme le fait le plugin Jeedom officiel. Activez ceci si une télécommande est entendue sans jamais être suivie : ses trames seront alors utilisées quand même, au risque d'une fausse détection de temps en temps. Sans effet sur un protocole que le boîtier capte sans le décoder (aucune adresse dans les journaux) : celui-là demande son pid dans le canal d'écoute. |
+| Journaux détaillés (debug) | `boolean` | Non | Journalise chaque trame radio entendue par le boîtier, y compris celles écartées comme peu fiables ou non décodées. Activez-le pour comprendre pourquoi une télécommande ne remonte pas, puis désactivez-le : c'est verbeux. Votre chaîne de connexion n'est jamais journalisée. |
+
+## Comment installer Devmel dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Devmel apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:1.0.11`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
+
+Devmel nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Devmel est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-devmel) — [source de cette documentation](https://github.com/prohand/gladys-devmel/blob/HEAD/docs/fr.md)

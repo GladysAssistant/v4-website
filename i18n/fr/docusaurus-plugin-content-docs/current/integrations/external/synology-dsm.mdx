@@ -1,0 +1,116 @@
+---
+title: "Intégration Synology DSM pour Gladys Assistant"
+sidebar_label: "Synology DSM"
+description: "Supervisez les métriques système, volumes, états SMART des disques et sauvegardes d'un NAS Synology. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-synology.png"
+keywords:
+  - "synology dsm"
+  - "gladys synology dsm"
+  - "synology dsm gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-synology instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="synology-dsm" />
+
+Cette intégration supervise un NAS Synology depuis Gladys Assistant. Elle fonctionne en lecture seule et utilise la WebAPI DSM disponible sur le NAS.
+
+## Avant de commencer
+
+1. Dans **Panneau de configuration → Utilisateur et groupe → Utilisateur**, créez un utilisateur dédié à Gladys.
+2. À l'étape d'affectation aux groupes, ajoutez-le au groupe **administrators**. Ce droit est obligatoire : les WebAPI DSM utilisées pour la charge système et le stockage refusent un utilisateur ordinaire avec l'erreur `105` (droits insuffisants). Le rôle délégué **Surveillance du système** ne remplace pas ce droit de manière fiable pour ces API.
+3. Attribuez **Pas d'accès** à tous les dossiers partagés.
+4. Attribuez **Refuser** à toutes les applications. Les API de supervision restent accessibles grâce au groupe administrators, même si le compte ne peut pas utiliser DSM ni parcourir les fichiers.
+5. N'accordez aucun quota ni accès à File Station, Surveillance Station, SSH ou à un autre service.
+6. Dans **Panneau de configuration → Portail de connexion**, relevez le port HTTPS de DSM (généralement `5001`).
+7. Vérifiez que la machine qui exécute Gladys peut joindre cette adresse. N'exposez pas DSM à Internet uniquement pour cette intégration.
+
+La MFA est prise en charge avec les codes de vérification DSM (OTP). **Approuver la connexion** et les clés de sécurité matérielles fonctionnent uniquement avec une connexion Web interactive : configurez donc **Code de vérification (OTP)** pour ce compte. Lors de la première connexion, l'intégration échange le code OTP actuel contre un identifiant d'appareil DSM approuvé et le conserve dans son volume privé `/data`. Vous pouvez effacer le champ OTP après la première connexion réussie. Si l'appareil approuvé est ensuite révoqué dans DSM, saisissez un nouvel OTP puis enregistrez la configuration pour l'inscrire à nouveau.
+
+## Configuration
+
+- **URL DSM** : URL locale complète, par exemple `https://192.168.1.20:5001`.
+- **Nom d'utilisateur / mot de passe** : identifiants du compte DSM dédié.
+- **Code OTP actuel (MFA)** : code actuel à 6 chiffres pour la première connexion MFA ou après révocation de l'appareil approuvé dans DSM. Il n'est plus transmis lorsque l'appareil mémorisé est accepté.
+- **Vérifier le certificat TLS** : laissez cette option activée avec un certificat de confiance. Ne la désactivez que pour un certificat local auto-signé, après avoir vérifié vous-même l'adresse du NAS.
+- **NAS 2, NAS 3 et NAS 4** : connexions facultatives utilisant les mêmes champs URL, nom d'utilisateur, mot de passe, OTP et TLS que le NAS principal. Laissez l'URL d'un NAS vide pour ignorer cet emplacement. Chaque mot de passe et chaque OTP est conservé dans un champ secret Gladys dédié et n'apparaît jamais dans un document JSON.
+- **Intervalle de rafraîchissement** : valeur saisie manuellement en secondes, entre 60 et 86400. La valeur recommandée et utilisée par défaut est 900 secondes (15 minutes). Un intervalle modéré évite de remplir inutilement la base Gladys.
+
+Cliquez sur **Tester la connexion DSM**. En cas de succès, le résultat indique le modèle du NAS, la version DSM et le nombre de volumes détectés. Lancez ensuite une recherche d'appareils dans Gladys.
+
+## Appareils
+
+L'intégration crée un appareil par NAS, un appareil par volume de stockage, un appareil par disque interne et, lorsqu'elles sont disponibles, un appareil par tâche Hyper Backup ou Active Backup. Chaque disque expose l'état SMART exact renvoyé par DSM ainsi qu'un indicateur binaire de bonne santé SMART. Une tâche de sauvegarde expose son état, son dernier résultat et la date de sa dernière sauvegarde. Les API de ces paquets DSM ne sont pas présentes sur tous les modèles et versions : leur absence ne bloque pas les métriques système et stockage.
+
+Un premier instantané est envoyé immédiatement après l'ajout d'un appareil, puis chaque cycle met à jour en une seule fois les valeurs de tous les NAS. Le pourcentage d'occupation des volumes est arrondi à deux décimales. L'historique est conservé pour les taux d'utilisation, la température et l'état de santé ; les capacités et informations textuelles ne créent pas d'historique redondant.
+
+## Dépannage
+
+- **Identifiants incorrects** : vérifiez le compte dédié et sa politique de connexion.
+- **Code MFA requis / erreur 403 ou 406** : configurez OTP pour le compte DSM, saisissez un code actuel à 6 chiffres dans Gladys puis enregistrez. Les notifications d'approbation et les clés matérielles ne sont pas prises en charge par l'API DSM.
+- **Code MFA invalide ou expiré / erreur 404** : attendez le prochain code OTP et enregistrez-le avant son expiration.
+- **Droits insuffisants / erreur 105** : ajoutez le compte dédié au groupe DSM `administrators`. Le seul rôle délégué Surveillance du système ne suffit pas pour ces API.
+- **DSM injoignable** : testez l'URL depuis l'hôte Gladys et vérifiez le pare-feu du NAS.
+- **Erreur de certificat** : installez un certificat de confiance dans DSM. Pour une installation privée auto-signée uniquement, la vérification peut être désactivée.
+- **Volume absent** : relancez une recherche après la création ou la suppression d'un volume.
+- **Tâches de sauvegarde absentes** : vérifiez que Hyper Backup ou Active Backup est installé, qu'au moins une tâche existe et que le compte DSM dédié peut ouvrir le paquet correspondant, puis relancez la recherche.
+- **La date d'une sauvegarde n'a aucune valeur** : mettez l'intégration à jour, enregistrez de nouveau la connexion et attendez le prochain rafraîchissement. Les détails Active Backup sont interrogés tâche par tâche, car la liste générale ne fournit pas toujours les dates des versions.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Synology DSM dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connexion à Synology DSM | `section` | Non | Utilisez un compte DSM dédié en lecture seule. Gladys doit pouvoir joindre le NAS sur votre réseau local. |
+| URL DSM | `string` | Oui | Par exemple : https://192.168.1.20:5001 |
+| Nom d'utilisateur | `string` | Oui |  |
+| Mot de passe | `secret` | Oui |  |
+| Code OTP actuel (MFA) | `secret` | Non | Requis uniquement pour approuver cette installation Gladys lors de la première connexion MFA, ou après révocation de l'appareil de confiance dans DSM. Saisissez un code de vérification actuel à 6 chiffres. |
+| Vérifier le certificat TLS | `boolean` | Non | Laissez activé sauf si DSM utilise un certificat auto-signé. |
+| NAS 2 (facultatif) | `section` | Non | Laissez l'URL vide pour ignorer cet emplacement. Les identifiants sont stockés dans des champs secrets dédiés. |
+| NAS 2 — URL DSM | `string` | Non |  |
+| NAS 2 — Nom d'utilisateur | `string` | Non |  |
+| NAS 2 — Mot de passe | `secret` | Non |  |
+| NAS 2 — Code OTP actuel | `secret` | Non |  |
+| NAS 2 — Vérifier le certificat TLS | `boolean` | Non |  |
+| NAS 3 (facultatif) | `section` | Non | Laissez l'URL vide pour ignorer cet emplacement. Les identifiants sont stockés dans des champs secrets dédiés. |
+| NAS 3 — URL DSM | `string` | Non |  |
+| NAS 3 — Nom d'utilisateur | `string` | Non |  |
+| NAS 3 — Mot de passe | `secret` | Non |  |
+| NAS 3 — Code OTP actuel | `secret` | Non |  |
+| NAS 3 — Vérifier le certificat TLS | `boolean` | Non |  |
+| NAS 4 (facultatif) | `section` | Non | Laissez l'URL vide pour ignorer cet emplacement. Les identifiants sont stockés dans des champs secrets dédiés. |
+| NAS 4 — URL DSM | `string` | Non |  |
+| NAS 4 — Nom d'utilisateur | `string` | Non |  |
+| NAS 4 — Mot de passe | `secret` | Non |  |
+| NAS 4 — Code OTP actuel | `secret` | Non |  |
+| NAS 4 — Vérifier le certificat TLS | `boolean` | Non |  |
+| Intervalle de rafraîchissement (s) | `number` | Non | Intervalle personnalisé en secondes (60 à 86400). La valeur par défaut est 900 secondes. Un intervalle modéré limite la croissance de la base Gladys. |
+
+## Comment installer Synology DSM dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Synology DSM apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-synology](https://github.com/prohand/gladys-synology).
+
+Synology DSM nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Synology DSM est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-synology) — [source de cette documentation](https://github.com/prohand/gladys-synology/blob/HEAD/docs/fr.md)

@@ -1,0 +1,133 @@
+---
+title: "Intégration Network UPS Tools (NUT) pour Gladys Assistant"
+sidebar_label: "Network UPS Tools (NUT)"
+description: "Suivez l’état, la charge et l’autonomie des onduleurs de vos serveurs Network UPS Tools. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-nut.jpg"
+keywords:
+  - "network ups tools (nut)"
+  - "gladys network ups tools (nut)"
+  - "network ups tools (nut) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-nut instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="network-ups-tools-nut" />
+
+L’intégration **Network UPS Tools (NUT)** permet à Gladys de récupérer les mesures et états des onduleurs déclarés dans un serveur NUT `upsd` accessible sur votre réseau local.
+
+> L’intégration est conçue pour la supervision. Elle ne commande pas l’arrêt, le redémarrage ni les réglages des onduleurs.
+
+## Prérequis
+
+Votre onduleur doit déjà être fonctionnel dans NUT. Depuis la machine qui héberge Gladys, le serveur doit répondre à la commande suivante, en remplaçant les valeurs par celles de votre installation :
+
+```bash
+upsc <nom-onduleur>@<adresse-serveur>
+```
+
+Par défaut, `upsd` écoute en TCP sur le port **3493**. Vérifiez également que les règles réseau et les ACL NUT autorisent l’accès depuis Gladys.
+
+## Configuration
+
+1. Ouvrez **Intégrations**, puis l’intégration **Network UPS Tools (NUT)**.
+2. Dans l’onglet **Configuration**, renseignez le premier serveur `upsd` ; son hôte est obligatoire.
+3. Ajoutez si nécessaire jusqu’à quatre serveurs supplémentaires dans les emplacements optionnels.
+4. Pour chaque serveur, laissez le port à `3493` sauf si votre installation utilise un autre port. Renseignez aussi les identifiants NUT si une authentification est requise.
+5. Choisissez l’intervalle de rafraîchissement. La valeur par défaut de 300 secondes convient à la plupart des installations. Gladys interroge les appareils au maximum une fois par minute : un intervalle plus long est appliqué au tick de scrutation le plus proche.
+6. Enregistrez, puis utilisez **Tester les connexions NUT**.
+
+### Choisir l’intervalle de rafraîchissement
+
+Chaque mesure publiée est conservée dans l’historique de Gladys, et un onduleur expose jusqu’à douze mesures. Un intervalle court fait donc grossir la base rapidement : à 60 secondes, un seul onduleur écrit environ 17 000 lignes par jour, contre environ 3 500 avec l’intervalle par défaut de 300 secondes.
+
+Pour limiter encore ce volume, l’intégration ne publie que les mesures qui ont changé depuis le relevé précédent ; une valeur restée stable est republiée au moins une fois par heure pour ne pas être affichée comme obsolète. Descendez à 60 secondes uniquement si vous avez besoin d’un suivi fin — l’autonomie restante pendant une coupure, par exemple — et augmentez l’intervalle jusqu’à 86 400 secondes si vous préférez ménager la base.
+
+Une fois la connexion validée, Gladys découvre tous les onduleurs retournés par le serveur NUT. Chaque onduleur apparaît comme un appareil distinct dans la découverte Gladys. Dans l’onglet **Découverte**, cliquez sur **Ajouter** pour chaque onduleur que vous souhaitez intégrer : vous pouvez en ajouter plusieurs, indépendamment les uns des autres. La liste est reconstruite à chaque scan à partir de la commande NUT `LIST UPS`.
+
+## Informations disponibles
+
+Les pilotes NUT ne renvoient pas tous les mêmes variables. L’intégration crée donc seulement les capteurs correspondant aux informations réellement publiées par l’onduleur.
+
+| Domaine      | Variables possibles                                  |
+| ------------ | ---------------------------------------------------- |
+| Batterie     | Charge, autonomie, tension et température            |
+| Alimentation | Tension et courant d’entrée/sortie                   |
+| Charge       | Charge en pourcentage, puissance réelle et apparente |
+| Onduleur     | Température, statut et alarmes                       |
+
+Les mesures sont publiées uniquement lorsqu’elles sont numériques et effectivement retournées par le pilote. Les statuts textuels NUT sont lus pendant la communication mais ne sont pas publiés comme fonctionnalités Gladys afin de rester compatibles avec les versions Core qui ne reconnaissent pas encore la catégorie `text`.
+
+## Dépannage
+
+| Symptôme                                          | Vérifications recommandées                                                                                                                                                                                                                                             |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Aucun onduleur détecté                            | Vérifiez chaque hôte, port, pare-feu et la présence d’au moins un onduleur dans chaque `ups.conf`.                                                                                                                                                                     |
+| Erreur d’accès ou d’authentification              | Vérifiez les ACL dans `upsd.conf` et les identifiants définis dans `upsd.users`.                                                                                                                                                                                       |
+| Certaines mesures manquent                        | Exécutez `upsc <nom>@<serveur>` ; seules les variables retournées par votre pilote peuvent être créées dans Gladys.                                                                                                                                                    |
+| Données obsolètes                                 | Une mesure stable n’est réécrite qu’une fois par heure : c’est normal. Au-delà, vérifiez que le pilote NUT communique encore avec le matériel et consultez les logs `upsd`.                                                                                            |
+| La base de Gladys grossit trop vite               | Augmentez l’intervalle de rafraîchissement : le volume d’historique lui est directement proportionnel. Chaque onduleur ajouté écrit son propre historique.                                                                                                             |
+| Ajout refusé : « appareil incomplet ou invalide » | Mettez à jour l’intégration. Ce refus (HTTP 422) venait de fonctionnalités publiées sans bornes `min` et `max`, désormais toujours déclarées.                                                                                                                          |
+| Valeurs figées après l’ajout                      | Mettez à jour l’intégration : les appareils sont désormais publiés avec la scrutation périodique activée.                                                                                                                                                              |
+| Fonctionnalités affichées sans nom ni icône       | Mettez à jour l’intégration, puis ré-ajoutez l’onduleur depuis l’onglet **Découverte** pour mettre à jour ses fonctionnalités existantes : la charge et la puissance apparente étaient publiées sur un couple catégorie/type que le front Gladys ne sait pas dessiner. |
+
+Pour obtenir les détails de l’erreur, ouvrez les journaux de l’intégration dans Gladys. Vous pouvez également régler `LOG_LEVEL=debug` pour disposer de logs plus détaillés.
+
+## Ressources
+
+La [spécification officielle du protocole réseau NUT](https://networkupstools.org/docs/developer-guide.chunked/net-protocol.html) détaille les commandes de découverte et de lecture utilisées par l’intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Network UPS Tools (NUT) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Serveurs NUT | `section` | Non | Configurez un ou plusieurs serveurs upsd accessibles. Chaque onduleur exposé par chaque serveur configuré est découvert comme un appareil Gladys distinct. |
+| Hôte du serveur 1 | `string` | Oui | Adresse IP ou nom DNS du premier serveur NUT upsd. |
+| Port du serveur 1 | `number` | Non | Le port TCP NUT par défaut est 3493. |
+| Nom d’utilisateur du serveur 1 (facultatif) | `string` | Non |  |
+| Mot de passe du serveur 1 (facultatif) | `secret` | Non | Obligatoire lorsqu’un nom d’utilisateur est configuré. |
+| Hôte du serveur 2 (facultatif) | `string` | Non |  |
+| Port du serveur 2 | `number` | Non |  |
+| Nom d’utilisateur du serveur 2 | `string` | Non |  |
+| Mot de passe du serveur 2 | `secret` | Non |  |
+| Hôte du serveur 3 (facultatif) | `string` | Non |  |
+| Port du serveur 3 | `number` | Non |  |
+| Nom d’utilisateur du serveur 3 | `string` | Non |  |
+| Mot de passe du serveur 3 | `secret` | Non |  |
+| Hôte du serveur 4 (facultatif) | `string` | Non |  |
+| Port du serveur 4 | `number` | Non |  |
+| Nom d’utilisateur du serveur 4 | `string` | Non |  |
+| Mot de passe du serveur 4 | `secret` | Non |  |
+| Hôte du serveur 5 (facultatif) | `string` | Non |  |
+| Port du serveur 5 | `number` | Non |  |
+| Nom d’utilisateur du serveur 5 | `string` | Non |  |
+| Mot de passe du serveur 5 | `secret` | Non |  |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence d’interrogation de chaque onduleur. Chaque relevé est conservé dans l’historique Gladys : un intervalle court fait grossir vite la base, conservez 300 s sauf besoin réel de mesures plus fines. |
+
+## Comment installer Network UPS Tools (NUT) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Network UPS Tools (NUT) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-nut:1.0.7`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-nut](https://github.com/prohand/gladys-nut).
+
+Network UPS Tools (NUT) nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Network UPS Tools (NUT) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-nut) — [source de cette documentation](https://github.com/prohand/gladys-nut/blob/HEAD/docs/fr.md)
