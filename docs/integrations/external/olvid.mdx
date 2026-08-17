@@ -1,0 +1,209 @@
+---
+title: "Olvid integration for Gladys Assistant"
+sidebar_label: "Olvid"
+description: "Chat with your home from Olvid, the end-to-end encrypted messenger (personal profile). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-olvid.png"
+keywords:
+  - "olvid"
+  - "gladys olvid"
+  - "olvid gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-olvid instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="olvid" />
+
+This integration adds [Olvid](https://olvid.io) as a chat channel in Gladys,
+exactly like the Telegram integration: ask your home a question from Olvid,
+Gladys answers in the discussion, and your scenes can send you notifications
+through the same channel — end-to-end encrypted, with no company directory, on
+a **personal ("particulier") Olvid profile**.
+
+## How it works
+
+Olvid has no cloud bot API: there is no equivalent of Telegram's BotFather. An
+Olvid bot is made of two halves:
+
+- the **Olvid daemon** (`olvid/bot-daemon`): a complete Olvid client embedding
+  the cryptographic engine and holding your profile, exposing a gRPC API;
+- the **bot**: this integration. It drives the daemon, relays messages to
+  Gladys and sends the answers back.
+
+**Gladys runs the daemon for you**: it is declared in the integration manifest,
+so the Gladys supervisor starts it in its own container, on the integration's
+private network. No `docker-compose` file to write, no command line to type, no
+key to copy around.
+
+No extra third-party service sees your messages: the daemon is an Olvid client,
+just like your phone, and its gRPC API is published on no port at all — only the
+integration can talk to it.
+
+## 1. Install the integration
+
+Install the Olvid integration from the Gladys store. The install screen tells
+you what it runs besides itself (`olvid/bot-daemon`, its memory limit, and the
+fact that no port is published): that is the contract you accept.
+
+On the first run, with nothing to fill in, the integration:
+
+1. generates the admin key of the daemon (you never see nor type it) and starts
+   the daemon container;
+2. creates a personal Olvid profile, since the daemon is empty;
+3. mints its own client key, scoped to that profile (the admin key is only used
+   for that);
+4. enables automatic acceptance of incoming invitations.
+
+Starting the daemon takes a few tens of seconds the first time (image download
+included): the integration status goes from "Starting the Olvid daemon…" to
+connected on its own. Click **Test the connection** to check it: Gladys answers
+with the daemon version and the profile name.
+
+You can then adjust, if you want to:
+
+| Field             | Value                                                |
+| ----------------- | ---------------------------------------------------- |
+| First / last name | the name shown to your contacts ("Gladys Assistant") |
+| Profile number    | `0` (Gladys takes the first profile, or creates one) |
+
+> Your **Olvid identity** (profile, contacts, messages) lives in the volume of
+> the daemon container, managed by Gladys along with the integration data.
+> Uninstalling the integration destroys that profile: your contacts will have to
+> invite you again. Keep that in mind before uninstalling, and back your Gladys
+> data up as usual.
+
+## 2. Add Gladys to your Olvid contacts
+
+This is the regular Olvid journey for an individual: an invitation, then a
+4-digit code exchanged between the two devices. Olvid never automates that
+step — it is what proves you are really talking to your own home.
+
+1. click **Show the invitation link**: Gladys displays an
+   `https://invitation.olvid.io/…` link;
+2. open that link on the phone where Olvid is installed and send the
+   invitation;
+3. Gladys accepts it automatically (if you turned that option off, click
+   **Accept pending invitations**). Your app then shows a 4-digit code and
+   waits for another one;
+4. in Gladys, click **Invitations in progress**: the code to type into Olvid is
+   displayed there. Copy it into the app;
+5. type the code displayed by Olvid into the **Validate an invitation** action
+   of Gladys.
+
+Once the exchange completes, "Gladys Assistant" appears in your Olvid contacts.
+
+## 3. Link your Olvid account to your Gladys user
+
+Being a contact is not enough: Gladys has to know **which user** is speaking,
+since an incoming message drives the home with that user's rights.
+
+1. in Gladys, on the Olvid integration page, click **Link my account**: a short
+   code is displayed (valid for 15 minutes);
+2. send that code to Gladys in the Olvid discussion;
+3. Gladys answers "Account linked to …". You are done.
+
+Until a contact is linked, Gladys forwards nothing to its brain: it simply
+answers with the instructions. You can revoke a link at any time from the same
+page.
+
+## Usage
+
+- ask in plain language: "what is the temperature in the living room?", "turn
+  on the office light";
+- scenes that send a message can pick the Olvid channel;
+- images sent by Gladys (a camera snapshot) arrive as an attachment;
+- long answers are split into several messages.
+
+**Group** discussions are deliberately ignored: an incoming message speaks with
+the authority of the linked user, which only makes sense one-to-one.
+
+## Using your own daemon (advanced)
+
+If you **already** run an Olvid daemon — because you use it for other bots, or
+because you want to control its version and its backups — switch the **Olvid
+daemon** field to "My own daemon", then fill in:
+
+| Field            | Value                                        |
+| ---------------- | -------------------------------------------- |
+| Olvid daemon URL | `http://olvid-daemon:50051`                  |
+| Admin client key | the value of `OLVID_ADMIN_CLIENT_KEY_GLADYS` |
+
+Gladys then stops the daemon it managed, so two Olvid clients never run in
+parallel. The daemon must be reachable from the integration container: share a
+Docker network (the container is then reachable by its name), or publish port
+50051 and use the host IP address.
+
+A minimal `docker-compose.yml` for that case:
+
+```yaml
+services:
+  olvid-daemon:
+    image: olvid/bot-daemon:2.0.1
+    container_name: olvid-daemon
+    restart: unless-stopped
+    environment:
+      # A long random value (openssl rand -hex 32): this is the key you paste
+      # into Gladys. It grants full control over the daemon.
+      - OLVID_ADMIN_CLIENT_KEY_GLADYS=replace-me-with-a-random-value
+    volumes:
+      - ./daemon-data:/daemon/data
+```
+
+> In that mode the Olvid identity lives in your `./daemon-data` folder: backing
+> it up is up to you.
+
+## Troubleshooting
+
+| Symptom                                  | Likely cause                                                                                                            |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| "Starting the Olvid daemon…" that stays  | The image download is still running, or it failed: check the integration logs.                                          |
+| "The Olvid daemon container stopped"     | The daemon exited at startup: its own logs, in Gladys, give the reason.                                                 |
+| "Olvid daemon unreachable"               | The daemon has not finished starting (the integration retries on its own). With your own daemon: URL or Docker network. |
+| `unauthenticated` on the connection test | With your own daemon: the admin client key does not match the one of the daemon container.                              |
+| The invitation stays stuck               | The 4-digit code was not exchanged both ways (the "Invitations" and "Validate" actions).                                |
+| "Your Olvid account is not linked yet"   | The linking code was never sent, or it expired (15 minutes).                                                            |
+| Nothing arrives after a restart          | Messages received while offline are replayed on startup; check the integration logs.                                    |
+
+The integration logs (`LOG_LEVEL=debug` for details) show every step: profile
+provisioning, invitations, incoming messages.
+
+## Configuration settings
+
+These are the settings Olvid asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Olvid has no cloud bot API: messages go through an Olvid daemon holding your personal Olvid profile. Gladys runs that daemon for you, in its own container, with a key it generates — nothing to install by hand. Use the buttons below to introduce Gladys to your Olvid app, then link your account. |
+| Olvid daemon | `select` | No | Managed by Gladys: the daemon runs in a container Gladys starts, keeps up and secures with a generated key — leave the two fields below empty. Pick your own daemon only if you already run one, then fill them in. |
+| Olvid daemon URL | `string` | No | Your own daemon only: gRPC endpoint, reachable from this container. http:// for plaintext, https:// when the daemon serves TLS. |
+| Admin client key | `secret` | No | Your own daemon only: its OLVID_ADMIN_CLIENT_KEY_* value. Gladys uses it once to pick its profile and mint its own key. |
+| Olvid profile number | `number` | No | Which profile of the daemon to use. Leave 0 to take the first one, and create one when the daemon is empty. |
+| Profile first name | `string` | No | Name shown to your contacts, used when Gladys creates the Olvid profile. |
+| Profile last name | `string` | No |  |
+| Accept invitations automatically | `boolean` | No | Gladys accepts the invitations it receives, so you only have to exchange the 4-digit code. Group invitations are never accepted. |
+
+## How to install Olvid in Gladys
+
+1. In Gladys, open **Integrations**: Olvid appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-olvid:1.0.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-olvid](https://github.com/prohand/gladys-olvid).
+
+Olvid requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Olvid is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-olvid) — [source of this documentation](https://github.com/prohand/gladys-olvid/blob/HEAD/docs/en.md)

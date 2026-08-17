@@ -1,0 +1,112 @@
+---
+title: "Intégration Enphase IQ Gateway pour Gladys Assistant"
+sidebar_label: "Enphase IQ Gateway"
+description: "Suivi local de votre IQ Gateway Enphase : production, consommation et micro-onduleurs. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/EchoPouet--gladys-enphase.png"
+keywords:
+  - "enphase iq gateway"
+  - "gladys enphase iq gateway"
+  - "enphase iq gateway gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/EchoPouet/gladys-enphase instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="enphase-iq-gateway" />
+
+Cette intégration suit en **local** votre installation solaire Enphase : production, consommation (si un compteur est présent), batterie (si une IQ Battery est installée), production individuelle de chaque **micro-onduleur**, le **IQ System Controller** et les **compteurs CT**.
+
+## Prérequis
+
+- Un **IQ Gateway** avec un firmware **D8+** (novembre 2023 ou plus récent).
+- Le gateway joignable depuis le réseau local de votre Gladys.
+- Un **jeton d'accès local** : depuis l'interface web du gateway, allez dans **Système > Accès local**, signez l'accord Enphase et copiez le jeton JWT affiché.
+
+## Configuration
+
+1. Installez l'intégration depuis le catalogue Gladys.
+2. Renseignez l'**adresse IP locale** du gateway (ou utilisez le bouton **« Détecter le gateway »** qui le trouve par mDNS).
+3. Collez votre **jeton d'accès local**.
+4. Choisissez l'**intervalle de rafraîchissement** (15 à 600 secondes, 60 par défaut).
+5. Cochez **« Suivre chaque micro-onduleur »** pour obtenir un appareil par onduleur.
+
+L'intégration ne fait **aucun appel cloud** : tout reste sur votre réseau local.
+
+## Appareils publiés
+
+Les valeurs sont publiées en **kW / kWh** (puissance / énergie), **%** (niveau de batterie), **°C** (température), **V** (tension) et **A** (courant), arrondies à **3 décimales maximum**.
+
+- **Un appareil « gateway »** : production (kW), production du jour, des 7 derniers jours et cumulée (kWh), consommation (kW et kWh/jour) si un compteur existe, et batterie (niveau %, puissance de charge/décharge, énergie restante) si une IQ Battery est installée.
+- **Un appareil par micro-onduleur** (si activé) : puissance instantanée (kW) et statut texte (« Actif », « Hors-ligne… ») pour repérer un onduleur défaillant.
+- **Un appareil par IQ Battery (Encharge)** : niveau (%), température (°C), puissance (kW) et capacité (kWh).
+- **Un appareil « IQ System Controller » (Enpower)** : mode réseau, température (°C) et état admin.
+- **Un appareil par compteur CT** : puissance active (kW), énergie délivrée / reçue (kWh), tension (V) et courant (A).
+
+Les appareils Encharge, Enpower et compteurs CT ne sont publiés que si le gateway les rapporte (détection automatique).
+
+## Sécurité : épingler le certificat du gateway
+
+Le gateway utilise un **certificat auto-signé** : l'intégration ne peut donc pas en vérifier cryptographiquement l'identité par défaut. Un appareil malveillant présent sur votre réseau local pourrait en théorie se faire passer pour le gateway et récupérer votre jeton d'accès.
+
+**Recommandé :** renseignez le champ **« Empreinte du certificat du gateway (optionnel) »**. L'intégration ne fait alors confiance qu'à un gateway qui présente exactement ce certificat — un imposteur est rejeté (`CERT_PIN_MISMATCH`) même si la validation TLS reste allégée.
+
+1. Depuis une machine de confiance sur le même réseau, lisez l'empreinte du vrai gateway :
+   ```
+   openssl s_client -connect <adresse_gateway>:443 \
+     < /dev/null 2>/dev/null | \
+     openssl x509 -noout -fingerprint -sha256
+   ```
+2. Copiez la valeur `SHA256 Fingerprint=...` dans le champ **Empreinte du certificat du gateway**.
+3. Enregistrez — l'empreinte est appliquée immédiatement. La casse et les séparateurs ne comptent pas (le code les normalise).
+
+Si le certificat du gateway change un jour (mise à jour du firmware, remplacement du boîtier), l'intégration refusera de se connecter : relisez la nouvelle empreinte et mettez à jour le champ.
+
+À noter : l'empreinte protège toutes les connexions effectuées après sa configuration. Lisez toujours l'empreinte depuis votre propre gateway de confiance, jamais via une source intermédiaire.
+
+## Dépannage
+
+- **« Jeton refusé »** : le jeton est invalide, expiré ou révoqué. Régénérez-le dans le menu du gateway (Système > Accès local).
+- **« Gateway injoignable »** : vérifiez que le gateway est allumé, sur le même réseau, et que l'IP est correcte (le bouton « Détecter le gateway » la retrouve par mDNS).
+- **« Détecter le gateway » ne trouve rien** : le gateway publie plusieurs adresses en mDNS, dont des adresses IPv6. L'intégration ne retient qu'une adresse privée (IPv4 en priorité) et n'envoie jamais le jeton vers une adresse publique — si aucune adresse privée n'est publiée, renseignez l'IP LAN du gateway manuellement.
+- **Aucune consommation affichée** : votre installation n'a pas de compteur de consommation branché — l'intégration ne publie les données que si le gateway les rapporte.
+- **« Empreinte du certificat refusée »** : le certificat du gateway a changé ou un appareil tente de l'usurper. Relisez l'empreinte réelle et mettez à jour le champ.
+- Le badge de transport reste **local** quand tout va bien, et passe à **injoignable** quand le gateway ne répond plus.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Enphase IQ Gateway dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | Générez un jeton d'accès local sur votre IQ Gateway (firmware D8+) : depuis l'interface web du gateway, allez dans Système > Accès local, signez l'accord Enphase et copiez le jeton. L'intégration le lit directement sur votre réseau local — aucun compte cloud nécessaire. |
+| Adresse IP du gateway | `string` | Oui | L'adresse IP locale de votre IQ Gateway, ex. 192.168.1.42. Utilisez le bouton « Détecter le gateway » pour la trouver sur votre réseau. |
+| Jeton d'accès local | `secret` | Oui | Le jeton JWT généré dans l'interface web du gateway (Système > Accès local). Il est stocké chiffré par Gladys et jamais renvoyé au frontend. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence d'interrogation du gateway, en secondes. Les données de production sont mises à jour toutes les 5 secondes sur le gateway ; un poll de 15 à 60 s est un bon compromis. |
+| Suivre chaque micro-onduleur | `boolean` | Non | Publie un appareil par micro-onduleur avec sa production actuelle, pour repérer une unité défaillante (un onduleur mort rapporte 0 W). |
+| Empreinte du certificat du gateway (optionnel) | `string` | Non | Empreinte SHA-256 (optionnelle) du certificat du gateway (ex. AB:CD:12:34:…). Si renseignée, l'intégration ne fait confiance qu'à un gateway dont le certificat lui correspond — protection recommandée contre un appareil usurpant votre gateway sur le réseau local. Obtenez-la depuis le certificat dans votre navigateur, ou avec : openssl s_client -connect \<adresse_gateway>:443 \< /dev/null 2>/dev/null \| openssl x509 -noout -fingerprint -sha256. |
+
+## Comment installer Enphase IQ Gateway dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Enphase IQ Gateway apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/echopouet/gladys-enphase:1.0.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/EchoPouet/gladys-enphase](https://github.com/EchoPouet/gladys-enphase).
+
+Enphase IQ Gateway nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Enphase IQ Gateway est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [EchoPouet](https://github.com/EchoPouet), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/EchoPouet/gladys-enphase) — [source de cette documentation](https://github.com/EchoPouet/gladys-enphase/blob/HEAD/docs/fr.md)
