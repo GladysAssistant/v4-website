@@ -645,7 +645,7 @@ export function getPrivacyContent(lang) {
             },
             {
               type: "p",
-              text: "Le site gladysassistant.com y stocke également un identifiant technique de mesure d'audience, ainsi que la devise détectée pour l'affichage des tarifs. Aucun cookie publicitaire n'est déposé.",
+              text: "Le site gladysassistant.com y stocke également un identifiant technique de mesure d'audience, la devise détectée pour l'affichage des tarifs, et, le cas échéant, les paramètres de campagne présents dans l'URL d'arrivée (utm_source, utm_medium, utm_campaign...), transmis avec la commande pour savoir d'où proviennent les souscriptions. Aucun identifiant publicitaire n'est collecté et aucun cookie publicitaire n'est déposé.",
             },
           ],
         },
@@ -806,7 +806,7 @@ export function getPrivacyContent(lang) {
           },
           {
             type: "p",
-            text: "The gladysassistant.com website also stores a technical analytics identifier there, as well as the currency detected to display prices. No advertising cookie is set.",
+            text: "The gladysassistant.com website also stores a technical analytics identifier there, the currency detected to display prices, and, where applicable, the campaign parameters present in the landing URL (utm_source, utm_medium, utm_campaign...), passed along with the order to know where subscriptions come from. No advertising identifier is collected and no advertising cookie is set.",
           },
         ],
       },
