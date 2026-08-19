@@ -80,10 +80,11 @@ function Block({ block }) {
             ))}
         </ul>
       );
-    // Translation disclaimer shown on top of the English legal pages.
+    // Footnote closing the English legal pages: which language version
+    // prevails. Kept discreet, it is not part of the text itself.
     case "note":
       return (
-        <p>
+        <p style={{ fontSize: "0.9rem", opacity: 0.75 }}>
           <em>
             {linkifyEmail(block.text)}
             <BlockLink link={block.link} />

@@ -160,18 +160,6 @@ export function getTermsContent(lang, prices) {
     heading: "Terms of sale",
     sections: [
       {
-        blocks: [
-          {
-            type: "note",
-            text: "This English text is a translation provided for convenience. Only the French version has legal value in case of discrepancy:",
-            link: {
-              label: "Conditions générales de ventes",
-              href: "/fr/plus/terms/",
-            },
-          },
-        ],
-      },
-      {
         title: "Preamble",
         blocks: [
           {
@@ -285,6 +273,18 @@ export function getTermsContent(lang, prices) {
           },
         ],
       },
+      {
+        blocks: [
+          {
+            type: "note",
+            text: "Gladys Plus is operated from France, under French and European law. Should this English text and the French version differ, the French version prevails:",
+            link: {
+              label: "Conditions générales de ventes",
+              href: "/fr/plus/terms/",
+            },
+          },
+        ],
+      },
     ],
   };
 }
@@ -361,18 +361,6 @@ export function getPrivacyContent(lang) {
     heading: "Privacy policy of Gladys Plus",
     sections: [
       {
-        blocks: [
-          {
-            type: "note",
-            text: "This English text is a translation provided for convenience. Only the French version has legal value in case of discrepancy:",
-            link: {
-              label: "Politique de confidentialité",
-              href: "/fr/plus/privacy/",
-            },
-          },
-        ],
-      },
-      {
         title: "Preamble",
         blocks: [
           {
@@ -424,6 +412,18 @@ export function getPrivacyContent(lang) {
           {
             type: "p",
             text: "The Provider undertakes to act on any justified request to access, modify, object to and/or delete the data, by answering these requests within thirty (30) calendar days from the reception of the request. These requests are made by email at hello@gladysassistant.com.",
+          },
+        ],
+      },
+      {
+        blocks: [
+          {
+            type: "note",
+            text: "Gladys Plus is operated from France, under French and European law. Should this English text and the French version differ, the French version prevails:",
+            link: {
+              label: "Politique de confidentialité",
+              href: "/fr/plus/privacy/",
+            },
           },
         ],
       },
@@ -553,15 +553,6 @@ export function getLegalNoticeContent(lang) {
     heading: "Legal notice",
     sections: [
       {
-        blocks: [
-          {
-            type: "note",
-            text: "This English text is a translation provided for convenience. Only the French version has legal value in case of discrepancy:",
-            link: { label: "Mentions légales", href: "/fr/legal-notice/" },
-          },
-        ],
-      },
-      {
         title: "Website publisher",
         blocks: [
           { type: "p", text: "gladysassistant.com is published by:" },
@@ -652,6 +643,15 @@ export function getLegalNoticeContent(lang) {
           {
             type: "p",
             text: "The website uses OpenPanel, an open-source analytics solution self-hosted by Gladys Assistant SAS, to count visits and improve the website. A technical identifier is stored in the browser to distinguish visits; no data is sold or shared with any advertising network.",
+          },
+        ],
+      },
+      {
+        blocks: [
+          {
+            type: "note",
+            text: "Gladys Assistant is a French company, operating under French and European law. Should this English text and the French version differ, the French version prevails:",
+            link: { label: "Mentions légales", href: "/fr/legal-notice/" },
           },
         ],
       },
