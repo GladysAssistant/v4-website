@@ -157,6 +157,23 @@ export function getTermsContent(lang, prices) {
           ],
         },
         {
+          title: "Livraison du matériel",
+          blocks: [
+            {
+              type: "p",
+              text: "Le kit de démarrage est préparé à la demande : le mini-PC est commandé auprès du fournisseur, installé et configuré individuellement, puis expédié via Mondial Relay.",
+            },
+            {
+              type: "p",
+              text: "La commande est généralement livrée sous 10 jours ouvrés à compter du paiement, et au plus tard 30 jours, conformément à l'article L. 216-1 du Code de la consommation. À défaut de livraison dans ce délai, l'utilisateur peut résoudre la commande dans les conditions prévues par le Code de la consommation et obtenir le remboursement intégral des sommes versées.",
+            },
+            {
+              type: "p",
+              text: "Les frais de livraison sont indiqués avant la validation de la commande.",
+            },
+          ],
+        },
+        {
           title: "Droit de rétractation pour les achats de matériel",
           blocks: [
             {
@@ -207,7 +224,24 @@ export function getTermsContent(lang, prices) {
             },
             {
               type: "p",
+              text: "Pièces détachées : le mini-PC fourni dans le kit de démarrage est fabriqué par Beelink. Le fabricant ne communique pas de durée de disponibilité des pièces détachées pour ces modèles. Des pièces (ventilateur, câbles, cartes) peuvent être obtenues sur demande auprès de son service après-vente.",
+            },
+            {
+              type: "p",
               text: "Ces garanties s'exercent par email à hello@gladysassistant.com. Elles s'appliquent indépendamment du droit de rétractation et de la garantie commerciale de remboursement de 30 jours.",
+            },
+          ],
+        },
+        {
+          title: "Reprise des équipements usagés",
+          blocks: [
+            {
+              type: "p",
+              text: "Conformément à la réglementation relative aux déchets d'équipements électriques et électroniques (DEEE), l'utilisateur qui commande un kit de démarrage peut faire reprendre gratuitement un équipement usagé de type équivalent, dans la limite d'un appareil repris pour un appareil acheté. La demande se formule par email à hello@gladysassistant.com au moment de la commande ; les modalités de retour lui sont alors communiquées.",
+            },
+            {
+              type: "p",
+              text: "L'éco-participation applicable au matériel est acquittée en amont par le fabricant ou l'importateur qui l'a mis sur le marché français.",
             },
           ],
         },
@@ -418,6 +452,23 @@ export function getTermsContent(lang, prices) {
         ],
       },
       {
+        title: "Delivery of the hardware",
+        blocks: [
+          {
+            type: "p",
+            text: "The starter kit is prepared to order: the mini-PC is ordered from the supplier, installed and configured individually, then shipped through Mondial Relay.",
+          },
+          {
+            type: "p",
+            text: "The order is usually delivered within 10 working days of the payment, and at the latest within 30 days, in accordance with article L. 216-1 of the French consumer code. Failing delivery within that period, the user may cancel the order under the conditions set by the French consumer code and be refunded in full.",
+          },
+          {
+            type: "p",
+            text: "Delivery costs are shown before the order is confirmed.",
+          },
+        ],
+      },
+      {
         title: "Right of withdrawal for hardware purchases",
         blocks: [
           {
@@ -468,7 +519,24 @@ export function getTermsContent(lang, prices) {
           },
           {
             type: "p",
+            text: "Spare parts: the mini-PC supplied in the starter kit is manufactured by Beelink. The manufacturer does not state for how long spare parts remain available for these models. Parts (fan, cables, boards) can be obtained on request from its after-sales service.",
+          },
+          {
+            type: "p",
             text: "These guarantees are exercised by email at hello@gladysassistant.com. They apply independently of the right of withdrawal and of the 30-day commercial refund guarantee.",
+          },
+        ],
+      },
+      {
+        title: "Take-back of used equipment",
+        blocks: [
+          {
+            type: "p",
+            text: "In accordance with the regulation on waste electrical and electronic equipment (WEEE), a user ordering a starter kit can have an equivalent piece of used equipment taken back free of charge, one item for each item purchased. The request is made by email at hello@gladysassistant.com when ordering; the return terms are then sent to them.",
+          },
+          {
+            type: "p",
+            text: "The eco-contribution applying to the hardware is paid upstream by the manufacturer or the importer who placed it on the French market.",
           },
         ],
       },
@@ -969,6 +1037,10 @@ export function getLegalNoticeContent(lang) {
                 { term: "Contact", value: COMPANY.email },
               ],
             },
+            {
+              type: "p",
+              text: "Gladys Assistant ne dispose pas d'accueil téléphonique. Toute demande adressée à hello@gladysassistant.com reçoit une réponse sous 3 jours ouvrés.",
+            },
           ],
         },
         {
@@ -1102,6 +1174,10 @@ export function getLegalNoticeContent(lang) {
               },
               { term: "Contact", value: COMPANY.email },
             ],
+          },
+          {
+            type: "p",
+            text: "Gladys Assistant has no telephone support. Any request sent to hello@gladysassistant.com is answered within 3 working days.",
           },
         ],
       },
