@@ -6,9 +6,10 @@ import { formatPrice } from "../components/plus/pricing";
 
 // Identity of the company, displayed on the legal notice. The identifiers come
 // from the national business register (SIREN, RCS registration and legal form
-// as published in the BODACC). Fields left empty are simply not rendered:
-// `vatNumber` is empty because the company is not registered for
-// intra-community VAT (its computed number is rejected by VIES).
+// as published in the BODACC). There is no VAT number: the company falls under
+// the French small-business VAT exemption ("franchise en base de TVA"), which
+// is why the legal notice and the terms of sale carry the article 293 B
+// mention instead. Fields left empty are simply not rendered.
 export const COMPANY = {
   name: "Gladys Assistant",
   address: "66 avenue des Champs-Élysées, 75008 Paris, France",
@@ -17,7 +18,6 @@ export const COMPANY = {
   shareCapital: "1 000 €",
   rcs: "Paris 947 826 814",
   siren: "947 826 814",
-  vatNumber: "",
 };
 
 export function getTermsContent(lang, prices) {
@@ -95,6 +95,10 @@ export function getTermsContent(lang, prices) {
                   text: `${plusMonthly}/mois ou ${plusYearly}/an - Accès à toutes les fonctionnalités (incluant sauvegardes, Enedis, modèles d'IA Open-Weight, streaming caméra)`,
                 },
               ],
+            },
+            {
+              type: "p",
+              text: "TVA non applicable, article 293 B du Code général des impôts. Les tarifs affichés sont les tarifs définitifs, aucune taxe n'est ajoutée au moment du paiement.",
             },
           ],
         },
@@ -226,6 +230,10 @@ export function getTermsContent(lang, prices) {
                 text: `${plusMonthly}/month or ${plusYearly}/year - Access to all the features (including backups, Enedis, Open-Weight AI models, camera streaming)`,
               },
             ],
+          },
+          {
+            type: "p",
+            text: "VAT is not applicable, article 293 B of the French general tax code. The prices displayed are final prices, no tax is added at checkout.",
           },
         ],
       },
@@ -451,7 +459,11 @@ export function getLegalNoticeContent(lang) {
                 { term: "Capital social", value: COMPANY.shareCapital },
                 { term: "RCS", value: COMPANY.rcs },
                 { term: "SIREN", value: COMPANY.siren },
-                { term: "TVA intracommunautaire", value: COMPANY.vatNumber },
+                {
+                  term: "TVA",
+                  value:
+                    "Non applicable, article 293 B du Code général des impôts (franchise en base de TVA)",
+                },
                 {
                   term: "Directeur de la publication",
                   value: COMPANY.publicationDirector,
@@ -566,7 +578,11 @@ export function getLegalNoticeContent(lang) {
               { term: "Share capital", value: COMPANY.shareCapital },
               { term: "Trade register (RCS)", value: COMPANY.rcs },
               { term: "SIREN", value: COMPANY.siren },
-              { term: "VAT number", value: COMPANY.vatNumber },
+              {
+                term: "VAT",
+                value:
+                  "Not applicable, article 293 B of the French general tax code (small-business VAT exemption)",
+              },
               {
                 term: "Publication director",
                 value: COMPANY.publicationDirector,
