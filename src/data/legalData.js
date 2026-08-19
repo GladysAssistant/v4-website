@@ -40,9 +40,9 @@ export function getTermsContent(lang, prices) {
 
   if (lang === "fr") {
     return {
-      title: "Conditions générales de ventes de Gladys Plus",
-      description: "Les conditions générales de ventes de Gladys Plus",
-      heading: "Conditions générales de ventes",
+      title: "Conditions générales de vente de Gladys Plus",
+      description: "Les conditions générales de vente de Gladys Plus",
+      heading: "Conditions générales de vente",
       updated: "Dernière mise à jour : 19 août 2026",
       sections: [
         {
@@ -50,7 +50,7 @@ export function getTermsContent(lang, prices) {
           blocks: [
             {
               type: "p",
-              text: "Gladys Plus est un service fourni par Gladys Assistant SAS, 66 avenue des Champs-Elysées 75008 Paris.",
+              text: "Gladys Plus est un service fourni par Gladys Assistant, société par actions simplifiée au capital de 1 000 €, immatriculée au RCS de Paris sous le numéro 947 826 814, dont le siège social est situé 66 avenue des Champs-Élysées, 75008 Paris.",
             },
             {
               type: "p",
@@ -80,11 +80,11 @@ export function getTermsContent(lang, prices) {
             },
             {
               type: "p",
-              text: "La souscription au service Gladys Plus n'apporte pas de garanties sur le produit open-source Gladys Assistant qui est entièrement gratuit et développé par la communauté open-source Gladys Assistant, sans aucune affiliations entre les deux.",
+              text: "La souscription au service Gladys Plus n'apporte pas de garanties sur le produit open-source Gladys Assistant qui est entièrement gratuit et développé par la communauté open-source Gladys Assistant, sans aucune affiliation entre les deux.",
             },
             {
               type: "p",
-              text: "Le produit open-source Gladys Assistant est distribué sous license Apache 2.0, sans aucune garantie sur son fonctionnement.",
+              text: "Le produit open-source Gladys Assistant est distribué sous licence Apache 2.0, sans aucune garantie sur son fonctionnement.",
             },
           ],
         },
@@ -100,7 +100,7 @@ export function getTermsContent(lang, prices) {
               items: [
                 {
                   label: "Gladys Plus Lite :",
-                  text: `${liteMonthly}/mois ou ${liteYearly}/an - Accès aux fonctionnalités essentielles (accès à distance, API ouverte, assistant vocaux avec Google Home/Alexa)`,
+                  text: `${liteMonthly}/mois ou ${liteYearly}/an - Accès aux fonctionnalités essentielles (accès à distance, API ouverte, assistants vocaux avec Google Home/Alexa)`,
                 },
                 {
                   label: "Gladys Plus :",
@@ -123,7 +123,7 @@ export function getTermsContent(lang, prices) {
             },
             {
               type: "p",
-              text: "L'utilisateur dispose de 30 jours pour se faire rembourser si il n'est pas satisfait de la prestation, et ce sans justification.",
+              text: "L'utilisateur dispose de 30 jours pour se faire rembourser s'il n'est pas satisfait de la prestation, et ce sans justification.",
             },
             {
               type: "p",
@@ -250,7 +250,7 @@ export function getTermsContent(lang, prices) {
           blocks: [
             {
               type: "p",
-              text: "Etant développé et maintenu par un individuel, la disponibilité du produit est dite au \"best-effort\", sans SLA garanti. Néanmoins, depuis 2019 nous n'avons quasiment pas connu d'interruption de service.",
+              text: "Étant développé et maintenu par une seule personne, la disponibilité du produit est dite au \"best-effort\", sans SLA garanti. Néanmoins, depuis 2019 nous n'avons quasiment pas connu d'interruption de service.",
             },
           ],
         },
@@ -352,7 +352,7 @@ export function getTermsContent(lang, prices) {
         blocks: [
           {
             type: "p",
-            text: "Gladys Plus is a service provided by Gladys Assistant SAS, 66 avenue des Champs-Elysées 75008 Paris, France.",
+            text: "Gladys Plus is a service provided by Gladys Assistant, a French simplified joint-stock company with a share capital of 1 000 €, registered with the Paris trade register under number 947 826 814, whose registered office is at 66 avenue des Champs-Élysées, 75008 Paris, France.",
           },
           {
             type: "p",
@@ -642,7 +642,7 @@ export function getTermsContent(lang, prices) {
             type: "note",
             text: "Gladys Plus is operated from France, under French and European law. Should this English text and the French version differ, the French version prevails:",
             link: {
-              label: "Conditions générales de ventes",
+              label: "Conditions générales de vente",
               href: "/fr/plus/terms/",
             },
           },
@@ -1064,7 +1064,7 @@ export function getLegalNoticeContent(lang) {
           blocks: [
             {
               type: "p",
-              text: "Le site gladysassistant.com est hébergé par Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis.",
+              text: "Le site gladysassistant.com est hébergé par Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis — téléphone : +1 650 319 8930.",
             },
             {
               type: "p",
@@ -1210,7 +1210,7 @@ export function getLegalNoticeContent(lang) {
         blocks: [
           {
             type: "p",
-            text: "gladysassistant.com is hosted by Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, United States.",
+            text: "gladysassistant.com is hosted by Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, United States — phone: +1 650 319 8930.",
           },
           {
             type: "p",
