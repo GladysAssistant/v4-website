@@ -4,17 +4,19 @@
 // a disclaimer pointing back to the French version.
 import { formatPrice } from "../components/plus/pricing";
 
-// Identity of the company, displayed on the legal notice. Fields left empty are
-// simply not rendered, so the missing legal identifiers (share capital, RCS
-// registration, VAT number) can be filled in here without touching the page.
+// Identity of the company, displayed on the legal notice. The identifiers come
+// from the national business register (SIREN, RCS registration and legal form
+// as published in the BODACC). Fields left empty are simply not rendered:
+// `vatNumber` is empty because the company is not registered for
+// intra-community VAT (its computed number is rejected by VIES).
 export const COMPANY = {
-  name: "Gladys Assistant SAS",
+  name: "Gladys Assistant",
   address: "66 avenue des Champs-Élysées, 75008 Paris, France",
   email: "hello@gladysassistant.com",
   publicationDirector: "Pierre-Gilles Leymarie",
-  shareCapital: "",
-  rcs: "",
-  siren: "",
+  shareCapital: "1 000 €",
+  rcs: "Paris 947 826 814",
+  siren: "947 826 814",
   vatNumber: "",
 };
 
@@ -442,7 +444,8 @@ export function getLegalNoticeContent(lang) {
                 { term: "Raison sociale", value: COMPANY.name },
                 {
                   term: "Forme juridique",
-                  value: "Société par actions simplifiée (SAS)",
+                  value:
+                    "Société par actions simplifiée à associé unique (SASU)",
                 },
                 { term: "Siège social", value: COMPANY.address },
                 { term: "Capital social", value: COMPANY.shareCapital },
@@ -556,7 +559,8 @@ export function getLegalNoticeContent(lang) {
               { term: "Company name", value: COMPANY.name },
               {
                 term: "Legal form",
-                value: "Simplified joint-stock company (SAS), under French law",
+                value:
+                  "Simplified joint-stock company with a sole shareholder (SASU), under French law",
               },
               { term: "Registered office", value: COMPANY.address },
               { term: "Share capital", value: COMPANY.shareCapital },
