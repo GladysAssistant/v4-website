@@ -316,6 +316,10 @@ export function getTermsContent(lang, prices) {
           blocks: [
             {
               type: "p",
+              text: "Un simple email à hello@gladysassistant.com suffit pour se rétracter, il n'y a pas de démarche particulière à suivre. Le formulaire ci-dessous est fourni parce que la loi l'impose, son utilisation n'est pas obligatoire.",
+            },
+            {
+              type: "p",
               text: "(Veuillez compléter et renvoyer le présent formulaire uniquement si vous souhaitez vous rétracter du contrat.)",
             },
             {
@@ -609,6 +613,10 @@ export function getTermsContent(lang, prices) {
       {
         title: "Model withdrawal form",
         blocks: [
+          {
+            type: "p",
+            text: "An email to hello@gladysassistant.com is enough to withdraw, there is no particular procedure to follow. The form below is provided because the law requires it; using it is not mandatory.",
+          },
           {
             type: "p",
             text: "(Please complete and return this form only if you wish to withdraw from the contract.)",
