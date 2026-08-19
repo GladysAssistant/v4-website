@@ -233,11 +233,11 @@ export function getTermsContent(lang, prices) {
           ],
         },
         {
-          title: "Reprise des équipements usagés",
+          title: "Fin de vie du matériel",
           blocks: [
             {
               type: "p",
-              text: "Conformément à la réglementation relative aux déchets d'équipements électriques et électroniques (DEEE), l'utilisateur qui commande un kit de démarrage peut faire reprendre gratuitement un équipement usagé de type équivalent, dans la limite d'un appareil repris pour un appareil acheté. La demande se formule par email à hello@gladysassistant.com au moment de la commande ; les modalités de retour lui sont alors communiquées.",
+              text: "Le kit de démarrage est un équipement électrique et électronique. En fin de vie, il ne doit pas être jeté avec les ordures ménagères, mais déposé en déchetterie ou dans un point de collecte de déchets d'équipements électriques et électroniques (DEEE), notamment ceux des distributeurs d'équipements informatiques.",
             },
             {
               type: "p",
@@ -532,11 +532,11 @@ export function getTermsContent(lang, prices) {
         ],
       },
       {
-        title: "Take-back of used equipment",
+        title: "End of life of the hardware",
         blocks: [
           {
             type: "p",
-            text: "In accordance with the regulation on waste electrical and electronic equipment (WEEE), a user ordering a starter kit can have an equivalent piece of used equipment taken back free of charge, one item for each item purchased. The request is made by email at hello@gladysassistant.com when ordering; the return terms are then sent to them.",
+            text: "The starter kit is an electrical and electronic equipment. At the end of its life it must not be thrown away with household waste, but taken to a waste facility or to a collection point for waste electrical and electronic equipment (WEEE), such as those of computer equipment retailers.",
           },
           {
             type: "p",
