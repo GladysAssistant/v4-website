@@ -262,6 +262,10 @@ module.exports = function createConfig() {
               href: "/contact",
             },
             {
+              label: "Legal notice",
+              to: "legal-notice/",
+            },
+            {
               label: "Twitter",
               href: "https://twitter.com/gladysassistant",
             },
