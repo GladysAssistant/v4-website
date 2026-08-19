@@ -232,6 +232,14 @@ module.exports = function createConfig() {
               label: "Login to Gladys Plus",
               href: "https://plus.gladysassistant.com",
             },
+            {
+              label: "Terms of sale",
+              to: "plus/terms/",
+            },
+            {
+              label: "Privacy policy",
+              to: "plus/privacy/",
+            },
           ],
         },
         {
