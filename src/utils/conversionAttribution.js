@@ -74,9 +74,6 @@ export function captureConversionAttribution() {
     window.localStorage.getItem(CONVERSION_ATTRIBUTION_STORAGE_KEY),
   );
   const existingAttribution = keepAllowedKeys(storedAttribution);
-  const hasStaleKeys =
-    Object.keys(storedAttribution).length !==
-    Object.keys(existingAttribution).length;
 
   const hasNewAttribution = Object.keys(urlAttribution).length > 0;
   const mergedAttribution = hasNewAttribution
@@ -94,8 +91,9 @@ export function captureConversionAttribution() {
       CONVERSION_ATTRIBUTION_STORAGE_KEY,
       JSON.stringify(mergedAttribution),
     );
-  } else if (hasStaleKeys) {
-    // Nothing left to keep: remove the entry rather than store an empty object.
+  } else {
+    // Nothing to keep — including an empty or malformed leftover entry: remove
+    // it rather than store an empty object.
     window.localStorage.removeItem(CONVERSION_ATTRIBUTION_STORAGE_KEY);
   }
 

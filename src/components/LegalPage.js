@@ -2,7 +2,9 @@ import React from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 
-const EMAIL_PATTERN = /([\w.+-]+@[\w-]+\.[\w.-]+)/g;
+// The domain must end on a word character, so a sentence-final period right
+// after the address is not swallowed into the mailto link.
+const EMAIL_PATTERN = /([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/g;
 
 // The legal texts mention email addresses inline (our contact address, the
 // consumer mediator). Rather than turning every string of the data file into
@@ -76,7 +78,11 @@ function Block({ block }) {
             .filter((item) => item.value)
             .map((item, index) => (
               <li key={index}>
-                <strong>{item.term} :</strong> {linkifyEmail(item.value)}
+                <strong>
+                  {item.term}
+                  {block.separator ?? ":"}
+                </strong>{" "}
+                {linkifyEmail(item.value)}
               </li>
             ))}
         </ul>

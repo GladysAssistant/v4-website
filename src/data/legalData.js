@@ -263,6 +263,7 @@ export function getTermsContent(lang, prices) {
             },
             {
               type: "dl",
+              separator: " :",
               items: [
                 { term: "Médiateur", value: MEDIATOR.name },
                 { term: "Adresse", value: MEDIATOR.address },
@@ -1022,6 +1023,7 @@ export function getLegalNoticeContent(lang) {
             },
             {
               type: "dl",
+              separator: " :",
               items: [
                 { term: "Raison sociale", value: COMPANY.name },
                 {
@@ -1111,6 +1113,7 @@ export function getLegalNoticeContent(lang) {
             },
             {
               type: "dl",
+              separator: " :",
               items: [
                 { term: "Médiateur", value: MEDIATOR.name },
                 { term: "Adresse", value: MEDIATOR.address },
