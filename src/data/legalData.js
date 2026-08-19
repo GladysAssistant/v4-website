@@ -169,7 +169,7 @@ export function getTermsContent(lang, prices) {
             },
             {
               type: "p",
-              text: "Les frais de livraison sont indiqués avant la validation de la commande.",
+              text: "Les frais de livraison et les pays desservis sont indiqués lors du paiement, avant la validation de la commande.",
             },
           ],
         },
@@ -464,7 +464,7 @@ export function getTermsContent(lang, prices) {
           },
           {
             type: "p",
-            text: "Delivery costs are shown before the order is confirmed.",
+            text: "Delivery costs and the countries served are shown at payment, before the order is confirmed.",
           },
         ],
       },
@@ -1039,7 +1039,7 @@ export function getLegalNoticeContent(lang) {
             },
             {
               type: "p",
-              text: "Gladys Assistant ne dispose pas d'accueil téléphonique. Toute demande adressée à hello@gladysassistant.com reçoit une réponse sous 3 jours ouvrés.",
+              text: "Gladys Assistant ne dispose pas d'accueil téléphonique. Toute demande adressée à hello@gladysassistant.com reçoit une réponse sous 5 jours ouvrés.",
             },
           ],
         },
@@ -1177,7 +1177,7 @@ export function getLegalNoticeContent(lang) {
           },
           {
             type: "p",
-            text: "Gladys Assistant has no telephone support. Any request sent to hello@gladysassistant.com is answered within 3 working days.",
+            text: "Gladys Assistant has no telephone support. Any request sent to hello@gladysassistant.com is answered within 5 working days.",
           },
         ],
       },
