@@ -1039,7 +1039,15 @@ export function getLegalNoticeContent(lang) {
             },
             {
               type: "p",
-              text: "Gladys Assistant ne dispose pas d'accueil téléphonique. Toute demande adressée à hello@gladysassistant.com reçoit une réponse sous 5 jours ouvrés.",
+              text: "Gladys Assistant ne dispose pas d'accueil téléphonique. Les clients du service Gladys Plus et les acheteurs du kit de démarrage obtiennent une réponse à hello@gladysassistant.com sous 5 jours ouvrés.",
+            },
+            {
+              type: "p",
+              text: "Le logiciel open source Gladys Assistant est gratuit et ne s'accompagne d'aucun support individuel : l'entraide entre utilisateurs se fait sur le forum de la communauté.",
+              link: {
+                label: "community.gladysassistant.com",
+                href: "https://community.gladysassistant.com/",
+              },
             },
           ],
         },
@@ -1177,7 +1185,15 @@ export function getLegalNoticeContent(lang) {
           },
           {
             type: "p",
-            text: "Gladys Assistant has no telephone support. Any request sent to hello@gladysassistant.com is answered within 5 working days.",
+            text: "Gladys Assistant has no telephone support. Customers of the Gladys Plus service and buyers of the starter kit get an answer at hello@gladysassistant.com within 5 working days.",
+          },
+          {
+            type: "p",
+            text: "The open-source Gladys Assistant software is free and comes with no individual support: users help each other on the community forum.",
+            link: {
+              label: "community.gladysassistant.com",
+              href: "https://community.gladysassistant.com/",
+            },
           },
         ],
       },
