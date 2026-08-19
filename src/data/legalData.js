@@ -20,6 +20,17 @@ export const COMPANY = {
   siren: "947 826 814",
 };
 
+// Consumer mediator appointed by the company, as required by article L. 616-1
+// of the French consumer code. Its details have to appear both on the legal
+// notice and in the terms of sale.
+export const MEDIATOR = {
+  name: "CM2C - Centre de la Médiation de la Consommation de Conciliateurs de Justice",
+  address: "49 rue de Ponthieu, 75008 Paris, France",
+  phone: "01 89 47 00 14",
+  email: "litiges@cm2c.net",
+  url: "https://www.cm2c.net/declarer-un-litige.php",
+};
+
 export function getTermsContent(lang, prices) {
   const { currency } = prices;
   const liteMonthly = formatPrice(prices.lite.monthly, currency);
@@ -138,6 +149,33 @@ export function getTermsContent(lang, prices) {
             {
               type: "p",
               text: "Etant développé et maintenu par un individuel, la disponibilité du produit est dite au \"best-effort\", sans SLA garanti. Néanmoins, depuis 2019 nous n'avons quasiment pas connu d'interruption de service.",
+            },
+          ],
+        },
+        {
+          title: "Médiation de la consommation",
+          blocks: [
+            {
+              type: "p",
+              text: "Conformément à l'article L. 612-1 du Code de la consommation, tout consommateur a le droit de recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d'un litige qui l'oppose à un professionnel. Après avoir adressé une réclamation écrite à hello@gladysassistant.com et à défaut de solution satisfaisante, le consommateur peut saisir le médiateur désigné par Gladys Assistant :",
+            },
+            {
+              type: "dl",
+              items: [
+                { term: "Médiateur", value: MEDIATOR.name },
+                { term: "Adresse", value: MEDIATOR.address },
+                { term: "Téléphone", value: MEDIATOR.phone },
+                { term: "Email", value: MEDIATOR.email },
+              ],
+            },
+            {
+              type: "p",
+              text: "Le litige peut également être déclaré en ligne :",
+              link: { label: "www.cm2c.net", href: MEDIATOR.url },
+            },
+            {
+              type: "p",
+              text: "La saisine du médiateur doit intervenir dans un délai maximal d'un an à compter de la réclamation écrite adressée au professionnel. Le recours à la médiation est gratuit pour le consommateur.",
             },
           ],
         },
@@ -261,6 +299,33 @@ export function getTermsContent(lang, prices) {
           {
             type: "p",
             text: 'As it is developed and maintained by a single individual, the availability of the product is provided on a "best-effort" basis, with no guaranteed SLA. That said, since 2019 we have experienced almost no service interruption.',
+          },
+        ],
+      },
+      {
+        title: "Consumer mediation",
+        blocks: [
+          {
+            type: "p",
+            text: "In accordance with article L. 612-1 of the French consumer code, every consumer has the right to use a consumer mediator, free of charge, to settle a dispute with a professional amicably. After sending a written complaint to hello@gladysassistant.com and failing a satisfactory answer, the consumer may refer the matter to the mediator appointed by Gladys Assistant:",
+          },
+          {
+            type: "dl",
+            items: [
+              { term: "Mediator", value: MEDIATOR.name },
+              { term: "Address", value: MEDIATOR.address },
+              { term: "Phone", value: MEDIATOR.phone },
+              { term: "Email", value: MEDIATOR.email },
+            ],
+          },
+          {
+            type: "p",
+            text: "The dispute can also be declared online:",
+            link: { label: "www.cm2c.net", href: MEDIATOR.url },
+          },
+          {
+            type: "p",
+            text: "The mediator must be contacted within one year of the written complaint sent to the professional. Mediation is free of charge for the consumer.",
           },
         ],
       },
@@ -517,6 +582,29 @@ export function getLegalNoticeContent(lang) {
           ],
         },
         {
+          title: "Médiation de la consommation",
+          blocks: [
+            {
+              type: "p",
+              text: "Conformément à l'article L. 616-1 du Code de la consommation, Gladys Assistant a désigné un médiateur de la consommation, que tout client consommateur peut saisir gratuitement après avoir adressé une réclamation écrite restée sans solution satisfaisante :",
+            },
+            {
+              type: "dl",
+              items: [
+                { term: "Médiateur", value: MEDIATOR.name },
+                { term: "Adresse", value: MEDIATOR.address },
+                { term: "Téléphone", value: MEDIATOR.phone },
+                { term: "Email", value: MEDIATOR.email },
+              ],
+            },
+            {
+              type: "p",
+              text: "Le litige peut également être déclaré en ligne :",
+              link: { label: "www.cm2c.net", href: MEDIATOR.url },
+            },
+          ],
+        },
+        {
           title: "Données personnelles",
           blocks: [
             {
@@ -620,6 +708,29 @@ export function getLegalNoticeContent(lang) {
             type: "p",
             text: "The conditions applying to the Gladys Plus subscription and to hardware purchases are detailed in the",
             link: { label: "terms of sale", to: "/plus/terms/" },
+          },
+        ],
+      },
+      {
+        title: "Consumer mediation",
+        blocks: [
+          {
+            type: "p",
+            text: "In accordance with article L. 616-1 of the French consumer code, Gladys Assistant has appointed a consumer mediator, whom any consumer customer may contact free of charge after a written complaint has been left without a satisfactory answer:",
+          },
+          {
+            type: "dl",
+            items: [
+              { term: "Mediator", value: MEDIATOR.name },
+              { term: "Address", value: MEDIATOR.address },
+              { term: "Phone", value: MEDIATOR.phone },
+              { term: "Email", value: MEDIATOR.email },
+            ],
+          },
+          {
+            type: "p",
+            text: "The dispute can also be declared online:",
+            link: { label: "www.cm2c.net", href: MEDIATOR.url },
           },
         ],
       },

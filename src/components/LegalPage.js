@@ -2,20 +2,21 @@ import React from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 
-const CONTACT_EMAIL = "hello@gladysassistant.com";
+const EMAIL_PATTERN = /([\w.+-]+@[\w-]+\.[\w.-]+)/g;
 
-// The legal texts mention the contact email inline. Rather than turning every
-// string of the data file into JSX, the email is linkified here.
+// The legal texts mention email addresses inline (our contact address, the
+// consumer mediator). Rather than turning every string of the data file into
+// JSX, they are linkified here.
 function linkifyEmail(text) {
-  const parts = text.split(CONTACT_EMAIL);
-  return parts.map((part, index) => (
-    <React.Fragment key={index}>
-      {part}
-      {index < parts.length - 1 && (
-        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-      )}
-    </React.Fragment>
-  ));
+  return text.split(EMAIL_PATTERN).map((part, index) =>
+    index % 2 === 1 ? (
+      <a key={index} href={`mailto:${part}`}>
+        {part}
+      </a>
+    ) : (
+      <React.Fragment key={index}>{part}</React.Fragment>
+    ),
+  );
 }
 
 function BlockLink({ link }) {
