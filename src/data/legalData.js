@@ -43,6 +43,7 @@ export function getTermsContent(lang, prices) {
       title: "Conditions générales de ventes de Gladys Plus",
       description: "Les conditions générales de ventes de Gladys Plus",
       heading: "Conditions générales de ventes",
+      updated: "Dernière mise à jour : 19 août 2026",
       sections: [
         {
           title: "Préambule",
@@ -114,7 +115,7 @@ export function getTermsContent(lang, prices) {
           ],
         },
         {
-          title: "Durée de l'offre et résilation",
+          title: "Durée de l'offre et résiliation",
           blocks: [
             {
               type: "p",
@@ -123,6 +124,35 @@ export function getTermsContent(lang, prices) {
             {
               type: "p",
               text: "L'utilisateur dispose de 30 jours pour se faire rembourser si il n'est pas satisfait de la prestation, et ce sans justification.",
+            },
+            {
+              type: "p",
+              text: "Conformément à l'article L. 215-1 du Code de la consommation, pour les abonnements annuels, Gladys Assistant informe l'utilisateur par email, au plus tôt trois mois et au plus tard un mois avant le terme de la période en cours, de sa faculté de ne pas reconduire son abonnement. À défaut d'une telle information, l'utilisateur peut mettre fin gratuitement à son abonnement à tout moment à compter de la date de reconduction, et les sommes versées après cette date lui sont remboursées.",
+            },
+            {
+              type: "p",
+              text: "Conformément à l'article L. 215-1-1 du Code de la consommation, l'abonnement souscrit en ligne peut être résilié en ligne, depuis le compte Gladys Plus de l'utilisateur, aussi simplement qu'il a été souscrit.",
+            },
+          ],
+        },
+        {
+          title: "Droit de rétractation pour l'abonnement Gladys Plus",
+          blocks: [
+            {
+              type: "p",
+              text: "Conformément à l'article L. 221-18 du Code de la consommation, l'utilisateur consommateur dispose d'un délai de 14 jours à compter de la conclusion du contrat pour exercer son droit de rétractation, sans avoir à motiver sa décision ni à supporter de pénalités.",
+            },
+            {
+              type: "p",
+              text: "Le service Gladys Plus étant accessible immédiatement, l'utilisateur demande expressément, lors de sa souscription, que son exécution commence avant l'expiration de ce délai. Il conserve son droit de rétractation, mais devra régler le montant correspondant au service déjà fourni jusqu'à la communication de sa décision, au prorata de la période d'abonnement écoulée.",
+            },
+            {
+              type: "p",
+              text: "Pour exercer ce droit, l'utilisateur notifie sa décision par email à hello@gladysassistant.com, ou au moyen du formulaire type figurant à la fin des présentes conditions. Le remboursement intervient dans un délai de 14 jours à compter de la réception de cette décision.",
+            },
+            {
+              type: "p",
+              text: "Indépendamment de ce droit légal, Gladys Assistant accorde commercialement un délai de 30 jours pour demander le remboursement intégral de l'abonnement, sans justification.",
             },
           ],
         },
@@ -135,11 +165,15 @@ export function getTermsContent(lang, prices) {
             },
             {
               type: "p",
-              text: "Pour exercer ce droit, l'utilisateur doit notifier sa décision de rétractation par email à hello@gladysassistant.com. Le matériel doit être retourné dans son emballage d'origine, en parfait état, complet et accompagné de tous les accessoires. Les frais de retour sont à la charge de l'utilisateur.",
+              text: "Pour exercer ce droit, l'utilisateur notifie sa décision de rétractation par email à hello@gladysassistant.com, ou au moyen du formulaire type figurant à la fin des présentes conditions. Le matériel doit être renvoyé au plus tard 14 jours après cette notification. Les frais de retour sont à la charge de l'utilisateur.",
             },
             {
               type: "p",
-              text: "Le remboursement sera effectué dans un délai de 14 jours à compter de la réception du matériel retourné, après vérification de son état.",
+              text: "L'utilisateur peut essayer le matériel comme il l'aurait fait en magasin. Sa responsabilité n'est engagée qu'à l'égard de la dépréciation du matériel résultant de manipulations autres que celles nécessaires pour établir sa nature, ses caractéristiques et son bon fonctionnement.",
+            },
+            {
+              type: "p",
+              text: "Le remboursement porte sur le prix du matériel ainsi que sur les frais de livraison standard initialement facturés. Il intervient dans un délai de 14 jours à compter de la récupération du matériel ou de la preuve de son expédition, la date retenue étant celle du premier de ces faits.",
             },
           ],
         },
@@ -184,7 +218,50 @@ export function getTermsContent(lang, prices) {
           blocks: [
             {
               type: "p",
-              text: "L'utilisateur garantit \"Gladys Assistant SAS\" contre tout recours de quelque nature qu'il soit émanant de tiers. Dans l'hypothèse où la responsabilité de Gladys Assistant SAS serait engagée, la réparation du préjudice subi ne pourra excéder le montant de l'abonnement annuel, calculée sur les douze dernier mois effectivement payés par l'utilisateur Gladys Plus. Par ailleurs, en aucun cas Gladys Assistant SAS ne sera responsable des dommages indirects (commercial, financier, exploitation) que subirait l'utilisateur, ce dernier étant son propre assureur à défaut d'avoir contracté des assurances appropriées. La présente clause est considérée comme essentielle et déterminante par Gladys Assistant SAS qui n'aurait pas contracté sans elle. Gladys Assistant SAS ne garantit pas que le service Gladys Plus sera exempt d'anomalies ou d'erreurs, ni que celles-ci pourront être corrigées, ni que le service Gladys Plus fonctionnera sans interruption ou pannes, ni encore qu'il est compatible avec un matériel ou une configuration particulière autre que celle expressément validée sur le site.",
+              text: "Gladys Assistant SAS est responsable de plein droit de la bonne exécution du service Gladys Plus, dans les conditions prévues par le Code de la consommation. Aucune stipulation des présentes ne peut avoir pour effet de supprimer ou de réduire le droit à réparation de l'utilisateur consommateur en cas de manquement de Gladys Assistant SAS à ses obligations.",
+            },
+            {
+              type: "p",
+              text: "Gladys Assistant SAS ne garantit pas que le service Gladys Plus sera exempt d'anomalies ou d'erreurs, ni qu'il fonctionnera sans interruption, ni qu'il est compatible avec un matériel ou une configuration particulière autre que ceux expressément validés sur le site. Sa disponibilité est décrite à l'article « Disponibilité » des présentes.",
+            },
+            {
+              type: "p",
+              text: "Le produit open-source Gladys Assistant, distribué gratuitement sous licence Apache 2.0, est fourni sans garantie conformément aux termes de cette licence. Il est distinct du service Gladys Plus.",
+            },
+            {
+              type: "p",
+              text: "Pour les utilisateurs professionnels n'agissant pas en qualité de consommateur, la réparation du préjudice subi ne pourra excéder le montant des sommes effectivement payées au titre de l'abonnement au cours des douze derniers mois, et Gladys Assistant SAS ne sera pas tenue des dommages indirects (commercial, financier, exploitation).",
+            },
+          ],
+        },
+        {
+          title: "Droit applicable",
+          blocks: [
+            {
+              type: "p",
+              text: "Les présentes conditions générales de vente sont soumises au droit français. Les dispositions plus protectrices de la loi du pays de résidence habituelle du consommateur demeurent applicables.",
+            },
+          ],
+        },
+        {
+          title: "Formulaire type de rétractation",
+          blocks: [
+            {
+              type: "p",
+              text: "(Veuillez compléter et renvoyer le présent formulaire uniquement si vous souhaitez vous rétracter du contrat.)",
+            },
+            {
+              type: "ul",
+              items: [
+                "À l'attention de Gladys Assistant, 66 avenue des Champs-Élysées, 75008 Paris, France — hello@gladysassistant.com :",
+                "Je vous notifie par la présente ma rétractation du contrat portant sur la vente du bien ci-dessous / pour la prestation de services ci-dessous :",
+                "Commandé le (*) / reçu le (*) :",
+                "Nom du consommateur :",
+                "Adresse du consommateur :",
+                "Signature du consommateur (uniquement en cas de notification du présent formulaire sur papier) :",
+                "Date :",
+                "(*) Rayez la mention inutile.",
+              ],
             },
           ],
         },
@@ -196,6 +273,7 @@ export function getTermsContent(lang, prices) {
     title: "Gladys Plus terms of sale",
     description: "The terms of sale of Gladys Plus",
     heading: "Terms of sale",
+    updated: "Last updated: 19 August 2026",
     sections: [
       {
         title: "Preamble",
@@ -274,6 +352,35 @@ export function getTermsContent(lang, prices) {
             type: "p",
             text: "The user has 30 days to get a refund if they are not satisfied with the service, without having to justify their decision.",
           },
+          {
+            type: "p",
+            text: "In accordance with article L. 215-1 of the French consumer code, for yearly subscriptions, Gladys Assistant informs the user by email, at the earliest three months and at the latest one month before the end of the current period, of their right not to renew their subscription. Failing that information, the user may terminate their subscription free of charge at any time from the renewal date onwards, and the amounts paid after that date are refunded.",
+          },
+          {
+            type: "p",
+            text: "In accordance with article L. 215-1-1 of the French consumer code, a subscription taken out online can be terminated online, from the user's Gladys Plus account, as simply as it was taken out.",
+          },
+        ],
+      },
+      {
+        title: "Right of withdrawal for the Gladys Plus subscription",
+        blocks: [
+          {
+            type: "p",
+            text: "In accordance with article L. 221-18 of the French consumer code, a consumer has 14 days from the conclusion of the contract to exercise their right of withdrawal, without having to justify their decision nor to pay any penalty.",
+          },
+          {
+            type: "p",
+            text: "As the Gladys Plus service is available immediately, the user expressly requests, when subscribing, that its performance starts before that period ends. They keep their right of withdrawal, but will owe the amount corresponding to the service already provided until they communicate their decision, in proportion to the elapsed subscription period.",
+          },
+          {
+            type: "p",
+            text: "To exercise this right, the user notifies their decision by email at hello@gladysassistant.com, or using the model form at the end of these terms. The refund is issued within 14 days from the reception of that decision.",
+          },
+          {
+            type: "p",
+            text: "Independently of this legal right, Gladys Assistant commercially grants 30 days to ask for a full refund of the subscription, without any justification.",
+          },
         ],
       },
       {
@@ -285,11 +392,15 @@ export function getTermsContent(lang, prices) {
           },
           {
             type: "p",
-            text: "To exercise this right, the user must notify their withdrawal decision by email at hello@gladysassistant.com. The hardware must be returned in its original packaging, in perfect condition, complete and with all its accessories. Return shipping costs are at the user's expense.",
+            text: "To exercise this right, the user notifies their withdrawal decision by email at hello@gladysassistant.com, or using the model form at the end of these terms. The hardware must be sent back no later than 14 days after that notification. Return shipping costs are at the user's expense.",
           },
           {
             type: "p",
-            text: "The refund will be issued within 14 days from the reception of the returned hardware, once its condition has been checked.",
+            text: "The user may try out the hardware as they would have done in a shop. They are only liable for the depreciation of the hardware resulting from handling beyond what is necessary to establish its nature, characteristics and proper operation.",
+          },
+          {
+            type: "p",
+            text: "The refund covers the price of the hardware as well as the standard delivery costs initially charged. It is issued within 14 days from the recovery of the hardware or from the proof of its shipment, whichever comes first.",
           },
         ],
       },
@@ -334,7 +445,50 @@ export function getTermsContent(lang, prices) {
         blocks: [
           {
             type: "p",
-            text: 'The user indemnifies "Gladys Assistant SAS" against any claim of any nature whatsoever from third parties. Should the liability of Gladys Assistant SAS be engaged, the compensation for the damage suffered may not exceed the amount of the yearly subscription, calculated over the last twelve months actually paid by the Gladys Plus user. Furthermore, Gladys Assistant SAS shall in no case be liable for indirect damages (commercial, financial, operational) suffered by the user, the latter being their own insurer if they failed to take out appropriate insurance. This clause is considered essential and decisive by Gladys Assistant SAS, which would not have entered into the contract without it. Gladys Assistant SAS does not warrant that the Gladys Plus service will be free of anomalies or errors, nor that these could be corrected, nor that the Gladys Plus service will operate without interruption or failure, nor that it is compatible with any particular hardware or configuration other than the ones expressly validated on the website.',
+            text: "Gladys Assistant SAS is liable as of right for the proper performance of the Gladys Plus service, under the conditions set by the French consumer code. No provision of these terms may remove or reduce a consumer's right to compensation should Gladys Assistant SAS fail to meet its obligations.",
+          },
+          {
+            type: "p",
+            text: 'Gladys Assistant SAS does not warrant that the Gladys Plus service will be free of anomalies or errors, nor that it will operate without interruption, nor that it is compatible with any hardware or configuration other than the ones expressly validated on the website. Its availability is described in the "Availability" article of these terms.',
+          },
+          {
+            type: "p",
+            text: "The open-source product Gladys Assistant, distributed free of charge under the Apache 2.0 license, is provided without warranty in accordance with the terms of that license. It is distinct from the Gladys Plus service.",
+          },
+          {
+            type: "p",
+            text: "For professional users not acting as consumers, the compensation for the damage suffered may not exceed the amounts actually paid for the subscription over the last twelve months, and Gladys Assistant SAS shall not be liable for indirect damages (commercial, financial, operational).",
+          },
+        ],
+      },
+      {
+        title: "Governing law",
+        blocks: [
+          {
+            type: "p",
+            text: "These terms of sale are governed by French law. The more protective provisions of the law of the consumer's country of habitual residence remain applicable.",
+          },
+        ],
+      },
+      {
+        title: "Model withdrawal form",
+        blocks: [
+          {
+            type: "p",
+            text: "(Please complete and return this form only if you wish to withdraw from the contract.)",
+          },
+          {
+            type: "ul",
+            items: [
+              "To Gladys Assistant, 66 avenue des Champs-Élysées, 75008 Paris, France — hello@gladysassistant.com:",
+              "I hereby give notice of my withdrawal from the contract for the sale of the following goods / for the provision of the following service:",
+              "Ordered on (*) / received on (*):",
+              "Name of the consumer:",
+              "Address of the consumer:",
+              "Signature of the consumer (only if this form is notified on paper):",
+              "Date:",
+              "(*) Delete as appropriate.",
+            ],
           },
         ],
       },
@@ -357,9 +511,11 @@ export function getTermsContent(lang, prices) {
 export function getPrivacyContent(lang) {
   if (lang === "fr") {
     return {
-      title: "Politique de confidentialités de Gladys Plus",
-      description: "La politique de confidentialité de Gladys Plus",
-      heading: "Politique de confidentialité de Gladys Plus",
+      title: "Politique de confidentialité",
+      description:
+        "La politique de confidentialité du site gladysassistant.com et du service Gladys Plus : données collectées, bases légales, destinataires, durées de conservation et droits des utilisateurs.",
+      heading: "Politique de confidentialité",
+      updated: "Dernière mise à jour : 19 août 2026",
       sections: [
         {
           title: "Préambule",
@@ -370,29 +526,115 @@ export function getPrivacyContent(lang) {
             },
             {
               type: "p",
-              text: "La présente politique de confidentialité a pour objet d’informer les utilisateurs du service Gladys Plus sur les données collectées pendant leur utilisation.",
+              text: "La présente politique de confidentialité a pour objet d’informer les utilisateurs sur les données collectées lors de leur utilisation du site gladysassistant.com et du service Gladys Plus.",
+            },
+            {
+              type: "p",
+              text: "Le logiciel open source Gladys Assistant, lui, s'installe et fonctionne chez l'utilisateur : les données de sa maison connectée restent sur son propre matériel et ne nous sont pas transmises.",
             },
           ],
         },
         {
-          title: "Données collectées en cas d’utilisation de Gladys Plus",
+          title: "Responsable de traitement",
           blocks: [
             {
               type: "p",
-              text: "Lors de son inscription, l'utilisateur communique son adresse email ainsi qu'un nom d'utilisateur.",
-            },
-            {
-              type: "p",
-              text: "Afin de protéger le service Gladys Plus des attaques par dénie de service (DOS), l'adresse IP de l'utilisateur Gladys Plus peut-être stockée temporairement en mémoire par les serveurs Gladys Plus afin de compatibiliser le nombre d'appel à une ressource pendant un temps donné. Ce procédé, dit de \"rate-limiting\", ne stocke pas l'adresse IP sur un disque physique mais uniquement en mémoire pendant une courte durée, ceci afin d'assurer la sécurité du service.",
+              text: "Le responsable des traitements décrits ci-dessous est Gladys Assistant SAS, 66 avenue des Champs-Élysées, 75008 Paris, France. Toute question relative à ces traitements peut être adressée à hello@gladysassistant.com.",
             },
           ],
         },
         {
-          title: "Utilisation des cookies",
+          title: "Données collectées, finalités et bases légales",
+          blocks: [
+            {
+              type: "ul",
+              items: [
+                {
+                  label: "Compte Gladys Plus :",
+                  text: "adresse email et nom d'utilisateur, communiqués lors de l'inscription, pour créer et gérer le compte et fournir le service. Base légale : exécution du contrat.",
+                },
+                {
+                  label: "Paiement et facturation :",
+                  text: "les données de paiement sont traitées directement par Stripe, qui agit en qualité de responsable de traitement pour cette opération ; nous n'avons jamais accès au numéro de carte bancaire. Nous conservons les données de facturation. Bases légales : exécution du contrat et obligation légale comptable.",
+                },
+                {
+                  label: "Sauvegardes :",
+                  text: "les sauvegardes de l'instance Gladys de l'utilisateur sont chiffrées de bout en bout avant leur envoi ; nous ne pouvons pas en lire le contenu. Base légale : exécution du contrat.",
+                },
+                {
+                  label: "Sécurité du service :",
+                  text: "l'adresse IP peut être conservée temporairement en mémoire pour limiter le nombre d'appels à une ressource (rate-limiting) et protéger le service des attaques par déni de service. Base légale : intérêt légitime à assurer la sécurité du service.",
+                },
+                {
+                  label: "Fonctionnalités d'IA :",
+                  text: "lorsque l'utilisateur utilise l'assistant IA, ses requêtes sont transmises aux modèles Open-Weight hébergés chez Scaleway, en France, pour produire une réponse. Base légale : exécution du contrat.",
+                },
+                {
+                  label: "Assistants vocaux :",
+                  text: "si l'utilisateur active l'intégration Google Home ou Alexa, les commandes vocales transitent par les services de Google ou d'Amazon, soumis à leurs propres politiques de confidentialité. Base légale : exécution du contrat, à l'initiative de l'utilisateur.",
+                },
+                {
+                  label: "Formulaire de contact :",
+                  text: "adresse email et contenu du message, pour traiter la demande. Base légale : intérêt légitime à répondre aux demandes qui nous sont adressées.",
+                },
+                {
+                  label: "Newsletter :",
+                  text: "adresse email, pour envoyer les actualités du projet. Base légale : consentement, retirable à tout moment via le lien de désinscription.",
+                },
+                {
+                  label: "Mesure d'audience :",
+                  text: "statistiques de visite du site, collectées via OpenPanel, une solution open source que nous hébergeons nous-mêmes. Base légale : intérêt légitime à mesurer l'audience du site.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          title: "Destinataires des données",
           blocks: [
             {
               type: "p",
-              text: "Gladys Plus utilise le LocalStorage du navigateur de l'utilisateur pour stocker :",
+              text: "Les données ne sont ni vendues, ni louées, ni transmises à des fins publicitaires. Elles sont accessibles à Gladys Assistant SAS et aux prestataires techniques suivants, qui agissent sur nos instructions :",
+            },
+            {
+              type: "ul",
+              items: [
+                "Cloudflare, pour l'hébergement du site et l'exécution des fonctions serveur (formulaire de contact, inscription à la newsletter, paiement)",
+                "Stripe, pour le traitement des paiements",
+                "Scaleway, pour l'hébergement des modèles d'IA en France",
+                "l'hébergeur européen de l'infrastructure Gladys Plus (API, sauvegardes, relais)",
+                "notre prestataire d'envoi d'emails, pour la newsletter et les emails de service",
+              ],
+            },
+            {
+              type: "p",
+              text: "Certains de ces prestataires sont établis hors de l'Union européenne, ou peuvent y traiter des données. Ces transferts sont encadrés par les clauses contractuelles types de la Commission européenne ou par une décision d'adéquation.",
+            },
+          ],
+        },
+        {
+          title: "Durées de conservation",
+          blocks: [
+            {
+              type: "ul",
+              items: [
+                "Données du compte Gladys Plus : pendant toute la durée de la relation commerciale, puis suppression",
+                "Sauvegardes : selon la politique de rétention du service, l'utilisateur pouvant les supprimer à tout moment depuis son compte",
+                "Données de facturation : 10 ans, conformément aux obligations comptables",
+                "Adresse IP utilisée pour le rate-limiting : quelques minutes, en mémoire uniquement, sans écriture sur disque",
+                "Messages envoyés via le formulaire de contact : le temps nécessaire au traitement de la demande",
+                "Adresse email inscrite à la newsletter : jusqu'au retrait du consentement",
+                "Données de mesure d'audience : 13 mois au maximum",
+              ],
+            },
+          ],
+        },
+        {
+          title: "Stockage dans le navigateur",
+          blocks: [
+            {
+              type: "p",
+              text: "Le service Gladys Plus utilise le LocalStorage du navigateur de l'utilisateur pour stocker :",
             },
             {
               type: "ul",
@@ -401,18 +643,27 @@ export function getPrivacyContent(lang) {
                 "Un token d'accès à Gladys Plus qui authentifie l'utilisateur.",
               ],
             },
+            {
+              type: "p",
+              text: "Le site gladysassistant.com y stocke également un identifiant technique de mesure d'audience, ainsi que la devise détectée pour l'affichage des tarifs. Aucun cookie publicitaire n'est déposé.",
+            },
           ],
         },
         {
-          title: "Conservation des données et délais",
+          title: "Droits des utilisateurs",
           blocks: [
             {
               type: "p",
-              text: "Les données récoltées sont conservées valablement pendant toute la durée de la relation commerciale entre les Parties.",
+              text: "Conformément au Règlement général sur la protection des données, l'utilisateur dispose d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité de ses données, ainsi que du droit de retirer son consentement à tout moment lorsque le traitement repose sur celui-ci, et du droit de définir des directives relatives au sort de ses données après son décès.",
             },
             {
               type: "p",
-              text: "Le Prestataire s’engage à rendre effective toute éventuelle demande motivée de consultation, modification, opposition, et/ou suppression des données, en répondant à ces demandes dans un délai de trente (30) jours calendaires à compter de la réception de la demande. Ces demandes se font par courriel à l’adresse hello@gladysassistant.com.",
+              text: "Ces demandes se font par courriel à l’adresse hello@gladysassistant.com. Nous nous engageons à y répondre dans un délai de trente (30) jours calendaires à compter de leur réception.",
+            },
+            {
+              type: "p",
+              text: "L'utilisateur qui estime, après nous avoir contactés, que ses droits ne sont pas respectés peut adresser une réclamation à la Commission nationale de l'informatique et des libertés (CNIL), 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07 :",
+              link: { label: "www.cnil.fr", href: "https://www.cnil.fr" },
             },
           ],
         },
@@ -421,9 +672,11 @@ export function getPrivacyContent(lang) {
   }
 
   return {
-    title: "Gladys Plus privacy policy",
-    description: "The privacy policy of Gladys Plus",
-    heading: "Privacy policy of Gladys Plus",
+    title: "Privacy policy",
+    description:
+      "The privacy policy of gladysassistant.com and of the Gladys Plus service: data collected, legal bases, recipients, retention periods and user rights.",
+    heading: "Privacy policy",
+    updated: "Last updated: 19 August 2026",
     sections: [
       {
         title: "Preamble",
@@ -434,29 +687,115 @@ export function getPrivacyContent(lang) {
           },
           {
             type: "p",
-            text: "The purpose of this privacy policy is to inform the users of the Gladys Plus service about the data collected while they use it.",
+            text: "The purpose of this privacy policy is to inform users about the data collected when they use the gladysassistant.com website and the Gladys Plus service.",
+          },
+          {
+            type: "p",
+            text: "The open-source Gladys Assistant software itself is installed and runs at the user's home: their smart home data stays on their own hardware and is not sent to us.",
           },
         ],
       },
       {
-        title: "Data collected when using Gladys Plus",
+        title: "Data controller",
         blocks: [
           {
             type: "p",
-            text: "When signing up, the user provides their email address as well as a username.",
-          },
-          {
-            type: "p",
-            text: 'In order to protect the Gladys Plus service against denial of service (DOS) attacks, the IP address of the Gladys Plus user may be temporarily stored in memory by the Gladys Plus servers, so as to count the number of calls to a resource over a given period of time. This process, called "rate-limiting", does not store the IP address on a physical disk but only in memory for a short duration, in order to keep the service secure.',
+            text: "The controller of the processing described below is Gladys Assistant SAS, 66 avenue des Champs-Élysées, 75008 Paris, France. Any question about it can be sent to hello@gladysassistant.com.",
           },
         ],
       },
       {
-        title: "Use of cookies",
+        title: "Data collected, purposes and legal bases",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              {
+                label: "Gladys Plus account:",
+                text: "email address and username, provided when signing up, to create and manage the account and provide the service. Legal basis: performance of the contract.",
+              },
+              {
+                label: "Payment and invoicing:",
+                text: "payment data is processed directly by Stripe, acting as a controller for that operation; we never have access to the card number. We keep the invoicing data. Legal bases: performance of the contract and accounting legal obligation.",
+              },
+              {
+                label: "Backups:",
+                text: "the backups of the user's Gladys instance are end-to-end encrypted before being sent; we cannot read their content. Legal basis: performance of the contract.",
+              },
+              {
+                label: "Security of the service:",
+                text: "the IP address may be kept temporarily in memory to limit the number of calls to a resource (rate-limiting) and protect the service against denial of service attacks. Legal basis: legitimate interest in keeping the service secure.",
+              },
+              {
+                label: "AI features:",
+                text: "when the user uses the AI assistant, their requests are sent to the Open-Weight models hosted at Scaleway, in France, to produce an answer. Legal basis: performance of the contract.",
+              },
+              {
+                label: "Voice assistants:",
+                text: "if the user enables the Google Home or Alexa integration, voice commands go through Google's or Amazon's services, subject to their own privacy policies. Legal basis: performance of the contract, at the user's initiative.",
+              },
+              {
+                label: "Contact form:",
+                text: "email address and content of the message, to answer the request. Legal basis: legitimate interest in answering the requests sent to us.",
+              },
+              {
+                label: "Newsletter:",
+                text: "email address, to send news about the project. Legal basis: consent, which can be withdrawn at any time through the unsubscribe link.",
+              },
+              {
+                label: "Analytics:",
+                text: "website visit statistics, collected through OpenPanel, an open-source solution that we host ourselves. Legal basis: legitimate interest in measuring the audience of the website.",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Recipients of the data",
         blocks: [
           {
             type: "p",
-            text: "Gladys Plus uses the LocalStorage of the user's browser to store:",
+            text: "The data is never sold, rented, or shared for advertising purposes. It is accessible to Gladys Assistant SAS and to the following technical providers, acting on our instructions:",
+          },
+          {
+            type: "ul",
+            items: [
+              "Cloudflare, for the hosting of the website and the server functions (contact form, newsletter signup, payment)",
+              "Stripe, for payment processing",
+              "Scaleway, for hosting the AI models in France",
+              "the European host of the Gladys Plus infrastructure (API, backups, relays)",
+              "our email delivery provider, for the newsletter and service emails",
+            ],
+          },
+          {
+            type: "p",
+            text: "Some of these providers are established outside the European Union, or may process data there. Such transfers are governed by the European Commission's standard contractual clauses or by an adequacy decision.",
+          },
+        ],
+      },
+      {
+        title: "Retention periods",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "Gladys Plus account data: for the whole duration of the commercial relationship, then deleted",
+              "Backups: according to the retention policy of the service, the user being able to delete them at any time from their account",
+              "Invoicing data: 10 years, in accordance with accounting obligations",
+              "IP address used for rate-limiting: a few minutes, in memory only, never written to disk",
+              "Messages sent through the contact form: as long as needed to handle the request",
+              "Email address signed up to the newsletter: until consent is withdrawn",
+              "Analytics data: 13 months at most",
+            ],
+          },
+        ],
+      },
+      {
+        title: "Browser storage",
+        blocks: [
+          {
+            type: "p",
+            text: "The Gladys Plus service uses the LocalStorage of the user's browser to store:",
           },
           {
             type: "ul",
@@ -465,18 +804,27 @@ export function getPrivacyContent(lang) {
               "A Gladys Plus access token which authenticates the user.",
             ],
           },
+          {
+            type: "p",
+            text: "The gladysassistant.com website also stores a technical analytics identifier there, as well as the currency detected to display prices. No advertising cookie is set.",
+          },
         ],
       },
       {
-        title: "Data retention",
+        title: "User rights",
         blocks: [
           {
             type: "p",
-            text: "The data collected is kept for the whole duration of the commercial relationship between the Parties.",
+            text: "In accordance with the General Data Protection Regulation, users have a right to access, rectify, erase, restrict, object to and port their data, as well as the right to withdraw their consent at any time where the processing is based on it, and the right to give instructions about what happens to their data after their death.",
           },
           {
             type: "p",
-            text: "The Provider undertakes to act on any justified request to access, modify, object to and/or delete the data, by answering these requests within thirty (30) calendar days from the reception of the request. These requests are made by email at hello@gladysassistant.com.",
+            text: "These requests are made by email at hello@gladysassistant.com. We undertake to answer them within thirty (30) calendar days from their reception.",
+          },
+          {
+            type: "p",
+            text: "A user who considers, after contacting us, that their rights are not respected may lodge a complaint with the French data protection authority (CNIL), 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07:",
+            link: { label: "www.cnil.fr", href: "https://www.cnil.fr" },
           },
         ],
       },
@@ -503,6 +851,7 @@ export function getLegalNoticeContent(lang) {
       description:
         "Mentions légales du site gladysassistant.com : éditeur, hébergeur, propriété intellectuelle et données personnelles.",
       heading: "Mentions légales",
+      updated: "Dernière mise à jour : 19 août 2026",
       sections: [
         {
           title: "Éditeur du site",
@@ -639,6 +988,7 @@ export function getLegalNoticeContent(lang) {
     description:
       "Legal notice of gladysassistant.com: publisher, hosting, intellectual property and personal data.",
     heading: "Legal notice",
+    updated: "Last updated: 19 August 2026",
     sections: [
       {
         title: "Website publisher",

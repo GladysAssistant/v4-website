@@ -107,7 +107,7 @@ function Block({ block }) {
  * notice). The content itself lives in `src/data/legalData.js`, in English and
  * in French.
  */
-function LegalPage({ title, description, heading, sections }) {
+function LegalPage({ title, description, heading, updated, sections }) {
   return (
     <Layout title={title} description={description}>
       <main>
@@ -116,6 +116,9 @@ function LegalPage({ title, description, heading, sections }) {
             <div className="row">
               <div className="col col--12">
                 <h1>{heading}</h1>
+                {updated && (
+                  <p style={{ fontSize: "0.9rem", opacity: 0.75 }}>{updated}</p>
+                )}
                 {sections.map((section, index) => (
                   <React.Fragment key={index}>
                     {section.title && <h2>{section.title}</h2>}
