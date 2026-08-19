@@ -178,6 +178,40 @@ export function getTermsContent(lang, prices) {
           ],
         },
         {
+          title: "Garanties légales",
+          blocks: [
+            {
+              type: "p",
+              text: "Le matériel vendu par Gladys Assistant (kit de démarrage) bénéficie des garanties légales suivantes, indépendamment de toute garantie commerciale :",
+            },
+            {
+              type: "ul",
+              items: [
+                {
+                  label: "Garantie légale de conformité :",
+                  text: "articles L. 217-3 et suivants du Code de la consommation. Le consommateur dispose d'un délai de deux ans à compter de la délivrance du bien pour obtenir sa mise en conformité, sans frais et sans avoir à prouver le défaut pendant les vingt-quatre mois qui suivent la délivrance. Il peut choisir entre la réparation et le remplacement du bien, et obtenir une réduction du prix ou la résolution de la vente dans les cas prévus par la loi.",
+                },
+                {
+                  label: "Prolongation de la garantie :",
+                  text: "toute réparation intervenant dans le cadre de la garantie légale de conformité prolonge celle-ci de six mois. Si le consommateur demande la réparation mais que le vendeur impose le remplacement, la garantie légale de conformité est renouvelée pour deux ans à compter du remplacement.",
+                },
+                {
+                  label: "Garantie des vices cachés :",
+                  text: "articles 1641 et suivants du Code civil. Le consommateur peut obtenir la résolution de la vente ou une réduction du prix, dans un délai de deux ans à compter de la découverte du vice.",
+                },
+              ],
+            },
+            {
+              type: "p",
+              text: "Le service Gladys Plus, en tant que service numérique, bénéficie de la garantie légale de conformité des contenus et services numériques prévue aux articles L. 224-25-12 et suivants du Code de la consommation.",
+            },
+            {
+              type: "p",
+              text: "Ces garanties s'exercent par email à hello@gladysassistant.com. Elles s'appliquent indépendamment du droit de rétractation et de la garantie commerciale de remboursement de 30 jours.",
+            },
+          ],
+        },
+        {
           title: "Disponibilité",
           blocks: [
             {
@@ -405,6 +439,40 @@ export function getTermsContent(lang, prices) {
         ],
       },
       {
+        title: "Legal guarantees",
+        blocks: [
+          {
+            type: "p",
+            text: "The hardware sold by Gladys Assistant (starter kit) comes with the following legal guarantees, independently of any commercial guarantee:",
+          },
+          {
+            type: "ul",
+            items: [
+              {
+                label: "Legal guarantee of conformity:",
+                text: "articles L. 217-3 and following of the French consumer code. The consumer has two years from the delivery of the goods to obtain their conformity, free of charge and without having to prove the defect during the twenty-four months following delivery. They may choose between repair and replacement, and obtain a price reduction or the cancellation of the sale in the cases provided for by the law.",
+              },
+              {
+                label: "Extension of the guarantee:",
+                text: "any repair carried out under the legal guarantee of conformity extends it by six months. If the consumer asks for a repair but the seller imposes a replacement, the legal guarantee of conformity is renewed for two years from the replacement.",
+              },
+              {
+                label: "Guarantee against hidden defects:",
+                text: "articles 1641 and following of the French civil code. The consumer may obtain the cancellation of the sale or a price reduction, within two years from the discovery of the defect.",
+              },
+            ],
+          },
+          {
+            type: "p",
+            text: "The Gladys Plus service, as a digital service, comes with the legal guarantee of conformity for digital content and services provided for by articles L. 224-25-12 and following of the French consumer code.",
+          },
+          {
+            type: "p",
+            text: "These guarantees are exercised by email at hello@gladysassistant.com. They apply independently of the right of withdrawal and of the 30-day commercial refund guarantee.",
+          },
+        ],
+      },
+      {
         title: "Availability",
         blocks: [
           {
@@ -530,7 +598,7 @@ export function getPrivacyContent(lang) {
             },
             {
               type: "p",
-              text: "Le logiciel open source Gladys Assistant, lui, s'installe et fonctionne chez l'utilisateur : les données de sa maison connectée restent sur son propre matériel et ne nous sont pas transmises.",
+              text: "Le logiciel open source Gladys Assistant, lui, s'installe et fonctionne chez l'utilisateur : les données de sa maison connectée (appareils, scénarios, historiques) restent sur son propre matériel et ne nous sont jamais transmises. Seules les statistiques d'usage décrites ci-dessous remontent à nos serveurs.",
             },
           ],
         },
@@ -574,6 +642,10 @@ export function getPrivacyContent(lang) {
                   text: "si l'utilisateur active l'intégration Google Home ou Alexa, les commandes vocales transitent par les services de Google ou d'Amazon, soumis à leurs propres politiques de confidentialité. Base légale : exécution du contrat, à l'initiative de l'utilisateur.",
                 },
                 {
+                  label: "Statistiques d'usage du logiciel open source :",
+                  text: "une instance Gladys Assistant interroge périodiquement nos serveurs pour savoir si une nouvelle version est disponible. À cette occasion, nous enregistrons le pays, la région et le fuseau horaire déduits de l'adresse IP de la requête, le système d'exploitation, la version de Node.js, l'exécution ou non dans Docker, le nombre d'appareils connectés et la liste des intégrations utilisées. L'adresse IP elle-même n'est pas conservée, et ces données ne sont rattachées ni à un nom ni à un compte Gladys Plus. Base légale : intérêt légitime à connaître l'usage du projet et à alimenter ses statistiques publiques.",
+                },
+                {
                   label: "Formulaire de contact :",
                   text: "adresse email et contenu du message, pour traiter la demande. Base légale : intérêt légitime à répondre aux demandes qui nous sont adressées.",
                 },
@@ -583,7 +655,7 @@ export function getPrivacyContent(lang) {
                 },
                 {
                   label: "Mesure d'audience :",
-                  text: "statistiques de visite du site, collectées via OpenPanel, une solution open source que nous hébergeons nous-mêmes. Base légale : intérêt légitime à mesurer l'audience du site.",
+                  text: "statistiques de visite du site, collectées via OpenPanel, une solution open source que nous hébergeons nous-mêmes, sans cookie ni identifiant déposé dans le navigateur. Base légale : intérêt légitime à mesurer l'audience du site.",
                 },
               ],
             },
@@ -603,7 +675,7 @@ export function getPrivacyContent(lang) {
                 "Stripe, pour le traitement des paiements",
                 "Scaleway, pour l'hébergement des modèles d'IA en France",
                 "l'hébergeur européen de l'infrastructure Gladys Plus (API, sauvegardes, relais)",
-                "notre prestataire d'envoi d'emails, pour la newsletter et les emails de service",
+                "Amazon Web Services (Amazon SES), dans la région Irlande, pour l'envoi de la newsletter et des emails de service",
               ],
             },
             {
@@ -619,7 +691,7 @@ export function getPrivacyContent(lang) {
               type: "ul",
               items: [
                 "Données du compte Gladys Plus : pendant toute la durée de la relation commerciale, puis suppression",
-                "Sauvegardes : selon la politique de rétention du service, l'utilisateur pouvant les supprimer à tout moment depuis son compte",
+                "Sauvegardes : les sauvegardes de plus de six mois sont supprimées et, passé le mois en cours, une seule sauvegarde par mois est conservée ; l'utilisateur peut les supprimer à tout moment depuis son compte",
                 "Données de facturation : 10 ans, conformément aux obligations comptables",
                 "Adresse IP utilisée pour le rate-limiting : quelques minutes, en mémoire uniquement, sans écriture sur disque",
                 "Messages envoyés via le formulaire de contact : le temps nécessaire au traitement de la demande",
@@ -645,7 +717,11 @@ export function getPrivacyContent(lang) {
             },
             {
               type: "p",
-              text: "Le site gladysassistant.com y stocke également un identifiant technique de mesure d'audience, la devise détectée pour l'affichage des tarifs, et, le cas échéant, les paramètres de campagne présents dans l'URL d'arrivée (utm_source, utm_medium, utm_campaign...), transmis avec la commande pour savoir d'où proviennent les souscriptions. Aucun identifiant publicitaire n'est collecté et aucun cookie publicitaire n'est déposé.",
+              text: "Le site gladysassistant.com y stocke la devise détectée pour l'affichage des tarifs et, le cas échéant, les paramètres de campagne présents dans l'URL d'arrivée (utm_source, utm_medium, utm_campaign...), transmis avec la commande pour savoir d'où proviennent les souscriptions.",
+            },
+            {
+              type: "p",
+              text: "La mesure d'audience, elle, ne dépose ni cookie ni identifiant dans le navigateur : OpenPanel calcule un identifiant de visite côté serveur, en hachant l'adresse IP et le navigateur avec un sel renouvelé chaque jour. L'adresse IP n'est pas conservée et l'identifiant ne peut plus être rattaché à une visite antérieure au-delà de 24 heures. Aucun identifiant publicitaire n'est collecté et aucun cookie publicitaire n'est déposé.",
             },
           ],
         },
@@ -691,7 +767,7 @@ export function getPrivacyContent(lang) {
           },
           {
             type: "p",
-            text: "The open-source Gladys Assistant software itself is installed and runs at the user's home: their smart home data stays on their own hardware and is not sent to us.",
+            text: "The open-source Gladys Assistant software itself is installed and runs at the user's home: their smart home data (devices, scenes, history) stays on their own hardware and is never sent to us. Only the usage statistics described below reach our servers.",
           },
         ],
       },
@@ -735,6 +811,10 @@ export function getPrivacyContent(lang) {
                 text: "if the user enables the Google Home or Alexa integration, voice commands go through Google's or Amazon's services, subject to their own privacy policies. Legal basis: performance of the contract, at the user's initiative.",
               },
               {
+                label: "Usage statistics of the open-source software:",
+                text: "a Gladys Assistant instance periodically asks our servers whether a new version is available. On that occasion, we record the country, region and timezone derived from the IP address of the request, the operating system, the Node.js version, whether it runs in Docker, the number of connected devices and the list of integrations in use. The IP address itself is not kept, and this data is linked neither to a name nor to a Gladys Plus account. Legal basis: legitimate interest in knowing how the project is used and in feeding its public statistics.",
+              },
+              {
                 label: "Contact form:",
                 text: "email address and content of the message, to answer the request. Legal basis: legitimate interest in answering the requests sent to us.",
               },
@@ -744,7 +824,7 @@ export function getPrivacyContent(lang) {
               },
               {
                 label: "Analytics:",
-                text: "website visit statistics, collected through OpenPanel, an open-source solution that we host ourselves. Legal basis: legitimate interest in measuring the audience of the website.",
+                text: "website visit statistics, collected through OpenPanel, an open-source solution that we host ourselves, without any cookie or identifier stored in the browser. Legal basis: legitimate interest in measuring the audience of the website.",
               },
             ],
           },
@@ -764,7 +844,7 @@ export function getPrivacyContent(lang) {
               "Stripe, for payment processing",
               "Scaleway, for hosting the AI models in France",
               "the European host of the Gladys Plus infrastructure (API, backups, relays)",
-              "our email delivery provider, for the newsletter and service emails",
+              "Amazon Web Services (Amazon SES), in the Ireland region, for sending the newsletter and service emails",
             ],
           },
           {
@@ -780,7 +860,7 @@ export function getPrivacyContent(lang) {
             type: "ul",
             items: [
               "Gladys Plus account data: for the whole duration of the commercial relationship, then deleted",
-              "Backups: according to the retention policy of the service, the user being able to delete them at any time from their account",
+              "Backups: backups older than six months are deleted and, beyond the current month, a single backup per month is kept; the user can delete them at any time from their account",
               "Invoicing data: 10 years, in accordance with accounting obligations",
               "IP address used for rate-limiting: a few minutes, in memory only, never written to disk",
               "Messages sent through the contact form: as long as needed to handle the request",
@@ -806,7 +886,11 @@ export function getPrivacyContent(lang) {
           },
           {
             type: "p",
-            text: "The gladysassistant.com website also stores a technical analytics identifier there, the currency detected to display prices, and, where applicable, the campaign parameters present in the landing URL (utm_source, utm_medium, utm_campaign...), passed along with the order to know where subscriptions come from. No advertising identifier is collected and no advertising cookie is set.",
+            text: "The gladysassistant.com website stores there the currency detected to display prices and, where applicable, the campaign parameters present in the landing URL (utm_source, utm_medium, utm_campaign...), passed along with the order to know where subscriptions come from.",
+          },
+          {
+            type: "p",
+            text: "Analytics, on the other hand, stores neither a cookie nor an identifier in the browser: OpenPanel computes a visit identifier server-side, by hashing the IP address and the browser with a salt renewed every day. The IP address is not kept, and the identifier can no longer be tied to an earlier visit beyond 24 hours. No advertising identifier is collected and no advertising cookie is set.",
           },
         ],
       },
@@ -975,7 +1059,7 @@ export function getLegalNoticeContent(lang) {
           blocks: [
             {
               type: "p",
-              text: "Le site utilise OpenPanel, une solution de mesure d'audience open source auto-hébergée par Gladys Assistant SAS, afin de comptabiliser les visites et d'améliorer le site. Un identifiant technique est stocké dans le navigateur pour distinguer les visites ; aucune donnée n'est revendue ni transmise à une régie publicitaire.",
+              text: "Le site utilise OpenPanel, une solution de mesure d'audience open source auto-hébergée par Gladys Assistant SAS, afin de comptabiliser les visites et d'améliorer le site. Elle ne dépose ni cookie ni identifiant dans le navigateur et ne conserve pas les adresses IP ; aucune donnée n'est revendue ni transmise à une régie publicitaire.",
             },
           ],
         },
@@ -1103,7 +1187,7 @@ export function getLegalNoticeContent(lang) {
         blocks: [
           {
             type: "p",
-            text: "The website uses OpenPanel, an open-source analytics solution self-hosted by Gladys Assistant SAS, to count visits and improve the website. A technical identifier is stored in the browser to distinguish visits; no data is sold or shared with any advertising network.",
+            text: "The website uses OpenPanel, an open-source analytics solution self-hosted by Gladys Assistant SAS, to count visits and improve the website. It stores neither a cookie nor an identifier in the browser and does not keep IP addresses; no data is sold or shared with any advertising network.",
           },
         ],
       },
