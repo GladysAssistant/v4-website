@@ -24,7 +24,7 @@ This article is kept for the record.
 
 I've told you about Matterbridge before: a project that lets you install plugins to bring non-Matter devices into Matter. Today, Matterbridge already lets you use, inside Gladys:
 
-- [Somfy shutters](/docs/integrations/somfy-tahoma/)
+- [Somfy shutters](/docs/integrations/external/overkiz/)
 - [Shelly devices](/docs/integrations/external/shelly/) (generations 1, 2 and 3)
 - and soon, Roborock robot vacuums
 
