@@ -73,7 +73,6 @@ module.exports = {
             "integrations/owntracks",
             "integrations/pilot-wire",
             "integrations/sonoff",
-            "integrations/somfy-tahoma",
             "integrations/sonos",
             "integrations/tasmota",
             "integrations/xiaomi",

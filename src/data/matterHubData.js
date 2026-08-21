@@ -57,7 +57,7 @@ const matterHubContent = {
         "Matter over Wi-Fi or Ethernet: no hub to buy. The device is already on your network, and Gladys pairs with it directly using its 11-digit code. This covers most Matter plugs, bulbs, and every manufacturer bridge.",
         "Matter over Thread: you need a Thread border router on your network, and with Gladys today it has to be a full Matter controller such as an Apple TV, a Matter compatible Echo or a Google Nest device. The first pairing of a Thread device goes over Bluetooth, which Gladys does not handle yet: you pair the device there, then share it with Gladys with a new pairing code. Check the Apple, Google and Amazon devices you already own before buying anything.",
         "Zigbee or Z-Wave devices: Matter is not involved at all. These need their own coordinator, which with Gladys means a USB Zigbee dongle and Zigbee2MQTT, not a Matter hub.",
-        "Cloud-only devices, such as Somfy io or many older brands: no hub will make them speak Matter. A bridge such as Matterbridge, or a direct integration, is the way in.",
+        "Cloud-only devices, such as Somfy io or many older brands: no hub will make them speak Matter. An integration talking to their cloud is the way in, and Gladys often has one: Somfy TaHoma, TaHoma Switch and Connexoon go through the Overkiz external integration, for instance.",
       ],
       outro:
         "If you own a Matter device today and it is on Wi-Fi or Ethernet, you can add it to Gladys in the next ten minutes without buying anything.",
@@ -194,7 +194,7 @@ const matterHubContent = {
         "Matter en Wi-Fi ou Ethernet : aucun hub à acheter. L'appareil est déjà sur votre réseau, et Gladys s'y appaire directement avec son code à 11 chiffres. C'est le cas de la plupart des prises et ampoules Matter, et de tous les ponts de fabricants.",
         "Matter en Thread : il vous faut un routeur de bordure Thread sur votre réseau, et avec Gladys aujourd'hui ce doit être un contrôleur Matter complet, comme une Apple TV, une Echo compatible Matter ou un appareil Google Nest. Le premier appairage d'un appareil Thread passe par le Bluetooth, que Gladys ne gère pas encore : vous appairez l'appareil sur ce contrôleur, puis vous le partagez avec Gladys grâce à un nouveau code d'appairage. Vérifiez les appareils Apple, Google et Amazon que vous possédez déjà avant d'acheter.",
         "Appareils Zigbee ou Z-Wave : Matter n'entre pas en jeu. Ils ont besoin de leur propre coordinateur, ce qui avec Gladys signifie une clé USB Zigbee et Zigbee2MQTT, pas un hub Matter.",
-        "Appareils uniquement cloud, comme le Somfy io ou beaucoup de marques plus anciennes : aucun hub ne les fera parler Matter. Un pont comme Matterbridge, ou une intégration directe, est la bonne porte d'entrée.",
+        "Appareils uniquement cloud, comme le Somfy io ou beaucoup de marques plus anciennes : aucun hub ne les fera parler Matter. C'est une intégration qui parle à leur cloud qui vous ouvre la porte, et Gladys en a souvent une : les box Somfy TaHoma, TaHoma Switch et Connexoon passent par exemple par l'intégration externe Overkiz.",
       ],
       outro:
         "Si vous possédez déjà un appareil Matter et qu'il est en Wi-Fi ou en Ethernet, vous pouvez l'ajouter à Gladys dans les dix minutes, sans rien acheter.",
@@ -265,8 +265,8 @@ const matterHubContent = {
           text: "Exposer en Matter des appareils qui ne sont pas compatibles Matter.",
         },
         {
-          label: "Somfy et Matter",
-          href: "/fr/docs/integrations/somfy-tahoma/",
+          label: "Intégration Overkiz",
+          href: "/fr/docs/integrations/external/overkiz/",
           text: "Piloter vos volets TaHoma, TaHoma Switch et Connexoon dans Gladys.",
         },
         {
