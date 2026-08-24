@@ -1,0 +1,226 @@
+---
+title: "SEDIF – Eau d'Île-de-France integration for Gladys Assistant"
+sidebar_label: "SEDIF – Eau d'Île-de-France"
+description: "Track your SEDIF water consumption (L'Eau d'Île-de-France / Veolia) in Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-sedif.jpg"
+keywords:
+  - "sedif – eau d'île-de-france"
+  - "gladys sedif – eau d'île-de-france"
+  - "sedif – eau d'île-de-france gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/PhilippeMA/gladys-sedif instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="sedif-eau-d-ile-de-france" />
+
+This integration adds a "SEDIF water meter" device to Gladys, tracking your
+drinking water consumption from your customer account on
+[leaudiledefrance.fr](https://www.leaudiledefrance.fr/).
+
+SEDIF (Syndicat des Eaux d'Île-de-France) is the public authority in charge of
+drinking water for roughly 4 million people around Paris; the service itself is
+operated by Veolia under the "L'Eau d'Île-de-France" brand. Your meter readings
+are published on that operator's customer portal, which is where this
+integration reads them from.
+
+## What you get
+
+The created device carries two measurements, both kept in history so you can
+chart them and use them in scenes:
+
+| Measurement           | Unit | Description                                            |
+| --------------------- | ---- | ------------------------------------------------------ |
+| **Meter index**       | m³   | The total meter reading, the one printed on your bill. |
+| **Daily consumption** | L    | The volume used over that day.                         |
+
+## Requirements
+
+- An account on [leaudiledefrance.fr](https://www.leaudiledefrance.fr/) with an
+  active contract. It is the same account you use to read your bills.
+- A remotely-read (télérelevé) meter. SEDIF has rolled these out broadly, but if
+  yours is not one of them the portal shows no daily history and the integration
+  has nothing to import.
+- Check **before installing** that the "Historique" page of your customer
+  account does show a daily curve. If it is empty on the website, it will be
+  empty in Gladys too.
+
+## Configuration
+
+| Field                          | Purpose                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| **Where readings come from**   | Automatic (default) or a dropped CSV file. See below.                                       |
+| **Email address**              | The login of your customer account. Not needed in dropped-file mode.                        |
+| **Password**                   | The password of that same account. Stored in clear text by Gladys — see "Your credentials". |
+| **Contract number**            | Only needed if your account holds several contracts. It is printed on your bill.            |
+| **Refresh interval**           | 6 hours by default. The meter is only read once a day, so a shorter interval gains nothing. |
+| **History to import**          | How many days the first import goes back. 30 days by default, up to 3 years.                |
+| **Include estimated readings** | Off by default. See "Measured and estimated readings".                                      |
+
+Once the fields are filled in, use the **Test the connection** button: it really
+signs in and reports the latest available reading. It is the fastest way to
+check your credentials.
+
+The **Re-import the history** button forgets the import cursor and publishes the
+whole configured period again. Use it after changing "History to import", or if
+you deleted data in Gladys.
+
+## Two ways to get the readings
+
+Both modes produce exactly the same device and the same charts.
+
+### Automatic — recommended
+
+The integration signs in to your customer account and reads its history. A
+handful of HTTP requests every six hours: no browser, a few megabytes of
+memory, negligible even on a Raspberry Pi.
+
+### Dropped CSV file
+
+No credentials at all: you download the file from the portal yourself, drop it
+in the integration's import folder, and it takes care of the rest.
+
+1. On [leaudiledefrance.fr](https://www.leaudiledefrance.fr/), open the
+   **Historique** page, pick the **Litres** then **Jours** view, and click
+   **Télécharger la période**. You get `historique_jours_litres.csv`.
+2. Drop that file into `/data/import` in the integration container:
+
+   ```bash
+   # Find the container (its name contains "sedif")
+   docker ps --format '{{.Names}}' | grep sedif
+
+   # Copy the file into it
+   docker cp historique_jours_litres.csv <container-name>:/data/import/
+   ```
+
+3. Click **Test the connection**, then **Re-import the history**.
+
+You can drop **several files**: they are all read and merged. A July export next
+to an August one simply extends the history. Files are never deleted, and
+dropping the same one twice does nothing — the import cursor already knows what
+Gladys has.
+
+Choose this mode if you would rather nothing signed in to your customer account
+without you, or if the automatic mode breaks.
+
+## Data delay
+
+Readings are not real time. The meter is read remotely once a day and the
+operator publishes the value with a **one to two day delay**: the device shows
+the day before yesterday's consumption, not the current minute. That is a limit
+of the service, not of the integration.
+
+Every reading is published in Gladys **at its actual date**, not at the date of
+the import: your chart is correctly dated, including the history picked up on
+the very first run.
+
+The integration paces itself rather than using the Gladys polling mechanism,
+which never goes slower than once a minute — far too fast for a daily value. A
+first refresh runs about a minute after startup and after every configuration
+change, then at the interval you chose.
+
+## Measured and estimated readings
+
+For each day the portal states whether the value was **measured** or
+**estimated**. An estimate fills a gap between two real readings, and the
+resulting index can go backwards once the real measurement lands — which
+produces inconsistent charts and breaks any consumption arithmetic.
+
+The integration therefore skips estimated readings by default: a day without a
+real measurement is simply missing from the chart, and shows up later if the
+operator publishes the real value. The "Include estimated readings" option is
+there if you would rather have a continuous chart than an exact one.
+
+## How the data is retrieved
+
+Neither SEDIF nor its operator publishes a documented API. The customer portal
+is a Salesforce site, and the integration speaks the same protocol its own pages
+speak: it signs in, lists your contracts, reads the meter of the contract, then
+asks for the daily history. Exactly the exchanges your browser makes when you
+open the "Historique" page.
+
+**A consequence worth knowing:** that protocol is not a commitment from the
+operator. A redesign of the portal can change it, and the integration would stop
+working until it is updated. The device badge turns orange and the error names
+the step that failed. The dropped-file mode remains available in the meantime.
+
+## Your credentials
+
+Your credentials never leave your installation: they are passed to the
+integration, which runs in its own container on your own hardware, and are used
+only to sign in to `connexion.leaudiledefrance.fr`. No third party service is
+contacted.
+
+Do know how they are kept, though: **Gladys stores integration settings in clear
+text in its database**. The password is not encrypted. The field is declared
+`secret`, which only guarantees that the value is never sent back to the web
+interface — not that it is protected on disk.
+
+In practice, anyone who can read the Gladys database, or a backup of it, can
+read that password. Hence two precautions:
+
+- treat your Gladys backups as a document containing a password;
+- do not use a password here that you reuse elsewhere.
+
+If that bothers you, the **dropped CSV file** mode asks for no credentials at
+all.
+
+## Troubleshooting
+
+- **Credentials refused**: check them by signing in by hand on the website. An
+  account can also be temporarily locked after several failed attempts.
+- **"No meter attached to contract"**: your meter is most likely not remotely
+  read, so the portal has no daily history to give.
+- **"Contract X is not among the active ones"**: the message lists the contracts
+  it found; copy one of them, or empty the field to use the account's only
+  contract.
+- **An error naming an `LTN...` class**: the operator changed its application.
+  That is the case that needs an update of the integration; switch to "Dropped
+  CSV file" in the meantime.
+- **The device badge is orange**: either the last refresh failed, or the
+  operator has published nothing for more than four days. The badge tooltip
+  gives the reason.
+- **The chart stops at a past date**: that is the expected behaviour when the
+  operator stops publishing; the missing days are imported as soon as they show
+  up.
+
+## Configuration settings
+
+These are the settings SEDIF – Eau d'Île-de-France asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Before you start | `section` | No | This integration signs in to your leaudiledefrance.fr customer account and reads the daily consumption history of your water meter, the same one the Historique page shows. Use the credentials of your personal account. Readings are published once a day by the operator, with a one to two day delay. |
+| Where the readings come from | `select` | No | Automatic signs in and reads the portal's own API — a handful of HTTP requests, no browser, light enough for any machine. Dropped file needs no credentials at all: you download the CSV from the portal yourself and put it in the integration's import folder. Both produce exactly the same device and the same charts. |
+| Email address | `string` | No | The email address of your leaudiledefrance.fr account. Only used by the automatic source; leave empty if you drop the file yourself. |
+| Password | `secret` | No | The password of your leaudiledefrance.fr account, used only by the automatic source. Gladys stores integration settings in CLEAR TEXT in its database: the secret field only means the value is never sent back to the web interface, not that it is protected on disk. Prefer a password you do not reuse elsewhere. |
+| Contract number | `string` | No | Only needed if your account holds several contracts. Shown on your bill and in the portal. Leave empty to use the only contract of the account. |
+| Refresh interval (s) | `number` | No | How often the portal is queried, in seconds. The meter is read once a day, so there is nothing to gain from a short interval. |
+| History to import (days) | `number` | No |  |
+| Include estimated readings | `boolean` | No | The portal marks each reading as measured or estimated. Estimated readings are skipped by default because they can make the meter index go backwards. |
+
+## How to install SEDIF – Eau d'Île-de-France in Gladys
+
+1. In Gladys, open **Integrations**: SEDIF – Eau d'Île-de-France appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/philippema/gladys-sedif:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/PhilippeMA/gladys-sedif](https://github.com/PhilippeMA/gladys-sedif).
+
+SEDIF – Eau d'Île-de-France requires Gladys `>=4.85.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+SEDIF – Eau d'Île-de-France is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [PhilippeMA](https://github.com/PhilippeMA), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/PhilippeMA/gladys-sedif) — [source of this documentation](https://github.com/PhilippeMA/gladys-sedif/blob/HEAD/docs/en.md)

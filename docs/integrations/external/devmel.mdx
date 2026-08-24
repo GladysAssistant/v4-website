@@ -48,11 +48,95 @@ So the only thing the local channel needs from you is the **connection
 string** exported by airsend.cloud, which looks like:
 
 ```
-sp://password@[fe80::xxxx:xxxx:xxxx:xxxx]?gw=0&rhost=192.168.1.50
+sp://password@fe80::xxxx:xxxx:xxxx:xxxx?gw=0&rhost=192.168.1.50
 ```
+
+Paste it **exactly as airsend.cloud gives it to you**: add nothing, remove
+nothing, do not retype it.
 
 Always keep the `?gw=0&rhost=<box IPv4>` part: without it the box is reached
 by IPv6 link-local only and the service answers unexpected errors.
+
+#### Where that string is set on airsend.cloud
+
+It is not meant to be typed by hand: it is produced by the **Communication**
+screen of [app.airsend.cloud](https://app.airsend.cloud). Every field there
+writes a piece of the string, and two of them decide whether the integration
+will talk to your box over your own network or over the internet.
+
+| Field on airsend.cloud                   | What it writes in the string | What to set it to for Gladys                                       |
+| ---------------------------------------- | ---------------------------- | ------------------------------------------------------------------ |
+| **Local IP**                             | the part after `@`           | Nothing to fill in: the box link-local IPv6, the same as `localip` |
+| **Password**                             | the part before `@`          | The password of the box                                            |
+| **Internet gateway**                     | `gw=1` or `gw=0`             | **Off**, i.e. `gw=0`: the order stays on your network              |
+| **Secondary address**                    | `rhost=`                     | The **box IPv4** on your network, not your router's                |
+| **Connection mode** / **WebService Url** | nothing                      | Concerns the airsend.cloud page only (see below)                   |
+| **Maximum delay (ms)**                   | nothing                      | Leave it empty                                                     |
+
+**Connection mode** and **WebService Url** say how the _airsend.cloud page_
+reaches your box from your browser — typically an AirSend service running on
+your own PC, hence the `http://127.0.0.1:33863`. Gladys never uses them: it
+runs its own service inside its container. Those two fields can stay as they
+are.
+
+The two that matter are the others:
+
+- **Internet gateway** turned on writes `gw=1`, and the box becomes reachable
+  through the internet. Handy from a phone on 4G, and a needless detour for an
+  integration sitting on the same network as the box: every order makes a round
+  trip through the cloud, which shows in the logs (a good second between an
+  order and its echo, instead of two or three tenths). Turn it off and keep
+  `gw=0`.
+- **Secondary address** writes `rhost=`. That is the address the AirSend
+  service dials **from the Gladys container**, so it has to be the IPv4 of the
+  box, routable from the Gladys host. Read it off your router's DHCP leases and
+  reserve it so it does not change; without it the box is reachable by IPv6
+  link-local only and the service answers unexpected errors.
+
+After any change, click **Save**, then **copy the connection string again**
+into Gladys: it changed.
+
+#### Never retype it
+
+Copy and paste the whole string, from `sp://` to the end, into an emptied field.
+The box answers a damaged string exactly what it answers a wrong password:
+
+```
+[WARN] [airsend] Local transfer failed for "Chambre parents": Invalid connection string (HTTP 401)
+[WARN] Could not listen through "AirSend box": Invalid connection string (HTTP 401)
+```
+
+What gets damaged, by retyping and by proofreading alike:
+
+- **the double colon.** A link-local address is written
+  `fe80::dcf6:e5ff:fe8f:89cd` — `fe80`, then **two** colons. Retyped, it becomes
+  `fe80:dcf6:e5ff:fe8f:89cd`: five groups of an eight-group address. Still
+  address-shaped, no longer an address;
+- **what looks like it needs correcting.** A URL normally puts an IPv6 address
+  between square brackets; airsend.cloud exports it without them, and boxes
+  answer that form. Both spellings exist, neither is to be added: what
+  airsend.cloud gives you is what to paste;
+- **what cannot be seen.** The field is a secret and shows nothing but dots: the
+  masking dots copied instead of the password, a thin space picked up from a web
+  page, an apostrophe turned typographic by a note-taking app — all of it pastes
+  in with nothing to show for it.
+
+The integration now checks what can be checked without a box — the `sp://`, the
+password, the address, characters that have no business being there — and writes
+it to the logs when the configuration loads, on the Configuration screen, and on
+the _Local_ line of **Test the connection**.
+
+Above all, that action shows **the string itself, password removed**:
+
+```
+Connection string: sp://<16 characters>@fe80::dcf6:e5ff:fe8f:89cd?gw=0&rhost=192.168.1.50
+```
+
+It is the only way to see what Gladys is really holding. Half the mistakes it
+catches are ones no check can name: the address of the other box, a `gw=1`
+nobody asked for, an `rhost` left on the old IP. The password itself is never
+shown and never logged — only its length is, which is enough to spot a mask
+pasted in its place.
 
 #### Using a service you already run
 
@@ -204,6 +288,59 @@ Only orders that mean the same thing twice are repeated — Open, Stop, Close, a
 position. A push button TOGGLE goes out once: heard twice, it is back where it
 started.
 
+Those repeats do **not** make the interface wait: Gladys is answered as soon as
+the order is on the air, and the repeats keep going behind it, in their place in
+the queue. They are a second chance for a frame lost in the noise, not part of
+the answer — and re-arming the listener, which needs the radio too, now waits
+for the queue to empty instead of slipping between two orders. That is what made
+a "Close" clicked right after an "Open" take a few seconds to go out.
+
+### The first order after a long pause
+
+An order that leaves in a fraction of a second most of the time, and takes
+several after a quiet evening, is not the radio: it is the **link to the box**
+having gone cold. Nothing had spoken to it for hours, so the session had to be
+built again before anything could be sent, and that wait landed on whoever
+clicked.
+
+The integration keeps that from happening: when the box has been left alone for
+four minutes, it reads the box own sensors — a request that reaches the box and
+never goes on the air. An installation being used stays warm on its own traffic
+and nothing extra is sent. It costs one small request per idle box, and it is
+what polling already did for a box declared with `sensors: true`; a box that only
+carries the connection string had nothing.
+
+Four minutes is where it starts, not a fact: how long a box tolerates being left
+alone is documented nowhere, and it is not the same over Wi-Fi as through the
+cloud gateway. So the box says. When waking it takes more than a second, the
+link had already gone cold, the integration halves the wait — down to one
+minute, never below — and writes the line:
+
+```
+Waking the link to "AirSend" took 2.6 s after 4 min of silence: it goes cold
+faster than it was being kept warm… Touching it every 2 min from now on.
+```
+
+It only ever shortens: a fast wake proves the interval it was made at works,
+never that a longer one would.
+
+When an order still takes more than a second and a half to leave, the logs say
+so, and say **where the time went**:
+
+```
+The order sent to "Kitchen shutter" took 4.2 s to reach the air: 0.1 s waiting
+for the radio, 4.1 s in the box. The time went into the box, not into the
+queue: …
+```
+
+- **in the box** — the box itself was slow to answer. Two usual reasons: the
+  connection string carries `gw=1`, so every order travels to Devmel servers and
+  back (turn **Internet gateway** off on airsend.cloud and give the string the
+  box IPv4 with `rhost=`), or the box sits where its Wi-Fi is weak;
+- **waiting for the radio** — the orders in front of this one were still going
+  out. Repeats are the usual reason there were several: lower **Command
+  repeats** if you raised it.
+
 ### Gladys does not mistake itself for the remote
 
 Everything the integration transmits comes back to it: the box answers the
@@ -214,13 +351,52 @@ order was doing. A timed shutter sent to 40 % is the example: the echo of its
 shutter ran to the top. The integration now recognizes its own orders and does
 not replay them.
 
+What identifies an echo is **the address it comes from**. The channel Gladys
+transmits on is the box's own: nothing else in the house speaks with that voice,
+whatever the delay. A box that takes ten seconds to repeat itself is no longer
+mistaken for a hand on a remote — which was enough to send a shutter stopped at
+40 % back to the top.
+
 Two visible consequences:
 
 - a wall remote emits from **another address**: it is never taken for that echo,
   and goes on driving the shutter in Gladys;
-- when the box answers that it **could not transmit**, the integration writes it
-  in its logs, naming the device. It is the only trace of an order that went
-  nowhere, and it is worth a look if you often click twice.
+- when the box answers that it **did not carry the order**, the integration
+  writes it in its logs, naming the device and what the box said. It is the only
+  trace of an order that went nowhere, and it is worth a look if you often click
+  twice.
+
+### When the box says no
+
+Every order handed to the box is answered, and that answer carries a number.
+Below `256` the order went out; from `256` up it did not, and the number says
+where it died. That is what the line in the logs spells out:
+
+```
+The box did not carry the order sent to "Kitchen". SYNCHRONIZATION (event type
+258): the exchange between the AirSend Web Service and the box lost its thread —
+a link error, not a radio one. Whether anything went out on the air, nothing
+says. Check nothing else drives the box at the same moment…
+```
+
+| Name (type)             | What it means                       | What to check                                                                         |
+| ----------------------- | ----------------------------------- | ------------------------------------------------------------------------------------- |
+| `UNKNOWN` (256)         | refused without saying why          | Restart the box, then the integration                                                 |
+| `NETWORK` (257)         | the service never reached the box   | The box is powered, on the network, and still at the address in the connection string |
+| `SYNCHRONIZATION` (258) | the link with the box lost the plot | Nothing else driving the box at that moment; a weak Wi-Fi link does it too            |
+| `SECURITY` (259)        | the connection string was refused   | Export it again from airsend.cloud and paste it whole                                 |
+| `BUSY` (260)            | another client had the box locked   | Close the AirSend app, or take the box out of the other installation                  |
+| `TIMEOUT` (261)         | the box did not answer in time      | A box busy for someone else, or standing where its Wi-Fi is weak                      |
+| `UNSUPPORTED` (262)     | the box cannot send this            | The `type` and the channel of the device, against the airsend.cloud export            |
+| `INCOMPLETE` (263)      | something was missing               | Paste the channel whole, with everything it came with next to `id`                    |
+| `FULL` (264)            | the request was too large           | Report it: nothing sent from here should ever be that long                            |
+
+**Command repeats answers none of these.** Repeats are for a frame lost in the
+noise — and a frame lost in the noise is precisely the failure nothing reports:
+nothing acknowledges a radio order, so an order the box says it carried is all
+the confirmation there will ever be. When the box itself reports the failure,
+the order never got as far as the noise. Raising the repeats then only sends
+orders out closer together, at a box already having trouble keeping up.
 
 ## The position of a shutter
 
@@ -314,11 +490,53 @@ decodes which protocol, and subscribes the box to the one your devices use.
 Leave the **Listening channel** field empty.
 
 Fill it in only to listen to something else: the `pid` of a protocol you have
-not declared yet, `1` for generic listening, or `0` to turn listening off.
+not declared yet, or `0` to turn listening off.
+
+**`1` and an empty field mean the same thing: "deduce it".** That is the value
+the field defaulted to before the deduction existed, and it is read as such — a
+`1` does not ask for generic 433 MHz listening. Generic listening is what the
+deduction falls back to when no radio device is declared, and nothing else. The
+field is a **text** field rather than a number for that very reason: a number
+field cannot be left empty, it makes you type something, and that something
+then reads as a choice nobody made.
+
+One consequence: the generic 433 MHz decoder cannot be asked for by its pid,
+since that pid is `1`. It is asked for **by name** instead — type `generic` in
+the field. That is a test worth running for a 433 MHz remote its own protocol
+only half decodes: the generic decoder is another way of reading the same
+frames.
+
+Either way, the _Listening_ line of **Test the connection** says which channel
+was actually chosen — that line is the authority, not what is typed in the
+field.
 
 To check, click **Test the connection**: the _Listening_ line says which
 protocol is listened to, which devices it covers, and where the frames are
 pushed — or why they are not.
+
+When two protocols are declared equally — a shutter on one side, the wall remote
+attached to it on the other — the one that **emits** wins. A shutter, a switch,
+a lamp do not talk: they are talked to. A remote declared in `remotes` is there
+precisely to be heard, so that is what the box is subscribed to.
+
+#### A protocol nobody speaks on
+
+If nothing declared on the channel being listened to ever emits by itself, the
+subscription is armed, the route works, and nothing will ever come through it:
+the box will only hear the echo of Gladys' own orders. That is the normal state
+of a house where only shutters are declared — and it looks exactly like a
+listener that never armed, so the integration says it out loud, in its logs at
+startup and in the _Listening_ line of **Test the connection**:
+
+```text
+Nothing declared on channel 25455 emits by itself: shutters, switches and lamps
+are talked to, they do not talk. The box will hear the echo of Gladys own orders
+and nothing else.
+```
+
+The way out is the same one as everywhere else on this page: attach the wall
+remote that drives the equipment (see below). It has its own address, it is a
+real emitter, and once declared it is what the deduction listens to.
 
 ### 868 MHz and rolling code
 
@@ -331,6 +549,40 @@ says so, in its logs and in **Test the connection**.
 
 Two ways out: declare a device on that protocol, or fill in its `pid` as the
 **Listening channel**.
+
+#### "Listening on 868 MHz" is not a thing — here is what is
+
+A box does not listen to a **band**, it listens to a **protocol**: there is no
+"868 MHz" switch to flip, and channel `1` is not "the 433 one" as opposed to
+some "868 one" living elsewhere — it is one decoder among a couple of hundred,
+the one covering generic 433 MHz protocols. Listening on 868 MHz therefore means
+**naming an 868 MHz protocol by its `pid`**. Three ways, simplest first:
+
+1. **declare the device** in the **Devices** list (the airsend.cloud export
+   carries its `pid`): the deduction does the rest and the **Listening channel**
+   field stays empty. This is what works nine times out of ten;
+2. **attach its remote** (`remotes`): a remote actually emits, so on a tie the
+   deduction keeps its protocol rather than the shutter's, which never speaks;
+3. **force the `pid`** in **Listening channel** when the protocol is not
+   declared yet. To find it, the **Find a radio protocol** action asks the
+   AirSend service and searches by brand or by `pid`:
+
+```text
+2 protocols for "somfy":
+- pid 25455 — Somfy RTS (decodes itself, declared on "Patio door")
+- pid 26848 — Somfy io (decodes itself)
+Put the pid you want in the Listening channel field…
+```
+
+It also says how each protocol is decoded — by itself, by the generic 433 MHz
+channel `1`, or only partially — and which one is being listened to right now.
+
+And then there is the dead end, which is worth knowing about: the box has
+**one** radio, so hearing a remote whose protocol you do not know requires
+already listening to that protocol. There is no scanning. If its `pid` is
+written nowhere — not in the AirSend app, not in the export — the only way left
+is trying the candidates of your brand one by one, pressing the remote after
+each attempt and running **Test the connection** again.
 
 The **rolling code** of those remotes is not what stops the frames from coming
 in. It protects _emission_: to drive a Profalux shutter, the AirSend box has to
@@ -470,6 +722,43 @@ still nothing, the frame never arrived, and there are only three reasons why:
   (debug)**: those frames are traced there too, with their `pid`, their `addr`
   and the reason they went no further.
 
+#### What a press writes in the logs
+
+Each of those lines is said **once per emitter** — a remote held down emits a
+frame every half second, and a log that scrolls is a log nobody reads. The
+counter is re-armed **every time you save the configuration**: you changed
+something because it did not work, and the very next press is the one you are
+watching for.
+
+So after saving, one press writes exactly one line, and which line it is says
+where the frame stopped:
+
+```text
+Heard pid 25455, addr 94311 -> "Baie vitrée" followed it: level 0 (down).
+Heard a frame on a channel no device declares: pid 14177, addr 3359265281.
+Heard pid 14177, addr 3359265281 for "Baie vitrée", but no note the service could decode
+Ignored a radio frame (unreliable, graded 2): pid 25455, addr 94311, carrying level 100 (up).
+```
+
+The first one is the only one that says it works — and it is worth reading twice
+before blaming the integration for a shutter that did not move: the frame was
+heard, routed and followed, so what is left is between the order and the motor.
+No line at all means no frame arrived; see the three reasons above.
+
+#### Is that really my remote?
+
+An emitter heard is not proof it is the one in your hand: 433 MHz is a public
+band, and the neighbourhood is on it too. Press yours five times, then run
+**Test the connection** and read the counter of the emitter under _Heard_:
+
+```text
+pid 14177, addr 3359265281 (5 frames, last one 3 s ago, no decoded note)
+```
+
+Five frames and "3 s ago" is your remote. A counter that does not move while you
+press is somebody else's, and attaching it declares a stranger's remote on your
+shutter.
+
 ### What the box actually heard
 
 Every check above answers "can the frames get in?". The _Heard_ line of **Test
@@ -481,11 +770,17 @@ many frames each sent, how long ago, what they decoded to, and what the devices
 made of them:
 
 ```text
-Heard: 1 emitter heard: pid 14177, addr 3359265281 (3 frames, last one 4 s ago,
+Heard: 1 emitter heard: pid 14177 "Profalux", addr 3359265281 (3 frames, last one 4 s ago,
 no decoded note) — declared on Living room shutter, but its frames carry no
 order to replay (a protocol the service only partially decodes): the position
 cannot follow.
 ```
+
+The `pid` is **named** whenever the service answered with its protocol table:
+that is the most reliable answer to "which protocol does my remote speak?". The
+brand printed on the plastic does not always say — a shutter sold under one name
+may carry another manufacturer's radio — while the name here is the decoder that
+actually decoded the frame.
 
 Three possible verdicts per emitter:
 
@@ -494,6 +789,19 @@ Three possible verdicts per emitter:
 | `followed by <device>`     | it works: those frames do drive the device                                |
 | `no device declares it`    | the emitter is heard but attached to nothing — **Attach a remote**        |
 | `carry no order to replay` | the frame reaches its device and carries nothing to replay (rolling code) |
+
+The line quotes **every** distinct note an emitter has been heard saying, not
+just its last frame — that is what tells a remote whose buttons the service
+decodes (`notes: level 100 (up); level 0 (down); state stop`) from one whose
+every button decodes to the same order. The second is a `followed by` that moves
+nothing: a STOP replayed on a shutter that is not moving changes a state, not a
+percentage. The report now says so and offers the check: press Open, then Close,
+and run the action again. If the note does not change, the AirSend service does
+not decode the buttons of that remote, and the position cannot follow.
+
+The echoes of your own orders are not emitters: they are counted apart, at the
+end of the line (`Plus 3 echoes of your own orders`). That is the proof the
+frames have a route back in, even when nothing else is heard.
 
 The registry is emptied when the integration restarts: "no radio frame since the
 integration started" means "nothing since then", not "never". Press the remote,
@@ -533,7 +841,9 @@ The **Detailed logs (debug)** field of the Configuration screen turns them on.
 It takes effect at once, with no restart: tick it, press the remote, read the
 logs, untick it. It is verbose, and not meant to stay on.
 
-Your `sp://` connection string is never logged, at any level.
+The **password** of your `sp://` connection string is never logged, at any
+level: the rest of the string — the address, `gw`, `rhost` — is, at debug, with
+the password replaced by its length alone (see "Never retype it").
 
 If you would rather use the container environment variable, `LOG_LEVEL` still
 works and still wins: the switch raises the level to debug while it is on, then
@@ -556,6 +866,10 @@ provides: link your Gladys Plus account and paste your Open API key in the
   not parse, or an attached remote whose frames carry no order.
 - **Attach a remote** — press the remote, pick the device it drives: the action
   writes the device list to paste back, remote included (see "The wall remote").
+- **Find a radio protocol** — searches the protocols the AirSend service knows,
+  by brand or by `pid`, says how each one is decoded and which one is being
+  listened to: this is where the `pid` for **Listening channel** comes from (see
+  "Listening on 868 MHz").
 - **Identify a device** — pick a device and it is sent a PING. Not every piece
   of 433 MHz equipment reacts to it.
 
@@ -574,23 +888,26 @@ provides: link your Gladys Plus account and paste your Open API key in the
 
 ## Troubleshooting
 
-| Symptom                            | What to check                                                                          |
-| ---------------------------------- | -------------------------------------------------------------------------------------- |
-| `Invalid connection string`        | The `sp://` URL, and that its password matches the box                                 |
-| `Invalid input`                    | The `channel` of the device (`id`/`pid` and `source`/`addr`)                           |
-| `no radio channel` in the logs     | The entry carries no channel: it needs `channel.id`, or the `pid`/`addr` pair          |
-| `no radio confirmation`            | Normal on equipment without feedback: set `wait: false`                                |
-| No device in the Discovery tab     | **Test the connection**: the device list probably did not parse                        |
-| The box is unreachable             | The `?gw=0&rhost=<IPv4>` part of the connection string                                 |
-| `Built-in service unavailable`     | The integration logs: the service logs its own startup there                           |
-| The box answers by hand, not here  | The `rhost=` IPv4 must be reachable **from the container**, not just from your desktop |
-| You have to click several times    | Raise **Command repeats** to `2` or `3`, or the device's own `repeat`                  |
-| A shutter shows no position        | Time it: `travel_up` / `travel_down`, then open or close it fully once                 |
-| The position drifts over time      | Re-time the travel, and open the shutter fully once a day to resynchronize it          |
-| No frame from an 868 MHz remote    | **Test the connection**: channel `1` is 433 MHz. Declare the device, or its `pid`      |
-| Remote attached, nothing moves     | **Test the connection**, _Heard_ line: it says whether the frames carry an order       |
-| `unreliable, graded N` in the logs | A frame graded too low: **Accept unreliable frames**, or move the box closer           |
-| A frame with a `pid` and no `addr` | The protocol is not decoded: put that `pid` in **Listening channel**                   |
+| Symptom                               | What to check                                                                                                    |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `Invalid connection string`           | **Test the connection**: it shows the `sp://` string, password removed                                           |
+| `Invalid input`                       | The `channel` of the device (`id`/`pid` and `source`/`addr`)                                                     |
+| `no radio channel` in the logs        | The entry carries no channel: it needs `channel.id`, or the `pid`/`addr` pair                                    |
+| `no radio confirmation`               | Normal on equipment without feedback: set `wait: false`                                                          |
+| No device in the Discovery tab        | **Test the connection**: the device list probably did not parse                                                  |
+| The box is unreachable                | The `?gw=0&rhost=<IPv4>` part of the connection string                                                           |
+| `Built-in service unavailable`        | The integration logs: the service logs its own startup there                                                     |
+| The box answers by hand, not here     | The `rhost=` IPv4 must be reachable **from the container**, not just from your desktop                           |
+| You have to click several times       | Raise **Command repeats** to `2` or `3`, or the device's own `repeat`                                            |
+| An order takes a second to leave      | `gw=1` in the connection string: turn **Internet gateway** off on airsend.cloud                                  |
+| An order is slow after a long pause   | The logs say where the time went — see [The first order after a long pause](#the-first-order-after-a-long-pause) |
+| A shutter shows no position           | Time it: `travel_up` / `travel_down`, then open or close it fully once                                           |
+| The position drifts over time         | Re-time the travel, and open the shutter fully once a day to resynchronize it                                    |
+| No frame from an 868 MHz remote       | **Test the connection**: channel `1` is 433 MHz. Declare the device, or its `pid`                                |
+| Remote attached, nothing moves        | **Test the connection**, _Heard_ line: it says whether the frames carry an order                                 |
+| `unreliable, graded N` in the logs    | A frame graded too low: **Accept unreliable frames**, or move the box closer                                     |
+| `did not carry the order` in the logs | The name that line gives the failure — see [When the box says no](#when-the-box-says-no)                         |
+| A frame with a `pid` and no `addr`    | The protocol is not decoded: put that `pid` in **Listening channel**                                             |
 
 The integration logs everything it does: read the integration logs from the
 Gladys UI (or `docker logs` on the host), and tick **Detailed logs (debug)** in
@@ -605,18 +922,18 @@ These are the settings Devmel asks for in its configuration screen in Gladys.
 | Getting started | `section` | No | The AirSend Web Service is included: it runs inside this integration, on http://127.0.0.1:33863, and there is nothing to install on your network. All it needs is the sp:// connection string of your box. Devices are configured in the AirSend app, then exported from airsend.cloud (Import/Export, JSON): paste that export below, the integration reads it as is. |
 | Use the built-in AirSend service | `boolean` | No | Run the AirSend Web Service inside the integration, on http://127.0.0.1:33863. Leave it on unless you already run that service elsewhere on your network. |
 | AirSend Web Service URL | `string` | No | Only if you run the AirSend Web Service yourself (Home Assistant add-on, Jeedom daemon, your own container): its address on your network, e.g. http://192.168.1.50:33863/. Leave empty to use the built-in one. |
-| Local connection string | `secret` | No | The sp:// URL exported by airsend.cloud, e.g. sp://password@[fe80::...]?gw=0&rhost=192.168.1.50 |
+| Local connection string | `secret` | No | The sp:// URL exported by airsend.cloud, pasted exactly as it is given to you — add nothing, remove nothing. It reads sp://password@fe80::...?gw=0&rhost=192.168.1.50 |
 | Devices | `string` | No | Your airsend.cloud JSON export, pasted as is: one entry per device, with its type and its radio channel (written as pid/addr). See the documentation. |
-| Listening channel | `number` | No | Leave empty: the box then listens to the radio protocol of the devices you declared, which is what pushes what it hears (wall remotes, sensors) to Gladys. Fill it only to listen to another protocol, by its pid: 1 is generic 433 MHz listening, and no 868 MHz remote (Profalux, Somfy io) is heard on it. 0 disables listening. |
-| Command repeats | `number` | No | How many extra times an order is sent on the air, the way a real remote repeats it while the button is held. Nothing acknowledges a radio order, so a frame lost in the noise is a click that did nothing: raise this to 2 or 3 if a device sometimes ignores Gladys. 0 sends each order once. A device can override it with its own repeat value. |
+| Listening channel | `string` | No | Which radio protocol the box listens to, by its pid. Leave it empty — or 1, which means the same thing — and it is deduced from the devices you declared: that is what pushes to Gladys what the box hears (wall remotes, sensors). "Test the connection" says on its Listening line which protocol was chosen and what it covers, and "Find a radio protocol" searches the pids by brand. Fill in a pid to listen to another protocol, the word generic for generic 433 MHz listening (its pid, 1, is taken), 0 to turn listening off. |
+| Command repeats | `number` | No | How many extra times an order is sent on the air, the way a real remote repeats it while the button is held. Nothing acknowledges a radio order, so a frame lost in the noise is a click that did nothing: raise this to 2 or 3 if a device sometimes ignores Gladys. 0 sends each order once. A device can override it with its own repeat value. It answers a frame lost in the noise, which nothing reports: an order the box itself says it did not carry is a different problem, and the logs name it. |
 | Refresh interval (s) | `number` | No | How often the box sensors are read, in seconds. A device can override it with its own refresh value. |
 | Accept unreliable frames | `boolean` | No | The box grades every frame it decodes, and the badly graded ones are normally ignored — as the official Jeedom plugin does. Turn this on when a remote is heard but never followed: its frames are then used anyway, at the risk of the occasional false trigger. It changes nothing for a protocol the box picks up without decoding it (no address in the logs): that one needs the listening channel set to its pid. |
-| Detailed logs (debug) | `boolean` | No | Log every radio frame the box hears, including the ones dropped as unreliable or left undecoded. Turn it on to find out why a remote does not show up, and off again once you know: it is verbose. Your connection string is never logged. |
+| Detailed logs (debug) | `boolean` | No | Log every radio frame the box hears, including the ones dropped as unreliable or left undecoded. Turn it on to find out why a remote does not show up, and off again once you know: it is verbose. The password of your connection string is never logged; the rest of it is, at this level, so you can see what Gladys is really holding. |
 
 ## How to install Devmel in Gladys
 
 1. In Gladys, open **Integrations**: Devmel appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:1.0.11`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:1.0.18`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 
