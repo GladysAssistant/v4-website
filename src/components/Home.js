@@ -1,41 +1,177 @@
 import React, { useState, useEffect } from "react";
 import classnames from "classnames";
-import styles from "./homeStyles.module.css";
 import Link from "@docusaurus/Link";
-// import Image from "@theme/IdealImage";
-import useBaseUrl from "@docusaurus/useBaseUrl";
-import { Integration } from "./Integration";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import Translate, { translate } from "@docusaurus/Translate";
+
+import styles from "./home/horizonStyles.module.css";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
-import HoverVideoPlayer from "react-hover-video-player";
 import { TestimonialHomeSection } from "./Testimonial";
-import PlayImage from "./play.svg";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
 
 import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
 
-import Translate, { translate } from "@docusaurus/Translate";
 import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
+const DEMO_URL = "https://demo.gladysassistant.com/dashboard";
+
 const COMPATIBILITIES = [
-  [
-    { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
-    { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
-    { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
-    { title: "Tuya", imgSrc: "tuya.jpg", docKey: "external/tuya/" },
-  ],
-  [
-    { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/netatmo/" },
-    { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-    { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/zendure/" },
-    { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
-  ],
+  { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
+  { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
+  { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
+  { title: "Tuya", imgSrc: "tuya.jpg", docKey: "external/tuya/" },
+  { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/netatmo/" },
+  { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
+  { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/zendure/" },
+  { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
 ];
 
 const testimonials = {
   fr: testimonialFr,
   en: testimonialEn,
 };
+
+/**
+ * The product shots come from the app itself, in its default light "Horizon"
+ * glass theme, exported per locale at three or four widths. `name` is the
+ * file prefix in /static/img/home/horizon; "hero-dark" is the one dark
+ * capture, used by the light/dark section.
+ */
+const SHOT_WIDTHS = {
+  hero: [800, 1200, 1600, 2400],
+  feature: [640, 1000, 1400],
+  // the light/dark pair shows two shots side by side, so each one gets the
+  // narrower set (the light hero ships both)
+  pair: [640, 1000, 1400],
+};
+
+const Icon = ({ children, ...props }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    {...props}
+  >
+    {children}
+  </svg>
+);
+
+const ICONS = {
+  shield: (
+    <Icon>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </Icon>
+  ),
+  sliders: (
+    <Icon>
+      <line x1="4" y1="21" x2="4" y2="14" />
+      <line x1="4" y1="10" x2="4" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12" y2="3" />
+      <line x1="20" y1="21" x2="20" y2="16" />
+      <line x1="20" y1="12" x2="20" y2="3" />
+      <line x1="1" y1="14" x2="7" y2="14" />
+      <line x1="9" y1="8" x2="15" y2="8" />
+      <line x1="17" y1="16" x2="23" y2="16" />
+    </Icon>
+  ),
+  layout: (
+    <Icon>
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <line x1="3" y1="9" x2="21" y2="9" />
+      <line x1="9" y1="21" x2="9" y2="9" />
+    </Icon>
+  ),
+  award: (
+    <Icon>
+      <circle cx="12" cy="8" r="7" />
+      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+    </Icon>
+  ),
+  zap: (
+    <Icon>
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </Icon>
+  ),
+  refresh: (
+    <Icon>
+      <polyline points="23 4 23 10 17 10" />
+      <polyline points="1 20 1 14 7 14" />
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+    </Icon>
+  ),
+  download: (
+    <Icon className={styles.btnIcon}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </Icon>
+  ),
+  play: (
+    <Icon className={styles.btnIcon}>
+      <polygon points="6 3 20 12 6 21 6 3" />
+    </Icon>
+  ),
+  sparkle: (
+    <Icon strokeWidth="1.8" width="13" height="13">
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+    </Icon>
+  ),
+};
+
+/**
+ * A product screenshot, in its glass frame. The file naming convention is
+ * `<name>-<lang>-<width>.webp`, so one component serves every shot.
+ */
+const Shot = ({ asset, name, lang, alt, widths, sizes, priority }) => {
+  const url = (width) =>
+    asset(`img/home/horizon/${name}-${lang}-${width}.webp`);
+  const srcSet = widths.map((width) => `${url(width)} ${width}w`).join(", ");
+
+  return (
+    <div className={styles.shotFrame}>
+      <img
+        src={url(widths[widths.length - 1])}
+        srcSet={srcSet}
+        sizes={sizes}
+        width="1600"
+        height="950"
+        alt={alt}
+        loading={priority ? "eager" : "lazy"}
+        fetchpriority={priority ? "high" : undefined}
+        decoding="async"
+      />
+    </div>
+  );
+};
+
+const FeatureRow = ({ reversed, eyebrow, title, text, shot }) => (
+  <div
+    className={classnames(styles.featureRow, {
+      [styles.featureRowReversed]: reversed,
+    })}
+  >
+    <div className={styles.featureCopy}>
+      <span className={styles.eyebrow}>{eyebrow}</span>
+      <h3 className={styles.featureTitle}>{title}</h3>
+      <p className={styles.featureText}>{text}</p>
+    </div>
+    <div>{shot}</div>
+  </div>
+);
+
+const GlassCard = ({ icon, title, text }) => (
+  <div className={styles.glassCard}>
+    <span className={styles.glassCardIcon}>{ICONS[icon]}</span>
+    <h3 className={styles.glassCardTitle}>{title}</h3>
+    <p className={styles.glassCardText}>{text}</p>
+  </div>
+);
 
 const FAQQuestions = {
   fr: [
@@ -48,8 +184,8 @@ const FAQQuestions = {
           <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
             en une seule commande Docker
           </Link>
-          . Aucun abonnement requis pour utiliser Gladys, aucune limitation, aucune
-          carte bancaire demandée.
+          . Aucun abonnement requis pour utiliser Gladys, aucune limitation,
+          aucune carte bancaire demandée.
           <br />
           <br />
           Vous pouvez l'installer sur n'importe quelle machine Linux : mini-PC,
@@ -69,9 +205,9 @@ const FAQQuestions = {
           <br />
           <br />
           <b>Pour aller plus vite :</b> le{" "}
-          <Link href="/fr/starter-kit/">kit de démarrage</Link> arrive avec Gladys
-          déjà installée. Vous branchez, vous suivez le guide, et vous pouvez
-          vous concentrer sur votre maison connectée.
+          <Link href="/fr/starter-kit/">kit de démarrage</Link> arrive avec
+          Gladys déjà installée. Vous branchez, vous suivez le guide, et vous
+          pouvez vous concentrer sur votre maison connectée.
         </>
       ),
     },
@@ -85,9 +221,9 @@ const FAQQuestions = {
           <br />
           <br />
           Pas de cloud obligatoire, pas de tracking, pas de revente de données.
-          Des services optionnels comme{" "}
-          <a href="/fr/plus">Gladys Plus</a> existent (accès à distance, IA…),
-          mais le cœur de Gladys reste auto-hébergé. 🔒
+          Des services optionnels comme <a href="/fr/plus">Gladys Plus</a>{" "}
+          existent (accès à distance, IA…), mais le cœur de Gladys reste
+          auto-hébergé. 🔒
         </>
       ),
     },
@@ -162,10 +298,10 @@ const FAQQuestions = {
       title: <>Is it hard to install?</>,
       response: (
         <>
-          <b>It takes some technical steps, but we guide you through them.</b> You
-          first need a Linux machine (Ubuntu Server, for example), then you run
-          Gladys via Docker. Our documentation walks you through each step with
-          screenshots and videos.
+          <b>It takes some technical steps, but we guide you through them.</b>{" "}
+          You first need a Linux machine (Ubuntu Server, for example), then you
+          run Gladys via Docker. Our documentation walks you through each step
+          with screenshots and videos.
         </>
       ),
     },
@@ -190,104 +326,115 @@ const FAQQuestions = {
         <>
           <b>Very likely!</b> Gladys supports{" "}
           <Link href="/docs/integrations/">thousands of devices</Link> through
-          open protocols like Zigbee, Matter, and MQTT, plus native
-          integrations (Sonos, RTSP cameras, and many more).
+          open protocols like Zigbee, Matter, and MQTT, plus native integrations
+          (Sonos, RTSP cameras, and many more).
           <br />
           <br />
           Device not listed yet? Have a look at{" "}
-          <Link href="/docs/integrations/external/">
-            external integrations
-          </Link>
-          : community-built integrations, installable in one click, with a list
-          that keeps growing. And if yours is missing,{" "}
+          <Link href="/docs/integrations/external/">external integrations</Link>{" "}
+          : community-built integrations you can install in one click, and the
+          list keeps growing. If yours is missing,{" "}
           <Link href="/docs/dev/external-integrations/">build it yourself</Link>{" "}
-          in the language you like, or{" "}
+          in the language of your choice, or{" "}
           <a href="https://community.gladysassistant.com/">ask on the forum</a>.
         </>
       ),
     },
     {
-      title: <>Can I access Gladys remotely?</>,
+      title: <>Can I access Gladys from outside my home?</>,
       response: (
         <>
-          <b>Yes, in two ways:</b>
+          <b>Yes, in several ways:</b>
           <br />
           <br />
           <b>Option 1 (recommended):</b> <a href="/plus">Gladys Plus</a>, our
-          optional service that gives you secure access (end-to-end encrypted)
+          optional service that gives you secure (end-to-end encrypted) access
           from anywhere. Works as an app on iOS and Android.
           <br />
           <br />
           <b>Option 2 (for experts):</b> Set up your own VPN or reverse proxy.
-          Gladys remains 100% free, but requires technical skills.
+          Gladys stays 100% free, but this requires technical skills.
         </>
       ),
     },
   ],
 };
 
-const MainImageResponsive = ({ imageKey, alt, sizes }) => {
-  let srcSet = "";
+const PRESS = [
+  {
+    url: "https://www.igen.fr/domotique/2026/02/gladys-assistant-la-domotique-plus-avancee-que-maison-et-plus-accessible-que-home-assistant-154785",
+    source: "iGen.fr",
+    logo: "/img/press/igen.png",
+    title:
+      "Gladys Assistant, la domotique plus avancée que Maison et plus accessible que Home Assistant",
+    linkLabel: "Lire l'article →",
+  },
+  {
+    url: "https://www.antoineguilbert.fr/gladys-assistant-alternative-home-assistant/",
+    source: "antoineguilbert.fr",
+    logo: "/img/press/antoineguilbert.jpg",
+    title:
+      "J'ai testé Gladys Assistant : mon avis sur l'alternative à Home Assistant",
+    linkLabel: "Lire l'article →",
+  },
+  {
+    url: "https://mcflypartages.fr/blog/gladys_assistant_intro/",
+    source: "mcflypartages.fr",
+    logo: "/img/press/mcflypartages.jpg",
+    title:
+      "Gladys Assistant - Une solution domotique (Cocorico) accessible et prometteuse",
+    linkLabel: "Lire l'article →",
+  },
+  {
+    url: "https://www.youtube.com/watch?v=iqkG3mRUeBU",
+    source: "AyLabs · YouTube",
+    logo: "/img/press/youtube.png",
+    thumbnail: "/img/press/youtube-aylabs-thumbnail.jpg",
+    title: "Je quitte HOME ASSISTANT ?! (Découverte Gladys Assistant)",
+    linkLabel: "Voir la vidéo →",
+  },
+];
 
-  sizes.forEach((size) => {
-    if (srcSet.length > 0) {
-      srcSet += ",\n";
-    }
-    srcSet += `${useBaseUrl(
-      `/img/home/main_screenshot/${imageKey},w_${size}.png`
-    )} ${size}w`;
-  });
-
-  return (
-    <img
-      fetchpriority="high"
-      sizes="(max-width: 2800px) 100vw, 2800px"
-      srcSet={srcSet}
-      src={useBaseUrl(`/img/home/main_screenshot/${imageKey},w_2800.png`)}
-      alt={alt}
-    ></img>
-  );
-};
-
-const PausedOverlay2 = ({ videoSrc, imgSrc, alt }) => (
-  <HoverVideoPlayer
-    className={styles.coolFeatureVideoPlayer}
-    videoSrc={videoSrc}
-    pausedOverlay={
-      <div className={styles.coolFeatureVideoPausedOverlay}>
-        <img src={imgSrc} alt={alt} />
-        <PlayImage className={styles.coolFeatureVideoPausedOverlaySvg} />
-      </div>
-    }
-    loadingOverlay={
-      <div className="loading-overlay">
-        <div className="loading-spinner" />
-      </div>
-    }
-  />
-);
-
-const PausedOverlay = ({ videoSrc, imgSrc, alt }) => (
-  <video autoPlay loop muted playsInline>
-    <source src={videoSrc} type="video/mp4" />
-  </video>
-);
+const YOUTUBE_VIDEOS = [
+  {
+    id: "X-UtYMJoKV4",
+    title: "Alexa est officiellement dépassée : voici le futur",
+  },
+  {
+    id: "iVFXXDO798A",
+    title: "Home Assistant vs Gladys Assistant : Le Comparatif Honnête 2026",
+  },
+  {
+    id: "gn-bBBs39G0",
+    title: "Comment rendre n'importe quel lave-linge \"Intelligent\" ?",
+  },
+];
 
 const BLACK_FRIDAY_ACTIVE = BLACK_FRIDAY_CONFIG.ENABLED;
 const blackFridayEndDate = BLACK_FRIDAY_CONFIG.END_DATE;
 
-function Home({ integrations, lang }) {
-  const [openPanel, setOpenPanel] = React.useState(1);
+function Home({ lang }) {
   const [isBlackFridayActive, setIsBlackFridayActive] =
     useState(BLACK_FRIDAY_ACTIVE);
   const [blackFridayTimeLeft, setBlackFridayTimeLeft] = useState(null);
 
-  const shouldDisplayStarterKitLink =
-    lang === "fr" ||
-    (navigator && navigator.language && navigator.language.startsWith("fr"));
+  // One base URL for every static asset: `useBaseUrl` is a hook, so it
+  // cannot be called from inside the .map()s below.
+  const { siteConfig } = useDocusaurusContext();
+  const asset = (path) => `${siteConfig.baseUrl}${path.replace(/^\//, "")}`;
+
+  const docsUrl = lang === "en" ? "/docs" : `/${lang}/docs`;
+  const integrationsUrl =
+    lang === "en" ? "/docs/integrations" : `/${lang}/docs/integrations`;
+
+  // The starter kit is a French-market offer: keep it out of the English page.
+  const shouldDisplayStarterKitLink = lang === "fr";
 
   useEffect(() => {
-    // Black Friday countdown
+    if (!BLACK_FRIDAY_ACTIVE) {
+      return undefined;
+    }
+
     const updateBlackFridayCountdown = () => {
       const now = new Date();
       const distance = blackFridayEndDate - now;
@@ -313,373 +460,487 @@ function Home({ integrations, lang }) {
     return () => clearInterval(interval);
   }, []);
 
+  const installButton = (
+    <Link className={classnames(styles.btn, styles.btnPrimary)} href={docsUrl}>
+      {ICONS.download}
+      <Translate
+        id="home.horizon.installButton"
+        description="Primary call to action of the homepage: install Gladys"
+      >
+        Install Gladys
+      </Translate>
+    </Link>
+  );
+
+  const demoButton = (
+    <Link className={classnames(styles.btn, styles.btnGlass)} href={DEMO_URL}>
+      {ICONS.play}
+      <Translate
+        id="home.horizon.demoButton"
+        description="Secondary call to action of the homepage: open the online demo"
+      >
+        Try the live demo
+      </Translate>
+    </Link>
+  );
+
   return (
-    <>
+    <div className={styles.horizon}>
       {isBlackFridayActive && shouldDisplayStarterKitLink && (
         <div
           style={{
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
-            padding: "1rem 1rem",
+            padding: "1rem",
             textAlign: "center",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
           }}
         >
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <p
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: "bold",
-                margin: "0 0 0.5rem 0",
-                color: "white",
-              }}
-            >
-              🎁{" "}
-              {lang === "fr"
-                ? "BLACK FRIDAY : Promo sur le kit de démarrage et Gladys Plus"
-                : "BLACK FRIDAY: Gladys Plus -30% off"}
-            </p>
-            {blackFridayTimeLeft && (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: "0.75rem",
-                  flexWrap: "wrap",
-                  fontSize: "0.9rem",
-                }}
-              >
-                {blackFridayTimeLeft.days > 0 && (
-                  <span style={{ opacity: 0.95 }}>
-                    {blackFridayTimeLeft.days} {lang === "fr" ? "j" : "d"}
-                  </span>
-                )}
-                <span style={{ opacity: 0.95 }}>
-                  {blackFridayTimeLeft.hours}h {blackFridayTimeLeft.minutes}m{" "}
-                  {blackFridayTimeLeft.seconds}s
-                </span>
-              </div>
-            )}
-          </div>
+          <p
+            style={{
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+              margin: "0 0 0.5rem 0",
+              color: "white",
+            }}
+          >
+            🎁{" "}
+            {lang === "fr"
+              ? "BLACK FRIDAY : Promo sur le kit de démarrage et Gladys Plus"
+              : "BLACK FRIDAY: Gladys Plus -30% off"}
+          </p>
+          {blackFridayTimeLeft && (
+            <div style={{ fontSize: "0.9rem", opacity: 0.95 }}>
+              {blackFridayTimeLeft.days > 0 &&
+                `${blackFridayTimeLeft.days} ${lang === "fr" ? "j " : "d "}`}
+              {blackFridayTimeLeft.hours}h {blackFridayTimeLeft.minutes}m{" "}
+              {blackFridayTimeLeft.seconds}s
+            </div>
+          )}
         </div>
       )}
-      <header className={classnames("shadow--lw")}>
-        <div className={styles.heroBanner}>
-          <div className={styles.flexContainer}>
-            <div className={classnames("padding-top--lg")}>
-              <h1 className={styles.heroTitle}>
-                <Translate id="home.title" description="The home page title">
-                  Gladys Assistant
-                </Translate>
-              </h1>
-              <p className={styles.heroSubtitle}>
+
+      <header className={styles.hero}>
+        <span className={styles.badge}>
+          <span className={styles.badgeDot}>{ICONS.sparkle}</span>
+          <Translate
+            id="home.horizon.badge"
+            description="Small badge above the homepage title"
+          >
+            Gladys 5 · New design
+          </Translate>
+        </span>
+
+        <h1 className={styles.heroTitle}>
+          <Translate id="home.title" description="The home page title">
+            Gladys Assistant
+          </Translate>
+          <br />
+          <span className={styles.heroTitleAccent}>
+            <Translate
+              id="home.horizon.titleClaim"
+              description="Second line of the homepage title"
+            >
+              A smart home that stays yours.
+            </Translate>
+          </span>
+        </h1>
+
+        <p className={styles.heroSubtitle}>
+          <Translate
+            id="home.description"
+            description="The home page description"
+          >
+            Open-source, local smart home. Matter-ready, voice-controlled,
+            private by design.
+          </Translate>
+        </p>
+
+        <div className={styles.heroActions}>
+          {installButton}
+          {demoButton}
+        </div>
+
+        <div className={styles.heroTrust}>
+          <span>
+            <i className={styles.heroTrustDot} />
+            <Translate
+              id="home.horizon.trustFree"
+              description="Homepage hero reassurance: free and open source"
+            >
+              Free and open source
+            </Translate>
+          </span>
+          <span>
+            <i className={styles.heroTrustDot} />
+            <Translate
+              id="home.horizon.trustSelfHosted"
+              description="Homepage hero reassurance: self-hosted"
+            >
+              Self-hosted, no mandatory cloud
+            </Translate>
+          </span>
+          <span>
+            <i className={styles.heroTrustDot} />
+            <Translate
+              id="home.horizon.trustDocker"
+              description="Homepage hero reassurance: one Docker command"
+            >
+              One Docker command
+            </Translate>
+          </span>
+        </div>
+
+        <div className={styles.heroShot}>
+          <Shot
+            asset={asset}
+            name="hero"
+            lang={lang}
+            widths={SHOT_WIDTHS.hero}
+            sizes="(max-width: 1240px) 100vw, 1120px"
+            alt={translate({
+              id: "home.horizon.heroShotAlt",
+              description: "Alt text of the main homepage screenshot",
+              message: "The Gladys Assistant dashboard",
+            })}
+            priority
+          />
+        </div>
+      </header>
+
+      <main>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.eyebrow}>
+              <Translate
+                id="home.horizon.featuresEyebrow"
+                description="Eyebrow above the features section"
+              >
+                Features
+              </Translate>
+            </span>
+            <h2 className={styles.sectionTitle}>
+              <Translate
+                id="home.coolFeatures.title"
+                description="Cool features description on the homepage"
+              >
+                Powerful Features, Ready to Use
+              </Translate>
+            </h2>
+          </div>
+
+          <FeatureRow
+            eyebrow={
+              <Translate
+                id="home.horizon.eyebrowDashboard"
+                description="Eyebrow of the dashboard feature"
+              >
+                Dashboard
+              </Translate>
+            }
+            title={
+              <Translate
+                id="home.coolFeatures.dashboardTitle"
+                description="Cool features dashboard title on the homepage"
+              >
+                See Everything at a Glance
+              </Translate>
+            }
+            text={
+              <Translate
+                id="home.coolFeatures.dashboardDescrition"
+                description="Cool features dashboard title on the homepage"
+              >
+                Temperature, security cameras, presence: monitor everything from
+                one beautiful dashboard.
+              </Translate>
+            }
+            shot={
+              <Shot
+                asset={asset}
+                name="comfort"
+                lang={lang}
+                widths={SHOT_WIDTHS.feature}
+                sizes="(max-width: 996px) 100vw, 620px"
+                alt={translate({
+                  id: "home.horizon.dashboardShotAlt",
+                  description: "Alt text of the dashboard screenshot",
+                  message: "A Gladys Assistant comfort dashboard",
+                })}
+              />
+            }
+          />
+
+          <FeatureRow
+            reversed
+            eyebrow={
+              <Translate
+                id="home.horizon.eyebrowScenes"
+                description="Eyebrow of the scenes feature"
+              >
+                Scenes
+              </Translate>
+            }
+            title={
+              <Translate
+                id="home.coolFeatures.sceneTitle"
+                description="Cool features scene title on the homepage"
+              >
+                Automate Your Entire Day
+              </Translate>
+            }
+            text={
+              <Translate
+                id="home.coolFeatures.sceneDescription"
+                description="Cool features scene title on the homepage"
+              >
+                Coffee brewing, lights turning on, music playing: all automatic.
+                No coding required.
+              </Translate>
+            }
+            shot={
+              <Shot
+                asset={asset}
+                name="scene"
+                lang={lang}
+                widths={SHOT_WIDTHS.feature}
+                sizes="(max-width: 996px) 100vw, 620px"
+                alt={translate({
+                  id: "home.horizon.sceneShotAlt",
+                  description: "Alt text of the scene screenshot",
+                  message: "The Gladys Assistant scene editor",
+                })}
+              />
+            }
+          />
+
+          <FeatureRow
+            eyebrow={
+              <Translate
+                id="home.horizon.eyebrowEnergy"
+                description="Eyebrow of the energy feature"
+              >
+                Energy
+              </Translate>
+            }
+            title={
+              <Translate
+                id="home.coolFeatures.energyTitle"
+                description="Cool features energy title on the homepage"
+              >
+                Know Exactly What Your Home Consumes
+              </Translate>
+            }
+            text={
+              <Translate
+                id="home.coolFeatures.energyDescription"
+                description="Cool features energy description on the homepage"
+              >
+                Electricity, solar production, home battery: follow your energy
+                in real time and cut the bill where it matters.
+              </Translate>
+            }
+            shot={
+              <Shot
+                asset={asset}
+                name="energy"
+                lang={lang}
+                widths={SHOT_WIDTHS.feature}
+                sizes="(max-width: 996px) 100vw, 620px"
+                alt={translate({
+                  id: "home.horizon.energyShotAlt",
+                  description: "Alt text of the energy screenshot",
+                  message: "A Gladys Assistant energy dashboard",
+                })}
+              />
+            }
+          />
+
+          <FeatureRow
+            reversed
+            eyebrow={
+              <Translate
+                id="home.horizon.eyebrowAssistant"
+                description="Eyebrow of the assistant feature"
+              >
+                Assistant
+              </Translate>
+            }
+            title={
+              <Translate
+                id="home.coolFeatures.chatTitle"
+                description="Cool features chat title on the homepage"
+              >
+                Control Your Home by Voice
+              </Translate>
+            }
+            text={
+              <Translate
+                id="home.coolFeatures.chatDescription"
+                description="Cool features chat title on the homepage"
+              >
+                "Turn on the light in the kitchen" - Gladys responds instantly
+                via its built-in voice assistant or by message on your phone.
+              </Translate>
+            }
+            shot={
+              <Shot
+                asset={asset}
+                name="chat"
+                lang={lang}
+                widths={SHOT_WIDTHS.feature}
+                sizes="(max-width: 996px) 100vw, 620px"
+                alt={translate({
+                  id: "home.horizon.chatShotAlt",
+                  description: "Alt text of the chat screenshot",
+                  message: "Talking to Gladys Assistant",
+                })}
+              />
+            }
+          />
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.eyebrow}>
+              <Translate
+                id="home.horizon.themesEyebrow"
+                description="Eyebrow above the light/dark section"
+              >
+                Appearance
+              </Translate>
+            </span>
+            <h2 className={styles.sectionTitle}>
+              <Translate
+                id="home.horizon.themesTitle"
+                description="Title of the light/dark section"
+              >
+                Light or dark, your call
+              </Translate>
+            </h2>
+            <p className={styles.sectionLead}>
+              <Translate
+                id="home.horizon.themesText"
+                description="Description of the light/dark section"
+              >
+                The same glass, the same layout, two moods. Gladys follows
+                your system or stays on the one you pick, and you can switch
+                whenever you like, in one click.
+              </Translate>
+            </p>
+          </div>
+
+          <div className={styles.themeGrid}>
+            <div>
+              <Shot
+                asset={asset}
+                name="hero"
+                lang={lang}
+                widths={SHOT_WIDTHS.pair}
+                sizes="(max-width: 820px) 100vw, 560px"
+                alt={translate({
+                  id: "home.horizon.heroShotAlt",
+                  description: "Alt text of the main homepage screenshot",
+                  message: "The Gladys Assistant dashboard",
+                })}
+              />
+              <span className={styles.themeLabel}>
+                <i
+                  className={classnames(
+                    styles.themeSwatch,
+                    styles.themeSwatchLight
+                  )}
+                />
                 <Translate
-                  id="home.description"
-                  description="The home page description"
+                  id="home.horizon.themeLight"
+                  description="Label of the light theme screenshot"
                 >
-                  Open-source, local smart home. Matter-ready, voice-controlled,
-                  private by design.
+                  Light mode
                 </Translate>
-              </p>
-              <span className="container">
-                <div
-                  className="margin-right--md"
-                  style={{ display: "inline-block", verticalAlign: "top" }}
+              </span>
+            </div>
+            <div>
+              <Shot
+                asset={asset}
+                name="hero-dark"
+                lang={lang}
+                widths={SHOT_WIDTHS.pair}
+                sizes="(max-width: 820px) 100vw, 560px"
+                alt={translate({
+                  id: "home.horizon.heroShotAltDark",
+                  description: "Alt text of the dark theme screenshot",
+                  message: "The Gladys Assistant dashboard in dark mode",
+                })}
+              />
+              <span className={styles.themeLabel}>
+                <i
+                  className={classnames(
+                    styles.themeSwatch,
+                    styles.themeSwatchDark
+                  )}
+                />
+                <Translate
+                  id="home.horizon.themeDark"
+                  description="Label of the dark theme screenshot"
                 >
-                  <Link
-                    className={classnames("button", styles.heroButton, {
-                      "button--primary": true,
-                    })}
-                    href={lang === "en" ? `/docs` : `/${lang}/docs`}
-                  >
-                    <Translate
-                      id="home.gettingStartedButton"
-                      description="The getting started button of the homepage"
-                    >
-                      Get Started
-                    </Translate>
-                  </Link>
-                  <div
-                    style={{
-                      fontSize: "0.85em",
-                      marginTop: "0.5rem",
-                      opacity: 0.8,
-                      textAlign: "center",
-                    }}
-                  >
-                    <Translate
-                      id="home.gettingStartedSubtext"
-                      description="The getting started button subtext"
-                    >
-                      Free • Guided setup
-                    </Translate>
-                  </div>
-                </div>
-                {shouldDisplayStarterKitLink && (
-                  <div
-                    className="margin-right--md"
-                    style={{ display: "inline-block", verticalAlign: "top" }}
-                  >
-                    <Link
-                      className={classnames(
-                        "button",
-                        styles.heroButton,
-                        isBlackFridayActive ? "" : "button--secondary"
-                      )}
-                      href={
-                        lang === "en" ? `/starter-kit` : `/${lang}/starter-kit`
-                      }
-                      style={
-                        isBlackFridayActive
-                          ? {
-                              background:
-                                "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                              color: "white",
-                              border: "none",
-                            }
-                          : undefined
-                      }
-                    >
-                      {isBlackFridayActive ? (
-                        lang === "fr" ? (
-                          "🎁 Offres Black Friday"
-                        ) : (
-                          "🎁 Black Friday Deals"
-                        )
-                      ) : (
-                        <Translate
-                          id="home.starterKitButton"
-                          description="The getting started button of the homepage"
-                        >
-                          Discover the Starter Kit
-                        </Translate>
-                      )}
-                    </Link>
-                  </div>
-                )}
-                {false && (
-                  <div
-                    className="margin-right--md"
-                    style={{ display: "inline-block" }}
-                  >
-                    <Link
-                      className={classnames(
-                        "button button--outline button--secondary",
-                        styles.heroButton
-                      )}
-                      href="https://demo.gladysassistant.com/dashboard"
-                    >
-                      <Translate
-                        id="home.tryOnlineButton"
-                        description="The try online button of the homepage"
-                      >
-                        Try Online
-                      </Translate>
-                    </Link>
-                  </div>
-                )}
+                  Dark mode
+                </Translate>
               </span>
             </div>
           </div>
-          <div className={styles.flexContainer}>
-            <div className={styles.heroImg}>
-              <MainImageResponsive
-                imageKey={
-                  lang === "en"
-                    ? "main_screenshot_en_j5czyj_c_scale"
-                    : "main_screenshot_fr_ncm1yr_c_scale"
-                }
-                sizes={
-                  lang === "en"
-                    ? [
-                        480, 850, 1142, 1388, 1623, 1839, 2022, 2181, 2379,
-                        2526, 2694, 2800,
-                      ]
-                    : [
-                        480, 825, 1090, 1342, 1548, 1756, 1951, 2083, 2254,
-                        2412, 2568, 2731, 2800,
-                      ]
-                }
-                alt="Gladys Assistant Demo Image"
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-      <main>
-        <div className={classnames(styles.homeSection)}>
-          <h2 className={styles.secondaryTitle}>
-            <Translate
-              id="home.coolFeatures.title"
-              description="Cool features description on the homepage"
-            >
-              Powerful Features, Ready to Use
-            </Translate>
-          </h2>
-          <div className={styles.coolFeatureFlexContainer}>
-            <div className={styles.coolFeatureItem}>
-              <h4>
-                <Translate
-                  id="home.coolFeatures.dashboardTitle"
-                  description="Cool features dashboard title on the homepage"
-                >
-                  See Everything at a Glance
-                </Translate>
-              </h4>
-              <p>
-                <Translate
-                  id="home.coolFeatures.dashboardDescrition"
-                  description="Cool features dashboard title on the homepage"
-                >
-                  Temperature, security cameras, presence: monitor everything
-                  from one beautiful dashboard.
-                </Translate>
-              </p>
-            </div>
-            <div className={styles.coolFeatureItem}>
-              <PausedOverlay
-                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/dashboard_${lang}.mp4`}
-                imgSrc={useBaseUrl(
-                  `/img/home/video_thumbnails/dashboard_${lang}.png`
-                )}
-                alt="Dashboard"
-              />
-            </div>
-          </div>
-          <div
-            className={classnames(
-              styles.coolFeatureFlexContainer,
-              styles.coolFeatureFlexContainerToReverse
-            )}
-          >
-            <div className={styles.coolFeatureItem}>
-              <PausedOverlay
-                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/scene_${lang}.mp4`}
-                imgSrc={useBaseUrl(
-                  `/img/home/video_thumbnails/scene_${lang}.png`
-                )}
-                alt="Scene"
-              />
-            </div>
-            <div className={styles.coolFeatureItem}>
-              <h4>
-                <Translate
-                  id="home.coolFeatures.sceneTitle"
-                  description="Cool features scene title on the homepage"
-                >
-                  Automate Your Entire Day
-                </Translate>
-              </h4>
-              <p>
-                <Translate
-                  id="home.coolFeatures.sceneDescription"
-                  description="Cool features scene title on the homepage"
-                >
-                  Coffee brewing, lights turning on, music playing: all
-                  automatic. No coding required.
-                </Translate>
-              </p>
-            </div>
-          </div>
-          <div className={styles.coolFeatureFlexContainer}>
-            <div className={styles.coolFeatureItem}>
-              <h4>
-                <Translate
-                  id="home.coolFeatures.chatTitle"
-                  description="Cool features chat title on the homepage"
-                >
-                  Control Your Home by Voice
-                </Translate>
-              </h4>
-              <p>
-                <Translate
-                  id="home.coolFeatures.chatDescription"
-                  description="Cool features chat title on the homepage"
-                >
-                  "Turn on the light in the kitchen" - Gladys responds instantly
-                  via its built-in voice assistant or by message on your phone.
-                </Translate>
-              </p>
-            </div>
-            <div className={styles.coolFeatureItem}>
-              <PausedOverlay
-                videoSrc={`https://gladysassistant-assets.b-cdn.net/home/assistant-vocal-short-extra-small.mp4`}
-                imgSrc={useBaseUrl(
-                  `/img/home/video_thumbnails/assistant-vocal-short.jpg`
-                )}
-                alt="Voice assistant"
-              />
-            </div>
-          </div>
-          <div style={{ textAlign: "center", marginTop: "3rem" }}>
-            <Link
-              className="button button--primary button--lg"
-              href={lang === "en" ? `/docs` : `/${lang}/docs`}
-            >
-              <Translate
-                id="home.ctaAfterFeatures"
-                description="CTA after features section"
-              >
-                Try Gladys Now - It's Free
-              </Translate>
-            </Link>
-          </div>
-        </div>
+        </section>
 
-        <div
-          className={classnames(
-            styles.homeSection,
-            styles.compatibilitiesSection
-          )}
-        >
-          <h2 className={styles.secondaryTitle}>
-            <Translate
-              id="home.compatibilities.title"
-              description="Cool features chat title on the homepage"
-            >
-              Works With Everything You Own
-            </Translate>
-          </h2>
-          <div className="row">
-            <div className="col col--12">
-              <p className="text--center">
-                <Translate
-                  id="home.integrations.description"
-                  description="Integrations description of the homepage"
-                >
-                  Open protocols, native integrations, and community external
-                  integrations for everything else.
-                </Translate>
-              </p>
-              {COMPATIBILITIES.map((row) => (
-                <div className={styles.compatibilitiesRow}>
-                  {row.map((item) => (
-                    <div className={styles.compatibilitiesCol}>
-                      <a href={useBaseUrl(`/docs/integrations/${item.docKey}`)}>
-                        <img
-                          src={useBaseUrl(
-                            "/img/home/compatibilities/" + item.imgSrc
-                          )}
-                          width="254"
-                          height="169"
-                          alt={item.title}
-                        />
-                        <h5>{item.title}</h5>
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.eyebrow}>
+              <Translate
+                id="home.horizon.compatibilitiesEyebrow"
+                description="Eyebrow above the compatibilities section"
+              >
+                Compatibility
+              </Translate>
+            </span>
+            <h2 className={styles.sectionTitle}>
+              <Translate
+                id="home.compatibilities.title"
+                description="Cool features chat title on the homepage"
+              >
+                Works With Everything You Own
+              </Translate>
+            </h2>
+            <p className={styles.sectionLead}>
+              <Translate
+                id="home.integrations.description"
+                description="Integrations description of the homepage"
+              >
+                Open protocols, native integrations, and community external
+                integrations for everything else.
+              </Translate>
+            </p>
           </div>
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+
+          <div className={styles.compatGrid}>
+            {COMPATIBILITIES.map((item) => (
+              <a
+                key={item.title}
+                className={styles.compatTile}
+                href={asset(`docs/integrations/${item.docKey}`)}
+              >
+                <img
+                  src={asset(`img/home/compatibilities/${item.imgSrc}`)}
+                  width="254"
+                  height="169"
+                  loading="lazy"
+                  alt={item.title}
+                />
+                <span className={styles.compatTileLabel}>{item.title}</span>
+              </a>
+            ))}
+          </div>
+
+          <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
             <Link
-              className="button button--secondary button--lg"
-              href={
-                lang === "en"
-                  ? `/docs/integrations`
-                  : `/${lang}/docs/integrations`
-              }
+              className={classnames(styles.btn, styles.btnQuiet)}
+              href={integrationsUrl}
             >
               <Translate
                 id="home.ctaAfterIntegrations"
@@ -689,47 +950,60 @@ function Home({ integrations, lang }) {
               </Translate>
             </Link>
           </div>
-        </div>
+        </section>
 
-        <div className={classnames(styles.homeSection)}>
-          <h2 className={styles.secondaryTitle}>
-            <Translate
-              id="home.characteristics.title"
-              description="Characteristics chat title on the homepage"
-            >
-              Built Different: Privacy-First, User-Focused
-            </Translate>
-          </h2>
-          <div className={styles.featureFlexContainer}>
-            <div className={styles.feature}>
-              <h4>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.eyebrow}>
+              <Translate
+                id="home.horizon.principlesEyebrow"
+                description="Eyebrow above the principles section"
+              >
+                Principles
+              </Translate>
+            </span>
+            <h2 className={styles.sectionTitle}>
+              <Translate
+                id="home.characteristics.title"
+                description="Characteristics chat title on the homepage"
+              >
+                Built Different: Privacy-First, User-Focused
+              </Translate>
+            </h2>
+          </div>
+
+          <div className={styles.cardGrid}>
+            <GlassCard
+              icon="shield"
+              title={
                 <Translate
                   id="home.characteristics.privacyTitle"
                   description="Characteristics privacy title on the homepage"
                 >
                   Privacy
                 </Translate>
-              </h4>
-              <p>
+              }
+              text={
                 <Translate
                   id="home.characteristics.privacyDescription"
                   description="Characteristics chat title on the homepage"
                 >
-                  Gladys is self-hosted: your smart home data stays on your local
-                  machine. No mandatory cloud, no tracking.
+                  Gladys is self-hosted: your smart home data stays on your
+                  local machine. No mandatory cloud, no tracking.
                 </Translate>
-              </p>
-            </div>
-            <div className={styles.feature}>
-              <h4>
+              }
+            />
+            <GlassCard
+              icon="sliders"
+              title={
                 <Translate
                   id="home.characteristics.easeOfUseTitle"
                   description="Characteristics ease of use title on the homepage"
                 >
                   Easy to use
                 </Translate>
-              </h4>
-              <p>
+              }
+              text={
                 <Translate
                   id="home.characteristics.easeOfUseDescription"
                   description="Characteristics ease of use title on the homepage"
@@ -737,38 +1011,38 @@ function Home({ integrations, lang }) {
                   No terminal for day-to-day use: a clear interface to control
                   your home. Installation is guided via Docker.
                 </Translate>
-              </p>
-            </div>
-            <div className={styles.feature}>
-              <h4>
+              }
+            />
+            <GlassCard
+              icon="layout"
+              title={
                 <Translate
                   id="home.characteristics.cleanUITitle"
                   description="Characteristics ease of use title on the homepage"
                 >
                   Clean UI
                 </Translate>
-              </h4>
-              <p>
+              }
+              text={
                 <Translate
                   id="home.characteristics.cleanUIDescription"
                   description="Characteristics ease of use title on the homepage"
                 >
                   Every pixel matters. We design first, then code.
                 </Translate>
-              </p>
-            </div>
-          </div>
-          <div className={styles.featureFlexContainer}>
-            <div className={styles.feature}>
-              <h4>
+              }
+            />
+            <GlassCard
+              icon="award"
+              title={
                 <Translate
                   id="home.characteristics.stableTitle"
                   description="Characteristics ease of use title on the homepage"
                 >
                   Stable
                 </Translate>
-              </h4>
-              <p>
+              }
+              text={
                 <Translate
                   id="home.characteristics.stableDescription"
                   description="Characteristics ease of use title on the homepage"
@@ -776,18 +1050,19 @@ function Home({ integrations, lang }) {
                   Built to last decades. Your smart home will never let you
                   down.
                 </Translate>
-              </p>
-            </div>
-            <div className={styles.feature}>
-              <h4>
+              }
+            />
+            <GlassCard
+              icon="zap"
+              title={
                 <Translate
                   id="home.characteristics.fastTitle"
                   description="Characteristics ease of use title on the homepage"
                 >
                   Fast
                 </Translate>
-              </h4>
-              <p>
+              }
+              text={
                 <Translate
                   id="home.characteristics.fastDescription"
                   description="Characteristics ease of use title on the homepage"
@@ -795,18 +1070,19 @@ function Home({ integrations, lang }) {
                   Lightning-fast interface, instant actions. We're obsessed with
                   performance.
                 </Translate>
-              </p>
-            </div>
-            <div className={styles.feature}>
-              <h4>
+              }
+            />
+            <GlassCard
+              icon="refresh"
+              title={
                 <Translate
                   id="home.characteristics.autoUpgradeTitle"
                   description="Characteristics ease of use title on the homepage"
                 >
                   Auto upgrades
                 </Translate>
-              </h4>
-              <p>
+              }
+              text={
                 <Translate
                   id="home.characteristics.autoUpgradeDescription"
                   description="Characteristics ease of use title on the homepage"
@@ -814,47 +1090,168 @@ function Home({ integrations, lang }) {
                   New features and bug fixes installed automatically. Zero
                   hassle.
                 </Translate>
-              </p>
-            </div>
+              }
+            />
           </div>
-        </div>
+        </section>
 
-        <div className={classnames(styles.homeSection)}>
-          <h2 className={styles.secondaryTitle}>
-            <Translate
-              id="home.testimonial.title"
-              description="Testimonia title on the homepage"
-            >
-              What Our Community Says
-            </Translate>
-          </h2>
-          <div className={styles.testimonialContainer}>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.eyebrow}>
+              <Translate
+                id="home.horizon.communityEyebrow"
+                description="Eyebrow above the testimonials section"
+              >
+                Community
+              </Translate>
+            </span>
+            <h2 className={styles.sectionTitle}>
+              <Translate
+                id="home.testimonial.title"
+                description="Testimonia title on the homepage"
+              >
+                What Our Community Says
+              </Translate>
+            </h2>
+          </div>
+          <div className={styles.testimonials}>
             <TestimonialHomeSection lang={lang} testimonials={testimonials} />
           </div>
-          <div
-            style={{
-              textAlign: "center",
-              marginTop: "3rem",
-              padding: "2.5rem 1.5rem",
-              backgroundColor: "var(--ifm-color-emphasis-100)",
-              borderRadius: "0.75rem",
-              maxWidth: "800px",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            <h3 style={{ fontSize: "1.75rem", marginBottom: "1rem" }}>
+        </section>
+
+        {lang === "fr" && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.eyebrow}>Presse</span>
+              <h2 className={styles.sectionTitle}>Ils parlent de nous</h2>
+              <p className={styles.sectionLead}>
+                La presse et les créateurs de contenu ont testé Gladys
+                Assistant. Découvre leurs avis.
+              </p>
+            </div>
+            <div className={styles.pressGrid}>
+              {PRESS.map((item) => (
+                <a
+                  key={item.url}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener"
+                  className={styles.pressCard}
+                >
+                  {item.thumbnail && (
+                    <div className={styles.pressCardThumbnail}>
+                      <img
+                        src={asset(item.thumbnail)}
+                        alt={item.title}
+                        loading="lazy"
+                      />
+                      <div className={styles.pressCardPlayOverlay}>
+                        <span className={styles.pressCardPlayTriangle} />
+                      </div>
+                    </div>
+                  )}
+                  <div className={styles.pressCardSource}>
+                    <img
+                      src={asset(item.logo)}
+                      alt={item.source}
+                      width="22"
+                      height="22"
+                      loading="lazy"
+                    />
+                    <span>{item.source}</span>
+                  </div>
+                  <h3 className={styles.pressCardTitle}>{item.title}</h3>
+                  <span className={styles.pressCardLink}>{item.linkLabel}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {lang === "fr" && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.eyebrow}>YouTube</span>
+              <h2 className={styles.sectionTitle}>
+                <Translate
+                  id="home.videos.title"
+                  description="Youtube videos title of the homepage"
+                >
+                  Our latest YouTube videos
+                </Translate>
+              </h2>
+              <p className={styles.sectionLead}>
+                <Translate
+                  id="home.videos.description"
+                  description="Youtube videos description of the homepage"
+                >
+                  We are active on our YouTube channel, if you like our content,
+                  you can subscribe!
+                </Translate>
+              </p>
+            </div>
+            <div className={styles.videoGrid}>
+              {YOUTUBE_VIDEOS.map((video) => (
+                <div key={video.id}>
+                  <div className={styles.videoFrame}>
+                    <YoutubeEmbedVideo id={video.id} disablePadding />
+                  </div>
+                  <h3 className={styles.videoTitle}>{video.title}</h3>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className={classnames(styles.section, styles.sectionTight)}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.eyebrow}>FAQ</span>
+            <h2 className={styles.sectionTitle}>
+              <Translate
+                id="home.horizon.faqTitle"
+                description="Title of the FAQ section"
+              >
+                Frequently asked questions
+              </Translate>
+            </h2>
+          </div>
+          <div className={styles.faqGrid}>
+            {FAQQuestions[lang].map((oneElement, index) => (
+              <div className={styles.faqItem} key={index}>
+                <h3 className={styles.faqQuestion}>{oneElement.title}</h3>
+                <p className={styles.faqAnswer}>{oneElement.response}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {shouldDisplayStarterKitLink && (
+          <section className={classnames(styles.section, styles.sectionTight)}>
+            <div className={styles.asideCard}>
+              <p className={styles.asideText}>
+                <b>Vous préférez éviter l'installation ?</b> Le{" "}
+                <Link href="/fr/starter-kit">kit de démarrage</Link> inclut un
+                mini-PC avec Gladys pré-installé, la formation officielle et 6
+                mois de Gladys Plus. Option clé en main, sans obligation.
+              </p>
+              <Link
+                className={classnames(styles.btn, styles.btnQuiet)}
+                href="/fr/starter-kit"
+              >
+                Découvrir le kit de démarrage →
+              </Link>
+            </div>
+          </section>
+        )}
+
+        <section className={classnames(styles.section, styles.sectionTight)}>
+          <div className={styles.ctaPanel}>
+            <h2 className={styles.ctaTitle}>
               <Translate id="home.finalCta.title" description="Final CTA title">
                 Ready to Take Control of Your Smart Home?
               </Translate>
-            </h3>
-            <p
-              style={{
-                fontSize: "1.1rem",
-                marginBottom: "1.5rem",
-                opacity: 0.9,
-              }}
-            >
+            </h2>
+            <p className={styles.ctaText}>
               <Translate
                 id="home.finalCta.subtitle"
                 description="Final CTA subtitle"
@@ -862,260 +1259,19 @@ function Home({ integrations, lang }) {
                 Join the open-source smart home revolution
               </Translate>
             </p>
-            <Link
-              className="button button--primary button--lg"
-              href={lang === "en" ? `/docs` : `/${lang}/docs`}
-            >
-              <Translate
-                id="home.finalCta.button"
-                description="Final CTA button"
-              >
-                Get Started Free
-              </Translate>
-            </Link>
-          </div>
-        </div>
-
-        {lang === "fr" && (
-          <div
-            className={classnames(
-              styles.homeSection,
-              styles.youtubeVideoSection
-            )}
-          >
-            <div className="container">
-              <div className="row">
-                <div className="col col--12">
-                  <h2 className={styles.secondaryTitle}>
-                    <Translate
-                      id="home.videos.title"
-                      description="Youtube videos title of the homepage"
-                    >
-                      Our latest YouTube videos
-                    </Translate>
-                  </h2>
-                  <p className="text--center">
-                    <Translate
-                      id="home.videos.description"
-                      description="Youtube videos description of the homepage"
-                    >
-                      We are active on our YouTube channel, if you like our
-                      content, you can subscribe!
-                    </Translate>
-                  </p>
-                  <div className="row">
-                    <div className="col col--4">
-                      <YoutubeEmbedVideo id="X-UtYMJoKV4" />
-                      <h4 className={styles.homeYouTubeVideoTitle}>
-                        Alexa est officiellement dépassée : voici le futur
-                      </h4>
-                    </div>
-                    <div className="col col--4">
-                      <YoutubeEmbedVideo id="iVFXXDO798A" />
-                      <h4 className={styles.homeYouTubeVideoTitle}>
-                        Home Assistant vs Gladys Assistant : Le Comparatif Honnête
-                        2026
-                      </h4>
-                    </div>
-                    <div className="col col--4">
-                      <YoutubeEmbedVideo id="gn-bBBs39G0" disablePadding />
-                      <h4 className={styles.homeYouTubeVideoTitle}>
-                        Comment rendre n'importe quel lave-linge "Intelligent" ?
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className={styles.ctaActions}>
+              {installButton}
+              {demoButton}
             </div>
           </div>
-        )}
+        </section>
 
-        {lang === "fr" && (
-          <div
-            className={classnames(styles.homeSection)}
-            style={{
-              padding: "2rem 1rem",
-            }}
-          >
-            <div
-              className="container"
-              style={{
-                maxWidth: "800px",
-                margin: "0 auto",
-                textAlign: "center",
-                padding: "2rem 1.5rem",
-                backgroundColor: "var(--ifm-color-emphasis-100)",
-                borderRadius: "0.75rem",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "1.1rem",
-                  marginBottom: "1.25rem",
-                  opacity: 0.95,
-                }}
-              >
-                Vous préférez éviter l'installation ? Le{" "}
-                <Link href="/fr/starter-kit">kit de démarrage</Link> inclut un
-                mini-PC avec Gladys pré-installé, la formation officielle et 6
-                mois de Gladys Plus. Option clé en main, sans obligation.
-              </p>
-              <Link
-                className="button button--secondary"
-                href="/fr/starter-kit"
-              >
-                Découvrir le kit de démarrage →
-              </Link>
-            </div>
-          </div>
-        )}
-
-        <div className={classnames(styles.homeSection)}>
-          <h2 className={styles.secondaryTitle}>FAQ</h2>
-          <div className={classnames("row", styles.faqRows)}>
-            <div className="col">
-              {FAQQuestions[lang]
-                .slice(0, Math.ceil(FAQQuestions[lang].length / 2))
-                .map((oneElement) => (
-                  <div>
-                    <h4>{oneElement.title}</h4>
-                    <p>{oneElement.response}</p>
-                  </div>
-                ))}
-            </div>
-            <div className="col">
-              {FAQQuestions[lang]
-                .slice(Math.ceil(FAQQuestions[lang].length / 2))
-                .map((oneElement) => (
-                  <div>
-                    <h4>{oneElement.title}</h4>
-                    <p>{oneElement.response}</p>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-        {lang === "fr" && (
-          <div
-            className={classnames(styles.homeSection, styles.pressSection)}
-          >
-            <h2 className={styles.secondaryTitle}>Ils parlent de nous</h2>
-            <p className={styles.pressIntro}>
-              La presse et les créateurs de contenu ont testé Gladys Assistant.
-              Découvre leurs avis.
-            </p>
-            <div className={styles.pressGrid}>
-              <a
-                href="https://www.igen.fr/domotique/2026/02/gladys-assistant-la-domotique-plus-avancee-que-maison-et-plus-accessible-que-home-assistant-154785"
-                target="_blank"
-                rel="noopener"
-                className={styles.pressCard}
-              >
-                <div className={styles.pressCardHeader}>
-                  <img
-                    src={useBaseUrl("/img/press/igen.png")}
-                    alt="iGen"
-                    width="24"
-                    height="24"
-                    loading="lazy"
-                  />
-                  <span>iGen.fr</span>
-                </div>
-                <h4 className={styles.pressCardTitle}>
-                  Gladys Assistant, la domotique plus avancée que Maison et plus
-                  accessible que Home Assistant
-                </h4>
-                <span className={styles.pressCardLink}>Lire l'article →</span>
-              </a>
-
-              <a
-                href="https://www.antoineguilbert.fr/gladys-assistant-alternative-home-assistant/"
-                target="_blank"
-                rel="noopener"
-                className={styles.pressCard}
-              >
-                <div className={styles.pressCardHeader}>
-                  <img
-                    src={useBaseUrl("/img/press/antoineguilbert.jpg")}
-                    alt="Antoine Guilbert"
-                    width="24"
-                    height="24"
-                    loading="lazy"
-                  />
-                  <span>antoineguilbert.fr</span>
-                </div>
-                <h4 className={styles.pressCardTitle}>
-                  J'ai testé Gladys Assistant : mon avis sur l'alternative à
-                  Home Assistant
-                </h4>
-                <span className={styles.pressCardLink}>Lire l'article →</span>
-              </a>
-
-              <a
-                href="https://mcflypartages.fr/blog/gladys_assistant_intro/"
-                target="_blank"
-                rel="noopener"
-                className={styles.pressCard}
-              >
-                <div className={styles.pressCardHeader}>
-                  <img
-                    src={useBaseUrl("/img/press/mcflypartages.jpg")}
-                    alt="McFly Partages"
-                    width="24"
-                    height="24"
-                    loading="lazy"
-                  />
-                  <span>mcflypartages.fr</span>
-                </div>
-                <h4 className={styles.pressCardTitle}>
-                  Gladys Assistant - Une solution domotique (Cocorico)
-                  accessible et prometteuse
-                </h4>
-                <span className={styles.pressCardLink}>Lire l'article →</span>
-              </a>
-
-              <a
-                href="https://www.youtube.com/watch?v=iqkG3mRUeBU"
-                target="_blank"
-                rel="noopener"
-                className={classnames(styles.pressCard, styles.pressCardVideo)}
-              >
-                <div className={styles.pressCardThumbnail}>
-                  <img
-                    src={useBaseUrl("/img/press/youtube-aylabs-thumbnail.jpg")}
-                    alt="Je quitte HOME ASSISTANT ?!"
-                    loading="lazy"
-                  />
-                  <div className={styles.pressCardPlayOverlay}>
-                    <span className={styles.pressCardPlayTriangle} />
-                  </div>
-                </div>
-                <div className={styles.pressCardHeader}>
-                  <img
-                    src={useBaseUrl("/img/press/youtube.png")}
-                    alt="YouTube"
-                    width="24"
-                    height="24"
-                    loading="lazy"
-                  />
-                  <span>AyLabs · YouTube</span>
-                </div>
-                <h4 className={styles.pressCardTitle}>
-                  Je quitte HOME ASSISTANT ?! (Découverte Gladys Assistant)
-                </h4>
-                <span className={styles.pressCardLink}>Voir la vidéo →</span>
-              </a>
-            </div>
-          </div>
-        )}
-
-        <div
-          className={classnames(styles.homeSection, styles.newsletterSection)}
-        >
+        <section className={classnames(styles.section, styles.newsletter)}>
           <SubcribeNewsletter lang={lang} />
-        </div>
+        </section>
       </main>
-    </>
+    </div>
   );
 }
+
 export { Home };
