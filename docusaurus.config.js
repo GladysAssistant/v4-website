@@ -315,7 +315,10 @@ module.exports = function createConfig() {
           },
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: [
+            require.resolve("./src/css/custom.css"),
+            require.resolve("./src/css/horizon.css"),
+          ],
         },
         sitemap: {
           lastmod: "date",

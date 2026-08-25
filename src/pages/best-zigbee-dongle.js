@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
@@ -200,9 +200,9 @@ export default function BestZigbeeDonglePage() {
   const faq = lang === "fr" ? bestZigbeeDongleFaqFr : bestZigbeeDongleFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getBestZigbeeDonglePageSchema(lang)} />
       <GuideContent content={content} faq={faq} />
-    </Layout>
+    </HorizonPage>
   );
 }

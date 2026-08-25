@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 import Translate, { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
@@ -459,7 +459,7 @@ function DevPage() {
   const contributors = data.contributors || [];
 
   return (
-    <Layout
+    <HorizonPage
       title={translate({
         id: "devPage.title",
         description: "Dev activity page title",
@@ -1183,7 +1183,7 @@ function DevPage() {
           </section>
         </div>
       </main>
-    </Layout>
+    </HorizonPage>
   );
 }
 

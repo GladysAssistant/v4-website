@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
@@ -191,9 +191,9 @@ export default function JeedomComparisonPage() {
   const faq = lang === "fr" ? comparisonFaqFr : comparisonFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getJeedomComparisonPageSchema(lang)} />
       <ComparisonContent content={content} faq={faq} lang={lang} />
-    </Layout>
+    </HorizonPage>
   );
 }

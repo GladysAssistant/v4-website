@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Translate, { translate } from "@docusaurus/Translate";
 
-import styles from "./home/horizonStyles.module.css";
+import styles from "./horizon/styles.module.css";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import { TestimonialHomeSection } from "./Testimonial";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
@@ -485,7 +485,7 @@ function Home({ lang }) {
   );
 
   return (
-    <div className={styles.horizon}>
+    <>
       {isBlackFridayActive && shouldDisplayStarterKitLink && (
         <div
           style={{
@@ -1270,7 +1270,7 @@ function Home({ lang }) {
           <SubcribeNewsletter lang={lang} />
         </section>
       </main>
-    </div>
+    </>
   );
 }
 

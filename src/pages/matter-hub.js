@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
@@ -201,9 +201,9 @@ export default function MatterHubPage() {
   const faq = lang === "fr" ? matterHubFaqFr : matterHubFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getMatterHubPageSchema(lang)} />
       <GuideContent content={content} faq={faq} />
-    </Layout>
+    </HorizonPage>
   );
 }

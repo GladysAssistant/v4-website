@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
@@ -183,9 +183,9 @@ export default function HomeWeatherStationPage() {
   const faq = lang === "fr" ? homeWeatherStationFaqFr : homeWeatherStationFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getHomeWeatherStationPageSchema(lang)} />
       <WeatherContent content={content} faq={faq} />
-    </Layout>
+    </HorizonPage>
   );
 }

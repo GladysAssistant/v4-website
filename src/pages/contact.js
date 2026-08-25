@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styles from "./styles.module.css";
 import Translate from "@docusaurus/Translate";
@@ -82,7 +82,7 @@ function Home() {
   });
 
   return (
-    <Layout
+    <HorizonPage
       title={translate({
         id: "contact.title",
         description: "Contact page title",
@@ -229,7 +229,7 @@ function Home() {
           </div>
         </div>
       </main>
-    </Layout>
+    </HorizonPage>
   );
 }
 

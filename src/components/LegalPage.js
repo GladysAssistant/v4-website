@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "./horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 
 // The domain must end on a word character, so a sentence-final period right
@@ -115,7 +115,7 @@ function Block({ block }) {
  */
 function LegalPage({ title, description, heading, updated, sections }) {
   return (
-    <Layout title={title} description={description}>
+    <HorizonPage title={title} description={description}>
       <main>
         <div style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
           <div className="container">
@@ -138,7 +138,7 @@ function LegalPage({ title, description, heading, updated, sections }) {
           </div>
         </div>
       </main>
-    </Layout>
+    </HorizonPage>
   );
 }
 
