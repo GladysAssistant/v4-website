@@ -526,7 +526,7 @@ function Home({ lang }) {
             id="home.horizon.badge"
             description="Small badge above the homepage title"
           >
-            Gladys 5 · New design
+            Gladys Assistant 5 · New design
           </Translate>
         </span>
 
