@@ -550,8 +550,8 @@ function Home({ lang }) {
             id="home.description"
             description="The home page description"
           >
-            Open-source, local smart home. Matter-ready, voice-controlled,
-            private by design.
+            Open-source, local smart home. Integrations install in one click,
+            and anyone can create one.
           </Translate>
         </p>
 

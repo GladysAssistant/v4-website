@@ -13,9 +13,10 @@ function HomePage() {
   return (
     <HorizonPage
       title={translate({
-        id: "home.description",
-        description: "The home page description",
-        message: "A privacy-first, open-source home assistant",
+        id: "home.pageTitle",
+        description:
+          "The <title> of the home page, shown in search results. Docusaurus appends ' | Gladys Assistant', so it has to stay short.",
+        message: "Open-source, local and extensible smart home",
       })}
       description={translate({
         id: "home.metaDescription",
