@@ -64,7 +64,7 @@ Un capteur qui remonte une unité différente de celle du thermostat (une sonde 
 
 L'**hystérésis** (par défaut) est la méthode simple et robuste. En mode chauffage, le chauffage démarre lorsque la température descend sous `consigne − seuil de démarrage`, et s'arrête lorsqu'elle remonte au-dessus de `consigne + seuil d'arrêt`. Avec une consigne de 21 °C et des seuils de 0,5 °C, le chauffage tourne sous 20,5 °C et s'arrête au-dessus de 21,5 °C. Entre les deux, l'état courant est conservé, ce qui évite au relais de battre en permanence.
 
-Le **TPI** (Time Proportional Integral) calcule un rapport ON/OFF sur un cycle fixe, proportionnel à l'écart entre la pièce et la consigne. Avec un cycle de 30 minutes et une bande proportionnelle de 2 °C, un écart de 1 °C donne 50 % du cycle en marche, soit 15 minutes allumé puis 15 minutes éteint. C'est le bon choix pour un plancher chauffant ou tout système à forte inertie, où l'hystérésis dépasse la consigne.
+Le **TPI** (Time Proportional Integral) calcule un rapport ON/OFF sur un cycle fixe, proportionnel à l'écart entre la pièce et la consigne. Avec un cycle de 30 minutes et une bande proportionnelle de 2 °C, un écart de 1 °C donne 50 % du cycle en marche, soit 15 minutes allumé puis 15 minutes éteint. C'est le bon choix pour un plancher chauffant ou tout système à forte inertie, où l'hystérésis entraîne un dépassement de la consigne.
 
 | Réglage | Défaut | Plage |
 | --- | --- | --- |
@@ -83,7 +83,7 @@ Un preset est une température de consigne nommée. L'intégration en propose si
 
 | Preset | Défaut |
 | --- | --- |
-| Arrêt | pas de consigne, le chauffage est coupé |
+| Arrêt | pas de consigne, la régulation est arrêtée |
 | Hors-gel | 7 °C |
 | Absence | 16 °C |
 | Éco | 18 °C |
@@ -100,7 +100,7 @@ Lorsque vous tournez la molette du widget, ou lorsqu'une scène définit une tem
 
 Si le thermostat ne suit **aucun** planning, une consigne manuelle est conservée indéfiniment, comme sur un thermostat physique.
 
-![Presets du thermostat](../../../../../static/img/docs/fr/configuration/thermostat/thermostat-mode.png)
+![Mode de régulation du thermostat](../../../../../static/img/docs/fr/configuration/thermostat/thermostat-mode.png)
 
 ## Créer un planning hebdomadaire
 
@@ -128,7 +128,7 @@ Les plannings sont résolus dans le fuseau horaire configuré dans Gladys, et no
 
 ## Détection de fenêtre ouverte
 
-Si vous avez configuré un capteur d'ouverture, le chauffage est coupé dès l'ouverture de la fenêtre — immédiatement, sans attendre le cycle de régulation suivant — et reprend à la fermeture. Le widget affiche un bandeau « Fenêtre ouverte — chauffage suspendu » pendant toute la durée.
+Si vous avez configuré un capteur d'ouverture, la régulation est coupée dès l'ouverture de la fenêtre — immédiatement, sans attendre le cycle de régulation suivant — et reprend à la fermeture. Le widget affiche un bandeau « Fenêtre ouverte — chauffage suspendu » pendant toute la durée, ou « Fenêtre ouverte — climatisation suspendue » en mode climatisation.
 
 ![Fenêtre ouverte](../../../../../static/img/docs/fr/configuration/thermostat/thermostat-window-open.png)
 

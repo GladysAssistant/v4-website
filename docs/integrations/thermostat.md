@@ -83,7 +83,7 @@ A preset is a named target temperature. The integration ships six of them, and y
 
 | Preset | Default |
 | --- | --- |
-| Off | no setpoint, the heating is stopped |
+| Off | no setpoint, the regulation is stopped |
 | Frost | 7 °C |
 | Away | 16 °C |
 | Eco | 18 °C |
@@ -128,7 +128,7 @@ Schedules are resolved in the timezone configured in Gladys, not in your browser
 
 ## Open window detection
 
-If you configured an opening sensor, the heating is cut as soon as the window opens — immediately, without waiting for the next regulation cycle — and resumes when it closes. The widget shows a "Window open — heating suspended" banner while this lasts.
+If you configured an opening sensor, the regulation is cut as soon as the window opens — immediately, without waiting for the next regulation cycle — and resumes when it closes. The widget shows a "Window open — heating suspended" banner while this lasts, or "Window open — cooling suspended" in cooling mode.
 
 ![Window open](../../static/img/docs/en/configuration/thermostat/thermostat-window-open.png)
 
