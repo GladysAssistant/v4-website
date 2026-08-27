@@ -4,8 +4,9 @@ set -e
 # Cleaning build folder
 rm -rf build
 
-# Refreshing the /dev/ page data. Never fails the build: if GitHub or the forum
-# is unreachable, the snapshot committed in src/data/devActivity.json is used.
+# Refreshing the /dev/ page data. The script already falls back on the snapshot
+# committed in src/data/devActivity.json, section by section, when GitHub or the
+# forum cannot be reached; this only guards against it failing outright.
 npm run load-dev-activity || echo ">> Keeping the committed dev activity snapshot"
 
 # Building website
