@@ -1,0 +1,225 @@
+---
+title: "Docker integration for Gladys Assistant"
+sidebar_label: "Docker"
+description: "Start, stop, restart and monitor the Docker containers of your server. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-docker.png"
+keywords:
+  - "docker"
+  - "gladys docker"
+  - "docker gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/PhilippeMA/gladys-docker instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="docker" />
+
+Manage the Docker containers of your server from Gladys: see whether they run,
+start and stop them from a dashboard or a scene, restart them from the
+Configuration screen, and follow their CPU and memory usage.
+
+## How it connects to Docker
+
+Gladys runs every external integration in a sandboxed container that **cannot
+mount a path of your host**, and `/var/run/docker.sock` is a host path. So this
+integration does not use the Docker socket: it talks to the **Docker Engine
+API over your network**, at an address you provide.
+
+You have two ways to expose that API. The first one is strongly recommended.
+
+### Option A — a socket proxy (recommended)
+
+A socket proxy sits in front of the Docker socket and only forwards the calls
+you allow. Even if something else on your network reached it, it could not
+create a privileged container on your host.
+
+Add this to a `docker-compose.yml` on the machine that runs your containers:
+
+```yaml
+services:
+  docker-proxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:0.3.0
+    restart: unless-stopped
+    ports:
+      - '2375:2375'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CONTAINERS: 1 # list the containers (required)
+      POST: 1 # allow start / stop / restart
+```
+
+Then `docker compose up -d`, and use `http://<ip-of-that-machine>:2375` as the
+address below.
+
+Two notes on those permissions:
+
+- `CONTAINERS: 1` alone gives a **read-only** integration: states, CPU and
+  memory work, the On/Off switch and the restart button do not.
+- `POST: 1` is what allows starting, stopping and restarting. It is scoped to
+  the endpoints the proxy exposes, so it does not grant container creation.
+
+The proxy has no authentication of its own: publish its port on a network you
+trust, and never on the public internet.
+
+### Option B — the Docker daemon itself
+
+If your daemon already listens on TCP (`-H tcp://0.0.0.0:2375`, or a
+`hosts` entry in `/etc/docker/daemon.json`), point the integration straight at
+it. Be aware that an unprotected Docker API grants **full root-equivalent
+access** to that machine: only do this on a trusted network, and prefer
+option A.
+
+`https://` addresses are supported. Client certificates (`--tlsverify` with a
+client key pair) are not: if your daemon requires them, put a socket proxy in
+front of it instead.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. **Docker API address** — for example `http://192.168.1.10:2375`. The
+   `tcp://host:port` form the Docker CLI uses and a bare `host:port` are
+   accepted too.
+3. Click **Test the Docker connection**. It answers with the Docker version and
+   how many containers match your filters. Fix this before going further:
+   nothing else works until it succeeds.
+4. **Containers to include / to exclude** — comma-separated names where `*`
+   matches anything, for example `media-*, nginx`. Leaving the inclusion list
+   empty exposes every container. The exclusion list is applied last and
+   defaults to `gladys*`, so the containers running Gladys itself are kept out
+   of reach — controlling them from Gladys would let you stop the very thing
+   holding the switch.
+5. Click **List the matching containers** to check your filters before saving.
+6. Save: the containers appear in the **Discovery** tab, ready to be added.
+
+The other settings:
+
+| Setting                  | What it changes                                                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Offer stopped containers | Whether containers that are currently stopped are listed in Discovery.                                                                                                |
+| Collect CPU and memory   | Adds a CPU and a memory sensor to each container. Costs about a second of daemon time per refresh.                                                                    |
+| Refresh interval         | How often the state and the sensors of a container are refreshed. Gladys polls a device once a minute at the slowest, so the choices run from 10 seconds to 1 minute. |
+| Discovery interval       | How often the container list is re-read, so containers created later appear on their own. This is the integration's own timer, unrelated to the refresh interval.     |
+| Stop timeout             | The grace period Docker gives a container to exit before killing it.                                                                                                  |
+
+## What each container looks like in Gladys
+
+| Feature                | What it does                                                                                                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Running                | Read-only badge: on or off. Keeps its history, and works as a scene condition ("if the container is running").                                                                        |
+| State                  | `running`, `exited`, `restarting`, `paused`…                                                                                                                                          |
+| Start / Stop / Restart | One push button each. Always all three: Gladys cannot hide a feature depending on a state, but pressing Start on a running container does nothing (Docker answers "already started"). |
+| Action                 | A single control offering only what makes sense right now — Start when the container is stopped, Stop and Restart when it runs.                                                       |
+| CPU                    | Percentage, same scale as `docker stats`: 200% means two full cores.                                                                                                                  |
+| Memory                 | Megabytes, page cache excluded.                                                                                                                                                       |
+
+Containers created by Docker Compose are named `project · service`; the others
+keep their container name. The device page also shows the image the container
+runs and, for a Compose container, its project and service.
+
+Two labels come from Gladys, not from this integration. The CPU row reads
+**"Temperature"**: Gladys has no CPU category, so the feature borrows the one
+whose icon is a processor chip — the value and its percent unit are correct,
+only the wording is not. The Running row reads **"Switch"** for the same
+reason. Both can be renamed for good in a dashboard, from the pencil icon of
+the "Devices in room" box.
+
+A device carries a **local** badge, which turns orange when the container needs
+attention — restarting in a loop, paused, dead, or failing its own health check
+— and grey when the daemon can no longer be reached.
+
+## Actions
+
+- **Test the Docker connection** — contacts the daemon and reports its version,
+  its platform and how many containers your filters select.
+- **List the matching containers** — shows exactly what your inclusion and
+  exclusion filters select right now. The fastest way to understand why a
+  container does or does not show up.
+- **Restart a container** — pick one of your containers and restart it, without
+  having to build a stop-then-start scene.
+
+## Good to know
+
+- **Containers are tracked by name, not by id.** `docker compose up` after an
+  image update recreates a container with a brand new id but the same name, so
+  your devices, their history and the scenes using them survive the update.
+- **A container renamed is a new device.** Rename a container and Gladys sees
+  the old device disappear and a new one show up in Discovery.
+- **Stopped containers stay controllable.** Hiding stopped containers only
+  changes what Discovery offers; a device you already added keeps its switch
+  and can be started again.
+- **The state published is the daemon's, not the request's.** Start a container
+  that crashes on boot and the switch goes back to off, because that is what
+  Docker reports.
+- **Collecting CPU and memory is not free.** Docker needs about a second to
+  answer a stats request, per container. With twenty containers refreshed every
+  10 seconds, the daemon spends more time answering than idling: leave the
+  refresh interval at one minute unless you have few containers, or turn the
+  stats off.
+
+## Troubleshooting
+
+**"Cannot reach the Docker API"** — the address is wrong, the port is not
+published, or a firewall drops the connection. From another machine on the same
+network, `curl http://<address>/version` should answer some JSON.
+
+**"Docker API returned a non-JSON body"** — something answered, but it was not
+a Docker API: usually a web server or a router page on that port.
+
+**"Docker API 403"** — a socket proxy is refusing the call. Add the permission
+it needs: `CONTAINERS: 1` to list, `POST: 1` to start, stop and restart.
+
+**No container in Discovery** — click **List the matching containers**. An
+empty answer means your filters exclude everything; remember the exclusion
+list defaults to `gladys*`.
+
+**The CPU is missing but the memory is there** — a container needs two
+consecutive readings before a CPU percentage can be computed. One is missing
+just after a start; the next refresh has it.
+
+The integration logs everything it does. Set `LOG_LEVEL=debug` to see every
+call it makes to the Docker API, then read the integration logs from the Gladys
+UI (or `docker logs` on the host).
+
+## Configuration settings
+
+These are the settings Docker asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Before you start | `section` | No | This integration runs in a sandboxed container that cannot mount the Docker socket of your host. It talks to the Docker Engine API over the network instead: expose it with a read-limited socket proxy (recommended) and paste its address below. The full step-by-step is in the documentation. |
+| Docker API address | `string` | Yes | Address of the Docker Engine API, for example http://192.168.1.10:2375. https:// is supported. |
+| Accept a self-signed certificate | `boolean` | No | https addresses only: skip the verification of the server certificate. Leave off unless your proxy uses a self-signed certificate. |
+| Containers to include | `string` | No | Comma-separated container names, * allowed (e.g. media-*, nginx). Leave empty to expose every container. |
+| Containers to exclude | `string` | No | Comma-separated container names, * allowed. Applied after the inclusion list — keep your Gladys containers here. |
+| Offer stopped containers | `boolean` | No | Also list the containers that are currently stopped in the Discovery tab. |
+| Collect CPU and memory | `boolean` | No | Add a CPU and a memory sensor to each container. Costs about one second of daemon time per container and per refresh. |
+| Refresh interval | `select` | No | How often the state and the sensors of each container are refreshed. Gladys polls no slower than once a minute. With CPU and memory collection on, each refresh costs about a second of daemon time per container: keep it slow if you manage many. |
+| Discovery interval (s) | `number` | No | How often the container list is re-read, so new containers show up on their own. Unrelated to the refresh interval above: this one is the integration’s own timer. |
+| Stop timeout (s) | `number` | No | Grace period Docker gives a container to exit before killing it. |
+
+## How to install Docker in Gladys
+
+1. In Gladys, open **Integrations**: Docker appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/philippema/gladys-docker:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/PhilippeMA/gladys-docker](https://github.com/PhilippeMA/gladys-docker).
+
+Docker requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Docker is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [PhilippeMA](https://github.com/PhilippeMA), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/PhilippeMA/gladys-docker) — [source of this documentation](https://github.com/PhilippeMA/gladys-docker/blob/HEAD/docs/en.md)

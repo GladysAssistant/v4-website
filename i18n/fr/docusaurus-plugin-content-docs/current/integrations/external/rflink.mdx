@@ -198,59 +198,83 @@ choisissez.
 
 ### Appairer RFLink avec un volet
 
-1. Choisissez une adresse libre, jamais utilisée — six chiffres hexadécimaux,
-   par exemple `100001`. Une adresse différente par volet (`100002`,
-   `100003`…), et notez-les.
-2. Prenez la télécommande Somfy qui pilote déjà le volet et maintenez son
-   bouton **PROG** (au dos, ~2-3 s) jusqu'à ce que le volet fasse un **bref
-   va-et-vient**. Il attend maintenant une nouvelle télécommande, pendant
-   quelques secondes.
-3. Dans Gladys, lancez l'action **Envoyer une commande brute** avec :
+Le RTS étant à code tournant, RFLink doit se faire connaître du moteur comme
+une télécommande supplémentaire, sur une adresse que vous choisissez.
+
+1. Choisissez une adresse libre, six chiffres hexadécimaux, une par volet :
+   `a00001`, `a00002`… Notez-les.
+2. Maintenez le bouton **PROG** de la télécommande Somfy (au dos, ~2-3 s)
+   jusqu'au bref va-et-vient du volet. Il entre en mode programmation pour
+   quelques dizaines de secondes.
+3. Action **Envoyer une commande brute** :
 
    ```
-   10;RTS;100001;0;PAIR;
+   10;RTS;a00001;0412;1;PAIR;
    ```
 
-4. Le volet refait un va-et-vient : il a accepté RFLink comme télécommande.
-5. Testez avec `10;RTS;100001;0;DOWN;` — le volet doit descendre.
-6. Envoyez une commande de plus (par exemple `10;RTS;100001;0;UP;`) et la
-   nouvelle télécommande virtuelle apparaît dans l'onglet **Découverte**.
-   Ajoutez-la, nommez-la d'après la pièce, et vous avez le contrôle complet.
+   - `a00001` — l'adresse choisie
+   - `0412` — la valeur initiale du code tournant, **non nulle**
+   - `1` — l'emplacement mémoire dans RFLink, **un seul chiffre de 0 à 9**,
+     différent par volet
+
+   La forme courte `10;RTS;a00001;0412;PAIR;` fonctionne aussi, RFLink
+   choisissant l'emplacement lui-même.
+
+4. **Le volet refait un va-et-vient : c'est le seul signe que l'appairage a
+   pris.** Aucun appareil n'apparaît à cette étape, c'est normal.
+5. Vérifiez avec `10;RTS;a00001;0;DOWN;` — le volet doit descendre. Le champ
+   après l'adresse redevient `0` : il porte le code tournant pour un `PAIR`, et
+   il est inutilisé pour les commandes normales.
+6. Créez enfin l'appareil dans Gladys avec l'action **Déclarer un appareil
+   connu** : protocole `RTS`, adresse `a00001`, unité `0`, piloté par
+   « Montée / Descente / Stop ». Il apparaît aussitôt dans la Découverte.
 
 À répéter par volet. Pour annuler un appairage, remettez le moteur en mode
-programmation avec PROG et renvoyez `PAIR` sur la même adresse.
+programmation et renvoyez `PAIR` sur la même adresse.
+
+### Ce que le délai de réponse vous apprend
+
+La passerelle répond `OK` à toute commande acceptée, mais **le délai dit ce qui
+s'est réellement passé** :
+
+| Réponse                 | Signification                                |
+| ----------------------- | -------------------------------------------- |
+| `OK` après 2-3 secondes | la trame est réellement partie sur les ondes |
+| `OK` immédiat           | commande acceptée, mais rien d'émis          |
+| `CMD UNKNOWN` immédiat  | syntaxe refusée, rien n'est parti            |
+
+C'est le diagnostic le plus utile quand un appairage ne prend pas.
 
 ### Deux appareils par volet
 
-Après l'appairage vous avez, dans la Découverte, l'adresse de votre
-**télécommande physique** (`f1e260`, découverte à l'écoute) et l'adresse que
-**RFLink possède** (`100001`). Ce sont deux appareils distincts :
+Vous pouvez avoir, dans la Découverte, l'adresse de votre **télécommande
+physique** (découverte à l'écoute quand vous l'utilisez) et l'adresse que
+**RFLink possède** (déclarée à l'étape 6). Ce sont deux appareils distincts :
 
 - celui de la télécommande physique rapporte ce que vous faites à la main —
-  utile si vous voulez qu'un scénario réagisse à un appui sur la télécommande
-  murale ;
+  utile pour qu'un scénario réagisse à un appui manuel ;
 - l'adresse propre à RFLink est celle qui pilote réellement le moteur.
 
-Si seul le pilotage vous intéresse, ajoutez la seconde et utilisez **Oublier les
-appareils non ajoutés** pour effacer la première.
+Si seul le pilotage vous intéresse, utilisez **Oublier les appareils non
+ajoutés** pour effacer le premier.
 
 ### Dépannage RTS
 
-- **Le volet ne bouge jamais au `PAIR`.** Le moteur n'était plus en mode
-  programmation (la fenêtre est courte : envoyez la commande dans les quelques
-  secondes), ou l'émetteur RFLink est hors de portée. Le RTS est en
-  433,42 MHz, légèrement décalé du 433,92 habituel : un émetteur RFLink
-  standard fonctionne à courte portée, mais c'est un quartz 433,42 MHz dédié
-  qui donne la portée complète.
+- **Le volet ne bouge jamais au `PAIR`.** Vérifiez d'abord le délai de l'`OK`
+  (ci-dessus). Sinon : le moteur n'était plus en mode programmation, ou
+  l'émetteur est hors de portée. Le RTS émet en 433,42 MHz, légèrement décalé
+  du 433,92 habituel : un émetteur RFLink standard fonctionne à courte portée,
+  mais c'est un quartz 433,42 MHz dédié qui donne la portée complète.
+- **`CMD UNKNOWN` sur le `PAIR`.** L'emplacement mémoire dépasse 9, ou le code
+  tournant est absent. Les deux formes valides sont rappelées à l'étape 3.
 - **Ça a marché, puis plus rien.** Le code tournant est désynchronisé.
   Ré-appairez la même adresse, ou appairez-en une nouvelle.
-- **Voir ce que RFLink stocke.** `10;RTSSHOW;` liste les codes tournants qu'il
-  conserve, `10;RTSCLEAN;` les efface — après quoi chaque adresse appairée doit
-  l'être à nouveau. Les deux passent par **Envoyer une commande brute**.
-
-> La commande `PAIR` et les utilitaires `RTSSHOW` / `RTSCLEAN` proviennent de la
-> référence du protocole RFLink, pas d'un test sur matériel réel ici. Le chemin
-> de pilotage UP / DOWN / STOP, lui, est couvert de bout en bout par les tests.
+- **Voir ce que RFLink stocke.** `10;RTSSHOW;` liste les codes tournants
+  conservés, `10;RTSCLEAN;` les efface — après quoi chaque adresse doit être
+  ré-appairée. `10;RTSRECCLEAN=9;` n'efface qu'un emplacement.
+- **L'appui sur PROG apparaît comme `CMD=STOP`.** RFLink ne décode pas ce
+  bouton séparément. C'est néanmoins la preuve, dans les logs, que l'appui a
+  bien été capté.
 
 ## Piloter un appareil
 
@@ -274,8 +298,10 @@ l'action **Envoyer une commande brute** :
    jusqu'à ce qu'il clignote).
 2. Envoyez une commande sur une adresse libre, par exemple
    `10;NewKaku;00c142;1;ON;`.
-3. Le récepteur la mémorise. Renvoyez la même commande et il apparaît dans
-   l'onglet Découverte comme n'importe quel autre appareil.
+3. Le récepteur la mémorise. Créez ensuite l'appareil avec l'action
+   **Déclarer un appareil connu** : émettre une commande ne le crée pas, car
+   l'intégration n'apprend que ce qu'elle **entend**, et RFLink ne rejoue pas
+   ses propres émissions.
 
 L'action n'accepte qu'une seule ligne RFLink commençant par `10;`, et refuse
 tout le reste.
@@ -348,7 +374,7 @@ Voici les paramètres demandés par RFLink dans son écran de configuration dans
 ## Comment installer RFLink dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : RFLink apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-rflink:1.0.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-rflink:1.0.4`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/PhilippeMA/gladys-RFlink](https://github.com/PhilippeMA/gladys-RFlink).
 

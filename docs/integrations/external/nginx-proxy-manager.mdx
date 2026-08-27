@@ -1,0 +1,143 @@
+---
+title: "Nginx Proxy Manager integration for Gladys Assistant"
+sidebar_label: "Nginx Proxy Manager"
+description: "Install and run Nginx Proxy Manager from Gladys, with direct access to its admin portal. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/JeremieMercier--gladys-nginx-proxy-manager.png"
+keywords:
+  - "nginx proxy manager"
+  - "gladys nginx proxy manager"
+  - "nginx proxy manager gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/JeremieMercier/gladys-nginx-proxy-manager instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="nginx-proxy-manager" />
+
+This integration **installs and runs
+[Nginx Proxy Manager](https://nginxproxymanager.com/)** (NPM) directly on the
+Gladys machine: nothing to install by hand, no docker-compose to write. Gladys
+creates the container, supervises it, keeps its data and gives you direct
+access to its web portal. (The image is a very lightly adapted build of the
+official one, required to run inside the Gladys security sandbox — same
+features.)
+
+## What the integration does
+
+- **Automatic install**: when the integration is installed, Gladys pulls the
+  official NPM image and starts the container (the docker-compose equivalent,
+  inside the Gladys sandbox).
+- **Supervision**: the container state is visible in Gladys; the configuration
+  screen shows whether the NPM API answers, and a **Check Nginx Proxy
+  Manager** button displays the running version.
+- **Portal access**: an **Open** link in Gladys leads to the NPM admin portal.
+  Management (proxy hosts, redirections, SSL certificates) happens in that
+  portal, as usual.
+- **Persistent data**: the NPM database (`/data`) and its certificates
+  (`/etc/letsencrypt`) are kept by Gladys across restarts and updates.
+
+## Install
+
+1. Install the integration from the Gladys catalog. The install screen shows
+   the container that will be created (image, published ports, limits);
+   confirm.
+2. Wait for the status to turn green (the first start initializes the NPM
+   database, allow one to two minutes).
+3. Open the portal through the **Open** link (or the URL shown in the "Access
+   the portal" section).
+4. On your first visit, Nginx Proxy Manager asks you to create the
+   administrator account (email + password of your choice).
+
+## Expose your services on the internet
+
+Gladys picks the ports published on the machine (they are shown in the
+configuration screen, "Expose your services" section):
+
+- the **HTTP** port maps to NPM's internal port 80;
+- the **HTTPS** port maps to the internal port 443.
+
+On your router:
+
+- **Forward port 443** (to the assigned HTTPS port): the only essential one.
+  Your sites are served encrypted, nobody can read the traffic.
+- **Port 80 is optional** (to the assigned HTTP port) and must never serve
+  your sites in clear text. It has only two legitimate uses:
+  - letting Let's Encrypt verify your domain to issue and renew your
+    certificates (its default method);
+  - automatically redirecting visitors typing `http://` to `https://`.
+
+  If you open it, enable **Force SSL** on each of your proxy hosts in NPM:
+  anything arriving over HTTP is immediately redirected to HTTPS, nothing is
+  served in clear.
+
+- If you prefer **not to open port 80 at all**: in NPM, request your
+  certificates with a **DNS challenge** ("Use a DNS Challenge" when
+  requesting the certificate) — Let's Encrypt then verifies your domain
+  without going through port 80.
+
+## Where is my data?
+
+The Nginx Proxy Manager data lives on the machine hosting Gladys, inside the
+integration data folder:
+
+```
+/var/lib/gladysassistant/external-integrations/<identifier>/containers/npm/
+├─ data/               # SQLite database (proxy hosts, accounts, settings),
+│                      # generated nginx configurations, logs
+└─ etc/letsencrypt/    # Let's Encrypt certificates and account keys
+```
+
+(`<identifier>` depends on your install — visible with `docker inspect` on
+the `npm` container, mounts column.)
+
+These folders survive restarts and updates. However, **uninstalling the
+integration may remove them**: make a copy before any uninstall, and include
+this path in your usual backups:
+
+```bash
+sudo tar czf ~/backup-npm-$(date +%F).tar.gz \
+  /var/lib/gladysassistant/external-integrations/*/containers/npm
+```
+
+## Good to know
+
+- This integration creates no device in Gladys: NPM is managed from its own
+  portal.
+- Stopping the integration also stops the proxy; uninstalling the integration
+  removes the container (volumes follow the Gladys data policy).
+
+## Configuration settings
+
+These are the settings Nginx Proxy Manager asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | This integration installs and runs Nginx Proxy Manager on your Gladys machine: nothing to install by hand, the container is created, supervised and updated by Gladys. Manage your proxy hosts, redirections and SSL certificates from its own web portal. |
+| Access the portal | `section` | No | The admin portal is available at http://\{\{gladys_host\}\}:\{\{port:admin\}\} — also one click away via the "Open NPM admin portal" button on the Supervision screen. On your first visit, Nginx Proxy Manager asks you to create the administrator account. |
+| Expose your services | `section` | No | To serve your domains from the internet, forward port 443 of your router to port \{\{port:https\}\} on the Gladys machine — that is the only essential one, your sites are served encrypted (HTTPS). Port 80 (to \{\{port:http\}\}) is optional and must never serve content: it is only used by Let's Encrypt to issue/renew your certificates (default method) and to redirect visitors typing http:// to https://. If you open it, enable "Force SSL" on your hosts in NPM; if you keep it closed, use the DNS challenge for your certificates. |
+
+## How to install Nginx Proxy Manager in Gladys
+
+1. In Gladys, open **Integrations**: Nginx Proxy Manager appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/jeremiemercier/gladys-nginx-proxy-manager:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/JeremieMercier/gladys-nginx-proxy-manager](https://github.com/JeremieMercier/gladys-nginx-proxy-manager).
+
+Nginx Proxy Manager requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Nginx Proxy Manager is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [JeremieMercier](https://github.com/JeremieMercier), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/JeremieMercier/gladys-nginx-proxy-manager) — [source of this documentation](https://github.com/JeremieMercier/gladys-nginx-proxy-manager/blob/HEAD/docs/en.md)

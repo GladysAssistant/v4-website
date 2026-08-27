@@ -42,14 +42,17 @@ La MFA est prise en charge avec les codes de vérification DSM (OTP). **Approuve
 - **Vérifier le certificat TLS** : laissez cette option activée avec un certificat de confiance. Ne la désactivez que pour un certificat local auto-signé, après avoir vérifié vous-même l'adresse du NAS.
 - **NAS 2, NAS 3 et NAS 4** : connexions facultatives utilisant les mêmes champs URL, nom d'utilisateur, mot de passe, OTP et TLS que le NAS principal. Laissez l'URL d'un NAS vide pour ignorer cet emplacement. Chaque mot de passe et chaque OTP est conservé dans un champ secret Gladys dédié et n'apparaît jamais dans un document JSON.
 - **Intervalle de rafraîchissement** : valeur saisie manuellement en secondes, entre 60 et 86400. La valeur recommandée et utilisée par défaut est 900 secondes (15 minutes). Un intervalle modéré évite de remplir inutilement la base Gladys.
+- **Format de date** : présentation des dates de sauvegarde dans Gladys. `ISO 8601` (valeur par défaut, UTC) conserve l'horodatage DSM brut ; `AAAA-MM-JJ HH:mm`, `JJ/MM/AAAA HH:mm` et `MM/JJ/AAAA hh:mm AM/PM` affichent l'heure locale du conteneur de l'intégration. Renseignez la variable d'environnement `TZ` du conteneur avec votre fuseau horaire si ces formats affichent une heure inattendue. Le changement de format s'applique à partir du rafraîchissement suivant : les dates déjà enregistrées conservent le format utilisé lors de leur publication.
 
 Cliquez sur **Tester la connexion DSM**. En cas de succès, le résultat indique le modèle du NAS, la version DSM et le nombre de volumes détectés. Lancez ensuite une recherche d'appareils dans Gladys.
 
 ## Appareils
 
-L'intégration crée un appareil par NAS, un appareil par volume de stockage, un appareil par disque interne et, lorsqu'elles sont disponibles, un appareil par tâche Hyper Backup ou Active Backup. Chaque disque expose l'état SMART exact renvoyé par DSM ainsi qu'un indicateur binaire de bonne santé SMART. Une tâche de sauvegarde expose son état, son dernier résultat et la date de sa dernière sauvegarde. Les API de ces paquets DSM ne sont pas présentes sur tous les modèles et versions : leur absence ne bloque pas les métriques système et stockage.
+L'intégration crée un appareil par NAS, un appareil par volume de stockage, un appareil par disque interne et, lorsqu'elles sont disponibles, un appareil par tâche Hyper Backup ou Active Backup. Chaque disque expose l'état SMART exact renvoyé par DSM, un indicateur binaire de bonne santé SMART et, lorsque DSM la communique, sa température. Une tâche de sauvegarde expose son état, son dernier résultat et la date de sa dernière sauvegarde. Les API de ces paquets DSM ne sont pas présentes sur tous les modèles et versions : leur absence ne bloque pas les métriques système et stockage.
 
 Un premier instantané est envoyé immédiatement après l'ajout d'un appareil, puis chaque cycle met à jour en une seule fois les valeurs de tous les NAS. Le pourcentage d'occupation des volumes est arrondi à deux décimales. L'historique est conservé pour les taux d'utilisation, la température et l'état de santé ; les capacités et informations textuelles ne créent pas d'historique redondant.
+
+Les indicateurs de bonne santé ne prennent une valeur que sur un état clairement signalé par DSM comme sain ou comme une panne. Pendant une opération de maintenance (extension, vérification, réparation) ou lorsque SMART n'est pas pris en charge, la valeur précédente est conservée plutôt que de déclencher une fausse alerte.
 
 ## Dépannage
 
@@ -57,7 +60,10 @@ Un premier instantané est envoyé immédiatement après l'ajout d'un appareil, 
 - **Code MFA requis / erreur 403 ou 406** : configurez OTP pour le compte DSM, saisissez un code actuel à 6 chiffres dans Gladys puis enregistrez. Les notifications d'approbation et les clés matérielles ne sont pas prises en charge par l'API DSM.
 - **Code MFA invalide ou expiré / erreur 404** : attendez le prochain code OTP et enregistrez-le avant son expiration.
 - **Droits insuffisants / erreur 105** : ajoutez le compte dédié au groupe DSM `administrators`. Le seul rôle délégué Surveillance du système ne suffit pas pour ces API.
+- **Connexion perdue après un redémarrage du NAS ou une mise à jour DSM / erreur 498** : rien à faire. DSM peut refuser la connexion mémorisée pendant son redémarrage ; l'intégration se reconnecte d'elle-même et réessaie toutes les 30 secondes, puis de plus en plus espacé jusqu'à 15 minutes, tant que le NAS ne répond pas.
 - **DSM injoignable** : testez l'URL depuis l'hôte Gladys et vérifiez le pare-feu du NAS.
+- **DSM n'a pas répondu à temps** : le NAS a accepté la connexion mais n'a rien renvoyé en 20 secondes. Le cycle est abandonné puis réessayé au suivant ; vérifiez la charge du NAS et le réseau.
+- **Un seul NAS injoignable dans une configuration multi-NAS** : les autres NAS continuent de publier leurs valeurs et l'écran de configuration Gladys indique l'adresse en défaut. Seule une panne de tous les NAS signale l'intégration comme déconnectée.
 - **Erreur de certificat** : installez un certificat de confiance dans DSM. Pour une installation privée auto-signée uniquement, la vérification peut être désactivée.
 - **Volume absent** : relancez une recherche après la création ou la suppression d'un volume.
 - **Tâches de sauvegarde absentes** : vérifiez que Hyper Backup ou Active Backup est installé, qu'au moins une tâche existe et que le compte DSM dédié peut ouvrir le paquet correspondant, puis relancez la recherche.
@@ -94,11 +100,12 @@ Voici les paramètres demandés par Synology DSM dans son écran de configuratio
 | NAS 4 — Code OTP actuel | `secret` | Non |  |
 | NAS 4 — Vérifier le certificat TLS | `boolean` | Non |  |
 | Intervalle de rafraîchissement (s) | `number` | Non | Intervalle personnalisé en secondes (60 à 86400). La valeur par défaut est 900 secondes. Un intervalle modéré limite la croissance de la base Gladys. |
+| Format de date | `select` | Non | Format utilisé pour les dates de sauvegarde publiées dans Gladys. Tous les formats sauf ISO 8601 affichent l'heure locale du conteneur de l'intégration. |
 
 ## Comment installer Synology DSM dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Synology DSM apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:1.0.4`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-synology](https://github.com/prohand/gladys-synology).
 

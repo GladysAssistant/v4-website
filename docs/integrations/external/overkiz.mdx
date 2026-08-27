@@ -1,7 +1,7 @@
 ---
 title: "Overkiz integration for Gladys Assistant"
 sidebar_label: "Overkiz"
-description: "Control your Overkiz devices (Somfy TaHoma, Connexoon, Cozytouch...). Free, open source, installable in one click."
+description: "Control your Overkiz devices (Somfy TaHoma, Connexoon, Cozytouch...), up to 3 accounts. Free, open source, installable in one click."
 image: "https://integration-store-storage.gladysassistant.com/covers/cicoub13--gladys-overkiz.png"
 keywords:
   - "overkiz"
@@ -29,7 +29,7 @@ Control your Overkiz-based devices from Gladys Assistant: Somfy TaHoma, TaHoma S
 - **Switches and plugs**: on/off.
 - **Sensors**: temperature, humidity, luminance, contact (opening), occupancy (motion), smoke, water leak, CO2 and electric power/energy.
 - **Battery**: every device that reports one, covers and lights included. Devices with a gauge get a battery level in percent; those that only report a status — most IO and RTS sensors — get a "low battery" indicator instead.
-- **Water heaters**: operating mode (eco, manual, auto, away), boost, hot water setpoint, hot water left (in litres drawable at 40 °C), whether the appliance is heating, and the water temperature. Requires **Gladys 4.85 or later**, which is where the water heater category was added.
+- **Water heaters**: operating mode (eco, manual, auto, away), boost, hot water setpoint, hot water left (in litres drawable at 40 °C), whether the appliance is heating, and the water temperature.
 
 Device states are refreshed in near real time through the Overkiz event API, so a shutter moved from a physical remote is reflected in Gladys within seconds.
 
@@ -42,6 +42,7 @@ Device states are refreshed in near real time through the Overkiz event API, so 
 
 ## Prerequisites
 
+- **Gladys 4.86 or later.**
 - An Overkiz-based hub (Somfy TaHoma, TaHoma Switch, Connexoon, Cozytouch...) already set up with the vendor's app.
 - The email and password of your vendor account (the same credentials you use in the TaHoma / Cozytouch app).
 
@@ -54,9 +55,24 @@ Device states are refreshed in near real time through the Overkiz event API, so 
 5. Use the **Test the connection** button to verify the credentials.
 6. Open the **Discovery** tab, run a scan, and create the devices you want in Gladys.
 
+### Several Overkiz accounts
+
+Overkiz powers hubs from several brands, and each brand keeps its own account on its own server. If
+you own more than one — a Somfy hub for your covers and an Atlantic Cozytouch account for a Thermor
+water heater, say — fill in the **Overkiz account 2** section (and 3 if needed) with its own server,
+email and password. The three accounts run side by side and their devices show up in the same
+Discovery list.
+
+To stop using an account, clear its **email** and save. Avoid picking the blank entry in the
+**Server** list: it is not a valid value and the save is rejected.
+
+The **event polling period** is a single setting shared by every account.
+
 ## Troubleshooting
 
 - **Connection failed**: double-check the server selection and your credentials by logging into the vendor's app. Somfy may temporarily lock the account after too many failed attempts.
+- **Only one of my accounts connects**: the connection status turns red as soon as one configured account fails, and names the one at fault — the others keep working normally. **Test the connection** reports each account separately.
+- **A second account's devices disappeared from Discovery**: an account that is momentarily disconnected stops offering its devices there; the ones you already created in Gladys are untouched, and the rest come back on the next connection.
 - **A device is missing**: only device types listed above are supported. Run a new scan from the Discovery tab after adding a device to your hub. If your device should be supported but is not, use the **List the raw devices** action: it writes what Overkiz says about each of your devices to the integration logs, which is what a mapping needs. The dump carries your hub serial number — anonymize it before sharing.
 - **States seem stale**: the event polling period can be lowered in the Configuration tab (10 s minimum). Keep in mind the Overkiz cloud rate-limits aggressive polling.
 - **My water heater offers fewer modes than the appliance does**: only the modes your appliance actually exposes are offered. A boost is a control of its own rather than a mode, because that is how these appliances report it.
@@ -67,20 +83,29 @@ These are the settings Overkiz asks for in its configuration screen in Gladys.
 
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
-| Overkiz account | `section` | No | Connect with the credentials of your Overkiz-based hub. Pick the server matching your hub, then enter the email and password of your provider account. Covers, lights, switches, sensors and water heaters are supported; heating devices are not mapped yet. |
+| Overkiz account 1 | `section` | No | Connect with the credentials of your Overkiz-based hub. Pick the server matching your hub, then enter the email and password of your provider account. Up to 3 accounts can run side by side — a Somfy hub for your covers and a Cozytouch account for your water heater, for instance. Covers, lights, switches, sensors and water heaters are supported; heating devices are not mapped yet. |
 | Server (hub type) | `select` | Yes |  |
 | Email / username | `string` | Yes |  |
 | Password | `secret` | Yes |  |
-| Event polling period (s) | `number` | No | How often events are fetched from the Overkiz cloud, in seconds. |
+| Overkiz account 2 (optional) | `section` | No | Leave the email and the password empty if you have a single Overkiz account. Fill them in to add a second hub or a second provider — for example an Atlantic Cozytouch account for a water heater, next to a Somfy hub for your covers. To disable this account later, clear the email. |
+| Server (hub type) | `select` | No |  |
+| Email / username | `string` | No |  |
+| Password | `secret` | No |  |
+| Overkiz account 3 (optional) | `section` | No | A third account, same principle. Leave it empty if you do not need it. |
+| Server (hub type) | `select` | No |  |
+| Email / username | `string` | No |  |
+| Password | `secret` | No |  |
+| Advanced | `section` | No |  |
+| Event polling period (s) | `number` | No | How often events are fetched from the Overkiz cloud, in seconds. Applies to every configured account. |
 
 ## How to install Overkiz in Gladys
 
 1. In Gladys, open **Integrations**: Overkiz appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/cicoub13/gladys-overkiz:1.3.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/cicoub13/gladys-overkiz:1.5.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/cicoub13/gladys-overkiz](https://github.com/cicoub13/gladys-overkiz).
 
-Overkiz requires Gladys `>=4.85.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Overkiz requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

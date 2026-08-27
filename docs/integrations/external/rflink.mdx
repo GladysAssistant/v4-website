@@ -182,56 +182,81 @@ becomes that extra remote, on an address of your choosing.
 
 ### Pairing RFLink with a shutter
 
-1. Pick a free address you have not used before — six hexadecimal digits, for
-   example `100001`. Use a different one per shutter (`100002`, `100003`…) and
-   write them down.
-2. Take the Somfy remote that already drives the shutter and hold its **PROG**
-   button (on the back, ~2-3 s) until the shutter **jogs** briefly. It is now
-   waiting for a new remote, for a few seconds.
-3. In Gladys, run the **Send a raw command** action with:
+RTS is a rolling-code protocol, so RFLink has to introduce itself to the motor
+as one more remote, on an address you choose.
+
+1. Pick a free address, six hexadecimal digits, one per shutter: `a00001`,
+   `a00002`… Write them down.
+2. Hold the **PROG** button of the Somfy remote (on the back, ~2-3 s) until the
+   shutter jogs. It stays in programming mode for a few tens of seconds.
+3. Run the **Send a raw command** action:
 
    ```
-   10;RTS;100001;0;PAIR;
+   10;RTS;a00001;0412;1;PAIR;
    ```
 
-4. The shutter jogs again: it has accepted RFLink as a remote.
-5. Test it with `10;RTS;100001;0;DOWN;` — the shutter should close.
-6. Send one more command (for example `10;RTS;100001;0;UP;`) and the new
-   virtual remote appears in the **Discovery** tab. Add it, name it after the
-   room, and you have full control.
+   - `a00001` — the address you picked
+   - `0412` — the initial rolling-code value, **not zero**
+   - `1` — the storage slot inside RFLink, **a single digit from 0 to 9**,
+     different for each shutter
+
+   The short form `10;RTS;a00001;0412;PAIR;` works too, letting RFLink pick the
+   slot itself.
+
+4. **The shutter jogs again: that is the only sign the pairing took.** No
+   device appears at this step, and that is expected.
+5. Check with `10;RTS;a00001;0;DOWN;` — the shutter should close. Note that the
+   field after the address is back to `0`: it carries the rolling code for a
+   `PAIR`, and is unused for ordinary commands.
+6. Finally create the device with the **Declare a known device** action:
+   protocol `RTS`, address `a00001`, unit `0`, driven by "Up / Down / Stop". It
+   shows up in Discovery straight away.
 
 Repeat per shutter. To undo a pairing, put the motor back in programming mode
-with the PROG button and send `PAIR` again on the same address.
+and send `PAIR` again on the same address.
+
+### What the answer delay tells you
+
+The gateway answers `OK` to every accepted command, but **the delay is what
+tells you what actually happened**:
+
+| Answer                    | Meaning                                   |
+| ------------------------- | ----------------------------------------- |
+| `OK` after 2-3 seconds    | the frame really went out on the air      |
+| `OK` immediately          | command accepted, but nothing transmitted |
+| `CMD UNKNOWN` immediately | syntax refused, nothing left the gateway  |
+
+It is the single most useful diagnostic when a pairing does not take.
 
 ### Two devices per shutter
 
-After pairing you have, in the Discovery tab, the address of your **physical
-remote** (`f1e260`, discovered by listening) and the address **RFLink owns**
-(`100001`). They are separate devices:
+You may end up with, in Discovery, the address of your **physical remote**
+(discovered by listening when you use it) and the address **RFLink owns**
+(declared at step 6). They are separate devices:
 
 - the physical remote's device reports what you do by hand — useful if you want
   a scene to react to someone pressing the wall remote;
 - RFLink's own address is the one that actually drives the motor.
 
-If you only care about control, add the second one and use **Forget
-undiscovered devices** to clear the first.
+If you only care about control, use **Forget undiscovered devices** to clear
+the first one.
 
 ### RTS troubleshooting
 
-- **The shutter never jogs on `PAIR`.** The motor was not in programming mode
-  any more (the window is short — send the command within a few seconds), or
-  the RFLink transmitter is out of range. RTS is 433.42 MHz, slightly off the
-  usual 433.92: a standard RFLink transceiver works at short range, but a
-  dedicated 433.42 MHz crystal is what gives full range.
+- **The shutter never jogs on `PAIR`.** Check the `OK` delay first (above).
+  Otherwise: the motor was no longer in programming mode, or the transmitter is
+  out of range. RTS runs at 433.42 MHz, slightly off the usual 433.92: a
+  standard RFLink transceiver works at short range, but a dedicated 433.42 MHz
+  crystal is what gives full range.
+- **`CMD UNKNOWN` on the `PAIR`.** The storage slot is above 9, or the rolling
+  code is missing. Both valid forms are shown at step 3.
 - **It worked, then stopped.** The rolling code is out of sync. Re-pair the
   same address, or pair a fresh one.
 - **Checking what RFLink stores.** `10;RTSSHOW;` lists the rolling codes it
-  keeps, `10;RTSCLEAN;` wipes them — after which every paired address has to be
-  paired again. Both go through **Send a raw command**.
-
-> The `PAIR` command and the `RTSSHOW` / `RTSCLEAN` helpers come from the
-> RFLink protocol reference rather than from a test on real hardware here. The
-> UP / DOWN / STOP control path is exercised end to end by the test suite.
+  keeps, `10;RTSCLEAN;` wipes them — after which every address has to be paired
+  again. `10;RTSRECCLEAN=9;` clears a single slot.
+- **A PROG press shows up as `CMD=STOP`.** RFLink does not decode that button
+  separately. It is still the proof, in the logs, that the press was picked up.
 
 ## Controlling a device
 
@@ -254,8 +279,10 @@ raw command** action:
    blinks).
 2. Send a command on a free address, for example
    `10;NewKaku;00c142;1;ON;`.
-3. The receiver memorizes it. Send the same command again and it appears in
-   the Discovery tab like any other device.
+3. The receiver memorizes it. Then create the device with the **Declare a
+   known device** action: transmitting a command does not create it, because
+   the integration only learns what it **hears**, and RFLink does not replay
+   its own transmissions.
 
 The action accepts a single RFLink line starting with `10;`, and rejects
 anything else.
@@ -267,6 +294,7 @@ anything else.
 | **Test the gateway**            | Sends `10;PING;` and waits for the `PONG`.                           |
 | **Read the firmware version**   | Sends `10;VERSION;` and shows firmware, revision and build.          |
 | **Set a device type**           | Declares what an EV1527-style device really is, and its reset delay. |
+| **Declare a known device**      | Creates a device whose address you know, without having heard it.    |
 | **Identify a device**           | Switches the chosen device on, then off, two seconds later.          |
 | **Send a raw command**          | Transmits one RFLink `10;...;` line (pairing, testing an address).   |
 | **Forget undiscovered devices** | Empties the Discovery tab, keeping every device you created.         |
@@ -324,7 +352,7 @@ These are the settings RFLink asks for in its configuration screen in Gladys.
 ## How to install RFLink in Gladys
 
 1. In Gladys, open **Integrations**: RFLink appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/philippema/gladys-rflink:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/philippema/gladys-rflink:1.0.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/PhilippeMA/gladys-RFlink](https://github.com/PhilippeMA/gladys-RFlink).
 
