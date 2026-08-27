@@ -36,17 +36,23 @@ You did exactly that. So version 5 is for the screen you actually use.
 
 The new design is called **Horizon**. It is a soft, luminous glass theme: frosted surfaces floating over a living gradient, generous radii, real depth, and a type scale that finally lets the numbers breathe.
 
+![Close-up on the top of the Home dashboard: the clock, the weather and the house view widget](../static/img/articles/gladys-assistant-5/02-horizon-closeup-en.webp)
+
+That is a zoom on the top of a dashboard, at real size. Every widget is a frosted panel with a wide radius, floating over a gradient that runs behind the entire page instead of being repainted card by card. In the middle sits the **house view**, the signature widget of this release: your home as an illustration, with live values pinned exactly where they belong.
+
 It is not a re-skin of two screens. **Every page of Gladys moved onto it**: the dashboard, Devices, Integrations and each of their sub-pages, Discussion, Activity, Calendar, Plans, Scenes, Settings, the profile, even the login screen.
 
-![The comfort dashboard, with segmented controls and setpoint capsules](../static/img/articles/gladys-assistant-5/03-comfort-controls-en.webp)
+![Close-up on the device controls: segmented controls, a setpoint capsule and toggles](../static/img/articles/gladys-assistant-5/03-horizon-controls-en.webp)
 
-Look at the controls in that screenshot. The old Bootstrap button groups became **iOS-style segmented controls**: a soft track, a single white active segment. Setpoints became **capsules** with a minus and a plus. Switches became real toggles. None of this changes what Gladys does. All of it changes how it feels to use twenty times a day.
+And the controls were redrawn one by one. The old Bootstrap button groups became **iOS-style segmented controls**: a soft track, a single white active segment. Setpoints became **capsules** with a minus and a plus. Every device row became its own nested glass tile. None of this changes what Gladys does. All of it changes how it feels to use twenty times a day.
 
 ## 📱 Built for the phone in your pocket
 
 This is the part I care most about, and the part that is hardest to show in a screenshot, so let me be specific.
 
-![Gladys Assistant 5 on a phone: the dashboard, the comfort view and the settings](../static/img/articles/gladys-assistant-5/02-mobile-en.webp)
+![Gladys Assistant 5 on a phone: the home screen, the controls of a room, and the light panel](../static/img/articles/gladys-assistant-5/04-mobile-en.webp)
+
+Those three screens are one gesture apart. You open Gladys and you see your house. You scroll once and you are on the controls of a room: a light, a shutter, the air conditioning and its setpoint, all at finger size. You tap the light and you get a full-screen panel with a brightness slider you drag with your thumb and a colour wheel. That is the whole point of this release.
 
 **The dashboard switcher moved to the bottom.** On a phone, the reachable edge is the bottom one, not the top. So below the desktop breakpoint the tab bar detaches from the header and becomes a floating dock within thumb reach. It respects `safe-area-inset-bottom`, so it clears the home indicator on an iPhone, and it tracks the **visual viewport**: iOS Safari animates its own bottom toolbar while you scroll, and without that correction the dock would keep hiding underneath it. Now it does not.
 
@@ -58,9 +64,9 @@ This is the part I care most about, and the part that is hardest to show in a sc
 
 **Segmented controls are the exception to the 44 pixel rule**, on purpose: inside a segmented track the *whole track* is the touch zone, so its segments stay at the iOS segmented height instead of stacking into a tower of fat buttons.
 
-**Popups are portalled.** Date pickers, period selectors, dropdown menus: they used to be clipped by the card that contained them, or painted under the next step of a scene. They now render at the top of the document, so they are never cut off on a small screen.
+**Popups escape their card.** Date pickers, period selectors and dropdown menus render at the top of the document rather than inside the widget that opened them, so on a small screen they are never cut off by the card they belong to.
 
-**The settings menu scrolls sideways** with overflow arrows instead of wrapping into six lines. Columns that no longer fit **wrap** instead of being crushed. The scene name stops being truncated. The integrations disclaimer collapses.
+**The settings menu scrolls sideways** with overflow arrows instead of wrapping into six lines, and columns that no longer fit **wrap** instead of being crushed.
 
 Twenty small decisions. Together they are the difference between an interface that *works* on a phone and one that was *made* for it.
 
@@ -68,7 +74,7 @@ Twenty small decisions. Together they are the difference between an interface th
 
 Horizon ships in both. The dark theme is not an inverted filter, it is authored: the same glass, the same depth, warmer at the edges.
 
-![The Gladys Assistant 5 dashboard in dark mode](../static/img/articles/gladys-assistant-5/04-dark-mode-en.webp)
+![The Gladys Assistant 5 dashboard in dark mode](../static/img/articles/gladys-assistant-5/05-dark-mode-en.webp)
 
 ## 🧱 A dashboard you can actually lay out
 
@@ -89,7 +95,7 @@ Dashboards also now **require an icon** when you create one, and existing dashbo
 
 Scenes were the most powerful and the most intimidating part of Gladys. The editor is now a **vertical flow**: a **WHEN** block for the triggers, a **THEN** block for the steps, each step collapsible, each action picked from a **categorized picker** instead of a flat list.
 
-![The rewritten scene editor, with its WHEN and THEN blocks](../static/img/articles/gladys-assistant-5/05-scene-editor-en.webp)
+![The rewritten scene editor, with its WHEN and THEN blocks](../static/img/articles/gladys-assistant-5/06-scene-editor-en.webp)
 
 Also new in scenes:
 
@@ -106,31 +112,35 @@ Two versions ago we opened **external integrations**: anyone can package a devic
 
 The catalog went from 20 to **67 integrations** in about a month, and **22 of those landed in the last two weeks alone**. Airzone, Apple TV, Daikin, De Dietrich, charging stations, CallMeBot, Docker, solar inverters: almost all of it written by the community, not by me.
 
-![The integration catalog, filtered on the community integrations](../static/img/articles/gladys-assistant-5/06-integration-store-en.webp)
+![The integration catalog, filtered on the community integrations](../static/img/articles/gladys-assistant-5/07-integration-store-en.webp)
 
 This release polishes that whole loop: an **Installed** view showing what actually runs on your instance, version numbers **linked to their changelog**, the new version shown in the "update available" banner, **per-feature history retention** on external devices, and **automatic energy tracking** for the features that report power.
 
 If your device is not supported yet, [you can build the integration yourself in an afternoon](/docs/dev/external-integrations/).
 
-## 🤖 An assistant that actually uses your house
+## 🤖 The assistant gets a microphone
 
-The AI assistant now shows **which tools it used** to answer you. Ask what you consumed today and you see it call `device_get_energy_consumption`, then `device_get_state`, then answer in plain language. No black box.
+The Discussion page moved onto Horizon like everything else: the conversation sits on the same glass, and the tools the assistant used to answer you are laid out as chips you can unfold.
 
-![The Gladys AI assistant, showing the tools it used to answer](../static/img/articles/gladys-assistant-5/07-ai-chat-en.webp)
+![The Gladys AI assistant on the Horizon Discussion page](../static/img/articles/gladys-assistant-5/08-ai-chat-en.webp)
 
-New in this release: a **microphone button** to dictate your message instead of typing it, and a **battery tool** so the assistant can answer "which sensors need new batteries?".
+The new thing is right next to the send button: a **microphone**. Tap it and dictate your message instead of typing it. On a phone that is the difference between using the assistant and not bothering.
+
+![The message composer, with the new microphone button next to send](../static/img/articles/gladys-assistant-5/09-ai-microphone-en.webp)
+
+The assistant also learned a new tool: it can read the **battery level of your devices**, so "which sensors need new batteries?" now gets a real answer.
 
 ## ⚡ Energy
 
-The energy widgets got the Horizon treatment and a few real upgrades: a **billing period that can start on any day of the month** (so it matches your actual bill, not the calendar), a redesigned month and year view, and a period picker that no longer gets clipped inside its card.
+The energy widgets got the Horizon treatment, and one upgrade you will feel every month: the tracking period can now **start on any day of the month**, so it matches your real billing period instead of the calendar.
 
-![The energy dashboard](../static/img/articles/gladys-assistant-5/08-energy-en.webp)
+![The energy dashboard](../static/img/articles/gladys-assistant-5/10-energy-en.webp)
 
 Enedis users: the new **DataConnect 2026** consent callback is supported, and a sync now only recalculates the costs of the devices it actually touched, instead of the whole history.
 
 ## 🔌 Devices, protocols, system
 
-![The devices page](../static/img/articles/gladys-assistant-5/09-devices-en.webp)
+![The devices page](../static/img/articles/gladys-assistant-5/11-devices-en.webp)
 
 - **Export a device's history as CSV**, straight from the devices list.
 - **Matter**: water leak detectors, contact and rain sensors, and **door locks**.
@@ -149,7 +159,7 @@ Plus the long tail: rooms sorted alphabetically, integration names shown on the 
 
 ## 🏡 Coming from Home Assistant?
 
-I will be honest about the trade: Home Assistant has more integrations than Gladys, and it will for a while. Here is what you get in exchange.
+The usual objection is the integration count. That argument is running out of road: the community catalog went from 20 to **67 integrations in a month**, written by people who had never opened the Gladys codebase before, and it is still accelerating. We are closing that gap on purpose, and fast. Meanwhile, here is everything you get today.
 
 - **An interface you do not have to build.** No YAML, no dashboard DSL, no card catalog to learn. You install Gladys and it already looks like the screenshots in this post, on your phone, in dark mode, without a single config file.
 - **Your existing devices probably already work.** Gladys speaks **Home Assistant Discovery over MQTT**: your ESPHome, Tasmota and Zigbee2MQTT devices are found automatically, with zero manual configuration. It also speaks Zigbee2MQTT natively, Matter, Z-Wave, and it can talk to HomeKit and Google Home.
@@ -167,7 +177,7 @@ Then, when you are convinced: **[install Gladys](/docs/)**. On a Raspberry Pi, a
 
 ## ❤️ Thank you
 
-Version 5 exists because of the people who reported, argued, tested on their own wall tablets and sent me screenshots of things that were broken on iOS.
+Version 5 exists because of the people who reported, argued, tested on their own wall tablets and sent me screenshots of things that were broken on mobile.
 
 Huge thanks to [@Dreamthy](https://github.com/Dreamthy), [@William-De71](https://github.com/William-De71), [@callemand](https://github.com/callemand), [@cicoub13](https://github.com/cicoub13), [@vincentBesseau](https://github.com/vincentBesseau), Stéphane Escandell and Valentin Hutter for the code in this release, and to everyone publishing external integrations: you are the reason the catalog tripled in a month.
 
