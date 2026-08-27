@@ -4,12 +4,7 @@
 // maintain and keep in sync when both languages live side by side.
 //
 // Tone: this lives on Gladys' own site, so the comparison is fair and honest
-// but allowed to lean slightly in Gladys' favor (unlike the deliberately
-// neutral YouTube video it's based on).
-
-// "Home Assistant vs Gladys Assistant" YouTube video. Rendered as an embedded
-// video in a dedicated section on the comparison page.
-const YOUTUBE_VIDEO_ID = "iVFXXDO798A";
+// but allowed to lean slightly in Gladys' favor.
 
 const comparisonContent = {
   en: {
@@ -26,6 +21,13 @@ const comparisonContent = {
         "Full transparency: I'm Pierre-Gilles, the creator of Gladys Assistant, so I'm obviously biased. But I'll be fair about both projects. Here's how they really compare, and why I believe Gladys is the better fit for most people who want a smart home that simply works.",
         "Both projects started in 2013, right after the first Raspberry Pi came out. They look similar at first glance, but they're built on very different philosophies, and that difference is exactly what should guide your choice.",
       ],
+      showdown: {
+        alt: "The Gladys Assistant 5 dashboard next to the Home Assistant demo dashboard",
+        gladysLabel: "Gladys Assistant 5",
+        haLabel: "Home Assistant",
+        caption:
+          "Same screen, same day, no retouching: on the left the Gladys Assistant 5 dashboard, on the right the official Home Assistant demo.",
+      },
     },
     verdict: {
       title: "The short version",
@@ -141,7 +143,8 @@ const comparisonContent = {
         id: "interface",
         title: "Interface & ease of use",
         gladys: [
-          "Gladys has a clean, intuitive interface. The whole philosophy is to think about the user before the technical implementation: you never have to dig into logs or edit a file on disk. Everything happens with the mouse.",
+          "Since version 5, Gladys ships a brand new interface called Horizon: frosted glass surfaces over a living gradient, real depth, and every control redrawn one by one. It was designed mobile-first, so controls grow to thumb size on a phone and shrink back on a desktop, and the dashboard switcher sits at the bottom of the screen, where your hand actually is.",
+          "The whole philosophy is to think about the user before the technical implementation: you never have to dig into logs or edit a file on disk. Everything happens with the mouse, or with your thumb.",
           "You can build as many dashboards as you want, one per room or by theme (energy, security, and so on), with no configuration files because there simply aren't any.",
           "Gladys deliberately keeps things focused: you arrange the widgets you actually need instead of wading through endless options. And since it's open-source, anything missing can be added by the community.",
         ],
@@ -150,7 +153,7 @@ const comparisonContent = {
           "But you'll often see, on the forums, that some parts still require editing YAML files, which can be intimidating for a beginner.",
         ],
         takeaway:
-          "For a beautiful experience that works out of the box, Gladys is hard to beat. Home Assistant gives you more knobs if you enjoy customizing every last detail.",
+          "This is where Gladys is clearly ahead, and since version 5 it is not close. Home Assistant hands you a box of cards and lets you assemble your own dashboard; Gladys hands you one that already looks finished, on your phone as much as on your laptop, with nothing to configure. If you are going to open an app several times a day for years, that difference matters more than any feature list.",
       },
       {
         id: "integrations",
@@ -168,7 +171,7 @@ const comparisonContent = {
           "The flip side is variable quality: some integrations are excellent, others less so, and it's up to you to find the right one and test that it works. Custom components installed through HACS also run inside Home Assistant itself, so a badly behaved one can affect the whole instance.",
         ],
         takeaway:
-          "Home Assistant still has the larger catalog today, and if you own very niche hardware there's a good chance it's already covered. But Gladys is no longer limited to what I have time to build: native integrations for open standards, plus an open catalog of community external integrations that anyone can extend, installed in one click and sandboxed by design. Between Matter on one side and external integrations on the other, the gap is closing fast.",
+          "The usual objection is the integration count, and that argument is running out of road: the community catalog went from 20 to 67 integrations in a little over two weeks, written by people who had never opened the Gladys codebase before, and it is still accelerating. Home Assistant has the larger catalog today, and if you own very niche hardware there's a good chance it's already covered. But Gladys is no longer limited to what I have time to build, and between Matter on one side and a catalog anyone can extend on the other, we are closing that gap on purpose, and fast.",
       },
       {
         id: "automations",
@@ -229,7 +232,6 @@ const comparisonContent = {
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "See the integrations", href: "/docs/integrations/" },
     },
-    videoTitle: "Watch the full comparison",
   },
 
   fr: {
@@ -246,6 +248,13 @@ const comparisonContent = {
         "En toute transparence : je suis Pierre-Gilles, le créateur de Gladys Assistant, donc je suis forcément un peu partial. Mais je serai juste envers les deux projets. Voici comment ils se comparent vraiment, et pourquoi je pense que Gladys est le meilleur choix pour la plupart des gens qui veulent une maison connectée qui fonctionne, tout simplement.",
         "Les deux projets sont nés en 2013, juste après la sortie du premier Raspberry Pi. Ils se ressemblent au premier abord, mais ils reposent sur des philosophies très différentes, et c'est justement cette différence qui doit guider votre choix.",
       ],
+      showdown: {
+        alt: "Le tableau de bord de Gladys Assistant 5 face au tableau de bord de démonstration de Home Assistant",
+        gladysLabel: "Gladys Assistant 5",
+        haLabel: "Home Assistant",
+        caption:
+          "Même écran, le même jour, sans retouche : à gauche le tableau de bord de Gladys Assistant 5, à droite la démo officielle de Home Assistant.",
+      },
     },
     verdict: {
       title: "En résumé",
@@ -362,7 +371,8 @@ const comparisonContent = {
         id: "interface",
         title: "Interface & prise en main",
         gladys: [
-          "Gladys a une interface épurée et intuitive. Toute la philosophie, c'est de penser à l'utilisateur avant la technique : vous n'avez jamais à aller chercher dans les logs ou à éditer un fichier sur le disque. Tout se passe à la souris.",
+          "Depuis la version 5, Gladys embarque une interface entièrement nouvelle, appelée Horizon : des surfaces de verre dépoli posées sur un dégradé vivant, de la vraie profondeur, et chaque contrôle redessiné un par un. Elle a été pensée pour le mobile d'abord, donc les contrôles atteignent la taille d'un pouce sur un téléphone et se resserrent sur un ordinateur, et le sélecteur de tableaux de bord est en bas de l'écran, là où se trouve votre main.",
+          "Toute la philosophie, c'est de penser à l'utilisateur avant la technique : vous n'avez jamais à aller chercher dans les logs ou à éditer un fichier sur le disque. Tout se passe à la souris, ou au pouce.",
           "Vous pouvez créer autant de tableaux de bord que vous voulez, un par pièce ou par thématique (énergie, sécurité…), sans fichiers de configuration puisqu'il n'y en a pas.",
           "Gladys reste volontairement concentrée : vous disposez les widgets dont vous avez réellement besoin, sans vous noyer dans des options à n'en plus finir. Et comme c'est open source, ce qui manque peut être ajouté par la communauté.",
         ],
@@ -371,7 +381,7 @@ const comparisonContent = {
           "Mais on remarque souvent, sur les forums, que certaines parties demandent encore d'éditer des fichiers YAML, ce qui peut être intimidant pour un débutant.",
         ],
         takeaway:
-          "Pour une belle expérience qui fonctionne dès le départ, Gladys est difficile à battre. Home Assistant offre plus de réglages si vous aimez tout personnaliser dans les moindres détails.",
+          "C'est là que Gladys est clairement devant, et depuis la version 5 ce n'est même plus serré. Home Assistant vous tend une boîte de cartes et vous laisse assembler votre tableau de bord ; Gladys vous en donne un qui a déjà l'air fini, sur votre téléphone autant que sur votre ordinateur, sans rien à configurer. Quand on ouvre une application plusieurs fois par jour pendant des années, cette différence compte plus que n'importe quelle liste de fonctionnalités.",
       },
       {
         id: "integrations",
@@ -389,7 +399,7 @@ const comparisonContent = {
           "La contrepartie, c'est une qualité variable : certaines intégrations sont excellentes, d'autres moins, et c'est à vous de trouver la bonne et de vérifier qu'elle fonctionne. Les custom components installés via HACS tournent en plus à l'intérieur de Home Assistant lui-même : un module mal écrit peut donc affecter toute l'instance.",
         ],
         takeaway:
-          "Home Assistant garde aujourd'hui le catalogue le plus large, et si vous avez du matériel très spécifique il y a de bonnes chances qu'il soit déjà couvert. Mais Gladys n'est plus limitée à ce que j'ai le temps de développer : des intégrations natives pour les standards ouverts, plus un catalogue ouvert d'intégrations externes que n'importe qui peut enrichir, installables en un clic et isolées par conception. Entre Matter d'un côté et les intégrations externes de l'autre, l'écart se réduit vite.",
+          "L'objection habituelle, c'est le nombre d'intégrations, et cet argument est en train de s'épuiser : le catalogue communautaire est passé de 20 à 67 intégrations en un peu plus de deux semaines, écrites par des gens qui n'avaient jamais ouvert le code de Gladys, et ça accélère encore. Home Assistant a le catalogue le plus large aujourd'hui, et si vous avez du matériel très spécifique il y a de bonnes chances qu'il soit déjà couvert. Mais Gladys n'est plus limitée à ce que j'ai le temps de développer, et entre Matter d'un côté et un catalogue que n'importe qui peut enrichir de l'autre, on va chercher cet écart, volontairement, et vite.",
       },
       {
         id: "automatisations",
@@ -450,7 +460,6 @@ const comparisonContent = {
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Voir les intégrations", href: "/docs/integrations/" },
     },
-    videoTitle: "Voir le comparatif en vidéo",
   },
 };
 
@@ -540,5 +549,4 @@ export const comparisonFaqFr = [
   },
 ];
 
-export { YOUTUBE_VIDEO_ID };
 export default comparisonContent;

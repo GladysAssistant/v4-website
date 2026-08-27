@@ -1,5 +1,6 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "./horizon/HorizonPage";
+import GladysScreenshot from "./horizon/GladysScreenshot";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
@@ -13,37 +14,6 @@ import styles from "../pages/comparison.module.css";
 // keeps the individual page files tiny and the pages visually consistent.
 
 // Reuses the homepage hero dashboard screenshot (localized, responsive).
-function GladysScreenshot({ lang, caption }) {
-  const key =
-    lang === "fr"
-      ? "main_screenshot_fr_ncm1yr_c_scale"
-      : "main_screenshot_en_j5czyj_c_scale";
-  const widths =
-    lang === "fr"
-      ? [825, 1090, 1342, 1548, 1951, 2800]
-      : [850, 1142, 1388, 1623, 2022, 2800];
-  const base = `/img/home/main_screenshot/${key}`;
-  const srcSet = widths
-    .map((w) => `${useBaseUrl(`${base},w_${w}.png`)} ${w}w`)
-    .join(", ");
-  const defaultWidth = lang === "fr" ? 1342 : 1388;
-  const alt =
-    lang === "fr"
-      ? "Le tableau de bord de Gladys Assistant"
-      : "The Gladys Assistant dashboard";
-
-  return (
-    <figure className={styles.screenshot}>
-      <img
-        src={useBaseUrl(`${base},w_${defaultWidth}.png`)}
-        srcSet={srcSet}
-        sizes="(max-width: 52rem) 100vw, 52rem"
-        alt={alt}
-      />
-      <figcaption className={styles.screenshotCaption}>{caption}</figcaption>
-    </figure>
-  );
-}
 
 function Card({ icon, title, text }) {
   return (
@@ -70,7 +40,7 @@ function LinkCard({ label, href, text }) {
 
 export default function UseCasePage({ content, faq, schemaData, lang }) {
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={schemaData} />
       <main className={styles.main}>
         <div className={`container ${styles.container}`}>
@@ -246,6 +216,6 @@ export default function UseCasePage({ content, faq, schemaData, lang }) {
           </section>
         </div>
       </main>
-    </Layout>
+    </HorizonPage>
   );
 }

@@ -121,6 +121,7 @@ L'écriture peut prendre plusieurs minutes selon la vitesse de votre support de 
 
 Ouvrez votre navigateur et rendez-vous à l'une de ces adresses :
 
+- `http://gladysassistant.local` (Gladys annonce ce nom sur votre réseau local en mDNS)
 - `http://gladys.local` (si vous avez configuré le nom d'hôte `gladys`)
 - `http://VOTRE_IP_LOCALE` (par exemple `http://192.168.1.131`)
 

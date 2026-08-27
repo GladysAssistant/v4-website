@@ -121,6 +121,7 @@ Writing can take several minutes depending on your storage speed. Once complete,
 
 Open your browser and go to one of these addresses:
 
+- `http://gladysassistant.local` (Gladys announces this name on your local network over mDNS)
 - `http://gladys.local` (if you configured the hostname as `gladys`)
 - `http://YOUR_LOCAL_IP` (for example `http://192.168.1.131`)
 

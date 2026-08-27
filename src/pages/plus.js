@@ -1,13 +1,11 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import cx from "classnames";
 
-import { useColorMode } from "@docusaurus/theme-common";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Translate, { translate } from "@docusaurus/Translate";
 
-import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
 import { TestimonialSection } from "../components/Testimonial";
 import testimonialsFr from "../components/testimonials/testimonial.plus.fr.json";
 import testimonialsEn from "../components/testimonials/testimonial.plus.en.json";
@@ -25,8 +23,8 @@ import FounderNote from "../components/plus/FounderNote";
 import StickyMobileCta from "../components/plus/StickyMobileCta";
 import { getCheckoutUrl } from "../components/plus/checkout";
 
-import styles from "./styles.module.css";
 import plusStyles from "../components/plus/styles.module.css";
+import horizonStyles from "../components/horizon/styles.module.css";
 import JsonLd from "../components/seo/JsonLd";
 import { getPlusPageSchema } from "../data/structuredData";
 
@@ -37,7 +35,6 @@ const testimonials = {
 
 function PlusContent() {
   const { i18n } = useDocusaurusContext();
-  const isDarkTheme = useColorMode().colorMode === "dark";
   const language = i18n.currentLocale;
   const recommendedCheckoutHref = getCheckoutUrl(language);
 
@@ -149,18 +146,28 @@ function PlusContent() {
                 </a>
               </div>
             </div>
-            <div className="col col--6">
-              <img
-                alt="Gladys Plus"
-                src={useBaseUrl("img/plus/mockup-1x.png")}
-                srcSet={`${useBaseUrl(
-                  "img/plus/mockup-1x.png",
-                )} 1x, ${useBaseUrl("img/plus/mockup-2x.png")} 2x`}
-                className={cx(
-                  isDarkTheme ? "" : styles.invertImageColor,
-                  styles.plusImage,
-                )}
-              />
+            <div className={cx("col col--6", plusStyles.heroPhone)}>
+              <div className={horizonStyles.phoneFrame}>
+                <img
+                  alt="Gladys Plus"
+                  src={useBaseUrl(
+                    `img/home/horizon/phone-${language}-780.webp`,
+                  )}
+                  srcSet={[390, 585, 780]
+                    .map(
+                      (width) =>
+                        `${useBaseUrl(
+                          `img/home/horizon/phone-${language}-${width}.webp`,
+                        )} ${width}w`,
+                    )
+                    .join(", ")}
+                  sizes="(max-width: 996px) 60vw, 17.5rem"
+                  width="390"
+                  height="844"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -193,22 +200,6 @@ function PlusContent() {
           <PricingTable language={language} />
         </section>
 
-        {language === "fr" && (
-          <section
-            className={plusStyles.section}
-            aria-labelledby="demo-video-title"
-          >
-            <h2 id="demo-video-title" className={plusStyles.sectionTitle}>
-              <Translate id="gladysPlusPage.v2.video.title">
-                Gladys Plus en vidéo
-              </Translate>
-            </h2>
-            <div style={{ maxWidth: "56rem", margin: "0 auto" }}>
-              <YoutubeEmbedVideo id="TmjrBeufjyo" />
-            </div>
-          </section>
-        )}
-
         {/* EUROPEAN HOSTING */}
         <EuropeanHosting />
 
@@ -232,7 +223,7 @@ function PlusParent() {
   const { i18n } = useDocusaurusContext();
 
   return (
-    <Layout
+    <HorizonPage
       title={translate({
         id: "gladysgladysPlusPage.title",
         message: "Gladys Plus: secure remote access for your smart home",
@@ -245,7 +236,7 @@ function PlusParent() {
     >
       <JsonLd data={getPlusPageSchema(i18n.currentLocale)} />
       <PlusContent />
-    </Layout>
+    </HorizonPage>
   );
 }
 

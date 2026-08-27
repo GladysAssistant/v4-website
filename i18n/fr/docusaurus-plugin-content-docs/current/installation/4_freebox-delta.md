@@ -82,7 +82,7 @@ docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
-gladysassistant/gladys:v4
+gladysassistant/gladys:v5
 ```
 
 ## Mise à jour automatique avec Watchtower
@@ -100,6 +100,6 @@ docker run -d \
 
 ### Accéder à Gladys
 
-Vous pouvez accéder à Gladys en tapant l'IP de votre VM sur votre navigateur.
+Vous pouvez accéder à Gladys à l'adresse `http://gladysassistant.local`, le nom que Gladys annonce sur votre réseau local en mDNS. Si votre réseau bloque le mDNS, tapez plutôt l'IP de votre VM dans votre navigateur.
 
 ![Accéder a la VM](../../../../../static/img/docs/fr/installation/freebox-delta/freebox-vm-success.jpg)

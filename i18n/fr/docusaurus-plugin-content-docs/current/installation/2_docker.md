@@ -46,7 +46,8 @@ sudo docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
-gladysassistant/gladys:v4
+-v /run/dbus:/run/dbus:ro \
+gladysassistant/gladys:v5
 ```
 
 **Note :**
@@ -56,6 +57,8 @@ gladysassistant/gladys:v4
 - `-e TZ=Europe/Paris` => Pour changer le fuseau horaire du conteneur, vous pouvez modifier cette variable. Vous trouverez toutes les valeurs possibles sur [cette liste](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 - `-v /var/lib/gladysassistant` : Le dossier de destination où Gladys va stocker toutes ses données. Vous pouvez changer la partie à gauche des ":" pour modifier le dossier de destination.
+
+- `-v /run/dbus:/run/dbus:ro` : Donne à Gladys l'accès au bus système de la machine hôte. C'est ce qui permet de redémarrer ou d'éteindre la machine depuis les paramètres Système, et c'est le prérequis pour le Bluetooth : l'appairage d'un appareil Matter en BLE comme la lecture des capteurs Bluetooth passent par BlueZ, qui n'est joignable que par ce bus. BlueZ doit être installé sur la machine hôte (`sudo apt install bluez` sous Debian et Ubuntu).
 
 - Cette image a été buildée pour toutes les architectures connues du marché. Vous pouvez donc lancer cette commande que vous soyez sur un Raspberry Pi, sur un NAS Synology, sur une VM Ubuntu, etc... Tout est possible !
 
@@ -76,6 +79,19 @@ sudo docker run -d \
 
 ## Accéder à Gladys Assistant sur le navigateur
 
-Vous pouvez accéder à Gladys en saisissant l'IP de votre machine sur votre navigateur, vous devez être sur le même réseau que la machine attention !
+Ouvrez **`http://gladysassistant.local`** dans votre navigateur. Gladys annonce ce nom sur votre réseau local en mDNS : vous y accédez depuis n'importe quel appareil du même réseau, sans jamais chercher d'adresse IP.
 
-Pour trouver l'IP de votre machine, si vous êtes sur le même réseau local, vous pouvez utiliser des apps comme ([Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) sur Android ou [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) sur iOS).
+:::note
+Vous devez être sur le même réseau que la machine.
+:::
+
+Si vous faites tourner plusieurs Gladys chez vous, vous pouvez renommer chacune depuis **Paramètres → Système → Adresse locale (mDNS)**. Le changement est appliqué immédiatement, sans redémarrage.
+
+### Si `gladysassistant.local` ne s'ouvre pas
+
+Le mDNS est intégré à macOS, iOS et Windows 10 et suivants, et fonctionne sur la plupart des réseaux domestiques. Quelques cas résistent encore : certaines versions d'Android, les réseaux invités, et les box dont l'isolation des clients est activée. Gladys ne s'annonce par ailleurs que lorsqu'elle tourne sur le réseau de l'hôte, ce que fait la commande ci-dessus.
+
+Dans ce cas, saisissez plutôt l'IP de votre machine dans votre navigateur. Pour la trouver sur votre réseau local, vous pouvez utiliser des applications comme :
+
+- [Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner&hl=fr) sur Android
+- [iNet](https://itunes.apple.com/fr/app/inet-network-scanner/id340793353?mt=8) sur iOS

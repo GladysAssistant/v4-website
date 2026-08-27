@@ -1,7 +1,6 @@
 import React from "react";
-import Layout from "@theme/Layout";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import integrations from "../../integrations";
+import HorizonPage from "../components/horizon/HorizonPage";
 import { Home } from "../components/Home";
 import JsonLd from "../components/seo/JsonLd";
 import { getHomepageSchema } from "../data/structuredData";
@@ -11,13 +10,13 @@ import { translate } from "@docusaurus/Translate";
 function HomePage() {
   const context = useDocusaurusContext();
   const { i18n } = context;
-  const first4Integrations = integrations[i18n.currentLocale].slice(0, 4);
   return (
-    <Layout
+    <HorizonPage
       title={translate({
-        id: "home.description",
-        description: "The home page description",
-        message: "A privacy-first, open-source home assistant",
+        id: "home.pageTitle",
+        description:
+          "The <title> of the home page, shown in search results. Docusaurus appends ' | Gladys Assistant', so it has to stay short.",
+        message: "Open-source, local and extensible smart home",
       })}
       description={translate({
         id: "home.metaDescription",
@@ -27,8 +26,8 @@ function HomePage() {
       })}
     >
       <JsonLd data={getHomepageSchema(i18n.currentLocale)} />
-      <Home integrations={first4Integrations} lang={i18n.currentLocale} />
-    </Layout>
+      <Home lang={i18n.currentLocale} />
+    </HorizonPage>
   );
 }
 

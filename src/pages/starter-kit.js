@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Head from "@docusaurus/Head";
 import Link from "@docusaurus/Link";
 import { Redirect } from "@docusaurus/router";
@@ -982,8 +982,8 @@ function Plus() {
                             }}
                           >
                             {isBlackFridayActive
-                              ? "🎁 Profiter de l'offre"
-                              : "Commander le Kit T5"}
+                                ? "🎁 Profiter de l'offre"
+                                : "Commander le Kit T5"}
                           </button>
                         </div>
                       </div>
@@ -1116,8 +1116,8 @@ function Plus() {
                           }}
                         >
                           {isBlackFridayActive
-                            ? "🎁 Profiter de l'offre"
-                            : "Commander le kit mini S12"}
+                              ? "🎁 Profiter de l'offre"
+                              : "Commander le kit mini S12"}
                         </button>
                       </div>
                     </div>
@@ -1250,8 +1250,8 @@ function Plus() {
                           }}
                         >
                           {isBlackFridayActive
-                            ? "🎁 Profiter de l'offre"
-                            : "Commander le kit S13"}
+                              ? "🎁 Profiter de l'offre"
+                              : "Commander le kit S13"}
                         </button>
                       </div>
                     </div>
@@ -1875,8 +1875,8 @@ function Plus() {
                             onClick={subscribeT5}
                             value={
                               isBlackFridayActive
-                                ? "🎁 Profiter de l'offre"
-                                : "Commander le Kit T5"
+                                  ? "🎁 Profiter de l'offre"
+                                  : "Commander le Kit T5"
                             }
                             disabled={isUnavailable || loading || !priceT5}
                             className={cx("button button--primary button--lg")}
@@ -1897,8 +1897,8 @@ function Plus() {
                           onClick={subscribeMiniS}
                           value={
                             isBlackFridayActive
-                              ? "🎁 Profiter de l'offre"
-                              : "Commander le Kit mini S12"
+                                ? "🎁 Profiter de l'offre"
+                                : "Commander le Kit mini S12"
                           }
                           disabled={isUnavailable || loading || !priceMiniS}
                           className={cx("button button--primary button--lg")}
@@ -1918,8 +1918,8 @@ function Plus() {
                           onClick={subscribeS13}
                           value={
                             isBlackFridayActive
-                              ? "🎁 Profiter de l'offre"
-                              : "Commander le Kit S13"
+                                ? "🎁 Profiter de l'offre"
+                                : "Commander le Kit S13"
                           }
                           disabled={isUnavailable || loading || !priceS13}
                           className={cx("button button--primary button--lg")}
@@ -1986,12 +1986,12 @@ function Plus() {
 
 function PlusParent() {
   return (
-    <Layout
+    <HorizonPage
       title="Kit domotique clé en main, sans installation | Gladys"
       description="La box domotique Gladys prête à l'emploi : un mini-PC avec Gladys installée, configurée et testée, 6 mois de Gladys Plus inclus, formation vidéo et support direct. Tu branches, tu ouvres ton navigateur, c'est parti. Aucune compétence technique."
     >
       <Plus />
-    </Layout>
+    </HorizonPage>
   );
 }
 

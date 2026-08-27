@@ -1,5 +1,6 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
+import GladysScreenshot from "../components/horizon/GladysScreenshot";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
@@ -15,41 +16,6 @@ import styles from "./comparison.module.css";
 
 // Reuses the homepage hero dashboard screenshot (localized, responsive) to
 // break up the text and show off the Gladys interface.
-function GladysScreenshot({ lang }) {
-  const key =
-    lang === "fr"
-      ? "main_screenshot_fr_ncm1yr_c_scale"
-      : "main_screenshot_en_j5czyj_c_scale";
-  const widths =
-    lang === "fr"
-      ? [825, 1090, 1342, 1548, 1951, 2800]
-      : [850, 1142, 1388, 1623, 2022, 2800];
-  const base = `/img/home/main_screenshot/${key}`;
-  const srcSet = widths
-    .map((w) => `${useBaseUrl(`${base},w_${w}.png`)} ${w}w`)
-    .join(", ");
-  const defaultWidth = lang === "fr" ? 1342 : 1388;
-  const alt =
-    lang === "fr"
-      ? "Le tableau de bord de Gladys Assistant"
-      : "The Gladys Assistant dashboard";
-
-  return (
-    <figure className={styles.screenshot}>
-      <img
-        src={useBaseUrl(`${base},w_${defaultWidth}.png`)}
-        srcSet={srcSet}
-        sizes="(max-width: 52rem) 100vw, 52rem"
-        alt={alt}
-      />
-      <figcaption className={styles.screenshotCaption}>
-        {lang === "fr"
-          ? "Une interface locale et épurée où vos données restent chez vous, sans cloud obligatoire."
-          : "A clean, local interface where your data stays at home, with no mandatory cloud."}
-      </figcaption>
-    </figure>
-  );
-}
 
 function Card({ icon, title, text }) {
   return (
@@ -104,7 +70,14 @@ function PillarContent({ content, faq, lang }) {
         </header>
 
         {/* GLADYS SCREENSHOT */}
-        <GladysScreenshot lang={lang} />
+        <GladysScreenshot
+          lang={lang}
+          caption={
+            lang === "fr"
+              ? "Une interface locale et épurée où vos données restent chez vous, sans cloud obligatoire."
+              : "A clean, local interface where your data stays at home, with no mandatory cloud."
+          }
+        />
 
         {/* WHY NOT THE CLOUD */}
         <section className={styles.section} aria-labelledby="why-cloud-title">
@@ -220,9 +193,9 @@ export default function LocalSmartHomePage() {
   const faq = lang === "fr" ? localSmartHomeFaqFr : localSmartHomeFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getLocalSmartHomePageSchema(lang)} />
       <PillarContent content={content} faq={faq} lang={lang} />
-    </Layout>
+    </HorizonPage>
   );
 }

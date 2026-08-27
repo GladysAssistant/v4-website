@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
@@ -167,9 +167,9 @@ export default function IkeaSmartHomePage() {
   const faq = lang === "fr" ? ikeaSmartHomeFaqFr : ikeaSmartHomeFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getIkeaSmartHomePageSchema(lang)} />
       <IkeaContent content={content} faq={faq} />
-    </Layout>
+    </HorizonPage>
   );
 }

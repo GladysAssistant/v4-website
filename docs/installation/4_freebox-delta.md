@@ -83,7 +83,7 @@ docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
-gladysassistant/gladys:v4
+gladysassistant/gladys:v5
 ```
 
 ## Auto-Upgrade Gladys with Watchtower
@@ -101,6 +101,6 @@ docker run -d \
 
 ### Accessing Gladys
 
-You can access Gladys directly by typing the IP of your VM in your browser.
+You can access Gladys at `http://gladysassistant.local`, the name Gladys announces on your local network over mDNS. If your network blocks mDNS, type the IP of your VM in your browser instead.
 
 ![Accessing Gladys](../../static/img/docs/en/installation/freebox-delta/freebox-vm-success.jpg)

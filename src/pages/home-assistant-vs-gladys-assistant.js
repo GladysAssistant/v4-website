@@ -1,15 +1,14 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
-import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
 import JsonLd from "../components/seo/JsonLd";
 import { getComparisonPageSchema } from "../data/structuredData";
 import comparisonContent, {
   comparisonFaqEn,
   comparisonFaqFr,
-  YOUTUBE_VIDEO_ID,
 } from "../data/comparisonData";
 
 import styles from "./comparison.module.css";
@@ -33,22 +32,43 @@ function VerdictCard({ data, isGladys }) {
   );
 }
 
-function ComparisonContent({ content, faq, lang }) {
-  const videoSection = YOUTUBE_VIDEO_ID ? (
-    <section className={styles.section} aria-labelledby="video-title">
-      <h2 id="video-title" className={styles.sectionTitle}>
-        {content.videoTitle}
-      </h2>
-      <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
-        <YoutubeEmbedVideo id={YOUTUBE_VIDEO_ID} />
+/**
+ * The two dashboards, cut along one diagonal so the same screen is shown twice at
+ * the same scale. The image is baked per locale because both products are captured
+ * in the reader's language; the labels stay in HTML so they scale with the page and
+ * stay readable when the band shrinks on a phone.
+ */
+function DesignShowdown({ showdown, lang }) {
+  return (
+    <figure className={styles.showdown}>
+      <div className={styles.showdownStage}>
+        <div className={styles.showdownFrame}>
+          <img
+            className={styles.showdownImage}
+            src={useBaseUrl(`img/comparison/design-showdown-${lang}.webp`)}
+            alt={showdown.alt}
+            width={2000}
+            height={958}
+          />
+        </div>
+        <span className={styles.showdownVs} aria-hidden="true">
+          VS
+        </span>
+        <div className={styles.showdownLegend}>
+          <span className={`${styles.showdownTag} ${styles.showdownTagGladys}`}>
+            {showdown.gladysLabel}
+          </span>
+          <span className={styles.showdownTag}>{showdown.haLabel}</span>
+        </div>
       </div>
-    </section>
-  ) : null;
+      <figcaption className={styles.showdownCaption}>
+        {showdown.caption}
+      </figcaption>
+    </figure>
+  );
+}
 
-  // The video is in French, so feature it right under the hero on the French
-  // page. On the English page it stays lower (French audio is less useful there).
-  const showVideoAtTop = lang === "fr";
-
+function ComparisonContent({ content, faq, lang }) {
   return (
     <main className={styles.main}>
       <div className={`container ${styles.container}`}>
@@ -56,15 +76,13 @@ function ComparisonContent({ content, faq, lang }) {
         <header className={styles.hero}>
           <h1 className={styles.heroTitle}>{content.hero.title}</h1>
           <p className={styles.heroSubtitle}>{content.hero.subtitle}</p>
+          <DesignShowdown showdown={content.hero.showdown} lang={lang} />
           <div className={styles.intro}>
             {content.hero.intro.map((paragraph, i) => (
               <p key={i}>{paragraph}</p>
             ))}
           </div>
         </header>
-
-        {/* VIDEO (top placement on the French page) */}
-        {showVideoAtTop && videoSection}
 
         {/* VERDICT */}
         <section className={styles.section} aria-labelledby="verdict-title">
@@ -150,7 +168,6 @@ function ComparisonContent({ content, faq, lang }) {
         </section>
 
         {/* VIDEO (lower placement on the English page) */}
-        {!showVideoAtTop && videoSection}
 
         {/* FAQ */}
         <section className={styles.section} aria-labelledby="faq-title">
@@ -198,9 +215,9 @@ export default function ComparisonPage() {
   const faq = lang === "fr" ? comparisonFaqFr : comparisonFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getComparisonPageSchema(lang)} />
       <ComparisonContent content={content} faq={faq} lang={lang} />
-    </Layout>
+    </HorizonPage>
   );
 }

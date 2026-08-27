@@ -1,5 +1,6 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
+import GladysScreenshot from "../components/horizon/GladysScreenshot";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
@@ -15,41 +16,6 @@ import styles from "./comparison.module.css";
 
 // Reuses the homepage hero dashboard screenshot (localized, responsive) to
 // break up the text and show off the Gladys interface.
-function GladysScreenshot({ lang }) {
-  const key =
-    lang === "fr"
-      ? "main_screenshot_fr_ncm1yr_c_scale"
-      : "main_screenshot_en_j5czyj_c_scale";
-  const widths =
-    lang === "fr"
-      ? [825, 1090, 1342, 1548, 1951, 2800]
-      : [850, 1142, 1388, 1623, 2022, 2800];
-  const base = `/img/home/main_screenshot/${key}`;
-  const srcSet = widths
-    .map((w) => `${useBaseUrl(`${base},w_${w}.png`)} ${w}w`)
-    .join(", ");
-  const defaultWidth = lang === "fr" ? 1342 : 1388;
-  const alt =
-    lang === "fr"
-      ? "Le tableau de bord de Gladys Assistant"
-      : "The Gladys Assistant dashboard";
-
-  return (
-    <figure className={styles.screenshot}>
-      <img
-        src={useBaseUrl(`${base},w_${defaultWidth}.png`)}
-        srcSet={srcSet}
-        sizes="(max-width: 52rem) 100vw, 52rem"
-        alt={alt}
-      />
-      <figcaption className={styles.screenshotCaption}>
-        {lang === "fr"
-          ? "Parlez à votre maison en langage naturel : l'IA de Gladys s'occupe du reste."
-          : "Talk to your home in plain language: Gladys' AI handles the rest."}
-      </figcaption>
-    </figure>
-  );
-}
 
 function Card({ icon, title, text }) {
   return (
@@ -104,7 +70,14 @@ function PillarContent({ content, faq, lang }) {
         </header>
 
         {/* GLADYS SCREENSHOT */}
-        <GladysScreenshot lang={lang} />
+        <GladysScreenshot
+          lang={lang}
+          caption={
+            lang === "fr"
+              ? "Parlez à votre maison en langage naturel : l'IA de Gladys s'occupe du reste."
+              : "Talk to your home in plain language: Gladys' AI handles the rest."
+          }
+        />
 
         {/* CAPABILITIES */}
         <section className={styles.section} aria-labelledby="capabilities-title">
@@ -207,9 +180,9 @@ export default function AiSmartHomePage() {
   const faq = lang === "fr" ? aiSmartHomeFaqFr : aiSmartHomeFaqEn;
 
   return (
-    <Layout title={content.meta.title} description={content.meta.description}>
+    <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getAiSmartHomePageSchema(lang)} />
       <PillarContent content={content} faq={faq} lang={lang} />
-    </Layout>
+    </HorizonPage>
   );
 }

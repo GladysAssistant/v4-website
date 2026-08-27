@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Link from "@docusaurus/Link";
 import Translate from "@docusaurus/Translate";
 import {
@@ -293,7 +293,7 @@ function Open() {
   }, []);
 
   return (
-    <Layout
+    <HorizonPage
       title={translate({
         id: "openPage.title",
         description: "",
@@ -642,7 +642,7 @@ function Open() {
           </div>
         </div>
       </main>
-    </Layout>
+    </HorizonPage>
   );
 }
 

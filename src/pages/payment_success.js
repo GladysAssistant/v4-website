@@ -1,10 +1,10 @@
 import React from "react";
-import Layout from "@theme/Layout";
+import HorizonPage from "../components/horizon/HorizonPage";
 import Translate from "@docusaurus/Translate";
 
 function PaymentSuccess() {
   return (
-    <Layout title="Merci !" description="Merci d'avoir contribué à Gladys">
+    <HorizonPage title="Merci !" description="Merci d'avoir contribué à Gladys">
       <main>
         <div
           className="container"
@@ -82,7 +82,7 @@ function PaymentSuccess() {
           </p>
         </div>
       </main>
-    </Layout>
+    </HorizonPage>
   );
 }
 

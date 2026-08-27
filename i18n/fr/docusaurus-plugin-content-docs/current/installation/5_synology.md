@@ -51,7 +51,7 @@ docker run -d \
 -v /etc/TZ:/etc/timezone:ro \
 -v /etc/localtime:/etc/localtime:ro \
 -v /dev:/dev \
-gladysassistant/gladys:v4
+gladysassistant/gladys:v5
 ```
 
 **Notes:**
@@ -62,8 +62,9 @@ gladysassistant/gladys:v4
 
 ### Accéder à Gladys
 
-Vous pouvez accéder à Gladys dans votre navigateur à l'addresse `http://YOUR_NAS_IP:PORT`
-Dans notre exemple ce sera `http://192.168.53.137:8420`.
+Vous pouvez accéder à Gladys dans votre navigateur à l'adresse `http://gladysassistant.local:PORT`, le nom que Gladys annonce sur votre réseau local en mDNS.
+
+Dans notre exemple ce sera `http://gladysassistant.local:8420`. Si votre réseau bloque le mDNS, utilisez plutôt l'IP du NAS, par exemple `http://192.168.53.137:8420`.
 
 ## Mise à jour automatique avec Watchtower
 
