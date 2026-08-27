@@ -6,7 +6,6 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Translate, { translate } from "@docusaurus/Translate";
 
-import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
 import { TestimonialSection } from "../components/Testimonial";
 import testimonialsFr from "../components/testimonials/testimonial.plus.fr.json";
 import testimonialsEn from "../components/testimonials/testimonial.plus.en.json";
@@ -200,22 +199,6 @@ function PlusContent() {
           </p>
           <PricingTable language={language} />
         </section>
-
-        {language === "fr" && (
-          <section
-            className={plusStyles.section}
-            aria-labelledby="demo-video-title"
-          >
-            <h2 id="demo-video-title" className={plusStyles.sectionTitle}>
-              <Translate id="gladysPlusPage.v2.video.title">
-                Gladys Plus en vidéo
-              </Translate>
-            </h2>
-            <div style={{ maxWidth: "56rem", margin: "0 auto" }}>
-              <YoutubeEmbedVideo id="TmjrBeufjyo" />
-            </div>
-          </section>
-        )}
 
         {/* EUROPEAN HOSTING */}
         <EuropeanHosting />

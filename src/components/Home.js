@@ -401,8 +401,8 @@ const YOUTUBE_VIDEOS = [
     title: "Alexa est officiellement dépassée : voici le futur",
   },
   {
-    id: "iVFXXDO798A",
-    title: "Home Assistant vs Gladys Assistant : Le Comparatif Honnête 2026",
+    id: "hJI_HEopBIU",
+    title: "Gladys Assistant 5 est enfin là",
   },
   {
     id: "gn-bBBs39G0",
