@@ -42,14 +42,17 @@ MFA is supported through DSM verification codes (OTP). **Approve sign-in** and h
 - **Verify the TLS certificate**: keep enabled for a trusted certificate. Disable only for a self-signed local certificate after verifying the NAS address yourself.
 - **NAS 2, NAS 3 and NAS 4**: optional connections using the same URL, username, password, OTP and TLS fields as the primary NAS. Leave a NAS URL empty to ignore that slot. Every password and OTP is stored in a dedicated Gladys secret field and is never exposed in a JSON document.
 - **Refresh interval**: manually entered in seconds, from 60 to 86400. The recommended default is 900 seconds (15 minutes). A moderate interval prevents unnecessary Gladys database growth.
+- **Date format**: how backup dates are displayed in Gladys. `ISO 8601` (default, UTC) keeps the raw DSM timestamp, `YYYY-MM-DD HH:mm`, `DD/MM/YYYY HH:mm` and `MM/DD/YYYY hh:mm AM/PM` display the local time of the integration container. Set the `TZ` environment variable of the integration container to your own timezone if these formats show an unexpected hour. Changing the format applies from the next refresh onwards; dates already recorded keep the format used when they were published.
 
 Click **Test the DSM connection**. A successful result shows the NAS model, DSM version and number of detected volumes. Then scan for devices in Gladys.
 
 ## Devices
 
-The integration creates one device per NAS, one device for every storage volume, one device for every internal disk and, when available, one device for every Hyper Backup or Active Backup task. Each disk exposes the exact SMART status reported by DSM and a binary SMART health indicator. A backup task exposes its status, latest result and latest backup time. These DSM package APIs are not available on every model and version; their absence does not prevent system and storage monitoring.
+The integration creates one device per NAS, one device for every storage volume, one device for every internal disk and, when available, one device for every Hyper Backup or Active Backup task. Each disk exposes the exact SMART status reported by DSM, a binary SMART health indicator and, when DSM reports it, its temperature. A backup task exposes its status, latest result and latest backup time. These DSM package APIs are not available on every model and version; their absence does not prevent system and storage monitoring.
 
 A first snapshot is sent immediately after a device is added, then every refresh updates all NAS values. Volume usage percentages are rounded to two decimal places. History is kept for utilization, temperature and health values; capacities and text information do not create redundant history.
+
+The health indicators only take a value on a status DSM clearly reports as healthy or as a failure. During a maintenance operation (expansion, scrubbing, repair) or when SMART is unsupported, the previous value is kept instead of publishing a false alarm.
 
 ## Troubleshooting
 
@@ -57,7 +60,10 @@ A first snapshot is sent immediately after a device is added, then every refresh
 - **MFA code required / error 403 or 406**: configure OTP for the DSM account, enter a current 6-digit code in Gladys and save. Approval notifications and hardware keys are not supported by the DSM API.
 - **Invalid or expired MFA code / error 404**: wait for the next OTP and save it before it expires.
 - **Insufficient privileges / error 105**: add the dedicated account to the DSM `administrators` group. A delegated System monitoring role alone is not sufficient for these APIs.
+- **Connection lost after a NAS reboot or a DSM update / error 498**: nothing to do. DSM can refuse the remembered login while it restarts; the integration signs in again by itself and retries the connection every 30 seconds, then less often up to every 15 minutes, until the NAS answers.
 - **Unable to reach DSM**: test the URL from the Gladys host and verify the NAS firewall.
+- **DSM did not answer in time**: the NAS accepted the connection but did not reply within 20 seconds. The refresh is abandoned and retried on the next cycle; check the NAS load and the network.
+- **A single NAS is unreachable in a multi-NAS setup**: the other NAS keep publishing their values and the Gladys configuration screen names the failing address. Only a failure of every NAS reports the integration as disconnected.
 - **Certificate error**: install a trusted certificate in DSM. For a private, self-signed installation only, certificate verification can be disabled.
 - **A volume is missing**: rescan after creating or removing a volume.
 - **Backup tasks are missing**: verify that Hyper Backup or Active Backup is installed, that at least one task exists and that the dedicated DSM account can open the corresponding package, then scan again.
@@ -94,11 +100,12 @@ These are the settings Synology DSM asks for in its configuration screen in Glad
 | NAS 4 — Current OTP code | `secret` | No |  |
 | NAS 4 — Verify TLS certificate | `boolean` | No |  |
 | Refresh interval (s) | `number` | No | Custom interval in seconds (60 to 86400). The default is 900 seconds. A moderate interval limits the growth of the Gladys database. |
+| Date format | `select` | No | Format used for the backup dates published to Gladys. Every format except ISO 8601 shows the local time of the integration container. |
 
 ## How to install Synology DSM in Gladys
 
 1. In Gladys, open **Integrations**: Synology DSM appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-synology:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-synology:1.0.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-synology](https://github.com/prohand/gladys-synology).
 

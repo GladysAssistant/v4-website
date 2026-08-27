@@ -51,12 +51,98 @@ La seule chose que le canal local attend de vous est donc la **chaîne de
 connexion** exportée par airsend.cloud, de la forme :
 
 ```
-sp://motdepasse@[fe80::xxxx:xxxx:xxxx:xxxx]?gw=0&rhost=192.168.1.50
+sp://motdepasse@fe80::xxxx:xxxx:xxxx:xxxx?gw=0&rhost=192.168.1.50
 ```
+
+Collez-la **exactement telle qu'airsend.cloud vous la donne** : n'ajoutez rien,
+n'enlevez rien, ne la retapez pas.
 
 Conservez toujours la partie `?gw=0&rhost=<IPv4 du boîtier>` : sans elle le
 boîtier n'est joignable qu'en IPv6 lien-local et le service renvoie des
 erreurs inattendues.
+
+#### Où cette chaîne se règle sur airsend.cloud
+
+Elle n'est pas à écrire à la main : elle est produite par l'écran
+**Communication** de [app.airsend.cloud](https://app.airsend.cloud). Chaque
+champ y écrit un morceau de la chaîne, et deux d'entre eux décident si
+l'intégration parlera à votre boîtier par votre réseau ou par internet.
+
+| Champ sur airsend.cloud                    | Ce qu'il écrit dans la chaîne | Ce qu'il faut y mettre pour Gladys                                                |
+| ------------------------------------------ | ----------------------------- | --------------------------------------------------------------------------------- |
+| **IP locale**                              | la partie après `@`           | Rien à saisir : c'est l'adresse IPv6 lien-local du boîtier, la même que `localip` |
+| **Mot de passe**                           | la partie avant `@`           | Le mot de passe du boîtier                                                        |
+| **Passerelle internet**                    | `gw=1` ou `gw=0`              | **Désactivée**, soit `gw=0` : l'ordre reste sur votre réseau                      |
+| **Adresse secondaire**                     | `rhost=`                      | L'**IPv4 du boîtier** sur votre réseau, pas celle de votre box internet           |
+| **Mode de connexion** / **WebService Url** | rien                          | Ne concerne que la page airsend.cloud elle-même (voir ci-dessous)                 |
+| **Délai maximum (ms)**                     | rien                          | Laissez vide                                                                      |
+
+**Mode de connexion** et **WebService Url** disent comment la _page
+airsend.cloud_ joint votre boîtier depuis votre navigateur — typiquement un
+service AirSend qui tourne sur votre PC, d'où le `http://127.0.0.1:33863`.
+Gladys ne s'en sert jamais : elle fait tourner son propre service dans son
+conteneur. Ces deux champs peuvent donc rester comme ils sont.
+
+Les deux qui comptent sont les autres :
+
+- **Passerelle internet** activée écrit `gw=1`, et le boîtier devient joignable
+  en passant par internet. C'est pratique depuis un téléphone en 4G, et c'est
+  un détour inutile pour une intégration qui est sur le même réseau que le
+  boîtier : chaque ordre fait un aller-retour par le cloud, ce qui se voit dans
+  les journaux (une bonne seconde entre l'ordre et son écho, au lieu de deux ou
+  trois dixièmes). Désactivez-la, et gardez `gw=0`.
+- **Adresse secondaire** écrit `rhost=`. C'est l'adresse que le service AirSend
+  compose **depuis le conteneur de Gladys**, et elle doit donc être l'IPv4 du
+  boîtier, joignable depuis l'hôte Gladys. Relevez-la dans les baux DHCP de
+  votre box internet et réservez-la, pour qu'elle ne change pas ; sans elle, le
+  boîtier n'est joignable qu'en IPv6 lien-local et le service renvoie des
+  erreurs inattendues.
+
+Après toute modification, cliquez sur **Enregistrer**, puis **recopiez** la
+chaîne de connexion dans Gladys : elle a changé.
+
+#### Ne la retapez jamais
+
+Copiez-collez la chaîne entière, du `sp://` jusqu'au bout, dans un champ vidé au
+préalable. Le boîtier répond à une chaîne abîmée exactement ce qu'il répond à un
+mauvais mot de passe :
+
+```
+[WARN] [airsend] Local transfer failed for "Chambre parents": Invalid connection string (HTTP 401)
+[WARN] Could not listen through "AirSend box": Invalid connection string (HTTP 401)
+```
+
+Ce qui s'abîme, à la ressaisie comme à la relecture :
+
+- **les deux-points doubles.** Une adresse lien-local s'écrit
+  `fe80::dcf6:e5ff:fe8f:89cd` — `fe80`, puis **deux** deux-points. Retapée, elle
+  devient `fe80:dcf6:e5ff:fe8f:89cd` : cinq groupes d'une adresse qui en compte
+  huit. Toujours en forme d'adresse, et plus une adresse ;
+- **ce qu'on croit devoir corriger.** Une adresse IPv6 se met normalement entre
+  crochets dans une URL ; airsend.cloud, lui, l'exporte sans, et les boîtiers
+  répondent à cette forme-là. Les deux s'écrivent, aucune ne se rajoute : ce
+  qu'airsend.cloud donne est ce qu'il faut coller ;
+- **ce qui ne se voit pas.** Le champ est un secret et n'affiche que des points :
+  les points de masquage recopiés à la place du mot de passe, une espace fine
+  ramassée dans une page web, une apostrophe rendue typographique par un
+  bloc-notes — tout cela se colle sans que rien ne le montre.
+
+L'intégration vérifie maintenant ce qui est vérifiable sans boîtier — le
+`sp://`, le mot de passe, l'adresse, les caractères qui n'ont rien à y faire —
+et l'écrit dans les journaux au chargement de la configuration, sur l'écran de
+configuration, et sur la ligne _Local_ de **Tester la connexion**.
+
+Et cette action affiche surtout **la chaîne elle-même, mot de passe retiré** :
+
+```
+Chaîne de connexion : sp://<16 characters>@fe80::dcf6:e5ff:fe8f:89cd?gw=0&rhost=192.168.1.50
+```
+
+C'est la seule façon de voir ce que Gladys tient vraiment. La moitié des erreurs
+qu'on y repère ne sont vérifiables par aucun contrôle : l'adresse de l'autre
+boîtier, un `gw=1` que personne n'a demandé, un `rhost` resté sur l'ancienne IP.
+Le mot de passe, lui, n'est jamais affiché ni journalisé — seule sa longueur
+l'est, ce qui suffit à repérer un masque collé à sa place.
 
 #### Utiliser un service que vous faites déjà tourner
 
@@ -212,6 +298,63 @@ Seuls les ordres qui veulent dire la même chose deux fois sont répétés — O
 Stop, Fermer, une position. Un TOGGLE de bouton poussoir, lui, part une seule
 fois : entendu deux fois, il revient d'où il part.
 
+Ces répétitions ne font **pas attendre l'interface** : Gladys est servie dès que
+l'ordre est sur l'air, et les répétitions continuent derrière, à leur place dans
+la file. C'est une seconde chance pour une trame perdue dans le bruit, pas une
+partie de la réponse — et le réabonnement à l'écoute, qui a lui aussi besoin de
+la radio, attend maintenant que la file soit vide au lieu de se glisser entre
+deux ordres. C'est ce qui faisait qu'un « Fermer » cliqué juste après un
+« Ouvrir » mettait quelques secondes à partir.
+
+### Le premier ordre après une longue pause
+
+Un ordre qui part en une fraction de seconde d'habitude, et met plusieurs
+secondes après une soirée calme, ce n'est pas la radio : c'est le **lien avec le
+boîtier** qui a refroidi. Plus rien ne lui avait parlé depuis des heures, la
+session a donc dû être refaite avant de pouvoir envoyer quoi que ce soit, et
+cette attente est tombée sur celui qui venait de cliquer.
+
+L'intégration l'évite : quand le boîtier est resté seul quatre minutes, elle lit
+ses capteurs internes — une requête qui atteint le boîtier et ne part jamais sur
+l'air. Une installation dont on se sert reste chaude avec son propre trafic, et
+rien de plus n'est envoyé. Ça coûte une petite requête par boîtier inactif, et
+c'est ce que le relevé faisait déjà pour un boîtier déclaré avec
+`sensors: true` ; un boîtier qui ne porte que la chaîne de connexion, lui,
+n'avait rien.
+
+Quatre minutes, c'est le point de départ, pas une vérité : combien de temps un
+boîtier supporte d'être laissé seul n'est documenté nulle part, et ce n'est pas
+la même chose en Wi-Fi et par la passerelle cloud. C'est donc le boîtier qui le
+dit. Quand le réveiller prend plus d'une seconde, c'est que le lien avait déjà
+refroidi : l'intégration divise l'attente par deux — jusqu'à une minute, jamais
+en dessous — et écrit la ligne :
+
+```
+Waking the link to "AirSend" took 2.6 s after 4 min of silence: it goes cold
+faster than it was being kept warm… Touching it every 2 min from now on.
+```
+
+Elle ne fait que raccourcir : un réveil rapide prouve que l'intervalle où il a
+eu lieu fonctionne, jamais qu'un plus long fonctionnerait.
+
+Quand un ordre met tout de même plus d'une seconde et demie à partir, les
+journaux le disent, et disent **où le temps est passé** :
+
+```
+The order sent to "Volet cuisine" took 4.2 s to reach the air: 0.1 s waiting
+for the radio, 4.1 s in the box. The time went into the box, not into the
+queue: …
+```
+
+- **in the box** — c'est le boîtier qui a été lent à répondre. Deux raisons
+  habituelles : la chaîne de connexion porte `gw=1`, donc chaque ordre fait
+  l'aller-retour par les serveurs Devmel (coupez **Passerelle internet** sur
+  airsend.cloud et donnez à la chaîne l'IPv4 du boîtier avec `rhost=`), ou le
+  boîtier est posé là où son Wi-Fi est faible ;
+- **waiting for the radio** — les ordres devant celui-ci étaient encore en train
+  de partir. Les répétitions sont la raison habituelle qu'il y en ait eu
+  plusieurs : baissez **Répétitions des commandes** si vous l'aviez montée.
+
 ### Gladys ne se prend pas pour la télécommande
 
 Tout ce que l'intégration émet lui revient : le boîtier répond à l'ordre, et
@@ -222,13 +365,54 @@ l'exemple : l'écho de son « Ouvrir » le renvoyait à 100 % et annulait le Sto
 prévu à mi-course, si bien que le volet montait tout en haut. L'intégration
 reconnaît maintenant ses propres ordres et ne les rejoue pas.
 
+Ce qui identifie un écho, c'est **l'adresse d'où il part**. Le canal sur lequel
+Gladys émet est celui du boîtier : rien d'autre dans la maison ne parle avec
+cette voix, quel que soit le délai. Un boîtier qui met dix secondes à se répéter
+n'est donc plus pris pour une main sur une télécommande — c'était de quoi
+renvoyer en haut un volet arrêté à 40 %.
+
 Deux conséquences visibles :
 
 - une télécommande murale émet depuis une **autre adresse** : elle n'est jamais
   prise pour cet écho, et continue de piloter le volet dans Gladys ;
-- quand le boîtier répond qu'il n'a **pas pu émettre**, l'intégration l'écrit
-  dans ses journaux, en nommant l'appareil. C'est la seule trace d'un ordre parti
-  dans le vide, et elle vaut le coup d'œil si vous cliquez souvent deux fois.
+- quand le boîtier répond qu'il **n'a pas porté l'ordre**, l'intégration l'écrit
+  dans ses journaux, en nommant l'appareil et ce que le boîtier a dit. C'est la
+  seule trace d'un ordre parti dans le vide, et elle vaut le coup d'œil si vous
+  cliquez souvent deux fois.
+
+### Quand le boîtier dit non
+
+Tout ordre confié au boîtier reçoit une réponse, et cette réponse porte un
+numéro. En dessous de `256`, l'ordre est parti ; à partir de `256`, il n'est pas
+parti, et le numéro dit où il est mort. C'est ce que détaille la ligne des
+journaux :
+
+```
+The box did not carry the order sent to "Cuisine". SYNCHRONIZATION (event type
+258): the exchange between the AirSend Web Service and the box lost its thread —
+a link error, not a radio one…
+```
+
+| Nom (type)              | Ce que ça veut dire                         | À vérifier                                                                              |
+| ----------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `UNKNOWN` (256)         | refusé sans dire pourquoi                   | Redémarrez le boîtier, puis l'intégration                                               |
+| `NETWORK` (257)         | le service n'a jamais joint le boîtier      | Le boîtier est allumé, sur le réseau, et toujours à l'adresse de la chaîne de connexion |
+| `SYNCHRONIZATION` (258) | le lien avec le boîtier a perdu le fil      | Que rien d'autre ne pilote le boîtier au même moment ; un lien Wi-Fi faible fait pareil |
+| `SECURITY` (259)        | la chaîne de connexion a été refusée        | Réexportez-la depuis airsend.cloud et recollez-la en entier                             |
+| `BUSY` (260)            | un autre client avait verrouillé le boîtier | Fermez l'application AirSend, ou sortez le boîtier de l'autre installation              |
+| `TIMEOUT` (261)         | le boîtier n'a pas répondu à temps          | Un boîtier occupé pour quelqu'un d'autre, ou posé là où son Wi-Fi est faible            |
+| `UNSUPPORTED` (262)     | le boîtier ne sait pas envoyer ça           | Le `type` et le canal de l'appareil, face à l'export airsend.cloud                      |
+| `INCOMPLETE` (263)      | il manquait quelque chose                   | Recollez le canal en entier, avec tout ce qui accompagnait `id`                         |
+| `FULL` (264)            | la requête était trop grosse                | Signalez-le : rien de ce qui part d'ici ne devrait être aussi long                      |
+
+**Les répétitions des commandes n'y répondent pour aucun.** Les répétitions
+servent contre une trame perdue dans le bruit — et une trame perdue dans le
+bruit, c'est précisément la panne que rien ne signale : rien n'accuse réception
+d'un ordre radio, donc un ordre que le boîtier dit avoir porté est la seule
+confirmation qui existera jamais. Quand c'est le boîtier lui-même qui signale
+l'échec, l'ordre n'est même pas arrivé jusqu'au bruit. Monter les répétitions ne
+fait alors que rapprocher les émissions, sur un boîtier qui a déjà du mal à
+suivre.
 
 ## La position d'un volet
 
@@ -326,12 +510,56 @@ canal décode quel protocole, et abonne le boîtier à celui de vos appareils.
 Laissez le champ **Canal d'écoute** vide.
 
 Renseignez-le seulement pour écouter autre chose : le `pid` d'un protocole que
-vous n'avez pas encore déclaré, `1` pour l'écoute générique, ou `0` pour couper
-l'écoute.
+vous n'avez pas encore déclaré, ou `0` pour couper l'écoute.
+
+**`1` et un champ vide veulent dire la même chose : « déduis-le ».** C'est la
+valeur que le champ prenait par défaut avant que la déduction n'existe, et elle
+est lue comme telle — un `1` ne demande donc pas l'écoute générique 433 MHz.
+Cette dernière est ce sur quoi la déduction se rabat quand aucun appareil radio
+n'est déclaré, et rien d'autre. Le champ est d'ailleurs un champ **texte**, pas
+un nombre, précisément pour qu'il puisse rester vide : un champ numérique oblige
+à taper quelque chose, et ce quelque chose se lit ensuite comme un choix que
+personne n'a fait.
+
+Une conséquence : le décodeur générique 433 MHz ne peut pas être demandé par son
+pid, puisque ce pid est `1`. Il se demande donc **par son nom** — tapez
+`générique` (ou `generic`) dans le champ. C'est un test qui vaut le coup pour
+une télécommande 433 MHz que son propre protocole ne décode qu'à moitié : le
+décodeur générique est une autre façon de lire les mêmes trames.
+
+Dans tous les cas, la ligne _Écoute_ de **Tester la connexion** dit le canal
+réellement retenu — c'est elle qui fait foi, pas ce qui est tapé dans le champ.
 
 Pour vérifier, cliquez sur **Tester la connexion** : la ligne _Écoute_ dit quel
 protocole est écouté, quels appareils il couvre, et vers où les trames sont
 poussées — ou pourquoi elles ne le sont pas.
+
+Quand deux protocoles sont déclarés à égalité — un volet d'un côté, la
+télécommande murale qu'on lui a rattachée de l'autre —, c'est **celui qui émet**
+qui l'emporte. Un volet, un interrupteur, une lampe ne parlent pas : on leur
+parle. Une télécommande déclarée dans `remotes` est là, elle, précisément pour
+être entendue : c'est donc elle que le boîtier écoute.
+
+#### Un protocole où personne ne parle
+
+Si aucun appareil déclaré sur le canal écouté n'émet de lui-même, l'abonnement
+est en place, la route fonctionne, et il n'arrivera jamais rien : le boîtier
+n'entendra que l'écho des ordres envoyés par Gladys. C'est l'état normal d'une
+maison où l'on n'a déclaré que des volets — et c'est exactement à quoi ressemble
+une écoute qui ne marche pas, d'où la ligne que l'intégration écrit désormais
+dans ses logs au démarrage, et dans la ligne _Écoute_ de **Tester la
+connexion** :
+
+```text
+Aucun de ces appareils n'émet de lui-même : volets, interrupteurs et lampes
+reçoivent les ordres, ils ne parlent pas. Sur ce canal le boîtier n'entendra que
+l'écho des ordres de Gladys.
+```
+
+La sortie est la même que partout ailleurs sur cette page : rattachez la
+télécommande murale qui pilote l'équipement (voir plus bas). Elle a sa propre
+adresse, elle émet pour de bon, et une fois déclarée c'est elle que la déduction
+écoute.
 
 ### Le 868 MHz et le code tournant
 
@@ -344,6 +572,43 @@ L'intégration le dit désormais dans ses logs et dans **Tester la connexion**.
 
 Deux façons d'en sortir : déclarer un appareil sur le protocole en question, ou
 renseigner son `pid` dans le champ **Canal d'écoute**.
+
+#### « Écouter en 868 MHz » : ça n'existe pas, et voici ce qui existe
+
+Un boîtier n'écoute pas une **bande**, il écoute un **protocole** : il n'y a pas
+d'interrupteur « 868 MHz » à activer, et le canal `1` n'est pas « le 433 » par
+opposition à un « le 868 » qui existerait ailleurs — c'est un décodeur parmi
+plus de cent quatre-vingts, celui qui couvre les protocoles 433 MHz génériques.
+Écouter du 868 MHz, c'est donc **nommer un protocole 868 MHz par son `pid`**.
+Trois chemins, du plus simple au dernier recours :
+
+1. **déclarez l'appareil** dans la liste **Appareils** (l'export airsend.cloud
+   contient son `pid`) : la déduction s'en charge, le champ **Canal d'écoute**
+   reste vide. C'est ce qui marche dans neuf cas sur dix ;
+2. **rattachez sa télécommande** (`remotes`) : elle émet pour de bon, et en cas
+   d'égalité c'est son protocole que la déduction retient — pas celui du volet,
+   qui ne parle jamais ;
+3. **forcez le `pid`** dans **Canal d'écoute** quand le protocole n'est pas
+   encore déclaré. Pour le trouver, l'action **Chercher un protocole radio**
+   interroge le service AirSend et cherche par marque ou par `pid` :
+
+```text
+2 protocoles pour « somfy » :
+- pid 25455 — Somfy RTS (décodé par lui-même, déclaré sur « Baie vitree »)
+- pid 26848 — Somfy io (décodé par lui-même)
+Mettez le pid voulu dans le champ Canal d'écoute…
+```
+
+Elle dit aussi comment chaque protocole est décodé — par lui-même, par le canal
+`1` générique 433 MHz, ou seulement partiellement — et lequel est écouté en ce
+moment.
+
+Reste le cas sans issue, qu'il vaut mieux connaître : le boîtier n'a qu'**une**
+radio, donc pour entendre une télécommande dont vous ignorez le protocole, il
+faut déjà écouter ce protocole. Il n'y a pas de balayage possible. Si son `pid`
+n'est écrit nulle part — ni dans l'appli AirSend, ni dans l'export —, il ne
+reste qu'à essayer les candidats de votre marque un par un, en appuyant sur la
+télécommande après chaque essai et en relançant **Tester la connexion**.
 
 Le **code tournant** de ces télécommandes, lui, n'est pas ce qui vous empêche de
 recevoir les trames. Il protège l'_émission_ : pour commander un volet Profalux,
@@ -488,6 +753,46 @@ arrivée, et il n'y a que trois raisons possibles :
   **Journaux détaillés (debug)** : ces trames-là y sont tracées, avec leur
   `pid`, leur `addr` et la raison de leur abandon.
 
+#### Ce qu'un appui écrit dans les logs
+
+Chacune de ces lignes est dite **une fois par émetteur** : une télécommande
+maintenue appuyée émet une trame toutes les demi-secondes, et un journal qui
+défile est un journal que personne ne lit. Le compteur est **réarmé à chaque
+enregistrement de la configuration** : si vous avez changé quelque chose, c'est
+que ça ne marchait pas, et l'appui qui suit est justement celui que vous
+guettez.
+
+Après un enregistrement, un appui écrit donc exactement une ligne, et laquelle
+dit où la trame s'est arrêtée :
+
+```text
+Heard pid 25455, addr 94311 -> "Baie vitrée" followed it: level 0 (down).
+Heard a frame on a channel no device declares: pid 14177, addr 3359265281.
+Heard pid 14177, addr 3359265281 for "Baie vitrée", but no note the service could decode
+Ignored a radio frame (unreliable, graded 2): pid 25455, addr 94311, carrying level 100 (up).
+```
+
+La première est la seule qui dise que **ça marche** — et elle vaut d'être lue
+avant d'accuser l'intégration quand un volet n'a pas bougé : la trame a été
+entendue, routée et suivie, ce qui reste se joue entre l'ordre et le moteur.
+Aucune ligne du tout signifie qu'aucune trame n'est arrivée : voir les trois
+raisons ci-dessus.
+
+#### Est-ce bien ma télécommande ?
+
+Un émetteur entendu n'est pas la preuve que c'est celui que vous avez en main :
+le 433 MHz est une bande publique, et le voisinage y est aussi. Appuyez cinq
+fois sur la vôtre, puis lancez **Tester la connexion** et lisez le compteur de
+l'émetteur dans la ligne _Entendu_ :
+
+```text
+pid 14177, addr 3359265281 (5 trames, dernière il y a 3 s, aucune note décodée)
+```
+
+Cinq trames et « il y a 3 s » : c'est la vôtre. Un compteur qui ne bouge pas
+pendant que vous appuyez est celui de quelqu'un d'autre, et le rattacher revient
+à déclarer la télécommande d'un inconnu sur votre volet.
+
 ### Ce que le boîtier a entendu
 
 Toutes les vérifications ci-dessus répondent à « les trames peuvent-elles
@@ -500,11 +805,17 @@ ancien, avec le nombre de trames, leur ancienneté, ce qu'elles ont donné au
 décodage et ce que les appareils en ont fait :
 
 ```text
-Entendu : 1 émetteur entendu : pid 14177, addr 3359265281 (3 trames, dernière
-il y a 4 s, aucune note décodée) — déclaré sur Baie vitrée, mais ses trames ne
-portent aucun ordre rejouable (protocole seulement partiellement décodé) : la
-position ne peut pas suivre.
+Entendu : 1 émetteur entendu : pid 14177 « Profalux », addr 3359265281 (3 trames,
+dernière il y a 4 s, aucune note décodée) — déclaré sur Baie vitrée, mais ses
+trames ne portent aucun ordre rejouable (protocole seulement partiellement
+décodé) : la position ne peut pas suivre.
 ```
+
+Le `pid` est **nommé** quand le service a répondu sa table de protocoles : c'est
+la réponse la plus fiable à « quel protocole parle ma télécommande ? ». La
+marque inscrite sur le boîtier plastique ne le dit pas toujours — un volet vendu
+sous une marque française peut embarquer la radio d'un autre fabricant — alors
+que le nom donné ici est celui du décodeur qui a réellement décodé la trame.
 
 Trois verdicts possibles pour un émetteur :
 
@@ -513,6 +824,21 @@ Trois verdicts possibles pour un émetteur :
 | `suivi par <appareil>`             | tout marche : ses trames pilotent bien l'appareil                             |
 | `aucun appareil ne le déclare`     | l'émetteur est entendu, mais rattaché à rien — **Rattacher une télécommande** |
 | `ne portent aucun ordre rejouable` | la trame arrive à l'appareil et ne porte rien à rejouer (code tournant)       |
+
+La ligne cite **toutes** les notes différentes entendues d'un même émetteur, pas
+seulement la dernière — c'est ce qui distingue une télécommande dont le service
+décode les boutons (`notes : level 100 (up) ; level 0 (down) ; state stop`)
+d'une télécommande dont tous les boutons donnent le même ordre. Ce second cas
+est celui d'un `suivi par` qui ne bouge rien : un STOP rejoué sur un volet à
+l'arrêt change un état, pas un pourcentage. Le rapport le dit maintenant et
+propose le test : appuyez sur Ouvrir, puis sur Fermer, et relancez l'action. Si
+la note ne change pas, le service AirSend ne décode pas les boutons de cette
+télécommande, et la position ne pourra pas suivre.
+
+Les échos de vos propres ordres, eux, ne sont pas des émetteurs : ils sont
+comptés à part, en fin de ligne (`Plus 3 échos de vos propres ordres`). C'est la
+preuve que la route des trames fonctionne, même quand rien d'autre n'est
+entendu.
 
 Le registre est vidé au démarrage de l'intégration : « aucune trame radio depuis
 le démarrage » veut dire « rien depuis », pas « jamais ». Appuyez sur la
@@ -555,8 +881,10 @@ Il prend effet immédiatement, sans redémarrer l'intégration : cochez, appuyez
 sur la télécommande, lisez les logs, décochez. C'est verbeux, ce n'est pas fait
 pour rester allumé.
 
-Votre chaîne de connexion `sp://` n'est jamais journalisée, quel que soit le
-niveau.
+Le **mot de passe** de votre chaîne de connexion `sp://` n'est jamais
+journalisé, quel que soit le niveau : le reste de la chaîne — l'adresse, `gw`,
+`rhost` — l'est en debug, mot de passe remplacé par sa seule longueur (voir
+« Ne la retapez jamais »).
 
 Si vous préférez la variable d'environnement du conteneur, `LOG_LEVEL` marche
 toujours et reste prioritaire : l'interrupteur monte le niveau à debug tant
@@ -581,6 +909,10 @@ votre clé Open API dans le bloc **Webhooks** de l'écran de configuration.
 - **Rattacher une télécommande** — appuyez sur la télécommande, choisissez
   l'appareil qu'elle pilote : l'action écrit la liste d'appareils à recoller,
   télécommande comprise (voir « La télécommande murale »).
+- **Chercher un protocole radio** — cherche par marque ou par `pid` parmi les
+  protocoles connus du service AirSend, dit comment chacun est décodé et lequel
+  est écouté : c'est là qu'on trouve le `pid` à mettre dans **Canal d'écoute**
+  (voir « Écouter en 868 MHz »).
 - **Identifier un appareil** — choisissez un appareil, un PING lui est envoyé.
   Tous les équipements 433 MHz n'y réagissent pas.
 
@@ -601,23 +933,26 @@ votre clé Open API dans le bloc **Webhooks** de l'écran de configuration.
 
 ## En cas de problème
 
-| Symptôme                               | À vérifier                                                                                 |
-| -------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `Invalid connection string`            | L'URL `sp://`, et que son mot de passe correspond au boîtier                               |
-| `Invalid input`                        | Le `channel` de l'appareil (`id`/`pid` et `source`/`addr`)                                 |
-| `no radio channel` (logs)              | L'entrée n'a pas de canal : il lui faut `channel.id`, ou le couple `pid`/`addr`            |
-| `no radio confirmation`                | Normal sans retour d'état : laissez `wait: false`                                          |
-| Aucun appareil dans « Découverte »     | **Tester la connexion** : la liste n'a sans doute pas été lue                              |
-| Le boîtier est injoignable             | La partie `?gw=0&rhost=<IPv4>` de la chaîne de connexion                                   |
-| `Service AirSend intégré indisponible` | Les logs de l'intégration : le service y journalise son démarrage                          |
-| Le boîtier répond à la main, pas ici   | L'IPv4 `rhost=` doit être joignable **depuis le conteneur**, pas seulement de votre PC     |
-| Il faut cliquer plusieurs fois         | Montez **Répétitions des commandes** à `2` ou `3`, ou le `repeat` de l'appareil            |
-| Un volet n'affiche pas de position     | Chronométrez-le : `travel_up` / `travel_down`, puis ouvrez-le ou fermez-le à fond une fois |
-| La position dérive avec le temps       | Rechronométrez la course, et ouvrez le volet à fond une fois par jour pour le recaler      |
-| Aucune trame d'une télécommande 868    | **Tester la connexion** : le canal `1` est du 433 MHz. Déclarez l'appareil, ou son `pid`   |
-| Télécommande rattachée, rien ne bouge  | **Tester la connexion**, ligne _Entendu_ : elle dit si les trames portent un ordre         |
-| `unreliable, graded N` (logs)          | Trame notée trop bas : **Accepter les trames peu fiables**, ou rapprochez le boîtier       |
-| Une trame avec un `pid` et sans `addr` | Le protocole n'est pas décodé : mettez ce `pid` dans **Canal d'écoute**                    |
+| Symptôme                                 | À vérifier                                                                                                                           |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `Invalid connection string`              | L'URL `sp://`, et que son mot de passe correspond au boîtier                                                                         |
+| `Invalid input`                          | Le `channel` de l'appareil (`id`/`pid` et `source`/`addr`)                                                                           |
+| `no radio channel` (logs)                | L'entrée n'a pas de canal : il lui faut `channel.id`, ou le couple `pid`/`addr`                                                      |
+| `no radio confirmation`                  | Normal sans retour d'état : laissez `wait: false`                                                                                    |
+| Aucun appareil dans « Découverte »       | **Tester la connexion** : la liste n'a sans doute pas été lue                                                                        |
+| Le boîtier est injoignable               | La partie `?gw=0&rhost=<IPv4>` de la chaîne de connexion                                                                             |
+| `Service AirSend intégré indisponible`   | Les logs de l'intégration : le service y journalise son démarrage                                                                    |
+| Le boîtier répond à la main, pas ici     | L'IPv4 `rhost=` doit être joignable **depuis le conteneur**, pas seulement de votre PC                                               |
+| Il faut cliquer plusieurs fois           | Montez **Répétitions des commandes** à `2` ou `3`, ou le `repeat` de l'appareil                                                      |
+| Un ordre met une seconde à partir        | `gw=1` dans la chaîne : coupez **Passerelle internet** sur airsend.cloud                                                             |
+| Un ordre est lent après une longue pause | Les journaux disent où le temps est passé — voir [Le premier ordre après une longue pause](#le-premier-ordre-après-une-longue-pause) |
+| Un volet n'affiche pas de position       | Chronométrez-le : `travel_up` / `travel_down`, puis ouvrez-le ou fermez-le à fond une fois                                           |
+| La position dérive avec le temps         | Rechronométrez la course, et ouvrez le volet à fond une fois par jour pour le recaler                                                |
+| Aucune trame d'une télécommande 868      | **Tester la connexion** : le canal `1` est du 433 MHz. Déclarez l'appareil, ou son `pid`                                             |
+| Télécommande rattachée, rien ne bouge    | **Tester la connexion**, ligne _Entendu_ : elle dit si les trames portent un ordre                                                   |
+| `unreliable, graded N` (logs)            | Trame notée trop bas : **Accepter les trames peu fiables**, ou rapprochez le boîtier                                                 |
+| `did not carry the order` (logs)         | Le nom que cette ligne donne à l'échec — voir [Quand le boîtier dit non](#quand-le-boîtier-dit-non)                                  |
+| Une trame avec un `pid` et sans `addr`   | Le protocole n'est pas décodé : mettez ce `pid` dans **Canal d'écoute**                                                              |
 
 L'intégration journalise tout ce qu'elle fait : consultez les logs de
 l'intégration depuis l'interface de Gladys (ou `docker logs` sur l'hôte), et
@@ -633,18 +968,18 @@ Voici les paramètres demandés par Devmel dans son écran de configuration dans
 | Pour commencer | `section` | Non | Le service AirSend est inclus : il tourne dans cette intégration, sur http://127.0.0.1:33863, et il n'y a rien à installer sur votre réseau. Il lui faut seulement la chaîne de connexion sp:// de votre boîtier. Les appareils se configurent dans l'application AirSend, puis s'exportent depuis airsend.cloud (Import/Export, JSON) : collez cet export ci-dessous, l'intégration le lit tel quel. |
 | Utiliser le service AirSend intégré | `boolean` | Non | Fait tourner le service AirSend dans l'intégration, sur http://127.0.0.1:33863. Laissez activé, sauf si vous faites déjà tourner ce service ailleurs sur votre réseau. |
 | URL du service AirSend | `string` | Non | Uniquement si vous faites tourner le service AirSend vous-même (add-on Home Assistant, démon Jeedom, votre propre conteneur) : son adresse sur votre réseau, par exemple http://192.168.1.50:33863/. Laissez vide pour utiliser celui intégré. |
-| Chaîne de connexion locale | `secret` | Non | L'URL sp:// exportée par airsend.cloud, par exemple sp://motdepasse@[fe80::...]?gw=0&rhost=192.168.1.50 |
+| Chaîne de connexion locale | `secret` | Non | L'URL sp:// exportée par airsend.cloud, collée exactement telle qu'elle vous est donnée — n'ajoutez rien, n'enlevez rien. Elle s'écrit sp://motdepasse@fe80::...?gw=0&rhost=192.168.1.50 |
 | Appareils | `string` | Non | Votre export JSON airsend.cloud, collé tel quel : une entrée par appareil, avec son type et son canal radio (écrit pid/addr). Voir la documentation. |
-| Canal d'écoute | `number` | Non | Laissez vide : le boîtier écoute alors le protocole radio des appareils que vous avez déclarés, ce qui remonte vers Gladys ce qu'il entend (télécommandes murales, capteurs). Ne le renseignez que pour écouter un autre protocole, par son pid : 1 correspond à l'écoute générique 433 MHz, sur laquelle aucune télécommande 868 MHz (Profalux, Somfy io) n'est entendue. 0 désactive l'écoute. |
-| Répétitions des commandes | `number` | Non | Nombre d'émissions supplémentaires d'un ordre radio, comme une vraie télécommande le répète tant qu'on appuie. Rien n'accuse réception d'un ordre radio : une trame perdue dans le bruit, c'est un clic sans effet. Montez à 2 ou 3 si un appareil ignore parfois Gladys. 0 n'envoie chaque ordre qu'une fois. Un appareil peut la surcharger avec sa propre valeur repeat. |
+| Canal d'écoute | `string` | Non | Le protocole radio écouté par le boîtier, par son pid. Laissez le champ vide — ou 1, qui veut dire la même chose — et il est déduit des appareils que vous avez déclarés : c'est ce qui remonte vers Gladys ce que le boîtier entend (télécommandes murales, capteurs). « Tester la connexion » indique sur sa ligne Écoute le protocole retenu et ce qu'il couvre, et « Chercher un protocole radio » cherche les pid par marque. Renseignez un pid pour écouter un autre protocole, le mot générique pour l'écoute générique 433 MHz (son pid, 1, est déjà pris), 0 pour désactiver l'écoute. |
+| Répétitions des commandes | `number` | Non | Nombre d'émissions supplémentaires d'un ordre radio, comme une vraie télécommande le répète tant qu'on appuie. Rien n'accuse réception d'un ordre radio : une trame perdue dans le bruit, c'est un clic sans effet. Montez à 2 ou 3 si un appareil ignore parfois Gladys. 0 n'envoie chaque ordre qu'une fois. Un appareil peut la surcharger avec sa propre valeur repeat. Cela répond à une trame perdue dans le bruit, que rien ne signale : un ordre que le boîtier dit lui-même ne pas avoir porté est un autre problème, et les journaux le nomment. |
 | Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture des capteurs du boîtier, en secondes. Un appareil peut la surcharger avec sa propre valeur refresh. |
 | Accepter les trames peu fiables | `boolean` | Non | Le boîtier note chaque trame qu'il décode, et celles qu'il note mal sont ignorées — comme le fait le plugin Jeedom officiel. Activez ceci si une télécommande est entendue sans jamais être suivie : ses trames seront alors utilisées quand même, au risque d'une fausse détection de temps en temps. Sans effet sur un protocole que le boîtier capte sans le décoder (aucune adresse dans les journaux) : celui-là demande son pid dans le canal d'écoute. |
-| Journaux détaillés (debug) | `boolean` | Non | Journalise chaque trame radio entendue par le boîtier, y compris celles écartées comme peu fiables ou non décodées. Activez-le pour comprendre pourquoi une télécommande ne remonte pas, puis désactivez-le : c'est verbeux. Votre chaîne de connexion n'est jamais journalisée. |
+| Journaux détaillés (debug) | `boolean` | Non | Journalise chaque trame radio entendue par le boîtier, y compris celles écartées comme peu fiables ou non décodées. Activez-le pour comprendre pourquoi une télécommande ne remonte pas, puis désactivez-le : c'est verbeux. Le mot de passe de votre chaîne de connexion n'est jamais journalisé ; le reste de la chaîne l'est à ce niveau, pour que vous voyiez ce que Gladys tient vraiment. |
 
 ## Comment installer Devmel dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Devmel apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:1.0.11`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:1.0.18`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 
