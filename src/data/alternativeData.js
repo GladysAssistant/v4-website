@@ -44,6 +44,11 @@ const alternativeContent = {
       title: "Why Gladys is a great Home Assistant alternative",
       cards: [
         {
+          icon: "☀️",
+          title: "An interface you don't have to build",
+          text: "Version 5 ships Horizon, a brand new design built mobile-first: frosted glass, real depth, and controls sized for a thumb. You get a dashboard that already looks finished, on your phone as much as on your laptop, with no cards to assemble and nothing to configure.",
+        },
+        {
           icon: "🖱️",
           title: "No YAML, ever",
           text: "Everything is configured by clicking in the interface. There are no configuration files to edit, because there are none.",
@@ -84,8 +89,8 @@ const alternativeContent = {
       title: "Being fair: where Home Assistant has the edge",
       paragraphs: [
         "I'm the creator of Gladys, so let me be transparent. Home Assistant still has a larger catalog of integrations, so if you own very niche or cloud-only devices, it may support them out of the box when Gladys doesn't yet. It also lets you share automations as YAML blueprints and gives power users more knobs to turn.",
-        "But Gladys already supports thousands of devices through Zigbee and Matter, the open standards the whole industry is moving toward. And that catalog is no longer limited by what I have time to build: with external integrations, anyone can package an integration, publish it on GitHub without asking anyone's permission, and it shows up in the catalog of every Gladys instance. You install it in one click, with no command line and no YAML, and it runs sandboxed so it can't destabilize your setup.",
-        "And if the integration you need doesn't exist yet, you can build it from the official template instead of waiting for it. You can also run Gladys and Home Assistant side by side, using one as a backend and the other as your interface. In other words, choosing Gladys rarely means giving anything up.",
+        "But that gap is closing fast, and on purpose. The community catalog went from 20 to 67 external integrations in a little over two weeks, written by people who had never opened the Gladys codebase before. Anyone can package an integration, publish it on GitHub without asking anyone's permission, and it shows up in the catalog of every Gladys instance. You install it in one click, with no command line and no YAML, and it runs sandboxed so it can't destabilize your setup. Add Zigbee and Matter, the open standards the whole industry is moving toward, and the one thing Home Assistant is supposed to win on is also the thing changing fastest.",
+        "And if the integration you need doesn't exist yet, you can build it from the official template instead of waiting for it. You can also run Gladys and Home Assistant side by side, using one as a backend and the other as your interface. In other words, choosing Gladys rarely means giving anything up, and since version 5 the interface is a reason to switch rather than a compromise.",
       ],
       compareLink: {
         label: "See the full Gladys vs Home Assistant comparison →",
@@ -167,6 +172,11 @@ const alternativeContent = {
       title: "Pourquoi Gladys est une excellente alternative à Home Assistant",
       cards: [
         {
+          icon: "☀️",
+          title: "Une interface que vous n'avez pas à construire",
+          text: "La version 5 apporte Horizon, un design entièrement nouveau pensé pour le mobile d'abord : du verre dépoli, de la vraie profondeur, des contrôles à taille de pouce. Vous obtenez un tableau de bord qui a déjà l'air fini, sur votre téléphone autant que sur votre ordinateur, sans cartes à assembler ni rien à configurer.",
+        },
+        {
           icon: "🖱️",
           title: "Jamais de YAML",
           text: "Tout se configure au clic dans l'interface. Aucun fichier de configuration à éditer, parce qu'il n'y en a pas.",
@@ -207,8 +217,8 @@ const alternativeContent = {
       title: "En toute honnêteté : là où Home Assistant garde l'avantage",
       paragraphs: [
         "Je suis le créateur de Gladys, alors soyons transparents. Home Assistant dispose encore d'un catalogue d'intégrations plus large : si vous avez des appareils très spécifiques ou cloud-only, il a plus de chances de les supporter directement, là où Gladys ne le fait pas encore. Il permet aussi de partager des automatisations via des blueprints YAML et offre plus de réglages aux power users.",
-        "Mais Gladys supporte déjà des milliers d'appareils via Zigbee et Matter, les standards ouverts vers lesquels toute l'industrie se dirige. Et ce catalogue n'est plus limité par ce que j'ai le temps de développer : avec les intégrations externes, n'importe qui peut empaqueter une intégration, la publier sur GitHub sans demander la permission à personne, et elle apparaît dans le catalogue de toutes les instances Gladys. Vous l'installez en un clic, sans ligne de commande ni YAML, et elle tourne isolée dans son bac à sable, sans pouvoir déstabiliser votre installation.",
-        "Et si l'intégration dont vous avez besoin n'existe pas encore, vous pouvez la créer à partir du template officiel plutôt que de l'attendre. Vous pouvez aussi faire tourner Gladys et Home Assistant côte à côte, l'un servant de backend et l'autre d'interface. Autrement dit, choisir Gladys ne veut presque jamais dire renoncer à quoi que ce soit.",
+        "Mais cet écart se réduit vite, et volontairement. Le catalogue communautaire est passé de 20 à 67 intégrations externes en un peu plus de deux semaines, écrites par des gens qui n'avaient jamais ouvert le code de Gladys. N'importe qui peut empaqueter une intégration, la publier sur GitHub sans demander la permission à personne, et elle apparaît dans le catalogue de toutes les instances Gladys. Vous l'installez en un clic, sans ligne de commande ni YAML, et elle tourne isolée dans son bac à sable, sans pouvoir déstabiliser votre installation. Ajoutez Zigbee et Matter, les standards ouverts vers lesquels toute l'industrie se dirige, et le seul terrain sur lequel Home Assistant est censé gagner est aussi celui qui bouge le plus vite.",
+        "Et si l'intégration dont vous avez besoin n'existe pas encore, vous pouvez la créer à partir du template officiel plutôt que de l'attendre. Vous pouvez aussi faire tourner Gladys et Home Assistant côte à côte, l'un servant de backend et l'autre d'interface. Autrement dit, choisir Gladys ne veut presque jamais dire renoncer à quoi que ce soit, et depuis la version 5 l'interface est une raison de basculer, plus un compromis.",
       ],
       compareLink: {
         label: "Voir le comparatif complet Gladys vs Home Assistant →",

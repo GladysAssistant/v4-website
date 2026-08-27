@@ -51,7 +51,7 @@ docker run -d \
 -v /etc/TZ:/etc/timezone:ro \
 -v /etc/localtime:/etc/localtime:ro \
 -v /dev:/dev \
-gladysassistant/gladys:v4
+gladysassistant/gladys:v5
 ```
 
 **Notes:**

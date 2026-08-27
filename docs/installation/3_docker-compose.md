@@ -34,7 +34,7 @@ Write the following text in the `gladys-compose.yml` file.
 ```yaml
 services:
   gladys:
-    image: gladysassistant/gladys:v4
+    image: gladysassistant/gladys:v5
     container_name: gladys
     restart: always
     privileged: true
@@ -54,6 +54,9 @@ services:
       - /var/lib/gladysassistant:/var/lib/gladysassistant
       - /dev:/dev
       - /run/udev:/run/udev:ro
+      # Host system bus: reboot/shutdown from the System settings, and the
+      # prerequisite for Bluetooth (Matter BLE pairing, Bluetooth sensors)
+      - /run/dbus:/run/dbus:ro
   watchtower:
     image: nickfedor/watchtower
     restart: always

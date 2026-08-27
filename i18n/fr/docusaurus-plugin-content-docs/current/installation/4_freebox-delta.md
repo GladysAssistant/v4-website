@@ -82,7 +82,7 @@ docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
-gladysassistant/gladys:v4
+gladysassistant/gladys:v5
 ```
 
 ## Mise à jour automatique avec Watchtower

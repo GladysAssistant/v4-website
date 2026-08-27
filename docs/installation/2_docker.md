@@ -54,7 +54,8 @@ sudo docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
-gladysassistant/gladys:v4
+-v /run/dbus:/run/dbus:ro \
+gladysassistant/gladys:v5
 ```
 
 Note:
@@ -68,6 +69,7 @@ Note:
 - `--network=host` => Use host network stack
 - `-e` => Set environment variables
 - `-v` => Mount volumes
+- `-v /run/dbus:/run/dbus:ro` => Gives Gladys access to the host's system bus. It is what lets you reboot or shut down the machine from the System settings, and it is the prerequisite for Bluetooth: pairing a Matter device over BLE and reading Bluetooth sensors both go through BlueZ, which is only reachable over that bus. The host needs BlueZ installed (`sudo apt install bluez` on Debian and Ubuntu).
 - `TZ=Europe/Paris` => Timezone used by container. Feel free to consult [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) on wikipedia if you need to change this value.
 
 ## Auto-Upgrade Gladys with Watchtower

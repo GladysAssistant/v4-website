@@ -46,7 +46,8 @@ sudo docker run -d \
 -v /var/lib/gladysassistant:/var/lib/gladysassistant \
 -v /dev:/dev \
 -v /run/udev:/run/udev:ro \
-gladysassistant/gladys:v4
+-v /run/dbus:/run/dbus:ro \
+gladysassistant/gladys:v5
 ```
 
 **Note :**
@@ -56,6 +57,8 @@ gladysassistant/gladys:v4
 - `-e TZ=Europe/Paris` => Pour changer le fuseau horaire du conteneur, vous pouvez modifier cette variable. Vous trouverez toutes les valeurs possibles sur [cette liste](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 - `-v /var/lib/gladysassistant` : Le dossier de destination où Gladys va stocker toutes ses données. Vous pouvez changer la partie à gauche des ":" pour modifier le dossier de destination.
+
+- `-v /run/dbus:/run/dbus:ro` : Donne à Gladys l'accès au bus système de la machine hôte. C'est ce qui permet de redémarrer ou d'éteindre la machine depuis les paramètres Système, et c'est le prérequis pour le Bluetooth : l'appairage d'un appareil Matter en BLE comme la lecture des capteurs Bluetooth passent par BlueZ, qui n'est joignable que par ce bus. BlueZ doit être installé sur la machine hôte (`sudo apt install bluez` sous Debian et Ubuntu).
 
 - Cette image a été buildée pour toutes les architectures connues du marché. Vous pouvez donc lancer cette commande que vous soyez sur un Raspberry Pi, sur un NAS Synology, sur une VM Ubuntu, etc... Tout est possible !
 
