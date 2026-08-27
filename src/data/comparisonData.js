@@ -21,6 +21,13 @@ const comparisonContent = {
         "Full transparency: I'm Pierre-Gilles, the creator of Gladys Assistant, so I'm obviously biased. But I'll be fair about both projects. Here's how they really compare, and why I believe Gladys is the better fit for most people who want a smart home that simply works.",
         "Both projects started in 2013, right after the first Raspberry Pi came out. They look similar at first glance, but they're built on very different philosophies, and that difference is exactly what should guide your choice.",
       ],
+      showdown: {
+        alt: "The Gladys Assistant 5 dashboard next to the Home Assistant demo dashboard",
+        gladysLabel: "Gladys Assistant 5",
+        haLabel: "Home Assistant",
+        caption:
+          "Same screen, same day, no retouching: on the left the Gladys Assistant 5 dashboard, on the right the official Home Assistant demo.",
+      },
     },
     verdict: {
       title: "The short version",
@@ -241,6 +248,13 @@ const comparisonContent = {
         "En toute transparence : je suis Pierre-Gilles, le créateur de Gladys Assistant, donc je suis forcément un peu partial. Mais je serai juste envers les deux projets. Voici comment ils se comparent vraiment, et pourquoi je pense que Gladys est le meilleur choix pour la plupart des gens qui veulent une maison connectée qui fonctionne, tout simplement.",
         "Les deux projets sont nés en 2013, juste après la sortie du premier Raspberry Pi. Ils se ressemblent au premier abord, mais ils reposent sur des philosophies très différentes, et c'est justement cette différence qui doit guider votre choix.",
       ],
+      showdown: {
+        alt: "Le tableau de bord de Gladys Assistant 5 face au tableau de bord de démonstration de Home Assistant",
+        gladysLabel: "Gladys Assistant 5",
+        haLabel: "Home Assistant",
+        caption:
+          "Même écran, le même jour, sans retouche : à gauche le tableau de bord de Gladys Assistant 5, à droite la démo officielle de Home Assistant.",
+      },
     },
     verdict: {
       title: "En résumé",

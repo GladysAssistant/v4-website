@@ -87,13 +87,19 @@ sudo docker run -d \
 
 ## Accessing Gladys
 
-You can access Gladys by entering the machine's IP address in your browser.
+Open **`http://gladysassistant.local`** in your browser. Gladys announces that name on your local network over mDNS, so you can reach it from any device on the same network without ever looking up an IP address.
 
 :::note
-Note: You must be on the same network as the machine!
+You must be on the same network as the machine.
 :::
 
-To find your machine's IP address on your local network, you can use applications like:
+If you run several Gladys instances at home, you can rename each one from **Settings → System → Local address (mDNS)**. The change takes effect immediately, no restart needed.
+
+### If `gladysassistant.local` does not open
+
+mDNS is built into macOS, iOS and Windows 10 and later, and works on most home networks. A few setups still block it: some Android versions, guest networks, and routers with client isolation turned on. Gladys also only advertises itself when it runs on the host network, which is what the command above does.
+
+In that case, use the machine's IP address in your browser instead. To find it on your local network, you can use applications like:
 
 - [Network Scanner](https://play.google.com/store/apps/details?id=com.easymobile.lan.scanner) on Android
 - [iNet - Network Scanner](https://apps.apple.com/us/app/inet-network-scanner/id340793353) on iOS

@@ -74,19 +74,7 @@ Once Gladys is running at your home, you can access it via your web browser and 
 
 ![Gladys Installation](../../static/img/docs/en/installation/guide/welcome-gladys.jpg)
 
-Simply follow the steps here.
-
-We will first create the main administrator account for your smart home:
-
-![Create Local Gladys Account](../../static/img/docs/en/installation/guide/create-local-account.jpg)
-
-Next, Gladys will ask you for some preferences:
-
-![Set Local Gladys Account Preferences](../../static/img/docs/en/installation/guide/preferences.jpg)
-
-Finally, you can name your house:
-
-![Create House in Gladys](../../static/img/docs/en/installation/guide/configure-house.jpg)
+From there, just follow the steps: create the main administrator account for your smart home, answer a few preferences, and name your house. It takes a couple of minutes.
 
 There you go! You now have a Gladys smart home system at your place.
 

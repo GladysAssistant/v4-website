@@ -55,9 +55,9 @@ gladysassistant/gladys:v5
 
 ### Gladys access
 
-Gladys will be accessible on your browser on `http://YOUR_NAS_IP:PORT`
+Gladys will be accessible on your browser on `http://gladysassistant.local:PORT`, the name Gladys announces on your local network over mDNS.
 
-For example `http://192.168.10.15:8420`
+For example `http://gladysassistant.local:8420`. If your network blocks mDNS, use the NAS IP address instead, for example `http://192.168.10.15:8420`.
 
 ## Automatic updates via Watchtower
 

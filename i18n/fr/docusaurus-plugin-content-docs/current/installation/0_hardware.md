@@ -89,19 +89,7 @@ Une fois que Gladys fonctionne chez vous, vous pourrez y accéder via votre navi
 
 ![Installation de Gladys](../../../../../static/img/docs/fr/installation/guide/welcome-gladys.jpg)
 
-Il vous suffira de suivre les étapes.
-
-Vous commencerez par créer le compte de l’administrateur principal de votre maison connectée :
-
-![Créer compte local Gladys](../../../../../static/img/docs/fr/installation/guide/create-local-account.jpg)
-
-Ensuite, Gladys vous demandera quelques préférences :
-
-![Définir préférences compte local Gladys](../../../../../static/img/docs/fr/installation/guide/preferences.jpg)
-
-Enfin, vous pourrez nommer votre maison :
-
-![Créer maison dans Gladys](../../../../../static/img/docs/fr/installation/guide/configure-house.jpg)
+Il vous suffira ensuite de suivre les étapes : créer le compte de l’administrateur principal de votre maison connectée, répondre à quelques préférences, puis nommer votre maison. L'affaire de deux minutes.
 
 Voilà ! Vous avez maintenant un système de maison connectée Gladys opérationnel.
 
