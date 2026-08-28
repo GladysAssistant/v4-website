@@ -31,10 +31,10 @@ Vous voilà maintenant dans l'éditeur de scène. Analysons ensemble chaque part
 ![Créer une scène](../../../../../static/img/docs/fr/scenes/intro/scenes-intro-3.jpg)
 
 1. Les déclencheurs : si vous ajoutez des déclencheurs à votre scène (ce qui est optionnel), ils apparaitront ici. Une même scène peut être déclenchée par plusieurs déclencheurs différents. Ces déclencheurs sont tous indépendants. Ajouter plusieurs déclencheurs veut tout simplement dire : "Quand cet évènement se produit OU Quand cet évènement se produit OU..."
-2. Un bloc d'actions : une scène est découpée en un ou plusieurs blocs d'actions. Lorsque vous ajoutez des actions à ce bloc d'actions, toutes les actions dans le bloc s'exécuteront en parallèle. Si vous ajoutez des actions au bloc d'action suivant (non visible sur cette capture d'écran), la scène attendra que le bloc d'action n°1 soit fini avant de passer au suivant. Ainsi, vous pouvez paralléliser les différentes actions, et pas seulement faire du séquentiel, puissant non ?
-3. Exécuter : Ce bouton vous permet de tester l'exécution de la scène. Ce bouton ne prend pas en compte les déclencheurs, il exécute uniquement les blocs d'actions.
-4. Enregistrer : Ce bouton enregistre la scène.
+2. Une étape : une scène est une suite d'étapes, qui s'exécutent les unes après les autres. Gladys attend qu'une étape soit terminée avant de passer à la suivante. À l'intérieur d'une étape, "Ajouter une action en parallèle" ajoute une action qui s'exécute en même temps que les autres actions de cette étape. Ainsi, vous pouvez paralléliser les différentes actions, et pas seulement faire du séquentiel, puissant non ?
+3. Démarrer : Ce bouton vous permet de tester l'exécution de la scène. Ce bouton ne prend pas en compte les déclencheurs, il exécute uniquement les étapes.
+4. Sauvegarder : Ce bouton enregistre la scène.
 5. Supprimer : Ce bouton supprime la scène.
-6. Ajouter déclencheur : Ce bouton vous permet d'ajouter un déclencheur à la scène. Vous pouvez ajouter autant de déclencheurs que vous voulez.
-7. Ajouter action : Ce bouton ajoute une action au bloc d'actions.
+6. Nouveau déclencheur : Ce bouton vous permet d'ajouter un déclencheur à la scène. Vous pouvez ajouter autant de déclencheurs que vous voulez.
+7. Le bouton "+" entre deux étapes : il insère une nouvelle étape à cet endroit de la scène.
 8. Cliquez sur le titre de la scène pour l'éditer.

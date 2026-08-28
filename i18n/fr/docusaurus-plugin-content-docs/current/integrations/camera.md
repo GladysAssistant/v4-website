@@ -84,8 +84,6 @@ Remplissez les informations de connexion à votre caméra
 
 Vous pouvez tester la connexion afin de vérifier que le flux est bien accessible de Gladys Assistant. Si Gladys n'a pas accès à la caméra, êtes-vous sûr que votre ordinateur faisant tourner Gladys est bien sur le même réseau que la caméra ? Que la caméra est bien accessible ? Que les identifiants sont bons ?
 
-![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/z_ajouter_webcam_usb_gladys_assistant_02-test.jpg)
-
 Une fois que la caméra fonctionne, cliquez sur le bouton "Sauvegarder".
 
 ![Ajouter une caméra à Gladys Assistant](../../../../../static/img/docs/fr/configuration/camera/camera-step-4.jpg)
