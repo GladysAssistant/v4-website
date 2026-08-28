@@ -31,7 +31,7 @@ Vous voilà maintenant dans l'éditeur de scène. Analysons ensemble chaque part
 ![Créer une scène](../../../../../static/img/docs/fr/scenes/intro/scenes-intro-3.jpg)
 
 1. Les déclencheurs : si vous ajoutez des déclencheurs à votre scène (ce qui est optionnel), ils apparaitront ici. Une même scène peut être déclenchée par plusieurs déclencheurs différents. Ces déclencheurs sont tous indépendants. Ajouter plusieurs déclencheurs veut tout simplement dire : "Quand cet évènement se produit OU Quand cet évènement se produit OU..."
-2. Une étape : une scène est une suite d'étapes, qui s'exécutent les unes après les autres. Gladys attend qu'une étape soit terminée avant de passer à la suivante. À l'intérieur d'une étape, "Ajouter une action parallèle" ajoute une action qui s'exécute en même temps que les autres actions de cette étape. Ainsi, vous pouvez paralléliser les différentes actions, et pas seulement faire du séquentiel, puissant non ?
+2. Une étape : une scène est une suite d'étapes, qui s'exécutent les unes après les autres. Gladys attend qu'une étape soit terminée avant de passer à la suivante. À l'intérieur d'une étape, "Ajouter une action en parallèle" ajoute une action qui s'exécute en même temps que les autres actions de cette étape. Ainsi, vous pouvez paralléliser les différentes actions, et pas seulement faire du séquentiel, puissant non ?
 3. Démarrer : Ce bouton vous permet de tester l'exécution de la scène. Ce bouton ne prend pas en compte les déclencheurs, il exécute uniquement les étapes.
 4. Sauvegarder : Ce bouton enregistre la scène.
 5. Supprimer : Ce bouton supprime la scène.
