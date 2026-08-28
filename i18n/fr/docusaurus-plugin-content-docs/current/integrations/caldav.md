@@ -106,7 +106,7 @@ Dans Gladys rejoignez la page de configuration CalDAV
 3. Entrez votre nom d'utilisateur Synology
 4. Entrez ici le mot de passe de votre compte
 
-![Synology](../../../../../static/img/docs/fr/configuration/caldav/apple_4_apple_config.png)
+![Synology](../../../../../static/img/docs/fr/configuration/caldav/synology_4_synology_config.png)
 
 Cliquez sur "Sauvegarder". S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérfiez les étapes précédentes et recommencez.
 
@@ -136,7 +136,7 @@ Dans Gladys rejoignez la page de configuration CalDAV
 3. Entrez votre pseudo Nexcloud
 4. Collez ici le mot de passe précédement généré
 
-![Nextcloud](../../../../../static/img/docs/fr/configuration/caldav/apple_4_apple_config.png)
+![Nextcloud](../../../../../static/img/docs/fr/configuration/caldav/other_config.png)
 
 Cliquez sur "Sauvegarder". S'il y a un message de validation, votre calendrier est prêt à être synchronisé. Si une erreur apparait, vérfiez les étapes précédentes et recommencez.
 
