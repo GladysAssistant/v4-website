@@ -38,8 +38,8 @@ module.exports = function createConfig() {
   themeConfig: {
     image:
       locale === "fr"
-        ? "img/presentation/gladys-assistant-og-image-2026-fr.jpg"
-        : "img/presentation/gladys-assistant-og-image-2026-en.jpg",
+        ? "img/presentation/gladys-assistant-og-image-v5-fr.jpg"
+        : "img/presentation/gladys-assistant-og-image-v5-en.jpg",
     metadata: [
       { name: "twitter:site", content: "@gladysassistant" },
       { property: "og:site_name", content: "Gladys Assistant" },

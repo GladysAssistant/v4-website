@@ -1033,7 +1033,7 @@ export function getPlusPageSchema(lang) {
             ? "Abonnement optionnel pour Gladys Assistant : accès distant chiffré, sauvegardes, IA, Enedis et serveur MCP."
             : "Optional subscription for Gladys Assistant: encrypted remote access, backups, AI, Enedis, and MCP server.",
         image: [
-          `${SITE_URL}/img/presentation/gladys-assistant-og-image-2026-${
+          `${SITE_URL}/img/presentation/gladys-assistant-og-image-v5-${
             lang === "fr" ? "fr" : "en"
           }.jpg`,
         ],
