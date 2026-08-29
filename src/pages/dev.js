@@ -5,6 +5,7 @@ import Translate, { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { usePluralForm } from "@docusaurus/theme-common";
 
+import DevPipeline from "../components/dev/DevPipeline";
 import devActivitySnapshot from "../data/devActivity.json";
 import {
   buildAchievements,
@@ -743,6 +744,9 @@ function DevPage() {
               }
             />
           </section>
+
+          {/* PIPELINE ------------------------------------------------------ */}
+          <DevPipeline />
 
           {/* RHYTHM -------------------------------------------------------- */}
           <section className={styles.panel} aria-labelledby="rhythm-title">
