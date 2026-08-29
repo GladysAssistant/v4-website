@@ -9,11 +9,11 @@ This integration lets you display upcoming movie releases in Gladys Assistant, u
 
 ## Create a TMDB account
 
-To configure TMDB, first go to [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) and click on "click here" next to "To generate a new API key".
+To configure TMDB, first go to [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api). If you are not logged in yet, TMDB asks you to sign in (or create a free account if you don't have one already) first.
 
 ![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-1.jpg)
 
-If you are not logged in yet, TMDB asks you to sign in (or create a free account if you don't have one already) first.
+Once logged in, you land on the "API" settings page. Click on "click here" next to "To generate a new API key".
 
 ![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-2.jpg)
 

@@ -9,11 +9,11 @@ Cette intégration vous permet d'afficher les prochaines sorties de films dans G
 
 ## Créez un compte TMDB
 
-Rendez-vous sur [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) et cliquez sur "click here" à côté de "To generate a new API key".
+Rendez-vous sur [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api). Si vous n'êtes pas encore connecté·e, TMDB vous demande de vous connecter (ou de créer un compte gratuit si vous n'en avez pas déjà un).
 
 ![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-1.jpg)
 
-Si vous n'êtes pas encore connecté·e, TMDB vous demande de vous connecter (ou de créer un compte gratuit si vous n'en avez pas déjà un).
+Une fois connecté·e, vous arrivez sur la page des paramètres "API". Cliquez sur "click here" à côté de "To generate a new API key".
 
 ![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-2.jpg)
 
