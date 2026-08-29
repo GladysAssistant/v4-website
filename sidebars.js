@@ -75,6 +75,7 @@ module.exports = {
             "integrations/sonoff",
             "integrations/sonos",
             "integrations/tasmota",
+            "integrations/tmdb",
             "integrations/xiaomi",
             "integrations/zigbee2mqtt",
             "integrations/zwavejs-ui",
