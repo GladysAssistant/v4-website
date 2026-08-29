@@ -71,11 +71,11 @@ Only public data is read, so the token needs no permission on anything:
   classic token reads public data, which is all this script does.
 - **fine-grained token**: under **Repository access**, pick **Public
   Repositories (read-only)**; nothing to tick under Repository or Account
-  permissions. Note that an organization can refuse fine-grained tokens it has
-  not approved, and Gladys lives in one: if the build logs `403 Forbidden —
-  Resource not accessible by personal access token` while the token is set up
-  this way, that policy is the first thing to check — or switch to a classic
-  token, which is not subject to it.
+  permissions. Give it an **expiration date under a year**: the
+  GladysAssistant organization refuses fine-grained tokens living longer than
+  366 days, "no expiration" included, and answers `403 Forbidden` on every
+  call — the build log quotes that refusal in full. Such a token has to be
+  rotated once a year; a classic token has no such limit.
 
 The build log always opens with what it got, so a deploy that refreshes nothing
 says whether the token even reached it:
