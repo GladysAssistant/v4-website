@@ -9,23 +9,33 @@ This integration lets you display upcoming movie releases in Gladys Assistant, u
 
 ## Create a TMDB account
 
-To configure TMDB, first go to [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api).
-
-Create a free account if you don't have one already.
+To configure TMDB, first go to [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) and click on "click here" next to "To generate a new API key".
 
 ![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-1.jpg)
 
-Once logged in, open your account settings and go to the "API" section.
+If you are not logged in yet, TMDB asks you to sign in (or create a free account if you don't have one already) first.
 
 ![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-2.jpg)
 
-Click on "Create" (or "Request an API key" if this is your first time), choose "Developer", and fill in the short form describing your use (personal use is fine).
+Answer "Yes, this is for my own personal use only".
 
 ![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-3.jpg)
 
-Your "API Key (v3 auth)" is generated instantly — this is the value Gladys needs.
+Confirm you understand the personal-use terms, check the box, and click "Yes, this is for personal use".
 
 ![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-4.jpg)
+
+Fill in the short application form: any application name works (ex. `gladys`), and `http://localhost` as the Application URL is fine. Describe your use in a sentence, fill in your contact details, and submit.
+
+![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-5.jpg)
+
+Your account is now on the Free Developer plan.
+
+![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-6.jpg)
+
+Your "API Key (v3 auth)" is generated instantly — this is the value Gladys needs.
+
+![Create account TMDB](../../static/img/docs/en/configuration/tmdb/create-account-step-7.jpg)
 
 ## Enter the API key in Gladys Assistant
 

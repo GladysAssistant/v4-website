@@ -9,23 +9,33 @@ Cette intégration vous permet d'afficher les prochaines sorties de films dans G
 
 ## Créez un compte TMDB
 
-Rendez-vous sur [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api).
-
-Créez un compte gratuit si vous n'en avez pas déjà un.
+Rendez-vous sur [https://www.themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) et cliquez sur "click here" à côté de "To generate a new API key".
 
 ![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-1.jpg)
 
-Une fois connecté·e, ouvrez les paramètres de votre compte et allez dans la section "API".
+Si vous n'êtes pas encore connecté·e, TMDB vous demande de vous connecter (ou de créer un compte gratuit si vous n'en avez pas déjà un).
 
 ![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-2.jpg)
 
-Cliquez sur "Create" (ou "Request an API key" si c'est votre première fois), choisissez "Developer", puis remplissez le court formulaire décrivant votre usage (un usage personnel convient très bien).
+Répondez "Yes, this is for my own personal use only".
 
 ![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-3.jpg)
 
-Votre "API Key (v3 auth)" est générée instantanément — c'est cette valeur dont Gladys a besoin.
+Confirmez que vous comprenez les conditions d'usage personnel, cochez la case, puis cliquez sur "Yes, this is for personal use".
 
 ![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-4.jpg)
+
+Remplissez le court formulaire de candidature : n'importe quel nom d'application convient (ex. `gladys`), et `http://localhost` fonctionne comme Application URL. Décrivez votre usage en une phrase, renseignez vos coordonnées, puis validez.
+
+![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-5.jpg)
+
+Votre compte est maintenant sur le plan Free Developer.
+
+![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-6.jpg)
+
+Votre "API Key (v3 auth)" est générée instantanément — c'est cette valeur dont Gladys a besoin.
+
+![Créez un compte TMDB](../../../../../static/img/docs/fr/configuration/tmdb/create-account-step-7.jpg)
 
 ## Entrez cette clé dans Gladys Assistant
 
