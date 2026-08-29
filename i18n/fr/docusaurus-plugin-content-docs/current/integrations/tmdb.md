@@ -1,7 +1,7 @@
 ---
 id: tmdb
 title: TMDB
-description: "Affichez les prochaines sorties de films dans Gladys Assistant avec TMDB : créez un compte, récupérez votre clé API et ajoutez un widget cinéma au tableau de bord."
+description: "Affichez les prochaines sorties de films dans Gladys Assistant avec TMDB : créez un compte, récupérez votre clé API et ajoutez un widget Prochaines sorties au tableau de bord."
 sidebar_label: TMDB
 ---
 
@@ -33,13 +33,13 @@ Allez dans "Intégrations" -> "TMDB". Entrez votre clé d'API puis cliquez sur "
 
 ![Ajoutez votre clé d'API dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/tmdb/add-api-key.jpg)
 
-## Ajoutez un widget cinéma au tableau de bord
+## Ajoutez un widget Prochaines sorties au tableau de bord
 
 Allez sur le dashboard, puis cliquez sur "Editer".
 
 ![Configurez TMDB dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/tmdb/configure-gladys-1.jpg)
 
-Ajoutez un widget "Sorties Cinéma".
+Ajoutez un widget "Prochaines sorties".
 
 ![Configurez TMDB dans Gladys Assistant](../../../../../static/img/docs/fr/configuration/tmdb/configure-gladys-2.jpg)
 

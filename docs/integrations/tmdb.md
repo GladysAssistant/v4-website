@@ -1,7 +1,7 @@
 ---
 id: tmdb
 title: TMDB
-description: "Display upcoming movie releases in Gladys Assistant with TMDB: create an account, get your API key and add a cinema widget to your dashboard."
+description: "Display upcoming movie releases in Gladys Assistant with TMDB: create an account, get your API key and add an Upcoming Releases widget to your dashboard."
 sidebar_label: TMDB
 ---
 
@@ -33,13 +33,13 @@ Go to "Integrations" -> "TMDB". Enter your API key, and click "Save".
 
 ![Add TMDB API key in Gladys Assistant](../../static/img/docs/en/configuration/tmdb/add-api-key.jpg)
 
-## Add a cinema widget to the dashboard
+## Add an Upcoming Releases widget to the dashboard
 
 Go to the dashboard, and click on "Edit".
 
 ![Configure TMDB in Gladys Assistant](../../static/img/docs/en/configuration/tmdb/configure-gladys-1.jpg)
 
-Add a "Cinema" widget.
+Add an "Upcoming Releases" widget.
 
 ![Configure TMDB in Gladys Assistant](../../static/img/docs/en/configuration/tmdb/configure-gladys-2.jpg)
 
