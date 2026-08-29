@@ -36,9 +36,15 @@ const GITHUB_REPO = "Gladys";
 const GITHUB_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
 
 const FORUM_URL = "https://community.gladysassistant.com";
-// Feature requests (category 43) tagged "accepted" (tag 184): the roadmap the
-// community voted for and that has been greenlit.
-const FORUM_ACCEPTED_PATH = "/tags/c/feature-requests/43/accepted/184.json";
+// A feature request the community voted for gets the "accepted" tag once it is
+// greenlit, and moves to the "Demandes livrées" category once shipped. Listing
+// the tag rather than one category keeps both states: filtering on the category
+// alone made the page drop a request the day it was delivered.
+const FORUM_ACCEPTED_PATH = "/tag/accepted.json";
+// "Demande de fonctionnalités": accepted, still to be built.
+const FORUM_PENDING_CATEGORY = 43;
+// "Demandes livrées": accepted and shipped.
+const FORUM_DELIVERED_CATEGORY = 52;
 
 const OUTPUT_FILE = path.join(__dirname, "..", "src", "data", "devActivity.json");
 
@@ -423,7 +429,7 @@ async function getForumRequests() {
   const topics = [];
   const users = new Map();
 
-  // Discourse paginates tag listings; two pages cover the accepted list with
+  // Discourse paginates tag listings; two pages cover the accepted tag with
   // room to grow.
   for (let page = 0; page < 2; page += 1) {
     const url = `${FORUM_URL}${FORUM_ACCEPTED_PATH}${page > 0 ? `?page=${page}` : ""}`;
@@ -442,11 +448,26 @@ async function getForumRequests() {
   return {
     forumRequests: topics
       .filter((topic) => {
+        // The tag is what makes a topic part of the roadmap, but it can be put
+        // on anything: only the two feature request categories belong here.
+        if (
+          topic.category_id !== FORUM_PENDING_CATEGORY &&
+          topic.category_id !== FORUM_DELIVERED_CATEGORY
+        ) {
+          return false;
+        }
         if (seen.has(topic.id)) {
           return false;
         }
         seen.add(topic.id);
         return true;
+      })
+      // What is still to be built comes first: that is the part of the page
+      // that answers "what is coming next".
+      .sort((a, b) => {
+        const delivered = Number(a.category_id === FORUM_DELIVERED_CATEGORY) -
+          Number(b.category_id === FORUM_DELIVERED_CATEGORY);
+        return delivered || new Date(b.bumped_at) - new Date(a.bumped_at);
       })
       .slice(0, MAX_FORUM_REQUESTS)
       .map((topic) => {
@@ -464,6 +485,7 @@ async function getForumRequests() {
           createdAt: topic.created_at,
           bumpedAt: topic.bumped_at,
           author: author ? author.username : null,
+          delivered: topic.category_id === FORUM_DELIVERED_CATEGORY,
           // The "accepted" tag is on every topic here, so it carries no signal.
           tags: (topic.tags || [])
             .filter((tag) => tag.name !== "accepted")
