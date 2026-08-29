@@ -40,15 +40,37 @@ requests on the forum.
 
 Nothing to do by hand: `build.sh` regenerates it on every deploy, and the
 `refresh-dev-activity` workflow asks Cloudflare Pages for a daily rebuild so
-the page keeps moving even on quiet days. If GitHub or the forum is
-unreachable during a build, the version committed in the repository is used
-instead.
+the page keeps moving even on quiet days. Whatever cannot be downloaded during
+a build (GitHub unreachable, rate limit reached, forum down) simply keeps the
+values committed in the repository, section by section, so a refresh never
+fails the deploy.
 
 To regenerate it locally:
 
 ```bash
 yarn load-dev-activity
 ```
+
+### About the GitHub rate limit
+
+Without a token, GitHub allows 60 requests per hour and *per IP*. Cloudflare
+Pages builds run on shared IPs, so that budget is often already spent by
+someone else and the GitHub half of the snapshot stops refreshing (the build
+logs then show `403 rate limit exceeded`). The script limits the damage by
+sending conditional requests: each answer is stored with its `ETag` and the
+`304 Not Modified` replies do not count against the limit.
+
+To refresh reliably, give the build a token: create a fine-grained personal
+access token with read-only public access (no scope needed) and add it as a
+`DEV_ACTIVITY_GITHUB_TOKEN` environment variable on the Cloudflare Pages
+project (Settings > Environment variables). That raises the budget to 5000
+requests per hour. Locally, the same variable in `.env` does the same.
+
+The name is deliberately specific: `GITHUB_TOKEN` is read by a lot of tooling
+(and is the name GitHub Actions gives its own automatic token), so a variable
+set for this script alone should not be handed to everything else running in
+the build. `GITHUB_TOKEN` is still accepted as a fallback, which is what the
+workflows use when they pass `secrets.GITHUB_TOKEN`.
 
 ## How to add new integrations ?
 
