@@ -80,6 +80,31 @@ const gitHubTokenVariable = process.env.DEV_ACTIVITY_GITHUB_TOKEN
     : null;
 const gitHubToken = gitHubTokenVariable ? process.env[gitHubTokenVariable] : null;
 
+// What the build log says about the token, without ever printing it: whether
+// one was found at all, and whether it looks like a GitHub token. A deploy that
+// refreshes nothing must not leave the question "was the token even passed to
+// the build?" open, since the answer changes where to look entirely.
+function describeToken() {
+  if (!gitHubToken) {
+    return (
+      "no token (DEV_ACTIVITY_GITHUB_TOKEN and GITHUB_TOKEN are unset): GitHub " +
+      "calls go out anonymously, on 60 requests/hour shared by every build on this IP"
+    );
+  }
+  const kinds = {
+    github_pat_: "fine-grained token",
+    ghp_: "classic token",
+    ghs_: "Actions token",
+    gho_: "OAuth token",
+    ghu_: "user-to-server token",
+  };
+  const prefix = Object.keys(kinds).find((candidate) => gitHubToken.startsWith(candidate));
+  // An unrecognized shape is a finding in itself: a value truncated by a copy
+  // and paste, quoted, or holding a trailing newline never gets accepted.
+  const kind = prefix ? kinds[prefix] : "unrecognized format";
+  return `${gitHubTokenVariable} (${kind}, ${gitHubToken.length} characters)`;
+}
+
 // A token GitHub refuses (expired, revoked, missing the repository) must not
 // leave the page stale while the anonymous budget is still there: the first
 // call to be refused drops it and the following ones go out anonymously.
@@ -591,6 +616,8 @@ async function loadSection(section) {
 }
 
 async function main() {
+  console.log(`>> GitHub calls: ${describeToken()}`);
+
   const data = {};
   for (const section of SECTIONS) {
     Object.assign(data, await loadSection(section));

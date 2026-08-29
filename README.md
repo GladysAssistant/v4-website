@@ -65,20 +65,25 @@ To refresh reliably, give the build a token and add it as a
 project (Settings > Environment variables). That raises the budget to 5000
 requests per hour. Locally, the same variable in `.env` does the same.
 
-Only public data is read, so the token needs no permission on anything — but
-it does need to be allowed to see public repositories, which is *not* what a
-fine-grained token does by default:
+Only public data is read, so the token needs no permission on anything:
 
-- **fine-grained token** (Settings > Developer settings > Personal access
-  tokens > Fine-grained tokens): under **Repository access**, pick
-  **Public Repositories (read-only)**. That option is what grants the token
-  its read access; leaving the default ("This token does not have access to
-  any repositories") makes GitHub answer `403 Forbidden — Resource not
-  accessible by personal access token` on *every* endpoint, public ones
-  included. Nothing to tick under Repository permissions or Account
-  permissions.
 - **classic token**: create it with no scope checked at all. A scopeless
-  classic token reads public data and is the simplest thing that works.
+  classic token reads public data, which is all this script does.
+- **fine-grained token**: under **Repository access**, pick **Public
+  Repositories (read-only)**; nothing to tick under Repository or Account
+  permissions. Note that an organization can refuse fine-grained tokens it has
+  not approved, and Gladys lives in one: if the build logs `403 Forbidden —
+  Resource not accessible by personal access token` while the token is set up
+  this way, that policy is the first thing to check — or switch to a classic
+  token, which is not subject to it.
+
+The build log always opens with what it got, so a deploy that refreshes nothing
+says whether the token even reached it:
+
+```
+>> GitHub calls: DEV_ACTIVITY_GITHUB_TOKEN (fine-grained token, 93 characters)
+>> GitHub calls: no token (DEV_ACTIVITY_GITHUB_TOKEN and GITHUB_TOKEN are unset): […]
+```
 
 The name is deliberately specific: `GITHUB_TOKEN` is read by a lot of tooling
 (and is the name GitHub Actions gives its own automatic token), so a variable
