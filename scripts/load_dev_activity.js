@@ -7,9 +7,10 @@
  * limit) and it is the only source for the forum feature requests, which
  * Discourse does not serve cross-origin.
  *
- * The deploy build runs without a GITHUB_TOKEN, on a shared Cloudflare Pages
- * IP, so the anonymous 60 requests/hour budget is often already spent by
- * someone else. Two things keep that from wiping the page data:
+ * The deploy build runs without a token (see DEV_ACTIVITY_GITHUB_TOKEN below),
+ * on a shared Cloudflare Pages IP, so the anonymous 60 requests/hour budget is
+ * often already spent by someone else. Two things keep that from wiping the
+ * page data:
  *
  *   - conditional requests: each answer is stored with its ETag and re-sent as
  *     `If-None-Match`, and GitHub does not count the 304 answers against the
@@ -20,8 +21,8 @@
  * Run with `yarn load-dev-activity`. Refreshed daily by the
  * `refresh-dev-activity` workflow.
  */
-// Only useful to read a local GITHUB_TOKEN from .env, and this script runs
-// during the deploy build, where a missing dev dependency must not break it.
+// Only useful to read a local token from .env, and this script runs during the
+// deploy build, where a missing dev dependency must not break it.
 try {
   require("dotenv").config();
 } catch (error) {
@@ -61,6 +62,13 @@ const REQUEST_TIMEOUT_MS = 20000;
 // than parking the deploy build.
 const MAX_RATE_LIMIT_WAIT_MS = 30000;
 
+// DEV_ACTIVITY_GITHUB_TOKEN is the name to set on the deploy environment:
+// GITHUB_TOKEN is generic enough that half the tooling of a build reads it (and
+// GitHub Actions gives that name to its own automatic token), so a token meant
+// for this script alone deserves its own name. GITHUB_TOKEN is still accepted
+// as a fallback, which is what a workflow passing `secrets.GITHUB_TOKEN` uses.
+const gitHubToken = process.env.DEV_ACTIVITY_GITHUB_TOKEN || process.env.GITHUB_TOKEN;
+
 // Returned instead of a payload when GitHub answers 304 Not Modified.
 const NOT_MODIFIED = Symbol("not modified");
 
@@ -78,7 +86,7 @@ class RateLimitError extends Error {
       : "no reset date given";
     super(
       `GitHub rate limit reached on ${url} (${when}). ` +
-        "Set a GITHUB_TOKEN to lift the anonymous 60 requests/hour limit."
+        "Set DEV_ACTIVITY_GITHUB_TOKEN to lift the anonymous 60 requests/hour limit."
     );
     this.name = "RateLimitError";
   }
@@ -123,11 +131,10 @@ async function getJson(url, { retryOn202 = false, conditional = false } = {}) {
   if (isGitHub) {
     headers["X-GitHub-Api-Version"] = "2022-11-28";
   }
-  // Optional: lifts the 60 requests/hour anonymous limit. The workflow passes
-  // the automatic GITHUB_TOKEN, a local run works fine without one. Only ever
-  // sent to the GitHub API, never to the forum.
-  if (isGitHub && process.env.GITHUB_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  // Optional: lifts the 60 requests/hour anonymous limit, a local run works
+  // fine without one. Only ever sent to the GitHub API, never to the forum.
+  if (isGitHub && gitHubToken) {
+    headers.Authorization = `Bearer ${gitHubToken}`;
   }
   // A 304 answer does not count against the rate limit, which is the whole
   // point: an unchanged repository makes the refresh free.

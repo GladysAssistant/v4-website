@@ -62,9 +62,15 @@ sending conditional requests: each answer is stored with its `ETag` and the
 
 To refresh reliably, give the build a token: create a fine-grained personal
 access token with read-only public access (no scope needed) and add it as a
-`GITHUB_TOKEN` environment variable on the Cloudflare Pages project
-(Settings > Environment variables). That raises the budget to 5000 requests
-per hour. Locally, a `GITHUB_TOKEN` in `.env` does the same.
+`DEV_ACTIVITY_GITHUB_TOKEN` environment variable on the Cloudflare Pages
+project (Settings > Environment variables). That raises the budget to 5000
+requests per hour. Locally, the same variable in `.env` does the same.
+
+The name is deliberately specific: `GITHUB_TOKEN` is read by a lot of tooling
+(and is the name GitHub Actions gives its own automatic token), so a variable
+set for this script alone should not be handed to everything else running in
+the build. `GITHUB_TOKEN` is still accepted as a fallback, which is what the
+workflows use when they pass `secrets.GITHUB_TOKEN`.
 
 ## How to add new integrations ?
 
