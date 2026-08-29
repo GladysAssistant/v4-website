@@ -36,9 +36,15 @@ const GITHUB_REPO = "Gladys";
 const GITHUB_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
 
 const FORUM_URL = "https://community.gladysassistant.com";
-// Feature requests (category 43) tagged "accepted" (tag 184): the roadmap the
-// community voted for and that has been greenlit.
-const FORUM_ACCEPTED_PATH = "/tags/c/feature-requests/43/accepted/184.json";
+// A feature request the community voted for gets the "accepted" tag once it is
+// greenlit, and moves to the "Demandes livrées" category once shipped. Listing
+// the tag rather than one category keeps both states: filtering on the category
+// alone made the page drop a request the day it was delivered.
+const FORUM_ACCEPTED_PATH = "/tag/accepted.json";
+// "Demande de fonctionnalités": accepted, still to be built.
+const FORUM_PENDING_CATEGORY = 43;
+// "Demandes livrées": accepted and shipped.
+const FORUM_DELIVERED_CATEGORY = 52;
 
 const OUTPUT_FILE = path.join(__dirname, "..", "src", "data", "devActivity.json");
 
@@ -67,7 +73,42 @@ const MAX_RATE_LIMIT_WAIT_MS = 30000;
 // GitHub Actions gives that name to its own automatic token), so a token meant
 // for this script alone deserves its own name. GITHUB_TOKEN is still accepted
 // as a fallback, which is what a workflow passing `secrets.GITHUB_TOKEN` uses.
-const gitHubToken = process.env.DEV_ACTIVITY_GITHUB_TOKEN || process.env.GITHUB_TOKEN;
+const gitHubTokenVariable = process.env.DEV_ACTIVITY_GITHUB_TOKEN
+  ? "DEV_ACTIVITY_GITHUB_TOKEN"
+  : process.env.GITHUB_TOKEN
+    ? "GITHUB_TOKEN"
+    : null;
+const gitHubToken = gitHubTokenVariable ? process.env[gitHubTokenVariable] : null;
+
+// What the build log says about the token, without ever printing it: whether
+// one was found at all, and whether it looks like a GitHub token. A deploy that
+// refreshes nothing must not leave the question "was the token even passed to
+// the build?" open, since the answer changes where to look entirely.
+function describeToken() {
+  if (!gitHubToken) {
+    return (
+      "no token (DEV_ACTIVITY_GITHUB_TOKEN and GITHUB_TOKEN are unset): GitHub " +
+      "calls go out anonymously, on 60 requests/hour shared by every build on this IP"
+    );
+  }
+  const kinds = {
+    github_pat_: "fine-grained token",
+    ghp_: "classic token",
+    ghs_: "Actions token",
+    gho_: "OAuth token",
+    ghu_: "user-to-server token",
+  };
+  const prefix = Object.keys(kinds).find((candidate) => gitHubToken.startsWith(candidate));
+  // An unrecognized shape is a finding in itself: a value truncated by a copy
+  // and paste, quoted, or holding a trailing newline never gets accepted.
+  const kind = prefix ? kinds[prefix] : "unrecognized format";
+  return `${gitHubTokenVariable} (${kind}, ${gitHubToken.length} characters)`;
+}
+
+// A token GitHub refuses (expired, revoked, missing the repository) must not
+// leave the page stale while the anonymous budget is still there: the first
+// call to be refused drops it and the following ones go out anonymously.
+let gitHubTokenRejected = false;
 
 // Returned instead of a payload when GitHub answers 304 Not Modified.
 const NOT_MODIFIED = Symbol("not modified");
@@ -79,16 +120,50 @@ const NOT_MODIFIED = Symbol("not modified");
 const etags = new Map();
 const stagedEtags = new Map();
 
+// GitHub explains every refusal in the body ("Bad credentials", "Resource not
+// accessible by personal access token", "API rate limit exceeded for x.x.x.x"),
+// and a build log without it leaves nothing to debug with.
+async function apiMessage(response) {
+  try {
+    const body = await response.json();
+    return typeof body?.message === "string" ? body.message : "";
+  } catch (error) {
+    return "";
+  }
+}
+
+function authLabel(headers) {
+  if (!headers.Authorization) {
+    return "anonymous";
+  }
+  return `with the ${gitHubTokenVariable} token`;
+}
+
+function describeFailure(response, url, message, headers) {
+  const budget = response.headers.get("x-ratelimit-remaining");
+  const details = [message, `${authLabel(headers)}`];
+  if (budget !== null) {
+    details.push(`${budget}/${response.headers.get("x-ratelimit-limit") || "?"} requests left`);
+  }
+  return `${response.status} ${response.statusText} on ${url} — ${details.filter(Boolean).join(", ")}`;
+}
+
 class RateLimitError extends Error {
-  constructor(url, delayMs) {
+  constructor(url, delayMs, message, headers) {
     const when = Number.isFinite(delayMs)
       ? `it resets in about ${Math.max(1, Math.round(delayMs / 60000))} min`
       : "no reset date given";
     super(
-      `GitHub rate limit reached on ${url} (${when}). ` +
-        "Set DEV_ACTIVITY_GITHUB_TOKEN to lift the anonymous 60 requests/hour limit."
+      `GitHub rate limit reached on ${url} (${authLabel(headers)}, ${when})` +
+        `${message ? `: ${message}` : ""}. ` +
+        (headers.Authorization
+          ? "Wait for the reset, the token cannot lift it any further."
+          : "Set DEV_ACTIVITY_GITHUB_TOKEN to lift the anonymous 60 requests/hour limit.")
     );
     this.name = "RateLimitError";
+    // What the sections skipped afterwards report, without repeating the URL
+    // and the advice of the call that actually hit the limit.
+    this.summary = `GitHub rate limit reached (${authLabel(headers)}), ${when}`;
   }
 }
 
@@ -121,7 +196,7 @@ function rateLimitDelay(response) {
 async function getJson(url, { retryOn202 = false, conditional = false } = {}) {
   const isGitHub = url.startsWith(GITHUB_API);
   if (isGitHub && gitHubRateLimit) {
-    throw gitHubRateLimit;
+    throw new Error(`${gitHubRateLimit.summary}, skipping this call`);
   }
 
   const headers = {
@@ -133,7 +208,7 @@ async function getJson(url, { retryOn202 = false, conditional = false } = {}) {
   }
   // Optional: lifts the 60 requests/hour anonymous limit, a local run works
   // fine without one. Only ever sent to the GitHub API, never to the forum.
-  if (isGitHub && gitHubToken) {
+  if (isGitHub && gitHubToken && !gitHubTokenRejected) {
     headers.Authorization = `Bearer ${gitHubToken}`;
   }
   // A 304 answer does not count against the rate limit, which is the whole
@@ -159,16 +234,27 @@ async function getJson(url, { retryOn202 = false, conditional = false } = {}) {
     }
     const rateLimited = rateLimitDelay(response);
     if (rateLimited !== null) {
+      const message = await apiMessage(response);
       if (rateLimited <= MAX_RATE_LIMIT_WAIT_MS && attempt < MAX_ATTEMPTS - 1) {
         console.log(`   rate limited on ${url}, retrying in ${Math.round(rateLimited / 1000)}s...`);
         await sleep(rateLimited + 1000);
         continue;
       }
-      const error = new RateLimitError(url, rateLimited);
+      const error = new RateLimitError(url, rateLimited, message, headers);
       if (isGitHub) {
         gitHubRateLimit = error;
       }
       throw error;
+    }
+    // Refused for the credentials rather than for the budget: drop the token
+    // and try again anonymously, which still has its own 60 requests/hour.
+    if ((response.status === 401 || response.status === 403) && headers.Authorization) {
+      const message = await apiMessage(response);
+      console.log(`   ${describeFailure(response, url, message, headers)}`);
+      console.log(`   retrying anonymously, ${gitHubTokenVariable} is not being accepted`);
+      gitHubTokenRejected = true;
+      delete headers.Authorization;
+      continue;
     }
     // A single 502 from GitHub should not fail the daily refresh.
     if (response.status >= 500 && attempt < MAX_ATTEMPTS - 1) {
@@ -177,7 +263,7 @@ async function getJson(url, { retryOn202 = false, conditional = false } = {}) {
       continue;
     }
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText} on ${url}`);
+      throw new Error(describeFailure(response, url, await apiMessage(response), headers));
     }
     const etag = response.headers.get("etag");
     if (conditional && etag) {
@@ -368,7 +454,7 @@ async function getForumRequests() {
   const topics = [];
   const users = new Map();
 
-  // Discourse paginates tag listings; two pages cover the accepted list with
+  // Discourse paginates tag listings; two pages cover the accepted tag with
   // room to grow.
   for (let page = 0; page < 2; page += 1) {
     const url = `${FORUM_URL}${FORUM_ACCEPTED_PATH}${page > 0 ? `?page=${page}` : ""}`;
@@ -387,11 +473,26 @@ async function getForumRequests() {
   return {
     forumRequests: topics
       .filter((topic) => {
+        // The tag is what makes a topic part of the roadmap, but it can be put
+        // on anything: only the two feature request categories belong here.
+        if (
+          topic.category_id !== FORUM_PENDING_CATEGORY &&
+          topic.category_id !== FORUM_DELIVERED_CATEGORY
+        ) {
+          return false;
+        }
         if (seen.has(topic.id)) {
           return false;
         }
         seen.add(topic.id);
         return true;
+      })
+      // What is still to be built comes first: that is the part of the page
+      // that answers "what is coming next".
+      .sort((a, b) => {
+        const delivered = Number(a.category_id === FORUM_DELIVERED_CATEGORY) -
+          Number(b.category_id === FORUM_DELIVERED_CATEGORY);
+        return delivered || new Date(b.bumped_at) - new Date(a.bumped_at);
       })
       .slice(0, MAX_FORUM_REQUESTS)
       .map((topic) => {
@@ -409,6 +510,7 @@ async function getForumRequests() {
           createdAt: topic.created_at,
           bumpedAt: topic.bumped_at,
           author: author ? author.username : null,
+          delivered: topic.category_id === FORUM_DELIVERED_CATEGORY,
           // The "accepted" tag is on every topic here, so it carries no signal.
           tags: (topic.tags || [])
             .filter((tag) => tag.name !== "accepted")
@@ -477,6 +579,25 @@ function committedValues(section) {
   return Object.fromEntries(section.keys.map((key) => [key, committedSnapshot[key]]));
 }
 
+// A list coming back much shorter than the committed one is usually an upstream
+// change rather than real news: a forum category emptied by an archiving pass, a
+// filter that stopped matching. The fresh values are still the truth and get
+// written, but a silent collapse of a page section is worth saying out loud.
+function warnAboutShrinking(values) {
+  Object.entries(values).forEach(([key, fresh]) => {
+    const committed = committedSnapshot[key];
+    if (!Array.isArray(fresh) || !Array.isArray(committed)) {
+      return;
+    }
+    if (committed.length >= 5 && fresh.length * 2 < committed.length) {
+      console.log(
+        `   !! ${key}: ${committed.length} entries committed, ${fresh.length} downloaded, ` +
+          "check that the source still holds what this page expects"
+      );
+    }
+  });
+}
+
 async function loadSection(section) {
   console.log(`>> Downloading the ${section.name}`);
   stagedEtags.clear();
@@ -484,6 +605,7 @@ async function loadSection(section) {
     const values = await section.load();
     if (values !== NOT_MODIFIED) {
       stagedEtags.forEach((etag, url) => etags.set(url, etag));
+      warnAboutShrinking(values);
       return values;
     }
     console.log("   unchanged upstream");
@@ -494,6 +616,8 @@ async function loadSection(section) {
 }
 
 async function main() {
+  console.log(`>> GitHub calls: ${describeToken()}`);
+
   const data = {};
   for (const section of SECTIONS) {
     Object.assign(data, await loadSection(section));

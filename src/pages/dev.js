@@ -22,8 +22,7 @@ import {
 import styles from "./dev.module.css";
 
 const GITHUB_API = "https://api.github.com/repos/GladysAssistant/Gladys";
-const FORUM_ACCEPTED_URL =
-  "https://community.gladysassistant.com/tags/c/feature-requests/43/accepted";
+const FORUM_ACCEPTED_URL = "https://community.gladysassistant.com/tag/accepted";
 const MAX_RELEASES_SHOWN = 8;
 
 const TIER_LABELS = {
@@ -1065,7 +1064,8 @@ function DevPage() {
               >
                 Anyone can suggest a feature on the forum. Once a request is
                 validated it gets the "accepted" tag and joins the roadmap.
-                These are the ones waiting to be built.
+                What is still to be built comes first, then everything the
+                community asked for and already got.
               </Translate>
             </p>
             <div className={styles.cardGrid}>
@@ -1075,13 +1075,26 @@ function DevPage() {
                   to={request.url}
                   className={styles.requestCard}
                 >
-                  <span className={styles.acceptedBadge}>
-                    <Translate
-                      id="devPage.requests.accepted"
-                      description="Accepted tag badge"
-                    >
-                      ✓ accepted
-                    </Translate>
+                  <span
+                    className={`${styles.acceptedBadge} ${
+                      request.delivered ? styles.deliveredBadge : ""
+                    }`}
+                  >
+                    {request.delivered ? (
+                      <Translate
+                        id="devPage.requests.delivered"
+                        description="Badge on a request that has been shipped"
+                      >
+                        🚀 delivered
+                      </Translate>
+                    ) : (
+                      <Translate
+                        id="devPage.requests.accepted"
+                        description="Accepted tag badge"
+                      >
+                        ✓ accepted
+                      </Translate>
+                    )}
                   </span>
                   <div className={styles.requestTitle}>{request.title}</div>
                   <div className={styles.requestMeta}>

@@ -60,11 +60,30 @@ logs then show `403 rate limit exceeded`). The script limits the damage by
 sending conditional requests: each answer is stored with its `ETag` and the
 `304 Not Modified` replies do not count against the limit.
 
-To refresh reliably, give the build a token: create a fine-grained personal
-access token with read-only public access (no scope needed) and add it as a
+To refresh reliably, give the build a token and add it as a
 `DEV_ACTIVITY_GITHUB_TOKEN` environment variable on the Cloudflare Pages
 project (Settings > Environment variables). That raises the budget to 5000
 requests per hour. Locally, the same variable in `.env` does the same.
+
+Only public data is read, so the token needs no permission on anything:
+
+- **classic token**: create it with no scope checked at all. A scopeless
+  classic token reads public data, which is all this script does.
+- **fine-grained token**: under **Repository access**, pick **Public
+  Repositories (read-only)**; nothing to tick under Repository or Account
+  permissions. Note that an organization can refuse fine-grained tokens it has
+  not approved, and Gladys lives in one: if the build logs `403 Forbidden —
+  Resource not accessible by personal access token` while the token is set up
+  this way, that policy is the first thing to check — or switch to a classic
+  token, which is not subject to it.
+
+The build log always opens with what it got, so a deploy that refreshes nothing
+says whether the token even reached it:
+
+```
+>> GitHub calls: DEV_ACTIVITY_GITHUB_TOKEN (fine-grained token, 93 characters)
+>> GitHub calls: no token (DEV_ACTIVITY_GITHUB_TOKEN and GITHUB_TOKEN are unset): […]
+```
 
 The name is deliberately specific: `GITHUB_TOKEN` is read by a lot of tooling
 (and is the name GitHub Actions gives its own automatic token), so a variable
