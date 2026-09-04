@@ -1,0 +1,185 @@
+---
+title: "Bitcoin Monitor integration for Gladys Assistant"
+sidebar_label: "Bitcoin Monitor"
+description: "Monitor Bitcoin fees, mempool, network, market price and transaction costs. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/Checconio--gladys-bitcoin-monitor.png"
+keywords:
+  - "bitcoin monitor"
+  - "gladys bitcoin monitor"
+  - "bitcoin monitor gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/Checconio/gladys-bitcoin-monitor instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="bitcoin-monitor" />
+
+## Overview
+
+Bitcoin Monitor is an external Gladys Assistant integration that monitors public Bitcoin network data through the mempool.space REST API. It requires no account, API key, MQTT broker, Node-RED flow, or manual device definition. Discovery proposes five virtual devices; the user remains in control of which ones are created.
+
+The integration is informational. Fee estimates are not confirmation guarantees, and the storage opportunity score is a transparent convenience heuristic, not financial advice.
+
+## Prerequisites and installation
+
+- Gladys Assistant 4.86.0 or newer.
+- Internet access to `https://mempool.space`.
+- No Gladys Plus subscription and no third-party account.
+
+Install **Bitcoin Monitor** from the decentralized integration catalog. Open its **Configuration** page, save the desired settings, then open **Discovery**. Create all five proposed devices, or only the devices you want. The integration never calls an undocumented Gladys API to create them automatically.
+
+## Configuration
+
+- The API endpoint is fixed to `https://mempool.space` and is not editable in Gladys. Legacy `api_base_url` configuration values are ignored.
+- **Currency**: EUR, USD, GBP, CHF, CAD, AUD, or JPY. These are the currencies currently returned by `/api/v1/prices`.
+- **Fast refresh**: fees, projected blocks, mempool, price, and tip height, from 30 to 900 seconds (default 60).
+- **Difficulty refresh**: 300 to 3600 seconds (default 600).
+- **Hashrate refresh**: 600 to 21600 seconds (default 1800).
+- **Default transaction vSize**: 50 to 10000 vB (default 250).
+- **Default priority**: Fastest, 30 minutes, 1 hour, or Economy.
+
+Changing the currency republishes discovery because a native Gladys currency unit or the visible ISO code can change. Existing devices may show an **Update** action in Discovery; use it to accept the feature-structure change.
+
+Available actions:
+
+- **Test connection** validates the precise-fee and tip-height responses and displays a translated result.
+- **Refresh now** runs all three collection families immediately.
+- **Update transaction simulator** saves the vSize and priority locally. The BTC amount is entered directly from a Gladys dashboard.
+
+## Devices and metrics
+
+### Bitcoin Fees
+
+- **Fastest fee**, **30 min fee**, **1 hour fee**, **Economy fee**, and **Minimum fee** are precise feerates in sat/vB.
+- **Projected block 1/2/3 median fee** comes from the projected mempool blocks.
+- **Projected block 1 transaction count** and **virtual size** describe the first projected block.
+- **Fast/economy spread** is `fastestFee - economyFee`, never below zero.
+- **Storage opportunity score** ranges from 0 to 5:
+  - economy ≤1: 5 (Exceptional)
+  - economy ≤2: 4 (Excellent)
+  - economy ≤3: 3 (Good)
+  - economy ≤5: 2 (Fair)
+  - economy ≤10: 1 (Wait)
+  - economy >10: 0 (Avoid)
+- If economy is at most 3 sat/vB but projected block 2 is above 5 sat/vB, the score is capped at 1 (**Wait**) to reflect temporary projected congestion.
+- **Storage opportunity advice** explains the current score in plain text.
+
+`sat/vB` is written in the feature name because Gladys has no native unit for it.
+
+### Bitcoin Mempool
+
+- **Unconfirmed transactions**: transaction count currently in the mempool.
+- **Mempool backlog**: total virtual size divided by 1,000,000, in vMB.
+- **Total mempool fees**: sum of fees in satoshis.
+- **Backlog >= 1/2/5/10 sat/vB**: histogram vsize at or above each threshold, divided by 1,000,000.
+
+### Bitcoin Network
+
+- **Blockchain height**: current chain-tip height.
+- **Last block age**: minutes since the latest known block timestamp.
+- **Last block transaction count**, **size**, and **weight**: enriched v1 block information. The block-detail endpoint is called only when the tip height changes.
+- **Difficulty adjustment estimate** and **Difficulty progress**: percentages returned by mempool.
+- **Blocks until adjustment**: remaining blocks in the 2016-block period.
+- **Average block time**: mempool's `timeAvg`, explicitly parsed as milliseconds and converted to minutes.
+- **Estimated retarget date**: mempool's millisecond Unix timestamp rendered as ISO 8601 text.
+- **Network hashrate**: `currentHashrate / 10^18`, displayed as EH/s in the name.
+- **Network difficulty**: `currentDifficulty / 10^12`, displayed as T in the name.
+
+### Bitcoin Market
+
+- **Bitcoin price** is the current public price in the configured currency.
+- Gladys native units are used for EUR, USD, and GBP. CHF, CAD, AUD, and JPY are not mislabelled as dollars; their ISO code appears in the feature name instead.
+
+### Bitcoin Transaction Simulator
+
+Local inputs:
+
+- **Transfer amount** in BTC.
+- **Transaction vSize** in virtual bytes.
+- **Priority**: Fastest, 30 minutes, 1 hour, or Economy.
+
+Outputs:
+
+- Transfer value in the configured fiat currency.
+- Selected fee rate, satoshis, BTC, fiat value, and percentage of transfer.
+- Fiat fee for all four priorities.
+- A plain-text simulation summary.
+
+The fee is calculated as:
+
+```text
+fee_sats = ceil(vsize × feerate)
+fee_btc = fee_sats / 100,000,000
+fee_fiat = fee_btc × BTC_fiat_price
+fee_percent = fee_btc / transfer_amount_btc × 100 (only when amount > 0)
+```
+
+The amount transferred does **not** determine the network fee. A transaction carrying 0.01 BTC can cost the same fee as one carrying 1 BTC when their virtual size and feerate are identical. vSize depends mostly on the number and type of inputs and outputs, not the BTC value.
+
+Gladys does not provide a generic writable numeric widget for a `sensor/decimal` feature. Bitcoin Monitor therefore maps **Transfer amount (BTC)** to Gladys' supported numeric setpoint contract, with a `0.00000001 BTC` step. The amount and priority can be changed directly from a dashboard; vSize remains in the validated action form. The three values are atomically persisted in `/data/simulator-state.json`.
+
+Values are rounded before publication: BTC prices and transfer values to 2 decimals, fiat fees and percentages to 4, feerates to 3, BTC amounts to 8, and satoshis/vSize to integers. Gladys may omit an insignificant trailing zero, but JavaScript floating-point tails are never exposed.
+
+## Polling, rate limits, and failures
+
+Each collection family uses `setTimeout` only after the previous run completes, so requests cannot accumulate. A small jitter avoids synchronized bursts. The HTTP client uses a timeout and retries only network failures, HTTP 429, and HTTP 5xx responses. Retry delays use exponential backoff plus jitter, honor `Retry-After`, and are capped at 30 seconds.
+
+The public mempool.space service does not promise a fixed public quota. Keep the default intervals to limit requests. Bitcoin Monitor never downloads all mempool transaction IDs, all transactions, or large block histories.
+
+On temporary failure, the last valid in-memory values remain intact; zero or null is not published as replacement data. After three fast cycles with no successful important request, Gladys shows the mempool connection as unavailable. Collection resumes automatically after recovery.
+
+## Troubleshooting
+
+- **No devices**: open the integration's Discovery tab and run discovery; creation is a user action.
+- **No values on one device**: confirm that the device and its current feature structure were created. Use **Update** in Discovery after changing currency or upgrading.
+- **Connection test fails**: verify DNS/firewall access to `https://mempool.space`.
+- **HTTP 429 in logs**: increase the fast refresh interval.
+- **Some metrics stay old**: the endpoint may be temporarily unavailable or malformed. Bitcoin Monitor deliberately keeps the last valid value.
+- **Transfer amount is not editable after upgrading**: update the **Bitcoin Transaction Simulator** device from Discovery so Gladys receives the new writable feature definition. Use **Configuration → Update transaction simulator** only for vSize.
+- **Persistence warning**: verify that Gladys mounted the integration's writable `/data` directory and that it is owned by UID/GID 1000.
+
+## Privacy
+
+There is no telemetry, analytics, tracker, or user account. Only public-data GET requests are sent to `https://mempool.space`. The local BTC amount, vSize, and priority are never included in those requests and never leave the integration's `/data` volume. No secret is required or logged.
+
+## Configuration settings
+
+These are the settings Bitcoin Monitor asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| General | `section` | No | Bitcoin Monitor uses the public mempool.space API at a fixed endpoint. No account or API key is required. |
+| Currency | `select` | Yes |  |
+| Polling | `section` | No | Conservative non-overlapping polling protects the public API. Temporary failures keep the last valid values. |
+| Fast refresh interval (seconds) | `number` | Yes |  |
+| Difficulty refresh interval (seconds) | `number` | Yes |  |
+| Hashrate refresh interval (seconds) | `number` | Yes |  |
+| Transaction simulator defaults | `section` | No | Transaction fees depend on virtual size and feerate, not on the transferred BTC amount. Enter the BTC amount on a Gladys dashboard; use the action below for vSize and priority. |
+| Default transaction vSize (vB) | `number` | Yes |  |
+| Default priority | `select` | Yes |  |
+
+## How to install Bitcoin Monitor in Gladys
+
+1. In Gladys, open **Integrations**: Bitcoin Monitor appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/checconio/gladys-bitcoin-monitor:1.0.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/Checconio/gladys-bitcoin-monitor](https://github.com/Checconio/gladys-bitcoin-monitor).
+
+Bitcoin Monitor requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Bitcoin Monitor is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [Checconio](https://github.com/Checconio), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/Checconio/gladys-bitcoin-monitor) — [source of this documentation](https://github.com/Checconio/gladys-bitcoin-monitor/blob/HEAD/docs/en.md)
