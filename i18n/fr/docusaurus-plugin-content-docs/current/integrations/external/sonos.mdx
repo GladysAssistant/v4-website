@@ -1,0 +1,119 @@
+---
+title: "Intégration externe Sonos pour Gladys Assistant"
+sidebar_label: "Sonos"
+description: "Contrôlez vos enceintes Sonos en local, y compris en VLAN, et lancez n'importe quelle URI. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/vincentBesseau--gladys-sonos.jpg"
+keywords:
+  - "sonos"
+  - "gladys sonos"
+  - "sonos gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/vincentBesseau/gladys-sonos instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="sonos" />
+
+Contrôlez vos enceintes Sonos directement sur votre réseau local : lecture,
+pause, morceau précédent/suivant, volume, et lecture de n'importe quelle URI
+de contenu (une playlist ou un morceau Spotify, un flux radio...) envoyée
+depuis, typiquement, une scène Gladys.
+
+## Pourquoi cette intégration, en plus du service Sonos natif de Gladys
+
+- **Découverte compatible VLAN.** Le service Sonos natif ne trouve les
+  enceintes que par multicast SSDP (`239.255.255.250:1900`), que la plupart
+  des routeurs ne relaient pas entre VLAN/sous-réseaux — une limitation
+  actuellement non résolue. Cette intégration ajoute un champ **IPs
+  connues** : l'IP d'une seule enceinte joignable suffit, car les enceintes
+  Sonos connaissent déjà toutes les pièces de l'installation et partagent
+  cette organisation avec celle qu'on interroge.
+- **Lecture de n'importe quelle URI.** Chaque appareil dispose d'une
+  fonctionnalité « Lire une URI » : envoyez-lui une URI (ex.
+  `spotify:playlist:...`) et la lecture démarre dessus. Combinez-la avec une
+  intégration qui liste des contenus (playlists, morceaux récents...) via une
+  scène Gladys : lisez la valeur sélectionnée, écrivez-la sur « Lire une
+  URI ».
+- **Parler sur une enceinte.** Chaque appareil dispose aussi d'une
+  fonctionnalité « Play Notification », pour l'action de scène « parler sur
+  une enceinte » : elle interrompt brièvement la lecture en cours pour
+  annoncer une URI (un fichier TTS généré, un son de notification...), puis
+  reprend — voir la section Limites pour la différence avec le service Sonos
+  natif.
+
+## Configuration
+
+1. Ouvrez l'onglet **Configuration** de l'intégration.
+2. Si vos enceintes Sonos sont joignables depuis Gladys sans configuration
+   réseau particulière, laissez **IPs connues** vide et lancez un scan — la
+   découverte automatique (SSDP) suffit.
+3. Si Gladys et vos enceintes Sonos sont sur des VLAN/sous-réseaux
+   différents, renseignez l'adresse IP d'**une** enceinte dans **IPs
+   connues**, enregistrez, puis lancez un scan (action **Rechercher les
+   enceintes Sonos**, ou l'onglet Découverte). Cette seule IP suffit à
+   retrouver toutes les pièces.
+
+## Faire le pont avec le contenu d'une autre intégration
+
+La fonctionnalité « Lire une URI » d'un appareil accepte n'importe quelle
+valeur texte via sa commande `text` standard — aucun câblage particulier
+nécessaire. Dans une scène Gladys : lisez l'état de la fonctionnalité qui
+liste le contenu à lancer (comme déclencheur), puis ajoutez une action qui
+écrit cette même valeur sur « Lire une URI » de cet appareil.
+
+## Limites
+
+- Contrôle réseau local uniquement : aucun compte cloud, rien ne fonctionne
+  si l'enceinte n'est pas joignable à l'adresse IP que Gladys a actuellement
+  pour elle.
+- Pas de mise à jour temps réel (lecture/pause, volume) : l'état est
+  interrogé périodiquement, le tableau de bord peut donc avoir quelques
+  secondes de retard.
+- La topologie des groupes/paires stéréo n'est lue qu'à chaque scan ; un
+  appareil regroupé après le dernier scan est piloté directement plutôt que
+  via le coordinateur de son groupe.
+- Lire une URI (`spotify:...`, etc.) suppose que l'enceinte visée prenne déjà
+  nativement en charge cette source de contenu (ex. Spotify lié comme service
+  dans l'app Sonos) — cette intégration ne gère pas cette liaison de compte,
+  elle se contente d'envoyer l'URI sur le réseau local.
+- Une « Play Notification » dure toujours une durée fixe (~20s) avant de
+  reprendre ce qui jouait avant, même si l'annonce elle-même est plus courte.
+  Le service Sonos natif de Gladys peut reprendre dès que l'enceinte signale
+  la fin de l'annonce ; cette intégration tourne dans son propre conteneur,
+  que le réseau local d'une enceinte Sonos ne peut jamais atteindre pour
+  délivrer ce même signal, donc elle attend systématiquement la durée fixe.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Sonos dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Sonos, piloté en local | `section` | Non | Cette intégration pilote vos enceintes Sonos directement sur votre réseau local - aucun compte cloud, aucune connexion à l'app Sonos. Elle les découvre automatiquement (SSDP). Si vos enceintes Sonos sont sur un VLAN/sous-réseau différent de Gladys, la découverte automatique ne les trouvera pas : renseignez plutôt une IP connue ci-dessous, cela suffit à retrouver toute l'installation. |
+| IPs connues (contournement VLAN) | `string` | Non | L'IP d'une seule enceinte Sonos suffit : l'intégration lui demande ensuite l'organisation de toute votre installation. Séparez plusieurs entrées par une virgule ou un retour à la ligne. |
+
+## Comment installer Sonos dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Sonos apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/vincentbesseau/gladys-sonos:1.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/vincentBesseau/gladys-sonos](https://github.com/vincentBesseau/gladys-sonos).
+
+Sonos nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Sonos est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [vincentBesseau](https://github.com/vincentBesseau), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/vincentBesseau/gladys-sonos) — [source de cette documentation](https://github.com/vincentBesseau/gladys-sonos/blob/HEAD/docs/fr.md)

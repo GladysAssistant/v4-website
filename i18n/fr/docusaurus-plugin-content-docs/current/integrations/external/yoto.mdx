@@ -1,0 +1,146 @@
+---
+title: "Intégration Yoto pour Gladys Assistant"
+sidebar_label: "Yoto"
+description: "Supervisez vos lecteurs Yoto : batterie, charge, volume, carte en cours, luminosité et signal Wi-Fi. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-yoto.png"
+keywords:
+  - "yoto"
+  - "gladys yoto"
+  - "yoto gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-yoto instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="yoto" />
+
+Cette intégration remonte l'état de vos lecteurs **Yoto** dans Gladys :
+batterie, charge, volume, carte en cours de lecture, luminosité ambiante,
+température de l'appareil, signal Wi-Fi et présence en ligne.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par lecteur Yoto du compte, avec neuf capteurs en lecture
+seule. L'API publique Yoto expose la télémétrie des lecteurs mais pas les
+commandes de lecture (play, pause, volume) : rien n'est donc pilotable depuis
+Gladys, et les capteurs sont déclarés en lecture seule pour ne pas afficher de
+bouton inopérant.
+
+## Prérequis
+
+Une application sur le portail développeur Yoto (gratuit) :
+
+1. Ouvrez [https://dashboard.yoto.dev/](https://dashboard.yoto.dev/) et créez une application de type
+   **client public**.
+2. Activez les scopes `family:devices:view`, `family:devices:control`,
+   `family:library:view` et `offline_access`.
+3. Notez le **Client ID**.
+
+Yoto a abandonné le flux _device code_ : l'intégration utilise le flux
+navigateur désormais recommandé (authorization code + PKCE). L'application doit
+donc aussi autoriser l'URL de rappel Gladys dans ses **Allowed callback URLs**
+— voir ci-dessous.
+
+## Configuration
+
+1. Ouvrez l'onglet **Configuration** de l'intégration.
+2. Collez le **Client ID Yoto** et enregistrez.
+3. Cliquez une première fois sur **Connecter**, puis ouvrez les logs de
+   l'intégration : la ligne `Yoto sign-in started, callback URL to allow on the
+Yoto app: …` donne l'URL exacte à coller dans les **Allowed callback URLs**
+   de votre application Yoto.
+4. Cliquez de nouveau sur **Connecter** : identifiez-vous sur la page Yoto,
+   Yoto redirige vers Gladys et le badge de connexion passe au vert.
+5. Les lecteurs apparaissent dans l'onglet **Découverte**, prêts à être
+   ajoutés.
+
+Réglages disponibles :
+
+- **Intervalle de rafraîchissement** (`poll_frequency`) — de 30 à 3600
+  secondes, 120 par défaut. C'est la fréquence à laquelle chaque lecteur est
+  lu. L'API Yoto est une API cloud : restez au-dessus de 60 secondes sauf
+  besoin réel. Gladys planifie sur des cadences fixes (60 secondes au plus
+  lent) : une valeur entre 30 et 59 secondes passe par la cadence 30 secondes,
+  et au-delà de 60 secondes c'est l'intégration qui respecte l'intervalle. Le
+  changement est pris en compte immédiatement, sans recréer les appareils.
+- **Demander au lecteur de se rafraîchir avant lecture** — envoie une demande
+  de statut au lecteur avant chaque interrogation, pour lire des valeurs
+  fraîches plutôt que les dernières remontées. Décochez si votre application
+  Yoto n'a pas le scope `family:devices:control`.
+
+Les jetons d'accès sont conservés par Gladys en interne (jamais affichés dans
+l'interface) : la liaison survit à un redémarrage ou à une mise à jour de
+l'image.
+
+## Actions
+
+- **Tester la connexion** — interroge le compte Yoto et affiche le nombre de
+  lecteurs trouvés, avec leurs noms.
+- **Rafraîchir tous les lecteurs** — force une interrogation immédiate de tous
+  les lecteurs, sans attendre le prochain cycle.
+
+## Dépannage
+
+- **« Aucun compte Yoto lié : cliquez sur Connecter »** — le Client ID est
+  renseigné mais la liaison n'a pas encore été faite, ou elle a expiré.
+- **« La liaison Yoto a expiré, reconnectez votre compte »** — le jeton a été
+  révoqué (mot de passe changé, application supprimée côté Yoto). Cliquez de
+  nouveau sur **Connecter**.
+- **Yoto répond « Callback URL mismatch »** — l'URL affichée par Yoto est celle
+  de rappel Gladys : ajoutez-la dans les **Allowed callback URLs** de votre
+  application Yoto, puis recliquez sur **Connecter**.
+- **« Impossible de lancer la connexion Yoto : … »** — la raison exacte est dans
+  le message et dans les logs. Un `unauthorized_client` sur l'endpoint device
+  code signifie que l'application Yoto n'a pas ce grant : Yoto l'a abandonné,
+  mettez Gladys à jour pour que le flux navigateur soit utilisé.
+- **« Aucune connexion Yoto en cours »** — l'intégration a redémarré entre le
+  clic sur **Connecter** et le retour de Yoto ; recliquez sur **Connecter**.
+- **Valeurs figées ou manquantes** — un lecteur éteint ou hors ligne ne remonte
+  plus rien : l'intégration publie alors le dernier état connu et le capteur
+  « En ligne » passe à 0. Les capteurs absents d'un modèle (température sur un
+  Yoto Mini par exemple) ne sont simplement pas publiés.
+- **Erreur 401/403 dans les logs** — les scopes de votre application Yoto sont
+  incomplets. Vérifiez-les sur le portail développeur, puis reconnectez le
+  compte.
+
+L'intégration journalise tout ce qu'elle fait : consultez les logs depuis
+l'interface Gladys (ou `docker logs` sur l'hôte) avec `LOG_LEVEL=debug` pour le
+détail complet.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Yoto dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | Créez une application gratuite sur le portail développeur Yoto en client public, collez son Client ID ci-dessous, enregistrez, puis cliquez sur Connecter : Yoto ouvre sa page de connexion puis renvoie vers Gladys. Activez les scopes family:devices:view, family:devices:control, family:library:view et offline_access, et autorisez l'URL de rappel Gladys que l'intégration affiche dans ses logs au clic sur Connecter. |
+| Client ID Yoto | `string` | Oui | Client ID de votre application Yoto (client public, flux authorization code avec PKCE). |
+| Compte Yoto | `oauth2` | Oui | Cliquez sur Connecter, identifiez-vous sur la page Yoto, vous êtes ensuite redirigé ici. La liaison reste valide : l'intégration renouvelle son jeton toute seule. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence d'interrogation de chaque lecteur, en secondes. L'API Yoto est une API cloud : restez au-dessus de 60 s sauf besoin réel. Gladys planifie sur des cadences fixes (60 s au plus lent) : une valeur entre 30 et 59 s passe par la cadence 30 s, une valeur plus longue est respectée par l'intégration elle-même. |
+| Demander au lecteur de se rafraîchir avant lecture | `boolean` | Non | Envoie une demande de statut au lecteur avant chaque interrogation, pour lire des valeurs fraîches plutôt que les dernières remontées. Nécessite le scope family:devices:control. |
+
+## Comment installer Yoto dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Yoto apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-yoto:1.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-yoto](https://github.com/prohand/gladys-yoto).
+
+Yoto nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Yoto est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-yoto) — [source de cette documentation](https://github.com/prohand/gladys-yoto/blob/HEAD/docs/fr.md)

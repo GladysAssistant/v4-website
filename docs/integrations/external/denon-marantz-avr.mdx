@@ -35,6 +35,9 @@ These show up per receiver:
 
 - **Power** — on/off, controllable.
 - **Volume** — 0-100%, controllable (mapped from the receiver's internal -80 dB to +18 dB scale).
+  Confirmed on real hardware: one specific percent (25% on the default scale) can never stay put —
+  setting it snaps to 26% instead. This is a genuine hardware limit (the receiver only has 99
+  discrete volume steps for the 101 possible percent values), not a bug this integration can fix.
 - **Mute** — on/off, controllable.
 - **Source** — a dropdown of the receiver's input codes (e.g. `TUNER`, `BD`, `NET`), directly on
   the dashboard. The **Select input** action described below does the exact same thing and stays
@@ -60,6 +63,23 @@ These show up per receiver:
   actual control path for HEOS-managed sources like Qobuz or Spotify Connect — see "HEOS support"
   below.
 - **Now playing** — a read-only "Artist - Title" line, filled in automatically while streaming.
+  For an internet radio station with no track metadata, the "Artist" slot falls back to the
+  station's own name (e.g. "Oui FM") — the same name the receiver's front display shows — instead
+  of staying blank next to a generic stream description like "63 kbps aac".
+- **Play notification** — backs Gladys' built-in **"Speak on a speaker"** scene action: pick this
+  AVR from that action's speaker dropdown and it reads your text out loud. Requires HEOS (see
+  "HEOS support" below) — there is no legacy-Telnet way to play an arbitrary audio URL, so this
+  only appears/works once a HEOS player id has been matched for this receiver. The volume slider
+  in that scene action has no effect here: Gladys does not forward it to this kind of integration
+  (a core limitation, not something this integration can work around) — the announcement plays at
+  the receiver's current volume. This is also the one feature here that works on a standalone HEOS
+  speaker (Denon Home, HEOS 1/3/5/7, Bar...) added through the manual IP fallback in
+  Configuration, not just a real AV receiver — everything else on this page (Power, Volume,
+  Source...) still needs the Telnet-based "AVR Control" service those speakers don't have, so this
+  integration otherwise won't work with one at all. Triggering this scene action repeatedly in
+  quick succession replaces whatever is currently speaking rather than queuing behind it — the
+  queue is cleared before every announcement, confirmed necessary on real hardware (without it,
+  a burst of announcements played back one after another instead of just the last one).
 - **Setup-menu remote control** — cursor Up/Down/Left/Right, Enter, Return, Info, Menu and
   relative Volume Up/Down, shown as clickable buttons directly in the device list (no extra
   dashboard box needed). Handy for navigating the receiver's on-screen Setup menu from Gladys
@@ -111,7 +131,7 @@ known HEOS behavior on an idle connection).
 cross-checked against the library behind Home Assistant's official HEOS integration — not tested
 by the developer against a live HEOS streaming session, since that requires an actual paid
 streaming account. If the buttons don't do anything on your setup even though the receiver is
-reachable, please report it (with the debug logs mentioned below) so it can be fixed.
+reachable, please report it (with the logs mentioned below) so it can be fixed.
 
 ## Prerequisites
 
@@ -160,16 +180,51 @@ reachable, please report it (with the debug logs mentioned below) so it can be f
 - **Receiver unreachable while powered off**: enable Network Standby / ECO standby in the
   receiver's setup menu (see Prerequisites).
 - The integration logs everything it does: check the integration logs from the Gladys UI (or
-  `docker logs` on the host) with `LOG_LEVEL=debug` for the full detail, including every Telnet
-  line sent and received.
+  `docker logs` on the host). Note that Gladys itself has no way to set `LOG_LEVEL=debug` on an
+  installed integration's container (it isn't one of the fixed environment variables Gladys sets,
+  nor a config field) — that flag only applies when running this integration yourself outside
+  Gladys (see "Run it locally" in the developer README). Every log line that actually matters for
+  troubleshooting (a receiver connecting, a HEOS player id being matched, a "Speak on a speaker"
+  stream being accepted or rejected...) is deliberately kept at `info` level or above for exactly
+  this reason, so it shows up without `debug`; only the very verbose Telnet-line-by-line detail is
+  `debug`-only and effectively out of reach from a normal Gladys install.
 - **Sound mode, playback buttons or now-playing don't work as expected**: these rely on parts of
   the protocol that vary more across models/firmware than power/volume/mute/source. Compare what
-  your remote actually sends against what this integration expects using the debug logs above.
-- **Playback buttons still do nothing on Qobuz/Spotify Connect/TIDAL**: check the debug logs for
+  your remote actually sends against what this integration expects — since the raw line-by-line
+  detail needed for that is `debug`-only (see above), use
+  [`scripts/debug-telnet.js`](https://github.com/LM1LC3N7/gladys-denon-avr/blob/HEAD/./scripts/debug-telnet.js)/
+  [`scripts/debug-heos.js`](https://github.com/LM1LC3N7/gladys-denon-avr/blob/HEAD/./scripts/debug-heos.js) directly against the receiver instead of the
+  container logs.
+- **Playback buttons still do nothing on Qobuz/Spotify Connect/TIDAL**: check the logs for
   a line mentioning "HEOS player id ... matched" shortly after the AVR connects — if it's not
   there, this receiver's HEOS CLI service (port 1255) wasn't reachable (firewall, older
   non-HEOS model, or HEOS momentarily not ready) and the integration silently fell back to the
   classic commands, which don't reach HEOS-managed sources.
+- **"Speak on a speaker" doesn't show up in the speaker list at all**: the device was likely
+  created before this feature shipped — open this integration's Discovery tab, scan, and click
+  **Update** on the device (see "Re-publishing a device" under Discovery).
+- **The scene runs with no error, but nothing plays on the Denon**: this is normal-looking on the
+  Gladys side even on failure — a scene logs a failed action and reports as having run either way,
+  it never surfaces an error to the user for this particular action. Check, in order:
+  1. Run **Test connection** from this integration's Configuration screen: its reply now ends with
+     a line like `HEOS: player id 12345 matched` or `HEOS: not connected`/`no player id matched`.
+     Anything other than "player id ... matched" means HEOS itself is the problem — same
+     requirement, same causes as the playback buttons above (firewalled port 1255, older non-HEOS
+     model, or HEOS not ready yet after a restart).
+  2. If HEOS is connected but reports **no player id matched**, check the logs for a line
+     naming the IPs HEOS actually sees (`HEOS reports: ...`) — a receiver with more than one
+     network interface (Ethernet + Wi-Fi) can advertise a different address to HEOS than the one
+     this integration is using, which prevents the match forever.
+  3. If a player id **is** matched, check the logs for the outcome of the stream itself: a
+     line saying HEOS _rejected_ the stream (with an error code/text from the receiver) means the
+     TTS URL wasn't playable as far as the receiver is concerned (unreachable from the receiver's
+     own network, wrong format...). A line saying HEOS _accepted_ it and you still hear nothing
+     should not happen any more (confirmed and fixed on real hardware: an earlier version
+     percent-encoded the stream URL, which some receivers accept without complaint — result:
+     success, a generic "Url Stream" placeholder even shows up as the current track — and then
+     never actually fetch, so nothing plays no matter the input, power, volume, or mute state; see
+     the developer README's "Speak on a speaker" section for the root cause). If it still happens
+     on an up-to-date install, please report it.
 
 ## Configuration settings
 
@@ -186,7 +241,7 @@ These are the settings Denon / Marantz AVR asks for in its configuration screen 
 ## How to install Denon / Marantz AVR in Gladys
 
 1. In Gladys, open **Integrations**: Denon / Marantz AVR appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-denon-avr:1.0.9`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-denon-avr:1.0.18`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-denon-avr](https://github.com/LM1LC3N7/gladys-denon-avr).
 
