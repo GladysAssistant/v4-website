@@ -30,9 +30,10 @@ n'est nécessaire.
 ## Prérequis
 
 - Une Apple TV (HD, 4K, toute génération sous tvOS 15 ou plus récent).
-- Gladys 4.85.0 ou plus récent.
-- L'Apple TV et votre serveur Gladys sur le **même réseau**. S'ils sont sur des
-  VLAN ou sous-réseaux différents, voir « Réseaux séparés » plus bas.
+- Gladys 5.0.0 ou plus récent.
+- L'Apple TV et votre serveur Gladys sur le **même réseau**. Des VLAN ou
+  sous-réseaux routés fonctionnent aussi, à condition qu'un relais mDNS transmette
+  les annonces : voir le dépannage.
 - Un accès physique au téléviseur pendant l'appairage : Apple affiche un code à
   l'écran, que vous devez lire et saisir dans Gladys.
 
@@ -125,13 +126,13 @@ utiliser, vous n'avez donc jamais à choisir.
 
 ## Configuration
 
-| Réglage                        | Effet                                                                                                                                |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Durée de la recherche          | Durée d'écoute des annonces AirPlay. À augmenter sur un réseau chargé ou lent.                                                       |
-| Adresses IPv4 manuelles        | Ajoute des cibles connues si les annonces n'atteignent pas Gladys. Ne permet pas, seule, la découverte entre VLANs routés.           |
-| Intervalle de rafraîchissement | Fréquence de réconciliation de ce que l'Apple TV ne pousse pas d'elle-même, généralement l'état d'alimentation sur certains modèles. |
-| Raccourcis d'applications      | Exposer ou non un bouton par application installée.                                                                                  |
-| Nombre maximum de raccourcis   | Une Apple TV peut compter une centaine d'applications ; cette limite garde l'appareil lisible.                                       |
+| Réglage                        | Effet                                                                                                                                                                  |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Durée de la recherche          | Durée d'écoute des annonces AirPlay. À augmenter sur un réseau chargé ou lent.                                                                                         |
+| Adresses IPv4 manuelles        | Ajoute des cibles connues si les annonces n'atteignent pas Gladys ; ne limite jamais la recherche à celles-ci. Ne permet pas, seule, la découverte entre VLANs routés. |
+| Intervalle de rafraîchissement | Fréquence de réconciliation de ce que l'Apple TV ne pousse pas d'elle-même, généralement l'état d'alimentation sur certains modèles.                                   |
+| Raccourcis d'applications      | Exposer ou non un bouton par application installée.                                                                                                                    |
+| Nombre maximum de raccourcis   | Une Apple TV peut compter une centaine d'applications ; cette limite garde l'appareil lisible.                                                                         |
 
 ## Autres actions
 
@@ -167,11 +168,25 @@ la débranche mais que pyatv ne répond jamais, la capture AirPlay médiée
 fonctionne et c'est la vérification directe que le réseau bloque.
 
 **Gladys et l'Apple TV sont sur des sous-réseaux routés ou VLANs distincts.**
-L'Apple TV ignore normalement la requête mDNS directe de pyatv lorsque sa source
-n'appartient pas au réseau local. Ouvrir UDP 5353 ou renseigner une adresse
-manuelle ne change pas cette règle mDNS. Le support complet nécessite que les
-services Bonjour utiles soient relayés par l'infrastructure réseau ou médiés
-par Gladys.
+C'est pris en charge depuis la version 1.2.0, à condition que votre réseau relaie
+les annonces Bonjour entre les deux sous-réseaux (un répéteur ou réflecteur mDNS
+sur le routeur, que proposent la plupart des firmwares un peu avancés). L'Apple
+TV ignore toujours la requête directe envoyée par l'intégration, puisque sa
+source n'appartient pas au réseau local — mais Gladys capture désormais les
+annonces AirPlay **et** Companion depuis le réseau de l'hôte, et l'intégration
+reconstruit l'appareil à partir de celles-ci au lieu d'exiger une réponse.
+
+Deux points à vérifier si cela ne suffit pas. Le relais doit transmettre
+`_airplay._tcp` **et** `_companion-link._tcp` : AirPlay seul ne permet ni
+l'appairage ni la télécommande. Et il doit transmettre les enregistrements
+d'adresse (A) en plus des enregistrements de service — le journal indique
+explicitement qu'une annonce est arrivée sans adresse, ce qui est le signe
+habituel d'un relais partiel.
+
+Un appareil récupéré ainsi est signalé dans le journal comme reconstruit à partir
+des annonces. Cela signifie qu'il n'a jamais été réellement joint pendant le
+scan : la découverte et l'appairage fonctionnent, mais les commandes elles-mêmes
+doivent encore atteindre l'Apple TV.
 
 **Vous faites tourner Gladys dans Docker sur un Mac ou sous Windows.** La
 découverte automatique ne peut pas fonctionner là, et ce n'est pas une erreur de
@@ -203,10 +218,18 @@ utilisée par l'intégration ; un bail statique sur votre routeur évite le prob
 **Il n'y a pas de curseur de volume.** Votre installation n'expose pas de niveau
 de volume lisible — cas fréquent en HDMI-CEC. Utilisez les boutons volume +/−.
 
-**Réseaux séparés.** Les annonces mDNS ne traversent pas les sous-réseaux.
-Renseignez l'adresse IPv4 de chaque Apple TV dans « Adresses IPv4 manuelles » :
-l'intégration les interroge directement, ce qui fonctionne tant que le trafic est
-routé.
+**La recherche liste des appareils qui ne sont pas des Apple TV.** Elle ne
+devrait pas : un HomePod, une AirPort Express ou une enceinte AirPlay est
+reconnu à son modèle matériel et écarté, alors même qu'un HomePod tourne sous
+tvOS et parle les mêmes protocoles. S'il en apparaît malgré tout un, c'est que
+son modèle manque à l'annonce — la ligne de journal `pyatv response n/n` indique
+le modèle lu par l'intégration, à joindre au rapport de bug.
+
+**« Adresses IPv4 manuelles » ne restreint pas la recherche.** Ces adresses
+s'ajoutent à celles que Gladys a captées, elles ne les remplacent jamais. Le
+champ sert à joindre un appareil dont les annonces n'arrivent pas, pas à choisir
+quelle Apple TV garder ; les lignes `Candidate address` du journal indiquent
+l'origine de chaque adresse.
 
 ## Confidentialité et stockage
 
@@ -222,8 +245,8 @@ Voici les paramètres demandés par Apple TV dans son écran de configuration da
 | --- | --- | --- | --- |
 | Configurer votre Apple TV, étape par étape | `section` | Non | Une Apple TV doit être ajoutée ET appairée avant que la moindre commande fonctionne. Trois étapes, dans cet ordre. 1) Onglet Découverte : cliquez sur « Scanner », patientez, puis sur « Ajouter à Gladys » sur votre Apple TV. Elle existe alors dans Gladys, mais n'obéit encore à rien. 2) De retour sur cette page, tout en bas : lancez « 1. Appairer une Apple TV » et choisissez-la dans la liste — aucune adresse IP à chercher. Un code s'affiche sur votre téléviseur ; saisissez-le dans « 2. Saisir le code ». Apple demande un code par protocole, un second code suit donc : effacez le champ et saisissez le nouveau à la place. 3) Onglet Découverte à nouveau : cliquez sur « Mettre à jour » sur votre Apple TV pour récupérer le volume et les raccourcis d'applications révélés par l'appairage. |
 | Trouver votre Apple TV | `section` | Non | Ces deux réglages ne concernent que le scan de l'onglet Découverte. Les valeurs par défaut conviennent à un réseau domestique classique : n'y touchez que si un scan ne trouve rien. |
-| Durée de la recherche (secondes) | `number` | Non | Durée d'écoute des annonces AirPlay. À augmenter sur un réseau chargé ou lent. |
-| Adresses IPv4 manuelles | `string` | Non | Facultatif, séparées par des virgules. Utile si les annonces automatiques n'atteignent pas Gladys mais que le trafic direct sort toujours sur le réseau local de l'Apple TV, comme avec certaines installations Docker de bureau. Une adresse seule ne permet pas la découverte entre VLANs routés. |
+| Durée de la recherche (secondes) | `number` | Non | Durée d'écoute des annonces mDNS de l'Apple TV. À augmenter sur un réseau chargé ou lent. |
+| Adresses IPv4 manuelles | `string` | Non | Facultatif, séparées par des virgules. S'ajoutent aux adresses annoncées à Gladys, jamais à leur place : ce champ ne permet pas de limiter la recherche à une seule Apple TV. Utile si les annonces automatiques n'atteignent pas Gladys mais que le trafic direct sort toujours sur le réseau local de l'Apple TV, comme avec certaines installations Docker de bureau. Une adresse seule ne permet pas la découverte entre VLANs routés. |
 | Ce que l'appareil expose | `section` | Non | Ces réglages façonnent l'appareil Gladys lui-même. Une modification prend effet au prochain « Mettre à jour » accepté dans l'onglet Découverte. |
 | Intervalle de rafraîchissement | `select` | Non | L'Apple TV pousse en temps réel ce qu'elle peut. Cet intervalle réconcilie ce qu'elle ne pousse pas, généralement l'état d'alimentation sur certains modèles. |
 | Raccourcis d'applications | `boolean` | Non | Ajoute un bouton par application installée sur l'appareil, pour ouvrir Netflix ou Disney+ directement depuis une scène. Lu sur l'Apple TV après l'appairage. |
@@ -233,11 +256,11 @@ Voici les paramètres demandés par Apple TV dans son écran de configuration da
 ## Comment installer Apple TV dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Apple TV apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/valentinhttr/gladys-apple-tv:1.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/valentinhttr/gladys-apple-tv:1.2.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/valentinhttr/gladys-apple-tv](https://github.com/valentinhttr/gladys-apple-tv).
 
-Apple TV nécessite Gladys `>=4.85.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Apple TV nécessite Gladys `>=5.0.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

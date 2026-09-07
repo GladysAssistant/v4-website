@@ -36,6 +36,10 @@ Voici ce qui apparaît par ampli :
 
 - **Alimentation** — marche/arrêt, contrôlable.
 - **Volume** — 0-100 %, contrôlable (converti depuis l'échelle interne de l'ampli, -80 dB à +18 dB).
+  Confirmé sur du matériel réel : un pourcentage précis (25 % sur l'échelle par défaut) ne peut
+  jamais rester tel quel — le régler bascule immédiatement à 26 %. C'est une vraie limite
+  matérielle (l'ampli n'a que 99 crans de volume pour les 101 valeurs de pourcentage possibles),
+  pas un bug que cette intégration peut corriger.
 - **Muet** — marche/arrêt, contrôlable.
 - **Source** — un menu déroulant des codes d'entrée de l'ampli (ex. `TUNER`, `BD`, `NET`),
   directement sur le tableau de bord. L'action **Sélectionner l'entrée** décrite ci-dessous fait
@@ -64,7 +68,26 @@ Voici ce qui apparaît par ampli :
   fonctionne réellement pour les sources gérées par HEOS comme Qobuz ou Spotify Connect — voir
   « Support HEOS » ci-dessous.
 - **En cours de lecture** — une ligne « Artiste - Titre » en lecture seule, renseignée
-  automatiquement pendant la lecture en streaming.
+  automatiquement pendant la lecture en streaming. Pour une radio internet sans métadonnées de
+  morceau, le champ « Artiste » reprend le nom de la station elle-même (ex. « Oui FM ») — le même
+  nom que celui affiché sur l'écran de l'ampli — plutôt que de rester vide à côté d'une simple
+  description technique du flux comme « 63 kbps aac ».
+- **Diffuser une notification** — alimente l'action de scène native de Gladys **« Parler sur une
+  enceinte »** : choisissez cet ampli dans le menu déroulant des enceintes de cette action, et il
+  lira votre texte à voix haute. Nécessite HEOS (voir « Support HEOS » ci-dessous) — il n'existe
+  aucun moyen via le Telnet classique de lire une URL audio arbitraire, donc ceci n'apparaît/ne
+  fonctionne qu'une fois qu'un identifiant de lecteur HEOS a été trouvé pour cet ampli. Le curseur
+  de volume de cette action de scène n'a aucun effet ici : Gladys ne le transmet pas à ce type
+  d'intégration (une limitation du cœur de Gladys, pas quelque chose que cette intégration peut
+  contourner) — l'annonce est lue au volume actuel de l'ampli. C'est aussi la seule fonctionnalité
+  de cette page qui fonctionne sur une enceinte HEOS autonome (Denon Home, HEOS 1/3/5/7, Bar...)
+  ajoutée via l'IP manuelle dans la Configuration, et pas seulement sur un vrai ampli-tuner — tout
+  le reste ici (alimentation, volume, source...) nécessite le service Telnet « AVR Control » que
+  ces enceintes n'ont pas, donc cette intégration ne fonctionnera sinon pas du tout avec ce type
+  d'appareil. Déclencher cette action de scène plusieurs fois rapidement remplace ce qui est en
+  train d'être dit au lieu de s'accumuler derrière — la file d'attente est vidée avant chaque
+  annonce, confirmé nécessaire sur du matériel réel (sans ça, une rafale d'annonces se relisait
+  l'une après l'autre au lieu que seule la dernière ne compte).
 - **Télécommande du menu de configuration** — curseur Haut/Bas/Gauche/Droite, Entrée, Retour,
   Info, Menu et Volume +/- relatif, affichés comme boutons cliquables directement dans la liste
   d'appareils (pas besoin d'une carte de tableau de bord supplémentaire). Pratique pour naviguer
@@ -123,7 +146,7 @@ connexion inactive).
 largement utilisé), recoupé avec la bibliothèque derrière l'intégration HEOS officielle de Home
 Assistant — non testé par le développeur sur une vraie session de streaming HEOS, car cela
 nécessite un compte de streaming payant réel. Si les boutons ne font rien chez vous alors que
-l'ampli est joignable, merci de le signaler (avec les logs de débogage mentionnés plus bas) pour
+l'ampli est joignable, merci de le signaler (avec les logs mentionnés plus bas) pour
 que ce soit corrigé.
 
 ## Prérequis
@@ -175,17 +198,59 @@ que ce soit corrigé.
 - **Ampli injoignable une fois éteint** : activez la veille réseau / veille ECO dans le menu de
   configuration de l'ampli (voir Prérequis).
 - L'intégration journalise tout ce qu'elle fait : consultez les logs de l'intégration depuis
-  l'interface Gladys (ou `docker logs` sur l'hôte) avec `LOG_LEVEL=debug` pour le détail complet,
-  y compris chaque ligne Telnet envoyée et reçue.
+  l'interface Gladys (ou `docker logs` sur l'hôte). Notez que Gladys lui-même n'offre aucun moyen
+  de régler `LOG_LEVEL=debug` sur le conteneur d'une intégration installée (ce n'est ni une des
+  variables d'environnement fixes que Gladys définit, ni un champ de configuration) — ce réglage
+  ne s'applique que si vous lancez cette intégration vous-même en dehors de Gladys (voir « Run it
+  locally » dans le README développeur). Toute ligne de log réellement utile pour le dépannage
+  (une connexion à l'ampli, un identifiant de lecteur HEOS trouvé, un flux « Parler sur une
+  enceinte » accepté ou rejeté...) est volontairement journalisée au niveau `info` ou plus pour
+  cette raison précise, afin qu'elle s'affiche sans `debug` ; seul le détail très verbeux ligne par
+  ligne du protocole Telnet est réservé à `debug` et donc hors de portée depuis une installation
+  Gladys classique.
 - **Mode sonore, boutons de lecture ou lecture en cours ne fonctionnent pas comme attendu** : ces
   fonctions reposent sur des parties du protocole qui varient plus d'un modèle/firmware à l'autre
   que alimentation/volume/muet/source. Comparez ce que votre télécommande envoie réellement avec
-  ce que cette intégration attend, via les logs de débogage ci-dessus.
+  ce que cette intégration attend — le détail ligne par ligne nécessaire pour ça n'existe qu'en
+  `debug` (voir ci-dessus), donc utilisez directement
+  [`scripts/debug-telnet.js`](https://github.com/LM1LC3N7/gladys-denon-avr/blob/HEAD/./scripts/debug-telnet.js)/
+  [`scripts/debug-heos.js`](https://github.com/LM1LC3N7/gladys-denon-avr/blob/HEAD/./scripts/debug-heos.js) contre l'ampli plutôt que les logs du
+  conteneur.
 - **Les boutons de lecture ne font toujours rien sur Qobuz/Spotify Connect/TIDAL** : vérifiez les
-  logs de débogage à la recherche d'une ligne mentionnant « HEOS player id ... matched » peu
+  logs à la recherche d'une ligne mentionnant « HEOS player id ... matched » peu
   après la connexion de l'ampli — si elle n'y est pas, le service HEOS CLI de cet ampli (port 1255) n'était pas joignable (pare-feu, modèle plus ancien sans HEOS, ou HEOS pas encore prêt)
   et l'intégration est repassée silencieusement sur les commandes classiques, qui n'atteignent
   pas les sources gérées par HEOS.
+- **« Parler sur une enceinte » n'apparaît pas du tout dans la liste des enceintes** : l'appareil a
+  probablement été créé avant l'arrivée de cette fonctionnalité — ouvrez l'onglet Découverte de
+  cette intégration, lancez un scan, et cliquez sur **Mettre à jour** sur l'appareil (voir
+  « Re-publishing a device » dans la section Découverte).
+- **La scène s'exécute sans erreur, mais rien ne sort de l'ampli Denon** : c'est normal côté
+  Gladys même en cas d'échec — une scène journalise une action en échec et se signale comme
+  exécutée quand même, sans jamais remonter d'erreur visible pour cette action précise. Vérifiez,
+  dans l'ordre :
+  1. Lancez **Tester la connexion** depuis l'écran Configuration de cette intégration : sa réponse
+     se termine maintenant par une ligne du type « HEOS : identifiant lecteur 12345 trouvé » ou
+     « HEOS : non connecté »/« aucun identifiant lecteur trouvé ». Tout ce qui n'est pas
+     « identifiant lecteur ... trouvé » signifie que le problème vient de HEOS lui-même — mêmes
+     causes que pour les boutons de lecture ci-dessus (port 1255 bloqué par un pare-feu, modèle
+     plus ancien sans HEOS, ou HEOS pas encore prêt après un redémarrage).
+  2. Si HEOS est connecté mais qu'**aucun identifiant lecteur n'est trouvé**, regardez dans les
+     logs la ligne qui liste les IP vues par HEOS (« HEOS reports: ... ») — un ampli
+     avec plusieurs interfaces réseau (Ethernet + Wi-Fi) peut annoncer à HEOS une adresse
+     différente de celle utilisée par cette intégration, ce qui empêche la correspondance
+     définitivement.
+  3. Si un identifiant lecteur **est** trouvé, regardez dans les logs le résultat du
+     flux lui-même : une ligne indiquant que HEOS a _rejeté_ le flux (avec un code d'erreur/texte
+     venant de l'ampli) signifie que l'URL de synthèse vocale n'était pas lisible du point de vue
+     de l'ampli (injoignable depuis le réseau de l'ampli, format non supporté...). Une ligne
+     indiquant que HEOS l'a _acceptée_ alors que vous n'entendez toujours rien ne devrait plus se
+     produire (confirmé et corrigé sur du matériel réel : une version précédente encodait l'URL du
+     flux, ce que certains amplis acceptent sans broncher — succès annoncé, un « Url Stream »
+     générique apparaît même comme piste en cours — sans jamais réellement la récupérer, donc rien
+     ne joue quels que soient l'entrée, l'alimentation, le volume ou l'état muet ; voir la section
+     « Speak on a speaker » du README développeur pour la cause exacte). Si ça se reproduit avec
+     une installation à jour, merci de le signaler.
 
 ## Paramètres de configuration
 
@@ -202,7 +267,7 @@ Voici les paramètres demandés par Denon / Marantz AVR dans son écran de confi
 ## Comment installer Denon / Marantz AVR dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Denon / Marantz AVR apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-denon-avr:1.0.9`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-denon-avr:1.0.18`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-denon-avr](https://github.com/LM1LC3N7/gladys-denon-avr).
 
