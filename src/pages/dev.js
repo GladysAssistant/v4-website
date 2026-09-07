@@ -439,6 +439,10 @@ function PullRequestLabels({ labels }) {
   );
 }
 
+/**
+ * The /dev/ page: rendered from the build-time snapshot, then refreshed from
+ * the GitHub API once mounted.
+ */
 function DevPage() {
   const { i18n } = useDocusaurusContext();
   const locale = i18n.currentLocale;

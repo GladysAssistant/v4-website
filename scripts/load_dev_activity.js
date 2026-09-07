@@ -344,13 +344,16 @@ async function getRepository() {
   };
 }
 
+/** "owner/name", as GitHub URLs and the snapshot entries spell it. */
 function repositoryKey(repository) {
   return `${repository.owner}/${repository.name}`;
 }
 
-// The weekly commits of one repository, in the compact shape stored in the
-// snapshot: this file lands in git, and 52 weeks of verbose objects make for a
-// needlessly noisy diff.
+/**
+ * The weekly commits of one repository, in the compact shape stored in the
+ * snapshot: this file lands in git, and 52 weeks of verbose objects make for a
+ * needlessly noisy diff.
+ */
 async function getRepositoryWeeks(repository, conditional) {
   const weeks = await getJson(
     `${GITHUB_API_ROOT}/repos/${repositoryKey(repository)}/stats/commit_activity`,

@@ -25,8 +25,10 @@ const COMMIT_REPOSITORIES = [
 // GitHub's commit activity endpoint always answers the last 52 weeks.
 const WEEKS_COUNT = 52;
 
-// GitHub payload -> the compact shape stored in the snapshot: `w` is the Unix
-// timestamp of the week's Sunday, `t` its total, `d` one count per day.
+/**
+ * GitHub payload -> the compact shape stored in the snapshot: `w` is the Unix
+ * timestamp of the week's Sunday, `t` its total, `d` one count per day.
+ */
 function compactWeeks(weeks) {
   return weeks.map((week) => ({
     w: week.week,
