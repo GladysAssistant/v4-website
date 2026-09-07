@@ -137,7 +137,7 @@ function Home() {
           message,
           name,
           language,
-          page: window.location.href,
+          page: window.location.origin + window.location.pathname,
           website,
           turnstileToken,
         }),
