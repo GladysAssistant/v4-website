@@ -97,8 +97,9 @@ export function computeStats(data, now) {
   const weeklyTotals = weeks.map((week) => week.t);
   const days = buildDailySeries(weeks, nowDate);
 
-  // The current week, Sunday to now: the same number GitHub prints as the last
-  // bar of Insights > Commits, because it comes from the same payload.
+  // The current week, Sunday to now, added up over every repository of
+  // src/utils/commitWeeks.js: the same buckets as GitHub Insights > Commits,
+  // because each series comes from that payload.
   const commitsThisWeek = weeklyTotals.length
     ? weeklyTotals[weeklyTotals.length - 1]
     : 0;
