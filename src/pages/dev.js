@@ -7,6 +7,7 @@ import { usePluralForm } from "@docusaurus/theme-common";
 
 import DevPipeline from "../components/dev/DevPipeline";
 import devActivitySnapshot from "../data/devActivity.json";
+import { COMMIT_REPOSITORIES, compactWeeks, mergeWeeks } from "../utils/commitWeeks";
 import {
   buildAchievements,
   buildHeatmap,
@@ -21,7 +22,10 @@ import {
 
 import styles from "./dev.module.css";
 
-const GITHUB_API = "https://api.github.com/repos/GladysAssistant/Gladys";
+const GITHUB_API_ROOT = "https://api.github.com";
+// Releases and pull requests are those of Gladys itself; only the commit
+// activity adds up the repositories listed in COMMIT_REPOSITORIES.
+const GITHUB_API = `${GITHUB_API_ROOT}/repos/GladysAssistant/Gladys`;
 const FORUM_ACCEPTED_URL = "https://community.gladysassistant.com/tag/accepted";
 const MAX_RELEASES_SHOWN = 8;
 
@@ -244,8 +248,14 @@ async function fetchJson(url) {
  * simply leaves the build-time snapshot in place.
  */
 async function fetchLiveActivity() {
-  const [weeks, releases, openPullRequests] = await Promise.all([
-    fetchJson(`${GITHUB_API}/stats/commit_activity`).catch(() => null),
+  const [repositoryWeeks, releases, openPullRequests] = await Promise.all([
+    Promise.all(
+      COMMIT_REPOSITORIES.map((repository) =>
+        fetchJson(
+          `${GITHUB_API_ROOT}/repos/${repository.owner}/${repository.name}/stats/commit_activity`
+        ).catch(() => null)
+      )
+    ),
     fetchJson(`${GITHUB_API}/releases?per_page=12`).catch(() => null),
     fetchJson(
       `${GITHUB_API}/pulls?state=open&per_page=100&sort=updated&direction=desc`
@@ -253,12 +263,27 @@ async function fetchLiveActivity() {
   ]);
 
   const live = {};
-  if (Array.isArray(weeks) && weeks.length > 0) {
-    live.weeks = weeks.map((week) => ({
-      w: week.week,
-      t: week.total,
-      d: week.days,
-    }));
+  // Repository by repository, like the snapshot: one GitHub is still computing
+  // the statistics of (202, empty body) keeps its snapshot weeks while the
+  // others get fresh ones, and the chart only stays put when none answered.
+  let refreshed = false;
+  const commitRepositories = COMMIT_REPOSITORIES.map((repository, index) => {
+    const weeks = repositoryWeeks[index];
+    if (Array.isArray(weeks) && weeks.length > 0) {
+      refreshed = true;
+      return { ...repository, weeks: compactWeeks(weeks) };
+    }
+    const known = (devActivitySnapshot.commitRepositories || []).find(
+      (candidate) =>
+        candidate.owner === repository.owner && candidate.name === repository.name
+    );
+    return known || { ...repository, weeks: [] };
+  });
+  if (refreshed) {
+    live.commitRepositories = commitRepositories;
+    live.weeks = mergeWeeks(
+      commitRepositories.map((repository) => repository.weeks)
+    );
   }
   if (Array.isArray(releases) && releases.length > 0) {
     live.releases = releases
@@ -414,6 +439,10 @@ function PullRequestLabels({ labels }) {
   );
 }
 
+/**
+ * The /dev/ page: rendered from the build-time snapshot, then refreshed from
+ * the GitHub API once mounted.
+ */
 function DevPage() {
   const { i18n } = useDocusaurusContext();
   const locale = i18n.currentLocale;
@@ -505,7 +534,7 @@ function DevPage() {
                 description="Dev activity page lead paragraph"
               >
                 Gladys is built in the open, one commit at a time. Everything on
-                this page comes straight from the public GitHub repository and
+                this page comes straight from the public GitHub repositories and
                 from the community forum, with nothing curated in between.
               </Translate>
             </p>
@@ -765,15 +794,28 @@ function DevPage() {
                 </Translate>
               </p>
               <p className={styles.panelHint}>
-                <Link to="https://github.com/GladysAssistant/Gladys/graphs/commit-activity">
-                  <Translate
-                    id="devPage.rhythm.sameAsGithub"
-                    description="Link to the GitHub commit activity graph"
-                  >
-                    Same numbers as GitHub Insights → Commits, straight from the
-                    same API →
-                  </Translate>
-                </Link>
+                <Translate
+                  id="devPage.rhythm.repositories"
+                  description="Which repositories the commit chart adds up, with links to their GitHub commit activity graphs"
+                  values={{
+                    // One element, not an array: Translate prints anything
+                    // else with toString().
+                    repositories: (
+                      <React.Fragment key="repositories">
+                        {COMMIT_REPOSITORIES.map((repository, index) => (
+                          <React.Fragment key={repository.name}>
+                            {index > 0 ? ", " : ""}
+                            <Link to={`${repository.url}/graphs/commit-activity`}>
+                              {repository.name}
+                            </Link>
+                          </React.Fragment>
+                        ))}
+                      </React.Fragment>
+                    ),
+                  }}
+                >
+                  {"Commits from {repositories} added together, from the same API as GitHub Insights → Commits."}
+                </Translate>
               </p>
             </div>
             <WeeklyBars weeks={data.weeks || []} locale={locale} />

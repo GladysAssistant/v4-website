@@ -34,9 +34,10 @@ npm run start -- --locale fr
 ## How to refresh the development activity page?
 
 The [/dev/](https://gladysassistant.com/dev/) page reads
-`src/data/devActivity.json`: a snapshot of the Gladys repository (weekly
-commits, releases, pull requests, contributors) and of the accepted feature
-requests on the forum.
+`src/data/devActivity.json`: a snapshot of the Gladys repository (releases,
+pull requests, contributors), of the weekly commits of the Gladys, v4-website
+and gladys-gateway repositories added together (the list lives in
+`src/utils/commitWeeks.js`), and of the accepted feature requests on the forum.
 
 Nothing to do by hand: `build.sh` regenerates it on every deploy, and the
 `refresh-dev-activity` workflow asks Cloudflare Pages for a daily rebuild so

@@ -1,6 +1,10 @@
 /**
  * Builds the snapshot powering the /dev/ development activity page.
  *
+ * The commit activity adds up the repositories listed in
+ * src/utils/commitWeeks.js (Gladys, the website, the gateway); everything else
+ * (releases, pull requests, contributors) is about Gladys itself.
+ *
  * GitHub data is public and CORS-enabled, so the page refreshes the commit,
  * release and pull request numbers in the browser. This snapshot is what gets
  * server-rendered (good for SEO and for visitors hitting the GitHub API rate
@@ -31,9 +35,17 @@ try {
 const fs = require("fs");
 const path = require("path");
 
+const {
+  COMMIT_REPOSITORIES,
+  compactWeeks,
+  mergeWeeks,
+} = require("../src/utils/commitWeeks");
+
+const GITHUB_API_ROOT = "https://api.github.com";
 const GITHUB_OWNER = "GladysAssistant";
 const GITHUB_REPO = "Gladys";
-const GITHUB_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
+// Everything but the commit activity comes from Gladys itself.
+const GITHUB_API = `${GITHUB_API_ROOT}/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
 
 const FORUM_URL = "https://community.gladysassistant.com";
 // A feature request the community voted for gets the "accepted" tag once it is
@@ -51,7 +63,7 @@ const OUTPUT_FILE = path.join(__dirname, "..", "src", "data", "devActivity.json"
 // Bump this whenever the shape of the snapshot or the way a payload is parsed
 // below changes: it throws away the stored ETags, which would otherwise keep
 // serving data built by the previous version of this script.
-const SNAPSHOT_VERSION = 1;
+const SNAPSHOT_VERSION = 2;
 
 const MAX_RELEASES = 12;
 const MAX_OPEN_PULL_REQUESTS = 15;
@@ -194,7 +206,7 @@ function rateLimitDelay(response) {
 }
 
 async function getJson(url, { retryOn202 = false, conditional = false } = {}) {
-  const isGitHub = url.startsWith(GITHUB_API);
+  const isGitHub = url.startsWith(GITHUB_API_ROOT);
   if (isGitHub && gitHubRateLimit) {
     throw new Error(`${gitHubRateLimit.summary}, skipping this call`);
   }
@@ -332,27 +344,81 @@ async function getRepository() {
   };
 }
 
-async function getWeeks() {
-  const weeks = await getJson(`${GITHUB_API}/stats/commit_activity`, {
-    retryOn202: true,
-    conditional: true,
-  });
+/** "owner/name", as GitHub URLs and the snapshot entries spell it. */
+function repositoryKey(repository) {
+  return `${repository.owner}/${repository.name}`;
+}
+
+/**
+ * The weekly commits of one repository, in the compact shape stored in the
+ * snapshot: this file lands in git, and 52 weeks of verbose objects make for a
+ * needlessly noisy diff.
+ */
+async function getRepositoryWeeks(repository, conditional) {
+  const weeks = await getJson(
+    `${GITHUB_API_ROOT}/repos/${repositoryKey(repository)}/stats/commit_activity`,
+    { retryOn202: true, conditional }
+  );
   if (weeks === NOT_MODIFIED) {
     return NOT_MODIFIED;
   }
   // GitHub answers 202 with an empty body while it builds the statistics
   // cache; fail with something readable rather than a map() stack trace.
   if (!Array.isArray(weeks)) {
-    throw new Error("Unexpected commit activity payload from GitHub");
+    throw new Error(`Unexpected commit activity payload for ${repositoryKey(repository)}`);
   }
-  // Compact keys: this file lands in git, and 52 weeks of verbose objects make
-  // for a needlessly noisy diff.
+  return compactWeeks(weeks);
+}
+
+/**
+ * The commit activity spans several repositories (see COMMIT_REPOSITORIES):
+ * the snapshot keeps the weekly series of each one, and `weeks` is their sum,
+ * which is what the page charts and counts.
+ *
+ * Keeping the series per repository is what lets this section refresh
+ * repository by repository: one that GitHub answers 304 for, or one that
+ * fails, keeps its committed weeks while the others get fresh ones. Only a
+ * repository with nothing committed yet fails the section as a whole.
+ */
+async function getCommitActivity() {
+  const committed = new Map(
+    (committedSnapshot.commitRepositories || []).map((repository) => [
+      repositoryKey(repository),
+      repository,
+    ])
+  );
+
+  const commitRepositories = [];
+  let refreshed = false;
+  for (const repository of COMMIT_REPOSITORIES) {
+    const known = committed.get(repositoryKey(repository));
+    // A 304 can only be turned back into data when the committed snapshot
+    // still holds this repository: without it the call must go out in full.
+    let weeks;
+    try {
+      weeks = await getRepositoryWeeks(repository, known !== undefined);
+    } catch (error) {
+      if (!known) {
+        throw error;
+      }
+      console.log(`   ${error.message}`);
+      console.log(`   keeping the committed commits of ${repositoryKey(repository)}`);
+      weeks = NOT_MODIFIED;
+    }
+    if (weeks === NOT_MODIFIED) {
+      commitRepositories.push(known);
+    } else {
+      commitRepositories.push({ ...repository, weeks });
+      refreshed = true;
+    }
+  }
+
+  if (!refreshed) {
+    return NOT_MODIFIED;
+  }
   return {
-    weeks: weeks.map((week) => ({
-      w: week.week,
-      t: week.total,
-      d: week.days,
-    })),
+    weeks: mergeWeeks(commitRepositories.map((repository) => repository.weeks)),
+    commitRepositories,
   };
 }
 
@@ -525,7 +591,11 @@ async function getForumRequests() {
 // or keeps the values already committed.
 const GITHUB_SECTIONS = [
   { name: "repository metadata", keys: ["repository"], load: getRepository },
-  { name: "commit activity", keys: ["weeks"], load: getWeeks },
+  {
+    name: "commit activity",
+    keys: ["weeks", "commitRepositories"],
+    load: getCommitActivity,
+  },
   { name: "releases", keys: ["releases"], load: getReleases },
   {
     name: "open pull requests",
@@ -647,7 +717,8 @@ async function main() {
 
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(snapshot, null, 2)}\n`);
   console.log(
-    `>> Wrote ${path.relative(process.cwd(), OUTPUT_FILE)}: ${snapshot.weeks.length} weeks, ` +
+    `>> Wrote ${path.relative(process.cwd(), OUTPUT_FILE)}: ${snapshot.weeks.length} weeks ` +
+      `across ${snapshot.commitRepositories.length} repositories, ` +
       `${snapshot.releases.length} releases, ` +
       `${snapshot.openPullRequests.length}/${snapshot.openPullRequestsCount} open PRs, ` +
       `${snapshot.mergedPullRequests.length} merged PRs, ` +
