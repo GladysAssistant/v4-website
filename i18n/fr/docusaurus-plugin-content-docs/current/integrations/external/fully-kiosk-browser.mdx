@@ -1,0 +1,232 @@
+---
+title: "Intégration Fully Kiosk Browser pour Gladys Assistant"
+sidebar_label: "Fully Kiosk Browser"
+description: "Découvrez vos tablettes Fully Kiosk via MQTT ou par IP, et pilotez-les via leur API HTTP locale. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/vincentBesseau--gladys-fullykiosk.jpg"
+keywords:
+  - "fully kiosk browser"
+  - "gladys fully kiosk browser"
+  - "fully kiosk browser gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/vincentBesseau/gladys-fullykiosk instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="fully-kiosk-browser" />
+
+Découvrez vos tablettes Android [Fully Kiosk Browser](https://www.fully-kiosk.com/)
+à partir des rapports de statut qu'elles publient déjà via MQTT (adresse IP,
+batterie, page en cours, mode kiosque...), puis pilotez-les - écran on/off,
+verrouillage kiosque, chargement d'une URL, synthèse vocale, redémarrage,
+reboot... - via leur API REST HTTP locale.
+
+## Fonctionnement
+
+- **Découverte : MQTT, ou ajout manuel par IP.** Fully Kiosk peut publier
+  périodiquement un rapport JSON « deviceInfo » vers un broker MQTT
+  (Paramètres > Autres paramètres > Paramètres MQTT, dans l'application Fully
+  Kiosk) - **mais cette fonctionnalité MQTT nécessite une licence Fully Kiosk
+  PLUS**, elle est absente de l'édition gratuite. Cette intégration se
+  connecte au broker configuré et s'abonne à tout ce qui se trouve sous un
+  préfixe de topic (`fully/#` par défaut) : tout message JSON qui ressemble à
+  un rapport deviceInfo (il porte un identifiant d'appareil) est récupéré, et
+  la tablette apparaît dans Gladys. **Sans licence PLUS**, utilisez plutôt
+  l'action **Ajouter une tablette par IP** : elle interroge directement l'API
+  REST de la tablette (gratuite, elle) pour l'ajouter, sans passer par MQTT.
+- **Pilotage : HTTP local.** Chaque commande (écran on/off, chargement d'URL,
+  redémarrage de l'app...) est envoyée directement à l'API REST de la
+  tablette (`http://<ip-tablette>:2323/?cmd=...`), que Fully Kiosk protège
+  par un mot de passe défini par tablette (Paramètres > Autres paramètres >
+  Administration à distance > Mot de passe d'administration à distance).
+  Enregistrez ce mot de passe une fois la tablette ajoutée à Gladys, via
+  l'action **Définir le mot de passe API REST d'une tablette** - pas besoin
+  de taper son IP, choisissez-la dans la liste déroulante.
+
+## Broker MQTT : dédié ou existant
+
+Pertinent uniquement si vous utilisez la découverte MQTT (licence Fully Kiosk
+PLUS requise - voir ci-dessus). Le champ **Broker MQTT** de la configuration
+propose trois modes :
+
+- **Lancer un broker dédié (recommandé)** : cette intégration démarre et
+  gère son propre broker Mosquitto (un sous-conteneur), avec un identifiant
+  et un mot de passe générés automatiquement. Rien d'autre à installer.
+  Utilisez l'action **Afficher les identifiants du broker dédié** (dans
+  l'onglet Configuration) pour récupérer l'adresse, l'identifiant, le mot de
+  passe et le topic « Device Info Topic » à saisir dans les paramètres MQTT
+  de chaque tablette.
+- **Se connecter à un broker existant** : si vous avez déjà un serveur MQTT
+  (Mosquitto, EMQX...), renseignez son hôte/port/identifiants dans les
+  champs prévus à cet effet.
+- **Désactiver MQTT** : si vous n'ajoutez vos tablettes que via l'action
+  **Ajouter une tablette par IP**, ce mode arrête (ou ne démarre jamais) le
+  sous-conteneur Mosquitto et ne tente aucune connexion MQTT - inutile de
+  faire tourner un broker dont vous ne vous servez pas.
+
+## Configuration
+
+### Avec une licence Fully Kiosk PLUS (découverte MQTT)
+
+1. Choisissez le mode de broker (ci-dessus). Avec le mode dédié, enregistrez
+   d'abord la configuration une fois pour que le broker démarre et que les
+   identifiants soient générés, puis récupérez-les via l'action **Afficher
+   les identifiants du broker dédié**.
+2. Dans l'application Fully Kiosk de chaque tablette, activez **MQTT**
+   (Paramètres > Autres paramètres > Paramètres MQTT) et pointez-la vers
+   l'adresse/les identifiants du broker choisi à l'étape 1 - le topic exact
+   que vous définissez là-bas importe peu tant qu'il commence par le préfixe
+   configuré ici (`fully` par défaut).
+3. Toujours dans chaque tablette, activez **l'administration à distance**
+   (Paramètres > Autres paramètres > Administration à distance) et notez le
+   **mot de passe d'administration à distance** défini - l'API REST de Fully
+   Kiosk en a besoin pour chaque commande.
+4. Enregistrez, puis lancez **Rafraîchir la liste des tablettes** (ou ouvrez
+   l'onglet Découverte) une fois qu'une tablette a envoyé son premier rapport
+   MQTT, et ajoutez-la à Gladys.
+5. Lancez l'action **Définir le mot de passe API REST d'une tablette**,
+   choisissez la tablette dans la liste déroulante (seules les tablettes déjà
+   ajoutées y apparaissent), puis renseignez son mot de passe d'administration
+   à distance (et un port REST personnalisé si ce n'est pas 2323 par défaut).
+   Répétez pour chaque tablette.
+
+### Sans licence PLUS (ajout par IP)
+
+1. Réglez **Broker MQTT** sur **Désactiver MQTT** (sauf si vous comptez
+   ajouter d'autres tablettes en PLUS plus tard).
+2. Dans l'application Fully Kiosk de chaque tablette, activez
+   **l'administration à distance** (Paramètres > Autres paramètres >
+   Administration à distance) et notez son **mot de passe d'administration à
+   distance** et son adresse IP.
+3. Lancez l'action **Ajouter une tablette par IP**, renseignez l'adresse IP,
+   le mot de passe (et un port REST personnalisé si ce n'est pas 2323 par
+   défaut). La tablette est ajoutée immédiatement et son mot de passe
+   enregistré en une seule étape - inutile de passer par MQTT ni par l'action
+   « Définir le mot de passe API REST d'une tablette ».
+   Répétez pour chaque tablette.
+
+Ce mode ne dépend d'aucun broker MQTT : ni la configuration du **Broker
+MQTT** ni le préfixe de topic n'ont d'effet sur les tablettes ajoutées ainsi.
+
+## Pourquoi une action plutôt qu'un champ de configuration
+
+Les intégrations externes Gladys n'exposent qu'un seul formulaire de
+configuration global, commun à toute l'intégration - il n'existe pas d'écran
+de paramètres par appareil intégré. En revanche, une **action** du manifeste
+peut définir son propre mini-formulaire, y compris une liste déroulante
+pré-remplie avec les appareils déjà créés par l'intégration - c'est
+exactement ce qu'utilise l'action **Définir le mot de passe API REST d'une
+tablette**, pour éviter de devoir taper ou copier une adresse IP à la main.
+Le mot de passe est stocké par identifiant Gladys stable de la tablette, pas
+par IP, donc il survit à un changement de bail DHCP contrairement à une
+liste indexée par IP.
+
+Pour la même raison, il n'existe pas non plus de champ de configuration
+conditionnel qui n'apparaîtrait que dans un des deux modes de découverte
+(MQTT ou IP) : le formulaire de configuration de Gladys est une liste plate,
+sans logique « afficher ce champ seulement si... ». C'est pourquoi l'ajout
+par IP est, lui aussi, une action séparée plutôt qu'un champ supplémentaire
+dans le formulaire principal.
+
+## Actions disponibles par tablette
+
+| Fonctionnalité            | Effet                                                             |
+| ------------------------- | ----------------------------------------------------------------- |
+| Écran                     | Allume/éteint l'écran de la tablette                              |
+| Verrouillage kiosque      | Active/désactive le mode kiosque (verrouillage) de Fully Kiosk    |
+| Économiseur d'écran       | Démarre/arrête l'économiseur d'écran                              |
+| Page en cours             | Lecture seule : l'URL/l'app actuellement au premier plan          |
+| Charger une URL           | Écriture d'une URL pour la charger immédiatement                  |
+| Synthèse vocale           | Écriture d'un texte pour le faire dire par la tablette            |
+| Redémarrer l'app          | Redémarre l'application Fully Kiosk                               |
+| Recharger l'URL de départ | Recharge l'URL de démarrage configurée                            |
+| Redémarrer l'appareil     | Redémarre toute la tablette (nécessite Device Owner/root Android) |
+| Vider le cache            | Vide le cache du navigateur                                       |
+| Quitter l'app             | Quitte l'application Fully Kiosk                                  |
+| Batterie / Charge         | Lecture seule, quand la tablette la remonte                       |
+
+## Limites
+
+- Réseau local uniquement : pas de compte cloud, rien ne fonctionne si la
+  tablette ou (en mode MQTT) le broker MQTT est injoignable.
+- Le reporting MQTT est une fonctionnalité de la licence Fully Kiosk **PLUS**
+  - absente de l'édition gratuite. Sans PLUS, utilisez l'action **Ajouter une
+    tablette par IP** : elle repose uniquement sur l'API REST de Fully Kiosk,
+    disponible dans l'édition gratuite.
+- Les actions « Définir le mot de passe API REST d'une tablette » et
+  « Ajouter une tablette par IP » affichent le mot de passe en clair pendant
+  la saisie - Gladys ne masque pas les champs de type `secret` à l'intérieur
+  du formulaire d'une action (seulement dans le formulaire de Configuration
+  principal), donc cette intégration utilise ici un champ texte simple
+  plutôt qu'un masquage cassé. La valeur reste stockée de façon sécurisée
+  côté serveur et n'est jamais réaffichée ensuite.
+- Le mode broker dédié publie le port du broker sur le réseau local de votre
+  serveur Gladys - toute personne sur ce réseau disposant des identifiants
+  générés peut s'y connecter. Sans problème sur un réseau domestique, à
+  garder en tête sur un réseau partagé/non fiable.
+- Le fichier de mots de passe du broker dédié doit être lisible par tous
+  (Gladys exécute chaque sous-conteneur avec toutes les capacités Linux
+  supprimées, donc cette intégration ne peut pas en faire un `chown` vers
+  l'utilisateur propre du broker) - Mosquitto 2.0.18 se contente d'avertir à
+  ce sujet ; une future version de Mosquitto pourrait refuser de démarrer
+  dans ce cas, ce qui nécessiterait de revoir la version de l'image
+  Mosquitto figée par cette intégration.
+- Pas de retour en temps réel sur l'effet d'une commande : le tableau de bord
+  ne reflète l'état réel d'une tablette qu'après son prochain rapport MQTT
+  programmé (ou une interrogation manuelle).
+- Les noms exacts des champs MQTT/REST de Fully Kiosk ont varié selon les
+  versions de l'application et ne sont pas formellement versionnés ; si un
+  champ (par ex. la page en cours) ne se remplit jamais, vérifiez la charge
+  utile brute (journalisée en niveau debug, `LOG_LEVEL=debug`) au regard de
+  votre version de Fully Kiosk.
+- Une tablette ajoutée juste après sa connexion MQTT peut afficher moins de
+  fonctionnalités que prévu dans l'onglet Découverte (pas de Batterie/En
+  charge, pas de section Paramètres techniques) si son tout premier rapport
+  ne portait pas encore ces informations (Wi-Fi/batterie pas encore
+  remontés). Ce n'est pas figé comme le `should_poll` : relancez simplement
+  **Rafraîchir la liste des tablettes** une fois qu'un rapport plus complet
+  est arrivé, pas besoin de supprimer/recréer l'appareil.
+- « Redémarrer l'appareil » et certaines commandes de paramètres nécessitent
+  que la tablette soit Device Owner (ou rootée) - sinon Fully Kiosk rejette
+  la commande, indépendamment de cette intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Fully Kiosk Browser dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fully Kiosk Browser, via MQTT + HTTP local | `section` | Non | Cette intégration découvre vos tablettes Fully Kiosk Browser à partir de messages de statut MQTT, puis les pilote via leur API REST locale. Le reporting MQTT nécessite une licence Fully Kiosk PLUS - avec l'édition gratuite, utilisez plutôt l'action « Ajouter une tablette par IP », sans MQTT. L'API REST de Fully Kiosk (utilisée pour piloter les tablettes dans les deux cas) est protégée par un mot de passe défini par tablette (paramètres Fully Kiosk > Administration à distance). |
+| Broker MQTT | `select` | Non | Pertinent uniquement si vous utilisez la découverte MQTT (nécessite une licence Fully Kiosk PLUS). Si vous n'ajoutez vos tablettes que via l'action « Ajouter une tablette par IP », choisissez « Désactiver MQTT » - aucun broker n'est démarré ni contacté. « Lancer un broker dédié » : cette intégration démarre et gère son propre broker Mosquitto - rien d'autre à installer, identifiants générés affichés par l'action « Afficher les identifiants du broker dédié » ci-dessous. « Se connecter à un broker existant » : utilisez le serveur MQTT que vous avez déjà, avec les champs plus bas. |
+| Hôte du broker MQTT (mode externe uniquement) | `string` | Non |  |
+| Port du broker MQTT (mode externe uniquement) | `number` | Non |  |
+| Utiliser TLS (mqtts://) (mode externe uniquement) | `boolean` | Non |  |
+| Identifiant MQTT (mode externe uniquement) | `string` | Non |  |
+| Mot de passe MQTT (mode externe uniquement) | `secret` | Non |  |
+| Préfixe des topics MQTT | `string` | Non | Cette intégration s'abonne à « \<préfixe>/# » et lit tout message JSON qui ressemble à un rapport deviceInfo de Fully Kiosk. Doit correspondre à la racine du « MQTT Report Topic » configuré dans les paramètres Fully Kiosk de chaque tablette. |
+| Les tablettes exposent leur API REST en HTTPS | `boolean` | Non |  |
+
+## Comment installer Fully Kiosk Browser dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Fully Kiosk Browser apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/vincentbesseau/gladys-fullykiosk:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/vincentBesseau/gladys-fullykiosk](https://github.com/vincentBesseau/gladys-fullykiosk).
+
+Fully Kiosk Browser nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Fully Kiosk Browser est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [vincentBesseau](https://github.com/vincentBesseau), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/vincentBesseau/gladys-fullykiosk) — [source de cette documentation](https://github.com/vincentBesseau/gladys-fullykiosk/blob/HEAD/docs/fr.md)
