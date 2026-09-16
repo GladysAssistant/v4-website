@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import cx from "classnames";
 import Translate from "@docusaurus/Translate";
-import { getCheckoutUrl } from "./checkout";
+import { getCheckoutUrl, handleCheckoutClick } from "./checkout";
 import styles from "./styles.module.css";
 
 const MOBILE_MAX_WIDTH = 996;
@@ -34,6 +34,7 @@ function StickyMobileCta({ language }) {
     <div className={styles.stickyMobileCta} role="region" aria-label="Quick action">
       <a
         href={checkoutHref}
+        onClick={handleCheckoutClick}
         className={cx("button button--primary button--block", styles.stickyMobileCtaBtn)}
         data-track="plus_sticky_mobile_cta_plus_yearly"
       >

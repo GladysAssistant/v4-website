@@ -21,7 +21,7 @@ const Check = () => (
   </svg>
 );
 
-import { getCheckoutUrl } from "./checkout";
+import { getCheckoutUrl, handleCheckoutClick } from "./checkout";
 import useRegion from "./useRegion";
 import { PRICES, formatPrice } from "./pricing";
 
@@ -119,6 +119,7 @@ function Plan({
 
       <a
         href={checkoutHref}
+        onClick={handleCheckoutClick}
         className={cx(
           "button",
           highlighted ? "button--primary" : "button--secondary",
