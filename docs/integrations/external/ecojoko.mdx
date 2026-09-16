@@ -1,0 +1,152 @@
+---
+title: "ecojoko integration for Gladys Assistant"
+sidebar_label: "ecojoko"
+description: "Live power, daily consumption and ambient sensors from your ecojoko energy assistant. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ecojoko.png"
+keywords:
+  - "ecojoko"
+  - "gladys ecojoko"
+  - "ecojoko gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-ecojoko instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="ecojoko" />
+
+Bring the readings of your **ecojoko** energy assistant into Gladys: the live
+power draw, today's consumption and, when your display reports them, the
+temperature and humidity. The integration also builds a **cumulative index**
+from the daily totals, so Gladys can drive its energy dashboard (half-hour
+consumption and cost from your contract).
+
+| Sensor                     | Unit  | Meaning                                                             |
+| -------------------------- | ----- | ------------------------------------------------------------------- |
+| **Live power**             | W     | What the home draws from the grid right now                         |
+| **Consumption index**      | kWh   | Cumulative counter since install (the base of the energy dashboard) |
+| **Today's consumption**    | kWh   | Today's total, reset every night                                    |
+| **_Period_ today**         | kWh   | Same per tariff period (off-peak/peak, Tempo colours…), optional    |
+| **Solar surplus today**    | kWh   | Energy exported to the grid, if ecojoko measures it at your place   |
+| **Temperature / humidity** | °C, % | Indoor (display) and outdoor, as a second device                    |
+
+## Requirements
+
+- An ecojoko sensor installed and linked to the ecojoko cloud.
+- The credentials of your ecojoko account (the mobile app's, or
+  [service.ecojoko.com](https://service.ecojoko.com/)).
+
+## Setup
+
+1. Enter your ecojoko **email** and **password**, then save.
+2. Click **Test the connection**: the message confirms the gateway found, the
+   current power and what your account exposes (tariff periods, solar surplus,
+   ambient sensor).
+3. Open the integration's **Devices** tab and add the `ecojoko` device (and
+   `ecojoko (ambiance)` if it shows up).
+4. For the energy dashboard, pick the **Consumption index** feature as the main
+   meter in Gladys' energy settings and fill in your contract.
+
+Both refresh rates are configurable: live power (30 s by default) and daily
+statistics (5 min by default). Every reading is a request to the ecojoko
+cloud: going below a few seconds is pointless, the display itself is not faster.
+
+## Showing the power as a gauge
+
+The power is published as a **signed grid exchange**: positive when you draw
+from the grid, negative when your panels export. The declared scale runs from
+−12,000 to +12,000 W, so 0 W sits in the middle.
+
+On a Gladys dashboard, add a **Gauge** box, pick the _Live power_ feature, then
+turn on **custom colours**:
+
+- **low threshold at 0** with a **green** low colour: every negative value, so
+  every surplus, shows green;
+- **high threshold** at whatever you consider heavy draw (3,000 W for example)
+  with a **red** high colour;
+- the in-range colour applies between the two.
+
+## If you produce
+
+When your ecojoko account reports a solar surplus, two extra sensors show up:
+the **surplus today**, reset every night, and an **exported energy index**,
+cumulative and never reset. The latter is the shape Gladys tracks production
+from, as it already does for consumption.
+
+## The energy dashboard
+
+Half-hour consumption and its cost are not computed by the integration: Gladys
+derives them from the **Consumption index**. Two conditions must be met, or the
+tile reads "no recent value":
+
+1. an **electricity contract filled in** in Gladys' energy settings;
+2. **at least 30 minutes** of index history, so a first delta exists.
+
+## Good to know
+
+- **No official API.** ecojoko publishes none; the integration uses the
+  interface of its own web app, like the community integrations for Home
+  Assistant do. It may stop working if ecojoko changes it. Nothing is ever
+  written to your account.
+- **The index starts at zero on install**, not at your Linky's value: ecojoko
+  does not expose the meter index. Only differences matter to Gladys. The state
+  lives in the integration's volume: a restart does not reset it, and days
+  missed while stopped are backfilled from ecojoko's weekly statistics.
+- **Tariff periods** come from the tariff you declared in the ecojoko app. If
+  you change it, save the configuration again: the new sensors will show up in
+  Devices.
+- **One account, one gateway**: when several gateways are attached to the
+  account, only the first one is supported.
+- **The "today" sensors reset at midnight** (Paris time), like the ecojoko app.
+  Only the cumulative index keeps growing.
+
+## Troubleshooting
+
+- _"ecojoko rejected the email or password"_: check them on
+  [service.ecojoko.com](https://service.ecojoko.com/). The integration stops on
+  purpose until the configuration is fixed, so your account never gets locked.
+- _"ecojoko cloud not answering"_: outage on ecojoko's side or Internet down;
+  retries resume by themselves, no action needed.
+- _No "ambiance" device_: your account reports no temperature/humidity sensor,
+  or the option is disabled in the configuration.
+
+Independent community project, not affiliated with the ecojoko company.
+
+## Configuration settings
+
+These are the settings ecojoko asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Your ecojoko sensor sends its readings to the ecojoko cloud; this integration reads them back with your ecojoko account (the one of the mobile app). ecojoko publishes no official API: this is the interface its own web app uses, it may change without notice. Nothing is ever written to your account. |
+| ecojoko email | `string` | Yes |  |
+| ecojoko password | `secret` | Yes |  |
+| Live power refresh (s) | `number` | No | Seconds between two readings of the instantaneous power. Keep it reasonable: every reading is a request to the ecojoko cloud. |
+| Daily statistics refresh (s) | `number` | No | Seconds between two refreshes of today's consumption, the cumulative index and the ambient sensors. |
+| One sensor per tariff period | `boolean` | No | Adds today's kWh per period reported by ecojoko (off-peak/peak hours, Tempo colours) when your tariff declares them. |
+| Ambient temperature and humidity | `boolean` | No | Publishes the indoor/outdoor temperature and humidity of the ecojoko display as a second device. |
+
+## How to install ecojoko in Gladys
+
+1. In Gladys, open **Integrations**: ecojoko appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ecojoko:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-ecojoko](https://github.com/guim31/gladys-ecojoko).
+
+ecojoko requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+ecojoko is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-ecojoko) — [source of this documentation](https://github.com/guim31/gladys-ecojoko/blob/HEAD/docs/en.md)
