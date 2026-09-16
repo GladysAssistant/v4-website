@@ -21,7 +21,10 @@ import EuropeanHosting from "../components/plus/EuropeanHosting";
 import ValueAnchor from "../components/plus/ValueAnchor";
 import FounderNote from "../components/plus/FounderNote";
 import StickyMobileCta from "../components/plus/StickyMobileCta";
-import { getCheckoutUrl } from "../components/plus/checkout";
+import {
+  getCheckoutUrl,
+  handleCheckoutClick,
+} from "../components/plus/checkout";
 
 import plusStyles from "../components/plus/styles.module.css";
 import horizonStyles from "../components/horizon/styles.module.css";
@@ -81,6 +84,7 @@ function PlusContent() {
 
               <a
                 href={recommendedCheckoutHref}
+                onClick={handleCheckoutClick}
                 className={plusStyles.heroTrialBanner}
                 data-track="plus_hero_trial_banner_plus_yearly"
               >
@@ -128,6 +132,7 @@ function PlusContent() {
               <div className={plusStyles.heroCtas}>
                 <a
                   href={recommendedCheckoutHref}
+                  onClick={handleCheckoutClick}
                   className="button button--primary button--lg"
                   data-track="plus_hero_start_trial_plus_yearly"
                 >

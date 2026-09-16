@@ -2,7 +2,7 @@ import React from "react";
 import cx from "classnames";
 import Translate from "@docusaurus/Translate";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import { getCheckoutUrl } from "./checkout";
+import { getCheckoutUrl, handleCheckoutClick } from "./checkout";
 import styles from "./styles.module.css";
 
 function FinalCTA({ language }) {
@@ -23,6 +23,7 @@ function FinalCTA({ language }) {
       <div className={styles.finalCtaButtons}>
         <a
           href={checkoutHref}
+          onClick={handleCheckoutClick}
           className={cx("button button--primary button--lg")}
           data-track="plus_final_cta_subscribe_plus_yearly"
         >
