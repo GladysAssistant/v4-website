@@ -11,19 +11,11 @@ Il n'y a **aucune pull request à ouvrir, aucune review de code à attendre, et 
 
 Cette page est un tutoriel complet, étape par étape, à destination des développeurs.
 
-:::tip[Nouveautés de Gladys 4.86 (SDK 0.12.0)]
+Si vous préférez la vidéo, je vous montre dans celle-ci comment créer une intégration externe en un seul prompt avec Claude, sans savoir coder :
 
-- **[Catégories du store](#catégories-du-store)** : un nouveau champ `categories` dans le manifeste, qui range votre intégration dans les rayons du catalogue redessiné. Le déclarer impose une plage `gladys_version` qui démarre à `4.86.0`.
-- **[Caméras PTZ](#caméras-motorisées-ptz)** : les fonctionnalités `move`, `preset` et les positions absolues, et Gladys affiche la croix directionnelle et le sélecteur de préréglages sur le widget caméra.
-- **[Wake-on-LAN](#wake-on-lan)** : `gladys.wakeOnLan(mac)` et l'autorisation `network_wake`, pour que le cœur émette le magic packet depuis le réseau de l'hôte.
-- **[Liaison de compte](#lier-un-compte-sans-redirection)** : un champ de configuration `account_link`, le bouton « Connecter » des fournisseurs qui ne redirigent jamais vers Gladys (une connexion par QR code validée dans l'application du fabricant).
-- **[Listes de choix découvertes sur les appareils](#listes-de-choix-découvertes-sur-les-appareils)** : le type de fonctionnalité `text`/`select` et ses `supported_options`, pour les applications d'une TV, les pièces d'un aspirateur ou les scènes natives d'un appareil.
-- **De nouvelles catégories d'appareils** dans les constantes du SDK : capteur de réseau électrique, capteur de sortie maison, maintenance (consommables), et les capteurs de gaz NO₂, O₃ et SO₂.
-- **[Installation depuis une image construite en local](#étape-4--construire-et-tester-en-local)** : le mode développeur installe directement le résultat d'un `docker build`, sans passer par un registre.
-
-Vous avez déjà publié une intégration ? Passez `@gladysassistant/integration-sdk` en `^0.12.0` (changements purement additifs, rien à adapter), déclarez vos `categories`, et passez `gladys_version` à `">=4.86.0"`.
-
-:::
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/ixwCPvzbXjY" title="Créer une intégration Gladys en un prompt avec Claude, sans savoir coder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 ## Pourquoi les intégrations externes ?
 
