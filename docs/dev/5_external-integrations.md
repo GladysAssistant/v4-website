@@ -11,20 +11,6 @@ There is **no pull request to open, no code review to wait for, and no maintaine
 
 This page is a complete, step-by-step tutorial for developers.
 
-:::tip[New in Gladys 4.86 (SDK 0.12.0)]
-
-- **[Store categories](#store-categories)**: a new `categories` manifest field, which puts your integration on the shelves of the redesigned catalog. Declaring it requires a `gladys_version` range starting at `4.86.0`.
-- **[PTZ cameras](#motorized-ptz-cameras)**: `move`, `preset` and absolute position features, and Gladys draws the directional pad and the preset selector on the camera widget.
-- **[Wake-on-LAN](#wake-on-lan)**: `gladys.wakeOnLan(mac)` and the `network_wake` authorization, so the core emits the magic packet from the host network.
-- **[Account linking](#account-linking-without-a-redirect)**: an `account_link` configuration field, the "Connect" button of providers that never redirect back to Gladys (a QR sign-in approved in the vendor app).
-- **[Choice lists discovered on the device](#choice-lists-discovered-on-the-device)**: the `text`/`select` feature type and its `supported_options`, for the apps of a TV, the rooms of a vacuum, or the native scenes of a device.
-- **More device categories** in the SDK constants: grid sensor, home output sensor, maintenance (consumables), and the NO₂, O₃ and SO₂ gas sensors.
-- **[Install from a locally built image](#step-4-build-and-test-locally)**: developer mode installs the output of a `docker build` directly, with no registry involved.
-
-Already published an integration? Bump `@gladysassistant/integration-sdk` to `^0.12.0` (purely additive, nothing to adapt), declare your `categories`, and move `gladys_version` to `">=4.86.0"`.
-
-:::
-
 ## Why external integrations?
 
 Historically, adding an integration to Gladys meant [contributing to the core project](/docs/dev/developing-a-service/): forking the repository, coding the service in the Gladys codebase, writing unit tests, opening a pull request, and waiting for a maintainer to review and merge it. That path still exists and is great for protocols that belong in the core, but it has friction: you need to know the Gladys internals, respect the coding conventions, and the maintainer is a bottleneck.
