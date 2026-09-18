@@ -27,6 +27,16 @@ You can find it on [Amazon](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=glad
 
 There are many videos online to install Ubuntu Server on a mini-PC.
 
+:::warning[Plug your mini-PC into your router with an Ethernet cable before starting the installation!]
+
+**This is essential.** If the mini-PC is not connected to the network during the Ubuntu Server installation, the installer will not be able to download the packages it needs, and **the "Install OpenSSH server" option will not be available**.
+
+Without OpenSSH, you will not be able to connect remotely to your mini-PC to install Docker and Gladys, and you will have to redo the whole installation.
+
+So: connect the Ethernet cable **first**, then start the installation, and make sure you check the **"Install OpenSSH server"** box during the setup.
+
+:::
+
 I recommend this tutorial:
 
 <div class="youtubeVideoContainerInBlog">
