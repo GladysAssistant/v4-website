@@ -15,6 +15,16 @@ Si vous préférez acheter un mini-PC par vous-même, le Beelink Mini S13 est un
 
 ## Installation d’Ubuntu Server sur le mini-PC
 
+:::warning[Branchez votre mini-PC en Ethernet sur votre box avant de démarrer l'installation !]
+
+**C'est indispensable.** Si le mini-PC n'est pas connecté au réseau pendant l'installation d'Ubuntu Server, l'installeur ne pourra pas télécharger les paquets nécessaires, et **l'option « Install OpenSSH server » ne sera pas disponible**.
+
+Sans OpenSSH, vous ne pourrez pas vous connecter à distance à votre mini-PC pour installer Docker et Gladys, et vous devrez recommencer toute l'installation.
+
+Donc : branchez **d'abord** le câble Ethernet, puis lancez l'installation, et pensez bien à cocher la case **« Install OpenSSH server »** pendant la configuration.
+
+:::
+
 J’ai réalisé une vidéo détaillant étape par étape l’installation d’Ubuntu Server sur un mini-PC :
 
 <div class="youtubeVideoContainerInBlog">
