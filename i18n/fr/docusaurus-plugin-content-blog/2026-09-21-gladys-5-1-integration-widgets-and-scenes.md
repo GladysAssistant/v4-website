@@ -136,7 +136,7 @@ Entre la 5.0 et aujourd'hui, quatre versions correctives sont sorties — 5.0.1,
 
 Merci à [@cicoub13](https://github.com/cicoub13), [@William-De71](https://github.com/William-De71), [@vincentBesseau](https://github.com/vincentBesseau) et **Nestor Alonso Torres** pour le code de cette version, et à tous ceux qui publient des intégrations externes — le catalogue est à **81** et il continue de monter.
 
-Si vous voulez en construire une, [le guide développeur est ici](/docs/dev/external-integrations/), et vous pouvez maintenant lui donner un widget et quelques déclencheurs de scène au passage.
+Si vous voulez en construire une, [le guide développeur est ici](/docs/dev/external-integrations/) — et vous pouvez maintenant lui donner un widget et quelques déclencheurs de scène au passage. Le guide n'a pas encore rattrapé ces deux nouveautés ; en attendant, leurs champs de manifeste, leurs charges utiles et leurs limites sont spécifiés en détail dans [la spécification des intégrations externes](https://github.com/GladysAssistant/Gladys/tree/master/docs/specs/external-integrations/capabilities).
 
 Comme toujours, Gladys se met à jour automatiquement sous 24 h si vous utilisez Watchtower, sinon vous pouvez le faire en un clic depuis les paramètres.
 

@@ -136,7 +136,7 @@ Between 5.0 and today, four patch releases went out — 5.0.1, 5.0.2, 5.0.3 and 
 
 Thanks to [@cicoub13](https://github.com/cicoub13), [@William-De71](https://github.com/William-De71), [@vincentBesseau](https://github.com/vincentBesseau) and **Nestor Alonso Torres** for the code in this release, and to everyone publishing external integrations — the catalog is at **81** and it is still going up.
 
-If you want to build one, [the developer guide is here](/docs/dev/external-integrations/), and you can now give it a widget and a few scene triggers while you are at it.
+If you want to build one, [the developer guide is here](/docs/dev/external-integrations/) — and you can now give it a widget and a few scene triggers while you are at it. The guide has not caught up with those two yet; in the meantime, their manifest fields, their payloads and their limits are specified in full in [the external integrations specification](https://github.com/GladysAssistant/Gladys/tree/master/docs/specs/external-integrations/capabilities).
 
 As always, Gladys updates automatically within 24 hours if you use Watchtower, otherwise you can do it in one click from the settings.
 
