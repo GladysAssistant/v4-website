@@ -142,4 +142,4 @@ Comme toujours, Gladys se met à jour automatiquement sous 24 h si vous utilisez
 
 Pensez à configurer Telegram pour recevoir une alerte sur votre téléphone quand Gladys se met à jour !
 
-Le CHANGELOG complet est disponible [ici](https://github.com/GladysAssistant/Gladys/releases/tag/v5.1.0).
+Le [CHANGELOG complet de la 5.1.0](https://github.com/GladysAssistant/Gladys/releases/tag/v5.1.0) est sur GitHub.

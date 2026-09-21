@@ -142,4 +142,4 @@ As always, Gladys updates automatically within 24 hours if you use Watchtower, o
 
 Remember to set up Telegram to get an alert on your phone when Gladys updates!
 
-The full CHANGELOG is available [here](https://github.com/GladysAssistant/Gladys/releases/tag/v5.1.0).
+The [full CHANGELOG of 5.1.0](https://github.com/GladysAssistant/Gladys/releases/tag/v5.1.0) is on GitHub.
