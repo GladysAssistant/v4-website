@@ -163,6 +163,11 @@ Enregistrez vos gestionnaires d'événements **avant** d'appeler `connect()`.
 - `publishState(featureExternalId, value)` : publie une mise à jour d'état unique — un nombre, `{ text }` pour une fonctionnalité textuelle, ou `{ state, created_at }` pour enregistrer un état passé.
 - `publishStates(states)` : publie un lot de mises à jour (jusqu'à 100 par requête). L'API hôte limite les mises à jour d'état à **300 états par minute** par intégration, publiez donc des *changements* d'état, pas des instantanés complets.
 
+**Scènes et widgets**
+
+- `publishSceneEvent(key, data?)` : déclenche un de vos déclencheurs de scène déclarés (voir Déclencheurs et actions de scène).
+- `requestWidgetRefresh(key)` : demande au cœur de redemander un de vos widgets tout de suite (voir Widgets de tableau de bord).
+
 La limite est dimensionnée pour des changements : gardez la dernière valeur envoyée pour chaque fonctionnalité et ne publiez que ce qui a réellement bougé :
 
 ```js
@@ -194,6 +199,8 @@ await gladys.publishStates(
 - `onSendMessage(cb)` : délivrer un message à un contact (voir Canaux de messagerie).
 - `onWeatherGet(cb)` / `onWeatherGetImage(cb)` : Gladys demande la météo, ou une image du fournisseur (voir Fournisseurs météo).
 - `onWebhook(key, cb)` / `onWebhookUpdated(cb)` : webhooks entrants (voir Webhooks entrants).
+- `onSceneAction(key, cb)` : une scène a atteint une de vos actions de scène déclarées (voir Déclencheurs et actions de scène).
+- `onWidgetGet(key, cb)` / `onWidgetAction(key, cb)` / `onWidgetGetImage(cb)` : contenu d'un widget de tableau de bord, appuis sur ses boutons et images (voir Widgets de tableau de bord).
 
 **Réseau**
 
@@ -607,6 +614,168 @@ onUpstreamVigilanceChange(() => gladys.requestWeatherRefresh());
 
 Rien d'autre n'est requis de votre côté : le déclencheur de scène sur alerte météo appartient au cœur et fonctionne à l'identique avec tous les fournisseurs.
 
+### Widgets de tableau de bord
+
+*Nécessite Gladys 5.1.0 ou plus récent.*
+
+Beaucoup de ce que sait une intégration n'est pas un appareil : une prévision de production, un plan de charge, la station la moins chère du coin, l'état d'un aspirateur robot. Déclarez jusqu'à cinq `widgets` dans votre manifeste et Gladys les place dans le sélecteur de widgets de l'éditeur de tableau de bord, dans leur propre section, sous le nom de votre intégration.
+
+```json
+"widgets": [
+  {
+    "key": "charging_plan",
+    "label": { "en": "Charging plan", "fr": "Plan de charge" },
+    "description": { "en": "When the car will charge tonight.", "fr": "Quand la voiture va charger cette nuit." },
+    "icon": "battery-charging",
+    "settings": [
+      { "key": "car", "type": "select", "source": "devices", "label": { "en": "Car", "fr": "Voiture" } }
+    ],
+    "action_timeout_seconds": 30
+  }
+]
+```
+
+Le manifeste déclare l'**identité** du widget : sa `key`, son `label` multilingue (3 à 30 caractères), une `description` et une icône Feather optionnelles, et jusqu'à dix `settings` par instance, dans la grammaire du `config_schema`. Ces réglages vivent dans le JSON du tableau de bord, que tous les utilisateurs d'un tableau partagé peuvent lire : les champs `secret`, `oauth2` et `account_link` y sont donc refusés. Un réglage `source: "devices"` est la bonne façon de lier une instance de widget à l'un de vos appareils.
+
+Le **contenu**, lui, est produit à la volée et pas stocké dans le manifeste, ce qui permet à un aspirateur en train de nettoyer de renvoyer une carte différente d'un aspirateur sur sa base :
+
+```js
+gladys.onWidgetGet("charging_plan", async ({ settings, language, units }) => {
+  const plan = await computePlan(settings.car);
+  return {
+    ttl_seconds: 300,
+    components: [
+      { type: "text", variant: "caption", text: { en: "Off-peak hours", fr: "Heures creuses" } },
+      { type: "value", value: plan.targetPercent, unit: "%", label: { en: "Target", fr: "Objectif" }, color: "success" },
+      { type: "chart", chart_type: "area", unit: "kW", now_marker: true, series: [{ points: plan.points }] },
+      { type: "button", label: { en: "Charge now", fr: "Charger maintenant" }, style: "primary",
+        action: { key: "charge_now", params: {} } },
+    ],
+  };
+});
+```
+
+Gladys récupère le contenu quand un tableau de bord affiche le widget, le met en cache par réglages, langue et unités, puis le redemande à l'expiration du `ttl_seconds` (10 à 3600 secondes, 60 par défaut). Votre handler est attendu pendant 15 secondes maximum.
+
+**Vous décrivez quoi afficher, Gladys décide de quoi ça a l'air.** Pas de HTML, pas de CSS, pas de script, pas de couleurs ni de tailles personnalisées. Vous envoyez un arbre de contenu dans un vocabulaire fixe et le cœur fait le rendu, ce qui donne à chaque widget le thème courant, le mode sombre, la mise en page mobile, la langue et les formats de nombres de l'utilisateur, et la compatibilité avec les évolutions de l'interface.
+
+Le vocabulaire compte huit types de composants :
+
+| `type` | Rendu |
+| --- | --- |
+| `text` | Un `heading`, un paragraphe `body` ou une légende `caption` discrète, en texte brut échappé. |
+| `value` | Une tuile : une valeur courte, avec `unit`, `label`, `icon` et `color` sémantique optionnels. |
+| `gauge` | Un arc radial de la taille d'une tuile, entre `min` et `max`. |
+| `status` | 1 à 10 lignes libellé/valeur avec une pastille de couleur. |
+| `chart` | 1 à 4 séries d'au plus 300 points, ou 1 à 4 de vos `device_features` sur un `interval`, avec jusqu'à 8 `annotations` et un `now_marker` optionnel. |
+| `card-list` | 1 à 12 cartes en `grid`, ou 1 à 8 lignes en `list`, chacune avec titre, date, image, badge, description et jusqu'à 3 liens. |
+| `image` | Une image dans un cadre 16:9 fixe. |
+| `button` | Une pastille portant exactement un `action`, un `device_feature` + `value`, ou un `link` https. |
+
+Les couleurs sont une énumération sémantique (`neutral`, `primary`, `success`, `warning`, `danger`, `info`) que le cœur transpose dans le thème, dans les deux modes, jamais une valeur hexadécimale. Chaque champ texte accepte une chaîne simple ou un objet multilingue. Les dates sont des chaînes ISO 8601 que le cœur formate dans la locale et le fuseau horaire de l'utilisateur.
+
+Une carte a aussi un **budget de contenu**, pour qu'un widget ne puisse pas être surchargé par construction : au plus 8 composants, 1 composant principal (`chart`, `card-list` ou `image`), 6 tuiles, 2 textes dont un `body`, 1 `status` et 4 boutons. Tout ce qui dépasse une limite est retiré dans l'ordre du contenu, donc mettez l'important en premier. Le cœur impose également l'ordre d'affichage (en-tête, tuiles, composant principal, états, boutons), quel que soit l'ordre que vous envoyez.
+
+Trois choses de plus qu'un widget sait faire :
+
+```js
+// Un bouton qui vous rappelle. `params` vient du contenu que vous avez envoyé, jamais d'une saisie utilisateur.
+gladys.onWidgetAction("charging_plan", async (actionKey, params, { settings }) => {
+  await startCharge(settings.car);
+  return { en: "Charging started", fr: "Charge lancée" };
+});
+
+// Une image déclarée dans le contenu, servie par Gladys plutôt que récupérée chez un tiers.
+gladys.onWidgetGetImage(async (imageKey) => toBase64(await renderMap(imageKey)));
+
+// « Redemande-moi maintenant », quand vos données ont changé avant l'expiration du TTL.
+gladys.requestWidgetRefresh("charging_plan");
+```
+
+- `onWidgetAction(key, cb)` : renvoie un message toast optionnel, attendu pendant l'`action_timeout_seconds` du widget (5 à 120, 30 par défaut). Après une action réussie, le cœur jette le contenu en cache et tous les tableaux de bord ouverts le redemandent.
+- `onWidgetGetImage(cb)` : enregistré une seule fois pour toutes vos clés d'image. Renvoyez du base64 brut (sans préfixe `data:`) d'un PNG, JPEG ou WebP, d'au plus 300 Ko décodés et 4096 par 4096 pixels. Le cœur valide et refuse, il ne recompresse jamais : redimensionnez de votre côté. Une image validée est mise en cache une heure par clé, donc quand les octets changent, changez la clé.
+- `requestWidgetRefresh(key)` : envoi sans réponse, limité à un par 10 secondes et par widget. Les tuiles et les graphiques liés à une fonctionnalité d'appareil se mettent à jour tout seuls et n'en ont pas besoin.
+
+Votre contenu n'est jamais considéré comme fiable : le cœur le normalise et le borne avant qu'il atteigne l'interface, en retirant les types de composants et les champs inconnus, en tronquant les textes, en limitant les tableaux et en n'acceptant que les liens `https`. Lancez votre intégration avec `DEBUG=gladys-integration-sdk` et le SDK journalise ce que le cœur retirerait ou tronquerait, ou appelez directement `validateWidgetContent(content)` et `validateWidgetImage(base64)` dans vos tests.
+
+### Déclencheurs et actions de scène
+
+*Nécessite Gladys 5.1.0 ou plus récent.*
+
+Une fonctionnalité d'appareil est un **état**, et `POST /state` couvre très bien ce cas. Ce qu'elle ne couvre pas, c'est ce qui **arrive** : une plaque d'immatriculation reconnue dans l'allée, une sonnette pressée, un tag NFC scanné. Et écrire une valeur n'est pas la même chose que lancer une **opération** avec des paramètres et un résultat, comme « prends un instantané et donne-moi l'image ».
+
+Déclarez `scene_triggers` et `scene_actions` dans votre manifeste (jusqu'à 20 de chaque) et ils apparaissent dans l'éditeur de scènes à côté de ceux de Gladys, dans une catégorie « Intégrations ». N'importe quel type d'intégration peut en déclarer.
+
+```json
+"scene_triggers": [
+  {
+    "key": "object_detected",
+    "label": { "en": "Object detected", "fr": "Objet détecté" },
+    "fields": [
+      { "key": "camera", "type": "select", "source": "devices", "required": true,
+        "label": { "en": "Camera", "fr": "Caméra" } },
+      { "key": "zone", "type": "string", "label": { "en": "Zone", "fr": "Zone" } }
+    ],
+    "variables": [
+      { "key": "label", "type": "string", "label": { "en": "Object type", "fr": "Type d'objet" } },
+      { "key": "score", "type": "number", "label": { "en": "Confidence", "fr": "Confiance" } }
+    ]
+  }
+],
+"scene_actions": [
+  {
+    "key": "create_snapshot",
+    "label": { "en": "Take a snapshot", "fr": "Prendre un instantané" },
+    "timeout_seconds": 20,
+    "fields": [
+      { "key": "camera", "type": "select", "source": "devices", "required": true,
+        "label": { "en": "Camera", "fr": "Caméra" } }
+    ],
+    "outputs": [{ "key": "image", "type": "string", "label": { "en": "Snapshot", "fr": "Instantané" } }]
+  }
+]
+```
+
+`fields` utilise la même grammaire plate que le `config_schema` (10 au maximum par déclaration) et Gladys en génère le formulaire dans l'éditeur de scènes. Sur un déclencheur, ces champs sont les **filtres** que l'auteur de la scène configure, et un champ laissé vide accepte n'importe quelle valeur. Les `variables` (20 au maximum) sont les détails que porte votre événement, exposés aux étapes suivantes de la scène sous la forme `{{triggerEvent.data.<key>}}`. Sur une action, les `outputs` sont les valeurs que vous renvoyez, disponibles pour les étapes d'après.
+
+On déclenche avec `publishSceneEvent` :
+
+```js
+await gladys.publishSceneEvent("object_detected", {
+  camera: ids.device,
+  label: "person",
+  zone: "driveway",
+  score: 0.92,
+});
+```
+
+`data` est plat : 30 clés au maximum, chacune une chaîne d'au plus 1 000 caractères, un nombre fini, un booléen ou `null`. Jamais d'objet imbriqué ni de tableau, parce qu'un événement porte des détails, pas une charge utile à interpréter. Le cœur construit les filtres et les variables à partir de votre déclaration, compare les filtres à ce que chaque auteur de scène a configuré, et lance les scènes qui correspondent. Envoyez un événement **par transition**, pas un instantané périodique : la limite est de 300 événements par minute et par intégration.
+
+**Vous n'apprenez jamais quelles scènes existent.** Vous émettez un événement typé, le cœur fait la correspondance. Il n'y a rien à fuiter, rien à resynchroniser quand vous vous reconnectez, et la configuration de l'utilisateur reste dans Gladys. Un `publishSceneEvent` résolu veut dire « accepté et évalué une fois », pas « une scène s'est exécutée ». La correspondance se fait par égalité et appartenance sur les champs déclarés, rien de plus : pas d'opérateur, pas de seuil, pas de durée. Si vous avez besoin d'un `>` sur une valeur, c'est que cette valeur est un état et qu'elle a sa place sur une fonctionnalité d'appareil.
+
+On traite une action avec `onSceneAction` :
+
+```js
+gladys.onSceneAction("create_snapshot", async (fields) => {
+  const image = await grabSnapshot(fields.camera);
+  return { image };
+});
+```
+
+Les champs arrivent **résolus** : variables de scène substituées, valeurs par défaut appliquées, validation faite par le cœur contre votre déclaration. Renvoyez un objet de vos `outputs` déclarés (des scalaires uniquement, chaînes plafonnées à 10 000 caractères) ou rien. Votre handler est attendu pendant le `timeout_seconds` déclaré (5 à 120, 30 par défaut), compté à partir du moment où la scène atteint l'action. Lever une exception fait échouer cette action uniquement : la scène le journalise et continue. Une action est émise une seule fois, sans file d'attente ni réessai.
+
+Une image n'est pas un output : publiez-la avec `publishCameraImage` et laissez la scène utiliser les actions caméra du cœur.
+
+### Intégrations sans appareil : le type `provider`
+
+*Nécessite Gladys 5.1.0 ou plus récent.*
+
+Certaines intégrations n'ont aucun appareil. Un indice de prix des carburants, un flux de sorties cinéma, une passerelle qui ne fait que relayer des événements : tout leur contrat tient dans ce qu'elles déclarent. Celles-là utilisent `"type": "provider"`, qui doit déclarer au moins un champ parmi `widgets`, `scene_triggers` et `scene_actions`.
+
+Une intégration `provider` a les écrans Configuration, Supervision et Logs, et pas d'onglet Appareils ni Découverte, exactement comme les types `communication` et `weather`. Tout le reste du manifeste fonctionne de la même façon.
+
+Les widgets et les déclarations de scène sont des **capacités, pas des types** : une intégration `device` peut aussi en déclarer, et devrait souvent le faire. Une intégration d'aspirateur robot publie ses appareils, un widget pour son état et une action de scène « nettoyer une pièce », le tout depuis le même manifeste.
+
 ### Coordonnées des maisons
 
 *Nécessite Gladys 4.85.0 ou ultérieur.*
@@ -687,7 +856,7 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | Champ | Requis | Description |
 | --- | --- | --- |
 | `manifest_version` | Oui | Doit valoir `1`. |
-| `type` | Oui | `"device"` (expose des appareils), `"communication"` (un canal de messagerie) ou `"weather"` (un fournisseur météo). |
+| `type` | Oui | `"device"` (expose des appareils), `"communication"` (un canal de messagerie), `"weather"` (un fournisseur météo) ou `"provider"` (aucun appareil, uniquement des capacités). |
 | `name` | Oui | Nom d'affichage, de 3 à 30 caractères. |
 | `description` | Oui | Un objet indexé par langue. `en` est obligatoire, chaque texte fait de 10 à 100 caractères. |
 | `version` | Oui | [Version sémantique](https://semver.org/) stricte. L'incrémenter notifie les utilisateurs qu'une mise à jour est disponible. |
@@ -705,6 +874,9 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | `messaging` | Obligatoire pour `communication` | `{ "receive": true }` pour un canal de chat bidirectionnel, `{ "receive": false }` pour un canal de notification en envoi seul. Interdit pour les autres types. |
 | `contact_schema` | Obligatoire quand `messaging.receive` vaut `false` | Les identifiants propres à chaque utilisateur d'un canal en envoi seul, même format de champs que `config_schema` (hors champs `oauth2`). Interdit sinon. |
 | `webhooks` | Non | Jusqu'à 3 webhooks entrants (Gladys Plus), chacun avec une `key`, un `label` multilingue, et un `mode` (`fire_and_forget` ou `sync`). |
+| `widgets` | Non | 1 à 5 widgets de tableau de bord, chacun avec une `key`, un `label` multilingue, une `description` et une `icon` optionnelles, jusqu'à 10 `settings` et un `action_timeout_seconds` (5 à 120). Nécessite un `gladys_version` qui démarre à `5.1.0`. |
+| `scene_triggers` | Non | 1 à 20 déclencheurs de scène, chacun avec une `key`, un `label` multilingue, jusqu'à 10 `fields` et jusqu'à 20 `variables`. Nécessite un `gladys_version` qui démarre à `5.1.0`. |
+| `scene_actions` | Non | 1 à 20 actions de scène, chacune avec une `key`, un `label` multilingue, un `timeout_seconds` (5 à 120), jusqu'à 10 `fields` et jusqu'à 20 `outputs`. Nécessite un `gladys_version` qui démarre à `5.1.0`. |
 
 ### Catégories du store
 

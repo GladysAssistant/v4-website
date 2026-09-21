@@ -157,6 +157,11 @@ Register your event handlers **before** calling `connect()`.
 - `publishState(featureExternalId, value)`: publishes a single state update — a number, `{ text }` for a text feature, or `{ state, created_at }` to record a past state.
 - `publishStates(states)`: publishes a batch of updates (up to 100 per request). The host API rate-limits state updates at **300 states per minute** per integration, so publish state *changes*, not full snapshots.
 
+**Scenes and widgets**
+
+- `publishSceneEvent(key, data?)`: fires one of your declared scene triggers (see Scene triggers and actions).
+- `requestWidgetRefresh(key)`: asks the core to re-pull one of your widgets now (see Dashboard widgets).
+
 The limit is sized for changes, so keep the last value you sent for each feature and publish only what actually moved:
 
 ```js
@@ -188,6 +193,8 @@ await gladys.publishStates(
 - `onSendMessage(cb)`: deliver a message to a contact (see Messaging channels).
 - `onWeatherGet(cb)` / `onWeatherGetImage(cb)`: Gladys asks for the weather, or for a provider image (see Weather providers).
 - `onWebhook(key, cb)` / `onWebhookUpdated(cb)`: incoming webhooks (see Incoming webhooks).
+- `onSceneAction(key, cb)`: a scene reached one of your declared scene actions (see Scene triggers and actions).
+- `onWidgetGet(key, cb)` / `onWidgetAction(key, cb)` / `onWidgetGetImage(cb)`: dashboard widget content, button presses and images (see Dashboard widgets).
 
 **Network**
 
@@ -601,6 +608,168 @@ onUpstreamVigilanceChange(() => gladys.requestWeatherRefresh());
 
 Nothing else is required on your side: the weather-alert scene trigger is owned by the core and works identically with every provider.
 
+### Dashboard widgets
+
+*Requires Gladys 5.1.0 or later.*
+
+A lot of what an integration knows is not a device: a production forecast, a charging plan, the cheapest station around, the state of a robot vacuum. Declare up to five `widgets` in your manifest and Gladys puts them in the widget picker of the dashboard editor, in their own section, under your integration name.
+
+```json
+"widgets": [
+  {
+    "key": "charging_plan",
+    "label": { "en": "Charging plan", "fr": "Plan de charge" },
+    "description": { "en": "When the car will charge tonight.", "fr": "Quand la voiture va charger cette nuit." },
+    "icon": "battery-charging",
+    "settings": [
+      { "key": "car", "type": "select", "source": "devices", "label": { "en": "Car", "fr": "Voiture" } }
+    ],
+    "action_timeout_seconds": 30
+  }
+]
+```
+
+The manifest declares the widget's **identity**: its `key`, its multi-language `label` (3 to 30 characters), an optional `description` and Feather `icon`, and up to ten per-instance `settings` in the `config_schema` grammar. Settings live in the dashboard JSON, which every user of a shared dashboard can read, so `secret`, `oauth2` and `account_link` fields are refused there. A `source: "devices"` setting is the intended way to bind one widget instance to one of your devices.
+
+The **content** is produced at runtime, not stored in the manifest, so a vacuum that is cleaning can return a different card than a vacuum on its dock:
+
+```js
+gladys.onWidgetGet("charging_plan", async ({ settings, language, units }) => {
+  const plan = await computePlan(settings.car);
+  return {
+    ttl_seconds: 300,
+    components: [
+      { type: "text", variant: "caption", text: { en: "Off-peak hours", fr: "Heures creuses" } },
+      { type: "value", value: plan.targetPercent, unit: "%", label: { en: "Target", fr: "Objectif" }, color: "success" },
+      { type: "chart", chart_type: "area", unit: "kW", now_marker: true, series: [{ points: plan.points }] },
+      { type: "button", label: { en: "Charge now", fr: "Charger maintenant" }, style: "primary",
+        action: { key: "charge_now", params: {} } },
+    ],
+  };
+});
+```
+
+Gladys pulls the content when a dashboard shows the widget, caches it per settings, language and units, and re-pulls it when `ttl_seconds` expires (10 to 3600 seconds, default 60). Your handler is awaited under 15 seconds.
+
+**You describe what to show, Gladys decides how it looks.** No HTML, no CSS, no script, no custom colors or sizes. You send a content tree in a fixed vocabulary and the core renders it, which is what gives every widget the current theme, dark mode, the mobile layout, the user's language and number formats, and forward compatibility when the interface changes.
+
+The vocabulary has eight component types:
+
+| `type` | What it renders |
+| --- | --- |
+| `text` | A `heading`, a `body` paragraph or a muted `caption`, as escaped plain text. |
+| `value` | A tile: one short value, an optional `unit`, `label`, `icon` and semantic `color`. |
+| `gauge` | A tile-sized radial arc between `min` and `max`. |
+| `status` | 1 to 10 label/value rows with a colored dot. |
+| `chart` | 1 to 4 series of up to 300 points, or 1 to 4 of your `device_features` over an `interval`, with up to 8 `annotations` and an optional `now_marker`. |
+| `card-list` | 1 to 12 cards in a `grid`, or 1 to 8 rows in a `list`, each with a title, date, image, badge, description and up to 3 links. |
+| `image` | One image in a fixed 16:9 frame. |
+| `button` | A pill carrying exactly one of `action`, `device_feature` + `value`, or an https `link`. |
+
+Colors are a semantic enum (`neutral`, `primary`, `success`, `warning`, `danger`, `info`) that the core maps to the theme in both modes, never a hex value. Every text field accepts a plain string or a multi-language object. Dates are ISO 8601 strings that the core formats in the user's locale and timezone.
+
+A card also has a **content budget**, so a widget cannot be cluttered by construction: at most 8 components, 1 focal component (`chart`, `card-list` or `image`), 6 tiles, 2 texts of which one `body`, 1 `status` and 4 buttons. Anything beyond a cap is dropped in content order, so put what matters first. The core also imposes the display order (header, tiles, focal component, states, buttons) whatever the order you send.
+
+Three more things a widget can do:
+
+```js
+// A button that calls you back. `params` come from the content you sent, never from user input.
+gladys.onWidgetAction("charging_plan", async (actionKey, params, { settings }) => {
+  await startCharge(settings.car);
+  return { en: "Charging started", fr: "Charge lancée" };
+});
+
+// An image declared in the content, served through Gladys rather than fetched from a third party.
+gladys.onWidgetGetImage(async (imageKey) => toBase64(await renderMap(imageKey)));
+
+// "Re-pull me now", when your data changed before the TTL expired.
+gladys.requestWidgetRefresh("charging_plan");
+```
+
+- `onWidgetAction(key, cb)`: returns an optional toast message, awaited under the widget's `action_timeout_seconds` (5 to 120, default 30). After a successful action the core drops the cached content and every open dashboard refetches.
+- `onWidgetGetImage(cb)`: registered once for all your image keys. Resolve raw base64 (no `data:` prefix) of a PNG, JPEG or WebP, at most 300 KB decoded and 4096 by 4096 pixels. The core validates and refuses, it never recompresses, so resize on your side. A validated image is cached for one hour by key: when the bytes change, change the key.
+- `requestWidgetRefresh(key)`: fire-and-forget, rate-limited to one per 10 seconds per widget. Tiles and charts bound to a device feature update on their own and need no nudge.
+
+Your payload is never trusted: the core normalizes and bounds everything before it reaches the interface, dropping unknown component types and fields, truncating texts, capping arrays, and accepting `https` links only. Run your integration with `DEBUG=gladys-integration-sdk` and the SDK logs what the core would drop or truncate, or call `validateWidgetContent(content)` and `validateWidgetImage(base64)` directly in your tests.
+
+### Scene triggers and actions
+
+*Requires Gladys 5.1.0 or later.*
+
+A device feature is a **state**, and `POST /state` covers it well. What it does not cover is what **happens**: a plate recognized on the driveway, a doorbell pressed, an NFC tag scanned. And writing a value is not the same as running an **operation** with parameters and a result, like "take a snapshot and give me the image".
+
+Declare `scene_triggers` and `scene_actions` in your manifest (up to 20 of each) and they appear in the scene editor next to the built-in ones, in an "Integrations" category. Any integration type can declare them.
+
+```json
+"scene_triggers": [
+  {
+    "key": "object_detected",
+    "label": { "en": "Object detected", "fr": "Objet détecté" },
+    "fields": [
+      { "key": "camera", "type": "select", "source": "devices", "required": true,
+        "label": { "en": "Camera", "fr": "Caméra" } },
+      { "key": "zone", "type": "string", "label": { "en": "Zone", "fr": "Zone" } }
+    ],
+    "variables": [
+      { "key": "label", "type": "string", "label": { "en": "Object type", "fr": "Type d'objet" } },
+      { "key": "score", "type": "number", "label": { "en": "Confidence", "fr": "Confiance" } }
+    ]
+  }
+],
+"scene_actions": [
+  {
+    "key": "create_snapshot",
+    "label": { "en": "Take a snapshot", "fr": "Prendre un instantané" },
+    "timeout_seconds": 20,
+    "fields": [
+      { "key": "camera", "type": "select", "source": "devices", "required": true,
+        "label": { "en": "Camera", "fr": "Caméra" } }
+    ],
+    "outputs": [{ "key": "image", "type": "string", "label": { "en": "Snapshot", "fr": "Instantané" } }]
+  }
+]
+```
+
+`fields` uses the same flat grammar as `config_schema` (up to 10 per declaration) and Gladys generates the form in the scene editor from it. On a trigger, those fields are the **filters** the scene author configures; a field left empty matches any value. `variables` (up to 20) are the details your event carries, exposed to the following steps of the scene as `{{triggerEvent.data.<key>}}`. On an action, `outputs` are the values you return, available to the steps after it.
+
+Fire a trigger with `publishSceneEvent`:
+
+```js
+await gladys.publishSceneEvent("object_detected", {
+  camera: ids.device,
+  label: "person",
+  zone: "driveway",
+  score: 0.92,
+});
+```
+
+`data` is flat: at most 30 keys, each a string of up to 1,000 characters, a finite number, a boolean or `null`. Never a nested object or an array, because an event carries details, not a payload to interpret. The core builds the filters and the variables from your declaration, compares the filters against what each scene author configured, and starts the scenes that match. Send one event **per transition**, not a periodic snapshot: the limit is 300 events per minute per integration.
+
+**You never learn which scenes exist.** You fire a typed event, the core does the matching. There is nothing to leak, nothing to resynchronize when you reconnect, and the user's configuration stays in Gladys. A resolved `publishSceneEvent` means "accepted and evaluated once", not "a scene ran". Matching is equality and membership on the declared fields, nothing more: no operator, no threshold, no duration. If you need `>` on a value, that value is a state and belongs on a device feature.
+
+Handle an action with `onSceneAction`:
+
+```js
+gladys.onSceneAction("create_snapshot", async (fields) => {
+  const image = await grabSnapshot(fields.camera);
+  return { image };
+});
+```
+
+The fields arrive **resolved**: scene variables substituted, defaults applied, validated by the core against your declaration. Return an object of your declared `outputs` (scalars only, strings capped at 10,000 characters) or nothing. Your handler is awaited under the declared `timeout_seconds` (5 to 120, default 30), counted from the moment the scene reaches the action. Throwing fails that action only: the scene logs it and carries on. An action is emitted once, with no queue and no retry.
+
+An image is not an output: publish it through `publishCameraImage` and let the scene use the core's camera actions.
+
+### Integrations with no devices: the `provider` type
+
+*Requires Gladys 5.1.0 or later.*
+
+Some integrations have no device at all. A fuel-price index, a cinema release feed, a bridge that only forwards events: their whole contract is what they declare. Those use `"type": "provider"`, which must declare at least one of `widgets`, `scene_triggers` or `scene_actions`.
+
+A `provider` integration gets the Configuration, Supervision and Logs screens, and no Devices or Discovery tab, exactly like the `communication` and `weather` types. Everything else in the manifest works the same way.
+
+Widgets and scene declarations are **capabilities, not types**: a `device` integration can declare them too, and usually should. A robot vacuum integration publishes its devices, a widget for its state and a "clean a room" scene action, all from the same manifest.
+
 ### House coordinates
 
 *Requires Gladys 4.85.0 or later.*
@@ -681,7 +850,7 @@ Every external integration is described by a single file named `gladys-assistant
 | Field | Required | Description |
 | --- | --- | --- |
 | `manifest_version` | Yes | Must be `1`. |
-| `type` | Yes | `"device"` (exposes devices), `"communication"` (a messaging channel) or `"weather"` (a weather provider). |
+| `type` | Yes | `"device"` (exposes devices), `"communication"` (a messaging channel), `"weather"` (a weather provider) or `"provider"` (no device, capabilities only). |
 | `name` | Yes | Display name, 3 to 30 characters. |
 | `description` | Yes | An object keyed by language. `en` is mandatory, each text is 10 to 100 characters. |
 | `version` | Yes | Strict [semantic version](https://semver.org/). Bumping it notifies users an update is available. |
@@ -699,6 +868,9 @@ Every external integration is described by a single file named `gladys-assistant
 | `messaging` | Mandatory for `communication` | `{ "receive": true }` for a bidirectional chat channel, `{ "receive": false }` for a send-only notification channel. Forbidden for the other types. |
 | `contact_schema` | Mandatory when `messaging.receive` is `false` | The per-user credentials of a send-only channel, same field format as `config_schema` (minus `oauth2` fields). Forbidden otherwise. |
 | `webhooks` | No | Up to 3 incoming webhooks (Gladys Plus), each with a `key`, a multi-language `label`, and a `mode` (`fire_and_forget` or `sync`). |
+| `widgets` | No | 1 to 5 dashboard widgets, each with a `key`, a multi-language `label`, an optional `description`, `icon`, up to 10 `settings` and an `action_timeout_seconds` (5 to 120). Requires a `gladys_version` range starting at `5.1.0`. |
+| `scene_triggers` | No | 1 to 20 scene triggers, each with a `key`, a multi-language `label`, up to 10 `fields` and up to 20 `variables`. Requires a `gladys_version` range starting at `5.1.0`. |
+| `scene_actions` | No | 1 to 20 scene actions, each with a `key`, a multi-language `label`, a `timeout_seconds` (5 to 120), up to 10 `fields` and up to 20 `outputs`. Requires a `gladys_version` range starting at `5.1.0`. |
 
 ### Store categories
 
