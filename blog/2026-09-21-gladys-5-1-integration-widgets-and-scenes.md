@@ -132,7 +132,7 @@ That makes almost 70 pull requests since version 5.0, 23 of them in this release
 
 Thanks to [@cicoub13](https://github.com/cicoub13), [@William-De71](https://github.com/William-De71), [@vincentBesseau](https://github.com/vincentBesseau) and Nestor Alonso Torres for the code in this release, and to everyone publishing external integrations. The catalog is at 81 and it keeps growing.
 
-If you want to write your own, [the developer guide is here](/docs/dev/external-integrations/). It does not cover widgets and scene declarations yet, in the meantime everything is detailed in [the external integrations specification](https://github.com/GladysAssistant/Gladys/tree/master/docs/specs/external-integrations/capabilities).
+If you want to write your own, [the developer guide is here](/docs/dev/external-integrations/). It now covers widgets and scene declarations, with the manifest fields, the content vocabulary, the limits and the SDK methods.
 
 See you on [the forum](https://community.gladysassistant.com/) if you want to talk about this release :)
 

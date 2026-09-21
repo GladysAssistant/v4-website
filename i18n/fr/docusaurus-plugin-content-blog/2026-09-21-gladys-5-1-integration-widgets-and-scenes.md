@@ -132,7 +132,7 @@ Entre la 5.0 et aujourd'hui, quatre versions correctives sont sorties (5.0.1 à 
 
 Merci à [@cicoub13](https://github.com/cicoub13), [@William-De71](https://github.com/William-De71), [@vincentBesseau](https://github.com/vincentBesseau) et Nestor Alonso Torres pour le code de cette version, et à tous ceux qui publient des intégrations externes. Le catalogue est à 81 et il continue de monter.
 
-Si vous voulez écrire la vôtre, [le guide développeur est ici](/docs/dev/external-integrations/). Il ne couvre pas encore les widgets et les déclarations de scène, en attendant tout est détaillé dans [la spécification des intégrations externes](https://github.com/GladysAssistant/Gladys/tree/master/docs/specs/external-integrations/capabilities).
+Si vous voulez écrire la vôtre, [le guide développeur est ici](/docs/dev/external-integrations/). Il couvre maintenant les widgets et les déclarations de scène, avec les champs de manifeste, le vocabulaire de contenu, les limites et les méthodes du SDK.
 
 On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette version :)
 
