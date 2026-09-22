@@ -20,6 +20,7 @@ module.exports = {
         "installation/docker-compose",
         "installation/synology",
         "installation/unraid",
+        "installation/easypanel",
         {
           id: "installation/freebox-delta",
           type: "doc",
