@@ -51,6 +51,14 @@ integration does not publish it — Gladys would send a "low battery" alert for 
 phone that is nowhere near empty — and keeps the last level it knew instead,
 like the Find My app.
 
+The "charging" measurement is deliberately **not** in the battery category,
+although Gladys has one for it. Gladys warns "battery level under 10%" for every
+feature of the **battery category** whose value is below the threshold, whatever
+its type: a charging sensor holds 0 or 1, so it was read as "0%" and warned every
+single day on every phone. It is published as a **binary input** instead (the
+generic binary measurement of Gladys): same yes/no value, same use in a scene,
+but outside the category that check walks through.
+
 ### Ringing a device from the dashboard
 
 Every measurement above is read-only, but **Ring** is a button: put the device
@@ -156,6 +164,21 @@ zone from firing your scenes over and over because of GPS noise.
 
 ## Troubleshooting
 
+**The values are not updated any more**: look at the **Configuration** tab of
+the integration first. When the integration stops refreshing its values it now
+says so there, with the reason: Apple is asking for a new two-factor code (the
+iCloud session expired, and so did the trust granted to it), Find My is not
+answering, or nothing has been refreshed for a long while. In the first case,
+enter the new code with the **Send the two-factor code** action and the values
+start moving again straight away. In the others, the **Test the iCloud
+connection** action shows where it is stuck. The dashboard keeps the last known
+values in the meantime: they are not wrong, just old.
+
+**A device deleted then created again stays empty**: fixed. The integration now
+republishes all of its readings the moment you create it again, instead of
+taking the event for a duplicate and leaving the device empty until a value
+moved.
+
 **"iCloud connection failed: ..."**: the message repeats Apple's own answer.
 The usual causes are a changed password, an account temporarily locked after
 too many attempts, or a session that needs approving again.
@@ -192,6 +215,32 @@ nothing has been published for it for a while (48 hours by default). The
 integration re-publishes every value at least every 30 minutes, so this should
 only show up when the integration is stopped, cannot sign in to iCloud any more
 (check the Configuration tab) or when the device reports no position at all.
+
+**I used to get "battery level under 10% (current: 0%)" every day on an
+iPhone**: that was the old "Charging" measurement, filed under the battery
+category, which holds 0 whenever the phone is not plugged in. The new "Charging"
+measurement is a binary input and never feeds that old one again. The old one
+stays recorded on the devices created before: open the **Discovery** tab of the
+integration and click **Update** on that device — Gladys deletes the
+measurements that are no longer published, and the alert stops.
+
+**The "Charging" measurement says "no value received"**: two possible causes,
+and the logs say which one.
+
+1. _The device was created in Gladys before that measurement existed_ (the
+   current "Charging" one landed in 1.0.8). Gladys never adds a new measurement
+   to an already created device on its own: open the **Discovery** tab of the
+   integration and click **Update** on that device — the values are published
+   straight after that click. While the measurement is missing, the integration
+   now says so in its logs: `Gladys has no feature ...:charging-state`.
+2. _Apple gives no charging state for that device_. Find My only carries the
+   `batteryStatus` field for the devices it could reach, and an accessory
+   (AirTag, AirPods) has none at all. The integration then publishes nothing
+   rather than an invented "not charging". The **Test the iCloud connection**
+   action shows what Apple answers for each device, e.g. `John's iPhone (87%,
+charging state unknown (batteryStatus: Unknown))`, and the logs repeat it
+   whenever it changes. Nothing to fix on the Gladys side: the value comes back
+   as soon as Apple reports it again.
 
 **The "Ring" button is missing**: the device was created before the feature
 existed. Open the **Discovery** tab of the integration and click **Update** on
@@ -246,7 +295,7 @@ These are the settings Apple Device Tracker asks for in its configuration screen
 ## How to install Apple Device Tracker in Gladys
 
 1. In Gladys, open **Integrations**: Apple Device Tracker appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-appledevicetracker:1.0.5`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-appledevicetracker:1.0.10`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-appledevicetracker](https://github.com/prohand/gladys-appledevicetracker).
 

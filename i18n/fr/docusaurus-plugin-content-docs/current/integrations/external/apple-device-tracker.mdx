@@ -51,6 +51,15 @@ valeur par défaut du champ. L'intégration ne la publie donc pas — sinon Glad
 enverrait une alerte « batterie faible » sur un téléphone plein — et garde le
 dernier niveau qu'elle connaissait, comme l'application Localiser.
 
+La mesure « En charge » n'est volontairement **pas** dans la catégorie batterie,
+alors que Gladys en propose une. Gladys prévient « niveau de batterie inférieur
+à 10 % » pour **toute mesure de la catégorie batterie** sous le seuil, quel que
+soit son type : une mesure de charge vaut 0 ou 1, elle était donc lue comme
+« 0 % » et déclenchait une fausse alerte tous les jours, sur chaque téléphone.
+Elle est donc publiée comme une **entrée binaire** (la mesure binaire générique
+de Gladys) : même valeur oui/non, même usage dans une scène, mais en dehors de
+la catégorie que cette vérification parcourt.
+
 ### Faire sonner un appareil depuis le tableau de bord
 
 Toutes les mesures ci-dessus sont en lecture seule, mais **Faire sonner** est
@@ -167,6 +176,22 @@ de zone déclenche vos scènes en boucle à cause du bruit GPS.
 
 ## Dépannage
 
+**Les valeurs ne sont plus mises à jour** : regardez d'abord l'onglet
+**Configuration** de l'intégration. Quand l'intégration cesse de rafraîchir ses
+valeurs, elle le dit maintenant à cet endroit, avec la raison : Apple redemande
+un code de double authentification (la session iCloud a expiré et la confiance
+accordée à cette session aussi), Localiser ne répond plus, ou plus rien n'a été
+rafraîchi depuis un long moment. Dans le premier cas, saisissez le nouveau code
+avec l'action **Envoyer le code de double authentification** : les valeurs
+repartent aussitôt. Dans les autres, l'action **Tester la connexion iCloud**
+indique où ça coince. Le tableau de bord, lui, garde les dernières valeurs
+connues : elles ne sont pas fausses, elles sont juste anciennes.
+
+**Un appareil supprimé puis recréé reste vide** : corrigé. L'intégration
+republie désormais toutes ses mesures au moment où vous le recréez, au lieu de
+prendre l'évènement pour un doublon et de le laisser vide jusqu'au prochain
+changement de valeur.
+
 **« Connexion à iCloud impossible : ... »** : le message reprend la réponse
 d'Apple. Les causes les plus fréquentes sont un mot de passe changé, un compte
 temporairement verrouillé après trop d'essais, ou une session à réapprouver.
@@ -196,6 +221,34 @@ valeur comme périmée quand plus rien n'a été publié dessus depuis un moment
 30 minutes : ce message ne devrait donc apparaître que si l'intégration est
 arrêtée, si elle n'arrive plus à se connecter à iCloud (regardez l'onglet
 Configuration) ou si l'appareil ne remonte aucune position.
+
+**Je recevais tous les jours « niveau de batterie inférieur à 10 % (actuel :
+0 %) » sur un iPhone** : c'était l'ancienne mesure « En charge », rangée dans la
+catégorie batterie, qui vaut 0 quand le téléphone n'est pas branché. La nouvelle
+mesure « En charge » est une entrée binaire et n'alimente plus cette ancienne
+mesure. Celle-ci reste enregistrée sur les appareils créés avant : ouvrez
+l'onglet **Découverte** de l'intégration et cliquez sur **Mettre à jour** sur
+l'appareil concerné — Gladys supprime les mesures qui ne sont plus publiées, et
+l'alerte s'arrête.
+
+**La mesure « En charge » affiche « Pas de valeur reçue »** : deux causes
+possibles, et les logs disent laquelle.
+
+1. _L'appareil a été créé dans Gladys avant que la mesure existe_ (la mesure
+   « En charge » actuelle est arrivée en 1.0.8). Gladys n'ajoute pas tout seul
+   une nouvelle mesure à un appareil déjà créé : ouvrez l'onglet **Découverte**
+   de l'intégration et cliquez sur **Mettre à jour** sur l'appareil. Les valeurs
+   sont publiées immédiatement après ce clic. Tant que la mesure n'existe pas,
+   l'intégration l'écrit maintenant dans ses logs : `Gladys has no feature
+... :charging-state`.
+2. _Apple ne donne pas l'état de charge de cet appareil_. Localiser ne remonte
+   le champ `batteryStatus` que pour les appareils qu'il a pu joindre ; pour un
+   accessoire (AirTag, AirPods) il n'existe pas du tout. L'intégration ne publie
+   alors rien, plutôt qu'un « pas en charge » inventé. L'action **Tester la
+   connexion iCloud** affiche ce qu'Apple renvoie pour chaque appareil, par
+   exemple `iPhone de Jean (87 %, charge inconnue (batteryStatus : Unknown))`,
+   et les logs le répètent à chaque changement. Rien à corriger côté Gladys :
+   la valeur réapparaît dès qu'Apple la redonne.
 
 **Le bouton « Faire sonner » n'apparaît pas** : l'appareil a été créé avant que
 la fonctionnalité existe. Onglet **Découverte** de l'intégration → bouton
@@ -264,7 +317,7 @@ Voici les paramètres demandés par Apple Device Tracker dans son écran de conf
 ## Comment installer Apple Device Tracker dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Apple Device Tracker apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-appledevicetracker:1.0.5`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-appledevicetracker:1.0.10`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-appledevicetracker](https://github.com/prohand/gladys-appledevicetracker).
 
