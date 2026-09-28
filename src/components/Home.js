@@ -326,8 +326,10 @@ const FAQQuestions = {
         <>
           <b>Very likely!</b> Gladys supports{" "}
           <Link href="/docs/integrations/">thousands of devices</Link> through
-          open protocols like Zigbee, Matter, and MQTT, plus native integrations
-          (Sonos, RTSP cameras, and many more).
+          open protocols like Zigbee, Z-Wave, Matter, and MQTT, plus
+          integrations for popular brands: Philips Hue, SmartThings, TP-Link
+          Kasa and Tapo, Shelly, Sonos, Reolink cameras, LG ThinQ, and many
+          more.
           <br />
           <br />
           Device not listed yet? Have a look at{" "}
@@ -337,6 +339,19 @@ const FAQQuestions = {
           <Link href="/docs/dev/external-integrations/">build it yourself</Link>{" "}
           in the language of your choice, or{" "}
           <a href="https://community.gladysassistant.com/">ask on the forum</a>.
+        </>
+      ),
+    },
+    {
+      title: <>How much does Gladys Plus cost?</>,
+      response: (
+        <>
+          <b>Gladys itself is free, forever.</b>{" "}
+          <a href="/plus">Gladys Plus</a> is an optional subscription that adds
+          encrypted remote access, Google Home and Alexa, backups, and AI. It
+          starts at $7.99/month in the US and Canada (€6.99/month in Europe),
+          with a 1-month free trial, no credit card required, and you can
+          cancel anytime.
         </>
       ),
     },

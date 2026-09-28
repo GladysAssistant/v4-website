@@ -9,16 +9,16 @@
 const alternativeContent = {
   en: {
     meta: {
-      title: "The best privacy-friendly Alexa alternative: Gladys Assistant",
+      title: "Private, Open-Source Alexa Alternative (Self-Hosted)",
       description:
-        "Looking for a privacy-friendly Alexa alternative? Gladys Assistant is a local, open-source, self-hosted smart home platform: your data stays at home, no cloud recordings, no ads, no data resale. Free and self-hosted.",
+        "Replace Alexa with a private, self-hosted smart home: automations run on your own hardware, a voice assistant and AI that aren't run by Amazon, no ads, no data resale. Free and open-source.",
     },
     hero: {
       title: "Looking for a privacy-friendly Alexa alternative?",
       subtitle:
         "Meet Gladys Assistant, the local, open-source smart home platform that keeps your data at home instead of in Amazon's cloud.",
       intro: [
-        "Amazon Alexa is convenient, but everything you say is processed in Amazon's cloud, tied to your account, and can be used to build a profile of you. For a lot of people, that's a deal-breaker.",
+        "Amazon Alexa is convenient, but everything you say is processed in Amazon's cloud, tied to your account, and can be used to build a profile of you. Since March 2025, Amazon no longer even offers the option to keep voice requests on the device: they all go to its cloud. For a lot of people, that's a deal-breaker.",
         "Gladys Assistant takes the opposite approach. It's a free, open-source, self-hosted smart home platform that runs at home, on your own machine. Your devices and automations stay on your local network, with no mandatory cloud, no recordings on someone else's servers, no ads and no data resale.",
       ],
       primaryCta: { label: "Get started free", href: "/docs/" },
@@ -62,7 +62,7 @@ const alternativeContent = {
         {
           icon: "🎙️",
           title: "A voice assistant you control",
-          text: "Gladys has its own voice assistant, so you keep hands-free control without handing every sentence you say to a big tech company.",
+          text: "Gladys has its own voice assistant: talk naturally from your dashboard, a wall tablet or your phone. It runs on open-weight AI models hosted in France, not on Amazon's servers, and nothing you say is used for ads.",
         },
         {
           icon: "🔌",
@@ -256,7 +256,7 @@ export const alternativeFaqEn = [
   {
     question: "Can I replace Alexa with a local, self-hosted system?",
     answer:
-      "Yes. Gladys Assistant is fully self-hosted and runs at home. It has its own voice assistant and a real automation engine, so you can move away from a cloud assistant while keeping hands-free control and powerful local automations.",
+      "Yes. Gladys Assistant is fully self-hosted and runs at home, with a real automation engine, so your scenes keep running locally. It also has its own voice assistant (with Gladys Plus), so you can move away from Amazon while keeping hands-free control.",
   },
   {
     question: "Does Gladys work without the cloud or internet?",
@@ -266,7 +266,17 @@ export const alternativeFaqEn = [
   {
     question: "Does Gladys have a voice assistant like Alexa?",
     answer:
-      "Yes, Gladys has its own voice assistant for hands-free control. It's newer than Alexa and you set it up yourself, but it lets you keep voice control without sending every sentence you say to a big tech company.",
+      "Yes. Gladys has a voice assistant widget for your dashboard, wall tablet or phone: you speak naturally, and it controls devices, reads sensors, runs scenes and answers questions. It is part of Gladys Plus and runs on open-weight AI models hosted in France (Scaleway), not on Amazon's or Google's servers, with no ads and no data resale. It's newer than Alexa, and there's no dedicated speaker yet.",
+  },
+  {
+    question: "Does Alexa still process voice requests locally?",
+    answer:
+      'No. In March 2025, Amazon removed the "Do Not Send Voice Recordings" setting from the few Echo devices that supported it, so every Alexa voice request is now sent to Amazon\'s cloud. With Gladys, your devices and automations run on your own hardware, at home.',
+  },
+  {
+    question: "Is there an open-source, self-hosted Alexa alternative?",
+    answer:
+      "Yes. Gladys Assistant is free, open-source (Apache 2.0) and self-hosted: it runs on a mini-PC, a Raspberry Pi or a NAS at home, and works with Zigbee, Matter, Philips Hue, SmartThings, Sonos and many other devices. Other open-source options include Home Assistant (Assist), OpenVoiceOS and Rhasspy.",
   },
   {
     question: "Can I keep using Alexa with Gladys?",

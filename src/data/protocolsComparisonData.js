@@ -12,7 +12,7 @@
 const protocolsContent = {
   en: {
     meta: {
-      title: "Zigbee vs Matter vs Z-Wave: which smart home protocol to choose? (2026)",
+      title: "Zigbee vs Z-Wave vs Matter vs Thread (2026 Guide)",
       description:
         "Zigbee, Matter or Z-Wave? A clear, neutral comparison of the three smart home standards: how they differ, their strengths and limits, and how to choose, plus why you don't actually have to pick just one.",
     },

@@ -9,9 +9,9 @@
 const openSourceHomeAutomationContent = {
   en: {
     meta: {
-      title: "Best Open-Source Home Automation Platforms: 6 Compared (2026)",
+      title: "Best Open-Source Home Automation Software (2026)",
       description:
-        "Compare the best open-source home automation platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED): interface, ease of use and license, to choose the right free, self-hosted smart home software.",
+        "The 6 best open-source home automation platforms compared: Gladys Assistant, Home Assistant, openHAB, Domoticz, Jeedom and Node-RED. Ease of use, devices, license: pick the right free, self-hosted smart home software.",
     },
     hero: {
       title: "Open-source home automation",
