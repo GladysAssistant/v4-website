@@ -8,7 +8,7 @@
 const matterHubContent = {
   en: {
     meta: {
-      title: "Which Matter hub do you need? (2026 guide)",
+      title: "Do You Need a Matter Hub? Controllers & Bridges (2026)",
       description:
         "Matter controller, Thread border router or Matter bridge: the word hub covers three different jobs. Here is which one you actually need, and how to run your Matter controller yourself with Gladys.",
     },

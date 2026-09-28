@@ -8,9 +8,9 @@
 const localSmartHomeContent = {
   en: {
     meta: {
-      title: "How to build a 100% local, private smart home (no cloud)",
+      title: "Local Smart Home Without the Cloud: Setup Guide",
       description:
-        "A complete guide to building a local, private smart home that runs without the cloud: why it matters, what 'local' really means, and how to do it with open standards and self-hosted, open-source software.",
+        "How to build a private smart home that keeps working when the internet goes down: which devices run locally (Zigbee, Matter, MQTT), which hub to use, and how to self-host it with free, open-source software.",
     },
     hero: {
       title: "Build a 100% local, private smart home",

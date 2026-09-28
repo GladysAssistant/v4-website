@@ -23,9 +23,9 @@ const SONOFF_E_FR = "https://www.amazon.fr/dp/B0B6P22YJC?tag=gladproj-21";
 const bestZigbeeDongleContent = {
   en: {
     meta: {
-      title: "Best Zigbee USB dongle for Raspberry Pi & Zigbee2MQTT (2026)",
+      title: "Best Zigbee USB Dongle & Coordinator (2026 Guide)",
       description:
-        "Which Zigbee USB dongle should you buy? A practical 2026 buyer's guide to the best Zigbee coordinators for Raspberry Pi, Zigbee2MQTT and Gladys Assistant: Sonoff, SMLIGHT, ConBee and more.",
+        "Which Zigbee USB dongle should you buy? The best Zigbee coordinators of 2026 for a Raspberry Pi, NAS or mini-PC running Zigbee2MQTT: Sonoff, SMLIGHT, ConBee and more, compared.",
     },
     hero: {
       title: "The best Zigbee USB dongle for your smart home",

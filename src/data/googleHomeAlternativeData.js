@@ -9,7 +9,7 @@
 const alternativeContent = {
   en: {
     meta: {
-      title: "The best privacy-friendly Google Home alternative: Gladys Assistant",
+      title: "Private, Open-Source Google Home Alternative",
       description:
         "Looking for a privacy-friendly Google Home alternative? Gladys Assistant is a local, open-source, self-hosted smart home platform: your data stays at home, no cloud recordings, no ads, no data resale. Free and self-hosted.",
     },

@@ -7,9 +7,9 @@
 const alarmContent = {
   en: {
     meta: {
-      title: "DIY home alarm system: local, private, and yours to own",
+      title: "DIY Self-Monitored Home Alarm System, No Contract",
       description:
-        "Build a real DIY home alarm system with Gladys Assistant, a local alternative to monitored alarms like Verisure or ADT: you own your hardware and installation, everything runs locally, with armed, partial and panic modes, affordable sensors and instant alerts.",
+        "Build a self-monitored DIY home alarm with no monitoring contract: you own the hardware, it runs locally, with armed, partial and panic modes, affordable sensors and instant alerts on your phone. A local alternative to ADT.",
     },
     screenshotCaption:
       "Arm, disarm and monitor your home from Gladys, locally and on your own terms.",
