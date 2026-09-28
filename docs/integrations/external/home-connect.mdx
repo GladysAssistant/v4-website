@@ -109,7 +109,69 @@ it, Home Connect refuses the command and Gladys shows the refusal message.
 
 Turning **Program running** off aborts the running program.
 
-## 4. How it stays up to date
+## 4. Dashboard, scenes and triggers
+
+Since **Gladys 5.1**, an integration can put its own cards on the dashboard and
+extend the scene editor. Home Connect uses all three.
+
+### The dashboard cards
+
+**Dashboard → Edit → Add a box**, integrations category:
+
+- **Home Connect** — every appliance in one card, one row each, with what it is
+  doing ("Running · Auto2 · 30 min"). Whatever is working shows up first. Leave
+  the _Appliances_ setting empty to show them all, or tick the ones you care
+  about.
+- **Appliance** — a single appliance: state, program, door, remaining time,
+  progress, and the _Start_ / _Pause_ / _Stop_ buttons. The buttons follow the
+  appliance: an idle one is offered _Start_, a running one _Pause_ and _Stop_.
+  Untick _Show the buttons_ for a read-only card.
+
+Remaining time and progress are bound to the appliance's own features: they move
+in real time, with no reload.
+
+### The scene triggers
+
+In a scene, **Add a trigger → Integrations**:
+
+| Trigger                            | Fires when                                                 |
+| ---------------------------------- | ---------------------------------------------------------- |
+| A program started                  | an appliance starts a cycle (or schedules a delayed start) |
+| A program finished                 | a cycle ends normally                                      |
+| A program was aborted              | a cycle is stopped before the end                          |
+| An appliance raised a notification | salt low, water tank empty, filter saturated, door alarm…  |
+
+Leave the _Appliance_ field empty to react to any of them. In the scene's
+actions, the trigger exposes `{{triggerEvent.data.appliance_name}}`,
+`{{triggerEvent.data.program}}` and, for notifications,
+`{{triggerEvent.data.notification_name}}` — enough to write "The dishwasher
+finished the Auto2 program" in a notification.
+
+An alert that **clears** fires nothing: only the moment it is raised is an
+event.
+
+### The scene actions
+
+In a scene, **Add an action → Integrations**:
+
+| Action                     | Effect                                                     |
+| -------------------------- | ---------------------------------------------------------- |
+| Start the selected program | runs the program already chosen on the appliance           |
+| Stop the running program   | aborts the cycle                                           |
+| Pause the program          | appliances that accept the pause command                   |
+| Resume the program         | restarts a paused cycle                                    |
+| Read the appliance status  | controls nothing: returns the state, program and time left |
+
+**Read the appliance status** is meant for the actions that follow it in the
+scene: it returns `state`, `program`, `running`, `remaining_seconds`,
+`remaining_label`, `progress`, `door`, `connected` and `summary` (a
+ready-to-send sentence). It reads what the integration already holds in memory:
+no Home Connect request, so no quota spent.
+
+The same limits as the **Program running** feature apply: starting runs the
+program selected on the appliance, and remote start must be armed there.
+
+## 5. How it stays up to date
 
 The integration holds a permanent **event stream** open to Home Connect, so a
 door opening or a program finishing reaches Gladys in about a second — including
@@ -126,13 +188,13 @@ dashboard, so an appliance that sits in the same state for days — connected,
 salt tank full, no program running — has to keep saying that nothing changed.
 Those re-statements cost no Home Connect request.
 
-## 5. Testing without an appliance
+## 6. Testing without an appliance
 
 Enable **Use the Home Connect simulator** in the configuration. The integration
 then talks to `simulator.home-connect.com`, which serves the same API against
 the virtual appliances of your developer account. Remember to turn it back off.
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
 **"Enter your Home Connect Client ID and Client Secret"** — the credentials are
 missing or empty.
@@ -159,6 +221,16 @@ Connect account. Click **Connect** again.
 
 **"Home Connect rate limit reached"** — too many requests. The integration backs
 off on its own; raise the refresh interval if it keeps happening.
+
+**A dashboard card reads "Reading your Home Connect appliances…"** — the
+integration has not read the account yet (recent restart, rate limit reached, or
+Home Connect unreachable at startup). The card triggers the read itself and
+fills in within seconds; if the message stays, check the connection status in the
+integration settings.
+
+**A card reads "This appliance no longer exists in Gladys"** — the appliance
+picked in the card settings was deleted from Gladys or removed from the Home
+Connect account. Reopen the card settings and pick another one.
 
 **An appliance shows an orange "unreachable" badge** — Home Connect itself
 cannot reach it. Check that it is powered on and connected to your Wi-Fi, in the
@@ -189,11 +261,11 @@ These are the settings Home Connect asks for in its configuration screen in Glad
 ## How to install Home Connect in Gladys
 
 1. In Gladys, open **Integrations**: Home Connect appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-homeconnect:1.0.5`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-homeconnect:2.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-homeconnect](https://github.com/prohand/gladys-homeconnect).
 
-Home Connect requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Home Connect requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

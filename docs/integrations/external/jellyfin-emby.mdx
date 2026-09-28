@@ -1,0 +1,154 @@
+---
+title: "Jellyfin & Emby integration for Gladys Assistant"
+sidebar_label: "Jellyfin & Emby"
+description: "Control your Jellyfin and Emby players, see what is playing and react to it in scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-jellyfin.jpg"
+keywords:
+  - "jellyfin & emby"
+  - "gladys jellyfin & emby"
+  - "jellyfin & emby gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-jellyfin instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="jellyfin-emby" />
+
+Control the players of your **Jellyfin** or **Emby** server from Gladys, see
+what is being watched around the house, and run scenes when playback
+starts, pauses or stops — the classic "dim the lights when the movie
+starts".
+
+Works with Jellyfin 10.9 and later (checked on 10.11 and 12.1) and with Emby
+(checked on 4.10). The integration detects which server it talks to.
+
+## Setup
+
+1. **Create an API key** for Gladys on your server:
+   - Jellyfin: **Dashboard > API Keys > +**, name it "Gladys";
+   - Emby: **Settings > Advanced > API Keys > New API Key**.
+2. In the **Configuration** tab of the integration, fill in:
+   - the **server URL**, port included (for example
+     `http://192.168.1.20:8096`). An https address behind a reverse proxy
+     works too; you may paste the address from your browser, `/web/...` is
+     removed automatically;
+   - the **API key** created in step 1.
+3. Save, then click **Test the connection**.
+4. The devices show up in the **Discovery** tab.
+
+A player (TV app, phone, browser) only shows up while it is **connected** to
+the server: open the app on the TV, then click **Look for players**. A player
+you added stays in Gladys even when it is off.
+
+## What you get
+
+**The server**: number of active playbacks, number of transcoded playbacks
+(the ones that load the CPU), a "who watches what, where" summary, and one
+counter per library (plus episodes for TV shows and tracks for music). The
+counters can be turned off in the configuration.
+
+**Each player**: play, pause, stop, previous, next, rewind, forward, volume,
+mute, playback state, now playing title, remaining time, and two **"in
+intro"** and **"in credits"** flags. The buttons work with the dashboard
+**Music** widget.
+
+The intro and credits flags need the server to know those parts:
+
+- Jellyfin (10.10 and later): install a media segment provider, for example the official
+  **Chapter Segments Provider** plugin (it reads chapters named "Intro",
+  "Credits"...) or the **Intro Skipper** plugin;
+- Emby: Emby's intro and credits detection.
+
+Without them, both flags stay at 0.
+
+## Scenes
+
+Four triggers: **Playback started**, **Playback paused**, **Playback
+resumed**, **Playback stopped**. Each one can be narrowed to one player and
+to media types (movie, episode, music, live TV...). The `title`, `name`,
+`series_name`, `media_type`, `user` and `player_name` variables are available
+to the following actions.
+
+Example: _Playback started, player "Living room TV", type Movie_ → dim the
+living room; _Playback paused_ on the same player → lights back on.
+
+Two scene actions:
+
+- **Display a message on a player** — for example "Someone is at the door"
+  over the movie;
+- **Play a media on a player** — searches the library for a title (movie,
+  series, album, artist, playlist...) and plays it, shuffled if you like.
+  The title played is available to the rest of the scene.
+
+The player must be connected to the server to receive a message or a media.
+
+## Dashboard widgets
+
+- **Now playing**: who watches what, where, with the posters.
+- **Player**: the current playback as a remote — the artwork (or the movie
+  fan art), title, state, remaining time, and the play/pause, stop and next
+  buttons. Leave the "Player" setting empty to follow whatever is playing, or
+  pick a player to follow that one only.
+- **Latest additions**: posters of the movies, series or albums added
+  lately, new episodes grouped by series.
+
+## Troubleshooting
+
+- **"The server refused the API key"**: the key was deleted or badly copied.
+  Create a new one and save it. The integration deliberately stops calling
+  the server while the key is refused: a reverse proxy running fail2ban
+  could otherwise ban your address.
+- **A button does nothing**: not every app accepts remote control. TV apps
+  and the web client do; some mobile apps do not. "Next" and "Previous" on an
+  episode play the neighbour episode, which works even on apps without a play
+  queue (Swiftfin).
+- **The message does not show up**: it depends on the app. Jellyfin Web and
+  Jellyfin for Android TV show it; Swiftfin (Apple TV, iOS) does not handle
+  it yet, and the official iOS app does not show it during video playback.
+- **The button does not change state right away**: the buttons of the
+  "Player" widget show the expected state as soon as the command is sent,
+  then the app confirms it (some take a few seconds).
+- **Updates are slow**: the integration follows playback in real time over a
+  WebSocket. If your reverse proxy does not forward WebSockets, it falls back
+  to polling every 15 seconds.
+- The integration logs can be read from the Gladys interface.
+
+## Configuration settings
+
+These are the settings Jellyfin & Emby asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect to your media server | `section` | No | Works with Jellyfin (10.9 and later) and Emby. Enter the address of the server (for example http://192.168.1.20:8096) and an API key created for Gladys: on Jellyfin, Dashboard > API Keys; on Emby, Settings > Advanced > API Keys. The integration detects which server it talks to. |
+| Server URL | `string` | Yes | Address of the server, port included (8096 by default). An https address behind a reverse proxy works too. |
+| API key | `secret` | Yes |  |
+| Language of the names | `select` | No | Language of the feature names and of the texts. Names are set when a device is created: to rename them after a change, delete and re-add the device. |
+| Library sensors | `boolean` | No | Add one item-count sensor per library on the server device (plus episodes for TV shows and tracks for music). |
+| Library refresh interval (s) | `number` | No | How often the library counts are refreshed, in seconds. Playback is followed in real time. |
+| Accept a self-signed certificate | `boolean` | No | Only for https addresses: accept the self-signed certificate of the server. Leave off for http addresses. |
+
+## How to install Jellyfin & Emby in Gladys
+
+1. In Gladys, open **Integrations**: Jellyfin & Emby appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-jellyfin:0.2.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-jellyfin](https://github.com/guim31/gladys-jellyfin).
+
+Jellyfin & Emby requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Jellyfin & Emby is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-jellyfin) — [source of this documentation](https://github.com/guim31/gladys-jellyfin/blob/HEAD/docs/en.md)

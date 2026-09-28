@@ -79,6 +79,15 @@ ne publie pas cette enseigne : elle est lue dans un jeu de données de référen
 du même système d'information. Une station que ce jeu de données ne connaît pas
 garde un nom construit à partir de sa rue.
 
+Quand deux stations de la même enseigne sont dans la même commune, leur rue est
+ajoutée au nom pour les distinguer : `TotalEnergies - 33 Av. Médéric -
+Noisy-le-Grand - Gazole`. Dans le cas rare où même la rue est identique (les
+deux sens d'une aire d'autoroute), l'identifiant national de la station est
+ajouté à la fin. Les appareils déjà créés gardent le nom qu'ils avaient :
+renommez-les dans **Appareils**, ou supprimez-les et rajoutez-les depuis
+l'onglet **Découverte** pour récupérer le nom détaillé (vous perdez alors leur
+historique de prix).
+
 ## Configuration
 
 1. Ouvrez l'onglet **Configuration** de l'intégration.
@@ -134,6 +143,121 @@ apparaissent dans l'onglet Découverte, et vos appareils existants continuent
 de fonctionner sans être modifiés. Supprimez ceux dont vous n'avez plus
 besoin.
 
+## Les widgets du tableau de bord
+
+En plus des appareils, l'intégration fournit **deux cartes** à poser sur un
+tableau de bord (bouton **Modifier le tableau de bord**, puis choisissez la
+carte dans la liste, section « Prix carburants »).
+
+### « Les moins chers »
+
+La carte répond à trois questions d'un coup : où faire le plein, est-ce le bon
+jour, et combien ça coûte.
+
+- **Titre** : le carburant et la zone — `Gazole · 10 km autour de ma maison`
+  (ou `autour du 35000` si Gladys ne connaît pas les coordonnées de la maison).
+- **Trois tuiles** : le prix le moins cher, la moyenne des stations trouvées, et
+  la **tendance sur 7 jours** en centimes (vert si ça baisse, rouge si ça monte).
+  La tuile est là dès le premier jour et affiche `—` tant qu'il n'y a pas une
+  vraie semaine d'historique.
+- **L'heure du relevé** : `Prix relevés le 19/09/2026 à 10:30`, parce qu'un prix
+  ne vaut que par le moment où il a été lu.
+- **La courbe des 30 derniers jours** du prix le moins cher de la zone.
+- **Le classement** des stations avec leur prix **et le jour où la station l'a
+  déclaré** (`auj.`, `hier`, `06/08`) — à ne pas confondre avec l'heure du
+  relevé ci-dessus : une station peut ne pas avoir bougé ses prix depuis une
+  semaine. La ligne est tenue courte pour rester lisible sur un téléphone : la
+  date est réduite au jour, l'unité `€/L` déjà affichée dans les tuiles au-dessus
+  n'est pas répétée à chaque ligne, et un nom de station trop long est raccourci
+  autour de ce qui le distingue des autres — la commune est gardée entière et
+  l'enseigne est ramenée à sa racine (`Total Access - Lyon 7e`), sans jamais
+  couper le nom de la chaîne elle-même (`Carrefour`, pas `Carre.`). Dès que
+  plusieurs stations du classement sont dans la MÊME commune, cette commune ne
+  les distingue plus à elle seule : ces lignes affichent alors leur rue, parce
+  que « Lyon » écrit trois fois dit où est la zone, pas où est la pompe. La
+  commune reste derrière la rue dès que la ligne peut tenir les deux, et la rue
+  est alors réduite à son nom — `Total - Garnier, Lyon`, `Total - Gerland,
+Lyon` — car `Av.` et `Rue de`, toutes les rues de la commune les portent
+  aussi. Quand même ça ne tient pas, ou quand raccourcir deux rues ferait deux
+  lignes identiques, la commune saute et la rue est affichée aussi entière que
+  la ligne le permet (`Total - Av. Tony Garnier`, `Carrefour - Peupliers`). Deux stations de la même rue gardent leur numéro (`Carrefour - 12 Ailes`, `Carrefour - 85 Ailes`), et deux stations déclarées à la même adresse exacte se terminent par la fin de leur code station (`Carrefour - Ailes ·001`, `Carrefour - Ailes ·002`). Le nom complet, l'adresse complète et l'horaire
+  complet restent sur la page de l'appareil et sur la carte « Ma station ».
+- Un bouton vers la **carte officielle** (prix-carburants.gouv.fr).
+
+Quatre réglages : le carburant, le nombre de stations affichées (3, 5 ou 8), le
+périmètre — **autour de votre code postal** (l'intégration cherche, comme pour
+l'onglet Découverte) ou **vos stations seulement** (celles que vous avez
+ajoutées) — et la **longueur des noms**, de 24 caractères (par défaut, ce qu'un
+téléphone affiche à côté du prix et de sa date) jusqu'à 40. Gladys ne donne pas
+la largeur de l'écran à l'intégration : choisissez la plus grande valeur que vos
+écrans affichent sans couper la date. À 40, `Carrefour - Rue des Peupliers,
+Cusset` est écrit en entier.
+
+#### D'où vient la courbe
+
+Le flux open data publie les prix de l'instant, pas ceux d'hier : personne ne
+stocke « le prix le moins cher de votre zone ». L'intégration le relève donc
+elle-même, **au maximum une fois par heure**, et garde 30 jours dans `/data`.
+
+- La courbe est affichée **dès le premier jour** et se remplit toute seule
+  ensuite. Elle se termine toujours sur le prix qui vient d'être lu, donc
+  **l'axe ne va jamais au-delà d'aujourd'hui** ; il s'étend vers la gauche au
+  fur et à mesure, jusqu'à couvrir 30 jours au bout d'un mois.
+- Les relevés continuent **même quand personne ne regarde** le tableau de bord :
+  la boucle de rafraîchissement prend le relais, à partir du moment où la carte
+  existe quelque part (une installation sans widget ne paie rien).
+- La **tendance sur 7 jours**, elle, attend d'avoir vraiment une semaine
+  d'historique : afficher « 0 ct » le premier jour serait faux.
+- Changer de code postal ou de rayon **repart d'une courbe vierge**, puisque ce
+  n'est plus la même zone.
+- Si `/data` n'est pas accessible en écriture, tout continue de fonctionner :
+  seule la courbe repart de zéro au redémarrage.
+
+### « Ma station »
+
+Le détail d'**une** station que vous suivez, choisie dans les réglages de la
+carte :
+
+- une tuile de prix **par carburant** vendu par la station (les quatre
+  premiers, le vôtre en tête) ;
+- l'enseigne, l'adresse, la distance et la date du dernier relevé ;
+- un bouton **Itinéraire** et un bouton **Rafraîchir**.
+
+Tous les carburants de la station sont affichés avec les **trois décimales** du
+prix à la pompe (`1,699 €/L`). Les tuiles étaient auparavant reliées à l'appareil
+Gladys pour les carburants suivis, ce qui les mettait à jour en direct mais
+affichait `1,7` : Gladys arrondit la valeur d'un appareil affichée dans une
+tuile. Le prix exact vaut mieux — la carte se met à jour à chaque passe de
+rafraîchissement, donc en quelques secondes.
+
+#### D'où partent les distances
+
+Par défaut, **de votre maison Gladys**. L'intégration demande ses coordonnées à
+Gladys (`Réglages → Maison`, champ adresse) : la case correspondante est
+affichée à l'installation comme une autorisation, les coordonnées servent
+uniquement à centrer la recherche et à calculer les distances, et elles ne sont
+affichées nulle part.
+
+- Maison localisée → `2,3 km de la maison`, et la recherche est centrée dessus.
+- Maison non localisée, ou réglage **« Mesurer les distances depuis : le code
+  postal »** → `2,3 km du 35000`, mesuré depuis le centre de la zone du code
+  postal.
+
+**Si Gladys contient plusieurs maisons**, remplissez le champ **« Quelle
+maison »** avec le nom de celle qui vous intéresse (la casse et les accents sont
+ignorés). Laissé vide, c'est la première maison localisée qui sert. Gladys ne
+permet pas encore à une intégration de proposer la liste des maisons dans un
+menu déroulant : pour savoir quoi écrire, cliquez sur **« Aperçu des
+stations »**, le message affiche la maison utilisée et le nom de toutes celles
+que Gladys connaît.
+
+Le code postal reste obligatoire dans tous les cas : c'est lui qui sert à
+interroger le jeu de données national.
+
+> Les widgets demandent **Gladys 5.1 ou plus récent**, comme les scènes plus
+> bas. C'est la version minimale déclarée par l'intégration : sur un Gladys
+> plus ancien, elle n'apparaît simplement pas dans le magasin.
+
 ## Idées de scènes
 
 - Recevoir une notification quand le prix du gazole de votre station passe
@@ -141,6 +265,66 @@ besoin.
 - Comparer deux stations sur le tableau de bord avant de partir faire le
   plein.
 - Enregistrer le prix moyen du mois grâce à l'historique.
+
+## Déclencheurs de scènes
+
+L'intégration ajoute trois déclencheurs dans la catégorie **Intégrations** de
+l'éditeur de scènes (Gladys 5.1 ou plus récent). Ils apparaissent tout seuls :
+rien à configurer côté intégration.
+
+| Déclencheur                                  | Se déclenche quand                                                                                       |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Un prix de carburant a changé**            | une station que vous suivez a déclaré un nouveau prix (filtres : station, carburant, hausse ou baisse)   |
+| **La station la moins chère a changé**       | une autre de vos stations est devenue la moins chère pour un carburant (il faut en suivre au moins deux) |
+| **Le flux open data est devenu injoignable** | toutes les stations d'un rafraîchissement ont échoué, ou le flux répond de nouveau                       |
+
+Chaque déclencheur transmet des informations à vos actions : le nom de la
+station, la ville, le carburant, le nouveau prix, le prix précédent et l'écart.
+Exemple de notification : « Le Gazole passe à 1,659 € à Station du Centre
+(-0,040 €) ».
+
+Un filtre laissé vide veut dire « peu importe » : sans station choisie, le
+déclencheur réagit à toutes vos stations.
+
+Deux points à connaître :
+
+- **un prix qui ne bouge pas ne déclenche rien**, même si l'intégration
+  rafraîchit toutes les heures : seul un vrai changement est envoyé ;
+- après un redémarrage du conteneur, le premier rafraîchissement sert de point
+  de repère et n'envoie rien.
+
+Pour un simple seuil (« préviens-moi sous 1,70 € »), n'utilisez pas ces
+déclencheurs : le déclencheur **Un appareil change d'état** de Gladys, sur la
+donnée « prix » de la station, fait déjà exactement ça.
+
+## Actions de scènes
+
+Toujours dans la catégorie **Intégrations**, l'intégration ajoute trois actions
+utilisables dans une scène.
+
+| Action                                 | Ce qu'elle fait                                                                   |
+| -------------------------------------- | --------------------------------------------------------------------------------- |
+| **Rafraîchir les prix des carburants** | lit le flux maintenant, pour que la suite de la scène travaille sur un prix frais |
+| **Trouver la station la moins chère**  | compare vos stations pour un carburant et renvoie la moins chère                  |
+| **Préparer un résumé des prix**        | la même comparaison sous forme d'une ligne de texte prête à envoyer               |
+
+Les résultats d'une action sont réutilisables dans les étapes suivantes de la
+scène (prix, nom de la station, ville, adresse, distance, date du prix…).
+
+Exemple de scène, tous les matins à 7 h :
+
+1. **Trouver la station la moins chère** (carburant : Gazole, lire les prix
+   avant de comparer : oui) ;
+2. **Continuer seulement si** le résultat `found` est vrai ;
+3. **Envoyer un message** : « Le plein le moins cher : \{\{ nom de la station \}\} à
+   \{\{ prix \}\} €/L ».
+
+Ou plus court, en une seule étape : **Préparer un résumé des prix**, puis
+envoyer le texte obtenu.
+
+Bon à savoir : « Trouver la station la moins chère » ne fait jamais échouer la
+scène quand vous ne suivez aucune station pour ce carburant — elle répond
+`found = false`, et c'est à vous de tester ce résultat.
 
 ## Dépannage
 
@@ -156,6 +340,28 @@ consultez les logs de l'intégration, qui indiquent les stations manquantes.
 L'intégration conserve alors la dernière valeur connue plutôt que de trouer la
 courbe.
 
+**Une station en rupture.** Quand la station déclare une rupture temporaire,
+elle vend bien ce carburant, elle n'en a simplement plus. L'appareil reste
+proposé dans l'onglet Découverte, le dernier prix connu reste affiché, et la
+fonctionnalité « Last price update » indique « En rupture depuis le
+18/09/2026 à 08:09 » jusqu'au retour du carburant. Le bouton
+**Prévisualiser les stations proches** écrit « SP98 : en rupture » dans ce cas,
+et « SP98 : non vendu » seulement quand la station ne vend pas ce carburant
+(pompe inexistante ou rupture définitive).
+
+Il arrive que le flux ne dise plus rien du tout sur un carburant : la station a
+levé sa rupture mais n'a pas encore ressaisi son prix. L'intégration regarde
+alors l'historique des prix des 30 derniers jours : un carburant que la station
+a vendu sur cette période est affiché « en rupture » (la fonctionnalité « Last
+price update » indique simplement « En rupture »), et non « non vendu ».
+
+**Le SP95 d'une station n'apparaît pas, contrairement au SP98.** C'est la
+station qui ne vend pas de SP95, pas un bug : beaucoup d'enseignes
+(TotalEnergies en particulier) l'ont remplacé par le **E10 (SP95-E10)**.
+Cochez E10 dans la configuration et la station réapparaîtra dans l'onglet
+Découverte. Le bouton **Prévisualiser les stations proches** le dit
+station par station : « SP95 : non vendu ».
+
 **Nombre de stations limité.** Le réglage **Nombre maximum de stations** borne
 la liste de découverte (20 par défaut, 50 au maximum). En ville dense,
 baissez-le et réduisez le rayon.
@@ -164,8 +370,9 @@ baissez-le et réduisez le rayon.
 PROCHES, dans la limite de ce maximum : en ville, vingt stations tiennent dans
 deux kilomètres, une station à 5 km est donc écartée même avec un rayon de
 10 km. Augmentez le **Nombre maximum de stations** plutôt que le rayon. Une
-station qui ne déclare aucun prix pour le carburant coché n'est pas proposée
-non plus, l'appareil n'aurait rien à publier.
+station qui ne vend pas le carburant coché n'est pas proposée non plus,
+l'appareil n'aurait rien à publier — une station seulement en rupture, elle,
+reste proposée.
 
 ## Données et licence
 
@@ -188,19 +395,21 @@ Voici les paramètres demandés par Prix carburants dans son écran de configura
 | Comment ça marche | `section` | Non | Choisissez votre pays, votre code postal et votre carburant, puis ouvrez l'onglet Découverte : les stations-service proches y apparaissent avec leur prix actuel. Ajoutez celles que vous voulez suivre, supprimez-les quand vous n'en avez plus besoin. Les données viennent de l'open data officiel, sans compte ni clé d'API. |
 | Pays | `select` | Oui | Pays dont l'open data est interrogé. D'autres pays seront ajoutés dans de prochaines versions. |
 | Code postal | `string` | Oui | Les stations sont recherchées autour de ce code postal. En France, 5 chiffres. |
+| Mesurer les distances depuis | `select` | Non | Votre maison Gladys est utilisée si elle a des coordonnées (l'intégration les demande à Gladys et ne les affiche nulle part). Sinon, c'est le centre de la zone du code postal. |
+| Quelle maison | `string` | Non | Utile seulement si Gladys contient plusieurs maisons : le nom de celle depuis laquelle les distances sont mesurées. Laissez vide pour la première maison localisée. Le bouton « Aperçu des stations » ci-dessous liste les maisons connues de Gladys. |
 | Rayon de recherche (km) | `number` | Non | Cherche aussi des stations autour du code postal. 0 ne garde que les stations du code postal lui-même. |
-| Type de carburant | `multi_select` | Oui | Un appareil est proposé par station ET par carburant sélectionné, ce qui permet de suivre plusieurs carburants dans la même station. |
+| Type de carburant | `multi_select` | Oui | Un appareil est proposé par station ET par carburant sélectionné, ce qui permet de suivre plusieurs carburants dans la même station. Une station n'apparaît que pour les carburants qu'elle vend vraiment : beaucoup de stations (TotalEnergies notamment) ont remplacé le SP95 par le E10 (SP95-E10), cochez donc E10 si le SP95 de votre station reste introuvable. |
 | Nombre maximum de stations | `number` | Non | Nombre de stations que l'onglet Découverte peut lister. Baissez-le en ville dense, augmentez-le à la campagne. |
 | Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de rafraîchissement du prix de chaque station ajoutée. Le flux français est mis à jour environ toutes les 10 minutes ; une fois par heure suffit largement. |
 
 ## Comment installer Prix carburants dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Prix carburants apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-prixcarburants:1.0.4`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-prixcarburants:2.0.8`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-prixcarburants](https://github.com/prohand/gladys-prixcarburants).
 
-Prix carburants nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Prix carburants nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

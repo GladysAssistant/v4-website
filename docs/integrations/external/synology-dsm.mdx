@@ -54,6 +54,39 @@ A first snapshot is sent immediately after a device is added, then every refresh
 
 The health indicators only take a value on a status DSM clearly reports as healthy or as a failure. During a maintenance operation (expansion, scrubbing, repair) or when SMART is unsupported, the previous value is kept instead of publishing a false alarm.
 
+## Dashboard widgets
+
+Requires Gladys 5.1 or later. Add them from the dashboard editor; every widget has a **NAS** setting that accepts any device of the NAS to show (the NAS itself, a volume, a disk or a backup task). Leave it empty to show the first NAS.
+
+- **Synology NAS**: model, DSM version, CPU, memory and temperature, one row per volume (usage and health), a summary of the disks and the backups, and a button to open DSM when its URL uses HTTPS. Once the NAS device is added to Gladys, the card also plots the CPU and memory history over the period chosen in the **Load history** setting.
+- **Synology storage**: one gauge per volume, the total free space and one row per disk with its SMART status and temperature.
+- **Synology backups**: the Hyper Backup and Active Backup tasks with their last result, failures first. With an empty **NAS** setting, it lists the tasks of every NAS. The **Tasks shown** setting can keep only the failed or partial ones.
+
+Widgets show the values read at the last refresh: opening a dashboard never queries the NAS. They update after each refresh. A NAS that stops answering is flagged **Unreachable** and keeps its last known values. On a dashboard set to US units, temperatures are shown in °F.
+
+## Scenes
+
+Requires Gladys 5.1 or later.
+
+**Triggers** fire once, on a change between two refreshes. The first reading after the integration starts only serves as a reference: a failure already present at startup does not fire again, and a change that happens while the integration is stopped is not reported. Each trigger can be limited to one device; leave the field empty to react to all of them.
+
+| Trigger                        | Fires when                                                                                                                  | Variables                                            |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| A Synology NAS stops answering | A NAS that was answering fails a refresh                                                                                    | NAS model, DSM URL, error                            |
+| A Synology NAS answers again   | That NAS answers again                                                                                                      | NAS model, DSM URL, unreachable for (min)            |
+| A Synology volume is degraded  | DSM reports a healthy volume as degraded, crashed or in error                                                               | NAS model, volume name, DSM status, usage (%)        |
+| A Synology disk is failing     | The SMART status of a healthy disk turns to a failure                                                                       | NAS model, disk name, SMART status, temperature (°C) |
+| A Synology backup finished     | A new result is read from a Hyper Backup or Active Backup task (filter by package and by result: success, partial, failure) | NAS model, task name, package, result, backup date   |
+| DSM was updated                | A NAS reports a new DSM version                                                                                             | NAS model, previous version, new version             |
+
+A maintenance state (expansion, scrubbing, repair) never counts as a failure, and a backup still running is only reported once it has finished.
+
+**Actions** query the NAS when the scene reaches them and return values that the following actions can use:
+
+- **Get the state of a Synology NAS**: reachable (yes/no), model, DSM version, CPU, memory, temperature, number of degraded volumes, failing disks and failed backups, and the list of problems found. An unreachable NAS does not stop the scene: test the **Reachable** value.
+- **Get the state of a Synology volume**: name, DSM status, healthy (yes/no), usage (%), used, free and total space (GB).
+- **Get the state of a Synology backup**: task name, package, status, result, last backup date (in the configured date format) and hours since the last backup, handy to warn about a backup that no longer runs.
+
 ## Troubleshooting
 
 - **Invalid credentials**: verify the dedicated account and its login policy.
@@ -105,11 +138,11 @@ These are the settings Synology DSM asks for in its configuration screen in Glad
 ## How to install Synology DSM in Gladys
 
 1. In Gladys, open **Integrations**: Synology DSM appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-synology:1.0.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-synology:2.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-synology](https://github.com/prohand/gladys-synology).
 
-Synology DSM requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Synology DSM requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

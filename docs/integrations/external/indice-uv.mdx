@@ -145,13 +145,74 @@ the timestamp stops moving and the age becomes visible on the dashboard.
 "Test the UV provider" ends each line with the same timestamp, so a source that
 answers with yesterday's hour shows up as what it is.
 
+## On the dashboard
+
+Two widgets are offered in the dashboard editor (Gladys 5.1 or later), under the
+name of the integration:
+
+- **UV index of a location** — the index now, today's maximum and the clear-sky
+  index, **today's hourly forecast curve** with the peak marked and a "now" line,
+  the exposure level and the advice that goes with it. In the widget settings,
+  pick the **UV device** of the location to show: only the devices already added
+  to Gladys are listed.
+- **UV index of all locations** — one row per location (10 at most), with the
+  current index and its level, in colour. No settings.
+
+The widgets are shown in the language of whoever looks at them, and follow every
+refresh of the integration. If you remove a widget's location, the widget says
+so: pick another device in its settings.
+
+## In scenes
+
+The integration adds two cards to the scene editor (Gladys 5.1 or later), under
+the **Integrations** category.
+
+### Trigger "UV exposure level changed"
+
+Fires when the exposure level of a location moves to another band (from 0 "None"
+to 5 "Extreme"). Three filters, all optional — left empty, a filter accepts
+anything:
+
+- **Location** — the UV device of the location to watch;
+- **New level** — one level or several, for example 3 and 4;
+- **Direction** — rising or falling.
+
+The actions of the scene can reuse these values: the location name, the new
+level and its label, the previous level, the direction (`rising` or `falling`),
+the protection advice, the UV index and the time of the data. Example message:
+"UV \{\{triggerEvent.data.level_label\}\} in \{\{triggerEvent.data.location_name\}\}:
+\{\{triggerEvent.data.advice\}\}".
+
+Good to know:
+
+- The first reading after the integration starts is a baseline and fires
+  nothing: a restart is not a change in the sky.
+- To react to a **threshold** ("as soon as the level is at least 3"), use the
+  standard trigger on the device's "UV exposure level" feature instead.
+- The texts (label, advice) are written in the **language of the device names**
+  chosen in the general settings.
+
+### Action "Read the UV index"
+
+Reads a location's UV index when the scene runs it and hands its values to the
+next actions: location name, index now, today's maximum, clear-sky index, level
+and label, level and label of the peak, **time of the peak**, protection advice
+and time of the data. A value the source does not have is absent, never replaced
+by 0.
+
+Example: an "every day at 8:00" trigger, then "Read the UV index" on your home,
+then a message "UV peak \{\{0.1.uv_index_max_today\}\}
+(\{\{0.1.level_max_today_label\}\}) around \{\{0.1.peak_time\}\}". The numbers (`0.1`)
+are the ones of the action in your scene: the editor offers them.
+
 ## General settings
 
 - **Language of the device names** — everything else this integration says
   already follows your Gladys language, but a device name and its feature names
   are stored as they are the moment you create the device. A device already added
   **keeps** the names it was created with: change the language, then delete the
-  device and add it again from the Discovery tab to rename it.
+  device and add it again from the Discovery tab to rename it. The texts handed
+  to your scenes (level label, advice) follow this setting too.
 - **Refresh interval** — 30 minutes by default, between 10 minutes and 6 hours.
   The CAMS forecast is hourly, so there is nothing to gain from going much below
   half an hour.
@@ -189,20 +250,20 @@ These are the settings Indice UV asks for in its configuration screen in Gladys.
 
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
-| How it works | `section` | No | Add a location with the button below: type its French postal code, it is resolved to a commune, and a UV device appears in the Discovery tab, ready to be added to Gladys. The UV index comes from the CAMS forecast (Copernicus), republished as open data by Open-Meteo, and postal codes are read through the French state's "Découpage administratif" API: no account and no API key are needed. Outside France, add a location by its latitude and longitude — the UV data itself is worldwide. |
+| How it works | `section` | No | Add a location with the button below: type its French postal code, it is resolved to a commune, and a UV device appears in the Discovery tab, ready to be added to Gladys. The UV index comes from the CAMS forecast (Copernicus), republished as open data by Open-Meteo, and postal codes are read through the French state's "Découpage administratif" API: no account and no API key are needed. Outside France, add a location by its latitude and longitude — the UV data itself is worldwide. Once a device is added, the dashboard offers two UV widgets and the scene editor a UV trigger and a UV action. |
 | General settings | `section` | No | These settings apply to every configured location. |
-| Language of the device names | `select` | No | The language the device and feature names are written in: "Indice UV" or "UV index". Everything else this integration displays already follows your Gladys language, but the name of a device and of its features is stored as it is published, so it has to be chosen here. A device already added to Gladys keeps the names it was created with: delete it and add it again from the Discovery tab to rename it. |
+| Language of the device names | `select` | No | The language the device and feature names are written in: "Indice UV" or "UV index". Everything else this integration displays already follows your Gladys language, but the name of a device and of its features is stored as it is published, so it has to be chosen here — as do the texts the UV scene cards hand to your scenes. A device already added to Gladys keeps the names it was created with: delete it and add it again from the Discovery tab to rename it. |
 | Refresh interval (s) | `number` | No | How often each location is refreshed, in seconds. The forecast has an hourly resolution, so there is nothing to gain from going much below half an hour. |
 | Your locations | `section` | No | Use the buttons below to add, list and remove your locations. "Add my Gladys houses" adds them all in one click, from the houses you already placed on the map in Gladys. They are not fields of this form: a list you build as you go cannot be one, so everything about them happens under a button, and the answer displayed there is what shows you the list. |
 
 ## How to install Indice UV in Gladys
 
 1. In Gladys, open **Integrations**: Indice UV appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-uvindex:1.0.5`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-uvindex:2.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-uvindex](https://github.com/prohand/gladys-uvindex).
 
-Indice UV requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Indice UV requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

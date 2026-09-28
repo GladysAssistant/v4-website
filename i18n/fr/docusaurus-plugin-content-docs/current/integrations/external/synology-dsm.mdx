@@ -54,6 +54,39 @@ Un premier instantané est envoyé immédiatement après l'ajout d'un appareil, 
 
 Les indicateurs de bonne santé ne prennent une valeur que sur un état clairement signalé par DSM comme sain ou comme une panne. Pendant une opération de maintenance (extension, vérification, réparation) ou lorsque SMART n'est pas pris en charge, la valeur précédente est conservée plutôt que de déclencher une fausse alerte.
 
+## Widgets du tableau de bord
+
+Nécessite Gladys 5.1 ou plus récent. Ajoutez-les depuis l'éditeur du tableau de bord ; chaque widget a un réglage **NAS** qui accepte n'importe quel appareil du NAS à afficher (le NAS lui-même, un volume, un disque ou une tâche de sauvegarde). Laissez-le vide pour afficher le premier NAS.
+
+- **NAS Synology** : modèle, version DSM, CPU, mémoire et température, une ligne par volume (occupation et santé), un résumé des disques et des sauvegardes, et un bouton pour ouvrir DSM si son URL utilise HTTPS. Une fois l'appareil NAS ajouté à Gladys, la carte affiche aussi l'historique du CPU et de la mémoire sur la période choisie dans le réglage **Historique de la charge**.
+- **Stockage Synology** : une jauge par volume, l'espace libre total et une ligne par disque avec son état SMART et sa température.
+- **Sauvegardes Synology** : les tâches Hyper Backup et Active Backup avec leur dernier résultat, échecs en premier. Avec un réglage **NAS** vide, il liste les tâches de tous les NAS. Le réglage **Tâches affichées** permet de ne garder que celles en échec ou partielles.
+
+Les widgets affichent les valeurs lues au dernier rafraîchissement : ouvrir un tableau de bord n'interroge jamais le NAS. Ils se mettent à jour après chaque rafraîchissement. Un NAS qui ne répond plus est signalé **Injoignable** et garde ses dernières valeurs connues. Sur un tableau de bord réglé en unités US, les températures sont affichées en °F.
+
+## Scènes
+
+Nécessite Gladys 5.1 ou plus récent.
+
+Les **déclencheurs** se déclenchent une seule fois, sur un changement entre deux rafraîchissements. Le premier relevé après le démarrage de l'intégration sert uniquement de référence : une panne déjà présente au démarrage ne se redéclenche pas, et un changement survenu pendant l'arrêt de l'intégration n'est pas signalé. Chaque déclencheur peut être limité à un appareil ; laissez le champ vide pour réagir à tous.
+
+| Déclencheur                          | Se déclenche quand                                                                                                                      | Variables                                                               |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Un NAS Synology ne répond plus       | Un NAS qui répondait échoue à un rafraîchissement                                                                                       | Modèle du NAS, URL DSM, erreur                                          |
+| Un NAS Synology répond à nouveau     | Ce NAS répond à nouveau                                                                                                                 | Modèle du NAS, URL DSM, injoignable pendant (min)                       |
+| Un volume Synology est dégradé       | DSM signale un volume sain comme dégradé, planté ou en erreur                                                                           | Modèle du NAS, nom du volume, état DSM, occupation (%)                  |
+| Un disque Synology est défaillant    | L'état SMART d'un disque sain passe en défaut                                                                                           | Modèle du NAS, nom du disque, état SMART, température (°C)              |
+| Une sauvegarde Synology est terminée | Un nouveau résultat est lu dans une tâche Hyper Backup ou Active Backup (filtre par paquet et par résultat : réussie, partielle, échec) | Modèle du NAS, nom de la tâche, paquet, résultat, date de la sauvegarde |
+| DSM a été mis à jour                 | Un NAS signale une nouvelle version de DSM                                                                                              | Modèle du NAS, version précédente, nouvelle version                     |
+
+Un état de maintenance (extension, vérification, réparation) ne compte jamais comme une panne, et une sauvegarde en cours n'est signalée qu'une fois terminée.
+
+Les **actions** interrogent le NAS au moment où la scène les atteint et renvoient des valeurs utilisables par les actions suivantes :
+
+- **Récupérer l'état d'un NAS Synology** : joignable (oui/non), modèle, version DSM, CPU, mémoire, température, nombre de volumes dégradés, de disques défaillants et de sauvegardes en échec, et la liste des problèmes détectés. Un NAS injoignable n'arrête pas la scène : testez la valeur **Joignable**.
+- **Récupérer l'état d'un volume Synology** : nom, état DSM, sain (oui/non), occupation (%), espace utilisé, libre et total (Go).
+- **Récupérer l'état d'une sauvegarde Synology** : nom de la tâche, paquet, état, résultat, date de la dernière sauvegarde (au format de date configuré) et heures depuis la dernière sauvegarde, pratique pour être prévenu d'une sauvegarde qui ne tourne plus.
+
 ## Dépannage
 
 - **Identifiants incorrects** : vérifiez le compte dédié et sa politique de connexion.
@@ -105,11 +138,11 @@ Voici les paramètres demandés par Synology DSM dans son écran de configuratio
 ## Comment installer Synology DSM dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Synology DSM apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:1.0.4`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:2.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-synology](https://github.com/prohand/gladys-synology).
 
-Synology DSM nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Synology DSM nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

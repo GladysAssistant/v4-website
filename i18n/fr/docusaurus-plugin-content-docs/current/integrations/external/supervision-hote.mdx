@@ -36,7 +36,7 @@ service cloud, aucune donnée qui sort de chez vous.
 
 ## Installation
 
-Nécessite **Gladys 4.86 ou plus récent**. Sur une version antérieure,
+Nécessite **Gladys 5.1 ou plus récent**. Sur une version antérieure,
 l'intégration n'apparaît tout simplement pas dans le catalogue : mettez d'abord
 Gladys à jour.
 
@@ -121,6 +121,79 @@ dans **Sonde de température CPU**.
   test à faire en premier si une valeur vous semble fausse.
 - **Lister les sondes de température** — voir ci-dessus.
 
+## Widget du tableau de bord
+
+Ajoutez la boîte **Santé de l'hôte** à un tableau de bord (liste des boîtes,
+section des intégrations). Elle affiche :
+
+- trois jauges : CPU, mémoire, disque ;
+- la température du CPU (si une sonde existe) et l'espace disque libre ;
+- un graphique de l'historique CPU / mémoire / disque ;
+- l'état de chaque alerte (voir plus bas) ;
+- un bouton **Lire maintenant**.
+
+Le seul réglage de la boîte est la **période du graphique** (dernière heure,
+24 heures, semaine, mois… ou pas de graphique). Le graphique n'apparaît que si
+l'appareil a été ajouté et qu'il conserve son historique.
+
+Tant que l'appareil n'est pas ajouté depuis l'écran Découverte, la boîte montre
+quand même la dernière mesure. Une fois l'appareil ajouté, les valeurs se
+mettent à jour en direct.
+
+## Scènes
+
+### Déclencheur « Alerte sur une mesure de l'hôte »
+
+L'intégration surveille quatre seuils, réglables dans l'écran de configuration
+(section **Alertes pour les scènes**) :
+
+| Seuil           | Par défaut |
+| --------------- | ---------- |
+| CPU             | 90 %       |
+| Mémoire         | 90 %       |
+| Disque          | 90 %       |
+| Température CPU | 80 °C      |
+
+Mettez un seuil à **0** pour désactiver cette alerte.
+
+Quand une mesure **atteint** son seuil, le déclencheur part **une seule fois**
+(« Alerte déclenchée »). Il repart une fois quand la mesure **redescend**
+(« Retour à la normale ») : 5 points sous le seuil pour les pourcentages, 3 °C
+pour la température. Cette marge évite qu'un disque qui oscille autour de 90 %
+lance vos scènes à chaque lecture.
+
+Dans l'éditeur de scène, vous pouvez filtrer sur les **mesures** (laissez vide
+pour toutes) et sur l'**événement** (déclenchée, retour à la normale, ou les
+deux). Les variables suivantes sont disponibles pour les actions de la scène :
+`metric`, `metric_label`, `status`, `value`, `threshold`, `unit`, `device_name`
+et `message` — un message tout prêt, par exemple
+« Machine hôte : Utilisation disque à 92 % (seuil 90 %) ».
+
+Exemple : « quand le disque atteint son seuil → m'envoyer un message avec
+`message` ».
+
+À savoir :
+
+- l'alerte est comparée à **chaque lecture**, même quand la valeur n'est pas
+  écrite dans l'historique ;
+- l'usage CPU est une **moyenne sur l'intervalle de rafraîchissement** : un pic
+  de quelques secondes ne déclenche rien ;
+- après un redémarrage de l'intégration, une alerte encore en cours est
+  **déclenchée à nouveau** à la première lecture.
+
+### Action « Lire les mesures de l'hôte »
+
+Cette action lit toutes les mesures au moment où la scène l'atteint, et les
+rend disponibles aux actions suivantes : `cpu_percent`, `memory_percent`,
+`disk_percent`, `disk_free_gib`, `temperature` et `summary` (un résumé en une
+ligne). Une mesure indisponible vaut vide, jamais 0.
+
+Exemple : « tous les lundis à 9 h → lire les mesures de l'hôte → m'envoyer
+`summary` ».
+
+Les valeurs lues passent par les mêmes garde-fous que le rafraîchissement
+normal : une scène qui tourne souvent ne remplit pas la base.
+
 ## Dépannage
 
 **Aucune valeur ne remonte.** Vérifiez que l'appareil a bien été ajouté depuis
@@ -180,15 +253,20 @@ Voici les paramètres demandés par Supervision hôte dans son écran de configu
 | Variation minimale (°C) | `number` | Non | Même seuil, appliqué à la température du CPU. |
 | Intervalle maximum sans point (min) | `number` | Non | Même si rien ne bouge, chaque métrique est publiée au moins une fois par intervalle pour que les courbes gardent une ligne continue. |
 | Conserver l'historique | `boolean` | Non | Appliqué à la création de l'appareil. Désactivez-le pour ne garder que les valeurs instantanées, sans aucune ligne d'historique. |
+| Alertes pour les scènes | `section` | Non | Quand une mesure atteint son seuil, l'intégration déclenche une fois le déclencheur de scène « Alerte sur une mesure de l'hôte », puis une fois encore quand la mesure redescend. Idéal pour être prévenu d'un disque plein ou d'un CPU qui chauffe. Mettez un seuil à 0 pour désactiver cette alerte. |
+| Seuil d'alerte CPU (%) | `number` | Non | L'usage CPU est une moyenne sur l'intervalle de rafraîchissement : les pics courts ne comptent pas. 0 désactive l'alerte. |
+| Seuil d'alerte mémoire (%) | `number` | Non | 0 désactive l'alerte. |
+| Seuil d'alerte disque (%) | `number` | Non | 0 désactive l'alerte. |
+| Seuil d'alerte température CPU (°C) | `number` | Non | 0 désactive l'alerte. Ignoré si aucune sonde de température n'est trouvée. |
 
 ## Comment installer Supervision hôte dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Supervision hôte apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-host-monitoring:1.0.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-host-monitoring:2.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-host-monitoring](https://github.com/prohand/gladys-host-monitoring).
 
-Supervision hôte nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Supervision hôte nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 
