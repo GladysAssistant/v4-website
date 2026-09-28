@@ -9,9 +9,9 @@
 const ikeaSmartHomeContent = {
   en: {
     meta: {
-      title: "IKEA smart home with Gladys: Dirigera, Tradfri and Matter",
+      title: "IKEA Smart Home: Dirigera, Matter over Thread & Zigbee",
       description:
-        "Control your IKEA smart home devices (Tradfri bulbs, sensors, blinds) locally with Gladys Assistant, with or without the Dirigera hub, over Zigbee2MQTT or Matter.",
+        "Control your IKEA smart home locally with Gladys Assistant: Tradfri over Zigbee2MQTT, the Dirigera hub over Matter, and the new Matter over Thread range (BILRESA, MYGGSPRAY, ALPSTUGA…), with or without Dirigera.",
     },
     hero: {
       title: "Your IKEA smart home, running locally with Gladys",
@@ -30,7 +30,7 @@ const ikeaSmartHomeContent = {
     methods: {
       title: "Two ways to use IKEA devices with Gladys",
       intro:
-        "IKEA smart devices are Zigbee devices, so you have two options depending on whether you want to keep the IKEA hub or not:",
+        "IKEA's Tradfri devices are Zigbee devices, so you have two options depending on whether you want to keep the IKEA hub or not:",
       items: [
         {
           name: "1. Directly over Zigbee2MQTT (no IKEA hub)",
@@ -47,6 +47,19 @@ const ikeaSmartHomeContent = {
       ],
       outro:
         "Not sure which to pick? If you want the most local, brand-agnostic setup, go with Zigbee2MQTT and a dongle. If you already own a Dirigera hub and like the IKEA app, the Matter route is the quickest.",
+    },
+    newRange: {
+      title: "IKEA's new Matter over Thread range: do you need DIRIGERA?",
+      intro:
+        "Since early 2026, IKEA's new smart home products (the BILRESA remotes, the MYGGSPRAY motion sensor, the MYGGBETT door and window sensor, the TIMMERFLOTTE temperature and humidity sensor, the ALPSTUGA air quality monitor, the KLIPPBOK water leak sensor, the GRILLPLATS plug and the KAJPLATS bulbs) use Matter over Thread instead of Zigbee. Here's how they fit with Gladys:",
+      points: [
+        "You need a Thread border router, but not necessarily DIRIGERA: an Apple TV 4K, a HomePod, a Google Nest Hub (2nd generation) or a recent Amazon Echo does the job too.",
+        "The first pairing goes through a full Matter controller (the IKEA, Apple Home, Google Home or Alexa app), because it uses Bluetooth, which Gladys doesn't handle yet. Then generate a new pairing code from that app and add the device to Gladys, which controls it locally.",
+        "If you have a DIRIGERA hub, you can also add the hub itself to Gladys as a Matter bridge and get all its devices at once.",
+        "Some models can switch to Zigbee: the BILRESA dual-button remote, for example, pairs directly with Zigbee2MQTT after a reset and a button sequence, and is fully supported in Gladys since version 4.72.",
+      ],
+      outro:
+        "Matter over Thread is still young and support varies from one device to another, so check the forum for the model you have in mind before buying.",
     },
     devices: {
       title: "Which IKEA devices work with Gladys",
@@ -117,9 +130,9 @@ const ikeaSmartHomeContent = {
 
   fr: {
     meta: {
-      title: "Maison connectée IKEA avec Gladys : Dirigera, Tradfri et Matter",
+      title: "Maison connectée IKEA : Dirigera, Matter over Thread et Zigbee",
       description:
-        "Pilotez vos appareils connectés IKEA (ampoules Tradfri, capteurs, stores) en local avec Gladys Assistant, avec ou sans le hub Dirigera, via Zigbee2MQTT ou Matter.",
+        "Pilotez votre maison connectée IKEA en local avec Gladys Assistant : Tradfri en Zigbee2MQTT, le hub Dirigera en Matter, et la nouvelle gamme Matter over Thread (BILRESA, MYGGSPRAY, ALPSTUGA…), avec ou sans Dirigera.",
     },
     hero: {
       title: "Votre maison connectée IKEA, en local avec Gladys",
@@ -138,7 +151,7 @@ const ikeaSmartHomeContent = {
     methods: {
       title: "Deux façons d'utiliser vos appareils IKEA avec Gladys",
       intro:
-        "Les appareils connectés IKEA sont des appareils Zigbee : vous avez donc deux options selon que vous souhaitez garder le hub IKEA ou non :",
+        "Les appareils IKEA Tradfri sont des appareils Zigbee : vous avez donc deux options selon que vous souhaitez garder le hub IKEA ou non :",
       items: [
         {
           name: "1. Directement en Zigbee2MQTT (sans hub IKEA)",
@@ -155,6 +168,19 @@ const ikeaSmartHomeContent = {
       ],
       outro:
         "Vous hésitez ? Pour l'installation la plus locale et multimarque, choisissez Zigbee2MQTT et une clé. Si vous possédez déjà un hub Dirigera et appréciez l'application IKEA, la voie Matter est la plus rapide.",
+    },
+    newRange: {
+      title: "La nouvelle gamme IKEA Matter over Thread : faut-il un DIRIGERA ?",
+      intro:
+        "Depuis début 2026, les nouveaux produits connectés IKEA (les télécommandes BILRESA, le détecteur de mouvement MYGGSPRAY, le capteur d'ouverture MYGGBETT, le capteur de température et d'humidité TIMMERFLOTTE, le capteur de qualité de l'air ALPSTUGA, le détecteur de fuite d'eau KLIPPBOK, la prise GRILLPLATS et les ampoules KAJPLATS) utilisent Matter over Thread au lieu du Zigbee. Voici comment ils s'intègrent à Gladys :",
+      points: [
+        "Il vous faut un routeur de bordure Thread, mais pas forcément un DIRIGERA : une Apple TV 4K, un HomePod, un Google Nest Hub (2e génération) ou un Amazon Echo récent font aussi l'affaire.",
+        "Le premier appairage passe par un contrôleur Matter complet (l'application IKEA, Maison d'Apple, Google Home ou Alexa), car il utilise le Bluetooth, que Gladys ne gère pas encore. Générez ensuite un nouveau code d'appairage depuis cette application et ajoutez l'appareil à Gladys, qui le pilote en local.",
+        "Si vous avez un hub DIRIGERA, vous pouvez aussi ajouter le hub lui-même à Gladys comme pont Matter et récupérer tous ses appareils d'un coup.",
+        "Certains modèles peuvent passer en Zigbee : la télécommande BILRESA à deux boutons, par exemple, s'appaire directement à Zigbee2MQTT après une réinitialisation et une séquence d'appuis, et est entièrement prise en charge dans Gladys depuis la version 4.72.",
+      ],
+      outro:
+        "Matter over Thread est encore jeune et la prise en charge varie d'un appareil à l'autre : consultez le forum pour le modèle qui vous intéresse avant d'acheter.",
     },
     devices: {
       title: "Quels appareils IKEA fonctionnent avec Gladys",
@@ -250,6 +276,16 @@ export const ikeaSmartHomeFaqEn = [
     answer:
       "Yes, and that is one of the main reasons to use Gladys. Over Zigbee2MQTT you can freely combine IKEA Tradfri with Philips Hue, Aqara, Sonoff and other Zigbee brands, all on the same network and in the same automations.",
   },
+  {
+    question: "Do IKEA's new Matter over Thread devices need the DIRIGERA hub?",
+    answer:
+      "No, but they need a Thread border router. DIRIGERA is one, and so are an Apple TV 4K, a HomePod, a Google Nest Hub (2nd generation) or a recent Amazon Echo. The first pairing goes through the IKEA, Apple Home, Google Home or Alexa app; you then share the device with Gladys using a new Matter pairing code.",
+  },
+  {
+    question: "Can the IKEA BILRESA remote work over Zigbee?",
+    answer:
+      "Yes. The BILRESA remotes can be switched from Matter over Thread to Zigbee with a reset followed by a button sequence, then paired directly with Zigbee2MQTT. Gladys fully supports the dual-button BILRESA over Zigbee since version 4.72; the scroll-wheel version pairs too, but its wheel isn't handled yet.",
+  },
 ];
 
 export const ikeaSmartHomeFaqFr = [
@@ -277,6 +313,16 @@ export const ikeaSmartHomeFaqFr = [
     question: "Puis-je mélanger des appareils IKEA avec d'autres marques ?",
     answer:
       "Oui, et c'est l'une des principales raisons d'utiliser Gladys. En Zigbee2MQTT, vous combinez librement l'IKEA Tradfri avec du Philips Hue, de l'Aqara, du Sonoff et d'autres marques Zigbee, sur le même réseau et dans les mêmes automatisations.",
+  },
+  {
+    question: "Les nouveaux appareils IKEA Matter over Thread ont-ils besoin du hub DIRIGERA ?",
+    answer:
+      "Non, mais ils ont besoin d'un routeur de bordure Thread. Le DIRIGERA en est un, tout comme une Apple TV 4K, un HomePod, un Google Nest Hub (2e génération) ou un Amazon Echo récent. Le premier appairage passe par l'application IKEA, Maison d'Apple, Google Home ou Alexa ; vous partagez ensuite l'appareil avec Gladys grâce à un nouveau code d'appairage Matter.",
+  },
+  {
+    question: "La télécommande IKEA BILRESA peut-elle fonctionner en Zigbee ?",
+    answer:
+      "Oui. Les télécommandes BILRESA peuvent passer de Matter over Thread au Zigbee avec une réinitialisation suivie d'une séquence d'appuis, puis s'appairer directement à Zigbee2MQTT. Gladys prend entièrement en charge la BILRESA à deux boutons en Zigbee depuis la version 4.72 ; la version à molette s'appaire aussi, mais sa molette n'est pas encore gérée.",
   },
 ];
 

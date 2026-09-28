@@ -43,6 +43,26 @@ import { protocolsFaqEn, protocolsFaqFr } from "./protocolsComparisonData";
 import { energyFaqEn, energyFaqFr } from "./energyMonitoringData";
 import { alarmFaqEn, alarmFaqFr } from "./alarmSystemData";
 import { presenceFaqEn, presenceFaqFr } from "./presenceSimulationData";
+import worksWithContent, {
+  worksWithFaqEn,
+  worksWithFaqFr,
+} from "./worksWithData";
+import smartThingsAlternativeContent, {
+  smartThingsAlternativeFaqEn,
+  smartThingsAlternativeFaqFr,
+} from "./smartThingsAlternativeData";
+import homeAssistantGreenAlternativeContent, {
+  homeAssistantGreenAlternativeFaqEn,
+  homeAssistantGreenAlternativeFaqFr,
+} from "./homeAssistantGreenAlternativeData";
+import hydroQuebecFlexDContent, {
+  hydroQuebecFlexDFaqEn,
+  hydroQuebecFlexDFaqFr,
+} from "./hydroQuebecFlexDData";
+import reolinkRtspContent, {
+  reolinkRtspFaqEn,
+  reolinkRtspFaqFr,
+} from "./reolinkRtspData";
 
 const SITE_URL = "https://gladysassistant.com";
 
@@ -743,12 +763,12 @@ export function getIkeaSmartHomePageSchema(lang) {
         "@id": `${pageUrl}#article`,
         headline:
           lang === "fr"
-            ? "Maison connectée IKEA avec Gladys : Dirigera, Tradfri et Matter"
-            : "IKEA smart home with Gladys: Dirigera, Tradfri and Matter",
+            ? "Maison connectée IKEA : Dirigera, Matter over Thread et Zigbee"
+            : "IKEA Smart Home: Dirigera, Matter over Thread & Zigbee",
         description:
           lang === "fr"
-            ? "Pilotez vos appareils connectés IKEA (ampoules Tradfri, capteurs, stores) en local avec Gladys Assistant, avec ou sans le hub Dirigera, via Zigbee2MQTT ou Matter."
-            : "Control your IKEA smart home devices (Tradfri bulbs, sensors, blinds) locally with Gladys Assistant, with or without the Dirigera hub, over Zigbee2MQTT or Matter.",
+            ? "Pilotez votre maison connectée IKEA en local avec Gladys Assistant : Tradfri en Zigbee2MQTT, le hub Dirigera en Matter, et la nouvelle gamme Matter over Thread, avec ou sans Dirigera."
+            : "Control your IKEA smart home locally with Gladys Assistant: Tradfri over Zigbee2MQTT, the Dirigera hub over Matter, and the new Matter over Thread range, with or without Dirigera.",
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },
@@ -761,6 +781,7 @@ export function getIkeaSmartHomePageSchema(lang) {
           { "@type": "Thing", name: "IKEA smart home" },
           { "@type": "Thing", name: "IKEA Dirigera" },
           { "@type": "Thing", name: "IKEA Tradfri" },
+          { "@type": "Thing", name: "Matter over Thread" },
           { "@type": "SoftwareApplication", name: "Gladys Assistant" },
         ],
       },
@@ -1118,4 +1139,104 @@ export function getStarterKitPageSchema(lang) {
       },
     ],
   };
+}
+
+// Shared builder for the guide / use-case pages whose headline and description
+// are the page's own meta title and description.
+function getGuidePageSchema(lang, { path, content, faqEn, faqFr, about }) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}${path}`;
+  const meta = content[lang === "fr" ? "fr" : "en"].meta;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "Article",
+        "@id": `${pageUrl}#article`,
+        headline: meta.title,
+        description: meta.description,
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        author: {
+          "@type": "Person",
+          name: "Pierre-Gilles Leymarie",
+        },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        about,
+      },
+      toFaqPage(lang === "fr" ? faqFr : faqEn, pageUrl),
+    ],
+  };
+}
+
+export function getWorksWithPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/works-with/",
+    content: worksWithContent,
+    faqEn: worksWithFaqEn,
+    faqFr: worksWithFaqFr,
+    about: [
+      { "@type": "Thing", name: "Smart home device compatibility" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getSmartThingsAlternativePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/smartthings-alternative/",
+    content: smartThingsAlternativeContent,
+    faqEn: smartThingsAlternativeFaqEn,
+    faqFr: smartThingsAlternativeFaqFr,
+    about: [
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+      { "@type": "SoftwareApplication", name: "Samsung SmartThings" },
+    ],
+  });
+}
+
+export function getHomeAssistantGreenAlternativePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/home-assistant-green-alternative/",
+    content: homeAssistantGreenAlternativeContent,
+    faqEn: homeAssistantGreenAlternativeFaqEn,
+    faqFr: homeAssistantGreenAlternativeFaqFr,
+    about: [
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+      { "@type": "Product", name: "Home Assistant Green" },
+      { "@type": "Product", name: "Home Assistant Yellow" },
+    ],
+  });
+}
+
+export function getHydroQuebecFlexDPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/hydro-quebec-flex-d/",
+    content: hydroQuebecFlexDContent,
+    faqEn: hydroQuebecFlexDFaqEn,
+    faqFr: hydroQuebecFlexDFaqFr,
+    about: [
+      { "@type": "Thing", name: "Hydro-Québec Rate Flex D" },
+      { "@type": "Organization", name: "Hydro-Québec" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getReolinkRtspPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/reolink-rtsp-url/",
+    content: reolinkRtspContent,
+    faqEn: reolinkRtspFaqEn,
+    faqFr: reolinkRtspFaqFr,
+    about: [
+      { "@type": "Thing", name: "RTSP" },
+      { "@type": "Organization", name: "Reolink" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
 }

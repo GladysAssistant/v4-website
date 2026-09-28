@@ -79,6 +79,20 @@ function IkeaContent({ content, faq }) {
           <p className={styles.blockOutro}>{content.methods.outro}</p>
         </section>
 
+        {/* NEW MATTER OVER THREAD RANGE */}
+        <section className={styles.section} aria-labelledby="new-range-title">
+          <h2 id="new-range-title" className={styles.sectionTitle}>
+            {content.newRange.title}
+          </h2>
+          <p className={styles.blockIntro}>{content.newRange.intro}</p>
+          <ul className={styles.bulletList}>
+            {content.newRange.points.map((point, i) => (
+              <li key={i}>{point}</li>
+            ))}
+          </ul>
+          <p className={styles.blockOutro}>{content.newRange.outro}</p>
+        </section>
+
         {/* COMPATIBLE DEVICES */}
         <section className={styles.section} aria-labelledby="devices-title">
           <h2 id="devices-title" className={styles.sectionTitle}>
