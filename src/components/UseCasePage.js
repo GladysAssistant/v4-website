@@ -15,18 +15,31 @@ import styles from "../pages/comparison.module.css";
 
 // Reuses the homepage hero dashboard screenshot (localized, responsive).
 
-function Card({ icon, title, text }) {
-  return (
-    <div className={styles.card}>
+// A feature card becomes a link when the page gives it an `href` (the "works
+// with" page points each brand to its integration doc).
+function Card({ icon, title, text, href }) {
+  const body = (
+    <>
       {icon && (
         <span className={styles.cardIcon} aria-hidden="true">
           {icon}
         </span>
       )}
-      <div className={styles.cardTitle}>{title}</div>
+      <div className={styles.cardTitle}>
+        {title}
+        {href ? " →" : null}
+      </div>
       <p>{text}</p>
-    </div>
+    </>
   );
+  if (href) {
+    return (
+      <Link to={href} className={styles.card}>
+        {body}
+      </Link>
+    );
+  }
+  return <div className={styles.card}>{body}</div>;
 }
 
 function LinkCard({ label, href, text }) {

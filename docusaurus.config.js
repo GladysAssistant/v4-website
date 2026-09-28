@@ -129,6 +129,10 @@ module.exports = function createConfig() {
               className: "footer__link-item footer__link--fr-only",
             },
             {
+              label: "Works with Gladys",
+              to: "works-with/",
+            },
+            {
               label: "Installing on a Mini-PC",
               to: "docs/installation/mini-pc/",
             },
@@ -183,6 +187,14 @@ module.exports = function createConfig() {
               to: "edf-tempo/",
             },
             {
+              label: "Hydro-Québec Rate Flex D",
+              to: "hydro-quebec-flex-d/",
+            },
+            {
+              label: "Reolink RTSP URL",
+              to: "reolink-rtsp-url/",
+            },
+            {
               label: "DIY home alarm system",
               to: "diy-home-alarm-system/",
             },
@@ -218,6 +230,14 @@ module.exports = function createConfig() {
             {
               label: "Google Home alternative",
               to: "google-home-alternative/",
+            },
+            {
+              label: "SmartThings alternative",
+              to: "smartthings-alternative/",
+            },
+            {
+              label: "Home Assistant Green alternative",
+              to: "home-assistant-green-alternative/",
             },
           ],
         },

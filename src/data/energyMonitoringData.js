@@ -114,6 +114,11 @@ const energyContent = {
           text: "Pull your official Linky consumption history into Gladys via Gladys Plus.",
         },
         {
+          label: "Hydro-Québec Rate Flex D (Quebec)",
+          href: "/hydro-quebec-flex-d/",
+          text: "Automate Flex D peak events and track your savings with the Hydro-Québec integration.",
+        },
+        {
           label: "The AI weekly home report",
           href: "/ai-smart-home/",
           text: "Get a weekly AI summary of your consumption, cost and trends.",
@@ -239,6 +244,11 @@ const energyContent = {
           label: "Enedis & Linky",
           href: "/docs/integrations/enedis/",
           text: "Récupérez l'historique officiel de votre Linky dans Gladys via Gladys Plus.",
+        },
+        {
+          label: "Tarif Flex D d'Hydro-Québec (Québec)",
+          href: "/hydro-quebec-flex-d/",
+          text: "Automatisez les pointes du Flex D et suivez vos économies avec l'intégration Hydro-Québec.",
         },
         {
           label: "Le rapport hebdomadaire par IA",
