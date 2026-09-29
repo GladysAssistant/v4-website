@@ -1,10 +1,11 @@
 ---
-title: "Devmel integration for Gladys Assistant"
+title: "Devmel smart home integration, free and open source"
 sidebar_label: "Devmel"
 description: "Control the shutters, switches, lights and sensors of a Devmel AirSend radio gateway. Free, open source, installable in one click."
 image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-devmel.png"
 keywords:
   - "devmel"
+  - "devmel smart home"
   - "gladys devmel"
   - "devmel gladys assistant"
   - "external integration"
@@ -561,8 +562,9 @@ the one covering generic 433 MHz protocols. Listening on 868 MHz therefore means
 1. **declare the device** in the **Devices** list (the airsend.cloud export
    carries its `pid`): the deduction does the rest and the **Listening channel**
    field stays empty. This is what works nine times out of ten;
-2. **attach its remote** (`remotes`): a remote actually emits, so on a tie the
-   deduction keeps its protocol rather than the shutter's, which never speaks;
+2. **attach its remote** (`remotes`): a remote actually emits, so the deduction
+   keeps its protocol rather than the shutter's, which never speaks — however
+   many shutters share it;
 3. **force the `pid`** in **Listening channel** when the protocol is not
    declared yet. To find it, the **Find a radio protocol** action asks the
    AirSend service and searches by brand or by `pid`:
@@ -849,6 +851,12 @@ If you would rather use the container environment variable, `LOG_LEVEL` still
 works and still wins: the switch raises the level to debug while it is on, then
 hands your `LOG_LEVEL` back when you turn it off.
 
+The log lines are stamped in the **Time zone of the logs** field (default
+`Europe/Paris`), so they show the same hour as the dashboard widget:
+`[2026-09-28T14:02:05.123+02:00] [INFO] …`. Any IANA name works
+(`America/Montreal`, `Europe/Brussels`…); left empty, the container's `TZ` is
+used, or UTC.
+
 ### If you run the AirSend service elsewhere
 
 The AirSend Web Service pushes the frames from the machine it runs on. When the
@@ -872,6 +880,46 @@ provides: link your Gladys Plus account and paste your Open API key in the
   "Listening on 868 MHz").
 - **Identify a device** — pick a device and it is sent a PING. Not every piece
   of 433 MHz equipment reacts to it.
+
+## Scenes and dashboard (Gladys 5.1+)
+
+These need **Gladys 5.1 or later**; an older Gladys keeps the previous version
+of the integration.
+
+### Scene triggers
+
+In the scene editor, under **Integrations**:
+
+- **A radio remote is pressed** — a wall remote, a keyfob or a radio button
+  declared on a device was heard (the `remotes` of a device, a type `1` remote,
+  a spare remote attached to a type `4096` button). Filter on the device it
+  drives and on the order (`up`, `down`, `stop`, `favorite`, `on`, `off`,
+  `toggle`). The scene can read `device_name`, `order`, `pid` and `addr`.
+  Gladys' own orders never fire it, so a scene cannot loop on itself. A remote
+  held down is one press, not one event per frame.
+- **A radio order failed** — the box did not carry an order Gladys gave:
+  unreachable, connection string refused, box busy… The scene can read
+  `device_name`, `reason` (`NETWORK`, `SECURITY`, `BUSY`, `HTTP_401`,
+  `UNREACHABLE`…) and `message`. One event per device and reason per minute:
+  made for a notification.
+
+### Scene actions
+
+- **Set the known position of a shutter** — tells the integration where a
+  timed shutter really is (0-100 %), **without moving it**: after a power cut, a
+  crank turned by hand, a motor stopped by an obstacle.
+- **Re-arm radio listening** — subscribes the box again, now. Useful right
+  after the box has been powered back on (it forgets its subscription). Gives
+  the channel listened to as `channel`.
+
+### The "AirSend radio" widget
+
+Add it to a dashboard: the state of the AirSend service, the protocol the box
+listens to, the last frame heard, the echoes of Gladys' orders, the frames
+dropped, the box temperature and light when it has `sensors: true`, and the
+last emitters heard with what became of them (followed, unknown, dropped…). Its
+**Re-arm listening** button does the same as the scene action. The
+**Emitters shown** setting (0 to 8) sets the length of the list.
 
 ## Good to know
 
@@ -929,15 +977,16 @@ These are the settings Devmel asks for in its configuration screen in Gladys.
 | Refresh interval (s) | `number` | No | How often the box sensors are read, in seconds. A device can override it with its own refresh value. |
 | Accept unreliable frames | `boolean` | No | The box grades every frame it decodes, and the badly graded ones are normally ignored — as the official Jeedom plugin does. Turn this on when a remote is heard but never followed: its frames are then used anyway, at the risk of the occasional false trigger. It changes nothing for a protocol the box picks up without decoding it (no address in the logs): that one needs the listening channel set to its pid. |
 | Detailed logs (debug) | `boolean` | No | Log every radio frame the box hears, including the ones dropped as unreliable or left undecoded. Turn it on to find out why a remote does not show up, and off again once you know: it is verbose. The password of your connection string is never logged; the rest of it is, at this level, so you can see what Gladys is really holding. |
+| Time zone of the logs | `string` | No | The time zone the log lines are stamped in, so they show the same hour as the dashboard widget. An IANA name such as Europe/Paris or America/Montreal. Left empty: the TZ of the container, or UTC. |
 
 ## How to install Devmel in Gladys
 
 1. In Gladys, open **Integrations**: Devmel appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:1.0.18`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:2.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 
-Devmel requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Devmel requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

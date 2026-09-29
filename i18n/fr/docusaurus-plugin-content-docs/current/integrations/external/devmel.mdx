@@ -1,10 +1,11 @@
 ---
-title: "Intégration Devmel pour Gladys Assistant"
+title: "Intégration domotique Devmel, gratuite et open source"
 sidebar_label: "Devmel"
 description: "Pilotez volets, interrupteurs, lampes et capteurs d'une passerelle radio Devmel AirSend. Gratuite, open source, installable en un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-devmel.png"
 keywords:
   - "devmel"
+  - "domotique devmel"
   - "gladys devmel"
   - "devmel gladys assistant"
   - "intégration externe"
@@ -585,9 +586,9 @@ Trois chemins, du plus simple au dernier recours :
 1. **déclarez l'appareil** dans la liste **Appareils** (l'export airsend.cloud
    contient son `pid`) : la déduction s'en charge, le champ **Canal d'écoute**
    reste vide. C'est ce qui marche dans neuf cas sur dix ;
-2. **rattachez sa télécommande** (`remotes`) : elle émet pour de bon, et en cas
-   d'égalité c'est son protocole que la déduction retient — pas celui du volet,
-   qui ne parle jamais ;
+2. **rattachez sa télécommande** (`remotes`) : elle émet pour de bon, et c'est
+   son protocole que la déduction retient — pas celui du volet, qui ne parle
+   jamais, quel que soit le nombre de volets qui le partagent ;
 3. **forcez le `pid`** dans **Canal d'écoute** quand le protocole n'est pas
    encore déclaré. Pour le trouver, l'action **Chercher un protocole radio**
    interroge le service AirSend et cherche par marque ou par `pid` :
@@ -890,6 +891,12 @@ Si vous préférez la variable d'environnement du conteneur, `LOG_LEVEL` marche
 toujours et reste prioritaire : l'interrupteur monte le niveau à debug tant
 qu'il est activé, puis rend la main à votre `LOG_LEVEL` quand vous le coupez.
 
+Les lignes des journaux sont horodatées dans le **Fuseau horaire des journaux**
+(par défaut `Europe/Paris`), pour afficher la même heure que le widget du
+tableau de bord : `[2026-09-28T14:02:05.123+02:00] [INFO] …`. Tout nom IANA
+convient (`America/Montreal`, `Europe/Brussels`…) ; laissé vide, c'est le `TZ`
+du conteneur, ou UTC.
+
 ### Si vous faites tourner le service AirSend ailleurs
 
 Le service web AirSend pousse les trames depuis la machine où il tourne. Quand
@@ -915,6 +922,47 @@ votre clé Open API dans le bloc **Webhooks** de l'écran de configuration.
   (voir « Écouter en 868 MHz »).
 - **Identifier un appareil** — choisissez un appareil, un PING lui est envoyé.
   Tous les équipements 433 MHz n'y réagissent pas.
+
+## Scènes et tableau de bord (Gladys 5.1+)
+
+Il faut **Gladys 5.1 ou plus récent** ; un Gladys plus ancien garde la version
+précédente de l'intégration.
+
+### Déclencheurs de scène
+
+Dans l'éditeur de scènes, rubrique **Intégrations** :
+
+- **Une télécommande radio est actionnée** — une télécommande murale, un
+  porte-clés ou un bouton radio déclaré sur un appareil a été entendu (les
+  `remotes` d'un appareil, une télécommande de type `1`, une télécommande de
+  rechange rattachée à un bouton de type `4096`). Filtrez sur l'appareil piloté
+  et sur l'ordre (`up`, `down`, `stop`, `favorite`, `on`, `off`, `toggle`). La
+  scène peut lire `device_name`, `order`, `pid` et `addr`. Les ordres de Gladys
+  ne le déclenchent jamais : une scène ne peut pas boucler sur elle-même. Une
+  télécommande tenue appuyée compte pour un seul appui.
+- **Un ordre radio a échoué** — le boîtier n'a pas porté un ordre donné par
+  Gladys : injoignable, chaîne de connexion refusée, boîtier occupé… La scène
+  peut lire `device_name`, `reason` (`NETWORK`, `SECURITY`, `BUSY`, `HTTP_401`,
+  `UNREACHABLE`…) et `message`. Un seul événement par appareil et par raison
+  et par minute : fait pour une notification.
+
+### Actions de scène
+
+- **Recaler la position d'un volet** — indique à l'intégration où est vraiment
+  un volet minuté (0-100 %), **sans le faire bouger** : après une coupure de
+  courant, une manivelle tournée à la main, un moteur arrêté par un obstacle.
+- **Réarmer l'écoute radio** — réabonne le boîtier, tout de suite. Utile juste
+  après la remise sous tension du boîtier (il oublie son abonnement). Renvoie le
+  canal écouté dans `channel`.
+
+### Le widget « Radio AirSend »
+
+Ajoutez-le à un tableau de bord : l'état du service AirSend, le protocole
+écouté, la dernière trame entendue, les échos des ordres de Gladys, les trames
+écartées, la température et la luminosité du boîtier s'il a `sensors: true`, et
+les derniers émetteurs entendus avec ce qu'ils sont devenus (suivi, inconnu,
+écarté…). Son bouton **Réarmer l'écoute** fait la même chose que l'action de
+scène. Le réglage **Émetteurs affichés** (0 à 8) règle la longueur de la liste.
 
 ## Bon à savoir
 
@@ -975,15 +1023,16 @@ Voici les paramètres demandés par Devmel dans son écran de configuration dans
 | Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture des capteurs du boîtier, en secondes. Un appareil peut la surcharger avec sa propre valeur refresh. |
 | Accepter les trames peu fiables | `boolean` | Non | Le boîtier note chaque trame qu'il décode, et celles qu'il note mal sont ignorées — comme le fait le plugin Jeedom officiel. Activez ceci si une télécommande est entendue sans jamais être suivie : ses trames seront alors utilisées quand même, au risque d'une fausse détection de temps en temps. Sans effet sur un protocole que le boîtier capte sans le décoder (aucune adresse dans les journaux) : celui-là demande son pid dans le canal d'écoute. |
 | Journaux détaillés (debug) | `boolean` | Non | Journalise chaque trame radio entendue par le boîtier, y compris celles écartées comme peu fiables ou non décodées. Activez-le pour comprendre pourquoi une télécommande ne remonte pas, puis désactivez-le : c'est verbeux. Le mot de passe de votre chaîne de connexion n'est jamais journalisé ; le reste de la chaîne l'est à ce niveau, pour que vous voyiez ce que Gladys tient vraiment. |
+| Fuseau horaire des journaux | `string` | Non | Le fuseau horaire des heures écrites dans les journaux, pour qu'ils affichent la même heure que le widget du tableau de bord. Un nom IANA comme Europe/Paris ou America/Montreal. Laissé vide : le TZ du conteneur, ou UTC. |
 
 ## Comment installer Devmel dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Devmel apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:1.0.18`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:2.0.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 
-Devmel nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Devmel nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 
