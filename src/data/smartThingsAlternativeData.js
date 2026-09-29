@@ -158,6 +158,11 @@ const smartThingsAlternativeContent = {
       intro: "Everything you need to plan the move:",
       links: [
         {
+          label: "Hubitat alternative",
+          href: "/hubitat-alternative/",
+          text: "Another local hub, and how Gladys compares to it.",
+        },
+        {
           label: "Works with Gladys",
           href: "/works-with/",
           text: "The brands and protocols supported by Gladys, with a setup guide for each.",
@@ -338,6 +343,11 @@ const smartThingsAlternativeContent = {
       title: "Aller plus loin",
       intro: "Tout ce qu'il faut pour préparer la migration :",
       links: [
+        {
+          label: "Alternative à Hubitat",
+          href: "/hubitat-alternative/",
+          text: "Une autre box locale, et comment Gladys s'y compare.",
+        },
         {
           label: "Compatible Gladys",
           href: "/works-with/",

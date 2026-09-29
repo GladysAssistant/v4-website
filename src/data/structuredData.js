@@ -63,6 +63,38 @@ import reolinkRtspContent, {
   reolinkRtspFaqEn,
   reolinkRtspFaqFr,
 } from "./reolinkRtspData";
+import hydroQuebecPeakEventsContent, {
+  hydroQuebecPeakEventsFaqEn,
+  hydroQuebecPeakEventsFaqFr,
+} from "./hydroQuebecPeakEventsData";
+import smartHomeMcpContent, {
+  smartHomeMcpFaqEn,
+  smartHomeMcpFaqFr,
+} from "./smartHomeMcpData";
+import zigbee2mqttWithoutHomeAssistantContent, {
+  zigbee2mqttWithoutHomeAssistantFaqEn,
+  zigbee2mqttWithoutHomeAssistantFaqFr,
+} from "./zigbee2mqttWithoutHomeAssistantData";
+import zwaveJsUiWithoutHomeAssistantContent, {
+  zwaveJsUiWithoutHomeAssistantFaqEn,
+  zwaveJsUiWithoutHomeAssistantFaqFr,
+} from "./zwaveJsUiWithoutHomeAssistantData";
+import hubitatAlternativeContent, {
+  hubitatAlternativeFaqEn,
+  hubitatAlternativeFaqFr,
+} from "./hubitatAlternativeData";
+import homeyAlternativeContent, {
+  homeyAlternativeFaqEn,
+  homeyAlternativeFaqFr,
+} from "./homeyAlternativeData";
+import openhabAlternativeContent, {
+  openhabAlternativeFaqEn,
+  openhabAlternativeFaqFr,
+} from "./openhabAlternativeData";
+import sinopeZigbeeContent, {
+  sinopeZigbeeFaqEn,
+  sinopeZigbeeFaqFr,
+} from "./sinopeZigbeeData";
 
 const SITE_URL = "https://gladysassistant.com";
 
@@ -1236,6 +1268,112 @@ export function getReolinkRtspPageSchema(lang) {
     about: [
       { "@type": "Thing", name: "RTSP" },
       { "@type": "Organization", name: "Reolink" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getHydroQuebecPeakEventsPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/hydro-quebec-peak-events/",
+    content: hydroQuebecPeakEventsContent,
+    faqEn: hydroQuebecPeakEventsFaqEn,
+    faqFr: hydroQuebecPeakEventsFaqFr,
+    about: [
+      { "@type": "Thing", name: "Hydro-Québec peak events" },
+      { "@type": "Organization", name: "Hydro-Québec" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getSmartHomeMcpPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/smart-home-mcp-server/",
+    content: smartHomeMcpContent,
+    faqEn: smartHomeMcpFaqEn,
+    faqFr: smartHomeMcpFaqFr,
+    about: [
+      { "@type": "Thing", name: "Model Context Protocol" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getZigbee2mqttWithoutHomeAssistantPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/zigbee2mqtt-without-home-assistant/",
+    content: zigbee2mqttWithoutHomeAssistantContent,
+    faqEn: zigbee2mqttWithoutHomeAssistantFaqEn,
+    faqFr: zigbee2mqttWithoutHomeAssistantFaqFr,
+    about: [
+      { "@type": "SoftwareApplication", name: "Zigbee2MQTT" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getZwaveJsUiWithoutHomeAssistantPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/z-wave-js-ui-without-home-assistant/",
+    content: zwaveJsUiWithoutHomeAssistantContent,
+    faqEn: zwaveJsUiWithoutHomeAssistantFaqEn,
+    faqFr: zwaveJsUiWithoutHomeAssistantFaqFr,
+    about: [
+      { "@type": "SoftwareApplication", name: "Z-Wave JS UI" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getHubitatAlternativePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/hubitat-alternative/",
+    content: hubitatAlternativeContent,
+    faqEn: hubitatAlternativeFaqEn,
+    faqFr: hubitatAlternativeFaqFr,
+    about: [
+      { "@type": "Product", name: "Hubitat Elevation" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getHomeyAlternativePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/homey-alternative/",
+    content: homeyAlternativeContent,
+    faqEn: homeyAlternativeFaqEn,
+    faqFr: homeyAlternativeFaqFr,
+    about: [
+      { "@type": "Product", name: "Homey Pro" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getOpenhabAlternativePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/openhab-alternative/",
+    content: openhabAlternativeContent,
+    faqEn: openhabAlternativeFaqEn,
+    faqFr: openhabAlternativeFaqFr,
+    about: [
+      { "@type": "SoftwareApplication", name: "openHAB" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getSinopeZigbeePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/sinope-zigbee/",
+    content: sinopeZigbeeContent,
+    faqEn: sinopeZigbeeFaqEn,
+    faqFr: sinopeZigbeeFaqFr,
+    about: [
+      { "@type": "Organization", name: "Sinopé Technologies" },
+      { "@type": "Thing", name: "Zigbee" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },
     ],
   });
