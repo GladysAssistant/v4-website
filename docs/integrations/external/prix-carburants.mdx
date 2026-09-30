@@ -76,6 +76,14 @@ publish that brand, so it is read from a reference dataset of the same
 information system; a station that reference dataset does not know keeps a name
 built from its street.
 
+When two stations of the same brand share a city, their street is added to the
+name so you can tell them apart: `TotalEnergies - 33 Av. Médéric -
+Noisy-le-Grand - Diesel`. In the rare case where even the street is the same
+(both sides of a motorway rest area), the national id of the station is appended.
+Devices already created keep the name they were given: rename them in
+**Devices**, or delete and re-add them from the **Discovery** tab to get the
+detailed name (their price history is lost in the process).
+
 ## Configuration
 
 1. Open the **Configuration** tab of the integration.
@@ -126,12 +134,173 @@ part of the device identity: ticking an extra fuel in the configuration makes
 **new** entries appear in the Discovery tab, and your existing devices keep
 working untouched. Delete the ones you no longer need.
 
+## The dashboard widgets
+
+Beyond the devices, the integration provides **two cards** you can drop on a
+dashboard (**Edit dashboard**, then pick the card in the list, under "Prix
+carburants").
+
+### "Cheapest around me"
+
+The card answers three questions at once: where to fill up, is this a good day,
+and how much will it cost.
+
+- **Heading**: the fuel and the area — `Diesel · within 10 km of my home`
+  (or `of 35000` when Gladys does not know where the house is).
+- **Three tiles**: the cheapest price, the average of the stations found, and
+  the **7-day trend** in cents (green when it drops, red when it climbs). The
+  tile is there from day one and shows `—` until a real week of history exists.
+- **The read time**: `Prices read on 19/09/2026 at 10:30`, because a price is
+  only as good as the moment it was read.
+- **The 30-day curve** of the cheapest price of the area.
+- **The ranking** of the stations with their price **and the day the station
+  declared it** (`today`, `yest.`, `06/08`) — not to be confused with the read
+  time above: a station may not have moved its prices in a week. The row is kept
+  short so it stays readable on a phone: the date is reduced to the day, the
+  `€/L` unit already shown by the tiles above is not repeated on every row, and
+  a long station name is shortened around what tells it from the others — the
+  town is kept whole and the brand is shortened to its root
+  (`Total Access - Lyon 7e`), never below the name of the chain itself
+  (`Carrefour`, not `Carre.`). As soon as several stations of the ranking are in
+  the SAME town, that town stops telling them apart on its own, so each of those
+  rows shows its street: "Lyon" written three times says where the area is, not
+  where the pump is. The town stays behind the street whenever the row can hold
+  both, and the street is then shortened to its name — `Total - Garnier, Lyon`,
+  `Total - Gerland, Lyon` — since `Av.` and `Rue de` are what every other street
+  carries too. When even that does not fit, or when shortening two streets would
+  make two rows read the same, the town goes and the street is shown as whole as
+  the row allows (`Total - Av. Tony Garnier`, `Carrefour - Peupliers`). Two stations of the same street keep their house number (`Carrefour - 12 Ailes`, `Carrefour - 85 Ailes`), and two stations declared at the very same address end on the last digits of their station code (`Carrefour - Ailes ·001`, `Carrefour - Ailes ·002`). The full name, the full address and the full
+  timestamp are still on the device page and on the "My station" card.
+- A button to the **official map** (prix-carburants.gouv.fr).
+
+Four settings: the fuel, how many stations are shown (3, 5 or 8), the
+scope — **around your postal code** (the integration searches, as it does for
+the Discovery tab) or **my stations only** (the ones you added) — and the
+**station name length**, from 24 characters (the default, what a phone holds
+next to the price and its date) up to 40. Gladys does not tell the integration
+how wide the screen is, so pick the widest your screens show without cutting
+the date: at 40, `Carrefour - Rue des Peupliers, Cusset` is written whole.
+
+#### Where the curve comes from
+
+The open data feed publishes the prices of the moment, not yesterday's: nobody
+stores "the cheapest price of your area". So the integration samples it itself,
+**at most once an hour**, and keeps 30 days in `/data`.
+
+- The curve is shown **from day one** and fills itself afterwards. It always
+  ends on the price just read, so **the axis never runs past today**; it grows
+  leftwards until it covers thirty days after a month.
+- Sampling continues **while nobody is watching** the dashboard: the refresh
+  loop takes over, from the moment the card exists somewhere (an install with
+  no widget pays nothing).
+- The **7-day trend** does wait for a real week of history: showing "0 ct" on
+  the first day would be a lie.
+- Changing the postal code or the radius **starts a new curve**, since it is no
+  longer the same area.
+- If `/data` is not writable, everything keeps working: only the curve starts
+  over after a restart.
+
+### "My station"
+
+The detail of **one** station you follow, picked in the card settings:
+
+- one price tile **per fuel** the station sells (the first four, yours first);
+- the brand, the address, the distance and the date of the last price update;
+- a **Directions** button and a **Refresh** button.
+
+All the fuels of the station are shown with the **three decimals** of the pump
+price (`1.699 €/L`). The tiles used to be bound to the Gladys device for the
+fuels you track, which updated them live but displayed `1.7`: Gladys rounds a
+device value shown in a tile. The exact price is worth more — the card follows
+the refresh loop, so it updates within seconds anyway.
+
+#### Where the distances start
+
+From your **Gladys house** by default. The integration asks Gladys for its
+coordinates (`Settings → House`, address field): the matching box is shown at
+install time as an authorization, the coordinates only centre the search and
+compute the distances, and they are displayed nowhere.
+
+- House located → `2.3 km from home`, and the search is centred on it.
+- House not located, or the setting **"Measure distances from: the postal
+  code"** → `2.3 km from 35000`, measured from the centre of the postal code
+  area.
+
+**If Gladys holds several houses**, fill in the **"Which house"** field with the
+name of the one you want (case and accents are ignored). Left empty, the first
+located house is used. Gladys does not let an integration offer the list of
+houses in a dropdown yet: to know what to type, press **"Preview the
+stations"** — the message names the house in use and every house Gladys knows.
+
+The postal code stays required either way: it is what queries the national
+dataset.
+
+> Widgets need **Gladys 5.1 or newer**, like the scenes below. That is the
+> minimum version the integration declares: on an older Gladys it simply does
+> not show up in the store.
+
 ## Scene ideas
 
 - Get a notification when the diesel price of your station drops below a
   threshold.
 - Compare two stations on the dashboard before driving out to fill up.
 - Track the monthly average price thanks to the history.
+
+## Scene triggers
+
+The integration adds three triggers to the **Integrations** category of the
+scene editor (Gladys 5.1 or newer). They show up on their own: nothing to
+configure on the integration side.
+
+| Trigger                                   | Fires when                                                                                        |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **A fuel price changed**                  | a station you follow declared a new price (filters: station, fuel, up or down)                    |
+| **The cheapest station changed**          | another of your stations is now the cheapest for a fuel (you need to follow at least two of them) |
+| **The open data feed became unreachable** | every station of a refresh failed, or the feed answers again                                      |
+
+Each trigger passes information on to your actions: the station name, the city,
+the fuel, the new price, the previous price and the difference. A notification
+then reads "Diesel is now 1.659 EUR at Station du Centre (-0.040)".
+
+A filter left empty means "any": with no station picked, the trigger reacts to
+every station you follow.
+
+Two things worth knowing:
+
+- **a price that did not move fires nothing**, even though the integration
+  refreshes every hour: only a real change is sent;
+- after a container restart, the first refresh is a baseline and fires nothing.
+
+For a plain threshold ("warn me below 1.70"), do not use these triggers: the
+Gladys **A device changes state** trigger on the station's price feature
+already does exactly that.
+
+## Scene actions
+
+In the same **Integrations** category, the integration adds three actions a
+scene can run.
+
+| Action                        | What it does                                                        |
+| ----------------------------- | ------------------------------------------------------------------- |
+| **Refresh the fuel prices**   | reads the feed now, so the rest of the scene works on a fresh price |
+| **Find the cheapest station** | compares your stations for one fuel and returns the cheapest one    |
+| **Prepare a price summary**   | the same comparison as one line of text, ready to send              |
+
+What an action returns is reusable in the next steps of the scene (price,
+station name, city, address, distance, date of the price…).
+
+An example scene, every morning at 7am:
+
+1. **Find the cheapest station** (fuel: Diesel, read the prices before
+   comparing: yes);
+2. **Only continue if** the `found` result is true;
+3. **Send a message**: "Cheapest fill-up: \{\{ station name \}\} at \{\{ price \}\}".
+
+Or, in one step: **Prepare a price summary**, then send the text it returns.
+
+Worth knowing: "Find the cheapest station" never fails the scene when you
+follow no station for that fuel — it answers `found = false`, and it is up to
+you to test that result.
 
 ## Troubleshooting
 
@@ -146,6 +315,26 @@ the integration logs list the missing stations.
 **An empty price.** The station is not declaring that fuel right now. The
 integration keeps the last known value instead of leaving a hole in the chart.
 
+**A station out of stock.** When the station declares a temporary rupture it
+does sell that fuel, it simply has none left. The device stays offered in the
+Discovery tab, the last known price stays displayed, and the "Last price
+update" feature reads "En rupture depuis le 18/09/2026 à 08:09" until the fuel
+is back. The **Preview the nearby stations** button then writes "SP98: out of
+stock", and keeps "SP98: not sold" for a fuel the station really does not sell
+(no pump, or a definitive rupture).
+
+The feed sometimes says nothing at all about a fuel — the station lifted its
+rupture but has not typed its price back yet. The integration then looks at the
+last 30 days of price history: a fuel the station priced in that window is shown
+as "out of stock" (the "Last price update" feature simply reads "En rupture"),
+not as "not sold".
+
+**The SP95 of a station is missing while its SP98 is there.** That station
+does not sell SP95, and it is not a bug: many brands (TotalEnergies in
+particular) replaced it with **E10 (SP95-E10)**. Tick E10 in the configuration
+and the station comes back in the Discovery tab. The **Preview the nearby
+stations** button spells it out station by station: "SP95: not sold".
+
 **Limited number of stations.** The **Maximum number of stations** setting
 bounds the discovery list (20 by default, 50 max). In a dense city, lower it
 and shrink the radius.
@@ -153,9 +342,9 @@ and shrink the radius.
 **One particular station is missing.** The list keeps the NEAREST stations, up
 to that maximum: in a city, twenty of them fit in a couple of kilometres, so a
 station 5 km away is left out even with a 10 km radius. Raise **Maximum number
-of stations** rather than the radius. A station that declares no price for the
-fuel you ticked is not offered either, since the device would have nothing to
-publish.
+of stations** rather than the radius. A station that does not sell the fuel you
+ticked is not offered either, since the device would have nothing to publish —
+a station merely out of stock stays offered.
 
 ## Data and licence
 
@@ -177,19 +366,21 @@ These are the settings Prix carburants asks for in its configuration screen in G
 | How it works | `section` | No | Choose your country, your postal code and the fuel you use, then open the Discovery tab: the petrol stations around you appear there with their current price. Add the ones you want to follow, delete them when you no longer need them. Data comes from the official open data, no account and no API key needed. |
 | Country | `select` | Yes | Country whose open data is queried. More countries will be added in future versions. |
 | Postal code | `string` | Yes | Stations are searched around this postal code. In France, 5 digits. |
+| Measure distances from | `select` | No | Your Gladys house is used when it has coordinates (the integration asks Gladys for them, and shows them nowhere). Otherwise the centre of the postal code area is used. |
+| Which house | `string` | No | Only useful if Gladys holds several houses: the name of the one distances start from. Leave it empty for the first located house. The "Preview the stations" button below lists the houses Gladys knows. |
 | Search radius (km) | `number` | No | Also look for stations around the postal code. 0 keeps only the stations of the postal code itself. |
-| Fuel type | `multi_select` | Yes | One device is offered per station AND per selected fuel, so you can follow several fuels at the same station. |
+| Fuel type | `multi_select` | Yes | One device is offered per station AND per selected fuel, so you can follow several fuels at the same station. A station only appears for the fuels it actually sells: many stations (TotalEnergies in particular) replaced SP95 with E10 (SP95-E10), so tick E10 if the SP95 of your station is nowhere to be found. |
 | Maximum number of stations | `number` | No | How many stations the Discovery tab may list. Lower it in a dense city, raise it in the countryside. |
 | Refresh interval (s) | `number` | No | How often the price of each added station is refreshed. The French feed is updated about every 10 minutes; once an hour is plenty. |
 
 ## How to install Prix carburants in Gladys
 
 1. In Gladys, open **Integrations**: Prix carburants appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-prixcarburants:1.0.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-prixcarburants:2.0.8`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-prixcarburants](https://github.com/prohand/gladys-prixcarburants).
 
-Prix carburants requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Prix carburants requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

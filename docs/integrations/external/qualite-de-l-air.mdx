@@ -198,6 +198,92 @@ day's ATMO bulletin.
 by the worldwide **GeoNames** database. Open, and with no account and no API key
 either.
 
+## On your dashboard
+
+Two widgets are offered in the dashboard editor, among the integration widgets.
+They follow the language of whoever is looking, and their colours follow the
+Gladys theme (light or dark).
+
+### Air quality — one place
+
+The card of one location, picked among the devices already added from the
+Discovery tab:
+
+- a **gauge** from 1 to 6 with the current index;
+- the **dominant pollutant**, the one that sets the index (nothing when the air
+  is good);
+- one row per pollutant, worst first, with its class **and** its concentration:
+  "4/6 (Poor) · 150 µg/m³";
+- the **curve of the hours ahead**, today and tomorrow — the one thing no sensor
+  can show, since it has not happened yet;
+- the hour of the CAMS analysis, and a **Refresh** button.
+
+Two settings per card:
+
+- **Pollutants followed** — tick the ones you care about (ozone in summer,
+  particles in winter): the gauge, the rows and the curve then only account for
+  those. Nothing ticked = all of them, which is the index Gladys publishes.
+- **Show the hours ahead** — untick it for a compact card.
+
+### Air quality — all places
+
+One row per configured location, with its index and its dominant pollutant, and
+a **Refresh** button that re-reads every location. No setting: the card shows
+the list managed in the configuration screen. Beyond ten locations, the caption
+says how many are left out.
+
+The colours: green for "Good" and "Fair", yellow for "Moderate", red from "Poor"
+to "Extremely poor". The widget palette has neither orange nor purple; repeating
+a red beats painting a "Poor" in yellow.
+
+## Using the index in a scene
+
+### 1. The measures, like any sensor
+
+The index, the sub-indexes and the concentrations are features of the device:
+the Gladys "Device value" trigger watches them like any sensor ("when the index
+goes above 3").
+
+### 2. The triggers
+
+In the scene editor, under **Air quality**:
+
+- **Air quality index changed** — once, when the overall index of a location
+  **moves** from one class to another. Never on every refresh.
+- **Sub-index of one pollutant changed** — the same thing, pollutant by
+  pollutant.
+
+Each trigger can be filtered (everything is optional, an empty filter means
+"any"): the **location**, the **new class(es)**, the **direction** ("Worsening"
+to close the windows, "Improving" to open them again), and for the second one
+the **pollutant(s)**.
+
+The scene gets ready-made variables, among which `{{triggerEvent.data.summary}}`:
+"Air quality in Home: index 4/6 (Poor), dominant Ozone (O₃)." — to drop
+straight into a notification. The others: location name, new and previous class
+(as a number and in words), direction, pollutant, concentration (second
+trigger), hour of the analysis.
+
+Two things worth knowing:
+
+- **Nothing fires on the first reading** after a start: the previous class is
+  unknown, and "unknown → 4" is not a change.
+- **Missing data is not a return to good air**: it fires nothing, and the next
+  class is compared with the last one actually read.
+
+### 3. The actions
+
+- **Read the air quality** — reads a location now and hands the next actions the
+  class, its label, the pollutant, its concentration, the hour of the analysis
+  and the same ready-made sentence. Pick "Overall index" (the worst pollutant of
+  the moment) or one pollutant. No data? The class is empty and the sentence says
+  so: test it in a condition rather than waiting for an error.
+- **Refresh the air quality data** — re-reads and republishes one location, or
+  all of them when the location is left empty, without waiting for the next
+  refresh. Returns how many locations were refreshed and how many failed.
+
+Example: "every day at 7 am → Read the air quality (Home) → send me `{{summary}}`".
+
 ## Settings
 
 - **Language of the device names** — French by default. Everything the
@@ -229,6 +315,8 @@ turns red, with the reason, when a location can no longer be read.
 - Outside Europe the model is **four times coarser** (~40 km against ~11 km): it
   describes a regional background well, a street less so.
 - Twenty locations maximum.
+- Gladys **5.1.0** or later: the version that opened widgets and scenes to
+  integrations.
 - A location cannot be edited: to watch another commune, remove it and add a new
   one.
 
@@ -238,7 +326,7 @@ These are the settings Qualité de l'air asks for in its configuration screen in
 
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
-| How it works | `section` | No | Add a location with the button below: type a town, anywhere in the world, and an air quality device appears in the Discovery tab, ready to be added to Gladys. Towns are resolved by the Open-Meteo geocoding API (GeoNames), and the pollutant concentrations come from the Copernicus CAMS data, republished as open data by Open-Meteo: no account and no API key are needed. In Europe the ~11 km CAMS European model is used, elsewhere the ~40 km CAMS global one. The index is the European Air Quality Index, whose six classes and thresholds are the ones the French ATMO index has used since 2021 — it is applied worldwide, so it is not the local national index of a country outside Europe. |
+| How it works | `section` | No | Add a location with the button below: type a town, anywhere in the world, and an air quality device appears in the Discovery tab, ready to be added to Gladys. Towns are resolved by the Open-Meteo geocoding API (GeoNames), and the pollutant concentrations come from the Copernicus CAMS data, republished as open data by Open-Meteo: no account and no API key are needed. In Europe the ~11 km CAMS European model is used, elsewhere the ~40 km CAMS global one. The index is the European Air Quality Index, whose six classes and thresholds are the ones the French ATMO index has used since 2021 — it is applied worldwide, so it is not the local national index of a country outside Europe. Two dashboard widgets, two scene triggers and two scene actions come with it: add a card from the dashboard editor, and the scene editor lists them under "Air quality". |
 | General settings | `section` | No | These settings apply to every configured location. |
 | Language of the device names | `select` | No | The language the device and feature names are written in: "Dominant pollutant" or "Polluant dominant", "Nitrogen dioxide (NO₂)" or "Dioxyde d'azote (NO₂)". Everything else this integration displays already follows your Gladys language, but the name of a device and of its features is stored as it is published, so it has to be chosen here. A device already added to Gladys keeps the names it was created with: delete it and add it again from the Discovery tab to rename it. |
 | Refresh interval (s) | `number` | No | How often each location is refreshed, in seconds. The CAMS analysis is produced once an hour, so there is nothing to gain below one hour. |
@@ -247,11 +335,11 @@ These are the settings Qualité de l'air asks for in its configuration screen in
 ## How to install Qualité de l'air in Gladys
 
 1. In Gladys, open **Integrations**: Qualité de l'air appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-airquality:1.0.5`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-airquality:2.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-airquality](https://github.com/prohand/gladys-airquality).
 
-Qualité de l'air requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Qualité de l'air requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

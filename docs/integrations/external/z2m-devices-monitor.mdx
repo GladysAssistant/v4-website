@@ -63,6 +63,7 @@ required.
 
 ### 1. Requirements
 
+- Gladys **5.1.0 or later** (widget and scene blocks);
 - Zigbee2MQTT running and publishing to an MQTT broker;
 - that broker reachable from Gladys (same local network).
 
@@ -220,11 +221,65 @@ It is **not** published by this integration: the Gladys Zigbee2MQTT integration
 already reports the LQI of every device, and a second copy of the same number
 would only clutter the device lists and the scene pickers.
 
+## The dashboard widget
+
+Edit your dashboard and add the **Zigbee health** widget. At a glance it shows:
+
+- three counters: **silent**, **alive** and **watched** devices;
+- the state of the **Zigbee2MQTT bridge**;
+- the list of silent devices, with how long each has been quiet (or "never
+  seen"). Past 9 devices, the last row tells how many others are silent.
+
+It works **right after installation**, without creating a single device in
+Gladys. The **Devices shown** setting restricts it to battery or mains-powered
+devices — handy for two widgets side by side. The widget refreshes on its own
+every minute, and immediately when a device goes silent or comes back.
+
 ## Getting alerted: the scene
 
-The integration raises the flag, Gladys sends the alert. The most useful scene is
-the one built on the **Zigbee2MQTT monitor** device: it covers the whole network,
-including the devices you will pair six months from now.
+The integration raises the flag, Gladys sends the alert.
+
+### With the integration's trigger (recommended)
+
+1. **Scenes → New scene**;
+2. trigger: in the **Integrations** category, pick **A Zigbee device went
+   silent**. Leave the filters empty to cover the whole network, including the
+   devices paired later, or pick one **Device** and/or a **Power source**
+   (battery, mains);
+3. action: **Send a message** with something like:
+
+   > \{\{triggerEvent.data.device_name\}\} has given no sign of life for
+   > \{\{triggerEvent.data.silence_minutes\}\} minutes.
+
+   Type `{{` in the message to pick the variables from the list.
+
+That's it: no "Get device value" block needed. The available variables:
+
+| Variable            | Content                            |
+| ------------------- | ---------------------------------- |
+| `device_name`       | the device name in Zigbee2MQTT     |
+| `silence_minutes`   | how many minutes it has been quiet |
+| `threshold_minutes` | its silence threshold              |
+| `power_source`      | `battery` or `mains`               |
+| `ieee_address`      | its IEEE address                   |
+
+Good to know about this trigger:
+
+- **one alert per device**: if a second sensor dies while the first one is still
+  silent, you get a second alert — which the counter scene below does not do;
+- **no flood when Zigbee2MQTT itself goes down**: while the broker is unreachable
+  or the bridge is offline, no device is announced (they are all silent for the
+  same reason). Once the network is back, only the ones still quiet are
+  announced;
+- **no alert on install or upgrade** for devices already silent: only a
+  _change_ from alive to silent counts. That memory survives restarts;
+- the **A Zigbee device is back** trigger works the same way, to say "false
+  alarm, it came back".
+
+### With the Zigbee2MQTT monitor device
+
+The former method, still valid. It fires once, when the number of silent
+devices goes above zero.
 
 1. **Scenes → New scene**;
 2. trigger: **A device value changes** → device _Zigbee2MQTT monitor_, feature
@@ -255,6 +310,24 @@ name (State of input)_).
 Tip: add a time condition to the scene if you would rather not be woken up at
 night — a silent sensor can almost always wait until morning.
 
+## The scene actions
+
+The integration adds two blocks in the **Integrations** category of the scene
+actions. Their results can be inserted in the following actions with `{{`.
+
+- **Get the silent Zigbee devices** — returns the **number** of silent devices,
+  their **names** and the number of watched devices. A filter restricts the count
+  to battery or mains-powered devices. Example: a scene every morning at 8 that
+  sends you the list of the day.
+- **Check a Zigbee device** — for one chosen device, returns whether it is
+  **alive**, how many minutes it has been quiet and its threshold. Example:
+  before leaving on holiday, check the smoke detector still answers. The device
+  must have been added to Gladys to appear in the list.
+
+If the Zigbee2MQTT inventory has not been received yet, or the device is no
+longer watched, the action fails (the scene logs it and carries on) rather than
+answering a wrong value.
+
 ## The buttons on the Configuration screen
 
 - **Test the MQTT connection** — the live connection state, how many devices are
@@ -271,7 +344,9 @@ night — a silent sensor can almost always wait until morning.
   supposed to be silent. An option lets you include them.
 - **The coordinator (the USB stick) is not watched**: it is not a device that can
   fall off on its own. Use the _Zigbee2MQTT bridge online_ feature for that.
-- **The last-seen history is persisted** in the integration's `/data` volume. A
+- **The last-seen history is persisted** in the integration's `/data` volume,
+  along with the last known state of each device (so the scene triggers do not
+  fire again on every restart). A
   container restart therefore does not reset every device — otherwise a sensor
   that died a month ago would start a fresh threshold and the alert would never
   fire.
@@ -340,11 +415,11 @@ These are the settings Z2M Devices Monitor asks for in its configuration screen 
 ## How to install Z2M Devices Monitor in Gladys
 
 1. In Gladys, open **Integrations**: Z2M Devices Monitor appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-z2m-devices-monitor:1.0.5`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-z2m-devices-monitor:2.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-z2m-devices-monitor](https://github.com/prohand/gladys-z2m-devices-monitor).
 
-Z2M Devices Monitor requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Z2M Devices Monitor requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

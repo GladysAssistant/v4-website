@@ -25,8 +25,9 @@ Onecta cloud API** — the same cloud the Onecta mobile app talks to. No hardwar
 to add, no reverse engineering: your units keep working exactly as they do
 today, Gladys just becomes another remote control.
 
-> **Gladys 4.86 or newer is required.** The store will not offer the
-> integration to an older instance.
+> **Gladys 5.1 or newer is required** (dashboard widgets, scene triggers and
+> scene actions). The store will not offer the integration to an older
+> instance.
 
 ## What you get
 
@@ -266,6 +267,69 @@ in Onecta is missing, run this action: when its name appears neither in the
 published features nor in the ignored characteristics, the Daikin API does not
 expose it for your model.
 
+## Dashboard widgets
+
+Since Gladys 5.1 the integration brings its own widgets. On the dashboard,
+switch to edit mode, add a box and look for "Daikin":
+
+- **Daikin air conditioner** — one unit (picked in the widget settings): room,
+  outdoor and target temperatures, energy of the day, state, mode, fan,
+  louvers and active comfort modes — display only. A setting picks the chart: temperatures over 24 h, **energy per two-hour
+  slot (today next to yesterday)**, or none.
+- **Daikin account** — every unit at a glance (running, off, in error,
+  unreachable), the energy of the day for the whole account, **the energy per
+  month this year against last year**, a gauge of the **API calls left
+  today**, and how old the last read is.
+
+The widgets cost **no API call**: they read the values already received. The
+temperature and energy tiles follow the values live; the rest updates at every
+refresh and after every command.
+
+To **drive** the unit (mode, setpoint, fan, louvers, Powerful…), add Gladys'
+own **Devices** box next to it and pick the Daikin unit: it shows every
+function with its proper control (mode selector, − / + setpoint, fan slider,
+switches). An integration widget cannot: Gladys only lets it hold buttons.
+
+## Scenes
+
+### Triggers
+
+Four triggers show up in the scene editor. Each fires **once per change**,
+noticed between two reads of the cloud (so at the pace of the refresh
+interval). The first read after a restart fires nothing: it is the baseline.
+
+| Trigger                                   | Filters                            | Variables                 |
+| ----------------------------------------- | ---------------------------------- | ------------------------- |
+| A Daikin unit goes offline or back online | Unit, Connection (lost / restored) | `unit_name`, `connection` |
+| A Daikin unit reports or clears an error  | Unit, Error (reported / cleared)   | `unit_name`, `state`      |
+| The Daikin API quota is almost spent      | —                                  | `remaining`, `limit`      |
+| The Daikin session expired                | —                                  | —                         |
+
+An empty filter matches anything. The quota is "almost spent" at 20 calls left
+or fewer; the trigger re-arms when the counter climbs back (the next day).
+Example: _"A Daikin unit goes offline" → Send a message: "\{\{triggerEvent.data.unit_name\}\}
+is not answering"_.
+
+### Actions
+
+| Action                         | What it does                                                                                               | Outputs                                                                                            |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Set a Daikin air conditioner   | Power, mode, setpoint and fan speed in one step. The mode is always sent before the setpoint.              | `power`, `mode`, `temperature`, `commands_sent`, `api_calls_left`                                  |
+| Read the Daikin consumption    | Energy used today, yesterday, this month, last month, this year and last year, for one unit or the account | `today_kwh`, `yesterday_kwh`, `this_month_kwh`, `last_month_kwh`, `this_year_kwh`, `last_year_kwh` |
+| Refresh the Daikin account now | Reads every unit right away (1 call, at most once a minute)                                                | `units_total`, `units_online`, `units_running`, `api_calls_left`                                   |
+
+**Why "Set a Daikin air conditioner" rather than several cards?** At Daikin,
+the setpoint and the fan belong to the mode. A scene that sets 21 °C and then
+switches to Heating writes the **Cooling** setpoint. The action always sends
+the mode first, and skips what is already set (every write costs one API
+call). An empty field changes nothing. When a setting is impossible (a mode the
+unit lacks, no setpoint in that mode…), the action fails **before** the first
+write.
+
+"Read the consumption" answers from the last read, with no API call. Example:
+_every morning at 8 → Read the consumption → Send a message: "Yesterday:
+\{\{…yesterday_kwh\}\} kWh"_.
+
 ## API quota left
 
 Under the **Connect** button, the Configuration screen permanently shows what is
@@ -357,11 +421,11 @@ These are the settings Daikin Cloud asks for in its configuration screen in Glad
 ## How to install Daikin Cloud in Gladys
 
 1. In Gladys, open **Integrations**: Daikin Cloud appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-daikin-cloud:1.0.12`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-daikin-cloud:4.0.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-daikin-cloud](https://github.com/prohand/gladys-daikin-cloud).
 
-Daikin Cloud requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Daikin Cloud requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

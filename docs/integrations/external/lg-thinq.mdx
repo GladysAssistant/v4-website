@@ -32,6 +32,7 @@ only credential is a token you create yourself and can revoke at any time.
 
 You need:
 
+- **Gladys 5.1** or newer;
 - an **LG ThinQ account** with your appliances already added in the LG ThinQ
   mobile app (this integration discovers appliances, it does not pair them);
 - appliances that are **online** in the app;
@@ -114,6 +115,59 @@ through two buttons in the **Configuration** tab:
    value. The command is checked against the profile before being sent, so a
    typo is refused with the list of allowed values instead of a silent failure.
 
+## Dashboard widgets
+
+In a dashboard, **Edit** → add a box → integrations category:
+
+- **LG appliance** — one appliance, picked in the box settings: its live values
+  (temperatures, humidity, time left…), what it is doing (state, mode), its
+  connection to the LG cloud, and the **On** / **Off** and **Refresh** buttons;
+- **LG appliances** — every LG appliance on one card, each with its state
+  ("Running", "End", "Unreachable"…) and a **Refresh** button.
+
+Values follow the refresh interval; **Refresh** asks LG right away. Only the
+appliances added to Gladys are shown.
+
+## Scenes
+
+### Triggers
+
+In the scene editor, **Integrations** category:
+
+| Trigger                                  | When                                                   |
+| ---------------------------------------- | ------------------------------------------------------ |
+| **LG appliance: cycle finished**         | A washer, dryer, dishwasher or oven finishes its cycle |
+| **LG appliance: state changed**          | The run state changes (`RUNNING`, `RINSING`, `END`…)   |
+| **LG appliance: connection lost / back** | The appliance leaves or comes back to the LG cloud     |
+
+A filter left empty means "any". The **New state** filter expects the exact LG
+value, in capitals (`END`, `RUNNING`…): **List the properties** shows the values
+of each appliance.
+
+The next actions of the scene can reuse the appliance name, the sub-appliance
+(washer or dryer of a WashTower), the new and the previous state. Example:
+"Cycle finished" → send a message "\{\{triggerEvent.data.device_name\}\} is done".
+
+Good to know:
+
+- changes are seen **at the next read** of the appliance: a cycle that ends is
+  reported at most one refresh interval later;
+- nothing fires when the integration starts: a change needs a "before" and an
+  "after";
+- a read caused by an action (button, scene, command) fires nothing right away —
+  the next regular read does. This keeps a scene from re-triggering itself in
+  a loop.
+
+### Actions
+
+| Action                           | What it does                                                                                       |
+| -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **LG appliance: send a command** | Like the **Send a command** button: any property, checked before being sent                        |
+| **LG appliance: read the state** | Reads the appliance now and hands the next actions: connected (yes/no), run state, time left (min) |
+
+Example: every evening at 10 pm, "Read the state" of the washer → condition
+"run state = `END`" → notification "Empty the washer".
+
 ## Troubleshooting
 
 **"LG refused the credentials"** — the token or the country is wrong. Tokens are
@@ -132,6 +186,13 @@ badge clears itself on the next refresh.
 the moment you add it, so this means LG had nothing to report at that instant:
 the appliance is usually off the network (check for the orange badge). The next
 refresh fills the features as soon as LG answers again.
+
+**The LG appliance widget shows "settings.device: must be at most 100
+characters"** — the appliance was added with version 2.0.0 or older, whose
+identifier was too long for a widget. After the update, delete the appliance in
+Gladys, add it again from the **Discovery** tab, then pick it again in the
+widget settings. The history of the old device and the scenes using it must be
+redone.
 
 **"Call quota exceeded"** — increase the refresh interval. LG counts the calls
 of each client, and one refresh costs one call per appliance.
@@ -165,11 +226,11 @@ These are the settings LG ThinQ asks for in its configuration screen in Gladys.
 ## How to install LG ThinQ in Gladys
 
 1. In Gladys, open **Integrations**: LG ThinQ appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-lg-thinq:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-lg-thinq:2.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-lg-thinq](https://github.com/prohand/gladys-lg-thinq).
 
-LG ThinQ requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+LG ThinQ requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

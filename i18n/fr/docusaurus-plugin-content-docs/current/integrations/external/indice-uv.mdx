@@ -149,6 +149,68 @@ cesse d'avancer et l'ancienneté devient visible sur le tableau de bord.
 « Tester le fournisseur UV » termine chaque ligne par ce même horodatage : une
 source qui répond avec l'heure d'hier se voit immédiatement.
 
+## Sur le tableau de bord
+
+Deux widgets sont proposés dans l'éditeur du tableau de bord (Gladys 5.1 ou
+plus récent), sous le nom de l'intégration :
+
+- **Indice UV d'un lieu** — l'indice actuel, le maximum du jour et l'indice ciel
+  clair, la **courbe horaire prévue pour aujourd'hui** avec le pic marqué et un
+  repère « maintenant », le niveau d'exposition et le conseil qui va avec. Dans
+  les réglages du widget, choisissez l'**appareil UV** du lieu à afficher : seuls
+  les appareils déjà ajoutés à Gladys sont proposés.
+- **Indice UV de tous les lieux** — une ligne par lieu (10 au maximum), avec
+  l'indice actuel et son niveau, en couleur. Aucun réglage.
+
+Les widgets s'affichent dans la langue de chaque personne qui les regarde, et se
+mettent à jour à chaque rafraîchissement de l'intégration. Si vous supprimez le
+lieu d'un widget, le widget le dit : choisissez un autre appareil dans ses
+réglages.
+
+## Dans les scènes
+
+L'intégration ajoute deux cartes à l'éditeur de scènes (Gladys 5.1 ou plus
+récent), dans la catégorie **Intégrations**.
+
+### Déclencheur « Niveau d'exposition UV changé »
+
+Se déclenche quand le niveau d'exposition d'un lieu passe dans une autre tranche
+(de 0 « Nul » à 5 « Extrême »). Trois filtres, tous facultatifs — laissé vide, un
+filtre accepte tout :
+
+- **Lieu** — l'appareil UV du lieu à surveiller ;
+- **Nouveau niveau** — un ou plusieurs niveaux, par exemple 3 et 4 ;
+- **Sens** — en hausse ou en baisse.
+
+Les actions de la scène peuvent réutiliser ces valeurs : le nom du lieu, le
+nouveau niveau et son libellé, le niveau précédent, le sens (`rising` ou
+`falling`), le conseil de protection, l'indice UV et l'heure des données. Exemple
+de message : « UV \{\{triggerEvent.data.level_label\}\} à
+\{\{triggerEvent.data.location_name\}\} : \{\{triggerEvent.data.advice\}\} ».
+
+Bon à savoir :
+
+- Le premier relevé après un démarrage de l'intégration sert de référence et ne
+  déclenche rien : un redémarrage n'est pas un changement de ciel.
+- Pour réagir à un **seuil** (« dès que le niveau est au moins 3 »), utilisez
+  plutôt le déclencheur standard sur la fonctionnalité « Niveau d'exposition
+  UV » de l'appareil.
+- Les textes (libellé, conseil) sont écrits dans la **langue du nom des
+  appareils** choisie dans les réglages généraux.
+
+### Action « Lire l'indice UV »
+
+Lit l'indice UV d'un lieu au moment où la scène l'exécute et passe ses valeurs aux
+actions suivantes : nom du lieu, indice actuel, maximum du jour, indice ciel
+clair, niveau et libellé, niveau et libellé du pic, **heure du pic**, conseil de
+protection et heure des données. Une valeur que la source n'a pas est absente,
+jamais remplacée par 0.
+
+Exemple : un déclencheur « tous les jours à 8h », puis « Lire l'indice UV » sur
+votre maison, puis un message « Pic UV \{\{0.1.uv_index_max_today\}\}
+(\{\{0.1.level_max_today_label\}\}) vers \{\{0.1.peak_time\}\} ». Les numéros
+(`0.1`) sont ceux de l'action dans votre scène : l'éditeur les propose.
+
 ## Réglages généraux
 
 - **Langue du nom des appareils** — le reste de ce que dit l'intégration suit
@@ -156,7 +218,8 @@ source qui répond avec l'heure d'hier se voit immédiatement.
   fonctionnalités est enregistré tel quel au moment où vous créez l'appareil.
   Un appareil déjà ajouté **conserve** les noms avec lesquels il a été créé :
   changez la langue, puis supprimez et rajoutez l'appareil depuis la Découverte
-  pour le renommer.
+  pour le renommer. Les textes transmis aux scènes (libellé du niveau, conseil)
+  suivent aussi ce réglage.
 - **Intervalle de rafraîchissement** — 30 minutes par défaut, entre 10 minutes et
   6 heures. La prévision CAMS est horaire : descendre nettement sous la
   demi-heure n'apporte rien de plus.
@@ -195,20 +258,20 @@ Voici les paramètres demandés par Indice UV dans son écran de configuration d
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Comment ça marche | `section` | Non | Ajoutez un lieu avec le bouton ci-dessous : saisissez son code postal, il est résolu en commune, puis un appareil UV apparaît dans l'onglet Découverte, prêt à être ajouté à Gladys. L'indice UV provient de la prévision CAMS (Copernicus), rediffusée en open data par Open-Meteo, et les codes postaux sont lus via l'API « Découpage administratif » de l'État : aucun compte ni clé d'API n'est nécessaire. Hors de France, ajoutez un lieu par sa latitude et sa longitude — les données UV sont mondiales. |
+| Comment ça marche | `section` | Non | Ajoutez un lieu avec le bouton ci-dessous : saisissez son code postal, il est résolu en commune, puis un appareil UV apparaît dans l'onglet Découverte, prêt à être ajouté à Gladys. L'indice UV provient de la prévision CAMS (Copernicus), rediffusée en open data par Open-Meteo, et les codes postaux sont lus via l'API « Découpage administratif » de l'État : aucun compte ni clé d'API n'est nécessaire. Hors de France, ajoutez un lieu par sa latitude et sa longitude — les données UV sont mondiales. Une fois l'appareil ajouté, le tableau de bord propose deux widgets UV et l'éditeur de scènes un déclencheur et une action UV. |
 | Réglages généraux | `section` | Non | Ces réglages s'appliquent à tous les lieux configurés. |
-| Langue du nom des appareils | `select` | Non | La langue dans laquelle sont écrits les noms des appareils et de leurs fonctionnalités : « Indice UV » ou « UV index ». Tout le reste de ce que l'intégration affiche suit déjà la langue de votre compte Gladys, mais le nom d'un appareil et de ses fonctionnalités est enregistré tel qu'il est publié : il faut donc le choisir ici. Un appareil déjà ajouté à Gladys conserve les noms avec lesquels il a été créé : supprimez-le et rajoutez-le depuis l'onglet Découverte pour le renommer. |
+| Langue du nom des appareils | `select` | Non | La langue dans laquelle sont écrits les noms des appareils et de leurs fonctionnalités : « Indice UV » ou « UV index ». Tout le reste de ce que l'intégration affiche suit déjà la langue de votre compte Gladys, mais le nom d'un appareil et de ses fonctionnalités est enregistré tel qu'il est publié : il faut donc le choisir ici, comme les textes que les cartes de scène UV transmettent à vos scènes. Un appareil déjà ajouté à Gladys conserve les noms avec lesquels il a été créé : supprimez-le et rajoutez-le depuis l'onglet Découverte pour le renommer. |
 | Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de rafraîchissement de chaque lieu, en secondes. La prévision est horaire : descendre nettement sous la demi-heure n'apporte rien. |
 | Vos lieux | `section` | Non | Utilisez les boutons ci-dessous pour ajouter, lister et supprimer vos lieux. « Ajouter mes maisons Gladys » les ajoute tous en un clic, à partir des maisons que vous avez déjà placées sur la carte dans Gladys. Ce ne sont pas des champs de ce formulaire : une liste que l'on construit au fil de l'eau ne peut pas en être un, donc tout se passe sous un bouton et c'est la réponse affichée là qui vous montre la liste. |
 
 ## Comment installer Indice UV dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Indice UV apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-uvindex:1.0.5`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-uvindex:2.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-uvindex](https://github.com/prohand/gladys-uvindex).
 
-Indice UV nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Indice UV nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

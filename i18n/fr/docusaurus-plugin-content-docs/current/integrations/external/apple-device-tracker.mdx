@@ -51,6 +51,15 @@ valeur par défaut du champ. L'intégration ne la publie donc pas — sinon Glad
 enverrait une alerte « batterie faible » sur un téléphone plein — et garde le
 dernier niveau qu'elle connaissait, comme l'application Localiser.
 
+La mesure « En charge » n'est volontairement **pas** dans la catégorie batterie,
+alors que Gladys en propose une. Gladys prévient « niveau de batterie inférieur
+à 10 % » pour **toute mesure de la catégorie batterie** sous le seuil, quel que
+soit son type : une mesure de charge vaut 0 ou 1, elle était donc lue comme
+« 0 % » et déclenchait une fausse alerte tous les jours, sur chaque téléphone.
+Elle est donc publiée comme une **entrée binaire** (la mesure binaire générique
+de Gladys) : même valeur oui/non, même usage dans une scène, mais en dehors de
+la catégorie que cette vérification parcourt.
+
 ### Faire sonner un appareil depuis le tableau de bord
 
 Toutes les mesures ci-dessus sont en lecture seule, mais **Faire sonner** est
@@ -77,6 +86,70 @@ vous n'avez pas encore ajouté à Gladys.
 > passant par le compte iCloud ne peut donc les voir. L'intégration lit malgré
 > tout les listes d'accessoires si Apple se met un jour à les servir : elles
 > seront découvertes sans nouvelle version.
+
+## Widgets du tableau de bord (Gladys 5.1+)
+
+Deux widgets s'ajoutent depuis l'édition d'un tableau de bord, catégorie de
+l'intégration :
+
+- **Qui est à la maison** — une ligne par appareil : « À la maison » ou
+  « Absent · 5,6 km ». En haut, le nombre d'appareils à la maison. Réglage :
+  les appareils à afficher (vide = tous les appareils créés dans Gladys, 10 au
+  maximum).
+- **Appareil Apple** — un appareil en détail : batterie et distance (mises à
+  jour en direct), courbe de la distance sur 24 h, présence, charge, précision
+  et âge de la position, plus trois boutons : **Sonner**, **Carte** (ouvre la
+  position dans Plans) et **Rafraîchir**.
+
+Le bouton **Rafraîchir** interroge Localiser tout de suite, sans attendre
+l'intervalle de rafraîchissement. Pour ne pas se faire bloquer par Apple,
+l'intégration n'appelle jamais Localiser plus d'une fois toutes les 30 s : un
+appui plus rapproché réutilise la dernière lecture.
+
+## Scènes (Gladys 5.1+)
+
+La **présence** reste le déclencheur le plus simple (« la présence de mon
+iPhone passe à 1 »). Gladys 5.1 ajoute des cartes dédiées dans l'éditeur de
+scènes.
+
+**Déclencheurs**
+
+| Déclencheur                                               | Quand                                                  | Variables                                                    |
+| --------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------ |
+| Un appareil Apple arrive à la maison                      | Une fois, quand l'appareil entre dans le rayon         | Nom de l'appareil, batterie, appareils à la maison           |
+| Un appareil Apple quitte la maison                        | Une fois, quand l'appareil dépasse 125 % du rayon      | Nom de l'appareil, distance, batterie, appareils à la maison |
+| iCloud demande un nouveau code de double authentification | Une fois, quand les positions s'arrêtent faute de code | —                                                            |
+
+- Choisissez un ou plusieurs appareils dans la carte, ou laissez vide pour
+  « n'importe quel appareil ».
+- Seuls les appareils **créés dans Gladys** déclenchent une scène.
+- Au redémarrage de l'intégration, un téléphone déjà à la maison n'« arrive »
+  pas une deuxième fois.
+- « Appareils à la maison » vaut `0` quand le dernier appareil part : pratique
+  pour un message « la maison est vide ».
+- Le déclencheur « nouveau code » sert à vous prévenir (notification, message)
+  : sans code, les présences ne bougent plus.
+
+**Actions**
+
+- **Afficher un message sur un appareil Apple** — le message s'affiche sur
+  l'écran de l'appareil (comme le message de Localiser sur icloud.com), avec
+  le son en option. Les variables de scène sont acceptées. 500 caractères au
+  maximum.
+- **Rafraîchir la position des appareils Apple** — interroge Localiser tout de
+  suite. Renvoie le nombre d'appareils à la maison et le nombre d'appareils
+  suivis. À placer avant une condition sur la présence.
+- **Récupérer la position d'un appareil Apple** — renvoie le nom, « à la
+  maison », la distance, la latitude, la longitude, la précision, l'âge de la
+  position, la batterie, la charge et un **lien vers la carte**. Exemple :
+  « Marie est à \{\{distance\}\} km : \{\{lien vers la carte\}\} » dans un message
+  Telegram. Option : demander d'abord une position fraîche à Localiser.
+
+Les actions « Rafraîchir » suivent la même règle que le bouton des widgets :
+un appel à Apple toutes les 30 s au plus.
+
+> **Gladys 5.1 ou plus est nécessaire** pour ces widgets et ces cartes de
+> scène.
 
 ## Configuration
 
@@ -167,6 +240,22 @@ de zone déclenche vos scènes en boucle à cause du bruit GPS.
 
 ## Dépannage
 
+**Les valeurs ne sont plus mises à jour** : regardez d'abord l'onglet
+**Configuration** de l'intégration. Quand l'intégration cesse de rafraîchir ses
+valeurs, elle le dit maintenant à cet endroit, avec la raison : Apple redemande
+un code de double authentification (la session iCloud a expiré et la confiance
+accordée à cette session aussi), Localiser ne répond plus, ou plus rien n'a été
+rafraîchi depuis un long moment. Dans le premier cas, saisissez le nouveau code
+avec l'action **Envoyer le code de double authentification** : les valeurs
+repartent aussitôt. Dans les autres, l'action **Tester la connexion iCloud**
+indique où ça coince. Le tableau de bord, lui, garde les dernières valeurs
+connues : elles ne sont pas fausses, elles sont juste anciennes.
+
+**Un appareil supprimé puis recréé reste vide** : corrigé. L'intégration
+republie désormais toutes ses mesures au moment où vous le recréez, au lieu de
+prendre l'évènement pour un doublon et de le laisser vide jusqu'au prochain
+changement de valeur.
+
 **« Connexion à iCloud impossible : ... »** : le message reprend la réponse
 d'Apple. Les causes les plus fréquentes sont un mot de passe changé, un compte
 temporairement verrouillé après trop d'essais, ou une session à réapprouver.
@@ -196,6 +285,34 @@ valeur comme périmée quand plus rien n'a été publié dessus depuis un moment
 30 minutes : ce message ne devrait donc apparaître que si l'intégration est
 arrêtée, si elle n'arrive plus à se connecter à iCloud (regardez l'onglet
 Configuration) ou si l'appareil ne remonte aucune position.
+
+**Je recevais tous les jours « niveau de batterie inférieur à 10 % (actuel :
+0 %) » sur un iPhone** : c'était l'ancienne mesure « En charge », rangée dans la
+catégorie batterie, qui vaut 0 quand le téléphone n'est pas branché. La nouvelle
+mesure « En charge » est une entrée binaire et n'alimente plus cette ancienne
+mesure. Celle-ci reste enregistrée sur les appareils créés avant : ouvrez
+l'onglet **Découverte** de l'intégration et cliquez sur **Mettre à jour** sur
+l'appareil concerné — Gladys supprime les mesures qui ne sont plus publiées, et
+l'alerte s'arrête.
+
+**La mesure « En charge » affiche « Pas de valeur reçue »** : deux causes
+possibles, et les logs disent laquelle.
+
+1. _L'appareil a été créé dans Gladys avant que la mesure existe_ (la mesure
+   « En charge » actuelle est arrivée en 1.0.8). Gladys n'ajoute pas tout seul
+   une nouvelle mesure à un appareil déjà créé : ouvrez l'onglet **Découverte**
+   de l'intégration et cliquez sur **Mettre à jour** sur l'appareil. Les valeurs
+   sont publiées immédiatement après ce clic. Tant que la mesure n'existe pas,
+   l'intégration l'écrit maintenant dans ses logs : `Gladys has no feature
+... :charging-state`.
+2. _Apple ne donne pas l'état de charge de cet appareil_. Localiser ne remonte
+   le champ `batteryStatus` que pour les appareils qu'il a pu joindre ; pour un
+   accessoire (AirTag, AirPods) il n'existe pas du tout. L'intégration ne publie
+   alors rien, plutôt qu'un « pas en charge » inventé. L'action **Tester la
+   connexion iCloud** affiche ce qu'Apple renvoie pour chaque appareil, par
+   exemple `iPhone de Jean (87 %, charge inconnue (batteryStatus : Unknown))`,
+   et les logs le répètent à chaque changement. Rien à corriger côté Gladys :
+   la valeur réapparaît dès qu'Apple la redonne.
 
 **Le bouton « Faire sonner » n'apparaît pas** : l'appareil a été créé avant que
 la fonctionnalité existe. Onglet **Découverte** de l'intégration → bouton
@@ -264,11 +381,11 @@ Voici les paramètres demandés par Apple Device Tracker dans son écran de conf
 ## Comment installer Apple Device Tracker dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Apple Device Tracker apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-appledevicetracker:1.0.5`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-appledevicetracker:2.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-appledevicetracker](https://github.com/prohand/gladys-appledevicetracker).
 
-Apple Device Tracker nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Apple Device Tracker nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

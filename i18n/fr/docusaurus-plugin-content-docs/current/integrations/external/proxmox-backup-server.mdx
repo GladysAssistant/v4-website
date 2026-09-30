@@ -51,9 +51,10 @@ proxmox-backup-manager user permissions 'gladys@pbs!monitoring'
 4. Nœud : généralement `localhost`; indiquez le nom retourné par PBS si nécessaire.
 5. Gardez la vérification TLS activée. Ne la désactivez que pour un certificat autosigné sur un réseau de confiance.
 6. L'intervalle de rafraîchissement est de 15 minutes par défaut. Il ne peut pas être inférieur à 5 minutes afin de limiter la croissance de la base Gladys, et peut être augmenté jusqu'à 24 heures.
-7. La liste déroulante générale `Format de date` s'applique à toutes les dates des tâches. Elle propose les formats ISO 8601, jour/mois/année, année-mois-jour et mois/jour/année. Les dates sont formatées en UTC.
+7. La liste déroulante générale `Format de date` s'applique à toutes les dates des tâches. Elle propose les formats ISO 8601, jour/mois/année, année-mois-jour et mois/jour/année.
+8. Le champ `Fuseau horaire` fixe le fuseau d'affichage des dates, sous forme de nom IANA comme `Europe/Paris` (heures d'été et d'hiver gérées). Il vaut `UTC` par défaut ; une valeur vide ou inconnue revient aussi à UTC. En ISO 8601, un fuseau autre que UTC ajoute son décalage, par exemple `2026-09-23T23:30:01+02:00`.
 
-> Après avoir modifié et sauvegardé le format de date, ouvrez l'appareil PBS concerné dans Gladys et sauvegardez-le de nouveau pour appliquer le changement.
+> Après avoir modifié et sauvegardé le format de date ou le fuseau horaire, ouvrez l'appareil PBS concerné dans Gladys et sauvegardez-le de nouveau pour appliquer le changement.
 
 Le jeton est envoyé avec l'en-tête natif `Authorization: PBSAPIToken=...`; aucun mot de passe n'est envoyé à chaque requête.
 
@@ -76,6 +77,51 @@ Les trois valeurs de capacité (`Usage`, `Total size` et `Used space`) sont ratt
 | Last prune status              | Texte       | Dernier statut du prune, par exemple `OK`.                                          |
 | Last prune date                | Texte       | Date du dernier prune, au format configuré.                                         |
 | Backup stale (> 26 h)          | `0` ou `1`  | `1` lorsqu'aucun snapshot n'existe ou que le plus récent date de plus de 26 heures. |
+
+## Widgets, déclencheurs et actions de scène (Gladys 5.1)
+
+Ces fonctions demandent Gladys **5.1.0** ou plus récent. Elles lisent PBS uniquement : aucun bouton, déclencheur ou action ne peut lancer, modifier ou supprimer quoi que ce soit sur le serveur.
+
+### Widgets du tableau de bord
+
+Ajoutez-les depuis l'édition du tableau de bord, dans la liste des widgets de cette intégration.
+
+| Widget          | Réglages                                              | Contenu                                                                                                                                                                                          |
+| --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Datastore PBS   | Un datastore, afficher les tuiles (activé par défaut) | Jauge d'utilisation, espace libre, nombre de snapshots, une carte par tâche vérification/GC/prune (date et badge de résultat), dernière sauvegarde, espace utilisé / total, bouton `Actualiser`. |
+| Sauvegardes PBS | Aucun                                                 | Utilisation du datastore le plus plein, sauvegardes en retard, tâches en échec, une ligne d'état par datastore (10 au maximum), bouton `Actualiser`.                                             |
+
+La tuile snapshots suit l'état de l'appareil en direct. Les autres tuiles, les cartes des tâches et les lignes d'état sont mises à jour après chaque rafraîchissement. Le bouton `Actualiser` relit PBS tout de suite. Désactivez `Afficher les tuiles utilisation, espace libre et snapshots` pour masquer les trois tuiles.
+
+### Déclencheurs de scène
+
+Ils apparaissent dans l'éditeur de scène, dans la catégorie « Intégrations ». Chaque filtre est facultatif : laissez-le vide pour accepter toutes les valeurs.
+
+| Déclencheur                       | Se déclenche quand                                                      | Filtres                            | Variables                                                 |
+| --------------------------------- | ----------------------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------- |
+| Tâche de maintenance PBS terminée | Une tâche de vérification, de garbage collection ou de prune est finie. | Datastore, type de tâche, résultat | `datastore_name`, `task_type`, `result`, `status`, `date` |
+| Nouvelle sauvegarde PBS           | Un snapshot plus récent est apparu sur le datastore.                    | Datastore                          | `datastore_name`, `last_backup`, `snapshot_count`         |
+| Sauvegarde PBS trop ancienne      | Le snapshot le plus récent vient de dépasser 26 heures.                 | Datastore                          | `datastore_name`, `last_backup`, `hours_since_backup`     |
+| PBS injoignable                   | Une lecture de datastore a échoué (une fois par panne).                 | Datastore                          | `datastore_name`, `error`                                 |
+| PBS de nouveau joignable          | Une lecture de datastore a réussi après un échec.                       | Datastore                          | `datastore_name`                                          |
+
+`result` vaut `ok`, `warning` ou `error` ; `status` est le statut brut de PBS, par exemple `OK`, `WARNINGS: 2` ou le texte de l'erreur.
+
+- Un déclencheur part **une seule fois par changement**, jamais à chaque rafraîchissement. Exemple : une sauvegarde qui reste trop ancienne ne déclenche `Sauvegarde PBS trop ancienne` qu'une fois.
+- Les changements sont détectés par le rafraîchissement planifié (l'intervalle de rafraîchissement). Une lecture demandée par un widget ou une action de scène ne déclenche jamais rien elle-même ; le rafraîchissement planifié suivant signale le changement.
+- Le premier rafraîchissement après un démarrage ou un changement de configuration ne déclenche rien : il sert de point de départ.
+- Si plusieurs tâches du même type se terminent entre deux rafraîchissements, seule la plus récente est signalée.
+
+### Actions de scène
+
+| Action                                 | Champs                                                                  | Sorties                                                                                                                                                                                                                                             |
+| -------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lire l'état d'un datastore PBS         | Datastore (obligatoire), `Lire PBS maintenant` (désactivé par défaut)   | `datastore_name`, `usage_percent`, `used_gb`, `total_gb`, `snapshot_count`, `backup_stale`, `last_backup`, `hours_since_backup`, `last_verify_status`, `last_verify_date`, `last_gc_status`, `last_gc_date`, `last_prune_status`, `last_prune_date` |
+| Obtenir le rapport des sauvegardes PBS | `Lire PBS maintenant` (désactivé par défaut), langue du rapport (en/fr) | `datastore_count`, `stale_count`, `failed_task_count`, `unreachable_count`, `max_usage_percent`, `all_ok`, `summary`                                                                                                                                |
+
+- Sans `Lire PBS maintenant`, l'action répond avec les valeurs du dernier rafraîchissement et ne sollicite pas PBS.
+- `summary` est un texte prêt à envoyer, une ligne par datastore. Exemple de rapport quotidien : « Tous les jours à 8 h » → « Obtenir le rapport des sauvegardes PBS » (langue `fr`) → « Envoyer un message » avec la sortie `summary`.
+- Exemple d'alerte : « Tâche de maintenance PBS terminée » filtrée sur le résultat `Erreur` → « Envoyer un message » : `Échec de {{triggerEvent.data.task_type}} sur {{triggerEvent.data.datastore_name}} : {{triggerEvent.data.status}}`.
 
 ## Détails de fonctionnement
 
@@ -121,16 +167,17 @@ Voici les paramètres demandés par Proxmox Backup Server dans son écran de con
 | Nom du nœud PBS | `string` | Non |  |
 | Intervalle de rafraîchissement (secondes) | `number` | Non |  |
 | Vérifier le certificat TLS | `boolean` | Non |  |
-| Format de date | `select` | Non | Sélectionnez le format d'affichage des dates des tâches. Les dates sont affichées en UTC. |
+| Format de date | `select` | Non | Sélectionnez le format d'affichage des dates des tâches, dans le fuseau horaire indiqué ci-dessous. |
+| Fuseau horaire | `string` | Non | Nom IANA utilisé pour afficher les dates, par exemple Europe/Paris. Vide ou inconnu : UTC. |
 
 ## Comment installer Proxmox Backup Server dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Proxmox Backup Server apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-proxmox-backup-server:1.0.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-proxmox-backup-server:2.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-proxmox-backup-server](https://github.com/prohand/gladys-proxmox-backup-server).
 
-Proxmox Backup Server nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Proxmox Backup Server nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 
