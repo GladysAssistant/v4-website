@@ -83,7 +83,7 @@ const bestZigbeeDongleContent = {
           tag: "Best placement options",
           image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
           imageAlt: "SMLIGHT SLZB-06 Ethernet Zigbee coordinator",
-          text: "A coordinator with USB-C, Ethernet and PoE, so you can either plug it into your server or place it centrally in your home. Its coordinator type is selectable in Gladys since 4.81; connect it over USB, as Gladys does not yet offer a network (TCP) connection.",
+          text: "A coordinator with USB-C, Ethernet and PoE, so you can either plug it into your server or place it centrally in your home. Since Gladys 5, you can also use it as a network coordinator over Ethernet, placed away from your server and from interference.",
           href: amazonUS("SMLIGHT SLZB-06 Zigbee coordinator"),
           linkLabel: "View on Amazon →",
         },
@@ -135,6 +135,11 @@ const bestZigbeeDongleContent = {
       intro:
         "Setting up your local Zigbee network is part of a bigger picture:",
       links: [
+        {
+          label: "Zigbee2MQTT without Home Assistant",
+          href: "/zigbee2mqtt-without-home-assistant/",
+          text: "Let Gladys install and manage Zigbee2MQTT and its MQTT broker for you.",
+        },
         {
           label: "Connect Zigbee devices to Gladys",
           href: "/docs/integrations/zigbee2mqtt/",
@@ -241,7 +246,7 @@ const bestZigbeeDongleContent = {
           tag: "Le plus polyvalent",
           image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
           imageAlt: "Coordinateur Zigbee Ethernet SMLIGHT SLZB-06",
-          text: "Un coordinateur avec USB-C, Ethernet et PoE : vous pouvez le brancher sur votre serveur ou le placer au centre de la maison. Son type de coordinateur est sélectionnable dans Gladys depuis la 4.81 ; branchez-le en USB, Gladys ne propose pas encore de connexion réseau (TCP).",
+          text: "Un coordinateur avec USB-C, Ethernet et PoE : vous pouvez le brancher sur votre serveur ou le placer au centre de la maison. Depuis Gladys 5, vous pouvez aussi l'utiliser comme coordinateur réseau en Ethernet, placé loin de votre serveur et des interférences.",
           href: amazonFR("SMLIGHT SLZB-06 coordinateur Zigbee"),
           linkLabel: "Voir sur Amazon →",
         },
@@ -293,6 +298,11 @@ const bestZigbeeDongleContent = {
       intro:
         "Monter votre réseau Zigbee local s'inscrit dans un tableau plus large :",
       links: [
+        {
+          label: "Zigbee2MQTT sans Home Assistant",
+          href: "/zigbee2mqtt-without-home-assistant/",
+          text: "Laissez Gladys installer et gérer Zigbee2MQTT et son broker MQTT pour vous.",
+        },
         {
           label: "Connecter des appareils Zigbee à Gladys",
           href: "/fr/docs/integrations/zigbee2mqtt/",

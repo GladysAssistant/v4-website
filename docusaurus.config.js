@@ -163,6 +163,10 @@ module.exports = function createConfig() {
               to: "ai-smart-home/",
             },
             {
+              label: "Smart home MCP server",
+              to: "smart-home-mcp-server/",
+            },
+            {
               label: "Open-source home automation",
               to: "open-source-home-automation/",
             },
@@ -173,6 +177,14 @@ module.exports = function createConfig() {
             {
               label: "Best Zigbee dongle",
               to: "best-zigbee-dongle/",
+            },
+            {
+              label: "Zigbee2MQTT without Home Assistant",
+              to: "zigbee2mqtt-without-home-assistant/",
+            },
+            {
+              label: "Z-Wave JS UI without Home Assistant",
+              to: "z-wave-js-ui-without-home-assistant/",
             },
             {
               label: "Which Matter hub to choose",
@@ -189,6 +201,14 @@ module.exports = function createConfig() {
             {
               label: "Hydro-Québec Rate Flex D",
               to: "hydro-quebec-flex-d/",
+            },
+            {
+              label: "Hydro-Québec peak events today",
+              to: "hydro-quebec-peak-events/",
+            },
+            {
+              label: "Sinopé Zigbee thermostats",
+              to: "sinope-zigbee/",
             },
             {
               label: "Reolink RTSP URL",
@@ -238,6 +258,18 @@ module.exports = function createConfig() {
             {
               label: "Home Assistant Green alternative",
               to: "home-assistant-green-alternative/",
+            },
+            {
+              label: "Hubitat alternative",
+              to: "hubitat-alternative/",
+            },
+            {
+              label: "Homey alternative",
+              to: "homey-alternative/",
+            },
+            {
+              label: "openHAB alternative",
+              to: "openhab-alternative/",
             },
           ],
         },

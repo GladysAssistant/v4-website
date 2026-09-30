@@ -157,6 +157,16 @@ const hydroQuebecFlexDContent = {
       intro: "Lowering your electricity bill is a whole project:",
       links: [
         {
+          label: "Hydro-Québec peak events, live",
+          href: "/hydro-quebec-peak-events/",
+          text: "Is there a peak event today or tomorrow? Live from Hydro-Québec's open data.",
+        },
+        {
+          label: "Sinopé Zigbee thermostats",
+          href: "/sinope-zigbee/",
+          text: "Control Sinopé thermostats locally over Zigbee, without Neviweb.",
+        },
+        {
           label: "Reduce your electricity bill",
           href: "/home-energy-monitoring/",
           text: "Track your consumption and act on the data, locally and privately.",
@@ -338,6 +348,16 @@ const hydroQuebecFlexDContent = {
       title: "Aller plus loin",
       intro: "Réduire sa facture d'électricité, c'est tout un projet :",
       links: [
+        {
+          label: "Pointes Hydro-Québec en direct",
+          href: "/hydro-quebec-peak-events/",
+          text: "Y a-t-il une pointe aujourd'hui ou demain ? En direct depuis les données ouvertes d'Hydro-Québec.",
+        },
+        {
+          label: "Thermostats Sinopé Zigbee",
+          href: "/sinope-zigbee/",
+          text: "Pilotez vos thermostats Sinopé en local, en Zigbee, sans Neviweb.",
+        },
         {
           label: "Réduire sa facture d'électricité",
           href: "/home-energy-monitoring/",

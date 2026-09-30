@@ -59,11 +59,14 @@ const buildSlugs = (integrations) => {
   return slugs;
 };
 
+// Docusaurus already appends " | Gladys Assistant" to every docs title, so the
+// titles target what people search for (the brand plus "smart home" /
+// "domotique") instead of repeating the product name.
 const TEXTS = {
   en: {
-    title: (name) => `${name} integration for Gladys Assistant`,
+    title: (name) => `${name} smart home integration, free and open source`,
     titleWithNative: (name) =>
-      `${name} external integration for Gladys Assistant`,
+      `${name} community integration, free and open source`,
     descriptionSuffix: "Free, open source, installable in one click.",
     docSourceMissing:
       "The author of this integration has not published a documentation page yet.",
@@ -95,9 +98,9 @@ const TEXTS = {
     ],
   },
   fr: {
-    title: (name) => `Intégration ${name} pour Gladys Assistant`,
+    title: (name) => `Intégration domotique ${name}, gratuite et open source`,
     titleWithNative: (name) =>
-      `Intégration externe ${name} pour Gladys Assistant`,
+      `Intégration communautaire ${name}, gratuite et open source`,
     descriptionSuffix: "Gratuite, open source, installable en un clic.",
     docSourceMissing:
       "L'auteur de cette intégration n'a pas encore publié de page de documentation.",
@@ -280,6 +283,7 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
     "keywords:",
     ...[
       lowerName,
+      locale === "fr" ? `domotique ${lowerName}` : `${lowerName} smart home`,
       `gladys ${lowerName}`,
       `${lowerName} gladys assistant`,
       locale === "fr" ? "intégration externe" : "external integration",

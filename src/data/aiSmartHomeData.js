@@ -83,6 +83,11 @@ const aiSmartHomeContent = {
         "Want to dig in? These guides cover each piece of Gladys' AI, and how it stays private:",
       links: [
         {
+          label: "Smart home MCP server",
+          href: "/smart-home-mcp-server/",
+          text: "What your AI agent can do in your home through MCP, local or remote.",
+        },
+        {
           label: "Control your home in natural language",
           href: "/docs/integrations/openai/",
           text: "The AI integration: talk to Gladys from the chat, Telegram or the voice assistant.",
@@ -193,6 +198,11 @@ const aiSmartHomeContent = {
       intro:
         "Envie de creuser ? Ces guides détaillent chaque brique de l'IA de Gladys, et comment elle reste privée :",
       links: [
+        {
+          label: "Serveur MCP domotique",
+          href: "/smart-home-mcp-server/",
+          text: "Ce que votre agent IA peut faire dans votre maison via MCP, en local ou à distance.",
+        },
         {
           label: "Contrôler sa maison en langage naturel",
           href: "/docs/integrations/openai/",
