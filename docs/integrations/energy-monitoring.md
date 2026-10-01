@@ -7,6 +7,10 @@ sidebar_label: Energy Monitoring
 
 The "Energy Monitoring" integration allows you to track your energy consumption with Gladys Assistant.
 
+:::tip[Going further]
+How to turn the data into savings: [Reduce your electricity bill](/home-energy-monitoring/). On a time-based rate? See the live [EDF Tempo colour](/edf-tempo/), [Hydro-Québec peak events](/hydro-quebec-peak-events/) and [Ontario electricity rates](/ontario-electricity-rates/).
+:::
+
 It is available since Gladys Assistant 4.66.
 
 ## Compatible Hardware

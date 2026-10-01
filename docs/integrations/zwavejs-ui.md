@@ -17,6 +17,10 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 
 Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), a software application for controlling Z-Wave devices. It runs **locally** on your own hardware, so your Z-Wave network keeps working with no cloud account.
 
+:::tip[Z-Wave without Home Assistant]
+Why Z-Wave JS UI plus Gladys is a simple, local setup, and how it compares: [Z-Wave JS UI without Home Assistant](/z-wave-js-ui-without-home-assistant/).
+:::
+
 Gladys connects to the same MQTT broker as Z-Wave JS UI and receives MQTT messages whenever a device's status changes.
 
 :::note[Choosing a Z-Wave USB stick for your region]

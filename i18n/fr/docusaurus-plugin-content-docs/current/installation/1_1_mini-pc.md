@@ -7,6 +7,10 @@ sidebar_label: Installation sur Mini-PC
 
 L’installation sur un mini-PC est la méthode recommandée pour profiter pleinement de Gladys. Ces petits ordinateurs sont fiables, performants, abordables et économes en énergie, en faisant une excellente solution pour une installation domestique.
 
+:::tip[Quel mini-PC acheter ?]
+Modèles, caractéristiques, consommation et budget : [Quel mini-PC pour la domotique](/fr/mini-pc-home-automation/).
+:::
+
 ## Quel matériel choisir ?
 
 La meilleure façon de débuter avec Gladys est d’opter pour [le kit de démarrage](/fr/starter-kit/). C'est une box domotique avec Gladys Assistant déjà installé.

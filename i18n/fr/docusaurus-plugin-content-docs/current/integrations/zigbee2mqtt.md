@@ -15,7 +15,11 @@ keywords:
 
 import JsonLd from '@site/src/components/seo/JsonLd';
 
-Dans ce tutoriel, nous allons vous expliquer comment intégrer vos appareils Zigbee dans Gladys via une clé USB Zigbee.
+Dans ce tutoriel, nous allons vous expliquer comment intégrer vos appareils Zigbee dans Gladys via un coordinateur Zigbee : une clé USB Zigbee, ou un coordinateur réseau.
+
+:::tip[Vous venez de Home Assistant ?]
+Gladys installe et gère Zigbee2MQTT et son broker MQTT pour vous : voir [Zigbee2MQTT sans Home Assistant](/fr/zigbee2mqtt-without-home-assistant/). Vous hésitez encore sur la clé ? Lisez le [guide d'achat des clés Zigbee](/fr/best-zigbee-dongle/).
+:::
 
 Vous pourrez ainsi connecter tout type d'appareils Zigbee en direct, et vous affranchir des bridges Zigbee souvent fournis par les constructeurs (Bridge Philips Hue, Hub Xiaomi).
 
@@ -29,7 +33,7 @@ Si vous préférez en vidéo, j'ai filmé ce tutoriel sur Youtube pour vous mont
 
 ## Le matériel nécessaire
 
-Pour commencer, vous aurez besoin d'un dongle USB Zigbee.
+Pour commencer, vous aurez besoin d'un coordinateur Zigbee : un dongle USB branché sur la machine qui fait tourner Gladys, ou un coordinateur réseau (voir [Utiliser un coordinateur réseau](#utiliser-un-coordinateur-réseau) plus bas).
 
 ![Sonoff Zigbee 3.0 USB dongle plus](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
 
@@ -68,6 +72,18 @@ Cela permet de charger directement la configuration Zigbee2mqtt correspondante.
 :::warning
 Si vous avez un dongle basé sur [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (comme par exemple le Sonoff Zigbee 3.0 ZBDongle-E), il est recommandé de [mettre à jour](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) le firmware de votre dongle. Dans le cas contraire, vous devez choisir l'option `(legacy ezsp)` dans la liste.
 :::
+
+## Utiliser un coordinateur réseau
+
+Depuis Gladys 5, le coordinateur n'a pas besoin d'être branché sur la machine qui fait tourner Gladys. Un coordinateur réseau (SMLIGHT SLZB-06/SLZB-07, ZigStar…) se connecte en Ethernet ou en Wi-Fi : vous pouvez le placer au centre de la maison, loin de votre serveur et des interférences. Gladys installe et gère toujours Zigbee2MQTT pour vous.
+
+Dans `Intégrations / Zigbee2Mqtt`, dans la configuration :
+
+1. À la question **Comment le coordinateur Zigbee est-il connecté ?**, choisissez **Coordinateur réseau (Ethernet/Wi-Fi)**.
+2. Entrez l'adresse et le port TCP du coordinateur, par exemple `tcp://192.168.1.20:6638` (le préfixe `tcp://` est facultatif). Donnez au coordinateur une adresse IP fixe sur votre box.
+3. Sélectionnez le type d'adaptateur indiqué par la documentation de votre coordinateur : le SLZB-06 utilise `zstack`, les SLZB-06M et SLZB-07 utilisent `ember`.
+
+Passez ensuite à l'étape suivante pour activer Zigbee2MQTT.
 
 ## Activez Zigbee2Mqtt
 

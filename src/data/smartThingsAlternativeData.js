@@ -158,6 +158,11 @@ const smartThingsAlternativeContent = {
       intro: "Everything you need to plan the move:",
       links: [
         {
+          label: "Best smart home hub",
+          href: "/best-smart-home-hub/",
+          text: "SmartThings, Hubitat, Homey and a mini-PC, compared.",
+        },
+        {
           label: "Hubitat alternative",
           href: "/hubitat-alternative/",
           text: "Another local hub, and how Gladys compares to it.",
@@ -343,6 +348,11 @@ const smartThingsAlternativeContent = {
       title: "Aller plus loin",
       intro: "Tout ce qu'il faut pour préparer la migration :",
       links: [
+        {
+          label: "Quelle box domotique choisir",
+          href: "/best-smart-home-hub/",
+          text: "Jeedom, Homey, Home Assistant Green et un mini-PC, comparés.",
+        },
         {
           label: "Alternative à Hubitat",
           href: "/hubitat-alternative/",

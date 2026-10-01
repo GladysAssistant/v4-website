@@ -7,6 +7,10 @@ sidebar_label: Z-Wave JS UI
 
 Gladys Assistant propose une intégration avec [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), un logiciel qui permet de contrôler des appareils Z-Wave.
 
+:::tip[Le Z-Wave sans Home Assistant]
+Pourquoi Z-Wave JS UI avec Gladys est une installation simple et locale, et comment elle se compare : [Z-Wave JS UI sans Home Assistant](/fr/z-wave-js-ui-without-home-assistant/).
+:::
+
 Gladys se connecte au même broker MQTT que Z-Wave JS UI et reçoit des messages MQTT à chaque changement d'état d'un appareil.
 
 ## Installer Z-Wave JS UI

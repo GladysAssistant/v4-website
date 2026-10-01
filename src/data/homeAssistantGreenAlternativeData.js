@@ -150,6 +150,16 @@ const homeAssistantGreenAlternativeContent = {
       intro: "Pick your hardware and get started:",
       links: [
         {
+          label: "Best mini-PC for home automation",
+          href: "/mini-pc-home-automation/",
+          text: "Which mini-PC to buy, and what you actually need.",
+        },
+        {
+          label: "Best smart home hub",
+          href: "/best-smart-home-hub/",
+          text: "Every hub compared: price, protocols, local control.",
+        },
+        {
           label: "Install Gladys on a mini-PC",
           href: "/docs/installation/mini-pc/",
           text: "The recommended setup, step by step.",
@@ -321,6 +331,16 @@ const homeAssistantGreenAlternativeContent = {
       title: "Aller plus loin",
       intro: "Choisissez votre matériel et lancez-vous :",
       links: [
+        {
+          label: "Quel mini-PC pour la domotique",
+          href: "/mini-pc-home-automation/",
+          text: "Quel mini-PC acheter, et ce dont vous avez vraiment besoin.",
+        },
+        {
+          label: "Quelle box domotique choisir",
+          href: "/best-smart-home-hub/",
+          text: "Toutes les box comparées : prix, protocoles, contrôle local.",
+        },
         {
           label: "Installer Gladys sur un mini-PC",
           href: "/docs/installation/mini-pc/",

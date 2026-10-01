@@ -33,7 +33,7 @@ Le coordinateur Zigbee est **l'appareil le plus important** de votre installatio
     </div>
     <span class="product-card__badge">Alternative Ethernet</span>
     <h4 class="product-card__title">SMLight SLZB-06</h4>
-    <p class="product-card__description">Coordinateur Zigbee Ethernet/PoE. Pratique si vous voulez éloigner le dongle de votre serveur (placard technique) pour une meilleure couverture du réseau Zigbee. <strong>⚠️ Avec ce modèle, vous devrez installer et gérer Zigbee2MQTT vous-même</strong> (Docker, machine dédiée…), l'intégration Zigbee2MQTT de Gladys ne le lance pas automatiquement contrairement au dongle USB.</p>
+    <p class="product-card__description">Coordinateur Zigbee Ethernet/PoE. Pratique si vous voulez éloigner le dongle de votre serveur (placard technique) pour une meilleure couverture du réseau Zigbee. Depuis Gladys 5, l'intégration Zigbee2MQTT prend en charge les coordinateurs réseau : Gladys installe et gère toujours Zigbee2MQTT pour vous (<a href="/fr/docs/integrations/zigbee2mqtt/#utiliser-un-coordinateur-réseau">étapes de configuration</a>).</p>
     <a class="product-card__cta" href="https://www.domadoo.fr/fr/box-domotique/7612-smlight-slzb-06mg24u-adaptateur-usb-ethernet-poe-zigbee-30-efr32mg24.html?domid=17" target="_blank" rel="noopener">Voir le produit sur SMLight</a>
   </div>
 </div>

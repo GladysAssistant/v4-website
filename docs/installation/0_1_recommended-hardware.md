@@ -33,7 +33,7 @@ The Zigbee coordinator is **the most important device** of your installation: it
     </div>
     <span class="product-card__badge">Ethernet alternative</span>
     <h4 class="product-card__title">SMLight SLZB-06</h4>
-    <p class="product-card__description">Ethernet/PoE Zigbee coordinator. Useful if you want to move the dongle away from your server (e.g. in a tech closet) to get better Zigbee mesh coverage. <strong>⚠️ With this model, you'll have to install and run Zigbee2MQTT yourself</strong> (Docker, dedicated machine…), Gladys' Zigbee2MQTT integration won't start it automatically, unlike with the USB dongle.</p>
+    <p class="product-card__description">Ethernet/PoE Zigbee coordinator. Useful if you want to move the dongle away from your server (e.g. in a tech closet) to get better Zigbee mesh coverage. Since Gladys 5, the Zigbee2MQTT integration supports network coordinators: Gladys still installs and manages Zigbee2MQTT for you (<a href="/docs/integrations/zigbee2mqtt/#use-a-network-coordinator">setup steps</a>).</p>
     <a class="product-card__cta" href="https://www.amazon.com/s?k=SMLight+SLZB-06&tag=gladproj-21" target="_blank" rel="noopener">View on Amazon</a>
   </div>
 </div>

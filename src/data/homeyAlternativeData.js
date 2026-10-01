@@ -157,6 +157,11 @@ const homeyAlternativeContent = {
       intro: "More ways to build a local smart home:",
       links: [
         {
+          label: "Best smart home hub",
+          href: "/best-smart-home-hub/",
+          text: "Homey, Hubitat, SmartThings and a mini-PC, compared.",
+        },
+        {
           label: "Home Assistant Green alternative",
           href: "/home-assistant-green-alternative/",
           text: "Building your own local hub with a mini-PC.",
@@ -334,6 +339,11 @@ const homeyAlternativeContent = {
       title: "Aller plus loin",
       intro: "D'autres façons de construire une maison locale :",
       links: [
+        {
+          label: "Quelle box domotique choisir",
+          href: "/best-smart-home-hub/",
+          text: "Homey, Jeedom, Home Assistant Green et un mini-PC, comparés.",
+        },
         {
           label: "Alternative à Jeedom",
           href: "/jeedom-alternative/",

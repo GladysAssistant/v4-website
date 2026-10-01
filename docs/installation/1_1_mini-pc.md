@@ -15,6 +15,10 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 
 Installing on a mini-PC is the recommended method to fully enjoy Gladys. These small computers are reliable, powerful, energy-efficient, and affordable, making them an excellent solution for a home setup.
 
+:::tip[Which mini-PC to buy?]
+Models, specs, power draw and budget: [Best mini-PC for home automation](/mini-pc-home-automation/).
+:::
+
 ## Which Hardware to Choose?
 
 I recommend the Beelink Mini S13. It's an incredible machine, at an affordable price.

@@ -165,6 +165,11 @@ const hubitatAlternativeContent = {
       intro: "More guides for a local smart home:",
       links: [
         {
+          label: "Best smart home hub",
+          href: "/best-smart-home-hub/",
+          text: "Hubitat, Homey, SmartThings and a mini-PC, compared.",
+        },
+        {
           label: "SmartThings alternative",
           href: "/smartthings-alternative/",
           text: "A local, private alternative to Samsung SmartThings.",
@@ -349,6 +354,11 @@ const hubitatAlternativeContent = {
       title: "Aller plus loin",
       intro: "D'autres guides pour une maison locale :",
       links: [
+        {
+          label: "Quelle box domotique choisir",
+          href: "/best-smart-home-hub/",
+          text: "Jeedom, Homey, Home Assistant Green et un mini-PC, comparés.",
+        },
         {
           label: "Alternative à SmartThings",
           href: "/smartthings-alternative/",

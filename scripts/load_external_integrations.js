@@ -59,6 +59,65 @@ const buildSlugs = (integrations) => {
   return slugs;
 };
 
+// Landing pages (src/pages) that go deeper on what an integration is used
+// for, linked from its generated page. Keyed by the integration's page slug.
+const RELATED_GUIDES = {
+  "philips-hue": [
+    {
+      href: "/philips-hue-without-bridge/",
+      en: ["Philips Hue without the bridge", "pair Hue bulbs directly with a Zigbee dongle instead."],
+      fr: ["Philips Hue sans le pont", "associer ses ampoules Hue directement à une clé Zigbee."],
+    },
+  ],
+  tuya: [
+    {
+      href: "/tuya-zigbee-without-hub/",
+      en: ["Tuya Zigbee without the Tuya app", "local control for Tuya Zigbee devices through Zigbee2MQTT."],
+      fr: ["Tuya Zigbee sans l'application Tuya", "le contrôle local des appareils Tuya Zigbee via Zigbee2MQTT."],
+    },
+  ],
+  "hydro-quebec": [
+    {
+      href: "/hydro-quebec-peak-events/",
+      en: ["Hydro-Québec peak events today", "live Flex D and Winter Credit peak events."],
+      fr: ["Événements de pointe Hydro-Québec aujourd'hui", "les pointes Flex D et crédit hivernal en direct."],
+    },
+    {
+      href: "/hydro-quebec-flex-d/",
+      en: ["Hydro-Québec Rate Flex D", "how Flex D works and the automations that make it pay off."],
+      fr: ["Tarif Flex D d'Hydro-Québec", "comment fonctionne le Flex D et les automatisations qui le rentabilisent."],
+    },
+  ],
+  reolink: [
+    {
+      href: "/reolink-rtsp-url/",
+      en: ["Reolink RTSP URL", "how to enable RTSP and find your camera's stream URL."],
+      fr: ["URL RTSP Reolink", "activer le RTSP et trouver l'URL du flux de votre caméra."],
+    },
+  ],
+  smartthings: [
+    {
+      href: "/smartthings-alternative/",
+      en: ["SmartThings alternative", "how to move from SmartThings to a local platform."],
+      fr: ["Alternative à SmartThings", "comment passer de SmartThings à une plateforme locale."],
+    },
+  ],
+  "z-wave-js-ui": [
+    {
+      href: "/z-wave-js-ui-without-home-assistant/",
+      en: ["Z-Wave JS UI without Home Assistant", "your Z-Wave network with a simple interface."],
+      fr: ["Z-Wave JS UI sans Home Assistant", "votre réseau Z-Wave avec une interface simple."],
+    },
+  ],
+  shelly: [
+    {
+      href: "/shelly-without-cloud/",
+      en: ["Shelly without the cloud", "local control of Shelly relays, plugs and energy meters."],
+      fr: ["Shelly sans le cloud", "le contrôle local des relais, prises et compteurs Shelly."],
+    },
+  ],
+};
+
 // Docusaurus already appends " | Gladys Assistant" to every docs title, so the
 // titles target what people search for (the brand plus "smart home" /
 // "domotique") instead of repeating the product name.
@@ -87,6 +146,8 @@ const TEXTS = {
       `${name} requires Gladys \`${gladysVersion}\`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.`,
     installNoGladys:
       "Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.",
+    relatedTitle: "Related guides",
+    localePrefix: "",
     aboutTitle: "About external integrations",
     aboutBody: (name, ownerName, ownerUrl) =>
       `${name} is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [${ownerName}](${ownerUrl}), not by the Gladys core team.`,
@@ -121,6 +182,8 @@ const TEXTS = {
       `${name} nécessite Gladys \`${gladysVersion}\`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.`,
     installNoGladys:
       "Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.",
+    relatedTitle: "Guides associés",
+    localePrefix: "/fr",
     aboutTitle: "À propos des intégrations externes",
     aboutBody: (name, ownerName, ownerUrl) =>
       `${name} est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [${ownerName}](${ownerUrl}), et non par l'équipe cœur de Gladys.`,
@@ -253,6 +316,20 @@ const configTable = (integration, texts, locale) => {
   ].join("\n");
 };
 
+const relatedGuides = (slug, texts, locale) => {
+  const guides = RELATED_GUIDES[slug];
+  if (!guides) return [];
+  return [
+    `## ${texts.relatedTitle}`,
+    "",
+    ...guides.map(({ href, ...labels }) => {
+      const [label, description] = labels[locale];
+      return `- [${label}](${texts.localePrefix}${href}): ${description}`;
+    }),
+    "",
+  ];
+};
+
 const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
   const texts = TEXTS[locale];
   const description =
@@ -317,6 +394,7 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
     "",
     texts.installNoGladys,
     "",
+    ...relatedGuides(integration.slug, texts, locale),
     `## ${texts.aboutTitle}`,
     "",
     texts.aboutBody(
