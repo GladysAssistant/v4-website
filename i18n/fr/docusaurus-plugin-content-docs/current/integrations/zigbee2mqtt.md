@@ -15,7 +15,7 @@ keywords:
 
 import JsonLd from '@site/src/components/seo/JsonLd';
 
-Dans ce tutoriel, nous allons vous expliquer comment intégrer vos appareils Zigbee dans Gladys via une clé USB Zigbee.
+Dans ce tutoriel, nous allons vous expliquer comment intégrer vos appareils Zigbee dans Gladys via un coordinateur Zigbee : une clé USB Zigbee, ou un coordinateur réseau.
 
 :::tip[Vous venez de Home Assistant ?]
 Gladys installe et gère Zigbee2MQTT et son broker MQTT pour vous : voir [Zigbee2MQTT sans Home Assistant](/fr/zigbee2mqtt-without-home-assistant/). Vous hésitez encore sur la clé ? Lisez le [guide d'achat des clés Zigbee](/fr/best-zigbee-dongle/).
@@ -33,7 +33,7 @@ Si vous préférez en vidéo, j'ai filmé ce tutoriel sur Youtube pour vous mont
 
 ## Le matériel nécessaire
 
-Pour commencer, vous aurez besoin d'un dongle USB Zigbee.
+Pour commencer, vous aurez besoin d'un coordinateur Zigbee : un dongle USB branché sur la machine qui fait tourner Gladys, ou un coordinateur réseau (voir [Utiliser un coordinateur réseau](#utiliser-un-coordinateur-réseau) plus bas).
 
 ![Sonoff Zigbee 3.0 USB dongle plus](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
 
