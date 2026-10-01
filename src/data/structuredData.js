@@ -63,6 +63,39 @@ import reolinkRtspContent, {
   reolinkRtspFaqEn,
   reolinkRtspFaqFr,
 } from "./reolinkRtspData";
+import philipsHueWithoutBridgeContent, {
+  philipsHueWithoutBridgeFaqEn,
+  philipsHueWithoutBridgeFaqFr,
+} from "./philipsHueWithoutBridgeData";
+import aqaraWithoutHubContent, {
+  aqaraWithoutHubFaqEn,
+  aqaraWithoutHubFaqFr,
+} from "./aqaraWithoutHubData";
+import tuyaZigbeeWithoutHubContent, {
+  tuyaZigbeeWithoutHubFaqEn,
+  tuyaZigbeeWithoutHubFaqFr,
+} from "./tuyaZigbeeWithoutHubData";
+import waterLeakDetectionContent, {
+  waterLeakDetectionFaqEn,
+  waterLeakDetectionFaqFr,
+} from "./waterLeakDetectionData";
+import nestThermostatAlternativeContent, {
+  nestThermostatAlternativeFaqEn,
+  nestThermostatAlternativeFaqFr,
+} from "./nestThermostatAlternativeData";
+import ontarioElectricityRatesContent, {
+  ontarioElectricityRatesFaqEn,
+  ontarioElectricityRatesFaqFr,
+} from "./ontarioElectricityRatesData";
+import heuresCreusesContent, {
+  heuresCreusesFaqEn,
+  heuresCreusesFaqFr,
+} from "./heuresCreusesData";
+import domoticzAlternativeContent, {
+  domoticzAlternativeFaqEn,
+  domoticzAlternativeFaqFr,
+} from "./domoticzAlternativeData";
+import { guidesHubContent, guidesSections } from "./guidesHubData";
 import hydroQuebecPeakEventsContent, {
   hydroQuebecPeakEventsFaqEn,
   hydroQuebecPeakEventsFaqFr,
@@ -1374,6 +1407,148 @@ export function getSinopeZigbeePageSchema(lang) {
     about: [
       { "@type": "Organization", name: "Sinopé Technologies" },
       { "@type": "Thing", name: "Zigbee" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getGuidesHubPageSchema(lang) {
+  const prefix = lang === "fr" ? "/fr" : "";
+  const pageUrl = `${SITE_URL}${prefix}/guides/`;
+  const meta = guidesHubContent[lang === "fr" ? "fr" : "en"].meta;
+  const items = guidesSections.flatMap((section) => section.items);
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      getOrganizationNode(),
+      getWebSiteNode(lang),
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#page`,
+        name: meta.title,
+        description: meta.description,
+        url: pageUrl,
+        inLanguage: lang === "fr" ? "fr" : "en",
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        mainEntity: {
+          "@type": "ItemList",
+          itemListElement: items.map((item, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: item[lang === "fr" ? "fr" : "en"].label,
+            url: `${SITE_URL}${prefix}${item.href}`,
+          })),
+        },
+      },
+    ],
+  };
+}
+
+export function getPhilipsHueWithoutBridgePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/philips-hue-without-bridge/",
+    content: philipsHueWithoutBridgeContent,
+    faqEn: philipsHueWithoutBridgeFaqEn,
+    faqFr: philipsHueWithoutBridgeFaqFr,
+    about: [
+      { "@type": "Brand", name: "Philips Hue" },
+      { "@type": "SoftwareApplication", name: "Zigbee2MQTT" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getAqaraWithoutHubPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/aqara-without-hub/",
+    content: aqaraWithoutHubContent,
+    faqEn: aqaraWithoutHubFaqEn,
+    faqFr: aqaraWithoutHubFaqFr,
+    about: [
+      { "@type": "Brand", name: "Aqara" },
+      { "@type": "SoftwareApplication", name: "Zigbee2MQTT" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getTuyaZigbeeWithoutHubPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/tuya-zigbee-without-hub/",
+    content: tuyaZigbeeWithoutHubContent,
+    faqEn: tuyaZigbeeWithoutHubFaqEn,
+    faqFr: tuyaZigbeeWithoutHubFaqFr,
+    about: [
+      { "@type": "Brand", name: "Tuya" },
+      { "@type": "SoftwareApplication", name: "Zigbee2MQTT" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getWaterLeakDetectionPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/water-leak-detection/",
+    content: waterLeakDetectionContent,
+    faqEn: waterLeakDetectionFaqEn,
+    faqFr: waterLeakDetectionFaqFr,
+    about: [
+      { "@type": "Thing", name: "Water leak detection" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getNestThermostatAlternativePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/nest-thermostat-alternative/",
+    content: nestThermostatAlternativeContent,
+    faqEn: nestThermostatAlternativeFaqEn,
+    faqFr: nestThermostatAlternativeFaqFr,
+    about: [
+      { "@type": "Product", name: "Nest Learning Thermostat" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getOntarioElectricityRatesPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/ontario-electricity-rates/",
+    content: ontarioElectricityRatesContent,
+    faqEn: ontarioElectricityRatesFaqEn,
+    faqFr: ontarioElectricityRatesFaqFr,
+    about: [
+      { "@type": "Thing", name: "Ontario electricity rates" },
+      { "@type": "Organization", name: "Ontario Energy Board" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getHeuresCreusesPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/heures-creuses/",
+    content: heuresCreusesContent,
+    faqEn: heuresCreusesFaqEn,
+    faqFr: heuresCreusesFaqFr,
+    about: [
+      { "@type": "Thing", name: "Heures creuses" },
+      { "@type": "Organization", name: "Commission de régulation de l'énergie" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getDomoticzAlternativePageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/domoticz-alternative/",
+    content: domoticzAlternativeContent,
+    faqEn: domoticzAlternativeFaqEn,
+    faqFr: domoticzAlternativeFaqFr,
+    about: [
+      { "@type": "SoftwareApplication", name: "Domoticz" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },
     ],
   });

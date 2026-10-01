@@ -153,6 +153,11 @@ const alarmContent = {
       intro: "Set it up, or combine it with the rest of your local smart home:",
       links: [
         {
+          label: "Water leak detection",
+          href: "/water-leak-detection/",
+          text: "Detect leaks and shut the water off automatically.",
+        },
+        {
           label: "The alarm setup guide",
           href: "/docs/dashboard/alarm/",
           text: "Step by step: modes, arming delay, code and intrusion scenes.",
@@ -331,6 +336,11 @@ const alarmContent = {
       title: "Aller plus loin",
       intro: "Mettez-la en place, ou combinez-la avec le reste de votre maison connectée locale :",
       links: [
+        {
+          label: "Détection de fuite d'eau",
+          href: "/water-leak-detection/",
+          text: "Détectez les fuites et coupez l'eau automatiquement.",
+        },
         {
           label: "Le guide de configuration de l'alarme",
           href: "/docs/dashboard/alarm/",

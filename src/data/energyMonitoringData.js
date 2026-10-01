@@ -104,6 +104,16 @@ const energyContent = {
       intro: "Set it up, or see how energy fits into a wider local smart home:",
       links: [
         {
+          label: "Ontario electricity rates now",
+          href: "/ontario-electricity-rates/",
+          text: "The current Time-of-Use and Ultra-Low Overnight price, live.",
+        },
+        {
+          label: "France's new off-peak hours",
+          href: "/heures-creuses/",
+          text: "What the heures creuses reform changes, and how to adapt.",
+        },
+        {
           label: "Energy Monitoring in Gladys",
           href: "/docs/integrations/energy-monitoring/",
           text: "Track your home's consumption in kWh with a compatible sensor or smart plug.",
@@ -235,6 +245,16 @@ const energyContent = {
       title: "Aller plus loin",
       intro: "Mettez-le en place, ou voyez comment l'énergie s'intègre dans une maison connectée locale :",
       links: [
+        {
+          label: "Heures creuses : ce qui change",
+          href: "/heures-creuses/",
+          text: "Ce que change la réforme des heures creuses, et comment s'adapter.",
+        },
+        {
+          label: "Tarifs d'électricité en Ontario",
+          href: "/ontario-electricity-rates/",
+          text: "Le prix en cours selon la grille horaire de l'Ontario, en direct.",
+        },
         {
           label: "Le suivi de consommation dans Gladys",
           href: "/docs/integrations/energy-monitoring/",
