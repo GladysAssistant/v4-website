@@ -147,6 +147,16 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       intro: "Everything you need for a local Zigbee network:",
       links: [
         {
+          label: "Philips Hue without the bridge",
+          href: "/philips-hue-without-bridge/",
+          text: "Pair Hue bulbs directly with your Zigbee dongle.",
+        },
+        {
+          label: "Aqara sensors without the hub",
+          href: "/aqara-without-hub/",
+          text: "Aqara Zigbee sensors, locally, without the Aqara app.",
+        },
+        {
           label: "Best Zigbee USB dongle",
           href: "/best-zigbee-dongle/",
           text: "Which coordinator to buy for Zigbee2MQTT, USB or network.",
@@ -316,6 +326,16 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       title: "Aller plus loin",
       intro: "Tout ce qu'il faut pour un réseau Zigbee local :",
       links: [
+        {
+          label: "Philips Hue sans le pont",
+          href: "/philips-hue-without-bridge/",
+          text: "Associez vos ampoules Hue directement à votre clé Zigbee.",
+        },
+        {
+          label: "Capteurs Aqara sans hub",
+          href: "/aqara-without-hub/",
+          text: "Les capteurs Aqara Zigbee en local, sans l'application Aqara.",
+        },
         {
           label: "Quelle clé Zigbee choisir",
           href: "/best-zigbee-dongle/",
