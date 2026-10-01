@@ -163,32 +163,8 @@ module.exports = function createConfig() {
               to: "ai-smart-home/",
             },
             {
-              label: "Smart home MCP server",
-              to: "smart-home-mcp-server/",
-            },
-            {
               label: "Open-source home automation",
               to: "open-source-home-automation/",
-            },
-            {
-              label: "Zigbee vs Matter vs Z-Wave",
-              to: "zigbee-vs-matter-vs-zwave/",
-            },
-            {
-              label: "Best Zigbee dongle",
-              to: "best-zigbee-dongle/",
-            },
-            {
-              label: "Zigbee2MQTT without Home Assistant",
-              to: "zigbee2mqtt-without-home-assistant/",
-            },
-            {
-              label: "Z-Wave JS UI without Home Assistant",
-              to: "z-wave-js-ui-without-home-assistant/",
-            },
-            {
-              label: "Which Matter hub to choose",
-              to: "matter-hub/",
             },
             {
               label: "Reduce your electricity bill",
@@ -197,30 +173,11 @@ module.exports = function createConfig() {
             {
               label: "EDF Tempo colour of the day",
               to: "edf-tempo/",
+              className: "footer__link-item footer__link--fr-only",
             },
             {
-              label: "Hydro-Québec Rate Flex D",
-              to: "hydro-quebec-flex-d/",
-            },
-            {
-              label: "Hydro-Québec peak events today",
-              to: "hydro-quebec-peak-events/",
-            },
-            {
-              label: "Sinopé Zigbee thermostats",
-              to: "sinope-zigbee/",
-            },
-            {
-              label: "Reolink RTSP URL",
-              to: "reolink-rtsp-url/",
-            },
-            {
-              label: "DIY home alarm system",
-              to: "diy-home-alarm-system/",
-            },
-            {
-              label: "Presence simulation",
-              to: "presence-simulation/",
+              label: "All guides →",
+              to: "guides/",
             },
           ],
         },
@@ -238,38 +195,19 @@ module.exports = function createConfig() {
             {
               label: "Gladys vs Jeedom",
               to: "jeedom-vs-gladys-assistant/",
-            },
-            {
-              label: "Jeedom alternative",
-              to: "jeedom-alternative/",
-            },
-            {
-              label: "Alexa alternative",
-              to: "alexa-alternative/",
-            },
-            {
-              label: "Google Home alternative",
-              to: "google-home-alternative/",
+              className: "footer__link-item footer__link--fr-only",
             },
             {
               label: "SmartThings alternative",
               to: "smartthings-alternative/",
             },
             {
-              label: "Home Assistant Green alternative",
-              to: "home-assistant-green-alternative/",
+              label: "Alexa alternative",
+              to: "alexa-alternative/",
             },
             {
-              label: "Hubitat alternative",
-              to: "hubitat-alternative/",
-            },
-            {
-              label: "Homey alternative",
-              to: "homey-alternative/",
-            },
-            {
-              label: "openHAB alternative",
-              to: "openhab-alternative/",
+              label: "All comparisons →",
+              to: "guides/#compare",
             },
           ],
         },
