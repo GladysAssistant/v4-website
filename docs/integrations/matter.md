@@ -7,6 +7,10 @@ sidebar_label: Matter
 
 The Matter protocol is a small revolution in the world of smart homes: it finally allows unified communication between smart devices from different manufacturers.
 
+:::tip[Controller, border router, bridge?]
+Not sure what you need for Matter and Thread devices? Read [Do you need a Matter hub?](/matter-hub/)
+:::
+
 Gladys Assistant is compatible with Matter, so you can integrate Matter devices into your setup. Gladys acts as your **Matter controller**, running on your own machine: for a Matter device on Wi-Fi or Ethernet, you do not need to buy a hub at all. Thread devices are the exception, and are covered below. If you are wondering which box you need, read our guide on [which Matter hub to choose](/matter-hub/).
 
 ## Compatibility

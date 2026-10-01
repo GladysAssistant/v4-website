@@ -22,6 +22,10 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 
 Zigbee2MQTT lets you run your own **local Zigbee hub** with Gladys: you plug a USB Zigbee dongle into the machine running Gladys, and you control every Zigbee device directly from your home, with no cloud account and no vendor bridge. This tutorial shows you how to set it up, pair your dongle, and add devices.
 
+:::tip[Coming from Home Assistant?]
+Gladys installs and manages Zigbee2MQTT and its MQTT broker for you: see [Zigbee2MQTT without Home Assistant](/zigbee2mqtt-without-home-assistant/). Still choosing a dongle? Read the [Zigbee dongle buyer's guide](/best-zigbee-dongle/).
+:::
+
 In short, we'll connect your Zigbee devices directly to Gladys, without needing any third-party bridges (just by using a USB Zigbee dongle and the [Zigbee2Mqtt](https://www.zigbee2mqtt.io/) project).
 
 You can check the list of compatible devices [here](https://www.zigbee2mqtt.io/supported-devices/).

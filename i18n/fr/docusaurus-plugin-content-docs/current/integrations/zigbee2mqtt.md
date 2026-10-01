@@ -17,6 +17,10 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 
 Dans ce tutoriel, nous allons vous expliquer comment intégrer vos appareils Zigbee dans Gladys via une clé USB Zigbee.
 
+:::tip[Vous venez de Home Assistant ?]
+Gladys installe et gère Zigbee2MQTT et son broker MQTT pour vous : voir [Zigbee2MQTT sans Home Assistant](/fr/zigbee2mqtt-without-home-assistant/). Vous hésitez encore sur la clé ? Lisez le [guide d'achat des clés Zigbee](/fr/best-zigbee-dongle/).
+:::
+
 Vous pourrez ainsi connecter tout type d'appareils Zigbee en direct, et vous affranchir des bridges Zigbee souvent fournis par les constructeurs (Bridge Philips Hue, Hub Xiaomi).
 
 Nous utilisons pour cela l'excellent projet open-source [Zigbee2Mqtt](https://www.zigbee2mqtt.io/).

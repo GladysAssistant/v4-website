@@ -7,6 +7,10 @@ sidebar_label: Suivi de l'énergie
 
 L'intégration "Suivi de l'énergie" permet de surveiller votre consommation énergétique avec Gladys Assistant.
 
+:::tip[Aller plus loin]
+Comment transformer les données en économies : [Réduire sa facture d'électricité](/fr/home-energy-monitoring/). Vos heures creuses changent ? Lisez [ce que change la réforme des heures creuses](/fr/heures-creuses/), et suivez la [couleur Tempo du jour](/fr/edf-tempo/) en direct.
+:::
+
 Elle est disponible depuis Gladys Assistant 4.66.
 
 ## Le matériel compatible

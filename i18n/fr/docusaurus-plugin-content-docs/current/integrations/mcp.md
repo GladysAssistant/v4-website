@@ -7,6 +7,10 @@ description: "Connectez Claude Desktop, Perplexity ou Mistral à votre domotique
 
 Le Model Context Protocol (MCP) est un protocole ouvert développé par Anthropic qui permet d'exposer des outils et fonctions que les agents IA peuvent utiliser pour obtenir des informations ou interagir avec des appareils du monde réel.
 
+:::tip[Que peut faire un agent IA dans votre maison ?]
+Cas d'usage, accès local ou à distance et clients compatibles, sur une seule page : [Serveur MCP domotique](/fr/smart-home-mcp-server/).
+:::
+
 ## Que permet le serveur MCP de Gladys ?
 
 Gladys Assistant intègre un serveur MCP qui permet à vos agents IA compatibles (Claude Desktop, Perplexity, Mistral Le Chat etc...) de communiquer avec votre maison connectée. À ce jour voici les capacités disponibles :

@@ -12,6 +12,16 @@ export const guidesSections = [
     title: { en: "Getting started", fr: "Bien démarrer" },
     items: [
       card(
+        "/best-smart-home-hub/",
+        { label: "Best smart home hub", text: "Hubitat, Homey, SmartThings, Home Assistant Green or a mini-PC: which hub to choose." },
+        { label: "Quelle box domotique choisir", text: "Jeedom, Homey, Home Assistant Green ou un mini-PC : quelle box choisir." }
+      ),
+      card(
+        "/mini-pc-home-automation/",
+        { label: "Best mini-PC for home automation", text: "Intel N100/N150, Raspberry Pi 5 or a used office PC: what to buy." },
+        { label: "Quel mini-PC pour la domotique", text: "Intel N100/N150, Raspberry Pi 5 ou PC de bureau d'occasion : quoi acheter." }
+      ),
+      card(
         "/local-smart-home/",
         { label: "Build a local smart home", text: "Why local-first matters and how to build a home that runs without the cloud." },
         { label: "Créer une maison connectée locale", text: "Pourquoi le local d'abord compte, et comment bâtir une maison qui tourne sans cloud." }
@@ -87,6 +97,11 @@ export const guidesSections = [
         "/tuya-zigbee-without-hub/",
         { label: "Tuya Zigbee without the Tuya app", text: "Local control for Tuya Zigbee devices." },
         { label: "Tuya Zigbee sans l'application Tuya", text: "Le contrôle local de vos appareils Tuya Zigbee." }
+      ),
+      card(
+        "/shelly-without-cloud/",
+        { label: "Shelly without the cloud", text: "Local, real-time control of Shelly relays, plugs and meters." },
+        { label: "Shelly sans le cloud", text: "Le contrôle local et en temps réel des relais, prises et compteurs Shelly." }
       ),
       card(
         "/ikea-smart-home/",

@@ -63,6 +63,18 @@ import reolinkRtspContent, {
   reolinkRtspFaqEn,
   reolinkRtspFaqFr,
 } from "./reolinkRtspData";
+import bestSmartHomeHubContent, {
+  bestSmartHomeHubFaqEn,
+  bestSmartHomeHubFaqFr,
+} from "./bestSmartHomeHubData";
+import miniPcHomeAutomationContent, {
+  miniPcHomeAutomationFaqEn,
+  miniPcHomeAutomationFaqFr,
+} from "./miniPcHomeAutomationData";
+import shellyWithoutCloudContent, {
+  shellyWithoutCloudFaqEn,
+  shellyWithoutCloudFaqFr,
+} from "./shellyWithoutCloudData";
 import philipsHueWithoutBridgeContent, {
   philipsHueWithoutBridgeFaqEn,
   philipsHueWithoutBridgeFaqFr,
@@ -1549,6 +1561,45 @@ export function getDomoticzAlternativePageSchema(lang) {
     faqFr: domoticzAlternativeFaqFr,
     about: [
       { "@type": "SoftwareApplication", name: "Domoticz" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getBestSmartHomeHubPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/best-smart-home-hub/",
+    content: bestSmartHomeHubContent,
+    faqEn: bestSmartHomeHubFaqEn,
+    faqFr: bestSmartHomeHubFaqFr,
+    about: [
+      { "@type": "Thing", name: "Smart home hub" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getMiniPcHomeAutomationPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/mini-pc-home-automation/",
+    content: miniPcHomeAutomationContent,
+    faqEn: miniPcHomeAutomationFaqEn,
+    faqFr: miniPcHomeAutomationFaqFr,
+    about: [
+      { "@type": "Thing", name: "Mini PC" },
+      { "@type": "SoftwareApplication", name: "Gladys Assistant" },
+    ],
+  });
+}
+
+export function getShellyWithoutCloudPageSchema(lang) {
+  return getGuidePageSchema(lang, {
+    path: "/shelly-without-cloud/",
+    content: shellyWithoutCloudContent,
+    faqEn: shellyWithoutCloudFaqEn,
+    faqFr: shellyWithoutCloudFaqFr,
+    about: [
+      { "@type": "Brand", name: "Shelly" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },
     ],
   });
