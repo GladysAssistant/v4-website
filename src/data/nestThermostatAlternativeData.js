@@ -4,8 +4,9 @@
 // Nest and Home apps, but keep working on the device itself. Facts checked on
 // support.google.com/googlenest/answer/16233096 and press coverage (October
 // 2026). Gladys controls thermostats over Matter (target temperature, see
-// docs/integrations/matter.md), Zigbee2MQTT (occupied_heating_setpoint) and
-// the Netatmo integration. We don't claim support for specific Z-Wave
+// docs/integrations/matter.md) and Zigbee2MQTT (occupied_heating_setpoint).
+// Netatmo works too but through Netatmo's cloud, so it isn't presented as a
+// local alternative. We don't claim support for specific Z-Wave
 // thermostats, which the Gladys Z-Wave JS UI doc doesn't list.
 
 const nestThermostatAlternativeContent = {
@@ -97,9 +98,9 @@ const nestThermostatAlternativeContent = {
           text: "Through Zigbee2MQTT: baseboard thermostats like Sinopé in Canada, or Zigbee radiator valves in Europe.",
         },
         {
-          icon: "🌡️",
-          title: "Netatmo",
-          text: "Netatmo thermostats and radiator valves through the Netatmo integration.",
+          icon: "📅",
+          title: "Schedules you own",
+          text: "Your heating schedule lives in Gladys scenes on your own machine, not in a vendor's app.",
         },
         {
           icon: "🏠",
@@ -265,9 +266,9 @@ const nestThermostatAlternativeContent = {
           text: "Via Zigbee2MQTT : têtes thermostatiques Zigbee pour radiateurs, ou thermostats de plinthes comme Sinopé au Canada.",
         },
         {
-          icon: "🌡️",
-          title: "Netatmo",
-          text: "Thermostats et vannes de radiateur Netatmo via l'intégration Netatmo.",
+          icon: "📅",
+          title: "Des programmations à vous",
+          text: "Votre programmation de chauffage vit dans des scènes Gladys sur votre propre machine, pas dans l'application d'un fabricant.",
         },
         {
           icon: "🏠",

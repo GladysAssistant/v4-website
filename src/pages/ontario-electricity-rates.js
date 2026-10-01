@@ -8,7 +8,7 @@ import { getOntarioElectricityRatesPageSchema } from "../data/structuredData";
 import ontarioElectricityRatesContent, {
   ontarioElectricityRatesFaqEn,
   ontarioElectricityRatesFaqFr,
-  RATES,
+  INITIAL_RATES,
   ratesFor,
   OEB_RATES_URL,
 } from "../data/ontarioElectricityRatesData";
@@ -79,22 +79,27 @@ function describe(plan, now, lang) {
   };
 }
 
-function PlanWidget({ strings, lang }) {
-  const [plan, setPlan] = useState("tou");
+// Current time, set in the browser only, refreshed every minute.
+function useNow() {
   const [now, setNow] = useState(null);
-
   useEffect(() => {
     setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 60 * 1000);
     return () => clearInterval(id);
   }, []);
+  return now;
+}
 
-  const info = now ? describe(plan, now, lang) : null;
-  // Static render uses the latest published prices; the browser picks the
-  // period covering today.
-  const { rates, outdated } = now
+// Price period covering today; the static HTML uses the first period.
+const ratesAt = (now) =>
+  now
     ? ratesFor(ontarioParts(now).key)
-    : { rates: RATES, outdated: false };
+    : { rates: INITIAL_RATES, outdated: false };
+
+function PlanWidget({ strings, lang, now }) {
+  const [plan, setPlan] = useState("tou");
+  const info = now ? describe(plan, now, lang) : null;
+  const { rates, outdated } = ratesAt(now);
   const price = info ? rates[plan][info.current] : null;
 
   return (
@@ -133,7 +138,7 @@ function PlanWidget({ strings, lang }) {
         ) : null}
         {info && (info.holiday || info.weekend) ? (
           <span className={t.cardNote}>
-            {info.holiday ? strings.holiday : strings.weekend}
+            {strings.dayNotes[plan][info.holiday ? "holiday" : "weekend"]}
           </span>
         ) : null}
       </div>
@@ -191,6 +196,8 @@ function LinkCard({ label, href, text }) {
 
 function RatesContent({ content, faq, lang }) {
   const tbl = content.table;
+  const now = useNow();
+  const { rates } = ratesAt(now);
   return (
     <main className={styles.main}>
       <div className={`container ${styles.container}`}>
@@ -198,7 +205,7 @@ function RatesContent({ content, faq, lang }) {
           <h1 className={styles.heroTitle}>{content.hero.title}</h1>
           <p className={styles.heroSubtitle}>{content.hero.subtitle}</p>
         </header>
-        <PlanWidget strings={content.widget} lang={lang} />
+        <PlanWidget strings={content.widget} lang={lang} now={now} />
 
         {/* ALL RATES */}
         <section className={styles.section} aria-labelledby="prices-title">
@@ -227,7 +234,7 @@ function RatesContent({ content, faq, lang }) {
                     </td>
                     <td>{when}</td>
                     <td className={t.nowrap}>
-                      {RATES[plan][period].toFixed(1)} {content.widget.unit}
+                      {rates[plan][period].toFixed(1)} {content.widget.unit}
                     </td>
                   </tr>
                 ))}

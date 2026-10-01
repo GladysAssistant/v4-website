@@ -7,8 +7,10 @@
 
 // ¢/kWh, from the OEB (oeb.ca, "Electricity rates"). The OEB now sets prices
 // once a year, for November 1 to October 31, and announces them in mid-October.
-// Add the new period here when it's published: the widget picks the period
-// that covers today, and warns when today is past the last one.
+// Add the new period here when it's published: the widget and the price
+// table pick the period that covers today, and warn when today is past the
+// last one. Keep the period in effect first (the static HTML, before the
+// browser knows today's date, shows RATE_PERIODS[0]) and drop expired ones.
 export const RATE_PERIODS = [
   {
     from: "2025-11-01",
@@ -25,8 +27,8 @@ export function ratesFor(dayKey) {
   return { rates: match || latest, outdated: !match && dayKey > latest.to };
 }
 
-// Used for the static parts of the page (price table, FAQ).
-export const RATES = RATE_PERIODS[RATE_PERIODS.length - 1];
+// Prices shown before the browser knows today's date (static HTML).
+export const INITIAL_RATES = RATE_PERIODS[0];
 
 export const OEB_RATES_URL =
   "https://www.oeb.ca/consumer-information-and-protection/electricity-rates";
@@ -57,8 +59,16 @@ const ontarioElectricityRatesContent = {
         weekendOff: "Weekend off-peak",
       },
       unit: "¢/kWh",
-      holiday: "Holiday: off-peak rules apply all day",
-      weekend: "Weekend: off-peak rules apply all day",
+      dayNotes: {
+        tou: {
+          holiday: "Holiday: off-peak all day",
+          weekend: "Weekend: off-peak all day",
+        },
+        ulo: {
+          holiday: "Holiday: weekend off-peak from 7 a.m. to 11 p.m.",
+          weekend: "Weekend: weekend off-peak from 7 a.m. to 11 p.m.",
+        },
+      },
       source: (from, to) =>
         `Ontario Energy Board Regulated Price Plan prices for ${from} to ${to}, before delivery, regulatory charges, HST and the Ontario Electricity Rebate. Check your bill for your exact plan.`,
       outdated:
@@ -164,8 +174,16 @@ const ontarioElectricityRatesContent = {
         weekendOff: "Creuses de fin de semaine",
       },
       unit: "¢/kWh",
-      holiday: "Jour férié : tarif creux toute la journée",
-      weekend: "Fin de semaine : tarif creux toute la journée",
+      dayNotes: {
+        tou: {
+          holiday: "Jour férié : heures creuses toute la journée",
+          weekend: "Fin de semaine : heures creuses toute la journée",
+        },
+        ulo: {
+          holiday: "Jour férié : creuses de fin de semaine de 7 h à 23 h",
+          weekend: "Fin de semaine : creuses de fin de semaine de 7 h à 23 h",
+        },
+      },
       source: (from, to) =>
         `Prix de la grille tarifaire réglementée de la Commission de l'énergie de l'Ontario du ${from} au ${to}, hors livraison, frais de réglementation, TVH et remise de l'Ontario pour l'électricité. Vérifiez votre facture pour connaître votre grille exacte.`,
       outdated:
