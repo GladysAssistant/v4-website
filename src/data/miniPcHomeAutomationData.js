@@ -283,7 +283,60 @@ const miniPcHomeAutomationContent = {
   },
 };
 
-export const miniPcHomeAutomationFaqEn = [];
-export const miniPcHomeAutomationFaqFr = [];
+export const miniPcHomeAutomationFaqEn = [
+  {
+    question: "Raspberry Pi 5 or mini-PC for home automation in 2026?",
+    answer:
+      "For most people, a mini-PC. Memory costs pushed Raspberry Pi 5 prices up several times: since April 2026 the 8 GB model lists at $175, before a case, power supply and SSD. An Intel N150 mini-PC with 16 GB of RAM and a 500 GB SSD sells for about $190 to $200, complete. A Pi you already own is still perfectly fine.",
+  },
+  {
+    question: "How much power does a home automation mini-PC use?",
+    answer:
+      "An Intel N100 or N150 mini-PC running Linux typically idles around 6 to 10 W, or roughly 50 to 90 kWh a year. Used office mini-PCs with older Core i5 chips usually idle around 15 to 25 W. A Home Assistant Green-style ARM box idles below 2 W.",
+  },
+  {
+    question: "How much RAM and storage do I need?",
+    answer:
+      "8 GB of RAM and a 256 GB SSD are plenty for Gladys, Zigbee2MQTT and a few cameras. 16 GB and 500 GB give room for other self-hosted apps. Avoid SD cards for a server that writes to a database all day.",
+  },
+  {
+    question: "Which mini-PC do you recommend for Gladys?",
+    answer:
+      "We recommend the Beelink Mini S13 (Intel N150) in our installation guide. Any recent Intel N100 or N150 mini-PC with 8 to 16 GB of RAM, an SSD and Ethernet works just as well.",
+  },
+  {
+    question: "Is a used office mini-PC a good idea?",
+    answer:
+      "Yes, if you find one at a good price: Lenovo ThinkCentre Tiny, Dell OptiPlex Micro and HP EliteDesk Mini are robust and powerful. They draw more power at idle than a new N100/N150 machine, which adds up over years of 24/7 use.",
+  },
+];
+
+export const miniPcHomeAutomationFaqFr = [
+  {
+    question: "Raspberry Pi 5 ou mini-PC pour la domotique en 2026 ?",
+    answer:
+      "Pour la plupart des gens, un mini-PC. Le coût de la mémoire a fait grimper le prix du Raspberry Pi 5 plusieurs fois : depuis avril 2026, le modèle 8 Go est affiché à 175 $ aux États-Unis, sans boîtier, alimentation ni SSD. Un mini-PC Intel N150 avec 16 Go de RAM et un SSD de 500 Go se trouve autour de 190 à 200 $, complet. Un Pi que vous avez déjà reste parfaitement utilisable.",
+  },
+  {
+    question: "Combien consomme un mini-PC domotique ?",
+    answer:
+      "Un mini-PC Intel N100 ou N150 sous Linux consomme généralement autour de 6 à 10 W au repos, soit environ 50 à 90 kWh par an. Les mini-PC de bureau d'occasion avec d'anciens Core i5 tournent plutôt autour de 15 à 25 W. Une box ARM comme le Home Assistant Green descend sous les 2 W.",
+  },
+  {
+    question: "Combien de RAM et de stockage faut-il ?",
+    answer:
+      "8 Go de RAM et un SSD de 256 Go suffisent largement pour Gladys, Zigbee2MQTT et quelques caméras. 16 Go et 500 Go laissent de la place pour d'autres applications auto-hébergées. Évitez les cartes SD pour un serveur qui écrit dans une base de données toute la journée.",
+  },
+  {
+    question: "Quel mini-PC recommandez-vous pour Gladys ?",
+    answer:
+      "Nous recommandons le Beelink Mini S13 (Intel N150) dans notre guide d'installation. N'importe quel mini-PC Intel N100 ou N150 récent avec 8 à 16 Go de RAM, un SSD et l'Ethernet fonctionne tout aussi bien. Et si vous ne voulez rien installer, le kit de démarrage est livré avec Gladys prête à l'emploi.",
+  },
+  {
+    question: "Un mini-PC de bureau d'occasion, bonne idée ?",
+    answer:
+      "Oui, si vous le trouvez à bon prix : les Lenovo ThinkCentre Tiny, Dell OptiPlex Micro et HP EliteDesk Mini sont robustes et puissants. Ils consomment plus au repos qu'un N100/N150 neuf, ce qui finit par compter sur des années de fonctionnement 24 h/24.",
+  },
+];
 
 export default miniPcHomeAutomationContent;

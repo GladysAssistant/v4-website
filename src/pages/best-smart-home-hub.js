@@ -11,6 +11,7 @@ import bestSmartHomeHubContent, {
 } from "../data/bestSmartHomeHubData";
 
 import styles from "./comparison.module.css";
+import h from "./bestSmartHomeHub.module.css";
 
 // Buyer's guide comparing several hubs at once: the shared UseCasePage only
 // has a two-column comparison, so this page has its own multi-column table.
@@ -77,7 +78,7 @@ function HubGuide({ content, faq }) {
           </h2>
           <p className={styles.blockIntro}>{table.intro}</p>
           <div className={styles.tableWrapper}>
-            <table className={styles.table}>
+            <table className={`${styles.table} ${h.hubTable}`}>
               <thead>
                 <tr>
                   {table.columns.map((col, i) => (

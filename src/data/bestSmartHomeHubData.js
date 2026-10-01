@@ -25,13 +25,80 @@ const bestSmartHomeHubContent = {
     picks: {
       title: "Quick picks",
       intro: "If you only read one section:",
-      cards: [],
+      cards: [
+        {
+          tag: "Local, no lock-in",
+          name: "Gladys Assistant on a mini-PC",
+          text: "Free, open-source software on hardware you choose. Zigbee, Z-Wave, Matter and many brands, a modern interface, no mandatory subscription. Our own product, so judge with that in mind.",
+          link: { label: "Best mini-PC for home automation →", href: "/mini-pc-home-automation/" },
+        },
+        {
+          tag: "Plug-and-play local hub",
+          name: "Hubitat Elevation C-8 Pro",
+          text: "Zigbee and Z-Wave Long Range built in, automations that run on the hub. Proprietary, with a dated interface.",
+          link: { label: "Gladys vs Hubitat →", href: "/hubitat-alternative/" },
+        },
+        {
+          tag: "Polished all-in-one",
+          name: "Homey Pro",
+          text: "Every radio in one beautiful box, easy Flows. The most expensive option here.",
+          link: { label: "Gladys vs Homey →", href: "/homey-alternative/" },
+        },
+        {
+          tag: "Home Assistant users",
+          name: "Home Assistant Green",
+          text: "The easiest way into Home Assistant. Add Connect dongles for Zigbee, Thread or Z-Wave.",
+          link: { label: "Home Assistant Green alternative →", href: "/home-assistant-green-alternative/" },
+        },
+      ],
     },
     table: {
       title: "Smart home hubs compared",
       intro: "The main options at a glance:",
       columns: ["Hub", "Price", "Zigbee / Z-Wave", "Matter / Thread", "Runs locally", "Subscription", "Open source"],
-      rows: [],
+      rows: [
+        // Gladys: free software; mini-PC prices from Beelink EQ14 / GMKtec G3 Plus reviews (Aug 2026).
+        {
+          name: "Gladys on a mini-PC",
+          highlight: true,
+          cells: ["Free software + mini-PC (about $190–270) + Zigbee dongle", "Yes, with USB dongles", "Matter controller; Thread devices shared from an Apple, Google or Amazon hub", "Yes", "Optional (Gladys Plus from $7.99/mo)", "Yes (Apache 2.0)"],
+        },
+        // home-assistant.io/green, nabucasa.com/pricing, ZBT-2 and ZWA-2 product pages.
+        {
+          name: "Home Assistant Green",
+          cells: ["$199 (+ $49 ZBT-2, $69 ZWA-2)", "With the Connect ZBT-2 / ZWA-2 dongles", "Matter; Thread with the ZBT-2", "Yes", "Optional (Home Assistant Cloud $6.50/mo)", "Yes (Apache 2.0)"],
+        },
+        // hubitat.com/products, docs2.hubitat.com services.
+        {
+          name: "Hubitat Elevation C-8 Pro",
+          cells: ["$184.95", "Both built in, Z-Wave Long Range", "Matter; Thread only on a special edition without Zigbee", "Yes", "Optional (Remote Admin, Hub Protect: $45/yr each)", "No"],
+        },
+        // homey.app/en-us/homey-pro (prices since June 1, 2026).
+        {
+          name: "Homey Pro",
+          cells: ["$449 (Pro mini $249)", "Both built in (mini: Zigbee only)", "Matter and Thread border router", "Yes", "Optional (cloud backup $10/yr)", "No"],
+        },
+        // samsung.com Aeotec Smart Home Hub 2; SmartThings API plan from October 2026.
+        {
+          name: "SmartThings (Aeotec Smart Home Hub 2)",
+          cells: ["$119.99", "Zigbee only, no Z-Wave", "Matter and Thread border router", "Partly: local drivers and automations, app through the cloud", "No for the app; API access $4.99/mo since Oct 2026", "No"],
+        },
+        // us.aqara.com/products/hub-m3.
+        {
+          name: "Aqara Hub M3",
+          cells: ["$159.99", "Zigbee only", "Matter controller and bridge, Thread border router", "Yes, local automations", "None for hub features", "No"],
+        },
+        // aboutamazon.com fall 2025 lineup.
+        {
+          name: "Amazon Echo (Dot Max, Show 8)",
+          cells: ["From $99.99", "Zigbee only", "Matter and Thread", "Mostly cloud (Alexa)", "No", "No"],
+        },
+        // macrumors.com roundups (prices since June 2026).
+        {
+          name: "Apple TV 4K / HomePod mini",
+          cells: ["$249 (Ethernet, Thread) / $129", "No", "Matter and Thread border router", "Yes for Matter and HomeKit devices", "No", "No"],
+        },
+      ],
       outro:
         "Prices are list prices in USD, before tax, as of October 2026.",
     },
@@ -94,13 +161,80 @@ const bestSmartHomeHubContent = {
     picks: {
       title: "En bref",
       intro: "Si vous ne lisez qu'une section :",
-      cards: [],
+      cards: [
+        {
+          tag: "Prêt à l'emploi",
+          name: "Le kit de démarrage Gladys",
+          text: "Un mini-PC Beelink avec Gladys installée et testée à la main, 6 mois de Gladys Plus, une formation vidéo et mon support direct. Notre propre produit : jugez en connaissance de cause.",
+          link: { label: "Découvrir le kit →", href: "/starter-kit/" },
+        },
+        {
+          tag: "Local, sans enfermement",
+          name: "Gladys sur votre mini-PC",
+          text: "Logiciel gratuit et open source sur le matériel de votre choix : Zigbee, Z-Wave, Matter et de nombreuses marques, sans abonnement obligatoire.",
+          link: { label: "Quel mini-PC choisir →", href: "/mini-pc-home-automation/" },
+        },
+        {
+          tag: "Box française historique",
+          name: "Jeedom Luna ou Atlas",
+          text: "Un écosystème de plugins très vaste, dont une partie payante. Riche, mais demande du temps.",
+          link: { label: "Gladys vs Jeedom →", href: "/jeedom-vs-gladys-assistant/" },
+        },
+        {
+          tag: "Tout-en-un soigné",
+          name: "Homey Pro",
+          text: "Toutes les radios dans un beau boîtier, des Flows faciles. L'option la plus chère.",
+          link: { label: "Gladys vs Homey →", href: "/homey-alternative/" },
+        },
+      ],
     },
     table: {
       title: "Les box domotiques comparées",
       intro: "Les principales options en un coup d'œil :",
       columns: ["Box", "Prix", "Zigbee / Z-Wave", "Matter / Thread", "Fonctionne en local", "Abonnement", "Open source"],
-      rows: [],
+      rows: [
+        // Prix du kit affiché sur /starter-kit/, selon le modèle de mini-PC.
+        {
+          name: "Kit de démarrage Gladys",
+          highlight: true,
+          cells: ["Selon le mini-PC choisi, voir la page du kit", "Avec une clé USB (Zigbee via Zigbee2MQTT, Z-Wave via Z-Wave JS UI)", "Contrôleur Matter ; appareils Thread partagés depuis un hub Apple, Google ou Amazon", "Oui", "6 mois de Gladys Plus inclus, puis optionnel", "Oui (Apache 2.0)"],
+        },
+        {
+          name: "Gladys sur votre mini-PC",
+          highlight: true,
+          cells: ["Logiciel gratuit + mini-PC + clé Zigbee", "Avec des clés USB", "Contrôleur Matter ; appareils Thread partagés depuis un hub Apple, Google ou Amazon", "Oui", "Optionnel (Gladys Plus dès 6,99 €/mois)", "Oui (Apache 2.0)"],
+        },
+        // Prix Domadoo (distributeur), octobre 2026 ; promotions fréquentes sur la Luna.
+        {
+          name: "Jeedom Luna / Atlas",
+          cells: ["Luna 199 €, Atlas 249 €", "Luna : Zigbee et Z-Wave intégrés ; Atlas : selon la version", "Selon la box et les plugins", "Oui", "Service Pack Power inclus ; plugins payants à l'unité", "Cœur open source"],
+        },
+        // homey.app/fr-fr (prix depuis le 1er juin 2026).
+        {
+          name: "Homey Pro",
+          cells: ["449 € (Pro mini 279 €)", "Intégrés (mini : Zigbee seulement)", "Matter et routeur de bordure Thread", "Oui", "Optionnel (sauvegarde cloud)", "Non"],
+        },
+        // home-assistant.io/green, nabucasa.com/pricing.
+        {
+          name: "Home Assistant Green",
+          cells: ["179 € (+ 45 € ZBT-2, 59 € ZWA-2)", "Avec les clés Connect ZBT-2 / ZWA-2", "Matter ; Thread avec la ZBT-2", "Oui", "Optionnel (Home Assistant Cloud 7,50 €/mois)", "Oui (Apache 2.0)"],
+        },
+        // somfy.fr (prix conseillé 2026).
+        {
+          name: "Somfy TaHoma Switch",
+          cells: ["149 €", "Zigbee 3.0 (plus io-homecontrol et RTS), pas de Z-Wave", "Pas de Matter natif", "Scénarios programmés oui ; pilotage à distance via le cloud", "Non", "Non"],
+        },
+        // shop.eedomus.com.
+        {
+          name: "eedomus+",
+          cells: ["199 €", "Z-Wave+", "Non", "En partie, l'interface passe par les serveurs eedomus", "2 ans de service Basic inclus, Premium optionnel", "Non"],
+        },
+        // eu.aqara.com hub M3.
+        {
+          name: "Aqara Hub M3",
+          cells: ["159,99 €", "Zigbee seulement", "Contrôleur et pont Matter, routeur de bordure Thread", "Oui, automatisations locales", "Aucun pour les fonctions du hub", "Non"],
+        },
+      ],
       outro:
         "Prix publics TTC en euros, constatés en octobre 2026.",
     },
@@ -146,7 +280,60 @@ const bestSmartHomeHubContent = {
   },
 };
 
-export const bestSmartHomeHubFaqEn = [];
-export const bestSmartHomeHubFaqFr = [];
+export const bestSmartHomeHubFaqEn = [
+  {
+    question: "What is the best smart home hub in 2026?",
+    answer:
+      "It depends on what you value. For local control without lock-in, open-source software like Gladys Assistant or Home Assistant on a small computer. For a plug-and-play local box with Z-Wave, Hubitat. For an all-in-one polished experience, Homey Pro. For the cheapest entry into an ecosystem, SmartThings or an Echo, at the cost of more cloud dependence.",
+  },
+  {
+    question: "Do I need a hub for Matter?",
+    answer:
+      "You need a Matter controller, and for Matter over Thread devices, a Thread border router. Many devices you may already own act as both, such as an Apple TV 4K (Ethernet model), a HomePod mini, a Google TV Streamer, recent Echo devices, the Aqara M3 or the SmartThings Hub 2. Gladys is a Matter controller and uses an existing Thread border router.",
+  },
+  {
+    question: "Which smart home hubs support Z-Wave?",
+    answer:
+      "Hubitat and Homey Pro have Z-Wave built in, and Home Assistant Green and Gladys support it with a USB stick. The current SmartThings hub (Aeotec Smart Home Hub 2) and Amazon Echo devices don't have Z-Wave.",
+  },
+  {
+    question: "Is there a smart home hub without a subscription?",
+    answer:
+      "Yes, most hubs work without one; subscriptions usually add remote access, backups or extras. Gladys, Home Assistant, Hubitat, Homey and Aqara all work locally for free, with optional paid services. SmartThings started charging $4.99/month for API access in October 2026.",
+  },
+  {
+    question: "Can a mini-PC replace a smart home hub?",
+    answer:
+      "Yes. A small Intel mini-PC running Gladys Assistant or Home Assistant, plus a Zigbee or Z-Wave USB dongle, does everything a dedicated hub does, usually with more power and storage, and you choose the hardware.",
+  },
+];
+
+export const bestSmartHomeHubFaqFr = [
+  {
+    question: "Quelle est la meilleure box domotique en 2026 ?",
+    answer:
+      "Tout dépend de ce qui compte pour vous. Pour le contrôle local sans enfermement, un logiciel open source comme Gladys Assistant ou Home Assistant sur un petit ordinateur, ou le kit de démarrage Gladys prêt à l'emploi. Pour un écosystème de plugins très vaste, Jeedom. Pour un tout-en-un soigné, Homey Pro. Pour les volets Somfy, la TaHoma Switch.",
+  },
+  {
+    question: "Jeedom ou Gladys ?",
+    answer:
+      "Les deux sont open source et fonctionnent en local. Jeedom mise sur un très grand catalogue de plugins, dont une partie payante ; Gladys mise sur la simplicité, une interface moderne et des intégrations toutes gratuites. Notre comparatif détaillé Gladys vs Jeedom entre dans le détail.",
+  },
+  {
+    question: "Faut-il une box compatible Matter ?",
+    answer:
+      "Il faut un contrôleur Matter, et pour les appareils Matter over Thread, un routeur de bordure Thread. Beaucoup d'appareils que vous avez peut-être déjà jouent ce rôle (Apple TV, HomePod mini, Google TV Streamer, enceintes Echo récentes, Aqara M3). Gladys est un contrôleur Matter et s'appuie sur un routeur de bordure Thread existant.",
+  },
+  {
+    question: "Existe-t-il une box domotique sans abonnement ?",
+    answer:
+      "Oui, la plupart fonctionnent sans abonnement ; les abonnements ajoutent en général l'accès à distance, les sauvegardes ou des services. Gladys, Home Assistant, Homey, Jeedom et la TaHoma Switch fonctionnent sans abonnement obligatoire.",
+  },
+  {
+    question: "Existe-t-il une box domotique prête à l'emploi avec Gladys ?",
+    answer:
+      "Oui : le kit de démarrage officiel est un mini-PC Beelink avec Gladys installée et testée à la main, 6 mois de Gladys Plus, une formation vidéo et un support direct. Il fonctionne dès la sortie du carton.",
+  },
+];
 
 export default bestSmartHomeHubContent;
