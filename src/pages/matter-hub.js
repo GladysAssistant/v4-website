@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getMatterHubPageSchema } from "../data/structuredData";
+import { getMatterHubPageSchema } from "../data/schemas/matterHub";
 import matterHubContent, {
   matterHubFaqEn,
   matterHubFaqFr,

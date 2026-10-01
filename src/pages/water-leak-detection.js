@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getWaterLeakDetectionPageSchema } from "../data/structuredData";
+import { getWaterLeakDetectionPageSchema } from "../data/schemas/waterLeakDetection";
 import waterLeakDetectionContent, {
   waterLeakDetectionFaqEn,
   waterLeakDetectionFaqFr,

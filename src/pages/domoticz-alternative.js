@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getDomoticzAlternativePageSchema } from "../data/structuredData";
+import { getDomoticzAlternativePageSchema } from "../data/schemas/domoticzAlternative";
 import domoticzAlternativeContent, {
   domoticzAlternativeFaqEn,
   domoticzAlternativeFaqFr,

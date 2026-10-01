@@ -5,7 +5,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import YoutubeEmbedVideo from "../components/YoutubeEmbedVideo";
 import JsonLd from "../components/seo/JsonLd";
-import { getJeedomComparisonPageSchema } from "../data/structuredData";
+import { getJeedomComparisonPageSchema } from "../data/schemas/jeedomComparison";
 import comparisonContent, {
   comparisonFaqEn,
   comparisonFaqFr,

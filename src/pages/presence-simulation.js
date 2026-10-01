@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getPresenceSimulationPageSchema } from "../data/structuredData";
+import { getPresenceSimulationPageSchema } from "../data/schemas/presenceSimulation";
 import presenceContent, {
   presenceFaqEn,
   presenceFaqFr,

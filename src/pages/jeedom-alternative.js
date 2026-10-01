@@ -6,7 +6,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getJeedomAlternativePageSchema } from "../data/structuredData";
+import { getJeedomAlternativePageSchema } from "../data/schemas/jeedomAlternative";
 import alternativeContent, {
   alternativeFaqEn,
   alternativeFaqFr,

@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getProtocolsComparisonPageSchema } from "../data/structuredData";
+import { getProtocolsComparisonPageSchema } from "../data/schemas/protocolsComparison";
 import protocolsContent, {
   protocolsFaqEn,
   protocolsFaqFr,

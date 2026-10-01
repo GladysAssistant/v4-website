@@ -196,7 +196,8 @@ const TEXTS = {
   },
 };
 
-// Keep only what the website needs, so the committed snapshot stays small.
+// Keep only what the website needs, so the committed snapshot stays small
+// (config_schema is dropped from it when written, see below).
 const trimIntegration = (integration, slug) => ({
   slug,
   store_slug: integration.store_slug,
@@ -450,9 +451,11 @@ const removeStalePages = (directory, keptFiles) => {
   );
   integrations.sort((a, b) => b.stars - a.stars || a.name.localeCompare(b.name));
 
+  // config_schema only feeds the configuration table of the generated pages:
+  // leave it out of the snapshot, which every integration page bundles.
   const snapshot = {
     generated_at: index.generated_at,
-    integrations,
+    integrations: integrations.map(({ config_schema, ...rest }) => rest),
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(snapshot, null, 2)}\n`);
   console.log(

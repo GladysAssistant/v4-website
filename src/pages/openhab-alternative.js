@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getOpenhabAlternativePageSchema } from "../data/structuredData";
+import { getOpenhabAlternativePageSchema } from "../data/schemas/openhabAlternative";
 import openhabAlternativeContent, {
   openhabAlternativeFaqEn,
   openhabAlternativeFaqFr,

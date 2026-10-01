@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getHydroQuebecPeakEventsPageSchema } from "../data/structuredData";
+import { getHydroQuebecPeakEventsPageSchema } from "../data/schemas/hydroQuebecPeakEvents";
 import hydroQuebecPeakEventsContent, {
   hydroQuebecPeakEventsFaqEn,
   hydroQuebecPeakEventsFaqFr,

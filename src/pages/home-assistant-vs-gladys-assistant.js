@@ -5,7 +5,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getComparisonPageSchema } from "../data/structuredData";
+import { getComparisonPageSchema } from "../data/schemas/comparison";
 import comparisonContent, {
   comparisonFaqEn,
   comparisonFaqFr,

@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getAlarmSystemPageSchema } from "../data/structuredData";
+import { getAlarmSystemPageSchema } from "../data/schemas/alarmSystem";
 import alarmContent, { alarmFaqEn, alarmFaqFr } from "../data/alarmSystemData";
 
 export default function DiyHomeAlarmSystemPage() {

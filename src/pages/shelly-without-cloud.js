@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getShellyWithoutCloudPageSchema } from "../data/structuredData";
+import { getShellyWithoutCloudPageSchema } from "../data/schemas/shellyWithoutCloud";
 import shellyWithoutCloudContent, {
   shellyWithoutCloudFaqEn,
   shellyWithoutCloudFaqFr,

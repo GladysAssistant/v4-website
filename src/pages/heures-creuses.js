@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getHeuresCreusesPageSchema } from "../data/structuredData";
+import { getHeuresCreusesPageSchema } from "../data/schemas/heuresCreuses";
 import heuresCreusesContent, {
   heuresCreusesFaqEn,
   heuresCreusesFaqFr,

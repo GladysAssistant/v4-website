@@ -6,7 +6,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getEnergyMonitoringPageSchema } from "../data/structuredData";
+import { getEnergyMonitoringPageSchema } from "../data/schemas/energyMonitoring";
 import energyContent, {
   energyFaqEn,
   energyFaqFr,

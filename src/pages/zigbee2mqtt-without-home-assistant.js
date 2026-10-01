@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getZigbee2mqttWithoutHomeAssistantPageSchema } from "../data/structuredData";
+import { getZigbee2mqttWithoutHomeAssistantPageSchema } from "../data/schemas/zigbee2mqttWithoutHomeAssistant";
 import zigbee2mqttWithoutHomeAssistantContent, {
   zigbee2mqttWithoutHomeAssistantFaqEn,
   zigbee2mqttWithoutHomeAssistantFaqFr,

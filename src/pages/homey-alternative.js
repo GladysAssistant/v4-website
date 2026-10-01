@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getHomeyAlternativePageSchema } from "../data/structuredData";
+import { getHomeyAlternativePageSchema } from "../data/schemas/homeyAlternative";
 import homeyAlternativeContent, {
   homeyAlternativeFaqEn,
   homeyAlternativeFaqFr,

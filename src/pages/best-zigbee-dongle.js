@@ -5,7 +5,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getBestZigbeeDonglePageSchema } from "../data/structuredData";
+import { getBestZigbeeDonglePageSchema } from "../data/schemas/bestZigbeeDongle";
 import bestZigbeeDongleContent, {
   bestZigbeeDongleFaqEn,
   bestZigbeeDongleFaqFr,

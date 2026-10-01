@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getAqaraWithoutHubPageSchema } from "../data/structuredData";
+import { getAqaraWithoutHubPageSchema } from "../data/schemas/aqaraWithoutHub";
 import aqaraWithoutHubContent, {
   aqaraWithoutHubFaqEn,
   aqaraWithoutHubFaqFr,

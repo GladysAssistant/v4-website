@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getNestThermostatAlternativePageSchema } from "../data/structuredData";
+import { getNestThermostatAlternativePageSchema } from "../data/schemas/nestThermostatAlternative";
 import nestThermostatAlternativeContent, {
   nestThermostatAlternativeFaqEn,
   nestThermostatAlternativeFaqFr,

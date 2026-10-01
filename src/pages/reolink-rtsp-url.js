@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getReolinkRtspPageSchema } from "../data/structuredData";
+import { getReolinkRtspPageSchema } from "../data/schemas/reolinkRtsp";
 import reolinkRtspContent, {
   reolinkRtspFaqEn,
   reolinkRtspFaqFr,
