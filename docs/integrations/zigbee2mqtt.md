@@ -30,7 +30,7 @@ In short, we'll connect your Zigbee devices directly to Gladys, without needing 
 
 You can check the list of compatible devices [here](https://www.zigbee2mqtt.io/supported-devices/).
 
-Before you start, make sure you have a USB Zigbee adapter.
+Before you start, make sure you have a Zigbee coordinator: a USB dongle plugged into the machine running Gladys, or a network coordinator (see [Use a network coordinator](#use-a-network-coordinator) below).
 
 An easy & affordable USB dongle we tested with Gladys is the [Sonoff Zigbee 3.0 USB dongle](https://amzn.to/3JZwzJy).
 
@@ -67,6 +67,18 @@ We recommend you use a externaly powered USB charging tower.
 
 You can read more about it on ZigbeeMQTT website: [Zigbee2MQTT fails to start](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html)
 :::
+
+## Use a network coordinator
+
+Since Gladys 5, the coordinator doesn't have to be plugged into the machine running Gladys. A network coordinator (SMLIGHT SLZB-06/SLZB-07, ZigStar…) connects over Ethernet or Wi-Fi, so you can place it in the middle of your home, away from your server and from interference. Gladys still installs and manages Zigbee2MQTT for you.
+
+In `Integrations / Zigbee2Mqtt`, in the setup:
+
+1. Under **How is the Zigbee coordinator connected?**, choose **Network coordinator (Ethernet/Wi-Fi)**.
+2. Enter the coordinator's address and TCP port, for example `tcp://192.168.1.20:6638` (the `tcp://` prefix is optional). Give the coordinator a fixed IP address on your router.
+3. Select the adapter type given by your coordinator's documentation: the SLZB-06 uses `zstack`, the SLZB-06M and SLZB-07 use `ember`.
+
+Then continue with the next step to enable Zigbee2MQTT.
 
 ## Activate Zigbee2Mqtt
 

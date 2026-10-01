@@ -315,7 +315,7 @@ export const miniPcHomeAutomationFaqFr = [
   {
     question: "Raspberry Pi 5 ou mini-PC pour la domotique en 2026 ?",
     answer:
-      "Pour la plupart des gens, un mini-PC. Le coût de la mémoire a fait grimper le prix du Raspberry Pi 5 plusieurs fois : depuis avril 2026, le modèle 8 Go est affiché à 175 $ aux États-Unis, sans boîtier, alimentation ni SSD. Un mini-PC Intel N150 avec 16 Go de RAM et un SSD de 500 Go se trouve autour de 190 à 200 $, complet. Un Pi que vous avez déjà reste parfaitement utilisable.",
+      "Pour la plupart des gens, un mini-PC. Le coût de la mémoire a fait grimper le prix du Raspberry Pi 5 plusieurs fois : depuis avril 2026, le modèle 8 Go est affiché à 175 $ aux États-Unis, sans boîtier, alimentation ni SSD. Aux États-Unis toujours, un mini-PC Intel N150 avec 16 Go de RAM et un SSD de 500 Go se trouve autour de 190 à 200 $, complet. Un Pi que vous avez déjà reste parfaitement utilisable.",
   },
   {
     question: "Combien consomme un mini-PC domotique ?",

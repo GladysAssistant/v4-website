@@ -73,6 +73,18 @@ Cela permet de charger directement la configuration Zigbee2mqtt correspondante.
 Si vous avez un dongle basé sur [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (comme par exemple le Sonoff Zigbee 3.0 ZBDongle-E), il est recommandé de [mettre à jour](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) le firmware de votre dongle. Dans le cas contraire, vous devez choisir l'option `(legacy ezsp)` dans la liste.
 :::
 
+## Utiliser un coordinateur réseau
+
+Depuis Gladys 5, le coordinateur n'a pas besoin d'être branché sur la machine qui fait tourner Gladys. Un coordinateur réseau (SMLIGHT SLZB-06/SLZB-07, ZigStar…) se connecte en Ethernet ou en Wi-Fi : vous pouvez le placer au centre de la maison, loin de votre serveur et des interférences. Gladys installe et gère toujours Zigbee2MQTT pour vous.
+
+Dans `Intégrations / Zigbee2Mqtt`, dans la configuration :
+
+1. À la question **Comment le coordinateur Zigbee est-il connecté ?**, choisissez **Coordinateur réseau (Ethernet/Wi-Fi)**.
+2. Entrez l'adresse et le port TCP du coordinateur, par exemple `tcp://192.168.1.20:6638` (le préfixe `tcp://` est facultatif). Donnez au coordinateur une adresse IP fixe sur votre box.
+3. Sélectionnez le type d'adaptateur indiqué par la documentation de votre coordinateur : le SLZB-06 utilise `zstack`, les SLZB-06M et SLZB-07 utilisent `ember`.
+
+Passez ensuite à l'étape suivante pour activer Zigbee2MQTT.
+
 ## Activez Zigbee2Mqtt
 
 Une fois votre dongle configuré, Gladys a besoin d'installer deux containers (MQTT et Zigbee2Mqtt) pour utiliser le dongle et communiquer avec tous vos appareils. Ne vous inquiétez pas, tout cela a été automatisé.

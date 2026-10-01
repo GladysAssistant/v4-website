@@ -299,7 +299,7 @@ export const bestSmartHomeHubFaqEn = [
   {
     question: "Is there a smart home hub without a subscription?",
     answer:
-      "Yes, most hubs work without one; subscriptions usually add remote access, backups or extras. Gladys, Home Assistant, Hubitat, Homey and Aqara all work locally for free, with optional paid services. SmartThings started charging $4.99/month for API access in October 2026.",
+      "Yes, most hubs work without one; subscriptions usually add remote access, backups or extras. Gladys, Home Assistant, Hubitat, Homey and Aqara all work locally for free, with optional paid services. SmartThings' app and hub stay free; since October 2026, only API access for third-party integrations requires a $4.99/month personal plan.",
   },
   {
     question: "Can a mini-PC replace a smart home hub?",
