@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { matterHubFaqEn, matterHubFaqFr } from "../matterHubData";
 
@@ -26,6 +27,7 @@ export function getMatterHubPageSchema(lang) {
           lang === "fr"
             ? "Contrôleur Matter, routeur de bordure Thread ou pont Matter : quel hub Matter vous faut-il vraiment, et comment héberger le vôtre avec Gladys."
             : "Matter controller, Thread border router or Matter bridge: which Matter hub you actually need, and how to run your own with Gladys.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

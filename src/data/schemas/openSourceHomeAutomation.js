@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import {
   openSourceHomeAutomationFaqEn,
@@ -29,6 +30,7 @@ export function getOpenSourceHomeAutomationPageSchema(lang) {
           lang === "fr"
             ? "Comparez les meilleures plateformes domotiques open source (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED) : interface, facilité et licence, pour choisir le bon logiciel domotique libre et auto-hébergé."
             : "Compare the best open-source home automation platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED): interface, ease of use and license, to choose the right free, self-hosted smart home software.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

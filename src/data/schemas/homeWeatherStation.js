@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import {
   homeWeatherStationFaqEn,
@@ -29,6 +30,7 @@ export function getHomeWeatherStationPageSchema(lang) {
           lang === "fr"
             ? "Guide des capteurs météo sans fil pour Gladys Assistant : capteurs Zigbee et Matter locaux, station Netatmo, et OpenWeather pour les prévisions."
             : "A guide to wireless weather sensors for Gladys Assistant: local Zigbee and Matter sensors, the Netatmo station, and OpenWeather for forecast data.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

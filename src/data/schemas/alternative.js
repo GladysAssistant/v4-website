@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { alternativeFaqEn, alternativeFaqFr } from "../alternativeData";
 
@@ -26,6 +27,7 @@ export function getAlternativePageSchema(lang) {
           lang === "fr"
             ? "Pourquoi Gladys Assistant est une alternative open source plus simple à Home Assistant : sans YAML, sans cloud, auto-hébergée et stable."
             : "Why Gladys Assistant is a simpler open-source alternative to Home Assistant: no YAML, no cloud, self-hosted and stable.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

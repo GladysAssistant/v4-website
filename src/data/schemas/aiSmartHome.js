@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { aiSmartHomeFaqEn, aiSmartHomeFaqFr } from "../aiSmartHomeData";
 
@@ -26,6 +27,7 @@ export function getAiSmartHomePageSchema(lang) {
           lang === "fr"
             ? "Pilotez votre maison en langage naturel, recevez un rapport hebdomadaire par IA, laissez une IA proactive agir pour vous, et connectez Claude, Perplexity ou Mistral via MCP, avec une IA open-weight hébergée en Europe."
             : "Control your smart home in natural language, get a weekly AI report, let a proactive AI agent act for you, and connect Claude, Perplexity or Mistral via MCP, with open-weight AI hosted in Europe.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

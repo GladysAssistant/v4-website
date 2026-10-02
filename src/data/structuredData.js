@@ -354,6 +354,19 @@ export function getStarterKitPageSchema(lang) {
   };
 }
 
+// The page's own Open Graph image (scripts/generate_og_images.js), as the same
+// absolute URL as its og:image, or undefined (dropped from the JSON) when the
+// page has none.
+export function getOgImageUrl(pageUrl, lang) {
+  const slug = pageUrl
+    .replace(SITE_URL, "")
+    .replace(/^\/fr\//, "/")
+    .replace(/^\/|\/$/g, "");
+  return ogImages.includes(slug)
+    ? `${SITE_URL}/img/og/${slug}-${lang === "fr" ? "fr" : "en"}.jpg`
+    : undefined;
+}
+
 // Shared builder for the guide / use-case pages whose headline and description
 // are the page's own meta title and description.
 export function getGuidePageSchema(
@@ -363,11 +376,6 @@ export function getGuidePageSchema(
   const prefix = lang === "fr" ? "/fr" : "";
   const pageUrl = `${SITE_URL}${prefix}${path}`;
   const meta = content[lang === "fr" ? "fr" : "en"].meta;
-  const slug = path.replace(/^\/|\/$/g, "");
-  // Same per-page image as the Open Graph one (scripts/generate_og_images.js).
-  const image = ogImages.includes(slug)
-    ? `${SITE_URL}${prefix}/img/og/${slug}-${lang === "fr" ? "fr" : "en"}.jpg`
-    : undefined;
 
   return {
     "@context": "https://schema.org",
@@ -379,7 +387,7 @@ export function getGuidePageSchema(
         "@id": `${pageUrl}#article`,
         headline: meta.title,
         description: meta.description,
-        ...(image ? { image } : {}),
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

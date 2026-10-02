@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { ikeaSmartHomeFaqEn, ikeaSmartHomeFaqFr } from "../ikeaSmartHomeData";
 
@@ -26,6 +27,7 @@ export function getIkeaSmartHomePageSchema(lang) {
           lang === "fr"
             ? "Pilotez votre maison connectée IKEA en local avec Gladys Assistant : Tradfri en Zigbee2MQTT, le hub Dirigera en Matter, et la nouvelle gamme Matter over Thread, avec ou sans Dirigera."
             : "Control your IKEA smart home locally with Gladys Assistant: Tradfri over Zigbee2MQTT, the Dirigera hub over Matter, and the new Matter over Thread range, with or without Dirigera.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

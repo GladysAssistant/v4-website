@@ -2,6 +2,7 @@ import {
   SITE_URL,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { guidesHubContent, guidesSections } from "../guidesHubData";
 
@@ -21,6 +22,7 @@ export function getGuidesHubPageSchema(lang) {
         "@id": `${pageUrl}#page`,
         name: meta.title,
         description: meta.description,
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

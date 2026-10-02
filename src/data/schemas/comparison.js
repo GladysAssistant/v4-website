@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { comparisonFaqEn, comparisonFaqFr } from "../comparisonData";
 
@@ -26,6 +27,7 @@ export function getComparisonPageSchema(lang) {
           lang === "fr"
             ? "Comparatif honnête entre Home Assistant et Gladys Assistant par le créateur de Gladys : installation, simplicité, intégrations, automatisations, communauté et prix."
             : "An honest comparison between Home Assistant and Gladys Assistant by Gladys' creator: installation, ease of use, integrations, automations, community and pricing.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

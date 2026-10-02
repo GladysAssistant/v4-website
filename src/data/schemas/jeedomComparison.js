@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import {
   comparisonFaqEn as jeedomComparisonFaqEn,
@@ -29,6 +30,7 @@ export function getJeedomComparisonPageSchema(lang) {
           lang === "fr"
             ? "Comparatif honnête entre Gladys Assistant et Jeedom par le créateur de Gladys : installation, simplicité, intégrations, scénarios, communauté et prix."
             : "An honest comparison between Gladys Assistant and Jeedom by Gladys' creator: installation, ease of use, integrations, scenarios, community and pricing.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

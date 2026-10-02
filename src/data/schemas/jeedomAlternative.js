@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import {
   alternativeFaqEn as jeedomAlternativeFaqEn,
@@ -29,6 +30,7 @@ export function getJeedomAlternativePageSchema(lang) {
           lang === "fr"
             ? "Pourquoi Gladys Assistant est une alternative française à Jeedom, plus simple et avec des intégrations gratuites : sans plugins payants, sans YAML, sans cloud, auto-hébergée et stable."
             : "Why Gladys Assistant is a simpler French Jeedom alternative with free integrations: no paid plugins, no YAML, no cloud, self-hosted and stable.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

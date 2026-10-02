@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { protocolsFaqEn, protocolsFaqFr } from "../protocolsComparisonData";
 
@@ -26,6 +27,7 @@ export function getProtocolsComparisonPageSchema(lang) {
           lang === "fr"
             ? "Comparatif clair et neutre des trois grands standards de la maison connectée : leurs différences, leurs forces et limites, et comment choisir."
             : "A clear, neutral comparison of the three main smart home standards: how they differ, their strengths and limits, and how to choose.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

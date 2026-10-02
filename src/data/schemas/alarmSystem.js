@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { alarmFaqEn, alarmFaqFr } from "../alarmSystemData";
 
@@ -26,6 +27,7 @@ export function getAlarmSystemPageSchema(lang) {
           lang === "fr"
             ? "Créez une vraie alarme maison DIY avec Gladys : modes armé, partiel et panique, détecteurs de mouvement et d'ouverture, photos de caméra et alertes instantanées, en local sur du matériel qui vous appartient et avec vos données gardées chez vous."
             : "Build a real DIY home alarm system with Gladys: armed, partial and panic modes, motion and door sensors, camera snapshots and instant alerts, all running locally on hardware you own with your data kept at home.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

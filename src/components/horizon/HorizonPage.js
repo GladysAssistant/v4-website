@@ -11,10 +11,14 @@ import ogImages from "../../data/ogImages.json";
 // scripts/generate_og_images.js); every other page keeps the site default.
 function useOgImage() {
   const { pathname } = useLocation();
-  const { i18n } = useDocusaurusContext();
+  const { i18n, siteConfig } = useDocusaurusContext();
   const lang = i18n.currentLocale === "fr" ? "fr" : "en";
   const slug = pathname.replace(/^\/fr\//, "/").replace(/^\/|\/$/g, "");
-  return ogImages.includes(slug) ? `/img/og/${slug}-${lang}.jpg` : undefined;
+  // Absolute and without the /fr prefix: the same URL as the Article image in
+  // the structured data (getOgImageUrl).
+  return ogImages.includes(slug)
+    ? `${siteConfig.url}/img/og/${slug}-${lang}.jpg`
+    : undefined;
 }
 
 /**

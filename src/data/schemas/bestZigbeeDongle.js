@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import {
   bestZigbeeDongleFaqEn,
@@ -29,6 +30,7 @@ export function getBestZigbeeDonglePageSchema(lang) {
           lang === "fr"
             ? "Guide d'achat des meilleurs coordinateurs Zigbee pour Raspberry Pi, Zigbee2MQTT et Gladys Assistant : Sonoff, SMLIGHT, ConBee et plus."
             : "A buyer's guide to the best Zigbee coordinators for Raspberry Pi, Zigbee2MQTT and Gladys Assistant: Sonoff, SMLIGHT, ConBee and more.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

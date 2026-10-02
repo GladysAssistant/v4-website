@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import {
   alternativeFaqEn as googleHomeAlternativeFaqEn,
@@ -29,6 +30,7 @@ export function getGoogleHomeAlternativePageSchema(lang) {
           lang === "fr"
             ? "Pourquoi Gladys Assistant est une alternative locale et respectueuse de la vie privée à Google Home : vos données restent chez vous, sans cloud obligatoire, open source et auto-hébergée."
             : "Why Gladys Assistant is a local, privacy-friendly Google Home alternative: your data stays at home, no mandatory cloud, open-source and self-hosted.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { presenceFaqEn, presenceFaqFr } from "../presenceSimulationData";
 
@@ -26,6 +27,7 @@ export function getPresenceSimulationPageSchema(lang) {
           lang === "fr"
             ? "Mettez en place une simulation de présence avec Gladys : allumez et éteignez aléatoirement lumières, volets et TV pendant votre absence pour dissuader les cambrioleurs, avec des scènes locales, gratuites et privées."
             : "Set up presence simulation with Gladys: randomly turn lights, shutters and TV on and off while you're away to deter burglars, all built from local scenes, free and private.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },

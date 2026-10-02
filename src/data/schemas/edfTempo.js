@@ -3,6 +3,7 @@ import {
   toFaqPage,
   getOrganizationNode,
   getWebSiteNode,
+  getOgImageUrl,
 } from "../structuredData";
 import { edfTempoFaqEn, edfTempoFaqFr } from "../edfTempoData";
 
@@ -26,6 +27,7 @@ export function getEdfTempoPageSchema(lang) {
           lang === "fr"
             ? "La couleur du jour EDF Tempo et celle de demain en direct, ce que coûte chaque couleur, et comment automatiser Tempo chez soi avec Gladys."
             : "The live EDF Tempo colour for today and tomorrow, what each colour costs, and how to automate Tempo at home with Gladys.",
+        image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
         inLanguage: lang === "fr" ? "fr" : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },
