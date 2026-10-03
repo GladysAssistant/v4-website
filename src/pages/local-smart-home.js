@@ -6,7 +6,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getLocalSmartHomePageSchema } from "../data/structuredData";
+import { getLocalSmartHomePageSchema } from "../data/schemas/localSmartHome";
 import localSmartHomeContent, {
   localSmartHomeFaqEn,
   localSmartHomeFaqFr,

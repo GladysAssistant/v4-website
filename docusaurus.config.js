@@ -321,11 +321,18 @@ module.exports = function createConfig() {
             // Give search engines a clearer priority hierarchy instead of a
             // flat 0.5 on every URL. Low-value listing pages (tags, archive,
             // pagination) are demoted; key landing pages are promoted.
+            // Landing pages with a generated Open Graph image are the SEO
+            // landing pages (see scripts/generate_og_images.js).
+            const landingPages = require("./src/data/ogImages.json");
             return items
               .filter(
                 (item) =>
                   !item.url.includes("/tags/") &&
-                  !item.url.includes("/page/")
+                  !item.url.includes("/page/") &&
+                  !item.url.endsWith("/search/") &&
+                  !item.url.endsWith("/payment_success/") &&
+                  // English-locale redirect to the French-only starter kit.
+                  item.url !== "https://gladysassistant.com/starter-kit/"
               )
               .map((item) => {
                 const path = item.url
@@ -335,6 +342,7 @@ module.exports = function createConfig() {
                   return { ...item, priority: 1.0, changefreq: "daily" };
                 }
                 if (
+                  landingPages.includes(path.replace(/^\/|\/$/g, "")) ||
                   path === "/docs/" ||
                   path === "/docs/integrations/" ||
                   path === "/plus/" ||

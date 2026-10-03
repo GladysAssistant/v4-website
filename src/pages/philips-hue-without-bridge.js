@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getPhilipsHueWithoutBridgePageSchema } from "../data/structuredData";
+import { getPhilipsHueWithoutBridgePageSchema } from "../data/schemas/philipsHueWithoutBridge";
 import philipsHueWithoutBridgeContent, {
   philipsHueWithoutBridgeFaqEn,
   philipsHueWithoutBridgeFaqFr,

@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getMiniPcHomeAutomationPageSchema } from "../data/structuredData";
+import { getMiniPcHomeAutomationPageSchema } from "../data/schemas/miniPcHomeAutomation";
 import miniPcHomeAutomationContent, {
   miniPcHomeAutomationFaqEn,
   miniPcHomeAutomationFaqFr,

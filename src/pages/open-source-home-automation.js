@@ -6,7 +6,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getOpenSourceHomeAutomationPageSchema } from "../data/structuredData";
+import { getOpenSourceHomeAutomationPageSchema } from "../data/schemas/openSourceHomeAutomation";
 import openSourceHomeAutomationContent, {
   openSourceHomeAutomationFaqEn,
   openSourceHomeAutomationFaqFr,

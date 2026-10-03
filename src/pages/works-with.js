@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getWorksWithPageSchema } from "../data/structuredData";
+import { getWorksWithPageSchema } from "../data/schemas/worksWith";
 import worksWithContent, {
   worksWithFaqEn,
   worksWithFaqFr,

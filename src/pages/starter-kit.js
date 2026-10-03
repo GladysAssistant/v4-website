@@ -376,7 +376,14 @@ function Plus() {
   // Send English-locale visitors to the canonical French page instead of
   // funneling them to a product that cannot ship to them.
   if (language === "en") {
-    return <Redirect to="/fr/starter-kit/" />;
+    return (
+      <>
+        <Head>
+          <meta name="robots" content="noindex, follow" />
+        </Head>
+        <Redirect to="/fr/starter-kit/" />
+      </>
+    );
   }
 
   return (
@@ -1354,20 +1361,18 @@ function Plus() {
                   Beelink T5 - Gladys Pré-installée
                 </h2>
                 <p>Un mini-PC compact et économique, parfait pour débuter :</p>
-                <p>
-                  <ul>
-                    <li>
-                      Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)
-                    </li>
-                    <li>4 Go de RAM LPDDR4</li>
-                    <li>64 Go eMMC</li>
-                    <li>Wi-Fi 5, Bluetooth 5.0 et LAN Gigabit</li>
-                    <li>Double HDMI 4K</li>
-                    <li>
-                      <b>Gladys déjà installée et configurée !</b>
-                    </li>
-                  </ul>
-                </p>
+                <ul>
+                  <li>
+                    Processeur Intel Celeron N4020 dual-core (jusqu'à 2,8 GHz)
+                  </li>
+                  <li>4 Go de RAM LPDDR4</li>
+                  <li>64 Go eMMC</li>
+                  <li>Wi-Fi 5, Bluetooth 5.0 et LAN Gigabit</li>
+                  <li>Double HDMI 4K</li>
+                  <li>
+                    <b>Gladys déjà installée et configurée !</b>
+                  </li>
+                </ul>
                 <p>
                   <b>Note de Pierre-Gilles :</b> Le Beelink T5 est l'option
                   idéale pour débuter avec Gladys sans se ruiner. Parfait pour
@@ -1383,18 +1388,16 @@ function Plus() {
                 Beelink mini S12 - Gladys Pré-installée
               </h2>
               <p>Le mini-PC équilibré, un bon rapport qualité/prix :</p>
-              <p>
-                <ul>
-                  <li>Processeur Intel N95 quad-core</li>
-                  <li>8 Go de RAM DDR4</li>
-                  <li>256 Go SSD</li>
-                  <li>Wi-Fi 5, Bluetooth 4.2 et LAN Gigabit</li>
-                  <li>Double HDMI 4K</li>
-                  <li>
-                    <b>Gladys déjà installée et configurée !</b>
-                  </li>
-                </ul>
-              </p>
+              <ul>
+                <li>Processeur Intel N95 quad-core</li>
+                <li>8 Go de RAM DDR4</li>
+                <li>256 Go SSD</li>
+                <li>Wi-Fi 5, Bluetooth 4.2 et LAN Gigabit</li>
+                <li>Double HDMI 4K</li>
+                <li>
+                  <b>Gladys déjà installée et configurée !</b>
+                </li>
+              </ul>
               <p>
                 <b>Note de Pierre-Gilles :</b> Le Beelink mini S12 offre un bon
                 équilibre entre performance et prix, avec suffisamment de
@@ -1427,18 +1430,16 @@ function Plus() {
                 Le meilleur choix ! Un mini-PC de dernière génération, prêt à
                 l'emploi :
               </p>
-              <p>
-                <ul>
-                  <li>
-                    Processeur Intel N150 quad-core (Twin Lake) - Dernière
-                    génération
-                  </li>
-                  <li>16 Go de RAM DDR4</li>
-                  <li>Disque SSD 500Go + slot M.2 disponible</li>
-                  <li>Wi-Fi 6, Bluetooth 5.2 et LAN 2.5G</li>
-                  <li>Double HDMI 4K@60Hz</li>
-                </ul>
-              </p>
+              <ul>
+                <li>
+                  Processeur Intel N150 quad-core (Twin Lake) - Dernière
+                  génération
+                </li>
+                <li>16 Go de RAM DDR4</li>
+                <li>Disque SSD 500Go + slot M.2 disponible</li>
+                <li>Wi-Fi 6, Bluetooth 5.2 et LAN 2.5G</li>
+                <li>Double HDMI 4K@60Hz</li>
+              </ul>
               <p>
                 <b>Note de Pierre-Gilles :</b> Le Beelink S13 est mon choix
                 recommandé ! Il représente le meilleur équilibre entre

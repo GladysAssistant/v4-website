@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getOntarioElectricityRatesPageSchema } from "../data/structuredData";
+import { getOntarioElectricityRatesPageSchema } from "../data/schemas/ontarioElectricityRates";
 import ontarioElectricityRatesContent, {
   ontarioElectricityRatesFaqEn,
   ontarioElectricityRatesFaqFr,

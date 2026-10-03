@@ -5,7 +5,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import useBrokenLinks from "@docusaurus/useBrokenLinks";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getGuidesHubPageSchema } from "../data/structuredData";
+import { getGuidesHubPageSchema } from "../data/schemas/guidesHub";
 import { guidesHubContent, guidesSections } from "../data/guidesHubData";
 
 import styles from "./comparison.module.css";

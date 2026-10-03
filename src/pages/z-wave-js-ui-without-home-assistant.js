@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getZwaveJsUiWithoutHomeAssistantPageSchema } from "../data/structuredData";
+import { getZwaveJsUiWithoutHomeAssistantPageSchema } from "../data/schemas/zwaveJsUiWithoutHomeAssistant";
 import zwaveJsUiWithoutHomeAssistantContent, {
   zwaveJsUiWithoutHomeAssistantFaqEn,
   zwaveJsUiWithoutHomeAssistantFaqFr,

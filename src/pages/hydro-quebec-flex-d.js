@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getHydroQuebecFlexDPageSchema } from "../data/structuredData";
+import { getHydroQuebecFlexDPageSchema } from "../data/schemas/hydroQuebecFlexD";
 import hydroQuebecFlexDContent, {
   hydroQuebecFlexDFaqEn,
   hydroQuebecFlexDFaqFr,

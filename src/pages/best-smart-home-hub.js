@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getBestSmartHomeHubPageSchema } from "../data/structuredData";
+import { getBestSmartHomeHubPageSchema } from "../data/schemas/bestSmartHomeHub";
 import bestSmartHomeHubContent, {
   bestSmartHomeHubFaqEn,
   bestSmartHomeHubFaqFr,

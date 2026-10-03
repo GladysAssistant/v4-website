@@ -1209,7 +1209,7 @@ function Home({ lang }) {
               {YOUTUBE_VIDEOS.map((video) => (
                 <div key={video.id}>
                   <div className={styles.videoFrame}>
-                    <YoutubeEmbedVideo id={video.id} disablePadding />
+                    <YoutubeEmbedVideo id={video.id} title={video.title} disablePadding />
                   </div>
                   <h3 className={styles.videoTitle}>{video.title}</h3>
                 </div>

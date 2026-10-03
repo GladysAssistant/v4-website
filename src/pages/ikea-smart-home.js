@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getIkeaSmartHomePageSchema } from "../data/structuredData";
+import { getIkeaSmartHomePageSchema } from "../data/schemas/ikeaSmartHome";
 import ikeaSmartHomeContent, {
   ikeaSmartHomeFaqEn,
   ikeaSmartHomeFaqFr,

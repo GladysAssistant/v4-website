@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getTuyaZigbeeWithoutHubPageSchema } from "../data/structuredData";
+import { getTuyaZigbeeWithoutHubPageSchema } from "../data/schemas/tuyaZigbeeWithoutHub";
 import tuyaZigbeeWithoutHubContent, {
   tuyaZigbeeWithoutHubFaqEn,
   tuyaZigbeeWithoutHubFaqFr,

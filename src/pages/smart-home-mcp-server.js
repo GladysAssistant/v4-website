@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getSmartHomeMcpPageSchema } from "../data/structuredData";
+import { getSmartHomeMcpPageSchema } from "../data/schemas/smartHomeMcp";
 import smartHomeMcpContent, {
   smartHomeMcpFaqEn,
   smartHomeMcpFaqFr,

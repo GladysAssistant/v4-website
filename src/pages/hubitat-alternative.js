@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getHubitatAlternativePageSchema } from "../data/structuredData";
+import { getHubitatAlternativePageSchema } from "../data/schemas/hubitatAlternative";
 import hubitatAlternativeContent, {
   hubitatAlternativeFaqEn,
   hubitatAlternativeFaqFr,

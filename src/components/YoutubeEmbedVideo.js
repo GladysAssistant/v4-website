@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./styles.module.css";
 import cx from "classnames";
 
-function YoutubeEmbedVideo({ id, disablePadding }) {
+function YoutubeEmbedVideo({ id, title, disablePadding }) {
   const [videoOpened, setVideoOpened] = React.useState(false);
 
   if (!videoOpened) {
@@ -15,6 +15,8 @@ function YoutubeEmbedVideo({ id, disablePadding }) {
         <div class={styles.imgContainer}>
           <img
             src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`}
+            alt={title || "YouTube video"}
+            loading="lazy"
             class=""
           />
           <div class={styles.playButton} onClick={() => setVideoOpened(true)} />

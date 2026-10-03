@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getEdfTempoPageSchema } from "../data/structuredData";
+import { getEdfTempoPageSchema } from "../data/schemas/edfTempo";
 import edfTempoContent, {
   edfTempoFaqEn,
   edfTempoFaqFr,

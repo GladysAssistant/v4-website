@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getSmartThingsAlternativePageSchema } from "../data/structuredData";
+import { getSmartThingsAlternativePageSchema } from "../data/schemas/smartThingsAlternative";
 import smartThingsAlternativeContent, {
   smartThingsAlternativeFaqEn,
   smartThingsAlternativeFaqFr,

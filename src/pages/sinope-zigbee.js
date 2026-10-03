@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getSinopeZigbeePageSchema } from "../data/structuredData";
+import { getSinopeZigbeePageSchema } from "../data/schemas/sinopeZigbee";
 import sinopeZigbeeContent, {
   sinopeZigbeeFaqEn,
   sinopeZigbeeFaqFr,

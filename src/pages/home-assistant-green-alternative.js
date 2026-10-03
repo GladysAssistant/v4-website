@@ -2,7 +2,7 @@ import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
-import { getHomeAssistantGreenAlternativePageSchema } from "../data/structuredData";
+import { getHomeAssistantGreenAlternativePageSchema } from "../data/schemas/homeAssistantGreenAlternative";
 import homeAssistantGreenAlternativeContent, {
   homeAssistantGreenAlternativeFaqEn,
   homeAssistantGreenAlternativeFaqFr,

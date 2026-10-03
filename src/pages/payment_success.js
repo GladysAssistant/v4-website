@@ -1,10 +1,15 @@
 import React from "react";
 import HorizonPage from "../components/horizon/HorizonPage";
 import Translate from "@docusaurus/Translate";
+import Head from "@docusaurus/Head";
 
 function PaymentSuccess() {
   return (
     <HorizonPage title="Merci !" description="Merci d'avoir contribué à Gladys">
+      <Head>
+        {/* Post-checkout thank-you page: nothing to index. */}
+        <meta name="robots" content="noindex, follow" />
+      </Head>
       <main>
         <div
           className="container"

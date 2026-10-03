@@ -4,7 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
-import { getHomeWeatherStationPageSchema } from "../data/structuredData";
+import { getHomeWeatherStationPageSchema } from "../data/schemas/homeWeatherStation";
 import homeWeatherStationContent, {
   homeWeatherStationFaqEn,
   homeWeatherStationFaqFr,
