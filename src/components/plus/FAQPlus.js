@@ -65,8 +65,9 @@ const buildDataFr = (prices, currency) => [
       <>
         <strong>Lite</strong> ({formatPrice(prices.lite.monthly, currency)}/mois
         ou {formatPrice(prices.lite.yearly, currency)}/an) couvre l'essentiel :
-        accès à distance chiffré, Google Home/Alexa, API REST ouverte, comptes
-        famille. <strong>Plus</strong> ({formatPrice(prices.plus.monthly, currency)}/mois
+        accès à distance chiffré, alerte email si ta Gladys est hors ligne,
+        Google Home/Alexa, API REST ouverte, comptes famille.{" "}
+        <strong>Plus</strong> ({formatPrice(prices.plus.monthly, currency)}/mois
         ou {formatPrice(prices.plus.yearly, currency)}/an) ajoute les
         sauvegardes chiffrées quotidiennes, le streaming caméra à distance,
         des modèles d'IA Open-Weight (hébergés en France chez Scaleway),
@@ -83,6 +84,20 @@ const buildDataFr = (prices, currency) => [
         connectes ensuite à ton instance Gladys locale, tu vas dans{" "}
         <em>Paramètres → Gladys Plus</em>, tu te connectes avec ton email/mot de
         passe et c'est tout. Aucun reset, aucune perte de configuration.
+      </>
+    ),
+  },
+  {
+    title: "Gladys Plus peut-il me prévenir si ma Gladys tombe en panne ?",
+    description: (
+      <>
+        Oui, c'est nouveau ! Gladys Plus voit ton instance se connecter et se
+        déconnecter. Si elle reste injoignable (coupure de courant, box
+        internet plantée, carte SD morte…) plus longtemps que le délai que tu
+        choisis, de 10 minutes à 24 heures, Gladys Plus envoie un email aux
+        administrateurs de ton compte, puis un second quand elle revient en
+        ligne. Ça s'active en un clic depuis Gladys Plus, dans les deux
+        formules.
       </>
     ),
   },
@@ -156,8 +171,9 @@ const buildDataEn = (prices, currency) => [
       <>
         <strong>Lite</strong> ({formatPrice(prices.lite.monthly, currency)}/month
         or {formatPrice(prices.lite.yearly, currency)}/year) covers the basics:
-        encrypted remote access, Google Home/Alexa, open REST API, family
-        accounts. <strong>Plus</strong> ({formatPrice(prices.plus.monthly, currency)}/month
+        encrypted remote access, an email alert when your Gladys goes
+        offline, Google Home/Alexa, open REST API, family accounts.{" "}
+        <strong>Plus</strong> ({formatPrice(prices.plus.monthly, currency)}/month
         or {formatPrice(prices.plus.yearly, currency)}/year) adds daily
         encrypted backups, remote camera streaming, Open-Weight AI models,
         Enedis integration, and an MCP server.
@@ -174,6 +190,19 @@ const buildDataEn = (prices, currency) => [
         your local Gladys instance, go to <em>Settings → Gladys Plus</em>, sign
         in with your email/password and that's it. No reset, no configuration
         lost.
+      </>
+    ),
+  },
+  {
+    title: "Can Gladys Plus warn me if my Gladys goes down?",
+    description: (
+      <>
+        Yes, and it's new! Gladys Plus sees your instance connect and
+        disconnect. If it stays unreachable (power cut, internet box down, dead
+        SD card…) for longer than the delay you choose, from 10 minutes to 24
+        hours, Gladys Plus emails the admins of your account, then emails them
+        again once it's back online. Turn it on in one click from Gladys Plus,
+        on both plans.
       </>
     ),
   },
