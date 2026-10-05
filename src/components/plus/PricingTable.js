@@ -112,7 +112,20 @@ function Plan({
         {features.map((feature, i) => (
           <li key={i}>
             <Check />
-            <span>{feature}</span>
+            {typeof feature === "string" ? (
+              <span>{feature}</span>
+            ) : (
+              <span>
+                {feature.label}
+                {feature.isNew && (
+                  <span className={styles.featureNewBadge}>
+                    <Translate id="gladysPlusPage.v2.feature.newBadge">
+                      New
+                    </Translate>
+                  </span>
+                )}
+              </span>
+            )}
           </li>
         ))}
       </ul>
@@ -165,6 +178,13 @@ function PricingTable({ language }) {
       id: "gladysPlusPage.v2.feature.remote",
       message: "End-to-end encrypted remote access",
     }),
+    {
+      label: translate({
+        id: "gladysPlusPage.v2.feature.offlineAlert",
+        message: "Email alert when your Gladys goes offline",
+      }),
+      isNew: true,
+    },
     translate({
       id: "gladysPlusPage.v2.feature.voice",
       message: "Google Home & Amazon Alexa",

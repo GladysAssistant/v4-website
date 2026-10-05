@@ -17,6 +17,7 @@ import FAQPlus from "../components/plus/FAQPlus";
 import FinalCTA from "../components/plus/FinalCTA";
 import MiniStats from "../components/plus/MiniStats";
 import HowItWorks from "../components/plus/HowItWorks";
+import OfflineAlert from "../components/plus/OfflineAlert";
 import EuropeanHosting from "../components/plus/EuropeanHosting";
 import ValueAnchor from "../components/plus/ValueAnchor";
 import FounderNote from "../components/plus/FounderNote";
@@ -182,6 +183,9 @@ function PlusContent() {
         {/* PERSONAS */}
         <Personas />
 
+        {/* NEW FEATURE: OFFLINE ALERT */}
+        <OfflineAlert />
+
         <HowItWorks />
 
         <div style={{ margin: "4rem 0" }}>
@@ -197,9 +201,9 @@ function PlusContent() {
           </h2>
           <p className={plusStyles.sectionSubtitle}>
             <Translate id="gladysPlusPage.v2.pricing.subtitle">
-              Lite for the essentials: remote access, voice assistants and open
-              API. Plus for the full experience including AI, camera streaming,
-              Enedis and encrypted backups.
+              Lite for the essentials: remote access, offline alerts, voice
+              assistants and open API. Plus for the full experience including
+              AI, camera streaming, Enedis and encrypted backups.
             </Translate>
           </p>
           <PricingTable language={language} />

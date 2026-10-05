@@ -83,12 +83,17 @@ const plusFaqEn = [
   {
     question: "What's the difference between the Lite and Plus plans?",
     answer:
-      "Lite covers encrypted remote access, Google Home/Alexa, open REST API, and family accounts. Plus adds daily encrypted backups, remote camera streaming, Open-Weight AI models, Enedis integration, and an MCP server. See the pricing section for current rates in your region.",
+      "Lite covers encrypted remote access, an email alert when your Gladys goes offline, Google Home/Alexa, open REST API, and family accounts. Plus adds daily encrypted backups, remote camera streaming, Open-Weight AI models, Enedis integration, and an MCP server. See the pricing section for current rates in your region.",
   },
   {
     question: "How do I activate Gladys Plus on my existing Gladys instance?",
     answer:
       "After subscribing, you receive an email with your activation link. Open your local Gladys instance, go to Settings → Gladys Plus, sign in with your email and password. No reset, no configuration lost.",
+  },
+  {
+    question: "Can Gladys Plus warn me if my Gladys goes down?",
+    answer:
+      "Yes. Gladys Plus sees your instance connect and disconnect. If it stays unreachable (power cut, internet box down, dead SD card) for longer than the delay you choose, from 10 minutes to 24 hours, Gladys Plus emails the admins of your account, then emails them again once it is back online. On by default, on both plans.",
   },
   {
     question: "Can I unsubscribe at any time?",
@@ -121,13 +126,18 @@ const plusFaqFr = [
   {
     question: "Quelle différence entre la formule Lite et la formule Plus ?",
     answer:
-      "Lite couvre l'accès distant chiffré, Google Home/Alexa, l'API REST ouverte et les comptes famille. Plus ajoute les sauvegardes chiffrées, le streaming caméra, l'IA Open-Weight, Enedis et le serveur MCP. Voir la section tarifs pour les prix actuels dans votre région.",
+      "Lite couvre l'accès distant chiffré, l'alerte email quand votre Gladys est hors ligne, Google Home/Alexa, l'API REST ouverte et les comptes famille. Plus ajoute les sauvegardes chiffrées, le streaming caméra, l'IA Open-Weight, Enedis et le serveur MCP. Voir la section tarifs pour les prix actuels dans votre région.",
   },
   {
     question:
       "Comment activer Gladys Plus depuis mon instance Gladys existante ?",
     answer:
       "Après abonnement, vous recevez un email avec le lien d'activation. Connectez-vous à votre instance locale, allez dans Paramètres → Gladys Plus, connectez-vous avec email/mot de passe. Aucun reset, aucune perte de configuration.",
+  },
+  {
+    question: "Gladys Plus peut-il me prévenir si ma Gladys tombe en panne ?",
+    answer:
+      "Oui. Gladys Plus voit votre instance se connecter et se déconnecter. Si elle reste injoignable (coupure de courant, box internet plantée, carte SD morte) plus longtemps que le délai choisi, de 10 minutes à 24 heures, Gladys Plus envoie un email aux administrateurs du compte, puis un second quand elle revient en ligne. Activée par défaut, dans les deux formules.",
   },
   {
     question: "Est-ce que je peux me désabonner à tout moment ?",
@@ -266,8 +276,8 @@ export function getPlusPageSchema(lang) {
             : "Home automation subscription",
         description:
           lang === "fr"
-            ? "Abonnement optionnel pour Gladys Assistant : accès distant chiffré, sauvegardes, IA, Enedis et serveur MCP."
-            : "Optional subscription for Gladys Assistant: encrypted remote access, backups, AI, Enedis, and MCP server.",
+            ? "Abonnement optionnel pour Gladys Assistant : accès distant chiffré, alerte email si Gladys est hors ligne, sauvegardes, IA, Enedis et serveur MCP."
+            : "Optional subscription for Gladys Assistant: encrypted remote access, email alert when Gladys goes offline, backups, AI, Enedis, and MCP server.",
         image: [
           `${SITE_URL}/img/presentation/gladys-assistant-og-image-v5-${
             lang === "fr" ? "fr" : "en"
