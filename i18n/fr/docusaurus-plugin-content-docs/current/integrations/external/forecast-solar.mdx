@@ -1,0 +1,169 @@
+---
+title: "Intégration domotique Forecast.Solar, gratuite et open source"
+sidebar_label: "Forecast.Solar"
+description: "Prévision de production solaire : puissance actuelle, énergie du jour et du lendemain. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-forecastsolar.png"
+keywords:
+  - "forecast.solar"
+  - "domotique forecast.solar"
+  - "gladys forecast.solar"
+  - "forecast.solar gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-forecastsolar instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="forecast-solar" />
+
+Cette intégration affiche dans Gladys la **prévision de production** de vos
+panneaux solaires, calculée par le service gratuit
+[Forecast.Solar](https://forecast.solar) à partir de la météo prévue.
+
+Nécessite **Gladys 5.1.0** ou plus récent.
+
+## Maisons
+
+La position vient des **maisons configurées dans Gladys**
+(**Paramètres > Maisons**) : à l'installation, Gladys vous demande
+d'autoriser l'accès à la position des maisons.
+
+- Chaque maison **localisée** apparaît comme un appareil dans l'onglet
+  **Découverte**.
+- Ajoutez **uniquement** les maisons qui ont des panneaux : seules celles-ci
+  sont interrogées (pas de requête perdue).
+- Une maison sans position n'apparaît pas : renseignez sa position dans
+  Gladys, puis relancez une découverte.
+
+## Ce que vous obtenez
+
+Pour chaque maison ajoutée, un appareil **Solar forecast** avec 4 capteurs :
+
+| Capteur                          | Unité | Contenu                                       |
+| -------------------------------- | ----- | --------------------------------------------- |
+| Estimated power now              | W     | Puissance estimée en ce moment                |
+| Estimated energy today           | kWh   | Production estimée sur toute la journée       |
+| Estimated energy remaining today | kWh   | Production estimée d'ici la fin de la journée |
+| Estimated energy tomorrow        | kWh   | Production estimée pour demain                |
+
+Ce sont des **prévisions**, pas des mesures : elles ne sont pas comptées dans
+le suivi d'énergie de Gladys.
+
+## Configuration
+
+1. Ouvrez l'onglet **Configuration** de l'intégration.
+2. Décrivez vos panneaux :
+   - **Inclinaison** : 0° = à plat, 90° = vertical (souvent 30 à 35° sur un toit) ;
+   - **Orientation** : 0° = sud, -90° = est, 90° = ouest, 180° = nord ;
+   - **Puissance crête** en Wc, nombre entier (ex. 3000 pour 3 kWc ; indiquée sur votre contrat ou votre onduleur).
+3. La **clé d'API** est facultative : laissez vide pour l'offre gratuite.
+4. Enregistrez, puis ajoutez l'appareil de votre maison depuis l'onglet
+   **Découverte**.
+
+Ces réglages s'appliquent à toutes les maisons ajoutées.
+
+Le bouton **Mettre à jour la prévision maintenant** télécharge la prévision
+tout de suite et affiche le résumé du jour et du lendemain.
+
+## Widgets du tableau de bord
+
+| Widget                       | Contenu                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------- |
+| **Prévision solaire**        | Puissance actuelle, énergie du jour / restante / demain, courbe, pic       |
+| **Meilleur créneau solaire** | Meilleur moment pour lancer un appareil de N heures, aujourd'hui et demain |
+
+Dans le widget, choisissez l'appareil (la maison) et, pour le meilleur
+créneau, la durée de l'appareil (lave-linge 2 h, lave-vaisselle 3 h…).
+
+## Scènes
+
+### Déclencheurs
+
+| Déclencheur                    | Quand                                         |
+| ------------------------------ | --------------------------------------------- |
+| Prévision solaire mise à jour  | À chaque nouvelle prévision téléchargée       |
+| Début de la production solaire | Début de production estimée (lever du soleil) |
+| Pic de production solaire      | Pic de production estimé de la journée        |
+| Fin de la production solaire   | Fin de production estimée (coucher du soleil) |
+
+Filtre possible sur la maison (laisser vide = toutes). Variables disponibles
+dans les actions suivantes : maison, puissance actuelle, énergie du jour,
+restante, de demain, puissance et heure du pic.
+
+Pour un **seuil** (« si demain > 10 kWh »), utilisez le déclencheur standard
+de Gladys sur la valeur d'un appareil, avec le capteur
+« Estimated energy tomorrow ».
+
+### Actions
+
+| Action                                   | Paramètres          | Résultats                                                  |
+| ---------------------------------------- | ------------------- | ---------------------------------------------------------- |
+| Lire la prévision solaire                | maison              | puissance, énergies du jour / restante / demain, pic       |
+| Production solaire des prochaines heures | maison, heures      | énergie (kWh), puissance moyenne et maximale (W)           |
+| Trouver le meilleur créneau solaire      | maison, durée, jour | trouvé, heure de début / fin, énergie, minutes avant début |
+
+Exemple : chaque matin à 8 h, « Trouver le meilleur créneau solaire » (2 h,
+aujourd'hui), puis attendre « minutes avant début » et lancer le lave-linge.
+
+## Fonctionnement
+
+- La prévision est téléchargée toutes les 60 minutes par défaut
+  (réglable de 15 à 1440 minutes), par maison ajoutée.
+- Entre deux téléchargements, les valeurs sont recalculées et publiées toutes
+  les 5 minutes (la puissance suit la courbe du soleil).
+- L'offre gratuite autorise **12 requêtes par heure** et par adresse IP.
+  En cas d'erreur ou de limite atteinte, l'intégration réessaie 15 minutes
+  plus tard et garde la dernière prévision connue.
+- Les maisons sont relues à chaque démarrage, à chaque découverte et toutes
+  les heures.
+- Un seul plan de panneaux par maison. Pour une installation est/ouest,
+  indiquez l'orientation et la puissance du plan principal.
+
+## Dépannage
+
+- **« Configuration incomplète ou invalide »** : un champ obligatoire est
+  vide ou hors limites (le nom du champ est indiqué).
+- **« Aucune maison localisée »** : renseignez la position d'une maison dans
+  **Paramètres > Maisons**.
+- **« Limite de requêtes Forecast.Solar atteinte »** : trop de requêtes depuis
+  votre adresse IP. Augmentez l'intervalle de mise à jour.
+- Pour le détail, consultez les logs de l'intégration depuis Gladys (ou
+  `docker logs` sur l'hôte) avec `LOG_LEVEL=debug`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Forecast.Solar dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | La prévision utilise la position de vos maisons dans Gladys (Paramètres > Maisons) : un appareil par maison localisée, n'ajoutez que celles qui ont des panneaux. Décrivez ensuite les panneaux ci-dessous. Offre gratuite : sans compte, 12 requêtes par heure. |
+| Inclinaison (°) | `number` | Oui | Angle des panneaux : 0 = à plat, 90 = vertical. |
+| Orientation (°) | `number` | Oui | Direction des panneaux : 0 = sud, -90 = est, 90 = ouest, 180 = nord. |
+| Puissance crête (Wc) | `number` | Oui | Puissance crête installée des panneaux, en watt-crête (nombre entier), par exemple 3000 pour 3 kWc ou 6200 pour 6,2 kWc. |
+| Clé d'API (facultative) | `secret` | Non | Laissez vide pour l'offre gratuite. |
+| Intervalle de mise à jour de la prévision (min) | `number` | Non | Fréquence de téléchargement de la prévision. Les valeurs affichées dans Gladys restent mises à jour toutes les 5 minutes. |
+
+## Comment installer Forecast.Solar dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Forecast.Solar apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-forecastsolar:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-forecastsolar](https://github.com/prohand/gladys-forecastsolar).
+
+Forecast.Solar nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Forecast.Solar est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-forecastsolar) — [source de cette documentation](https://github.com/prohand/gladys-forecastsolar/blob/HEAD/docs/fr.md)
