@@ -93,7 +93,7 @@ const plusFaqEn = [
   {
     question: "Can Gladys Plus warn me if my Gladys goes down?",
     answer:
-      "Yes. Gladys Plus sees your instance connect and disconnect. If it stays unreachable (power cut, internet box down, dead SD card) for longer than the delay you choose, from 10 minutes to 24 hours, Gladys Plus emails the admins of your account, then emails them again once it is back online. Available on both plans.",
+      "Yes. Gladys Plus sees your instance connect and disconnect. If it stays unreachable (power cut, internet box down, dead SD card) for longer than the delay you choose, from 10 minutes to 24 hours, Gladys Plus emails the admins of your account, then emails them again once it is back online. On by default, on both plans.",
   },
   {
     question: "Can I unsubscribe at any time?",
@@ -137,7 +137,7 @@ const plusFaqFr = [
   {
     question: "Gladys Plus peut-il me prévenir si ma Gladys tombe en panne ?",
     answer:
-      "Oui. Gladys Plus voit votre instance se connecter et se déconnecter. Si elle reste injoignable (coupure de courant, box internet plantée, carte SD morte) plus longtemps que le délai choisi, de 10 minutes à 24 heures, Gladys Plus envoie un email aux administrateurs du compte, puis un second quand elle revient en ligne. Disponible dans les deux formules.",
+      "Oui. Gladys Plus voit votre instance se connecter et se déconnecter. Si elle reste injoignable (coupure de courant, box internet plantée, carte SD morte) plus longtemps que le délai choisi, de 10 minutes à 24 heures, Gladys Plus envoie un email aux administrateurs du compte, puis un second quand elle revient en ligne. Activée par défaut, dans les deux formules.",
   },
   {
     question: "Est-ce que je peux me désabonner à tout moment ?",

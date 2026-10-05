@@ -36,10 +36,10 @@ function OfflineAlert() {
     {
       icon: "🧘",
       titleId: "gladysPlusPage.v2.offlineAlert.nothing.title",
-      titleDefault: "Nothing to install",
+      titleDefault: "Nothing to set up",
       textId: "gladysPlusPage.v2.offlineAlert.nothing.text",
       textDefault:
-        "No monitoring service to host: turn the alert on in one click from Gladys Plus, and every admin of your account gets the email.",
+        "No monitoring service to host: the alert is on by default, and every admin of your account gets the email.",
     },
   ];
 

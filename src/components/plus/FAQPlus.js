@@ -96,8 +96,8 @@ const buildDataFr = (prices, currency) => [
         internet plantée, carte SD morte…) plus longtemps que le délai que tu
         choisis, de 10 minutes à 24 heures, Gladys Plus envoie un email aux
         administrateurs de ton compte, puis un second quand elle revient en
-        ligne. Ça s'active en un clic depuis Gladys Plus, dans les deux
-        formules.
+        ligne. L'alerte est activée par défaut, dans les deux formules : tu
+        peux changer le délai ou la couper depuis Gladys Plus.
       </>
     ),
   },
@@ -201,8 +201,8 @@ const buildDataEn = (prices, currency) => [
         disconnect. If it stays unreachable (power cut, internet box down, dead
         SD card…) for longer than the delay you choose, from 10 minutes to 24
         hours, Gladys Plus emails the admins of your account, then emails them
-        again once it's back online. Turn it on in one click from Gladys Plus,
-        on both plans.
+        again once it's back online. It's on by default, on both plans: you
+        can change the delay or turn it off from Gladys Plus.
       </>
     ),
   },
