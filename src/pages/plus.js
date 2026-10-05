@@ -19,7 +19,6 @@ import MiniStats from "../components/plus/MiniStats";
 import HowItWorks from "../components/plus/HowItWorks";
 import OfflineAlert from "../components/plus/OfflineAlert";
 import EuropeanHosting from "../components/plus/EuropeanHosting";
-import ValueAnchor from "../components/plus/ValueAnchor";
 import FounderNote from "../components/plus/FounderNote";
 import StickyMobileCta from "../components/plus/StickyMobileCta";
 import {
@@ -214,8 +213,6 @@ function PlusContent() {
 
         {/* FAQ */}
         <FAQPlus lang={language} />
-
-        <ValueAnchor />
 
         <FounderNote />
 

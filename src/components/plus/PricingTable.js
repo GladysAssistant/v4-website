@@ -169,7 +169,7 @@ function PricingTable({ language }) {
   });
   const saveLabel = translate({
     id: "gladysPlusPage.v2.toggleSave",
-    message: "-17%",
+    message: "2 months free",
   });
 
   // ---- Lite features (image: remote, voice, open API)
@@ -276,7 +276,7 @@ function PricingTable({ language }) {
           name="Lite"
           tagline={translate({
             id: "gladysPlusPage.v2.lite.tagline",
-            message: "The essentials for remote access",
+            message: "Your home from anywhere, without opening a single port",
           })}
           monthlyPrice={prices.lite.monthly}
           yearlyPrice={prices.lite.yearly}
@@ -290,7 +290,7 @@ function PricingTable({ language }) {
           name="Plus"
           tagline={translate({
             id: "gladysPlusPage.v2.plus.tagline",
-            message: "All the advanced integrations",
+            message: "Never lose your setup, plus cameras and AI",
           })}
           monthlyPrice={prices.plus.monthly}
           yearlyPrice={prices.plus.yearly}
