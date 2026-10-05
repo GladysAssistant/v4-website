@@ -1,18 +1,17 @@
 import React from "react";
-import Link from "@docusaurus/Link";
 import Translate, { translate } from "@docusaurus/Translate";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { getCheckoutUrl, handleCheckoutClick } from "./checkout";
 import styles from "./styles.module.css";
 
 // Shipped with Gladys 5.1: Gladys Plus already sees the instance connect and
 // disconnect, so it can email the account admins when it stays unreachable.
 // The setting is not gated by plan, so it is sold as part of Lite (and Plus).
-const RELEASE_POST = "/blog/gladys-5-1-integration-widgets-and-scenes";
-
 function OfflineAlert() {
   const { i18n } = useDocusaurusContext();
-  const screenshotLang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const language = i18n.currentLocale;
+  const screenshotLang = language === "fr" ? "fr" : "en";
   const screenshotUrl = useBaseUrl(
     `/img/articles/gladys-assistant-5-1/06-offline-alert-${screenshotLang}.webp`,
   );
@@ -97,16 +96,23 @@ function OfflineAlert() {
           ))}
         </div>
 
-        <p className={styles.offlineAlertFootnote}>
-          <Translate id="gladysPlusPage.v2.offlineAlert.plans">
-            Included in both plans, Lite and Plus.
-          </Translate>{" "}
-          <Link to={RELEASE_POST} data-track="plus_offline_alert_release_post">
-            <Translate id="gladysPlusPage.v2.offlineAlert.link">
-              Read the announcement →
+        <div className={styles.offlineAlertCta}>
+          <a
+            href={getCheckoutUrl(language)}
+            onClick={handleCheckoutClick}
+            className="button button--primary button--lg"
+            data-track="plus_offline_alert_start_trial_plus_yearly"
+          >
+            <Translate id="gladysPlusPage.v2.offlineAlert.cta">
+              Try it free for 1 month →
             </Translate>
-          </Link>
-        </p>
+          </a>
+          <p className={styles.offlineAlertFootnote}>
+            <Translate id="gladysPlusPage.v2.offlineAlert.plans">
+              Included in both plans, Lite and Plus · No credit card required
+            </Translate>
+          </p>
+        </div>
       </div>
     </section>
   );
