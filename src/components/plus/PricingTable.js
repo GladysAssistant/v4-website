@@ -290,7 +290,7 @@ function PricingTable({ language }) {
           name="Plus"
           tagline={translate({
             id: "gladysPlusPage.v2.plus.tagline",
-            message: "Never lose your setup, plus cameras and AI",
+            message: "Never lose your setup, plus cameras and\u00a0AI",
           })}
           monthlyPrice={prices.plus.monthly}
           yearlyPrice={prices.plus.yearly}
