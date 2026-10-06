@@ -6,13 +6,19 @@ import { getHomeyAlternativePageSchema } from "../data/schemas/homeyAlternative"
 import homeyAlternativeContent, {
   homeyAlternativeFaqEn,
   homeyAlternativeFaqFr,
+  homeyAlternativeFaqDe,
 } from "../data/homeyAlternativeData";
 
 export default function HomeyAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = homeyAlternativeContent[lang];
-  const faq = lang === "fr" ? homeyAlternativeFaqFr : homeyAlternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? homeyAlternativeFaqFr
+      : lang === "de"
+        ? homeyAlternativeFaqDe
+        : homeyAlternativeFaqEn;
 
   return (
     <UseCasePage

@@ -388,6 +388,197 @@ const smartThingsAlternativeContent = {
       secondary: { label: "Compatible Gladys", href: "/works-with/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "SmartThings Alternative: lokal, privat und Open Source",
+      description:
+        "SmartThings Alternative gesucht? Gladys Assistant läuft auf deiner Hardware, steuert Zigbee, Z-Wave und Matter lokal und bindet SmartThings beim Umzug ein.",
+    },
+    screenshotCaption:
+      "Deine bisherigen SmartThings-Geräte, gesteuert über ein lokales Dashboard, das auf deinem eigenen Rechner läuft.",
+    hero: {
+      title: "Du suchst eine Alternative zu SmartThings?",
+      subtitle:
+        "Behalte deine Geräte, nicht die Abhängigkeit: Gladys Assistant steuert dein Smart Home lokal, auf Hardware, die dir gehört, ganz ohne Samsung-Konto.",
+      intro: [
+        "Samsung SmartThings hat das Smart Home für Millionen Menschen zugänglich gemacht. Doch alles dreht sich um ein Samsung-Konto, die SmartThings-Cloud und die Produktentscheidungen von Samsung, und viele Nutzer haben über die Jahre erlebt, wie Plattformänderungen ihr Setup lahmgelegt haben.",
+        "Gladys Assistant geht einen anderen Weg. Es ist eine kostenlose Open-Source-Plattform für dein Smart Home, die bei dir zu Hause läuft, auf einem Mini-PC oder einem Raspberry Pi. Deine Zigbee-, Z-Wave- und Matter-Geräte koppelst du direkt damit, deine Automationen laufen lokal und deine Daten bleiben in deinem Netzwerk. Und weil Gladys auch eine SmartThings-Integration hat, kannst du in deinem eigenen Tempo umziehen.",
+      ],
+      primaryCta: { label: "Kostenlos starten", href: "/docs/" },
+      secondaryCta: {
+        label: "Die SmartThings-Integration →",
+        href: "/docs/integrations/external/smartthings/",
+      },
+    },
+    problem: {
+      title: "Warum viele eine Alternative zu SmartThings suchen",
+      intro:
+        "SmartThings ist kostenlos und einfach für den Einstieg, aber die Kompromisse zeigen sich mit der Zeit:",
+      points: [
+        "Alles hängt an einem Samsung-Konto und der SmartThings-Cloud, auch die App, mit der du dein Zuhause steuerst.",
+        "Fällt das Internet oder fallen die Samsung-Server aus, reagiert alles nicht mehr, was von der Cloud abhängt, von der App bis zu Cloud-Geräten.",
+        "Die Plattform ändert sich nach Samsungs Zeitplan: Ältere Hubs haben ihren Support verloren, und das Aus für eigenen Groovy-Code hat viele Nutzer gezwungen, ihr Setup neu aufzubauen.",
+        "Der Zugang für Entwickler wird immer enger: Seit Ende 2024 laufen neue persönliche Zugriffstoken nach 24 Stunden ab.",
+        "Deine Nutzungsdaten liegen auf Samsungs Servern, gleich neben dem Rest deines Samsung-Kontos.",
+      ],
+      outro:
+        "Nichts davon macht SmartThings zu einem schlechten Produkt. Aber wenn du ein Zuhause willst, das wirklich dir gehört, kommt es auf das Fundament an.",
+    },
+    comparison: {
+      title: "Gladys Assistant vs. SmartThings",
+      intro: "So schneiden die beiden Plattformen bei dem ab, was für ein langlebiges Smart Home zählt:",
+      cols: {
+        feature: "",
+        gladys: "Gladys Assistant",
+        other: "Samsung SmartThings",
+      },
+      rows: [
+        {
+          feature: "Wo es läuft",
+          gladys: "Auf deinem eigenen Mini-PC, Raspberry Pi oder NAS",
+          other: "In der Samsung-Cloud, plus SmartThings-Hub oder kompatibles Samsung-Gerät",
+        },
+        {
+          feature: "Konto erforderlich",
+          gladys: "Nein, lokale Konten auf deinem Rechner",
+          other: "Ja, ein Samsung-Konto",
+        },
+        {
+          feature: "Funktioniert ohne Internet",
+          gladys: "Ja, der Kern läuft lokal",
+          other: "Teilweise, App und Cloud-Funktionen brauchen Internet",
+        },
+        {
+          feature: "Zigbee, Z-Wave, Matter",
+          gladys: "Ja, mit USB-Stick oder über Matter",
+          other: "Ja, über den SmartThings-Hub",
+        },
+        {
+          feature: "Quellcode",
+          gladys: "Open Source (Apache 2.0)",
+          other: "Proprietär",
+        },
+        {
+          feature: "Deine Daten",
+          gladys: "Bleiben in deinem Netzwerk",
+          other: "Gespeichert auf Samsungs Servern",
+        },
+        {
+          feature: "Preis",
+          gladys: "Kostenlos, optional Gladys Plus für Fernzugriff, Backups und KI",
+          other: "App kostenlos, Hub separat erhältlich",
+        },
+      ],
+      outro:
+        "SmartThings punktet mit Komfort direkt nach dem Auspacken und der Zahl zertifizierter Geräte. Gladys punktet mit Eigentum, Datenschutz und lokaler Steuerung.",
+    },
+    features: {
+      title: "Warum Gladys eine gute SmartThings Alternative ist",
+      intro: "Das bekommst du, wenn du dein Zuhause auf Gladys umziehst:",
+      cards: [
+        {
+          icon: "🏠",
+          title: "Läuft bei dir zu Hause",
+          text: "Gladys läuft auf deinem eigenen Rechner. Geräte, Automationen und Verlauf bleiben in deinem lokalen Netzwerk.",
+        },
+        {
+          icon: "📡",
+          title: "Zigbee, Z-Wave und Matter",
+          text: "Kopple deine Geräte direkt per USB-Stick oder über Matter, ohne proprietären Hub dazwischen.",
+        },
+        {
+          icon: "🧠",
+          title: "Eine echte Automations-Engine",
+          text: "Szenen mit Auslösern, Bedingungen, Wenn/Dann/Sonst und Verzögerungen, erstellt im visuellen Editor, ganz ohne Code.",
+        },
+        {
+          icon: "🔗",
+          title: "Spricht weiter mit SmartThings",
+          text: "Die SmartThings-Integration holt die Geräte deines Kontos während des Umzugs in Gladys.",
+        },
+        {
+          icon: "📱",
+          title: "Eine moderne mobile Oberfläche",
+          text: "Gladys 5 wurde für das Smartphone in deiner Tasche und das Tablet an deiner Wand entwickelt.",
+        },
+        {
+          icon: "💚",
+          title: "Open Source, kein Lock-in",
+          text: "Im Kern kostenlos und Open Source. Falls du jemals wechselst, sind deine Geräte Standard und deine Daten gehören dir.",
+        },
+      ],
+    },
+    how: {
+      title: "So ziehst du von SmartThings zu Gladys um",
+      intro: "Du musst nicht alles an einem Wochenende umstellen. Ein entspannter Weg:",
+      points: [
+        "Installiere Gladys auf einem Mini-PC oder Raspberry Pi und liste deine SmartThings-Geräte nach Protokoll auf: Zigbee, Z-Wave, Matter oder WLAN.",
+        "Verbinde die SmartThings-Integration, um deine aktuellen Geräte sofort in Gladys zu sehen (beachte, dass persönliche SmartThings-Zugriffstoken inzwischen nach 24 Stunden ablaufen: Das ist ein Werkzeug für den Übergang, keine Dauerlösung).",
+        "Zigbee-Geräte: Schließe einen Zigbee-USB-Stick an, entferne jedes Gerät aus SmartThings und kopple es mit Zigbee2MQTT.",
+        "Z-Wave-Geräte: Schließe einen Z-Wave-USB-Stick an, exkludiere jedes Gerät aus SmartThings und inkludiere es in Z-Wave JS UI.",
+        "Matter-Geräte: Erzeuge in der SmartThings-App einen neuen Kopplungscode (mit Matter kann ein Gerät mehrere Controller haben) und füge es zu Gladys hinzu, das es dann lokal steuert.",
+        "WLAN-Geräte (Kasa, Shelly, Hue Bridge, Sonos…): Verbinde sie über ihre eigene Gladys-Integration, meist lokal.",
+        "Baue deine Routinen als Gladys-Szenen nach und zieh den Stecker des SmartThings-Hubs, sobald du so weit bist.",
+      ],
+      outro:
+        "Die meisten ziehen Raum für Raum um. Und wenn ein Gerät Ärger macht, hilft dir das Forum weiter.",
+    },
+    solution: {
+      title: "Deine Geräte, deine Hardware, deine Regeln",
+      paragraphs: [
+        "Die Zigbee-, Z-Wave- und Matter-Geräte, die du für SmartThings gekauft hast, sind Standardgeräte. Sie gehören nicht Samsung, und sie funktionieren genauso gut mit einer Plattform, die bei dir zu Hause läuft.",
+        "Gladys ist kostenlos und Open Source und wird seit 2013 öffentlich entwickelt. Ein optionales Gladys Plus Abo ergänzt verschlüsselten Fernzugriff, Alexa und Google Home, Backups und KI, doch der Kern bleibt lokal und gehört dir.",
+      ],
+      link: {
+        label: "Alle Marken ansehen, die mit Gladys funktionieren →",
+        href: "/works-with/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Alles, was du für die Planung des Umzugs brauchst:",
+      links: [
+        {
+          label: "Die beste Smart Home Zentrale",
+          href: "/best-smart-home-hub/",
+          text: "SmartThings, Hubitat, Homey und ein Mini-PC im Vergleich.",
+        },
+        {
+          label: "Hubitat Alternative",
+          href: "/hubitat-alternative/",
+          text: "Ein weiterer lokaler Hub, und wie Gladys im Vergleich abschneidet.",
+        },
+        {
+          label: "Funktioniert mit Gladys",
+          href: "/works-with/",
+          text: "Die von Gladys unterstützten Marken und Protokolle, jeweils mit Einrichtungsanleitung.",
+        },
+        {
+          label: "Der beste Zigbee-USB-Stick",
+          href: "/best-zigbee-dongle/",
+          text: "Der Koordinator, mit dem du deine Zigbee-Geräte vom SmartThings-Hub löst.",
+        },
+        {
+          label: "Brauchst du einen Matter-Hub?",
+          href: "/matter-hub/",
+          text: "Matter-Controller, Thread-Border-Router und Bridges einfach erklärt.",
+        },
+        {
+          label: "Home Assistant Alternative",
+          href: "/home-assistant-alternative/",
+          text: "Du schaust dir auch Home Assistant an? So schneidet Gladys im Vergleich ab.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Hol dein Smart Home zurück nach Hause",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Behalte deine Geräte, steuere sie lokal und behalte die Kontrolle.",
+      primary: { label: "Jetzt starten", href: "/docs/" },
+      secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
+    },
+  },
 };
 
 export const smartThingsAlternativeFaqEn = [
@@ -453,6 +644,39 @@ export const smartThingsAlternativeFaqFr = [
     question: "Gladys est-elle gratuite ?",
     answer:
       "Oui. Gladys est gratuite et open source, pour toujours. Un abonnement Gladys Plus optionnel ajoute l'accès distant chiffré, Alexa et Google Home, les sauvegardes et l'IA, à partir de 6,99 €/mois en Europe, avec un mois d'essai gratuit.",
+  },
+];
+
+export const smartThingsAlternativeFaqDe = [
+  {
+    question: "Was ist die beste lokale Alternative zu SmartThings?",
+    answer:
+      "Gladys Assistant ist eine kostenlose Open-Source-Plattform für dein Smart Home, die auf deiner eigenen Hardware läuft (Mini-PC, Raspberry Pi oder NAS). Sie unterstützt Zigbee-, Z-Wave- und Matter-Geräte direkt, führt deine Automationen lokal aus und braucht weder ein Samsung-Konto noch ein anderes Cloud-Konto. Home Assistant, Hubitat und openHAB sind weitere lokale Optionen.",
+  },
+  {
+    question: "Kann ich meine SmartThings-Geräte mit Gladys weiterverwenden?",
+    answer:
+      "Ja. Zigbee-Geräte koppelst du über einen Zigbee-USB-Stick und Zigbee2MQTT mit Gladys, Z-Wave-Geräte über einen Z-Wave-Stick und Z-Wave JS UI, und Matter-Geräte direkt, denn Gladys ist ein Matter-Controller. WLAN-Geräte verbindest du über ihre eigenen Integrationen (Kasa, Shelly, Philips Hue, Sonos…).",
+  },
+  {
+    question: "Lässt sich Gladys mit SmartThings verbinden?",
+    answer:
+      "Ja. Die SmartThings-Integration holt Schalter, Lampen, Schlösser, Rollläden, Thermostate und Sensoren deines SmartThings-Kontos über die Cloud-API von Samsung in Gladys. Seit Ende 2024 laufen persönliche SmartThings-Zugriffstoken nach 24 Stunden ab, deshalb eignet sie sich vor allem als Brücke, während du deine Geräte zu Gladys umziehst.",
+  },
+  {
+    question: "Funktioniert Gladys ohne Internet?",
+    answer:
+      "Ja. Gladys läuft in deinem lokalen Netzwerk, daher funktionieren per Zigbee, Z-Wave oder Matter gekoppelte Geräte und deine Szenen auch dann weiter, wenn das Internet ausfällt. Nur Cloud-Integrationen und optionale Gladys Plus Funktionen wie der Fernzugriff brauchen eine Verbindung.",
+  },
+  {
+    question: "Welche Hardware brauche ich, um den SmartThings-Hub zu ersetzen?",
+    answer:
+      "Einen kleinen, dauerhaft laufenden Rechner für Gladys, etwa einen Mini-PC mit Intel N100 oder einen Raspberry Pi, dazu einen Zigbee-USB-Stick für Zigbee-Geräte und einen Z-Wave-USB-Stick, falls du Z-Wave-Geräte hast. Matter-Geräte im WLAN brauchen nichts weiter; Matter-over-Thread-Geräte brauchen einen Thread-Border-Router.",
+  },
+  {
+    question: "Ist Gladys kostenlos?",
+    answer:
+      "Ja. Gladys ist kostenlos und Open Source, für immer. Ein optionales Gladys Plus Abo ergänzt verschlüsselten Fernzugriff, Alexa und Google Home, Backups und KI, ab 6,99 €/Monat in Europa, mit einem Monat kostenlosem Test.",
   },
 ];
 

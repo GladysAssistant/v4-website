@@ -6,13 +6,19 @@ import { getOpenhabAlternativePageSchema } from "../data/schemas/openhabAlternat
 import openhabAlternativeContent, {
   openhabAlternativeFaqEn,
   openhabAlternativeFaqFr,
+  openhabAlternativeFaqDe,
 } from "../data/openhabAlternativeData";
 
 export default function OpenhabAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = openhabAlternativeContent[lang];
-  const faq = lang === "fr" ? openhabAlternativeFaqFr : openhabAlternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? openhabAlternativeFaqFr
+      : lang === "de"
+        ? openhabAlternativeFaqDe
+        : openhabAlternativeFaqEn;
 
   return (
     <UseCasePage

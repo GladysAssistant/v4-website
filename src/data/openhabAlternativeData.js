@@ -371,6 +371,188 @@ const openhabAlternativeContent = {
       secondary: { label: "Appareils compatibles", href: "/works-with/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "openHAB Alternative: einfachere Open-Source-Hausautomation",
+      description:
+        "Suchst du eine openHAB Alternative? Gladys Assistant ist kostenlose Open-Source-Hausautomation, viel einfacher: visuelle Szenen, Zigbee2MQTT, Matter, KI.",
+    },
+    screenshotCaption:
+      "Gladys: ein modernes Dashboard und visuelle Szenen, ganz ohne Items, Channels oder Sitemaps zum Konfigurieren.",
+    hero: {
+      title: "Du suchst eine Alternative zu openHAB?",
+      subtitle:
+        "openHAB ist mächtig und herstellerunabhängig. Wenn du denselben lokalen Open-Source-Ansatz mit viel weniger Konfiguration willst, lohnt sich ein Blick auf Gladys Assistant.",
+      intro: [
+        "openHAB ist seit mehr als zehn Jahren eine der Säulen der Open-Source-Hausautomation. Es verbindet sich mit fast allem, die Regel-Engine ist ernst zu nehmen, und alles läuft komplett bei dir zu Hause. Es verlangt dir aber auch einiges ab: Things, Channels, Items, Bindings, Persistence-Dienste, Sitemaps oder UI-Seiten und Regeln in einer von mehreren Sprachen.",
+        "Gladys Assistant teilt die Werte von openHAB, Open Source, lokal und privat, geht bei der Komplexität aber genau den umgekehrten Weg. Du fügst ein Gerät hinzu, es erscheint mit seinen Funktionen, du legst es auf ein Dashboard und nutzt es in einer visuellen Szene. Fertig.",
+      ],
+      primaryCta: { label: "Kostenlos starten", href: "/docs/" },
+      secondaryCta: {
+        label: "Demo ausprobieren →",
+        href: "https://demo.gladysassistant.com/dashboard",
+      },
+    },
+    problem: {
+      title: "Warum viele eine Alternative zu openHAB suchen",
+      intro: "openHAB-Nutzer, die wechseln, nennen meist dieselben Gründe:",
+      points: [
+        "Das Modell aus Thing, Channel und Item ist mächtig, aber du musst es erst lernen, bevor dein erstes Gerät etwas Nützliches tut.",
+        "Die Konfiguration ist zwischen Oberfläche und Textdateien aufgeteilt, und viele Anleitungen setzen immer noch Textdateien voraus.",
+        "Regeln lassen sich in DSL, Blockly, JavaScript, Python, Ruby oder Groovy schreiben: flexibel, aber für den Rest des Haushalts schwer zu lesen.",
+        "Für eine familientaugliche Oberfläche musst du Seiten oder Sitemaps selbst gestalten.",
+      ],
+      outro:
+        "Wenn du gern bastelst, ist openHAB großartig. Wenn dein Zuhause einfach funktionieren soll, passt eine einfachere Plattform vielleicht besser zu dir.",
+    },
+    comparison: {
+      title: "Gladys Assistant vs. openHAB",
+      intro: "Zwei lokale Open-Source-Plattformen mit unterschiedlicher Philosophie:",
+      cols: {
+        feature: "",
+        gladys: "Gladys Assistant",
+        other: "openHAB",
+      },
+      rows: [
+        {
+          feature: "Lizenz",
+          gladys: "Apache 2.0",
+          other: "EPL 2.0",
+        },
+        {
+          feature: "Technik",
+          gladys: "Node.js, Docker",
+          other: "Java 21, openHABian oder Docker",
+        },
+        {
+          feature: "Gerät hinzufügen",
+          gladys: "Erkennen, hinzufügen, fertig",
+          other: "Thing anlegen, dann Channels mit Items verknüpfen",
+        },
+        {
+          feature: "Automationen",
+          gladys: "Visuelle Szenen",
+          other: "Rules DSL, Blockly, JavaScript, Python, Ruby, Groovy",
+        },
+        {
+          feature: "Dashboards",
+          gladys: "Eingebaut, fürs Smartphone gemacht",
+          other: "Main-UI-Seiten oder Sitemaps zum Selbstgestalten",
+        },
+        {
+          feature: "Integrationen",
+          gladys: "Native Integrationen plus über 90 Community-Integrationen",
+          other: "Über 500 Add-ons",
+        },
+        {
+          feature: "KI",
+          gladys: "KI-Assistent mit Gladys Plus, eingebauter MCP-Server",
+          other: "LLM-Chat und eingebauter MCP-Server seit 5.2",
+        },
+        {
+          feature: "Fernzugriff",
+          gladys: "Optional mit Gladys Plus, verschlüsselt",
+          other: "myopenHAB Cloud Connector",
+        },
+      ],
+      outro:
+        "openHAB punktet mit der Breite an Integrationen und Flexibilität. Gladys punktet mit Einfachheit, schnellem Weg zur ersten Automation und einer alltagstauglichen Oberfläche.",
+    },
+    features: {
+      title: "Warum Gladys eine gute openHAB Alternative ist",
+      intro: "Das ändert sich, wenn du zu Gladys wechselst:",
+      cards: [
+        {
+          icon: "⚡",
+          title: "In Minuten zum ersten Gerät",
+          text: "Mit einem Docker-Befehl installieren, ein Gerät hinzufügen, es auf deinem Dashboard sehen.",
+        },
+        {
+          icon: "🐝",
+          title: "Verwaltetes Zigbee2MQTT",
+          text: "Gladys installiert und verbindet Zigbee2MQTT samt MQTT-Broker für dich, ohne Konfigurationsdateien.",
+        },
+        {
+          icon: "🧩",
+          title: "Szenen, die die ganze Familie versteht",
+          text: "Auslöser, Bedingungen, Wenn/Dann/Sonst und Verzögerungen in einem visuellen Editor, ohne dass du eine Skriptsprache wählen musst.",
+        },
+        {
+          icon: "📱",
+          title: "Eine moderne Oberfläche",
+          text: "Gladys 5 wurde von Anfang an für Smartphones und Wand-Tablets entwickelt.",
+        },
+        {
+          icon: "🧱",
+          title: "Integrationen in jeder Sprache",
+          text: "Community-Integrationen sind Docker-Images, in beliebiger Sprache geschrieben, mit einem Klick installiert und vom Kern abgeschottet.",
+        },
+        {
+          icon: "💚",
+          title: "Open Source seit 2013",
+          text: "Apache 2.0, öffentlich entwickelt, mit einer freundlichen, zweisprachigen Community.",
+        },
+      ],
+    },
+    how: {
+      title: "So wechselst du von openHAB zu Gladys",
+      intro: "Eine schrittweise Migration:",
+      points: [
+        "Installiere Gladys auf demselben oder einem anderen Rechner und liste deine openHAB-Things nach Binding auf.",
+        "Zigbee und Z-Wave: Zieh deine Geräte zu Zigbee2MQTT und Z-Wave JS UI um (wenn du Z-Wave JS UI schon mit seinem MQTT-Gateway betreibst, kann sich Gladys direkt damit verbinden).",
+        "Matter-Geräte: Teile sie mit Gladys als zweitem Controller.",
+        "Marken (Hue, Sonos, Netatmo, Shelly, Tapo…): Verbinde sie über ihre Gladys-Integration.",
+        "Schreib deine wichtigsten Regeln als Gladys-Szenen neu und schalte openHAB ab, sobald alles in Gladys läuft.",
+      ],
+      outro:
+        "Wirf vorher einen Blick auf die Seite „Funktioniert mit Gladys“: openHAB deckt mehr Bindings ab, stell also sicher, dass deine Geräte unterstützt werden.",
+    },
+    solution: {
+      title: "Dieselben Werte, weniger Konfiguration",
+      paragraphs: [
+        "openHAB und Gladys sind sich beim Wesentlichen einig: Dein Zuhause sollte lokal laufen, mit Open-Source-Software, die du kontrollierst. Der Unterschied liegt darin, für wen sie gemacht sind. openHAB gibt Power-Usern jede Stellschraube; Gladys gibt Haushalten ein Smart Home, das sich leicht einrichten lässt und mit dem man gut lebt.",
+        "Gladys ist kostenlos. Gladys Plus ist ein optionales Abo für verschlüsselten Fernzugriff, Backups, Alexa und Google Home sowie den KI-Assistenten.",
+      ],
+      link: {
+        label: "Die beste Open-Source-Software für Hausautomation →",
+        href: "/open-source-home-automation/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Vergleiche Gladys mit anderen Plattformen:",
+      links: [
+        {
+          label: "Gladys vs. Home Assistant",
+          href: "/home-assistant-vs-gladys-assistant/",
+          text: "Ein ehrlicher Vergleich mit der beliebtesten Open-Source-Plattform.",
+        },
+        {
+          label: "Open-Source-Hausautomation",
+          href: "/open-source-home-automation/",
+          text: "Die wichtigsten Open-Source-Plattformen im Vergleich.",
+        },
+        {
+          label: "Zigbee2MQTT ohne Home Assistant",
+          href: "/zigbee2mqtt-without-home-assistant/",
+          text: "Lokales Zigbee mit verwalteter Einrichtung und Dashboards.",
+        },
+        {
+          label: "MCP-Server fürs Smart Home",
+          href: "/smart-home-mcp-server/",
+          text: "Verbinde Claude und andere KI-Agenten mit deinem Zuhause.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Open Source, lokal und einfach",
+      text: "Gladys ist kostenlos und mit einem einzigen Docker-Befehl installiert. Probier es neben openHAB aus und sieh selbst den Unterschied.",
+      primary: { label: "Jetzt starten", href: "/docs/" },
+      secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
+    },
+  },
 };
 
 export const openhabAlternativeFaqEn = [
@@ -426,6 +608,34 @@ export const openhabAlternativeFaqFr = [
     question: "openHAB a-t-il des fonctionnalités d'IA ?",
     answer:
       "Oui, openHAB 5.2 (juillet 2026) a ajouté une interface de chat LLM et un serveur MCP intégré. Gladys a aussi un serveur MCP intégré, et son abonnement Gladys Plus inclut un assistant IA basé sur des modèles open-weight hébergés en France.",
+  },
+];
+
+export const openhabAlternativeFaqDe = [
+  {
+    question: "Was ist eine einfachere Alternative zu openHAB?",
+    answer:
+      "Gladys Assistant ist eine kostenlose, lokale Open-Source-Plattform, die auf Einfachheit ausgelegt ist: Geräte werden in wenigen Klicks erkannt und hinzugefügt, Dashboards sind eingebaut, und Automationen sind visuelle Szenen. Home Assistant ist eine weitere Option, umfangreicher, aber auch komplexer.",
+  },
+  {
+    question: "Ist Gladys Open Source wie openHAB?",
+    answer:
+      "Ja. Gladys Assistant ist Open Source unter der Apache-2.0-Lizenz und wird seit 2013 öffentlich entwickelt. openHAB ist Open Source unter der Eclipse Public License 2.0.",
+  },
+  {
+    question: "Hat Gladys so viele Integrationen wie openHAB?",
+    answer:
+      "Nein. openHAB hat mehr als 500 Add-ons, Gladys hat seine nativen Integrationen plus über 90 Community-Integrationen. Gladys deckt die wichtigen Protokolle (Zigbee, Z-Wave, Matter, MQTT) und beliebte Marken ab, prüf deine Geräte also auf der Seite „Funktioniert mit Gladys“.",
+  },
+  {
+    question: "Kann Gladys auf demselben Raspberry Pi wie openHAB laufen?",
+    answer:
+      "Gladys läuft in Docker und kann deshalb während einer Migration neben openHAB laufen, wenn der Rechner genug Ressourcen hat. Empfohlen sind ein Raspberry Pi 4 oder 5 oder ein Mini-PC. Einen bestimmten Zigbee- oder Z-Wave-USB-Stick kann immer nur einer von beiden gleichzeitig nutzen.",
+  },
+  {
+    question: "Hat openHAB KI-Funktionen?",
+    answer:
+      "Ja, openHAB 5.2 (Juli 2026) hat eine LLM-Chat-Oberfläche und einen eingebauten MCP-Server eingeführt. Gladys hat ebenfalls einen eingebauten MCP-Server, und das Gladys Plus Abo enthält einen KI-Assistenten auf Basis von Open-Weight-Modellen, die in Frankreich gehostet werden.",
   },
 ];
 

@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import smartThingsAlternativeContent, {
   smartThingsAlternativeFaqEn,
   smartThingsAlternativeFaqFr,
+  smartThingsAlternativeFaqDe,
 } from "../smartThingsAlternativeData";
 
 export function getSmartThingsAlternativePageSchema(lang) {
@@ -10,6 +11,7 @@ export function getSmartThingsAlternativePageSchema(lang) {
     content: smartThingsAlternativeContent,
     faqEn: smartThingsAlternativeFaqEn,
     faqFr: smartThingsAlternativeFaqFr,
+    faqDe: smartThingsAlternativeFaqDe,
     about: [
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },
       { "@type": "SoftwareApplication", name: "Samsung SmartThings" },

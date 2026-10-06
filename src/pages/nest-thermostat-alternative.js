@@ -6,13 +6,19 @@ import { getNestThermostatAlternativePageSchema } from "../data/schemas/nestTher
 import nestThermostatAlternativeContent, {
   nestThermostatAlternativeFaqEn,
   nestThermostatAlternativeFaqFr,
+  nestThermostatAlternativeFaqDe,
 } from "../data/nestThermostatAlternativeData";
 
 export default function NestThermostatAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = nestThermostatAlternativeContent[lang];
-  const faq = lang === "fr" ? nestThermostatAlternativeFaqFr : nestThermostatAlternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? nestThermostatAlternativeFaqFr
+      : lang === "de"
+        ? nestThermostatAlternativeFaqDe
+        : nestThermostatAlternativeFaqEn;
 
   return (
     <UseCasePage

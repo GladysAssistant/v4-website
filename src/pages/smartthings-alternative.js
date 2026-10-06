@@ -6,13 +6,19 @@ import { getSmartThingsAlternativePageSchema } from "../data/schemas/smartThings
 import smartThingsAlternativeContent, {
   smartThingsAlternativeFaqEn,
   smartThingsAlternativeFaqFr,
+  smartThingsAlternativeFaqDe,
 } from "../data/smartThingsAlternativeData";
 
 export default function SmartThingsAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = smartThingsAlternativeContent[lang];
-  const faq = lang === "fr" ? smartThingsAlternativeFaqFr : smartThingsAlternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? smartThingsAlternativeFaqFr
+      : lang === "de"
+        ? smartThingsAlternativeFaqDe
+        : smartThingsAlternativeFaqEn;
 
   return (
     <UseCasePage

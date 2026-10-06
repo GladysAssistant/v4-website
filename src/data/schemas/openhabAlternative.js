@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import openhabAlternativeContent, {
   openhabAlternativeFaqEn,
   openhabAlternativeFaqFr,
+  openhabAlternativeFaqDe,
 } from "../openhabAlternativeData";
 
 export function getOpenhabAlternativePageSchema(lang) {
@@ -10,6 +11,7 @@ export function getOpenhabAlternativePageSchema(lang) {
     content: openhabAlternativeContent,
     faqEn: openhabAlternativeFaqEn,
     faqFr: openhabAlternativeFaqFr,
+    faqDe: openhabAlternativeFaqDe,
     about: [
       { "@type": "SoftwareApplication", name: "openHAB" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

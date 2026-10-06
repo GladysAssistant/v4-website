@@ -6,13 +6,19 @@ import { getDomoticzAlternativePageSchema } from "../data/schemas/domoticzAltern
 import domoticzAlternativeContent, {
   domoticzAlternativeFaqEn,
   domoticzAlternativeFaqFr,
+  domoticzAlternativeFaqDe,
 } from "../data/domoticzAlternativeData";
 
 export default function DomoticzAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = domoticzAlternativeContent[lang];
-  const faq = lang === "fr" ? domoticzAlternativeFaqFr : domoticzAlternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? domoticzAlternativeFaqFr
+      : lang === "de"
+        ? domoticzAlternativeFaqDe
+        : domoticzAlternativeFaqEn;
 
   return (
     <UseCasePage
