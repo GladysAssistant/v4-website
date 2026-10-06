@@ -474,11 +474,12 @@ export function getOgImageUrl(pageUrl, lang) {
 // are the page's own meta title and description.
 export function getGuidePageSchema(
   lang,
-  { path, content, faqEn, faqFr, about },
+  { path, content, faqEn, faqFr, faqDe, about },
 ) {
   const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}${path}`;
-  const meta = content[lang === "fr" ? "fr" : "en"].meta;
+  const meta = (content[lang] || content.en).meta;
+  const faq = { fr: faqFr, de: faqDe }[lang] || faqEn;
 
   return {
     "@context": "https://schema.org",
@@ -492,7 +493,7 @@ export function getGuidePageSchema(
         description: meta.description,
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: content[lang] ? lang : "en",
         isPartOf: { "@id": `${SITE_URL}/#website` },
         author: {
           "@type": "Person",
@@ -501,7 +502,7 @@ export function getGuidePageSchema(
         publisher: { "@id": `${SITE_URL}/#organization` },
         about,
       },
-      toFaqPage(lang === "fr" ? faqFr : faqEn, pageUrl),
+      toFaqPage(faq, pageUrl),
     ],
   };
 }
