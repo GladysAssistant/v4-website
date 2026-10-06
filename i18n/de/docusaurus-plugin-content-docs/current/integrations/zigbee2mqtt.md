@@ -68,7 +68,7 @@ Wir empfehlen dir einen USB-Hub mit eigener Stromversorgung.
 Mehr dazu liest du auf der Website von Zigbee2MQTT: [Zigbee2MQTT fails to start](https://www.zigbee2mqtt.io/guide/installation/20_zigbee2mqtt-fails-to-start.html)
 :::
 
-## Einen Netzwerk-Koordinator verwenden {#use-a-network-coordinator}
+## Einen Netzwerk-Koordinator verwenden {/* #use-a-network-coordinator */}
 
 Seit Gladys 5 muss der Koordinator nicht mehr im Rechner mit Gladys stecken. Ein Netzwerk-Koordinator (SMLIGHT SLZB-06/SLZB-07, ZigStar…) verbindet sich per Ethernet oder WLAN, sodass du ihn mitten in deinem Zuhause platzieren kannst, weit weg von deinem Server und von Störquellen. Gladys installiert und verwaltet Zigbee2MQTT weiterhin für dich.
 

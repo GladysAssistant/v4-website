@@ -24,7 +24,7 @@ Wenn du ein Dashboard erstellst, kann es „privat“ oder „öffentlich“ sei
 
 ![Ein Dashboard erstellen](../../../../../static/img/docs/en/dashboard/create-dashboard.png)
 
-### Tablet-Modus {#tablet-mode}
+### Tablet-Modus {/* #tablet-mode */}
 
 Wenn du Gladys irgendwo in deinem Zuhause auf einem Touchscreen-Tablet nutzt, möchtest du das Gladys-Dashboard wahrscheinlich im Vollbildmodus anzeigen, ohne dass man diesen Bildschirm verlassen kann.
 

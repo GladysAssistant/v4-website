@@ -25,7 +25,7 @@ Im Hintergrund nutzt Gladys große Sprachmodelle (LLMs), die natürliche Sprache
 
 Das LLM versteht eine Vielzahl von Anfragen: Geräte steuern, Sensoren auslesen, Szenen starten oder erstellen, Kamerabilder analysieren, um Rat fragen und vieles mehr. Je mehr Geräte du in Gladys hast, desto mehr kann Gladys für dich tun.
 
-## Beispiele {#examples}
+## Beispiele {/* #examples */}
 
 - „Schalte das Licht in der Küche ein“
 - „Wie warm ist es im Garten?“

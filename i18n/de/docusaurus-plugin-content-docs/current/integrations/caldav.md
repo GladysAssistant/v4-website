@@ -29,7 +29,7 @@ Die meisten Dienste verlangen ein App-spezifisches Passwort statt deines Hauptpa
 4. [Nextcloud](#nextcloud)
 5. [Andere](#others)
 
-### iCloud {#icloud}
+### iCloud {/* #icloud */}
 
 Melde dich bei deinem Apple-Account an: [https://appleid.apple.com](https://appleid.apple.com)
 
@@ -58,7 +58,7 @@ Klicke auf „Speichern“.
 
 Erscheint eine Bestätigungsmeldung, synchronisiert Gladys deinen Kalender. Erscheint ein Fehler, prüfe die vorherigen Schritte und versuche es erneut.
 
-### Google Calendar {#google-calendar}
+### Google Calendar {/* #google-calendar */}
 
 Melde dich bei deinem Google-Konto an: [https://myaccount.google.com/](https://myaccount.google.com/)
 
@@ -85,7 +85,7 @@ Gehe zum Bereich „Sicherheit“ und klicke auf „App-Passwörter“.
 
 Klicke auf „Speichern“. Erscheint eine Bestätigungsmeldung, synchronisiert Gladys deinen Kalender. Erscheint ein Fehler, prüfe die vorherigen Schritte und versuche es erneut.
 
-### Synology Calendar {#synology-calendar}
+### Synology Calendar {/* #synology-calendar */}
 
 Öffne auf deiner Synology die Anwendung „Calendar“.
 
@@ -115,7 +115,7 @@ Klicke auf „Speichern“.
 
 Erscheint eine Bestätigungsmeldung, synchronisiert Gladys deinen Kalender. Erscheint ein Fehler, prüfe die vorherigen Schritte und versuche es erneut.
 
-### Nextcloud {#nextcloud}
+### Nextcloud {/* #nextcloud */}
 
 1. Öffne auf deiner Nextcloud-Instanz die Einstellungen und klicke auf den Bereich „Sicherheit“
 2. Gib unten „Gladys“ ein und klicke auf „Neues App-Passwort erstellen“
@@ -147,7 +147,7 @@ Klicke auf „Speichern“.
 
 Erscheint eine Bestätigungsmeldung, synchronisiert Gladys deinen Kalender. Erscheint ein Fehler, prüfe die vorherigen Schritte und versuche es erneut.
 
-### Andere {#others}
+### Andere {/* #others */}
 
 Für alle anderen Dienste:
 

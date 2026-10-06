@@ -33,7 +33,7 @@ Es sollte eine leere Liste laufender Container angezeigt werden.
 
 Falls du Probleme bei der Installation von Docker hast, wirf einen Blick in die [Docker-Dokumentation](https://docs.docker.com/) und suche dort nach der Anleitung für dein System.
 
-## Gladys starten {#start-gladys}
+## Gladys starten {/* #start-gladys */}
 
 Mit diesem Befehl startest du einen Gladys-Container:
 
@@ -72,7 +72,7 @@ Hinweise:
 - `-v /run/dbus:/run/dbus:ro` => Gibt Gladys Zugriff auf den Systembus des Hosts. Darüber kannst du den Rechner in den Systemeinstellungen neu starten oder herunterfahren, und das ist die Voraussetzung für Bluetooth: Sowohl das Koppeln eines Matter-Geräts über BLE als auch das Auslesen von Bluetooth-Sensoren laufen über BlueZ, das nur über diesen Bus erreichbar ist. Auf dem Host muss BlueZ installiert sein (`sudo apt install bluez` unter Debian und Ubuntu).
 - `TZ=Europe/Paris` => Zeitzone, die der Container verwendet. Falls du diesen Wert ändern musst, findest du in [dieser Liste](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) auf Wikipedia alle möglichen Werte.
 
-## Gladys mit Watchtower automatisch aktualisieren {#auto-upgrade-gladys-with-watchtower}
+## Gladys mit Watchtower automatisch aktualisieren {/* #auto-upgrade-gladys-with-watchtower */}
 
 Mit Watchtower kannst du Gladys automatisch aktualisieren, sobald eine neue Version verfügbar ist. Starte dazu einen Watchtower-Container:
 
@@ -85,7 +85,7 @@ sudo docker run -d \
   --cleanup --include-restarting
 ```
 
-## Gladys aufrufen {#accessing-gladys}
+## Gladys aufrufen {/* #accessing-gladys */}
 
 Öffne **`http://gladysassistant.local`** in deinem Browser. Gladys macht diesen Namen per mDNS in deinem lokalen Netzwerk bekannt, sodass du es von jedem Gerät im selben Netzwerk erreichst, ohne jemals eine IP-Adresse heraussuchen zu müssen.
 

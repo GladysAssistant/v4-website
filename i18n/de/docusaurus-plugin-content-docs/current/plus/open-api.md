@@ -15,7 +15,7 @@ Um die Open API zu nutzen, brauchst du ein kostenpflichtiges Gladys-Plus-Abo.
 
 Du kannst es [hier](/de/plus) abschließen.
 
-## Einen neuen API-Schlüssel erzeugen {#generate-a-new-api-key}
+## Einen neuen API-Schlüssel erzeugen {/* #generate-a-new-api-key */}
 
 Zuerst musst du in Gladys Plus einen neuen API-Schlüssel erstellen.
 

@@ -109,7 +109,7 @@ Die Oberfläche von Gladys 4 ist eine [Preact](https://preactjs.com/)-Anwendung 
 
 Um der Oberfläche eine Funktion hinzuzufügen, legst du eine Route und ihre Komponenten an oder bearbeitest sie, verbindest den Zustand über `actions` und trägst jede verwendete Beschriftung in alle Dateien `front/src/config/i18n/<lang>.json` ein, damit die Oberfläche vollständig übersetzt bleibt (Englisch und Französisch sind die Referenzsprachen).
 
-## Deine Änderungen testen {#testing-your-changes}
+## Deine Änderungen testen {/* #testing-your-changes */}
 
 Ein zentrales Ziel von Gladys Assistant ist es, eine extrem stabile und zuverlässige Software zu sein. Deshalb muss der gesamte Code von Gladys getestet sein.
 
