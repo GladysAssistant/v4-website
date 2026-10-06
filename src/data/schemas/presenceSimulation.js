@@ -5,10 +5,10 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { presenceFaqEn, presenceFaqFr } from "../presenceSimulationData";
+import { presenceFaqEn, presenceFaqFr, presenceFaqDe } from "../presenceSimulationData";
 
 export function getPresenceSimulationPageSchema(lang) {
-  const prefix = lang === "fr" ? "/fr" : "";
+  const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}/presence-simulation/`;
 
   return {
@@ -22,14 +22,18 @@ export function getPresenceSimulationPageSchema(lang) {
         headline:
           lang === "fr"
             ? "Simulation de présence : faites croire que votre maison est occupée"
-            : "Presence simulation: make your home look occupied while away",
+            : lang === "de"
+              ? "Anwesenheitssimulation: Lass dein Zuhause bewohnt wirken, wenn du weg bist"
+              : "Presence simulation: make your home look occupied while away",
         description:
           lang === "fr"
             ? "Mettez en place une simulation de présence avec Gladys : allumez et éteignez aléatoirement lumières, volets et TV pendant votre absence pour dissuader les cambrioleurs, avec des scènes locales, gratuites et privées."
-            : "Set up presence simulation with Gladys: randomly turn lights, shutters and TV on and off while you're away to deter burglars, all built from local scenes, free and private.",
+            : lang === "de"
+              ? "Richte mit Gladys eine Anwesenheitssimulation ein: Licht, Rollläden und TV schalten sich in deiner Abwesenheit zufällig ein und aus und schrecken Einbrecher ab, mit lokalen Szenen, kostenlos und privat."
+              : "Set up presence simulation with Gladys: randomly turn lights, shutters and TV on and off while you're away to deter burglars, all built from local scenes, free and private.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: lang,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         author: {
           "@type": "Person",
@@ -42,7 +46,7 @@ export function getPresenceSimulationPageSchema(lang) {
           { "@type": "SoftwareApplication", name: "Gladys Assistant" },
         ],
       },
-      toFaqPage(lang === "fr" ? presenceFaqFr : presenceFaqEn, pageUrl),
+      toFaqPage(lang === "fr" ? presenceFaqFr : lang === "de" ? presenceFaqDe : presenceFaqEn, pageUrl),
     ],
   };
 }

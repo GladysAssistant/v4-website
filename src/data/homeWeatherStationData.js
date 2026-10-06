@@ -319,6 +319,160 @@ const homeWeatherStationContent = {
       },
     },
   },
+
+  // German: no amazon.de affiliate tag is configured yet, so the product links
+  // reuse the English (amazon.com) affiliate search links.
+  de: {
+    meta: {
+      title: "Wetterstation fürs Smart Home (Zigbee, Matter, Netatmo)",
+      description:
+        "Welche Wetterstation passt zum lokalen Smart Home? Ratgeber für Wettersensoren mit Gladys: Zigbee- und Matter-Sensoren, Netatmo und OpenWeather.",
+    },
+    hero: {
+      title: "Die beste Wetterstation für dein Smart Home",
+      subtitle:
+        "So misst du Temperatur, Luftfeuchtigkeit und mehr zu Hause, und zwar so, dass es wirklich mit Gladys funktioniert: komplett lokal mit Zigbee- und Matter-Sensoren oder mit einer vernetzten Wetterstation.",
+      intro: [
+        "Eine Wetterstation zeigt dir, was drinnen und draußen los ist: Temperatur, Luftfeuchtigkeit, Luftdruck und manchmal auch Wind und Regen. Die meisten handelsüblichen Wetterstationen sperren ihre Daten aber in die App und Cloud des Herstellers, und das passt schlecht zu einem lokalen Smart Home.",
+        "Mit Gladys Assistant hast du zwei gute Möglichkeiten. Die lokalste: Du baust deine eigene Station aus Zigbee- und Matter-Sensoren, die Gladys direkt in deinem Netzwerk ausliest. Wenn du eine fertige Station mit Wind- und Regenmesser willst, bindest du die Netatmo Wetterstation über ihre Integration an. Dieser Ratgeber deckt beides ab.",
+      ],
+      primaryCta: { label: "Lokale Sensoren ansehen", href: "#local" },
+      secondaryCta: {
+        label: "Mit Gladys loslegen →",
+        href: "/de/docs/",
+      },
+    },
+    criteria: {
+      title: "Worauf du bei einer smarten Wetterstation achten solltest",
+      intro:
+        "Vor dem Kauf sind ein paar Punkte wichtiger als die Anzahl der Funktionen auf der Verpackung:",
+      points: [
+        "Lokal oder Cloud: Kannst du die Daten in deinem eigenen Netzwerk auslesen, oder existieren sie nur in der App des Herstellers? Ein lokaler Sensor funktioniert auch ohne Internet weiter und hängt nie von einer Cloud ab, die abgeschaltet werden könnte.",
+        "Innen und außen: Für ein echtes Wetterbild brauchst du meist mindestens einen Innen- und einen Außensensor (Temperatur und Luftfeuchtigkeit, idealerweise auch Luftdruck).",
+        "Protokoll: Für ein lokales Setup setzt du am besten auf Zigbee (über Zigbee2MQTT) oder Matter. Beide sind offen und erlauben Gladys, die Werte direkt auszulesen.",
+        "Extras: Nur wenige Produkte messen Wind und Regen. Wenn du das brauchst, ist eine vernetzte Station wie Netatmo heute die realistische Wahl.",
+        "Akkulaufzeit und Reichweite: Außensensoren laufen mit Batterie und stehen weit vom Haus entfernt. Eine gute Batterielaufzeit und Reichweite sind daher entscheidend für die Zuverlässigkeit.",
+      ],
+      outro:
+        "Die gute Nachricht: Egal, welchen Weg du unten wählst, Gladys bringt alle Messwerte in ein Dashboard und lässt dich darauf basierend automatisieren.",
+    },
+    local: {
+      title: "Der lokale Weg: Zigbee- und Matter-Sensoren",
+      intro:
+        "Das ist die lokalste Variante: Stell dir deine eigene Wetterstation aus Sensoren zusammen, die Gladys direkt ausliest, ganz ohne Hersteller-Cloud. Diese Modelle werden über Zigbee2MQTT oder Matter unterstützt:",
+      items: [
+        {
+          name: "Aqara Temperatur- und Feuchtigkeitssensor",
+          tag: "Bester Innensensor, Zigbee",
+          text: "Ein winziger, günstiger Zigbee-Sensor, der Temperatur, Luftfeuchtigkeit und Luftdruck meldet. Eines der Geräte, die wir für Gladys ohnehin empfehlen. Wird über Zigbee2MQTT gekoppelt.",
+          buyHref: amazonUS("Aqara Temperature and Humidity Sensor"),
+          buyLabel: "Bei Amazon ansehen →",
+          docHref: "/de/docs/integrations/zigbee2mqtt/",
+          docLabel: "Zigbee-Geräte koppeln",
+        },
+        {
+          name: "SONOFF SNZB-02D",
+          tag: "Innen mit Display, Zigbee",
+          text: "Ein Zigbee-Temperatur- und Feuchtigkeitssensor mit E-Ink-Display, sodass du die Werte auch direkt an der Wand ablesen kannst. Zuverlässig und günstig, wird über Zigbee2MQTT gekoppelt.",
+          buyHref: amazonUS("SONOFF SNZB-02D Zigbee temperature humidity sensor"),
+          buyLabel: "Bei Amazon ansehen →",
+        },
+        {
+          name: "OWON THS-317-ET",
+          tag: "Außenfühler, Zigbee",
+          text: "Ein Zigbee-Temperatursensor mit wasserdichtem externem Fühler, ideal, um die Außentemperatur oder die Temperatur in Kühl- und Gefrierschrank zu messen. Im Zigbee-Katalog von Gladys gelistet.",
+          buyHref: amazonUS("OWON THS-317-ET Zigbee temperature sensor"),
+          buyLabel: "Bei Amazon ansehen →",
+        },
+        {
+          name: "Eve Weather",
+          tag: "Matter over Thread",
+          text: "Ein wetterfester Außensensor, der Temperatur, Luftfeuchtigkeit und Luftdruck misst. Er spricht Thread und Matter, sodass Gladys ihn über die Matter-Integration lokal auslesen kann.",
+          buyHref: amazonUS("Eve Weather Matter Thread"),
+          buyLabel: "Bei Amazon ansehen →",
+          docHref: "/de/docs/integrations/matter/",
+          docLabel: "So funktioniert Matter",
+        },
+      ],
+      outro:
+        "Zum Koppeln der Zigbee-Sensoren brauchst du nur einen Zigbee-Stick. In unserem Ratgeber erfährst du, welcher der richtige ist.",
+    },
+    cloud: {
+      title: "Der Weg über vernetzte Stationen: Netatmo und OpenWeather",
+      intro:
+        "Du willst eine fertige Station mit Wind- und Regenmesser oder Wetterdaten ganz ohne Hardware? Auch diese Lösungen lassen sich mit Gladys verbinden:",
+      items: [
+        {
+          name: "Netatmo Wetterstation",
+          tag: "Komplettstation, Wind und Regen",
+          text: "Eine vollständige vernetzte Wetterstation: Innen- und Außenmodul, optional mit Wind- und Regenmesser. Sie läuft über die Netatmo-Cloud, und Gladys liest ihre Werte über die Netatmo-Integration aus. Die realistische Wahl, wenn du heute Wind und Regen messen willst.",
+          buyHref: amazonUS("Netatmo Weather Station"),
+          buyLabel: "Bei Amazon ansehen →",
+          docHref: "/de/docs/integrations/external/netatmo/",
+          docLabel: "Netatmo-Integration",
+        },
+        {
+          name: "OpenWeather (ohne Hardware)",
+          tag: "Kostenlose Wettervorhersage",
+          text: "Wenn du einfach nur die aktuellen Bedingungen und die Vorhersage für deinen Standort möchtest, holt die OpenWeather-Integration die Wetterdaten kostenlos in Gladys, ganz ohne Sensorkauf. Ideal als Ergänzung zu deinen eigenen Sensoren.",
+          docHref: "/de/docs/integrations/openweather/",
+          docLabel: "OpenWeather einrichten →",
+        },
+      ],
+      outro:
+        "Cloud-Stationen sind bequem und haben viele Funktionen, hängen aber von den Servern des Herstellers ab. Für alles, was auch offline weiterlaufen soll, sind die lokalen Sensoren oben die bessere Wahl.",
+    },
+    gladys: {
+      title: "Warum du deine Wetterstation in Gladys einbinden solltest",
+      paragraphs: [
+        "Für sich allein lebt jeder Sensor und jede Station in einer eigenen App. Mit Gladys landen alle Innen- und Außenwerte in einem lokalen Dashboard, direkt neben allen anderen Geräten in deinem Zuhause, und der Verlauf bleibt auf deiner eigenen Hardware.",
+        "Darauf aufbauend automatisierst du nach dem Wetter: Rollos schließen, wenn es zu heiß wird, die Heizung hochdrehen, wenn die Außentemperatur fällt, vor einer kalten Nacht eine Frostwarnung schicken oder einen Ventilator einschalten, wenn die Luftfeuchtigkeit drinnen steigt.",
+      ],
+      link: { label: "Lokale Open-Source-Hausautomation entdecken →", href: "/de/open-source-home-automation/" },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro:
+        "Wettersensoren hinzuzufügen ist ein Baustein auf dem Weg zum lokalen Smart Home:",
+      links: [
+        {
+          label: "Zigbee-Geräte mit Gladys verbinden",
+          href: "/de/docs/integrations/zigbee2mqtt/",
+          text: "Die Schritt-für-Schritt-Anleitung, um Zigbee-Sensoren mit Zigbee2MQTT zu koppeln.",
+        },
+        {
+          label: "Der beste Zigbee-USB-Stick",
+          href: "/de/best-zigbee-dongle/",
+          text: "Welchen Zigbee-Koordinator du kaufen solltest, um deine Wettersensoren lokal zu koppeln.",
+        },
+        {
+          label: "IKEA Smart Home mit Gladys",
+          href: "/de/ikea-smart-home/",
+          text: "Steuere deine IKEA-Geräte von Tradfri und Dirigera lokal, über Zigbee2MQTT oder Matter.",
+        },
+        {
+          label: "Netatmo in Gladys",
+          href: "/de/docs/integrations/external/netatmo/",
+          text: "Verbinde eine Netatmo Wetterstation und lies ihre Module in Gladys aus.",
+        },
+        {
+          label: "Empfohlene Hardware",
+          href: "/de/docs/installation/recommended-hardware/",
+          text: "Die vollständige Liste der Zigbee-Geräte, die wir für ein zuverlässiges Gladys-Zuhause empfehlen.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Bau deine lokale Wetterstation",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Kopple ein paar Sensoren, lies das Raumklima deines Zuhauses lokal aus und lass Automatisierungen darauf reagieren.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: {
+        label: "Zigbee2MQTT einrichten",
+        href: "/de/docs/integrations/zigbee2mqtt/",
+      },
+    },
+  },
 };
 
 export const homeWeatherStationFaqEn = [
@@ -374,6 +528,34 @@ export const homeWeatherStationFaqFr = [
     question: "Puis-je automatiser ma maison en fonction de la météo ?",
     answer:
       "Oui, c'est la principale raison d'intégrer les données météo à Gladys. Vous pouvez fermer les stores quand il fait trop chaud, monter le chauffage quand la température extérieure baisse, envoyer une alerte gel avant une nuit froide, ou lancer un ventilateur quand l'humidité intérieure grimpe.",
+  },
+];
+
+export const homeWeatherStationFaqDe = [
+  {
+    question: "Kann ich eine Wetterstation mit Gladys lokal nutzen, ohne Cloud?",
+    answer:
+      "Ja. Die lokalste Variante ist, dir deine eigene Station aus Zigbee- oder Matter-Sensoren zu bauen. Zigbee-Sensoren wie der Aqara Temperatur- und Feuchtigkeitssensor oder der Sonoff SNZB-02D werden über Zigbee2MQTT gekoppelt, und ein Matter-Sensor wie der Eve Weather wird über dein Netzwerk ausgelesen. Gladys liest sie direkt aus, ohne Hersteller-Cloud, sodass sie auch offline weiterlaufen.",
+  },
+  {
+    question: "Welche Wettersensoren funktionieren mit Gladys?",
+    answer:
+      "Jeder Zigbee-Sensor für Temperatur, Luftfeuchtigkeit oder Luftdruck, den Zigbee2MQTT unterstützt, funktioniert, darunter Modelle von Aqara, Sonoff und OWON. Ebenso jeder Matter-Sensor für Temperatur oder Luftfeuchtigkeit wie der Eve Weather. Für eine Komplettstation mit Wind und Regen wird die Netatmo Wetterstation über ihre Integration angebunden.",
+  },
+  {
+    question: "Funktioniert Gladys mit der Netatmo Wetterstation?",
+    answer:
+      "Ja. Gladys hat eine Netatmo-Integration, die dein Innen- und Außenmodul ausliest, einschließlich des optionalen Wind- und Regenmessers. Beachte, dass Netatmo auf seine Cloud angewiesen ist: Anders als lokale Zigbee- oder Matter-Sensoren braucht die Station eine Internetverbindung.",
+  },
+  {
+    question: "Kann ich in Gladys Wetterdaten bekommen, ohne einen Sensor zu kaufen?",
+    answer:
+      "Ja. Die OpenWeather-Integration holt die aktuellen Bedingungen und die Vorhersage für deinen Standort kostenlos und ohne Hardware in Gladys. Eine ideale Ergänzung zu deinen eigenen Innen- und Außensensoren.",
+  },
+  {
+    question: "Kann ich mein Zuhause wetterabhängig automatisieren?",
+    answer:
+      "Ja, genau dafür holst du die Wetterdaten in Gladys. Du kannst die Rollos schließen, wenn es zu heiß wird, die Heizung hochdrehen, wenn die Außentemperatur fällt, vor einer kalten Nacht eine Frostwarnung schicken oder einen Ventilator starten, wenn die Luftfeuchtigkeit drinnen steigt.",
   },
 ];
 

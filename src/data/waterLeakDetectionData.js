@@ -264,6 +264,135 @@ const waterLeakDetectionContent = {
       secondary: { label: "Guide Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Wassermelder mit automatischer Absperrung, lokal",
+      description:
+        "Wasserschäden vermeiden: Zigbee-Wassermelder, ein motorisiertes Absperrventil und eine lokale Szene in Gladys. Ohne Abo, funktioniert auch ohne Internet.",
+    },
+    screenshotCaption:
+      "Wassermelder, Absperrventil und Alarmszene, Seite an Seite in Gladys.",
+    hero: {
+      title: "Wasserleck-Erkennung, die das Wasser für dich abdreht",
+      subtitle:
+        "Ein paar Zigbee-Wassermelder, ein motorisiertes Ventil an der Hauptwasserleitung und eine lokale Szene: Sekunden nach einem Leck ist das Wasser abgesperrt, auch wenn niemand zu Hause ist.",
+      intro: [
+        "Ein undichter Warmwasserspeicher, ein geplatzter Waschmaschinenschlauch oder ein eingefrorenes Rohr können in wenigen Stunden mehr Schaden anrichten als die meisten Einbrüche. Ein Melder, der nur piept, hilft wenig, wenn du gerade bei der Arbeit oder im Urlaub bist.",
+        "Mit Gladys Assistant, einer kostenlosen Open-Source-Plattform für dein Smart Home, die bei dir zu Hause läuft, kann jeder Wassermelder ein motorisiertes Ventil an deiner Hauptwasserleitung schließen, dir eine Benachrichtigung aufs Handy schicken und die betroffenen Geräte ausschalten. Alles läuft lokal: Die Absperrung funktioniert auch ohne Internet, und es gibt keine monatlichen Kosten.",
+      ],
+      primaryCta: { label: "Kostenlos loslegen", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Zigbee2MQTT einrichten →",
+        href: "/de/docs/integrations/zigbee2mqtt/",
+      },
+    },
+    problem: {
+      title: "Warum ein piepender Melder nicht reicht",
+      intro: "Die meisten Wassermelder auf dem Markt haben dieselben Grenzen:",
+      points: [
+        "Sie warnen dich, aber nichts stoppt das Wasser, bis jemand nach Hause kommt.",
+        "Smarte Absperrsysteme brauchen oft einen eigenen Hub, eine eigene App und manchmal ein Abo.",
+        "Cloud-basierte Systeme sind auf das Internet und die Server des Herstellers angewiesen, um zu reagieren.",
+        "Jede Marke lebt in ihrer eigenen App: Der Melder unter der Spüle kann nicht mit dem Ventil einer anderen Marke sprechen.",
+      ],
+      outro:
+        "Was du eigentlich willst: jeder Melder, jedes Ventil, eine Regel, die immer greift. Genau dafür ist lokale Hausautomation da.",
+    },
+    features: {
+      title: "Was du mit Gladys bauen kannst",
+      intro: "Wassermelder und Ventile werden zu ganz normalen Gladys-Geräten:",
+      cards: [
+        {
+          icon: "💧",
+          title: "Wassermelder überall",
+          text: "Unter Spülen, hinter der Waschmaschine, neben dem Warmwasserspeicher und dem Heizkessel: Zigbee-Wassermelder sind klein, günstig und laufen jahrelang mit einer Batterie.",
+        },
+        {
+          icon: "🚰",
+          title: "Automatische Absperrung",
+          text: "Ein motorisiertes Ventil an der Hauptleitung schließt, sobald ein Melder Wasser erkennt, ohne auf dich zu warten.",
+        },
+        {
+          icon: "📱",
+          title: "Sofortbenachrichtigungen",
+          text: "Eine Telegram-Nachricht, eine SMS oder ein anderer Benachrichtigungskanal sagt dir, welcher Melder ausgelöst hat.",
+        },
+        {
+          icon: "🔌",
+          title: "Geräte abschalten",
+          text: "Schalte in derselben Szene die smarte Steckdose der betroffenen Waschmaschine oder Spülmaschine ab.",
+        },
+        {
+          icon: "🔋",
+          title: "Batterieüberwachung",
+          text: "Batteriestände werden wie jeder andere Wert erfasst: Eine Szene kann dich warnen, wenn eine Batterie schwach wird, und der wöchentliche KI-Bericht (Gladys Plus) meldet Sensoren, die verstummt sind.",
+        },
+        {
+          icon: "🏠",
+          title: "Funktioniert ohne Internet",
+          text: "Melder, Ventil und Szene laufen alle in deinem lokalen Netzwerk: Das Wasser wird auch dann abgesperrt, wenn das Internet ausfällt.",
+        },
+      ],
+    },
+    how: {
+      title: "So richtest du es ein",
+      intro: "Auf einem Mini-PC oder einem Raspberry Pi mit Gladys:",
+      points: [
+        "Schließe einen Zigbee-Koordinator an und aktiviere Zigbee2MQTT in Gladys.",
+        "Kopple Zigbee-Wassermelder (Aqara, Third Reality, Sinopé WL4200, Tuya und viele weitere werden von Zigbee2MQTT unterstützt) und platziere sie dort, wo Lecks entstehen.",
+        "Installiere ein motorisiertes Ventil an der Hauptwasserleitung, etwa ein Sinopé-Sedna-Ventil, den Aqara Valve Controller T1 oder eine andere von Zigbee2MQTT unterstützte Zigbee-Ventilsteuerung, und kopple es.",
+        "Erstelle eine Szene: Sobald ein Wassermelder Wasser erkennt, schließt das Ventil, du bekommst eine Benachrichtigung und die betroffenen Geräte werden ausgeschaltet.",
+        "Teste das Ganze mit einem feuchten Tuch auf einem Melder und prüfe, ob das Ventil schließt.",
+      ],
+      outro:
+        "Lass das Ventil an der Hauptleitung von einem Installateur einbauen, wenn du dir das nicht selbst zutraust.",
+    },
+    solution: {
+      title: "Jeder Melder, jedes Ventil, eine lokale Regel",
+      paragraphs: [
+        "Da Gladys mit Zigbee-, Z-Wave-, Matter- und WLAN-Geräten spricht, bist du nicht an das Set einer einzigen Marke gebunden: Kombiniere die Melder und das Ventil, die zu deinem Zuhause und deinem Budget passen.",
+        "Gladys ist kostenlos und Open Source. Das optionale Gladys Plus ergänzt verschlüsselten Fernzugriff und Backups, die Absperrung selbst hängt aber nie davon ab.",
+      ],
+      link: {
+        label: "Bau dir auch eine DIY-Alarmanlage →",
+        href: "/de/diy-home-alarm-system/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Schütze dein Zuhause mit lokalen Automatisierungen:",
+      links: [
+        {
+          label: "DIY-Alarmanlage",
+          href: "/de/diy-home-alarm-system/",
+          text: "Eine selbst überwachte Alarmanlage, die lokal läuft, ohne Vertrag.",
+        },
+        {
+          label: "Zigbee2MQTT ohne Home Assistant",
+          href: "/de/zigbee2mqtt-without-home-assistant/",
+          text: "Lokales Zigbee mit verwaltetem Setup und Dashboards.",
+        },
+        {
+          label: "Aqara-Sensoren ohne Hub",
+          href: "/de/aqara-without-hub/",
+          text: "Aqara-Wassermelder und -Türsensoren lokal nutzen.",
+        },
+        {
+          label: "Der beste Zigbee-USB-Stick",
+          href: "/de/best-zigbee-dongle/",
+          text: "Welchen Zigbee-Koordinator du kaufen solltest.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Stopp Lecks, bevor sie zur Überschwemmung werden",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Kopple deine Melder und dein Ventil und lass die Szene über dein Zuhause wachen.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: { label: "Zigbee2MQTT-Anleitung", href: "/de/docs/integrations/zigbee2mqtt/" },
+    },
+  },
 };
 
 export const waterLeakDetectionFaqEn = [
@@ -319,6 +448,34 @@ export const waterLeakDetectionFaqFr = [
     question: "Y a-t-il un abonnement ?",
     answer:
       "Non. Gladys est gratuite et open source, et détecteurs comme vanne s'achètent une seule fois. Gladys Plus est optionnel, pour l'accès distant chiffré et les sauvegardes.",
+  },
+];
+
+export const waterLeakDetectionFaqDe = [
+  {
+    question: "Kann ein smarter Wassermelder das Wasser automatisch absperren?",
+    answer:
+      "Ja, wenn er mit einem motorisierten Ventil an der Hauptwasserleitung kombiniert wird. Mit Gladys Assistant kann jeder unterstützte Wassermelder eine Szene auslösen, die das Ventil schließt, dich benachrichtigt und Geräte abschaltet, lokal und ohne Abo.",
+  },
+  {
+    question: "Funktioniert die automatische Wasserabsperrung ohne Internet?",
+    answer:
+      "Mit Gladys ja. Die Zigbee-Melder, das Ventil und die Szene laufen alle in deinem lokalen Netzwerk, das Wasser wird also auch abgesperrt, wenn deine Internetverbindung ausfällt. Nur die Benachrichtigung aufs Handy braucht Internet.",
+  },
+  {
+    question: "Welche Wassermelder und Ventile funktionieren mit Gladys?",
+    answer:
+      "Jeder Zigbee-Wassermelder und jede Ventilsteuerung, die Zigbee2MQTT unterstützt, etwa Wassermelder von Aqara, Third Reality und Tuya, Sinopé-WL4200-Sensoren, Sinopé-Sedna-Ventile und der Aqara Valve Controller T1. Je nach Funktionsumfang lassen sich auch Matter- und Z-Wave-Geräte nutzen.",
+  },
+  {
+    question: "Wo sollte ich Wassermelder platzieren?",
+    answer:
+      "Überall dort, wo Wasser auslaufen kann: unter Küchen- und Badspülen, hinter Waschmaschine und Spülmaschine, neben Warmwasserspeicher, Heizkessel und Wasserenthärter sowie in der Nähe des Hauptwasseranschlusses.",
+  },
+  {
+    question: "Gibt es eine monatliche Gebühr?",
+    answer:
+      "Nein. Gladys ist kostenlos und Open Source, Melder und Ventil kaufst du einmalig. Gladys Plus ist optional und bietet verschlüsselten Fernzugriff und Backups.",
   },
 ];
 

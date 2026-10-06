@@ -8,6 +8,7 @@ import { getIkeaSmartHomePageSchema } from "../data/schemas/ikeaSmartHome";
 import ikeaSmartHomeContent, {
   ikeaSmartHomeFaqEn,
   ikeaSmartHomeFaqFr,
+  ikeaSmartHomeFaqDe,
 } from "../data/ikeaSmartHomeData";
 
 import styles from "./comparison.module.css";
@@ -176,9 +177,9 @@ function IkeaContent({ content, faq }) {
 
 export default function IkeaSmartHomePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = ikeaSmartHomeContent[lang];
-  const faq = lang === "fr" ? ikeaSmartHomeFaqFr : ikeaSmartHomeFaqEn;
+  const faq = lang === "fr" ? ikeaSmartHomeFaqFr : lang === "de" ? ikeaSmartHomeFaqDe : ikeaSmartHomeFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

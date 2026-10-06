@@ -371,6 +371,189 @@ const alarmContent = {
       secondary: { label: "Voir le guide de l'alarme", href: "/docs/dashboard/alarm/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Alarmanlage selber bauen: lokal und ohne Vertrag",
+      description:
+        "Bau dir eine DIY-Alarmanlage ohne Überwachungsvertrag: eigene Hardware, lokal, mit Scharf-, Teil- und Panikmodus und Sofortalarm aufs Handy.",
+    },
+    screenshotCaption:
+      "Schalte dein Zuhause in Gladys scharf oder unscharf und behalte es im Blick, lokal und nach deinen Regeln.",
+    hero: {
+      title: "Bau dir deine eigene Alarmanlage, lokal und privat",
+      subtitle:
+        "Eine echte DIY-Alarmanlage mit Bewegungsmeldern, Türkontakten, Kameras und Sofortbenachrichtigungen, die lokal auf Hardware läuft, die dir gehört und die du kontrollierst.",
+      intro: [
+        "Klassische Alarmanlagen binden dich an proprietäre Hardware, die Cloud eines Unternehmens und Regeln, die du nicht ändern kannst. Die Sicherheit deines Zuhauses sollte keine Blackbox sein, die du von jemand anderem mietest.",
+        "Mit Gladys Assistant baust du aus günstigen Sensoren von der Stange eine echte Alarmanlage. Sie läuft lokal auf deinem eigenen Rechner, alarmiert dich sofort und verhält sich genau so, wie du es festlegst.",
+      ],
+      primaryCta: { label: "Kostenlos loslegen", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Anleitung zur Alarmanlage →",
+        href: "/de/docs/dashboard/alarm/",
+      },
+    },
+    problem: {
+      title: "Das Problem mit klassischen Alarmanlagen mit Überwachungsdienst",
+      intro: "Fertige Alarmanlagen mit Überwachungsdienst (Verisure, Ring Alarm und Co.) sind bequem, aber die Kompromisse sind groß:",
+      points: [
+        "Proprietäre Hardware und Sensoren, die an einen einzigen Anbieter gebunden sind.",
+        "Deine Sicherheitsdaten und Kamerabilder laufen über die Cloud eines Unternehmens.",
+        "Starre Szenarien: Es gelten ihre Regeln, nicht deine.",
+        "Ändert das Unternehmen seine Bedingungen oder stellt den Betrieb ein, kann dein System nutzlos werden.",
+        "Das System gehört dir nie wirklich, du mietest es nur.",
+      ],
+      outro:
+        "Eine selbst gehostete Alarmanlage dreht das alles um: deine Regeln, deine Hardware, deine Daten, und alles bleibt bei dir zu Hause.",
+    },
+    comparison: {
+      title: "Gladys-DIY-Alarmanlage vs. Alarmanlage im Überwachungsabo",
+      intro:
+        "So schlägt sich eine selbst gehostete Gladys-Alarmanlage im Vergleich zu einer klassischen Alarmanlage mit Überwachungsdienst (Verisure, Ring Alarm und ähnliche):",
+      cols: {
+        feature: "",
+        gladys: "Gladys-DIY-Alarmanlage",
+        other: "Alarmanlage im Überwachungsabo",
+      },
+      rows: [
+        {
+          feature: "Eigentum",
+          gladys: "Hardware und Installation gehören dir",
+          other: "Du mietest das ganze System",
+        },
+        {
+          feature: "Deine Daten",
+          gladys: "Bleiben in deinem lokalen Netzwerk",
+          other: "Laufen über ihre Cloud",
+        },
+        {
+          feature: "Funktioniert offline",
+          gladys: "Ja, komplett lokal",
+          other: "Eingeschränkt ohne ihren Dienst",
+        },
+        {
+          feature: "Sensoren & Hardware",
+          gladys: "Jeder Zigbee- oder Matter-Sensor, ganz nach deiner Wahl",
+          other: "Proprietär, an den Anbieter gebunden",
+        },
+        {
+          feature: "Regeln & Automatisierungen",
+          gladys: "Deine eigenen, frei anpassbar",
+          other: "Die des Anbieters, feste Szenarien",
+        },
+        {
+          feature: "Abo",
+          gladys: "Optional Gladys Plus für Fernzugriff, Backups und Kamera-Streaming",
+          other: "Pflicht, das System ist das Abo",
+        },
+        {
+          feature: "Wenn der Anbieter aufgibt",
+          gladys: "Läuft weiter, es gehört dir",
+          other: "Kann nutzlos werden",
+        },
+      ],
+      outro:
+        "Bei beiden kann ein Abo dazugehören. Der Unterschied liegt darin, was du dafür bekommst: Mit Gladys gehören dir Hardware und Installation, alles läuft lokal und deine Daten bleiben zu Hause, statt ein System zu mieten, über das du nie die Kontrolle hast.",
+    },
+    features: {
+      title: "Was deine Gladys-Alarmanlage kann",
+      intro: "Du bekommst eine echte Alarmanlage, zusammengesetzt aus einfachen, günstigen Komponenten:",
+      cards: [
+        {
+          icon: "🛡️",
+          title: "Scharf-, Teil- & Panikmodus",
+          text: "Schalte das ganze Haus scharf, wenn du gehst, nutze nachts den Teilmodus, um nur die Außenhaut zu überwachen, oder löse sofort einen Panikalarm aus.",
+        },
+        {
+          icon: "🚪",
+          title: "Bewegungsmelder & Türsensoren",
+          text: "Nutze günstige Zigbee-Bewegungsmelder und Tür-/Fensterkontakte als Auslöser, Marken beliebig kombinierbar.",
+        },
+        {
+          icon: "📷",
+          title: "Kamera-Schnappschüsse",
+          text: "Bei einem Einbruch schickt dir Gladys einen Kamera-Schnappschuss, damit du sofort siehst, was los ist.",
+        },
+        {
+          icon: "📲",
+          title: "Sofortbenachrichtigungen",
+          text: "Lass dich per Telegram, SMS oder über andere Kanäle benachrichtigen, sobald bei scharfer Anlage etwas auslöst.",
+        },
+        {
+          icon: "🔢",
+          title: "Codeeingabe & Aktivierungsverzögerung",
+          text: "Entschärfe die Anlage per Zahlencode über ein Wandtablet und stell eine Aktivierungsverzögerung ein, damit du das Haus verlassen kannst, bevor sie scharf wird.",
+        },
+        {
+          icon: "🔔",
+          title: "Sirenen & Abschreckung",
+          text: "Lass eine Sirene heulen, die Lichter blinken oder starte eine beliebige Szene: Wie die Anlage reagiert, legst du ganz allein fest.",
+        },
+      ],
+    },
+    how: {
+      title: "So funktioniert eine Gladys-Alarmanlage",
+      intro: "Du baust sie aus einfachen Bausteinen zusammen, ganz ohne Installateur:",
+      points: [
+        "Füge deinem Dashboard das Alarm-Widget hinzu, mit vier Modi: scharf, unscharf, teilweise scharf und Panik.",
+        "Leg in den Einstellungen deines Hauses einen Alarmcode und eine Aktivierungsverzögerung fest.",
+        "Erstelle eine Szene fürs Scharfschalten (dich benachrichtigen, Lichter blinken lassen) und die wichtigste Szene: die für den Einbruch.",
+        "Die Einbruchsszene wird durch eine Bewegung oder eine geöffnete Tür ausgelöst, mit der Bedingung, dass die Anlage scharf ist. Dann verschickt sie Benachrichtigungen und einen Kamera-Schnappschuss und lässt eine Sirene heulen.",
+        "Alles läuft lokal und reagiert in Echtzeit, selbst wenn dein Internet ausfällt.",
+      ],
+      outro: "Günstige Sensoren, deine eigenen Regeln und ein System, das dir komplett gehört.",
+    },
+    solution: {
+      title: "Lokal, privat und wirklich deins",
+      paragraphs: [
+        "Da Gladys auf deinem eigenen Rechner läuft, funktioniert deine Alarmanlage auch ohne Internet, und deine Sensordaten und Kamerabilder bleiben in deinem lokalen Netzwerk statt auf den Servern eines Sicherheitsunternehmens.",
+        "Der Kern von Gladys ist kostenlos und Open Source, dein gesamtes Setup gehört also dir. Wenn du von unterwegs nach dem Rechten sehen willst, ergänzt das optionale Gladys Plus einen verschlüsselten Fernzugriff und Kamera-Streaming, zu deinen Bedingungen und ohne deine Daten je an Dritte weiterzugeben.",
+      ],
+      link: {
+        label: "Zur vollständigen Anleitung für die Alarmanlage →",
+        href: "/de/docs/dashboard/alarm/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Richte sie ein oder kombiniere sie mit dem Rest deines lokalen Smart Homes:",
+      links: [
+        {
+          label: "Wasserlecks erkennen",
+          href: "/de/water-leak-detection/",
+          text: "Lecks erkennen und das Wasser automatisch absperren.",
+        },
+        {
+          label: "Die Anleitung zur Alarmanlage",
+          href: "/de/docs/dashboard/alarm/",
+          text: "Schritt für Schritt: Modi, Aktivierungsverzögerung, Code und Einbruchsszenen.",
+        },
+        {
+          label: "Anwesenheitssimulation",
+          href: "/de/presence-simulation/",
+          text: "Lass dein Zuhause bewohnt wirken, während du weg bist: die perfekte Ergänzung zu deiner Alarmanlage.",
+        },
+        {
+          label: "Dein Zuhause mit KI steuern",
+          href: "/de/ai-smart-home/",
+          text: "Lass die KI bei einem Einbruch eine Kamera prüfen und entscheiden, ob du alarmiert wirst.",
+        },
+        {
+          label: "Ein lokales Smart Home aufbauen",
+          href: "/de/local-smart-home/",
+          text: "Das große Ganze: ein privates, lokales Smart Home auf Basis offener Standards.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Bau dir eine Alarmanlage, die dir wirklich gehört",
+      text: "Gladys ist kostenlos, Open Source und setzt auf lokal zuerst. Bau dir aus günstigen Sensoren eine echte Alarmanlage, die auf deiner eigenen Hardware läuft und deine Daten zu Hause behält.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: { label: "Zur Anleitung", href: "/de/docs/dashboard/alarm/" },
+    },
+  },
 };
 
 export const alarmFaqEn = [
@@ -446,6 +629,44 @@ export const alarmFaqFr = [
     question: "Mes données de sécurité sont-elles privées ?",
     answer:
       "Oui. Gladys est auto-hébergée : vos données de capteurs et vos flux de caméra restent sur votre réseau local, sans cloud obligatoire et sans revente de données.",
+  },
+];
+
+export const alarmFaqDe = [
+  {
+    question: "Kann ich meine eigene Alarmanlage bauen?",
+    answer:
+      "Ja. Mit Gladys Assistant baust du aus handelsüblichen Sensoren eine echte Alarmanlage mit Scharf-, Teil- und Panikmodus. Sie läuft lokal auf deinem eigenen Rechner, auf Hardware, die dir gehört, ohne Bindung an einen Hersteller.",
+  },
+  {
+    question: "Welche Hardware brauche ich für eine DIY-Alarmanlage?",
+    answer:
+      "Günstige Zigbee-Bewegungsmelder und Tür-/Fensterkontakte als Auslöser, optional eine Kamera und eine Sirene. Du kannst Marken frei kombinieren, ein proprietäres Set musst du nicht kaufen.",
+  },
+  {
+    question: "Funktioniert die Alarmanlage auch ohne Internet?",
+    answer:
+      "Ja. Gladys läuft lokal, die Alarmanlage erkennt Einbrüche also auch dann und reagiert in Echtzeit, wenn dein Internet ausfällt. Nur Benachrichtigungen aufs Handy und der Fernzugriff brauchen eine Verbindung.",
+  },
+  {
+    question: "Wie alarmiert mich Gladys bei einem Einbruch?",
+    answer:
+      "Über Szenen. Löst ein Sensor aus, während die Anlage scharf ist, kann Gladys dir eine Benachrichtigung per Telegram oder SMS samt Kamera-Schnappschuss schicken, eine Sirene auslösen, die Lichter blinken lassen oder jede andere Aktion ausführen, die du festlegst.",
+  },
+  {
+    question: "Ist eine DIY-Alarmanlage so gut wie eine professionelle?",
+    answer:
+      "Eine Gladys-Alarmanlage ist sehr leistungsfähig und flexibel, aber du baust und wartest sie selbst. Für viele reicht eine gut aufgebaute lokale Alarmanlage völlig aus; wenn du zusätzlich eine professionelle Überwachung möchtest, kannst du beides kombinieren.",
+  },
+  {
+    question: "Ist Gladys eine Alternative zu einer Abo-Alarmanlage wie Verisure?",
+    answer:
+      "Ja, aber auf andere Art. Mit Gladys gehören dir Hardware und Installation, und deine Alarmanlage läuft lokal auf deinem eigenen Rechner, deine Daten bleiben zu Hause. Gladys bietet mit Gladys Plus ein optionales Abo für verschlüsselten Fernzugriff und Kamera-Streaming. Es geht also nicht darum, jedes Abo zu vermeiden, sondern darum, dass du Eigentümer deines Systems und deiner Daten bleibst, statt einen Überwachungsdienst zu mieten, den du nie kontrollierst.",
+  },
+  {
+    question: "Bleiben meine Sicherheitsdaten privat?",
+    answer:
+      "Ja. Gladys ist selbst gehostet, deine Sensordaten und Kamerabilder bleiben also in deinem lokalen Netzwerk, ohne Cloud-Zwang und ohne Weiterverkauf deiner Daten.",
   },
 ];
 

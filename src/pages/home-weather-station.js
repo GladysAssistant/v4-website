@@ -8,6 +8,7 @@ import { getHomeWeatherStationPageSchema } from "../data/schemas/homeWeatherStat
 import homeWeatherStationContent, {
   homeWeatherStationFaqEn,
   homeWeatherStationFaqFr,
+  homeWeatherStationFaqDe,
 } from "../data/homeWeatherStationData";
 
 import styles from "./comparison.module.css";
@@ -178,9 +179,9 @@ function WeatherContent({ content, faq }) {
 
 export default function HomeWeatherStationPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = homeWeatherStationContent[lang];
-  const faq = lang === "fr" ? homeWeatherStationFaqFr : homeWeatherStationFaqEn;
+  const faq = lang === "fr" ? homeWeatherStationFaqFr : lang === "de" ? homeWeatherStationFaqDe : homeWeatherStationFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

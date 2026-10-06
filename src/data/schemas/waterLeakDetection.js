@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import waterLeakDetectionContent, {
   waterLeakDetectionFaqEn,
   waterLeakDetectionFaqFr,
+  waterLeakDetectionFaqDe,
 } from "../waterLeakDetectionData";
 
 export function getWaterLeakDetectionPageSchema(lang) {
@@ -10,6 +11,7 @@ export function getWaterLeakDetectionPageSchema(lang) {
     content: waterLeakDetectionContent,
     faqEn: waterLeakDetectionFaqEn,
     faqFr: waterLeakDetectionFaqFr,
+    faqDe: waterLeakDetectionFaqDe,
     about: [
       { "@type": "Thing", name: "Water leak detection" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

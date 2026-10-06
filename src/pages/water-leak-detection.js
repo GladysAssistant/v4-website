@@ -6,13 +6,14 @@ import { getWaterLeakDetectionPageSchema } from "../data/schemas/waterLeakDetect
 import waterLeakDetectionContent, {
   waterLeakDetectionFaqEn,
   waterLeakDetectionFaqFr,
+  waterLeakDetectionFaqDe,
 } from "../data/waterLeakDetectionData";
 
 export default function WaterLeakDetectionPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = waterLeakDetectionContent[lang];
-  const faq = lang === "fr" ? waterLeakDetectionFaqFr : waterLeakDetectionFaqEn;
+  const faq = lang === "fr" ? waterLeakDetectionFaqFr : lang === "de" ? waterLeakDetectionFaqDe : waterLeakDetectionFaqEn;
 
   return (
     <UseCasePage

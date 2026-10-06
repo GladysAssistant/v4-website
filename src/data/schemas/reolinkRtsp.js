@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import reolinkRtspContent, {
   reolinkRtspFaqEn,
   reolinkRtspFaqFr,
+  reolinkRtspFaqDe,
 } from "../reolinkRtspData";
 
 export function getReolinkRtspPageSchema(lang) {
@@ -10,6 +11,7 @@ export function getReolinkRtspPageSchema(lang) {
     content: reolinkRtspContent,
     faqEn: reolinkRtspFaqEn,
     faqFr: reolinkRtspFaqFr,
+    faqDe: reolinkRtspFaqDe,
     about: [
       { "@type": "Thing", name: "RTSP" },
       { "@type": "Organization", name: "Reolink" },
