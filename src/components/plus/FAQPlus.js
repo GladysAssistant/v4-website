@@ -44,6 +44,28 @@ const e2eTechnicalEn = (
   </>
 );
 
+const e2eSummaryDe = (
+  <>
+    Deine Befehle und Backups sind Ende-zu-Ende-verschlüsselt: Selbst wenn die
+    Server von Gladys Plus kompromittiert würden, könnte niemand deine Daten
+    lesen, ohne den privaten Schlüssel deiner lokalen Instanz.
+  </>
+);
+
+const e2eTechnicalDe = (
+  <>
+    Ich habe viel Zeit damit verbracht, den Stand der Technik zu studieren
+    (Apple iMessage, Dashlane, Insomnia, ProtonMail). Gladys Plus verschlüsselt
+    deine Befehle mit AES-GCM 256 Bit und einem eigenen Schlüssel pro Nachricht,
+    der mit RSA-OAEP 2048 Bit und dem öffentlichen Schlüssel deiner Instanz
+    gekapselt wird. Signiert wird mit ECDSA P-256 samt Ablaufdatum, um
+    Replay-Angriffe zu verhindern. In Gladys bestätigst du jeden öffentlichen
+    Schlüssel manuell, um Man-in-the-Middle-Angriffe zu blockieren. Selbst wenn
+    Gladys Plus kompromittiert wird, kann ein Angreifer ohne deinen privaten
+    Schlüssel nichts ausrichten.
+  </>
+);
+
 const buildDataFr = (prices, currency) => [
   {
     title: "Pourquoi s'inscrire à Gladys Plus ?",
@@ -244,6 +266,103 @@ const buildDataEn = (prices, currency) => [
   },
 ];
 
+const buildDataDe = (prices, currency) => [
+  {
+    title: "Warum sollte ich Gladys Plus abonnieren?",
+    description: (
+      <>
+        Du willst von überall sicher auf deine Gladys-Instanz zugreifen?
+        Verschlüsselte tägliche Backups? Enedis, Open-Weight-KI-Modelle,
+        Kamera-Streaming oder einen MCP-Server? Ein wachsendes französisches
+        Open-Source-Projekt unterstützen? Dann ist Gladys Plus genau das
+        Richtige für dich!
+      </>
+    ),
+  },
+  {
+    title: "Was ist der Unterschied zwischen den Tarifen Lite und Plus?",
+    description: (
+      <>
+        <strong>Lite</strong> ({formatPrice(prices.lite.monthly, currency)}
+        /Monat oder {formatPrice(prices.lite.yearly, currency)}/Jahr) deckt
+        das Wichtigste ab: verschlüsselter Fernzugriff, eine E-Mail-Warnung,
+        wenn deine Gladys offline geht, Google Home/Alexa, offene REST-API und
+        Familienkonten. <strong>Plus</strong> (
+        {formatPrice(prices.plus.monthly, currency)}/Monat oder{" "}
+        {formatPrice(prices.plus.yearly, currency)}/Jahr) bietet zusätzlich
+        tägliche verschlüsselte Backups, Kamera-Streaming von unterwegs,
+        Open-Weight-KI-Modelle, die Enedis-Integration und einen MCP-Server. Du
+        kannst jederzeit zwischen den beiden Tarifen wechseln.
+      </>
+    ),
+  },
+  {
+    title: "Wie aktiviere ich Gladys Plus auf meiner bestehenden Gladys-Instanz?",
+    description: (
+      <>
+        Nach dem Abschluss des Abos bekommst du eine E-Mail mit deinem
+        Aktivierungslink. Öffne dann deine lokale Gladys-Instanz, geh zu{" "}
+        <em>Einstellungen → Gladys Plus</em>, melde dich mit deiner E-Mail und
+        deinem Passwort an, und fertig. Kein Zurücksetzen, keine Konfiguration
+        geht verloren.
+      </>
+    ),
+  },
+  {
+    title: "Kann Gladys Plus mich warnen, wenn meine Gladys ausfällt?",
+    description: (
+      <>
+        Ja, und das ist neu! Gladys Plus sieht, wenn sich deine Instanz
+        verbindet und trennt. Bleibt sie länger als die von dir gewählte Zeit
+        (zwischen 10 Minuten und 24 Stunden) unerreichbar, etwa wegen eines
+        Stromausfalls, eines abgestürzten Routers oder einer defekten SD-Karte,
+        schickt Gladys Plus den Admins deines Kontos eine E-Mail und eine
+        weitere, sobald sie wieder online ist. Die Warnung ist in beiden
+        Tarifen standardmäßig aktiv: Du kannst die Wartezeit ändern oder sie in
+        Gladys Plus ausschalten.
+      </>
+    ),
+  },
+  {
+    title: "Kann ich jederzeit kündigen?",
+    description: (
+      <>
+        Na klar! Gladys ist ein Open-Source-Projekt und kein skrupelloser
+        Konzern 😄 Du kannst dein Abo mit einem Klick in der Oberfläche von
+        Gladys Plus kündigen. Der Button ist nicht versteckt.
+      </>
+    ),
+  },
+  {
+    title: "Zufrieden oder Geld zurück?",
+    description: (
+      <>
+        Ja. Wenn du nicht zufrieden bist, schreib mir einfach eine E-Mail und
+        ich erstatte dir den Betrag, ohne Wenn und Aber. Erzähl mir gerne, was
+        nicht gepasst hat, damit ich den Dienst verbessern kann 🙂
+      </>
+    ),
+  },
+  {
+    title: "Warum ist Gladys Plus nicht kostenlos?",
+    description: (
+      <>
+        Gladys und der gesamte Quellcode sind und bleiben kostenlos und Open
+        Source. Aber Open Source heißt nicht, dass der Betrieb nichts kostet:
+        Server, Domains, Community, E-Mail-Dienste, Hardware und vor allem die
+        Zeit, die ich in das Projekt stecke. Dieses Projekt respektiert deine
+        Privatsphäre und <b>lebt ausschließlich von diesen Beiträgen</b>. Keine
+        Investoren, keine Werbung, kein Verkauf von Daten.
+      </>
+    ),
+  },
+  {
+    title: "Wie funktioniert die Ende-zu-Ende-Verschlüsselung?",
+    description: e2eSummaryDe,
+    technicalDetail: e2eTechnicalDe,
+  },
+];
+
 function FaqItem({ item, lang }) {
   return (
     <div className={styles.faqItem}>
@@ -267,10 +386,9 @@ function FAQPlus({ lang }) {
   const region = useRegion();
   const prices = PRICES[region];
   const { currency } = prices;
-  const data =
-    lang === "en"
-      ? buildDataEn(prices, currency)
-      : buildDataFr(prices, currency);
+  const buildData =
+    lang === "fr" ? buildDataFr : lang === "de" ? buildDataDe : buildDataEn;
+  const data = buildData(prices, currency);
   return (
     <section
       id="faq"
@@ -278,7 +396,11 @@ function FAQPlus({ lang }) {
       aria-labelledby="faq-plus-title"
     >
       <h2 id="faq-plus-title" className={styles.sectionTitle}>
-        {lang === "en" ? "Frequently asked questions" : "Questions fréquentes"}
+        {lang === "fr"
+          ? "Questions fréquentes"
+          : lang === "de"
+            ? "Häufig gestellte Fragen"
+            : "Frequently asked questions"}
       </h2>
       <div className={styles.faqGrid}>
         {data.map((item, i) => (
