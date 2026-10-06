@@ -37,9 +37,10 @@ npm run start -- --locale fr
 npm run start -- --locale de
 ```
 
-German translations live in `i18n/de/`. Pages that are not translated yet
-(blog posts, guide/landing pages, external integration pages) fall back to the
-English content.
+German translations live in `i18n/de/` (docs, blog, UI strings); the guide
+and comparison pages carry a `de` object in their `src/data/*Data.js` file.
+External integration pages and the France/Québec/Ontario-specific pages are
+not translated yet and fall back to the English content.
 
 ## How to refresh the development activity page?
 
