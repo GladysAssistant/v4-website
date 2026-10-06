@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import tuyaZigbeeWithoutHubContent, {
   tuyaZigbeeWithoutHubFaqEn,
   tuyaZigbeeWithoutHubFaqFr,
+  tuyaZigbeeWithoutHubFaqDe,
 } from "../tuyaZigbeeWithoutHubData";
 
 export function getTuyaZigbeeWithoutHubPageSchema(lang) {
@@ -10,6 +11,7 @@ export function getTuyaZigbeeWithoutHubPageSchema(lang) {
     content: tuyaZigbeeWithoutHubContent,
     faqEn: tuyaZigbeeWithoutHubFaqEn,
     faqFr: tuyaZigbeeWithoutHubFaqFr,
+    faqDe: tuyaZigbeeWithoutHubFaqDe,
     about: [
       { "@type": "Brand", name: "Tuya" },
       { "@type": "SoftwareApplication", name: "Zigbee2MQTT" },

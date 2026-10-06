@@ -318,6 +318,162 @@ const philipsHueWithoutBridgeContent = {
       secondary: { label: "Guide Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Philips Hue ohne Bridge: Hue-Lampen per Zigbee koppeln",
+      description:
+        "Philips Hue ohne Bridge: Hue-Lampen per Zigbee2MQTT direkt mit einem Zigbee-Stick koppeln und lokal mit Gladys steuern. Was geht, was fehlt, wie du resettest.",
+    },
+    screenshotCaption:
+      "Hue-Lampen, direkt per Zigbee gekoppelt, neben deinen übrigen Geräten in Gladys.",
+    hero: {
+      title: "Philips Hue ohne Bridge",
+      subtitle:
+        "Hue-Lampen sprechen Standard-Zigbee. Kopple sie mit einem Zigbee-USB-Stick und Gladys Assistant und steuere sie lokal, zusammen mit allen anderen Marken.",
+      intro: [
+        "Die Hue Bridge ist ein Zigbee-Hub. Jede Hue-Lampe, -Steckdose und jeder Hue-Schalter spricht mit ihr über Zigbee, dasselbe offene Protokoll, das auch IKEA, Aqara und Hunderte andere Marken nutzen. Die Bridge brauchst du also eigentlich gar nicht: Jeder Zigbee-Koordinator kann Hue-Lampen steuern.",
+        "Gladys Assistant, eine kostenlose Open-Source-Plattform für dein Smart Home, installiert Zigbee2MQTT für dich. Kopple deine Hue-Lampen mit einem Zigbee-USB-Stick und steuere Ein/Aus, Helligkeit, Farbe und Weißtemperatur lokal, in denselben Szenen wie deine Sensoren und Geräte anderer Marken.",
+      ],
+      primaryCta: {
+        label: "Zigbee2MQTT-Einrichtungsanleitung",
+        href: "/docs/integrations/zigbee2mqtt/",
+      },
+      secondaryCta: {
+        label: "Lieber die Bridge behalten →",
+        href: "/docs/integrations/external/philips-hue/",
+      },
+    },
+    problem: {
+      title: "Warum auf die Hue Bridge verzichten",
+      intro: "Die Bridge funktioniert gut, ist aber nicht immer die beste Wahl:",
+      points: [
+        "Sie ist eine weitere Box, die du kaufen und mit Strom versorgen musst, nur für eine einzige Marke.",
+        "Die Hue-App und ihre Funktionen drehen sich um die Bridge (oder die neuere Bridge Pro) und um die Hue-Cloud für den Fernzugriff.",
+        "Deine Hue-Lampen leben in ihrer eigenen App, getrennt von deinen Sensoren, Thermostaten und anderen Zigbee-Geräten.",
+        "Jeder Zigbee-Hub betreibt sein eigenes Netz: Hue-Lampen, die mit deinem Hauptkoordinator gekoppelt sind, arbeiten zusätzlich als Zigbee-Router und stärken dein gesamtes Mesh.",
+      ],
+      outro:
+        "Wenn du zu Hause schon Zigbee nutzt, ist es einfacher, deine Hue-Lampen ins selbe Netz zu holen, und das Netz wird dadurch stabiler.",
+    },
+    comparison: {
+      title: "Hue mit Gladys und Zigbee2MQTT vs. mit der Hue Bridge",
+      intro: "Beides läuft lokal. Der Unterschied liegt darin, was du rund um die Lampen bekommst:",
+      cols: {
+        feature: "",
+        gladys: "Gladys + Zigbee2MQTT",
+        other: "Hue Bridge + Hue-App",
+      },
+      rows: [
+        { feature: "Ein/Aus, Helligkeit, Farbe, Weißtemperatur", gladys: "Ja", other: "Ja" },
+        { feature: "Funktioniert ohne Internet", gladys: "Ja", other: "Ja, lokal" },
+        {
+          feature: "Andere Marken in denselben Szenen",
+          gladys: "Jedes Zigbee-, Z-Wave-, Matter- oder WLAN-Gerät",
+          other: "Hue-Geräte und Works-with-Hue-Partner",
+        },
+        { feature: "Hue Sync / Entertainment-Bereiche", gladys: "Nein", other: "Ja" },
+        { feature: "Szenen und Effekte der Hue-App", gladys: "Nein, stattdessen Gladys-Szenen", other: "Ja" },
+        { feature: "Firmware-Updates", gladys: "Ja, über Zigbee2MQTT (OTA)", other: "Ja, über die Hue-App" },
+        { feature: "Zusätzliche Hardware", gladys: "Ein Zigbee-USB-Stick", other: "Die Hue Bridge" },
+      ],
+      outro:
+        "Du willst Hue Sync mit deinem Fernseher oder die Effekte der Hue-App? Dann behalte die Bridge: Gladys kann deine Hue-Lampen über die Philips-Hue-Integration auch darüber steuern. Du willst ein einziges Zigbee-Netz für alles? Dann kopple sie direkt.",
+    },
+    features: {
+      title: "Was du mit Hue-Lampen in Gladys bekommst",
+      intro: "Einmal gekoppelt, wird jede Hue-Lampe zu einem Gladys-Gerät:",
+      cards: [
+        {
+          icon: "💡",
+          title: "Volle Lichtsteuerung",
+          text: "Ein/Aus, Helligkeit, Farbe und Weißtemperatur, über das Dashboard oder eine Szene.",
+        },
+        {
+          icon: "🎬",
+          title: "Szenen mit allem",
+          text: "Das Flurlicht einschalten, wenn ein Aqara-Bewegungsmelder auslöst, oder das Wohnzimmer dimmen, sobald der Fernseher angeht.",
+        },
+        {
+          icon: "🕸️",
+          title: "Ein stärkeres Zigbee-Mesh",
+          text: "Netzbetriebene Hue-Lampen leiten den Zigbee-Verkehr deiner batteriebetriebenen Sensoren weiter.",
+        },
+        {
+          icon: "🏠",
+          title: "Lokal und privat",
+          text: "Keine Cloud: Befehle gehen von Gladys über dein eigenes Zigbee-Netz direkt an die Lampe.",
+        },
+        {
+          icon: "🌅",
+          title: "Sonnenauf- und -untergang",
+          text: "Licht passend zu Sonnenuntergang und Sonnenaufgang an deinem Standort planen, mit Zeitversatz.",
+        },
+        {
+          icon: "🤖",
+          title: "Sprache und KI",
+          text: "Licht in natürlicher Sprache mit Gladys Plus steuern oder über den MCP-Server aus Claude heraus.",
+        },
+      ],
+    },
+    how: {
+      title: "So koppelst du Hue-Lampen ohne Bridge",
+      intro: "Auf einem Mini-PC oder einem Raspberry Pi mit Gladys:",
+      points: [
+        "Steck einen Zigbee-Koordinator in den Rechner und aktiviere Zigbee2MQTT in Gladys.",
+        "War die Lampe mit einer Hue Bridge gekoppelt, lösche sie zuerst in der Hue-App oder setze sie auf Werkseinstellungen zurück.",
+        "Möglichkeiten zum Zurücksetzen: ein Touchlink-Reset über die Zigbee2MQTT-Oberfläche, wobei die Lampe nur wenige Zentimeter vom Koordinator entfernt ist; ein Werksreset über die Hue-App bei Hue-Lampen mit Bluetooth; oder ein Hue Dimmschalter dicht an der Lampe, bei dem du die Ein- und Aus-Taste etwa 10 Sekunden gedrückt hältst.",
+        "Öffne in Gladys Zigbee2MQTT → Erkennen, erlaube den Beitritt und schalte die Lampe ein: Sie erscheint mit ihren Funktionen.",
+        "Ordne sie einem Raum zu, füge sie deinem Dashboard hinzu und nutze sie in deinen Szenen.",
+      ],
+      outro:
+        "Hue Dimmschalter und Bewegungsmelder lassen sich genauso koppeln und können dann jede Gladys-Szene auslösen.",
+    },
+    solution: {
+      title: "Hue-Qualität in einem offenen Zigbee-Netz",
+      paragraphs: [
+        "Hue baut hervorragende Lampen. Wenn du sie direkt mit deinem Zigbee-Koordinator koppelst, behältst du diese Qualität und sparst dir einen proprietären Hub und eine separate App.",
+        "Gladys ist kostenlos und Open Source, wird seit 2013 entwickelt und läuft komplett auf deiner eigenen Hardware.",
+      ],
+      link: {
+        label: "Alle Marken, die mit Gladys funktionieren →",
+        href: "/works-with/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Weitere Geräte ohne ihren Hub:",
+      links: [
+        {
+          label: "Aqara-Sensoren ohne Hub",
+          href: "/aqara-without-hub/",
+          text: "Aqara-Zigbee-Sensoren lokal nutzen, ohne die Aqara-App.",
+        },
+        {
+          label: "IKEA Smart Home",
+          href: "/ikea-smart-home/",
+          text: "Tradfri über Zigbee, DIRIGERA über Matter.",
+        },
+        {
+          label: "Der beste Zigbee-USB-Stick",
+          href: "/best-zigbee-dongle/",
+          text: "Welchen Zigbee-Koordinator du kaufen solltest.",
+        },
+        {
+          label: "Alle Ratgeber",
+          href: "/guides/",
+          text: "Alle Ratgeber, Tools und Vergleiche an einem Ort.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Hol deine Hue-Lampen in ein offenes Netz",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Zigbee-Stick einstecken und die erste Hue-Lampe koppeln.",
+      primary: { label: "Jetzt starten", href: "/docs/" },
+      secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
+    },
+  },
 };
 
 export const philipsHueWithoutBridgeFaqEn = [
@@ -373,6 +529,34 @@ export const philipsHueWithoutBridgeFaqFr = [
     question: "Les télécommandes et détecteurs Hue fonctionnent-ils sans le pont ?",
     answer:
       "Oui, les télécommandes Hue et les détecteurs de mouvement Hue sont des appareils Zigbee pris en charge par Zigbee2MQTT. Une fois associés, leurs boutons et détections peuvent déclencher n'importe quelle scène Gladys.",
+  },
+];
+
+export const philipsHueWithoutBridgeFaqDe = [
+  {
+    question: "Funktionieren Philips-Hue-Lampen ohne Bridge?",
+    answer:
+      "Ja. Hue-Lampen sind Standard-Zigbee-Leuchten, jeder Zigbee-Koordinator kann sie also steuern. Mit Gladys Assistant und einem Zigbee-USB-Stick koppelt Zigbee2MQTT sie direkt, und du steuerst sie lokal, ohne Hue Bridge.",
+  },
+  {
+    question: "Worauf verzichte ich ohne Hue Bridge?",
+    answer:
+      "Auf die Hue-App mit ihren Szenen und Effekten, auf Hue Sync und Entertainment-Bereiche sowie auf Hues eigene Fernzugriffs- und Sprachfunktionen. Die Grundsteuerung (Ein/Aus, Helligkeit, Farbe, Weißtemperatur) funktioniert vollständig, und Gladys ersetzt die Automationen der App durch eigene Szenen.",
+  },
+  {
+    question: "Wie setze ich eine Hue-Lampe zurück, um sie mit Zigbee2MQTT zu koppeln?",
+    answer:
+      "Lösche sie in der Hue-App, falls sie mit einer Bridge gekoppelt war. Führe dann entweder einen Touchlink-Reset über die Zigbee2MQTT-Oberfläche aus, mit der Lampe nah am Koordinator, oder setze sie bei Hue-Lampen mit Bluetooth über die Hue-App auf Werkseinstellungen zurück. Die Lampe tritt dann bei, sobald die Kopplung erlaubt ist.",
+  },
+  {
+    question: "Kann ich die Hue Bridge behalten und trotzdem Gladys nutzen?",
+    answer:
+      "Ja. Die Philips-Hue-Integration verbindet Gladys mit deiner Bridge, sodass du die Hue-App und Hue Sync behältst und deine Lampen trotzdem in Gladys-Szenen nutzt.",
+  },
+  {
+    question: "Funktionieren Hue-Schalter und -Bewegungsmelder ohne Bridge?",
+    answer:
+      "Ja, Hue Dimmschalter und Bewegungsmelder sind Zigbee-Geräte, die Zigbee2MQTT unterstützt. Einmal gekoppelt, können ihre Tasten und Bewegungsereignisse jede Gladys-Szene auslösen.",
   },
 ];
 

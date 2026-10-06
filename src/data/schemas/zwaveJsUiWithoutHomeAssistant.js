@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import zwaveJsUiWithoutHomeAssistantContent, {
   zwaveJsUiWithoutHomeAssistantFaqEn,
   zwaveJsUiWithoutHomeAssistantFaqFr,
+  zwaveJsUiWithoutHomeAssistantFaqDe,
 } from "../zwaveJsUiWithoutHomeAssistantData";
 
 export function getZwaveJsUiWithoutHomeAssistantPageSchema(lang) {
@@ -10,6 +11,7 @@ export function getZwaveJsUiWithoutHomeAssistantPageSchema(lang) {
     content: zwaveJsUiWithoutHomeAssistantContent,
     faqEn: zwaveJsUiWithoutHomeAssistantFaqEn,
     faqFr: zwaveJsUiWithoutHomeAssistantFaqFr,
+    faqDe: zwaveJsUiWithoutHomeAssistantFaqDe,
     about: [
       { "@type": "SoftwareApplication", name: "Z-Wave JS UI" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

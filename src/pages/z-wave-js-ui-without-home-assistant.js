@@ -6,13 +6,15 @@ import { getZwaveJsUiWithoutHomeAssistantPageSchema } from "../data/schemas/zwav
 import zwaveJsUiWithoutHomeAssistantContent, {
   zwaveJsUiWithoutHomeAssistantFaqEn,
   zwaveJsUiWithoutHomeAssistantFaqFr,
+  zwaveJsUiWithoutHomeAssistantFaqDe,
 } from "../data/zwaveJsUiWithoutHomeAssistantData";
 
 export default function ZwaveJsUiWithoutHomeAssistantPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = zwaveJsUiWithoutHomeAssistantContent[lang];
-  const faq = lang === "fr" ? zwaveJsUiWithoutHomeAssistantFaqFr : zwaveJsUiWithoutHomeAssistantFaqEn;
+  const faq =
+    lang === "fr" ? zwaveJsUiWithoutHomeAssistantFaqFr : lang === "de" ? zwaveJsUiWithoutHomeAssistantFaqDe : zwaveJsUiWithoutHomeAssistantFaqEn;
 
   return (
     <UseCasePage
