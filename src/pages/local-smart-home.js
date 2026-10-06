@@ -10,6 +10,7 @@ import { getLocalSmartHomePageSchema } from "../data/schemas/localSmartHome";
 import localSmartHomeContent, {
   localSmartHomeFaqEn,
   localSmartHomeFaqFr,
+  localSmartHomeFaqDe,
 } from "../data/localSmartHomeData";
 
 import styles from "./comparison.module.css";
@@ -75,6 +76,8 @@ function PillarContent({ content, faq, lang }) {
           caption={
             lang === "fr"
               ? "Une interface locale et épurée où vos données restent chez vous, sans cloud obligatoire."
+              : lang === "de"
+              ? "Eine aufgeräumte, lokale Oberfläche, bei der deine Daten zu Hause bleiben, ganz ohne Cloud-Zwang."
               : "A clean, local interface where your data stays at home, with no mandatory cloud."
           }
         />
@@ -188,9 +191,16 @@ function PillarContent({ content, faq, lang }) {
 
 export default function LocalSmartHomePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = localSmartHomeContent[lang];
-  const faq = lang === "fr" ? localSmartHomeFaqFr : localSmartHomeFaqEn;
+  const faq =
+    lang === "fr"
+      ? localSmartHomeFaqFr
+      : lang === "de"
+      ? localSmartHomeFaqDe
+      : localSmartHomeFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

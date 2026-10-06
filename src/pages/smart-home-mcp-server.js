@@ -6,13 +6,21 @@ import { getSmartHomeMcpPageSchema } from "../data/schemas/smartHomeMcp";
 import smartHomeMcpContent, {
   smartHomeMcpFaqEn,
   smartHomeMcpFaqFr,
+  smartHomeMcpFaqDe,
 } from "../data/smartHomeMcpData";
 
 export default function SmartHomeMcpPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = smartHomeMcpContent[lang];
-  const faq = lang === "fr" ? smartHomeMcpFaqFr : smartHomeMcpFaqEn;
+  const faq =
+    lang === "fr"
+      ? smartHomeMcpFaqFr
+      : lang === "de"
+      ? smartHomeMcpFaqDe
+      : smartHomeMcpFaqEn;
 
   return (
     <UseCasePage

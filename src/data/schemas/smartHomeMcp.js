@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import smartHomeMcpContent, {
   smartHomeMcpFaqEn,
   smartHomeMcpFaqFr,
+  smartHomeMcpFaqDe,
 } from "../smartHomeMcpData";
 
 export function getSmartHomeMcpPageSchema(lang) {
@@ -10,6 +11,7 @@ export function getSmartHomeMcpPageSchema(lang) {
     content: smartHomeMcpContent,
     faqEn: smartHomeMcpFaqEn,
     faqFr: smartHomeMcpFaqFr,
+    faqDe: smartHomeMcpFaqDe,
     about: [
       { "@type": "Thing", name: "Model Context Protocol" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

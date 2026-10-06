@@ -271,6 +271,139 @@ const localSmartHomeContent = {
       secondary: { label: "Découvrir Gladys Plus", href: "/plus/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Smart Home ohne Cloud: lokal & privat einrichten",
+      description:
+        "So baust du ein privates Smart Home, das auch ohne Internet läuft: lokale Geräte (Zigbee, Matter, MQTT), passende Zentrale, kostenlose Open-Source-Software.",
+    },
+    hero: {
+      title: "Ein 100 % lokales, privates Smart Home bauen",
+      subtitle:
+        "Keine Cloud, keine Aufzeichnungen, kein Datenverkauf: ein Smart Home, das bei dir zu Hause läuft und nur auf dich hört.",
+      intro: [
+        "Die meisten Smart-Home-Geräte schicken alles, was sie sehen und hören, in die Cloud des Herstellers. Deine Routinen, deine Anwesenheit, manchmal deine Stimme und deine Kamerabilder verlassen dein Zuhause, und du musst darauf vertrauen, dass sie sicher aufbewahrt werden und der Dienst nicht abgeschaltet wird, wenn das Unternehmen es sich anders überlegt.",
+        "Ein lokales Smart Home dreht das um. Deine Geräte, deine Automationen und deine Daten bleiben in deinem eigenen Netzwerk. Es funktioniert auch ohne Internetverbindung, hängt nicht von einem Abo ab, und niemand erstellt daraus ein Profil von dir. Dieser Guide erklärt, warum das wichtig ist, was „lokal“ wirklich bedeutet und wie du dein eigenes lokales Smart Home aufbaust.",
+      ],
+      primaryCta: { label: "Kostenlos starten", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Integrationen entdecken →",
+        href: "/de/docs/integrations/",
+      },
+    },
+    whyCloud: {
+      title: "Warum dein Smart Home nicht in der Cloud leben sollte",
+      intro:
+        "Cloud-basierte Smart Homes sind am ersten Tag bequem, aber im Grunde mietest du deine Hausautomation bei einem Dritten. Die Nachteile summieren sich:",
+      points: [
+        "Datenschutz: Deine Gewohnheiten, deine Anwesenheit, deine Stimme und deine Kameradaten landen auf Servern, die du nicht kontrollierst, und können gespeichert, ausgewertet oder für Werbung genutzt werden.",
+        "Abhängigkeit: Fällt dein Internet oder der Server des Herstellers aus, reagieren Licht, Schlösser und Routinen womöglich nicht mehr.",
+        "Produkt-Aus: Cloud-Geräte werden zu Elektroschrott, wenn ein Unternehmen eine Produktlinie einstellt oder übernommen wird, selbst wenn die Hardware einwandfrei ist.",
+        "Latenz: Ein Tastendruck oder ein Sensorsignal muss oft erst den Umweg über einen weit entfernten Server nehmen, bevor zu Hause etwas passiert.",
+        "Lock-in: Jedes Ökosystem drängt dich, sein eigenes Zubehör zu kaufen, und hält deine Daten in seiner App fest.",
+        "Kosten: Immer mehr Funktionen wandern hinter monatliche Abos.",
+      ],
+      outro:
+        "Das heißt nicht, dass Cloud-Geräte nutzlos sind, aber sie sollten nicht das Fundament sein, von dem dein ganzes Zuhause abhängt.",
+    },
+    definition: {
+      title: "Was ist ein lokales Smart Home?",
+      intro:
+        "Ein lokales (oder selbst gehostetes) Smart Home betreibt das Gehirn deines Zuhauses auf Hardware, die dir gehört, in deinem eigenen Netzwerk. Konkret heißt das:",
+      points: [
+        "Deine Automationen laufen auf einem Gerät bei dir zu Hause, nicht auf einem entfernten Server.",
+        "Es funktioniert offline: Kein Internet ist kein Problem für deine wichtigsten Szenen.",
+        "Deine Daten bleiben in deinem lokalen Netzwerk, ohne Pflicht-Konto in der Cloud.",
+        "Du bestimmst über Updates, und niemand kann dir den Stecker ziehen, weil ein Dienst eingestellt wurde.",
+        "Es basiert auf offenen Standards, sodass du Marken frei kombinieren und Lock-in vermeiden kannst.",
+      ],
+      outro:
+        "Fernzugriff und KI sind trotzdem möglich, aber sie werden zu einer Option, die du einschaltest, statt zu einer Pflicht, die dir aufgezwungen wird.",
+    },
+    howTo: {
+      title: "So baust du ein lokales Smart Home",
+      cards: [
+        {
+          icon: "🧠",
+          title: "Eine lokale Zentrale",
+          text: "Starte mit einer selbst gehosteten Steuerzentrale, die bei dir zu Hause läuft und alles koordiniert. Sie ist das Gehirn deines Setups, und genau hier kommt Gladys Assistant ins Spiel.",
+        },
+        {
+          icon: "🔌",
+          title: "Offene Standards statt Cloud-Gadgets",
+          text: "Setze auf Geräte mit Zigbee, Matter oder MQTT statt auf WLAN-Gadgets, die nur über die App und Cloud des Herstellers funktionieren.",
+        },
+        {
+          icon: "🖥️",
+          title: "Deine eigene Hardware",
+          text: "Betreibe alles auf einem Raspberry Pi, einem Mini-PC oder einem NAS, den du schon hast. Ein kleiner, sparsamer Rechner reicht für die meisten Haushalte völlig aus.",
+        },
+        {
+          icon: "⚙️",
+          title: "Eine echte Automations-Engine",
+          text: "Baue Szenen mit Auslösern, Bedingungen und Aktionen, damit dein Zuhause selbstständig reagiert, alles lokal ausgewertet.",
+        },
+        {
+          icon: "🎙️",
+          title: "Sprache & KI zu deinen Bedingungen (optional)",
+          text: "Freihändige Sprachsteuerung und KI-Unterstützung sind optional. Wenn du sie nutzt, laufen Anfragen über eine private, sichere Cloud eines unabhängigen Projekts, ohne Werbung und ohne Datenverkauf, nie über den Assistenten eines Tech-Riesen, der ein Profil von dir anlegt.",
+        },
+        {
+          icon: "🔐",
+          title: "Fernzugriff zu deinen Bedingungen",
+          text: "Wenn du von unterwegs nach dem Rechten sehen willst, nutze einen Ende-zu-Ende-verschlüsselten Fernzugriff, statt dein Zuhause für einen Dritten zu öffnen.",
+        },
+      ],
+    },
+    gladys: {
+      title: "Gladys Assistant: ein lokales Fundament",
+      paragraphs: [
+        "Gladys Assistant ist eine kostenlose, quelloffene und selbst gehostete Smart-Home-Plattform, die genau auf diesen Prinzipien aufbaut. Sie wird mit einem einzigen Docker-Befehl auf einem Raspberry Pi, Mini-PC oder NAS installiert und läuft vollständig in deinem lokalen Netzwerk.",
+        "Alles wird über eine aufgeräumte Oberfläche eingerichtet, ohne Konfigurationsdateien. Gladys setzt auf offene Standards (Zigbee, Matter, MQTT) und eine vollwertige lokale Automations-Engine, sodass deine alltäglichen Szenen komplett zu Hause laufen. Optionale Funktionen wie Sprachsteuerung, KI und Fernzugriff nutzen zwar die Cloud, aber eine private, sichere Cloud eines unabhängigen Projekts: keine Werbung, kein Datenverkauf und ein Ende-zu-Ende-verschlüsselter Fernzugriff.",
+      ],
+      link: { label: "Mit Gladys starten →", href: "/de/docs/" },
+    },
+    related: {
+      title: "Die Cloud Schritt für Schritt ersetzen",
+      intro:
+        "Du musst nicht alles auf einmal umstellen. Diese Guides zeigen, wie du dich von den gängigsten Cloud-Diensten löst, ohne auf Komfort zu verzichten:",
+      links: [
+        {
+          label: "Alexa Alternative",
+          href: "/de/alexa-alternative/",
+          text: "Behalte die Sprachsteuerung, ohne alles, was du sagst, in die Cloud von Amazon zu schicken.",
+        },
+        {
+          label: "Google Home Alternative",
+          href: "/de/google-home-alternative/",
+          text: "Eine private, lokale Alternative zu Google Home und Google Assistant.",
+        },
+        {
+          label: "Home Assistant Alternative",
+          href: "/de/home-assistant-alternative/",
+          text: "Eine einfachere, lokale Open-Source-Plattform, ohne YAML und ohne steile Lernkurve.",
+        },
+        {
+          label: "Gladys vs. Home Assistant",
+          href: "/de/home-assistant-vs-gladys-assistant/",
+          text: "Wie sich die beiden wichtigsten lokalen Open-Source-Plattformen wirklich unterscheiden.",
+        },
+        {
+          label: "Dein Zuhause mit KI steuern",
+          href: "/de/ai-smart-home/",
+          text: "Behalte den Komfort von KI und Sprachsteuerung, auf einer privaten Cloud statt beim Assistenten eines Tech-Riesen.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Bau jetzt dein lokales Smart Home",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Lokal zuerst, selbst gehostet, keine Cloud nötig.",
+      primary: { label: "Jetzt starten", href: "/de/docs/" },
+      secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
+    },
+  },
 };
 
 export const localSmartHomeFaqEn = [
@@ -336,6 +469,39 @@ export const localSmartHomeFaqFr = [
     question: "Puis-je quand même accéder à ma maison connectée à distance si elle est locale ?",
     answer:
       "Oui. Une maison connectée locale peut tout à fait offrir un accès distant ; la différence, c'est la manière. Avec Gladys Plus, l'accès distant est chiffré de bout en bout : vous gardez un œil depuis n'importe où sans confier le contrôle de votre maison à un tiers.",
+  },
+];
+
+export const localSmartHomeFaqDe = [
+  {
+    question: "Was ist ein lokales Smart Home?",
+    answer:
+      "Ein lokales Smart Home betreibt das Gehirn deines Zuhauses, also die Automations-Engine und deine Daten, auf Hardware, die dir gehört, in deinem eigenen Netzwerk statt in der Cloud eines Herstellers. Es funktioniert offline, hängt von keinem Abo ab, und deine Daten bleiben zu Hause.",
+  },
+  {
+    question: "Funktioniert ein Smart Home auch ohne Internet?",
+    answer:
+      "Ja. Mit einer lokalen, selbst gehosteten Plattform wie Gladys Assistant laufen deine Automationen auf einem Gerät bei dir zu Hause, sodass deine wichtigsten Szenen auch bei einem Internetausfall weiterlaufen. Nur der Fernzugriff und einige Cloud-Funktionen brauchen eine Verbindung.",
+  },
+  {
+    question: "Ist ein lokales Smart Home datenschutzfreundlicher?",
+    answer:
+      "Ja. Da alles auf deinem eigenen Rechner läuft, bleiben deine Gewohnheiten, deine Anwesenheit, deine Stimme und deine Kameradaten in deinem lokalen Netzwerk, statt an Server geschickt zu werden, die du nicht kontrollierst. Es gibt keine Aufzeichnungen auf fremden Servern und keine Werbeprofile.",
+  },
+  {
+    question: "Was ist die beste lokale Open-Source-Software für das Smart Home?",
+    answer:
+      "Beliebte lokale Open-Source-Optionen sind Gladys Assistant, Home Assistant, openHAB, Jeedom und Domoticz. Gladys setzt auf Einfachheit und eine aufgeräumte Oberfläche ohne Konfigurationsdateien und basiert auf offenen Standards wie Zigbee, Matter und MQTT.",
+  },
+  {
+    question: "Muss ich technisch versiert sein, um ein lokales Smart Home zu bauen?",
+    answer:
+      "Weniger, als du denkst. Gladys wird mit einem einzigen Docker-Befehl installiert, und alles wird per Klick in der Oberfläche eingerichtet. Du brauchst vor allem einen kleinen Rechner (Raspberry Pi, Mini-PC oder NAS) und Geräte, die offene Standards nutzen.",
+  },
+  {
+    question: "Kann ich auf ein lokales Smart Home trotzdem von unterwegs zugreifen?",
+    answer:
+      "Ja. Auch ein lokales Smart Home kann Fernzugriff bieten, der Unterschied liegt im Wie. Mit Gladys Plus ist der Fernzugriff Ende-zu-Ende-verschlüsselt, sodass du von überall nach dem Rechten sehen kannst, ohne die Kontrolle über dein Zuhause an einen Dritten abzugeben.",
   },
 ];
 

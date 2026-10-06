@@ -344,6 +344,175 @@ const openSourceHomeAutomationContent = {
       secondary: { label: "Découvrir Gladys Plus", href: "/plus/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Open Source Hausautomation: 6 Systeme im Vergleich (2026)",
+      description:
+        "Die 6 besten Open-Source-Smart-Home-Systeme im Vergleich: Gladys Assistant, Home Assistant, openHAB, Domoticz, Jeedom und Node-RED. Finde dein System.",
+    },
+    hero: {
+      title: "Open-Source-Hausautomation",
+      subtitle:
+        "Steuere dein Smart Home mit freier, selbst gehosteter Software, die du lesen, prüfen und behalten kannst, statt sie bei einer geschlossenen Cloud zu mieten.",
+      intro: [
+        "Die meisten Smart-Home-Produkte sind Blackboxen: proprietäre Software, Cloud-Zwang und ein Unternehmen, das jederzeit die Regeln ändern, ein Abo einführen oder den Dienst abschalten kann. Das System gehört nicht dir, du mietest nur den Zugang.",
+        "Open-Source-Hausautomation geht den umgekehrten Weg. Die Software, die dein Zuhause steuert, ist frei, öffentlich und selbst gehostet: Jeder kann sie einsehen, verbessern und so lange betreiben, wie er möchte. Dieser Guide erklärt, was Open-Source-Hausautomation ist, warum sie wichtig ist, welche Plattformen du kennen solltest und wie du loslegst.",
+      ],
+      primaryCta: { label: "Kostenlos starten", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Integrationen entdecken →",
+        href: "/de/docs/integrations/",
+      },
+    },
+    whyCloud: {
+      title: "Warum Open Source für dein Zuhause wichtig ist",
+      intro:
+        "Deine Hausautomation steuert Licht, Türschlösser, Heizung und Alarmanlage. Genau dort willst du keine Blackbox, die du weder prüfen noch ersetzen kannst. Open Source verschiebt die Machtverhältnisse:",
+      points: [
+        "Transparenz: Der Code ist öffentlich, also kann jeder nachprüfen, was mit deinen Daten passiert, statt einem Marketingversprechen glauben zu müssen.",
+        "Langlebigkeit: Ein Community-Projekt kann nicht von einem einzelnen Unternehmen „eingestellt“ werden. Selbst wenn das ursprüngliche Team aufhört, bleibt der Code erhalten und kann geforkt werden.",
+        "Kein Lock-in: Offene Standards und offener Code bedeuten, dass du Marken frei kombinieren und dein Setup mitnehmen kannst, statt in einem Ökosystem gefangen zu sein.",
+        "Datenschutz: Die meisten Open-Source-Plattformen sind selbst gehostet, sodass deine Gewohnheiten, deine Anwesenheit und deine Kamerabilder in deinem eigenen Netzwerk bleiben können.",
+        "Keine überraschenden Bezahlschranken: Die Kernsoftware ist kostenlos, wichtige Funktionen können also nicht plötzlich hinter einem neuen Monatsabo verschwinden.",
+        "Erweiterbarkeit: Eine Community entwickelt Integrationen viel schneller als ein einzelner Hersteller, sodass mehr deiner vorhandenen Geräte unterstützt werden.",
+      ],
+      outro:
+        "Open Source heißt nicht kompliziert oder ohne Support. Die besten Projekte sind ausgereift, werden aktiv gepflegt und von großen Communitys getragen.",
+    },
+    definition: {
+      title: "Was ist Open-Source-Hausautomation?",
+      intro:
+        "Open-Source-Hausautomation bedeutet, dass die Software, die dein Smart Home steuert, unter einer Open-Source-Lizenz veröffentlicht wird: frei nutzbar, einsehbar und veränderbar, und meist selbst gehostet auf Hardware, die dir gehört. Konkret heißt das:",
+      points: [
+        "Der Quellcode ist öffentlich und offen lizenziert (Gladys Assistant zum Beispiel unter Apache 2.0), sodass du oder jeder andere ihn lesen und prüfen kann.",
+        "Der Betrieb ist kostenlos: keine Gebühr pro Gerät und kein Pflicht-Abo, damit das System funktioniert.",
+        "Sie läuft selbst gehostet auf deinem eigenen Rechner, deine Automationen und Daten bleiben also unter deiner Kontrolle.",
+        "Sie spricht offene Standards wie Zigbee, Matter und MQTT statt des proprietären Protokolls einer einzelnen Marke.",
+        "Eine Community entwickelt Integrationen, Fehlerbehebungen und Übersetzungen ganz offen.",
+      ],
+      outro:
+        "Open Source und Komfort schließen sich nicht aus: Optionale Funktionen wie Fernzugriff oder KI kann es trotzdem geben, sie sind nur eine Wahl statt einer Pflicht.",
+    },
+    howTo: {
+      title: "Die beste Open-Source-Software für Hausautomation im Vergleich",
+      intro:
+        "Mehrere ausgereifte Open-Source-Plattformen können dein Smart Home steuern. So schneiden die wichtigsten ab, von der einfachsten bis zur flexibelsten:",
+      table: {
+        headers: ["Plattform", "Oberfläche & Einrichtung", "Bedienbarkeit", "Lizenz", "Ideal für"],
+        rows: [
+          ["Gladys Assistant", "Aufgeräumte Oberfläche, keine Konfigurationsdateien", "Sehr einfach", "Apache 2.0", "Open Source ohne Lernkurve"],
+          ["Home Assistant", "Oberfläche, YAML für fortgeschrittene Setups", "Mittel bis fortgeschritten", "Apache 2.0", "Den größten Integrationskatalog"],
+          ["openHAB", "Textkonfiguration und Oberfläche", "Fortgeschritten", "EPL 2.0", "Herstellerneutralität, mächtige Regeln"],
+          ["Jeedom", "Oberfläche mit Plugin-Marktplatz", "Mittel", "GPL (Kern)", "Lokale Boxen und ein Plugin-Ökosystem"],
+          ["Domoticz", "Schlanke, nüchterne Oberfläche", "Mittel", "GPLv3", "Sehr sparsame Hardware"],
+          ["Node-RED", "Visueller Flow-Editor", "Mittel", "Apache 2.0", "Komplexe Automationslogik bauen"],
+        ],
+      },
+      cards: [
+        {
+          logo: "/img/external/open-source-platforms/gladys-assistant.png",
+          logoAlt: "Logo von Gladys Assistant",
+          title: "Gladys Assistant",
+          text: "Eine selbst gehostete Plattform (Apache 2.0) mit Fokus auf Einfachheit: aufgeräumte Oberfläche, keine Konfigurationsdateien, Szenen per Klick und Installation mit einem einzigen Docker-Befehl. Über externe Integrationen kann jeder eine Integration auf GitHub veröffentlichen, die sich mit einem Klick installieren lässt und isoliert in einer Sandbox läuft. Ideal, wenn du Open Source ohne steile Lernkurve willst.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/home-assistant.png",
+          logoAlt: "Logo von Home Assistant",
+          title: "Home Assistant",
+          text: "Die funktionsreichste und beliebteste Open-Source-Plattform mit einem riesigen Integrationskatalog. Extrem leistungsfähig, aber die Konfiguration kann bei fortgeschrittenen Setups tief gehen und viel YAML erfordern.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/openhab.png",
+          logoAlt: "Logo von openHAB",
+          title: "openHAB",
+          text: "Eine ausgereifte, Java-basierte Plattform, bekannt für Flexibilität und Herstellerneutralität. Mächtige Regel-Engine, aber eine steilere, technischere Einrichtung.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/jeedom.png",
+          logoAlt: "Logo von Jeedom",
+          title: "Jeedom",
+          text: "Eine französische Open-Source-Plattform mit Plugin-Marktplatz (teils kostenpflichtig). Beliebt auf lokalen Boxen, mit einem technischeren, Plugin-zentrierten Ansatz.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/domoticz.png",
+          logoAlt: "Logo von Domoticz",
+          title: "Domoticz",
+          text: "Ein schlankes, seit Langem etabliertes Open-Source-System, das auch auf sehr sparsamer Hardware gut läuft, mit einer eher nüchternen Oberfläche.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/node-red.png",
+          logoAlt: "Logo von Node-RED",
+          title: "Node-RED",
+          text: "Keine vollständige Plattform, sondern ein Open-Source-Tool für flussbasierte Automation, das oft mit den anderen kombiniert wird, um komplexe Logik visuell zu bauen.",
+        },
+      ],
+    },
+    hardware: {
+      title: "Brauchst du einen speziellen Hub oder besondere Hardware?",
+      intro:
+        "Ein großer Vorteil von Open-Source-Hausautomation: Du bist an keinen proprietären Hub gebunden. Die Software läuft auf Hardware, die du schon hast oder günstig kaufen kannst:",
+      points: [
+        "Ein kleiner Rechner als Host: Ein Raspberry Pi, ein Mini-PC oder ein NAS reicht, um die Plattform rund um die Uhr in deinem eigenen Netzwerk zu betreiben.",
+        "USB-Funksticks für drahtlose Geräte: Mit einem Zigbee- oder Z-Wave-USB-Stick sprichst du lokal mit Hunderten von Sensoren und Schaltern, ganz ohne Hersteller-Bridge.",
+        "Matter und Thread für neuere Geräte: Matter-Geräte per WLAN oder Ethernet treten deinem Netzwerk direkt bei, Thread-Geräte brauchen dafür einen Thread Border Router. Das kann ein Gerät sein, das du schon besitzt (manche Lautsprecher, TV-Boxen und Hubs übernehmen diese Rolle), oder ein Open-Source-Setup auf deinem eigenen Host mit einem 802.15.4-Funkmodul. So bist du auch hier an keine Marke gebunden.",
+        "Deine vorhandenen WLAN- und IP-Geräte: Viele Kameras, Steckdosen und Fernseher verbinden sich direkt über dein lokales Netzwerk.",
+      ],
+      outro:
+        "Du musst also keine proprietäre Box kaufen: Ein günstiger Mini-Computer plus ein USB-Funkstick reichen für die meisten Setups.",
+      link: {
+        label: "Den besten Zigbee-Stick finden →",
+        href: "/de/best-zigbee-dongle/",
+      },
+    },
+    gladys: {
+      title: "Gladys Assistant: Open Source, ganz einfach",
+      paragraphs: [
+        "Gladys Assistant ist eine kostenlose, quelloffene (Apache 2.0) und selbst gehostete Plattform für Hausautomation. Der komplette Quellcode liegt auf GitHub, die Installation erfolgt mit einem einzigen Docker-Befehl auf einem Raspberry Pi, Mini-PC oder NAS, und alles läuft vollständig in deinem lokalen Netzwerk.",
+        "Ihre Stärke ist die Einfachheit. Alles wird über eine aufgeräumte Oberfläche eingerichtet, ohne Konfigurationsdateien und ohne YAML, und Szenen erstellst du per Klick. Gladys setzt auf offene Standards (Zigbee, Matter, MQTT) und bringt eine vollwertige lokale Automations-Engine mit, sodass deine alltäglichen Szenen zu Hause laufen. Optionale Funktionen wie Sprachsteuerung, KI und Fernzugriff nutzen eine private, sichere Cloud desselben unabhängigen Projekts: keine Werbung, kein Datenverkauf und ein Ende-zu-Ende-verschlüsselter Fernzugriff.",
+      ],
+      link: { label: "Mit Gladys starten →", href: "/de/docs/" },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro:
+        "Ob du Plattformen vergleichst oder ein geschlossenes Ökosystem verlassen willst: Diese Guides helfen dir bei der Wahl und beim Umstieg:",
+      links: [
+        {
+          label: "Home Assistant Alternative",
+          href: "/de/home-assistant-alternative/",
+          text: "Eine einfachere, lokale Open-Source-Plattform, ohne YAML und ohne steile Lernkurve.",
+        },
+        {
+          label: "Gladys vs. Home Assistant",
+          href: "/de/home-assistant-vs-gladys-assistant/",
+          text: "Wie sich die beiden wichtigsten lokalen Open-Source-Plattformen wirklich unterscheiden.",
+        },
+        {
+          label: "Jeedom Alternative",
+          href: "/de/jeedom-alternative/",
+          text: "Eine Open-Source-Alternative zu Jeedom, ohne kostenpflichtigen Plugin-Marktplatz.",
+        },
+        {
+          label: "Ein lokales Smart Home bauen",
+          href: "/de/local-smart-home/",
+          text: "Warum „lokal zuerst“ wichtig ist und wie du ein Zuhause baust, das ohne Cloud funktioniert.",
+        },
+        {
+          label: "Dein Zuhause mit KI steuern",
+          href: "/de/ai-smart-home/",
+          text: "Behalte den Komfort von KI und Sprachsteuerung, auf einer privaten Cloud statt beim Assistenten eines Tech-Riesen.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Starte mit Open-Source-Hausautomation",
+      text: "Gladys ist kostenlos, Open Source (Apache 2.0) und mit einem einzigen Docker-Befehl installiert. Selbst gehostet, lokal zuerst, keine Cloud nötig.",
+      primary: { label: "Jetzt starten", href: "/de/docs/" },
+      secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
+    },
+  },
 };
 
 export const openSourceHomeAutomationFaqEn = [
@@ -419,6 +588,44 @@ export const openSourceHomeAutomationFaqFr = [
     question: "Sous quelle licence Gladys Assistant est-elle publiée ?",
     answer:
       "Gladys Assistant est publiée sous licence Apache 2.0, une licence open source permissive. L'intégralité du code source est disponible publiquement sur GitHub : chacun peut le lire, l'auditer, y contribuer ou le forker.",
+  },
+];
+
+export const openSourceHomeAutomationFaqDe = [
+  {
+    question: "Was ist Open-Source-Hausautomation?",
+    answer:
+      "Open-Source-Hausautomation bedeutet, dass die Software, die dein Smart Home steuert, unter einer Open-Source-Lizenz veröffentlicht wird: frei nutzbar, einsehbar und veränderbar, und meist selbst gehostet auf Hardware, die dir gehört. Der Code ist öffentlich, für den Kern gibt es kein Pflicht-Abo, und in der Regel werden offene Standards wie Zigbee, Matter und MQTT genutzt.",
+  },
+  {
+    question: "Was ist die beste Open-Source-Software für Hausautomation?",
+    answer:
+      "Die wichtigsten Open-Source-Plattformen sind Gladys Assistant, Home Assistant, openHAB, Jeedom und Domoticz. Home Assistant hat den größten Integrationskatalog, während Gladys Assistant auf Einfachheit setzt: aufgeräumte Oberfläche, keine Konfigurationsdateien, Installation mit einem Befehl und externe Integrationen, die jeder veröffentlichen kann und die sich mit einem Klick installieren lassen. Die beste Wahl hängt davon ab, ob dir maximale Flexibilität oder einfache Bedienung wichtiger ist.",
+  },
+  {
+    question: "Brauche ich für Open-Source-Hausautomation einen Hub?",
+    answer:
+      "Ein proprietärer Hub ist nicht nötig. Eine Open-Source-Plattform läuft auf einem kleinen Rechner, der dir gehört, etwa einem Raspberry Pi, einem Mini-PC oder einem NAS. Für drahtlose Geräte steckst du einfach einen USB-Funkstick (Zigbee oder Z-Wave) dazu. Neuere Geräte verbinden sich über die offenen Standards Matter und Thread: Matter-Geräte per WLAN oder Ethernet treten deinem Netzwerk direkt bei, Thread-Geräte brauchen zusätzlich einen Thread Border Router. Das kann ein Gerät sein, das du schon besitzt, oder ein Open-Source-Setup auf deinem eigenen Host mit einem 802.15.4-Funkmodul. So oder so musst du keine markengebundene Box kaufen.",
+  },
+  {
+    question: "Ist Open-Source-Hausautomation kostenlos?",
+    answer:
+      "Ja, die Kernsoftware ist kostenlos. Plattformen wie Gladys Assistant (Apache 2.0) und Home Assistant kosten nichts, weder beim Download noch im Betrieb auf deiner eigenen Hardware. Manche Projekte bieten optionale kostenpflichtige Dienste an (etwa Fernzugriff oder KI), aber du wirst nie zu einem Abo gezwungen, damit deine Hausautomation weiter funktioniert.",
+  },
+  {
+    question: "Ist Open-Source-Hausautomation privat und sicher?",
+    answer:
+      "Sie kann deutlich datenschutzfreundlicher sein als geschlossene Cloud-Produkte. Da die meisten Open-Source-Plattformen selbst gehostet sind, bleiben deine Automationen und Daten in deinem eigenen Netzwerk statt auf den Servern eines Herstellers, und weil der Code öffentlich ist, kann jeder prüfen, was er tut. Die Sicherheit hängt aber wie bei jeder Software davon ab, dass du dein System aktuell hältst.",
+  },
+  {
+    question: "Muss ich Entwickler sein, um Open-Source-Hausautomation zu nutzen?",
+    answer:
+      "Nein. Manche Plattformen sind recht technisch, aber Gladys Assistant ist für Nicht-Entwickler gemacht: Die Installation erfolgt mit einem einzigen Docker-Befehl, und alles wird per Klick in der Oberfläche eingerichtet, ganz ohne Konfigurationsdateien.",
+  },
+  {
+    question: "Unter welcher Lizenz steht Gladys Assistant?",
+    answer:
+      "Gladys Assistant wird unter der Apache-2.0-Lizenz veröffentlicht, einer permissiven Open-Source-Lizenz. Der komplette Quellcode ist öffentlich auf GitHub verfügbar, sodass jeder ihn lesen, prüfen, verbessern oder forken kann.",
   },
 ];
 

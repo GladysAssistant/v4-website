@@ -340,6 +340,174 @@ const smartHomeMcpContent = {
       secondary: { label: "Documentation MCP", href: "/docs/integrations/mcp/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "MCP-Server fürs Smart Home: mit Claude & KI steuern",
+      description:
+        "Gladys Assistant hat einen MCP-Server: Verbinde Claude Desktop, VS Code Copilot, Perplexity oder Le Chat mit deinem Smart Home. Gratis & lokal.",
+    },
+    screenshotCaption:
+      "Deine Geräte, Sensoren, Kameras und Szenen in Gladys, per MCP für deinen KI-Agenten verfügbar.",
+    hero: {
+      title: "Ein MCP-Server fürs Smart Home: Lass deinen KI-Agenten dein Zuhause steuern",
+      subtitle:
+        "Gladys Assistant enthält einen Model-Context-Protocol-Server. Verbinde Claude, Copilot, Perplexity oder Le Chat und sprich mit deinem echten Zuhause aus den KI-Tools, die du ohnehin nutzt.",
+      intro: [
+        "Das Model Context Protocol (MCP) ist der offene Standard, über den KI-Agenten externe Tools aufrufen. Ein MCP-Server stellt Funktionen bereit, und jeder kompatible Client wie Claude Desktop oder VS Code kann sie im Gespräch nutzen.",
+        "Gladys Assistant, die kostenlose Open-Source-Plattform fürs Smart Home, bringt einen eigenen MCP-Server mit. Aktiviere ihn, erzeuge einen Schlüssel, und dein KI-Agent kann jeden Sensor in deinem Zuhause auslesen, durch deine Kameras schauen, Lichter und Steckdosen schalten und deine Szenen starten. Kein Cloud-Konto, keine Bridge eines Drittanbieters: Der Server läuft auf deiner eigenen Gladys-Instanz, in deinem lokalen Netzwerk.",
+      ],
+      primaryCta: {
+        label: "MCP-Server einrichten",
+        href: "/de/docs/integrations/mcp/",
+      },
+      secondaryCta: {
+        label: "Demo ausprobieren →",
+        href: "https://demo.gladysassistant.com/dashboard",
+      },
+    },
+    problem: {
+      title: "Warum einen KI-Agenten mit deinem Zuhause verbinden?",
+      intro:
+        "Chatbots können hervorragend schlussfolgern, aber sie wissen nichts über dein Zuhause. Mit MCP bekommen sie echte Daten und echte Steuerungsmöglichkeiten:",
+      points: [
+        "Stell Fragen, die kein Dashboard beantwortet: „Welcher Raum war letzte Nacht am kältesten, und stand dort ein Fenster offen?“",
+        "Analysiere Verläufe: „Vergleiche den Stromverbrauch dieser Woche mit der letzten und sag mir, was sich geändert hat.“",
+        "Sieh nach dem Rechten: „Ist jemand im Garten? Beschreib, was die Kamera sieht.“",
+        "Handle in normaler Sprache: „Schalte im Wohnzimmer alles aus und starte die Kino-Szene.“",
+        "Verbinde dein Zuhause mit deinen anderen Tools: Derselbe Agent kann über seine anderen MCP-Server deinen Kalender, deinen Code oder deine Dokumente lesen.",
+      ],
+      outro:
+        "Dein Agent denkt nach, Gladys führt aus. Deine Automationen und Geräte bleiben in Gladys und laufen weiter, mit oder ohne KI.",
+    },
+    features: {
+      title: "Was der MCP-Server von Gladys bereitstellt",
+      intro:
+        "Ein mit Gladys verbundener MCP-Client kann heute:",
+      cards: [
+        {
+          icon: "🌡️",
+          title: "Jeden Sensor auslesen",
+          text: "Den aktuellen Wert oder den Verlauf von Temperatur, Luftfeuchtigkeit, Energie, CO₂, Luftqualität, Bewegung, Tür-/Fensterkontakt, Wasserlecks, Rauch, Anwesenheit und vielem mehr.",
+        },
+        {
+          icon: "📷",
+          title: "Deine Kameras ansehen",
+          text: "Ein Kamerabild abrufen, damit der Agent beschreiben kann, was er sieht, sofern dein Client Bilder unterstützt.",
+        },
+        {
+          icon: "💡",
+          title: "Lichter steuern",
+          text: "Lichter ein- und ausschalten, Raum für Raum oder alle auf einmal.",
+        },
+        {
+          icon: "🔌",
+          title: "Schalter und Steckdosen steuern",
+          text: "Smarte Steckdosen, Relais und Schalter aller Marken schalten, die Gladys unterstützt.",
+        },
+        {
+          icon: "🎬",
+          title: "Szenen starten",
+          text: "Jede Gladys-Szene starten: Der Agent löst sie aus, Gladys führt sie lokal und zuverlässig aus.",
+        },
+        {
+          icon: "🔑",
+          title: "API-Schlüssel pro Client",
+          text: "Jeder Client bekommt seinen eigenen Schlüssel, in Gladys erzeugt und jederzeit widerrufbar.",
+        },
+      ],
+    },
+    comparison: {
+      title: "Lokales MCP vs. Remote-MCP",
+      intro:
+        "Gladys bietet dir zwei Wege, den MCP-Server zu erreichen:",
+      cols: {
+        feature: "",
+        gladys: "Lokales MCP (kostenlos)",
+        other: "Remote-MCP (Gladys Plus)",
+      },
+      rows: [
+        {
+          feature: "URL",
+          gladys: "http://IP_DEINER_GLADYS/api/v1/service/mcp/proxy",
+          other: "https://api.gladysgateway.com/v1/api/mcp/<API-Schlüssel>",
+        },
+        {
+          feature: "Wo es funktioniert",
+          gladys: "In deinem Heimnetzwerk",
+          other: "Überall, über Gladys Plus",
+        },
+        {
+          feature: "Clients",
+          gladys: "Claude Desktop, VS Code Copilot, Perplexity…",
+          other: "Dieselben, plus reine Web-Clients wie Mistral Le Chat",
+        },
+        {
+          feature: "Preis",
+          gladys: "Kostenlos",
+          other: "In Gladys Plus enthalten",
+        },
+      ],
+      outro:
+        "Clients, die MCP nur über stdio sprechen, wie das kostenlose Claude Desktop, verbinden sich über die kleine Open-Source-Bridge mcp-proxy. Die Einrichtung dauert nur ein paar Minuten und wird in der Dokumentation Schritt für Schritt erklärt.",
+    },
+    how: {
+      title: "So verbindest du Claude mit deinem Smart Home",
+      intro: "Vier Schritte, auf jeder Gladys-Installation:",
+      points: [
+        "Installiere Gladys mit Docker auf einem Mini-PC, einem Raspberry Pi oder einem NAS und füge deine Geräte hinzu.",
+        "Öffne in Gladys Integrationen → MCP und erzeuge einen API-Schlüssel für deinen Client.",
+        "Füge den MCP-Server von Gladys in deinem Client hinzu: die lokale URL und den Schlüssel im Authorization-Header (über mcp-proxy für Claude Desktop).",
+        "Starte den Client neu und frag: „Wie warm ist es im Schlafzimmer?“",
+      ],
+      outro:
+        "Die vollständige Konfiguration für Claude Desktop, Perplexity, VS Code und Le Chat findest du in der MCP-Dokumentation.",
+    },
+    solution: {
+      title: "Die KI ist austauschbar, dein Zuhause bleibt deins",
+      paragraphs: [
+        "MCP ist ein offener Standard, du bist also an keinen KI-Anbieter gebunden: Nutze heute Claude, morgen ein anderes Modell oder ein lokales Modell auf deinem eigenen Rechner mit einem MCP-fähigen Client wie LM Studio. Gladys bleibt die zentrale Quelle für deine Geräte, und sie ist Open Source unter Apache 2.0.",
+        "Lieber ein Assistent, der sofort funktioniert? Gladys Plus enthält einen integrierten KI-Assistenten, betrieben mit Open-Weight-Modellen, die in Frankreich gehostet werden, mit dem du über den Chat, Telegram oder ein Sprach-Widget sprechen kannst.",
+      ],
+      link: {
+        label: "KI in Gladys entdecken →",
+        href: "/de/ai-smart-home/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Weitere Wege, KI in dein Zuhause zu bringen:",
+      links: [
+        {
+          label: "MCP-Dokumentation",
+          href: "/de/docs/integrations/mcp/",
+          text: "Schritt-für-Schritt-Konfiguration für Claude Desktop, Perplexity, VS Code und Le Chat.",
+        },
+        {
+          label: "KI im Smart Home",
+          href: "/de/ai-smart-home/",
+          text: "Steuerung in natürlicher Sprache, ein proaktiver KI-Agent und ein Wochenbericht, alles privat.",
+        },
+        {
+          label: "Ein lokales Smart Home bauen",
+          href: "/de/local-smart-home/",
+          text: "Warum „lokal zuerst“ wichtig ist und wie du ein Zuhause baust, das ohne Cloud funktioniert.",
+        },
+        {
+          label: "Kompatibel mit Gladys",
+          href: "/de/works-with/",
+          text: "Die Marken und Protokolle, die dein KI-Agent über Gladys steuern kann.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Verbinde deinen KI-Agenten mit deinem Zuhause",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Der MCP-Server ist bereits integriert.",
+      primary: { label: "Jetzt starten", href: "/de/docs/" },
+      secondary: { label: "MCP-Dokumentation", href: "/de/docs/integrations/mcp/" },
+    },
+  },
 };
 
 export const smartHomeMcpFaqEn = [
@@ -415,6 +583,44 @@ export const smartHomeMcpFaqFr = [
     question: "L'agent IA peut-il casser mes automatisations ?",
     answer:
       "Le serveur MCP expose un nombre limité d'actions : lire des états et des images de caméras, piloter lumières et prises, et lancer des scènes existantes. Vos automatisations sont définies et exécutées par Gladys, qui continue de fonctionner même si l'IA est déconnectée.",
+  },
+];
+
+export const smartHomeMcpFaqDe = [
+  {
+    question: "Was ist ein MCP-Server für die Hausautomation?",
+    answer:
+      "Ein MCP-Server (Model Context Protocol) stellt dein Smart Home als Tools bereit, die ein KI-Agent aufrufen kann: einen Sensor auslesen, seinen Verlauf abrufen, ein Licht schalten, eine Szene starten. Gladys Assistant bringt einen mit, sodass jeder MCP-kompatible Client mit deinen echten Geräten sprechen kann.",
+  },
+  {
+    question: "Kann ich mein Smart Home mit Claude steuern?",
+    answer:
+      "Ja. Aktiviere die MCP-Integration in Gladys, erzeuge einen API-Schlüssel und füge den MCP-Server von Gladys in Claude Desktop hinzu (über die Open-Source-Bridge mcp-proxy). Claude kann dann deine Sensoren auslesen, deine Kameras ansehen, Lichter und Steckdosen steuern und Szenen starten.",
+  },
+  {
+    question: "Welche KI-Clients funktionieren mit dem MCP-Server von Gladys?",
+    answer:
+      "Jeder MCP-kompatible Client. Die Dokumentation behandelt Claude Desktop, Perplexity, GitHub Copilot in VS Code und Mistral Le Chat. Clients, die MCP-Server nur über das Internet erreichen, wie Le Chat, nutzen die Remote-URL von Gladys Plus.",
+  },
+  {
+    question: "Funktioniert es mit ChatGPT?",
+    answer:
+      "ChatGPT verbindet sich in seinem Entwicklermodus mit eigenen MCP-Servern, nur in den kostenpflichtigen Tarifen und nur mit Remote-Servern über HTTPS. Es braucht daher die Remote-URL von Gladys Plus. Die Gladys-Dokumentation erklärt derzeit Claude Desktop, Perplexity, VS Code und Le Chat Schritt für Schritt.",
+  },
+  {
+    question: "Ist der MCP-Server von Gladys kostenlos?",
+    answer:
+      "Ja. Der lokale MCP-Server ist Teil von Gladys, das kostenlos und Open Source ist. Der Zugriff von außerhalb deines Zuhauses oder über reine Web-Clients läuft über die Open API von Gladys Plus.",
+  },
+  {
+    question: "Gehen meine Daten an den KI-Anbieter?",
+    answer:
+      "Nur das, was der Agent in einem Gespräch abfragt, und zwar an den KI-Anbieter, den du gewählt hast. Gladys selbst bleibt auf deiner Hardware, und jeder Client nutzt seinen eigenen widerrufbaren Schlüssel. Für maximale Privatsphäre nutzt du ein lokales Modell mit einem MCP-fähigen Client.",
+  },
+  {
+    question: "Kann der KI-Agent meine Automationen kaputt machen?",
+    answer:
+      "Der MCP-Server stellt nur eine begrenzte Auswahl an Aktionen bereit: Zustände und Kamerabilder auslesen, Lichter und Steckdosen schalten und bestehende Szenen starten. Deine Automationen werden von Gladys definiert und ausgeführt, und Gladys läuft weiter, auch wenn die KI getrennt ist.",
   },
 ];
 

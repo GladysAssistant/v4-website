@@ -238,6 +238,122 @@ const aiSmartHomeContent = {
       secondary: { label: "Découvrir Gladys Plus", href: "/plus/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "KI im Smart Home: dein Zuhause privat mit KI steuern",
+      description:
+        "Steuere dein Smart Home in natürlicher Sprache, mit KI-Wochenbericht, proaktivem KI-Agenten und MCP für Claude, Perplexity oder Mistral. KI aus Europa.",
+    },
+    hero: {
+      title: "Steuere dein Smart Home mit KI",
+      subtitle:
+        "Sprich mit deinem Zuhause in normaler Sprache, lass einen proaktiven KI-Agenten für dich handeln und behalte dabei deine Privatsphäre, mit Open-Weight-KI gehostet in Europa.",
+      intro: [
+        "Die meiste „KI“ im Smart Home ist nur ein Sprachassistent, der deine Worte in eine feste Liste von Befehlen übersetzt und dabei alles in die Cloud eines Tech-Konzerns schickt. Gladys geht mit KI viel weiter und hält sie privat.",
+        "Mit Gladys sprichst du mit deinem Zuhause in deinen eigenen Worten, und ein echter KI-Agent findet heraus, was zu tun ist: Er liest deine Sensoren, steuert deine Geräte, analysiert deine Kamerabilder, schreibt Automationen für dich und schickt dir sogar einen Wochenbericht über dein Zuhause. Und weil er auf Open-Weight-Modellen läuft, die in Europa gehostet werden, wird dein Zuhause nicht zum Futter für die Werbemaschine eines anderen.",
+      ],
+      primaryCta: { label: "Kostenlos starten", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Zur KI-Integration →",
+        href: "/de/docs/integrations/openai/",
+      },
+    },
+    capabilities: {
+      title: "Was KI in deinem Zuhause leisten kann",
+      intro:
+        "KI ist bei Gladys kein aufgesetztes Gimmick. Sie zieht sich durch die ganze Plattform, von der alltäglichen Steuerung bis zu proaktiven Entscheidungen.",
+      cards: [
+        {
+          icon: "💬",
+          title: "Steuerung in natürlicher Sprache",
+          text: "Sprich mit deinem Zuhause über den Chat, Telegram oder ein Sprach-Widget. Es gibt keine feste Befehlsliste: Frag in deinen eigenen Worten, und die KI findet heraus, was zu tun ist.",
+        },
+        {
+          icon: "🧠",
+          title: "Ein KI-Agent, der handelt",
+          text: "Gladys denkt nach, bevor sie antwortet, und verkettet mehrere Aktionen, um ein Ziel zu erreichen: einen Sensor auslesen, Geräte steuern, deinen Energieverlauf abrufen oder eine Szene bauen, alles mit einer einzigen Anfrage.",
+        },
+        {
+          icon: "🔮",
+          title: "Proaktive KI",
+          text: "Gib Gladys eine Anweisung in normaler Sprache und lass sie entscheiden. Zum Beispiel: Wenn sich in der Garage etwas bewegt, prüfe die Kamera und alarmiere mich nur, wenn es nicht mein Auto ist.",
+        },
+        {
+          icon: "📊",
+          title: "Ein wöchentlicher KI-Bericht",
+          text: "Jede Woche schickt dir Gladys eine persönliche Zusammenfassung deines Zuhauses: Komfort, Energieverbrauch und -kosten, stumme oder getrennte Sensoren, Trends und praktische Tipps.",
+        },
+        {
+          icon: "🔌",
+          title: "Deinen eigenen KI-Agenten verbinden (MCP)",
+          text: "Gladys bringt einen MCP-Server mit, sodass du Claude Desktop, Perplexity oder Mistral Le Chat mit deinem Zuhause verbinden kannst, um Sensoren auszulesen, Kameras anzusehen und Geräte zu steuern.",
+        },
+      ],
+    },
+    privacy: {
+      title: "Privatsphäre von Grund auf",
+      paragraphs: [
+        "Hier unterscheidet sich Gladys. Cloud-Sprachassistenten schicken alles, was du sagst, an Server im Ausland, verknüpfen es mit deinem Konto und erstellen damit ein Profil von dir. Die integrierte KI von Gladys läuft auf Open-Weight-Modellen, die in Frankreich gehostet werden (Scaleway). Deine Anfragen werden also in Europa verarbeitet, nach DSGVO, und weder verkauft noch für Werbung ausgewertet.",
+        "Und wenn du noch weiter gehen willst: KI im Smart Home muss überhaupt nicht Cloud bedeuten. Du kannst dein eigenes lokales LLM anbinden, sodass die Intelligenz deines Zuhauses komplett auf Hardware läuft, die dir gehört. So oder so behältst du die Kontrolle darüber, wohin deine Daten gehen.",
+      ],
+      link: { label: "So funktioniert KI in Gladys →", href: "/de/docs/integrations/openai/" },
+    },
+    howTo: {
+      title: "Erste Schritte mit KI in Gladys",
+      intro: "Es gibt zwei Wege, die sich ergänzen, um KI in dein Gladys-Zuhause zu bringen:",
+      points: [
+        "Der integrierte KI-Assistent von Gladys ist in Gladys Plus enthalten. Sobald deine Instanz verbunden ist, sprichst du mit deinem Zuhause über den Chat-Tab, Telegram oder das Sprachassistent-Widget.",
+        "Um deinen eigenen KI-Agenten zu nutzen, aktivierst du den MCP-Server und verbindest einen Client wie Claude Desktop, Perplexity oder Mistral Le Chat. Das funktioniert lokal in deinem Netzwerk und aus der Ferne über die Open API von Gladys Plus.",
+        "Je mehr Geräte du in Gladys hast, desto mehr kann die KI sehen und für dich erledigen.",
+      ],
+      outro: "Ab da sprichst du einfach mit deinem Zuhause, und es erledigt den Rest.",
+    },
+    related: {
+      title: "Mehr über KI in Gladys",
+      intro:
+        "Du willst tiefer einsteigen? Diese Guides behandeln jeden Baustein der KI in Gladys und zeigen, wie sie privat bleibt:",
+      links: [
+        {
+          label: "MCP-Server fürs Smart Home",
+          href: "/de/smart-home-mcp-server/",
+          text: "Was dein KI-Agent per MCP in deinem Zuhause tun kann, lokal oder aus der Ferne.",
+        },
+        {
+          label: "Dein Zuhause in natürlicher Sprache steuern",
+          href: "/de/docs/integrations/openai/",
+          text: "Die KI-Integration: Sprich mit Gladys über den Chat, Telegram oder den Sprachassistenten.",
+        },
+        {
+          label: "Claude, Perplexity oder Mistral verbinden (MCP)",
+          href: "/de/docs/integrations/mcp/",
+          text: "Verbinde deinen Lieblings-KI-Agenten über den MCP-Server von Gladys mit deinem Smart Home.",
+        },
+        {
+          label: "Gladys Plus",
+          href: "/de/plus/",
+          text: "Das optionale Abo, das die integrierte, in Europa gehostete KI freischaltet.",
+        },
+        {
+          label: "Alexa Alternative",
+          href: "/de/alexa-alternative/",
+          text: "Eine private, lokale Alternative zu Cloud-Sprachassistenten wie Alexa.",
+        },
+        {
+          label: "Ein lokales Smart Home bauen",
+          href: "/de/local-smart-home/",
+          text: "Das große Ganze: wie KI in ein vollständig lokales, privates Smart Home passt.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Bring KI in dein Smart Home",
+      text: "Gladys ist kostenlos und Open Source, und ihre KI läuft auf Open-Weight-Modellen, die in Europa gehostet werden. Privat von Grund auf, selbst gehostet, kein Datenverkauf.",
+      primary: { label: "Jetzt starten", href: "/de/docs/" },
+      secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
+    },
+  },
 };
 
 export const aiSmartHomeFaqEn = [
@@ -303,6 +419,39 @@ export const aiSmartHomeFaqFr = [
     question: "L'IA dans Gladys est-elle payante ?",
     answer:
       "L'assistant IA intégré de Gladys fait partie de l'abonnement Gladys Plus (formule Plus). Connecter votre propre IA agent via le serveur MCP local fonctionne avec votre propre client et tourne sur votre réseau. Gladys elle-même reste gratuite et open source dans son cœur.",
+  },
+];
+
+export const aiSmartHomeFaqDe = [
+  {
+    question: "Kann ich mein Smart Home mit KI steuern?",
+    answer:
+      "Ja. Mit Gladys Assistant steuerst du dein Zuhause in natürlicher Sprache, ohne feste Befehlsliste. Du kannst über einen Chat, Telegram oder ein Sprach-Widget mit ihr sprechen, und ein echter KI-Agent liest deine Sensoren, steuert deine Geräte, analysiert Kamerabilder und erstellt sogar Automationen für dich.",
+  },
+  {
+    question: "Gibt es eine datenschutzfreundliche KI für das Smart Home?",
+    answer:
+      "Ja. Die integrierte KI von Gladys läuft auf Open-Weight-Modellen, die in Frankreich gehostet werden (Scaleway). Deine Anfragen werden also in Europa nach DSGVO verarbeitet und weder verkauft noch für Werbung genutzt. Du kannst auch dein eigenes lokales LLM anbinden, sodass die KI komplett auf Hardware läuft, die dir gehört.",
+  },
+  {
+    question: "Welches KI-Modell nutzt Gladys?",
+    answer:
+      "Die integrierte KI von Gladys nutzt große Open-Weight-Sprachmodelle, die über Gladys Plus in Europa gehostet werden (Scaleway, Frankreich). Du kannst auch deinen eigenen KI-Agenten wie Claude Desktop, Perplexity oder Mistral Le Chat über den MCP-Server von Gladys anbinden.",
+  },
+  {
+    question: "Kann die KI Automationen für mich erstellen?",
+    answer:
+      "Ja. Der KI-Agent von Gladys kann nachdenken und mehrere Aktionen verketten: Sensoren auslesen, Geräte steuern, deinen Energieverlauf anzeigen und Szenen aus einer einzigen Anfrage in natürlicher Sprache erstellen, etwa „Erstelle eine Szene, die um 23 Uhr alle Lichter ausschaltet“.",
+  },
+  {
+    question: "Kann ich Claude, ChatGPT oder Mistral mit meinem Smart Home verbinden?",
+    answer:
+      "Ja. Gladys enthält einen MCP-Server (Model Context Protocol), über den kompatible KI-Agenten wie Claude Desktop, Perplexity oder Mistral Le Chat deine Gerätezustände auslesen, deine Kameras ansehen, Lichter und Schalter steuern und Szenen starten können. Das funktioniert in deinem lokalen Netzwerk und aus der Ferne mit der Open API von Gladys Plus.",
+  },
+  {
+    question: "Kostet die KI in Gladys extra?",
+    answer:
+      "Der integrierte KI-Assistent von Gladys ist Teil des Gladys-Plus-Abos (Plus-Tarif). Deinen eigenen KI-Agenten über den lokalen MCP-Server anzubinden, funktioniert mit deinem eigenen Client und läuft in deinem Netzwerk. Gladys selbst bleibt im Kern kostenlos und Open Source.",
   },
 ];
 
