@@ -5,10 +5,10 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { protocolsFaqEn, protocolsFaqFr } from "../protocolsComparisonData";
+import { protocolsFaqEn, protocolsFaqFr, protocolsFaqDe } from "../protocolsComparisonData";
 
 export function getProtocolsComparisonPageSchema(lang) {
-  const prefix = lang === "fr" ? "/fr" : "";
+  const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}/zigbee-vs-matter-vs-zwave/`;
 
   return {
@@ -22,14 +22,18 @@ export function getProtocolsComparisonPageSchema(lang) {
         headline:
           lang === "fr"
             ? "Zigbee vs Matter vs Z-Wave : quel protocole domotique choisir ?"
-            : "Zigbee vs Matter vs Z-Wave: which smart home protocol to choose?",
+            : lang === "de"
+              ? "Zigbee vs. Matter vs. Z-Wave: Welcher Smart-Home-Funkstandard passt zu dir?"
+              : "Zigbee vs Matter vs Z-Wave: which smart home protocol to choose?",
         description:
           lang === "fr"
             ? "Comparatif clair et neutre des trois grands standards de la maison connectée : leurs différences, leurs forces et limites, et comment choisir."
-            : "A clear, neutral comparison of the three main smart home standards: how they differ, their strengths and limits, and how to choose.",
+            : lang === "de"
+              ? "Ein klarer, neutraler Vergleich der drei großen Smart-Home-Standards: Unterschiede, Stärken und Grenzen – und wie du den richtigen wählst."
+              : "A clear, neutral comparison of the three main smart home standards: how they differ, their strengths and limits, and how to choose.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: lang,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         author: {
           "@type": "Person",
@@ -44,7 +48,10 @@ export function getProtocolsComparisonPageSchema(lang) {
           { "@type": "SoftwareApplication", name: "Gladys Assistant" },
         ],
       },
-      toFaqPage(lang === "fr" ? protocolsFaqFr : protocolsFaqEn, pageUrl),
+      toFaqPage(
+        lang === "fr" ? protocolsFaqFr : lang === "de" ? protocolsFaqDe : protocolsFaqEn,
+        pageUrl
+      ),
     ],
   };
 }

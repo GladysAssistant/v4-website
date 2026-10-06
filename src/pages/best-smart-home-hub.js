@@ -8,6 +8,7 @@ import { getBestSmartHomeHubPageSchema } from "../data/schemas/bestSmartHomeHub"
 import bestSmartHomeHubContent, {
   bestSmartHomeHubFaqEn,
   bestSmartHomeHubFaqFr,
+  bestSmartHomeHubFaqDe,
 } from "../data/bestSmartHomeHubData";
 
 import styles from "./comparison.module.css";
@@ -197,9 +198,14 @@ function HubGuide({ content, faq }) {
 
 export default function BestSmartHomeHubPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = bestSmartHomeHubContent[lang];
-  const faq = lang === "fr" ? bestSmartHomeHubFaqFr : bestSmartHomeHubFaqEn;
+  const faq =
+    lang === "fr"
+      ? bestSmartHomeHubFaqFr
+      : lang === "de"
+        ? bestSmartHomeHubFaqDe
+        : bestSmartHomeHubFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

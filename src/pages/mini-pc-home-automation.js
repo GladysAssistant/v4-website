@@ -6,13 +6,19 @@ import { getMiniPcHomeAutomationPageSchema } from "../data/schemas/miniPcHomeAut
 import miniPcHomeAutomationContent, {
   miniPcHomeAutomationFaqEn,
   miniPcHomeAutomationFaqFr,
+  miniPcHomeAutomationFaqDe,
 } from "../data/miniPcHomeAutomationData";
 
 export default function MiniPcHomeAutomationPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = miniPcHomeAutomationContent[lang];
-  const faq = lang === "fr" ? miniPcHomeAutomationFaqFr : miniPcHomeAutomationFaqEn;
+  const faq =
+    lang === "fr"
+      ? miniPcHomeAutomationFaqFr
+      : lang === "de"
+        ? miniPcHomeAutomationFaqDe
+        : miniPcHomeAutomationFaqEn;
 
   return (
     <UseCasePage

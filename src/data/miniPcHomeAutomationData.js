@@ -281,6 +281,143 @@ const miniPcHomeAutomationContent = {
       secondary: { label: "Kit de démarrage", href: "/starter-kit/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Bester Mini-PC für Hausautomation (Ratgeber 2026)",
+      description:
+        "Welcher Mini-PC fürs Smart Home? Intel N100/N150 vs. Raspberry Pi 5 vs. gebrauchter Business-Mini-PC: RAM, Speicher, Strom – und worauf Gladys läuft.",
+    },
+    screenshotCaption:
+      "Gladys auf einem kleinen Mini-PC: Dashboards, Szenen und Verlauf für das ganze Zuhause.",
+    hero: {
+      title: "Der beste Mini-PC für Hausautomation",
+      subtitle:
+        "Ein kleiner, leiser Rechner, der rund um die Uhr läuft, ist das beste Zuhause für deine Smart-Home-Software. Hier erfährst du, was du kaufen solltest – und was du wirklich brauchst.",
+      intro: [
+        "Selbst gehostete Smart-Home-Plattformen wie Gladys Assistant, Home Assistant oder openHAB laufen alle auf einem kleinen Rechner, der rund um die Uhr eingeschaltet bleibt. Jahrelang war der Raspberry Pi die Standardwahl. Heute sind kleine Intel-Mini-PCs meist der bessere Kauf: schneller, mit echter SSD und Ethernet – und das oft zu einem ähnlichen Gesamtpreis.",
+        "Dieser Ratgeber erklärt, worauf es ankommt, welche Modelle du dir ansehen solltest und wann ein Raspberry Pi oder ein gebrauchter Büro-Mini-PC trotzdem die richtige Wahl ist.",
+      ],
+      primaryCta: {
+        label: "Gladys auf einem Mini-PC installieren",
+        href: "/de/docs/installation/mini-pc/",
+      },
+      secondaryCta: {
+        label: "Empfohlene Hardware →",
+        href: "/de/docs/installation/recommended-hardware/",
+      },
+    },
+    problem: {
+      title: "Worauf es wirklich ankommt",
+      intro: "Für einen Hausautomations-Server sind Gaming-Specs egal. Achte auf:",
+      points: [
+        "CPU: Ein aktueller, sparsamer Intel-Chip (N100, N150 o. Ä.) reicht für Gladys, Zigbee2MQTT und ein paar Kameras locker aus.",
+        "RAM: 8 GB sind komfortabel, 16 GB bieten Reserven für weitere selbst gehostete Apps.",
+        "Speicher: eine SSD (256 GB oder mehr), keine SD-Karte. SD-Karten verschleißen, wenn den ganzen Tag eine Datenbank darauf schreibt.",
+        "Ethernet: Für einen Server ist eine Kabelverbindung zuverlässiger als WLAN.",
+        "Stromverbrauch: Der Rechner läuft rund um die Uhr, daher zählt ein niedriger Leerlaufverbrauch mehr als Spitzenleistung.",
+        "USB-Ports: für deinen Zigbee- oder Z-Wave-Stick, idealerweise an einem kurzen USB-2.0-Verlängerungskabel.",
+      ],
+      outro:
+        "Jeder aktuelle Einsteiger-Mini-PC erfüllt alle Punkte. Der Rest ist eine Frage von Budget und Geschmack.",
+    },
+    comparison: {
+      title: "Mini-PC vs. Raspberry Pi 5",
+      intro: "Die zwei häufigsten Optionen im direkten Vergleich:",
+      cols: {
+        feature: "",
+        gladys: "Mini-PC mit Intel N100/N150",
+        other: "Raspberry Pi 5",
+      },
+      rows: [
+        { feature: "Sofort einsatzbereit", gladys: "Gehäuse, Netzteil und SSD inklusive", other: "Gehäuse, Netzteil und Speicher kommen dazu" },
+        { feature: "Speicher", gladys: "Interne SSD", other: "Standardmäßig SD-Karte; eine NVMe-SSD braucht eine Zusatzplatine" },
+        { feature: "Leistung", gladys: "Höher, x86", other: "Gut, ARM" },
+        { feature: "Stromverbrauch", gladys: "Niedrig", other: "Sehr niedrig" },
+        { feature: "Software-Kompatibilität", gladys: "Jedes x86-Docker-Image", other: "Nur ARM64-Images (Gladys unterstützt beides)" },
+        { feature: "Ideal für", gladys: "Einen zentralen Heimserver, der mitwachsen soll", other: "Ein kleines, sparsames Setup oder einen Pi, den du schon hast" },
+      ],
+      outro:
+        "Rechnest du beim Raspberry Pi 5 Gehäuse, Netzteil und SSD dazu, liegt der Gesamtpreis oft nah an einem Einsteiger-Mini-PC, der komplett geliefert wird.",
+    },
+    features: {
+      title: "Unsere Empfehlungen",
+      intro: "Die Rechner, die wir selbst nutzen und die mit Gladys gut laufen:",
+      cards: [
+        {
+          icon: "🥇",
+          title: "Beelink Mini S13 (Intel N150)",
+          text: "Unsere Empfehlung in der Installationsanleitung: leise, effizient und schnell genug, um Gladys und mehr über Jahre zu betreiben.",
+        },
+        {
+          icon: "💰",
+          title: "Mini-PCs mit Intel N100 / N95",
+          text: "Etwas ältere Chips, oft günstiger und für ein Smart Home immer noch mehr als genug.",
+        },
+        {
+          icon: "♻️",
+          title: "Gebrauchte Business-Mini-PCs",
+          text: "Lenovo ThinkCentre Tiny, Dell OptiPlex Micro oder HP EliteDesk Mini: robust, gebraucht günstig, nur etwas weniger sparsam.",
+        },
+        {
+          icon: "🍓",
+          title: "Raspberry Pi 5",
+          text: "Für ein kleines Setup weiterhin eine gute Option, am besten mit SSD statt SD-Karte.",
+        },
+        {
+          icon: "🗄️",
+          title: "Dein NAS",
+          text: "Du hast schon einen Synology- oder Unraid-Server mit Docker? Dann läuft Gladys auch dort.",
+        },
+        {
+          icon: "💻",
+          title: "Was du schon besitzt",
+          text: "Ein alter Laptop mit funktionierendem Akku gibt einen ordentlichen Server ab – mit eingebauter USV.",
+        },
+      ],
+    },
+    how: {
+      title: "Vom Karton zum Smart Home",
+      intro: "Sobald du den Rechner hast:",
+      points: [
+        "Verbinde ihn per Ethernet-Kabel mit deinem Router.",
+        "Installiere Ubuntu Server und aktiviere dabei die Option OpenSSH-Server.",
+        "Installiere Docker und starte Gladys mit einem einzigen Befehl.",
+        "Steck deinen Zigbee-Stick über ein kurzes USB-2.0-Verlängerungskabel ein und aktiviere Zigbee2MQTT in Gladys.",
+        "Öffne Gladys auf deinem Smartphone oder Computer und füge deine Geräte hinzu.",
+      ],
+      outro:
+        "Die Schritt-für-Schritt-Installationsanleitung erklärt jeden Schritt – inklusive Video.",
+    },
+    solution: {
+      title: "Kleine Hardware, großes Smart Home",
+      paragraphs: [
+        "Ein Mini-PC, der etwa so viel kostet wie ein smarter Lautsprecher, kann dein ganzes Zuhause lokal steuern: Dashboards, Automatisierungen, Verlauf, Kameras, Energie-Monitoring und auf Wunsch KI. Er braucht kaum Strom, ist lautlos und hängt von keiner Cloud ab.",
+        "Gladys ist kostenlos und Open Source und läuft mit Docker auf jedem dieser Rechner.",
+      ],
+      link: {
+        label: "Alternative zu Home Assistant Green →",
+        href: "/de/home-assistant-green-alternative/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Vervollständige dein Setup:",
+      links: [
+        { label: "Der beste Zigbee-USB-Stick", href: "/de/best-zigbee-dongle/", text: "Welchen Zigbee-Koordinator du an deinen Mini-PC anschließen solltest." },
+        { label: "Der beste Smart-Home-Hub", href: "/de/best-smart-home-hub/", text: "Mini-PC, Hubitat, Homey, SmartThings: Welcher Hub passt zu dir?" },
+        { label: "Alternative zu Home Assistant Green", href: "/de/home-assistant-green-alternative/", text: "Deine eigene lokale Zentrale auf einem Mini-PC." },
+        { label: "Alle Ratgeber", href: "/de/guides/", text: "Alle Ratgeber, Tools und Vergleiche an einem Ort." },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Mach einen Mini-PC zur Zentrale deines Smart Home",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl auf jedem dieser Rechner installiert.",
+      primary: { label: "Gladys installieren", href: "/de/docs/installation/mini-pc/" },
+      secondary: { label: "Empfohlene Hardware", href: "/de/docs/installation/recommended-hardware/" },
+    },
+  },
 };
 
 export const miniPcHomeAutomationFaqEn = [
@@ -336,6 +473,34 @@ export const miniPcHomeAutomationFaqFr = [
     question: "Un mini-PC de bureau d'occasion, bonne idée ?",
     answer:
       "Oui, si vous le trouvez à bon prix : les Lenovo ThinkCentre Tiny, Dell OptiPlex Micro et HP EliteDesk Mini sont robustes et puissants. Ils consomment plus au repos qu'un N100/N150 neuf, ce qui finit par compter sur des années de fonctionnement 24 h/24.",
+  },
+];
+
+export const miniPcHomeAutomationFaqDe = [
+  {
+    question: "Raspberry Pi 5 oder Mini-PC für die Hausautomation 2026?",
+    answer:
+      "Für die meisten ein Mini-PC. Gestiegene Speicherkosten haben den Preis des Raspberry Pi 5 mehrfach in die Höhe getrieben: Seit April 2026 kostet das 8-GB-Modell in den USA 175 $ – ohne Gehäuse, Netzteil und SSD. Ebenfalls in den USA bekommst du einen Mini-PC mit Intel N150, 16 GB RAM und 500-GB-SSD für etwa 190 bis 200 $, komplett. Ein Pi, den du schon hast, ist aber weiterhin völlig in Ordnung.",
+  },
+  {
+    question: "Wie viel Strom verbraucht ein Mini-PC für die Hausautomation?",
+    answer:
+      "Ein Mini-PC mit Intel N100 oder N150 unter Linux braucht im Leerlauf typischerweise etwa 6 bis 10 W, also rund 50 bis 90 kWh im Jahr. Gebrauchte Büro-Mini-PCs mit älteren Core-i5-Chips liegen im Leerlauf meist bei 15 bis 25 W. Eine ARM-Box wie der Home Assistant Green kommt im Leerlauf mit unter 2 W aus.",
+  },
+  {
+    question: "Wie viel RAM und Speicher brauche ich?",
+    answer:
+      "8 GB RAM und eine 256-GB-SSD reichen für Gladys, Zigbee2MQTT und ein paar Kameras locker aus. Mit 16 GB und 500 GB hast du Platz für weitere selbst gehostete Apps. Verzichte auf SD-Karten bei einem Server, der den ganzen Tag in eine Datenbank schreibt.",
+  },
+  {
+    question: "Welchen Mini-PC empfehlt ihr für Gladys?",
+    answer:
+      "In unserer Installationsanleitung empfehlen wir den Beelink Mini S13 (Intel N150). Jeder aktuelle Mini-PC mit Intel N100 oder N150, 8 bis 16 GB RAM, SSD und Ethernet funktioniert genauso gut.",
+  },
+  {
+    question: "Ist ein gebrauchter Büro-Mini-PC eine gute Idee?",
+    answer:
+      "Ja, wenn du einen zu einem guten Preis findest: Lenovo ThinkCentre Tiny, Dell OptiPlex Micro und HP EliteDesk Mini sind robust und leistungsstark. Im Leerlauf verbrauchen sie mehr Strom als ein neuer N100/N150-Rechner, was sich über Jahre im Dauerbetrieb bemerkbar macht.",
   },
 ];
 
