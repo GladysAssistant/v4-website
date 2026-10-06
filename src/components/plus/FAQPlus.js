@@ -297,7 +297,8 @@ const buildDataDe = (prices, currency) => [
     ),
   },
   {
-    title: "Wie aktiviere ich Gladys Plus auf meiner bestehenden Gladys-Instanz?",
+    title:
+      "Wie aktiviere ich Gladys Plus auf meiner bestehenden Gladys-Instanz?",
     description: (
       <>
         Nach dem Abschluss des Abos bekommst du eine E-Mail mit deinem

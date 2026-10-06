@@ -33,7 +33,7 @@ Es sollte eine leere Liste laufender Container angezeigt werden.
 
 Falls du Probleme bei der Installation von Docker hast, wirf einen Blick in die [Docker-Dokumentation](https://docs.docker.com/) und suche dort nach der Anleitung für dein System.
 
-## Gladys starten
+## Gladys starten {#start-gladys}
 
 Mit diesem Befehl startest du einen Gladys-Container:
 
@@ -85,7 +85,7 @@ sudo docker run -d \
   --cleanup --include-restarting
 ```
 
-## Gladys aufrufen
+## Gladys aufrufen {#accessing-gladys}
 
 Öffne **`http://gladysassistant.local`** in deinem Browser. Gladys macht diesen Namen per mDNS in deinem lokalen Netzwerk bekannt, sodass du es von jedem Gerät im selben Netzwerk erreichst, ohne jemals eine IP-Adresse heraussuchen zu müssen.
 
