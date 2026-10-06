@@ -2,6 +2,7 @@ import { getGuidePageSchema } from "../structuredData";
 import homeAssistantGreenAlternativeContent, {
   homeAssistantGreenAlternativeFaqEn,
   homeAssistantGreenAlternativeFaqFr,
+  homeAssistantGreenAlternativeFaqDe,
 } from "../homeAssistantGreenAlternativeData";
 
 export function getHomeAssistantGreenAlternativePageSchema(lang) {
@@ -10,6 +11,7 @@ export function getHomeAssistantGreenAlternativePageSchema(lang) {
     content: homeAssistantGreenAlternativeContent,
     faqEn: homeAssistantGreenAlternativeFaqEn,
     faqFr: homeAssistantGreenAlternativeFaqFr,
+    faqDe: homeAssistantGreenAlternativeFaqDe,
     about: [
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },
       { "@type": "Product", name: "Home Assistant Green" },

@@ -240,6 +240,122 @@ const alternativeContent = {
       },
     },
   },
+  de: {
+    meta: {
+      title: "Alexa Alternative: privat, Open Source & lokal",
+      description:
+        "Ersetze Alexa durch ein privates, selbst gehostetes Smart Home: Automationen auf deiner Hardware, Sprachassistent ohne Amazon, keine Werbung. Kostenlos.",
+    },
+    hero: {
+      title: "Du suchst eine Alexa Alternative mit Datenschutz?",
+      subtitle:
+        "Lerne Gladys Assistant kennen: die lokale Open-Source-Plattform für dein Smart Home, die deine Daten zu Hause behält statt in Amazons Cloud.",
+      intro: [
+        "Amazon Alexa ist bequem, aber alles, was du sagst, wird in Amazons Cloud verarbeitet, mit deinem Konto verknüpft und kann genutzt werden, um ein Profil von dir zu erstellen. Seit März 2025 bietet Amazon nicht einmal mehr die Option an, Sprachanfragen auf dem Gerät zu behalten: Alles geht in die Cloud. Für viele ist das ein K.-o.-Kriterium.",
+        "Gladys Assistant geht den umgekehrten Weg. Es ist eine kostenlose, quelloffene und selbst gehostete Smart-Home-Plattform, die bei dir zu Hause auf deinem eigenen Rechner läuft. Deine Geräte und Automationen bleiben in deinem lokalen Netzwerk – ohne Cloud-Pflicht, ohne Aufnahmen auf fremden Servern, ohne Werbung und ohne Datenverkauf.",
+      ],
+      primaryCta: { label: "Kostenlos loslegen", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Den Sprachassistenten von Gladys entdecken →",
+        href: "/de/docs/dashboard/voice-assistant/",
+      },
+    },
+    whyLooking: {
+      title: "Warum nach einer Alternative zu Alexa suchen?",
+      intro:
+        "Alexa ist ein ausgereifter Sprachassistent, aber das Cloud-first- und Werbemodell dahinter hat echte Nachteile. Die häufigsten Gründe, warum Leute nach einer Alternative suchen:",
+      points: [
+        "Alles, was du sagst, wird an Amazons Cloud geschickt, und Sprachaufnahmen können auf deren Servern gespeichert werden.",
+        "Deine Nutzung fließt in Personalisierungs- und Werbeprofile über alle Amazon-Dienste hinweg.",
+        "Du brauchst ein Amazon-Konto und eine ständige Internetverbindung; offline funktioniert kaum etwas.",
+        "Amazon kann jederzeit Geräte einstellen, Funktionen ändern oder seine Datenschutzbestimmungen anpassen.",
+        "Alexa ist eine Sprachsteuerung, keine echte Automatisierungs-Engine: Wirklich lokale, komplexe Automationen sind begrenzt.",
+      ],
+      outro:
+        "Nichts davon macht Alexa zu einem schlechten Produkt – Sprache versteht es hervorragend. Es ist schlicht eine Frage der Prioritäten: Wenn dir Datenschutz und lokale Kontrolle wichtig sind, gibt es ein besseres Fundament für dein Smart Home.",
+    },
+    reasons: {
+      title: "Warum Gladys eine starke Alexa Alternative mit Datenschutz ist",
+      cards: [
+        {
+          icon: "🔒",
+          title: "Deine Daten bleiben zu Hause",
+          text: "Gladys läuft auf deinem eigenen Rechner, deine Smart-Home-Daten bleiben also in deinem lokalen Netzwerk. Keine Cloud-Pflicht, keine Aufnahmen auf Amazons Servern, kein Tracking.",
+        },
+        {
+          icon: "🌐",
+          title: "Funktioniert ohne Cloud",
+          text: "Weil Gladys lokal läuft, funktioniert dein Zuhause weiter, auch wenn das Internet ausfällt oder ein Cloud-Dienst abgeschaltet wird. Deine Automationen hängen nicht davon ab, dass Amazon online bleibt.",
+        },
+        {
+          icon: "🧠",
+          title: "Echte Automation, nicht nur Befehle",
+          text: "Gladys hat eine vollwertige Szenen-Engine mit Auslösern, Bedingungen und Aktionen. So baust du ein Zuhause, das von selbst reagiert, statt nur auf Sprachbefehle zu warten.",
+        },
+        {
+          icon: "🎙️",
+          title: "Ein Sprachassistent unter deiner Kontrolle",
+          text: "Gladys hat einen eigenen Sprachassistenten: Sprich ganz natürlich über dein Dashboard, ein Wandtablet oder dein Handy. Er läuft mit Open-Weight-KI-Modellen, die in Frankreich gehostet werden, nicht auf Amazons Servern, und nichts, was du sagst, wird für Werbung genutzt.",
+        },
+        {
+          icon: "🔌",
+          title: "Auf offenen Standards gebaut",
+          text: "Zigbee, Matter und MQTT werden vollwertig unterstützt – du bist also nie im Ökosystem einer einzelnen Marke gefangen oder gezwungen, „kompatibles“ Zubehör zu kaufen.",
+        },
+        {
+          icon: "💚",
+          title: "Open Source, keine Werbung, kein Datenverkauf",
+          text: "Der Kern von Gladys ist zu 100 % kostenlos und Open Source. Es gibt keine Werbung und keinen Datenverkauf; das optionale Abo Gladys Plus finanziert das Projekt transparent.",
+        },
+      ],
+    },
+    honesty: {
+      title: "Fairerweise: Wo Alexa die Nase vorn hat",
+      paragraphs: [
+        "Ich will ehrlich sein: Alexa ist richtig gut in dem, was es tut. Erstklassige Spracherkennung, natürliche Gespräche, ein riesiges Ökosystem an Skills, sehr günstige Lautsprecher und Multiroom-Audio, das einfach funktioniert. Gladys ist in erster Linie eine Plattform für Hausautomation, und sein Sprachassistent ist neuer und wird von dir selbst eingerichtet. Als reiner Sprachlautsprecher für Endkunden ist Alexa daher schwer zu schlagen.",
+        "Die gute Nachricht: Es muss nicht alles oder nichts sein. Gladys lässt sich mit Alexa verbinden, du kannst also die Sprachsteuerung auf deinen vorhandenen Echo-Geräten behalten, während deine Automationen lokal in Gladys laufen. Und wenn dir Datenschutz am wichtigsten ist, kannst du komplett lokal werden und den Cloud-Assistenten ganz weglassen. So oder so behältst du die Kontrolle.",
+      ],
+      compareLink: {
+        label: "So verbindest du Gladys mit Alexa →",
+        href: "/de/docs/integrations/alexa/",
+      },
+    },
+    others: {
+      title: "Weitere datenschutzfreundliche Alternativen zu Alexa",
+      intro:
+        "Gladys ist nicht die einzige Option. Der Fairness halber hier die wichtigsten Alternativen, wenn du mehr Datenschutz und lokale Kontrolle willst, als Alexa bietet:",
+      cards: [
+        {
+          title: "Home Assistant",
+          text: "Eine leistungsstarke Open-Source-Plattform mit lokaler Sprachoption (Assist). Sehr fähig, aber mit steiler Lernkurve und etwas YAML.",
+        },
+        {
+          title: "Apple HomeKit / Siri",
+          text: "Datenschutzbewusster als Alexa, aber weiterhin an Apples Ökosystem und Cloud gebunden und auf Apple-Hardware beschränkt.",
+        },
+        {
+          title: "OpenVoiceOS / Mycroft",
+          text: "Open-Source-Sprachassistenten mit Fokus auf Datenschutz. Vielversprechend, aber eher ein Bastelprojekt als ein ausgereiftes Endkundenprodukt.",
+        },
+        {
+          title: "Rhasspy",
+          text: "Ein komplett offline arbeitendes Sprach-Toolkit, das sich mit anderen Plattformen kombinieren lässt. Sehr privat, aber technisch in Einrichtung und Wartung.",
+        },
+      ],
+      outro:
+        "Unter diesen Optionen sticht Gladys hervor, weil es eine aufgeräumte, moderne Oberfläche, eine echte lokale Automatisierungs-Engine und offene Standards vereint – ohne steile Lernkurve.",
+    },
+    faqTitle: "Häufig gestellte Fragen",
+    cta: {
+      title: "Teste die Alexa Alternative mit Datenschutz",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Lokal, selbst gehostet, keine Cloud nötig und keine Aufnahmen auf fremden Servern.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: {
+        label: "Gladys Plus entdecken",
+        href: "/de/plus/",
+      },
+    },
+  },
 };
 
 export const alternativeFaqEn = [
@@ -315,6 +431,49 @@ export const alternativeFaqFr = [
     question: "Puis-je continuer à utiliser Alexa avec Gladys ?",
     answer:
       "Oui. Gladys peut s'intégrer avec Alexa : vous gardez le contrôle vocal sur vos enceintes Echo pendant que vos automatisations tournent en local dans Gladys. Et si la vie privée est votre priorité, vous pouvez aussi passer en 100 % local et abandonner complètement l'assistant cloud.",
+  },
+];
+
+export const alternativeFaqDe = [
+  {
+    question: "Gibt es eine datenschutzfreundliche Alternative zu Alexa?",
+    answer:
+      "Ja. Gladys Assistant ist eine lokale, quelloffene und selbst gehostete Smart-Home-Plattform, die auf deinem eigenen Rechner läuft. Deine Daten bleiben in deinem lokalen Netzwerk statt in Amazons Cloud. Keine Aufnahmen auf fremden Servern, keine Werbung und kein Datenverkauf.",
+  },
+  {
+    question: "Nimmt Alexa alles auf, was du sagst?",
+    answer:
+      "Alexa verarbeitet deine Sprachanfragen in Amazons Cloud, und Sprachaufnahmen können auf deren Servern gespeichert und zur Personalisierung von Diensten genutzt werden. Gladys geht den umgekehrten Weg: Es läuft lokal, deine Smart-Home-Daten bleiben also zu Hause.",
+  },
+  {
+    question: "Kann ich Alexa durch ein lokales, selbst gehostetes System ersetzen?",
+    answer:
+      "Ja. Gladys Assistant ist komplett selbst gehostet, läuft bei dir zu Hause und hat eine echte Automatisierungs-Engine, sodass deine Szenen lokal weiterlaufen. Außerdem hat es einen eigenen Sprachassistenten (mit Gladys Plus): So kannst du dich von Amazon lösen und trotzdem freihändig steuern.",
+  },
+  {
+    question: "Funktioniert Gladys ohne Cloud oder Internet?",
+    answer:
+      "Ja. Der Kern von Gladys läuft vollständig in deinem lokalen Netzwerk, dein Zuhause funktioniert also weiter, auch wenn das Internet ausfällt oder ein Cloud-Dienst abgeschaltet wird. Das optionale Abo Gladys Plus ergänzt Fernzugriff und KI, aber der selbst gehostete Kern bleibt lokal.",
+  },
+  {
+    question: "Hat Gladys einen Sprachassistenten wie Alexa?",
+    answer:
+      "Ja. Gladys hat ein Sprachassistenten-Widget für dein Dashboard, dein Wandtablet oder dein Handy: Du sprichst ganz natürlich, und es steuert Geräte, liest Sensoren aus, startet Szenen und beantwortet Fragen. Es ist Teil von Gladys Plus und läuft mit Open-Weight-KI-Modellen, die in Frankreich (Scaleway) gehostet werden, nicht auf den Servern von Amazon oder Google, ohne Werbung und ohne Datenverkauf. Es ist neuer als Alexa, und einen eigenen Lautsprecher gibt es noch nicht.",
+  },
+  {
+    question: "Verarbeitet Alexa Sprachanfragen noch lokal?",
+    answer:
+      "Nein. Im März 2025 hat Amazon die Einstellung „Keine Sprachaufnahmen senden“ von den wenigen Echo-Geräten entfernt, die sie unterstützten. Seitdem wird jede Alexa-Sprachanfrage an Amazons Cloud geschickt. Mit Gladys laufen deine Geräte und Automationen auf deiner eigenen Hardware, bei dir zu Hause.",
+  },
+  {
+    question: "Gibt es eine selbst gehostete Open-Source-Alternative zu Alexa?",
+    answer:
+      "Ja. Gladys Assistant ist kostenlos, Open Source (Apache 2.0) und selbst gehostet: Es läuft auf einem Mini-PC, einem Raspberry Pi oder einem NAS bei dir zu Hause und funktioniert mit Zigbee, Matter, Philips Hue, SmartThings, Sonos und vielen weiteren Geräten. Weitere Open-Source-Optionen sind Home Assistant (Assist), OpenVoiceOS und Rhasspy.",
+  },
+  {
+    question: "Kann ich Alexa zusammen mit Gladys weiter nutzen?",
+    answer:
+      "Ja. Gladys lässt sich mit Alexa verbinden, du kannst also die Sprachsteuerung auf deinen Echo-Geräten behalten, während deine Automationen lokal in Gladys laufen. Wenn dir Datenschutz am wichtigsten ist, kannst du auch komplett lokal werden und den Cloud-Assistenten ganz weglassen.",
   },
 ];
 

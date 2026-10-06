@@ -261,6 +261,133 @@ const alternativeContent = {
       },
     },
   },
+  de: {
+    meta: {
+      title: "Home Assistant Alternative: Gladys Assistant",
+      description:
+        "Suchst du eine Home Assistant Alternative? Gladys Assistant ist einfacher, Open Source und selbst gehostet: ohne YAML, ohne Cloud, mit stabilen Updates.",
+    },
+    hero: {
+      title: "Du suchst eine Alternative zu Home Assistant?",
+      subtitle:
+        "Lerne Gladys Assistant kennen: die einfachere Open-Source-Plattform für Hausautomation, bei der Datenschutz an erster Stelle steht.",
+      intro: [
+        "Home Assistant ist ein großartiges Projekt, aber nicht für jeden gemacht. YAML-Dateien, eine steile Lernkurve und häufige Updates: Viele suchen etwas Einfacheres, ohne auf Open Source und lokale Kontrolle zu verzichten.",
+        "Genau dafür gibt es Gladys Assistant. Eine kostenlose, quelloffene und selbst gehostete Hausautomation, die auf einer Idee aufbaut: zuerst an die Nutzer denken. Keine Konfigurationsdateien, keine Cloud nötig, alles geht mit ein paar Klicks.",
+      ],
+      primaryCta: { label: "Kostenlos loslegen", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Gladys vs. Home Assistant →",
+        href: "/de/home-assistant-vs-gladys-assistant/",
+      },
+    },
+    whyLooking: {
+      title: "Warum nach einer Alternative zu Home Assistant suchen?",
+      intro:
+        "Home Assistant ist unglaublich mächtig, doch diese Macht hat ihren Preis. Die häufigsten Gründe, warum Leute nach einer Alternative suchen:",
+      points: [
+        "Für manche Setups musst du YAML-Konfigurationsdateien bearbeiten.",
+        "Die Lernkurve ist steil, und die Oberfläche kann Einsteiger schnell überfordern.",
+        "Häufige Updates machen manchmal ein Setup kaputt, das vorher einwandfrei lief.",
+        "Es fühlt sich oft an wie „von Entwicklern, für Entwickler“.",
+        "Du willst ein aufgeräumtes, stabiles Erlebnis, das einfach funktioniert – ohne Basteln.",
+      ],
+      outro:
+        "Nichts davon macht Home Assistant zu einem schlechten Projekt. Wenn du gerne bastelst, ist es hervorragend. Es ist schlicht eine Frage der Passung – und für alle, die einfach ein Smart Home wollen, das funktioniert, gibt es einen einfacheren Weg.",
+    },
+    reasons: {
+      title: "Warum Gladys eine starke Home Assistant Alternative ist",
+      cards: [
+        {
+          icon: "☀️",
+          title: "Eine Oberfläche, die du nicht selbst bauen musst",
+          text: "Version 5 bringt Horizon mit, ein komplett neues, Mobile-first gestaltetes Design: Milchglas-Optik, echte Tiefe und Bedienelemente in Daumengröße. Du bekommst ein Dashboard, das schon fertig aussieht – auf dem Handy genauso wie auf dem Laptop, ohne Karten zusammenzustecken und ohne etwas zu konfigurieren.",
+        },
+        {
+          icon: "🖱️",
+          title: "Niemals YAML",
+          text: "Alles wird per Klick in der Oberfläche eingerichtet. Es gibt keine Konfigurationsdateien zu bearbeiten, weil es schlicht keine gibt.",
+        },
+        {
+          icon: "🛡️",
+          title: "Grundsolide Stabilität",
+          text: "Updates laufen vollautomatisch und atomar ab: Gladys kann nie in einem halb kaputten Zustand zwischen zwei Versionen hängen bleiben.",
+        },
+        {
+          icon: "🔒",
+          title: "Datenschutz zuerst & selbst gehostet",
+          text: "Gladys läuft bei dir zu Hause, auf deinem eigenen Rechner. Deine Daten bleiben in deinem lokalen Netzwerk – ohne Cloud-Pflicht, ohne Tracking und ohne Datenverkauf.",
+        },
+        {
+          icon: "🔌",
+          title: "Auf offenen Standards gebaut",
+          text: "Zigbee, Matter und MQTT werden vollwertig unterstützt – damit funktionieren Tausende Geräte über diese offenen Protokolle.",
+        },
+        {
+          icon: "🧩",
+          title: "Externe Integrationen",
+          text: "Jeder kann eine Gladys-Integration auf GitHub veröffentlichen, ohne Pull Request und ohne Review. Du installierst sie mit einem Klick aus dem Katalog in Gladys, und sie läuft in einer isolierten Sandbox, sodass sie deine Instanz nie beschädigen kann.",
+        },
+        {
+          icon: "💬",
+          title: "Ein Projekt, das zuhört",
+          text: "Stell deine Frage per E-Mail, im Forum oder in den sozialen Netzwerken – der Gründer antwortet persönlich. Dein Feedback prägt die Roadmap ganz konkret.",
+        },
+        {
+          icon: "💚",
+          title: "Für immer kostenlos & Open Source",
+          text: "Der Kern von Gladys ist zu 100 % kostenlos und Open Source. Das optionale Abo Gladys Plus ergänzt Fernzugriff, KI und Backups.",
+        },
+      ],
+    },
+    honesty: {
+      title: "Fairerweise: Wo Home Assistant die Nase vorn hat",
+      paragraphs: [
+        "Ich bin der Entwickler von Gladys, also bin ich lieber transparent. Home Assistant hat nach wie vor den größeren Katalog an Integrationen. Wenn du sehr exotische oder reine Cloud-Geräte besitzt, werden sie dort vielleicht direkt unterstützt, während Gladys sie noch nicht kann. Außerdem lassen sich Automatisierungen als YAML-Blueprints teilen, und Power-User haben mehr Stellschrauben.",
+        "Aber dieser Abstand schrumpft schnell, und zwar mit Absicht. Der Community-Katalog ist in gut zwei Wochen von 20 auf 67 externe Integrationen gewachsen, geschrieben von Leuten, die den Code von Gladys vorher nie geöffnet hatten. Jeder kann eine Integration paketieren und auf GitHub veröffentlichen, ohne irgendwen um Erlaubnis zu fragen, und sie taucht im Katalog jeder Gladys-Instanz auf. Du installierst sie mit einem Klick, ohne Kommandozeile und ohne YAML, und sie läuft in einer Sandbox, sodass sie dein Setup nicht aus dem Gleichgewicht bringen kann. Dazu kommen Zigbee und Matter, die offenen Standards, auf die sich die ganze Branche zubewegt: Ausgerechnet der Punkt, bei dem Home Assistant angeblich gewinnt, verändert sich am schnellsten.",
+        "Und wenn die Integration, die du brauchst, noch nicht existiert, kannst du sie mit der offiziellen Vorlage selbst bauen, statt darauf zu warten. Du kannst Gladys und Home Assistant auch parallel betreiben und das eine als Backend, das andere als Oberfläche nutzen. Kurz gesagt: Wer Gladys wählt, verzichtet selten auf etwas – und seit Version 5 ist die Oberfläche ein Grund zum Wechseln statt ein Kompromiss.",
+      ],
+      compareLink: {
+        label: "Zum ausführlichen Vergleich Gladys vs. Home Assistant →",
+        href: "/de/home-assistant-vs-gladys-assistant/",
+      },
+    },
+    others: {
+      title: "Weitere Open-Source-Alternativen zu Home Assistant",
+      intro:
+        "Gladys ist nicht die einzige Option. Der Fairness halber hier die wichtigsten Open-Source-Alternativen zu Home Assistant:",
+      cards: [
+        {
+          title: "openHAB",
+          text: "Basiert auf Java, sehr mächtig und regelbasiert. Äußerst flexibel, aber mit einer Lernkurve ähnlich wie bei Home Assistant.",
+        },
+        {
+          title: "Domoticz",
+          text: "Schlank und läuft auf bescheidener Hardware. Ausgereift und stabil, aber die Oberfläche wirkt altbacken.",
+        },
+        {
+          title: "Jeedom",
+          text: "Ein französisches Projekt mit Plugin-basiertem Freemium-Modell. Flexibel, aber viele Plugins kosten Geld.",
+        },
+        {
+          title: "Homey Pro",
+          text: "Ein ausgefeiltes Erlebnis, setzt aber auf proprietäre, kostenpflichtige Hardware statt komplett offen und selbst gehostet zu sein.",
+        },
+      ],
+      outro:
+        "Unter diesen Optionen sticht Gladys durch seine Einfachheit und ein echtes Produkterlebnis hervor: eine aufgeräumte Oberfläche, keine Konfigurationsdateien und ein klarer Fokus auf offene Standards.",
+    },
+    faqTitle: "Häufig gestellte Fragen",
+    cta: {
+      title: "Teste die einfache Home Assistant Alternative",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Datenschutz zuerst, selbst gehostet, keine Cloud nötig.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: {
+        label: "Mit Home Assistant vergleichen",
+        href: "/de/home-assistant-vs-gladys-assistant/",
+      },
+    },
+  },
 };
 
 export const alternativeFaqEn = [
@@ -336,6 +463,44 @@ export const alternativeFaqFr = [
     question: "Gladys est-elle une bonne alternative à Home Assistant pour la vie privée ?",
     answer:
       "Oui. Gladys est auto-hébergée et tourne sur votre propre machine : vos données domotiques restent sur votre réseau local. Pas de cloud obligatoire, pas de tracking, pas de revente de données.",
+  },
+];
+
+export const alternativeFaqDe = [
+  {
+    question: "Was ist die beste Alternative zu Home Assistant?",
+    answer:
+      "Das hängt von deinem Profil ab. Wenn du Einfachheit und ein aufgeräumtes Erlebnis ohne YAML willst, ist Gladys Assistant eine sehr gute Wahl. Weitere Open-Source-Alternativen sind openHAB, Domoticz und Jeedom, jeweils mit eigenen Vor- und Nachteilen.",
+  },
+  {
+    question: "Gibt es eine Home Assistant Alternative ohne YAML?",
+    answer:
+      "Ja. Gladys Assistant braucht weder YAML noch sonst irgendwelche Konfigurationsdateien. Alles wird per Klick in der Oberfläche eingerichtet, was den Einstieg deutlich einfacher macht.",
+  },
+  {
+    question: "Gibt es eine einfachere Home Assistant Alternative für Einsteiger?",
+    answer:
+      "Gladys Assistant ist auf Einfachheit ausgelegt: eine aufgeräumte Oberfläche, keine Konfigurationsdateien, automatische atomare Updates und eine ausführliche Dokumentation mit Videos. Damit gehört es zu den Open-Source-Lösungen, mit denen der Einstieg am leichtesten fällt.",
+  },
+  {
+    question: "Hat Gladys so viele Integrationen wie Home Assistant?",
+    answer:
+      "Home Assistant hat weiterhin den größeren Katalog, aber Gladys ist nicht mehr auf seine eingebauten Integrationen beschränkt. Neben Zigbee, Matter und MQTT kann dank externer Integrationen jeder eine Gladys-Integration auf GitHub veröffentlichen, ohne Pull Request und ohne Review, und jede Gladys-Instanz listet sie in ihrem Katalog. Du installierst sie mit einem Klick, und sie läuft in einer isolierten Sandbox, sodass sie den Rest deiner Instanz nicht beeinträchtigen kann.",
+  },
+  {
+    question: "Kann ich von Home Assistant zu Gladys wechseln?",
+    answer:
+      "Du musst nicht alles auf einmal umziehen. Mit Zigbee2MQTT oder Matter können dieselben Geräte gleichzeitig in beiden Systemen erscheinen, sodass du beide parallel betreiben kannst. Für alles, was Gladys noch nicht abdeckt, schließt meist eine externe Integration die Lücke, und beide Plattformen können außerdem über MQTT oder HTTP miteinander kommunizieren.",
+  },
+  {
+    question: "Gibt es kostenlose Alternativen zu Home Assistant?",
+    answer:
+      "Ja. Gladys Assistant, openHAB und Domoticz sind kostenlos und Open Source. Jeedom ist kostenlos, setzt aber auf ein Freemium-Modell bei den Plugins. Der Kern von Gladys ist zu 100 % kostenlos und Open Source, mit einem optionalen kostenpflichtigen Abo.",
+  },
+  {
+    question: "Ist Gladys eine gute Home Assistant Alternative in Sachen Datenschutz?",
+    answer:
+      "Ja. Gladys wird selbst gehostet und läuft auf deinem eigenen Rechner, deine Smart-Home-Daten bleiben also in deinem lokalen Netzwerk. Es gibt keine Cloud-Pflicht, kein Tracking und keinen Datenverkauf.",
   },
 ];
 

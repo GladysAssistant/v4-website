@@ -5,10 +5,14 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { comparisonFaqEn, comparisonFaqFr } from "../comparisonData";
+import {
+  comparisonFaqEn,
+  comparisonFaqFr,
+  comparisonFaqDe,
+} from "../comparisonData";
 
 export function getComparisonPageSchema(lang) {
-  const prefix = lang === "fr" ? "/fr" : "";
+  const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}/home-assistant-vs-gladys-assistant/`;
 
   return {
@@ -22,14 +26,18 @@ export function getComparisonPageSchema(lang) {
         headline:
           lang === "fr"
             ? "Home Assistant vs Gladys Assistant : le comparatif honnête"
-            : "Home Assistant vs Gladys Assistant: an honest comparison",
+            : lang === "de"
+              ? "Home Assistant vs. Gladys Assistant: der ehrliche Vergleich"
+              : "Home Assistant vs Gladys Assistant: an honest comparison",
         description:
           lang === "fr"
             ? "Comparatif honnête entre Home Assistant et Gladys Assistant par le créateur de Gladys : installation, simplicité, intégrations, automatisations, communauté et prix."
-            : "An honest comparison between Home Assistant and Gladys Assistant by Gladys' creator: installation, ease of use, integrations, automations, community and pricing.",
+            : lang === "de"
+              ? "Ehrlicher Vergleich von Home Assistant und Gladys Assistant – vom Gladys-Entwickler selbst: Installation, Bedienung, Integrationen, Automatisierungen, Community und Preis."
+              : "An honest comparison between Home Assistant and Gladys Assistant by Gladys' creator: installation, ease of use, integrations, automations, community and pricing.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: lang,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         author: {
           "@type": "Person",
@@ -41,7 +49,14 @@ export function getComparisonPageSchema(lang) {
           { "@type": "SoftwareApplication", name: "Home Assistant" },
         ],
       },
-      toFaqPage(lang === "fr" ? comparisonFaqFr : comparisonFaqEn, pageUrl),
+      toFaqPage(
+        lang === "fr"
+          ? comparisonFaqFr
+          : lang === "de"
+            ? comparisonFaqDe
+            : comparisonFaqEn,
+        pageUrl,
+      ),
     ],
   };
 }

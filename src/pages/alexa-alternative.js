@@ -10,6 +10,7 @@ import { getAlexaAlternativePageSchema } from "../data/schemas/alexaAlternative"
 import alternativeContent, {
   alternativeFaqEn,
   alternativeFaqFr,
+  alternativeFaqDe,
 } from "../data/alexaAlternativeData";
 
 import styles from "./comparison.module.css";
@@ -66,7 +67,9 @@ function AlternativeContent({ content, faq, lang }) {
           caption={
             lang === "fr"
               ? "Une interface locale et épurée où vos données restent chez vous, sans cloud obligatoire."
-              : "A clean, local interface where your data stays at home, with no mandatory cloud."
+              : lang === "de"
+                ? "Eine aufgeräumte, lokale Oberfläche: Deine Daten bleiben zu Hause, ganz ohne Cloud-Pflicht."
+                : "A clean, local interface where your data stays at home, with no mandatory cloud."
           }
         />
 
@@ -168,9 +171,16 @@ function AlternativeContent({ content, faq, lang }) {
 
 export default function AlexaAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = alternativeContent[lang];
-  const faq = lang === "fr" ? alternativeFaqFr : alternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? alternativeFaqFr
+      : lang === "de"
+        ? alternativeFaqDe
+        : alternativeFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

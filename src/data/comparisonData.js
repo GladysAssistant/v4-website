@@ -461,6 +461,233 @@ const comparisonContent = {
       secondary: { label: "Voir les intégrations", href: "/docs/integrations/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Home Assistant vs. Gladys Assistant: Vergleich 2026",
+      description:
+        "Home Assistant oder Gladys Assistant? Ein fairer Vergleich vom Gladys-Gründer: Installation, Bedienung, Integrationen, Automationen, Community und Preis.",
+    },
+    hero: {
+      title: "Home Assistant vs. Gladys Assistant",
+      subtitle: "Ein ehrlicher Vergleich zweier Open-Source-Smart-Home-Zentralen",
+      intro: [
+        "Du schwankst noch zwischen Home Assistant und Gladys Assistant? Dieser Vergleich spart dir Stunden.",
+        "Volle Transparenz: Ich bin Pierre-Gilles, der Entwickler von Gladys Assistant, also natürlich voreingenommen. Trotzdem werde ich beiden Projekten gerecht. Hier siehst du, wie sie sich wirklich unterscheiden – und warum ich glaube, dass Gladys für die meisten, die einfach ein funktionierendes Smart Home wollen, die bessere Wahl ist.",
+        "Beide Projekte sind 2013 gestartet, kurz nachdem der erste Raspberry Pi erschienen war. Auf den ersten Blick sehen sie sich ähnlich, doch sie beruhen auf sehr unterschiedlichen Philosophien – und genau dieser Unterschied sollte deine Entscheidung leiten.",
+      ],
+      showdown: {
+        alt: "Das Dashboard von Gladys Assistant 5 neben dem Demo-Dashboard von Home Assistant",
+        gladysLabel: "Gladys Assistant 5",
+        haLabel: "Home Assistant",
+        caption:
+          "Gleicher Bildschirm, gleicher Tag, keine Retusche: links das Dashboard von Gladys Assistant 5, rechts die offizielle Demo von Home Assistant.",
+      },
+    },
+    verdict: {
+      title: "Die Kurzfassung",
+      gladys: {
+        title: "Wähle Gladys Assistant, wenn …",
+        points: [
+          "du etwas Einfaches willst, das schnell eingerichtet ist und einfach funktioniert.",
+          "du eine aufgeräumte Oberfläche bevorzugst, in der alles per Klick geht – ohne Konfigurationsdateien und ohne YAML.",
+          "dir Stabilität wichtig ist: Updates laufen vollautomatisch und atomar.",
+          "du ein reaktionsschnelles Projekt willst, bei dem dein Feedback das Produkt wirklich prägt.",
+          "du jedes beliebige Gerät einbinden können willst: Jeder kann eine externe Integration veröffentlichen, und du installierst sie mit einem Klick.",
+        ],
+      },
+      ha: {
+        title: "Wähle Home Assistant, wenn …",
+        points: [
+          "du sehr exotische Geräte besitzt, für die noch niemand eine Gladys-Integration gebaut hat.",
+          "du Power-User bist und es liebst, bis ins Extreme zu basteln und anzupassen.",
+          "du kein Problem damit hast, YAML zu bearbeiten und unter die Haube zu schauen.",
+          "du den größtmöglichen Katalog an Integrationen willst, auch wenn die Qualität schwankt.",
+        ],
+      },
+    },
+    tableTitle: "Der schnelle Vergleich",
+    tableCols: { feature: "", gladys: "Gladys Assistant", ha: "Home Assistant" },
+    table: [
+      { feature: "Gestartet", gladys: "2013", ha: "2013" },
+      { feature: "Backend", gladys: "Node.js (JavaScript)", ha: "Python" },
+      { feature: "Frontend", gladys: "Preact", ha: "Lit + Web Components" },
+      {
+        feature: "Installation",
+        gladys: "Ein Docker-Befehl, ausführliche Doku und Videos",
+        ha: "Home Assistant OS, die HA-Green-Box oder Docker",
+      },
+      {
+        feature: "Einstiegshürde",
+        gladys: "Einsteigerfreundlich, Schritt für Schritt geführt",
+        ha: "Steilere Lernkurve",
+      },
+      {
+        feature: "Konfigurationsdateien",
+        gladys: "Keine: alles passiert in der Oberfläche",
+        ha: "YAML für manche Bereiche nötig",
+      },
+      {
+        feature: "Integrationen",
+        gladys:
+          "Native Integrationen rund um offene Standards (Zigbee, Matter, MQTT) plus externe Community-Integrationen, mit einem Klick installiert",
+        ha: "Riesiger Katalog, von der Community gebaut, schwankende Qualität",
+      },
+      {
+        feature: "Unterstützte Geräte",
+        gladys: "Tausende über Zigbee, Matter und MQTT plus der Katalog externer Integrationen",
+        ha: "Der größte verfügbare Katalog",
+      },
+      {
+        feature: "Fehlende Integration ergänzen",
+        gladys: "Jeder kann eine veröffentlichen: Vorlage klonen, auf GitHub pushen – ohne Pull Request und ohne Review",
+        ha: "Eine Custom Component in Python schreiben oder eine aus der Community über HACS installieren",
+      },
+      {
+        feature: "Automationen",
+        gladys: "Ein einfacher Tab „Szenen“, visueller Editor, Node-RED",
+        ha: "Automationen / Szenen / Skripte / Blueprints, visueller Editor, YAML, Node-RED",
+      },
+      {
+        feature: "Integrierter Alarmmodus",
+        gladys: "Ja",
+        ha: "Nicht nativ",
+      },
+      {
+        feature: "Integrierte Anwesenheitserkennung",
+        gladys: "Ja",
+        ha: "Über Integrationen",
+      },
+      {
+        feature: "Updates",
+        gladys: "Vollautomatisch und atomar",
+        ha: "Häufig, können gelegentlich etwas kaputt machen",
+      },
+      {
+        feature: "Support",
+        gladys: "Direkte Antworten vom Entwickler, aktive Community",
+        ha: "Große Community, Support durch die Community",
+      },
+      {
+        feature: "Preis",
+        gladys: "Kostenlos & Open Source + optionales Abo Gladys Plus",
+        ha: "Kostenlos & Open Source + optionales Abo Nabu Casa Cloud",
+      },
+      {
+        feature: "Philosophie",
+        gladys: "Nutzer zuerst, Einfachheit auf Produktniveau",
+        ha: "Entwickler zuerst, maximale Flexibilität",
+      },
+    ],
+    sections: [
+      {
+        id: "installation",
+        title: "Installation",
+        gladys: [
+          "Gladys ist wirklich einfach zu installieren. Es läuft mit einem einzigen Docker-Befehl (eine `docker run`-Zeile oder eine `docker-compose`-Datei, die du kopierst, einfügst und startest), und die Dokumentation begleitet dich bei jedem Schritt mit Screenshots und Installationsvideos.",
+          "Und weil Gladys nur ein Container ist, kannst du deinen Mini-PC, dein NAS oder deinen Raspberry Pi weiterhin auch für andere Dinge nutzen.",
+        ],
+        ha: [
+          "Home Assistant bietet Home Assistant OS, das ausgereift ist, und die Box Home Assistant Green kommt einsatzbereit an.",
+          "Mit ihrer Box ist das unkompliziert. Ohne sie ist aber nicht immer klar, welche Installationsmethode die einfachste ist, da eher Home Assistant OS als der reine Docker-Weg empfohlen wird.",
+        ],
+        takeaway:
+          "Beide sind einsteigerfreundlich, wenn du ihre Hardware kaufst. Gladys lässt sich aber besonders leicht selbst installieren – dank Docker-Setup in einer Zeile, ausführlicher Dokumentation und Schritt-für-Schritt-Videos.",
+      },
+      {
+        id: "interface",
+        title: "Oberfläche & Bedienung",
+        gladys: [
+          "Seit Version 5 bringt Gladys eine komplett neue Oberfläche namens Horizon mit: Milchglasflächen über einem lebendigen Farbverlauf, echte Tiefe und jedes Bedienelement einzeln neu gezeichnet. Sie wurde Mobile-first entworfen: Auf dem Handy wachsen die Bedienelemente auf Daumengröße, am Desktop schrumpfen sie wieder, und der Dashboard-Umschalter sitzt unten am Bildschirm, genau da, wo deine Hand ist.",
+          "Die ganze Philosophie lautet: zuerst an die Nutzer denken, dann an die technische Umsetzung. Du musst nie in Logs wühlen oder eine Datei auf der Festplatte bearbeiten. Alles geht mit der Maus – oder mit dem Daumen.",
+          "Du kannst so viele Dashboards anlegen, wie du willst, eines pro Raum oder nach Thema (Energie, Sicherheit usw.), ganz ohne Konfigurationsdateien, weil es schlicht keine gibt.",
+          "Gladys bleibt bewusst fokussiert: Du ordnest die Widgets an, die du wirklich brauchst, statt dich durch endlose Optionen zu kämpfen. Und da es Open Source ist, kann die Community alles Fehlende ergänzen.",
+        ],
+        ha: [
+          "Home Assistant hat eine moderne Material-Design-Oberfläche, die aufgeräumt und stark anpassbar ist. Das Dashboard lässt sich mit unzähligen Karten und Optionen komplett bearbeiten.",
+          "In den Foren liest man aber oft, dass manche Bereiche noch das Bearbeiten von YAML-Dateien erfordern – was Einsteiger abschrecken kann.",
+        ],
+        takeaway:
+          "Hier liegt Gladys klar vorn, und seit Version 5 ist es nicht einmal knapp. Home Assistant drückt dir einen Kasten voller Karten in die Hand und lässt dich dein Dashboard selbst zusammenbauen; Gladys gibt dir eines, das schon fertig aussieht – auf dem Handy genauso wie auf dem Laptop, ohne etwas zu konfigurieren. Wenn du eine App jahrelang mehrmals am Tag öffnest, zählt dieser Unterschied mehr als jede Funktionsliste.",
+      },
+      {
+        id: "integrations",
+        title: "Integrationen & Kompatibilität",
+        gladys: [
+          "Die nativen Integrationen von Gladys konzentrieren sich auf das Wesentliche: offene Standards wie Zigbee, Matter und MQTT, jede sorgfältig gebaut und durchgängig getestet, gestaltet wie ein ausgereiftes Endkundenprodukt statt von Entwicklern für Entwickler.",
+          "Allein über Zigbee und Matter sind das schon Tausende kompatible Geräte. Die Wette: Offene Standards, allen voran Matter, werden sich durchsetzen. Deshalb investiert Gladys massiv dort, wohin sich der Markt bewegt, und nicht in geschlossene Cloud-Ökosysteme, die dich einsperren.",
+          "Und für alles andere gibt es externe Integrationen. Das ist die größte Veränderung in der Geschichte des Projekts: Jeder kann jetzt eine Gladys-Integration schreiben und auf GitHub veröffentlichen, ohne Pull Request, ohne Review und ohne meine Freigabe. Sie erscheinen im Katalog jeder Gladys-Instanz neben den nativen Integrationen, und die Community hat in wenigen Tagen mehr davon veröffentlicht, als wir in sechs Jahren in den Kern eingebaut hatten.",
+          "Für dich als Nutzer ändert sich nichts: Du stöberst im Katalog in Gladys, klickst auf Installieren, und Gladys lädt die Integration, startet sie und erzeugt ihre komplette Oberfläche (Geräteliste, Erkennung, Konfigurationsformular). Danach startest, stoppst und aktualisierst du sie oder liest ihre Logs an derselben Stelle. Keine Kommandozeile, kein YAML, keine technischen Kenntnisse nötig.",
+          "Freiheit auf der einen Seite, die Sorgfalt von Gladys auf der anderen: Jede externe Integration läuft in einer isolierten Sandbox (begrenzter RAM und CPU, schreibgeschütztes Dateisystem, isoliertes Netzwerk). Stürzt eine ab, stürzt sie allein ab und kann deine Instanz nie mitreißen. Genau deshalb ist es sicher, die Tür für alle zu öffnen.",
+          "Und wenn die Integration, die du brauchst, noch nicht existiert, musst du auf niemanden mehr warten: Du klonst die offizielle Vorlage, passt sie an dein Gerät an, veröffentlichst sie, und innerhalb einer Stunde landet sie im Katalog jeder Gladys-Instanz.",
+        ],
+        ha: [
+          "Home Assistant hat einen riesigen Katalog mit Tausenden Community-Integrationen, sodass selbst exotische Geräte oft direkt unterstützt werden.",
+          "Die Kehrseite ist die schwankende Qualität: Manche Integrationen sind hervorragend, andere weniger, und es liegt an dir, die richtige zu finden und zu testen, ob sie funktioniert. Über HACS installierte Custom Components laufen zudem innerhalb von Home Assistant selbst, eine fehlerhafte kann also die ganze Instanz beeinträchtigen.",
+        ],
+        takeaway:
+          "Der übliche Einwand ist die Zahl der Integrationen, und dieses Argument verliert an Boden: Der Community-Katalog ist in gut zwei Wochen von 20 auf 67 Integrationen gewachsen, geschrieben von Leuten, die den Code von Gladys vorher nie geöffnet hatten, und das Tempo nimmt weiter zu. Home Assistant hat heute den größeren Katalog, und wenn du sehr exotische Hardware besitzt, stehen die Chancen gut, dass sie dort schon abgedeckt ist. Aber Gladys ist nicht mehr auf das beschränkt, wofür ich Zeit habe, und zwischen Matter auf der einen und einem Katalog, den jeder erweitern kann, auf der anderen Seite schließen wir diese Lücke ganz bewusst – und schnell.",
+      },
+      {
+        id: "automations",
+        title: "Automationen & Szenen",
+        gladys: [
+          "Alles lebt in einem einzigen Tab „Szenen“. Eine Szene kann eine manuelle Abfolge von Aktionen sein, die du vom Dashboard aus startest, oder eine vollwertige Automation mit Auslösern, Bedingungen und Aktionen.",
+          "Der visuelle Editor ist intuitiv: Du beginnst (optional) mit einem Auslöser und hängst dann beliebig viele Bedingungen und Aktionen an, die du frei mischen kannst – eine Bedingung führt zu Aktionen, danach folgen weitere Bedingungen. Erstaunlich mächtig und trotzdem gut lesbar.",
+          "Und falls du einmal weiter gehen musst, kannst du komplexe Logik in Node-RED auslagern und über MQTT oder HTTP mit Gladys verbinden.",
+        ],
+        ha: [
+          "Home Assistant hat ebenfalls einen visuellen Editor, dazu teilbare YAML-Blueprints und eine Node-RED-Integration für Fortgeschrittenes.",
+          "Allerdings verteilt es alles auf vier Tabs (Automationen, Szenen, Skripte und Blueprints), was sich am Anfang wie vier Varianten derselben Sache anfühlen kann und die Lernkurve zusätzlich steiler macht.",
+        ],
+        takeaway:
+          "Gladys bündelt alles an einem einfachen, leistungsstarken Ort, während Home Assistant es auf vier Tabs verteilt. Für die meisten ist der eine Szenen-Tab von Gladys schneller gelernt und für alltägliche Automationen genauso leistungsfähig.",
+      },
+      {
+        id: "community",
+        title: "Community & Support",
+        gladys: [
+          "Gladys ist ein Projekt, das wirklich zuhört. Es gibt eine aktive Community im Forum und eine Roadmap, die von echtem Nutzerfeedback geprägt wird statt davon, was am einfachsten zu bauen ist.",
+          "Das Beste: Du bekommst direkten Support vom Gründer. Wenn du eine Frage hast, selbst eine tiefgehende zum Code, kannst du mir eine E-Mail schreiben, im Forum posten oder mich in den sozialen Netzwerken kontaktieren – und du bekommst eine persönliche Antwort. So einen direkten Draht gibt es selten.",
+        ],
+        ha: [
+          "Home Assistant hat eine riesige weltweite Community und ein gewaltiges Forum, du findest also meist jemanden, der dein Problem schon gelöst hat.",
+          "Bei dieser Größe läuft der Support allerdings über die Community statt persönlich, und der Großteil der Kommunikation der Entwickler findet auf Englisch statt.",
+        ],
+        takeaway:
+          "Bei der schieren Größe gewinnt Home Assistant. Gladys bietet dafür etwas Selteneres: ein reaktionsschnelles Projekt, bei dem der Entwickler zuhört und dir persönlich antwortet.",
+      },
+      {
+        id: "pricing",
+        title: "Preis & Geschäftsmodell",
+        gladys: [
+          "Der Kern von Gladys ist zu 100 % kostenlos und Open Source, und das für immer. Optional gibt es das Abo Gladys Plus für Fernzugriff, verschlüsselte automatische Backups, Sprachassistenten (Google Home, Alexa), KI und Energiedaten von Enedis.",
+          "Das Geschäftsmodell ist tatsächlich das Abo – ohne Investoren, ohne Werbung und ohne Datenverkauf.",
+        ],
+        ha: [
+          "Auch der Kern von Home Assistant ist zu 100 % kostenlos und Open Source, mit einem optionalen Abo Nabu Casa Cloud (Fernzugriff, Sprache) und einer wachsenden Hardware-Reihe wie der HA-Green-Box.",
+        ],
+        takeaway:
+          "Beide haben ein transparentes, sehr ähnliches Modell: einen kostenlosen Open-Source-Kern plus ein optionales Abo. So oder so unterstützt du ein unabhängiges Projekt statt eines datenhungrigen Tech-Riesen.",
+      },
+    ],
+    whyNotBoth: {
+      title: "Warum nicht beides?",
+      paragraphs: [
+        "Das übersehen die meisten Vergleiche: Du musst dich nicht entscheiden. Du kannst Gladys Assistant und Home Assistant gleichzeitig im selben Setup betreiben.",
+        "Mit Zigbee2MQTT kann eine einzige Zigbee-Instanz sowohl mit Gladys als auch mit Home Assistant sprechen, sodass dasselbe Gerät in beiden Oberflächen auftaucht. Dasselbe gilt für Matter: Ein Gerät, das mit einem Hub (etwa einem Apple TV) gekoppelt ist, lässt sich von beiden steuern. Du kannst mehrere Controller gleichzeitig nutzen.",
+        "Beide bieten außerdem umfangreiche APIs und können über MQTT oder HTTP miteinander kommunizieren – das eine als Backend, das andere als deine Oberfläche.",
+        "Wenn du also die Oberfläche von Gladys liebst, aber eine exotische Integration von Home Assistant brauchst, betreib beide parallel – oder mach selbst eine externe Gladys-Integration daraus und teile sie mit allen. Es gibt wirklich keine Ausrede: Alles ist möglich.",
+      ],
+    },
+    faqTitle: "Häufig gestellte Fragen",
+    cta: {
+      title: "Bereit, Gladys Assistant auszuprobieren?",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Datenschutz zuerst, selbst gehostet, keine Cloud nötig.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: { label: "Zu den Integrationen", href: "/de/docs/integrations/" },
+    },
+  },
 };
 
 export const comparisonFaqEn = [
@@ -546,6 +773,49 @@ export const comparisonFaqFr = [
     question: "Faut-il choisir Gladys ou Home Assistant ?",
     answer:
       "Si vous voulez une maison connectée simple et stable qui fonctionne, sans YAML ni fichiers de configuration, Gladys est le meilleur choix pour la plupart des gens. Choisissez Home Assistant si vous êtes un power user qui veut le plus grand catalogue d'intégrations possible et aime bidouiller.",
+  },
+];
+
+export const comparisonFaqDe = [
+  {
+    question: "Ist Gladys Assistant ein Fork von Home Assistant?",
+    answer:
+      "Nein. Gladys ist ein unabhängiges Projekt, 2013 gestartet – im selben Jahr wie Home Assistant –, aber mit einem komplett anderen Stack: Node.js und Preact bei Gladys, Python und Lit bei Home Assistant.",
+  },
+  {
+    question: "Was ist einfacher für Einsteiger: Gladys oder Home Assistant?",
+    answer:
+      "Für Einsteiger ist Gladys die einfachere Wahl: keine Konfigurationsdateien und kein YAML, alles wird per Klick in der Oberfläche eingerichtet, und die Dokumentation führt dich mit Videos durch. Home Assistant ist mächtiger, hat aber eine steilere Lernkurve.",
+  },
+  {
+    question: "Funktioniert Gladys mit meinen Geräten?",
+    answer:
+      "Sehr wahrscheinlich. Gladys unterstützt Tausende Geräte über offene Standards wie Zigbee, Matter und MQTT sowie eigene Integrationen für beliebte Marken. Alles andere deckt meist eine externe Integration ab, eine Community-Integration, die du mit einem Klick aus dem Katalog in Gladys installierst. Und wenn noch niemand die passende gebaut hat, kannst du sie mit der offiziellen Vorlage selbst erstellen.",
+  },
+  {
+    question: "Was, wenn es keine Gladys-Integration für mein Gerät gibt?",
+    answer:
+      "Seit Version 4.84 kann jeder eine erstellen. Du klonst die offizielle Vorlage, passt sie an dein Gerät an, veröffentlichst sie in einem öffentlichen GitHub-Repository, und innerhalb einer Stunde steht sie im Katalog jeder Gladys-Instanz. Kein Pull Request, kein Review, keine Freigabe, auf die du warten musst. Jede externe Integration läuft in einer isolierten Sandbox und kann dein Gladys daher nie aus dem Gleichgewicht bringen.",
+  },
+  {
+    question: "Machen externe Integrationen Gladys so kompliziert wie Home Assistant?",
+    answer:
+      "Nein. Die Installation ist ein einziger Klick im Katalog in Gladys: keine Kommandozeile, kein YAML, keine Konfigurationsdatei. Gladys erzeugt die komplette Oberfläche der Integration, und du startest, stoppst und aktualisierst sie oder liest ihre Logs auf demselben Bildschirm wie bei jeder nativen Integration.",
+  },
+  {
+    question: "Kann ich Gladys und Home Assistant gleichzeitig betreiben?",
+    answer:
+      "Ja. Mit Zigbee2MQTT oder Matter Multi-Admin können dieselben Geräte in beiden Systemen erscheinen. Du kannst die beiden auch über MQTT oder HTTP verbinden, da beide umfangreiche APIs bieten.",
+  },
+  {
+    question: "Ist Gladys kostenlos wie Home Assistant?",
+    answer:
+      "Ja. Der Kern beider Projekte ist zu 100 % kostenlos und Open Source. Beide bieten ein optionales kostenpflichtiges Abo: Gladys Plus für Gladys und Nabu Casa Cloud für Home Assistant.",
+  },
+  {
+    question: "Soll ich Gladys oder Home Assistant wählen?",
+    answer:
+      "Wenn du ein einfaches, stabiles Smart Home willst, das einfach funktioniert – ohne YAML und ohne Konfigurationsdateien –, ist Gladys für die meisten die bessere Wahl. Nimm Home Assistant, wenn du Power-User bist, den größtmöglichen Katalog an Integrationen willst und gerne bastelst.",
   },
 ];
 

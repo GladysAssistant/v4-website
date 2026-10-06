@@ -10,6 +10,7 @@ import { getAlternativePageSchema } from "../data/schemas/alternative";
 import alternativeContent, {
   alternativeFaqEn,
   alternativeFaqFr,
+  alternativeFaqDe,
 } from "../data/alternativeData";
 
 import styles from "./comparison.module.css";
@@ -66,7 +67,9 @@ function AlternativeContent({ content, faq, lang }) {
           caption={
             lang === "fr"
               ? "Une interface épurée où tout se fait au clic, sans aucun fichier de configuration."
-              : "A clean interface where everything happens with clicks, with no configuration files."
+              : lang === "de"
+                ? "Eine aufgeräumte Oberfläche, in der alles per Klick geht – ganz ohne Konfigurationsdateien."
+                : "A clean interface where everything happens with clicks, with no configuration files."
           }
         />
 
@@ -168,9 +171,16 @@ function AlternativeContent({ content, faq, lang }) {
 
 export default function AlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = alternativeContent[lang];
-  const faq = lang === "fr" ? alternativeFaqFr : alternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? alternativeFaqFr
+      : lang === "de"
+        ? alternativeFaqDe
+        : alternativeFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>
