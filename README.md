@@ -31,6 +31,16 @@ npm start
 npm run start -- --locale fr
 ```
 
+### Running the German website
+
+```
+npm run start -- --locale de
+```
+
+German translations live in `i18n/de/`. Pages that are not translated yet
+(blog posts, guide/landing pages, external integration pages) fall back to the
+English content.
+
 ## How to refresh the development activity page?
 
 The [/dev/](https://gladysassistant.com/dev/) page reads

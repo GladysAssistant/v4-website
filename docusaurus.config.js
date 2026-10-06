@@ -25,13 +25,16 @@ module.exports = function createConfig() {
   projectName: "gladys", // Usually your repo name.
   i18n: {
     defaultLocale: "en",
-    locales: ["en", "fr"],
+    locales: ["en", "fr", "de"],
     localeConfigs: {
       en: {
         label: "English",
       },
       fr: {
         label: "Français",
+      },
+      de: {
+        label: "Deutsch",
       },
     },
   },
@@ -331,13 +334,14 @@ module.exports = function createConfig() {
                   !item.url.includes("/page/") &&
                   !item.url.endsWith("/search/") &&
                   !item.url.endsWith("/payment_success/") &&
-                  // English-locale redirect to the French-only starter kit.
-                  item.url !== "https://gladysassistant.com/starter-kit/"
+                  // English and German redirects to the French-only starter kit.
+                  item.url !== "https://gladysassistant.com/starter-kit/" &&
+                  item.url !== "https://gladysassistant.com/de/starter-kit/"
               )
               .map((item) => {
                 const path = item.url
                   .replace("https://gladysassistant.com", "")
-                  .replace("/fr/", "/");
+                  .replace(/^\/(fr|de)\//, "/");
                 if (path === "/") {
                   return { ...item, priority: 1.0, changefreq: "daily" };
                 }

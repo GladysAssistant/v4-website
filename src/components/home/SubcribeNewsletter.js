@@ -33,7 +33,8 @@ function SubcribeNewsletter({ lang }) {
         body: JSON.stringify({
           email,
           firstname,
-          language: lang,
+          // The newsletter is only written in French and English.
+          language: lang === "fr" ? "fr" : "en",
         }),
       });
       setEmail("");

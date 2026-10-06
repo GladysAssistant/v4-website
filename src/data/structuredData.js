@@ -370,7 +370,7 @@ export function getStarterKitPageSchema(lang) {
 export function getOgImageUrl(pageUrl, lang) {
   const slug = pageUrl
     .replace(SITE_URL, "")
-    .replace(/^\/fr\//, "/")
+    .replace(/^\/(fr|de)\//, "/")
     .replace(/^\/|\/$/g, "");
   return ogImages.includes(slug)
     ? `${SITE_URL}/img/og/${slug}-${lang === "fr" ? "fr" : "en"}.jpg`

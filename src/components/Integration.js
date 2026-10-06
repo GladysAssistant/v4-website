@@ -37,7 +37,9 @@ function Integration({
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
         <img
-          src={useBaseUrl(`/img/integrations/${lang}/${imageName}`)}
+          src={useBaseUrl(
+            `/img/integrations/${lang === "fr" ? "fr" : "en"}/${imageName}`
+          )}
           alt={title}
           title={title}
           className={styles.integrationImage}
@@ -351,7 +353,12 @@ function IntegrationPage({ integrations, lang }) {
               description="Integration page description"
               values={{
                 website: (
-                  <Link to={IMPROVE_COMPATIBILITY_LIST_LINKS[lang]}>
+                  <Link
+                    to={
+                      IMPROVE_COMPATIBILITY_LIST_LINKS[lang] ||
+                      IMPROVE_COMPATIBILITY_LIST_LINKS.en
+                    }
+                  >
                     <Translate
                       id="integrations.improveHere"
                       description="Integration improve integration list here"

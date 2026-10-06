@@ -39,6 +39,8 @@ const testimonials = {
 function PlusContent() {
   const { i18n } = useDocusaurusContext();
   const language = i18n.currentLocale;
+  // The app screenshots only exist in French and English.
+  const screenshotLang = language === "fr" ? "fr" : "en";
   const recommendedCheckoutHref = getCheckoutUrl(language);
 
   return (
@@ -156,13 +158,13 @@ function PlusContent() {
                 <img
                   alt="Gladys Plus"
                   src={useBaseUrl(
-                    `img/home/horizon/phone-${language}-780.webp`,
+                    `img/home/horizon/phone-${screenshotLang}-780.webp`,
                   )}
                   srcSet={[390, 585, 780]
                     .map(
                       (width) =>
                         `${useBaseUrl(
-                          `img/home/horizon/phone-${language}-${width}.webp`,
+                          `img/home/horizon/phone-${screenshotLang}-${width}.webp`,
                         )} ${width}w`,
                     )
                     .join(", ")}

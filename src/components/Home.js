@@ -129,8 +129,10 @@ const ICONS = {
  * `<name>-<lang>-<width>.webp`, so one component serves every shot.
  */
 const Shot = ({ asset, name, lang, alt, widths, sizes, priority }) => {
+  // Screenshots only exist in French and English.
+  const shotLang = lang === "fr" ? "fr" : "en";
   const url = (width) =>
-    asset(`img/home/horizon/${name}-${lang}-${width}.webp`);
+    asset(`img/home/horizon/${name}-${shotLang}-${width}.webp`);
   const srcSet = widths.map((width) => `${url(width)} ${width}w`).join(", ");
 
   return (
@@ -373,6 +375,117 @@ const FAQQuestions = {
       ),
     },
   ],
+  de: [
+    {
+      title: <>Ist Gladys wirklich kostenlos?</>,
+      response: (
+        <>
+          <b>Ja, 100 % kostenlos und Open Source!</b> Gladys Assistant ist freie
+          Software, die du mit{" "}
+          <Link href="/de/docs/installation/docker/#start-gladys">
+            einem einzigen Docker-Befehl
+          </Link>{" "}
+          installieren kannst. Für Gladys brauchst du kein Abo, es gibt keine
+          Einschränkungen und du musst keine Kreditkarte angeben.
+          <br />
+          <br />
+          Du kannst Gladys auf jedem Linux-Rechner installieren: Mini-PC,
+          Synology-NAS, Raspberry Pi, Server oder sogar ein alter Computer. Wenn
+          Docker darauf läuft, läuft auch Gladys darauf! 🚀
+        </>
+      ),
+    },
+    {
+      title: <>Ist die Installation kompliziert?</>,
+      response: (
+        <>
+          <b>
+            Ein paar technische Schritte sind nötig, aber wir begleiten dich
+            dabei.
+          </b>{" "}
+          Zuerst brauchst du einen Linux-Rechner (zum Beispiel Ubuntu Server),
+          dann startest du Gladys über Docker. Unsere Dokumentation führt dich
+          Schritt für Schritt durch alles, mit Screenshots und Videos.
+        </>
+      ),
+    },
+    {
+      title: <>Bleiben meine Daten wirklich privat?</>,
+      response: (
+        <>
+          <b>Ja, und zwar von Grund auf.</b> Gladys läuft bei dir zu Hause, auf
+          deinem eigenen Rechner. Deine Smart-Home-Daten (Sensoren, Szenen,
+          Verlauf) bleiben in deinem lokalen Netzwerk.
+          <br />
+          <br />
+          Keine Cloud-Pflicht, kein Tracking, kein Verkauf von Daten. Es gibt
+          optionale Dienste wie <a href="/de/plus">Gladys Plus</a> (Fernzugriff,
+          KI…), aber der Kern von Gladys bleibt selbst gehostet. 🔒
+        </>
+      ),
+    },
+    {
+      title: <>Funktioniert Gladys mit meinen Geräten?</>,
+      response: (
+        <>
+          <b>Sehr wahrscheinlich!</b> Gladys unterstützt{" "}
+          <Link href="/de/docs/integrations/">tausende Geräte</Link> über offene
+          Protokolle wie Zigbee, Z-Wave, Matter und MQTT sowie Integrationen für
+          beliebte Marken: Philips Hue, SmartThings, TP-Link Kasa und Tapo,
+          Shelly, Sonos, Reolink-Kameras, LG ThinQ und viele mehr.
+          <br />
+          <br />
+          Dein Gerät ist noch nicht dabei? Schau dir die{" "}
+          <Link href="/de/docs/integrations/external/">
+            externen Integrationen
+          </Link>{" "}
+          an: Von der Community entwickelte Integrationen, die du mit einem
+          Klick installieren kannst, und die Liste wächst ständig. Fehlt deine
+          trotzdem,{" "}
+          <Link href="/de/docs/dev/external-integrations/">
+            entwickle sie einfach selbst
+          </Link>{" "}
+          in der Programmiersprache deiner Wahl, oder{" "}
+          <a href="https://community.gladysassistant.com/">
+            frag im Forum nach
+          </a>
+          .
+        </>
+      ),
+    },
+    {
+      title: <>Was kostet Gladys Plus?</>,
+      response: (
+        <>
+          <b>Gladys selbst ist kostenlos, für immer.</b>{" "}
+          <a href="/de/plus">Gladys Plus</a> ist ein optionales Abo, das
+          verschlüsselten Fernzugriff, Google Home und Alexa, Backups und KI
+          hinzufügt. Es kostet ab 6,99 €/Monat in Europa (7,99 $/Monat in den
+          USA und Kanada), mit einem kostenlosen Probemonat ohne Kreditkarte,
+          und du kannst jederzeit kündigen.
+        </>
+      ),
+    },
+    {
+      title: <>Kann ich auch von unterwegs auf Gladys zugreifen?</>,
+      response: (
+        <>
+          <b>Ja, auf mehreren Wegen:</b>
+          <br />
+          <br />
+          <b>Option 1 (empfohlen):</b> <a href="/de/plus">Gladys Plus</a>,
+          unser optionaler Dienst, der dir von überall einen sicheren
+          (Ende-zu-Ende-verschlüsselten) Zugriff ermöglicht. Funktioniert als
+          App auf iOS und Android.
+          <br />
+          <br />
+          <b>Option 2 (für Profis):</b> Richte dein eigenes VPN oder einen
+          Reverse Proxy ein. Gladys bleibt 100 % kostenlos, aber dafür brauchst
+          du technisches Know-how.
+        </>
+      ),
+    },
+  ],
 };
 
 const PRESS = [
@@ -521,12 +634,16 @@ function Home({ lang }) {
             🎁{" "}
             {lang === "fr"
               ? "BLACK FRIDAY : Promo sur le kit de démarrage et Gladys Plus"
-              : "BLACK FRIDAY: Gladys Plus -30% off"}
+              : lang === "de"
+                ? "BLACK FRIDAY: Gladys Plus -30 % Rabatt"
+                : "BLACK FRIDAY: Gladys Plus -30% off"}
           </p>
           {blackFridayTimeLeft && (
             <div style={{ fontSize: "0.9rem", opacity: 0.95 }}>
               {blackFridayTimeLeft.days > 0 &&
-                `${blackFridayTimeLeft.days} ${lang === "fr" ? "j " : "d "}`}
+                `${blackFridayTimeLeft.days} ${
+                  lang === "fr" ? "j " : lang === "de" ? "T " : "d "
+                }`}
               {blackFridayTimeLeft.hours}h {blackFridayTimeLeft.minutes}m{" "}
               {blackFridayTimeLeft.seconds}s
             </div>
@@ -1231,7 +1348,7 @@ function Home({ lang }) {
             </h2>
           </div>
           <div className={styles.faqGrid}>
-            {FAQQuestions[lang].map((oneElement, index) => (
+            {(FAQQuestions[lang] || FAQQuestions.en).map((oneElement, index) => (
               <div className={styles.faqItem} key={index}>
                 <h3 className={styles.faqQuestion}>{oneElement.title}</h3>
                 <p className={styles.faqAnswer}>{oneElement.response}</p>
