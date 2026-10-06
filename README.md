@@ -39,8 +39,10 @@ npm run start -- --locale de
 
 German translations live in `i18n/de/` (docs, blog, UI strings); the guide
 and comparison pages carry a `de` object in their `src/data/*Data.js` file.
-External integration pages and the France/Québec/Ontario-specific pages are
-not translated yet and fall back to the English content.
+External integration pages are generated in German by
+`yarn load-external-integrations` (with the author's English documentation when
+there is no German one). The France/Québec/Ontario-specific pages are not
+translated and fall back to the English content.
 
 ## How to refresh the development activity page?
 

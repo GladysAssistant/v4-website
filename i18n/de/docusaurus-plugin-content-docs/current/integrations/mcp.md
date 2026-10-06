@@ -98,7 +98,7 @@ https://api.gladysgateway.com/v1/api/mcp/<GLADYS_PLUS_API_KEY>
 
 #### Einen Gladys-Plus-API-Schlüssel erzeugen (`<GLADYS_PLUS_API_KEY>`)
 
-Du musst einen Open-API-Schlüssel erzeugen (Achtung: nicht einen aus der Konfigurationsoberfläche). Folge dazu der [Gladys-Plus-Dokumentation](https://gladysassistant.com/de/docs/plus/open-api/#generate-an-api-key)
+Du musst einen Open-API-Schlüssel erzeugen (Achtung: nicht einen aus der Konfigurationsoberfläche). Folge dazu der [Gladys-Plus-Dokumentation](/de/docs/plus/open-api/#generate-a-new-api-key)
 
 ## MCP-Clients konfigurieren
 

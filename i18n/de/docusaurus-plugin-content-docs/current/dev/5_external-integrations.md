@@ -980,6 +980,8 @@ Ein fehlendes oder ungültiges Titelbild führt nicht zur Ablehnung deiner Integ
 
 Jede Integration muss zwei Dokumentationsdateien im Stammverzeichnis ihres Repositorys mitliefern: `docs/en.md` und `docs/fr.md`, jeweils mindestens **300 Zeichen** lang. Der Store hostet sie neu und zeigt sie den Nutzern im Katalog an, ein Repository ohne diese Dateien wird daher **abgelehnt**. Decke das Wesentliche ab: was die Integration tut, ihre Voraussetzungen, wie man sie konfiguriert und die Fehlerbehebung. Das Template enthält bereits beide Dateien, bereit zum Ausfüllen.
 
+Die Website gibt es auch auf Deutsch. Die deutsche Seite deiner Integration verwendet die deutsche `description` und die deutschen Konfigurationsbezeichnungen deines Manifests, wenn du sie angibst (ein `"de"`-Schlüssel neben `"en"` und `"fr"`), andernfalls deine englische Dokumentation.
+
 ## Schritt 4: Lokal bauen und testen
 
 Du kannst komplett auf deinem Rechner iterieren, bevor du irgendetwas veröffentlichst.

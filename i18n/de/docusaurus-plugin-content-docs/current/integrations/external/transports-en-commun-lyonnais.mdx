@@ -1,0 +1,425 @@
+---
+title: "Transports en Commun Lyonnais Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Transports en Commun Lyonnais"
+description: "Next TCL departures, Vélo'v availability and park & ride occupancy in Lyon. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-transport-commun-lyonnais.png"
+keywords:
+  - "transports en commun lyonnais"
+  - "transports en commun lyonnais smart home"
+  - "gladys transports en commun lyonnais"
+  - "transports en commun lyonnais gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-transport-commun-lyonnais instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="transports-en-commun-lyonnais" />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Bring Lyon's public transport network into Gladys: the next departures at the
+stops you use, the bikes and free docks at your Vélo'v stations, and the free
+spaces in the TCL park & ride car parks.
+
+Every device this integration creates is **read-only**: it publishes what the
+open data feeds say, and nothing is ever sent back to the network.
+
+## What you get
+
+One device per entry you list in the configuration.
+
+**Transit stop** — for each of the next departures (up to five, your choice):
+
+| Feature             | What it holds                                                                             |
+| ------------------- | ----------------------------------------------------------------------------------------- |
+| Next departure      | Minutes to wait (`999` when nothing is coming)                                            |
+| Next departure line | `T1 → IUT Feyssine` (a `~` prefix marks a timetable estimate rather than a real-time one) |
+| Next departures     | The whole board on one line, for a dashboard tile                                         |
+
+**Vélo'v station**
+
+| Feature                  | What it holds                                     |
+| ------------------------ | ------------------------------------------------- |
+| Bikes available          | Bikes ready to rent                               |
+| Electric bikes available | Subset that is electric, when the feed details it |
+| Docks available          | Free stands to return a bike                      |
+| Occupancy                | Share of the stands holding a bike, in percent    |
+| Status                   | `OK`, `no bike available`, `Out of service`…      |
+
+**Park & ride (P+R)**
+
+| Feature                     | What it holds                                             |
+| --------------------------- | --------------------------------------------------------- |
+| Spaces available            | Free car spaces, where SYTRAL counts them live            |
+| Accessible spaces available | Free spaces reserved for reduced mobility, when published |
+| Total capacity              | Spaces the facility holds, from the inventory             |
+| Occupancy                   | Share of the capacity taken, in percent                   |
+| Status                      | `120/655 free`, `Full`, `No live count (287 spaces)`…     |
+
+Not every park & ride is counted in real time: the occupancy dataset covers
+part of the network only, and the rest is published as an inventory without a
+live count. Those facilities can still be watched — their capacity and a
+`No live count` status are what they publish, and the free spaces fill in by
+themselves the day SYTRAL starts counting them. `Spaces available`,
+`Accessible spaces available` and `Occupancy` then stay empty ("no recent
+value" in Gladys), which is the honest answer: nothing is published for them
+upstream.
+
+The status says which of the two situations you are in:
+
+- `No live count (287 spaces)` — the facility is absent from the real-time
+  dataset. Nothing to fix, it is the open data as SYTRAL publishes it;
+- `Live count unreadable (287 spaces)` — the facility **is** in the real-time
+  dataset and its count could not be read (a renamed column, or a `-1` meaning
+  "unknown"). Please report it: the columns received are in the container logs.
+
+The **List the park & ride facilities** button says the same thing for the
+whole network, so you can tell without reading the logs.
+
+## Configuration
+
+### 1. Data Grand Lyon account (transit stops and park & ride only)
+
+Vélo'v works out of the box: its feed is fully open.
+
+Transit departures and park & ride occupancy come from the TCL real-time
+datasets hosted on [data.grandlyon.com](https://data.grandlyon.com), which
+require a free account.
+
+> **The password asked for here is not the one you sign in with.** You browse
+> the portal with GrandLyon Connect (the single sign-on shared by every
+> Métropole de Lyon service), but the web service this integration calls only
+> accepts a password specific to the data platform. Entering your GrandLyon
+> Connect password gives "Data Grand Lyon refused the credentials".
+
+1. Create an account, or sign in, on
+   [GrandLyon Connect](https://moncompte.grandlyon.com/login/).
+2. Go to
+   [your data platform profile](https://data.grandlyon.com/onegeo-login/fr/profile/)
+   and define the password of the platform. It can — and should — be different
+   from the GrandLyon Connect one.
+
+   That form is titled "Changer votre mot de passe" and asks for an **old
+   password**. If you only ever signed in through GrandLyon Connect you have
+   none — and the GrandLyon Connect password is not accepted there either. Log
+   out of the portal: the profile page then lands on the data platform's own
+   sign-in form, where the **Mot de passe oublié ?** (forgotten password) link
+   emails you a link that sets the password without knowing the previous one.
+   The password you set that way is the one to paste into the integration.
+
+3. In the integration configuration, fill in the **login** (in general the
+   email address of your account) and that **platform password**.
+4. Press **Test the Data Grand Lyon account** — it reports how many park & ride
+   facilities it could read.
+
+Leave both fields empty if you only watch Vélo'v stations.
+
+### 2. Tell the integration what to watch
+
+The three list fields accept entries separated by commas, semicolons or
+newlines. You do not need to hunt for identifiers on a website: the buttons at
+the bottom of the Configuration screen search them for you.
+
+**Transit stops** — `<stop id>[@<line>[|<line>…]][:<custom name>]`
+
+| Entry                  | Meaning                                     |
+| ---------------------- | ------------------------------------------- |
+| `1234`                 | Every departure at stop 1234                |
+| `1234@T1`              | Only line T1                                |
+| `1234@C3\|C13`         | Lines C3 and C13                            |
+| `1234@T1:Tram at home` | Only T1, and name the device "Tram at home" |
+
+Watching the same stop twice with two different line filters gives you two
+devices — one per line, which is usually what you want on a dashboard.
+
+Press **Find a transit stop** and type a name (for example `Bellecour`) to get
+the identifiers to paste. Each result also says where its lines go:
+
+```
+1234 — Bellecour (A → Perrache, A → Vaulx-en-Velin La Soie)
+5678 — Bellecour (C3 → Gare Saint-Paul)
+```
+
+That is the part you need to choose: the network gives the two sides of the
+same street two different identifiers under one name, so the terminus — what is
+written on the front of the tram — is what tells you which one is the platform
+going your way. The directions come from the departures announced right now, so
+a stop with nothing running is listed with its lines only; search it again
+during service hours to see them.
+
+**Vélo'v stations** — `<station id or name>[:<custom name>]`
+
+`10063`, `Hotel de Ville`, or `10063:Work`. Press **Find a Vélo'v station** to
+search by name.
+
+**Park & ride** — `<P+R id or name>[:<custom name>]`
+
+`Gorge de Loup`, `SOI`, or `Parilly:Commute`. Identifiers are short upper-case
+codes (`SOI`, `BON`, `GREY`…), and the name works just as well. Press **List
+the park & ride facilities** to see every facility with its identifier and
+current occupancy — all 22 of them, including the ones SYTRAL does not count in
+real time, which are listed with `?` free spaces. Those still make a usable
+device: their capacity is published, their free-space count is not.
+
+### 3. Refresh intervals
+
+Each data source has its own interval, because they do not move at the same
+speed:
+
+| Setting                      | Default | What it drives                       |
+| ---------------------------- | ------- | ------------------------------------ |
+| Departures refresh interval  | 60 s    | The countdowns at each watched stop  |
+| Vélo'v refresh interval      | 120 s   | Bike and dock availability           |
+| Park & ride refresh interval | 300 s   | Free spaces in each watched car park |
+
+All three accept 30 s to 3600 s. Going below 60 s buys you nothing: the
+upstream feeds are themselves recomputed about once a minute, so a faster poll
+returns the same numbers while consuming your Data Grand Lyon quota. Gladys
+itself never ticks slower than once a minute, so an interval above 60 s is
+honored by the integration, which simply skips the ticks in between.
+
+The integration also batches its requests: watching ten Vélo'v stations costs
+two HTTP requests per cycle, not twenty, and watching five park & ride
+facilities costs two.
+
+**What it stores.** A fast refresh interval is a fast-growing database if every
+reading is written down, so the integration only sends Gladys the values that
+actually changed since the last read: a car park whose free spaces do not move
+all night is recorded once, not three hundred times. Departure countdowns go
+one step further and keep no history at all — "7 minutes, then 6, then 5, then
+12 again" is the shape of every timetable and nothing reads it back, while it
+would be by far the biggest writer of the three. They are still live on your
+dashboard; it is their past that is not kept. Vélo'v availability and park &
+ride occupancy do keep theirs: those charts are worth something, and one point
+per change draws the same curve as one point per poll.
+
+### 4. Save
+
+Save the configuration, then open the **Discovery** tab: your stops, stations
+and car parks are there, ready to be added to Gladys.
+
+## Dashboard widgets and scenes
+
+Since Gladys 5.1, the integration also brings its own dashboard widgets and its
+own scene triggers and actions. They work on the devices you created: add the
+stops, stations and car parks from the **Discovery** tab first, then pick one
+of them in the widget or scene card.
+
+### Widgets
+
+In the dashboard editor, the widgets are listed under the integration name.
+
+| Widget          | What it shows                                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------------------------- |
+| TCL departures  | The departure board of a stop: the next departure as a large tile, then up to eight departures, soonest first |
+| Vélo'v station  | Bikes, electric bikes and free docks, the fill gauge, the curve of the last 24 hours and the station state    |
+| TCL park & ride | Free spaces, capacity, accessible spaces, the fill gauge, the curve of the last 24 hours and the state        |
+
+On the board, a green dot is a departure tracked in real time and a grey dot
+(with the `~` prefix) a timetable estimate. A widget set up with a device of
+the wrong kind — a Vélo'v station in the departures widget — says so instead of
+staying empty.
+
+### Scene triggers
+
+In the scene editor, under **Integrations**:
+
+| Trigger                     | Fires when                                                                                                       |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| TCL departure approaching   | The next departure of a line crosses the chosen mark: 1, 2, 3, 5, 10 or 15 minutes. Optional line filter (`T1`)  |
+| Vélo'v availability changed | The last bike is taken, bikes come back, the last dock is taken, docks free up, the station goes out of service… |
+| Park & ride availability    | The car park goes past 90 % full, becomes full, or frees spaces again                                            |
+
+The following steps of the scene can read the details of the event: the line,
+its direction and the minutes to wait; the bikes and docks left; the free
+spaces and the fill level.
+
+A few things worth knowing:
+
+- the triggers compare two consecutive reads of the device, so they follow its
+  refresh interval: a park & ride read every 5 minutes cannot fire sooner than
+  that;
+- nothing fires on the first read after the integration starts: there is no
+  "before" to compare with yet;
+- the line of the departure trigger is compared as written on the vehicle,
+  upper case included (`T1`, `C3`).
+
+### Scene actions
+
+| Action                   | Gives the following steps                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| Read the next departures | The next departure (line, direction, minutes, real time or not), the one after, a one-line board |
+| Read a Vélo'v station    | Bikes, electric bikes, free docks, fill level and state                                          |
+| Read a park & ride       | Free spaces, capacity, fill level and state                                                      |
+
+The actions read the feed at the moment the scene runs, not the value the
+device last received: "at 7:40, send me the next T1 at Bellecour" gets the
+countdown of 7:40.
+
+## Ideas for automations
+
+- At 8:00 on weekdays, **Read the next departures** at my stop and send me the
+  board.
+- When the next T1 at Bellecour is **5 minutes** away, send me a notification:
+  it is time to leave.
+- When the Vélo'v station near work has **no free dock left**, warn me before I
+  leave.
+- When my usual park & ride goes past **90 % full**, remind me to take the tram
+  instead.
+
+## Troubleshooting
+
+**"Transit stops and park & ride need a Data Grand Lyon account"** — the
+integration status stays red because you listed a stop or a car park without
+filling in the credentials. Add them, or remove the entries.
+
+**The profile page asks for an old password I never set** — that form
+_changes_ an existing password, and an account created through GrandLyon
+Connect has none. Log out of the portal, go back to
+[data.grandlyon.com/onegeo-login/fr/profile/](https://data.grandlyon.com/onegeo-login/fr/profile/)
+— you land on the data platform sign-in form — and use **Mot de passe oublié ?**
+with the email address of the account. The emailed link sets the platform
+password with no old password required.
+
+**"Data Grand Lyon refused the credentials"** — nine times out of ten, the
+password entered is the GrandLyon Connect one. The web service wants the
+password you define on
+[data.grandlyon.com/onegeo-login/fr/profile/](https://data.grandlyon.com/onegeo-login/fr/profile/),
+with the email address of your account as the login. Set it there, paste it
+here, and press **Test the Data Grand Lyon account**. If it still fails, the
+account may not have confirmed its email address yet.
+
+**"Data Grand Lyon answered HTTP 404"** — your account is fine: the dataset
+itself is not published under the name the integration asked for. The Métropole
+renames its TCL layers when the network changes (that is what the `_2_0_0`
+suffix in the message means). The integration tries every name it knows, then
+asks the platform's own catalogue what the dataset is called today and uses
+that name, so most renames now heal themselves without an update. When even the
+catalogue has nothing, the message lists what was tried and the closest names
+the platform does publish: open an issue with it, and updating the integration
+is all it will take.
+
+**"Test the Data Grand Lyon account" reports a dataset as unreadable** — the
+button probes the three datasets separately, and its first line is the one that
+matters: if it says your account was accepted, your credentials are right. A
+single `✖` line means that one dataset was retired (see above); the features
+built on the other two keep working.
+
+**"Data Grand Lyon did not answer within ..."** — the platform took too long,
+usually while downloading the whole stop directory for **Find a transit stop**.
+Press the button again: the first successful download is kept in memory for an
+hour, so the following searches answer instantly. Typing a stop name in full
+(`Bellecour` rather than `belle`) skips the download altogether.
+
+**A stop always shows `999`** — `999` means "no departure announced". Outside
+service hours that is normal. If it persists during the day, the stop id is
+probably wrong (or the line filter never matches, e.g. `@T1` on a bus-only
+stop): re-run **Find a transit stop**.
+
+**A Vélo'v station or a park & ride errors on every poll** — the identifier is
+not in the feed. Re-run the matching search button and paste the id it returns;
+the park & ride error also names a few of the identifiers the dataset does hold.
+
+**A park & ride shows a status and a capacity, but no free spaces** — SYTRAL
+does not count that facility live, and the integration will not invent a
+number: **List the park & ride facilities** shows the same `?` next to it. This
+is the open data, not the configuration.
+
+**A device records nothing since the integration was updated** — Gladys keeps
+the features a device was created with, and a container cannot add one to a
+device that already exists: re-publishing a discovery only refreshes its
+parameters. So a version that adds a feature publishes values that have nowhere
+to land. A park & ride nobody counts live is the clearest case: its only two
+values, `Total capacity` and `Status`, are exactly the features an older device
+does not have, and the car park stays empty while the logs only mention the
+thin feed. The integration now says so instead: the device carries an orange
+dot in the device list, whose tooltip names what is missing, and the logs spell
+it out once (`… does not have the feature(s) capacity, status in Gladys …`).
+The fix is in the **Discovery** screen: press **Update** on the device (
+deleting it and adding it again works too), and the values arrive on the next
+read.
+
+**A device I added stays empty** — features showing no value at all mean the
+device is never read. Older versions published their devices without the flag
+Gladys reads to schedule them, so the core never polled them and no error was
+raised anywhere. The integration now refreshes its own devices as well, so an
+empty device fills in shortly after the container restarts, without having to
+be deleted and added again. If it is still empty after that, the read itself is
+failing: the integration logs every failed read with its reason.
+
+**I pasted an identifier and the Discovery screen stays empty** — the Discovery
+screen only lists what the integration published, and it publishes when the
+configuration is _saved_, not when a field is edited. Save the configuration,
+then read the integration status just above: it now spells out what is being
+watched ("Connected. Watching 1 stop — they appear in the Discovery screen").
+If it says something else, or your entry is missing from the count, the value
+did not reach the integration — check that the field was saved, then press the
+scan button of the Discovery screen. The integration logs the same thing on
+every publication: `Publishing 1 device(s): Bellecour`.
+
+The integration logs everything it does: read the integration logs from the
+Gladys UI, with `LOG_LEVEL=debug` for the full detail (every outgoing request
+is logged at that level).
+
+## Data sources and credits
+
+- [TCL real-time departures](https://data.grandlyon.com/portail/fr/jeux-de-donnees/prochains-passages-reseau-transports-commun-lyonnais-rhonexpress-disponibilites-temps-reel/info)
+  — Métropole de Lyon / SYTRAL, on Data Grand Lyon.
+- [TCL park & ride availability](https://data.grandlyon.com/portail/fr/jeux-de-donnees/parcs-relais-reseau-transports-commun-lyonnais-disponibilites-temps-reel/info)
+  — Métropole de Lyon / SYTRAL, on Data Grand Lyon.
+- [Vélo'v availability](https://transport.data.gouv.fr/datasets/velos-libre-service-lyon-velov-disponibilite-en-temps-reel)
+  — Métropole de Lyon / JCDecaux, published as a
+  [GBFS](https://gbfs.org/documentation/reference/) feed.
+
+This is an unofficial integration. It is not affiliated with SYTRAL Mobilités,
+Keolis Lyon or JCDecaux.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Transports en Commun Lyonnais in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| How it works | `section` | Nein | This integration creates one read-only device per transit stop, Vélo'v station and park & ride you list below. Vélo'v works out of the box (open GBFS feed). Transit stops and park & ride read the TCL real-time datasets on Data Grand Lyon, which need a free account. |
+| Data Grand Lyon account | `section` | Nein | You sign in on data.grandlyon.com with GrandLyon Connect, but the API needs a separate password that you set on the data platform itself. If its profile page asks for an old password you never had, log out of the portal and use its forgotten-password link. Leave both fields empty if you only watch Vélo'v stations. |
+| Data Grand Lyon login | `string` | Nein | The login of your data platform account — in general the email address of your GrandLyon Connect account. |
+| Data platform password | `secret` | Nein | The password you defined on data.grandlyon.com/onegeo-login/fr/profile/, NOT your GrandLyon Connect password. |
+| What to watch | `section` | Nein | Separate entries with commas or newlines. Use the buttons at the bottom of this screen to look up the identifiers without leaving Gladys. |
+| Transit stops | `string` | Nein | Stop identifiers. Optional line filter after @ and custom name after : — e.g. "1234, 5678@T1:Tram at home, 4321@C3\|C13". |
+| Vélo'v stations | `string` | Nein | Station identifiers or names, with an optional custom name after : — e.g. "10063, Hotel de Ville:Work". |
+| Park & ride (P+R) | `string` | Nein | Park & ride identifiers or names, with an optional custom name after : — e.g. "Gorge de Loup, Parilly:Commute". |
+| Refresh intervals | `section` | Nein | Each device is refreshed by Gladys at its own interval. The upstream feeds are recomputed about once a minute, so polling faster only costs requests. |
+| Departures refresh interval (s) | `number` | Nein | How often the next departures of each watched stop are refreshed, in seconds. |
+| Vélo'v refresh interval (s) | `number` | Nein | How often bike and dock availability is refreshed, in seconds. |
+| Park & ride refresh interval (s) | `number` | Nein | How often park & ride occupancy is refreshed, in seconds. |
+| Departures per stop | `number` | Nein | How many upcoming departures each stop device exposes as features. |
+
+## So installierst du Transports en Commun Lyonnais in Gladys
+
+1. Öffne in Gladys **Integrationen**: Transports en Commun Lyonnais erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-transport-commun-lyonnais:2.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-transport-commun-lyonnais](https://github.com/prohand/gladys-transport-commun-lyonnais).
+
+Transports en Commun Lyonnais benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Transports en Commun Lyonnais ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [prohand](https://github.com/prohand) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)
+- [Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-transport-commun-lyonnais) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-transport-commun-lyonnais/blob/HEAD/docs/en.md)

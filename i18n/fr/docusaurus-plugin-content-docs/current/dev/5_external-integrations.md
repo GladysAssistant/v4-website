@@ -986,6 +986,8 @@ Une couverture manquante ou invalide ne rejette pas votre intégration : elle es
 
 Chaque intégration doit fournir deux fichiers de documentation à la racine de son dépôt : `docs/en.md` et `docs/fr.md`, d'au moins **300 caractères** chacun. Le store les ré-héberge et les affiche aux utilisateurs dans le catalogue, si bien qu'un dépôt sans ces fichiers est **rejeté**. Couvrez l'essentiel : ce que fait l'intégration, ses prérequis, comment la configurer, et le dépannage. Le template inclut déjà les deux fichiers, prêts à compléter.
 
+Le site existe aussi en allemand. Sa page pour votre intégration utilise la `description` et les libellés de configuration allemands de votre manifeste quand vous les fournissez (une clé `"de"` à côté de `"en"` et `"fr"`), et votre documentation anglaise sinon.
+
 ## Étape 4 : Construire et tester en local
 
 Vous pouvez tout itérer sur votre machine avant de publier quoi que ce soit.

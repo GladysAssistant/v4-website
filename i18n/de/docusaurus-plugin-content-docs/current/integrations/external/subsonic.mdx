@@ -1,0 +1,201 @@
+---
+title: "Subsonic Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Subsonic"
+description: "Link Gladys with a Subsonic-compatible music server: Navidrome, Airsonic, Gonic... Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-subsonic.png"
+keywords:
+  - "subsonic"
+  - "subsonic smart home"
+  - "gladys subsonic"
+  - "subsonic gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-subsonic instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="subsonic" />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration links Gladys Assistant with any music server implementing
+the [Subsonic API](https://www.subsonic.org/pages/api.jsp):
+[Navidrome](https://www.navidrome.org), Airsonic-Advanced, Gonic, LMS,
+Subsonic… It was designed and tested first against **Navidrome**.
+
+## What you get
+
+- A **Subsonic server** device with five periodically refreshed sensors,
+  usable in your scenes and on your dashboard:
+  - **Now playing**: the track being played right now, as
+    `Artist — Title (listener)`. Gladys fires its scene triggers when this
+    value changes, so you can react to every new track;
+  - **Active streams**: how many songs are being played right now (handy for
+    a "don't cut the sound while someone is listening" scene);
+  - **Album cover**: the artwork of the album being played. It travels on the
+    Gladys image channel, so it shows up in the dashboard **Camera** widget
+    (pick the "Subsonic server" device). When playback stops the last cover
+    stays on screen; until anything has ever been played, a neutral
+    placeholder takes its place;
+  - **Songs**, **Artists** and **Albums** counted in the library.
+- An optional **Subsonic jukebox** device to control _server-side_ playback:
+  play/pause, previous/next, volume and playback state.
+- Buttons in the Configuration screen: test the connection, start a library
+  scan, play random songs or a playlist on the jukebox.
+- Three dashboard widgets (Gladys 5.1 or later): **Now playing**, **Jukebox**
+  and **Library** — see below.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. Fill in:
+   - **Server URL**: the root of your server, without `/rest` — for example
+     `https://music.mydomain.com` or `http://192.168.1.10:4533` (Navidrome's
+     default port);
+   - **Username** and **Password**: an account on your server. Prefer a
+     dedicated account for Gladys;
+   - **Authentication method**: keep **Token** (the password never transits,
+     only a salted md5 hash is sent). Switch to **Legacy** only for very old
+     servers (API \< 1.13) or LDAP accounts that reject tokens (error 41);
+   - **Refresh interval**: how often the sensors are polled (60 s by
+     default).
+3. Save, then click **Test the connection**: the server answers with its name
+   and version (for example `navidrome 0.52`).
+4. The devices show up in the **Discovery** tab, ready to be added.
+
+## The jukebox (server-side playback)
+
+Jukebox mode plays the music **on the machine hosting the server** (the one
+wired to your speakers), through the `jukeboxControl` API endpoint. It must
+be enabled on both sides:
+
+1. **Server side.** For Navidrome, in `navidrome.toml`:
+
+   ```toml
+   [Jukebox]
+   Enabled = true
+   ```
+
+   or with the `ND_JUKEBOX_ENABLED=true` environment variable. The host needs
+   a working audio output (see the
+   [Navidrome jukebox mode documentation](https://www.navidrome.org/docs/usage/jukebox/)).
+
+2. **Gladys side.** Turn on **Enable the jukebox device** in the integration
+   configuration: the "Subsonic jukebox" device then appears in discovery.
+
+From your scenes or the dashboard you can then: play/pause, skip to the next
+or previous track, set the volume, and trigger the **Play random songs**
+(N random tracks) or **Play a playlist** (by exact name, case-insensitive)
+buttons.
+
+## Dashboard widgets
+
+With Gladys 5.1 or later, the integration offers three widgets (**Edit the
+dashboard** → **Add a widget**). They have no settings: each one follows the
+configured server. The number tiles are bound to the sensors of the "Subsonic
+server" device: add it to Gladys for them to show a value.
+
+- **Now playing** — the number of streams in progress (the tile follows the
+  sensor live) and one row per session the server lists: title, artist ·
+  album, the cover, and as a badge the player or listener name, green when
+  the session really plays, grey when it is paused or stopped (the server
+  keeps a session listed for a while after it stops). Eight rows at most,
+  the active streams first. Nothing playing: "Nothing is playing right now."
+  Refreshed every 30 seconds; the list read by the periodic poll is reused
+  while it is less than 30 seconds old.
+- **Jukebox** — the server-side playback as a remote: the cover and the title
+  of the current track, artist · album, then the state (Playing / Stopped),
+  the volume and the position in the queue ("2 / 20"), and four buttons:
+  **Pause** or **Play** depending on the state, **Previous**, **Next** and
+  **Shuffle** (20 random songs, like the configuration button). An empty queue
+  only offers **Shuffle**. Until the jukebox device is enabled in the
+  configuration, the widget says so. Refreshed every 30 seconds, and as soon
+  as a button acted. The buttons work even if the "Subsonic jukebox" device
+  was not added to Gladys; the playback state published to Gladys follows
+  every command.
+- **Library** — three live tiles (**Songs**, **Artists**, **Albums**), the
+  server identity (type and version returned by the ping, for example
+  `navidrome 0.53.3`), the scan status ("Running · n" or "Done · n songs";
+  "Unavailable" when the server refuses `getScanStatus` to this account) and
+  a **Scan** button. Refreshed every 15 minutes, every 10 seconds during a
+  scan. The button is subject to the same rights as the configuration one:
+  Navidrome reserves scans to administrators.
+
+The widget covers are served by the integration (asked to the server at
+300 px) and cached one hour by Gladys. A track without a cover shows without
+an image.
+
+## Troubleshooting
+
+- **"Wrong username or password" (error 40)**: double-check the credentials
+  by logging into the server's web interface.
+- **Error 41**: your account (often LDAP) does not accept token
+  authentication — switch the method to **Legacy**.
+- **"Cannot reach the Subsonic server"**: make sure the URL is reachable
+  _from Gladys_ (same machine/network as the integration container), not
+  only from your browser.
+- **The jukebox makes no sound**: the audio comes out of the server host, not
+  the device running Gladys. Check `Jukebox.Enabled` and the host's audio
+  output (audio device access for a Docker container, if applicable).
+- **The sensors show "no recent value"**: they have never been polled yet.
+  After updating the integration, go back to the **Discovery** tab and click
+  the device again: this re-applies its definition (including the periodic
+  polling flag) to the already created device. The first value lands on the
+  next poll (60 s by default).
+- **"The server refuses a scan from this account"**: starting a scan is
+  reserved to administrators (Navidrome does so). It does not matter: the
+  button is only a shortcut, the server scans on its own schedule and the
+  sensors follow. Make the account an administrator if you want the button —
+  nothing else in the integration needs those rights.
+- **A track stays on screen although playback stopped**: the server keeps the
+  session in its "now playing" list for a while after the music stops. The
+  integration only counts sessions whose reported state is really playing, but
+  a player that simply goes silent without telling the server (the classic
+  Subsonic protocol has no notion of stopping) stays listed until the track
+  would have ended.
+- **The sensors never change**: the artist/album counters only move after a
+  library scan — use the **Scan the music library** button.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Subsonic in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Server connection | `section` | Nein | Works with any server implementing the Subsonic API (Navidrome, Airsonic-Advanced, Gonic...). Use a dedicated user account if you can. The URL is the root of the server, e.g. https://music.example.com or http://192.168.1.10:4533. |
+| Server URL | `string` | Ja | Root URL of the Subsonic server, without /rest. |
+| Username | `string` | Ja |  |
+| Password | `secret` | Ja |  |
+| Authentication method | `select` | Nein | Token (md5 + salt) is supported by every modern server. Use legacy only for pre-1.13 servers or LDAP users. |
+| Refresh interval (s) | `number` | Nein | How often the server sensors are polled, in seconds. Gladys only supports 10, 15, 30 or 60 s: the value is snapped to the closest one. |
+| Jukebox (server-side playback) | `section` | Nein | The jukebox plays music on the machine hosting the server. It must also be enabled server-side: in Navidrome, set Jukebox.Enabled = true (ND_JUKEBOX_ENABLED=true) and make sure the host has an audio output. |
+| Enable the jukebox device | `boolean` | Nein |  |
+
+## So installierst du Subsonic in Gladys
+
+1. Öffne in Gladys **Integrationen**: Subsonic erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-subsonic:1.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-subsonic](https://github.com/guim31/gladys-subsonic).
+
+Subsonic benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Subsonic ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)
+- [Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-subsonic) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-subsonic/blob/HEAD/docs/en.md)

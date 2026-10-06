@@ -14,8 +14,12 @@ const DOCS_DIRS = {
     __dirname,
     "../i18n/fr/docusaurus-plugin-content-docs/current/integrations/external"
   ),
+  de: path.join(
+    __dirname,
+    "../i18n/de/docusaurus-plugin-content-docs/current/integrations/external"
+  ),
 };
-const LOCALES = ["en", "fr"];
+const LOCALES = ["en", "fr", "de"];
 
 // Every generated page starts with this marker, so the cleanup step only ever
 // removes files this script owns.
@@ -67,6 +71,7 @@ const RELATED_GUIDES = {
       href: "/philips-hue-without-bridge/",
       en: ["Philips Hue without the bridge", "pair Hue bulbs directly with a Zigbee dongle instead."],
       fr: ["Philips Hue sans le pont", "associer ses ampoules Hue directement à une clé Zigbee."],
+      de: ["Philips Hue ohne Bridge", "Hue-Lampen direkt mit einem Zigbee-Stick koppeln."],
     },
   ],
   tuya: [
@@ -74,6 +79,7 @@ const RELATED_GUIDES = {
       href: "/tuya-zigbee-without-hub/",
       en: ["Tuya Zigbee without the Tuya app", "local control for Tuya Zigbee devices through Zigbee2MQTT."],
       fr: ["Tuya Zigbee sans l'application Tuya", "le contrôle local des appareils Tuya Zigbee via Zigbee2MQTT."],
+      de: ["Tuya Zigbee ohne Tuya-App", "lokale Steuerung von Tuya-Zigbee-Geräten über Zigbee2MQTT."],
     },
   ],
   "hydro-quebec": [
@@ -81,11 +87,13 @@ const RELATED_GUIDES = {
       href: "/hydro-quebec-peak-events/",
       en: ["Hydro-Québec peak events today", "live Flex D and Winter Credit peak events."],
       fr: ["Événements de pointe Hydro-Québec aujourd'hui", "les pointes Flex D et crédit hivernal en direct."],
+      de: ["Hydro-Québec-Spitzenereignisse heute", "Flex-D- und Winterkredit-Spitzen live."],
     },
     {
       href: "/hydro-quebec-flex-d/",
       en: ["Hydro-Québec Rate Flex D", "how Flex D works and the automations that make it pay off."],
       fr: ["Tarif Flex D d'Hydro-Québec", "comment fonctionne le Flex D et les automatisations qui le rentabilisent."],
+      de: ["Hydro-Québec-Tarif Flex D", "wie Flex D funktioniert und welche Automationen sich lohnen."],
     },
   ],
   reolink: [
@@ -93,6 +101,7 @@ const RELATED_GUIDES = {
       href: "/reolink-rtsp-url/",
       en: ["Reolink RTSP URL", "how to enable RTSP and find your camera's stream URL."],
       fr: ["URL RTSP Reolink", "activer le RTSP et trouver l'URL du flux de votre caméra."],
+      de: ["Reolink RTSP-URL", "RTSP aktivieren und die Stream-URL deiner Kamera finden."],
     },
   ],
   smartthings: [
@@ -100,6 +109,7 @@ const RELATED_GUIDES = {
       href: "/smartthings-alternative/",
       en: ["SmartThings alternative", "how to move from SmartThings to a local platform."],
       fr: ["Alternative à SmartThings", "comment passer de SmartThings à une plateforme locale."],
+      de: ["SmartThings-Alternative", "so wechselst du von SmartThings zu einer lokalen Plattform."],
     },
   ],
   "z-wave-js-ui": [
@@ -107,6 +117,7 @@ const RELATED_GUIDES = {
       href: "/z-wave-js-ui-without-home-assistant/",
       en: ["Z-Wave JS UI without Home Assistant", "your Z-Wave network with a simple interface."],
       fr: ["Z-Wave JS UI sans Home Assistant", "votre réseau Z-Wave avec une interface simple."],
+      de: ["Z-Wave JS UI ohne Home Assistant", "dein Z-Wave-Netz mit einer einfachen Oberfläche."],
     },
   ],
   shelly: [
@@ -114,6 +125,7 @@ const RELATED_GUIDES = {
       href: "/shelly-without-cloud/",
       en: ["Shelly without the cloud", "local control of Shelly relays, plugs and energy meters."],
       fr: ["Shelly sans le cloud", "le contrôle local des relais, prises et compteurs Shelly."],
+      de: ["Shelly ohne Cloud", "lokale Steuerung von Shelly-Relais, -Steckdosen und -Energiezählern."],
     },
   ],
 };
@@ -127,6 +139,9 @@ const TEXTS = {
     titleWithNative: (name) =>
       `${name} community integration, free and open source`,
     descriptionSuffix: "Free, open source, installable in one click.",
+    keywordSmartHome: (name) => `${name} smart home`,
+    keywordExternal: "external integration",
+    keywordOpenSource: "open source home automation",
     docSourceMissing:
       "The author of this integration has not published a documentation page yet.",
     configTitle: "Configuration settings",
@@ -163,6 +178,9 @@ const TEXTS = {
     titleWithNative: (name) =>
       `Intégration communautaire ${name}, gratuite et open source`,
     descriptionSuffix: "Gratuite, open source, installable en un clic.",
+    keywordSmartHome: (name) => `domotique ${name}`,
+    keywordExternal: "intégration externe",
+    keywordOpenSource: "domotique open source",
     docSourceMissing:
       "L'auteur de cette intégration n'a pas encore publié de page de documentation.",
     configTitle: "Paramètres de configuration",
@@ -192,6 +210,47 @@ const TEXTS = {
       `[Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys`,
       `[Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)`,
       `[Code source sur GitHub](${repoUrl}) — [source de cette documentation](${repoUrl}/blob/HEAD/${docPath})`,
+    ],
+  },
+  de: {
+    title: (name) => `${name} Smart-Home-Integration, kostenlos und Open Source`,
+    titleWithNative: (name) =>
+      `${name} Community-Integration, kostenlos und Open Source`,
+    descriptionSuffix: "Kostenlos, Open Source, mit einem Klick installiert.",
+    keywordSmartHome: (name) => `${name} smart home`,
+    keywordExternal: "externe Integration",
+    keywordOpenSource: "Open-Source-Hausautomation",
+    docSourceMissing:
+      "Der Autor dieser Integration hat noch keine Dokumentation veröffentlicht.",
+    docInEnglish:
+      ":::info\n\nDie Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.\n\n:::",
+    configTitle: "Konfigurationseinstellungen",
+    configIntro: (name) =>
+      `Diese Einstellungen fragt ${name} in seinem Konfigurationsbildschirm in Gladys ab.`,
+    configColumns: ["Einstellung", "Typ", "Pflichtfeld", "Beschreibung"],
+    required: "Ja",
+    optional: "Nein",
+    installTitle: (name) => `So installierst du ${name} in Gladys`,
+    installSteps: (name, dockerImage, repoUrl) => [
+      `Öffne in Gladys **Integrationen**: ${name} erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.`,
+      `Klicke auf **Installieren**. Gladys lädt das Docker-Image (\`${dockerImage}\`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).`,
+      `Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.`,
+      `Du kannst sie auch direkt über die URL ihres Repositorys installieren: [${repoUrl}](${repoUrl}).`,
+    ],
+    installRequirement: (name, gladysVersion) =>
+      `${name} benötigt Gladys \`${gladysVersion}\`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.`,
+    installNoGladys:
+      "Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.",
+    relatedTitle: "Passende Ratgeber",
+    localePrefix: "/de",
+    aboutTitle: "Über externe Integrationen",
+    aboutBody: (name, ownerName, ownerUrl) =>
+      `${name} ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [${ownerName}](${ownerUrl}) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.`,
+    aboutLinks: (repoUrl, docPath) => [
+      `[Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)`,
+      `[Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind`,
+      `[Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)`,
+      `[Quellcode auf GitHub](${repoUrl}) — [Quelle dieser Dokumentation](${repoUrl}/blob/HEAD/${docPath})`,
     ],
   },
 };
@@ -331,10 +390,14 @@ const relatedGuides = (slug, texts, locale) => {
   ];
 };
 
-const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
+// `docLocale` is the language of the author's documentation, which can differ
+// from the page's when the author did not write one in that language.
+const buildPage = (integration, authorDoc, locale, docLocale, hasNativeDoc) => {
   const texts = TEXTS[locale];
-  const description =
-    integration.description[locale] || integration.description.en;
+  // A description missing in this language falls back to English, with the
+  // English suffix, so the meta description never mixes two languages.
+  const descriptionLocale = integration.description[locale] ? locale : "en";
+  const description = integration.description[descriptionLocale];
   const title = hasNativeDoc
     ? texts.titleWithNative(integration.name)
     : texts.title(integration.name);
@@ -348,8 +411,8 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
   const metaDescription =
     description.length > 120
       ? description
-      : `${description} ${texts.descriptionSuffix}`;
-  const docPath = `docs/${locale}.md`;
+      : `${description} ${TEXTS[descriptionLocale].descriptionSuffix}`;
+  const docPath = `docs/${docLocale}.md`;
   const lowerName = integration.name.toLowerCase();
 
   const frontmatter = [
@@ -361,11 +424,11 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
     "keywords:",
     ...[
       lowerName,
-      locale === "fr" ? `domotique ${lowerName}` : `${lowerName} smart home`,
+      texts.keywordSmartHome(lowerName),
       `gladys ${lowerName}`,
       `${lowerName} gladys assistant`,
-      locale === "fr" ? "intégration externe" : "external integration",
-      locale === "fr" ? "domotique open source" : "open source home automation",
+      texts.keywordExternal,
+      texts.keywordOpenSource,
     ].map((keyword) => `  - ${yaml(keyword)}`),
     "custom_edit_url: null",
     "---",
@@ -382,6 +445,9 @@ const buildPage = (integration, authorDoc, locale, hasNativeDoc) => {
     "",
     `<ExternalIntegrationHeader slug="${integration.slug}" />`,
     "",
+    ...(authorDoc && docLocale !== locale && texts.docInEnglish
+      ? [texts.docInEnglish, ""]
+      : []),
     authorDoc || texts.docSourceMissing,
     "",
     configTable(integration, texts, locale),
@@ -469,19 +535,24 @@ const removeStalePages = (directory, keptFiles) => {
     fs.mkdirSync(DOCS_DIRS[locale], { recursive: true })
   );
 
-  const written = { en: new Set(), fr: new Set() };
+  const written = Object.fromEntries(
+    LOCALES.map((locale) => [locale, new Set()])
+  );
   for (const integration of index.integrations) {
     const trimmed = integrations.find(
       (item) => item.store_slug === integration.store_slug
     );
     for (const locale of LOCALES) {
-      const authorDoc = await downloadDoc(
-        integration.docs ? integration.docs[locale] : null
-      );
+      // The store requires English and French documentation; other languages
+      // are optional and fall back to the English one.
+      const docs = integration.docs || {};
+      const docLocale = docs[locale] ? locale : "en";
+      const authorDoc = await downloadDoc(docs[docLocale]);
       const page = buildPage(
         trimmed,
         authorDoc ? prepareAuthorDoc(authorDoc, trimmed) : null,
         locale,
+        docLocale,
         nativeSlugs.has(trimmed.slug)
       );
       const fileName = `${trimmed.slug}.mdx`;
