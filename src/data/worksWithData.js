@@ -473,6 +473,240 @@ const worksWithContent = {
       secondary: { label: "Voir les intégrations", href: "/docs/integrations/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Kompatibel mit Gladys: Hue, SmartThings, Matter & mehr",
+      description:
+        "Welche Geräte funktionieren mit Gladys? Zigbee, Z-Wave, Matter, MQTT sowie Philips Hue, SmartThings, Shelly, Sonos, Reolink, Bosch, Siemens und viele mehr.",
+    },
+    screenshotCaption:
+      "Alle Marken in einem lokalen Dashboard: Licht, Steckdosen, Sensoren, Kameras und Haushaltsgeräte nebeneinander.",
+    hero: {
+      title: "Kompatibel mit Gladys: die Geräte und Marken, die du schon hast",
+      subtitle:
+        "Gladys spricht die offenen Smart-Home-Standards und Dutzende beliebte Marken. So holst du deine vorhandenen Geräte in ein einziges lokales, privates Dashboard.",
+      intro: [
+        "Bevor man die Smart-Home-Plattform wechselt, stellt sich jeder dieselbe Frage: Funktioniert das mit meinen Geräten? Bei Gladys Assistant lautet die Antwort sehr wahrscheinlich: ja.",
+        "Gladys unterstützt die offenen Standards (Zigbee, Z-Wave, Matter, MQTT), die allein schon Tausende Geräte von Hunderten Herstellern abdecken, dazu Integrationen für die Marken, die man tatsächlich kauft: Philips Hue, SmartThings, TP-Link Kasa und Tapo, Shelly, Sonos, Reolink, LG, Samsung und mehr. Hier ist der komplette Überblick, mit dem Link zur Einrichtungsanleitung für jede Marke.",
+      ],
+      primaryCta: { label: "Alle Integrationen ansehen", href: "/docs/integrations/" },
+      secondaryCta: {
+        label: "Community-Integrationen →",
+        href: "/docs/integrations/external/",
+      },
+    },
+    problem: {
+      title: "Warum eine App pro Marke nicht skaliert",
+      intro:
+        "Die meisten Smart-Home-Geräte kommen mit eigener App und eigener Cloud. Bei den ersten zwei, drei Geräten klappt das noch, danach wird es zum Problem:",
+      points: [
+        "Deine Lampen, Steckdosen, Kameras und Sensoren stecken in getrennten Apps, die nicht miteinander reden.",
+        "Automationen können keine Marken mischen: Der Bewegungsmelder des einen Herstellers kann nicht das Licht eines anderen einschalten.",
+        "Jede App hängt an der Cloud ihres Herstellers. Fällt das Internet oder deren Server aus, reagiert dein Zuhause nicht mehr.",
+        "Jeder Hersteller sammelt seinen eigenen Teil an Daten über deinen Haushalt.",
+      ],
+      outro:
+        "Gladys bringt alle Geräte an einen Ort, mit einer einzigen Automations-Engine, auf deiner eigenen Hardware.",
+    },
+    comparison: {
+      title: "Wie Gladys mit deinen Geräten spricht",
+      intro:
+        "Nicht jede Integration funktioniert gleich. Hier siehst du, wie jede Geräteart angebunden wird und was auch ohne Internet weiterläuft:",
+      cols: {
+        feature: "Geräteart",
+        gladys: "Wie Gladys sich verbindet",
+        other: "Funktioniert ohne Internet?",
+      },
+      rows: [
+        {
+          feature: "Zigbee (Hue-Lampen, Aqara, IKEA, Sonoff…)",
+          gladys: "Direkt, mit einem Zigbee-USB-Stick und Zigbee2MQTT",
+          other: "Ja, komplett lokal",
+        },
+        {
+          feature: "Z-Wave (Schlösser, Schalter, Sensoren)",
+          gladys: "Direkt, mit einem Z-Wave-Stick und Z-Wave JS UI",
+          other: "Ja, komplett lokal",
+        },
+        {
+          feature: "Matter über WLAN oder Ethernet",
+          gladys: "Gladys ist dein Matter-Controller, kein Hub nötig",
+          other: "Ja, komplett lokal",
+        },
+        {
+          feature: "Matter over Thread (Eve, Nanoleaf, IKEA…)",
+          gladys: "Über einen Thread-Border-Router (Apple TV, HomePod, Nest Hub…)",
+          other: "Ja, lokal",
+        },
+        {
+          feature: "Philips Hue Bridge, Kasa, Sonos, Shelly, ESPHome, Reolink",
+          gladys: "Über dein lokales Netzwerk",
+          other: "Ja",
+        },
+        {
+          feature: "SmartThings, LG ThinQ, SolarEdge, Daikin…",
+          gladys: "Über die offizielle Cloud-API des Herstellers",
+          other: "Nein, sie brauchen die Cloud des Herstellers",
+        },
+      ],
+      outro:
+        "Sobald ein Gerät eine lokale Option bietet, nutzt Gladys genau diese. Cloud-Integrationen gibt es, damit du trotzdem alles in einem Dashboard zusammenführen kannst.",
+    },
+    features: {
+      title: "Beliebte Marken, die mit Gladys funktionieren",
+      intro:
+        "Eine Auswahl der Marken, die heute unterstützt werden. Klick auf eine Karte, um die Einrichtungsanleitung zu öffnen:",
+      cards: [
+        {
+          icon: "💡",
+          title: "Philips Hue",
+          text: "Steuere deine Hue-Lampen lokal über die Hue Bridge oder koppel sie direkt per Zigbee, ganz ohne Bridge.",
+          href: "/docs/integrations/external/philips-hue/",
+        },
+        {
+          icon: "🏠",
+          title: "Samsung SmartThings",
+          text: "Hol dir Schalter, Lampen, Schlösser, Rollläden, Thermostate und Sensoren deines SmartThings-Kontos in Gladys.",
+          href: "/docs/integrations/external/smartthings/",
+        },
+        {
+          icon: "🔌",
+          title: "TP-Link Kasa",
+          text: "Smarte Steckdosen, Schalter und Lampen, gesteuert über dein lokales Netzwerk.",
+          href: "/docs/integrations/external/tp-link-kasa/",
+        },
+        {
+          icon: "📷",
+          title: "TP-Link-Tapo-Kameras",
+          text: "Bilder, Klingeln und Bewegungen deiner Tapo-Kameras und -Türklingeln. Die Bilder bleiben in deinem Netzwerk.",
+          href: "/docs/integrations/external/tapo/",
+        },
+        {
+          icon: "⚡",
+          title: "Shelly",
+          text: "Relais, Steckdosen und Energiemessgeräte, lokal über MQTT oder HTTP, mit der Shelly Cloud nur als Rückfallebene.",
+          href: "/docs/integrations/external/shelly/",
+        },
+        {
+          icon: "🎥",
+          title: "Reolink",
+          text: "Bilder, Erkennungen, Scheinwerfer, Sirene und PTZ-Positionen. Kein Reolink-Konto, nichts läuft über die Cloud.",
+          href: "/docs/integrations/external/reolink/",
+        },
+        {
+          icon: "🔊",
+          title: "Sonos",
+          text: "Steuere deine Sonos-Lautsprecher lokal über das Musik-Widget im Dashboard und aus deinen Szenen.",
+          href: "/docs/integrations/sonos/",
+        },
+        {
+          icon: "🧺",
+          title: "LG ThinQ",
+          text: "Waschmaschinen, Trockner, Kühlschränke und Klimageräte deines ThinQ-Kontos, über die offizielle API von LG.",
+          href: "/docs/integrations/external/lg-thinq/",
+        },
+        {
+          icon: "📺",
+          title: "LG- und Samsung-Fernseher",
+          text: "Ein/Aus, Lautstärke, Stummschaltung und Eingangsquelle deiner LG-webOS- und Samsung-Tizen-TVs, über das lokale Netzwerk.",
+          href: "/docs/integrations/external/lg-webos/",
+        },
+        {
+          icon: "🍽️",
+          title: "Home Connect (Bosch, Siemens)",
+          text: "Überwache und steuere deine Geräte von Bosch, Siemens, Neff und Gaggenau.",
+          href: "/docs/integrations/external/home-connect/",
+        },
+        {
+          icon: "☀️",
+          title: "Enphase, SolarEdge, EcoFlow",
+          text: "Solarertrag, Hausverbrauch und Batteriespeicher, direkt neben deinen übrigen Energiedaten.",
+          href: "/docs/integrations/external/enphase-iq-gateway/",
+        },
+        {
+          icon: "🧹",
+          title: "Roborock",
+          text: "Status, Start/Stopp, Saugstärke, Station und Routinen der Saugroboter, die in der Roborock-App gekoppelt sind.",
+          href: "/docs/integrations/external/roborock/",
+        },
+        {
+          icon: "🍎",
+          title: "Apple HomeKit & Siri",
+          text: "Mach deine Gladys-Geräte in der Apple-Home-App verfügbar und steuere sie mit Siri.",
+          href: "/docs/integrations/homekit/",
+        },
+        {
+          icon: "🗣️",
+          title: "Alexa & Google Home",
+          text: "Behalte die Sprachsteuerung auf deinen Echo- und Nest-Lautsprechern, während deine Automationen in Gladys laufen (mit Gladys Plus).",
+          href: "/docs/integrations/google-home/",
+        },
+        {
+          icon: "🛠️",
+          title: "ESPHome & Tasmota",
+          text: "Deine DIY-Projekte und umgeflashten ESP32/ESP8266-Geräte, lokal gesteuert.",
+          href: "/docs/integrations/external/esphome/",
+        },
+      ],
+    },
+    how: {
+      title: "Dein Gerät ist nicht dabei?",
+      intro: "Die Liste oben ist nur eine Auswahl. Bevor du aufgibst, prüf Folgendes:",
+      points: [
+        "Ist es Zigbee, Z-Wave oder Matter? Dann funktioniert es sehr wahrscheinlich, egal welche Marke: Diese Standards decken Tausende Geräte ab.",
+        "Schau in den Katalog der externen Integrationen: Community-Integrationen, mit einem Klick installiert, und jede Woche kommen neue dazu.",
+        "Frag im Community-Forum: Vielleicht hat schon jemand dasselbe Gerät angebunden, oft über MQTT, Node-RED oder Matterbridge.",
+        "Bau die Integration selbst: Externe Integrationen sind Docker-Container in der Sprache deiner Wahl, veröffentlicht auf GitHub, ganz ohne Pull Request oder Review.",
+      ],
+      outro:
+        "Gladys ist Open Source, und der Katalog wächst mit jedem neuen Nutzer. Fehlt deine Lieblingsmarke, kannst du derjenige sein, der sie hinzufügt.",
+    },
+    solution: {
+      title: "Ein Dashboard und eine Automations-Engine für alle Marken",
+      paragraphs: [
+        "Sind deine Geräte erst in Gladys, spielt die Marke keine Rolle mehr. Ein Aqara-Bewegungsmelder schaltet Hue-Lampen ein, ein Shelly-Energiemessgerät pausiert eine LG-Waschmaschine, und eine Reolink-Kamera schickt dir ein Foto, wenn sich ein Z-Wave-Schloss öffnet.",
+        "Gladys läuft auf deinem eigenen Rechner (Mini-PC, Raspberry Pi oder NAS), ist kostenlos und Open Source und funktioniert bei Internetausfall weiter, für jedes Gerät mit lokaler Option.",
+      ],
+      link: {
+        label: "Alle nativen Integrationen ansehen →",
+        href: "/docs/integrations/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Wähle die passende Hardware und die richtigen Protokolle für dein Zuhause:",
+      links: [
+        {
+          label: "Zigbee vs. Z-Wave vs. Matter vs. Thread",
+          href: "/zigbee-vs-matter-vs-zwave/",
+          text: "Welches Smart-Home-Protokoll du wählen solltest und warum du dich nicht auf eines festlegen musst.",
+        },
+        {
+          label: "Brauchst du einen Matter-Hub?",
+          href: "/matter-hub/",
+          text: "Matter-Controller, Thread-Border-Router und Bridges einfach erklärt.",
+        },
+        {
+          label: "Der beste Zigbee-USB-Stick",
+          href: "/best-zigbee-dongle/",
+          text: "Der Zigbee-Koordinator, mit dem du deine Zigbee-Geräte lokal koppelst.",
+        },
+        {
+          label: "Eine externe Integration bauen",
+          href: "/docs/dev/external-integrations/",
+          text: "Füge eine neue Marke hinzu, in jeder Sprache, ohne Pull Request.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Hol alle deine Geräte an einen Ort",
+      text: "Gladys ist kostenlos, Open Source und läuft auf deiner eigenen Hardware. Verbinde die Geräte, die du schon hast, egal von welcher Marke.",
+      primary: { label: "Jetzt starten", href: "/docs/" },
+      secondary: { label: "Integrationen ansehen", href: "/docs/integrations/" },
+    },
+  },
 };
 
 export const worksWithFaqEn = [
@@ -538,6 +772,39 @@ export const worksWithFaqFr = [
     question: "Ma marque n'est pas prise en charge, que faire ?",
     answer:
       "Vérifiez si l'appareil parle Zigbee, Z-Wave ou Matter, parcourez le catalogue des intégrations externes et demandez sur le forum. S'il manque toujours, n'importe qui peut créer une intégration externe dans le langage de son choix et la publier sur GitHub, sans pull request ni relecture.",
+  },
+];
+
+export const worksWithFaqDe = [
+  {
+    question: "Funktioniert Gladys Assistant mit Philips Hue?",
+    answer:
+      "Ja, auf zwei Arten. Die Philips-Hue-Integration steuert deine Lampen lokal über die Hue Bridge (Ein/Aus, Helligkeit, Farbe, Weißton). Du kannst Hue-Lampen aber auch direkt per Zigbee mit Gladys koppeln, mit einem Zigbee-USB-Stick und Zigbee2MQTT, ganz ohne Bridge.",
+  },
+  {
+    question: "Funktioniert Gladys mit SmartThings?",
+    answer:
+      "Ja. Die SmartThings-Integration holt Schalter, Steckdosen, Lampen, Schlösser, Rollläden, Thermostate und Sensoren deines SmartThings-Kontos in Gladys, über die offizielle Cloud-API von Samsung. Deine Zigbee-, Z-Wave- und Matter-Geräte kannst du außerdem vom SmartThings-Hub lösen und direkt mit Gladys koppeln, damit sie lokal laufen.",
+  },
+  {
+    question: "Funktioniert Gladys mit Matter-Geräten?",
+    answer:
+      "Ja. Gladys ist ein Matter-Controller, der auf deinem eigenen Rechner läuft: Matter-Geräte im WLAN oder per Ethernet brauchen überhaupt keinen Hub. Matter-over-Thread-Geräte brauchen einen Thread-Border-Router in deinem Netzwerk, etwa ein Apple TV 4K, einen HomePod oder einen Google Nest Hub.",
+  },
+  {
+    question: "Funktioniert Gladys mit Z-Wave?",
+    answer:
+      "Ja, über die Integration Z-Wave JS UI und einen Z-Wave-USB-Stick. Deine Z-Wave-Schlösser, -Schalter und -Sensoren werden lokal gesteuert, ohne Cloud.",
+  },
+  {
+    question: "Welche Geräte funktionieren ohne Internet?",
+    answer:
+      "Alles, was per Zigbee, Z-Wave oder Matter gekoppelt ist, dazu die Integrationen, die im lokalen Netzwerk mit deinen Geräten sprechen (Philips Hue Bridge, TP-Link Kasa, Sonos, Shelly, Reolink, ESPHome, LG- und Samsung-TVs…). Integrationen, die auf der Cloud-API eines Herstellers basieren, wie SmartThings oder LG ThinQ, brauchen Internet.",
+  },
+  {
+    question: "Meine Marke wird nicht unterstützt, was kann ich tun?",
+    answer:
+      "Prüf, ob das Gerät Zigbee, Z-Wave oder Matter spricht, schau in den Katalog der externen Integrationen und frag im Community-Forum. Fehlt es dann immer noch, kann jeder eine externe Integration in der Sprache seiner Wahl bauen und auf GitHub veröffentlichen, ohne Pull Request oder Review.",
   },
 ];
 

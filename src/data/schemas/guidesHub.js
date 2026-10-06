@@ -7,9 +7,10 @@ import {
 import { guidesHubContent, guidesSections } from "../guidesHubData";
 
 export function getGuidesHubPageSchema(lang) {
-  const prefix = lang === "fr" ? "/fr" : "";
+  const prefix = lang === "en" ? "" : `/${lang}`;
+  const locale = ["fr", "de"].includes(lang) ? lang : "en";
   const pageUrl = `${SITE_URL}${prefix}/guides/`;
-  const meta = guidesHubContent[lang === "fr" ? "fr" : "en"].meta;
+  const meta = guidesHubContent[locale].meta;
   const items = guidesSections.flatMap((section) => section.items);
 
   return {
@@ -24,14 +25,14 @@ export function getGuidesHubPageSchema(lang) {
         description: meta.description,
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: locale,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         mainEntity: {
           "@type": "ItemList",
           itemListElement: items.map((item, i) => ({
             "@type": "ListItem",
             position: i + 1,
-            name: item[lang === "fr" ? "fr" : "en"].label,
+            name: item[locale].label,
             url: `${SITE_URL}${prefix}${item.href}`,
           })),
         },
