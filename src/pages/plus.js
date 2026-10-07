@@ -9,6 +9,7 @@ import Translate, { translate } from "@docusaurus/Translate";
 import { TestimonialSection } from "../components/Testimonial";
 import testimonialsFr from "../components/testimonials/testimonial.plus.fr.json";
 import testimonialsEn from "../components/testimonials/testimonial.plus.en.json";
+import testimonialsDe from "../components/testimonials/testimonial.plus.de.json";
 
 import BlackFridayBanner from "../components/plus/BlackFridayBanner";
 import PricingTable from "../components/plus/PricingTable";
@@ -34,6 +35,7 @@ import { getPlusPageSchema } from "../data/structuredData";
 const testimonials = {
   fr: testimonialsFr,
   en: testimonialsEn,
+  de: testimonialsDe,
 };
 
 function PlusContent() {

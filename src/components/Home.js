@@ -11,6 +11,7 @@ import SubcribeNewsletter from "./home/SubcribeNewsletter";
 
 import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
+import testimonialDe from "./testimonials/testimonial.de.json";
 
 import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
@@ -30,6 +31,7 @@ const COMPATIBILITIES = [
 const testimonials = {
   fr: testimonialFr,
   en: testimonialEn,
+  de: testimonialDe,
 };
 
 /**
