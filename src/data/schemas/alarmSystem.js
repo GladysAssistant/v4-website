@@ -5,7 +5,7 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { alarmFaqEn, alarmFaqFr, alarmFaqDe } from "../alarmSystemData";
+import { alarmFaqEn, alarmFaqFr, alarmFaqDe, alarmFaqEs } from "../alarmSystemData";
 
 export function getAlarmSystemPageSchema(lang) {
   const prefix = lang === "en" ? "" : `/${lang}`;

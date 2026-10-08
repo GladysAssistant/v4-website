@@ -3,7 +3,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
 import { getAlarmSystemPageSchema } from "../data/schemas/alarmSystem";
-import alarmContent, { alarmFaqEn, alarmFaqFr, alarmFaqDe } from "../data/alarmSystemData";
+import alarmContent, { alarmFaqEn, alarmFaqFr, alarmFaqDe, alarmFaqEs } from "../data/alarmSystemData";
 
 export default function DiyHomeAlarmSystemPage() {
   const { i18n } = useDocusaurusContext();

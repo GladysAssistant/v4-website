@@ -5,7 +5,7 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { protocolsFaqEn, protocolsFaqFr, protocolsFaqDe } from "../protocolsComparisonData";
+import { protocolsFaqEn, protocolsFaqFr, protocolsFaqDe, protocolsFaqEs } from "../protocolsComparisonData";
 
 export function getProtocolsComparisonPageSchema(lang) {
   const prefix = lang === "en" ? "" : `/${lang}`;

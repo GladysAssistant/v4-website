@@ -5,7 +5,7 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { ikeaSmartHomeFaqEn, ikeaSmartHomeFaqFr, ikeaSmartHomeFaqDe } from "../ikeaSmartHomeData";
+import { ikeaSmartHomeFaqEn, ikeaSmartHomeFaqFr, ikeaSmartHomeFaqDe, ikeaSmartHomeFaqEs } from "../ikeaSmartHomeData";
 
 export function getIkeaSmartHomePageSchema(lang) {
   const prefix = lang === "en" ? "" : `/${lang}`;

@@ -5,7 +5,7 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { matterHubFaqEn, matterHubFaqFr, matterHubFaqDe } from "../matterHubData";
+import { matterHubFaqEn, matterHubFaqFr, matterHubFaqDe, matterHubFaqEs } from "../matterHubData";
 
 export function getMatterHubPageSchema(lang) {
   const prefix = lang === "en" ? "" : `/${lang}`;

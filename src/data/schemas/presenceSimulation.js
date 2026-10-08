@@ -5,7 +5,7 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { presenceFaqEn, presenceFaqFr, presenceFaqDe } from "../presenceSimulationData";
+import { presenceFaqEn, presenceFaqFr, presenceFaqDe, presenceFaqEs } from "../presenceSimulationData";
 
 export function getPresenceSimulationPageSchema(lang) {
   const prefix = lang === "en" ? "" : `/${lang}`;
