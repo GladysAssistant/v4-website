@@ -404,6 +404,138 @@ const shellyWithoutCloudContent = {
       secondary: { label: "Shelly-Integration", href: "/docs/integrations/external/shelly/" },
     },
   },
+
+  es: {
+    meta: {
+      title: "Shelly sin la nube: control local de relés y medidores",
+      description:
+        "Controla relés, enchufes y medidores de energía Shelly en local, sin Shelly Cloud: tiempo real en Gen2+, soporte Gen1, paneles de energía y escenas en Gladys.",
+    },
+    screenshotCaption:
+      "Relés y medidores de energía Shelly, controlados en local y en tiempo real desde Gladys.",
+    hero: {
+      title: "Shelly sin la nube",
+      subtitle:
+        "Los dispositivos Shelly ya tienen una excelente API local. Gladys Assistant la aprovecha: controla tus relés y enchufes y consulta tus medidores de energía en tiempo real, sin Shelly Cloud.",
+      intro: [
+        "Shelly fabrica algunos de los relés, enchufes y medidores de energía wifi más populares, de esos que se esconden detrás de un interruptor de pared o en el cuadro eléctrico. A diferencia de muchos dispositivos wifi, ofrecen una API local documentada, así que no necesitan la nube para funcionar.",
+        "Gladys Assistant, una plataforma de domótica gratuita y de código abierto, tiene una integración Shelly que se comunica directamente con tus dispositivos en tu red. Los dispositivos Gen2 y posteriores envían sus cambios en tiempo real, así que un relé accionado desde la pared aparece en Gladys en aproximadamente un segundo. Para una instalación totalmente local, basta con dejar vacío el formulario de configuración.",
+      ],
+      primaryCta: {
+        label: "La integración Shelly",
+        href: "/docs/integrations/external/shelly/",
+      },
+      secondaryCta: {
+        label: "Empieza con Gladys →",
+        href: "/docs/",
+      },
+    },
+    problem: {
+      title: "Por qué mantener tus dispositivos Shelly en local",
+      intro: "La app y la nube de Shelly son cómodas, pero:",
+      points: [
+        "El control remoto y las automatizaciones en la nube dependen de internet y de los servidores de Shelly.",
+        "Los datos de energía de tus medidores son más útiles junto al resto de tu casa, no en una app aparte.",
+        "Las escenas que combinan relés Shelly con sensores Zigbee o dispositivos Matter necesitan una plataforma que hable todos esos protocolos.",
+        "El control local es más rápido y sigue funcionando cuando internet falla.",
+      ],
+      outro:
+        "Shelly diseñó sus dispositivos para el uso local. Gladys simplemente lo aprovecha.",
+    },
+    features: {
+      title: "Lo que admite la integración Shelly de Gladys",
+      intro: "Hoy, la integración cubre relés, enchufes y medidores:",
+      cards: [
+        {
+          icon: "🔌",
+          title: "Relés y enchufes",
+          text: "Encendido/apagado con potencia, tensión, corriente y energía total en los modelos con medición, como el Pro 1PM.",
+        },
+        {
+          icon: "⚡",
+          title: "Medidores de energía",
+          text: "Medidores trifásicos como el Pro 3EM, por fase y en total, además de medidores independientes como el PM Mini.",
+        },
+        {
+          icon: "⏱️",
+          title: "Tiempo real",
+          text: "Los dispositivos Gen2 y posteriores envían sus cambios en local; los Gen1 se consultan periódicamente, o en tiempo real vía MQTT.",
+        },
+        {
+          icon: "🧬",
+          title: "Todas las generaciones",
+          text: "Los dispositivos Gen1, Plus, Pro, Mini, Gen3 y Gen4 se unifican en las mismas funciones dentro de Gladys.",
+        },
+        {
+          icon: "🔁",
+          title: "Alternativas de respaldo opcionales",
+          text: "MQTT para grandes flotas de dispositivos, y Shelly Cloud como último recurso si un dispositivo no es accesible en local. Ambas son opcionales.",
+        },
+        {
+          icon: "📊",
+          title: "Paneles de energía",
+          text: "Envía los datos de tus medidores al seguimiento de energía de Gladys para controlar el consumo y el coste a lo largo del tiempo.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo configurarlo",
+      intro: "Gladys 4.83 o posterior, con tus dispositivos Shelly ya conectados a tu wifi:",
+      points: [
+        "En Gladys, abre Integraciones e instala la integración Shelly desde el catálogo.",
+        "Deja la configuración vacía para una instalación totalmente local, o añade tu broker MQTT si tienes muchos dispositivos.",
+        "Abre la pestaña \"Descubrimiento\" y haz clic en Escanear: tus dispositivos Shelly aparecen con sus funciones.",
+        "Asígnalos a habitaciones, añádelos a tu panel y úsalos en escenas.",
+        "Reserva una IP por DHCP para tus dispositivos Shelly en tu router, para que su dirección IP no cambie.",
+      ],
+      outro:
+        "Aún no compatibles: el modo persiana, los reguladores de intensidad y las entradas. Consulta la hoja de ruta de la integración si los necesitas.",
+    },
+    solution: {
+      title: "Dispositivos locales, un solo lugar para todo",
+      paragraphs: [
+        "Con Gladys, tus relés Shelly conviven con tus sensores Zigbee, dispositivos Matter y cámaras: un sensor de movimiento puede activar un relé Shelly y una lectura del medidor puede lanzar una notificación, todo en local.",
+        "Gladys es gratis y de código abierto, se desarrolla desde 2013 y funciona íntegramente en tu propio hardware.",
+      ],
+      link: {
+        label: "Reduce tu factura de luz →",
+        href: "/home-energy-monitoring/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Más guías sobre control local:",
+      links: [
+        {
+          label: "Crea un hogar inteligente local",
+          href: "/local-smart-home/",
+          text: "Por qué importa lo local y cómo montar una casa que funcione sin la nube.",
+        },
+        {
+          label: "Reduce tu factura de luz",
+          href: "/home-energy-monitoring/",
+          text: "Controla tu consumo y actúa en función de los datos.",
+        },
+        {
+          label: "Funciona con Gladys",
+          href: "/works-with/",
+          text: "Todas las marcas y protocolos compatibles con Gladys.",
+        },
+        {
+          label: "Todas las guías",
+          href: "/guides/",
+          text: "Todas las guías, herramientas y comparativas en un solo lugar.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Usa tus dispositivos Shelly en local",
+      text: "Gladys es gratis, de código abierto y se instala con un solo comando de Docker. Instala la integración Shelly y escanea tu red.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Integración Shelly", href: "/docs/integrations/external/shelly/" },
+    },
+  },
 };
 
 export const shellyWithoutCloudFaqEn = [
@@ -472,6 +604,29 @@ export const shellyWithoutCloudFaqDe = [
     question: "Brauche ich MQTT für Shelly?",
     answer:
       "Nein, empfohlen ist es aber für große Geräteflotten oder Geräte in einem anderen VLAN. Ohne MQTT erkennt und steuert Gladys die Geräte direkt in deinem lokalen Netzwerk.",
+  },
+];
+
+export const shellyWithoutCloudFaqEs = [
+  {
+    question: "¿Los dispositivos Shelly funcionan sin la nube?",
+    answer:
+      "Sí. Los dispositivos Shelly ofrecen una API local, y la integración Shelly de Gladys la usa directamente en tu red. Una instalación totalmente local funciona con la configuración vacía; MQTT y Shelly Cloud son alternativas de respaldo opcionales.",
+  },
+  {
+    question: "¿Qué dispositivos Shelly admite Gladys?",
+    answer:
+      "Relés y enchufes (con medición de potencia cuando el dispositivo la tiene), medidores de energía trifásicos como el Pro 3EM, el PM Mini y las lecturas de temperatura y batería, en dispositivos Gen1, Plus, Pro, Mini, Gen3 y Gen4. El modo persiana, los reguladores de intensidad y las entradas aún no son compatibles.",
+  },
+  {
+    question: "¿Las actualizaciones de Shelly llegan en tiempo real a Gladys?",
+    answer:
+      "En los dispositivos Gen2 y posteriores, sí: envían sus cambios en local, aproximadamente un segundo después de accionar un relé. Los dispositivos Gen1 se consultan en local según el intervalo de actualización, o en tiempo real vía MQTT.",
+  },
+  {
+    question: "¿Necesito MQTT para Shelly?",
+    answer:
+      "No, pero se recomienda para grandes flotas de dispositivos o para dispositivos en otra VLAN. Sin MQTT, Gladys descubre y controla los dispositivos directamente en tu red local.",
   },
 ];
 
