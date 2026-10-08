@@ -73,5 +73,5 @@ The user can revoke any API key at any time in Gladys → **Integrations** → *
 
 ## Supported languages
 
-- Gladys product UI: English, French, German
-- This documentation: English and French at https://gladysassistant.com/docs/
+- Gladys product UI: English, French, German, Spanish
+- Website documentation: English at https://gladysassistant.com/docs/, French at https://gladysassistant.com/fr/docs/, German at https://gladysassistant.com/de/docs/ and Spanish at https://gladysassistant.com/es/docs/
