@@ -3,6 +3,7 @@ import bestSmartHomeHubContent, {
   bestSmartHomeHubFaqEn,
   bestSmartHomeHubFaqFr,
   bestSmartHomeHubFaqDe,
+  bestSmartHomeHubFaqEs,
 } from "../bestSmartHomeHubData";
 
 export function getBestSmartHomeHubPageSchema(lang) {
@@ -12,6 +13,7 @@ export function getBestSmartHomeHubPageSchema(lang) {
     faqEn: bestSmartHomeHubFaqEn,
     faqFr: bestSmartHomeHubFaqFr,
     faqDe: bestSmartHomeHubFaqDe,
+    faqEs: bestSmartHomeHubFaqEs,
     about: [
       { "@type": "Thing", name: "Smart home hub" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

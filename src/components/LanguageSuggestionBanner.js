@@ -13,6 +13,11 @@ const SUGGESTIONS = {
     switchLabel: "Ja, auf Deutsch wechseln",
     stayLabel: "Nein, auf Englisch bleiben",
   },
+  es: {
+    text: "🇪🇸 Parece que hablas español. ¿Quieres ver el sitio en español?",
+    switchLabel: "Sí, cambiar a español",
+    stayLabel: "No, seguir en inglés",
+  },
 };
 
 const LanguageSuggestionBanner = () => {
@@ -32,7 +37,7 @@ const LanguageSuggestionBanner = () => {
     // Check if we're on English site
     if (currentLocale !== "en") return;
 
-    // Check if browser language is French or German
+    // Check if browser language is French, German or Spanish
     const browserLang = (
       navigator.language ||
       navigator.userLanguage ||
@@ -43,6 +48,8 @@ const LanguageSuggestionBanner = () => {
       setSuggestedLocale("fr");
     } else if (browserLang.startsWith("de")) {
       setSuggestedLocale("de");
+    } else if (browserLang.startsWith("es")) {
+      setSuggestedLocale("es");
     }
   }, [currentLocale]);
 

@@ -7,17 +7,20 @@ import nestThermostatAlternativeContent, {
   nestThermostatAlternativeFaqEn,
   nestThermostatAlternativeFaqFr,
   nestThermostatAlternativeFaqDe,
+  nestThermostatAlternativeFaqEs,
 } from "../data/nestThermostatAlternativeData";
 
 export default function NestThermostatAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = nestThermostatAlternativeContent[lang];
   const faq =
     lang === "fr"
       ? nestThermostatAlternativeFaqFr
       : lang === "de"
         ? nestThermostatAlternativeFaqDe
+      : lang === "es"
+        ? nestThermostatAlternativeFaqEs
         : nestThermostatAlternativeFaqEn;
 
   return (

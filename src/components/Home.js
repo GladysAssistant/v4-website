@@ -12,6 +12,7 @@ import SubcribeNewsletter from "./home/SubcribeNewsletter";
 import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
 import testimonialDe from "./testimonials/testimonial.de.json";
+import testimonialEs from "./testimonials/testimonial.es.json";
 
 import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
@@ -32,6 +33,7 @@ const testimonials = {
   fr: testimonialFr,
   en: testimonialEn,
   de: testimonialDe,
+  es: testimonialEs,
 };
 
 /**
@@ -488,6 +490,114 @@ const FAQQuestions = {
       ),
     },
   ],
+  es: [
+    {
+      title: <>¿Gladys es realmente gratis?</>,
+      response: (
+        <>
+          <b>¡Sí, 100 % gratis y de código abierto!</b> Gladys Assistant es
+          software libre que puedes instalar con{" "}
+          <Link href="/es/docs/installation/docker/#start-gladys">
+            un solo comando Docker
+          </Link>
+          . No necesitas ninguna suscripción para usar Gladys, no hay
+          limitaciones y no te pedimos tarjeta de crédito.
+          <br />
+          <br />
+          Puedes instalarla en cualquier máquina Linux: mini-PC, NAS Synology,
+          Raspberry Pi, servidor o incluso un ordenador antiguo. Si Docker
+          funciona en ella, ¡Gladys también! 🚀
+        </>
+      ),
+    },
+    {
+      title: <>¿Es difícil de instalar?</>,
+      response: (
+        <>
+          <b>Requiere algunos pasos técnicos, pero te guiamos en cada uno.</b>{" "}
+          Primero necesitas una máquina Linux (Ubuntu Server, por ejemplo) y
+          después ejecutas Gladys con Docker. Nuestra documentación te acompaña
+          paso a paso, con capturas de pantalla y vídeos.
+        </>
+      ),
+    },
+    {
+      title: <>¿Mis datos son realmente privados?</>,
+      response: (
+        <>
+          <b>Sí, desde su diseño.</b> Gladys funciona en tu casa, en tu propia
+          máquina. Los datos de tu hogar inteligente (sensores, escenas,
+          historial) se quedan en tu red local.
+          <br />
+          <br />
+          Sin nube obligatoria, sin rastreo, sin venta de datos. Existen
+          servicios opcionales como <a href="/es/plus">Gladys Plus</a> (acceso
+          remoto, IA…), pero el núcleo de Gladys sigue siendo autoalojado. 🔒
+        </>
+      ),
+    },
+    {
+      title: <>¿Gladys funciona con mis dispositivos?</>,
+      response: (
+        <>
+          <b>¡Muy probablemente!</b> Gladys es compatible con{" "}
+          <Link href="/es/docs/integrations/">miles de dispositivos</Link> a
+          través de protocolos abiertos como Zigbee, Z-Wave, Matter y MQTT,
+          además de integraciones con marcas populares: Philips Hue,
+          SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink, LG
+          ThinQ y muchas más.
+          <br />
+          <br />
+          ¿Tu dispositivo aún no aparece? Echa un vistazo a las{" "}
+          <Link href="/es/docs/integrations/external/">
+            integraciones externas
+          </Link>
+          : integraciones creadas por la comunidad que puedes instalar con un
+          clic, y la lista no para de crecer. Si aun así falta la tuya,{" "}
+          <Link href="/es/docs/dev/external-integrations/">
+            desarróllala tú mismo
+          </Link>{" "}
+          en el lenguaje que prefieras, o{" "}
+          <a href="https://community.gladysassistant.com/">
+            pregunta en el foro
+          </a>
+          .
+        </>
+      ),
+    },
+    {
+      title: <>¿Cuánto cuesta Gladys Plus?</>,
+      response: (
+        <>
+          <b>Gladys en sí es gratis, para siempre.</b>{" "}
+          <a href="/es/plus">Gladys Plus</a> es una suscripción opcional que
+          añade acceso remoto cifrado, Google Home y Alexa, copias de seguridad
+          e IA. Cuesta desde 6,99 €/mes en Europa (7,99 $/mes en EE. UU. y
+          Canadá), con un mes de prueba gratis sin tarjeta de crédito, y puedes
+          cancelar cuando quieras.
+        </>
+      ),
+    },
+    {
+      title: <>¿Puedo acceder a Gladys desde fuera de casa?</>,
+      response: (
+        <>
+          <b>Sí, de varias maneras:</b>
+          <br />
+          <br />
+          <b>Opción 1 (recomendada):</b> <a href="/es/plus">Gladys Plus</a>,
+          nuestro servicio opcional que te da un acceso seguro (cifrado de
+          extremo a extremo) desde cualquier lugar. Funciona como app en iOS y
+          Android.
+          <br />
+          <br />
+          <b>Opción 2 (para expertos):</b> Configura tu propia VPN o un reverse
+          proxy. Gladys sigue siendo 100 % gratis, pero esto requiere
+          conocimientos técnicos.
+        </>
+      ),
+    },
+  ],
 };
 
 const PRESS = [
@@ -638,13 +748,21 @@ function Home({ lang }) {
               ? "BLACK FRIDAY : Promo sur le kit de démarrage et Gladys Plus"
               : lang === "de"
                 ? "BLACK FRIDAY: Gladys Plus -30 % Rabatt"
-                : "BLACK FRIDAY: Gladys Plus -30% off"}
+                : lang === "es"
+                  ? "BLACK FRIDAY: Gladys Plus -30 % de descuento"
+                  : "BLACK FRIDAY: Gladys Plus -30% off"}
           </p>
           {blackFridayTimeLeft && (
             <div style={{ fontSize: "0.9rem", opacity: 0.95 }}>
               {blackFridayTimeLeft.days > 0 &&
                 `${blackFridayTimeLeft.days} ${
-                  lang === "fr" ? "j " : lang === "de" ? "T " : "d "
+                  lang === "fr"
+                    ? "j "
+                    : lang === "de"
+                      ? "T "
+                      : lang === "es"
+                        ? "d "
+                        : "d "
                 }`}
               {blackFridayTimeLeft.hours}h {blackFridayTimeLeft.minutes}m{" "}
               {blackFridayTimeLeft.seconds}s

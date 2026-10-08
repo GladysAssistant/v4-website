@@ -107,6 +107,39 @@ const homepageFaqDe = [
   },
 ];
 
+const homepageFaqEs = [
+  {
+    question: "¿Gladys es realmente gratis?",
+    answer:
+      "Sí, 100 % gratis y de código abierto. Gladys Assistant se instala con un solo comando Docker. Sin suscripción, sin limitaciones y sin tarjeta de crédito. Funciona en cualquier máquina Linux con Docker: mini-PC, NAS, Raspberry Pi o servidor.",
+  },
+  {
+    question: "¿Es difícil de instalar?",
+    answer:
+      "Requiere algunos pasos técnicos, pero la documentación te guía en cada uno con capturas de pantalla y vídeos. Necesitas una máquina Linux y Docker.",
+  },
+  {
+    question: "¿Mis datos son realmente privados?",
+    answer:
+      "Sí, desde su diseño. Gladys funciona en tu casa, en tu propia máquina. Los datos de tu hogar inteligente se quedan en tu red local. Sin nube obligatoria, sin rastreo, sin venta de datos. El servicio opcional Gladys Plus añade acceso remoto e IA sin cambiar el núcleo autoalojado.",
+  },
+  {
+    question: "¿Gladys funciona con mis dispositivos?",
+    answer:
+      "Muy probablemente. Gladys es compatible con miles de dispositivos a través de Zigbee (Zigbee2MQTT), Z-Wave, Matter, MQTT e integraciones con marcas populares: Philips Hue, SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink, LG ThinQ y muchas más. Todo lo demás lo cubren las integraciones externas, integraciones creadas por la comunidad que se instalan con un clic, y cualquiera puede crear la suya.",
+  },
+  {
+    question: "¿Cuánto cuesta Gladys Plus?",
+    answer:
+      "Gladys en sí es gratis, para siempre. Gladys Plus es una suscripción opcional que añade acceso remoto cifrado, Google Home y Alexa, copias de seguridad e IA. Cuesta desde 6,99 €/mes en Europa (7,99 $/mes en EE. UU. y Canadá), con un mes de prueba gratis sin tarjeta de crédito, y puedes cancelar cuando quieras.",
+  },
+  {
+    question: "¿Puedo acceder a Gladys desde fuera de casa?",
+    answer:
+      "Sí. Gladys Plus ofrece acceso remoto cifrado de extremo a extremo desde cualquier lugar (app para iOS/Android). Como alternativa, los usuarios avanzados pueden configurar su propia VPN o un reverse proxy, y Gladys sigue siendo gratis.",
+  },
+];
+
 const plusFaqEn = [
   {
     question: "Why should I subscribe to Gladys Plus?",
@@ -244,6 +277,49 @@ const plusFaqDe = [
   },
 ];
 
+const plusFaqEs = [
+  {
+    question: "¿Por qué suscribirme a Gladys Plus?",
+    answer:
+      "Gladys Plus desbloquea el acceso remoto seguro, las copias de seguridad diarias cifradas, el seguimiento energético de Enedis, modelos de IA Open-Weight alojados en Francia (Scaleway), el streaming de cámaras y un servidor MCP para agentes de IA. Además, apoyas un proyecto francés de código abierto en pleno crecimiento.",
+  },
+  {
+    question: "¿Qué diferencia hay entre el plan Lite y el plan Plus?",
+    answer:
+      "Lite incluye acceso remoto cifrado, una alerta por correo electrónico cuando tu Gladys se desconecta, Google Home/Alexa, API REST abierta y cuentas familiares. Plus añade copias de seguridad diarias cifradas, streaming de cámaras a distancia, modelos de IA Open-Weight, la integración con Enedis y un servidor MCP. Consulta la sección de precios para ver las tarifas actuales en tu región.",
+  },
+  {
+    question: "¿Cómo activo Gladys Plus en mi instancia de Gladys actual?",
+    answer:
+      "Después de suscribirte, recibirás un correo electrónico con tu enlace de activación. Abre tu instancia local de Gladys, ve a Ajustes → Gladys Plus e inicia sesión con tu correo electrónico y tu contraseña. Sin reinicios y sin perder ninguna configuración.",
+  },
+  {
+    question: "¿Puede Gladys Plus avisarme si mi Gladys deja de funcionar?",
+    answer:
+      "Sí. Gladys Plus ve cuándo tu instancia se conecta y se desconecta. Si sigue inaccesible (corte de luz, router caído, tarjeta SD averiada) durante más tiempo del que elijas, de 10 minutos a 24 horas, Gladys Plus envía un correo electrónico a los administradores de tu cuenta, y otro cuando vuelve a estar en línea. Activada por defecto en los dos planes.",
+  },
+  {
+    question: "¿Puedo cancelar mi suscripción en cualquier momento?",
+    answer:
+      "Sí. Puedes cancelar con un solo clic desde la interfaz de Gladys Plus. Gladys es un proyecto de código abierto, no una trampa de suscripción.",
+  },
+  {
+    question: "¿Satisfecho o te devolvemos el dinero?",
+    answer:
+      "Sí. Si no estás satisfecho, escribe un correo electrónico al fundador y te devolverá el importe completo, sin preguntas.",
+  },
+  {
+    question: "¿Por qué Gladys Plus no es gratis?",
+    answer:
+      "El núcleo de Gladys es y seguirá siendo gratuito y de código abierto. Gladys Plus financia los servidores, los dominios, la comunidad y el tiempo de desarrollo. Sin inversores, sin publicidad, sin venta de datos.",
+  },
+  {
+    question: "¿Cómo funciona el cifrado de extremo a extremo?",
+    answer:
+      "Los comandos y las copias de seguridad están cifrados de extremo a extremo. Aunque los servidores de Gladys Plus se vieran comprometidos, nadie podría leer tus datos sin la clave privada de tu instancia local. El cifrado usa AES-GCM de 256 bits, RSA-OAEP de 2048 bits y ECDSA P-256, con validación manual de las claves públicas.",
+  },
+];
+
 export function toFaqPage(faqs, pageUrl) {
   return {
     "@type": "FAQPage",
@@ -290,7 +366,7 @@ export function getWebSiteNode(lang) {
     "@id": `${SITE_URL}/#website`,
     name: "Gladys Assistant",
     url: `${SITE_URL}${prefix}/`,
-    inLanguage: lang === "fr" || lang === "de" ? lang : "en",
+    inLanguage: ["fr", "de", "es"].includes(lang) ? lang : "en",
     publisher: { "@id": `${SITE_URL}/#organization` },
   };
 }
@@ -315,7 +391,9 @@ export function getHomepageSchema(lang) {
             ? "Logiciel de domotique open-source, auto-hébergé et respectueux de la vie privée. Alternative à Home Assistant, centrée sur la simplicité et le contrôle local."
             : lang === "de"
               ? "Datenschutzfreundliche, selbst gehostete Open-Source-Software für die Hausautomation. Eine Alternative zu Home Assistant mit Fokus auf Einfachheit und lokale Steuerung."
-              : "Privacy-first, open-source, self-hosted home automation software. Alternative to Home Assistant, focused on simplicity and local control.",
+              : lang === "es"
+                ? "Software de domótica de código abierto, autoalojado y respetuoso con la privacidad. Una alternativa a Home Assistant centrada en la sencillez y el control local."
+                : "Privacy-first, open-source, self-hosted home automation software. Alternative to Home Assistant, focused on simplicity and local control.",
         offers: {
           "@type": "Offer",
           price: "0",
@@ -332,7 +410,9 @@ export function getHomepageSchema(lang) {
           ? homepageFaqFr
           : lang === "de"
             ? homepageFaqDe
-            : homepageFaqEn,
+            : lang === "es"
+              ? homepageFaqEs
+              : homepageFaqEn,
         pageUrl,
       ),
     ],
@@ -361,13 +441,17 @@ export function getPlusPageSchema(lang) {
             ? "Abonnement domotique"
             : lang === "de"
               ? "Hausautomations-Abonnement"
-              : "Home automation subscription",
+              : lang === "es"
+                ? "Suscripción de domótica"
+                : "Home automation subscription",
         description:
           lang === "fr"
             ? "Abonnement optionnel pour Gladys Assistant : accès distant chiffré, alerte email si Gladys est hors ligne, sauvegardes, IA, Enedis et serveur MCP."
             : lang === "de"
               ? "Optionales Abo für Gladys Assistant: verschlüsselter Fernzugriff, E-Mail-Warnung, wenn Gladys offline geht, Backups, KI, Enedis und MCP-Server."
-              : "Optional subscription for Gladys Assistant: encrypted remote access, email alert when Gladys goes offline, backups, AI, Enedis, and MCP server.",
+              : lang === "es"
+                ? "Suscripción opcional para Gladys Assistant: acceso remoto cifrado, alerta por correo electrónico si Gladys se desconecta, copias de seguridad, IA, Enedis y servidor MCP."
+                : "Optional subscription for Gladys Assistant: encrypted remote access, email alert when Gladys goes offline, backups, AI, Enedis, and MCP server.",
         image: [
           `${SITE_URL}/img/presentation/gladys-assistant-og-image-v5-${
             lang === "fr" ? "fr" : "en"
@@ -405,7 +489,13 @@ export function getPlusPageSchema(lang) {
           : {}),
       },
       toFaqPage(
-        lang === "fr" ? plusFaqFr : lang === "de" ? plusFaqDe : plusFaqEn,
+        lang === "fr"
+          ? plusFaqFr
+          : lang === "de"
+            ? plusFaqDe
+            : lang === "es"
+              ? plusFaqEs
+              : plusFaqEn,
         pageUrl,
       ),
     ],
@@ -463,7 +553,7 @@ export function getStarterKitPageSchema(lang) {
 export function getOgImageUrl(pageUrl, lang) {
   const slug = pageUrl
     .replace(SITE_URL, "")
-    .replace(/^\/(fr|de)\//, "/")
+    .replace(/^\/(fr|de|es)\//, "/")
     .replace(/^\/|\/$/g, "");
   return ogImages.includes(slug)
     ? `${SITE_URL}/img/og/${slug}-${lang === "fr" ? "fr" : "en"}.jpg`
@@ -474,12 +564,12 @@ export function getOgImageUrl(pageUrl, lang) {
 // are the page's own meta title and description.
 export function getGuidePageSchema(
   lang,
-  { path, content, faqEn, faqFr, faqDe, about },
+  { path, content, faqEn, faqFr, faqDe, faqEs, about },
 ) {
   const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}${path}`;
   const meta = (content[lang] || content.en).meta;
-  const faq = { fr: faqFr, de: faqDe }[lang] || faqEn;
+  const faq = { fr: faqFr, de: faqDe, es: faqEs }[lang] || faqEn;
 
   return {
     "@context": "https://schema.org",

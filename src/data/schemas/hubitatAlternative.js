@@ -3,6 +3,7 @@ import hubitatAlternativeContent, {
   hubitatAlternativeFaqEn,
   hubitatAlternativeFaqFr,
   hubitatAlternativeFaqDe,
+  hubitatAlternativeFaqEs,
 } from "../hubitatAlternativeData";
 
 export function getHubitatAlternativePageSchema(lang) {
@@ -12,6 +13,7 @@ export function getHubitatAlternativePageSchema(lang) {
     faqEn: hubitatAlternativeFaqEn,
     faqFr: hubitatAlternativeFaqFr,
     faqDe: hubitatAlternativeFaqDe,
+    faqEs: hubitatAlternativeFaqEs,
     about: [
       { "@type": "Product", name: "Hubitat Elevation" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

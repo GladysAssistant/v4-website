@@ -690,6 +690,232 @@ const protocolsContent = {
       secondary: { label: "Integrationen ansehen", href: "/de/docs/integrations/" },
     },
   },
+  es: {
+    meta: {
+      title: "Zigbee vs Z-Wave vs Matter vs Thread (guía 2026)",
+      description:
+        "¿Zigbee, Matter o Z-Wave? Una comparativa clara y neutral de los tres estándares del hogar inteligente: en qué se diferencian, sus puntos fuertes y sus límites, y cómo elegir, además de por qué en realidad no tienes que quedarte con uno solo.",
+    },
+    hero: {
+      title: "Zigbee vs Matter vs Z-Wave",
+      subtitle:
+        "Una guía clara y neutral de los tres principales estándares del hogar inteligente, y de cómo elegir entre ellos.",
+      intro: [
+        "Si estás montando un hogar inteligente, enseguida te toparás con tres nombres: Zigbee, Z-Wave y Matter. A menudo se presentan como rivales, pero no todos cumplen la misma función, y eso es lo primero que hay que tener claro.",
+        "Esta guía explica qué es realmente cada uno, cómo se comparan y cuál elegir, en un lenguaje sencillo y sin tomar partido.",
+      ],
+      primaryCta: { label: "Empieza con Gladys", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Crea un hogar inteligente local →",
+        href: "/es/local-smart-home/",
+      },
+    },
+    keyPoint: {
+      title: "Primero, lo esencial que la mayoría de los artículos explica mal",
+      paragraphs: [
+        "Zigbee y Z-Wave son protocolos inalámbricos: definen la radio que transporta la señal entre tus dispositivos. Matter es diferente. No es un protocolo de radio, sino un estándar de interoperabilidad que funciona por encima de otras redes, ya sea Wi-Fi o Thread.",
+        "Thread es la pieza realmente comparable a Zigbee y Z-Wave: es una radio inalámbrica en malla de bajo consumo. Así que, en la práctica, la comparación a nivel de radio es \"Zigbee vs Z-Wave vs Thread\", con Matter por encima para que dispositivos de distintas marcas y ecosistemas se entiendan entre sí.",
+        "Tenlo en cuenta al leer: cuando se habla de un \"dispositivo Matter\", normalmente se trata de un dispositivo Matter sobre Thread o Matter sobre Wi-Fi.",
+      ],
+    },
+    tableTitle: "Comparativa rápida",
+    tableCols: {
+      feature: "",
+      zigbee: "Zigbee",
+      zwave: "Z-Wave",
+      matter: "Matter",
+    },
+    table: [
+      {
+        feature: "Qué es",
+        zigbee: "Protocolo inalámbrico (malla)",
+        zwave: "Protocolo inalámbrico (malla)",
+        matter: "Estándar de interoperabilidad sobre Wi-Fi y Thread",
+      },
+      {
+        feature: "Frecuencia de radio",
+        zigbee: "2,4 GHz",
+        zwave: "Sub-GHz (868 MHz en Europa / 908 MHz en EE. UU.)",
+        matter: "Wi-Fi (2,4/5 GHz) o Thread (2,4 GHz)",
+      },
+      {
+        feature: "Topología de red",
+        zigbee: "Malla",
+        zwave: "Malla",
+        matter: "Malla (sobre Thread) o estrella (sobre Wi-Fi)",
+      },
+      {
+        feature: "Interoperabilidad",
+        zigbee: "Buena, mejor con hubs abiertos",
+        zwave: "Sólida, gracias a una certificación estricta",
+        matter: "Multiecosistema por diseño",
+      },
+      {
+        feature: "Variedad de dispositivos",
+        zigbee: "Enorme y muy asequible",
+        zwave: "Más reducida y más cara",
+        matter: "En rápido crecimiento, más reciente",
+      },
+      {
+        feature: "Control local",
+        zigbee: "Sí",
+        zwave: "Sí",
+        matter: "Sí, local por diseño",
+      },
+      {
+        feature: "Interferencias con el Wi-Fi",
+        zigbee: "Posibles (comparte los 2,4 GHz)",
+        zwave: "Bajas (sub-GHz)",
+        matter: "Thread comparte los 2,4 GHz; la versión Wi-Fi usa el Wi-Fi",
+      },
+      {
+        feature: "Respaldado por",
+        zigbee: "Connectivity Standards Alliance",
+        zwave: "Z-Wave Alliance / Silicon Labs",
+        matter: "CSA (Apple, Google, Amazon, Samsung…)",
+      },
+      {
+        feature: "Licencia",
+        zigbee: "Abierto, muy abierto gracias a Zigbee2MQTT",
+        zwave: "Propietario durante años, abierto hacia 2020",
+        matter: "Estándar abierto con un SDK público",
+      },
+      {
+        feature: "Madurez",
+        zigbee: "Maduro",
+        zwave: "Maduro pero envejeciendo",
+        matter: "Nuevo (desde 2022), en maduración",
+      },
+      {
+        feature: "Perspectivas",
+        zigbee: "En plena forma",
+        zwave: "En declive para los nuevos dispositivos",
+        matter: "El de mayor crecimiento",
+      },
+      {
+        feature: "Requiere",
+        zigbee: "Un coordinador USB",
+        zwave: "Un controlador USB",
+        matter: "Un Thread Border Router y/o un controlador Matter",
+      },
+    ],
+    protocols: [
+      {
+        id: "zigbee",
+        name: "Zigbee",
+        tagline: "La malla popular y asequible",
+        intro:
+          "Zigbee es un protocolo inalámbrico en malla de bajo consumo en la banda de 2,4 GHz. Los dispositivos conectados a la corriente retransmiten los mensajes de los que funcionan con pilas, así que la red se refuerza a medida que añades dispositivos. Impulsa un ecosistema enorme y asequible (Aqara, IKEA, Sonoff, Philips Hue y muchos más), y sigue en plena forma. Junto con Matter sobre Thread, es uno de los dos protocolos por los que merece la pena apostar hoy.",
+        strengths: [
+          "Una enorme variedad de dispositivos económicos.",
+          "Una malla que se repara sola y se amplía a medida que añades dispositivos conectados a la corriente.",
+          "Totalmente local, y muy abierto gracias a proyectos como Zigbee2MQTT.",
+        ],
+        limits: [
+          "Los 2,4 GHz pueden interferir con el Wi-Fi y otros equipos inalámbricos.",
+          "El funcionamiento entre marcas puede ser irregular con hubs cerrados (los hubs abiertos resuelven casi todo).",
+          "Necesitas un coordinador (un dongle USB).",
+        ],
+      },
+      {
+        id: "zwave",
+        name: "Z-Wave",
+        tagline: "El veterano certificado que envejece",
+        intro:
+          "Z-Wave es el veterano de los tres: un protocolo inalámbrico en malla de bajo consumo en frecuencias sub-GHz (868 MHz en Europa, 908 MHz en EE. UU.). Su certificación estricta le ha dado fama de funcionar de forma fiable entre marcas, y cuenta con una gran base instalada. Pero también es la opción que envejece: fue propietario durante la mayor parte de su existencia y no se abrió como estándar ratificado hasta alrededor de 2020, sus dispositivos son más caros y muchos fabricantes están trasladando sus nuevos productos a Matter y Thread.",
+        strengths: [
+          "La certificación estricta garantiza un funcionamiento fiable entre marcas.",
+          "La radio sub-GHz implica menos interferencias con el Wi-Fi y una buena penetración a través de las paredes.",
+          "Una gran base instalada, sobre todo en sistemas instalados por profesionales.",
+        ],
+        limits: [
+          "Menos dispositivos y notablemente más caros que Zigbee, con un catálogo de novedades que se reduce a medida que los fabricantes pasan a Matter y Thread, sobre todo en Europa.",
+          "Propietario durante la mayor parte de su historia; no se abrió como estándar ratificado hasta alrededor de 2020.",
+          "Frecuencias ligadas a cada región (los dispositivos europeos y estadounidenses no son intercambiables), una red clásica está limitada a unos 232 dispositivos y tiene fama de ser complicado de integrar.",
+        ],
+      },
+      {
+        id: "matter",
+        name: "Matter & Thread",
+        tagline: "El estándar de interoperabilidad",
+        intro:
+          "Matter es el más reciente de los tres, y es diferente: no es un protocolo de radio, sino un estándar de aplicación que funciona sobre Wi-Fi o sobre Thread, una radio en malla de bajo consumo comparable a Zigbee y Z-Wave. Respaldado por Apple, Google, Amazon y Samsung, su objetivo es que un mismo dispositivo funcione con todos los grandes ecosistemas. Junto con Zigbee, Matter sobre Thread se considera ampliamente el futuro del hogar inteligente.",
+        strengths: [
+          "Multiecosistema por diseño: un mismo dispositivo puede funcionar con Apple Home, Google Home, Alexa y otros.",
+          "El control local forma parte del estándar.",
+          "Un fuerte respaldo de la industria, así que es hacia donde se dirige el mercado.",
+        ],
+        limits: [
+          "Todavía joven (lanzado a finales de 2022): las funciones y la compatibilidad de dispositivos están madurando.",
+          "Matter sobre Thread necesita un Thread Border Router; al principio la configuración puede resultar confusa.",
+          "Algunos dispositivos y puentes de primera generación solo exponen funciones básicas.",
+        ],
+      },
+    ],
+    choose: {
+      title: "Entonces, ¿cuál deberías elegir?",
+      intro:
+        "Para un hogar inteligente totalmente nuevo hoy, los dos por los que apostar son Zigbee y Matter sobre Thread. Esta es la orientación rápida:",
+      cards: [
+        {
+          icon: "🟢",
+          title: "Elige Zigbee si…",
+          text: "Quieres la mayor y más barata variedad de dispositivos y una gran malla local desde ya. Es la opción segura y probada hoy, idealmente con un hub abierto para la mejor interoperabilidad.",
+        },
+        {
+          icon: "🟣",
+          title: "Elige Matter / Thread si…",
+          text: "Quieres dispositivos preparados para el futuro y compatibles con todos los ecosistemas, y te importa apostar por el estándar en torno al que se une toda la industria. Es hacia donde se dirige el mercado.",
+        },
+        {
+          icon: "🔵",
+          title: "Elige Z-Wave si…",
+          text: "Ya tienes una instalación Z-Wave, o necesitas específicamente sus dispositivos sub-GHz certificados, sabiendo que es la opción heredada, con un catálogo más caro y cada vez más reducido.",
+        },
+      ],
+    },
+    gladys: {
+      title: "Buenas noticias: con Gladys, no tienes que elegir",
+      paragraphs: [
+        "Estos estándares no son excluyentes. Un buen hub local habla varios a la vez, así que puedes elegir el mejor dispositivo para cada necesidad en lugar de apostarlo todo a una sola tecnología.",
+        "Gladys Assistant es compatible con Zigbee (a través de Zigbee2MQTT), Matter y Thread, y Z-Wave (a través de Z-Wave JS), además de MQTT para todo lo demás. Todos conviven en una única interfaz limpia, totalmente en local y sin dependencia de ningún fabricante.",
+      ],
+      link: { label: "Ver las integraciones de Gladys →", href: "/es/docs/integrations/" },
+    },
+    related: {
+      title: "Ve más allá",
+      intro: "Configura cada estándar en Gladys, o toma perspectiva y mira la visión de conjunto:",
+      links: [
+        {
+          label: "Zigbee con Gladys (Zigbee2MQTT)",
+          href: "/es/docs/integrations/zigbee2mqtt/",
+          text: "Añade dispositivos Zigbee a Gladys a través de Zigbee2MQTT.",
+        },
+        {
+          label: "Matter con Gladys",
+          href: "/es/docs/integrations/matter/",
+          text: "Empareja dispositivos Matter y Thread directamente en Gladys.",
+        },
+        {
+          label: "Z-Wave con Gladys",
+          href: "/es/docs/integrations/zwavejs-ui/",
+          text: "Integra tu red Z-Wave en Gladys a través de Z-Wave JS.",
+        },
+        {
+          label: "Crea un hogar inteligente local",
+          href: "/es/local-smart-home/",
+          text: "La visión de conjunto: un hogar inteligente privado y local basado en estándares abiertos.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Construye tu hogar inteligente sobre estándares abiertos",
+      text: "Gladys es gratuito, de código abierto y local por defecto, y habla Zigbee, Matter, Thread y Z-Wave, así que nunca quedas atado a una sola tecnología.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "Ver las integraciones", href: "/es/docs/integrations/" },
+    },
+  },
 };
 
 export const protocolsFaqEn = [
@@ -788,6 +1014,39 @@ export const protocolsFaqDe = [
     question: "Kann ich Zigbee, Z-Wave und Matter in einem Smart Home kombinieren?",
     answer:
       "Ja. Ein Hub wie Gladys Assistant unterstützt Zigbee, Matter, Thread und Z-Wave gleichzeitig – du kannst Geräte aller Standards also frei in einer einzigen, lokalen Oberfläche mischen.",
+  },
+];
+
+export const protocolsFaqEs = [
+  {
+    question: "¿Matter sustituye a Zigbee y Z-Wave?",
+    answer:
+      "No exactamente. Matter es un estándar de interoperabilidad, no un protocolo de radio. Funciona sobre Wi-Fi o sobre Thread, una radio en malla de bajo consumo comparable a Zigbee y Z-Wave. Matter aspira a unificar los ecosistemas, pero Zigbee y Z-Wave siguen siendo muy utilizados y compatibles, y muchos hubs los hacen funcionar todos a la vez.",
+  },
+  {
+    question: "¿Qué diferencia hay entre Matter y Thread?",
+    answer:
+      "Thread es la radio inalámbrica en malla de bajo consumo (como Zigbee o Z-Wave). Matter es la capa de aplicación que define cómo se comunican los dispositivos, y puede funcionar sobre Thread o sobre Wi-Fi. \"Matter sobre Thread\" significa simplemente que Thread transporta la señal mientras Matter define el idioma.",
+  },
+  {
+    question: "Zigbee vs Z-Wave: ¿cuál es mejor?",
+    answer:
+      "Para una instalación nueva, Zigbee suele tener más sentido hoy: un catálogo mucho más amplio, más barato y todavía en crecimiento en la banda de 2,4 GHz. Z-Wave sigue siendo fiable en frecuencias sub-GHz, con menos interferencias con el Wi-Fi y una certificación estricta, pero sus dispositivos son más caros y su gama de novedades se reduce a medida que los fabricantes pasan a Matter y Thread. Ambos son protocolos locales en malla.",
+  },
+  {
+    question: "¿Zigbee, Z-Wave y Matter funcionan sin la nube?",
+    answer:
+      "Sí, los tres permiten el control local. Con un hub local como Gladys Assistant, tus dispositivos funcionan en tu propia red y siguen funcionando sin depender de la nube de un fabricante.",
+  },
+  {
+    question: "¿Qué protocolo tiene más dispositivos?",
+    answer:
+      "Zigbee tiene hoy el catálogo más amplio y asequible. El de Matter crece rápidamente gracias al fuerte respaldo de la industria, mientras que el de Z-Wave es más reducido pero destaca por su fiabilidad.",
+  },
+  {
+    question: "¿Puedo mezclar Zigbee, Z-Wave y Matter en un mismo hogar inteligente?",
+    answer:
+      "Sí. Un hub como Gladys Assistant es compatible con Zigbee, Matter, Thread y Z-Wave a la vez, así que puedes mezclar libremente dispositivos de todos ellos en una única interfaz local.",
   },
 ];
 

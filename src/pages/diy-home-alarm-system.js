@@ -7,9 +7,9 @@ import alarmContent, { alarmFaqEn, alarmFaqFr, alarmFaqDe } from "../data/alarmS
 
 export default function DiyHomeAlarmSystemPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = alarmContent[lang];
-  const faq = lang === "fr" ? alarmFaqFr : lang === "de" ? alarmFaqDe : alarmFaqEn;
+  const faq = lang === "fr" ? alarmFaqFr : lang === "de" ? alarmFaqDe : lang === "es" ? alarmFaqEs : alarmFaqEn;
 
   return (
     <UseCasePage

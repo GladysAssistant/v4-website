@@ -24,12 +24,16 @@ export function getAlarmSystemPageSchema(lang) {
             ? "Alarme maison DIY : créez la vôtre, locale et privée"
             : lang === "de"
               ? "Alarmanlage selber bauen: lokal und privat"
+              : lang === "es"
+              ? "Alarma casera DIY: crea la tuya, local y privada"
               : "DIY home alarm system: build your own, local and private",
         description:
           lang === "fr"
             ? "Créez une vraie alarme maison DIY avec Gladys : modes armé, partiel et panique, détecteurs de mouvement et d'ouverture, photos de caméra et alertes instantanées, en local sur du matériel qui vous appartient et avec vos données gardées chez vous."
             : lang === "de"
               ? "Bau dir mit Gladys eine echte DIY-Alarmanlage: Scharf-, Teil- und Panikmodus, Bewegungs- und Türsensoren, Kamera-Schnappschüsse und Sofortbenachrichtigungen, alles lokal auf deiner eigenen Hardware, deine Daten bleiben zu Hause."
+              : lang === "es"
+              ? "Crea un verdadero sistema de alarma casero con Gladys: modos armado, parcial y pánico, sensores de movimiento y de puerta, capturas de cámara y alertas instantáneas, todo funcionando en local en tu propio hardware y con tus datos en casa."
               : "Build a real DIY home alarm system with Gladys: armed, partial and panic modes, motion and door sensors, camera snapshots and instant alerts, all running locally on hardware you own with your data kept at home.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
@@ -46,7 +50,7 @@ export function getAlarmSystemPageSchema(lang) {
           { "@type": "SoftwareApplication", name: "Gladys Assistant" },
         ],
       },
-      toFaqPage(lang === "fr" ? alarmFaqFr : lang === "de" ? alarmFaqDe : alarmFaqEn, pageUrl),
+      toFaqPage(lang === "fr" ? alarmFaqFr : lang === "de" ? alarmFaqDe : lang === "es" ? alarmFaqEs : alarmFaqEn, pageUrl),
     ],
   };
 }

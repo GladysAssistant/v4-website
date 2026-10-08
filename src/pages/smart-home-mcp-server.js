@@ -7,11 +7,12 @@ import smartHomeMcpContent, {
   smartHomeMcpFaqEn,
   smartHomeMcpFaqFr,
   smartHomeMcpFaqDe,
+  smartHomeMcpFaqEs,
 } from "../data/smartHomeMcpData";
 
 export default function SmartHomeMcpPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = smartHomeMcpContent[lang];
@@ -20,6 +21,8 @@ export default function SmartHomeMcpPage() {
       ? smartHomeMcpFaqFr
       : lang === "de"
       ? smartHomeMcpFaqDe
+      : lang === "es"
+      ? smartHomeMcpFaqEs
       : smartHomeMcpFaqEn;
 
   return (

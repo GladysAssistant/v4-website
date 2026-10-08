@@ -10,6 +10,7 @@ import bestZigbeeDongleContent, {
   bestZigbeeDongleFaqEn,
   bestZigbeeDongleFaqFr,
   bestZigbeeDongleFaqDe,
+  bestZigbeeDongleFaqEs,
 } from "../data/bestZigbeeDongleData";
 
 import styles from "./comparison.module.css";
@@ -196,13 +197,15 @@ function GuideContent({ content, faq }) {
 
 export default function BestZigbeeDonglePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = bestZigbeeDongleContent[lang];
   const faq =
     lang === "fr"
       ? bestZigbeeDongleFaqFr
       : lang === "de"
         ? bestZigbeeDongleFaqDe
+      : lang === "es"
+        ? bestZigbeeDongleFaqEs
         : bestZigbeeDongleFaqEn;
 
   return (

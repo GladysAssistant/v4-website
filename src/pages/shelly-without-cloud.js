@@ -7,14 +7,15 @@ import shellyWithoutCloudContent, {
   shellyWithoutCloudFaqEn,
   shellyWithoutCloudFaqFr,
   shellyWithoutCloudFaqDe,
+  shellyWithoutCloudFaqEs,
 } from "../data/shellyWithoutCloudData";
 
 export default function ShellyWithoutCloudPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = shellyWithoutCloudContent[lang];
   const faq =
-    lang === "fr" ? shellyWithoutCloudFaqFr : lang === "de" ? shellyWithoutCloudFaqDe : shellyWithoutCloudFaqEn;
+    lang === "fr" ? shellyWithoutCloudFaqFr : lang === "de" ? shellyWithoutCloudFaqDe : lang === "es" ? shellyWithoutCloudFaqEs : shellyWithoutCloudFaqEn;
 
   return (
     <UseCasePage

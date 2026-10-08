@@ -3,6 +3,7 @@ import homeyAlternativeContent, {
   homeyAlternativeFaqEn,
   homeyAlternativeFaqFr,
   homeyAlternativeFaqDe,
+  homeyAlternativeFaqEs,
 } from "../homeyAlternativeData";
 
 export function getHomeyAlternativePageSchema(lang) {
@@ -12,6 +13,7 @@ export function getHomeyAlternativePageSchema(lang) {
     faqEn: homeyAlternativeFaqEn,
     faqFr: homeyAlternativeFaqFr,
     faqDe: homeyAlternativeFaqDe,
+    faqEs: homeyAlternativeFaqEs,
     about: [
       { "@type": "Product", name: "Homey Pro" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

@@ -3,6 +3,7 @@ import philipsHueWithoutBridgeContent, {
   philipsHueWithoutBridgeFaqEn,
   philipsHueWithoutBridgeFaqFr,
   philipsHueWithoutBridgeFaqDe,
+  philipsHueWithoutBridgeFaqEs,
 } from "../philipsHueWithoutBridgeData";
 
 export function getPhilipsHueWithoutBridgePageSchema(lang) {
@@ -12,6 +13,7 @@ export function getPhilipsHueWithoutBridgePageSchema(lang) {
     faqEn: philipsHueWithoutBridgeFaqEn,
     faqFr: philipsHueWithoutBridgeFaqFr,
     faqDe: philipsHueWithoutBridgeFaqDe,
+    faqEs: philipsHueWithoutBridgeFaqEs,
     about: [
       { "@type": "Brand", name: "Philips Hue" },
       { "@type": "SoftwareApplication", name: "Zigbee2MQTT" },

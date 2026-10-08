@@ -9,6 +9,7 @@ import bestSmartHomeHubContent, {
   bestSmartHomeHubFaqEn,
   bestSmartHomeHubFaqFr,
   bestSmartHomeHubFaqDe,
+  bestSmartHomeHubFaqEs,
 } from "../data/bestSmartHomeHubData";
 
 import styles from "./comparison.module.css";
@@ -198,13 +199,15 @@ function HubGuide({ content, faq }) {
 
 export default function BestSmartHomeHubPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = bestSmartHomeHubContent[lang];
   const faq =
     lang === "fr"
       ? bestSmartHomeHubFaqFr
       : lang === "de"
         ? bestSmartHomeHubFaqDe
+      : lang === "es"
+        ? bestSmartHomeHubFaqEs
         : bestSmartHomeHubFaqEn;
 
   return (

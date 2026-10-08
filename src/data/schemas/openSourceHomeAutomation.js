@@ -9,6 +9,7 @@ import {
   openSourceHomeAutomationFaqEn,
   openSourceHomeAutomationFaqFr,
   openSourceHomeAutomationFaqDe,
+  openSourceHomeAutomationFaqEs,
 } from "../openSourceHomeAutomationData";
 
 export function getOpenSourceHomeAutomationPageSchema(lang) {
@@ -28,12 +29,16 @@ export function getOpenSourceHomeAutomationPageSchema(lang) {
             ? "Meilleurs logiciels domotiques open source : 6 comparés (2026)"
             : lang === "de"
             ? "Die beste Open-Source-Software für Hausautomation: 6 Plattformen im Vergleich (2026)"
+            : lang === "es"
+            ? "Las mejores plataformas de domótica de código abierto: 6 comparadas (2026)"
             : "Best Open-Source Home Automation Platforms: 6 Compared (2026)",
         description:
           lang === "fr"
             ? "Comparez les meilleures plateformes domotiques open source (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED) : interface, facilité et licence, pour choisir le bon logiciel domotique libre et auto-hébergé."
             : lang === "de"
             ? "Vergleiche die besten Open-Source-Plattformen für Hausautomation (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED): Oberfläche, Bedienbarkeit und Lizenz, um die richtige freie, selbst gehostete Smart-Home-Software zu finden."
+            : lang === "es"
+            ? "Compara las mejores plataformas de domótica de código abierto (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED): interfaz, facilidad de uso y licencia, para elegir el software de domótica gratuito y autoalojado que te conviene."
             : "Compare the best open-source home automation platforms (Gladys Assistant, Home Assistant, openHAB, Jeedom, Domoticz, Node-RED): interface, ease of use and license, to choose the right free, self-hosted smart home software.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
@@ -55,6 +60,8 @@ export function getOpenSourceHomeAutomationPageSchema(lang) {
           ? openSourceHomeAutomationFaqFr
           : lang === "de"
           ? openSourceHomeAutomationFaqDe
+          : lang === "es"
+          ? openSourceHomeAutomationFaqEs
           : openSourceHomeAutomationFaqEn,
         pageUrl,
       ),

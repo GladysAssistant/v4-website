@@ -3,6 +3,7 @@ import smartThingsAlternativeContent, {
   smartThingsAlternativeFaqEn,
   smartThingsAlternativeFaqFr,
   smartThingsAlternativeFaqDe,
+  smartThingsAlternativeFaqEs,
 } from "../smartThingsAlternativeData";
 
 export function getSmartThingsAlternativePageSchema(lang) {
@@ -12,6 +13,7 @@ export function getSmartThingsAlternativePageSchema(lang) {
     faqEn: smartThingsAlternativeFaqEn,
     faqFr: smartThingsAlternativeFaqFr,
     faqDe: smartThingsAlternativeFaqDe,
+    faqEs: smartThingsAlternativeFaqEs,
     about: [
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },
       { "@type": "SoftwareApplication", name: "Samsung SmartThings" },

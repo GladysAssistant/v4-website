@@ -579,6 +579,196 @@ const hubitatAlternativeContent = {
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
   },
+
+  es: {
+    meta: {
+      title: "Alternativa a Hubitat: domótica local y de código abierto",
+      description:
+        "¿Buscas una alternativa a Hubitat Elevation? Gladys Assistant es gratis, de código abierto y funciona en local: Zigbee, Z-Wave, Matter e interfaz moderna.",
+    },
+    screenshotCaption:
+      "Un panel de control moderno, pensado para el móvil, que funciona en tu propio hardware, como Hubitat, pero de código abierto.",
+    hero: {
+      title: "¿Buscas una alternativa a Hubitat?",
+      subtitle:
+        "Quédate con lo que te gusta de Hubitat, automatizaciones locales sin depender de la nube, y añade una interfaz moderna, código abierto y libertad para elegir tu hardware.",
+      intro: [
+        "Hubitat Elevation se ganó su lugar en los hogares inteligentes de Norteamérica haciendo una cosa bien: las automatizaciones se ejecutan en el hub, en tu casa, no en la nube de otro. Muchos usuarios que dejaron SmartThings o Wink acabaron ahí precisamente por eso.",
+        "Gladys Assistant comparte esa filosofía y va un paso más allá. Es una plataforma de domótica gratuita y de código abierto que ejecutas en tu propio mini-PC o Raspberry Pi. Tus dispositivos Zigbee, Z-Wave y Matter se emparejan directamente con ella, tus escenas se ejecutan en local y la interfaz se diseñó desde cero para el móvil que llevas en el bolsillo.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/docs/" },
+      secondaryCta: {
+        label: "Prueba la demo →",
+        href: "https://demo.gladysassistant.com/dashboard",
+      },
+    },
+    problem: {
+      title: "Por qué muchos buscan una alternativa a Hubitat",
+      intro:
+        "Hubitat es un buen hub local, pero algunos inconvenientes aparecen una y otra vez:",
+      points: [
+        "La interfaz se ve anticuada, y personalizar los paneles a menudo implica escribir CSS.",
+        "Rule Machine es potente, pero a muchos usuarios les resulta difícil de leer y de mantener.",
+        "La plataforma es propietaria: los drivers integrados son cerrados, y las apps y drivers personalizados se escriben en Groovy.",
+        "Remote Admin y Hub Protect son servicios de pago anuales (45 US$ al año cada uno desde mayo de 2025).",
+        "Dependes del hardware de Hubitat: cuando se descatalogan una radio o un modelo, tus opciones se reducen.",
+      ],
+      outro:
+        "Nada de esto convierte a Hubitat en una mala elección. Pero si quieres control local con una interfaz moderna y código abierto, hay otro camino.",
+    },
+    comparison: {
+      title: "Gladys Assistant vs. Hubitat Elevation",
+      intro: "Así se comparan en lo que importa para un hogar inteligente local:",
+      cols: {
+        feature: "",
+        gladys: "Gladys Assistant",
+        other: "Hubitat Elevation",
+      },
+      rows: [
+        {
+          feature: "Hardware",
+          gladys: "Tu propio mini-PC, Raspberry Pi o NAS",
+          other: "El hub C-8 Pro de Hubitat (184,95 US$)",
+        },
+        {
+          feature: "Automatizaciones en local",
+          gladys: "Sí",
+          other: "Sí",
+        },
+        {
+          feature: "Zigbee y Z-Wave",
+          gladys: "Sí, con dongles USB (Zigbee2MQTT, Z-Wave JS UI)",
+          other: "Sí, radios integradas, Z-Wave Long Range",
+        },
+        {
+          feature: "Matter",
+          gladys: "Sí, Gladys es un controlador Matter",
+          other: "Sí",
+        },
+        {
+          feature: "Automatizaciones",
+          gladys: "Escenas visuales, sin código",
+          other: "Rule Machine, Basic Rules, apps en Groovy",
+        },
+        {
+          feature: "Código fuente",
+          gladys: "Código abierto (Apache 2.0)",
+          other: "Propietario",
+        },
+        {
+          feature: "Acceso remoto",
+          gladys: "Opcional con Gladys Plus (desde 6,99 €/mes, incluye también IA, copias de seguridad, Alexa y Google)",
+          other: "Remote Admin (45 US$ al año), enlaces en la nube de Easy Dashboard gratis",
+        },
+        {
+          feature: "Asistente de IA integrado",
+          gladys: "Sí, con Gladys Plus, además de un servidor MCP gratuito para Claude y otros",
+          other: "No",
+        },
+      ],
+      outro:
+        "Hubitat gana en hardware listo para usar con radios integradas. Gladys gana en interfaz, apertura y libertad para elegir el hardware.",
+    },
+    features: {
+      title: "Por qué Gladys es una buena alternativa a Hubitat",
+      intro: "Lo que obtienes al mudar tu casa a Gladys:",
+      cards: [
+        {
+          icon: "🏠",
+          title: "Local ante todo",
+          text: "Gladys funciona en tu propia máquina. Tus dispositivos, escenas e historial se quedan en tu red y siguen funcionando sin internet.",
+        },
+        {
+          icon: "📡",
+          title: "Zigbee, Z-Wave y Matter",
+          text: "Zigbee con Zigbee2MQTT, Z-Wave con Z-Wave JS UI (con un stick de la frecuencia adecuada para tu región) y Matter, todo junto.",
+        },
+        {
+          icon: "📱",
+          title: "Una interfaz moderna",
+          text: "Gladys 5 se diseñó para móviles y tablets de pared: paneles que se ven bien sin una sola línea de CSS.",
+        },
+        {
+          icon: "🧠",
+          title: "Escenas que cualquiera entiende",
+          text: "Disparadores, condiciones, si/entonces/si no y retardos en un editor visual que el resto de la familia también puede entender.",
+        },
+        {
+          icon: "🤖",
+          title: "IA cuando la quieras",
+          text: "Habla con tu casa en lenguaje natural con Gladys Plus, o conecta Claude a través del servidor MCP integrado.",
+        },
+        {
+          icon: "💚",
+          title: "Código abierto, sin ataduras",
+          text: "Apache 2.0, desarrollado de forma abierta desde 2013. Tu hardware, tus datos, tu elección.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo migrar de Hubitat a Gladys",
+      intro: "Puedes migrar habitación por habitación, manteniendo Hubitat en marcha mientras tanto:",
+      points: [
+        "Instala Gladys en un mini-PC o una Raspberry Pi y haz una lista de tus dispositivos Hubitat por protocolo.",
+        "Dispositivos Zigbee: conecta un dongle USB Zigbee, elimina cada dispositivo de Hubitat y emparéjalo con Zigbee2MQTT en Gladys.",
+        "Dispositivos Z-Wave: conecta un stick Z-Wave de la frecuencia adecuada para tu región, excluye cada dispositivo de Hubitat e inclúyelo en Z-Wave JS UI.",
+        "Dispositivos Matter: compártelos con Gladys como segundo controlador (Matter admite varios) y luego elimínalos de Hubitat.",
+        "Dispositivos wifi y en la nube (Hue, Kasa, Tapo, Shelly, Sonos…): conéctalos a través de su integración en Gladys.",
+        "Reconstruye tus reglas como escenas de Gladys y jubila el hub cuando estés listo.",
+      ],
+      outro:
+        "Consejo: empieza con los dispositivos de una sola habitación para familiarizarte con Gladys antes de migrar el resto.",
+    },
+    solution: {
+      title: "La filosofía de Hubitat, sin la caja cerrada",
+      paragraphs: [
+        "Si elegiste Hubitat para alejarte de la nube, ya sabes por qué importa lo local. Gladys cumple esa promesa y elimina las demás limitaciones: código abierto, hardware estándar que puedes mejorar y una interfaz que de verdad te gustará usar.",
+        "Gladys es gratis. Gladys Plus es una suscripción opcional para el acceso remoto cifrado, las copias de seguridad, Alexa y Google Home y el asistente de IA, con un mes de prueba gratuita.",
+      ],
+      link: {
+        label: "Mira lo que funciona con Gladys →",
+        href: "/works-with/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Más guías para un hogar inteligente local:",
+      links: [
+        {
+          label: "El mejor hub domótico",
+          href: "/best-smart-home-hub/",
+          text: "Hubitat, Homey, SmartThings y un mini-PC, comparados.",
+        },
+        {
+          label: "Alternativa a SmartThings",
+          href: "/smartthings-alternative/",
+          text: "Una alternativa local y privada a Samsung SmartThings.",
+        },
+        {
+          label: "Z-Wave JS UI sin Home Assistant",
+          href: "/z-wave-js-ui-without-home-assistant/",
+          text: "Gestiona tu red Z-Wave en local con una interfaz sencilla.",
+        },
+        {
+          label: "Zigbee2MQTT sin Home Assistant",
+          href: "/zigbee2mqtt-without-home-assistant/",
+          text: "Zigbee local con una instalación gestionada y paneles.",
+        },
+        {
+          label: "Alternativa a Home Assistant Green",
+          href: "/home-assistant-green-alternative/",
+          text: "Monta tu propio hub local con un mini-PC.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Un hogar inteligente local y de código abierto",
+      text: "Gladys es gratis, de código abierto y se instala con un solo comando de Docker. Pruébalo junto a tu Hubitat y migra a tu ritmo.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Funciona con Gladys", href: "/works-with/" },
+    },
+  },
 };
 
 export const hubitatAlternativeFaqEn = [
@@ -662,6 +852,34 @@ export const hubitatAlternativeFaqDe = [
     question: "Welche Hardware brauche ich, um einen Hubitat Hub zu ersetzen?",
     answer:
       "Einen Mini-PC oder Raspberry Pi mit Docker, dazu einen Zigbee-USB-Stick und einen Z-Wave-Stick in der passenden Frequenz, falls du diese Protokolle nutzt. Matter- und WLAN-Geräte brauchen kein zusätzliches Funkmodul.",
+  },
+];
+
+export const hubitatAlternativeFaqEs = [
+  {
+    question: "¿Cuál es la mejor alternativa a Hubitat?",
+    answer:
+      "Si quieres seguir en local, las principales opciones son Home Assistant, Gladys Assistant y openHAB, todas de código abierto y autoalojadas. Gladys es la más sencilla de las tres: una interfaz moderna, escenas visuales y un Zigbee2MQTT que Gladys gestiona por ti, en un mini-PC o una Raspberry Pi.",
+  },
+  {
+    question: "¿Puedo pasar mis dispositivos Zigbee y Z-Wave de Hubitat a Gladys?",
+    answer:
+      "Sí. Zigbee y Z-Wave son protocolos estándar: elimina o excluye cada dispositivo de Hubitat y luego emparéjalo con Zigbee2MQTT o inclúyelo en Z-Wave JS UI con un dongle USB. Los dispositivos Matter se pueden compartir con Gladys como segundo controlador.",
+  },
+  {
+    question: "¿Gladys necesita una suscripción como el Remote Admin de Hubitat?",
+    answer:
+      "No. Gladys es gratis y funciona por completo en tu red local. Gladys Plus es opcional (desde 6,99 €/mes, con un mes de prueba gratuita) y reúne el acceso remoto cifrado, las copias de seguridad, Alexa y Google Home y el asistente de IA.",
+  },
+  {
+    question: "¿Hubitat es de código abierto?",
+    answer:
+      "No. La plataforma Hubitat y sus drivers integrados son propietarios; Hubitat publica algunas apps y drivers de ejemplo, y la comunidad escribe los suyos en Groovy. Gladys Assistant es totalmente de código abierto bajo licencia Apache 2.0.",
+  },
+  {
+    question: "¿Qué hardware necesito para sustituir un hub Hubitat?",
+    answer:
+      "Un mini-PC o una Raspberry Pi con Docker, más un dongle USB Zigbee y un stick Z-Wave de la frecuencia adecuada para tu región si usas esos protocolos. Los dispositivos Matter y wifi no necesitan ninguna radio adicional.",
   },
 ];
 

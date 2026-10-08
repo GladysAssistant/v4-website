@@ -1,0 +1,153 @@
+---
+title: "Integración comunitaria Broadlink, gratuita y de código abierto"
+sidebar_label: "Broadlink"
+description: "Local control of Broadlink devices: RM remotes (IR/RF), SP plugs, MP1 strips, A1 sensors. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-broadlink.jpg"
+keywords:
+  - "broadlink"
+  - "domótica broadlink"
+  - "gladys broadlink"
+  - "broadlink gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-broadlink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="broadlink" />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Control your Broadlink devices **locally** from Gladys: no Broadlink account,
+no cloud. The integration talks directly to the devices on your network (UDP,
+port 80).
+
+## Supported devices
+
+| Family             | Models (examples)                                 | In Gladys                                    |
+| ------------------ | ------------------------------------------------- | -------------------------------------------- |
+| Universal remotes  | RM mini 3, RM pro / pro+, RM4 mini, RM4C, RM4 pro | One button per IR/RF code + temp. / humidity |
+| Smart plugs        | SP1, SP2, SP mini, SP3, SP3S, SP4L, SP4M, MCB1…   | On/off (+ power on SP2S, SP3S, SP4B)         |
+| Power strip        | MP1                                               | 4 switchable outlets                         |
+| Environment sensor | A1                                                | Temperature, humidity                        |
+
+- The temperature / humidity of an RM4 only shows up when its sensor cable
+  (HTS2) is plugged in. The RM pro (RM2) has a built-in temperature sensor.
+- Radio (RF 433/315 MHz) learning is only available on the **pro** models
+  (RM pro, RM4 pro).
+
+## Before you start
+
+**Gladys 5.1.0 or newer** is required.
+
+1. Set up your devices on your Wi-Fi with the **Broadlink** app.
+2. In the app, open the settings of each device and **turn "Lock device"
+   off**. A locked device refuses every local command: the integration
+   ignores it.
+3. Recommended: give each device a **fixed IP** (DHCP reservation on your
+   router). Without one, when a device stops answering the integration scans
+   the network again on its own (at most once every 10 minutes) to find its
+   new address.
+
+## Add the devices
+
+1. Open the **Discovery** tab of the integration and run a **scan**.
+2. Gladys sends a discovery request (UDP broadcast, port 80) on your local
+   network; the devices found show up.
+3. Add the ones you want.
+
+Every device shows a **local** badge when it answers, or **unreachable**
+when it stops answering (unplugged, IP changed…).
+
+A device does not show up? It is probably on another network / VLAN, or the
+broadcast is filtered. In the **Configuration** tab, type its IP address in
+**Device IP addresses** (several addresses separated by commas), save, then
+scan again.
+
+## Remote codes (IR / RF)
+
+Every code saved on an RM remote becomes a **button** of the device in
+Gladys: turning it on sends the code, then it falls back to "off" by itself.
+Use it on the dashboard and in scenes ("Control a device" action).
+
+In scenes, the **"Send a Broadlink code"** action also sends a code by its
+name (remote + code name, with an optional repeat count), without going
+through a button.
+
+The actions live in the **Configuration** tab:
+
+- **Learn a remote code**
+  - Pick the remote, give a name (e.g. "TV on"), then choose **Infrared** or
+    **Radio**.
+  - Infrared: click the button, then within 30 seconds press the key of your
+    original remote, pointed at the Broadlink.
+  - Radio: **hold** the key until the frequency is found (up to 30 s),
+    release it, then press it **once** briefly.
+- **Import a code**: paste an existing Broadlink code, in base64 (Home
+  Assistant format, starts with `JgB`) or hexadecimal.
+- **Send a code**: test a code by its name.
+- **List saved codes** / **Delete a code**.
+- **List found devices**: name, model, IP and MAC of every device (handy for
+  troubleshooting).
+
+After learning, importing or deleting a code, open the **Discovery** tab and
+click **Update** on the remote so the button appears (or disappears).
+
+Codes are stored in the data volume of the integration (`/data/codes.json`):
+they survive updates.
+
+## Settings
+
+- **Device IP addresses**: only when the scan does not find a device.
+- **Refresh interval**: how often plug states and sensors are read (60 s by
+  default, 10 to 3600 s).
+
+## Troubleshooting
+
+- **A device is not found**: check it answers ping and sits on the same
+  network as Gladys, or type its IP in the configuration.
+- **"Authentication failed" / the device ignores commands**: the device is
+  locked in the Broadlink app, unlock it.
+- **An IR code is not captured**: bring the original remote closer
+  (5–10 cm) and aim at the top of the Broadlink.
+- **Logs**: read the integration logs from Gladys (or `docker logs`), with
+  `LOG_LEVEL=debug` for details.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Broadlink te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Set up your devices on your Wi-Fi with the Broadlink app first, and make sure they are NOT locked (device settings > Lock device: off). Then run a scan from the Discovery tab. Everything stays on your local network: no Broadlink account is needed here. |
+| Device IP addresses (optional) | `string` | No | Only if the scan does not find a device (other VLAN, broadcast filtered...): its IP addresses, separated by commas. Give your devices a fixed IP (DHCP reservation). |
+| Refresh interval (s) | `number` | No | How often plug states and sensors are read, in seconds. |
+
+## Cómo instalar Broadlink en Gladys
+
+1. En Gladys, abre **Integraciones**: Broadlink aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-broadlink:1.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-broadlink](https://github.com/prohand/gladys-broadlink).
+
+Broadlink requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Broadlink es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-broadlink) — [fuente de esta documentación](https://github.com/prohand/gladys-broadlink/blob/HEAD/docs/en.md)

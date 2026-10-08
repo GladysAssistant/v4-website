@@ -7,14 +7,15 @@ import philipsHueWithoutBridgeContent, {
   philipsHueWithoutBridgeFaqEn,
   philipsHueWithoutBridgeFaqFr,
   philipsHueWithoutBridgeFaqDe,
+  philipsHueWithoutBridgeFaqEs,
 } from "../data/philipsHueWithoutBridgeData";
 
 export default function PhilipsHueWithoutBridgePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = philipsHueWithoutBridgeContent[lang];
   const faq =
-    lang === "fr" ? philipsHueWithoutBridgeFaqFr : lang === "de" ? philipsHueWithoutBridgeFaqDe : philipsHueWithoutBridgeFaqEn;
+    lang === "fr" ? philipsHueWithoutBridgeFaqFr : lang === "de" ? philipsHueWithoutBridgeFaqDe : lang === "es" ? philipsHueWithoutBridgeFaqEs : philipsHueWithoutBridgeFaqEn;
 
   return (
     <UseCasePage

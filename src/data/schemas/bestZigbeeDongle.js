@@ -9,6 +9,7 @@ import {
   bestZigbeeDongleFaqEn,
   bestZigbeeDongleFaqFr,
   bestZigbeeDongleFaqDe,
+  bestZigbeeDongleFaqEs,
 } from "../bestZigbeeDongleData";
 
 export function getBestZigbeeDonglePageSchema(lang) {
@@ -28,12 +29,16 @@ export function getBestZigbeeDonglePageSchema(lang) {
             ? "Quelle clé Zigbee USB choisir pour le Raspberry Pi et Zigbee2MQTT (2026)"
             : lang === "de"
               ? "Der beste Zigbee-USB-Stick für Raspberry Pi & Zigbee2MQTT (2026)"
+              : lang === "es"
+              ? "El mejor dongle USB Zigbee para Raspberry Pi y Zigbee2MQTT (2026)"
               : "Best Zigbee USB dongle for Raspberry Pi & Zigbee2MQTT (2026)",
         description:
           lang === "fr"
             ? "Guide d'achat des meilleurs coordinateurs Zigbee pour Raspberry Pi, Zigbee2MQTT et Gladys Assistant : Sonoff, SMLIGHT, ConBee et plus."
             : lang === "de"
               ? "Kaufberatung zu den besten Zigbee-Koordinatoren für Raspberry Pi, Zigbee2MQTT und Gladys Assistant: Sonoff, SMLIGHT, ConBee und mehr."
+              : lang === "es"
+              ? "Guía de compra de los mejores coordinadores Zigbee para Raspberry Pi, Zigbee2MQTT y Gladys Assistant: Sonoff, SMLIGHT, ConBee y más."
               : "A buyer's guide to the best Zigbee coordinators for Raspberry Pi, Zigbee2MQTT and Gladys Assistant: Sonoff, SMLIGHT, ConBee and more.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
@@ -56,6 +61,8 @@ export function getBestZigbeeDonglePageSchema(lang) {
           ? bestZigbeeDongleFaqFr
           : lang === "de"
             ? bestZigbeeDongleFaqDe
+          : lang === "es"
+            ? bestZigbeeDongleFaqEs
             : bestZigbeeDongleFaqEn,
         pageUrl,
       ),

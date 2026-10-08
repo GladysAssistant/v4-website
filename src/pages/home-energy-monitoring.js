@@ -11,6 +11,7 @@ import energyContent, {
   energyFaqEn,
   energyFaqFr,
   energyFaqDe,
+  energyFaqEs,
 } from "../data/energyMonitoringData";
 
 import styles from "./comparison.module.css";
@@ -78,6 +79,8 @@ function EnergyContent({ content, faq, lang }) {
               ? "Suivez votre consommation d'énergie en temps réel, en local, dans Gladys."
               : lang === "de"
               ? "Verfolge deinen Energieverbrauch in Echtzeit, lokal in Gladys."
+              : lang === "es"
+              ? "Sigue tu consumo de energía en tiempo real, en local, en Gladys."
               : "Track your energy consumption in real time, locally, in Gladys."
           }
           shot="energy"
@@ -193,12 +196,12 @@ function EnergyContent({ content, faq, lang }) {
 
 export default function HomeEnergyMonitoringPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = energyContent[lang];
   const faq =
-    lang === "fr" ? energyFaqFr : lang === "de" ? energyFaqDe : energyFaqEn;
+    lang === "fr" ? energyFaqFr : lang === "de" ? energyFaqDe : lang === "es" ? energyFaqEs : energyFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

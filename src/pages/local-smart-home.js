@@ -11,6 +11,7 @@ import localSmartHomeContent, {
   localSmartHomeFaqEn,
   localSmartHomeFaqFr,
   localSmartHomeFaqDe,
+  localSmartHomeFaqEs,
 } from "../data/localSmartHomeData";
 
 import styles from "./comparison.module.css";
@@ -78,6 +79,8 @@ function PillarContent({ content, faq, lang }) {
               ? "Une interface locale et épurée où vos données restent chez vous, sans cloud obligatoire."
               : lang === "de"
               ? "Eine aufgeräumte, lokale Oberfläche, bei der deine Daten zu Hause bleiben, ganz ohne Cloud-Zwang."
+              : lang === "es"
+              ? "Una interfaz local y despejada en la que tus datos se quedan en casa, sin nube obligatoria."
               : "A clean, local interface where your data stays at home, with no mandatory cloud."
           }
         />
@@ -191,7 +194,7 @@ function PillarContent({ content, faq, lang }) {
 
 export default function LocalSmartHomePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = localSmartHomeContent[lang];
@@ -200,6 +203,8 @@ export default function LocalSmartHomePage() {
       ? localSmartHomeFaqFr
       : lang === "de"
       ? localSmartHomeFaqDe
+      : lang === "es"
+      ? localSmartHomeFaqEs
       : localSmartHomeFaqEn;
 
   return (

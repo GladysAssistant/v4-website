@@ -20,6 +20,10 @@ const amazonFR = (query) =>
 // configured yet; add `&tag=...` here once one exists).
 const amazonDE = (query) =>
   `https://www.amazon.de/s?k=${encodeURIComponent(query)}`;
+// Spanish locale: plain amazon.es search links (no amazon.es affiliate tag
+// configured yet; add `&tag=...` here once one exists).
+const amazonES = (query) =>
+  `https://www.amazon.es/s?k=${encodeURIComponent(query)}`;
 
 // Verified product ASIN (Sonoff ZBDongle-E) on amazon.fr.
 const SONOFF_E_FR = "https://www.amazon.fr/dp/B0B6P22YJC?tag=gladproj-21";
@@ -510,6 +514,168 @@ const bestZigbeeDongleContent = {
       },
     },
   },
+  es: {
+    meta: {
+      title: "El mejor dongle USB Zigbee y coordinador (guía 2026)",
+      description:
+        "¿Qué dongle USB Zigbee comprar? Los mejores coordinadores Zigbee de 2026 para una Raspberry Pi, un NAS o un mini-PC con Zigbee2MQTT: Sonoff, SMLIGHT, ConBee y más, comparados.",
+    },
+    hero: {
+      title: "El mejor dongle USB Zigbee para tu hogar inteligente",
+      subtitle:
+        "Qué coordinador Zigbee comprar para una Raspberry Pi, un NAS o un mini-PC, y montar una red Zigbee local y multimarca con Zigbee2MQTT y Gladys.",
+      intro: [
+        "Un dongle USB Zigbee (también llamado coordinador Zigbee) es el hardware que permite a tu ordenador comunicarse con dispositivos Zigbee: sensores de movimiento, sensores de apertura de puertas y ventanas, enchufes inteligentes, bombillas y mucho más. Conéctalo a tu Raspberry Pi y, con Zigbee2MQTT, controlarás cientos de dispositivos en local, sin hub del fabricante ni nube.",
+        "Pero no todos los dongles son iguales: el chipset, la antena y la forma de conectarlo marcan una diferencia real en alcance y fiabilidad. Esta guía explica en qué fijarte y recomienda los coordinadores que mejor funcionan con Zigbee2MQTT y Gladys Assistant en 2026.",
+      ],
+      primaryCta: { label: "Cómo conectar Zigbee a Gladys", href: "/es/docs/integrations/zigbee2mqtt/" },
+      secondaryCta: {
+        label: "Empieza con Gladys →",
+        href: "/es/docs/",
+      },
+    },
+    criteria: {
+      title: "En qué fijarte al elegir un dongle Zigbee",
+      intro:
+        "Antes de comprar, hay varios aspectos que importan mucho más que el precio:",
+      points: [
+        "Chipset: elige un coordinador moderno basado en Texas Instruments (CC2652) o Silicon Labs (EFR32 / EmberZNet). Ambos están perfectamente soportados en Zigbee2MQTT. Evita los antiguos sticks CC2531, que se quedan cortos para las redes actuales.",
+        "Antena externa: un dongle con antena externa mejora notablemente el alcance y la estabilidad de tu red mallada.",
+        "USB o red: un stick USB es la opción más sencilla, pero un coordinador de red (Ethernet o PoE) te permite colocarlo en cualquier lugar de la casa, lejos de las interferencias, lo que a menudo importa más que el propio modelo.",
+        "Usa siempre un cable alargador USB: conecta el dongle con un alargador corto (de aproximadamente 1 m) y mantenlo alejado de tu Raspberry Pi, de los SSD y de los puertos USB 3.0, que provocan interferencias en la banda de 2,4 GHz. Es la solución más habitual para una red Zigbee poco fiable.",
+        "Zigbee 3.0 y firmware actualizable: asegúrate de que el coordinador es compatible con Zigbee 3.0 y de que puedes actualizar su firmware para tener el mejor soporte a largo plazo.",
+      ],
+      outro:
+        "La buena noticia: Gladys te permite elegir el modelo exacto de tu coordinador en la interfaz, así que cualquiera de los dongles siguientes funcionará desde el primer momento.",
+    },
+    dongles: {
+      title: "Los dongles Zigbee que recomendamos",
+      intro:
+        "Todos son compatibles con Zigbee2MQTT y se pueden seleccionar como coordinador en Gladys:",
+      items: [
+        {
+          name: "Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E)",
+          tag: "Mejor relación calidad-precio",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-e.png",
+          imageAlt: "Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E",
+          text: "El dongle asequible que probamos con Gladys, basado en un chip Silicon Labs EFR32MG21 (EmberZNet), con antena externa. Consejo: actualiza su firmware EmberZNet para obtener la mejor estabilidad.",
+          href: amazonES("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E"),
+          linkLabel: "Ver en Amazon →",
+        },
+        {
+          name: "Sonoff ZBDongle-P",
+          tag: "El más probado",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-p.jpeg",
+          imageAlt: "Dongle USB Zigbee Sonoff ZBDongle-P",
+          text: "La versión con Texas Instruments CC2652P, de confianza desde hace años en la comunidad Zigbee2MQTT. Muy sólido, bien documentado y económico.",
+          href: amazonES("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
+          linkLabel: "Ver en Amazon →",
+        },
+        {
+          name: "SMLIGHT SLZB-06",
+          tag: "Más opciones de ubicación",
+          image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
+          imageAlt: "Coordinador Zigbee Ethernet SMLIGHT SLZB-06",
+          text: "Un coordinador con USB-C, Ethernet y PoE, para conectarlo a tu servidor o colocarlo en un punto central de tu casa. Desde Gladys 5, también puedes usarlo como coordinador de red por Ethernet, lejos de tu servidor y de las interferencias.",
+          href: amazonES("SMLIGHT SLZB-06 coordinador Zigbee"),
+          linkLabel: "Ver en Amazon →",
+        },
+        {
+          name: "ConBee II (Dresden Elektronik)",
+          tag: "USB premium",
+          image: "/img/external/zigbee-dongles/conbee-ii.jpg",
+          imageAlt: "Stick USB Zigbee ConBee II de Dresden Elektronik",
+          text: "Un coordinador USB premium y ampliamente soportado, con buen alcance y una larga trayectoria. Una gran opción si quieres un stick pulido y bien soportado.",
+          href: amazonES("ConBee II Zigbee USB stick"),
+          linkLabel: "Ver en Amazon →",
+        },
+        {
+          name: "Home Assistant Connect ZBT-1",
+          tag: "Hardware multiprotocolo",
+          image: "/img/external/zigbee-dongles/connect-zbt-1.jpg",
+          imageAlt: "Dongle USB Zigbee Home Assistant Connect ZBT-1",
+          text: "El coordinador de Nabu Casa basado en Silicon Labs (antes SkyConnect). Funciona muy bien con Zigbee2MQTT y es un tipo de coordinador soportado en Gladys.",
+          href: amazonES("Home Assistant Connect ZBT-1"),
+          linkLabel: "Ver en Amazon →",
+        },
+      ],
+      outro:
+        "La lista completa y siempre actualizada de coordinadores compatibles está en la página de adaptadores soportados de Zigbee2MQTT.",
+    },
+    multiprotocol: {
+      title: "¿Y los dongles Matter y Thread?",
+      paragraphs: [
+        "Cada vez más coordinadores incorporan dos radios: una para Zigbee y otra para Thread. El SMLIGHT SLZB-MR1 es el más conocido, con una radio Zigbee y una radio Thread una al lado de la otra, además de USB-C, Ethernet y PoE. Sobre el papel, gestiona tu red Zigbee y actúa a la vez como border router Thread.",
+        "Conviene saber dos cosas antes de comprarlo por ese motivo. Primero, usar las dos radios a la vez sigue siendo terreno experimental, sea cual sea el software que uses. Segundo, y más importante, una radio Thread no te dará Matter sobre Thread en Gladys hoy en día: un border router solo transporta el tráfico, mientras que el primer emparejamiento de un dispositivo Matter sobre Thread se hace por Bluetooth, algo que Gladys todavía no gestiona. Ese paso sigue necesitando un controlador Matter completo, como un Apple TV, un Echo compatible con Matter o un dispositivo Google Nest, que luego comparte el dispositivo con Gladys.",
+        "Nada de esto se aplica a Matter sobre Wi-Fi y Ethernet, que no necesita ningún dongle: esos dispositivos ya están en tu red y se emparejan directamente con Gladys.",
+        "Así que compra un coordinador multiprotocolo si quieres una sola caja para las dos redes y te gusta trastear. Compra un coordinador Zigbee sencillo y probado si lo que quieres es una red Zigbee que simplemente funcione.",
+      ],
+      link: {
+        label: "¿Qué hub Matter necesitas realmente? →",
+        href: "/es/matter-hub/",
+      },
+    },
+    gladys: {
+      title: "Cómo funciona con Gladys Assistant",
+      paragraphs: [
+        "Con Gladys no necesitas un hub Zigbee propietario. Conecta tu dongle a tu Raspberry Pi, NAS o mini-PC, abre la integración Zigbee2MQTT y selecciona el modelo de tu coordinador en la lista.",
+        "Gladys instala y configura automáticamente los contenedores MQTT y Zigbee2MQTT por ti, sin configuración manual ni puente de terceros. A partir de ahí, emparejas tus dispositivos Zigbee y los controlas completamente en local, mezclando marcas libremente.",
+      ],
+      link: { label: "Lee la guía de configuración de Zigbee2MQTT →", href: "/es/docs/integrations/zigbee2mqtt/" },
+    },
+    related: {
+      title: "Para ir más allá",
+      intro:
+        "Montar tu red Zigbee local forma parte de un proyecto más amplio:",
+      links: [
+        {
+          label: "Zigbee2MQTT sin Home Assistant",
+          href: "/es/zigbee2mqtt-without-home-assistant/",
+          text: "Deja que Gladys instale y gestione por ti Zigbee2MQTT y su broker MQTT.",
+        },
+        {
+          label: "Conecta dispositivos Zigbee a Gladys",
+          href: "/es/docs/integrations/zigbee2mqtt/",
+          text: "La guía paso a paso para configurar tu dongle con Zigbee2MQTT.",
+        },
+        {
+          label: "Domótica IKEA con Gladys",
+          href: "/es/ikea-smart-home/",
+          text: "Usa tus dispositivos IKEA Tradfri y Dirigera en local, con Zigbee2MQTT o Matter.",
+        },
+        {
+          label: "Estación meteorológica casera",
+          href: "/es/home-weather-station/",
+          text: "Monta una estación meteorológica local con sensores Zigbee y Matter que Gladys lee directamente.",
+        },
+        {
+          label: "Zigbee vs Matter vs Z-Wave",
+          href: "/es/zigbee-vs-matter-vs-zwave/",
+          text: "Qué estándar inalámbrico elegir para los dispositivos de tu hogar inteligente.",
+        },
+        {
+          label: "Crea un hogar inteligente local",
+          href: "/es/local-smart-home/",
+          text: "Por qué lo local es lo primero y cómo crear una casa que funcione sin la nube.",
+        },
+        {
+          label: "Domótica de código abierto",
+          href: "/es/open-source-home-automation/",
+          text: "Gestiona tu hogar inteligente con software libre y autoalojado en el que puedes confiar y que puedes conservar.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Crea tu red Zigbee local",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Conecta un dongle y controla tus dispositivos Zigbee en local, sin necesidad de hub.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: {
+        label: "Configurar Zigbee2MQTT",
+        href: "/es/docs/integrations/zigbee2mqtt/",
+      },
+    },
+  },
 };
 
 export const bestZigbeeDongleFaqEn = [
@@ -638,6 +804,49 @@ export const bestZigbeeDongleFaqDe = [
     question: "Brauche ich mit Gladys einen Zigbee-Hub oder eine Bridge?",
     answer:
       "Nein. Ein Zigbee-USB-Stick plus Zigbee2MQTT ersetzt jeden proprietären Hub. Gladys installiert und konfiguriert Zigbee2MQTT für dich, sodass deine Zigbee-Geräte direkt und komplett lokal gesteuert werden – ohne Hersteller-Bridge und ohne Cloud-Konto.",
+  },
+];
+
+export const bestZigbeeDongleFaqEs = [
+  {
+    question: "¿Qué dongle Zigbee funciona mejor con Gladys y Zigbee2MQTT?",
+    answer:
+      "Cualquier coordinador Zigbee 3.0 moderno basado en un chip Texas Instruments (CC2652) o Silicon Labs (EFR32 / EmberZNet) funciona bien. Las opciones más populares son el Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E y ZBDongle-P), el SMLIGHT SLZB-06, el ConBee II y el Home Assistant Connect ZBT-1. Gladys te permite seleccionar tu modelo exacto en la integración Zigbee2MQTT.",
+  },
+  {
+    question: "¿Cuál es el mejor dongle Zigbee para una Raspberry Pi?",
+    answer:
+      "El Sonoff Zigbee 3.0 USB Dongle Plus es una opción excelente y asequible para una Raspberry Pi, y es el que probamos con Gladys. Elijas el que elijas, conéctalo siempre con un cable alargador USB corto para mantenerlo alejado de la Pi y de sus puertos USB 3.0, que provocan interferencias en la banda de 2,4 GHz.",
+  },
+  {
+    question: "¿Qué diferencia hay entre el Sonoff ZBDongle-E y el ZBDongle-P?",
+    answer:
+      "El ZBDongle-P usa un chip Texas Instruments CC2652P y es desde hace tiempo la opción de confianza en la comunidad Zigbee2MQTT. El ZBDongle-E usa un chip Silicon Labs EFR32MG21 (EmberZNet) y es más reciente, con un hardware que también puede orientarse a los ecosistemas Matter y Thread. Ambos funcionan bien con Zigbee2MQTT y Gladys.",
+  },
+  {
+    question: "¿De verdad necesito un cable alargador USB?",
+    answer:
+      "Sí, es muy recomendable. Conectar el dongle directamente a una Raspberry Pi o cerca de SSD y puertos USB 3.0 es la causa más habitual de dispositivos Zigbee que se desconectan y de un mal alcance. Un alargador USB corto (de aproximadamente 1 m) que aleje el dongle de esas fuentes es la solución más eficaz.",
+  },
+  {
+    question: "¿Puedo usar un coordinador Zigbee por Ethernet en lugar de USB?",
+    answer:
+      "Sí. Los coordinadores de red como el SMLIGHT SLZB-06 se conectan por Ethernet o PoE en lugar de USB. Así puedes colocar el coordinador en un punto central de tu casa, lejos de las interferencias, lo que a menudo mejora el alcance y la fiabilidad más que cambiar de modelo de dongle.",
+  },
+  {
+    question: "¿El SMLIGHT SLZB-MR1 es una buena opción?",
+    answer:
+      "El SLZB-MR1 es un coordinador de doble radio: una radio Zigbee y una radio Thread, con USB-C, Ethernet y PoE. Funciona como coordinador Zigbee con Zigbee2MQTT y su tipo se puede seleccionar en Gladys, conectado por USB. Usar Zigbee y Thread a la vez sigue siendo experimental, y su radio Thread no permitirá a Gladys emparejar por sí solo dispositivos Matter sobre Thread: ese primer emparejamiento se hace por Bluetooth, a través de un controlador Matter completo como un Apple TV, un Echo compatible con Matter o un dispositivo Google Nest. Cómpralo por la parte Zigbee y la flexibilidad, no como puerta de entrada a Matter.",
+  },
+  {
+    question: "¿Necesito un dongle Matter o Thread para Gladys?",
+    answer:
+      "No, y un dongle Thread tampoco ayudaría. Los dispositivos Matter por Wi-Fi o Ethernet ya están en tu red y se emparejan directamente con Gladys, sin ningún dongle. Los dispositivos Thread sí necesitan un border router Thread, pero un border router por sí solo no basta con Gladys hoy en día: el emparejamiento inicial de un dispositivo Matter sobre Thread se hace por Bluetooth, algo que Gladys todavía no gestiona, así que hay que hacerlo en un controlador Matter completo como un Apple TV, un Echo compatible con Matter o un dispositivo Google Nest, que luego comparte el dispositivo con Gladys. Un dongle Zigbee sirve para los dispositivos Zigbee, que forman un ecosistema aparte y todavía muy amplio.",
+  },
+  {
+    question: "¿Necesito un hub o un puente Zigbee con Gladys?",
+    answer:
+      "No. Un dongle USB Zigbee junto con Zigbee2MQTT sustituye a cualquier hub propietario. Gladys instala y configura Zigbee2MQTT por ti, así que tus dispositivos Zigbee se controlan directamente y completamente en local, sin puente del fabricante ni cuenta en la nube.",
   },
 ];
 

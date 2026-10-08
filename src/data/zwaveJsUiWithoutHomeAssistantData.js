@@ -512,6 +512,174 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       secondary: { label: "Z-Wave JS UI-Anleitung", href: "/docs/integrations/zwavejs-ui/" },
     },
   },
+  es: {
+    meta: {
+      title: "Z-Wave JS UI sin Home Assistant: Z-Wave en local",
+      description:
+        "Usa Z-Wave JS UI sin Home Assistant: Z-Wave JS UI para tu red y Gladys Assistant por MQTT para paneles, escenas e IA. En local, gratis y de código abierto.",
+    },
+    screenshotCaption:
+      "Tus dispositivos Z-Wave, gestionados por Z-Wave JS UI, en un panel de Gladys.",
+    hero: {
+      title: "Z-Wave JS UI sin Home Assistant",
+      subtitle:
+        "Z-Wave JS UI es la mejor forma de gestionar una red Z-Wave. Combínalo con Gladys Assistant por MQTT y tendrás paneles, escenas e IA, sin Home Assistant.",
+      intro: [
+        "Z-Wave JS UI es una aplicación de código abierto que controla tu stick USB Z-Wave y gestiona tu red: inclusión, exclusión, reparación de la red, actualizaciones de firmware. Funciona perfectamente por sí sola en Docker y puede publicar cada dispositivo en un broker MQTT.",
+        "Así es exactamente como se conecta Gladys Assistant. Z-Wave JS UI sigue haciendo lo que mejor sabe hacer, y Gladys, una plataforma domótica gratuita y de código abierto, convierte cada nodo en un dispositivo que puedes poner en un panel, usar en escenas y controlar desde tu móvil. Todo se queda en local, en tu propio hardware.",
+      ],
+      primaryCta: {
+        label: "Guía de configuración de Z-Wave JS UI",
+        href: "/docs/integrations/zwavejs-ui/",
+      },
+      secondaryCta: {
+        label: "Empezar con Gladys →",
+        href: "/docs/",
+      },
+    },
+    problem: {
+      title: "Por qué la gente busca Z-Wave sin Home Assistant",
+      intro: "Quien usa Z-Wave suele querer una sola cosa: una red fiable que simplemente funcione.",
+      points: [
+        "La interfaz de Z-Wave JS UI es excelente para gestionar la red, pero no es un panel para toda la familia y no hace las automatizaciones del día a día.",
+        "Home Assistant las aporta, junto con una plataforma enorme que aprender, YAML, complementos y actualizaciones frecuentes que seguir.",
+        "Dejar atrás un hub antiguo (Fibaro, Vera, SmartThings, Hubitat…) es un buen momento para elegir algo más sencillo, siempre que siga siendo local.",
+      ],
+      outro:
+        "Z-Wave JS UI para la red y una plataforma sencilla por encima: un reparto de tareas limpio y robusto.",
+    },
+    comparison: {
+      title: "Z-Wave JS UI con Gladys frente a con Home Assistant",
+      intro: "El mismo Z-Wave JS UI, dos formas de usarlo:",
+      cols: {
+        feature: "",
+        gladys: "Con Gladys",
+        other: "Con Home Assistant",
+      },
+      rows: [
+        {
+          feature: "Conexión",
+          gladys: "MQTT: Z-Wave JS UI publica, Gladys se suscribe",
+          other: "WebSocket al servidor Z-Wave JS",
+        },
+        {
+          feature: "Gestión de la red",
+          gladys: "En Z-Wave JS UI",
+          other: "En Z-Wave JS UI o en la interfaz de Home Assistant",
+        },
+        {
+          feature: "Añadir dispositivos",
+          gladys: "Un clic desde la pestaña Descubiertos",
+          other: "Descubrimiento automático de entidades",
+        },
+        {
+          feature: "Automatizaciones",
+          gladys: "Escenas visuales, sin código",
+          other: "Automatizaciones, YAML, Node-RED",
+        },
+        {
+          feature: "Funciona en local",
+          gladys: "Sí",
+          other: "Sí",
+        },
+      ],
+      outro:
+        "Hoy en día, Home Assistant admite más tipos de dispositivos Z-Wave. Gladys cubre lo esencial (sensores, interruptores, reguladores, persianas, medición de energía) y es más sencillo en el día a día.",
+    },
+    features: {
+      title: "Lo que obtienes con Z-Wave JS UI en Gladys",
+      intro: "Una vez que tus nodos Z-Wave están en Gladys:",
+      cards: [
+        {
+          icon: "🚪",
+          title: "Sensores",
+          text: "Sensores de apertura de puertas y ventanas, temperatura, luminosidad, alarma y sensores binarios, con historial.",
+        },
+        {
+          icon: "💡",
+          title: "Interruptores y reguladores",
+          text: "Enchufes, interruptores empotrados y reguladores de intensidad, como los módulos Fibaro y Qubino.",
+        },
+        {
+          icon: "🪟",
+          title: "Persianas y estores",
+          text: "Abre, cierra y ajusta la posición de persianas enrollables y estores.",
+        },
+        {
+          icon: "⚡",
+          title: "Medición de energía",
+          text: "Sigue la potencia y el consumo de los enchufes y módulos con medición.",
+        },
+        {
+          icon: "🎬",
+          title: "Escenas",
+          text: "Dispara una escena con cualquier evento Z-Wave y actúa sobre cualquier dispositivo, sea Z-Wave o no, sin código.",
+        },
+        {
+          icon: "📡",
+          title: "Todos tus protocolos",
+          text: "Z-Wave junto a dispositivos Zigbee, Matter y Wi-Fi en la misma interfaz.",
+        },
+      ],
+    },
+    how: {
+      title: "Configura Z-Wave JS UI sin Home Assistant",
+      intro: "En un mini-PC, una Raspberry Pi o un NAS con Docker:",
+      points: [
+        "Conecta un stick USB Z-Wave para tu región: 868,42 MHz en Europa, 908,42 MHz en Estados Unidos y Canadá. En Latinoamérica, la frecuencia depende del país: compruébala antes de comprar.",
+        "Ejecuta Z-Wave JS UI en Docker e incluye tus dispositivos.",
+        "En Z-Wave JS UI, activa la pasarela MQTT con los ajustes de la guía de Gladys (topics con nombre, objeto de valor completo).",
+        "Instala Gladys, abre la integración Z-Wave JS UI e introduce los datos de tu broker MQTT.",
+        "Abre la pestaña Descubiertos y añade tus dispositivos con un clic.",
+      ],
+      outro:
+        "¿Necesitas un broker MQTT? La integración MQTT de Gladys puede iniciar uno por ti en Docker.",
+    },
+    solution: {
+      title: "Conserva Z-Wave JS UI, olvídate de la complejidad",
+      paragraphs: [
+        "Gladys no sustituye a Z-Wave JS UI: tu red, tus inclusiones y tus actualizaciones de firmware se quedan donde están. Gladys añade la parte que tu familia ve de verdad: paneles, notificaciones, escenas, IA y acceso remoto con Gladys Plus.",
+        "Gladys es gratis y de código abierto, se desarrolla desde 2013 y funciona íntegramente en tu propio hardware.",
+      ],
+      link: {
+        label: "Gladys frente a Home Assistant, la comparación honesta →",
+        href: "/home-assistant-vs-gladys-assistant/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Más sobre los protocolos locales:",
+      links: [
+        {
+          label: "Zigbee2MQTT sin Home Assistant",
+          href: "/zigbee2mqtt-without-home-assistant/",
+          text: "El mismo enfoque para tus dispositivos Zigbee.",
+        },
+        {
+          label: "Zigbee vs Z-Wave vs Matter",
+          href: "/zigbee-vs-matter-vs-zwave/",
+          text: "Qué protocolo elegir y cómo pueden convivir.",
+        },
+        {
+          label: "Alternativa a Homey",
+          href: "/homey-alternative/",
+          text: "Una alternativa gratuita y de código abierto al Homey Pro.",
+        },
+        {
+          label: "Alternativa a SmartThings",
+          href: "/smartthings-alternative/",
+          text: "Una alternativa local y privada a Samsung SmartThings.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Dale a tu red Z-Wave un hogar sencillo",
+      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker. Conecta Z-Wave JS UI por MQTT y empieza a automatizar.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Guía de Z-Wave JS UI", href: "/docs/integrations/zwavejs-ui/" },
+    },
+  },
 };
 
 export const zwaveJsUiWithoutHomeAssistantFaqEn = [
@@ -595,6 +763,34 @@ export const zwaveJsUiWithoutHomeAssistantFaqDe = [
     question: "Funktioniert Z-Wave mit Gladys ohne Internet?",
     answer:
       "Ja. Z-Wave JS UI, der MQTT-Broker und Gladys laufen alle auf deiner eigenen Hardware, deine Z-Wave-Geräte und Szenen funktionieren also auch ohne Internetverbindung und ohne Hersteller-Cloud weiter.",
+  },
+];
+
+export const zwaveJsUiWithoutHomeAssistantFaqEs = [
+  {
+    question: "¿Z-Wave JS UI puede funcionar sin Home Assistant?",
+    answer:
+      "Sí. Z-Wave JS UI es una aplicación independiente que normalmente se ejecuta con Docker. Gestiona por sí sola el stick Z-Wave y la red, y puede publicar los dispositivos en un broker MQTT. Gladys Assistant se conecta a ese broker para añadir paneles, escenas e IA.",
+  },
+  {
+    question: "¿Cómo se conecta Gladys a Z-Wave JS UI?",
+    answer:
+      "Por MQTT. Z-Wave JS UI publica el estado de los dispositivos en un broker MQTT con topics con nombre, y Gladys se suscribe al broker para leer los estados y enviar órdenes en tiempo real. Los ajustes exactos están en la guía de Z-Wave JS UI de Gladys.",
+  },
+  {
+    question: "¿Qué stick Z-Wave debo comprar?",
+    answer:
+      "Uno que corresponda a la frecuencia de tu región: 868,42 MHz en Europa, 908,42 MHz en Estados Unidos y Canadá. En Latinoamérica, la frecuencia depende del país. Un stick de otra región no se comunicará con tus dispositivos.",
+  },
+  {
+    question: "¿Qué dispositivos Z-Wave admite Gladys?",
+    answer:
+      "Sensores de puertas y ventanas, interruptores y enchufes, reguladores de intensidad, persianas enrollables, sensores de temperatura, luminosidad y alarma, y medición de energía. Si un dispositivo todavía no es compatible, el foro es el lugar para preguntar.",
+  },
+  {
+    question: "¿Z-Wave con Gladys funciona sin internet?",
+    answer:
+      "Sí. Z-Wave JS UI, el broker MQTT y Gladys funcionan en tu propio hardware, así que tus dispositivos Z-Wave y tus escenas siguen funcionando sin conexión a internet y sin la nube del fabricante.",
   },
 ];
 

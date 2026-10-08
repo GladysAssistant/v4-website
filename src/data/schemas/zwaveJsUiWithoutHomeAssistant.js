@@ -3,6 +3,7 @@ import zwaveJsUiWithoutHomeAssistantContent, {
   zwaveJsUiWithoutHomeAssistantFaqEn,
   zwaveJsUiWithoutHomeAssistantFaqFr,
   zwaveJsUiWithoutHomeAssistantFaqDe,
+  zwaveJsUiWithoutHomeAssistantFaqEs,
 } from "../zwaveJsUiWithoutHomeAssistantData";
 
 export function getZwaveJsUiWithoutHomeAssistantPageSchema(lang) {
@@ -12,6 +13,7 @@ export function getZwaveJsUiWithoutHomeAssistantPageSchema(lang) {
     faqEn: zwaveJsUiWithoutHomeAssistantFaqEn,
     faqFr: zwaveJsUiWithoutHomeAssistantFaqFr,
     faqDe: zwaveJsUiWithoutHomeAssistantFaqDe,
+    faqEs: zwaveJsUiWithoutHomeAssistantFaqEs,
     about: [
       { "@type": "SoftwareApplication", name: "Z-Wave JS UI" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

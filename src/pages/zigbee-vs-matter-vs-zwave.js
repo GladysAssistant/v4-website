@@ -9,6 +9,7 @@ import protocolsContent, {
   protocolsFaqEn,
   protocolsFaqFr,
   protocolsFaqDe,
+  protocolsFaqEs,
 } from "../data/protocolsComparisonData";
 
 import styles from "./comparison.module.css";
@@ -38,9 +39,9 @@ function LinkCard({ label, href, text }) {
 
 function ProtocolsContent({ content, faq, lang }) {
   const strengthsLabel =
-    lang === "fr" ? "Points forts" : lang === "de" ? "Stärken" : "Strengths";
+    lang === "fr" ? "Points forts" : lang === "de" ? "Stärken" : lang === "es" ? "Puntos fuertes" : "Strengths";
   const limitsLabel =
-    lang === "fr" ? "Limites" : lang === "de" ? "Grenzen" : "Limitations";
+    lang === "fr" ? "Limites" : lang === "de" ? "Grenzen" : lang === "es" ? "Limitaciones" : "Limitations";
 
   return (
     <main className={styles.main}>
@@ -227,10 +228,10 @@ function ProtocolsContent({ content, faq, lang }) {
 
 export default function ProtocolsComparisonPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = protocolsContent[lang];
   const faq =
-    lang === "fr" ? protocolsFaqFr : lang === "de" ? protocolsFaqDe : protocolsFaqEn;
+    lang === "fr" ? protocolsFaqFr : lang === "de" ? protocolsFaqDe : lang === "es" ? protocolsFaqEs : protocolsFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

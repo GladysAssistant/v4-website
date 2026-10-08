@@ -7,17 +7,20 @@ import hubitatAlternativeContent, {
   hubitatAlternativeFaqEn,
   hubitatAlternativeFaqFr,
   hubitatAlternativeFaqDe,
+  hubitatAlternativeFaqEs,
 } from "../data/hubitatAlternativeData";
 
 export default function HubitatAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = hubitatAlternativeContent[lang];
   const faq =
     lang === "fr"
       ? hubitatAlternativeFaqFr
       : lang === "de"
         ? hubitatAlternativeFaqDe
+      : lang === "es"
+        ? hubitatAlternativeFaqEs
         : hubitatAlternativeFaqEn;
 
   return (

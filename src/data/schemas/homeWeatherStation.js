@@ -9,6 +9,7 @@ import {
   homeWeatherStationFaqEn,
   homeWeatherStationFaqFr,
   homeWeatherStationFaqDe,
+  homeWeatherStationFaqEs,
 } from "../homeWeatherStationData";
 
 export function getHomeWeatherStationPageSchema(lang) {
@@ -28,12 +29,16 @@ export function getHomeWeatherStationPageSchema(lang) {
             ? "Quelle station météo connectée pour une maison connectée (Zigbee, Matter, Netatmo)"
             : lang === "de"
               ? "Die beste Wetterstation fürs Smart Home (Zigbee, Matter, Netatmo)"
+              : lang === "es"
+              ? "La mejor estación meteorológica para un hogar inteligente (Zigbee, Matter, Netatmo)"
               : "Best home weather station for a smart home (Zigbee, Matter, Netatmo)",
         description:
           lang === "fr"
             ? "Guide des capteurs météo sans fil pour Gladys Assistant : capteurs Zigbee et Matter locaux, station Netatmo, et OpenWeather pour les prévisions."
             : lang === "de"
               ? "Ratgeber für kabellose Wettersensoren mit Gladys Assistant: lokale Zigbee- und Matter-Sensoren, die Netatmo-Wetterstation und OpenWeather für Wettervorhersagen."
+              : lang === "es"
+              ? "Guía de sensores meteorológicos inalámbricos para Gladys Assistant: sensores Zigbee y Matter locales, la estación Netatmo y OpenWeather para las previsiones."
               : "A guide to wireless weather sensors for Gladys Assistant: local Zigbee and Matter sensors, the Netatmo station, and OpenWeather for forecast data.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
@@ -52,7 +57,7 @@ export function getHomeWeatherStationPageSchema(lang) {
         ],
       },
       toFaqPage(
-        lang === "fr" ? homeWeatherStationFaqFr : lang === "de" ? homeWeatherStationFaqDe : homeWeatherStationFaqEn,
+        lang === "fr" ? homeWeatherStationFaqFr : lang === "de" ? homeWeatherStationFaqDe : lang === "es" ? homeWeatherStationFaqEs : homeWeatherStationFaqEn,
         pageUrl,
       ),
     ],

@@ -10,6 +10,7 @@ import { TestimonialSection } from "../components/Testimonial";
 import testimonialsFr from "../components/testimonials/testimonial.plus.fr.json";
 import testimonialsEn from "../components/testimonials/testimonial.plus.en.json";
 import testimonialsDe from "../components/testimonials/testimonial.plus.de.json";
+import testimonialsEs from "../components/testimonials/testimonial.plus.es.json";
 
 import BlackFridayBanner from "../components/plus/BlackFridayBanner";
 import PricingTable from "../components/plus/PricingTable";
@@ -36,6 +37,7 @@ const testimonials = {
   fr: testimonialsFr,
   en: testimonialsEn,
   de: testimonialsDe,
+  es: testimonialsEs,
 };
 
 function PlusContent() {

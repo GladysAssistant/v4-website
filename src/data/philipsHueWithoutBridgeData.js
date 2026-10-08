@@ -474,6 +474,161 @@ const philipsHueWithoutBridgeContent = {
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
     },
   },
+  es: {
+    meta: {
+      title: "Philips Hue sin bridge: empareja bombillas Hue por Zigbee",
+      description:
+        "Usa bombillas Philips Hue sin el Hue Bridge: emparéjalas directamente con un dongle USB Zigbee mediante Zigbee2MQTT y contrólalas en local con Gladys Assistant. Qué funciona, qué pierdes y cómo resetear una bombilla Hue.",
+    },
+    screenshotCaption:
+      "Bombillas Hue emparejadas directamente por Zigbee, junto al resto de tus dispositivos en Gladys.",
+    hero: {
+      title: "Philips Hue sin el bridge",
+      subtitle:
+        "Las bombillas Hue hablan Zigbee estándar. Emparéjalas con un dongle USB Zigbee y Gladys Assistant, y contrólalas en local, junto a cualquier otra marca.",
+      intro: [
+        "El Hue Bridge es un hub Zigbee. Cada bombilla, enchufe e interruptor Hue se comunica con él por Zigbee, el mismo protocolo abierto que usan IKEA, Aqara y cientos de marcas más. Eso significa que en realidad no necesitas el bridge: cualquier coordinador Zigbee puede controlar las luces Hue.",
+        "Gladys Assistant, una plataforma domótica gratuita y de código abierto, instala Zigbee2MQTT por ti. Empareja tus bombillas Hue con un dongle USB Zigbee y controla en local el encendido/apagado, el brillo, el color y la temperatura del blanco, en las mismas escenas que tus sensores y dispositivos de otras marcas.",
+      ],
+      primaryCta: {
+        label: "Guía de configuración de Zigbee2MQTT",
+        href: "/docs/integrations/zigbee2mqtt/",
+      },
+      secondaryCta: {
+        label: "Prefiero conservar el bridge →",
+        href: "/docs/integrations/external/philips-hue/",
+      },
+    },
+    problem: {
+      title: "Por qué prescindir del Hue Bridge",
+      intro: "El bridge funciona bien, pero no siempre es la mejor opción:",
+      points: [
+        "Es una caja más que comprar y enchufar, para una sola marca.",
+        "La app Hue y sus funciones giran en torno al bridge (o al más reciente Bridge Pro) y a la nube de Hue para el acceso remoto.",
+        "Tus luces Hue viven en su propia app, separadas de tus sensores, termostatos y otros dispositivos Zigbee.",
+        "Cada hub Zigbee gestiona su propia red: las bombillas Hue emparejadas con tu coordinador principal también actúan como routers Zigbee y refuerzan toda tu red mallada.",
+      ],
+      outro:
+        "Si ya usas Zigbee en casa, poner tus bombillas Hue en la misma red es más sencillo y hace la red más robusta.",
+    },
+    comparison: {
+      title: "Hue con Gladys y Zigbee2MQTT vs con el Hue Bridge",
+      intro: "Ambas opciones son locales. La diferencia está en lo que obtienes alrededor de las luces:",
+      cols: {
+        feature: "",
+        gladys: "Gladys + Zigbee2MQTT",
+        other: "Hue Bridge + app Hue",
+      },
+      rows: [
+        { feature: "Encendido/apagado, brillo, color, temperatura del blanco", gladys: "Sí", other: "Sí" },
+        { feature: "Funciona sin internet", gladys: "Sí", other: "Sí, en local" },
+        {
+          feature: "Otras marcas en las mismas escenas",
+          gladys: "Cualquier dispositivo Zigbee, Z-Wave, Matter o Wi-Fi",
+          other: "Dispositivos Hue y socios Works with Hue",
+        },
+        { feature: "Hue Sync / áreas de entretenimiento", gladys: "No", other: "Sí" },
+        { feature: "Escenas y efectos de la app Hue", gladys: "No, en su lugar escenas de Gladys", other: "Sí" },
+        { feature: "Actualizaciones de firmware", gladys: "Sí, mediante Zigbee2MQTT (OTA)", other: "Sí, mediante la app Hue" },
+        { feature: "Hardware adicional", gladys: "Un dongle USB Zigbee", other: "El Hue Bridge" },
+      ],
+      outro:
+        "¿Quieres Hue Sync con tu televisor o los efectos de la app Hue? Conserva el bridge: Gladys puede controlar tus luces Hue a través de él con la integración Philips Hue. ¿Quieres una sola red Zigbee para todo? Emparéjalas directamente.",
+    },
+    features: {
+      title: "Lo que obtienes con las bombillas Hue en Gladys",
+      intro: "Una vez emparejada, cada luz Hue se convierte en un dispositivo de Gladys:",
+      cards: [
+        {
+          icon: "💡",
+          title: "Control total de la luz",
+          text: "Encendido/apagado, brillo, color y temperatura de color del blanco, desde el panel o desde una escena.",
+        },
+        {
+          icon: "🎬",
+          title: "Escenas con todo",
+          text: "Enciende las luces del pasillo cuando se activa un sensor de movimiento Aqara, o atenúa el salón cuando se enciende la tele.",
+        },
+        {
+          icon: "🕸️",
+          title: "Una red Zigbee más robusta",
+          text: "Las bombillas Hue conectadas a la corriente enrutan el tráfico Zigbee de tus sensores a pilas.",
+        },
+        {
+          icon: "🏠",
+          title: "Local y privado",
+          text: "Sin nube: los comandos van de Gladys a la bombilla por tu propia red Zigbee.",
+        },
+        {
+          icon: "🌅",
+          title: "Amanecer y atardecer",
+          text: "Programa las luces según la puesta y la salida del sol, con un desfase, para tu ubicación.",
+        },
+        {
+          icon: "🤖",
+          title: "Voz e IA",
+          text: "Controla las luces en lenguaje natural con Gladys Plus, o desde Claude mediante el servidor MCP.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo emparejar bombillas Hue sin el bridge",
+      intro: "En un mini-PC o una Raspberry Pi con Gladys:",
+      points: [
+        "Conecta un coordinador Zigbee a la máquina y activa Zigbee2MQTT en Gladys.",
+        "Si la bombilla estaba emparejada con un Hue Bridge, elimínala primero de la app Hue o restablécela de fábrica.",
+        "Opciones de reseteo: un reseteo Touchlink desde la interfaz de Zigbee2MQTT con la bombilla a pocos centímetros del coordinador; un restablecimiento de fábrica desde la app Hue para las bombillas Hue con Bluetooth; o un interruptor regulador Hue cerca de la bombilla, manteniendo pulsados los botones On y Off durante unos 10 segundos.",
+        "En Gladys, abre Zigbee2MQTT → Descubrir, permite el emparejamiento y enciende la bombilla: aparecerá con sus funciones.",
+        "Añádela a una habitación y a tu panel, y úsala en tus escenas.",
+      ],
+      outro:
+        "Los interruptores reguladores y los sensores de movimiento Hue se emparejan de la misma forma y pueden activar cualquier escena de Gladys.",
+    },
+    solution: {
+      title: "La calidad de Hue, una única red Zigbee abierta",
+      paragraphs: [
+        "Hue fabrica bombillas excelentes. Emparejarlas directamente con tu coordinador Zigbee mantiene esa calidad y elimina de tu instalación un hub propietario y una app aparte.",
+        "Gladys es gratuito y de código abierto, se desarrolla desde 2013 y funciona íntegramente en tu propio hardware.",
+      ],
+      link: {
+        label: "Mira todas las marcas compatibles con Gladys →",
+        href: "/works-with/",
+      },
+    },
+    related: {
+      title: "Para ir más allá",
+      intro: "Más dispositivos sin su hub:",
+      links: [
+        {
+          label: "Sensores Aqara sin el hub",
+          href: "/aqara-without-hub/",
+          text: "Sensores Zigbee Aqara, en local, sin la app Aqara.",
+        },
+        {
+          label: "Domótica IKEA",
+          href: "/ikea-smart-home/",
+          text: "Tradfri por Zigbee, DIRIGERA por Matter.",
+        },
+        {
+          label: "El mejor dongle USB Zigbee",
+          href: "/best-zigbee-dongle/",
+          text: "Qué coordinador Zigbee comprar.",
+        },
+        {
+          label: "Todas las guías",
+          href: "/guides/",
+          text: "Todas las guías, herramientas y comparativas en un solo lugar.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Pon tus bombillas Hue en una única red abierta",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Conecta un dongle Zigbee y empareja tu primera bombilla Hue.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Guía de Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
+    },
+  },
 };
 
 export const philipsHueWithoutBridgeFaqEn = [
@@ -557,6 +712,34 @@ export const philipsHueWithoutBridgeFaqDe = [
     question: "Funktionieren Hue-Schalter und -Bewegungsmelder ohne Bridge?",
     answer:
       "Ja, Hue Dimmschalter und Bewegungsmelder sind Zigbee-Geräte, die Zigbee2MQTT unterstützt. Einmal gekoppelt, können ihre Tasten und Bewegungsereignisse jede Gladys-Szene auslösen.",
+  },
+];
+
+export const philipsHueWithoutBridgeFaqEs = [
+  {
+    question: "¿Pueden funcionar las bombillas Philips Hue sin el bridge?",
+    answer:
+      "Sí. Las bombillas Hue son luces Zigbee estándar, así que cualquier coordinador Zigbee puede controlarlas. Con Gladys Assistant y un dongle USB Zigbee, Zigbee2MQTT las empareja directamente y las controlas en local, sin Hue Bridge.",
+  },
+  {
+    question: "¿Qué pierdo sin el Hue Bridge?",
+    answer:
+      "La app Hue con sus escenas y efectos, Hue Sync y las áreas de entretenimiento, y las funciones de acceso remoto y de voz propias de Hue. El control básico (encendido/apagado, brillo, color, temperatura del blanco) funciona por completo, y Gladys sustituye las automatizaciones de la app por sus propias escenas.",
+  },
+  {
+    question: "¿Cómo reseteo una bombilla Hue para emparejarla con Zigbee2MQTT?",
+    answer:
+      "Elimínala de la app Hue si estaba emparejada con un bridge. Después, haz un reseteo Touchlink desde la interfaz de Zigbee2MQTT con la bombilla cerca del coordinador o, en el caso de las bombillas Hue con Bluetooth, restablécela de fábrica desde la app Hue. La bombilla se unirá en cuanto se permita el emparejamiento.",
+  },
+  {
+    question: "¿Puedo conservar el Hue Bridge y usar Gladys igualmente?",
+    answer:
+      "Sí. La integración Philips Hue conecta Gladys a tu bridge, así que conservas la app Hue y Hue Sync mientras usas tus luces en las escenas de Gladys.",
+  },
+  {
+    question: "¿Funcionan los interruptores y sensores de movimiento Hue sin el bridge?",
+    answer:
+      "Sí, los interruptores reguladores y los sensores de movimiento Hue son dispositivos Zigbee compatibles con Zigbee2MQTT. Una vez emparejados, sus botones y eventos de movimiento pueden activar cualquier escena de Gladys.",
   },
 ];
 

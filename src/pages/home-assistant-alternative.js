@@ -11,6 +11,7 @@ import alternativeContent, {
   alternativeFaqEn,
   alternativeFaqFr,
   alternativeFaqDe,
+  alternativeFaqEs,
 } from "../data/alternativeData";
 
 import styles from "./comparison.module.css";
@@ -69,6 +70,8 @@ function AlternativeContent({ content, faq, lang }) {
               ? "Une interface épurée où tout se fait au clic, sans aucun fichier de configuration."
               : lang === "de"
                 ? "Eine aufgeräumte Oberfläche, in der alles per Klick geht – ganz ohne Konfigurationsdateien."
+                : lang === "es"
+                ? "Una interfaz despejada en la que todo se hace con clics, sin ningún archivo de configuración."
                 : "A clean interface where everything happens with clicks, with no configuration files."
           }
         />
@@ -171,7 +174,7 @@ function AlternativeContent({ content, faq, lang }) {
 
 export default function AlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = alternativeContent[lang];
@@ -180,6 +183,8 @@ export default function AlternativePage() {
       ? alternativeFaqFr
       : lang === "de"
         ? alternativeFaqDe
+      : lang === "es"
+        ? alternativeFaqEs
         : alternativeFaqEn;
 
   return (

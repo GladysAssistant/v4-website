@@ -18,8 +18,12 @@ const DOCS_DIRS = {
     __dirname,
     "../i18n/de/docusaurus-plugin-content-docs/current/integrations/external"
   ),
+  es: path.join(
+    __dirname,
+    "../i18n/es/docusaurus-plugin-content-docs/current/integrations/external"
+  ),
 };
-const LOCALES = ["en", "fr", "de"];
+const LOCALES = ["en", "fr", "de", "es"];
 
 // Every generated page starts with this marker, so the cleanup step only ever
 // removes files this script owns.
@@ -72,6 +76,7 @@ const RELATED_GUIDES = {
       en: ["Philips Hue without the bridge", "pair Hue bulbs directly with a Zigbee dongle instead."],
       fr: ["Philips Hue sans le pont", "associer ses ampoules Hue directement à une clé Zigbee."],
       de: ["Philips Hue ohne Bridge", "Hue-Lampen direkt mit einem Zigbee-Stick koppeln."],
+      es: ["Philips Hue sin el puente", "vincula tus bombillas Hue directamente a un dongle Zigbee."],
     },
   ],
   tuya: [
@@ -80,6 +85,7 @@ const RELATED_GUIDES = {
       en: ["Tuya Zigbee without the Tuya app", "local control for Tuya Zigbee devices through Zigbee2MQTT."],
       fr: ["Tuya Zigbee sans l'application Tuya", "le contrôle local des appareils Tuya Zigbee via Zigbee2MQTT."],
       de: ["Tuya Zigbee ohne Tuya-App", "lokale Steuerung von Tuya-Zigbee-Geräten über Zigbee2MQTT."],
+      es: ["Tuya Zigbee sin la app de Tuya", "control local de los dispositivos Tuya Zigbee mediante Zigbee2MQTT."],
     },
   ],
   "hydro-quebec": [
@@ -88,12 +94,14 @@ const RELATED_GUIDES = {
       en: ["Hydro-Québec peak events today", "live Flex D and Winter Credit peak events."],
       fr: ["Événements de pointe Hydro-Québec aujourd'hui", "les pointes Flex D et crédit hivernal en direct."],
       de: ["Hydro-Québec-Spitzenereignisse heute", "Flex-D- und Winterkredit-Spitzen live."],
+      es: ["Eventos de punta de Hydro-Québec hoy", "las puntas de Flex D y del crédito de invierno en directo."],
     },
     {
       href: "/hydro-quebec-flex-d/",
       en: ["Hydro-Québec Rate Flex D", "how Flex D works and the automations that make it pay off."],
       fr: ["Tarif Flex D d'Hydro-Québec", "comment fonctionne le Flex D et les automatisations qui le rentabilisent."],
       de: ["Hydro-Québec-Tarif Flex D", "wie Flex D funktioniert und welche Automationen sich lohnen."],
+      es: ["Tarifa Flex D de Hydro-Québec", "cómo funciona Flex D y las automatizaciones que lo hacen rentable."],
     },
   ],
   reolink: [
@@ -102,6 +110,7 @@ const RELATED_GUIDES = {
       en: ["Reolink RTSP URL", "how to enable RTSP and find your camera's stream URL."],
       fr: ["URL RTSP Reolink", "activer le RTSP et trouver l'URL du flux de votre caméra."],
       de: ["Reolink RTSP-URL", "RTSP aktivieren und die Stream-URL deiner Kamera finden."],
+      es: ["URL RTSP de Reolink", "activa RTSP y encuentra la URL del flujo de tu cámara."],
     },
   ],
   smartthings: [
@@ -110,6 +119,7 @@ const RELATED_GUIDES = {
       en: ["SmartThings alternative", "how to move from SmartThings to a local platform."],
       fr: ["Alternative à SmartThings", "comment passer de SmartThings à une plateforme locale."],
       de: ["SmartThings-Alternative", "so wechselst du von SmartThings zu einer lokalen Plattform."],
+      es: ["Alternativa a SmartThings", "cómo pasar de SmartThings a una plataforma local."],
     },
   ],
   "z-wave-js-ui": [
@@ -118,6 +128,7 @@ const RELATED_GUIDES = {
       en: ["Z-Wave JS UI without Home Assistant", "your Z-Wave network with a simple interface."],
       fr: ["Z-Wave JS UI sans Home Assistant", "votre réseau Z-Wave avec une interface simple."],
       de: ["Z-Wave JS UI ohne Home Assistant", "dein Z-Wave-Netz mit einer einfachen Oberfläche."],
+      es: ["Z-Wave JS UI sin Home Assistant", "tu red Z-Wave con una interfaz sencilla."],
     },
   ],
   shelly: [
@@ -126,6 +137,7 @@ const RELATED_GUIDES = {
       en: ["Shelly without the cloud", "local control of Shelly relays, plugs and energy meters."],
       fr: ["Shelly sans le cloud", "le contrôle local des relais, prises et compteurs Shelly."],
       de: ["Shelly ohne Cloud", "lokale Steuerung von Shelly-Relais, -Steckdosen und -Energiezählern."],
+      es: ["Shelly sin la nube", "control local de los relés, enchufes y medidores de energía Shelly."],
     },
   ],
 };
@@ -251,6 +263,48 @@ const TEXTS = {
       `[Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind`,
       `[Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)`,
       `[Quellcode auf GitHub](${repoUrl}) — [Quelle dieser Dokumentation](${repoUrl}/blob/HEAD/${docPath})`,
+    ],
+  },
+  es: {
+    title: (name) =>
+      `Integración domótica ${name}, gratuita y de código abierto`,
+    titleWithNative: (name) =>
+      `Integración comunitaria ${name}, gratuita y de código abierto`,
+    descriptionSuffix: "Gratuita, de código abierto, se instala con un clic.",
+    keywordSmartHome: (name) => `domótica ${name}`,
+    keywordExternal: "integración externa",
+    keywordOpenSource: "domótica de código abierto",
+    docSourceMissing:
+      "El autor de esta integración todavía no ha publicado una página de documentación.",
+    docInEnglish:
+      ":::info\n\nLa documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.\n\n:::",
+    configTitle: "Parámetros de configuración",
+    configIntro: (name) =>
+      `Estos son los parámetros que ${name} te pide en su pantalla de configuración en Gladys.`,
+    configColumns: ["Parámetro", "Tipo", "Obligatorio", "Descripción"],
+    required: "Sí",
+    optional: "No",
+    installTitle: (name) => `Cómo instalar ${name} en Gladys`,
+    installSteps: (name, dockerImage, repoUrl) => [
+      `En Gladys, abre **Integraciones**: ${name} aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.`,
+      `Haz clic en **Instalar**. Gladys descarga la imagen Docker (\`${dockerImage}\`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).`,
+      `Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.`,
+      `También puedes instalarla directamente desde la URL de su repositorio: [${repoUrl}](${repoUrl}).`,
+    ],
+    installRequirement: (name, gladysVersion) =>
+      `${name} requiere Gladys \`${gladysVersion}\`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.`,
+    installNoGladys:
+      "¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.",
+    relatedTitle: "Guías relacionadas",
+    localePrefix: "/es",
+    aboutTitle: "Sobre las integraciones externas",
+    aboutBody: (name, ownerName, ownerUrl) =>
+      `${name} es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [${ownerName}](${ownerUrl}), no el equipo principal de Gladys.`,
+    aboutLinks: (repoUrl, docPath) => [
+      `[Explorar todas las integraciones externas](/es/docs/integrations/external/)`,
+      `[Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys`,
+      `[Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)`,
+      `[Código fuente en GitHub](${repoUrl}) — [fuente de esta documentación](${repoUrl}/blob/HEAD/${docPath})`,
     ],
   },
 };

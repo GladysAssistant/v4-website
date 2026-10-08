@@ -3,6 +3,7 @@ import aqaraWithoutHubContent, {
   aqaraWithoutHubFaqEn,
   aqaraWithoutHubFaqFr,
   aqaraWithoutHubFaqDe,
+  aqaraWithoutHubFaqEs,
 } from "../aqaraWithoutHubData";
 
 export function getAqaraWithoutHubPageSchema(lang) {
@@ -12,6 +13,7 @@ export function getAqaraWithoutHubPageSchema(lang) {
     faqEn: aqaraWithoutHubFaqEn,
     faqFr: aqaraWithoutHubFaqFr,
     faqDe: aqaraWithoutHubFaqDe,
+    faqEs: aqaraWithoutHubFaqEs,
     about: [
       { "@type": "Brand", name: "Aqara" },
       { "@type": "SoftwareApplication", name: "Zigbee2MQTT" },

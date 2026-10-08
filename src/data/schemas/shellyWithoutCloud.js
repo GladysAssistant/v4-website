@@ -3,6 +3,7 @@ import shellyWithoutCloudContent, {
   shellyWithoutCloudFaqEn,
   shellyWithoutCloudFaqFr,
   shellyWithoutCloudFaqDe,
+  shellyWithoutCloudFaqEs,
 } from "../shellyWithoutCloudData";
 
 export function getShellyWithoutCloudPageSchema(lang) {
@@ -12,6 +13,7 @@ export function getShellyWithoutCloudPageSchema(lang) {
     faqEn: shellyWithoutCloudFaqEn,
     faqFr: shellyWithoutCloudFaqFr,
     faqDe: shellyWithoutCloudFaqDe,
+    faqEs: shellyWithoutCloudFaqEs,
     about: [
       { "@type": "Brand", name: "Shelly" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

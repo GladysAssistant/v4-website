@@ -7,16 +7,17 @@ import worksWithContent, {
   worksWithFaqEn,
   worksWithFaqFr,
   worksWithFaqDe,
+  worksWithFaqEs,
 } from "../data/worksWithData";
 
 export default function WorksWithPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = worksWithContent[lang];
   const faq =
-    lang === "fr" ? worksWithFaqFr : lang === "de" ? worksWithFaqDe : worksWithFaqEn;
+    lang === "fr" ? worksWithFaqFr : lang === "de" ? worksWithFaqDe : lang === "es" ? worksWithFaqEs : worksWithFaqEn;
 
   return (
     <UseCasePage

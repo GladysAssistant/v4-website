@@ -7,17 +7,20 @@ import smartThingsAlternativeContent, {
   smartThingsAlternativeFaqEn,
   smartThingsAlternativeFaqFr,
   smartThingsAlternativeFaqDe,
+  smartThingsAlternativeFaqEs,
 } from "../data/smartThingsAlternativeData";
 
 export default function SmartThingsAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = smartThingsAlternativeContent[lang];
   const faq =
     lang === "fr"
       ? smartThingsAlternativeFaqFr
       : lang === "de"
         ? smartThingsAlternativeFaqDe
+      : lang === "es"
+        ? smartThingsAlternativeFaqEs
         : smartThingsAlternativeFaqEn;
 
   return (

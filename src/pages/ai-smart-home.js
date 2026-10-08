@@ -11,6 +11,7 @@ import aiSmartHomeContent, {
   aiSmartHomeFaqEn,
   aiSmartHomeFaqFr,
   aiSmartHomeFaqDe,
+  aiSmartHomeFaqEs,
 } from "../data/aiSmartHomeData";
 
 import styles from "./comparison.module.css";
@@ -78,6 +79,8 @@ function PillarContent({ content, faq, lang }) {
               ? "Parlez à votre maison en langage naturel : l'IA de Gladys s'occupe du reste."
               : lang === "de"
               ? "Sprich mit deinem Zuhause in normaler Sprache: Die KI von Gladys erledigt den Rest."
+              : lang === "es"
+              ? "Habla con tu casa en lenguaje natural: la IA de Gladys se encarga del resto."
               : "Talk to your home in plain language: Gladys' AI handles the rest."
           }
         />
@@ -178,7 +181,7 @@ function PillarContent({ content, faq, lang }) {
 
 export default function AiSmartHomePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = aiSmartHomeContent[lang];
@@ -187,6 +190,8 @@ export default function AiSmartHomePage() {
       ? aiSmartHomeFaqFr
       : lang === "de"
       ? aiSmartHomeFaqDe
+      : lang === "es"
+      ? aiSmartHomeFaqEs
       : aiSmartHomeFaqEn;
 
   return (
