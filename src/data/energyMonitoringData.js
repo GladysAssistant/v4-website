@@ -290,6 +290,148 @@ const energyContent = {
       secondary: { label: "Découvrir Gladys Plus", href: "/plus/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Stromverbrauch messen & Stromrechnung senken",
+      description:
+        "Miss den Stromverbrauch deines Zuhauses in Echtzeit, gesamt und pro Gerät, und senke deine Stromrechnung mit Automationen. Lokal, privat und Open Source.",
+    },
+    hero: {
+      title: "Senke deine Stromrechnung mit Energiemonitoring",
+      subtitle:
+        "Sieh genau, wohin dein Strom fließt, in Echtzeit und pro Gerät, und lass dann die Automation fürs Sparen sorgen, alles lokal.",
+      intro: [
+        "Deine Stromrechnung ist meist eine Blackbox: eine Zahl pro Monat, ohne zu wissen, was sie in die Höhe treibt. Der erste Schritt zu weniger Kosten ist ganz einfach zu sehen, wohin deine Energie tatsächlich geht.",
+        "Gladys Assistant macht dein Zuhause zu einem übersichtlichen Energie-Dashboard in Echtzeit, für das ganze Haus und Gerät für Gerät, und lässt dich das Sparen automatisieren. Alles läuft lokal auf deinem eigenen Rechner, deine Verbrauchsdaten bleiben also privat.",
+      ],
+      primaryCta: { label: "Kostenlos starten", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Doku zum Energiemonitoring →",
+        href: "/de/docs/integrations/energy-monitoring/",
+      },
+    },
+    problem: {
+      title: "Warum deine Stromrechnung eine Blackbox ist",
+      intro:
+        "Die meisten Haushalte haben kaum Einblick in ihren Energieverbrauch, und so ist es fast unmöglich, weniger auszugeben:",
+      points: [
+        "Du bekommst eine einzige Monatszahl, ohne zu wissen, welche Geräte dafür verantwortlich sind.",
+        "Geräte im Standby, echte „Stromfresser“, treiben die Rechnung rund um die Uhr unbemerkt nach oben.",
+        "Ein altes oder defektes Gerät kann viel mehr verbrauchen, als du denkst, und zwar ohne jede Warnung.",
+        "Ohne Echtzeitdaten kannst du deinen Verbrauch nicht in günstigere Stunden verlagern.",
+      ],
+      outro: "Was du nicht misst, kannst du nicht senken. Der erste Schritt ist also Transparenz.",
+    },
+    see: {
+      title: "Was du mit Gladys siehst",
+      intro: "Gladys liefert dir ein detailliertes Live-Bild vom Energieverbrauch deines Zuhauses:",
+      cards: [
+        {
+          icon: "⚡",
+          title: "Verbrauch des ganzen Hauses",
+          text: "Verfolge den Verbrauch deines gesamten Zuhauses in kWh, in Echtzeit und im Verlauf, über einen kompatiblen Energiezähler oder Sensor.",
+        },
+        {
+          icon: "🔌",
+          title: "Gerät für Gerät",
+          text: "Ergänze smarte Steckdosen mit Strommessung (Zigbee, Shelly, Tuya…), um genau zu sehen, wie viel jedes Gerät zieht.",
+        },
+        {
+          icon: "💶",
+          title: "Verbrauch und Kosten",
+          text: "Rechne kWh in Euro um, damit du die echten Kosten deiner Gewohnheiten siehst, nicht nur abstrakte Zahlen.",
+        },
+        {
+          icon: "📈",
+          title: "Echtzeit und Verlauf",
+          text: "Live-Werte plus Diagramme über Tage, Wochen und Monate, um Trends und Auffälligkeiten zu erkennen.",
+        },
+        {
+          icon: "🤖",
+          title: "Ein wöchentlicher KI-Bericht",
+          text: "Die KI von Gladys schickt dir jede Woche eine Zusammenfassung deines Verbrauchs, der Kosten, Trends und praktische Tipps.",
+        },
+        {
+          icon: "🔔",
+          title: "Benachrichtigungen",
+          text: "Baue Szenen, die dich warnen, wenn der Verbrauch in die Höhe schießt oder ein Gerät versehentlich weiterläuft.",
+        },
+      ],
+    },
+    save: {
+      title: "Wie Automation die Rechnung wirklich senkt",
+      intro: "Transparenz ist Schritt eins. Danach kann dein Zuhause automatisch für dich sparen:",
+      points: [
+        "Standby-Verluste stoppen: Fernseher, Konsolen und Ladegeräte nachts oder beim Verlassen des Hauses ausschalten.",
+        "Große Verbraucher (Waschmaschine, Warmwasserbereiter, E-Auto-Laden) in die Nebenzeiten verlagern.",
+        "Clever heizen: die Heizung nach Anwesenheit und Uhrzeit planen, statt ein leeres Haus zu heizen.",
+        "Bei ungewöhnlichem Verbrauch gewarnt werden, etwa bei einem vergessenen Heizlüfter oder einer Gefriertruhe, die aus dem Ruder läuft, bevor es teuer wird.",
+        "Echte Tarifdaten nutzen, um große Geräte an den günstigsten Tagen laufen zu lassen (siehe unten).",
+      ],
+      outro: "Einmal eingerichtet, musst du nicht mehr daran denken: Das Sparen passiert von selbst.",
+    },
+    track: {
+      title: "Dein ganzes Zuhause im Blick, lokal und privat",
+      paragraphs: [
+        "Um dein ganzes Zuhause zu überwachen, brauchst du ein Gerät, das den Verbrauch in kWh meldet. Die Integration Energiemonitoring von Gladys funktioniert mit smarten Steckdosen mit Strommessung und Energiesensoren, und in Frankreich mit dem Linky-Stromzähler über einen Lixee ZLinky (Zigbee), der minütlich präzise Werte liefert.",
+        "Wenn du in Frankreich wohnst, holt die Enedis-Integration (über Gladys Plus) zusätzlich deinen offiziellen Linky-Verbrauchsverlauf, und Gladys kann die Tagesfarben von EDF Tempo auslesen, damit deine Automationen große Geräte an den günstigsten Tagen laufen lassen.",
+        "In jedem Fall liegen deine Energiedaten auf deinem eigenen Rechner, in deinem lokalen Netzwerk, ohne Cloud-Zwang und ohne Datenverkauf. Der Kern von Gladys ist kostenlos und Open Source; Enedis und die gehostete KI sind optionale Funktionen von Gladys Plus.",
+      ],
+      link: {
+        label: "Zur Integration Energiemonitoring →",
+        href: "/de/docs/integrations/energy-monitoring/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Richte es ein oder sieh dir an, wie Energie in ein lokales Smart Home passt:",
+      links: [
+        {
+          label: "Aktuelle Strompreise in Ontario",
+          href: "/de/ontario-electricity-rates/",
+          text: "Der aktuelle Time-of-Use- und Ultra-Low-Overnight-Preis, live.",
+        },
+        {
+          label: "Neue Nebenzeiten in Frankreich",
+          href: "/de/heures-creuses/",
+          text: "Was die Reform der „heures creuses“ ändert und wie du dich anpasst.",
+        },
+        {
+          label: "Energiemonitoring in Gladys",
+          href: "/de/docs/integrations/energy-monitoring/",
+          text: "Verfolge den Verbrauch deines Zuhauses in kWh mit einem kompatiblen Sensor oder einer smarten Steckdose.",
+        },
+        {
+          label: "Enedis & Linky (Frankreich)",
+          href: "/de/docs/integrations/enedis/",
+          text: "Hol dir deinen offiziellen Linky-Verbrauchsverlauf über Gladys Plus in Gladys.",
+        },
+        {
+          label: "Hydro-Québec-Tarif Flex D (Québec)",
+          href: "/de/hydro-quebec-flex-d/",
+          text: "Automatisiere Flex-D-Spitzenereignisse und verfolge deine Ersparnisse mit der Hydro-Québec-Integration.",
+        },
+        {
+          label: "Der wöchentliche KI-Bericht",
+          href: "/de/ai-smart-home/",
+          text: "Erhalte jede Woche eine KI-Zusammenfassung deines Verbrauchs, der Kosten und Trends.",
+        },
+        {
+          label: "Ein lokales Smart Home bauen",
+          href: "/de/local-smart-home/",
+          text: "Das große Ganze: ein privates, lokales Smart Home auf Basis offener Standards.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Fang an, bei der Stromrechnung zu sparen",
+      text: "Gladys ist kostenlos, Open Source und lokal zuerst. Überwache den Energieverbrauch deines Zuhauses, automatisiere das Sparen und behalte deine Daten bei dir.",
+      primary: { label: "Jetzt starten", href: "/de/docs/" },
+      secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
+    },
+  },
 };
 
 export const energyFaqEn = [
@@ -355,6 +497,39 @@ export const energyFaqFr = [
     question: "Gladys peut-elle m'aider à profiter des heures creuses ou de Tempo ?",
     answer:
       "Oui. Vous pouvez créer des automatisations qui décalent les gros appareils vers les heures creuses, et en France utiliser les couleurs des jours EDF Tempo pour les lancer les jours les moins chers, le tout décidé et exécuté en local.",
+  },
+];
+
+export const energyFaqDe = [
+  {
+    question: "Wie kann Hausautomation meine Stromrechnung senken?",
+    answer:
+      "In zwei Schritten. Zuerst Transparenz: Wenn du deinen Verbrauch in Echtzeit und pro Gerät siehst, erkennst du, wohin dein Geld fließt. Dann Automation: Standby-Geräte ausschalten, große Verbraucher in die Nebenzeiten verlagern, die Heizung nach Anwesenheit planen und dich bei ungewöhnlichem Verbrauch warnen. Gladys Assistant erledigt beides, lokal.",
+  },
+  {
+    question: "Kann ich den Stromverbrauch meines Zuhauses in Echtzeit überwachen?",
+    answer:
+      "Ja. Gladys zeigt den Verbrauch deines gesamten Zuhauses in kWh in Echtzeit an, dazu den Verlauf über Tage, Wochen und Monate. Mit smarten Steckdosen mit Strommessung siehst du außerdem Verbrauch und Kosten jedes einzelnen Geräts.",
+  },
+  {
+    question: "Brauche ich einen speziellen Zähler, um meine Energie zu messen?",
+    answer:
+      "Du brauchst ein Gerät, das den Verbrauch in kWh meldet: eine smarte Steckdose mit Strommessung, einen Energiesensor oder in Frankreich den Linky-Zähler, ausgelesen über einen Lixee ZLinky (Zigbee). Je mehr Messpunkte du hinzufügst, desto detaillierter wird das Bild.",
+  },
+  {
+    question: "Funktioniert es mit dem französischen Linky-Zähler?",
+    answer:
+      "Ja. In Frankreich kannst du den Linky über einen Lixee ZLinky (Zigbee, minütliche Werte) in Echtzeit auslesen und deinen offiziellen Verbrauchsverlauf über die Enedis-Integration mit Gladys Plus abrufen. Gladys kann außerdem die Tagesfarben von EDF Tempo in deinen Automationen nutzen.",
+  },
+  {
+    question: "Bleiben meine Energiedaten privat?",
+    answer:
+      "Ja. Gladys läuft lokal auf deinem eigenen Rechner, deine Verbrauchsdaten bleiben also in deinem lokalen Netzwerk, ohne Cloud-Zwang und ohne Datenverkauf. Der Kern von Gladys ist kostenlos und Open Source.",
+  },
+  {
+    question: "Kann mir Gladys helfen, Nebenzeiten oder günstigere Tarife zu nutzen?",
+    answer:
+      "Ja. Du kannst Automationen bauen, die große Verbraucher in die Nebenzeiten verlagern, und in Frankreich die Tagesfarben von EDF Tempo nutzen, um sie an den günstigsten Tagen laufen zu lassen, alles lokal entschieden und ausgeführt.",
   },
 ];
 

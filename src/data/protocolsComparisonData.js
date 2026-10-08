@@ -463,6 +463,233 @@ const protocolsContent = {
       secondary: { label: "Voir les intégrations", href: "/docs/integrations/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Zigbee vs. Z-Wave vs. Matter vs. Thread (Ratgeber 2026)",
+      description:
+        "Zigbee, Matter oder Z-Wave? Neutraler Vergleich der Smart-Home-Standards: Unterschiede, Stärken, Grenzen – und warum du dich nicht festlegen musst.",
+    },
+    hero: {
+      title: "Zigbee vs. Matter vs. Z-Wave",
+      subtitle:
+        "Ein klarer, neutraler Ratgeber zu den drei wichtigsten Smart-Home-Standards – und wie du dich zwischen ihnen entscheidest.",
+      intro: [
+        "Wer ein Smart Home aufbaut, stößt schnell auf drei Namen: Zigbee, Z-Wave und Matter. Sie werden oft als Konkurrenten dargestellt, spielen aber nicht alle dieselbe Rolle – und genau das solltest du als Erstes verstehen.",
+        "Dieser Ratgeber erklärt verständlich und ohne Parteinahme, was hinter jedem Standard steckt, wie sie sich unterscheiden und welcher zu dir passt.",
+      ],
+      primaryCta: { label: "Mit Gladys starten", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Ein lokales Smart Home aufbauen →",
+        href: "/de/local-smart-home/",
+      },
+    },
+    keyPoint: {
+      title: "Vorab: Was die meisten Artikel falsch darstellen",
+      paragraphs: [
+        "Zigbee und Z-Wave sind Funkprotokolle: Sie legen fest, über welche Funktechnik das Signal zwischen deinen Geräten übertragen wird. Matter ist etwas anderes. Es ist kein Funkprotokoll, sondern ein Interoperabilitätsstandard, der auf anderen Netzwerken aufsetzt – entweder auf WLAN oder auf Thread.",
+        "Thread ist der Teil, der sich tatsächlich mit Zigbee und Z-Wave vergleichen lässt: ein stromsparendes Mesh-Funknetz. Auf Funkebene lautet der eigentliche Vergleich also „Zigbee vs. Z-Wave vs. Thread“ – und Matter sitzt obendrauf, damit Geräte verschiedener Marken und Ökosysteme miteinander sprechen können.",
+        "Behalte das beim Lesen im Hinterkopf: Wenn von einem „Matter-Gerät“ die Rede ist, ist meist ein Gerät mit Matter over Thread oder Matter over WLAN gemeint.",
+      ],
+    },
+    tableTitle: "Der Vergleich auf einen Blick",
+    tableCols: {
+      feature: "",
+      zigbee: "Zigbee",
+      zwave: "Z-Wave",
+      matter: "Matter",
+    },
+    table: [
+      {
+        feature: "Was es ist",
+        zigbee: "Funkprotokoll (Mesh)",
+        zwave: "Funkprotokoll (Mesh)",
+        matter: "Interoperabilitätsstandard über WLAN & Thread",
+      },
+      {
+        feature: "Funkfrequenz",
+        zigbee: "2,4 GHz",
+        zwave: "Sub-GHz (868 MHz EU / 908 MHz USA)",
+        matter: "WLAN (2,4/5 GHz) oder Thread (2,4 GHz)",
+      },
+      {
+        feature: "Netzwerktopologie",
+        zigbee: "Mesh",
+        zwave: "Mesh",
+        matter: "Mesh (über Thread) oder Stern (über WLAN)",
+      },
+      {
+        feature: "Interoperabilität",
+        zigbee: "Gut, am besten mit offenen Hubs",
+        zwave: "Stark dank strenger Zertifizierung",
+        matter: "Ökosystemübergreifend von Grund auf",
+      },
+      {
+        feature: "Geräteauswahl",
+        zigbee: "Riesig und sehr günstig",
+        zwave: "Kleiner und teurer",
+        matter: "Wächst schnell, noch jünger",
+      },
+      {
+        feature: "Lokale Steuerung",
+        zigbee: "Ja",
+        zwave: "Ja",
+        matter: "Ja, lokal von Grund auf",
+      },
+      {
+        feature: "WLAN-Störungen",
+        zigbee: "Möglich (teilt sich 2,4 GHz)",
+        zwave: "Gering (Sub-GHz)",
+        matter: "Thread teilt sich 2,4 GHz; WLAN-Geräte nutzen WLAN",
+      },
+      {
+        feature: "Getragen von",
+        zigbee: "Connectivity Standards Alliance",
+        zwave: "Z-Wave Alliance / Silicon Labs",
+        matter: "CSA (Apple, Google, Amazon, Samsung …)",
+      },
+      {
+        feature: "Lizenz",
+        zigbee: "Offen, dank Zigbee2MQTT sehr offen",
+        zwave: "Jahrelang proprietär, seit ca. 2020 geöffnet",
+        matter: "Offener Standard mit öffentlichem SDK",
+      },
+      {
+        feature: "Reifegrad",
+        zigbee: "Ausgereift",
+        zwave: "Ausgereift, aber in die Jahre gekommen",
+        matter: "Neu (seit 2022), reift noch",
+      },
+      {
+        feature: "Ausblick",
+        zigbee: "Floriert",
+        zwave: "Rückläufig bei neuen Geräten",
+        matter: "Wächst am schnellsten",
+      },
+      {
+        feature: "Voraussetzung",
+        zigbee: "Ein USB-Koordinator",
+        zwave: "Ein USB-Controller",
+        matter: "Ein Thread-Border-Router und/oder ein Matter-Controller",
+      },
+    ],
+    protocols: [
+      {
+        id: "zigbee",
+        name: "Zigbee",
+        tagline: "Das beliebte, günstige Mesh",
+        intro:
+          "Zigbee ist ein stromsparendes Mesh-Funkprotokoll im 2,4-GHz-Band. Netzbetriebene Geräte leiten Nachrichten für batteriebetriebene weiter – das Netz wird also mit jedem zusätzlichen Gerät stabiler. Dahinter steht ein riesiges, preiswertes Ökosystem (Aqara, IKEA, Sonoff, Philips Hue und viele mehr), und es floriert nach wie vor. Zusammen mit Matter over Thread ist es eines der beiden Protokolle, auf die du heute setzen kannst.",
+        strengths: [
+          "Eine riesige Auswahl an günstigen Geräten.",
+          "Selbstheilendes Mesh, das mit jedem netzbetriebenen Gerät wächst.",
+          "Komplett lokal und dank Projekten wie Zigbee2MQTT sehr offen.",
+        ],
+        limits: [
+          "2,4 GHz kann mit WLAN und anderen Funkgeräten kollidieren.",
+          "Markenübergreifend klappt es auf geschlossenen Hubs nicht immer reibungslos (offene Hubs lösen das meiste).",
+          "Du brauchst einen Koordinator (einen USB-Stick).",
+        ],
+      },
+      {
+        id: "zwave",
+        name: "Z-Wave",
+        tagline: "Der zertifizierte Veteran, der in die Jahre kommt",
+        intro:
+          "Z-Wave ist der Veteran unter den dreien: ein stromsparendes Mesh-Funkprotokoll auf Sub-GHz-Frequenzen (868 MHz in Europa, 908 MHz in den USA). Die strenge Zertifizierung hat ihm den Ruf eingebracht, markenübergreifend zuverlässig zu funktionieren, und es gibt eine große installierte Basis. Gleichzeitig ist es aber die alternde Option: Z-Wave war die meiste Zeit proprietär und wurde erst um 2020 als ratifizierter Standard geöffnet, die Geräte sind teurer, und viele Hersteller bringen neue Produkte inzwischen lieber mit Matter und Thread auf den Markt.",
+        strengths: [
+          "Strenge Zertifizierung sorgt für zuverlässiges Zusammenspiel verschiedener Marken.",
+          "Sub-GHz-Funk bedeutet weniger WLAN-Störungen und gute Durchdringung von Wänden.",
+          "Eine große installierte Basis, vor allem bei professionell installierten Systemen.",
+        ],
+        limits: [
+          "Weniger Geräte und spürbar teurer als Zigbee – und das Angebot an Neugeräten schrumpft, weil Hersteller auf Matter und Thread umsteigen, besonders in Europa.",
+          "Die meiste Zeit proprietär; erst um 2020 wurde es als ratifizierter Standard geöffnet.",
+          "Regional gebundene Frequenzen (EU- und US-Geräte sind nicht austauschbar), ein klassisches Netz ist auf ca. 232 Geräte begrenzt, und die Integration gilt als fummelig.",
+        ],
+      },
+      {
+        id: "matter",
+        name: "Matter & Thread",
+        tagline: "Der Interoperabilitätsstandard",
+        intro:
+          "Matter ist der jüngste der drei Standards – und er funktioniert anders: Er ist kein Funkprotokoll, sondern ein Anwendungsstandard, der über WLAN oder über Thread läuft, ein stromsparendes Mesh-Funknetz, vergleichbar mit Zigbee und Z-Wave. Unterstützt von Apple, Google, Amazon und Samsung, soll ein Gerät damit in allen großen Ökosystemen funktionieren. Zusammen mit Zigbee gilt Matter over Thread weithin als die Zukunft des Smart Home.",
+        strengths: [
+          "Ökosystemübergreifend von Grund auf: Ein Gerät kann mit Apple Home, Google Home, Alexa und weiteren funktionieren.",
+          "Lokale Steuerung ist Teil des Standards.",
+          "Starker Rückhalt in der Branche – hierhin entwickelt sich der Markt.",
+        ],
+        limits: [
+          "Noch jung (Start Ende 2022): Funktionen und Geräteunterstützung reifen noch.",
+          "Matter over Thread braucht einen Thread-Border-Router; die Einrichtung kann anfangs verwirrend sein.",
+          "Manche frühen Geräte und Bridges bieten nur Grundfunktionen.",
+        ],
+      },
+    ],
+    choose: {
+      title: "Welchen Standard solltest du also wählen?",
+      intro:
+        "Wenn du heute ein Smart Home neu aufbaust, solltest du auf Zigbee und Matter over Thread setzen. Hier die Kurzempfehlung:",
+      cards: [
+        {
+          icon: "🟢",
+          title: "Nimm Zigbee, wenn …",
+          text: "… du sofort die größte und günstigste Geräteauswahl und ein großes lokales Mesh willst. Das ist heute die sichere, bewährte Wahl – idealerweise mit einem offenen Hub für die beste Interoperabilität.",
+        },
+        {
+          icon: "🟣",
+          title: "Nimm Matter / Thread, wenn …",
+          text: "… du zukunftssichere, ökosystemübergreifende Geräte willst und auf den Standard setzen möchtest, hinter dem sich die gesamte Branche versammelt. Hierhin entwickelt sich der Markt.",
+        },
+        {
+          icon: "🔵",
+          title: "Nimm Z-Wave, wenn …",
+          text: "… du schon ein Z-Wave-System hast oder gezielt dessen zertifizierte Sub-GHz-Geräte brauchst – im Wissen, dass es die Altlösung mit teurerem und schrumpfendem Sortiment ist.",
+        },
+      ],
+    },
+    gladys: {
+      title: "Die gute Nachricht: Mit Gladys musst du dich nicht entscheiden",
+      paragraphs: [
+        "Diese Standards schließen sich nicht gegenseitig aus. Ein guter lokaler Hub spricht mehrere davon gleichzeitig – so wählst du für jeden Zweck das beste Gerät, statt alles auf eine einzige Technologie zu setzen.",
+        "Gladys Assistant unterstützt Zigbee (über Zigbee2MQTT), Matter und Thread sowie Z-Wave (über Z-Wave JS) und dazu MQTT für alles andere. Alles läuft nebeneinander in einer übersichtlichen Oberfläche – komplett lokal und ohne Lock-in.",
+      ],
+      link: { label: "Gladys-Integrationen ansehen →", href: "/de/docs/integrations/" },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Richte jeden Standard in Gladys ein oder verschaff dir den Gesamtüberblick:",
+      links: [
+        {
+          label: "Zigbee mit Gladys (Zigbee2MQTT)",
+          href: "/de/docs/integrations/zigbee2mqtt/",
+          text: "Binde Zigbee-Geräte über Zigbee2MQTT in Gladys ein.",
+        },
+        {
+          label: "Matter mit Gladys",
+          href: "/de/docs/integrations/matter/",
+          text: "Kopple Matter- und Thread-Geräte direkt in Gladys.",
+        },
+        {
+          label: "Z-Wave mit Gladys",
+          href: "/de/docs/integrations/zwavejs-ui/",
+          text: "Hol dein Z-Wave-Netz über Z-Wave JS in Gladys.",
+        },
+        {
+          label: "Ein lokales Smart Home aufbauen",
+          href: "/de/local-smart-home/",
+          text: "Der Gesamtüberblick: ein privates, lokales Smart Home auf Basis offener Standards.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Bau dein Smart Home auf offenen Standards auf",
+      text: "Gladys ist kostenlos, Open Source und lokal – und spricht Zigbee, Matter, Thread und Z-Wave. So bist du nie an eine einzige Technologie gebunden.",
+      primary: { label: "Jetzt starten", href: "/de/docs/" },
+      secondary: { label: "Integrationen ansehen", href: "/de/docs/integrations/" },
+    },
+  },
 };
 
 export const protocolsFaqEn = [
@@ -528,6 +755,39 @@ export const protocolsFaqFr = [
     question: "Puis-je mélanger Zigbee, Z-Wave et Matter dans une même maison ?",
     answer:
       "Oui. Un hub comme Gladys Assistant supporte le Zigbee, le Matter, Thread et le Z-Wave en même temps : vous pouvez mélanger librement des appareils de chacun dans une seule interface, locale.",
+  },
+];
+
+export const protocolsFaqDe = [
+  {
+    question: "Ersetzt Matter Zigbee und Z-Wave?",
+    answer:
+      "Nicht ganz. Matter ist ein Interoperabilitätsstandard, kein Funkprotokoll. Es läuft über WLAN oder über Thread, ein stromsparendes Mesh-Funknetz, vergleichbar mit Zigbee und Z-Wave. Matter soll die Ökosysteme vereinen, doch Zigbee und Z-Wave sind weiterhin weit verbreitet und gut unterstützt – und viele Hubs betreiben alle parallel.",
+  },
+  {
+    question: "Was ist der Unterschied zwischen Matter und Thread?",
+    answer:
+      "Thread ist das stromsparende Mesh-Funknetz (wie Zigbee oder Z-Wave). Matter ist die Anwendungsschicht, die festlegt, wie Geräte miteinander kommunizieren – und sie kann über Thread oder WLAN laufen. „Matter over Thread“ bedeutet einfach: Thread überträgt das Signal, Matter definiert die Sprache.",
+  },
+  {
+    question: "Zigbee vs. Z-Wave: Was ist besser?",
+    answer:
+      "Für ein neues System ist Zigbee heute meist die sinnvollere Wahl: ein deutlich größeres, günstigeres und weiter wachsendes Sortiment im 2,4-GHz-Band. Z-Wave bleibt dank Sub-GHz-Frequenzen mit weniger WLAN-Störungen und strenger Zertifizierung zuverlässig, aber die Geräte sind teurer und das Angebot an Neugeräten schrumpft, weil Hersteller auf Matter und Thread umsteigen. Beide sind lokale Mesh-Protokolle.",
+  },
+  {
+    question: "Funktionieren Zigbee, Z-Wave und Matter ohne Cloud?",
+    answer:
+      "Ja, alle drei unterstützen lokale Steuerung. Mit einem lokalen Hub wie Gladys Assistant laufen deine Geräte in deinem eigenen Netzwerk und funktionieren weiter, ohne von der Cloud eines Herstellers abhängig zu sein.",
+  },
+  {
+    question: "Welches Protokoll hat die meisten Geräte?",
+    answer:
+      "Zigbee hat heute das größte und günstigste Sortiment. Das Matter-Angebot wächst dank starker Unterstützung aus der Branche schnell, während Z-Wave kleiner ist, aber mit Zuverlässigkeit punktet.",
+  },
+  {
+    question: "Kann ich Zigbee, Z-Wave und Matter in einem Smart Home kombinieren?",
+    answer:
+      "Ja. Ein Hub wie Gladys Assistant unterstützt Zigbee, Matter, Thread und Z-Wave gleichzeitig – du kannst Geräte aller Standards also frei in einer einzigen, lokalen Oberfläche mischen.",
   },
 ];
 

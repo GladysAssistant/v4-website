@@ -2,8 +2,21 @@ import React, { useState, useEffect } from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styles from "./LanguageSuggestionBanner.module.css";
 
+const SUGGESTIONS = {
+  fr: {
+    text: "🇫🇷 Il semblerait que vous parliez français. Voulez-vous consulter le site en français ?",
+    switchLabel: "Oui, passer en français",
+    stayLabel: "Non, rester en anglais",
+  },
+  de: {
+    text: "🇩🇪 Es sieht so aus, als würdest du Deutsch sprechen. Möchtest du die Website auf Deutsch ansehen?",
+    switchLabel: "Ja, auf Deutsch wechseln",
+    stayLabel: "Nein, auf Englisch bleiben",
+  },
+};
+
 const LanguageSuggestionBanner = () => {
-  const [showBanner, setShowBanner] = useState(false);
+  const [suggestedLocale, setSuggestedLocale] = useState(null);
   const context = useDocusaurusContext();
   const { i18n } = context;
   const currentLocale = i18n.currentLocale;
@@ -19,48 +32,49 @@ const LanguageSuggestionBanner = () => {
     // Check if we're on English site
     if (currentLocale !== "en") return;
 
-    // Check if browser language is French
-    const browserLang = navigator.language || navigator.userLanguage;
-    const isFrenchBrowser = browserLang.toLowerCase().startsWith("fr");
+    // Check if browser language is French or German
+    const browserLang = (
+      navigator.language ||
+      navigator.userLanguage ||
+      ""
+    ).toLowerCase();
 
-    if (isFrenchBrowser) {
-      setShowBanner(true);
+    if (browserLang.startsWith("fr")) {
+      setSuggestedLocale("fr");
+    } else if (browserLang.startsWith("de")) {
+      setSuggestedLocale("de");
     }
   }, [currentLocale]);
 
-  const handleSwitchToFrench = () => {
+  const handleSwitch = () => {
     localStorage.setItem("language-banner-dismissed", "true");
-    // Get current path and redirect to French version
+    // Get current path and redirect to the suggested locale
     const currentPath = window.location.pathname;
-    window.location.href = `/fr${currentPath}`;
+    window.location.href = `/${suggestedLocale}${currentPath}`;
   };
 
   const handleStayInEnglish = () => {
     localStorage.setItem("language-banner-dismissed", "true");
-    setShowBanner(false);
+    setSuggestedLocale(null);
   };
 
-  if (!showBanner) return null;
+  if (!suggestedLocale) return null;
+
+  const suggestion = SUGGESTIONS[suggestedLocale];
 
   return (
     <div className={styles.banner}>
       <div className={styles.bannerContent}>
-        <span className={styles.bannerText}>
-          🇫🇷 Il semblerait que vous parliez français. Voulez-vous consulter le
-          site en français ?
-        </span>
+        <span className={styles.bannerText}>{suggestion.text}</span>
         <div className={styles.bannerButtons}>
-          <button
-            className={styles.buttonPrimary}
-            onClick={handleSwitchToFrench}
-          >
-            Oui, passer en français
+          <button className={styles.buttonPrimary} onClick={handleSwitch}>
+            {suggestion.switchLabel}
           </button>
           <button
             className={styles.buttonSecondary}
             onClick={handleStayInEnglish}
           >
-            Non, rester en anglais
+            {suggestion.stayLabel}
           </button>
         </div>
       </div>

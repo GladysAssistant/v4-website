@@ -373,9 +373,9 @@ function Plus() {
   });
 
   // The starter kit ships from France only, so it is a French-locale offer.
-  // Send English-locale visitors to the canonical French page instead of
+  // Send visitors of the other locales to the canonical French page instead of
   // funneling them to a product that cannot ship to them.
-  if (language === "en") {
+  if (language !== "fr") {
     return (
       <>
         <Head>

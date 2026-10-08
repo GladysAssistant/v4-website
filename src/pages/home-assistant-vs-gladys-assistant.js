@@ -9,6 +9,7 @@ import { getComparisonPageSchema } from "../data/schemas/comparison";
 import comparisonContent, {
   comparisonFaqEn,
   comparisonFaqFr,
+  comparisonFaqDe,
 } from "../data/comparisonData";
 
 import styles from "./comparison.module.css";
@@ -45,7 +46,7 @@ function DesignShowdown({ showdown, lang }) {
         <div className={styles.showdownFrame}>
           <img
             className={styles.showdownImage}
-            src={useBaseUrl(`img/comparison/design-showdown-${lang}.webp`)}
+            src={useBaseUrl(`img/comparison/design-showdown-${lang === "fr" ? "fr" : "en"}.webp`)}
             alt={showdown.alt}
             width={2000}
             height={958}
@@ -149,7 +150,11 @@ function ComparisonContent({ content, faq, lang }) {
               </div>
             </div>
             <p className={styles.takeaway}>
-              <strong>{lang === "fr" ? "Le verdict" : "The verdict"}</strong>
+              <strong>{lang === "fr"
+                  ? "Le verdict"
+                  : lang === "de"
+                    ? "Das Fazit"
+                    : "The verdict"}</strong>
               {section.takeaway}
             </p>
           </section>
@@ -210,9 +215,16 @@ function ComparisonContent({ content, faq, lang }) {
 
 export default function ComparisonPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = comparisonContent[lang];
-  const faq = lang === "fr" ? comparisonFaqFr : comparisonFaqEn;
+  const faq =
+    lang === "fr"
+      ? comparisonFaqFr
+      : lang === "de"
+        ? comparisonFaqDe
+        : comparisonFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

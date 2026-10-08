@@ -8,6 +8,7 @@ import { getMatterHubPageSchema } from "../data/schemas/matterHub";
 import matterHubContent, {
   matterHubFaqEn,
   matterHubFaqFr,
+  matterHubFaqDe,
 } from "../data/matterHubData";
 
 import styles from "./comparison.module.css";
@@ -196,9 +197,10 @@ function GuideContent({ content, faq }) {
 
 export default function MatterHubPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = matterHubContent[lang];
-  const faq = lang === "fr" ? matterHubFaqFr : matterHubFaqEn;
+  const faq =
+    lang === "fr" ? matterHubFaqFr : lang === "de" ? matterHubFaqDe : matterHubFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

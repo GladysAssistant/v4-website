@@ -5,10 +5,10 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { ikeaSmartHomeFaqEn, ikeaSmartHomeFaqFr } from "../ikeaSmartHomeData";
+import { ikeaSmartHomeFaqEn, ikeaSmartHomeFaqFr, ikeaSmartHomeFaqDe } from "../ikeaSmartHomeData";
 
 export function getIkeaSmartHomePageSchema(lang) {
-  const prefix = lang === "fr" ? "/fr" : "";
+  const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}/ikea-smart-home/`;
 
   return {
@@ -22,14 +22,18 @@ export function getIkeaSmartHomePageSchema(lang) {
         headline:
           lang === "fr"
             ? "Maison connectée IKEA : Dirigera, Matter over Thread et Zigbee"
-            : "IKEA Smart Home: Dirigera, Matter over Thread & Zigbee",
+            : lang === "de"
+              ? "IKEA Smart Home: Dirigera, Matter over Thread & Zigbee"
+              : "IKEA Smart Home: Dirigera, Matter over Thread & Zigbee",
         description:
           lang === "fr"
             ? "Pilotez votre maison connectée IKEA en local avec Gladys Assistant : Tradfri en Zigbee2MQTT, le hub Dirigera en Matter, et la nouvelle gamme Matter over Thread, avec ou sans Dirigera."
-            : "Control your IKEA smart home locally with Gladys Assistant: Tradfri over Zigbee2MQTT, the Dirigera hub over Matter, and the new Matter over Thread range, with or without Dirigera.",
+            : lang === "de"
+              ? "Steuere dein IKEA Smart Home lokal mit Gladys Assistant: Tradfri über Zigbee2MQTT, den Dirigera-Hub über Matter und die neue Matter-over-Thread-Serie, mit oder ohne Dirigera."
+              : "Control your IKEA smart home locally with Gladys Assistant: Tradfri over Zigbee2MQTT, the Dirigera hub over Matter, and the new Matter over Thread range, with or without Dirigera.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: lang,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         author: {
           "@type": "Person",
@@ -45,7 +49,7 @@ export function getIkeaSmartHomePageSchema(lang) {
         ],
       },
       toFaqPage(
-        lang === "fr" ? ikeaSmartHomeFaqFr : ikeaSmartHomeFaqEn,
+        lang === "fr" ? ikeaSmartHomeFaqFr : lang === "de" ? ikeaSmartHomeFaqDe : ikeaSmartHomeFaqEn,
         pageUrl,
       ),
     ],

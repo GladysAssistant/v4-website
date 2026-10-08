@@ -371,6 +371,188 @@ const homeAssistantGreenAlternativeContent = {
       secondary: { label: "Installer sur un mini-PC", href: "/docs/installation/mini-pc/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Home Assistant Green & Yellow Alternative (2026)",
+      description:
+        "Alternative zum Home Assistant Green oder Ersatz für den eingestellten Yellow? Gladys auf Mini-PC oder Raspberry Pi: mehr Leistung, einfacher, kostenlos.",
+    },
+    screenshotCaption:
+      "Gladys Assistant auf einem kleinen Mini-PC: dieselbe Smart-Home-Box im Dauerbetrieb, nur mit mehr Reserven.",
+    hero: {
+      title: "Eine Alternative zum Home Assistant Green und Yellow",
+      subtitle:
+        "Du willst eine kleine Box, die rund um die Uhr dein Smart Home steuert? Ein Mini-PC oder ein Raspberry Pi mit Gladys Assistant bietet dir mehr Leistung und eine einfachere Oberfläche – bei ähnlichem Budget.",
+      intro: [
+        "Der Home Assistant Green ist eine praktische Plug-and-play-Box, und die Produktion des Yellow, seines auf dem Raspberry Pi basierenden Geschwisters, wurde im Oktober 2025 eingestellt. Wenn du dir eines davon zulegen willst, suchst du eigentlich zwei Dinge: einen kleinen Computer, der 24/7 läuft, und Smart-Home-Software, mit der man gerne lebt.",
+        "Dafür brauchst du keine spezielle Box. Ein kompakter Mini-PC, etwa mit Intels N100- oder N150-Chip, oder ein Raspberry Pi 5 betreibt Gladys Assistant problemlos. Gladys ist kostenlos, Open Source, läuft komplett lokal und lässt sich ohne YAML oder Konfigurationsdateien einrichten.",
+      ],
+      primaryCta: { label: "Auf einem Mini-PC installieren", href: "/de/docs/installation/mini-pc/" },
+      secondaryCta: {
+        label: "Auf einem Raspberry Pi installieren →",
+        href: "/de/docs/installation/raspberry-pi/",
+      },
+    },
+    problem: {
+      title: "Was du vor dem Kauf eines Home Assistant Green wissen solltest",
+      intro:
+        "Der Green ist ein gutes Produkt für das, was er ist, doch seine fest verbaute Hardware hat Grenzen, die du kennen solltest:",
+      points: [
+        "Er hat 4 GB RAM und 32 GB eMMC-Speicher, die sich nicht aufrüsten lassen: Verlauf, Kamera-Snapshots und Add-ons teilen sich diesen Platz.",
+        "Er hat kein eingebautes Zigbee-, Thread- oder Z-Wave-Funkmodul: Du steckst ohnehin einen USB-Stick an, genau wie bei jedem anderen Computer.",
+        "Er läuft nur mit Home Assistant und dessen Lernkurve: Integrationen, YAML für fortgeschrittene Setups und häufige Breaking Changes, die du im Blick behalten musst.",
+        "Der Yellow, die andere offizielle Box, wurde eingestellt – eine Erinnerung daran, dass spezielle Hardware kommt und geht.",
+      ],
+      outro:
+        "Ein Allzweck-Mini-PC umgeht die meisten dieser Grenzen, und du entscheidest selbst, welche Software darauf läuft.",
+    },
+    comparison: {
+      title: "Gladys auf einem Mini-PC vs. Home Assistant Green",
+      intro: "Ein typischer Mini-PC mit Intel N100/N150 und Gladys im Vergleich zum Green:",
+      cols: {
+        feature: "",
+        gladys: "Mini-PC + Gladys Assistant",
+        other: "Home Assistant Green",
+      },
+      rows: [
+        {
+          feature: "Prozessor",
+          gladys: "x86-CPU der Klasse Intel N100/N150",
+          other: "Rockchip RK3566 (ARM)",
+        },
+        {
+          feature: "Arbeitsspeicher",
+          gladys: "Meist 8 bis 16 GB",
+          other: "4 GB",
+        },
+        {
+          feature: "Speicher",
+          gladys: "SSD, meist 256 GB bis 1 TB, austauschbar",
+          other: "32 GB eMMC, nicht aufrüstbar",
+        },
+        {
+          feature: "Zigbee-/Thread-/Z-Wave-Funk",
+          gladys: "USB-Stick anstecken",
+          other: "USB-Stick anstecken",
+        },
+        {
+          feature: "Software",
+          gladys: "Gladys Assistant, kostenlos und Open Source, ohne YAML",
+          other: "Home Assistant OS",
+        },
+        {
+          feature: "Weitere Dienste möglich",
+          gladys: "Ja: Docker, Plex, Backups, ein lokales KI-Modell …",
+          other: "Nur als Home-Assistant-Add-ons",
+        },
+      ],
+      outro:
+        "Der Vorteil des Green: Er ist sofort startklar. Ein Mini-PC braucht etwas Einrichtung (Linux installieren, dann Gladys), und unsere Schritt-für-Schritt-Anleitung führt dich durch alles.",
+    },
+    features: {
+      title: "Warum Gladys auf deiner eigenen Box laufen lassen",
+      intro: "Das bekommst du mit einem Mini-PC oder Raspberry Pi und Gladys:",
+      cards: [
+        {
+          icon: "⚡",
+          title: "Mehr Reserven",
+          text: "Mehr Arbeitsspeicher und Speicherplatz als jede fest verbaute Smart-Home-Box – für jahrelangen Verlauf, Kamera-Snapshots und neue Funktionen.",
+        },
+        {
+          icon: "🧩",
+          title: "Einfach von Grund auf",
+          text: "Alles wird über die Oberfläche eingerichtet: Geräte, Dashboards und Szenen, ohne Konfigurationsdateien.",
+        },
+        {
+          icon: "📡",
+          title: "Zigbee, Z-Wave und Matter",
+          text: "Steck einen Zigbee- oder Z-Wave-USB-Stick an oder nutze Matter und kopple deine Geräte direkt und lokal.",
+        },
+        {
+          icon: "🏠",
+          title: "Lokal und privat",
+          text: "Alles läuft auf deinem Rechner und funktioniert weiter, wenn das Internet ausfällt. Deine Daten bleiben zu Hause.",
+        },
+        {
+          icon: "📱",
+          title: "Fürs Handy gemacht",
+          text: "Gladys 5 hat eine moderne Oberfläche, gestaltet für das Handy in deiner Tasche und das Tablet an deiner Wand.",
+        },
+        {
+          icon: "💚",
+          title: "Kostenlos und Open Source",
+          text: "Keine Lizenz, kein Pflicht-Abo. Das optionale Gladys Plus ergänzt verschlüsselten Fernzugriff, Backups und KI.",
+        },
+      ],
+    },
+    how: {
+      title: "Was du stattdessen kaufen kannst",
+      intro: "Drei gute Optionen, je nach Budget und dem, was du schon hast:",
+      points: [
+        "Ein Mini-PC (empfohlen): Ein Modell mit Intel N100 oder N150, wie der von mir empfohlene Beelink Mini S13, ist schnell, leise, sparsam und kostet etwa so viel wie eine spezielle Smart-Home-Box.",
+        "Ein Raspberry Pi 5: Das Gladys-Image gibt es direkt im Raspberry Pi Imager. Boote für mehr Zuverlässigkeit von einer SSD statt von einer microSD-Karte.",
+        "Ein Rechner, den du schon hast: Gladys läuft überall, wo Docker läuft – ein Synology-NAS, ein Unraid-Server oder ein alter Laptop tun es also auch.",
+        "Steck einen Zigbee-USB-Stick an (und bei Bedarf einen Z-Wave-Stick) und folge dann der Installationsanleitung.",
+      ],
+      outro:
+        "Du nutzt Home Assistant schon auf einem Green? Installier Gladys auf einem anderen Rechner und teste beide parallel, bevor du dich entscheidest.",
+    },
+    solution: {
+      title: "Eine Smart-Home-Box, die wirklich dir gehört",
+      paragraphs: [
+        "Eine spezielle Box ist bequem – bis ihre Hardware eingestellt wird oder der Platz ausgeht. Ein Standard-Mini-PC lässt sich leicht ersetzen und aufrüsten und kann neben deinem Smart Home noch andere Dienste betreiben.",
+        "Gladys wird seit 2013 offen entwickelt. Es ist kostenlos und Open Source, setzt auf Einfachheit und läuft komplett lokal auf der Hardware deiner Wahl.",
+      ],
+      link: {
+        label: "So schlägt sich Gladys im Vergleich zu Home Assistant →",
+        href: "/de/home-assistant-vs-gladys-assistant/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Wähle deine Hardware und leg los:",
+      links: [
+        {
+          label: "Der beste Mini-PC für Hausautomation",
+          href: "/de/mini-pc-home-automation/",
+          text: "Welcher Mini-PC sich lohnt und was du wirklich brauchst.",
+        },
+        {
+          label: "Die beste Smart-Home-Zentrale",
+          href: "/de/best-smart-home-hub/",
+          text: "Alle Zentralen im Vergleich: Preis, Protokolle, lokale Steuerung.",
+        },
+        {
+          label: "Gladys auf einem Mini-PC installieren",
+          href: "/de/docs/installation/mini-pc/",
+          text: "Das empfohlene Setup, Schritt für Schritt.",
+        },
+        {
+          label: "Home Assistant Alternative",
+          href: "/de/home-assistant-alternative/",
+          text: "Warum Leute von Home Assistant zu Gladys wechseln.",
+        },
+        {
+          label: "Der beste Zigbee-USB-Stick",
+          href: "/de/best-zigbee-dongle/",
+          text: "Der Zigbee-Koordinator für deine neue Box.",
+        },
+        {
+          label: "Funktioniert mit Gladys",
+          href: "/de/works-with/",
+          text: "Die von Gladys unterstützten Marken und Protokolle.",
+        },
+      ],
+    },
+    faqTitle: "Häufig gestellte Fragen",
+    cta: {
+      title: "Bau dir deine eigene Smart-Home-Box",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert – auf einem Mini-PC, einem Raspberry Pi oder dem Rechner, den du schon hast.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: { label: "Auf einem Mini-PC installieren", href: "/de/docs/installation/mini-pc/" },
+    },
+  },
 };
 
 export const homeAssistantGreenAlternativeFaqEn = [
@@ -436,6 +618,39 @@ export const homeAssistantGreenAlternativeFaqFr = [
     question: "Gladys est-elle gratuite ?",
     answer:
       "Oui. Gladys est gratuite et open source, pour toujours. Un abonnement Gladys Plus optionnel ajoute l'accès distant chiffré, Alexa et Google Home, les sauvegardes et l'IA, à partir de 6,99 €/mois en Europe, avec un mois d'essai gratuit.",
+  },
+];
+
+export const homeAssistantGreenAlternativeFaqDe = [
+  {
+    question: "Was ist eine gute Alternative zum Home Assistant Green?",
+    answer:
+      "Ein kleiner Mini-PC mit Intel N100 oder N150, auf dem Gladys Assistant läuft. Bei ähnlichem Budget bekommst du meist 8 bis 16 GB RAM und eine austauschbare SSD, statt 4 GB RAM und 32 GB eMMC beim Green. Ein Raspberry Pi 5 mit dem Gladys-Image ist eine weitere Option.",
+  },
+  {
+    question: "Wurde der Home Assistant Yellow eingestellt?",
+    answer:
+      "Ja. Nabu Casa hat die Produktion des Home Assistant Yellow im Oktober 2025 beendet und dabei auf Verfügbarkeit und Preis des Raspberry Pi Compute Module 4 verwiesen, auf dem er basiert. Bereits verkaufte Geräte funktionieren weiter, und der Green bleibt die offizielle Plug-and-play-Box.",
+  },
+  {
+    question: "Kann ich einen Mini-PC statt einer Home-Assistant-Box nutzen?",
+    answer:
+      "Ja. Jeder kleine x86-Rechner, der rund um die Uhr läuft, eignet sich gut und kann Gladys Assistant oder Home Assistant betreiben. Ein Mini-PC ist meist leistungsstärker und besser aufrüstbar als eine spezielle Box und kann neben deinem Smart Home noch andere Dienste betreiben.",
+  },
+  {
+    question: "Brauche ich mit Gladys einen Zigbee-Stick?",
+    answer:
+      "Nur für Zigbee-Geräte – genau wie beim Home Assistant Green, der ebenfalls kein eingebautes Funkmodul hat. Steck einen Zigbee-USB-Stick an deinen Mini-PC oder Raspberry Pi und kopple deine Geräte mit Zigbee2MQTT. Matter-Geräte über WLAN brauchen keinen Stick.",
+  },
+  {
+    question: "Ist Gladys einfacher als Home Assistant?",
+    answer:
+      "Gladys ist auf Einfachheit ausgelegt: Alles wird über die Oberfläche eingerichtet, ohne YAML, und der Fokus liegt auf den Funktionen, die die meisten Haushalte wirklich nutzen. Home Assistant unterstützt mehr Integrationen und ist anpassbarer, dafür ist die Lernkurve steiler.",
+  },
+  {
+    question: "Ist Gladys kostenlos?",
+    answer:
+      "Ja. Gladys ist kostenlos und Open Source, für immer. Das optionale Abo Gladys Plus ergänzt verschlüsselten Fernzugriff, Alexa und Google Home, Backups und KI, ab 6,99 €/Monat in Europa, mit einem Monat kostenlosem Test.",
   },
 ];
 

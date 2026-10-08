@@ -5,10 +5,10 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { matterHubFaqEn, matterHubFaqFr } from "../matterHubData";
+import { matterHubFaqEn, matterHubFaqFr, matterHubFaqDe } from "../matterHubData";
 
 export function getMatterHubPageSchema(lang) {
-  const prefix = lang === "fr" ? "/fr" : "";
+  const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}/matter-hub/`;
 
   return {
@@ -22,14 +22,18 @@ export function getMatterHubPageSchema(lang) {
         headline:
           lang === "fr"
             ? "Quel hub Matter choisir ? (guide 2026)"
-            : "Which Matter hub do you need? (2026 guide)",
+            : lang === "de"
+              ? "Welchen Matter-Hub brauchst du wirklich? (Ratgeber 2026)"
+              : "Which Matter hub do you need? (2026 guide)",
         description:
           lang === "fr"
             ? "Contrôleur Matter, routeur de bordure Thread ou pont Matter : quel hub Matter vous faut-il vraiment, et comment héberger le vôtre avec Gladys."
-            : "Matter controller, Thread border router or Matter bridge: which Matter hub you actually need, and how to run your own with Gladys.",
+            : lang === "de"
+              ? "Matter-Controller, Thread-Border-Router oder Matter-Bridge: welchen Matter-Hub du wirklich brauchst – und wie du deinen eigenen mit Gladys betreibst."
+              : "Matter controller, Thread border router or Matter bridge: which Matter hub you actually need, and how to run your own with Gladys.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: lang,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         author: {
           "@type": "Person",
@@ -43,7 +47,10 @@ export function getMatterHubPageSchema(lang) {
           { "@type": "SoftwareApplication", name: "Gladys Assistant" },
         ],
       },
-      toFaqPage(lang === "fr" ? matterHubFaqFr : matterHubFaqEn, pageUrl),
+      toFaqPage(
+        lang === "fr" ? matterHubFaqFr : lang === "de" ? matterHubFaqDe : matterHubFaqEn,
+        pageUrl
+      ),
     ],
   };
 }

@@ -6,13 +6,15 @@ import { getTuyaZigbeeWithoutHubPageSchema } from "../data/schemas/tuyaZigbeeWit
 import tuyaZigbeeWithoutHubContent, {
   tuyaZigbeeWithoutHubFaqEn,
   tuyaZigbeeWithoutHubFaqFr,
+  tuyaZigbeeWithoutHubFaqDe,
 } from "../data/tuyaZigbeeWithoutHubData";
 
 export default function TuyaZigbeeWithoutHubPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = tuyaZigbeeWithoutHubContent[lang];
-  const faq = lang === "fr" ? tuyaZigbeeWithoutHubFaqFr : tuyaZigbeeWithoutHubFaqEn;
+  const faq =
+    lang === "fr" ? tuyaZigbeeWithoutHubFaqFr : lang === "de" ? tuyaZigbeeWithoutHubFaqDe : tuyaZigbeeWithoutHubFaqEn;
 
   return (
     <UseCasePage

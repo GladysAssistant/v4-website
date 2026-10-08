@@ -345,6 +345,174 @@ const nestThermostatAlternativeContent = {
       secondary: { label: "Créer une maison locale", href: "/local-smart-home/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Nest Thermostat Alternative nach dem Support-Ende",
+      description:
+        "Google hat den Support für ältere Nest Learning Thermostate beendet. Was noch geht und wie du die Heizung mit Matter oder Zigbee und Gladys lokal steuerst.",
+    },
+    screenshotCaption:
+      "Thermostate, Raumtemperaturen und Heizungsszenen in Gladys, auf deiner eigenen Hardware.",
+    hero: {
+      title: "Du suchst eine Alternative zum Nest Thermostat?",
+      subtitle:
+        "Ältere Nest Learning Thermostate haben am 25. Oktober 2025 ihre App verloren. Hier erfährst du, was noch funktioniert und wie du Fernsteuerung und smarte Zeitpläne zurückbekommst, ohne wieder von einer Cloud abhängig zu sein.",
+      intro: [
+        "Am 25. Oktober 2025 hat Google den Support für die Nest Learning Thermostate der 1. und 2. Generation beendet (einschließlich des europäischen Modells der 2. Generation von 2014). Sie wurden aus der Nest-App und der Google Home App entfernt: keine Fernsteuerung mehr, kein Home/Away Assist, keine Sprachsteuerung und keine Updates.",
+        "Das Thermostat heizt dein Zuhause weiterhin und folgt dem auf dem Gerät gespeicherten Zeitplan. Wenn du aber Fernsteuerung und smarte Automationen zurückhaben willst, hast du die Wahl: dich auf die nächste Cloud einlassen oder deine Heizung über eine Plattform steuern, die dir gehört. Gladys Assistant ist eine kostenlose Open-Source-Plattform für dein Smart Home, die bei dir zu Hause läuft und Matter- und Zigbee-Thermostate lokal steuert.",
+      ],
+      primaryCta: { label: "Kostenlos starten", href: "/docs/" },
+      secondaryCta: {
+        label: "Matter-Thermostate in Gladys →",
+        href: "/docs/integrations/matter/",
+      },
+    },
+    problem: {
+      title: "Was sich für ältere Nest Thermostate geändert hat",
+      intro: "Laut Google gilt seit dem 25. Oktober 2025 für Nest Learning Thermostate der 1. und 2. Generation:",
+      points: [
+        "Das Thermostat wird entkoppelt und aus der Nest-App und der Google Home App entfernt.",
+        "Fernsteuerung, Benachrichtigungen und das Ändern von Einstellungen per Smartphone sind weg.",
+        "Home/Away Assist, Sprachassistenten und die Verbindung mit Nest Protect funktionieren nicht mehr.",
+        "Es gibt keine Software- oder Sicherheitsupdates mehr.",
+        "Was weiterhin funktioniert: die manuelle Bedienung am Gerät, der Moduswechsel und der bereits gespeicherte Zeitplan.",
+      ],
+      outro:
+        "Die Hardware ist in Ordnung. Verschwunden ist die Cloud, von der sie abhing, und genau das ist das Risiko eines reinen Cloud-Thermostats.",
+    },
+    comparison: {
+      title: "Deine Optionen nach dem Support-Ende",
+      intro: "Drei Wege nach vorn, je nachdem, was du willst:",
+      cols: {
+        feature: "",
+        gladys: "Lokales Thermostat + Gladys",
+        other: "Neues Cloud-Thermostat",
+      },
+      rows: [
+        {
+          feature: "Fernsteuerung",
+          gladys: "Ja, über Gladys (von unterwegs mit Gladys Plus)",
+          other: "Ja, über die App des Herstellers",
+        },
+        {
+          feature: "Funktioniert ohne Internet",
+          gladys: "Ja, Zeitpläne und Szenen laufen lokal",
+          other: "Teilweise, App und Automationen brauchen die Cloud",
+        },
+        {
+          feature: "Kann vom Hersteller abgeschaltet werden",
+          gladys: "Nein, Gladys ist Open Source und läuft bei dir zu Hause",
+          other: "Ja, wie bei den alten Nests geschehen",
+        },
+        {
+          feature: "Heizen nach Anwesenheit",
+          gladys: "Ja, mit Anwesenheit per Smartphone oder Bluetooth in Szenen",
+          other: "Abhängig vom Hersteller",
+        },
+        {
+          feature: "Kombination mit anderen Geräten",
+          gladys: "Fenstersensoren, Strompreise, jede Marke",
+          other: "Meist nur innerhalb des Hersteller-Ökosystems",
+        },
+      ],
+      outro:
+        "Das alte Nest als einfaches programmierbares Thermostat weiterzunutzen, ist eine legitime dritte Option: Es funktioniert weiterhin, nur eben ohne App.",
+    },
+    features: {
+      title: "Thermostate, die du mit Gladys lokal steuern kannst",
+      intro: "Wähle Hardware, die ein offenes Protokoll spricht:",
+      cards: [
+        {
+          icon: "🔗",
+          title: "Matter-Thermostate",
+          text: "Gladys ist ein Matter-Controller und stellt die Zieltemperatur von Matter-Thermostaten ein. Sogar das Nest Learning Thermostat der 4. Generation unterstützt Matter.",
+        },
+        {
+          icon: "🐝",
+          title: "Zigbee-Thermostate",
+          text: "Über Zigbee2MQTT: Zigbee-Heizkörperthermostate in Europa oder Thermostate für Sockelleistenheizungen wie Sinopé in Kanada.",
+        },
+        {
+          icon: "📅",
+          title: "Zeitpläne, die dir gehören",
+          text: "Dein Heizplan lebt in Gladys-Szenen auf deinem eigenen Rechner, nicht in der App eines Herstellers.",
+        },
+        {
+          icon: "🏠",
+          title: "Heizen nach Anwesenheit",
+          text: "Heizung runter, wenn alle aus dem Haus sind, wieder hoch, wenn sich der Erste auf den Heimweg macht: Home/Away, ganz ohne Google.",
+        },
+        {
+          icon: "🪟",
+          title: "Fenster auf, Heizung aus",
+          text: "Ein Tür- oder Fenstersensor kann die Heizung abschalten, solange geöffnet ist, Raum für Raum.",
+        },
+        {
+          icon: "⚡",
+          title: "Energiebewusst heizen",
+          text: "Richte dich nach zeitabhängigen Stromtarifen oder Lastspitzen und behalte im Blick, was deine Heizung kostet.",
+        },
+      ],
+    },
+    how: {
+      title: "So stellst du deine Heizung auf Gladys um",
+      intro: "Ein einfacher Weg:",
+      points: [
+        "Installiere Gladys auf einem Mini-PC oder Raspberry Pi.",
+        "Wähle einen Ersatz, der zu deiner Heizungsanlage passt und Matter oder Zigbee spricht, und lass ihn bei Bedarf anschließen.",
+        "Kopple ihn: Matter-Geräte direkt in Gladys, Zigbee-Geräte über Zigbee2MQTT mit einem USB-Stick.",
+        "Bau deinen Zeitplan als Gladys-Szenen nach und ergänze Regeln für Anwesenheit und offene Fenster.",
+        "Füge das Thermostat deinem Dashboard hinzu und nutze Gladys Plus, wenn du es auch von unterwegs steuern willst.",
+      ],
+      outro:
+        "Prüfe vor dem Kauf eines Thermostats, ob es zu deiner Heizungsanlage passt (Heizkessel, Wärmepumpe, Heizkörper, Warmluft- oder Sockelleistenheizung).",
+    },
+    solution: {
+      title: "Nie wieder ein Thermostat durch eine Abschaltung verlieren",
+      paragraphs: [
+        "Die Lehre aus dem Nest-Support-Ende ist einfach: Wenn ein Gerät nur über die Cloud eines anderen funktioniert, bleiben seine Funktionen nur so lange erhalten, wie dieses Unternehmen es will. Mit offenen Protokollen wie Matter und Zigbee und einer lokalen Plattform funktioniert deine Heizung nach deinen Regeln weiter.",
+        "Gladys ist kostenlos und Open Source, wird seit 2013 entwickelt und läuft komplett auf deiner eigenen Hardware.",
+      ],
+      link: {
+        label: "Ein lokales Smart Home aufbauen →",
+        href: "/local-smart-home/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Mehr zu lokaler Heizungssteuerung und Energie:",
+      links: [
+        {
+          label: "Google Home Alternative",
+          href: "/google-home-alternative/",
+          text: "Eine private, selbst gehostete Alternative zu Google Home.",
+        },
+        {
+          label: "Sinopé Zigbee-Thermostate",
+          href: "/sinope-zigbee/",
+          text: "Thermostate für Sockelleistenheizungen, lokal gesteuert, ohne Neviweb.",
+        },
+        {
+          label: "Brauchst du einen Matter-Hub?",
+          href: "/matter-hub/",
+          text: "Controller, Thread-Border-Router und Bridges erklärt.",
+        },
+        {
+          label: "Stromrechnung senken",
+          href: "/home-energy-monitoring/",
+          text: "Behalte deinen Verbrauch im Blick und handle auf Basis der Daten.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Hol dir die Kontrolle über deine Heizung zurück",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Kopple ein Matter- oder Zigbee-Thermostat und steuere deine Heizung bei dir zu Hause.",
+      primary: { label: "Jetzt starten", href: "/docs/" },
+      secondary: { label: "Ein lokales Smart Home aufbauen", href: "/local-smart-home/" },
+    },
+  },
 };
 
 export const nestThermostatAlternativeFaqEn = [
@@ -400,6 +568,34 @@ export const nestThermostatAlternativeFaqFr = [
     question: "Faut-il un abonnement ?",
     answer:
       "Non. Gladys est gratuite et open source et pilote votre thermostat sur votre réseau local. Gladys Plus est optionnel, pour l'accès distant chiffré depuis l'extérieur, les sauvegardes et l'assistant IA.",
+  },
+];
+
+export const nestThermostatAlternativeFaqDe = [
+  {
+    question: "Welche Nest Thermostate haben den Support verloren?",
+    answer:
+      "Das Nest Learning Thermostat der 1. Generation (2011), der 2. Generation (2012) und das europäische Modell der 2. Generation (2014). Google hat ihren Support am 25. Oktober 2025 beendet. Die 3. und 4. Generation sind nicht betroffen.",
+  },
+  {
+    question: "Funktioniert mein altes Nest Thermostat noch?",
+    answer:
+      "Ja, als normales Thermostat. Du kannst Temperatur und Modus weiterhin am Gerät ändern, und es folgt seinem gespeicherten Zeitplan. Weg ist alles, was auf der Google-Cloud beruhte: Steuerung per App, Fernzugriff, Home/Away Assist, Sprachassistenten und Updates.",
+  },
+  {
+    question: "Kann Gladys mein altes Nest Thermostat steuern?",
+    answer:
+      "Nein. Ältere Nest Thermostate waren nur über die Google-Cloud erreichbar, mit der sie nicht mehr verbunden sind. Gladys kann ein Nest Learning Thermostat der 4. Generation über Matter steuern (Zieltemperatur), ebenso Matter- oder Zigbee-Thermostate anderer Marken.",
+  },
+  {
+    question: "Was ist eine gute lokale Alternative zu Nest?",
+    answer:
+      "Ein Thermostat, das ein offenes Protokoll spricht, Matter oder Zigbee, gesteuert von einer lokalen Plattform wie Gladys Assistant. Deine Zeitpläne, Anwesenheitsregeln und der Fernzugriff hängen dann nicht mehr davon ab, dass die Cloud eines Herstellers online bleibt.",
+  },
+  {
+    question: "Brauche ich ein Abo?",
+    answer:
+      "Nein. Gladys ist kostenlos und Open Source und steuert dein Thermostat in deinem lokalen Netzwerk. Gladys Plus ist optional, für verschlüsselten Fernzugriff von unterwegs, Backups und den KI-Assistenten.",
   },
 ];
 

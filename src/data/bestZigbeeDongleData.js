@@ -16,6 +16,10 @@ const amazonUS = (query) =>
   `https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=gladproj-20`;
 const amazonFR = (query) =>
   `https://www.amazon.fr/s?k=${encodeURIComponent(query)}&tag=gladproj-21`;
+// German locale: plain amazon.de search links (no amazon.de affiliate tag
+// configured yet; add `&tag=...` here once one exists).
+const amazonDE = (query) =>
+  `https://www.amazon.de/s?k=${encodeURIComponent(query)}`;
 
 // Verified product ASIN (Sonoff ZBDongle-E) on amazon.fr.
 const SONOFF_E_FR = "https://www.amazon.fr/dp/B0B6P22YJC?tag=gladproj-21";
@@ -343,6 +347,169 @@ const bestZigbeeDongleContent = {
       secondary: { label: "Découvrir le kit de démarrage", href: "/fr/starter-kit/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Bester Zigbee-USB-Stick & Koordinator (Ratgeber 2026)",
+      description:
+        "Welchen Zigbee-Stick kaufen? Die besten Zigbee-Koordinatoren 2026 für Raspberry Pi, NAS oder Mini-PC mit Zigbee2MQTT: Sonoff, SMLIGHT, ConBee im Vergleich.",
+    },
+    hero: {
+      title: "Der beste Zigbee-USB-Stick für dein Smart Home",
+      subtitle:
+        "Welchen Zigbee-Koordinator du für Raspberry Pi, NAS oder Mini-PC kaufen solltest, um mit Zigbee2MQTT und Gladys ein lokales, herstellerunabhängiges Zigbee-Netz zu betreiben.",
+      intro: [
+        "Ein Zigbee-USB-Stick (auch Zigbee-Koordinator genannt) ist die Hardware, mit der dein Rechner mit Zigbee-Geräten spricht: Bewegungsmelder, Tür-/Fensterkontakte, smarte Steckdosen, Lampen und vieles mehr. Steck ihn in deinen Raspberry Pi, und mit Zigbee2MQTT steuerst du Hunderte Geräte lokal – ganz ohne Hersteller-Hub oder Cloud.",
+        "Doch Stick ist nicht gleich Stick: Chipsatz, Antenne und die Art des Anschlusses machen bei Reichweite und Zuverlässigkeit einen echten Unterschied. Dieser Ratgeber erklärt, worauf du achten solltest, und empfiehlt die Koordinatoren, die 2026 am besten mit Zigbee2MQTT und Gladys Assistant funktionieren.",
+      ],
+      primaryCta: { label: "So verbindest du Zigbee mit Gladys", href: "/de/docs/integrations/zigbee2mqtt/" },
+      secondaryCta: {
+        label: "Mit Gladys starten →",
+        href: "/de/docs/",
+      },
+    },
+    criteria: {
+      title: "Worauf du bei der Wahl eines Zigbee-Sticks achten solltest",
+      intro:
+        "Vor dem Kauf zählen ein paar Punkte deutlich mehr als der Preis:",
+      points: [
+        "Chipsatz: Setz auf einen modernen Koordinator mit Chip von Texas Instruments (CC2652) oder Silicon Labs (EFR32 / EmberZNet). Beide werden von Zigbee2MQTT erstklassig unterstützt. Finger weg von alten CC2531-Sticks – die sind für heutige Netze zu schwach.",
+        "Externe Antenne: Ein Stick mit externer Antenne verbessert Reichweite und Stabilität deines Mesh-Netzes spürbar.",
+        "USB oder Netzwerk: Ein USB-Stick ist die einfachste Lösung. Ein Netzwerk-Koordinator (Ethernet oder PoE) lässt sich dagegen überall im Haus platzieren, weg von Störquellen – und das ist oft wichtiger als das Modell selbst.",
+        "Immer ein USB-Verlängerungskabel nutzen: Schließ den Stick über eine kurze Verlängerung (ca. 1 m) an und halte ihn fern von Raspberry Pi, SSDs und USB-3.0-Ports, die Störungen im 2,4-GHz-Band verursachen. Das ist die häufigste Lösung für ein unzuverlässiges Zigbee-Netz.",
+        "Zigbee 3.0 und aktualisierbare Firmware: Achte darauf, dass der Koordinator Zigbee 3.0 unterstützt und du seine Firmware flashen kannst – für die beste Unterstützung auf lange Sicht.",
+      ],
+      outro:
+        "Die gute Nachricht: In Gladys wählst du dein genaues Koordinator-Modell direkt in der Oberfläche aus – jeder der folgenden Sticks funktioniert also sofort.",
+    },
+    dongles: {
+      title: "Unsere empfohlenen Zigbee-Sticks",
+      intro:
+        "Alle werden von Zigbee2MQTT unterstützt und lassen sich in Gladys als Koordinator auswählen:",
+      items: [
+        {
+          name: "Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E)",
+          tag: "Bestes Preis-Leistungs-Verhältnis",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-e.png",
+          imageAlt: "Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E",
+          text: "Der günstige Stick, den wir mit Gladys getestet haben – mit Silicon-Labs-Chip EFR32MG21 (EmberZNet) und externer Antenne. Tipp: Aktualisiere seine EmberZNet-Firmware für die beste Stabilität.",
+          href: amazonDE("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-E"),
+          linkLabel: "Bei Amazon ansehen →",
+        },
+        {
+          name: "Sonoff ZBDongle-P",
+          tag: "Am bewährtesten",
+          image: "/img/external/zigbee-dongles/sonoff-zbdongle-p.jpeg",
+          imageAlt: "Sonoff ZBDongle-P Zigbee-USB-Stick",
+          text: "Die Version mit Texas-Instruments-Chip CC2652P, seit Jahren bewährt in der Zigbee2MQTT-Community. Grundsolide, gut dokumentiert und preiswert.",
+          href: amazonDE("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
+          linkLabel: "Bei Amazon ansehen →",
+        },
+        {
+          name: "SMLIGHT SLZB-06",
+          tag: "Flexibelste Platzierung",
+          image: "/img/external/zigbee-dongles/smlight-slzb-06.jpg",
+          imageAlt: "SMLIGHT SLZB-06 Ethernet-Zigbee-Koordinator",
+          text: "Ein Koordinator mit USB-C, Ethernet und PoE: Du kannst ihn direkt an deinen Server anschließen oder zentral im Haus platzieren. Seit Gladys 5 kannst du ihn außerdem als Netzwerk-Koordinator über Ethernet nutzen – entfernt von deinem Server und von Störquellen.",
+          href: amazonDE("SMLIGHT SLZB-06 Zigbee Koordinator"),
+          linkLabel: "Bei Amazon ansehen →",
+        },
+        {
+          name: "ConBee II (Dresden Elektronik)",
+          tag: "Premium-USB",
+          image: "/img/external/zigbee-dongles/conbee-ii.jpg",
+          imageAlt: "ConBee II Zigbee-USB-Stick von Dresden Elektronik",
+          text: "Ein hochwertiger, breit unterstützter USB-Koordinator mit starker Reichweite und langer Erfolgsgeschichte. Eine gute Wahl, wenn du einen ausgereiften, gut unterstützten Stick willst.",
+          href: amazonDE("ConBee II Zigbee USB Stick"),
+          linkLabel: "Bei Amazon ansehen →",
+        },
+        {
+          name: "Home Assistant Connect ZBT-1",
+          tag: "Multiprotokoll-Hardware",
+          image: "/img/external/zigbee-dongles/connect-zbt-1.jpg",
+          imageAlt: "Home Assistant Connect ZBT-1 Zigbee-USB-Stick",
+          text: "Der Koordinator von Nabu Casa mit Silicon-Labs-Chip (früher SkyConnect). Er funktioniert hervorragend mit Zigbee2MQTT und ist in Gladys als Koordinatortyp auswählbar.",
+          href: amazonDE("Home Assistant Connect ZBT-1"),
+          linkLabel: "Bei Amazon ansehen →",
+        },
+      ],
+      outro:
+        "Die vollständige, stets aktuelle Liste kompatibler Koordinatoren findest du auf der Seite „Supported Adapters“ von Zigbee2MQTT.",
+    },
+    multiprotocol: {
+      title: "Und was ist mit Matter- und Thread-Sticks?",
+      paragraphs: [
+        "Immer mehr Koordinatoren haben zwei Funkmodule an Bord: eins für Zigbee, eins für Thread. Der bekannteste ist der SMLIGHT SLZB-MR1 mit Zigbee- und Thread-Funk nebeneinander, dazu USB-C, Ethernet und PoE. Auf dem Papier betreibt er dein Zigbee-Netz und arbeitet gleichzeitig als Thread-Border-Router.",
+        "Bevor du ihn aus diesem Grund kaufst, solltest du zwei Dinge wissen. Erstens ist der gleichzeitige Betrieb beider Funkmodule noch experimentell – egal mit welcher Software. Zweitens, und das ist wichtiger: Ein Thread-Funkmodul bringt dir in Gladys derzeit kein Matter over Thread. Ein Border-Router leitet nur den Datenverkehr weiter, während die erste Kopplung eines Matter-over-Thread-Geräts über Bluetooth läuft – und das unterstützt Gladys noch nicht. Für diesen Schritt brauchst du weiterhin einen vollwertigen Matter-Controller wie ein Apple TV, einen Matter-fähigen Echo oder ein Google-Nest-Gerät, der das Gerät dann mit Gladys teilt.",
+        "Für Matter over WLAN und Ethernet gilt das alles nicht – dafür brauchst du überhaupt keinen Stick: Diese Geräte sind bereits in deinem Netzwerk und werden direkt mit Gladys gekoppelt.",
+        "Kauf also einen Multiprotokoll-Koordinator, wenn du eine Box für beide Netze willst und gerne tüftelst. Kauf einen einfachen, bewährten Zigbee-Koordinator, wenn du ein Zigbee-Netz willst, das einfach funktioniert.",
+      ],
+      link: {
+        label: "Welchen Matter-Hub brauchst du wirklich? →",
+        href: "/de/matter-hub/",
+      },
+    },
+    gladys: {
+      title: "So funktioniert es mit Gladys Assistant",
+      paragraphs: [
+        "Mit Gladys brauchst du keinen proprietären Zigbee-Hub. Steck deinen Stick in deinen Raspberry Pi, dein NAS oder deinen Mini-PC, öffne die Zigbee2MQTT-Integration und wähle dein Koordinator-Modell aus der Liste.",
+        "Gladys installiert und konfiguriert anschließend automatisch die MQTT- und Zigbee2MQTT-Container für dich – ohne manuelle Einrichtung, ohne Bridge von Drittanbietern. Danach koppelst du deine Zigbee-Geräte und steuerst sie komplett lokal, mit Geräten beliebiger Marken.",
+      ],
+      link: { label: "Zur Zigbee2MQTT-Anleitung →", href: "/de/docs/integrations/zigbee2mqtt/" },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro:
+        "Dein lokales Zigbee-Netz ist Teil eines größeren Ganzen:",
+      links: [
+        {
+          label: "Zigbee2MQTT ohne Home Assistant",
+          href: "/de/zigbee2mqtt-without-home-assistant/",
+          text: "Lass Gladys Zigbee2MQTT und den MQTT-Broker für dich installieren und verwalten.",
+        },
+        {
+          label: "Zigbee-Geräte mit Gladys verbinden",
+          href: "/de/docs/integrations/zigbee2mqtt/",
+          text: "Die Schritt-für-Schritt-Anleitung zur Einrichtung deines Sticks mit Zigbee2MQTT.",
+        },
+        {
+          label: "IKEA Smart Home mit Gladys",
+          href: "/de/ikea-smart-home/",
+          text: "Nutze deine IKEA-Tradfri- und Dirigera-Geräte lokal, über Zigbee2MQTT oder Matter.",
+        },
+        {
+          label: "Wetterstation für zu Hause",
+          href: "/de/home-weather-station/",
+          text: "Bau dir eine lokale Wetterstation aus Zigbee- und Matter-Sensoren, die Gladys direkt ausliest.",
+        },
+        {
+          label: "Zigbee vs. Matter vs. Z-Wave",
+          href: "/de/zigbee-vs-matter-vs-zwave/",
+          text: "Welchen Funkstandard du für deine Smart-Home-Geräte wählen solltest.",
+        },
+        {
+          label: "Ein lokales Smart Home aufbauen",
+          href: "/de/local-smart-home/",
+          text: "Warum „lokal zuerst“ wichtig ist und wie du ein Zuhause baust, das ohne Cloud funktioniert.",
+        },
+        {
+          label: "Open-Source-Hausautomation",
+          href: "/de/open-source-home-automation/",
+          text: "Betreibe dein Smart Home mit kostenloser, selbst gehosteter Software, der du vertrauen kannst.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Bau dein lokales Zigbee-Netz auf",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Steck einen Stick ein und steuere deine Zigbee-Geräte lokal – ganz ohne Hub.",
+      primary: { label: "Jetzt starten", href: "/de/docs/" },
+      secondary: {
+        label: "Zigbee2MQTT einrichten",
+        href: "/de/docs/integrations/zigbee2mqtt/",
+      },
+    },
+  },
 };
 
 export const bestZigbeeDongleFaqEn = [
@@ -428,6 +595,49 @@ export const bestZigbeeDongleFaqFr = [
     question: "Faut-il une box ou un pont Zigbee avec Gladys ?",
     answer:
       "Non. Une clé Zigbee USB associée à Zigbee2MQTT remplace toute box propriétaire. Gladys installe et configure Zigbee2MQTT à votre place : vos appareils Zigbee sont pilotés directement et entièrement en local, sans pont de fabricant ni compte cloud.",
+  },
+];
+
+export const bestZigbeeDongleFaqDe = [
+  {
+    question: "Welcher Zigbee-Stick funktioniert am besten mit Gladys und Zigbee2MQTT?",
+    answer:
+      "Jeder moderne Zigbee-3.0-Koordinator mit Chip von Texas Instruments (CC2652) oder Silicon Labs (EFR32 / EmberZNet) funktioniert gut. Beliebt sind der Sonoff Zigbee 3.0 USB Dongle Plus (ZBDongle-E und ZBDongle-P), der SMLIGHT SLZB-06, der ConBee II und der Home Assistant Connect ZBT-1. In der Zigbee2MQTT-Integration von Gladys wählst du dein genaues Modell aus.",
+  },
+  {
+    question: "Welcher Zigbee-Stick ist der beste für einen Raspberry Pi?",
+    answer:
+      "Der Sonoff Zigbee 3.0 USB Dongle Plus ist eine hervorragende, günstige Wahl für den Raspberry Pi – und genau der Stick, den wir mit Gladys getestet haben. Egal, wofür du dich entscheidest: Schließ ihn immer über ein kurzes USB-Verlängerungskabel an, damit er Abstand zum Pi und seinen USB-3.0-Ports hat, die Störungen im 2,4-GHz-Band verursachen.",
+  },
+  {
+    question: "Was ist der Unterschied zwischen Sonoff ZBDongle-E und ZBDongle-P?",
+    answer:
+      "Der ZBDongle-P nutzt einen Texas-Instruments-Chip CC2652P und gilt in der Zigbee2MQTT-Community seit Langem als bewährte Wahl. Der ZBDongle-E nutzt einen Silicon-Labs-Chip EFR32MG21 (EmberZNet), ist neuer und seine Hardware kann auch Matter- und Thread-Ökosysteme ansprechen. Beide funktionieren gut mit Zigbee2MQTT und Gladys.",
+  },
+  {
+    question: "Brauche ich wirklich ein USB-Verlängerungskabel?",
+    answer:
+      "Ja, das ist dringend zu empfehlen. Steckt der Stick direkt im Raspberry Pi oder in der Nähe von SSDs und USB-3.0-Ports, ist das die häufigste Ursache für abspringende Zigbee-Geräte und schlechte Reichweite. Ein kurzes USB-Verlängerungskabel (ca. 1 m), das den Stick von diesen Störquellen fernhält, ist die wirksamste Lösung.",
+  },
+  {
+    question: "Kann ich einen Zigbee-Koordinator über Ethernet statt USB nutzen?",
+    answer:
+      "Ja. Netzwerk-Koordinatoren wie der SMLIGHT SLZB-06 werden über Ethernet oder PoE statt über USB angeschlossen. So kannst du den Koordinator zentral im Haus platzieren, weg von Störquellen – das verbessert Reichweite und Zuverlässigkeit oft mehr als ein anderes Stick-Modell.",
+  },
+  {
+    question: "Ist der SMLIGHT SLZB-MR1 eine gute Wahl?",
+    answer:
+      "Der SLZB-MR1 ist ein Koordinator mit zwei Funkmodulen: einem für Zigbee und einem für Thread, dazu USB-C, Ethernet und PoE. Er funktioniert als Zigbee-Koordinator mit Zigbee2MQTT, und sein Typ lässt sich in Gladys auswählen, wenn er per USB angeschlossen ist. Zigbee und Thread gleichzeitig zu betreiben, ist noch experimentell, und mit seinem Thread-Funk kann Gladys Matter-over-Thread-Geräte nicht allein koppeln: Diese erste Kopplung läuft über Bluetooth, über einen vollwertigen Matter-Controller wie ein Apple TV, einen Matter-fähigen Echo oder ein Google-Nest-Gerät. Kauf ihn für die Zigbee-Seite und die Flexibilität, nicht als Einstieg in Matter.",
+  },
+  {
+    question: "Brauche ich für Gladys einen Matter- oder Thread-Stick?",
+    answer:
+      "Nein – und ein Thread-Stick würde ohnehin nicht helfen. Matter-Geräte mit WLAN oder Ethernet sind bereits in deinem Netzwerk und werden direkt mit Gladys gekoppelt, ganz ohne Stick. Thread-Geräte brauchen zwar einen Thread-Border-Router, aber ein reiner Border-Router reicht mit Gladys derzeit nicht: Die erste Kopplung eines Matter-over-Thread-Geräts läuft über Bluetooth, was Gladys noch nicht unterstützt. Sie muss also auf einem vollwertigen Matter-Controller wie einem Apple TV, einem Matter-fähigen Echo oder einem Google-Nest-Gerät erfolgen, der das Gerät anschließend mit Gladys teilt. Ein Zigbee-Stick ist für Zigbee-Geräte gedacht – ein eigenes, nach wie vor sehr großes Ökosystem.",
+  },
+  {
+    question: "Brauche ich mit Gladys einen Zigbee-Hub oder eine Bridge?",
+    answer:
+      "Nein. Ein Zigbee-USB-Stick plus Zigbee2MQTT ersetzt jeden proprietären Hub. Gladys installiert und konfiguriert Zigbee2MQTT für dich, sodass deine Zigbee-Geräte direkt und komplett lokal gesteuert werden – ohne Hersteller-Bridge und ohne Cloud-Konto.",
   },
 ];
 

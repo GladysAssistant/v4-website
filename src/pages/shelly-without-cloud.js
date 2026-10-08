@@ -6,13 +6,15 @@ import { getShellyWithoutCloudPageSchema } from "../data/schemas/shellyWithoutCl
 import shellyWithoutCloudContent, {
   shellyWithoutCloudFaqEn,
   shellyWithoutCloudFaqFr,
+  shellyWithoutCloudFaqDe,
 } from "../data/shellyWithoutCloudData";
 
 export default function ShellyWithoutCloudPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = shellyWithoutCloudContent[lang];
-  const faq = lang === "fr" ? shellyWithoutCloudFaqFr : shellyWithoutCloudFaqEn;
+  const faq =
+    lang === "fr" ? shellyWithoutCloudFaqFr : lang === "de" ? shellyWithoutCloudFaqDe : shellyWithoutCloudFaqEn;
 
   return (
     <UseCasePage

@@ -14,7 +14,9 @@ import styles from "./comparison.module.css";
 // ("All guides") so the footer itself can stay short.
 export default function GuidesPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = guidesHubContent[lang];
   // Register the section anchors so links like /guides/#compare (footer)
   // pass Docusaurus' broken anchor check.

@@ -6,13 +6,14 @@ import { getPresenceSimulationPageSchema } from "../data/schemas/presenceSimulat
 import presenceContent, {
   presenceFaqEn,
   presenceFaqFr,
+  presenceFaqDe,
 } from "../data/presenceSimulationData";
 
 export default function PresenceSimulationPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = presenceContent[lang];
-  const faq = lang === "fr" ? presenceFaqFr : presenceFaqEn;
+  const faq = lang === "fr" ? presenceFaqFr : lang === "de" ? presenceFaqDe : presenceFaqEn;
 
   return (
     <UseCasePage

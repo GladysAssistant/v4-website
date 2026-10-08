@@ -31,12 +31,13 @@ function Testimonial({ username, content, url, date }) {
 }
 
 function TestimonialSection({ lang, testimonials }) {
+  const localeTestimonials = testimonials[lang] || testimonials.en;
   const testimonialsColumn = [[], [], []];
-  testimonials[lang].forEach((testimonial, i) =>
+  localeTestimonials.forEach((testimonial, i) =>
     testimonialsColumn[i % 3].push(testimonial)
   );
 
-  if (testimonials[lang].length === 0) {
+  if (localeTestimonials.length === 0) {
     return null;
   }
 
@@ -70,12 +71,13 @@ function TestimonialSection({ lang, testimonials }) {
 }
 
 function TestimonialHomeSection({ lang, testimonials }) {
+  const localeTestimonials = testimonials[lang] || testimonials.en;
   const testimonialsColumn = [[], [], []];
-  testimonials[lang].forEach((testimonial, i) =>
+  localeTestimonials.forEach((testimonial, i) =>
     testimonialsColumn[i % 3].push(testimonial)
   );
 
-  if (testimonials[lang].length === 0) {
+  if (localeTestimonials.length === 0) {
     return null;
   }
 

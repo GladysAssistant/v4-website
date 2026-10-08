@@ -10,6 +10,7 @@ import { getOpenSourceHomeAutomationPageSchema } from "../data/schemas/openSourc
 import openSourceHomeAutomationContent, {
   openSourceHomeAutomationFaqEn,
   openSourceHomeAutomationFaqFr,
+  openSourceHomeAutomationFaqDe,
 } from "../data/openSourceHomeAutomationData";
 
 import styles from "./comparison.module.css";
@@ -79,6 +80,8 @@ function PillarContent({ content, faq, lang }) {
           caption={
             lang === "fr"
               ? "Une interface open source et épurée, auto-hébergée, où vos données restent chez vous."
+              : lang === "de"
+              ? "Eine aufgeräumte, quelloffene und selbst gehostete Oberfläche, bei der deine Daten zu Hause bleiben."
               : "A clean, open-source, self-hosted interface where your data stays at home."
           }
         />
@@ -246,11 +249,15 @@ function PillarContent({ content, faq, lang }) {
 
 export default function OpenSourceHomeAutomationPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = openSourceHomeAutomationContent[lang];
   const faq =
     lang === "fr"
       ? openSourceHomeAutomationFaqFr
+      : lang === "de"
+      ? openSourceHomeAutomationFaqDe
       : openSourceHomeAutomationFaqEn;
 
   return (

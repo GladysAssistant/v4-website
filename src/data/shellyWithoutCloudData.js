@@ -272,6 +272,138 @@ const shellyWithoutCloudContent = {
       secondary: { label: "Intégration Shelly", href: "/docs/integrations/external/shelly/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Shelly ohne Cloud: Relais und Zähler lokal steuern",
+      description:
+        "Shelly-Relais, -Steckdosen und -Energiezähler lokal steuern, ohne Shelly Cloud: Echtzeit für Gen2+, Gen1-Support, Energie-Dashboards und Szenen in Gladys.",
+    },
+    screenshotCaption:
+      "Shelly-Relais und -Energiezähler, lokal und in Echtzeit aus Gladys gesteuert.",
+    hero: {
+      title: "Shelly ohne Cloud",
+      subtitle:
+        "Shelly-Geräte haben schon eine hervorragende lokale API. Gladys Assistant nutzt sie: Steuere deine Relais und Steckdosen und lies deine Energiezähler in Echtzeit aus, ohne Shelly Cloud.",
+      intro: [
+        "Shelly baut einige der beliebtesten WLAN-Relais, -Steckdosen und -Energiezähler, also genau die Geräte, die man hinter einem Lichtschalter oder im Sicherungskasten versteckt. Anders als viele WLAN-Geräte bieten sie eine dokumentierte lokale API und brauchen deshalb keine Cloud, um zu funktionieren.",
+        "Gladys Assistant, eine kostenlose Open-Source-Plattform für dein Smart Home, hat eine Shelly-Integration, die direkt in deinem Netzwerk mit deinen Geräten spricht. Geräte ab Gen2 melden ihre Änderungen in Echtzeit, ein am Wandschalter umgelegtes Relais taucht also nach etwa einer Sekunde in Gladys auf. Für einen komplett lokalen Betrieb lässt du das Konfigurationsformular einfach leer.",
+      ],
+      primaryCta: {
+        label: "Die Shelly-Integration",
+        href: "/docs/integrations/external/shelly/",
+      },
+      secondaryCta: {
+        label: "Mit Gladys loslegen →",
+        href: "/docs/",
+      },
+    },
+    problem: {
+      title: "Warum Shelly-Geräte lokal bleiben sollten",
+      intro: "Die Shelly-App und die Cloud sind bequem, aber:",
+      points: [
+        "Fernsteuerung und Cloud-Automationen hängen vom Internet und von den Servern von Shelly ab.",
+        "Die Energiedaten deiner Zähler sind am nützlichsten neben dem Rest deines Zuhauses, nicht in einer separaten App.",
+        "Szenen, die Shelly-Relais mit Zigbee-Sensoren oder Matter-Geräten kombinieren, brauchen eine Plattform, die all diese Protokolle spricht.",
+        "Lokale Steuerung ist schneller und funktioniert auch dann, wenn das Internet ausfällt.",
+      ],
+      outro:
+        "Shelly hat seine Geräte für den lokalen Betrieb entwickelt. Gladys nutzt das einfach aus.",
+    },
+    features: {
+      title: "Was die Shelly-Integration von Gladys unterstützt",
+      intro: "Aktuell deckt die Integration Relais, Steckdosen und Zähler ab:",
+      cards: [
+        {
+          icon: "🔌",
+          title: "Relais und Steckdosen",
+          text: "Ein/Aus-Steuerung mit Leistung, Spannung, Strom und Gesamtverbrauch bei Modellen mit Messfunktion wie dem Pro 1PM.",
+        },
+        {
+          icon: "⚡",
+          title: "Energiezähler",
+          text: "Dreiphasige Zähler wie der Pro 3EM, pro Phase und gesamt, dazu eigenständige Zähler wie der PM Mini.",
+        },
+        {
+          icon: "⏱️",
+          title: "Echtzeit",
+          text: "Geräte ab Gen2 melden ihre Änderungen lokal; Gen1-Geräte werden abgefragt oder laufen per MQTT in Echtzeit.",
+        },
+        {
+          icon: "🧬",
+          title: "Jede Generation",
+          text: "Gen1-, Plus-, Pro-, Mini-, Gen3- und Gen4-Geräte werden in Gladys auf dieselben Funktionen vereinheitlicht.",
+        },
+        {
+          icon: "🔁",
+          title: "Optionale Fallbacks",
+          text: "MQTT für große Geräteflotten und die Shelly Cloud als letzte Option, falls ein Gerät lokal nicht erreichbar ist. Beides ist optional.",
+        },
+        {
+          icon: "📊",
+          title: "Energie-Dashboards",
+          text: "Speise deine Zähler in das Energie-Monitoring von Gladys ein und verfolge Verbrauch und Kosten über die Zeit.",
+        },
+      ],
+    },
+    how: {
+      title: "So richtest du es ein",
+      intro: "Gladys 4.83 oder neuer, Shelly-Geräte bereits in deinem WLAN:",
+      points: [
+        "Öffne in Gladys die Integrationen und installiere die Shelly-Integration aus dem Katalog.",
+        "Lass die Konfiguration für einen komplett lokalen Betrieb leer oder trage deinen MQTT-Broker ein, wenn du viele Geräte hast.",
+        "Öffne den Tab „Erkennung“ und klicke auf Scannen: Deine Shelly-Geräte erscheinen mit ihren Funktionen.",
+        "Ordne sie Räumen zu, füge sie deinem Dashboard hinzu und nutze sie in Szenen.",
+        "Richte für deine Shelly-Geräte im Router eine DHCP-Reservierung ein, damit ihre IP-Adresse gleich bleibt.",
+      ],
+      outro:
+        "Noch nicht unterstützt: Rollladenmodus, Dimmer und Eingänge. Wirf einen Blick auf die Roadmap der Integration, falls du sie brauchst.",
+    },
+    solution: {
+      title: "Lokale Geräte, ein Ort für alles",
+      paragraphs: [
+        "Mit Gladys sitzen deine Shelly-Relais neben deinen Zigbee-Sensoren, Matter-Geräten und Kameras: Ein Bewegungsmelder kann ein Shelly-Relais schalten, und ein Zählerstand kann eine Benachrichtigung auslösen, alles lokal.",
+        "Gladys ist kostenlos und Open Source, wird seit 2013 entwickelt und läuft komplett auf deiner eigenen Hardware.",
+      ],
+      link: {
+        label: "Stromrechnung senken →",
+        href: "/home-energy-monitoring/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Weitere Ratgeber zur lokalen Steuerung:",
+      links: [
+        {
+          label: "Ein lokales Smart Home aufbauen",
+          href: "/local-smart-home/",
+          text: "Warum Local-First wichtig ist und wie du ein Zuhause baust, das ohne Cloud läuft.",
+        },
+        {
+          label: "Stromrechnung senken",
+          href: "/home-energy-monitoring/",
+          text: "Verfolge deinen Verbrauch und handle auf Basis der Daten.",
+        },
+        {
+          label: "Funktioniert mit Gladys",
+          href: "/works-with/",
+          text: "Alle Marken und Protokolle, die Gladys unterstützt.",
+        },
+        {
+          label: "Alle Ratgeber",
+          href: "/guides/",
+          text: "Alle Ratgeber, Tools und Vergleiche an einem Ort.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Betreibe deine Shelly-Geräte lokal",
+      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Installiere die Shelly-Integration und scanne dein Netzwerk.",
+      primary: { label: "Jetzt starten", href: "/docs/" },
+      secondary: { label: "Shelly-Integration", href: "/docs/integrations/external/shelly/" },
+    },
+  },
 };
 
 export const shellyWithoutCloudFaqEn = [
@@ -317,6 +449,29 @@ export const shellyWithoutCloudFaqFr = [
     question: "Faut-il MQTT pour les Shelly ?",
     answer:
       "Non, mais c'est recommandé pour les grands parcs ou les appareils sur un autre VLAN. Sans MQTT, Gladys découvre et pilote les appareils directement sur votre réseau local.",
+  },
+];
+
+export const shellyWithoutCloudFaqDe = [
+  {
+    question: "Funktionieren Shelly-Geräte ohne Cloud?",
+    answer:
+      "Ja. Shelly-Geräte bieten eine lokale API, und die Shelly-Integration von Gladys nutzt sie direkt in deinem Netzwerk. Ein komplett lokaler Betrieb funktioniert mit leerer Konfiguration; MQTT und die Shelly Cloud sind optionale Fallbacks.",
+  },
+  {
+    question: "Welche Shelly-Geräte unterstützt Gladys?",
+    answer:
+      "Relais und Steckdosen (mit Leistungsmessung, wenn das Gerät sie hat), dreiphasige Energiezähler wie der Pro 3EM, der PM Mini sowie Temperatur- und Batteriewerte, über Gen1-, Plus-, Pro-, Mini-, Gen3- und Gen4-Geräte hinweg. Rollladenmodus, Dimmer und Eingänge werden noch nicht unterstützt.",
+  },
+  {
+    question: "Kommen Shelly-Updates in Gladys in Echtzeit an?",
+    answer:
+      "Bei Geräten ab Gen2 ja: Sie melden ihre Änderungen lokal, etwa eine Sekunde nachdem ein Relais geschaltet wurde. Gen1-Geräte werden lokal im eingestellten Aktualisierungsintervall abgefragt oder per MQTT in Echtzeit angebunden.",
+  },
+  {
+    question: "Brauche ich MQTT für Shelly?",
+    answer:
+      "Nein, empfohlen ist es aber für große Geräteflotten oder Geräte in einem anderen VLAN. Ohne MQTT erkennt und steuert Gladys die Geräte direkt in deinem lokalen Netzwerk.",
   },
 ];
 

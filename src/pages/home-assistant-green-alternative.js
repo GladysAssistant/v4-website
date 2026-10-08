@@ -6,13 +6,21 @@ import { getHomeAssistantGreenAlternativePageSchema } from "../data/schemas/home
 import homeAssistantGreenAlternativeContent, {
   homeAssistantGreenAlternativeFaqEn,
   homeAssistantGreenAlternativeFaqFr,
+  homeAssistantGreenAlternativeFaqDe,
 } from "../data/homeAssistantGreenAlternativeData";
 
 export default function HomeAssistantGreenAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = homeAssistantGreenAlternativeContent[lang];
-  const faq = lang === "fr" ? homeAssistantGreenAlternativeFaqFr : homeAssistantGreenAlternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? homeAssistantGreenAlternativeFaqFr
+      : lang === "de"
+        ? homeAssistantGreenAlternativeFaqDe
+        : homeAssistantGreenAlternativeFaqEn;
 
   return (
     <UseCasePage

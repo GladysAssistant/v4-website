@@ -5,10 +5,14 @@ import {
   getWebSiteNode,
   getOgImageUrl,
 } from "../structuredData";
-import { energyFaqEn, energyFaqFr } from "../energyMonitoringData";
+import {
+  energyFaqEn,
+  energyFaqFr,
+  energyFaqDe,
+} from "../energyMonitoringData";
 
 export function getEnergyMonitoringPageSchema(lang) {
-  const prefix = lang === "fr" ? "/fr" : "";
+  const prefix = lang === "en" ? "" : `/${lang}`;
   const pageUrl = `${SITE_URL}${prefix}/home-energy-monitoring/`;
 
   return {
@@ -22,14 +26,18 @@ export function getEnergyMonitoringPageSchema(lang) {
         headline:
           lang === "fr"
             ? "Suivi de consommation électrique : réduisez votre facture d'électricité"
+            : lang === "de"
+            ? "Energiemonitoring zu Hause: Stromverbrauch messen und Stromrechnung senken"
             : "Home energy monitoring: track your consumption and cut your electricity bill",
         description:
           lang === "fr"
             ? "Suivez la consommation électrique de votre maison en temps réel, au global et appareil par appareil, puis automatisez les économies, en local avec Gladys Assistant. Compatible Linky, Enedis et Tempo."
+            : lang === "de"
+            ? "Miss den Stromverbrauch deines Zuhauses in Echtzeit, für das ganze Haus und pro Gerät, und senke deine Rechnung mit Automationen, lokal und privat mit Gladys Assistant."
             : "Monitor your home's electricity consumption in real time, whole-home and per device, then use automations to cut your bill, locally and privately with Gladys Assistant.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
-        inLanguage: lang === "fr" ? "fr" : "en",
+        inLanguage: lang,
         isPartOf: { "@id": `${SITE_URL}/#website` },
         author: {
           "@type": "Person",
@@ -42,7 +50,10 @@ export function getEnergyMonitoringPageSchema(lang) {
           { "@type": "SoftwareApplication", name: "Gladys Assistant" },
         ],
       },
-      toFaqPage(lang === "fr" ? energyFaqFr : energyFaqEn, pageUrl),
+      toFaqPage(
+        lang === "fr" ? energyFaqFr : lang === "de" ? energyFaqDe : energyFaqEn,
+        pageUrl,
+      ),
     ],
   };
 }

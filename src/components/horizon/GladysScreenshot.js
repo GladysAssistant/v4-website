@@ -15,13 +15,15 @@ const WIDTHS = [640, 1000, 1400];
 
 function GladysScreenshot({ lang, caption, shot = "hero", alt }) {
   const { siteConfig } = useDocusaurusContext();
+  // Screenshots only exist in French and English.
+  const shotLang = lang === "fr" ? "fr" : "en";
   const url = (width) =>
-    `${siteConfig.baseUrl}img/home/horizon/${shot}-${lang}-${width}.webp`;
+    `${siteConfig.baseUrl}img/home/horizon/${shot}-${shotLang}-${width}.webp`;
 
-  const defaultAlt =
-    lang === "fr"
-      ? "Le tableau de bord de Gladys Assistant"
-      : "The Gladys Assistant dashboard";
+  const defaultAlt = {
+    fr: "Le tableau de bord de Gladys Assistant",
+    de: "Das Dashboard von Gladys Assistant",
+  }[lang] || "The Gladys Assistant dashboard";
 
   return (
     <figure className={styles.screenshot}>

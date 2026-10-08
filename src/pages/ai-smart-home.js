@@ -10,6 +10,7 @@ import { getAiSmartHomePageSchema } from "../data/schemas/aiSmartHome";
 import aiSmartHomeContent, {
   aiSmartHomeFaqEn,
   aiSmartHomeFaqFr,
+  aiSmartHomeFaqDe,
 } from "../data/aiSmartHomeData";
 
 import styles from "./comparison.module.css";
@@ -75,6 +76,8 @@ function PillarContent({ content, faq, lang }) {
           caption={
             lang === "fr"
               ? "Parlez à votre maison en langage naturel : l'IA de Gladys s'occupe du reste."
+              : lang === "de"
+              ? "Sprich mit deinem Zuhause in normaler Sprache: Die KI von Gladys erledigt den Rest."
               : "Talk to your home in plain language: Gladys' AI handles the rest."
           }
         />
@@ -175,9 +178,16 @@ function PillarContent({ content, faq, lang }) {
 
 export default function AiSmartHomePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale)
+    ? i18n.currentLocale
+    : "en";
   const content = aiSmartHomeContent[lang];
-  const faq = lang === "fr" ? aiSmartHomeFaqFr : aiSmartHomeFaqEn;
+  const faq =
+    lang === "fr"
+      ? aiSmartHomeFaqFr
+      : lang === "de"
+      ? aiSmartHomeFaqDe
+      : aiSmartHomeFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

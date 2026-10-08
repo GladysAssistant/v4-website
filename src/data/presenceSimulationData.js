@@ -261,6 +261,134 @@ const presenceContent = {
       secondary: { label: "Découvrir les scènes", href: "/docs/scenes/intro/" },
     },
   },
+
+  de: {
+    meta: {
+      title: "Anwesenheitssimulation: Einbrecher abschrecken",
+      description:
+        "Anwesenheitssimulation mit Gladys: Licht, Rollläden und TV gehen in deiner Abwesenheit zufällig an und aus. Lokale Szenen, kostenlos, Open Source, privat.",
+    },
+    screenshotCaption:
+      "Baue deine Anwesenheitssimulation aus Szenen in Gladys, lokal auf deinem eigenen Rechner.",
+    hero: {
+      title: "Anwesenheitssimulation: Lass dein Zuhause bewohnt aussehen",
+      subtitle:
+        "Schalte Licht, Rollläden und Geräte zufällig, während du weg bist, damit ein leeres Haus bewohnt wirkt, alles mit lokalen Szenen, die du komplett im Griff hast.",
+      intro: [
+        "Ein leeres Zuhause ist ein leichtes Ziel. Die wirksamste und günstigste Abschreckung gegen Einbrüche ist es, das Haus bewohnt aussehen zu lassen, während du unterwegs bist.",
+        "Mit Gladys Assistant baust du deine Anwesenheitssimulation aus Szenen: Lampen und Rollläden, die zu glaubwürdigen Zeiten an- und ausgehen, auf Wunsch auch zufällig, lokal auf deinem eigenen Rechner, kostenlos und Open Source.",
+      ],
+      primaryCta: { label: "Kostenlos loslegen", href: "/de/docs/" },
+      secondaryCta: {
+        label: "Mehr über Szenen →",
+        href: "/de/docs/scenes/intro/",
+      },
+    },
+    problem: {
+      title: "Warum ein leeres Zuhause ein Ziel ist",
+      intro: "Einbrecher suchen nach Häusern, die offensichtlich leer stehen. Die typischen Anzeichen sind leicht zu erkennen:",
+      points: [
+        "Lichter, die während deines Urlaubs jeden Abend aus bleiben.",
+        "Rollläden oder Jalousien, die sich tagelang nicht bewegen.",
+        "Kein Lebenszeichen: kein Fernsehflackern, keine wechselnden Muster, gar nichts.",
+        "Ein vorhersehbares, dunkles, regloses Haus, genau das, worauf Gelegenheitsdiebe hoffen.",
+      ],
+      outro:
+        "Eine Anwesenheitssimulation beseitigt diese Anzeichen, indem sie die kleinen, unregelmäßigen Signale nachbildet, die zeigen, dass jemand zu Hause ist.",
+    },
+    features: {
+      title: "Was eine Anwesenheitssimulation kann",
+      intro: "Du entscheidest, wie bewohnt dein Zuhause wirken soll, mit einfachen Szenen, die du komplett im Griff hast:",
+      cards: [
+        {
+          icon: "💡",
+          title: "Zufällige Lichtwechsel",
+          text: "Schalte das Licht in verschiedenen Räumen abends zu wechselnden, glaubwürdigen Zeiten an und aus, statt nach einem auffällig starren Zeitplan.",
+        },
+        {
+          icon: "🪟",
+          title: "Rollläden & Jalousien",
+          text: "Öffne und schließe motorisierte Rollläden morgens und abends, damit sich das Haus von außen so verhält, als wäre jemand da.",
+        },
+        {
+          icon: "🌅",
+          title: "Timing nach Sonnenuntergang",
+          text: "Löse Szenen relativ zu Sonnenauf- und -untergang an deinem Standort aus, damit sich die Simulation automatisch den Jahreszeiten anpasst.",
+        },
+        {
+          icon: "📺",
+          title: "TV & Ambientegeräte",
+          text: "Schalte einen Fernseher, einen smarten Lautsprecher oder eine Lampe hinter dem Vorhang ein, für überzeugendes Licht und echte Lebenszeichen.",
+        },
+        {
+          icon: "🎲",
+          title: "Zufällige Muster",
+          text: "Bring Zufall in die Zeiten und in die Wahl der beleuchteten Räume, damit das Muster von der Straße aus nie automatisiert wirkt.",
+        },
+        {
+          icon: "🗓️",
+          title: "Nur wenn du weg bist",
+          text: "Knüpfe das Ganze an den Zustand „Haus leer“, damit die Simulation nur läuft, wenn wirklich niemand zu Hause ist.",
+        },
+      ],
+    },
+    how: {
+      title: "So baust du eine Anwesenheitssimulation in Gladys",
+      intro: "Es gibt dafür keinen einzelnen Knopf, du setzt sie aus Szenen zusammen, und genau das macht sie so flexibel:",
+      points: [
+        "Lege eine Bedingung „Haus leer“ auf Basis der Anwesenheit an (Handys nicht mehr im Netzwerk oder ein manueller „Abwesend“-Schalter).",
+        "Baue eine Szene, die ein Licht einschaltet, eine zufällige Zeit wartet und es dann wieder ausschaltet, und wiederhole das in ein paar Räumen.",
+        "Plane die Szenen für den Abend, relativ zum Sonnenuntergang, und nur solange das Haus leer ist.",
+        "Ergänze Rollläden, die morgens hoch- und abends runterfahren, um die Illusion zu vervollständigen.",
+        "Alles läuft lokal auf deinem Rechner und funktioniert weiter, selbst wenn dein Internet ausfällt.",
+      ],
+      outro: "Deine Regeln, dein Timing, dein Zuhause, ohne dass dein Zeitplan in der Cloud eines anderen liegt.",
+    },
+    solution: {
+      title: "Lokal, privat und kostenlos im Betrieb",
+      paragraphs: [
+        "Da Gladys auf deinem eigenen Rechner läuft, funktioniert deine Anwesenheitssimulation auch ohne Internet, und niemand außerhalb deines Zuhauses kennt deinen Zeitplan oder weiß, wann du weg bist.",
+        "Der Kern von Gladys ist kostenlos und Open Source, die Anwesenheitssimulation kostet dich also nichts außer den Geräten, die du ohnehin besitzt. Sie ergänzt eine DIY-Alarmanlage perfekt: Die Simulation schreckt ab, die Alarmanlage reagiert.",
+      ],
+      link: {
+        label: "So funktionieren Szenen →",
+        href: "/de/docs/scenes/intro/",
+      },
+    },
+    related: {
+      title: "Weiterlesen",
+      intro: "Kombiniere die Anwesenheitssimulation mit dem Rest deines lokalen Smart Homes:",
+      links: [
+        {
+          label: "DIY-Alarmanlage",
+          href: "/de/diy-home-alarm-system/",
+          text: "Die natürliche Ergänzung: Die Simulation schreckt ab, eine lokale Alarmanlage erkennt Einbrüche und alarmiert dich.",
+        },
+        {
+          label: "So funktionieren Szenen",
+          href: "/de/docs/scenes/intro/",
+          text: "Die Bausteine: Auslöser, Bedingungen, Aktionen und Zufall.",
+        },
+        {
+          label: "Dein Zuhause mit KI steuern",
+          href: "/de/ai-smart-home/",
+          text: "Lass die KI deine Automatisierungen mit der Zeit klüger und natürlicher machen.",
+        },
+        {
+          label: "Ein lokales Smart Home aufbauen",
+          href: "/de/local-smart-home/",
+          text: "Das große Ganze: ein privates, lokales Smart Home auf Basis offener Standards.",
+        },
+      ],
+    },
+    faqTitle: "Häufige Fragen",
+    cta: {
+      title: "Lass dein Zuhause bewohnt wirken, während du weg bist",
+      text: "Gladys ist kostenlos, Open Source und setzt auf lokal zuerst. Baue deine Anwesenheitssimulation aus Szenen, kostenlos und quelloffen, und dein Zeitplan bleibt privat.",
+      primary: { label: "Jetzt loslegen", href: "/de/docs/" },
+      secondary: { label: "Mehr über Szenen", href: "/de/docs/scenes/intro/" },
+    },
+  },
 };
 
 export const presenceFaqEn = [
@@ -326,6 +454,39 @@ export const presenceFaqFr = [
     question: "Est-ce que ça coûte quelque chose ?",
     answer:
       "Non. Le cœur de Gladys est gratuit et open source, et la simulation de présence utilise des appareils que vous possédez déjà : rien de plus à payer.",
+  },
+];
+
+export const presenceFaqDe = [
+  {
+    question: "Was ist eine Anwesenheitssimulation?",
+    answer:
+      "Eine Anwesenheitssimulation lässt ein leeres Zuhause bewohnt wirken, indem sie Licht, Rollläden und andere Geräte automatisch zu glaubwürdigen Zeiten ein- und ausschaltet. Sie ist eine der günstigsten und wirksamsten Maßnahmen, um Einbrecher abzuschrecken, während du weg bist.",
+  },
+  {
+    question: "Hat Gladys eine Funktion zur Anwesenheitssimulation?",
+    answer:
+      "Gladys hat keinen einzelnen Knopf dafür, du baust die Anwesenheitssimulation aus Szenen. Genau das macht sie so stark: Statt eines starren Fertigmodus bestimmst du genau, welche Geräte wann und wie zufällig reagieren.",
+  },
+  {
+    question: "Wie wirkt die Simulation möglichst realistisch?",
+    answer:
+      "Nutze zufällige Verzögerungen, variiere, welche Räume beleuchtet werden, löse Szenen relativ zum Sonnenuntergang aus und bewege die Rollläden morgens und abends. Unregelmäßige Muster, die sich am Sonnenuntergang orientieren, wirken viel überzeugender als ein fester Tagesplan.",
+  },
+  {
+    question: "Funktioniert die Anwesenheitssimulation ohne Internet?",
+    answer:
+      "Ja. Gladys läuft lokal, deine Szenen werden also auch dann ausgelöst, wenn deine Internetverbindung ausfällt, und dein Zeitplan verlässt nie dein Zuhause.",
+  },
+  {
+    question: "Kann die Simulation nur laufen, wenn ich weg bin?",
+    answer:
+      "Ja. Knüpfe deine Szenen an den Zustand „Haus leer“, basierend auf der Anwesenheit deiner Handys im Netzwerk oder einem manuellen „Abwesend“-Schalter, damit die Simulation nur läuft, wenn wirklich niemand zu Hause ist.",
+  },
+  {
+    question: "Kostet das etwas?",
+    answer:
+      "Nein. Der Kern von Gladys ist kostenlos und Open Source, und die Anwesenheitssimulation nutzt Geräte, die du bereits besitzt. Es fallen also keine Zusatzkosten an.",
   },
 ];
 

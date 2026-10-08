@@ -9,6 +9,7 @@ import { getBestZigbeeDonglePageSchema } from "../data/schemas/bestZigbeeDongle"
 import bestZigbeeDongleContent, {
   bestZigbeeDongleFaqEn,
   bestZigbeeDongleFaqFr,
+  bestZigbeeDongleFaqDe,
 } from "../data/bestZigbeeDongleData";
 
 import styles from "./comparison.module.css";
@@ -195,9 +196,14 @@ function GuideContent({ content, faq }) {
 
 export default function BestZigbeeDonglePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = bestZigbeeDongleContent[lang];
-  const faq = lang === "fr" ? bestZigbeeDongleFaqFr : bestZigbeeDongleFaqEn;
+  const faq =
+    lang === "fr"
+      ? bestZigbeeDongleFaqFr
+      : lang === "de"
+        ? bestZigbeeDongleFaqDe
+        : bestZigbeeDongleFaqEn;
 
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>

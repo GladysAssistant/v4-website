@@ -6,13 +6,19 @@ import { getHubitatAlternativePageSchema } from "../data/schemas/hubitatAlternat
 import hubitatAlternativeContent, {
   hubitatAlternativeFaqEn,
   hubitatAlternativeFaqFr,
+  hubitatAlternativeFaqDe,
 } from "../data/hubitatAlternativeData";
 
 export default function HubitatAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = i18n.currentLocale === "fr" ? "fr" : "en";
+  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = hubitatAlternativeContent[lang];
-  const faq = lang === "fr" ? hubitatAlternativeFaqFr : hubitatAlternativeFaqEn;
+  const faq =
+    lang === "fr"
+      ? hubitatAlternativeFaqFr
+      : lang === "de"
+        ? hubitatAlternativeFaqDe
+        : hubitatAlternativeFaqEn;
 
   return (
     <UseCasePage

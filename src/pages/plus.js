@@ -9,6 +9,7 @@ import Translate, { translate } from "@docusaurus/Translate";
 import { TestimonialSection } from "../components/Testimonial";
 import testimonialsFr from "../components/testimonials/testimonial.plus.fr.json";
 import testimonialsEn from "../components/testimonials/testimonial.plus.en.json";
+import testimonialsDe from "../components/testimonials/testimonial.plus.de.json";
 
 import BlackFridayBanner from "../components/plus/BlackFridayBanner";
 import PricingTable from "../components/plus/PricingTable";
@@ -34,11 +35,14 @@ import { getPlusPageSchema } from "../data/structuredData";
 const testimonials = {
   fr: testimonialsFr,
   en: testimonialsEn,
+  de: testimonialsDe,
 };
 
 function PlusContent() {
   const { i18n } = useDocusaurusContext();
   const language = i18n.currentLocale;
+  // The app screenshots only exist in French and English.
+  const screenshotLang = language === "fr" ? "fr" : "en";
   const recommendedCheckoutHref = getCheckoutUrl(language);
 
   return (
@@ -156,13 +160,13 @@ function PlusContent() {
                 <img
                   alt="Gladys Plus"
                   src={useBaseUrl(
-                    `img/home/horizon/phone-${language}-780.webp`,
+                    `img/home/horizon/phone-${screenshotLang}-780.webp`,
                   )}
                   srcSet={[390, 585, 780]
                     .map(
                       (width) =>
                         `${useBaseUrl(
-                          `img/home/horizon/phone-${language}-${width}.webp`,
+                          `img/home/horizon/phone-${screenshotLang}-${width}.webp`,
                         )} ${width}w`,
                     )
                     .join(", ")}
