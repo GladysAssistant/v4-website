@@ -554,6 +554,188 @@ const alarmContent = {
       secondary: { label: "Zur Anleitung", href: "/de/docs/dashboard/alarm/" },
     },
   },
+  es: {
+    meta: {
+      title: "Alarma casera DIY autovigilada, sin contrato",
+      description:
+        "Crea una alarma para casa DIY autovigilada y sin contrato de vigilancia: el hardware es tuyo, funciona en local, con modos armado, parcial y pánico, sensores asequibles y alertas instantáneas en tu móvil. Una alternativa local a Verisure.",
+    },
+    screenshotCaption:
+      "Arma, desarma y vigila tu casa desde Gladys, en local y según tus propias reglas.",
+    hero: {
+      title: "Crea tu propio sistema de alarma para casa, local y privado",
+      subtitle:
+        "Una alarma DIY de verdad, con sensores de movimiento, contactos de puerta, cámaras y alertas instantáneas, que funciona en local sobre un hardware que es tuyo y que tú controlas.",
+      intro: [
+        "Las alarmas tradicionales te atan a un hardware propietario, a la nube de una empresa y a unas reglas que no puedes cambiar. La seguridad de tu casa no debería ser una caja negra que le alquilas a otro.",
+        "Con Gladys Assistant creas un sistema de alarma de verdad a partir de sensores asequibles y fáciles de encontrar. Funciona en local en tu propio equipo, te avisa al instante y se comporta exactamente como tú decides.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Guía de configuración de la alarma →",
+        href: "/es/docs/dashboard/alarm/",
+      },
+    },
+    problem: {
+      title: "El problema de las alarmas con central receptora",
+      intro: "Las alarmas con servicio de vigilancia listas para usar (Verisure, Prosegur, Ring Alarm y similares) son cómodas, pero tienen un precio alto en otros aspectos:",
+      points: [
+        "Hardware y sensores propietarios, atados a un único proveedor.",
+        "Tus datos de seguridad y las imágenes de tus cámaras pasan por la nube de una empresa.",
+        "Escenarios rígidos: se aplican sus reglas, no las tuyas.",
+        "Si la empresa cambia sus condiciones o cierra, tu sistema puede quedarse inservible.",
+        "El sistema nunca es realmente tuyo: lo alquilas.",
+      ],
+      outro:
+        "Una alarma autoalojada le da la vuelta a todo esto: tus reglas, tu hardware, tus datos, y todo se queda en casa.",
+    },
+    comparison: {
+      title: "Alarma DIY con Gladys vs alarma con suscripción de vigilancia",
+      intro:
+        "Así se compara una alarma Gladys autoalojada con una alarma tradicional con central receptora (Verisure, Prosegur, Ring Alarm y similares):",
+      cols: {
+        feature: "",
+        gladys: "Alarma DIY con Gladys",
+        other: "Alarma con suscripción de vigilancia",
+      },
+      rows: [
+        {
+          feature: "Propiedad",
+          gladys: "El hardware y la instalación son tuyos",
+          other: "Alquilas todo el sistema",
+        },
+        {
+          feature: "Tus datos",
+          gladys: "Se quedan en tu red local",
+          other: "Pasan por su nube",
+        },
+        {
+          feature: "Funciona sin internet",
+          gladys: "Sí, totalmente en local",
+          other: "Limitada sin su servicio",
+        },
+        {
+          feature: "Sensores y hardware",
+          gladys: "Cualquier sensor Zigbee o Matter, a tu elección",
+          other: "Propietarios, atados a ellos",
+        },
+        {
+          feature: "Reglas y automatizaciones",
+          gladys: "Las tuyas, totalmente personalizables",
+          other: "Las suyas, escenarios fijos",
+        },
+        {
+          feature: "Suscripción",
+          gladys: "Gladys Plus opcional para el acceso remoto, las copias de seguridad y el streaming de cámaras",
+          other: "Obligatoria: el sistema es la suscripción",
+        },
+        {
+          feature: "Si la empresa cierra",
+          gladys: "Sigue funcionando, es tuyo",
+          other: "Puede quedarse inservible",
+        },
+      ],
+      outro:
+        "Ambas pueden implicar una suscripción. La diferencia está en lo que obtienes a cambio: con Gladys el hardware y la instalación son tuyos, todo funciona en local y tus datos se quedan en casa, en lugar de alquilar un sistema que nunca controlas.",
+    },
+    features: {
+      title: "Lo que puede hacer tu alarma Gladys",
+      intro: "Consigues un sistema de alarma de verdad, montado con piezas sencillas y asequibles:",
+      cards: [
+        {
+          icon: "🛡️",
+          title: "Modos armado, parcial y pánico",
+          text: "Arma toda la casa cuando sales, usa el modo parcial por la noche para vigilar solo el exterior o lanza una alarma de pánico al instante.",
+        },
+        {
+          icon: "🚪",
+          title: "Sensores de movimiento y de puerta",
+          text: "Usa detectores de movimiento Zigbee asequibles y contactos de puerta/ventana como disparadores, combinando la marca que quieras.",
+        },
+        {
+          icon: "📷",
+          title: "Capturas de cámara",
+          text: "En caso de intrusión, Gladys puede enviarte una captura de la cámara para que veas al instante lo que está pasando.",
+        },
+        {
+          icon: "📲",
+          title: "Alertas instantáneas",
+          text: "Recibe un aviso por Telegram, SMS u otros canales en cuanto algo se dispara con la alarma armada.",
+        },
+        {
+          icon: "🔢",
+          title: "Teclado y retardo de armado",
+          text: "Desarma desde una tablet de pared con un código numérico y configura un retardo de armado para tener tiempo de salir antes de que se active.",
+        },
+        {
+          icon: "🔔",
+          title: "Sirenas y elementos disuasorios",
+          text: "Haz sonar una sirena, haz parpadear las luces o ejecuta la escena que quieras: la respuesta la diseñas tú.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo funciona una alarma Gladys",
+      intro: "La montas con bloques sencillos, sin necesidad de instalador:",
+      points: [
+        "Añade el widget de Alarma a tu panel, con cuatro modos: armado, desarmado, parcial y pánico.",
+        "Define un código de alarma y un retardo de armado en los ajustes de tu casa.",
+        "Crea una escena para el armado (avisarte, hacer parpadear las luces) y la más importante: la de intrusión.",
+        "La escena de intrusión se activa con un movimiento o la apertura de una puerta, con la condición de que la alarma esté armada, y después envía alertas y una captura de la cámara y hace sonar una sirena.",
+        "Todo funciona en local y reacciona en tiempo real, incluso si se cae tu conexión a internet.",
+      ],
+      outro: "Sensores asequibles, tus propias reglas y un sistema que es totalmente tuyo.",
+    },
+    solution: {
+      title: "Local, privada y realmente tuya",
+      paragraphs: [
+        "Como Gladys funciona en tu propio equipo, tu alarma sigue funcionando sin internet, y los datos de tus sensores y las imágenes de tus cámaras se quedan en tu red local, no en los servidores de una empresa de seguridad.",
+        "El núcleo de Gladys es gratuito y de código abierto, así que toda tu instalación es tuya. Si quieres echar un vistazo a distancia, Gladys Plus (opcional) añade acceso remoto cifrado y streaming de cámaras, según tus condiciones y sin entregar nunca tus datos a terceros.",
+      ],
+      link: {
+        label: "Lee la guía completa de configuración de la alarma →",
+        href: "/es/docs/dashboard/alarm/",
+      },
+    },
+    related: {
+      title: "Ir más allá",
+      intro: "Configúrala o combínala con el resto de tu hogar inteligente local:",
+      links: [
+        {
+          label: "Detección de fugas de agua",
+          href: "/es/water-leak-detection/",
+          text: "Detecta fugas y corta el agua automáticamente.",
+        },
+        {
+          label: "La guía de configuración de la alarma",
+          href: "/es/docs/dashboard/alarm/",
+          text: "Paso a paso: modos, retardo de armado, código y escenas de intrusión.",
+        },
+        {
+          label: "Simulación de presencia",
+          href: "/es/presence-simulation/",
+          text: "Haz que tu casa parezca habitada mientras estás fuera, el complemento perfecto para tu alarma.",
+        },
+        {
+          label: "Controla tu casa con IA",
+          href: "/es/ai-smart-home/",
+          text: "Deja que la IA revise una cámara en caso de intrusión y decida si debe avisarte.",
+        },
+        {
+          label: "Crea un hogar inteligente local",
+          href: "/es/local-smart-home/",
+          text: "La visión de conjunto: un hogar inteligente privado y local, basado en estándares abiertos.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Crea una alarma para casa que sea realmente tuya",
+      text: "Gladys es gratuito, de código abierto y pensado para funcionar en local. Crea una alarma de verdad con sensores asequibles, que funciona en tu propio hardware y mantiene tus datos en casa.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "Ver la guía de la alarma", href: "/es/docs/dashboard/alarm/" },
+    },
+  },
 };
 
 export const alarmFaqEn = [
@@ -667,6 +849,44 @@ export const alarmFaqDe = [
     question: "Bleiben meine Sicherheitsdaten privat?",
     answer:
       "Ja. Gladys ist selbst gehostet, deine Sensordaten und Kamerabilder bleiben also in deinem lokalen Netzwerk, ohne Cloud-Zwang und ohne Weiterverkauf deiner Daten.",
+  },
+];
+
+export const alarmFaqEs = [
+  {
+    question: "¿Puedo crear mi propio sistema de alarma para casa?",
+    answer:
+      "Sí. Con Gladys Assistant creas un sistema de alarma de verdad, con modos armado, parcial y pánico, a partir de sensores fáciles de encontrar. Funciona en local en tu propio equipo, sobre un hardware que es tuyo, sin depender de un fabricante.",
+  },
+  {
+    question: "¿Qué hardware necesito para una alarma DIY?",
+    answer:
+      "Detectores de movimiento Zigbee asequibles y contactos de puerta/ventana como disparadores y, de forma opcional, una cámara y una sirena. Puedes combinar marcas libremente, no hace falta comprar ningún kit propietario.",
+  },
+  {
+    question: "¿La alarma funciona sin internet?",
+    answer:
+      "Sí. Gladys funciona en local, así que la alarma detecta las intrusiones y reacciona en tiempo real aunque se caiga tu conexión a internet. Solo las notificaciones a distancia y el acceso remoto necesitan conexión.",
+  },
+  {
+    question: "¿Cómo me avisa Gladys de una intrusión?",
+    answer:
+      "Mediante escenas. Cuando un sensor se dispara con la alarma armada, Gladys puede enviarte una alerta por Telegram o SMS junto con una captura de la cámara, hacer sonar una sirena, hacer parpadear las luces o ejecutar cualquier otra acción que diseñes.",
+  },
+  {
+    question: "¿Una alarma DIY es tan buena como una profesional?",
+    answer:
+      "Una alarma Gladys es muy capaz y flexible, pero es un sistema que montas y mantienes tú. Para mucha gente, una alarma local bien montada es más que suficiente; si además quieres vigilancia profesional, puedes combinar ambas.",
+  },
+  {
+    question: "¿Gladys es una alternativa a una alarma con suscripción como Verisure?",
+    answer:
+      "Sí, pero de otra manera. Con Gladys el hardware y la instalación son tuyos, y tu alarma funciona en local en tu propio equipo, con tus datos en casa. Gladys ofrece una suscripción opcional, Gladys Plus, para el acceso remoto cifrado y el streaming de cámaras: no se trata de evitar cualquier suscripción, sino de que sigas siendo el dueño de tu sistema y de tus datos en lugar de alquilar un servicio de vigilancia que nunca controlas.",
+  },
+  {
+    question: "¿Mis datos de seguridad son privados?",
+    answer:
+      "Sí. Gladys es autoalojado, así que los datos de tus sensores y las imágenes de tus cámaras se quedan en tu red local, sin nube obligatoria y sin reventa de datos.",
   },
 ];
 

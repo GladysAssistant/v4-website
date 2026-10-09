@@ -23,6 +23,7 @@ function GladysScreenshot({ lang, caption, shot = "hero", alt }) {
   const defaultAlt = {
     fr: "Le tableau de bord de Gladys Assistant",
     de: "Das Dashboard von Gladys Assistant",
+    es: "El panel de control de Gladys Assistant",
   }[lang] || "The Gladys Assistant dashboard";
 
   return (

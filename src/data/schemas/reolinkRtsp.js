@@ -3,6 +3,7 @@ import reolinkRtspContent, {
   reolinkRtspFaqEn,
   reolinkRtspFaqFr,
   reolinkRtspFaqDe,
+  reolinkRtspFaqEs,
 } from "../reolinkRtspData";
 
 export function getReolinkRtspPageSchema(lang) {
@@ -12,6 +13,7 @@ export function getReolinkRtspPageSchema(lang) {
     faqEn: reolinkRtspFaqEn,
     faqFr: reolinkRtspFaqFr,
     faqDe: reolinkRtspFaqDe,
+    faqEs: reolinkRtspFaqEs,
     about: [
       { "@type": "Thing", name: "RTSP" },
       { "@type": "Organization", name: "Reolink" },

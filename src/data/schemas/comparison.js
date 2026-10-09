@@ -9,6 +9,7 @@ import {
   comparisonFaqEn,
   comparisonFaqFr,
   comparisonFaqDe,
+  comparisonFaqEs,
 } from "../comparisonData";
 
 export function getComparisonPageSchema(lang) {
@@ -28,12 +29,16 @@ export function getComparisonPageSchema(lang) {
             ? "Home Assistant vs Gladys Assistant : le comparatif honnête"
             : lang === "de"
               ? "Home Assistant vs. Gladys Assistant: der ehrliche Vergleich"
+              : lang === "es"
+              ? "Home Assistant vs Gladys Assistant: una comparación honesta"
               : "Home Assistant vs Gladys Assistant: an honest comparison",
         description:
           lang === "fr"
             ? "Comparatif honnête entre Home Assistant et Gladys Assistant par le créateur de Gladys : installation, simplicité, intégrations, automatisations, communauté et prix."
             : lang === "de"
               ? "Ehrlicher Vergleich von Home Assistant und Gladys Assistant – vom Gladys-Entwickler selbst: Installation, Bedienung, Integrationen, Automatisierungen, Community und Preis."
+              : lang === "es"
+              ? "Una comparación honesta entre Home Assistant y Gladys Assistant, escrita por el creador de Gladys: instalación, facilidad de uso, integraciones, automatizaciones, comunidad y precio."
               : "An honest comparison between Home Assistant and Gladys Assistant by Gladys' creator: installation, ease of use, integrations, automations, community and pricing.",
         image: getOgImageUrl(pageUrl, lang),
         url: pageUrl,
@@ -54,6 +59,8 @@ export function getComparisonPageSchema(lang) {
           ? comparisonFaqFr
           : lang === "de"
             ? comparisonFaqDe
+          : lang === "es"
+            ? comparisonFaqEs
             : comparisonFaqEn,
         pageUrl,
       ),

@@ -3,6 +3,7 @@ import domoticzAlternativeContent, {
   domoticzAlternativeFaqEn,
   domoticzAlternativeFaqFr,
   domoticzAlternativeFaqDe,
+  domoticzAlternativeFaqEs,
 } from "../domoticzAlternativeData";
 
 export function getDomoticzAlternativePageSchema(lang) {
@@ -12,6 +13,7 @@ export function getDomoticzAlternativePageSchema(lang) {
     faqEn: domoticzAlternativeFaqEn,
     faqFr: domoticzAlternativeFaqFr,
     faqDe: domoticzAlternativeFaqDe,
+    faqEs: domoticzAlternativeFaqEs,
     about: [
       { "@type": "SoftwareApplication", name: "Domoticz" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

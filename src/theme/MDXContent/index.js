@@ -5,7 +5,12 @@ import MDXContent from "@theme-original/MDXContent";
 import { useColorMode } from "@docusaurus/theme-common";
 import SubcribeNewsletter from "../../components/home/SubcribeNewsletter";
 
-const LOCATION_BLACK_LIST = ["/fr/blog/", "/de/blog/", "/blog/"];
+const LOCATION_BLACK_LIST = [
+  "/fr/blog/",
+  "/de/blog/",
+  "/es/blog/",
+  "/blog/",
+];
 
 export default function MDXContentWrapper(props) {
   const context = useDocusaurusContext();

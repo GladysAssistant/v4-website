@@ -557,6 +557,189 @@ const homeyAlternativeContent = {
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
   },
+
+  es: {
+    meta: {
+      title: "Alternativa a Homey Pro: gratis y de código abierto",
+      description:
+        "¿Buscas una alternativa a Homey Pro? Gladys Assistant es gratis, de código abierto y funciona en tu mini-PC o Raspberry Pi: Zigbee, Z-Wave, Matter.",
+    },
+    screenshotCaption:
+      "Un panel de control limpio, escenas visuales y control local, en un hardware que ya tienes o que eliges tú.",
+    hero: {
+      title: "¿Buscas una alternativa a Homey?",
+      subtitle:
+        "Homey hizo que la domótica fuera fácil. Gladys Assistant sigue siendo fácil y, además, es gratis, de código abierto y tuya, en el hardware que elijas.",
+      intro: [
+        "Homey es uno de los hubs domóticos más agradables que existen: una app muy cuidada, Flows sencillos y muchas radios en un solo aparato. Pero también tiene su precio (el Homey Pro cuesta ya 449 €), una plataforma propietaria y una empresa que pertenece a LG desde 2024.",
+        "Gladys Assistant es una alternativa gratuita y de código abierto con el mismo enfoque en la sencillez. Funciona en tu propio mini-PC o Raspberry Pi, empareja directamente tus dispositivos Zigbee, Z-Wave y Matter y te permite crear escenas en un editor visual. Sin hub que comprar y sin suscripción obligatoria.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/docs/" },
+      secondaryCta: {
+        label: "Prueba la demo →",
+        href: "https://demo.gladysassistant.com/dashboard",
+      },
+    },
+    problem: {
+      title: "Por qué muchos buscan una alternativa a Homey",
+      intro: "Homey está bien hecho, pero hay algunas cosas que hacen que la gente busque otras opciones:",
+      points: [
+        "El hardware es caro: 449 € el Homey Pro y 279 € el Homey Pro mini desde junio de 2026.",
+        "La plataforma es propietaria. Las apps pueden ser de código abierto, pero Homey en sí no lo es.",
+        "Homey pertenece en un 80 % a LG desde julio de 2024: el rumbo del producto depende ahora de la estrategia de un gran grupo de electrónica.",
+        "Homey Self-Hosted Server funciona en tu propia máquina, pero es una licencia de pago, y para Zigbee o Z-Wave necesitas un Homey Bridge.",
+      ],
+      outro:
+        "Si te gusta la sencillez de Homey pero quieres que la plataforma sea tuya, hay una forma gratuita de conseguirlo.",
+    },
+    comparison: {
+      title: "Gladys Assistant vs. Homey",
+      intro: "Así se comparan los dos:",
+      cols: {
+        feature: "",
+        gladys: "Gladys Assistant",
+        other: "Homey Pro / Self-Hosted Server",
+      },
+      rows: [
+        {
+          feature: "Hardware",
+          gladys: "Tu propio mini-PC, Raspberry Pi o NAS",
+          other: "Homey Pro (449 €), Pro mini (279 €) o tu servidor con Self-Hosted Server",
+        },
+        {
+          feature: "Precio del software",
+          gladys: "Gratis",
+          other: "Incluido con el hub; Self-Hosted Server 4,99 €/mes o 149 € de por vida",
+        },
+        {
+          feature: "Zigbee y Z-Wave",
+          gladys: "Dongles USB (Zigbee2MQTT, Z-Wave JS UI)",
+          other: "Integrados en el Homey Pro; Self-Hosted Server necesita un Homey Bridge",
+        },
+        {
+          feature: "Matter",
+          gladys: "Sí, como controlador Matter",
+          other: "Sí, y el Homey Pro también es border router Thread",
+        },
+        {
+          feature: "Infrarrojos y 433 MHz",
+          gladys: "Con Broadlink y RFLink",
+          other: "Integrados en el Homey Pro (433 MHz fuera de Norteamérica)",
+        },
+        {
+          feature: "Código fuente",
+          gladys: "Código abierto (Apache 2.0)",
+          other: "Propietario",
+        },
+        {
+          feature: "IA",
+          gladys: "Asistente de IA con Gladys Plus, servidor MCP gratuito",
+          other: "Depende del plan y de las apps",
+        },
+      ],
+      outro:
+        "Homey gana con su aparato todo en uno que integra todas las radios. Gladys gana en precio, apertura y libertad de hardware.",
+    },
+    features: {
+      title: "Por qué Gladys es una buena alternativa a Homey",
+      intro: "Lo que obtienes con Gladys:",
+      cards: [
+        {
+          icon: "💸",
+          title: "Gratis, en el hardware que elijas",
+          text: "Un portátil viejo, un mini-PC, una Raspberry Pi o tu NAS: Gladys funciona en cualquier sitio donde funcione Docker.",
+        },
+        {
+          icon: "🎨",
+          title: "Sencillo por diseño",
+          text: "Como Homey, Gladys está pensado para quienes quieren un hogar inteligente que funcione, no un hobby que les ocupe todos los fines de semana.",
+        },
+        {
+          icon: "🧩",
+          title: "Escenas visuales",
+          text: "Disparadores, condiciones, si/entonces/si no y retardos, en un editor tan amigable como los Flows de Homey.",
+        },
+        {
+          icon: "📡",
+          title: "Zigbee, Z-Wave, Matter y más",
+          text: "Además de Philips Hue, Tapo, Shelly, Sonos, Tuya, Netatmo y un catálogo creciente de integraciones de la comunidad.",
+        },
+        {
+          icon: "🤖",
+          title: "IA integrada",
+          text: "Habla con tu casa en lenguaje natural con Gladys Plus, o conecta Claude a través del servidor MCP.",
+        },
+        {
+          icon: "💚",
+          title: "Código abierto desde 2013",
+          text: "Apache 2.0 y desarrollado de forma abierta: ninguna adquisición puede quitarte tu plataforma.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo pasar de Homey a Gladys",
+      intro: "Migra a tu ritmo, habitación por habitación:",
+      points: [
+        "Instala Gladys en un mini-PC o una Raspberry Pi y haz una lista de tus dispositivos Homey por protocolo.",
+        "Dispositivos Zigbee: conecta un dongle USB Zigbee, elimina cada dispositivo de Homey y emparéjalo con Zigbee2MQTT.",
+        "Dispositivos Z-Wave: conecta un stick USB Z-Wave, excluye cada dispositivo de Homey e inclúyelo en Z-Wave JS UI.",
+        "Dispositivos Matter: compártelos con Gladys como segundo controlador y luego elimínalos de Homey.",
+        "Dispositivos wifi y en la nube: conéctalos a través de su integración en Gladys.",
+        "Reconstruye tus Flows como escenas de Gladys y luego vende o jubila el hub.",
+      ],
+      outro:
+        "Los dispositivos Thread necesitan un border router Thread, y Gladys no lo es: conserva uno en casa (Apple TV, HomePod, Nest Hub…) para ellos.",
+    },
+    solution: {
+      title: "La sencillez de Homey, sin su precio",
+      paragraphs: [
+        "Gladys comparte la convicción de Homey de que un hogar inteligente debe ser fácil. La diferencia está en la propiedad: Gladys es gratis, de código abierto y funciona en el hardware que elijas, así que tu casa no depende de los precios de una gama de productos ni de la estrategia de una empresa.",
+        "Gladys Plus es una suscripción opcional para el acceso remoto cifrado, las copias de seguridad, Alexa y Google Home y el asistente de IA, con un mes de prueba gratuita.",
+      ],
+      link: {
+        label: "Mira lo que funciona con Gladys →",
+        href: "/works-with/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Más formas de montar un hogar inteligente local:",
+      links: [
+        {
+          label: "El mejor hub domótico",
+          href: "/best-smart-home-hub/",
+          text: "Homey, Hubitat, SmartThings y un mini-PC, comparados.",
+        },
+        {
+          label: "Alternativa a Home Assistant Green",
+          href: "/home-assistant-green-alternative/",
+          text: "Monta tu propio hub local con un mini-PC.",
+        },
+        {
+          label: "Alternativa a Hubitat",
+          href: "/hubitat-alternative/",
+          text: "Otro hub local, y por qué hay quien lo abandona.",
+        },
+        {
+          label: "Qué hub Matter elegir",
+          href: "/matter-hub/",
+          text: "Controlador, border router Thread, bridge: lo que realmente necesitas.",
+        },
+        {
+          label: "Zigbee2MQTT sin Home Assistant",
+          href: "/zigbee2mqtt-without-home-assistant/",
+          text: "Zigbee local con una instalación gestionada y paneles.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Un hogar inteligente fácil, gratis y de código abierto",
+      text: "Gladys se instala con un solo comando de Docker en el hardware que elijas. Pruébalo junto a tu Homey y migra a tu ritmo.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Funciona con Gladys", href: "/works-with/" },
+    },
+  },
 };
 
 export const homeyAlternativeFaqEn = [
@@ -640,6 +823,34 @@ export const homeyAlternativeFaqDe = [
     question: "Kann Gladys die Infrarot- und 433-MHz-Funktechnik von Homey ersetzen?",
     answer:
       "Teilweise. Gladys steuert Infrarotgeräte über Broadlink-Sender und 433-MHz-Geräte über RFLink. Der Homey Pro vereint mehr Funkstandards in einem Gerät, prüfe deine Geräte also zuerst auf der Seite „Funktioniert mit Gladys“.",
+  },
+];
+
+export const homeyAlternativeFaqEs = [
+  {
+    question: "¿Existe una alternativa gratuita a Homey Pro?",
+    answer:
+      "Sí. Gladys Assistant es gratis y de código abierto, y funciona en tu propio mini-PC, Raspberry Pi o NAS. Añade un dongle Zigbee y un stick Z-Wave si usas esos protocolos, y tendrás control local, paneles y escenas visuales sin comprar ningún hub.",
+  },
+  {
+    question: "¿Cuánto cuesta Homey en 2026?",
+    answer:
+      "Desde el 1 de junio de 2026, el Homey Pro cuesta 449 € y el Homey Pro mini 279 €. Homey Self-Hosted Server cuesta 4,99 € al mes o 149 € por una licencia de por vida, y necesita un Homey Bridge para Zigbee y Z-Wave.",
+  },
+  {
+    question: "¿Homey es de código abierto?",
+    answer:
+      "No. La plataforma de Homey es propietaria; los desarrolladores pueden elegir publicar sus apps de Homey como código abierto. Gladys Assistant es totalmente de código abierto bajo licencia Apache 2.0.",
+  },
+  {
+    question: "¿De quién es Homey?",
+    answer:
+      "LG Electronics adquirió en julio de 2024 el 80 % de Athom, la empresa detrás de Homey, con el plan de comprar el resto más adelante. La marca Homey y su equipo se han mantenido.",
+  },
+  {
+    question: "¿Puede Gladys sustituir las radios de infrarrojos y 433 MHz de Homey?",
+    answer:
+      "En parte. Gladys controla los dispositivos de infrarrojos con emisores Broadlink y los dispositivos de 433 MHz con RFLink. El Homey Pro integra más radios en un solo aparato, así que comprueba primero tus dispositivos en la página \"Funciona con Gladys\".",
   },
 ];
 

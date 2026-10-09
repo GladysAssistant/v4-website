@@ -404,6 +404,138 @@ const localSmartHomeContent = {
       secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
     },
   },
+  es: {
+    meta: {
+      title: "Hogar inteligente local sin la nube: guía de configuración",
+      description:
+        "Cómo crear un hogar inteligente privado que siga funcionando cuando se cae internet: qué dispositivos funcionan en local (Zigbee, Matter, MQTT), qué hub usar y cómo autoalojarlo con software gratuito y de código abierto.",
+    },
+    hero: {
+      title: "Crea un hogar inteligente 100 % local y privado",
+      subtitle:
+        "Sin nube, sin grabaciones, sin reventa de datos: un hogar inteligente que funciona en casa y solo responde ante ti.",
+      intro: [
+        "La mayoría de los aparatos domóticos envían todo lo que ven y oyen a la nube de un fabricante. Tus rutinas, tu presencia, a veces tu voz y las imágenes de tus cámaras salen de tu casa, y tienes que confiar en que se guarden de forma segura y en que no se apaguen cuando la empresa cambie de opinión.",
+        "Un hogar inteligente local le da la vuelta a todo esto. Tus dispositivos, tus automatizaciones y tus datos se quedan en tu propia red. Sigue funcionando sin conexión a internet, no depende de una suscripción para seguir vivo y nadie te elabora un perfil a partir de él. Esta guía explica por qué es importante, qué significa realmente \"local\" y cómo montar uno.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Explora las integraciones →",
+        href: "/es/docs/integrations/",
+      },
+    },
+    whyCloud: {
+      title: "Por qué tu hogar inteligente no debería vivir en la nube",
+      intro:
+        "Los hogares inteligentes en la nube son cómodos el primer día, pero en la práctica estás alquilando tu domótica a un tercero. Las contrapartidas se van sumando:",
+      points: [
+        "Privacidad: tus hábitos, tu presencia, tu voz y los datos de tus cámaras se envían a servidores que no controlas, donde pueden almacenarse, analizarse o usarse con fines publicitarios.",
+        "Dependencia: si se cae tu conexión a internet o los servidores del fabricante, tus luces, cerraduras y rutinas pueden dejar de responder.",
+        "Fin de producto: los dispositivos en la nube quedan inservibles cuando una empresa cierra una línea de productos o es adquirida, aunque el hardware funcione perfectamente.",
+        "Latencia: un toque o un sensor a menudo tienen que hacer un viaje de ida y vuelta a un servidor lejano antes de que ocurra nada en casa.",
+        "Dependencia de un ecosistema: cada ecosistema te empuja a comprar sus propios accesorios y mantiene tus datos dentro de su app.",
+        "Coste: cada vez más funciones pasan a estar detrás de suscripciones mensuales.",
+      ],
+      outro:
+        "Nada de esto significa que los dispositivos en la nube sean inútiles, pero no deberían ser la base de la que depende toda tu casa.",
+    },
+    definition: {
+      title: "¿Qué es un hogar inteligente local?",
+      intro:
+        "Un hogar inteligente local (o autoalojado) ejecuta el cerebro de tu casa en un hardware que es tuyo, en tu propia red. En la práctica, eso significa:",
+      points: [
+        "Tus automatizaciones se ejecutan en un dispositivo de tu casa, no en un servidor remoto.",
+        "Sigue funcionando sin conexión: sin internet, tus escenas principales no tienen ningún problema.",
+        "Tus datos se quedan en tu red local, sin cuenta obligatoria en la nube.",
+        "Tú controlas las actualizaciones, y nadie puede dejarte tirado porque se haya cerrado un servicio.",
+        "Se basa en estándares abiertos, así que eres libre de mezclar marcas y evitar las ataduras.",
+      ],
+      outro:
+        "El acceso remoto y la IA siguen siendo posibles, pero se convierten en una opción que activas, no en un requisito que te imponen.",
+    },
+    howTo: {
+      title: "Cómo crear un hogar inteligente local",
+      cards: [
+        {
+          icon: "🧠",
+          title: "Un hub local",
+          text: "Empieza con un controlador autoalojado que funcione en casa y lo orqueste todo. Es el cerebro de tu instalación, y ahí es donde entra Gladys Assistant.",
+        },
+        {
+          icon: "🔌",
+          title: "Estándares abiertos en lugar de aparatos en la nube",
+          text: "Elige dispositivos que hablen Zigbee, Matter o MQTT en lugar de aparatos Wi-Fi que solo funcionan a través de la app y la nube de un fabricante.",
+        },
+        {
+          icon: "🖥️",
+          title: "Tu propio hardware",
+          text: "Ejecútalo en una Raspberry Pi, un mini-PC o un NAS que ya tengas. Una máquina pequeña y de bajo consumo es más que suficiente para la mayoría de los hogares.",
+        },
+        {
+          icon: "⚙️",
+          title: "Un verdadero motor de automatización",
+          text: "Crea escenas con disparadores, condiciones y acciones para que tu casa reaccione por sí sola, todo evaluado en local.",
+        },
+        {
+          icon: "🎙️",
+          title: "Voz e IA a tu manera (opcional)",
+          text: "La voz manos libres y la asistencia con IA son opcionales. Cuando las usas, las peticiones pasan por una nube privada y segura gestionada por un proyecto independiente, sin anuncios ni reventa de datos, nunca por el asistente de una gran tecnológica que te elabora un perfil.",
+        },
+        {
+          icon: "🔐",
+          title: "Acceso remoto a tu manera",
+          text: "Cuando quieras echar un vistazo desde fuera, usa un acceso remoto cifrado de extremo a extremo en lugar de abrir tu casa a un tercero.",
+        },
+      ],
+    },
+    gladys: {
+      title: "Gladys Assistant: una base local ante todo",
+      paragraphs: [
+        "Gladys Assistant es una plataforma domótica gratuita, de código abierto y autoalojada, construida precisamente sobre estos principios. Se instala con un solo comando Docker en una Raspberry Pi, un mini-PC o un NAS, y funciona íntegramente en tu red local.",
+        "Todo se configura desde una interfaz clara, sin archivos de configuración. Se basa en estándares abiertos (Zigbee, Matter, MQTT) y en un motor de automatización local completo, así que tus escenas del día a día se ejecutan íntegramente en casa. Las funciones opcionales, como la voz, la IA y el acceso remoto, sí dependen de la nube, pero de una nube privada y segura de un proyecto independiente: sin anuncios, sin reventa de datos y con acceso remoto cifrado de extremo a extremo.",
+      ],
+      link: { label: "Empieza con Gladys →", href: "/es/docs/" },
+    },
+    related: {
+      title: "Sustituye la nube, pieza a pieza",
+      intro:
+        "No tienes que cambiarlo todo de golpe. Estas guías muestran cómo dejar atrás los servicios en la nube más habituales sin renunciar a la comodidad:",
+      links: [
+        {
+          label: "Alternativa a Alexa",
+          href: "/es/alexa-alternative/",
+          text: "Conserva el control por voz sin enviar todo lo que dices a la nube de Amazon.",
+        },
+        {
+          label: "Alternativa a Google Home",
+          href: "/es/google-home-alternative/",
+          text: "Una alternativa privada y local a Google Home y al Asistente de Google.",
+        },
+        {
+          label: "Alternativa a Home Assistant",
+          href: "/es/home-assistant-alternative/",
+          text: "Una plataforma más sencilla, local y de código abierto, sin YAML ni una curva de aprendizaje empinada.",
+        },
+        {
+          label: "Gladys vs Home Assistant",
+          href: "/es/home-assistant-vs-gladys-assistant/",
+          text: "Cómo se comparan realmente las dos principales plataformas de código abierto que apuestan por lo local.",
+        },
+        {
+          label: "Controla tu casa con IA",
+          href: "/es/ai-smart-home/",
+          text: "Conserva la comodidad de la IA y el control por voz, en una nube privada, no en el asistente de una gran tecnológica.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Empieza a crear tu hogar inteligente local",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Local ante todo, autoalojado, sin necesidad de nube.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "Descubre Gladys Plus", href: "/es/plus/" },
+    },
+  },
 };
 
 export const localSmartHomeFaqEn = [
@@ -502,6 +634,39 @@ export const localSmartHomeFaqDe = [
     question: "Kann ich auf ein lokales Smart Home trotzdem von unterwegs zugreifen?",
     answer:
       "Ja. Auch ein lokales Smart Home kann Fernzugriff bieten, der Unterschied liegt im Wie. Mit Gladys Plus ist der Fernzugriff Ende-zu-Ende-verschlüsselt, sodass du von überall nach dem Rechten sehen kannst, ohne die Kontrolle über dein Zuhause an einen Dritten abzugeben.",
+  },
+];
+
+export const localSmartHomeFaqEs = [
+  {
+    question: "¿Qué es un hogar inteligente local?",
+    answer:
+      "Un hogar inteligente local ejecuta el cerebro de tu casa, es decir, el motor de automatización y tus datos, en un hardware que es tuyo, en tu propia red, en lugar de en la nube de un fabricante. Sigue funcionando sin conexión, no depende de una suscripción y tus datos se quedan en casa.",
+  },
+  {
+    question: "¿Puede funcionar un hogar inteligente sin internet?",
+    answer:
+      "Sí. Con una plataforma local y autoalojada como Gladys Assistant, tus automatizaciones se ejecutan en un dispositivo de tu casa, así que tus escenas principales siguen funcionando aunque se caiga internet. Solo el acceso remoto y algunas funciones en la nube necesitan conexión.",
+  },
+  {
+    question: "¿Un hogar inteligente local es más privado?",
+    answer:
+      "Sí. Como todo se ejecuta en tu propia máquina, tus hábitos, tu presencia, tu voz y los datos de tus cámaras se quedan en tu red local en lugar de enviarse a servidores que no controlas. No hay grabaciones en los servidores de un tercero ni perfiles publicitarios.",
+  },
+  {
+    question: "¿Cuál es el mejor software domótico local y de código abierto?",
+    answer:
+      "Entre las opciones locales y de código abierto más populares están Gladys Assistant, Home Assistant, openHAB, Jeedom y Domoticz. Gladys apuesta por la sencillez y una interfaz clara sin archivos de configuración, basada en estándares abiertos como Zigbee, Matter y MQTT.",
+  },
+  {
+    question: "¿Necesito conocimientos técnicos para crear un hogar inteligente local?",
+    answer:
+      "Menos de lo que crees. Gladys se instala con un solo comando Docker y todo se configura con clics en la interfaz. Básicamente necesitas una máquina pequeña (Raspberry Pi, mini-PC o NAS) y dispositivos que usen estándares abiertos.",
+  },
+  {
+    question: "¿Puedo acceder a mi hogar inteligente a distancia si es local?",
+    answer:
+      "Sí. Un hogar inteligente local también puede ofrecer acceso remoto; la diferencia está en cómo. Con Gladys Plus, el acceso remoto está cifrado de extremo a extremo, así que puedes echar un vistazo desde cualquier lugar sin ceder el control de tu casa a un tercero.",
   },
 ];
 

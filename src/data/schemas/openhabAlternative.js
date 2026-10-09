@@ -3,6 +3,7 @@ import openhabAlternativeContent, {
   openhabAlternativeFaqEn,
   openhabAlternativeFaqFr,
   openhabAlternativeFaqDe,
+  openhabAlternativeFaqEs,
 } from "../openhabAlternativeData";
 
 export function getOpenhabAlternativePageSchema(lang) {
@@ -12,6 +13,7 @@ export function getOpenhabAlternativePageSchema(lang) {
     faqEn: openhabAlternativeFaqEn,
     faqFr: openhabAlternativeFaqFr,
     faqDe: openhabAlternativeFaqDe,
+    faqEs: openhabAlternativeFaqEs,
     about: [
       { "@type": "SoftwareApplication", name: "openHAB" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

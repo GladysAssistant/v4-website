@@ -415,6 +415,143 @@ const bestSmartHomeHubContent = {
       secondary: { label: "Der beste Mini-PC", href: "/de/mini-pc-home-automation/" },
     },
   },
+
+  es: {
+    meta: {
+      title: "El mejor hub domótico de 2026: comparativa honesta",
+      description:
+        "SmartThings, Hubitat, Homey Pro, Home Assistant Green, Aqara M3 o un mini-PC con Gladys: precios, protocolos, control local y suscripciones, comparados.",
+    },
+    hero: {
+      title: "El mejor hub domótico de 2026",
+      subtitle:
+        "El hub es el cerebro de tu hogar inteligente. Así se comparan las principales opciones en precio, protocolos, control local y dependencia del fabricante, sin rankings de afiliados.",
+      intro: [
+        "\"Hub domótico\" puede significar cosas muy distintas: una caja que depende de la nube y está atada a un ecosistema, un hub local dedicado, un dispositivo de streaming que además hace de controlador Matter, o un software de código abierto que funciona en un pequeño ordenador que es tuyo.",
+        "Desarrollamos Gladys Assistant, una de las opciones de abajo, así que hemos mantenido esta comparativa ceñida a los hechos: los precios y las funciones salen de las páginas de cada fabricante, revisadas en octubre de 2026.",
+      ],
+    },
+    picks: {
+      title: "Nuestras recomendaciones rápidas",
+      intro: "Si solo vas a leer una sección:",
+      cards: [
+        {
+          tag: "Local, sin ataduras",
+          name: "Gladys Assistant en un mini-PC",
+          text: "Software gratuito y de código abierto en el hardware que elijas. Zigbee, Z-Wave, Matter y muchas marcas, una interfaz moderna y sin suscripción obligatoria. Es nuestro propio producto, tenlo en cuenta al juzgar.",
+          link: { label: "El mejor mini-PC para domótica →", href: "/es/mini-pc-home-automation/" },
+        },
+        {
+          tag: "Hub local listo para usar",
+          name: "Hubitat Elevation C-8 Pro",
+          text: "Zigbee y Z-Wave Long Range integrados, automatizaciones que se ejecutan en el hub. Propietario, con una interfaz anticuada.",
+          link: { label: "Gladys vs. Hubitat →", href: "/es/hubitat-alternative/" },
+        },
+        {
+          tag: "Todo en uno muy pulido",
+          name: "Homey Pro",
+          text: "Todas las radios en una caja preciosa, Flows sencillos. La opción más cara de esta comparativa.",
+          link: { label: "Gladys vs. Homey →", href: "/es/homey-alternative/" },
+        },
+        {
+          tag: "Para usuarios de Home Assistant",
+          name: "Home Assistant Green",
+          text: "La forma más fácil de empezar con Home Assistant. Añade los dongles Connect para Zigbee, Thread o Z-Wave.",
+          link: { label: "Alternativa a Home Assistant Green →", href: "/es/home-assistant-green-alternative/" },
+        },
+      ],
+    },
+    table: {
+      title: "Comparativa de hubs domóticos",
+      intro: "Las principales opciones de un vistazo:",
+      columns: ["Hub", "Precio", "Zigbee / Z-Wave", "Matter / Thread", "Funciona en local", "Suscripción", "Código abierto"],
+      rows: [
+        // Gladys: free software; mini-PC prices from Beelink EQ14 / GMKtec G3 Plus reviews (Aug 2026, USD);
+        // Gladys Plus EU price as on the other German/French pages.
+        {
+          name: "Gladys en un mini-PC",
+          highlight: true,
+          cells: ["Software gratuito + mini-PC (unos 190–270 US$) + dongle Zigbee", "Sí, con dongles USB", "Controlador Matter; dispositivos Thread compartidos desde un hub de Apple, Google o Amazon", "Sí", "Opcional (Gladys Plus desde 6,99 €/mes)", "Sí (Apache 2.0)"],
+        },
+        // EU prices as checked for the French page (home-assistant.io/green, nabucasa.com/pricing).
+        {
+          name: "Home Assistant Green",
+          cells: ["179 € (+ 45 € ZBT-2, 59 € ZWA-2)", "Con los dongles Connect ZBT-2 / ZWA-2", "Matter; Thread con el ZBT-2", "Sí", "Opcional (Home Assistant Cloud 7,50 €/mes)", "Sí (Apache 2.0)"],
+        },
+        // hubitat.com/products, docs2.hubitat.com services (US prices).
+        {
+          name: "Hubitat Elevation C-8 Pro",
+          cells: ["184,95 US$", "Ambos integrados, Z-Wave Long Range", "Matter; Thread solo en una edición especial sin Zigbee", "Sí", "Opcional (Remote Admin, Hub Protect: 45 US$/año cada uno)", "No"],
+        },
+        // homey.app (EU prices since June 1, 2026, as on the French page).
+        {
+          name: "Homey Pro",
+          cells: ["449 € (Pro mini 279 €)", "Ambos integrados (mini: solo Zigbee)", "Matter y border router Thread", "Sí", "Opcional (copia de seguridad en la nube)", "No"],
+        },
+        // samsung.com Aeotec Smart Home Hub 2; SmartThings API plan from October 2026 (US prices).
+        {
+          name: "SmartThings (Aeotec Smart Home Hub 2)",
+          cells: ["119,99 US$", "Solo Zigbee, sin Z-Wave", "Matter y border router Thread", "En parte: drivers y automatizaciones locales, app a través de la nube", "No para la app; acceso a la API 4,99 US$/mes desde oct. de 2026", "No"],
+        },
+        // eu.aqara.com hub M3.
+        {
+          name: "Aqara Hub M3",
+          cells: ["159,99 €", "Solo Zigbee", "Controlador y bridge Matter, border router Thread", "Sí, automatizaciones locales", "Ninguna para las funciones del hub", "No"],
+        },
+        // aboutamazon.com fall 2025 lineup (US prices).
+        {
+          name: "Amazon Echo (Dot Max, Show 8)",
+          cells: ["Desde 99,99 US$", "Solo Zigbee", "Matter y Thread", "Sobre todo en la nube (Alexa)", "No", "No"],
+        },
+        // macrumors.com roundups (US prices since June 2026).
+        {
+          name: "Apple TV 4K / HomePod mini",
+          cells: ["249 US$ (Ethernet, Thread) / 129 US$", "No", "Matter y border router Thread", "Sí, para dispositivos Matter y HomeKit", "No", "No"],
+        },
+      ],
+      outro:
+        "Precios en euros: precios de catálogo con IVA según las páginas europeas de los fabricantes; precios en dólares: precios de catálogo en EE. UU. sin impuestos. Datos de octubre de 2026.",
+    },
+    criteria: {
+      title: "Cómo elegir",
+      intro: "Cinco preguntas importan más que la ficha técnica:",
+      points: [
+        "¿Qué radios usan tus dispositivos? Zigbee y Z-Wave necesitan un hub con esas radios (o un dongle USB); Matter over Thread necesita un border router Thread.",
+        "¿Sigue funcionando sin internet? Las automatizaciones locales sobreviven a los cortes y al cierre de un fabricante; las de la nube, no.",
+        "¿Hay suscripción y qué desbloquea? El acceso remoto, las copias de seguridad y la IA suelen ser las partes de pago.",
+        "¿Quién decide el futuro del producto? Un hub propietario puede perder funciones o soporte; un software de código abierto se puede bifurcar y mantener vivo.",
+        "¿Cuánto te apetece trastear? Algunas plataformas recompensan horas de configuración; otras buscan funcionar nada más sacarlas de la caja.",
+      ],
+    },
+    gladys: {
+      title: "Nuestra opción: Gladys en un mini-PC",
+      paragraphs: [
+        "Gladys Assistant es una solución de domótica gratuita y de código abierto que funciona en tu propio mini-PC, Raspberry Pi o NAS. Añade un dongle Zigbee y tendrás control local de Zigbee, Z-Wave (con Z-Wave JS UI), Matter, MQTT y muchas marcas, con una interfaz moderna y escenas visuales.",
+        "Gladys Plus es opcional: acceso remoto cifrado, copias de seguridad, Alexa y Google Home y un asistente de IA, desde 6,99 €/mes, con un mes de prueba gratuita.",
+      ],
+      links: [
+        { label: "El mejor mini-PC para domótica →", href: "/es/mini-pc-home-automation/" },
+        { label: "Funciona con Gladys →", href: "/es/works-with/" },
+      ],
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Comparativas detalladas:",
+      links: [
+        { label: "Alternativa a Hubitat", href: "/es/hubitat-alternative/", text: "Gladys vs. Hubitat Elevation en detalle." },
+        { label: "Alternativa a Homey", href: "/es/homey-alternative/", text: "Gladys vs. Homey Pro y Self-Hosted Server." },
+        { label: "Alternativa a SmartThings", href: "/es/smartthings-alternative/", text: "Pasar de SmartThings a una plataforma local." },
+        { label: "Alternativa a Home Assistant Green", href: "/es/home-assistant-green-alternative/", text: "Un hub local en tu propio mini-PC." },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Monta tu hub en un hardware que sea tuyo",
+      text: "Gladys es gratis, de código abierto y se instala con un solo comando de Docker en un mini-PC o una Raspberry Pi.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "El mejor mini-PC", href: "/es/mini-pc-home-automation/" },
+    },
+  },
 };
 
 export const bestSmartHomeHubFaqEn = [
@@ -498,6 +635,34 @@ export const bestSmartHomeHubFaqDe = [
     question: "Kann ein Mini-PC einen Smart-Home-Hub ersetzen?",
     answer:
       "Ja. Ein kleiner Intel-Mini-PC mit Gladys Assistant oder Home Assistant und einem Zigbee- oder Z-Wave-USB-Stick kann alles, was ein dedizierter Hub kann – meist mit mehr Leistung und Speicher, und du wählst die Hardware selbst.",
+  },
+];
+
+export const bestSmartHomeHubFaqEs = [
+  {
+    question: "¿Cuál es el mejor hub domótico en 2026?",
+    answer:
+      "Depende de lo que valores. Para el control local sin ataduras: un software de código abierto como Gladys Assistant o Home Assistant en un pequeño ordenador. Para una caja local lista para usar con Z-Wave: Hubitat. Para una experiencia todo en uno muy pulida: Homey Pro. Para la entrada más barata a un ecosistema: SmartThings o un Echo, a cambio de depender más de la nube.",
+  },
+  {
+    question: "¿Necesito un hub para Matter?",
+    answer:
+      "Necesitas un controlador Matter y, para los dispositivos Matter over Thread, un border router Thread. Muchos dispositivos que quizá ya tienes hacen ambas cosas, como un Apple TV 4K (modelo con Ethernet), un HomePod mini, un Google TV Streamer, los Echo recientes, el Aqara M3 o el SmartThings Hub 2. Gladys es un controlador Matter y usa un border router Thread que ya tengas.",
+  },
+  {
+    question: "¿Qué hubs domóticos son compatibles con Z-Wave?",
+    answer:
+      "Hubitat y Homey Pro tienen Z-Wave integrado, y Home Assistant Green y Gladys lo admiten con un stick USB. El hub actual de SmartThings (Aeotec Smart Home Hub 2) y los dispositivos Amazon Echo no tienen Z-Wave.",
+  },
+  {
+    question: "¿Existe un hub domótico sin suscripción?",
+    answer:
+      "Sí, la mayoría de los hubs funcionan sin suscripción; las suscripciones suelen añadir acceso remoto, copias de seguridad o extras. Gladys, Home Assistant, Hubitat, Homey y Aqara funcionan todos en local gratis, con servicios de pago opcionales. La app y el hub de SmartThings siguen siendo gratuitos; desde octubre de 2026, solo el acceso a la API para integraciones de terceros requiere un plan personal de 4,99 US$/mes.",
+  },
+  {
+    question: "¿Puede un mini-PC sustituir a un hub domótico?",
+    answer:
+      "Sí. Un pequeño mini-PC Intel con Gladys Assistant o Home Assistant, más un dongle USB Zigbee o Z-Wave, hace todo lo que hace un hub dedicado, normalmente con más potencia y almacenamiento, y eres tú quien elige el hardware.",
   },
 ];
 

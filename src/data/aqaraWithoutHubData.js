@@ -402,6 +402,137 @@ const aqaraWithoutHubContent = {
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
     },
   },
+  es: {
+    meta: {
+      title: "Sensores Aqara sin hub: control Zigbee en local",
+      description:
+        "Usa los sensores Zigbee de Aqara sin hub Aqara ni la app Aqara: vincula sensores de puerta, movimiento, temperatura, fugas y vibración con Zigbee2MQTT y automatízalos en local con Gladys Assistant. Gratuito y de código abierto.",
+    },
+    screenshotCaption:
+      "Sensores Aqara de puerta, movimiento y temperatura, vinculados directamente por Zigbee, en un panel de Gladys.",
+    hero: {
+      title: "Sensores Aqara sin el hub de Aqara",
+      subtitle:
+        "Los pequeños y baratos sensores Zigbee de Aqara funcionan perfectamente sin el hub de Aqara. Vincúlalos con un dongle Zigbee y Gladys Assistant, y automatízalos en local junto con cualquier otra marca.",
+      intro: [
+        "Aqara fabrica algunos de los sensores de hogar inteligente más populares: diminutos contactos de puerta y ventana, sensores de movimiento, sensores de temperatura y humedad, detectores de fugas y botones inalámbricos, que funcionan durante meses o años con una pila de botón. La mayoría son dispositivos Zigbee.",
+        "No necesitas un hub Aqara ni la app Aqara para usarlos. Gladys Assistant, una plataforma de hogar inteligente gratuita y de código abierto, instala Zigbee2MQTT por ti: vincula tus sensores Aqara con un dongle USB Zigbee y úsalos en escenas locales, junto a tus luces, enchufes y termostatos de cualquier marca.",
+      ],
+      primaryCta: {
+        label: "Guía de configuración de Zigbee2MQTT",
+        href: "/docs/integrations/zigbee2mqtt/",
+      },
+      secondaryCta: {
+        label: "Empieza con Gladys →",
+        href: "/docs/",
+      },
+    },
+    problem: {
+      title: "Por qué usar los sensores Aqara sin el hub",
+      intro: "El hub y la app de Aqara funcionan, pero:",
+      points: [
+        "La app Aqara y muchas funciones del hub dependen de la nube y de la cuenta de Aqara.",
+        "Las automatizaciones se quedan sobre todo dentro del mundo Aqara, con pocas opciones para combinar otras marcas.",
+        "Cada hub es una caja más y una app más que mantener.",
+        "El historial de tus sensores vive en la app de Aqara y no en tu propio equipo.",
+      ],
+      outro:
+        "Vinculados a un coordinador Zigbee local, esos mismos sensores se convierten en piezas que puedes usar en cualquier sitio.",
+    },
+    features: {
+      title: "Sensores Aqara que funcionan de maravilla en Gladys",
+      intro: "Estos tipos de dispositivos Zigbee de Aqara se corresponden directamente con funciones de Gladys:",
+      cards: [
+        {
+          icon: "🚪",
+          title: "Sensores de puerta y ventana",
+          text: "Estado abierto/cerrado para alarmas, calefacción que se apaga cuando se abre una ventana y notificaciones.",
+        },
+        {
+          icon: "🏃",
+          title: "Sensores de movimiento",
+          text: "Enciende las luces cuando alguien entra, o arma la alarma cuando la casa está vacía.",
+        },
+        {
+          icon: "🌡️",
+          title: "Temperatura y humedad",
+          text: "El clima de cada habitación en tu panel, con historial y gráficos.",
+        },
+        {
+          icon: "💧",
+          title: "Detectores de fugas",
+          text: "Recibe una alerta y cierra automáticamente una válvula de agua cuando se detecta una fuga.",
+        },
+        {
+          icon: "📳",
+          title: "Sensores de vibración",
+          text: "Entérate de cuándo ha terminado la lavadora, o de cuándo alguien intenta forzar una puerta.",
+        },
+        {
+          icon: "🔘",
+          title: "Botones inalámbricos",
+          text: "Pulsación simple, doble y larga, cada una lanzando una escena distinta.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo vincular sensores Aqara sin el hub",
+      intro: "En un mini-PC o una Raspberry Pi con Gladys:",
+      points: [
+        "Conecta un coordinador Zigbee a la máquina y activa Zigbee2MQTT en Gladys.",
+        "Elimina el sensor de la app Aqara si estaba vinculado a un hub Aqara.",
+        "En Gladys, abre Zigbee2MQTT → Descubrir y permite la vinculación.",
+        "Mantén pulsado el botón de reinicio del sensor unos cinco segundos hasta que su LED parpadee, y mantenlo cerca del coordinador mientras se vincula.",
+        "Asígnalo a una habitación, añádelo a tu panel y úsalo en escenas.",
+      ],
+      outro:
+        "Los sensores Aqara tienen fama de ser exigentes con los routers Zigbee a través de los que se conectan. Si uno se desconecta una y otra vez, consulta las notas de Zigbee2MQTT para ese modelo y elige routers que funcionen bien con los dispositivos Aqara.",
+    },
+    solution: {
+      title: "Lo que conviene saber antes de comprar",
+      paragraphs: [
+        "No todos los dispositivos Aqara recientes son Zigbee. Algunos modelos nuevos, como el Door and Window Sensor P2 y el Motion and Light Sensor P2, usan Thread y Matter: no se vinculan con Zigbee2MQTT, pero Gladys puede controlar dispositivos Matter a través de un border router Thread. Comprueba el protocolo en la caja y el modelo exacto en la lista de dispositivos de Zigbee2MQTT.",
+        "Gladys es gratuito y de código abierto, se desarrolla desde 2013 y funciona íntegramente en tu propio hardware.",
+      ],
+      link: {
+        label: "¿Necesitas un hub Matter? →",
+        href: "/matter-hub/",
+      },
+    },
+    related: {
+      title: "Ir más allá",
+      intro: "Más dispositivos sin su hub:",
+      links: [
+        {
+          label: "Philips Hue sin el puente",
+          href: "/philips-hue-without-bridge/",
+          text: "Vincula las bombillas Hue directamente con tu dongle Zigbee.",
+        },
+        {
+          label: "Tuya Zigbee sin la app Tuya",
+          href: "/tuya-zigbee-without-hub/",
+          text: "Control local para los dispositivos Zigbee de Tuya.",
+        },
+        {
+          label: "Detección de fugas de agua",
+          href: "/water-leak-detection/",
+          text: "Detecta fugas y corta el agua automáticamente.",
+        },
+        {
+          label: "Alarma casera DIY",
+          href: "/diy-home-alarm-system/",
+          text: "Una alarma autovigilada con sensores de puerta y de movimiento.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Libera tus sensores Aqara",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Conecta un dongle Zigbee y vincula tu primer sensor Aqara.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Guía de Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
+    },
+  },
 };
 
 export const aqaraWithoutHubFaqEn = [
@@ -470,6 +601,29 @@ export const aqaraWithoutHubFaqDe = [
     question: "Verliere ich etwas ohne den Aqara-Hub?",
     answer:
       "Du verzichtest auf die Aqara-App, ihre Cloud-Funktionen und hubspezifische Funktionen wie die eingebaute Sirene oder Kamera des Hubs. Die Messwerte und Ereignisse der Sensoren funktionieren in Gladys vollständig, und dort baust du deine eigenen Szenen.",
+  },
+];
+
+export const aqaraWithoutHubFaqEs = [
+  {
+    question: "¿Los sensores Aqara funcionan sin el hub de Aqara?",
+    answer:
+      "Sí, los sensores Zigbee de Aqara se pueden vincular con cualquier coordinador Zigbee compatible a través de Zigbee2MQTT. Con Gladys Assistant y un dongle USB Zigbee, los usas en local sin el hub, la app ni la cuenta de Aqara.",
+  },
+  {
+    question: "¿Qué sensores Aqara funcionan con Zigbee2MQTT?",
+    answer:
+      "Hay más de 200 dispositivos Aqara en la lista: sensores de puerta y ventana, sensores de movimiento, sensores de temperatura y humedad, detectores de fugas, sensores de vibración y botones inalámbricos. Comprueba el modelo exacto en la lista de dispositivos compatibles de Zigbee2MQTT, ya que los modelos Thread/Matter más recientes no son Zigbee.",
+  },
+  {
+    question: "¿Por qué mi sensor Aqara se desconecta una y otra vez?",
+    answer:
+      "Los dispositivos finales de Aqara y Xiaomi no buscan un nuevo padre cuando su router desaparece, y se sabe que algunos routers provocan desconexiones, según la documentación de Zigbee2MQTT (ciertos dispositivos Centralite, GE, Ledvance/OSRAM, Legrand, Sylvania y SmartThings). Vincúlalos justo al lado del coordinador y elige routers que funcionen bien con Aqara, como los enchufes y repetidores IKEA Tradfri.",
+  },
+  {
+    question: "¿Pierdo algo sin el hub de Aqara?",
+    answer:
+      "Pierdes la app Aqara, sus funciones en la nube y las funciones propias del hub, como su sirena o su cámara integradas. Las lecturas y los eventos de los sensores funcionan por completo en Gladys, donde creas tus propias escenas.",
   },
 ];
 

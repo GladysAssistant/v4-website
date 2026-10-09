@@ -402,6 +402,137 @@ const tuyaZigbeeWithoutHubContent = {
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
     },
   },
+  es: {
+    meta: {
+      title: "Tuya Zigbee sin el hub ni la app de Tuya: control local",
+      description:
+        "Controla tus dispositivos Tuya Zigbee sin la pasarela Tuya, sin la app Smart Life y sin la nube: emparéjalos con Zigbee2MQTT y automatízalos en local con Gladys Assistant. Qué funciona y qué comprobar antes de comprar.",
+    },
+    screenshotCaption:
+      "Enchufes, interruptores y sensores Tuya Zigbee, emparejados directamente por Zigbee, en un panel de Gladys.",
+    hero: {
+      title: "Dispositivos Tuya Zigbee sin la app de Tuya",
+      subtitle:
+        "Los enchufes, interruptores, sensores y válvulas Tuya Zigbee baratos no necesitan la pasarela Tuya ni la nube. Emparéjalos con Zigbee2MQTT y Gladys Assistant, y contrólalos en local.",
+      intro: [
+        "Tuya es la plataforma que hay detrás de una enorme cantidad de dispositivos domóticos asequibles, vendidos bajo decenas de marcas. Normalmente, los modelos Zigbee pasan por una pasarela Tuya y la app Tuya o Smart Life, lo que significa depender de la nube de Tuya para casi todo.",
+        "Pero son dispositivos Zigbee, y Zigbee2MQTT es compatible con mucho más de mil modelos basados en Tuya. Con Gladys Assistant, una plataforma domótica gratuita y de código abierto que instala Zigbee2MQTT por ti, los emparejas con un dongle USB Zigbee y los controlas en local: sin pasarela, sin app y sin nube.",
+      ],
+      primaryCta: {
+        label: "Guía de configuración de Zigbee2MQTT",
+        href: "/docs/integrations/zigbee2mqtt/",
+      },
+      secondaryCta: {
+        label: "Dispositivos Tuya Wi-Fi →",
+        href: "/docs/integrations/external/tuya/",
+      },
+    },
+    problem: {
+      title: "Por qué sacar tus dispositivos Tuya de la nube",
+      intro: "Con la pasarela y la app de Tuya:",
+      points: [
+        "El control y las automatizaciones pasan en gran parte por los servidores en la nube de Tuya.",
+        "Si se cae internet o la nube, tus dispositivos se vuelven difíciles de controlar.",
+        "Los datos y el uso de tus dispositivos se guardan en los servidores de Tuya.",
+        "Cada app de marca blanca tiene un aspecto distinto, pero todas están ligadas al mismo sistema de cuentas en la nube.",
+      ],
+      outro:
+        "Emparejados con un coordinador Zigbee local, esos mismos dispositivos económicos funcionan íntegramente en casa.",
+    },
+    features: {
+      title: "Dispositivos Tuya Zigbee que funcionan bien en Gladys",
+      intro: "Una vez emparejados, los dispositivos Tuya se convierten en dispositivos normales de Gladys:",
+      cards: [
+        {
+          icon: "🔌",
+          title: "Enchufes inteligentes con medición de energía",
+          text: "Encendido y apagado, además de lecturas de potencia y energía, para tus electrodomésticos y el panel de energía.",
+        },
+        {
+          icon: "💡",
+          title: "Interruptores, reguladores y relés",
+          text: "Interruptores empotrados y módulos de relé para automatizar las luces y aparatos que ya tienes.",
+        },
+        {
+          icon: "🌡️",
+          title: "Sensores",
+          text: "Sensores de temperatura y humedad, de apertura de puertas y ventanas, de movimiento, de fugas de agua y de humo.",
+        },
+        {
+          icon: "🪟",
+          title: "Persianas y válvulas",
+          text: "Módulos para persianas enrollables y controladores de válvulas de agua.",
+        },
+        {
+          icon: "🎬",
+          title: "Escenas locales",
+          text: "Combina dispositivos Tuya con los de cualquier otra marca en escenas que se ejecutan en tu propio hardware.",
+        },
+        {
+          icon: "🕸️",
+          title: "Una red mallada más sólida",
+          text: "Los enchufes e interruptores Tuya conectados a la corriente retransmiten el tráfico Zigbee de tus sensores a pilas.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo emparejar dispositivos Tuya Zigbee sin el hub",
+      intro: "En un mini-PC o una Raspberry Pi con Gladys:",
+      points: [
+        "Conecta un coordinador Zigbee al equipo y activa Zigbee2MQTT en Gladys.",
+        "Elimina el dispositivo de la app Tuya o Smart Life si estaba emparejado con una pasarela Tuya.",
+        "En Gladys, abre Zigbee2MQTT → Descubrir y permite el emparejamiento.",
+        "Pon el dispositivo en modo emparejamiento, normalmente manteniendo pulsado su botón unos cinco segundos hasta que parpadee.",
+        "Comprueba que aparece con las funciones esperadas y añádelo a una habitación y a tus escenas.",
+      ],
+      outro:
+        "Los dispositivos Tuya Wi-Fi no son Zigbee: para ellos, Gladys tiene una integración Tuya aparte.",
+    },
+    solution: {
+      title: "Comprueba antes de comprar",
+      paragraphs: [
+        "Muchos dispositivos Tuya comparten el mismo número de modelo (TS0601, TS011F…) pero llevan firmwares distintos. Zigbee2MQTT los identifica por su nombre de fabricante, como _TZ3000_ o _TZE200_ seguido de un código. Antes de comprar, busca el producto exacto en la lista de dispositivos compatibles de Zigbee2MQTT y da preferencia a los anuncios que mencionan la compatibilidad con Zigbee2MQTT. Una variante totalmente nueva puede necesitar un conversor externo hasta que se añada.",
+        "Gladys es gratis y de código abierto, se desarrolla desde 2013 y funciona íntegramente en tu propio hardware.",
+      ],
+      link: {
+        label: "Zigbee2MQTT sin Home Assistant →",
+        href: "/zigbee2mqtt-without-home-assistant/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Más dispositivos sin su hub:",
+      links: [
+        {
+          label: "Sensores Aqara sin el hub",
+          href: "/aqara-without-hub/",
+          text: "Sensores Zigbee de Aqara, en local, sin la app de Aqara.",
+        },
+        {
+          label: "Philips Hue sin el puente",
+          href: "/philips-hue-without-bridge/",
+          text: "Empareja las bombillas Hue directamente con tu dongle Zigbee.",
+        },
+        {
+          label: "Detección de fugas de agua",
+          href: "/water-leak-detection/",
+          text: "Sensores de fugas y válvulas Tuya que cortan el agua automáticamente.",
+        },
+        {
+          label: "El mejor dongle USB Zigbee",
+          href: "/best-zigbee-dongle/",
+          text: "Qué coordinador Zigbee comprar.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Saca tus dispositivos Tuya de la nube",
+      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker. Conecta un dongle Zigbee y empareja tu primer dispositivo Tuya.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Guía de Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
+    },
+  },
 };
 
 export const tuyaZigbeeWithoutHubFaqEn = [
@@ -470,6 +601,29 @@ export const tuyaZigbeeWithoutHubFaqDe = [
     question: "Welche Tuya-Marken sind abgedeckt?",
     answer:
       "Viele Marken verkaufen Tuya-basierte Zigbee-Geräte, etwa Moes, Zemismart, Avatto oder Lidl Silvercrest, oft unter eigenem Namen. Entscheidend ist die Zigbee-Kennung des Geräts, die du in der Liste der von Zigbee2MQTT unterstützten Geräte prüfen kannst.",
+  },
+];
+
+export const tuyaZigbeeWithoutHubFaqEs = [
+  {
+    question: "¿Los dispositivos Tuya Zigbee funcionan sin el hub de Tuya?",
+    answer:
+      "Sí. Los dispositivos Tuya Zigbee son dispositivos Zigbee, y Zigbee2MQTT es compatible con mucho más de mil modelos basados en Tuya. Emparejados con un dongle USB Zigbee y Gladys Assistant, funcionan en local sin la pasarela Tuya, sin la app Smart Life y sin la nube.",
+  },
+  {
+    question: "¿Por qué Zigbee2MQTT no reconoce mi dispositivo Tuya?",
+    answer:
+      "Tuya reutiliza a menudo el mismo número de modelo para dispositivos con firmwares distintos. Zigbee2MQTT los identifica por el nombre de fabricante (códigos como _TZ3000_ o _TZE200_), así que una variante nueva puede no ser compatible todavía. Busca tu producto exacto en la lista de dispositivos compatibles; Zigbee2MQTT explica cómo añadir la compatibilidad con un conversor externo.",
+  },
+  {
+    question: "¿Y los dispositivos Tuya Wi-Fi?",
+    answer:
+      "Los dispositivos Tuya Wi-Fi no usan Zigbee, así que Zigbee2MQTT no puede controlarlos. Gladys tiene una integración Tuya aparte para ellos.",
+  },
+  {
+    question: "¿Qué marcas de Tuya abarca esto?",
+    answer:
+      "Muchas marcas venden dispositivos Zigbee basados en Tuya, como Moes, Zemismart, Avatto o Lidl Silvercrest, a menudo con su propio nombre. Lo que importa es la identidad Zigbee del dispositivo, que puedes comprobar en la lista de dispositivos compatibles de Zigbee2MQTT.",
   },
 ];
 

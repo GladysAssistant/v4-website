@@ -7,14 +7,15 @@ import zwaveJsUiWithoutHomeAssistantContent, {
   zwaveJsUiWithoutHomeAssistantFaqEn,
   zwaveJsUiWithoutHomeAssistantFaqFr,
   zwaveJsUiWithoutHomeAssistantFaqDe,
+  zwaveJsUiWithoutHomeAssistantFaqEs,
 } from "../data/zwaveJsUiWithoutHomeAssistantData";
 
 export default function ZwaveJsUiWithoutHomeAssistantPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = zwaveJsUiWithoutHomeAssistantContent[lang];
   const faq =
-    lang === "fr" ? zwaveJsUiWithoutHomeAssistantFaqFr : lang === "de" ? zwaveJsUiWithoutHomeAssistantFaqDe : zwaveJsUiWithoutHomeAssistantFaqEn;
+    lang === "fr" ? zwaveJsUiWithoutHomeAssistantFaqFr : lang === "de" ? zwaveJsUiWithoutHomeAssistantFaqDe : lang === "es" ? zwaveJsUiWithoutHomeAssistantFaqEs : zwaveJsUiWithoutHomeAssistantFaqEn;
 
   return (
     <UseCasePage

@@ -14,7 +14,7 @@ function useOgImage() {
   const { i18n, siteConfig } = useDocusaurusContext();
   const lang = i18n.currentLocale === "fr" ? "fr" : "en";
   const slug = pathname
-    .replace(/^\/(fr|de)\//, "/")
+    .replace(/^\/(fr|de|es)\//, "/")
     .replace(/^\/|\/$/g, "");
   // Absolute and without the locale prefix: the same URL as the Article image in
   // the structured data (getOgImageUrl).

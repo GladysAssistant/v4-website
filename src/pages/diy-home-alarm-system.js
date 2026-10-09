@@ -3,13 +3,13 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import UseCasePage from "../components/UseCasePage";
 import { getAlarmSystemPageSchema } from "../data/schemas/alarmSystem";
-import alarmContent, { alarmFaqEn, alarmFaqFr, alarmFaqDe } from "../data/alarmSystemData";
+import alarmContent, { alarmFaqEn, alarmFaqFr, alarmFaqDe, alarmFaqEs } from "../data/alarmSystemData";
 
 export default function DiyHomeAlarmSystemPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = alarmContent[lang];
-  const faq = lang === "fr" ? alarmFaqFr : lang === "de" ? alarmFaqDe : alarmFaqEn;
+  const faq = lang === "fr" ? alarmFaqFr : lang === "de" ? alarmFaqDe : lang === "es" ? alarmFaqEs : alarmFaqEn;
 
   return (
     <UseCasePage

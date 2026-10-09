@@ -525,6 +525,178 @@ const reolinkRtspContent = {
       },
     },
   },
+  es: {
+    meta: {
+      title: "URL RTSP de Reolink: activar RTSP y encontrar tu stream",
+      description:
+        "El formato de la URL RTSP de Reolink para el stream principal y el secundario, cámaras y canales de NVR, cómo activar RTSP en los firmwares recientes, soluciones a los errores más comunes y cómo ver tus cámaras Reolink en local con Gladys.",
+    },
+    screenshotCaption:
+      "Cámaras Reolink transmitidas en local en un panel de Gladys, junto al resto de tu casa.",
+    hero: {
+      title: "URL RTSP de Reolink: cómo activar RTSP y encontrar tu stream",
+      subtitle:
+        "El formato exacto de la URL para cámaras y NVR Reolink, el ajuste que tienes que activar primero y qué hacer cuando el stream no se abre.",
+      intro: [
+        "RTSP es la forma estándar de leer el vídeo en directo de una cámara desde otra aplicación: VLC, un NVR, Frigate, Blue Iris o una plataforma de domótica como Gladys Assistant. Las cámaras Reolink lo admiten, pero los firmwares recientes traen RTSP desactivado, y el formato de la URL no es evidente.",
+        "Aquí tienes todo lo que necesitas: cómo activar RTSP, la URL del stream principal y del secundario, el formato para los canales de un NVR y soluciones a los problemas más comunes.",
+      ],
+      primaryCta: {
+        label: "Integración Reolink para Gladys",
+        href: "/es/docs/integrations/external/reolink/",
+      },
+      secondaryCta: {
+        label: "Añadir cualquier cámara RTSP →",
+        href: "/es/docs/integrations/camera/",
+      },
+    },
+    problem: {
+      title: "Paso 1: activa RTSP en tu cámara Reolink",
+      intro:
+        "En los firmwares recientes, RTSP está desactivado por defecto por motivos de seguridad. Actívalo antes de probar cualquier URL:",
+      points: [
+        "Abre la app Reolink o el cliente de escritorio de Reolink y selecciona tu cámara (o tu NVR).",
+        "Ve a los ajustes de la cámara, luego a Red, después a Avanzado, y abre los ajustes de servidor o de puertos (los nombres exactos de los menús varían según la versión de la app).",
+        "Activa RTSP y apunta el puerto RTSP: 554 por defecto.",
+        "Asigna a la cámara una dirección IP fija en tu router (una reserva DHCP), para que la URL no cambie después de un reinicio.",
+      ],
+      outro:
+        "Ya que estás en los ajustes, comprueba el usuario y la contraseña de la cámara: la URL RTSP usa la cuenta de la cámara, no tu cuenta en la nube de Reolink.",
+    },
+    comparison: {
+      title: "Paso 2: el formato de la URL RTSP de Reolink",
+      intro:
+        "Sustituye USER, PASSWORD e IP por la cuenta de tu cámara y su dirección IP local:",
+      cols: {
+        feature: "Stream",
+        gladys: "URL RTSP",
+        other: "Para qué sirve",
+      },
+      rows: [
+        {
+          feature: "Stream principal (cámara)",
+          gladys: "rtsp://USER:PASSWORD@IP:554/Preview_01_main",
+          other: "Grabación a resolución completa",
+        },
+        {
+          feature: "Stream secundario (cámara)",
+          gladys: "rtsp://USER:PASSWORD@IP:554/Preview_01_sub",
+          other: "Vista en directo, paneles, poco ancho de banda",
+        },
+        {
+          feature: "Formato antiguo (la mayoría de los modelos)",
+          gladys: "rtsp://USER:PASSWORD@IP:554/h264Preview_01_main",
+          other: "El mismo stream, usado en muchas guías y apps",
+        },
+        {
+          feature: "NVR o Home Hub, canal 2",
+          gladys: "rtsp://USER:PASSWORD@NVR_IP:554/Preview_02_main",
+          other: "Cámara conectada al 2.º canal del NVR",
+        },
+        {
+          feature: "Puerto personalizado",
+          gladys: "rtsp://USER:PASSWORD@IP:PORT/Preview_01_main",
+          other: "Si has cambiado el puerto RTSP",
+        },
+      ],
+      outro:
+        "El número de canal es 01 para una cámara independiente. En un NVR o un Home Hub, es el número del canal al que está conectada la cámara (02, 03…). Prueba la URL en VLC (Medio → Abrir ubicación de red) antes de usarla en cualquier otro sitio.",
+    },
+    features: {
+      title: "Paso 3: soluciona los problemas de RTSP más comunes",
+      intro: "Si el stream no se abre, normalmente se debe a una de estas causas:",
+      cards: [
+        {
+          icon: "🔒",
+          title: "RTSP sigue desactivado",
+          text: "Los firmwares recientes desactivan RTSP por defecto. Revisa los ajustes de servidor o de puertos, y guarda.",
+        },
+        {
+          icon: "🔑",
+          title: "Caracteres especiales en la contraseña",
+          text: "Caracteres como @, :, # o / rompen la URL. Codifícalos para URL (@ se convierte en %40) o usa una contraseña sin ellos.",
+        },
+        {
+          icon: "🎞️",
+          title: "Stream principal en H.265",
+          text: "Algunos reproductores no pueden decodificar H.265. Usa el stream secundario para la vista en directo, o cambia el stream principal a H.264 en los ajustes de la cámara.",
+        },
+        {
+          icon: "🔋",
+          title: "Cámaras con batería",
+          text: "Los modelos con batería vuelven a dormirse: Reolink limita sus sesiones RTSP a unos 5 minutos. No están pensados para transmitir de forma continua.",
+        },
+        {
+          icon: "🌐",
+          title: "Red equivocada",
+          text: "RTSP solo funciona en tu red local. Desde fuera, usa una VPN en lugar de exponer el puerto 554 a internet.",
+        },
+        {
+          icon: "🎥",
+          title: "Cámaras 4K en algunos NVR",
+          text: "Reolink indica que las cámaras 4K conectadas a algunos modelos de NVR solo exponen el stream fluido (secundario) por RTSP.",
+        },
+      ],
+    },
+    how: {
+      title: "Ver tus cámaras Reolink en Gladys",
+      intro: "Gladys Assistant te ofrece dos formas de añadir una cámara Reolink, ambas en local:",
+      points: [
+        "La integración Reolink (recomendada): escanea tu red y expone las imágenes y la detección de movimiento de cada cámara, además de la batería, el foco, la sirena o las posiciones PTZ según el modelo. Sin cuenta Reolink, nada pasa por la nube.",
+        "La integración de cámara genérica: pega la URL RTSP de cualquier cámara, sea Reolink o no, y muéstrala en tu panel.",
+        "Después usa tus cámaras en escenas: recibe una captura en el móvil cuando se detecte movimiento, enciende el foco cuando se abra una puerta o deja que la IA describa lo que ve la cámara.",
+      ],
+      outro:
+        "Todo se queda en tu red: Gladys lee el stream directamente desde la cámara.",
+    },
+    solution: {
+      title: "Cámaras en local, sin suscripción obligatoria",
+      paragraphs: [
+        "Reolink es una de las pocas marcas de cámaras que funcionan totalmente en local, con RTSP y sin nube obligatoria. Gladys lo mantiene así: tu vídeo va de la cámara a tu propio equipo, y a ningún otro sitio.",
+        "Gladys es gratuito y de código abierto. Una suscripción opcional a Gladys Plus añade acceso remoto cifrado a tus cámaras desde cualquier lugar, sin abrir puertos en tu router.",
+      ],
+      link: {
+        label: "Configurar la integración Reolink →",
+        href: "/es/docs/integrations/external/reolink/",
+      },
+    },
+    related: {
+      title: "Ir más allá",
+      intro: "Monta un sistema de seguridad completo y local:",
+      links: [
+        {
+          label: "Sistema de alarma casero",
+          href: "/es/diy-home-alarm-system/",
+          text: "Combina tus cámaras con sensores de movimiento y de apertura, en local.",
+        },
+        {
+          label: "Añadir cualquier cámara RTSP",
+          href: "/es/docs/integrations/camera/",
+          text: "La integración de cámara genérica para cualquier stream RTSP o HTTP.",
+        },
+        {
+          label: "Controla tu casa con IA",
+          href: "/es/ai-smart-home/",
+          text: "Deja que la IA mire una imagen de la cámara y decida si debe avisarte.",
+        },
+        {
+          label: "Compatible con Gladys",
+          href: "/es/works-with/",
+          text: "Las demás marcas y protocolos compatibles con Gladys.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Mira tus cámaras Reolink en local",
+      text: "Gladys es gratuito, de código abierto y funciona en tu propio hardware. Añade tus cámaras Reolink en unos clics y guarda tu vídeo en casa.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: {
+        label: "Integración Reolink",
+        href: "/es/docs/integrations/external/reolink/",
+      },
+    },
+  },
 };
 
 export const reolinkRtspFaqEn = [
@@ -623,6 +795,39 @@ export const reolinkRtspFaqDe = [
     question: "Kann ich Reolink-Kameras ohne Reolink-App oder Cloud ansehen?",
     answer:
       "Ja. Über RTSP kann jede kompatible App den Stream lokal abrufen. Gladys Assistant hat außerdem eine kostenlose Reolink-Integration, die direkt in deinem Netzwerk mit deinen Kameras spricht, ohne Reolink-Konto: für Bilder, Bewegungserkennung, Scheinwerfer, Sirene und PTZ-Positionen.",
+  },
+];
+
+export const reolinkRtspFaqEs = [
+  {
+    question: "¿Cuál es la URL RTSP de una cámara Reolink?",
+    answer:
+      "rtsp://USER:PASSWORD@IP:554/Preview_01_main para el stream principal y rtsp://USER:PASSWORD@IP:554/Preview_01_sub para el stream secundario, donde USER y PASSWORD son la cuenta de la cámara e IP su dirección local. La ruta antigua h264Preview_01_main también funciona en la mayoría de los modelos.",
+  },
+  {
+    question: "¿Cómo activo RTSP en una cámara Reolink?",
+    answer:
+      "En la app Reolink o en el cliente de escritorio, abre los ajustes de la cámara, luego Red, Avanzado y los ajustes de servidor o de puertos, y activa RTSP. Los firmwares recientes traen RTSP desactivado por defecto. El puerto RTSP por defecto es el 554.",
+  },
+  {
+    question: "¿Cuál es la URL RTSP de una cámara conectada a un NVR Reolink?",
+    answer:
+      "Usa la dirección IP del NVR y el número de canal de la cámara: rtsp://USER:PASSWORD@NVR_IP:554/Preview_02_main para la cámara del canal 2, Preview_03_main para el canal 3, y así sucesivamente.",
+  },
+  {
+    question: "¿Las cámaras Reolink con batería admiten RTSP?",
+    answer:
+      "Solo de forma limitada. Las cámaras con batería están diseñadas para dormir, y Reolink limita sus sesiones de vista previa RTSP a unos 5 minutos, así que no son adecuadas para transmitir de forma continua. Las cámaras con alimentación permanente (PoE o modelos Wi-Fi enchufados) son la opción correcta para RTSP 24/7.",
+  },
+  {
+    question: "¿Por qué no funciona mi stream RTSP de Reolink en VLC?",
+    answer:
+      "Las causas más comunes son que RTSP sigue desactivado en los ajustes de la cámara, que la contraseña tiene caracteres especiales que hay que codificar para URL, o que el stream principal está en H.265 y el reproductor no puede decodificarlo. Prueba primero el stream secundario y comprueba que estás en la misma red local que la cámara.",
+  },
+  {
+    question: "¿Puedo ver las cámaras Reolink sin la app ni la nube de Reolink?",
+    answer:
+      "Sí. Por RTSP, cualquier aplicación compatible puede leer el stream en local. Gladys Assistant también tiene una integración Reolink gratuita que se comunica directamente con tus cámaras en tu red, sin cuenta Reolink, para las imágenes, la detección de movimiento, el foco, la sirena y las posiciones PTZ.",
   },
 ];
 

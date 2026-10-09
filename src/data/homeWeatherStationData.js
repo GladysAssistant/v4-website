@@ -473,6 +473,159 @@ const homeWeatherStationContent = {
       },
     },
   },
+  // Spanish: no amazon.es affiliate tag is configured yet, so the product links
+  // reuse the English (amazon.com) affiliate search links, like the German ones.
+  es: {
+    meta: {
+      title: "La mejor estación meteorológica para un hogar inteligente (Zigbee, Matter, Netatmo)",
+      description:
+        "¿Qué estación meteorológica funciona con un hogar inteligente local? Una guía práctica de sensores meteorológicos inalámbricos para Gladys Assistant: sensores Zigbee y Matter locales, la estación Netatmo y OpenWeather para los datos de previsión.",
+    },
+    hero: {
+      title: "La mejor estación meteorológica para tu hogar inteligente",
+      subtitle:
+        "Cómo medir la temperatura, la humedad y mucho más en casa, de una forma que funcione de verdad con Gladys: totalmente en local con sensores Zigbee y Matter, o con una estación conectada.",
+      intro: [
+        "Una estación meteorológica te dice lo que pasa dentro y fuera de casa: temperatura, humedad, presión atmosférica y, a veces, viento y lluvia. Pero la mayoría de las estaciones meteorológicas de consumo encierran sus datos en la aplicación y la nube del fabricante, algo poco compatible con un hogar inteligente local.",
+        "Con Gladys Assistant tienes dos buenas opciones. La más local es montar tu propia estación con sensores Zigbee y Matter que Gladys lee directamente en tu red. Si prefieres una estación lista para usar con anemómetro y pluviómetro, la estación meteorológica Netatmo se conecta a través de su integración. Esta guía cubre ambas.",
+      ],
+      primaryCta: { label: "Ver los sensores locales", href: "#local" },
+      secondaryCta: {
+        label: "Empieza con Gladys →",
+        href: "/es/docs/",
+      },
+    },
+    criteria: {
+      title: "Qué tener en cuenta en una estación meteorológica inteligente",
+      intro:
+        "Antes de comprar, hay algunas cosas que importan más que el número de funciones que aparecen en la caja:",
+      points: [
+        "Local o nube: ¿puedes leer los datos en tu propia red o solo existen en la aplicación del fabricante? Un sensor local sigue funcionando incluso sin internet y nunca depende de una nube que podría desaparecer.",
+        "Cobertura interior y exterior: para tener una visión real del tiempo, normalmente necesitas al menos un sensor interior y otro exterior (temperatura y humedad, idealmente también presión atmosférica).",
+        "Protocolo: para una instalación local, elige Zigbee (vía Zigbee2MQTT) o Matter. Ambos son abiertos y permiten que Gladys lea los valores directamente.",
+        "Extras: pocos productos miden el viento y la lluvia. Si los necesitas, una estación conectada como Netatmo es hoy la opción realista.",
+        "Autonomía y alcance: los sensores exteriores funcionan con pilas y están lejos de la casa, así que una buena autonomía y un buen alcance son clave para la fiabilidad.",
+      ],
+      outro:
+        "La buena noticia: elijas la opción que elijas a continuación, Gladys reúne las mediciones en un solo panel y te permite crear automatizaciones a partir de ellas.",
+    },
+    local: {
+      title: "La opción local: sensores Zigbee y Matter",
+      intro:
+        "Es la opción más local: compón tu propia estación meteorológica con sensores que Gladys lee directamente, sin nube del fabricante. Son compatibles a través de Zigbee2MQTT o Matter:",
+      items: [
+        {
+          name: "Aqara Temperature and Humidity Sensor",
+          tag: "El mejor para interior, Zigbee",
+          text: "Un sensor Zigbee diminuto y asequible que mide temperatura, humedad y presión atmosférica. Es uno de los dispositivos que ya recomendamos para Gladys. Se empareja a través de Zigbee2MQTT.",
+          buyHref: amazonUS("Aqara Temperature and Humidity Sensor"),
+          buyLabel: "Ver en Amazon →",
+          docHref: "/es/docs/integrations/zigbee2mqtt/",
+          docLabel: "Cómo emparejar dispositivos Zigbee",
+        },
+        {
+          name: "SONOFF SNZB-02D",
+          tag: "Interior con pantalla, Zigbee",
+          text: "Un sensor Zigbee de temperatura y humedad con pantalla de tinta electrónica, para tener también la lectura en la pared. Fiable y barato, se empareja a través de Zigbee2MQTT.",
+          buyHref: amazonUS("SONOFF SNZB-02D Zigbee temperature humidity sensor"),
+          buyLabel: "Ver en Amazon →",
+        },
+        {
+          name: "OWON THS-317-ET",
+          tag: "Sonda exterior, Zigbee",
+          text: "Un sensor Zigbee de temperatura con sonda externa impermeable, ideal para medir la temperatura exterior o la de un frigorífico o congelador. Figura en el catálogo Zigbee de Gladys.",
+          buyHref: amazonUS("OWON THS-317-ET Zigbee temperature sensor"),
+          buyLabel: "Ver en Amazon →",
+        },
+        {
+          name: "Eve Weather",
+          tag: "Matter sobre Thread",
+          text: "Un sensor exterior resistente a la intemperie que mide temperatura, humedad y presión barométrica. Funciona con Thread y Matter, así que Gladys puede leerlo en local a través de la integración Matter.",
+          buyHref: amazonUS("Eve Weather Matter Thread"),
+          buyLabel: "Ver en Amazon →",
+          docHref: "/es/docs/integrations/matter/",
+          docLabel: "Cómo funciona Matter",
+        },
+      ],
+      outro:
+        "Para emparejar los sensores Zigbee solo necesitas un dongle Zigbee. Consulta nuestra guía para elegir el adecuado.",
+    },
+    cloud: {
+      title: "La opción de estación conectada: Netatmo y OpenWeather",
+      intro:
+        "¿Quieres una estación lista para usar con anemómetro y pluviómetro, o datos meteorológicos sin ningún hardware? También se conectan a Gladys:",
+      items: [
+        {
+          name: "Estación meteorológica Netatmo",
+          tag: "Estación completa, viento y lluvia",
+          text: "Una estación meteorológica conectada completa: módulos interior y exterior, con anemómetro y pluviómetro opcionales. Funciona a través de la nube de Netatmo, y Gladys lee sus valores mediante la integración Netatmo. La opción realista si hoy quieres medir viento y lluvia.",
+          buyHref: amazonUS("Netatmo Weather Station"),
+          buyLabel: "Ver en Amazon →",
+          docHref: "/es/docs/integrations/external/netatmo/",
+          docLabel: "Integración Netatmo",
+        },
+        {
+          name: "OpenWeather (sin hardware)",
+          tag: "Datos de previsión gratuitos",
+          text: "Si solo quieres las condiciones actuales y las previsiones de tu ubicación, la integración OpenWeather lleva los datos meteorológicos a Gladys de forma gratuita, sin comprar ningún sensor. Ideal para complementar tus propios sensores.",
+          docHref: "/es/docs/integrations/openweather/",
+          docLabel: "Configurar OpenWeather →",
+        },
+      ],
+      outro:
+        "Las estaciones en la nube son cómodas y completas, pero recuerda que dependen de los servidores del fabricante. Para todo lo que quieras que siga funcionando sin conexión, elige los sensores locales de arriba.",
+    },
+    gladys: {
+      title: "Por qué integrar tu estación meteorológica en Gladys",
+      paragraphs: [
+        "Por separado, cada sensor o estación vive en su propia aplicación. Con Gladys, todas tus mediciones interiores y exteriores están en un único panel local, junto a todos los demás dispositivos de tu casa, y el historial de datos se queda en tu propio hardware.",
+        "A partir de ahí puedes automatizar según el tiempo: bajar las persianas cuando hace demasiado calor, subir la calefacción cuando baja la temperatura exterior, enviar una alerta de helada antes de una noche fría o encender un ventilador cuando sube la humedad interior.",
+      ],
+      link: { label: "Descubre la domótica local y de código abierto →", href: "/es/open-source-home-automation/" },
+    },
+    related: {
+      title: "Ve más allá",
+      intro:
+        "Añadir sensores meteorológicos forma parte de la creación de un hogar inteligente local:",
+      links: [
+        {
+          label: "Conecta dispositivos Zigbee a Gladys",
+          href: "/es/docs/integrations/zigbee2mqtt/",
+          text: "La guía paso a paso para emparejar sensores Zigbee con Zigbee2MQTT.",
+        },
+        {
+          label: "El mejor dongle USB Zigbee",
+          href: "/es/best-zigbee-dongle/",
+          text: "Qué coordinador Zigbee comprar para emparejar tus sensores meteorológicos en local.",
+        },
+        {
+          label: "Hogar inteligente IKEA con Gladys",
+          href: "/es/ikea-smart-home/",
+          text: "Controla tus dispositivos IKEA Tradfri y Dirigera en local, mediante Zigbee2MQTT o Matter.",
+        },
+        {
+          label: "Netatmo en Gladys",
+          href: "/es/docs/integrations/external/netatmo/",
+          text: "Conecta una estación meteorológica Netatmo y lee sus módulos en Gladys.",
+        },
+        {
+          label: "Hardware recomendado",
+          href: "/es/docs/installation/recommended-hardware/",
+          text: "La lista completa de dispositivos Zigbee que recomendamos para una casa con Gladys fiable.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Crea tu estación meteorológica local",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Empareja unos cuantos sensores y consulta el clima de tu casa en local, con automatizaciones que reaccionan a él.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: {
+        label: "Configurar Zigbee2MQTT",
+        href: "/es/docs/integrations/zigbee2mqtt/",
+      },
+    },
+  },
 };
 
 export const homeWeatherStationFaqEn = [
@@ -556,6 +709,34 @@ export const homeWeatherStationFaqDe = [
     question: "Kann ich mein Zuhause wetterabhängig automatisieren?",
     answer:
       "Ja, genau dafür holst du die Wetterdaten in Gladys. Du kannst die Rollos schließen, wenn es zu heiß wird, die Heizung hochdrehen, wenn die Außentemperatur fällt, vor einer kalten Nacht eine Frostwarnung schicken oder einen Ventilator starten, wenn die Luftfeuchtigkeit drinnen steigt.",
+  },
+];
+
+export const homeWeatherStationFaqEs = [
+  {
+    question: "¿Puedo usar una estación meteorológica en local con Gladys, sin la nube?",
+    answer:
+      "Sí. La opción más local es montar tu propia estación con sensores Zigbee o Matter. Los sensores Zigbee como el Aqara Temperature and Humidity Sensor o el Sonoff SNZB-02D se emparejan a través de Zigbee2MQTT, y un sensor Matter como el Eve Weather se lee a través de tu red. Gladys los lee directamente, sin nube del fabricante, así que siguen funcionando sin conexión.",
+  },
+  {
+    question: "¿Qué sensores meteorológicos funcionan con Gladys?",
+    answer:
+      "Funciona cualquier sensor Zigbee de temperatura, humedad o presión compatible con Zigbee2MQTT, incluidos los modelos de Aqara, Sonoff y OWON, así como cualquier sensor Matter de temperatura o humedad, como el Eve Weather. Para una estación completa con viento y lluvia, la estación meteorológica Netatmo se conecta a través de su integración.",
+  },
+  {
+    question: "¿Gladys funciona con la estación meteorológica Netatmo?",
+    answer:
+      "Sí. Gladys tiene una integración Netatmo que lee tus módulos interiores y exteriores, incluidos el anemómetro y el pluviómetro opcionales. Ten en cuenta que Netatmo depende de su nube, así que, a diferencia de los sensores Zigbee o Matter locales, necesita conexión a internet para funcionar.",
+  },
+  {
+    question: "¿Puedo tener datos meteorológicos en Gladys sin comprar ningún sensor?",
+    answer:
+      "Sí. La integración OpenWeather lleva a Gladys las condiciones actuales y las previsiones de tu ubicación de forma gratuita, sin ningún hardware. Es un gran complemento para tus propios sensores interiores y exteriores.",
+  },
+  {
+    question: "¿Puedo automatizar mi casa en función del tiempo?",
+    answer:
+      "Sí, es la principal razón para llevar los datos meteorológicos a Gladys. Puedes bajar las persianas cuando hace demasiado calor, subir la calefacción cuando baja la temperatura exterior, enviar una alerta de helada antes de una noche fría o encender un ventilador cuando sube la humedad interior.",
   },
 ];
 

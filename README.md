@@ -44,6 +44,18 @@ External integration pages are generated in German by
 there is no German one). The France/Québec/Ontario-specific pages are not
 translated and fall back to the English content.
 
+### Running the Spanish website
+
+```
+npm run start -- --locale es
+```
+
+Spanish works exactly like German: translations live in `i18n/es/`, the guide
+and comparison pages carry an `es` object in their `src/data/*Data.js` file,
+and `yarn load-external-integrations` also generates the external integration
+pages in Spanish (with the author's English documentation when there is no
+Spanish one). The France/Québec/Ontario-specific pages fall back to English.
+
 ## How to refresh the development activity page?
 
 The [/dev/](https://gladysassistant.com/dev/) page reads

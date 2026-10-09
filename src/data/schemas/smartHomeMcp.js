@@ -3,6 +3,7 @@ import smartHomeMcpContent, {
   smartHomeMcpFaqEn,
   smartHomeMcpFaqFr,
   smartHomeMcpFaqDe,
+  smartHomeMcpFaqEs,
 } from "../smartHomeMcpData";
 
 export function getSmartHomeMcpPageSchema(lang) {
@@ -12,6 +13,7 @@ export function getSmartHomeMcpPageSchema(lang) {
     faqEn: smartHomeMcpFaqEn,
     faqFr: smartHomeMcpFaqFr,
     faqDe: smartHomeMcpFaqDe,
+    faqEs: smartHomeMcpFaqEs,
     about: [
       { "@type": "Thing", name: "Model Context Protocol" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

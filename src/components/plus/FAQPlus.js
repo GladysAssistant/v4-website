@@ -66,6 +66,27 @@ const e2eTechnicalDe = (
   </>
 );
 
+const e2eSummaryEs = (
+  <>
+    Tus comandos y copias de seguridad están cifrados de extremo a extremo:
+    aunque los servidores de Gladys Plus se vieran comprometidos, nadie podría
+    leer tus datos sin la clave privada de tu instancia local.
+  </>
+);
+
+const e2eTechnicalEs = (
+  <>
+    Dediqué mucho tiempo a estudiar el estado del arte (Apple iMessage,
+    Dashlane, Insomnia, ProtonMail). Gladys Plus cifra tus comandos con AES-GCM
+    de 256 bits y una clave única por mensaje, encapsulada con RSA-OAEP de 2048
+    bits mediante la clave pública de tu instancia, y firmada con ECDSA P-256
+    junto con una fecha de caducidad para evitar ataques de repetición. En
+    Gladys, validas manualmente cada clave pública para bloquear los ataques de
+    intermediario (man-in-the-middle). Aunque Gladys Plus se viera
+    comprometido, un atacante no podría hacer nada sin tu clave privada.
+  </>
+);
+
 const buildDataFr = (prices, currency) => [
   {
     title: "Pourquoi s'inscrire à Gladys Plus ?",
@@ -364,6 +385,103 @@ const buildDataDe = (prices, currency) => [
   },
 ];
 
+const buildDataEs = (prices, currency) => [
+  {
+    title: "¿Por qué suscribirme a Gladys Plus?",
+    description: (
+      <>
+        ¿Quieres acceder de forma segura a tu instancia de Gladys desde
+        cualquier lugar? ¿Copias de seguridad diarias cifradas? ¿Enedis, modelos
+        de IA Open-Weight, streaming de cámaras o un servidor MCP? ¿Apoyar un
+        proyecto francés de código abierto en pleno crecimiento? ¡Gladys Plus
+        es para ti!
+      </>
+    ),
+  },
+  {
+    title: "¿Qué diferencia hay entre el plan Lite y el plan Plus?",
+    description: (
+      <>
+        <strong>Lite</strong> ({formatPrice(prices.lite.monthly, currency)}/mes
+        o {formatPrice(prices.lite.yearly, currency)}/año) cubre lo esencial:
+        acceso remoto cifrado, una alerta por correo electrónico cuando tu
+        Gladys se desconecta, Google Home/Alexa, API REST abierta y cuentas
+        familiares. <strong>Plus</strong> (
+        {formatPrice(prices.plus.monthly, currency)}/mes o{" "}
+        {formatPrice(prices.plus.yearly, currency)}/año) añade copias de
+        seguridad diarias cifradas, streaming de cámaras a distancia, modelos
+        de IA Open-Weight, la integración con Enedis y un servidor MCP. Puedes
+        cambiar de un plan a otro en cualquier momento.
+      </>
+    ),
+  },
+  {
+    title: "¿Cómo activo Gladys Plus en mi instancia de Gladys actual?",
+    description: (
+      <>
+        Después de suscribirte, recibirás un correo electrónico con tu enlace de
+        activación. Abre tu instancia local de Gladys, ve a{" "}
+        <em>Ajustes → Gladys Plus</em>, inicia sesión con tu correo electrónico
+        y tu contraseña, y listo. Sin reinicios y sin perder ninguna
+        configuración.
+      </>
+    ),
+  },
+  {
+    title: "¿Puede Gladys Plus avisarme si mi Gladys deja de funcionar?",
+    description: (
+      <>
+        ¡Sí, y es una novedad! Gladys Plus ve cuándo tu instancia se conecta y
+        se desconecta. Si sigue inaccesible (corte de luz, router caído,
+        tarjeta SD averiada…) durante más tiempo del que elijas, de 10 minutos
+        a 24 horas, Gladys Plus envía un correo electrónico a los
+        administradores de tu cuenta, y otro cuando vuelve a estar en línea. La
+        alerta está activada por defecto en los dos planes: puedes cambiar el
+        plazo o desactivarla desde Gladys Plus.
+      </>
+    ),
+  },
+  {
+    title: "¿Puedo cancelar mi suscripción en cualquier momento?",
+    description: (
+      <>
+        ¡Por supuesto! Gladys es un proyecto de código abierto, no una gran
+        empresa sin escrúpulos 😄 Puedes cancelar con un solo clic desde la
+        interfaz de Gladys Plus. El botón no está escondido.
+      </>
+    ),
+  },
+  {
+    title: "¿Satisfecho o te devolvemos el dinero?",
+    description: (
+      <>
+        Sí. Si no estás satisfecho, envíame un correo electrónico y te
+        devuelvo el dinero, sin preguntas. No dudes en contarme qué no
+        funcionó para que pueda mejorar el servicio 🙂
+      </>
+    ),
+  },
+  {
+    title: "¿Por qué Gladys Plus no es gratis?",
+    description: (
+      <>
+        Gladys y todo su código fuente son y seguirán siendo gratuitos y de
+        código abierto. Pero código abierto no significa que mantenerlo no
+        cueste nada: servidores, dominios, comunidad, servicios de correo
+        electrónico, hardware y, sobre todo, el tiempo que dedico al proyecto.
+        Este proyecto respeta tu privacidad y{" "}
+        <b>vive únicamente de estas contribuciones</b>. Sin inversores, sin
+        publicidad, sin venta de datos.
+      </>
+    ),
+  },
+  {
+    title: "¿Cómo funciona el cifrado de extremo a extremo?",
+    description: e2eSummaryEs,
+    technicalDetail: e2eTechnicalEs,
+  },
+];
+
 function FaqItem({ item, lang }) {
   return (
     <div className={styles.faqItem}>
@@ -388,7 +506,13 @@ function FAQPlus({ lang }) {
   const prices = PRICES[region];
   const { currency } = prices;
   const buildData =
-    lang === "fr" ? buildDataFr : lang === "de" ? buildDataDe : buildDataEn;
+    lang === "fr"
+      ? buildDataFr
+      : lang === "de"
+        ? buildDataDe
+        : lang === "es"
+          ? buildDataEs
+          : buildDataEn;
   const data = buildData(prices, currency);
   return (
     <section
@@ -401,7 +525,9 @@ function FAQPlus({ lang }) {
           ? "Questions fréquentes"
           : lang === "de"
             ? "Häufig gestellte Fragen"
-            : "Frequently asked questions"}
+            : lang === "es"
+              ? "Preguntas frecuentes"
+              : "Frequently asked questions"}
       </h2>
       <div className={styles.faqGrid}>
         {data.map((item, i) => (

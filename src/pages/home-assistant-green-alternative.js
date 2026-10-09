@@ -7,11 +7,12 @@ import homeAssistantGreenAlternativeContent, {
   homeAssistantGreenAlternativeFaqEn,
   homeAssistantGreenAlternativeFaqFr,
   homeAssistantGreenAlternativeFaqDe,
+  homeAssistantGreenAlternativeFaqEs,
 } from "../data/homeAssistantGreenAlternativeData";
 
 export default function HomeAssistantGreenAlternativePage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = homeAssistantGreenAlternativeContent[lang];
@@ -20,6 +21,8 @@ export default function HomeAssistantGreenAlternativePage() {
       ? homeAssistantGreenAlternativeFaqFr
       : lang === "de"
         ? homeAssistantGreenAlternativeFaqDe
+      : lang === "es"
+        ? homeAssistantGreenAlternativeFaqEs
         : homeAssistantGreenAlternativeFaqEn;
 
   return (

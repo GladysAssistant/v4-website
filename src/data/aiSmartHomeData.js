@@ -354,6 +354,121 @@ const aiSmartHomeContent = {
       secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
     },
   },
+  es: {
+    meta: {
+      title: "Hogar inteligente con IA: controla tu casa con IA, de forma privada",
+      description:
+        "Controla tu hogar inteligente en lenguaje natural, recibe un informe semanal de IA, deja que un agente de IA proactivo actúe por ti y conecta Claude, Perplexity o Mistral vía MCP, con IA de pesos abiertos alojada en Europa. Privada por diseño.",
+    },
+    hero: {
+      title: "Controla tu hogar inteligente con IA",
+      subtitle:
+        "Habla con tu casa con tus propias palabras, deja que un agente de IA proactivo actúe por ti y mantén todo en privado, con IA de pesos abiertos alojada en Europa.",
+      intro: [
+        "La mayoría de la \"IA\" en el mundo del hogar inteligente no es más que un asistente de voz que convierte tus palabras en una lista fija de comandos, mientras lo envía todo a la nube de una gran tecnológica. Gladys lleva la IA mucho más lejos, y la mantiene privada.",
+        "Con Gladys, hablas con tu casa con tus propias palabras y un verdadero agente de IA averigua qué hacer: lee tus sensores, controla tus dispositivos, analiza las imágenes de tus cámaras, escribe automatizaciones por ti e incluso te envía un informe semanal sobre tu casa. Y como funciona con modelos de pesos abiertos alojados en Europa, tu casa no se convierte en combustible para la máquina publicitaria de nadie.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Ver la integración de IA →",
+        href: "/es/docs/integrations/openai/",
+      },
+    },
+    capabilities: {
+      title: "Lo que la IA puede hacer en tu casa",
+      intro:
+        "La IA en Gladys no es un truco añadido por encima. Recorre toda la plataforma, desde el control diario hasta las decisiones proactivas.",
+      cards: [
+        {
+          icon: "💬",
+          title: "Control en lenguaje natural",
+          text: "Habla con tu casa desde el chat, Telegram o un widget de voz. No hay una lista fija de comandos: pregunta con tus propias palabras y la IA averigua qué hacer.",
+        },
+        {
+          icon: "🧠",
+          title: "Un agente de IA que actúa",
+          text: "Gladys razona antes de responder y encadena varias acciones para alcanzar un objetivo: leer un sensor, controlar dispositivos, consultar tu historial de energía o crear una escena, todo a partir de una sola petición.",
+        },
+        {
+          icon: "🔮",
+          title: "IA proactiva",
+          text: "Dale a Gladys una instrucción en lenguaje natural y deja que decida. Por ejemplo: cuando haya movimiento en el garaje, revisa la cámara y avísame solo si el coche no es el mío.",
+        },
+        {
+          icon: "📊",
+          title: "Un informe semanal de IA",
+          text: "Cada semana, Gladys te envía un resumen personalizado de tu casa: confort, consumo y coste de energía, sensores silenciosos o desconectados, tendencias y consejos prácticos.",
+        },
+        {
+          icon: "🔌",
+          title: "Conecta tu propio agente de IA (MCP)",
+          text: "Gladys incluye un servidor MCP, para que puedas conectar Claude Desktop, Perplexity o Mistral Le Chat a tu casa y leer sensores, ver cámaras y controlar dispositivos.",
+        },
+      ],
+    },
+    privacy: {
+      title: "Privada por diseño",
+      paragraphs: [
+        "Aquí es donde Gladys marca la diferencia. Los asistentes de voz en la nube envían todo lo que dices a servidores en el extranjero, lo vinculan a tu cuenta y lo usan para perfilarte. La IA integrada de Gladys funciona con modelos de pesos abiertos alojados en Francia (Scaleway), así que tus peticiones se procesan en Europa, bajo el RGPD, y nunca se venden ni se explotan con fines publicitarios.",
+        "Y si quieres ir aún más lejos, la IA en el hogar inteligente no tiene por qué depender de la nube: puedes conectar tu propio LLM local, para que la inteligencia de tu casa funcione por completo en hardware que te pertenece. En cualquier caso, tú decides adónde van tus datos.",
+      ],
+      link: { label: "Cómo funciona la IA en Gladys →", href: "/es/docs/integrations/openai/" },
+    },
+    howTo: {
+      title: "Primeros pasos con la IA en Gladys",
+      intro: "Hay dos formas complementarias de llevar la IA a tu casa con Gladys:",
+      points: [
+        "El asistente de IA integrado de Gladys está incluido en Gladys Plus. Una vez conectada tu instancia, habla con tu casa desde la pestaña Chat, Telegram o el widget del asistente de voz.",
+        "Para usar tu propio agente de IA, activa el servidor MCP y conecta un cliente como Claude Desktop, Perplexity o Mistral Le Chat. Funciona en local, en tu red, y en remoto a través de la Open API de Gladys Plus.",
+        "Cuantos más dispositivos tengas en Gladys, más podrá ver y hacer la IA por ti.",
+      ],
+      outro: "A partir de ahí, solo tienes que hablar con tu casa, y ella se encarga del resto.",
+    },
+    related: {
+      title: "Profundiza en la IA de Gladys",
+      intro:
+        "¿Quieres saber más? Estas guías cubren cada pieza de la IA de Gladys, y cómo se mantiene privada:",
+      links: [
+        {
+          label: "Servidor MCP para el hogar inteligente",
+          href: "/es/smart-home-mcp-server/",
+          text: "Lo que tu agente de IA puede hacer en tu casa a través de MCP, en local o en remoto.",
+        },
+        {
+          label: "Controla tu casa en lenguaje natural",
+          href: "/es/docs/integrations/openai/",
+          text: "La integración de IA: habla con Gladys desde el chat, Telegram o el asistente de voz.",
+        },
+        {
+          label: "Conecta Claude, Perplexity o Mistral (MCP)",
+          href: "/es/docs/integrations/mcp/",
+          text: "Conecta tu agente de IA favorito a tu hogar inteligente a través del servidor MCP de Gladys.",
+        },
+        {
+          label: "Gladys Plus",
+          href: "/es/plus/",
+          text: "La suscripción opcional que desbloquea la IA integrada, alojada en Europa.",
+        },
+        {
+          label: "Alternativa a Alexa",
+          href: "/es/alexa-alternative/",
+          text: "Una alternativa privada y local a los asistentes de voz en la nube como Alexa.",
+        },
+        {
+          label: "Crea un hogar inteligente local",
+          href: "/es/local-smart-home/",
+          text: "La visión de conjunto: cómo encaja la IA en un hogar inteligente totalmente local y privado.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Lleva la IA a tu hogar inteligente",
+      text: "Gladys es gratuito y de código abierto, y su IA funciona con modelos de pesos abiertos alojados en Europa. Privado por diseño, autoalojado, sin reventa de datos.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "Descubre Gladys Plus", href: "/es/plus/" },
+    },
+  },
 };
 
 export const aiSmartHomeFaqEn = [
@@ -452,6 +567,39 @@ export const aiSmartHomeFaqDe = [
     question: "Kostet die KI in Gladys extra?",
     answer:
       "Der integrierte KI-Assistent von Gladys ist Teil des Gladys-Plus-Abos (Plus-Tarif). Deinen eigenen KI-Agenten über den lokalen MCP-Server anzubinden, funktioniert mit deinem eigenen Client und läuft in deinem Netzwerk. Gladys selbst bleibt im Kern kostenlos und Open Source.",
+  },
+];
+
+export const aiSmartHomeFaqEs = [
+  {
+    question: "¿Puedo controlar mi hogar inteligente con IA?",
+    answer:
+      "Sí. Con Gladys Assistant controlas tu casa en lenguaje natural, sin una lista fija de comandos. Puedes hablarle desde un chat, Telegram o un widget de voz, y un verdadero agente de IA lee tus sensores, controla tus dispositivos, analiza las imágenes de las cámaras e incluso crea automatizaciones por ti.",
+  },
+  {
+    question: "¿Existe una IA respetuosa con la privacidad para el hogar inteligente?",
+    answer:
+      "Sí. La IA integrada de Gladys funciona con modelos de pesos abiertos alojados en Francia (Scaleway), así que tus peticiones se procesan en Europa bajo el RGPD, y nunca se venden ni se usan con fines publicitarios. También puedes conectar tu propio LLM local para que la IA funcione por completo en hardware que te pertenece.",
+  },
+  {
+    question: "¿Qué modelo de IA usa Gladys?",
+    answer:
+      "La IA integrada de Gladys usa grandes modelos de lenguaje de pesos abiertos alojados en Europa (Scaleway, Francia) a través de Gladys Plus. También puedes conectar tu propio agente de IA, como Claude Desktop, Perplexity o Mistral Le Chat, mediante el servidor MCP de Gladys.",
+  },
+  {
+    question: "¿Puede la IA crear automatizaciones por mí?",
+    answer:
+      "Sí. El agente de IA de Gladys puede razonar y encadenar varias acciones: leer sensores, controlar dispositivos, mostrar tu historial de energía y crear escenas a partir de una sola petición en lenguaje natural, como \"crea una escena que apague todas las luces a las 23:00\".",
+  },
+  {
+    question: "¿Puedo conectar Claude, ChatGPT o Mistral a mi hogar inteligente?",
+    answer:
+      "Sí. Gladys incluye un servidor MCP (Model Context Protocol) que permite a agentes de IA compatibles como Claude Desktop, Perplexity o Mistral Le Chat leer el estado de tus dispositivos, ver tus cámaras, controlar luces e interruptores y lanzar escenas. Funciona en tu red local, y en remoto con la Open API de Gladys Plus.",
+  },
+  {
+    question: "¿La IA de Gladys tiene un coste adicional?",
+    answer:
+      "El asistente de IA integrado de Gladys forma parte de la suscripción Gladys Plus (plan Plus). Conectar tu propio agente de IA a través del servidor MCP local funciona con tu propio cliente y se ejecuta en tu red. Gladys en sí sigue siendo gratuito y de código abierto en su núcleo.",
   },
 ];
 

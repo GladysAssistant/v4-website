@@ -369,6 +369,126 @@ const ikeaSmartHomeContent = {
       },
     },
   },
+  es: {
+    meta: {
+      title: "Hogar inteligente IKEA: Dirigera, Matter over Thread y Zigbee",
+      description:
+        "Controla tu hogar inteligente IKEA en local con Gladys Assistant: Tradfri con Zigbee2MQTT, el hub Dirigera por Matter y la nueva gama Matter over Thread (BILRESA, MYGGSPRAY, ALPSTUGA…), con o sin Dirigera.",
+    },
+    hero: {
+      title: "Tu hogar inteligente IKEA, funcionando en local con Gladys",
+      subtitle:
+        "Controla tus dispositivos IKEA Tradfri y Dirigera desde un único panel local y de código abierto, con automatizaciones de verdad y sin nube.",
+      intro: [
+        "IKEA fabrica parte del hardware domótico con mejor relación calidad-precio del mercado: bombillas Tradfri, sensores de movimiento y de apertura, enchufes inteligentes, mandos y estores Fyrtur. Por sí solos, dependen de la app de IKEA y de la pasarela Dirigera (o de la antigua Tradfri).",
+        "Con Gladys Assistant puedes reunir todos estos dispositivos en un único panel local, combinarlos libremente con otras marcas y crear automatizaciones que reaccionen de verdad a lo que pasa en tu casa. Hay dos formas de conectar IKEA a Gladys, e incluso puedes prescindir por completo del hub de IKEA.",
+      ],
+      primaryCta: { label: "Conectar Zigbee a Gladys", href: "/es/docs/integrations/zigbee2mqtt/" },
+      secondaryCta: {
+        label: "Empezar con Gladys →",
+        href: "/es/docs/",
+      },
+    },
+    methods: {
+      title: "Dos formas de usar los dispositivos IKEA con Gladys",
+      intro:
+        "Los dispositivos Tradfri de IKEA son dispositivos Zigbee, así que tienes dos opciones según quieras conservar el hub de IKEA o no:",
+      items: [
+        {
+          name: "1. Directamente con Zigbee2MQTT (sin hub de IKEA)",
+          tag: "Recomendado, totalmente local",
+          text: "Los dispositivos IKEA Tradfri son Zigbee estándar, así que puedes emparejarlos directamente con Gladys mediante un dongle USB Zigbee y Zigbee2MQTT, sin necesidad de pasarela Dirigera ni Tradfri. Es la opción más local: tus bombillas, sensores y mandos hablan directamente con Gladys, y puedes combinarlos con Philips Hue, Aqara, Sonoff y cualquier otra marca Zigbee en la misma red.",
+          link: { href: "/es/docs/integrations/zigbee2mqtt/", label: "Configurar Zigbee2MQTT →" },
+        },
+        {
+          name: "2. A través del hub Dirigera por Matter",
+          tag: "Conserva tu pasarela IKEA",
+          text: "El nuevo hub IKEA DIRIGERA funciona como puente Matter. Si quieres seguir gestionando tus dispositivos en la app de IKEA, puedes exponerlos a Gladys por Matter: el hub ya está en tu Wi-Fi o Ethernet, así que Gladys puede controlar directamente los dispositivos conectados, en local, sin la nube de IKEA.",
+          link: { href: "/es/docs/integrations/matter/", label: "Leer la guía de Matter →" },
+        },
+      ],
+      outro:
+        "¿No sabes cuál elegir? Si quieres la instalación más local e independiente de marcas, opta por Zigbee2MQTT y un dongle. Si ya tienes un hub Dirigera y te gusta la app de IKEA, la vía Matter es la más rápida.",
+    },
+    newRange: {
+      title: "La nueva gama Matter over Thread de IKEA: ¿necesitas DIRIGERA?",
+      intro:
+        "Desde principios de 2026, los nuevos productos domóticos de IKEA (los mandos BILRESA, el sensor de movimiento MYGGSPRAY, el sensor de puertas y ventanas MYGGBETT, el sensor de temperatura y humedad TIMMERFLOTTE, el monitor de calidad del aire ALPSTUGA, el sensor de fugas de agua KLIPPBOK, el enchufe GRILLPLATS y las bombillas KAJPLATS) usan Matter over Thread en lugar de Zigbee. Así encajan con Gladys:",
+      points: [
+        "Necesitas un border router Thread, pero no necesariamente DIRIGERA: un Apple TV 4K, un HomePod, un Google Nest Hub (2.ª generación) o un Amazon Echo reciente también sirven.",
+        "El primer emparejamiento pasa por un controlador Matter completo (la app de IKEA, Apple Home, Google Home o Alexa), porque usa Bluetooth, que Gladys todavía no gestiona. Después genera un nuevo código de emparejamiento desde esa app y añade el dispositivo a Gladys, que lo controla en local.",
+        "Si tienes un hub DIRIGERA, también puedes añadir el propio hub a Gladys como puente Matter y obtener todos sus dispositivos de una sola vez.",
+        "Algunos modelos pueden pasarse a Zigbee: el mando BILRESA de dos botones, por ejemplo, se empareja directamente con Zigbee2MQTT tras un reinicio y una secuencia de botones, y es totalmente compatible con Gladys desde la versión 4.72.",
+      ],
+      outro:
+        "Matter over Thread todavía es joven y la compatibilidad varía de un dispositivo a otro, así que consulta el foro sobre el modelo que tienes en mente antes de comprarlo.",
+    },
+    devices: {
+      title: "Qué dispositivos IKEA funcionan con Gladys",
+      intro:
+        "Emparejada con Zigbee2MQTT, la gran mayoría de la gama IKEA Tradfri funciona con Gladys, incluidos:",
+      points: [
+        "Bombillas LED Tradfri (E27, E14, GU10), de blanco regulable y de color",
+        "Enchufes inteligentes (Tradfri control outlet)",
+        "Sensores de movimiento y sensores de puertas y ventanas",
+        "Mandos y reguladores Tradfri y Styrbar",
+        "Estores inteligentes Fyrtur y Kadrilj",
+        "Vindstyrka y otros sensores de calidad del aire Zigbee",
+      ],
+      outro:
+        "Para emparejarlos solo necesitas un dongle USB Zigbee. Consulta nuestra guía para elegir el adecuado.",
+    },
+    gladys: {
+      title: "Por qué gestionar tus dispositivos IKEA con Gladys",
+      paragraphs: [
+        "La app de IKEA está bien para el control básico, pero mantiene tus dispositivos aislados y depende de la nube. Con Gladys, tus luces y sensores IKEA conviven con todos los demás dispositivos de tu casa, y todo funciona en local en tu propio hardware.",
+        "A partir de ahí puedes crear automatizaciones de verdad: encender las luces Tradfri cuando se activa un sensor de movimiento IKEA, cerrar los estores Fyrtur al atardecer o lanzar una escena completa desde un mando Styrbar, combinando el material de IKEA con cualquier otra marca que tengas.",
+      ],
+      link: { label: "Descubre la domótica local y de código abierto →", href: "/es/open-source-home-automation/" },
+    },
+    related: {
+      title: "Ir más allá",
+      intro:
+        "Conectar tus dispositivos IKEA es parte de construir un hogar inteligente local:",
+      links: [
+        {
+          label: "Conectar dispositivos Zigbee a Gladys",
+          href: "/es/docs/integrations/zigbee2mqtt/",
+          text: "La guía paso a paso para emparejar dispositivos Zigbee, incluidos los IKEA Tradfri, con Zigbee2MQTT.",
+        },
+        {
+          label: "El mejor dongle USB Zigbee",
+          href: "/es/best-zigbee-dongle/",
+          text: "Qué coordinador Zigbee comprar para emparejar en local tus dispositivos IKEA y otros dispositivos Zigbee.",
+        },
+        {
+          label: "Estación meteorológica casera",
+          href: "/es/home-weather-station/",
+          text: "Mide la temperatura y la humedad en local con sensores Zigbee y Matter.",
+        },
+        {
+          label: "Matter en Gladys",
+          href: "/es/docs/integrations/matter/",
+          text: "Cómo usar puentes Matter como el hub IKEA Dirigera con Gladys.",
+        },
+        {
+          label: "Crear un hogar inteligente local",
+          href: "/es/local-smart-home/",
+          text: "Por qué importa priorizar lo local y cómo construir una casa que funcione sin la nube.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Trae tus dispositivos IKEA a casa",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Empareja tus dispositivos Tradfri en local y automatiza toda tu casa, IKEA y mucho más.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: {
+        label: "Configurar Zigbee2MQTT",
+        href: "/es/docs/integrations/zigbee2mqtt/",
+      },
+    },
+  },
 };
 
 export const ikeaSmartHomeFaqEn = [
@@ -482,6 +602,44 @@ export const ikeaSmartHomeFaqDe = [
     question: "Funktioniert die IKEA-Fernbedienung BILRESA auch über Zigbee?",
     answer:
       "Ja. Die BILRESA-Fernbedienungen lassen sich mit einem Reset und einer anschließenden Tastenfolge von Matter over Thread auf Zigbee umstellen und dann direkt mit Zigbee2MQTT koppeln. Gladys unterstützt die BILRESA mit zwei Tasten seit Version 4.72 vollständig über Zigbee; die Version mit Drehrad lässt sich ebenfalls koppeln, das Rad wird aber noch nicht unterstützt.",
+  },
+];
+
+export const ikeaSmartHomeFaqEs = [
+  {
+    question: "¿Puedo usar los dispositivos domóticos de IKEA sin el hub Dirigera?",
+    answer:
+      "Sí. Los dispositivos IKEA Tradfri son Zigbee estándar, así que puedes emparejarlos directamente con Gladys mediante un dongle USB Zigbee y Zigbee2MQTT, sin ninguna pasarela Dirigera ni Tradfri. Tus bombillas, sensores y mandos se comunican entonces directamente con Gladys, totalmente en local.",
+  },
+  {
+    question: "¿Gladys funciona con el hub IKEA Dirigera?",
+    answer:
+      "Sí. El hub Dirigera funciona como puente Matter, así que puedes exponer a Gladys por Matter los dispositivos conectados a él. El hub ya está en tu red local, lo que permite a Gladys controlarlos en local sin la nube de IKEA. También puedes prescindir del hub por completo y emparejar los dispositivos directamente con Zigbee2MQTT.",
+  },
+  {
+    question: "¿Qué dispositivos IKEA son compatibles con Gladys?",
+    answer:
+      "Emparejada con Zigbee2MQTT, la mayor parte de la gama IKEA Tradfri funciona: bombillas LED (E27, E14, GU10), enchufes inteligentes, sensores de movimiento y de apertura, mandos Styrbar y Tradfri, y estores Fyrtur o Kadrilj. Se puede añadir cualquier dispositivo que hable Zigbee estándar.",
+  },
+  {
+    question: "¿Sigo necesitando la app de IKEA?",
+    answer:
+      "No. Si emparejas tus dispositivos directamente con Zigbee2MQTT, lo controlas todo desde Gladys y no necesitas para nada la app de IKEA. Si conservas el hub Dirigera y usas Matter, puedes seguir gestionando los dispositivos en la app de IKEA y controlarlos también en Gladys.",
+  },
+  {
+    question: "¿Puedo combinar dispositivos IKEA con otras marcas?",
+    answer:
+      "Sí, y es uno de los principales motivos para usar Gladys. Con Zigbee2MQTT puedes combinar libremente IKEA Tradfri con Philips Hue, Aqara, Sonoff y otras marcas Zigbee, todo en la misma red y en las mismas automatizaciones.",
+  },
+  {
+    question: "¿Los nuevos dispositivos Matter over Thread de IKEA necesitan el hub DIRIGERA?",
+    answer:
+      "No, pero necesitan un border router Thread. DIRIGERA es uno, y también lo son un Apple TV 4K, un HomePod, un Google Nest Hub (2.ª generación) o un Amazon Echo reciente. El primer emparejamiento se hace desde la app de IKEA, Apple Home, Google Home o Alexa; después compartes el dispositivo con Gladys usando un nuevo código de emparejamiento Matter.",
+  },
+  {
+    question: "¿El mando IKEA BILRESA puede funcionar por Zigbee?",
+    answer:
+      "Sí. Los mandos BILRESA pueden pasar de Matter over Thread a Zigbee con un reinicio seguido de una secuencia de botones, y emparejarse después directamente con Zigbee2MQTT. Gladys es totalmente compatible con el BILRESA de dos botones por Zigbee desde la versión 4.72; la versión con rueda también se empareja, pero su rueda todavía no está soportada.",
   },
 ];
 

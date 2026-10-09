@@ -7,14 +7,15 @@ import tuyaZigbeeWithoutHubContent, {
   tuyaZigbeeWithoutHubFaqEn,
   tuyaZigbeeWithoutHubFaqFr,
   tuyaZigbeeWithoutHubFaqDe,
+  tuyaZigbeeWithoutHubFaqEs,
 } from "../data/tuyaZigbeeWithoutHubData";
 
 export default function TuyaZigbeeWithoutHubPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale) ? i18n.currentLocale : "en";
   const content = tuyaZigbeeWithoutHubContent[lang];
   const faq =
-    lang === "fr" ? tuyaZigbeeWithoutHubFaqFr : lang === "de" ? tuyaZigbeeWithoutHubFaqDe : tuyaZigbeeWithoutHubFaqEn;
+    lang === "fr" ? tuyaZigbeeWithoutHubFaqFr : lang === "de" ? tuyaZigbeeWithoutHubFaqDe : lang === "es" ? tuyaZigbeeWithoutHubFaqEs : tuyaZigbeeWithoutHubFaqEn;
 
   return (
     <UseCasePage

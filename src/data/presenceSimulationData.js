@@ -389,6 +389,133 @@ const presenceContent = {
       secondary: { label: "Mehr über Szenen", href: "/de/docs/scenes/intro/" },
     },
   },
+  es: {
+    meta: {
+      title: "Simulación de presencia: haz que tu casa parezca habitada cuando no estás",
+      description:
+        "Configura una simulación de presencia con Gladys Assistant: enciende y apaga al azar luces, persianas y la televisión mientras estás fuera para disuadir a los ladrones, todo con escenas locales, gratis, de código abierto y privado.",
+    },
+    screenshotCaption:
+      "Crea una simulación de presencia con escenas en Gladys, funcionando en local en tu propio equipo.",
+    hero: {
+      title: "Simulación de presencia: haz que tu casa parezca habitada",
+      subtitle:
+        "Activa al azar luces, persianas y dispositivos mientras estás fuera, para que una casa vacía parezca ocupada, todo con escenas locales que controlas por completo.",
+      intro: [
+        "Una casa vacía es un blanco fácil. La medida disuasoria más eficaz y barata contra los robos es hacer que la casa parezca ocupada mientras estás fuera.",
+        "Con Gladys Assistant creas la simulación de presencia a partir de escenas: luces y persianas que se encienden y se apagan a horas creíbles, incluso al azar, funcionando en local en tu propio equipo, de forma gratuita y con código abierto.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Descubre las escenas →",
+        href: "/es/docs/scenes/intro/",
+      },
+    },
+    problem: {
+      title: "Por qué una casa vacía es un blanco",
+      intro: "Los ladrones buscan casas claramente desocupadas. Las señales clásicas son fáciles de detectar:",
+      points: [
+        "Luces que permanecen apagadas todas las noches mientras estás de vacaciones.",
+        "Persianas o estores que no se mueven durante días.",
+        "Ninguna señal de vida: ni el resplandor de la televisión, ni cambios de rutina, nada.",
+        "Una casa predecible, oscura e inmóvil, justo lo que espera un ladrón oportunista.",
+      ],
+      outro:
+        "La simulación de presencia elimina esas señales recreando los pequeños indicios irregulares de que hay alguien en casa.",
+    },
+    features: {
+      title: "Lo que puede hacer la simulación de presencia",
+      intro: "Tú decides cuánto debe parecer habitada tu casa, con escenas sencillas que controlas por completo:",
+      cards: [
+        {
+          icon: "💡",
+          title: "Ciclos de luz aleatorios",
+          text: "Enciende y apaga luces en distintas habitaciones a horas variadas y creíbles por la noche, no con un horario fijo evidente.",
+        },
+        {
+          icon: "🪟",
+          title: "Persianas y estores",
+          text: "Abre y cierra las persianas motorizadas por la mañana y por la noche para que, desde fuera, la casa se comporte como si hubiera alguien.",
+        },
+        {
+          icon: "🌅",
+          title: "Horarios según la puesta de sol",
+          text: "Lanza escenas en función de la puesta y la salida del sol locales, para que la simulación siga las estaciones automáticamente.",
+        },
+        {
+          icon: "📺",
+          title: "Televisión y dispositivos de ambiente",
+          text: "Enciende una televisión, un altavoz inteligente o una lámpara detrás de las cortinas para añadir un resplandor y unos sonidos de vida convincentes.",
+        },
+        {
+          icon: "🎲",
+          title: "Patrones aleatorios",
+          text: "Añade aleatoriedad a los horarios y a las habitaciones que se iluminan, para que desde la calle el patrón nunca parezca automatizado.",
+        },
+        {
+          icon: "🗓️",
+          title: "Solo cuando no estás",
+          text: "Vincula todo a un estado de 'casa vacía', para que la simulación solo funcione cuando de verdad no hay nadie en casa.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo crear una simulación de presencia en Gladys",
+      intro: "No hay un único botón para ello: la montas a partir de escenas, y eso es justo lo que la hace tan flexible:",
+      points: [
+        "Crea una condición de 'casa vacía' basada en la presencia (teléfonos fuera de la red o un interruptor manual de 'ausente').",
+        "Crea una escena que encienda una luz, espere un tiempo aleatorio y luego la apague, y repítela en varias habitaciones.",
+        "Programa las escenas para que se ejecuten por la noche, en función de la puesta de sol, solo mientras la casa esté vacía.",
+        "Añade persianas que se abran por la mañana y se cierren por la noche para completar la ilusión.",
+        "Todo funciona en local en tu equipo y sigue funcionando aunque se caiga tu conexión a internet.",
+      ],
+      outro: "Tus reglas, tus horarios, tu casa, sin ningún horario guardado en la nube de otro.",
+    },
+    solution: {
+      title: "Local, privada y gratuita",
+      paragraphs: [
+        "Como Gladys funciona en tu propio equipo, tu simulación de presencia sigue funcionando sin internet, y nadie fuera de tu casa conoce tus horarios ni sabe cuándo no estás.",
+        "El núcleo de Gladys es gratuito y de código abierto, así que la simulación de presencia no cuesta nada más allá de los dispositivos que ya tienes. Combina a la perfección con una alarma casera: la simulación disuade y la alarma reacciona.",
+      ],
+      link: {
+        label: "Descubre cómo funcionan las escenas →",
+        href: "/es/docs/scenes/intro/",
+      },
+    },
+    related: {
+      title: "Ve más allá",
+      intro: "Combina la simulación de presencia con el resto de tu hogar inteligente local:",
+      links: [
+        {
+          label: "Sistema de alarma casero",
+          href: "/es/diy-home-alarm-system/",
+          text: "El complemento natural: la simulación disuade, una alarma local detecta y avisa.",
+        },
+        {
+          label: "Cómo funcionan las escenas",
+          href: "/es/docs/scenes/intro/",
+          text: "Las piezas básicas: disparadores, condiciones, acciones y aleatoriedad.",
+        },
+        {
+          label: "Controla tu casa con IA",
+          href: "/es/ai-smart-home/",
+          text: "Deja que la IA haga tus automatizaciones más inteligentes y naturales con el tiempo.",
+        },
+        {
+          label: "Crea un hogar inteligente local",
+          href: "/es/local-smart-home/",
+          text: "La visión de conjunto: un hogar inteligente privado y local basado en estándares abiertos.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Haz que tu casa parezca habitada mientras estás fuera",
+      text: "Gladys es gratuito, de código abierto y local por defecto. Crea una simulación de presencia con escenas, sin coste, y mantén tus horarios en privado.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "Descubre las escenas", href: "/es/docs/scenes/intro/" },
+    },
+  },
 };
 
 export const presenceFaqEn = [
@@ -487,6 +614,39 @@ export const presenceFaqDe = [
     question: "Kostet das etwas?",
     answer:
       "Nein. Der Kern von Gladys ist kostenlos und Open Source, und die Anwesenheitssimulation nutzt Geräte, die du bereits besitzt. Es fallen also keine Zusatzkosten an.",
+  },
+];
+
+export const presenceFaqEs = [
+  {
+    question: "¿Qué es la simulación de presencia?",
+    answer:
+      "La simulación de presencia hace que una casa vacía parezca ocupada encendiendo y apagando automáticamente luces, persianas y otros dispositivos a horas creíbles. Es una de las medidas disuasorias más baratas y eficaces contra los robos mientras estás fuera.",
+  },
+  {
+    question: "¿Gladys tiene una función de simulación de presencia?",
+    answer:
+      "Gladys no tiene un único botón dedicado: la simulación de presencia se crea con escenas. Eso es lo que la hace tan potente: controlas exactamente qué dispositivos actúan, cuándo y con cuánta aleatoriedad, en lugar de un modo fijo predefinido.",
+  },
+  {
+    question: "¿Cómo hago que la simulación parezca realista?",
+    answer:
+      "Usa retrasos aleatorios y varía las habitaciones que se iluminan, lanza las escenas en función de la puesta de sol y mueve las persianas por la mañana y por la noche. Los patrones irregulares y ligados a la puesta de sol resultan mucho más convincentes que un horario diario fijo.",
+  },
+  {
+    question: "¿La simulación de presencia funciona sin internet?",
+    answer:
+      "Sí. Gladys funciona en local, así que tus escenas siguen ejecutándose aunque se caiga tu conexión a internet, y tus horarios nunca salen de tu casa.",
+  },
+  {
+    question: "¿Puedo activar la simulación solo cuando no estoy?",
+    answer:
+      "Sí. Vincula tus escenas a un estado de 'casa vacía', basado en la presencia de los teléfonos en la red o en un interruptor manual de 'ausente', para que la simulación solo funcione cuando de verdad no hay nadie en casa.",
+  },
+  {
+    question: "¿Tiene algún coste?",
+    answer:
+      "No. El núcleo de Gladys es gratuito y de código abierto, y la simulación de presencia usa dispositivos que ya tienes, así que no hay nada más que pagar.",
   },
 ];
 

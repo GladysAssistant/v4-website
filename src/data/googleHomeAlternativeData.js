@@ -356,6 +356,122 @@ const alternativeContent = {
       },
     },
   },
+  es: {
+    meta: {
+      title: "Alternativa a Google Home privada y de código abierto",
+      description:
+        "¿Buscas una alternativa a Google Home que respete tu privacidad? Gladys Assistant es una plataforma domótica local, de código abierto y autoalojada: tus datos se quedan en casa, sin grabaciones en la nube, sin publicidad y sin reventa de datos. Gratuita y autoalojada.",
+    },
+    hero: {
+      title: "¿Buscas una alternativa a Google Home que respete tu privacidad?",
+      subtitle:
+        "Te presentamos Gladys Assistant, la plataforma domótica local y de código abierto que guarda tus datos en casa en lugar de en la nube de Google.",
+      intro: [
+        "Google Home es práctico, pero todo lo que dices se procesa en la nube de Google, se vincula a tu cuenta de Google y alimenta la misma maquinaria publicitaria que impulsa al resto de la empresa. Para mucha gente, eso es motivo suficiente para descartarlo.",
+        "Gladys Assistant adopta el enfoque contrario. Es una plataforma domótica gratuita, de código abierto y autoalojada que funciona en casa, en tu propio equipo. Tus dispositivos y automatizaciones se quedan en tu red local, sin nube obligatoria, sin grabaciones en servidores ajenos, sin publicidad y sin reventa de datos.",
+      ],
+      primaryCta: { label: "Empezar gratis", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Descubre el asistente de voz de Gladys →",
+        href: "/es/docs/dashboard/voice-assistant/",
+      },
+    },
+    whyLooking: {
+      title: "¿Por qué buscar una alternativa a Google Home?",
+      intro:
+        "Google Home es un asistente de voz muy pulido, pero su modelo centrado en la nube y financiado por la publicidad tiene contrapartidas reales. Estos son los motivos más habituales por los que la gente empieza a buscar una alternativa:",
+      points: [
+        "Todo lo que dices se envía a la nube de Google, y las grabaciones de voz pueden almacenarse y revisarse.",
+        "Tu uso queda vinculado a tu cuenta de Google y al perfil publicitario que hay detrás.",
+        "Necesita una cuenta de Google y una conexión a internet permanente; muy pocas cosas funcionan sin conexión.",
+        "Google tiene un largo historial de productos abandonados y de cambios en su asistente (que ahora pasa a Gemini).",
+        "Es una interfaz de voz, no un verdadero motor de automatización: las automatizaciones complejas y realmente locales son limitadas.",
+      ],
+      outro:
+        "Nada de esto convierte a Google Home en un mal producto: entiende la voz de maravilla. Es simplemente una cuestión de prioridades, y si la privacidad y el control local te importan, hay una base mejor para tu hogar inteligente.",
+    },
+    reasons: {
+      title: "Por qué Gladys es una gran alternativa a Google Home que respeta tu privacidad",
+      cards: [
+        {
+          icon: "🔒",
+          title: "Tus datos se quedan en casa",
+          text: "Gladys funciona en tu propio equipo, así que los datos de tu hogar inteligente se quedan en tu red local. Sin nube obligatoria, sin grabaciones en los servidores de Google, sin rastreo.",
+        },
+        {
+          icon: "🌐",
+          title: "Funciona sin la nube",
+          text: "Como funciona en local, tu casa sigue funcionando aunque se caiga internet o se cierre un servicio en la nube. Tus automatizaciones no dependen de que Google siga en línea.",
+        },
+        {
+          icon: "🧠",
+          title: "Automatización de verdad, no solo órdenes",
+          text: "Gladys tiene un motor de escenas completo con disparadores, condiciones y acciones. Construyes una casa que reacciona por sí sola, y no una que solo espera órdenes de voz.",
+        },
+        {
+          icon: "🎙️",
+          title: "Un asistente de voz que controlas tú",
+          text: "Gladys tiene su propio asistente de voz, así que mantienes el control manos libres sin entregar cada frase que dices a una gran empresa tecnológica.",
+        },
+        {
+          icon: "🔌",
+          title: "Basado en estándares abiertos",
+          text: "Zigbee, Matter y MQTT son ciudadanos de primera, así que nunca quedas atrapado en el ecosistema de una sola marca ni obligado a comprar accesorios compatibles.",
+        },
+        {
+          icon: "💚",
+          title: "Código abierto, sin publicidad, sin reventa",
+          text: "El núcleo de Gladys es 100 % gratuito y de código abierto. No hay publicidad ni reventa de datos, y una suscripción opcional a Gladys Plus financia el proyecto de forma transparente.",
+        },
+      ],
+    },
+    honesty: {
+      title: "Seamos justos: en qué gana Google Home",
+      paragraphs: [
+        "Voy a ser transparente. Google Home es excelente en lo que hace: un reconocimiento de voz de primer nivel, conversaciones naturales, respuestas completas gracias a la Búsqueda de Google, altavoces muy baratos y un audio multihabitación que simplemente funciona. Gladys es ante todo una plataforma domótica, y su asistente de voz es más reciente y lo configuras tú mismo, así que como altavoz de voz para el gran público, Google Home es difícil de superar.",
+        "La buena noticia es que no tiene por qué ser todo o nada. Gladys puede integrarse con Google Home, así que puedes mantener el control por voz en tus altavoces Nest mientras tus automatizaciones se ejecutan en local en Gladys. Y si tu prioridad es la privacidad, puedes pasarte a lo totalmente local y prescindir por completo del asistente en la nube. En cualquier caso, mantienes el control.",
+      ],
+      compareLink: {
+        label: "Mira cómo se integra Gladys con Google Home →",
+        href: "/es/docs/integrations/google-home/",
+      },
+    },
+    others: {
+      title: "Otras alternativas a Google Home que respetan tu privacidad",
+      intro:
+        "Gladys no es la única opción. Para ser justos, estas son las principales alternativas si quieres más privacidad y control local del que ofrece Google Home:",
+      cards: [
+        {
+          title: "Home Assistant",
+          text: "Una plataforma de código abierto potente con una opción de voz local (Assist). Muy capaz, pero con una curva de aprendizaje pronunciada y algo de YAML.",
+        },
+        {
+          title: "Apple HomeKit / Siri",
+          text: "Más respetuoso con la privacidad que Google Home, pero sigue atado al ecosistema y a la nube de Apple, y limitado al hardware de Apple.",
+        },
+        {
+          title: "OpenVoiceOS / Mycroft",
+          text: "Asistentes de voz de código abierto centrados en la privacidad. Prometedores, pero más un proyecto para aficionados al cacharreo que un producto de consumo pulido.",
+        },
+        {
+          title: "Rhasspy",
+          text: "Un kit de herramientas de voz totalmente offline que se combina con otras plataformas. Muy privado, pero técnico de instalar y de mantener.",
+        },
+      ],
+      outro:
+        "Entre todas ellas, Gladys destaca por combinar una interfaz limpia y moderna, un verdadero motor de automatización local y estándares abiertos, sin una curva de aprendizaje empinada.",
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Prueba la alternativa a Google Home que respeta tu privacidad",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Local ante todo, autoalojado, sin necesidad de nube y sin grabaciones en servidores ajenos.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: {
+        label: "Descubrir Gladys Plus",
+        href: "/es/plus/",
+      },
+    },
+  },
 };
 
 export const alternativeFaqEn = [
@@ -454,6 +570,39 @@ export const alternativeFaqDe = [
     question: "Kann ich Google Home zusammen mit Gladys weiter nutzen?",
     answer:
       "Ja. Gladys lässt sich mit Google Home verbinden, du kannst also die Sprachsteuerung auf deinen Nest-Lautsprechern behalten, während deine Automationen lokal in Gladys laufen. Wenn dir Datenschutz am wichtigsten ist, kannst du auch komplett lokal werden und den Cloud-Assistenten ganz weglassen.",
+  },
+];
+
+export const alternativeFaqEs = [
+  {
+    question: "¿Existe una alternativa a Google Home que respete la privacidad?",
+    answer:
+      "Sí. Gladys Assistant es una plataforma domótica local, de código abierto y autoalojada que funciona en tu propio equipo, así que tus datos se quedan en tu red local en lugar de en la nube de Google. No hay grabaciones en servidores ajenos, ni publicidad, ni reventa de datos.",
+  },
+  {
+    question: "¿Google Home graba todo lo que dices?",
+    answer:
+      "Google Home procesa tus peticiones de voz en la nube de Google, y las grabaciones de voz pueden almacenarse y revisarse para mejorar sus servicios. Gladys adopta el enfoque contrario: funciona en local, así que los datos de tu hogar inteligente se quedan en casa.",
+  },
+  {
+    question: "¿Puedo sustituir Google Home por un sistema local y autoalojado?",
+    answer:
+      "Sí. Gladys Assistant es totalmente autoalojado y funciona en casa. Tiene su propio asistente de voz y un verdadero motor de automatización, así que puedes dejar atrás un asistente en la nube sin renunciar al control manos libres ni a automatizaciones locales potentes.",
+  },
+  {
+    question: "¿Gladys funciona sin la nube o sin internet?",
+    answer:
+      "Sí. El núcleo de Gladys funciona íntegramente en tu red local, así que tu casa sigue funcionando aunque se caiga internet o se cierre un servicio en la nube. Una suscripción opcional a Gladys Plus añade el acceso remoto y la IA, pero el núcleo autoalojado sigue siendo local.",
+  },
+  {
+    question: "¿Gladys tiene un asistente de voz como Google Home?",
+    answer:
+      "Sí, Gladys tiene su propio asistente de voz para el control manos libres. Es más reciente que el Asistente de Google y lo configuras tú mismo, pero te permite mantener el control por voz sin enviar cada frase que dices a una gran empresa tecnológica.",
+  },
+  {
+    question: "¿Puedo seguir usando Google Home con Gladys?",
+    answer:
+      "Sí. Gladys puede integrarse con Google Home, así que puedes mantener el control por voz en tus altavoces Nest mientras tus automatizaciones se ejecutan en local en Gladys. Si tu prioridad es la privacidad, también puedes pasarte a lo totalmente local y prescindir por completo del asistente en la nube.",
   },
 ];
 

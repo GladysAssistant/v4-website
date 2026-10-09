@@ -546,6 +546,185 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
     },
   },
+  es: {
+    meta: {
+      title: "Zigbee2MQTT sin Home Assistant: la configuración sencilla",
+      description:
+        "Usa Zigbee2MQTT sin Home Assistant: Gladys Assistant instala y gestiona Zigbee2MQTT y el broker MQTT por ti, y luego te permite emparejar dispositivos, crear paneles y automatizar, en local. Gratis y de código abierto.",
+    },
+    screenshotCaption:
+      "Tus dispositivos Zigbee, emparejados con Zigbee2MQTT, en un panel de Gladys.",
+    hero: {
+      title: "Zigbee2MQTT sin Home Assistant",
+      subtitle:
+        "Zigbee2MQTT es la mejor forma de usar Zigbee en local. No necesitas Home Assistant para aprovecharlo: Gladys Assistant lo configura por ti y te ofrece los paneles y las automatizaciones.",
+      intro: [
+        "Zigbee2MQTT es un puente de código abierto compatible con más de 5000 dispositivos Zigbee de casi 600 marcas a través de un simple coordinador USB, sin hub del fabricante y sin nube. Por sí solo, solo publica mensajes MQTT: sigues necesitando una plataforma para ver tus dispositivos, crear un panel y automatizar.",
+        "Muchos acaban instalando Home Assistant para eso y luego pasan las tardes entre YAML y complementos. Gladys Assistant es una alternativa gratuita y de código abierto pensada para ser sencilla: conecta tu dongle, haz clic en Activar y Gladys instala Zigbee2MQTT y su broker MQTT, y después te permite emparejar y usar tus dispositivos desde su propia interfaz.",
+      ],
+      primaryCta: {
+        label: "Guía de configuración de Zigbee2MQTT",
+        href: "/docs/integrations/zigbee2mqtt/",
+      },
+      secondaryCta: {
+        label: "Empezar con Gladys →",
+        href: "/docs/",
+      },
+    },
+    problem: {
+      title: "Usar Zigbee2MQTT por sí solo es solo la mitad del trabajo",
+      intro: "Si has probado Zigbee2MQTT en modo independiente, ya sabes cómo va:",
+      points: [
+        "Necesitas un broker MQTT (Mosquitto) a su lado, con credenciales y topics que coincidan.",
+        "La interfaz web de Zigbee2MQTT es estupenda para emparejar y depurar, pero no es un panel para toda la familia y no hace automatizaciones.",
+        "Node-RED o algunos scripts pueden cubrir el hueco, pero entonces tienes que mantener tres o cuatro piezas distintas.",
+        "Home Assistant lo resuelve, a cambio de una plataforma enorme que aprender, YAML y cambios incompatibles frecuentes.",
+      ],
+      outro:
+        "Lo que la mayoría quiere es más sencillo: la compatibilidad de dispositivos de Zigbee2MQTT, con un panel claro y automatizaciones fáciles por encima.",
+    },
+    comparison: {
+      title: "Zigbee2MQTT con Gladys, en modo independiente o con Home Assistant",
+      intro: "Tres formas de usar el mismo Zigbee2MQTT:",
+      cols: {
+        feature: "",
+        gladys: "Con Gladys",
+        other: "Independiente o con Home Assistant",
+      },
+      rows: [
+        {
+          feature: "Instalación de Zigbee2MQTT y MQTT",
+          gladys: "Automática: Gladys crea los dos contenedores",
+          other: "A mano (Docker, complementos) y archivos de configuración",
+        },
+        {
+          feature: "Emparejamiento de dispositivos",
+          gladys: "Desde la interfaz de Gladys",
+          other: "Interfaz de Zigbee2MQTT y después importación en la plataforma",
+        },
+        {
+          feature: "Paneles",
+          gladys: "Integrados, adaptados al móvil",
+          other: "Ninguno en modo independiente; muy flexibles pero complejos en Home Assistant",
+        },
+        {
+          feature: "Automatizaciones",
+          gladys: "Escenas visuales, sin código",
+          other: "Ninguna en modo independiente; automatizaciones, YAML o Node-RED en Home Assistant",
+        },
+        {
+          feature: "Curva de aprendizaje",
+          gladys: "Una sola interfaz que aprender",
+          other: "Varias herramientas y conceptos (broker, YAML, complementos)",
+        },
+      ],
+      outro:
+        "Home Assistant es más completo y tiene una comunidad más grande; Gladys está pensado para quienes quieren que lo esencial simplemente funcione.",
+    },
+    features: {
+      title: "Lo que obtienes con Zigbee2MQTT en Gladys",
+      intro: "Cada dispositivo compatible con Zigbee2MQTT se convierte en un dispositivo de Gladys:",
+      cards: [
+        {
+          icon: "⚙️",
+          title: "Instalación gestionada",
+          text: "Elige tu coordinador y su modelo; Gladys instala y conecta Zigbee2MQTT y el broker MQTT por ti.",
+        },
+        {
+          icon: "🔗",
+          title: "Empareja desde Gladys",
+          text: "Permite el emparejamiento y los nuevos dispositivos aparecen con sus funciones detectadas, listos para darles un nombre y asignarlos a una habitación.",
+        },
+        {
+          icon: "📊",
+          title: "Paneles e historial",
+          text: "Sensores, luces, enchufes, termostatos y persianas en un panel, con gráficos de cada valor a lo largo del tiempo.",
+        },
+        {
+          icon: "🎬",
+          title: "Escenas",
+          text: "Dispara una escena con cualquier evento Zigbee, añade condiciones y actúa sobre cualquier dispositivo: sin código.",
+        },
+        {
+          icon: "📡",
+          title: "Combina con otros protocolos",
+          text: "Zigbee junto a Matter, Z-Wave, Wi-Fi e integraciones en la nube en una sola interfaz.",
+        },
+        {
+          icon: "🤖",
+          title: "IA y MCP",
+          text: "Habla con tus dispositivos Zigbee en lenguaje natural o ponlos a disposición de Claude a través del servidor MCP.",
+        },
+      ],
+    },
+    how: {
+      title: "Configura Zigbee2MQTT sin Home Assistant, paso a paso",
+      intro: "En un mini-PC, una Raspberry Pi o un NAS con Docker:",
+      points: [
+        "Instala Gladys con un solo comando Docker.",
+        "Conecta un coordinador Zigbee USB (Sonoff ZBDongle-E o -P…) al equipo, o conecta a tu red un coordinador de red como el SMLIGHT SLZB-06.",
+        "En Gladys, abre Integraciones → Zigbee2MQTT y selecciona tu coordinador y su modelo.",
+        "Haz clic en Activar Zigbee2MQTT: Gladys inicia los contenedores y muestra su estado.",
+        "Permite el emparejamiento, empareja tus dispositivos y añádelos a tu panel.",
+      ],
+      outro:
+        "La solución a los errores clásicos de Zigbee2MQTT (zigbee-herdsman, ping del adaptador, versión EZSP) está en la guía de configuración.",
+    },
+    solution: {
+      title: "El mismo Zigbee2MQTT, sin la complejidad",
+      paragraphs: [
+        "Gladys no sustituye a Zigbee2MQTT, lo utiliza: obtienes la misma compatibilidad de dispositivos y la misma red Zigbee local y sin nube. Lo que cambia es todo lo que lo rodea: ningún broker que configurar, nada de YAML, un panel que tu familia puede usar y escenas que creas en unos pocos clics.",
+        "Gladys es gratis y de código abierto, se desarrolla desde 2013 y funciona íntegramente en tu propio hardware.",
+      ],
+      link: {
+        label: "Gladys frente a Home Assistant, la comparación honesta →",
+        href: "/home-assistant-vs-gladys-assistant/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Todo lo que necesitas para una red Zigbee local:",
+      links: [
+        {
+          label: "Philips Hue sin el puente",
+          href: "/philips-hue-without-bridge/",
+          text: "Empareja las bombillas Hue directamente con tu dongle Zigbee.",
+        },
+        {
+          label: "Sensores Aqara sin el hub",
+          href: "/aqara-without-hub/",
+          text: "Sensores Zigbee de Aqara, en local, sin la app de Aqara.",
+        },
+        {
+          label: "El mejor dongle USB Zigbee",
+          href: "/best-zigbee-dongle/",
+          text: "Qué coordinador comprar para Zigbee2MQTT, USB o de red.",
+        },
+        {
+          label: "Zigbee vs Z-Wave vs Matter",
+          href: "/zigbee-vs-matter-vs-zwave/",
+          text: "Qué protocolo elegir y cómo pueden convivir.",
+        },
+        {
+          label: "Z-Wave JS UI sin Home Assistant",
+          href: "/z-wave-js-ui-without-home-assistant/",
+          text: "El mismo enfoque para tu red Z-Wave.",
+        },
+        {
+          label: "Alternativa a Home Assistant",
+          href: "/home-assistant-alternative/",
+          text: "Por qué la gente elige Gladys cuando Home Assistant se le hace demasiado.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Pon Zigbee2MQTT en marcha esta misma noche",
+      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker. Conecta tu dongle y empareja tus primeros dispositivos.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Guía de Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
+    },
+  },
 };
 
 export const zigbee2mqttWithoutHomeAssistantFaqEn = [
@@ -644,6 +823,39 @@ export const zigbee2mqttWithoutHomeAssistantFaqDe = [
     question: "Ist Gladys eine gute Home Assistant Alternative für Zigbee?",
     answer:
       "Wenn du lokales Zigbee mit einer einfachen Oberfläche willst, ja: Gladys nutzt dasselbe Zigbee2MQTT, ohne YAML und ohne Add-ons. Home Assistant hat ein breiteres Ökosystem und mehr Integrationen; Gladys setzt auf Einfachheit und Stabilität.",
+  },
+];
+
+export const zigbee2mqttWithoutHomeAssistantFaqEs = [
+  {
+    question: "¿Puedo usar Zigbee2MQTT sin Home Assistant?",
+    answer:
+      "Sí. Zigbee2MQTT es un proyecto de código abierto independiente: solo necesita un coordinador Zigbee y un broker MQTT. Home Assistant es una de las plataformas que pueden usarlo, pero no la única. Gladys Assistant instala y gestiona Zigbee2MQTT y el broker MQTT por ti, y añade paneles y automatizaciones por encima.",
+  },
+  {
+    question: "¿Zigbee2MQTT necesita un broker MQTT?",
+    answer:
+      "Sí, Zigbee2MQTT publica el estado de cada dispositivo por MQTT, así que necesita un broker como Mosquitto. Con Gladys no tienes que configurarlo: Gladys crea el broker y los contenedores de Zigbee2MQTT con credenciales coincidentes cuando activas la integración.",
+  },
+  {
+    question: "¿Qué dispositivos Zigbee funcionan con Gladys?",
+    answer:
+      "Todos los dispositivos compatibles con Zigbee2MQTT, más de 5000 dispositivos de casi 600 marcas: IKEA, bombillas Philips Hue, Aqara, Sonoff, Tuya, Schneider, Legrand, Sinopé y muchas más. La lista completa está en la web de Zigbee2MQTT.",
+  },
+  {
+    question: "¿Qué dongle Zigbee debo usar?",
+    answer:
+      "Cualquier coordinador compatible con Zigbee2MQTT. Las opciones más populares son el Sonoff ZBDongle-E y el ZBDongle-P por USB, o un coordinador de red como el SMLIGHT SLZB-06 si quieres colocarlo lejos de las interferencias. Nuestra guía de dongles Zigbee los compara.",
+  },
+  {
+    question: "¿Puedo seguir usando la interfaz web de Zigbee2MQTT?",
+    answer:
+      "Para el uso diario no la necesitarás: emparejar, renombrar y usar los dispositivos se hace en Gladys. Zigbee2MQTT sigue siendo el proyecto estándar que funciona por debajo, así que su documentación y su lista de dispositivos se aplican tal cual.",
+  },
+  {
+    question: "¿Es Gladys una buena alternativa a Home Assistant para Zigbee?",
+    answer:
+      "Si quieres Zigbee en local con una interfaz sencilla, sí: Gladys usa el mismo Zigbee2MQTT, sin YAML ni complementos. Home Assistant tiene un ecosistema más amplio y más integraciones; Gladys apuesta por la sencillez y la estabilidad.",
   },
 ];
 

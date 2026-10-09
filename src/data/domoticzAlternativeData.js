@@ -512,6 +512,175 @@ const domoticzAlternativeContent = {
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
   },
+
+  es: {
+    meta: {
+      title: "Alternativa a Domoticz: domótica moderna de código abierto",
+      description:
+        "¿Buscas una alternativa a Domoticz? Gladys Assistant es domótica gratuita y de código abierto con app moderna, escenas visuales, Zigbee2MQTT, Matter e IA.",
+    },
+    screenshotCaption:
+      "Gladys: un panel de control moderno, pensado para el móvil, donde los usuarios de Domoticz están acostumbrados a listas de dispositivos y scripts.",
+    hero: {
+      title: "¿Buscas una alternativa a Domoticz?",
+      subtitle:
+        "Domoticz ha hecho funcionar innumerables casas inteligentes en Raspberry Pi. Si quieres el mismo enfoque local y de código abierto, con una interfaz moderna y sin scripts, Gladys Assistant es el siguiente paso natural.",
+      intro: [
+        "Domoticz se ganó su reputación por ser ligero, estable y compatible con una enorme variedad de hardware, desde dispositivos RFXCOM y de 433 MHz hasta Zigbee y Z-Wave. Muchas casas inteligentes llevan una década funcionando con él.",
+        "Pero su interfaz acusa el paso de los años, y cualquier cosa más allá de simples temporizadores implica scripts en Lua, dzVents o Blockly. Gladys Assistant comparte los mismos valores, código abierto, local y ligero, con una interfaz pensada para el móvil y automatizaciones que creas de forma visual.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/docs/" },
+      secondaryCta: {
+        label: "Prueba la demo →",
+        href: "https://demo.gladysassistant.com/dashboard",
+      },
+    },
+    problem: {
+      title: "Por qué muchos buscan una alternativa a Domoticz",
+      intro: "Los usuarios de Domoticz que cambian suelen mencionar las mismas cosas:",
+      points: [
+        "La interfaz web se ve anticuada, sobre todo en el móvil.",
+        "Las automatizaciones más allá de simples temporizadores exigen scripts en Lua, dzVents o Blockly.",
+        "Configurar paneles para el resto de la familia lleva trabajo.",
+        "Su comunidad y su catálogo de integraciones son más pequeños que los de Home Assistant.",
+      ],
+      outro:
+        "Si Domoticz sigue haciendo todo lo que necesitas, quédatelo. Si quieres una experiencia más actual sin renunciar al código abierto ni al control local, sigue leyendo.",
+    },
+    comparison: {
+      title: "Gladys Assistant vs. Domoticz",
+      intro: "Dos plataformas ligeras, locales y de código abierto:",
+      cols: {
+        feature: "",
+        gladys: "Gladys Assistant",
+        other: "Domoticz",
+      },
+      rows: [
+        { feature: "Licencia", gladys: "Apache 2.0", other: "GPL v3" },
+        { feature: "Tecnología", gladys: "Node.js, Docker", other: "C++, nativo o Docker" },
+        {
+          feature: "Interfaz",
+          gladys: "Paneles modernos, pensados para el móvil",
+          other: "Interfaz web clásica",
+        },
+        {
+          feature: "Automatizaciones",
+          gladys: "Escenas visuales, sin código",
+          other: "Temporizadores, Blockly, scripts en Lua, dzVents y Python",
+        },
+        {
+          feature: "Zigbee",
+          gladys: "Zigbee2MQTT, instalado y gestionado por Gladys",
+          other: "Con Zigbee2MQTT vía MQTT, o con plugins",
+        },
+        {
+          feature: "IA",
+          gladys: "Asistente de IA con Gladys Plus, servidor MCP integrado",
+          other: "Sin IA integrada",
+        },
+        {
+          feature: "Compatibilidad de hardware",
+          gladys: "Los principales protocolos y marcas populares, más de 90 integraciones de la comunidad",
+          other: "Muy amplia, incluidos dispositivos antiguos de 433 MHz y RFXCOM",
+        },
+      ],
+      outro:
+        "Domoticz, que sigue activamente mantenido con varias versiones al año, gana en compatibilidad con hardware antiguo y en consumo mínimo de recursos. Gladys gana en interfaz, automatizaciones sin código, Matter e IA.",
+    },
+    features: {
+      title: "Por qué Gladys es una buena alternativa a Domoticz",
+      intro: "Lo que cambia al pasarte a Gladys:",
+      cards: [
+        {
+          icon: "📱",
+          title: "Una interfaz moderna",
+          text: "Paneles diseñados para móviles y tablets de pared, que toda la familia puede usar.",
+        },
+        {
+          icon: "🧩",
+          title: "Escenas en lugar de scripts",
+          text: "Disparadores, condiciones, si/entonces/si no y retardos en un editor visual: nada de Lua ni dzVents que mantener.",
+        },
+        {
+          icon: "🐝",
+          title: "Zigbee2MQTT gestionado",
+          text: "Gladys instala y conecta Zigbee2MQTT y su broker MQTT por ti.",
+        },
+        {
+          icon: "🔗",
+          title: "Matter",
+          text: "Gladys es un controlador Matter, listo para la nueva generación de dispositivos.",
+        },
+        {
+          icon: "🤖",
+          title: "IA cuando la quieras",
+          text: "Habla con tu casa con Gladys Plus, o conecta Claude a través del servidor MCP integrado.",
+        },
+        {
+          icon: "🍓",
+          title: "Igual de ligero",
+          text: "Gladys funciona en una Raspberry Pi, un mini-PC o un NAS con Docker.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo pasar de Domoticz a Gladys",
+      intro: "Una migración progresiva:",
+      points: [
+        "Instala Gladys en la misma Raspberry Pi o en otra máquina y haz una lista de tus dispositivos Domoticz por hardware.",
+        "Zigbee: pasa tus dispositivos al Zigbee2MQTT gestionado por Gladys (un dongle Zigbee solo puede usarlo una de las dos plataformas a la vez).",
+        "Z-Wave: ejecuta Z-Wave JS UI y conecta Gladys a él por MQTT.",
+        "Dispositivos de 433 MHz: echa un vistazo a la integración comunitaria RFLink; MQTT puede hacer de puente para el resto.",
+        "Reconstruye tus scripts como escenas de Gladys y apaga Domoticz cuando todo funcione en Gladys.",
+      ],
+      outro:
+        "Consulta antes la página \"Funciona con Gladys\": Domoticz es compatible con algunos equipos antiguos que Gladys no admite.",
+    },
+    solution: {
+      title: "Los mismos valores, una experiencia más actual",
+      paragraphs: [
+        "Domoticz y Gladys coinciden en lo esencial: código abierto, local, ligero. Gladys aporta lo que los usuarios de Domoticz echan de menos con más frecuencia: una interfaz actual, automatizaciones sin scripts, Matter e IA opcional.",
+        "Gladys es gratis. Gladys Plus es una suscripción opcional para el acceso remoto cifrado, las copias de seguridad, Alexa y Google Home y el asistente de IA.",
+      ],
+      link: {
+        label: "El mejor software de domótica de código abierto →",
+        href: "/open-source-home-automation/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Compara Gladys con otras plataformas:",
+      links: [
+        {
+          label: "Alternativa a openHAB",
+          href: "/openhab-alternative/",
+          text: "Domótica de código abierto más sencilla.",
+        },
+        {
+          label: "Gladys vs. Home Assistant",
+          href: "/home-assistant-vs-gladys-assistant/",
+          text: "Una comparación honesta con la plataforma más popular.",
+        },
+        {
+          label: "Zigbee2MQTT sin Home Assistant",
+          href: "/zigbee2mqtt-without-home-assistant/",
+          text: "Zigbee local con una instalación gestionada y paneles.",
+        },
+        {
+          label: "Todas las guías",
+          href: "/guides/",
+          text: "Todas las guías, herramientas y comparativas en un solo lugar.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Código abierto, local y moderno",
+      text: "Gladys es gratis y se instala con un solo comando de Docker. Pruébalo junto a Domoticz y comprueba la diferencia.",
+      primary: { label: "Empezar", href: "/docs/" },
+      secondary: { label: "Funciona con Gladys", href: "/works-with/" },
+    },
+  },
 };
 
 export const domoticzAlternativeFaqEn = [
@@ -595,6 +764,34 @@ export const domoticzAlternativeFaqDe = [
     question: "Unterstützt Gladys 433-MHz-Geräte wie Domoticz?",
     answer:
       "Teilweise, über die RFLink-Community-Integration. Domoticz unterstützt ältere 433-MHz- und RFXCOM-Hardware breiter, prüfe deine Geräte also vor dem Umzug.",
+  },
+];
+
+export const domoticzAlternativeFaqEs = [
+  {
+    question: "¿Cuál es una buena alternativa a Domoticz?",
+    answer:
+      "Gladys Assistant es una plataforma gratuita, local y de código abierto, con una interfaz moderna pensada para el móvil y escenas visuales en lugar de scripts. Home Assistant y openHAB son otras opciones de código abierto, más completas pero también más complejas.",
+  },
+  {
+    question: "¿Gladys es tan ligero como Domoticz?",
+    answer:
+      "Gladys funciona sin problemas en una Raspberry Pi 4 o 5, un mini-PC o un NAS con Docker. Domoticz consume todavía menos recursos, pero Gladys sigue siendo lo bastante ligero para una pequeña máquina siempre encendida.",
+  },
+  {
+    question: "¿Tengo que escribir scripts en Gladys?",
+    answer:
+      "No. Las automatizaciones de Gladys son escenas que creas en un editor visual, con disparadores, condiciones, si/entonces/si no y retardos. No hay que escribir Lua ni dzVents.",
+  },
+  {
+    question: "¿Puedo conservar mis dispositivos Zigbee si dejo Domoticz?",
+    answer:
+      "Sí. Los dispositivos Zigbee se pueden emparejar con la instancia de Zigbee2MQTT que Gladys instala y gestiona. Si ya usas Zigbee2MQTT con Domoticz, los dispositivos son los mismos; solo una plataforma puede usar el dongle a la vez.",
+  },
+  {
+    question: "¿Gladys es compatible con dispositivos de 433 MHz como Domoticz?",
+    answer:
+      "En parte, a través de la integración comunitaria RFLink. Domoticz ofrece una compatibilidad más amplia con hardware antiguo de 433 MHz y RFXCOM, así que comprueba tus dispositivos antes de migrar.",
   },
 ];
 

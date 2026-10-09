@@ -10,6 +10,7 @@ import comparisonContent, {
   comparisonFaqEn,
   comparisonFaqFr,
   comparisonFaqDe,
+  comparisonFaqEs,
 } from "../data/comparisonData";
 
 import styles from "./comparison.module.css";
@@ -154,6 +155,8 @@ function ComparisonContent({ content, faq, lang }) {
                   ? "Le verdict"
                   : lang === "de"
                     ? "Das Fazit"
+                    : lang === "es"
+                    ? "El veredicto"
                     : "The verdict"}</strong>
               {section.takeaway}
             </p>
@@ -215,7 +218,7 @@ function ComparisonContent({ content, faq, lang }) {
 
 export default function ComparisonPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = comparisonContent[lang];
@@ -224,6 +227,8 @@ export default function ComparisonPage() {
       ? comparisonFaqFr
       : lang === "de"
         ? comparisonFaqDe
+      : lang === "es"
+        ? comparisonFaqEs
         : comparisonFaqEn;
 
   return (

@@ -393,6 +393,134 @@ const waterLeakDetectionContent = {
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/de/docs/integrations/zigbee2mqtt/" },
     },
   },
+  es: {
+    meta: {
+      title: "Detección de fugas de agua con corte automático, en local",
+      description:
+        "Crea un sistema de detección de fugas de agua que corte el agua automáticamente: sensores de fugas Zigbee, una válvula motorizada y una escena local en Gladys Assistant. Sin suscripción, funciona sin internet.",
+    },
+    screenshotCaption:
+      "Sensores de fugas, la válvula de agua y la escena de alerta, uno junto a otro en Gladys.",
+    hero: {
+      title: "Detección de fugas de agua que corta el agua por ti",
+      subtitle:
+        "Unos cuantos sensores de fugas Zigbee, una válvula motorizada en la tubería principal y una sola escena local: el agua queda cortada segundos después de una fuga, aunque no haya nadie en casa.",
+      intro: [
+        "Un termo que gotea, una manguera de lavadora que revienta o una tubería congelada pueden causar en pocas horas más daños que la mayoría de los robos. Un detector que solo pita no sirve de mucho cuando estás en el trabajo o de vacaciones.",
+        "Con Gladys Assistant, una plataforma domótica gratuita y de código abierto que funciona en casa, cualquier sensor de fugas puede cerrar una válvula motorizada en tu entrada principal de agua, enviarte una alerta al móvil y apagar los electrodomésticos afectados. Funciona en local, así que reacciona aunque se caiga internet, y no hay cuota mensual.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Configurar Zigbee2MQTT →",
+        href: "/es/docs/integrations/zigbee2mqtt/",
+      },
+    },
+    problem: {
+      title: "Por qué un sensor que pita no es suficiente",
+      intro: "La mayoría de los detectores de fugas del mercado tienen los mismos límites:",
+      points: [
+        "Te avisan, pero nada detiene el agua hasta que alguien vuelve a casa.",
+        "Los sistemas inteligentes de corte suelen necesitar su propio hub, su propia app y, a veces, una suscripción.",
+        "Los sistemas en la nube dependen de internet y de los servidores del fabricante para reaccionar.",
+        "Cada marca funciona en su propia app, así que el sensor de debajo del fregadero no puede hablar con la válvula de otra marca.",
+      ],
+      outro:
+        "Lo que realmente quieres: cualquier sensor, cualquier válvula y una regla que siempre se cumpla. Es un trabajo para la domótica local.",
+    },
+    features: {
+      title: "Lo que puedes montar con Gladys",
+      intro: "Los sensores de fugas y las válvulas se convierten en dispositivos normales de Gladys:",
+      cards: [
+        {
+          icon: "💧",
+          title: "Sensores de fugas en cualquier lugar",
+          text: "Bajo los fregaderos, detrás de la lavadora, junto al termo y la caldera: los sensores de fugas Zigbee son pequeños, baratos y duran años con una pila.",
+        },
+        {
+          icon: "🚰",
+          title: "Corte automático",
+          text: "Una válvula motorizada en la tubería principal se cierra en cuanto cualquier sensor detecta agua, sin esperarte.",
+        },
+        {
+          icon: "📱",
+          title: "Alertas instantáneas",
+          text: "Un mensaje de Telegram, un SMS u otro canal de notificación te dice qué sensor se ha activado.",
+        },
+        {
+          icon: "🔌",
+          title: "Apaga los electrodomésticos",
+          text: "Apaga el enchufe inteligente de la lavadora o del lavavajillas afectado, en la misma escena.",
+        },
+        {
+          icon: "🔋",
+          title: "Control de las pilas",
+          text: "El nivel de las pilas se sigue como cualquier otro valor: una escena puede avisarte cuando una se esté agotando, y el informe semanal con IA (Gladys Plus) señala los sensores que han dejado de dar señales.",
+        },
+        {
+          icon: "🏠",
+          title: "Funciona sin internet",
+          text: "Los sensores, la válvula y la escena funcionan en tu red local: el corte se produce aunque se caiga internet.",
+        },
+      ],
+    },
+    how: {
+      title: "Cómo configurarlo",
+      intro: "En un mini-PC o una Raspberry Pi con Gladys:",
+      points: [
+        "Añade un coordinador Zigbee y activa Zigbee2MQTT en Gladys.",
+        "Empareja sensores de fugas Zigbee (Aqara, Third Reality, Sinopé WL4200, Tuya y muchos otros son compatibles con Zigbee2MQTT) y colócalos donde se producen las fugas.",
+        "Instala una válvula motorizada en la tubería principal de agua, como una válvula Sinopé Sedna, el Aqara Valve Controller T1 u otro controlador de válvula Zigbee compatible con Zigbee2MQTT, y emparéjala.",
+        "Crea una escena: cuando cualquier sensor de fugas detecte agua, cierra la válvula, envía una notificación y apaga los electrodomésticos relacionados.",
+        "Pruébalo con un paño húmedo sobre un sensor y comprueba que la válvula se cierra.",
+      ],
+      outro:
+        "Pide a un fontanero que instale la válvula en la tubería principal si no te sientes cómodo haciéndolo tú mismo.",
+    },
+    solution: {
+      title: "Cualquier sensor, cualquier válvula, una regla local",
+      paragraphs: [
+        "Como Gladys se comunica con dispositivos Zigbee, Z-Wave, Matter y Wi-Fi, no estás atado al kit de una sola marca: combina los sensores y la válvula que mejor se adapten a tu casa y a tu presupuesto.",
+        "Gladys es gratuito y de código abierto. Gladys Plus, opcional, añade acceso remoto cifrado y copias de seguridad, pero el corte en sí nunca depende de él.",
+      ],
+      link: {
+        label: "Monta también un sistema de alarma casero →",
+        href: "/es/diy-home-alarm-system/",
+      },
+    },
+    related: {
+      title: "Para ir más allá",
+      intro: "Protege tu casa con automatizaciones locales:",
+      links: [
+        {
+          label: "Sistema de alarma casero",
+          href: "/es/diy-home-alarm-system/",
+          text: "Una alarma autovigilada que funciona en local, sin contrato.",
+        },
+        {
+          label: "Zigbee2MQTT sin Home Assistant",
+          href: "/es/zigbee2mqtt-without-home-assistant/",
+          text: "Zigbee en local, con una instalación gestionada y paneles.",
+        },
+        {
+          label: "Sensores Aqara sin el hub",
+          href: "/es/aqara-without-hub/",
+          text: "Usa en local los sensores de fugas y de apertura de Aqara.",
+        },
+        {
+          label: "El mejor dongle USB Zigbee",
+          href: "/es/best-zigbee-dongle/",
+          text: "Qué coordinador Zigbee comprar.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Detén las fugas antes de que se conviertan en inundaciones",
+      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Empareja tus sensores y tu válvula, y deja que la escena vigile tu casa.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "Guía de Zigbee2MQTT", href: "/es/docs/integrations/zigbee2mqtt/" },
+    },
+  },
 };
 
 export const waterLeakDetectionFaqEn = [
@@ -476,6 +604,34 @@ export const waterLeakDetectionFaqDe = [
     question: "Gibt es eine monatliche Gebühr?",
     answer:
       "Nein. Gladys ist kostenlos und Open Source, Melder und Ventil kaufst du einmalig. Gladys Plus ist optional und bietet verschlüsselten Fernzugriff und Backups.",
+  },
+];
+
+export const waterLeakDetectionFaqEs = [
+  {
+    question: "¿Puede un sensor de fugas inteligente cortar el agua automáticamente?",
+    answer:
+      "Sí, si está vinculado a una válvula motorizada en la tubería principal de agua. Con Gladys Assistant, cualquier sensor de fugas compatible puede activar una escena que cierra la válvula, te envía una alerta y apaga los electrodomésticos, en local y sin suscripción.",
+  },
+  {
+    question: "¿El corte automático del agua funciona sin internet?",
+    answer:
+      "Con Gladys, sí. Los sensores Zigbee, la válvula y la escena funcionan en tu red local, así que el agua se corta aunque se caiga tu conexión a internet. Solo la notificación remota necesita internet.",
+  },
+  {
+    question: "¿Qué sensores de fugas y válvulas funcionan con Gladys?",
+    answer:
+      "Cualquier sensor de fugas o controlador de válvula Zigbee compatible con Zigbee2MQTT, como los sensores de fugas Aqara, Third Reality y Tuya, los sensores Sinopé WL4200, las válvulas Sinopé Sedna y el Aqara Valve Controller T1. También se pueden usar dispositivos Matter y Z-Wave, según sus funciones.",
+  },
+  {
+    question: "¿Dónde debo colocar los sensores de fugas de agua?",
+    answer:
+      "Allí donde pueda haber una fuga: bajo los fregaderos de la cocina y los lavabos del baño, detrás de la lavadora y del lavavajillas, junto al termo, la caldera y el descalcificador, y cerca de la entrada principal de agua.",
+  },
+  {
+    question: "¿Hay que pagar una cuota mensual?",
+    answer:
+      "No. Gladys es gratuito y de código abierto, y los sensores y la válvula se compran una sola vez. Gladys Plus es opcional, para el acceso remoto cifrado y las copias de seguridad.",
   },
 ];
 

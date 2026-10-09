@@ -513,6 +513,174 @@ const openSourceHomeAutomationContent = {
       secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
     },
   },
+  es: {
+    meta: {
+      title: "El mejor software de domótica de código abierto (2026)",
+      description:
+        "Comparamos las 6 mejores plataformas de domótica de código abierto: Gladys Assistant, Home Assistant, openHAB, Domoticz, Jeedom y Node-RED. Facilidad de uso, dispositivos, licencia: elige el software de hogar inteligente gratuito y autoalojado adecuado.",
+    },
+    hero: {
+      title: "Domótica de código abierto",
+      subtitle:
+        "Haz funcionar tu hogar inteligente con software gratuito y autoalojado que puedes leer, en el que puedes confiar y que puedes conservar, en lugar de alquilarlo a una nube cerrada.",
+      intro: [
+        "La mayoría de los productos para el hogar inteligente son cajas cerradas: software propietario, una nube obligatoria y una empresa que puede cambiar las reglas, añadir una suscripción o cerrar el servicio cuando quiera. No eres dueño del sistema, alquilas el acceso a él.",
+        "La domótica de código abierto adopta el enfoque contrario. El software que hace funcionar tu casa es gratuito, público y autoalojado, así que cualquiera puede inspeccionarlo, mejorarlo y mantenerlo en marcha todo el tiempo que quiera. Esta guía explica qué es la domótica de código abierto, por qué importa, cuáles son las principales plataformas que conviene conocer y cómo empezar.",
+      ],
+      primaryCta: { label: "Empieza gratis", href: "/es/docs/" },
+      secondaryCta: {
+        label: "Explora las integraciones →",
+        href: "/es/docs/integrations/",
+      },
+    },
+    whyCloud: {
+      title: "Por qué el código abierto importa para tu casa",
+      intro:
+        "Tu domótica controla tus luces, cerraduras, calefacción y alarma. No es lugar para una caja negra que no puedes inspeccionar ni sustituir. El código abierto cambia el equilibrio de poder:",
+      points: [
+        "Transparencia: el código es público, así que cualquiera puede verificar qué hace con tus datos, en lugar de fiarse de una promesa de marketing.",
+        "Longevidad: una sola empresa no puede \"jubilar\" un proyecto comunitario. Incluso si el equipo original lo deja, el código sigue ahí y se puede bifurcar.",
+        "Sin dependencia forzada: los estándares abiertos y un código abierto te dejan libre para mezclar marcas y trasladar tu instalación, sin quedar atrapado en un ecosistema.",
+        "Privacidad: la mayoría de las plataformas de código abierto son autoalojadas, así que tus hábitos, tu presencia y las imágenes de tus cámaras pueden quedarse en tu propia red.",
+        "Sin muros de pago sorpresa: el software principal es gratuito, así que las funciones esenciales no pueden pasar de repente a una nueva suscripción mensual.",
+        "Extensibilidad: una comunidad crea integraciones mucho más rápido que cualquier fabricante por sí solo, así que más dispositivos que ya tienes son compatibles.",
+      ],
+      outro:
+        "Código abierto no significa complicado ni sin soporte. Los mejores proyectos están pulidos, se mantienen activamente y cuentan con el respaldo de grandes comunidades.",
+    },
+    definition: {
+      title: "¿Qué es la domótica de código abierto?",
+      intro:
+        "La domótica de código abierto significa que el software que controla tu hogar inteligente se publica bajo una licencia de código abierto, que se puede usar, inspeccionar y modificar libremente, y que normalmente se autoaloja en hardware que te pertenece. En la práctica:",
+      points: [
+        "El código fuente es público y tiene una licencia abierta (por ejemplo, Gladys Assistant usa Apache 2.0), así que tú, o cualquier persona, puedes leerlo y auditarlo.",
+        "Usarlo es gratis: sin cuota por dispositivo ni suscripción obligatoria para que el núcleo siga funcionando.",
+        "Se autoaloja en tu propio equipo, así que tus automatizaciones y tus datos siguen bajo tu control.",
+        "Habla estándares abiertos como Zigbee, Matter y MQTT en lugar del protocolo propietario de una sola marca.",
+        "Una comunidad aporta integraciones, correcciones y traducciones de forma abierta.",
+      ],
+      outro:
+        "Código abierto y comodidad no son opuestos: las funciones opcionales como el acceso remoto o la IA pueden seguir existiendo, solo que pasan a ser una elección y no una obligación.",
+    },
+    howTo: {
+      title: "Comparativa del mejor software de domótica de código abierto",
+      intro:
+        "Varias plataformas de código abierto maduras pueden hacer funcionar tu hogar inteligente. Así se comparan las principales, de la más sencilla a la más flexible:",
+      table: {
+        headers: ["Plataforma", "Interfaz y configuración", "Facilidad de uso", "Licencia", "Ideal para"],
+        rows: [
+          ["Gladys Assistant", "Interfaz limpia, sin archivos de configuración", "Muy fácil", "Apache 2.0", "Código abierto sin curva de aprendizaje"],
+          ["Home Assistant", "Interfaz, YAML para configuraciones avanzadas", "Media a avanzada", "Apache 2.0", "El mayor catálogo de integraciones"],
+          ["openHAB", "Configuración en texto e interfaz", "Avanzada", "EPL 2.0", "Neutralidad frente a fabricantes, reglas potentes"],
+          ["Jeedom", "Interfaz con tienda de plugins", "Media", "GPL (núcleo)", "Equipos locales y un ecosistema de plugins"],
+          ["Domoticz", "Interfaz ligera y funcional", "Media", "GPLv3", "Hardware de muy bajo consumo"],
+          ["Node-RED", "Editor visual de flujos", "Media", "Apache 2.0", "Crear lógica de automatización avanzada"],
+        ],
+      },
+      cards: [
+        {
+          logo: "/img/external/open-source-platforms/gladys-assistant.png",
+          logoAlt: "Logo de Gladys Assistant",
+          title: "Gladys Assistant",
+          text: "Una plataforma autoalojada (Apache 2.0) centrada en la sencillez: una interfaz limpia, sin archivos de configuración, escenas creadas con unos clics y una instalación con un solo comando Docker. Sus integraciones externas permiten a cualquiera publicar una integración en GitHub, que se instala con un clic y se ejecuta de forma aislada. Ideal si quieres código abierto sin una curva de aprendizaje empinada.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/home-assistant.png",
+          logoAlt: "Logo de Home Assistant",
+          title: "Home Assistant",
+          text: "La plataforma de código abierto más completa y popular, con un enorme catálogo de integraciones. Extremadamente potente, pero la configuración puede volverse compleja y depender mucho de YAML en las instalaciones avanzadas.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/openhab.png",
+          logoAlt: "Logo de openHAB",
+          title: "openHAB",
+          text: "Una plataforma madura basada en Java, conocida por su flexibilidad y su neutralidad frente a los fabricantes. Motor de reglas potente, con una configuración más técnica y exigente.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/jeedom.png",
+          logoAlt: "Logo de Jeedom",
+          title: "Jeedom",
+          text: "Una plataforma francesa de código abierto con una tienda de plugins (algunos de pago). Popular en equipos locales, con un enfoque más técnico basado en plugins.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/domoticz.png",
+          logoAlt: "Logo de Domoticz",
+          title: "Domoticz",
+          text: "Un sistema de código abierto ligero y veterano que funciona bien en hardware de muy bajo consumo, con una interfaz más funcional.",
+        },
+        {
+          logo: "/img/external/open-source-platforms/node-red.png",
+          logoAlt: "Logo de Node-RED",
+          title: "Node-RED",
+          text: "No es una plataforma completa, sino una herramienta de automatización de código abierto basada en flujos, que a menudo se combina con las demás para crear lógica avanzada de forma visual.",
+        },
+      ],
+    },
+    hardware: {
+      title: "¿Necesitas un hub o un hardware especial?",
+      intro:
+        "Una de las grandes ventajas de la domótica de código abierto es que no dependes de un hub propietario. El software funciona en hardware que ya tienes o que puedes comprar a bajo precio:",
+      points: [
+        "Un pequeño ordenador para alojarlo: una Raspberry Pi, un mini-PC o un NAS bastan para hacer funcionar la plataforma 24/7 en tu propia red.",
+        "Dongles USB de radio para los dispositivos inalámbricos: añade un dongle USB Zigbee o Z-Wave para comunicarte en local con cientos de sensores e interruptores, sin necesidad de un puente del fabricante.",
+        "Matter y Thread para los equipos más recientes: los dispositivos Matter por Wi-Fi o Ethernet se unen directamente a tu red, mientras que los dispositivos Thread necesitan un Thread Border Router para llegar a ella. Ese border router puede ser un dispositivo que ya tienes (algunos altavoces, decodificadores de TV y hubs hacen esa función) o una configuración de código abierto en tu propio equipo con una radio 802.15.4, así que tampoco te ata a una marca.",
+        "Tu Wi-Fi y tus dispositivos IP actuales: muchas cámaras, enchufes y televisores se conectan directamente a través de tu red local.",
+      ],
+      outro:
+        "Así que no hay ninguna caja propietaria obligatoria que comprar: un mini-ordenador barato y un dongle USB de radio es todo lo que necesitan la mayoría de las instalaciones.",
+      link: {
+        label: "Descubre qué dongle Zigbee elegir →",
+        href: "/es/best-zigbee-dongle/",
+      },
+    },
+    gladys: {
+      title: "Gladys Assistant: código abierto, hecho sencillo",
+      paragraphs: [
+        "Gladys Assistant es una plataforma de domótica gratuita, de código abierto (Apache 2.0) y autoalojada. Todo el código fuente está en GitHub, se instala con un solo comando Docker en una Raspberry Pi, un mini-PC o un NAS, y funciona por completo en tu red local.",
+        "Donde destaca es en la sencillez. Todo se configura desde una interfaz limpia, sin archivos de configuración ni YAML, y las escenas se crean con unos clics. Se basa en estándares abiertos (Zigbee, Matter, MQTT) con un motor de automatización totalmente local, así que tus escenas del día a día se ejecutan en casa. Las funciones opcionales como la voz, la IA y el acceso remoto se apoyan en una nube privada y segura del mismo proyecto independiente: sin anuncios, sin reventa de datos y con acceso remoto cifrado de extremo a extremo.",
+      ],
+      link: { label: "Empieza con Gladys →", href: "/es/docs/" },
+    },
+    related: {
+      title: "Profundiza",
+      intro:
+        "Tanto si estás comparando plataformas como si quieres salir de un ecosistema cerrado, estas guías te ayudan a elegir y a dar el paso:",
+      links: [
+        {
+          label: "Alternativa a Home Assistant",
+          href: "/es/home-assistant-alternative/",
+          text: "Una plataforma más sencilla, local y de código abierto, sin YAML ni una curva de aprendizaje empinada.",
+        },
+        {
+          label: "Gladys vs Home Assistant",
+          href: "/es/home-assistant-vs-gladys-assistant/",
+          text: "Cómo se comparan de verdad las dos principales plataformas de código abierto y local por defecto.",
+        },
+        {
+          label: "Alternativa a Jeedom",
+          href: "/es/jeedom-alternative/",
+          text: "Una alternativa de código abierto a Jeedom, sin tienda de plugins de pago.",
+        },
+        {
+          label: "Crea un hogar inteligente local",
+          href: "/es/local-smart-home/",
+          text: "Por qué importa lo local y cómo crear una casa que funcione sin la nube.",
+        },
+        {
+          label: "Controla tu casa con IA",
+          href: "/es/ai-smart-home/",
+          text: "Conserva la comodidad de la IA y del control por voz, en una nube privada y no en un asistente de una gran tecnológica.",
+        },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Empieza con la domótica de código abierto",
+      text: "Gladys es gratuito, de código abierto (Apache 2.0) y se instala con un solo comando Docker. Autoalojado, local por defecto, sin necesidad de nube.",
+      primary: { label: "Empezar", href: "/es/docs/" },
+      secondary: { label: "Descubre Gladys Plus", href: "/es/plus/" },
+    },
+  },
 };
 
 export const openSourceHomeAutomationFaqEn = [
@@ -626,6 +794,44 @@ export const openSourceHomeAutomationFaqDe = [
     question: "Unter welcher Lizenz steht Gladys Assistant?",
     answer:
       "Gladys Assistant wird unter der Apache-2.0-Lizenz veröffentlicht, einer permissiven Open-Source-Lizenz. Der komplette Quellcode ist öffentlich auf GitHub verfügbar, sodass jeder ihn lesen, prüfen, verbessern oder forken kann.",
+  },
+];
+
+export const openSourceHomeAutomationFaqEs = [
+  {
+    question: "¿Qué es la domótica de código abierto?",
+    answer:
+      "La domótica de código abierto significa que el software que controla tu hogar inteligente se publica bajo una licencia de código abierto, que se puede usar, inspeccionar y modificar libremente, y que normalmente se autoaloja en hardware que te pertenece. El código es público, no hay suscripción obligatoria para el núcleo y suele usar estándares abiertos como Zigbee, Matter y MQTT.",
+  },
+  {
+    question: "¿Cuál es el mejor software de domótica de código abierto?",
+    answer:
+      "Las principales plataformas de código abierto son Gladys Assistant, Home Assistant, openHAB, Jeedom y Domoticz. Home Assistant tiene el mayor catálogo de integraciones, mientras que Gladys Assistant apuesta por la sencillez con una interfaz limpia, sin archivos de configuración y con una instalación de un solo comando, además de integraciones externas que cualquiera puede publicar y que se instalan con un clic. La mejor opción depende de si priorizas la flexibilidad pura o la facilidad de uso.",
+  },
+  {
+    question: "¿Se necesita un hub para la domótica de código abierto?",
+    answer:
+      "No hace falta ningún hub propietario. Una plataforma de código abierto funciona en un pequeño ordenador que te pertenece, como una Raspberry Pi, un mini-PC o un NAS. Para controlar dispositivos inalámbricos, basta con añadir un dongle USB de radio (Zigbee o Z-Wave). Los equipos más recientes se conectan mediante los estándares abiertos Matter y Thread: los dispositivos Matter por Wi-Fi o Ethernet se unen directamente a tu red, mientras que los dispositivos Thread también necesitan un Thread Border Router, que puede ser un dispositivo que ya tienes o una configuración de código abierto en tu propio equipo con una radio 802.15.4. En cualquier caso, no hay que comprar ninguna caja de una marca concreta.",
+  },
+  {
+    question: "¿La domótica de código abierto es gratuita?",
+    answer:
+      "Sí, el software principal es gratuito. Plataformas como Gladys Assistant (Apache 2.0) y Home Assistant no cuestan nada de descargar ni de usar en tu propio hardware. Algunos proyectos ofrecen servicios opcionales de pago (como el acceso remoto o la IA), pero nunca te obligan a suscribirte para que tu domótica siga funcionando.",
+  },
+  {
+    question: "¿La domótica de código abierto es privada y segura?",
+    answer:
+      "Puede ser más privada que los productos cerrados en la nube. Como la mayoría de las plataformas de código abierto son autoalojadas, tus automatizaciones y tus datos se quedan en tu propia red en lugar de en los servidores de un fabricante, y como el código es público, cualquiera puede auditar lo que hace. La seguridad sigue dependiendo de mantener tu sistema actualizado, como con cualquier software.",
+  },
+  {
+    question: "¿Hay que ser desarrollador para usar la domótica de código abierto?",
+    answer:
+      "No. Aunque algunas plataformas son bastante técnicas, Gladys Assistant está pensado para quienes no son desarrolladores: se instala con un solo comando Docker y todo se configura con unos clics en la interfaz, sin archivos de configuración.",
+  },
+  {
+    question: "¿Bajo qué licencia se publica Gladys Assistant?",
+    answer:
+      "Gladys Assistant se publica bajo la licencia Apache 2.0, una licencia de código abierto permisiva. Todo el código fuente está disponible públicamente en GitHub, así que cualquiera puede leerlo, auditarlo, contribuir o bifurcarlo.",
   },
 ];
 

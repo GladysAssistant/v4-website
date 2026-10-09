@@ -418,6 +418,142 @@ const miniPcHomeAutomationContent = {
       secondary: { label: "Empfohlene Hardware", href: "/de/docs/installation/recommended-hardware/" },
     },
   },
+  es: {
+    meta: {
+      title: "El mejor mini-PC para domótica (guía 2026)",
+      description:
+        "Qué mini-PC elegir para tu hogar inteligente: Intel N100/N150 frente a Raspberry Pi 5 o un mini-PC profesional de segunda mano, cuánta RAM y almacenamiento necesitas, consumo eléctrico y en qué equipo usamos Gladys Assistant.",
+    },
+    screenshotCaption:
+      "Gladys funcionando en un pequeño mini-PC: paneles, escenas e historial para toda la casa.",
+    hero: {
+      title: "El mejor mini-PC para domótica",
+      subtitle:
+        "Un ordenador pequeño, silencioso y siempre encendido es el mejor sitio para tu software domótico. Esto es lo que conviene comprar y lo que realmente necesitas.",
+      intro: [
+        "Las plataformas domóticas autoalojadas, ya sea Gladys Assistant, Home Assistant u openHAB, funcionan todas en un pequeño ordenador encendido 24/7. Durante años, la opción por defecto fue una Raspberry Pi. Hoy, los pequeños mini-PC con Intel suelen ser mejor compra: más rápidos, con almacenamiento SSD de verdad y Ethernet, y a menudo por un precio total similar.",
+        "Esta guía explica qué es lo importante, qué modelos mirar y cuándo una Raspberry Pi o un mini-PC de oficina de segunda mano sigue siendo la mejor elección.",
+      ],
+      primaryCta: {
+        label: "Instalar Gladys en un mini-PC",
+        href: "/es/docs/installation/mini-pc/",
+      },
+      secondaryCta: {
+        label: "Hardware recomendado →",
+        href: "/es/docs/installation/recommended-hardware/",
+      },
+    },
+    problem: {
+      title: "Lo que importa de verdad",
+      intro: "Para un servidor domótico, olvídate de las especificaciones gaming. Fíjate en:",
+      points: [
+        "CPU: un chip Intel reciente de bajo consumo (N100, N150 o similar) es más que suficiente para Gladys, Zigbee2MQTT y algunas cámaras.",
+        "RAM: 8 GB es cómodo; 16 GB te da margen para otras aplicaciones autoalojadas.",
+        "Almacenamiento: un SSD (256 GB o más), no una tarjeta SD. Las tarjetas SD se desgastan con una base de datos escribiendo todo el día.",
+        "Ethernet: para un servidor, una conexión por cable es más fiable que el Wi-Fi.",
+        "Consumo: funciona 24/7, así que un bajo consumo en reposo importa más que el rendimiento máximo.",
+        "Puertos USB: para tu dongle Zigbee o Z-Wave, idealmente con un cable alargador USB 2.0 corto.",
+      ],
+      outro:
+        "Cualquier mini-PC de gama de entrada reciente cumple todos los requisitos. El resto es cuestión de presupuesto y de gustos.",
+    },
+    comparison: {
+      title: "Mini-PC frente a Raspberry Pi 5",
+      intro: "Las dos opciones más habituales, cara a cara:",
+      cols: {
+        feature: "",
+        gladys: "Mini-PC Intel N100/N150",
+        other: "Raspberry Pi 5",
+      },
+      rows: [
+        { feature: "Listo para usar", gladys: "Carcasa, fuente de alimentación y SSD incluidos", other: "Hay que añadir carcasa, fuente de alimentación y almacenamiento" },
+        { feature: "Almacenamiento", gladys: "SSD interno", other: "Tarjeta SD por defecto; un SSD NVMe requiere una placa adicional" },
+        { feature: "Rendimiento", gladys: "Mayor, x86", other: "Bueno, ARM" },
+        { feature: "Consumo", gladys: "Bajo", other: "Muy bajo" },
+        { feature: "Compatibilidad de software", gladys: "Cualquier imagen Docker x86", other: "Solo imágenes ARM64 (Gladys admite ambas)" },
+        { feature: "Ideal para", gladys: "Un servidor doméstico principal que irá creciendo", other: "Una instalación pequeña y austera, o reutilizar una Pi que ya tienes" },
+      ],
+      outro:
+        "Cuando le añades carcasa, fuente de alimentación y SSD a una Raspberry Pi 5, el precio total suele acercarse al de un mini-PC de gama de entrada que viene completo.",
+    },
+    features: {
+      title: "Lo que recomendamos",
+      intro: "Los equipos que usamos y que vemos funcionar bien con Gladys:",
+      cards: [
+        {
+          icon: "🥇",
+          title: "Beelink Mini S13 (Intel N150)",
+          text: "El que recomendamos en la guía de instalación: silencioso, eficiente y lo bastante rápido para ejecutar Gladys y mucho más durante años.",
+        },
+        {
+          icon: "💰",
+          title: "Mini-PC Intel N100 / N95",
+          text: "Chips algo más antiguos, a menudo más baratos, y aun así más que suficientes para un hogar inteligente.",
+        },
+        {
+          icon: "♻️",
+          title: "Mini-PC profesionales de segunda mano",
+          text: "Lenovo ThinkCentre Tiny, Dell OptiPlex Micro o HP EliteDesk Mini: robustos, baratos de segunda mano, algo menos eficientes.",
+        },
+        {
+          icon: "🍓",
+          title: "Raspberry Pi 5",
+          text: "Sigue siendo una buena opción para una instalación pequeña, idealmente con un SSD en lugar de una tarjeta SD.",
+        },
+        {
+          icon: "🗄️",
+          title: "Tu NAS",
+          text: "¿Ya tienes un servidor Synology o Unraid con Docker? Gladys también funciona ahí.",
+        },
+        {
+          icon: "💻",
+          title: "Lo que ya tienes",
+          text: "Un portátil antiguo con la batería en buen estado es un servidor más que digno: hasta lleva un SAI integrado.",
+        },
+      ],
+    },
+    how: {
+      title: "De la caja al hogar inteligente",
+      intro: "Una vez que tengas el equipo:",
+      points: [
+        "Conéctalo a tu router con un cable Ethernet.",
+        "Instala Ubuntu Server, marcando la opción del servidor OpenSSH.",
+        "Instala Docker e inicia Gladys con un solo comando.",
+        "Conecta tu dongle Zigbee con un cable alargador USB 2.0 corto y activa Zigbee2MQTT en Gladys.",
+        "Abre Gladys desde tu móvil o tu ordenador y añade tus dispositivos.",
+      ],
+      outro:
+        "La guía de instalación paso a paso cubre cada etapa, con un vídeo.",
+    },
+    solution: {
+      title: "Hardware pequeño, gran hogar inteligente",
+      paragraphs: [
+        "Un mini-PC que cuesta más o menos lo mismo que un altavoz inteligente puede gestionar toda tu casa en local: paneles, automatizaciones, historial, cámaras, seguimiento del consumo de energía e IA si la quieres. Consume muy poco, no hace ruido y no depende de ninguna nube.",
+        "Gladys es gratis y de código abierto, y funciona con Docker en cualquiera de estos equipos.",
+      ],
+      link: {
+        label: "Alternativa a Home Assistant Green →",
+        href: "/es/home-assistant-green-alternative/",
+      },
+    },
+    related: {
+      title: "Para ir más lejos",
+      intro: "Completa tu instalación:",
+      links: [
+        { label: "El mejor dongle USB Zigbee", href: "/es/best-zigbee-dongle/", text: "Qué coordinador Zigbee conectar a tu mini-PC." },
+        { label: "El mejor hub domótico", href: "/es/best-smart-home-hub/", text: "Mini-PC, Hubitat, Homey, SmartThings: qué hub elegir." },
+        { label: "Alternativa a Home Assistant Green", href: "/es/home-assistant-green-alternative/", text: "Tu propio hub local en un mini-PC." },
+        { label: "Todas las guías", href: "/es/guides/", text: "Todas las guías, herramientas y comparativas en un solo lugar." },
+      ],
+    },
+    faqTitle: "Preguntas frecuentes",
+    cta: {
+      title: "Convierte un mini-PC en el hub de tu hogar inteligente",
+      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker en cualquiera de estos equipos.",
+      primary: { label: "Instalar Gladys", href: "/es/docs/installation/mini-pc/" },
+      secondary: { label: "Hardware recomendado", href: "/es/docs/installation/recommended-hardware/" },
+    },
+  },
 };
 
 export const miniPcHomeAutomationFaqEn = [
@@ -501,6 +637,34 @@ export const miniPcHomeAutomationFaqDe = [
     question: "Ist ein gebrauchter Büro-Mini-PC eine gute Idee?",
     answer:
       "Ja, wenn du einen zu einem guten Preis findest: Lenovo ThinkCentre Tiny, Dell OptiPlex Micro und HP EliteDesk Mini sind robust und leistungsstark. Im Leerlauf verbrauchen sie mehr Strom als ein neuer N100/N150-Rechner, was sich über Jahre im Dauerbetrieb bemerkbar macht.",
+  },
+];
+
+export const miniPcHomeAutomationFaqEs = [
+  {
+    question: "¿Raspberry Pi 5 o mini-PC para domótica en 2026?",
+    answer:
+      "Para la mayoría, un mini-PC. El encarecimiento de la memoria ha subido varias veces el precio de la Raspberry Pi 5: desde abril de 2026, el modelo de 8 GB cuesta 175 $ en Estados Unidos, sin carcasa, fuente de alimentación ni SSD. También en Estados Unidos, un mini-PC con Intel N150, 16 GB de RAM y un SSD de 500 GB se vende por unos 190 a 200 $, completo. Una Pi que ya tengas sigue siendo perfectamente válida.",
+  },
+  {
+    question: "¿Cuánto consume un mini-PC domótico?",
+    answer:
+      "Un mini-PC con Intel N100 o N150 bajo Linux suele consumir en reposo entre 6 y 10 W, es decir, unos 50 a 90 kWh al año. Los mini-PC de oficina de segunda mano con chips Core i5 más antiguos suelen consumir en reposo entre 15 y 25 W. Una caja ARM como el Home Assistant Green consume menos de 2 W en reposo.",
+  },
+  {
+    question: "¿Cuánta RAM y almacenamiento necesito?",
+    answer:
+      "8 GB de RAM y un SSD de 256 GB son más que suficientes para Gladys, Zigbee2MQTT y algunas cámaras. Con 16 GB y 500 GB tendrás margen para otras aplicaciones autoalojadas. Evita las tarjetas SD en un servidor que escribe en una base de datos todo el día.",
+  },
+  {
+    question: "¿Qué mini-PC se recomienda para Gladys?",
+    answer:
+      "En nuestra guía de instalación recomendamos el Beelink Mini S13 (Intel N150). Cualquier mini-PC reciente con Intel N100 o N150, de 8 a 16 GB de RAM, SSD y Ethernet funciona igual de bien.",
+  },
+  {
+    question: "¿Es buena idea un mini-PC de oficina de segunda mano?",
+    answer:
+      "Sí, si encuentras uno a buen precio: los Lenovo ThinkCentre Tiny, Dell OptiPlex Micro y HP EliteDesk Mini son robustos y potentes. En reposo consumen más que un equipo nuevo con N100/N150, lo que se nota tras años de funcionamiento 24/7.",
   },
 ];
 

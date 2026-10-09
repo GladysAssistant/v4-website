@@ -3,6 +3,7 @@ import miniPcHomeAutomationContent, {
   miniPcHomeAutomationFaqEn,
   miniPcHomeAutomationFaqFr,
   miniPcHomeAutomationFaqDe,
+  miniPcHomeAutomationFaqEs,
 } from "../miniPcHomeAutomationData";
 
 export function getMiniPcHomeAutomationPageSchema(lang) {
@@ -12,6 +13,7 @@ export function getMiniPcHomeAutomationPageSchema(lang) {
     faqEn: miniPcHomeAutomationFaqEn,
     faqFr: miniPcHomeAutomationFaqFr,
     faqDe: miniPcHomeAutomationFaqDe,
+    faqEs: miniPcHomeAutomationFaqEs,
     about: [
       { "@type": "Thing", name: "Mini PC" },
       { "@type": "SoftwareApplication", name: "Gladys Assistant" },

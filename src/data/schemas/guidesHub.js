@@ -8,7 +8,7 @@ import { guidesHubContent, guidesSections } from "../guidesHubData";
 
 export function getGuidesHubPageSchema(lang) {
   const prefix = lang === "en" ? "" : `/${lang}`;
-  const locale = ["fr", "de"].includes(lang) ? lang : "en";
+  const locale = ["fr", "de", "es"].includes(lang) ? lang : "en";
   const pageUrl = `${SITE_URL}${prefix}/guides/`;
   const meta = guidesHubContent[locale].meta;
   const items = guidesSections.flatMap((section) => section.items);

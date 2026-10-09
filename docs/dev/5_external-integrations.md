@@ -980,7 +980,7 @@ A missing or invalid cover does not reject your integration: it is indexed with 
 
 Every integration must ship two documentation files at the root of its repository: `docs/en.md` and `docs/fr.md`, each at least **300 characters**. The store re-hosts them and shows them to users in the catalog, so a repository without them is **rejected**. Cover the essentials: what the integration does, its prerequisites, how to configure it, and troubleshooting. The template already includes both files, ready to fill in.
 
-The website also has a German version. Its page for your integration uses the German `description` and configuration labels of your manifest when you provide them (a `"de"` key next to `"en"` and `"fr"`), and your English documentation otherwise.
+The website also has German and Spanish versions. Their page for your integration uses the German or Spanish `description` and configuration labels of your manifest when you provide them (a `"de"` or `"es"` key next to `"en"` and `"fr"`), and your English documentation otherwise.
 
 ## Step 4: Build and test locally
 

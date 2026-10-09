@@ -14,7 +14,7 @@ import styles from "./comparison.module.css";
 // ("All guides") so the footer itself can stay short.
 export default function GuidesPage() {
   const { i18n } = useDocusaurusContext();
-  const lang = ["fr", "de"].includes(i18n.currentLocale)
+  const lang = ["fr", "de", "es"].includes(i18n.currentLocale)
     ? i18n.currentLocale
     : "en";
   const content = guidesHubContent[lang];
