@@ -11,7 +11,7 @@ The "Energy Monitoring" integration allows you to track your energy consumption 
 How to turn the data into savings: [Reduce your electricity bill](/home-energy-monitoring/). On a time-based rate? See the live [EDF Tempo colour](/edf-tempo/), [Hydro-Québec peak events](/hydro-quebec-peak-events/) and [Ontario electricity rates](/ontario-electricity-rates/).
 :::
 
-It is available since Gladys Assistant 4.66.
+It is available since Gladys Assistant 4.66. Since Gladys Assistant 5.2, the cost of your consumption is computed from **energy contracts**, able to describe the electricity contracts of almost any country: time slots, seasons, day colours, consumption tiers, spot prices...
 
 ## Compatible Hardware
 
@@ -85,54 +85,77 @@ At the end of synchronization, you can verify that your Enedis device has proper
 
 If you see all your consumption in kWh, great, you can move on to the next step!
 
-### Step 2: Configure your energy rates
+### Step 2: Create your energy contract
 
-You now need to tell Gladys which energy provider you use and what your rate is.
+You now need to tell Gladys how your supplier bills you. Since Gladys Assistant 5.2, this is an **energy contract**: a validity period, a currency, a timezone and a tariff definition, attached to your electricity meter.
 
-Two options are available: either you're on a contract that Gladys knows and you can import it easily, or you have an unknown contract and you need to configure it manually.
+Go to the "Energy Monitoring" integration, "Contracts" tab, then click "Create". A wizard guides you in 4 steps.
 
-Note: The list of energy contracts is open-source and can be modified by anyone on [this GitHub repository](https://github.com/GladysAssistant/energy-contracts).
+**1. Meter**
 
-#### Import a contract
+Select your electricity meter. If you're using the Enedis integration, you should see your meter here, you can select it.
 
-To configure your contract, go to the "Energy Monitoring" integration, in the "Energy rates" tab, then click "Import":
+Otherwise, choose "Create an electricity meter" so that Gladys automatically creates a device that will be the "parent" of all your energy sensors in your home.
 
-![Energy monitoring create price](../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-create-price.png)
+**2. Template**
 
-Gladys asks you to select an electricity meter.
+Pick your contract in the list. You can filter by country and search by supplier or contract name. Each template shows where it comes from: the community catalogue, a Gladys service (EDF Tempo, fed with the day colours by Gladys Plus) or an installed integration.
 
-If you're using the Enedis integration, you should see your meter here, you can select it.
+![The list of contract templates, with a search field and a country filter](../../static/img/docs/en/configuration/energy-monitoring/energy-contract-templates.webp)
 
-Otherwise, you can click "Create an electricity meter" so that Gladys automatically creates a device that will be the "parent" of all your energy sensors in your home.
+The list of community contracts is open source and can be modified by anyone on [this GitHub repository](https://github.com/GladysAssistant/energy-contracts).
 
-Then, select your contract from the list, then your subscribed power:
+**3. Parameters**
 
-![Energy monitoring create import price](../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-create-price-import-contract.png)
+Check the name of the contract, its start date (and its end date if it has one), the currency, the timezone and the day your billing period starts. Then fill in the parameters of the template: the subscribed power, the prices, your off-peak hours on a grid of 30-minute slots for a peak / off-peak contract...
 
-If you're on peak/off-peak hours, you'll need to select your contract's schedules.
+![The parameters of an EDF Tempo contract: one price per day colour and per time slot, and the monthly subscription](../../static/img/docs/en/configuration/energy-monitoring/energy-contract-parameters.webp)
 
-In the case of Tempo, this will create dozens of prices because it will import the entire history of this contract with 6 prices per period!
+**4. Preview**
 
-![Energy monitoring contract list](../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-contract-list.png)
+Before saving anything, Gladys prices your **real consumption of the last 7 days** with this contract: the total, the detail per component (energy, subscription...) and a sample of 30-minute intervals with the price applied to each of them. It's the best way to check that the contract matches your bill.
 
-### Manually create a contract
+![The preview: the cost of the last 7 days with this contract, and the price applied to each interval](../../static/img/docs/en/configuration/energy-monitoring/energy-contract-preview.webp)
 
-If your contract is not in the list, click "Create".
+Click "Save": the contract appears in the list, with its status (active, scheduled, expired).
 
-You'll need to create one price per period and per price type. If you're on a peak/off-peak hours contract, you'll need to create 2 prices for each period.
+When your prices change, you don't touch the past: end the current contract at the date of the change, and create a new one starting the day after. A meter has at most one active contract on a given date.
 
-Example:
+:::info[Coming from an older version?]
+Your energy prices created before Gladys 5.2 are converted automatically into contracts on the first start, without touching the cost history already computed. Check them in the "Contracts" tab: a converted contract whose calculation differs from the old one is flagged.
+:::
 
-If in 2024 your energy rate was €0.15/kWh during peak hours and €0.10/kWh during off-peak hours, and in 2025 prices drop by €0.05/kWh, you'll need to create 4 prices:
+#### My contract is not in the list
 
-- 2024 peak hours
-- 2024 off-peak hours
-- 2025 peak hours
-- 2025 off-peak hours
+You have three options:
 
-This can quickly become tedious if your contract changes prices often, which is why I strongly encourage you to add your contract to the shared contract database on [the GitHub repository](https://github.com/GladysAssistant/energy-contracts).
+1. **Propose it to the community**, on [the energy contracts repository](https://github.com/GladysAssistant/energy-contracts). Gladys downloads this list directly: as soon as your contract is added, it shows up in every Gladys, without an update.
+2. **Publish it as an external integration**: an integration can declare contract templates, feed tariff calendars (day colours, spot prices, public holidays) and even compute the cost itself. See [the developer documentation](/docs/dev/external-integrations/).
+3. **Create it yourself**: on the "Parameters" step, turn on "Advanced: edit the tariff definition (JSON)" and describe your contract. The "Export as template" button then produces a template ready to be shared.
 
-It's collaborative and anyone can propose a rate!
+#### What a contract can express
+
+The pricing engine of Gladys knows no supplier by name: a contract is a list of rules, evaluated for each 30-minute interval. A rule can depend on:
+
+- the **time of day** (peak / off-peak hours, time-of-use slots);
+- the **day of the week** (cheaper weekends);
+- the **month or the season** (summer / winter rates);
+- a **date range** (promotion, transition period);
+- a **tariff calendar**: day colour (Tempo), public holidays, critical peak days;
+- **consumption tiers**, per day, per month or per billing period (progressive rates);
+- the **peak power** of the interval.
+
+And a contract can add **fixed fees** (per day or per month), **taxes** as a percentage, **demand charges** per kW of peak power, and **hourly or quarter-hourly market prices** (spot) with a multiplier and a margin.
+
+The engine is tested against real contracts from France, Belgium, the United Kingdom, Germany, Finland, Norway, the United States, Canada, Australia, Japan, South Korea and India.
+
+#### Tariff calendars
+
+Some contracts depend on values that change every day: the Tempo colour, spot prices, critical peak days. These values are stored in **tariff calendars**, visible in the "Settings" tab of the integration, with their provider, their granularity (day, 30 minutes, 15 minutes), their coverage and their last values.
+
+![The tariff calendars known by Gladys, here the EDF Tempo colours](../../static/img/docs/en/configuration/energy-monitoring/energy-contract-calendars.webp)
+
+From the same card, "Recalculate the costs from" recomputes the costs of every meter from the date you choose, for example after fixing a price.
 
 ### Step 3: Update your Zigbee devices
 
@@ -177,7 +200,7 @@ If your devices have consumption history, you can launch a recalculation of hist
 
 ![Recalculate historical consumption](../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-settings.png)
 
-First click on the first button to calculate consumption from indexes, then click on the second button to calculate 30-minute costs.
+First click on the first button to calculate consumption from indexes, then click on the second button to calculate 30-minute costs with your contracts.
 
 ### Step 7: Display your consumption on the dashboard
 
@@ -192,6 +215,25 @@ You can display your consumption:
 You can also display each device individually, for example my washing machine:
 
 ![Energy monitoring chart](../../static/img/docs/en/configuration/energy-monitoring/dashboard-washing-machine-widget.png)
+
+### Step 8: Display the current electricity price
+
+The "Electricity price" widget shows, for the contract you choose, the current price per kWh, the current tier (for example "Blue peak"), until when it applies and what the next price will be, as well as today's consumption.
+
+![The electricity price widget on the dashboard](../../static/img/docs/en/configuration/energy-monitoring/energy-price-widget.webp)
+
+It works with every contract, whatever its supplier or its country, and refreshes every 5 minutes.
+
+### Step 9: Use the price in your scenes
+
+Two scene blocks use your contract:
+
+- the **"Electricity price changed"** trigger starts a scene as soon as the price per kWh (or the tier) of the contract changes, for example when switching from peak to off-peak hours;
+- the **"Condition on electricity price"** action only lets the scene continue if the current price is lower than, higher than or equal to the threshold you choose.
+
+For example, to start the dishwasher as soon as electricity gets cheaper:
+
+![A scene that starts the dishwasher when the electricity price drops below €0.15/kWh](../../static/img/docs/en/configuration/energy-monitoring/energy-contract-scene.webp)
 
 ## Feedback?
 

@@ -698,6 +698,45 @@ gladys.requestWidgetRefresh("charging_plan");
 
 Votre contenu n'est jamais considéré comme fiable : le cœur le normalise et le borne avant qu'il atteigne l'interface, en retirant les types de composants et les champs inconnus, en tronquant les textes, en limitant les tableaux et en n'acceptant que les liens `https`. Lancez votre intégration avec `DEBUG=gladys-integration-sdk` et le SDK journalise ce que le cœur retirerait ou tronquerait, ou appelez directement `validateWidgetContent(content)` et `validateWidgetImage(base64)` dans vos tests.
 
+#### Un formulaire derrière un bouton
+
+*Nécessite Gladys 5.2.0 ou supérieur.*
+
+Au repos, un widget reste en lecture et en tap, mais un bouton peut demander quelques valeurs avant d'agir : le prix d'une livraison de granulés tapé sur la tablette murale, un nombre de minutes, un choix dans une liste. Déclarez des `fields` sur son `action` (4 au maximum, de type `string`, `number`, `boolean` ou `select`, dans la grammaire du `config_schema`) :
+
+```js
+gladys.onWidgetGet("pellets", async () => ({
+  components: [
+    { type: "value", value: stock.bags, unit: "sacs", label: { en: "Stock", fr: "Stock" } },
+    {
+      type: "button",
+      label: { en: "Pallet delivered", fr: "Palette livrée" },
+      icon: "truck",
+      action: {
+        key: "delivery",
+        fields: [
+          { key: "bags", type: "number", required: true, min: 1, max: 200, default: 72,
+            label: { en: "Bags delivered", fr: "Sacs livrés" } },
+          { key: "price_per_bag", type: "number", required: true, min: 0, max: 50, default: stock.lastPrice,
+            label: { en: "Price per bag", fr: "Prix par sac" } },
+        ],
+      },
+    },
+  ],
+}));
+
+gladys.onWidgetAction("pellets", async (actionKey, params, { values }) => {
+  await stock.recordDelivery(values.bags, values.price_per_bag); // validé par le cœur
+  return { en: `${values.bags} bags added`, fr: `${values.bags} sacs ajoutés` };
+});
+```
+
+Un tap sur le bouton ouvre le formulaire dans la carte, pré-rempli avec les `default`, qui sont des valeurs calculées à l'exécution : ici, le dernier prix payé. Gladys valide ce que l'utilisateur a tapé par rapport à votre déclaration avant que quoi que ce soit ne vous parvienne (clé inconnue, valeur invalide, texte de plus de 1 000 caractères ou champ obligatoire manquant sont refusés, valeurs par défaut appliquées), et vous le relaie dans `values`, à côté de `params` et jamais fusionné avec. `values` est absent d'une action sans `fields`.
+
+Pas de `section`, `multi_select`, `secret`, `oauth2`, `account_link` ni `source` dans ces champs : le contenu est produit à l'exécution, listez donc les options vous-même. Une déclaration de `fields` invalide supprime le bouton. Une valeur tapée est un **événement** utilisateur (une livraison a eu lieu, à ce prix), jamais une écriture dans votre configuration, qui reste réservée aux administrateurs.
+
+Un cœur plus ancien ignore `fields` et lance l'action sans `values` : déclarez un `gladys_version` qui démarre à `5.2.0`, ou refusez une action reçue sans elles.
+
 ### Déclencheurs et actions de scène
 
 *Nécessite Gladys 5.1.0 ou plus récent.*
@@ -770,11 +809,129 @@ Une image n'est pas un output : publiez-la avec `publishCameraImage` et laissez 
 
 *Nécessite Gladys 5.1.0 ou plus récent.*
 
-Certaines intégrations n'ont aucun appareil. Un indice de prix des carburants, un flux de sorties cinéma, une passerelle qui ne fait que relayer des événements : tout leur contrat tient dans ce qu'elles déclarent. Celles-là utilisent `"type": "provider"`, qui doit déclarer au moins un champ parmi `widgets`, `scene_triggers` et `scene_actions`.
+Certaines intégrations n'ont aucun appareil. Un indice de prix des carburants, un flux de sorties cinéma, une passerelle qui ne fait que relayer des événements : tout leur contrat tient dans ce qu'elles déclarent. Celles-là utilisent `"type": "provider"`, qui doit déclarer au moins un champ parmi `widgets`, `scene_triggers`, `scene_actions` et, depuis Gladys 5.2.0, `energy_contracts`.
 
 Une intégration `provider` a les écrans Configuration, Supervision et Logs, et pas d'onglet Appareils ni Découverte, exactement comme les types `communication` et `weather`. Tout le reste du manifeste fonctionne de la même façon.
 
 Les widgets et les déclarations de scène sont des **capacités, pas des types** : une intégration `device` peut aussi en déclarer, et devrait souvent le faire. Une intégration d'aspirateur robot publie ses appareils, un widget pour son état et une action de scène « nettoyer une pièce », le tout depuis le même manifeste.
+
+### Calendriers : le type `calendar`
+
+*Nécessite Gladys 5.2.0 ou supérieur.*
+
+Un fournisseur de calendriers (un serveur CalDAV ou Nextcloud, iCloud avec un mot de passe d'application, un flux ICS public pour un emploi du temps scolaire ou la collecte des déchets...) est une intégration externe de type `"calendar"`. **L'intégration synchronise, le cœur stocke** : les calendriers et les événements que vous poussez alimentent la vue calendrier, le déclencheur et les actions de scène calendrier et l'assistant, exactement comme les calendriers de l'intégration CalDAV interne. Gladys n'écrit jamais chez le fournisseur.
+
+Les calendriers sont des données personnelles, ils appartiennent donc aux utilisateurs. La page de l'intégration montre à **chaque utilisateur** un bloc « Mes calendriers » : les champs de votre `account_schema` facultatif (au format du `config_schema`, avec des valeurs par utilisateur) et un bouton d'activation. **Activer, c'est consentir** : vous ne synchronisez que les utilisateurs qui ont activé l'intégration, et chacun a, sur chaque calendrier que vous poussez, un interrupteur `sync` (ignorer ce calendrier) et un interrupteur `shared` (visible par le foyer, et seulement alors par les scènes).
+
+```json
+{
+  "type": "calendar",
+  "account_schema": [
+    { "key": "server_url", "type": "string", "label": { "en": "Server URL", "fr": "URL du serveur" }, "required": true },
+    { "key": "app_password", "type": "secret", "label": { "en": "App password", "fr": "Mot de passe d'application" }, "required": true }
+  ]
+}
+```
+
+```js
+const syncUser = async ({ user, config }) => {
+  const client = await caldav.connect(config.server_url, config.app_password); // votre code fournisseur
+  // Chaque identifiant est propre à l'utilisateur : ext:<selector>:<user_selector>:<id fournisseur>.
+  const id = (providerId) => gladys.externalId(`${user.selector}:${providerId}`);
+  const calendars = await client.calendars();
+  await gladys.publishCalendars(user.selector, calendars.map((c) => ({ external_id: id(c.url), name: c.name, color: c.color })));
+  const skipped = new Set((await gladys.getCalendars(user.selector)).filter((c) => !c.sync).map((c) => c.external_id));
+  for (const calendar of calendars) {
+    if (skipped.has(id(calendar.url))) continue;
+    const window = { from: startOfMonth, to: addMonths(startOfMonth, 12) };
+    await gladys.publishCalendarEvents(
+      id(calendar.url),
+      (await client.events(calendar, window)).map((e) => ({
+        external_id: id(e.uid + (e.recurrenceId || "")),
+        name: e.summary,
+        start: e.start, // une date-heure ISO, ou "2026-08-15" pour un événement sur la journée
+        end: e.end, // exclusive pour un événement sur la journée, comme en iCalendar
+        full_day: e.allDay,
+        location: e.location,
+      })),
+      window,
+    );
+  }
+};
+
+gladys.on("connected", async () => {
+  for (const account of await gladys.getCalendarAccounts()) await syncUser(account);
+});
+gladys.onCalendarAccountUpdated(async (userSelector) => {
+  const account = (await gladys.getCalendarAccounts()).find((a) => a.user.selector === userSelector);
+  if (account) await syncUser(account);
+  else stopSyncing(userSelector); // désactivé : ses calendriers sont déjà supprimés
+});
+```
+
+Les règles qui gardent une synchronisation juste :
+
+- **Des identifiants propres à l'utilisateur** : chaque `external_id` de calendrier et d'événement commence par `ext:<selector>:<user_selector>:` (255 caractères au maximum). Deux utilisateurs qui synchronisent le même calendrier chez le fournisseur n'entrent jamais en collision, et un événement republié sous un autre calendrier du même utilisateur est déplacé, pas dupliqué.
+- **Qui possède quel champ** : `name`, `description` et `color` sont à vous, écrasés à chaque envoi. `sync`, `shared` et `selector` appartiennent à l'utilisateur et ne sont jamais touchés. Un calendrier poussé commence privé.
+- **Une fenêtre remplace son contenu** : avec `window: { from, to }`, vos événements qui chevauchent la fenêtre et qui sont absents de la liste sont supprimés, une suppression côté fournisseur se propage donc en republiant simplement. Les événements créés à la main dans Gladys ne sont jamais supprimés. Une fenêtre, une requête : au-delà de 500 événements, découpez la période en sous-fenêtres disjointes. Sans `window`, c'est un simple upsert.
+- **Des limites** : 50 calendriers par utilisateur, 500 événements par requête, 30 écritures de calendrier par minute et par intégration. Dépliez vous-même les récurrences, sur un horizon borné.
+- **Prévenu dans les deux sens** : `onCalendarAccountUpdated(userSelector)` se déclenche quand un utilisateur active ou désactive l'intégration, change ses valeurs de compte ou bascule un interrupteur. Il est perdu pendant que vous êtes déconnecté : relisez donc `getCalendarAccounts()` et `getCalendars()` à chaque connexion.
+
+Vous ne voyez jamais que vos propres calendriers, jamais les autres calendriers de l'utilisateur. L'OAuth par utilisateur (Google Agenda, Outlook) n'est pas disponible dans cette première version : les champs `oauth2` et `account_link` sont refusés dans un `account_schema`.
+
+### Contrats d'énergie
+
+*Nécessite Gladys 5.2.0 ou supérieur.*
+
+Depuis Gladys 5.2, un contrat d'énergie est un ensemble de règles interprétées par un moteur de tarification dans le cœur (plages horaires, jours de la semaine, saisons, calendriers tarifaires, tranches de consommation, prix spot, frais fixes, taxes, composante de puissance). Une intégration peut publier un contrat **entièrement**, sans aucune modification de Gladys, avec le champ de capacité `energy_contracts`, utilisable par tous les types d'intégration :
+
+- des **modèles** (`templates`) : les contrats qu'elle propose, affichés dans l'assistant de création de contrat à côté du catalogue communautaire. En mode `"rules"`, le modèle porte une définition de tarif calculée par le moteur. En mode `"delegated"`, l'intégration tarifie elle-même les créneaux de 30 minutes ;
+- des **calendriers** : les valeurs datées que lisent les modèles, et que l'intégration alimente : couleurs de jour, jours fériés, jours de pointe, prix spot par 30 ou 15 minutes.
+
+```json
+"energy_contracts": {
+  "templates": [
+    { "key": "hydro-quebec-d", "name": { "en": "Hydro-Québec Rate D", "fr": "Hydro-Québec tarif D" }, "country": "CA", "currency": "CAD",
+      "timezone": "America/Toronto", "pricing_mode": "rules", "version": "2026-04-01",
+      "calendars": ["hq-critical-peaks"], "inputs": [{ "key": "subscribed_power", "type": "number", "unit": "kW" }],
+      "tariff": { "tariff_version": 1, "calendars": ["hq-critical-peaks"], "components": ["…"] } },
+    { "key": "octopus-agile", "name": { "en": "Octopus Agile" }, "country": "GB", "currency": "GBP",
+      "timezone": "Europe/London", "pricing_mode": "delegated", "version": "1",
+      "inputs": [{ "key": "region", "type": "select", "options": ["A", "B", "C"] }] }
+  ],
+  "calendars": [
+    { "key": "hq-critical-peaks", "granularity": "day", "values": ["normal", "critical-peak"], "timezone": "America/Toronto" },
+    { "key": "spot-fi", "granularity": "fifteen_minutes", "currency": "EUR", "timezone": "Europe/Helsinki" }
+  ]
+}
+```
+
+```js
+// Alimenter un calendrier : upsert par date de début. Une valeur modifiée recalcule les coûts qui la lisent.
+await gladys.publishEnergyCalendar("hq-critical-peaks", [{ date: "2026-01-12", value: "critical-peak" }]);
+await gladys.publishEnergyCalendar("spot-fi", slots.map((s) => ({ starts_at: s.start, price: s.eurPerKwh })));
+
+// Tarification déléguée : un coût par créneau d'une demi-heure d'une période de facturation.
+gladys.onEnergyPrice(async ({ contract, billing_period, cumulative_before, intervals }) => {
+  const prices = await agile.getPrices(contract.inputs.region, intervals);
+  return intervals.map(({ starts_at, kwh }) => ({ starts_at, cost: kwh * prices.get(starts_at), label: "Agile" }));
+});
+// Le prix actuel, pour le widget du tableau de bord et la condition de scène.
+gladys.onEnergyCurrent(async ({ contract }) => {
+  const slot = await agile.getCurrentSlot(contract.inputs.region);
+  return { price: slot.price, valid_until: slot.end, next_price: slot.nextPrice };
+});
+```
+
+À savoir :
+
+- **Jusqu'à 20 modèles et 10 calendriers.** La `key` d'un modèle ne change jamais une fois publiée : les contrats la stockent.
+- **Les clés de calendrier sont globales** : un calendrier par clé dans une instance Gladys, possédé par la première intégration installée qui le déclare. Une clé ne porte jamais de préfixe de fournisseur, un modèle écrit pour `spot-fr` marche donc quelle que soit l'intégration qui alimente `spot-fr`. Sa granularité (`day`, `thirty_minutes` ou `fifteen_minutes`) ne change jamais.
+- **Les entrées de calendrier sont bornées** : 2 000 par appel, de 5 ans en arrière à 7 jours en avant, alignées sur la granularité, avec exactement un `value` (parmi les `values` déclarées) ou un `price` (par kWh, éventuellement négatif).
+- **La tarification déléguée n'est jamais crue sur parole** : chaque créneau demandé doit recevoir exactement un coût fini, sous une borne de bon sens. Une réponse invalide ou une exception échoue comme un timeout : les créneaux ne reçoivent pas de nouveau coût (jamais un zéro silencieux), et le passage suivant réessaie, la même requête doit donc donner la même réponse. Vous ne recevez jamais le compteur ni son historique, seulement les créneaux à tarifer.
+- **Cycle de vie** : une intégration arrêtée garde ses contrats `rules` calculés tant que ses calendriers sont alimentés. Une désinstallation conserve les contrats et les calendriers.
+
+La grammaire des tarifs du mode `rules` est décrite dans [la spécification des contrats d'énergie](https://github.com/GladysAssistant/Gladys/blob/master/docs/specs/energy-contracts.md) du dépôt Gladys.
 
 ### Coordonnées des maisons
 
@@ -856,7 +1013,7 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | Champ | Requis | Description |
 | --- | --- | --- |
 | `manifest_version` | Oui | Doit valoir `1`. |
-| `type` | Oui | `"device"` (expose des appareils), `"communication"` (un canal de messagerie), `"weather"` (un fournisseur météo) ou `"provider"` (aucun appareil, uniquement des capacités). |
+| `type` | Oui | `"device"` (expose des appareils), `"communication"` (un canal de messagerie), `"weather"` (un fournisseur météo), `"calendar"` (un fournisseur de calendriers, Gladys 5.2.0 ou supérieur) ou `"provider"` (aucun appareil, uniquement des capacités). |
 | `name` | Oui | Nom d'affichage, de 3 à 30 caractères. |
 | `description` | Oui | Un objet indexé par langue. `en` est obligatoire, chaque texte fait de 10 à 100 caractères. |
 | `version` | Oui | [Version sémantique](https://semver.org/) stricte. L'incrémenter notifie les utilisateurs qu'une mise à jour est disponible. |
@@ -877,6 +1034,8 @@ Chaque intégration externe est décrite par un unique fichier nommé `gladys-as
 | `widgets` | Non | 1 à 5 widgets de tableau de bord, chacun avec une `key`, un `label` multilingue, une `description` et une `icon` optionnelles, jusqu'à 10 `settings` et un `action_timeout_seconds` (5 à 120). Nécessite un `gladys_version` qui démarre à `5.1.0`. |
 | `scene_triggers` | Non | 1 à 20 déclencheurs de scène, chacun avec une `key`, un `label` multilingue, jusqu'à 10 `fields` et jusqu'à 20 `variables`. Nécessite un `gladys_version` qui démarre à `5.1.0`. |
 | `scene_actions` | Non | 1 à 20 actions de scène, chacune avec une `key`, un `label` multilingue, un `timeout_seconds` (5 à 120), jusqu'à 10 `fields` et jusqu'à 20 `outputs`. Nécessite un `gladys_version` qui démarre à `5.1.0`. |
+| `account_schema` | Non, type `calendar` uniquement | Les champs de compte par utilisateur d'une intégration de calendriers, même format que le `config_schema` (sans `oauth2` ni `account_link`). Nécessite un `gladys_version` qui démarre à `5.2.0`. |
+| `energy_contracts` | Non | Jusqu'à 20 `templates` de contrats d'énergie et 10 `calendars` tarifaires (voir [Contrats d'énergie](#contrats-dénergie)). Nécessite un `gladys_version` qui démarre à `5.2.0`. |
 
 ### Catégories du store
 
@@ -902,7 +1061,7 @@ Les intégrations publiées avant la 4.86 ont été catégorisées une première
 
 `config_schema` est une liste plate de champs. Chaque champ a une `key` (en minuscules, correspondant à `[a-z0-9_]`), un `type`, et un `label` multilingue (avec `en` obligatoire). Les types pris en charge sont `string`, `number`, `boolean`, `select`, `multi_select`, `secret`, `oauth2`, `account_link` et `section`. Selon le type, un champ peut aussi déclarer `placeholder` (pour `string`/`number`/`secret`), `required`, `default`, `min`/`max` (pour les nombres) et `options` (pour `select`/`multi_select`).
 
-Un `select` ou un `multi_select` peut soit lister des `options` statiques, soit tirer ses choix dynamiquement des appareils de l'utilisateur avec `source: "devices"`, et s'afficher en `dropdown` ou en `radio` (`display`). Un champ `section` est purement présentationnel : il affiche une `description` et jusqu'à cinq liens de documentation (`links`), et ne stocke aucune valeur.
+Un `select` ou un `multi_select` peut soit lister des `options` statiques, soit tirer ses choix dynamiquement d'une `source` : `source: "devices"` liste les appareils de votre intégration (vous recevez l'`external_id` choisi), et `source: "houses"` (Gladys 5.2.0 ou supérieur) liste les maisons de Gladys (vous recevez le `selector` de la maison choisie, à comparer à `GET /house`). Choisir une maison de cette façon ne demande pas `location: true` : seule la maison choisie par l'utilisateur vous parvient. Les deux s'affichent en `dropdown` ou en `radio` (`display`). Un champ `section` est purement présentationnel : il affiche une `description` et jusqu'à cinq liens de documentation (`links`), et ne stocke aucune valeur.
 
 Gladys génère automatiquement le formulaire de configuration à partir de cette liste, vous n'écrivez donc jamais de code frontend. Les valeurs marquées `secret` sont stockées de façon sécurisée et ne sont jamais renvoyées au frontend.
 
