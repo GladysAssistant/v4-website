@@ -11,7 +11,7 @@ La integración "Monitorización de energía" te permite seguir tu consumo de en
 Cómo convertir los datos en ahorro: [Reduce tu factura de la luz](/es/home-energy-monitoring/). ¿Tienes una tarifa por franjas horarias? Consulta en directo el [color EDF Tempo](/es/edf-tempo/), los [eventos de punta de Hydro-Québec](/es/hydro-quebec-peak-events/) y las [tarifas eléctricas de Ontario](/es/ontario-electricity-rates/).
 :::
 
-Está disponible desde Gladys Assistant 4.66.
+Está disponible desde Gladys Assistant 4.66. Desde Gladys Assistant 5.2, el coste de tu consumo se calcula a partir de **contratos de energía**, capaces de describir los contratos de electricidad de casi cualquier país: franjas horarias, estaciones, colores del día, tramos de consumo, precios spot…
 
 ## Hardware compatible
 
@@ -85,54 +85,77 @@ Al terminar la sincronización, puedes comprobar que tu dispositivo Enedis ha en
 
 Si ves todo tu consumo en kWh, ¡genial, puedes pasar al siguiente paso!
 
-### Paso 2: Configurar tus tarifas de energía
+### Paso 2: Crear tu contrato de energía
 
-Ahora tienes que indicarle a Gladys qué proveedor de energía usas y cuál es tu tarifa.
+Ahora tienes que decirle a Gladys cómo te factura tu proveedor. Desde Gladys Assistant 5.2, esto es un **contrato de energía**: un periodo de validez, una moneda, una zona horaria y una definición de la tarifa, asociados a tu contador eléctrico.
 
-Hay dos opciones: o tienes un contrato que Gladys conoce y puedes importarlo fácilmente, o tienes un contrato desconocido y tienes que configurarlo manualmente.
+Ve a la integración «Supervisión de energía», pestaña «Contratos», y haz clic en «Crear». Un asistente te guía en 4 pasos.
 
-Nota: la lista de contratos de energía es de código abierto y cualquiera puede modificarla en [este repositorio de GitHub](https://github.com/GladysAssistant/energy-contracts).
+**1. Contador**
 
-#### Importar un contrato
+Selecciona tu contador eléctrico. Si usas la integración Enedis, deberías ver tu contador aquí y puedes seleccionarlo.
 
-Para configurar tu contrato, ve a la integración "Monitorización de energía", pestaña "Tarifas de energía", y haz clic en "Importar":
+Si no, elige «Crear un contador eléctrico» para que Gladys cree automáticamente un dispositivo que será el «padre» de todos los sensores de energía de tu casa.
 
-![Monitorización de energía: crear un precio](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-create-price.png)
+**2. Plantilla**
 
-Gladys te pide que selecciones un contador eléctrico.
+Elige tu contrato en la lista. Puedes filtrar por país y buscar por proveedor o por nombre de contrato. Cada plantilla indica de dónde viene: el catálogo de la comunidad, un servicio de Gladys (EDF Tempo, alimentado con los colores del día por Gladys Plus) o una integración instalada.
 
-Si usas la integración Enedis, deberías ver tu contador aquí y puedes seleccionarlo.
+![La lista de plantillas de contrato, con un buscador y un filtro por país](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-templates.webp)
 
-Si no, puedes hacer clic en "Crear un contador eléctrico" para que Gladys cree automáticamente un dispositivo que será el "padre" de todos los sensores de energía de tu casa.
+La lista de contratos de la comunidad es de código abierto y cualquiera puede modificarla en [este repositorio de GitHub](https://github.com/GladysAssistant/energy-contracts).
 
-A continuación, selecciona tu contrato en la lista y después tu potencia contratada:
+**3. Parámetros**
 
-![Monitorización de energía: importar un contrato](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-create-price-import-contract.png)
+Comprueba el nombre del contrato, su fecha de inicio (y su fecha de fin si la tiene), la moneda, la zona horaria y el día en que empieza tu periodo de facturación. Después rellena los parámetros de la plantilla: la potencia contratada, los precios, tus horas valle en una cuadrícula de franjas de 30 minutos para un contrato punta / valle…
 
-Si tienes una tarifa con horas punta y horas valle, tendrás que seleccionar los horarios de tu contrato.
+![Los parámetros de un contrato EDF Tempo: un precio por color de día y por franja horaria, y la cuota mensual](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-parameters.webp)
 
-En el caso de Tempo, se crearán decenas de precios, ¡porque se importa todo el historial de este contrato con 6 precios por periodo!
+**4. Vista previa**
 
-![Monitorización de energía: lista de contratos](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-contract-list.png)
+Antes de guardar nada, Gladys tarifica tu **consumo real de los últimos 7 días** con este contrato: el total, el detalle por componente (energía, cuota…) y una muestra de intervalos de 30 minutos con el precio aplicado a cada uno. Es la mejor forma de comprobar que el contrato corresponde a tu factura.
 
-### Crear un contrato manualmente
+![La vista previa: el coste de los últimos 7 días con este contrato y el precio aplicado a cada intervalo](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-preview.webp)
 
-Si tu contrato no está en la lista, haz clic en "Crear".
+Haz clic en «Guardar»: el contrato aparece en la lista, con su estado (activo, programado, caducado).
 
-Tendrás que crear un precio por periodo y por tipo de precio. Si tienes un contrato con horas punta y horas valle, tendrás que crear 2 precios para cada periodo.
+Cuando tus precios cambian, no tocas el pasado: termina el contrato en curso en la fecha del cambio y crea uno nuevo que empiece al día siguiente. Un contador tiene como máximo un contrato activo en una fecha dada.
 
-Ejemplo:
+:::info[¿Vienes de una versión anterior?]
+Tus precios de energía creados antes de Gladys 5.2 se convierten automáticamente en contratos en el primer arranque, sin tocar el historial de costes ya calculado. Revísalos en la pestaña «Contratos»: un contrato convertido cuyo cálculo difiere del anterior aparece señalado.
+:::
 
-Si en 2024 tu tarifa de energía era de 0,15 €/kWh en horas punta y de 0,10 €/kWh en horas valle, y en 2025 los precios bajan 0,05 €/kWh, tendrás que crear 4 precios:
+#### Mi contrato no está en la lista
 
-- 2024 horas punta
-- 2024 horas valle
-- 2025 horas punta
-- 2025 horas valle
+Tienes tres opciones:
 
-Esto puede volverse tedioso rápidamente si los precios de tu contrato cambian a menudo, por eso te animo encarecidamente a añadir tu contrato a la base de datos compartida de contratos en [el repositorio de GitHub](https://github.com/GladysAssistant/energy-contracts).
+1. **Proponerlo a la comunidad**, en [el repositorio de contratos de energía](https://github.com/GladysAssistant/energy-contracts). Gladys descarga esta lista directamente: en cuanto se añade tu contrato, aparece en todas las instancias de Gladys, sin actualizar.
+2. **Publicarlo como integración externa**: una integración puede declarar plantillas de contrato, alimentar calendarios tarifarios (colores del día, precios spot, festivos) e incluso calcular el coste por sí misma. Consulta [la documentación para desarrolladores](/es/docs/dev/external-integrations/).
+3. **Crearlo tú mismo**: en el paso «Parámetros», activa «Avanzado: editar la definición de la tarifa (JSON)» y describe tu contrato. El botón «Exportar como plantilla» genera después una plantilla lista para compartir.
 
-¡Es colaborativo y cualquiera puede proponer una tarifa!
+#### Lo que puede expresar un contrato
+
+El motor de tarificación de Gladys no conoce a ningún proveedor por su nombre: un contrato es una lista de reglas que se evalúan para cada intervalo de 30 minutos. Una regla puede depender de:
+
+- la **hora** (punta / valle, franjas horarias);
+- el **día de la semana** (fines de semana más baratos);
+- el **mes o la estación** (tarifas de verano / invierno);
+- un **rango de fechas** (promoción, periodo de transición);
+- un **calendario tarifario**: color del día (Tempo), festivos, días de punta crítica;
+- **tramos de consumo**, por día, por mes o por periodo de facturación (tarifas progresivas);
+- la **potencia máxima** del intervalo.
+
+Además, un contrato puede añadir **cuotas fijas** (por día o por mes), **impuestos** en porcentaje, un **término de potencia** por kW de punta y **precios de mercado horarios o cuartohorarios** (precios spot) con un coeficiente y un margen.
+
+El motor está probado con contratos reales de Francia, Bélgica, Reino Unido, Alemania, Finlandia, Noruega, Estados Unidos, Canadá, Australia, Japón, Corea del Sur e India.
+
+#### Los calendarios tarifarios
+
+Algunos contratos dependen de valores que cambian cada día: el color Tempo, los precios spot, los días de punta. Estos valores se guardan en **calendarios tarifarios**, visibles en la pestaña «Configuración» de la integración, con su proveedor, su granularidad (día, 30 minutos, 15 minutos), su cobertura y sus últimos valores.
+
+![Los calendarios tarifarios que conoce Gladys, aquí los colores EDF Tempo](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-calendars.webp)
+
+Desde la misma tarjeta, «Recalcular los costes desde el» vuelve a calcular los costes de todos los contadores a partir de la fecha elegida, por ejemplo después de corregir un precio.
 
 ### Paso 3: Actualizar tus dispositivos Zigbee
 
@@ -192,6 +215,25 @@ Puedes mostrar tu consumo:
 También puedes mostrar cada dispositivo por separado, por ejemplo mi lavadora:
 
 ![Gráfico de monitorización de energía](../../../../../static/img/docs/en/configuration/energy-monitoring/dashboard-washing-machine-widget.png)
+
+### Paso 8: Mostrar el precio actual de la electricidad
+
+El widget «Precio de la electricidad» muestra, para el contrato que elijas, el precio actual del kWh, el tramo en curso (por ejemplo «Blue peak»), hasta cuándo se aplica y cuál será el siguiente precio, además del consumo del día.
+
+![El widget de precio de la electricidad en el panel](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-price-widget.webp)
+
+Funciona con cualquier contrato, sea cual sea su proveedor o su país, y se actualiza cada 5 minutos.
+
+### Paso 9: Usar el precio en tus escenas
+
+Dos bloques de escena usan tu contrato:
+
+- el disparador **«Cambio de precio de la electricidad»** inicia una escena en cuanto cambia el precio del kWh (o el tramo tarifario) del contrato, por ejemplo al pasar de horas valle a horas punta;
+- la acción **«Condición sobre el precio de la electricidad»** solo deja continuar la escena si el precio actual es inferior, superior o igual al umbral elegido.
+
+Por ejemplo, para poner en marcha el lavavajillas en cuanto la electricidad se abarata:
+
+![Una escena que pone en marcha el lavavajillas cuando el precio de la electricidad baja de 0,15 €/kWh](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-scene.webp)
 
 ## ¿Comentarios?
 

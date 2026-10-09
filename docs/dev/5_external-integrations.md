@@ -692,6 +692,45 @@ gladys.requestWidgetRefresh("charging_plan");
 
 Your payload is never trusted: the core normalizes and bounds everything before it reaches the interface, dropping unknown component types and fields, truncating texts, capping arrays, and accepting `https` links only. Run your integration with `DEBUG=gladys-integration-sdk` and the SDK logs what the core would drop or truncate, or call `validateWidgetContent(content)` and `validateWidgetImage(base64)` directly in your tests.
 
+#### A form behind a button
+
+*Requires Gladys 5.2.0 or later.*
+
+A widget at rest stays read-and-tap, but a button can ask for a few values before acting: the price of a pellet delivery typed on the wall tablet, a number of minutes, a choice in a list. Declare `fields` on its `action` (at most 4, of type `string`, `number`, `boolean` or `select`, in the `config_schema` grammar):
+
+```js
+gladys.onWidgetGet("pellets", async () => ({
+  components: [
+    { type: "value", value: stock.bags, unit: "bags", label: { en: "Stock", fr: "Stock" } },
+    {
+      type: "button",
+      label: { en: "Pallet delivered", fr: "Palette livrée" },
+      icon: "truck",
+      action: {
+        key: "delivery",
+        fields: [
+          { key: "bags", type: "number", required: true, min: 1, max: 200, default: 72,
+            label: { en: "Bags delivered", fr: "Sacs livrés" } },
+          { key: "price_per_bag", type: "number", required: true, min: 0, max: 50, default: stock.lastPrice,
+            label: { en: "Price per bag", fr: "Prix par sac" } },
+        ],
+      },
+    },
+  ],
+}));
+
+gladys.onWidgetAction("pellets", async (actionKey, params, { values }) => {
+  await stock.recordDelivery(values.bags, values.price_per_bag); // validated by the core
+  return { en: `${values.bags} bags added`, fr: `${values.bags} sacs ajoutés` };
+});
+```
+
+A tap on the button opens the form inside the card, pre-filled with the `default`s, which are runtime values: here, the last price paid. Gladys validates what the user typed against your declaration before anything reaches you (unknown key, invalid value, string over 1,000 characters or missing required field are refused, defaults applied), and relays it as `values`, next to `params` and never merged into them. `values` is absent from an action without `fields`.
+
+No `section`, `multi_select`, `secret`, `oauth2`, `account_link` or `source` in these fields: the content is produced at runtime, so list the options yourself. An invalid `fields` declaration drops the button. A typed value is a user **event** (a delivery happened, at this price), never a write to your configuration, which stays admin-only.
+
+An older core drops `fields` and runs the action without `values`: declare a `gladys_version` range starting at `5.2.0`, or refuse an action received without them.
+
 ### Scene triggers and actions
 
 *Requires Gladys 5.1.0 or later.*
@@ -764,11 +803,129 @@ An image is not an output: publish it through `publishCameraImage` and let the s
 
 *Requires Gladys 5.1.0 or later.*
 
-Some integrations have no device at all. A fuel-price index, a cinema release feed, a bridge that only forwards events: their whole contract is what they declare. Those use `"type": "provider"`, which must declare at least one of `widgets`, `scene_triggers` or `scene_actions`.
+Some integrations have no device at all. A fuel-price index, a cinema release feed, a bridge that only forwards events: their whole contract is what they declare. Those use `"type": "provider"`, which must declare at least one of `widgets`, `scene_triggers`, `scene_actions` or, since Gladys 5.2.0, `energy_contracts`.
 
 A `provider` integration gets the Configuration, Supervision and Logs screens, and no Devices or Discovery tab, exactly like the `communication` and `weather` types. Everything else in the manifest works the same way.
 
 Widgets and scene declarations are **capabilities, not types**: a `device` integration can declare them too, and usually should. A robot vacuum integration publishes its devices, a widget for its state and a "clean a room" scene action, all from the same manifest.
+
+### Calendars: the `calendar` type
+
+*Requires Gladys 5.2.0 or later.*
+
+A calendar provider (a CalDAV or Nextcloud server, iCloud with an app password, a public ICS feed for a school timetable or the waste collection...) is an external integration of type `"calendar"`. **The integration syncs, the core stores**: the calendars and events you push feed the calendar view, the calendar scene trigger and actions and the assistant, exactly like the calendars of the internal CalDAV integration. Gladys never writes back to the provider.
+
+Calendars are personal data, so they belong to users. The integration page shows **every user** a "My calendars" block: the fields of your optional `account_schema` (the `config_schema` format, with per-user values) and an Enable button. **Enabling is the consent**: you only sync the users who enabled the integration, and each of them gets a `sync` toggle (skip this calendar) and a `shared` toggle (visible to the household, and only then to the scenes) on every calendar you push.
+
+```json
+{
+  "type": "calendar",
+  "account_schema": [
+    { "key": "server_url", "type": "string", "label": { "en": "Server URL" }, "required": true },
+    { "key": "app_password", "type": "secret", "label": { "en": "App password" }, "required": true }
+  ]
+}
+```
+
+```js
+const syncUser = async ({ user, config }) => {
+  const client = await caldav.connect(config.server_url, config.app_password); // your provider code
+  // Every id is user-scoped: ext:<selector>:<user_selector>:<provider id>.
+  const id = (providerId) => gladys.externalId(`${user.selector}:${providerId}`);
+  const calendars = await client.calendars();
+  await gladys.publishCalendars(user.selector, calendars.map((c) => ({ external_id: id(c.url), name: c.name, color: c.color })));
+  const skipped = new Set((await gladys.getCalendars(user.selector)).filter((c) => !c.sync).map((c) => c.external_id));
+  for (const calendar of calendars) {
+    if (skipped.has(id(calendar.url))) continue;
+    const window = { from: startOfMonth, to: addMonths(startOfMonth, 12) };
+    await gladys.publishCalendarEvents(
+      id(calendar.url),
+      (await client.events(calendar, window)).map((e) => ({
+        external_id: id(e.uid + (e.recurrenceId || "")),
+        name: e.summary,
+        start: e.start, // an ISO date-time, or "2026-08-15" for a full-day event
+        end: e.end, // exclusive on a full-day event, as in iCalendar
+        full_day: e.allDay,
+        location: e.location,
+      })),
+      window,
+    );
+  }
+};
+
+gladys.on("connected", async () => {
+  for (const account of await gladys.getCalendarAccounts()) await syncUser(account);
+});
+gladys.onCalendarAccountUpdated(async (userSelector) => {
+  const account = (await gladys.getCalendarAccounts()).find((a) => a.user.selector === userSelector);
+  if (account) await syncUser(account);
+  else stopSyncing(userSelector); // disabled: their calendars are already destroyed
+});
+```
+
+The rules that keep a sync correct:
+
+- **User-scoped ids**: every calendar and event `external_id` starts with `ext:<selector>:<user_selector>:` (255 characters at most). Two users syncing the same provider calendar never collide, and an event republished under another calendar of the same user is moved, not duplicated.
+- **Who owns which field**: `name`, `description` and `color` are yours, overwritten by every push. `sync`, `shared` and `selector` belong to the user and are never touched. A pushed calendar starts private.
+- **A window replaces its content**: with `window: { from, to }`, your events overlapping the window and absent from the list are deleted, so a deletion on the provider side propagates by simply republishing. Events created by hand in Gladys are never deleted. One window, one request: beyond 500 events, split the range into disjoint sub-windows. Without `window`, it's a pure upsert.
+- **Bounds**: 50 calendars per user, 500 events per request, 30 calendar writes per minute per integration. Expand recurrences yourself, over a bounded horizon.
+- **Notified both ways**: `onCalendarAccountUpdated(userSelector)` fires when a user enables or disables the integration, changes their account values or flips a toggle. It is lost while you are disconnected, so re-read `getCalendarAccounts()` and `getCalendars()` on every connection.
+
+You only ever see your own calendars, never the user's other ones. Per-user OAuth (Google Calendar, Outlook) is not available in this first version: `oauth2` and `account_link` fields are refused in an `account_schema`.
+
+### Energy contracts
+
+*Requires Gladys 5.2.0 or later.*
+
+Since Gladys 5.2, an energy contract is a set of rules interpreted by a pricing engine in the core (time slots, weekdays, seasons, tariff calendars, consumption tiers, spot prices, fixed fees, taxes, demand charges). An integration can publish a contract **entirely**, without any change to Gladys, with the `energy_contracts` capability field, usable by every integration type:
+
+- **templates**: the contracts it offers, shown in the contract wizard next to the community catalogue. In `"rules"` mode, the template carries a tariff definition the engine computes. In `"delegated"` mode, the integration prices the 30-minute intervals itself;
+- **calendars**: the dated values the templates read, that the integration keeps fed: day colours, public holidays, critical peak days, spot prices per 30 or 15 minutes.
+
+```json
+"energy_contracts": {
+  "templates": [
+    { "key": "hydro-quebec-d", "name": { "en": "Hydro-Québec Rate D" }, "country": "CA", "currency": "CAD",
+      "timezone": "America/Toronto", "pricing_mode": "rules", "version": "2026-04-01",
+      "calendars": ["hq-critical-peaks"], "inputs": [{ "key": "subscribed_power", "type": "number", "unit": "kW" }],
+      "tariff": { "tariff_version": 1, "calendars": ["hq-critical-peaks"], "components": ["…"] } },
+    { "key": "octopus-agile", "name": { "en": "Octopus Agile" }, "country": "GB", "currency": "GBP",
+      "timezone": "Europe/London", "pricing_mode": "delegated", "version": "1",
+      "inputs": [{ "key": "region", "type": "select", "options": ["A", "B", "C"] }] }
+  ],
+  "calendars": [
+    { "key": "hq-critical-peaks", "granularity": "day", "values": ["normal", "critical-peak"], "timezone": "America/Toronto" },
+    { "key": "spot-fi", "granularity": "fifteen_minutes", "currency": "EUR", "timezone": "Europe/Helsinki" }
+  ]
+}
+```
+
+```js
+// Feed a calendar: upsert by start. A changed value recomputes the costs that read it.
+await gladys.publishEnergyCalendar("hq-critical-peaks", [{ date: "2026-01-12", value: "critical-peak" }]);
+await gladys.publishEnergyCalendar("spot-fi", slots.map((s) => ({ starts_at: s.start, price: s.eurPerKwh })));
+
+// Delegated pricing: one cost per half-hour interval of one billing period.
+gladys.onEnergyPrice(async ({ contract, billing_period, cumulative_before, intervals }) => {
+  const prices = await agile.getPrices(contract.inputs.region, intervals);
+  return intervals.map(({ starts_at, kwh }) => ({ starts_at, cost: kwh * prices.get(starts_at), label: "Agile" }));
+});
+// The current price, for the dashboard widget and the scene condition.
+gladys.onEnergyCurrent(async ({ contract }) => {
+  const slot = await agile.getCurrentSlot(contract.inputs.region);
+  return { price: slot.price, valid_until: slot.end, next_price: slot.nextPrice };
+});
+```
+
+What to know:
+
+- **Up to 20 templates and 10 calendars.** A template `key` never changes once published: contracts store it.
+- **Calendar keys are global**: one calendar per key in a Gladys instance, owned by the first installed integration that declares it. A key never carries a provider prefix, so a template written for `spot-fr` works whichever integration feeds `spot-fr`. Its granularity (`day`, `thirty_minutes` or `fifteen_minutes`) never changes.
+- **Calendar entries are bounded**: 2,000 per call, from 5 years back to 7 days ahead, aligned on the granularity, with exactly one of `value` (within the declared `values`) or `price` (per kWh, possibly negative).
+- **Delegated pricing is never trusted**: every requested interval must get exactly one finite cost, under a sanity bound. An invalid answer or a throw fails like a timeout: the intervals get no new cost (never a silent zero), and the next run retries, so the same request must give the same answer. You never receive the meter nor its history, only the intervals to price.
+- **Lifecycle**: a stopped integration keeps its `rules` contracts computed as long as its calendars are fed. An uninstall keeps the contracts and the calendars.
+
+The tariff grammar of the `rules` mode is described in [the energy contracts specification](https://github.com/GladysAssistant/Gladys/blob/master/docs/specs/energy-contracts.md) of the Gladys repository.
 
 ### House coordinates
 
@@ -850,7 +1007,7 @@ Every external integration is described by a single file named `gladys-assistant
 | Field | Required | Description |
 | --- | --- | --- |
 | `manifest_version` | Yes | Must be `1`. |
-| `type` | Yes | `"device"` (exposes devices), `"communication"` (a messaging channel), `"weather"` (a weather provider) or `"provider"` (no device, capabilities only). |
+| `type` | Yes | `"device"` (exposes devices), `"communication"` (a messaging channel), `"weather"` (a weather provider), `"calendar"` (a calendar provider, Gladys 5.2.0 or later) or `"provider"` (no device, capabilities only). |
 | `name` | Yes | Display name, 3 to 30 characters. |
 | `description` | Yes | An object keyed by language. `en` is mandatory, each text is 10 to 100 characters. |
 | `version` | Yes | Strict [semantic version](https://semver.org/). Bumping it notifies users an update is available. |
@@ -871,6 +1028,8 @@ Every external integration is described by a single file named `gladys-assistant
 | `widgets` | No | 1 to 5 dashboard widgets, each with a `key`, a multi-language `label`, an optional `description`, `icon`, up to 10 `settings` and an `action_timeout_seconds` (5 to 120). Requires a `gladys_version` range starting at `5.1.0`. |
 | `scene_triggers` | No | 1 to 20 scene triggers, each with a `key`, a multi-language `label`, up to 10 `fields` and up to 20 `variables`. Requires a `gladys_version` range starting at `5.1.0`. |
 | `scene_actions` | No | 1 to 20 scene actions, each with a `key`, a multi-language `label`, a `timeout_seconds` (5 to 120), up to 10 `fields` and up to 20 `outputs`. Requires a `gladys_version` range starting at `5.1.0`. |
+| `account_schema` | No, `calendar` type only | The per-user account fields of a calendar integration, same field format as `config_schema` (minus `oauth2` and `account_link`). Requires a `gladys_version` range starting at `5.2.0`. |
+| `energy_contracts` | No | Up to 20 energy contract `templates` and 10 tariff `calendars` (see [Energy contracts](#energy-contracts)). Requires a `gladys_version` range starting at `5.2.0`. |
 
 ### Store categories
 
@@ -896,7 +1055,7 @@ Integrations published before 4.86 were categorized once through a fallback mapp
 
 `config_schema` is a flat list of fields. Each field has a `key` (lowercase, matching `[a-z0-9_]`), a `type`, and a multi-language `label` (with `en` mandatory). Supported types are `string`, `number`, `boolean`, `select`, `multi_select`, `secret`, `oauth2`, `account_link`, and `section`. Depending on the type, a field can also declare `placeholder` (for `string`/`number`/`secret`), `required`, `default`, `min`/`max` (for numbers), and `options` (for `select`/`multi_select`).
 
-A `select` or `multi_select` can either list static `options` or pull its choices dynamically from the user's devices with `source: "devices"`, and render as a `dropdown` or `radio` (`display`). A `section` field is presentational only: it shows a `description` and up to five documentation `links`, and stores no value.
+A `select` or `multi_select` can either list static `options` or pull its choices dynamically with a `source`: `source: "devices"` lists your integration's devices (you receive the chosen `external_id`), and `source: "houses"` (Gladys 5.2.0 or later) lists the houses of Gladys (you receive the chosen house `selector`, which you can match against `GET /house`). Picking a house this way needs no `location: true`: only the house the user chose reaches you. Both render as a `dropdown` or `radio` (`display`). A `section` field is presentational only: it shows a `description` and up to five documentation `links`, and stores no value.
 
 Gladys automatically generates the configuration form from this list, so you never write any frontend code. Values marked `secret` are stored securely and are never returned to the frontend.
 
