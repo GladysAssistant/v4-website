@@ -2,7 +2,7 @@
 title: "Denon / Marantz AVR smart home integration, free and open source"
 sidebar_label: "Denon / Marantz AVR"
 description: "Control a Denon or Marantz AV receiver: power, volume, mute, source — auto-discovered, no cloud. Free, open source, installable in one click."
-image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-denon-avr.png"
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-denon-avr.jpg"
 keywords:
   - "denon / marantz avr"
   - "denon / marantz avr smart home"
@@ -28,7 +28,8 @@ lineup — not tied to a specific model.
 ## Overview
 
 The integration talks directly to your receiver over the local network (Telnet, TCP port 23) —
-no cloud account, no internet dependency. The receiver itself pushes every state change
+no cloud account, no internet access needed (only the optional radio ad-break detection, and the
+song titles of a few stations like OUI FM, reach the internet: see "Radio ad breaks"). The receiver itself pushes every state change
 (power, volume, mute, source) as soon as it happens, whether triggered from Gladys, the
 physical remote, or the Denon/HEOS app, so the dashboard stays in sync in real time.
 
@@ -77,9 +78,12 @@ These show up per receiver:
   AVR from that action's speaker dropdown and it reads your text out loud. Requires HEOS (see
   "HEOS support" below) — there is no legacy-Telnet way to play an arbitrary audio URL, so this
   only appears/works once a HEOS player id has been matched for this receiver. The volume slider
-  in that scene action has no effect here: Gladys does not forward it to this kind of integration
-  (a core limitation, not something this integration can work around) — the announcement plays at
-  the receiver's current volume. This is also one of the features here that works on a standalone
+  in that scene action never reaches this integration: Gladys does not forward it to this kind of
+  integration (a core limitation). Instead, set **Announcement volume** in the Configuration (0 =
+  current volume), and leave **Restore the receiver after an announcement** on: once the
+  announcement is over, the receiver gets back its previous volume, input and standby state (the
+  volume is left alone if someone changed it during the announcement). Whatever HEOS was playing
+  before (a radio, a playlist) does not resume on its own. This is also one of the features here that works on a standalone
   HEOS speaker (Denon Home, HEOS 1/3/5/7, Bar...) added through the manual IP fallback in
   Configuration, not just a real AV receiver — alongside Volume, Mute and Play/Pause/Next/Previous
   (all of which have a real HEOS equivalent, see "HEOS support" below). Power, Source and Sound
@@ -96,27 +100,57 @@ These show up per receiver:
   the ones you don't use the same way you'd hide any other device feature — nothing to configure
   on this integration's side.
 
-## Automating source/sound mode from a scene
+## Dashboard widgets
 
-In a scene, the generic **"Control a device"** action is what sets `Source`/`Sound mode`/
-`Source index` — there's no scene action for a manifest's own custom buttons (**Select input**
-here), on any Gladys version.
+Since Gladys 5.1, this integration adds its own dashboard cards: edit a dashboard, add a card and
+look for "Denon / Marantz AVR". Each card has a **Receiver** setting to pick the device (left
+empty: the first receiver added). Cards show and trigger; the volume slider and the input
+dropdown stay those of Gladys' own "Devices" card.
 
-- **On Gladys 4.86.1 or newer**, "Control a device" already shows a proper labeled dropdown for
-  `Source` and `Sound mode`, exactly like the dashboard — just pick the device, then the feature,
-  then the value. `Source index` still works too if you'd rather set a plain number.
-- **On an older Gladys**, that dropdown either isn't offered or doesn't accept the value — use
-  **Source index** instead: it's a plain number, which "Control a device" has always been able to
-  set, and it maps to the same input as the dropdown (position in the _currently visible_ Source
-  list, 0 = first entry).
-- **If "Control a device" shows nothing at all for this AVR** (no `Source`/`Sound mode` dropdown,
-  no `Source index` either): try a **hard refresh / clear your browser cache** first — confirmed
-  once to be the actual cause, a stale cached front-end bundle showed a completely empty picker
-  for this device while other integrations (MQTT, Zigbee2MQTT) still worked fine, fixed instantly
-  by clearing the cache, no configuration change needed. Still nothing after that? The device was
-  likely added before this integration shipped `Source index`, combined with a Gladys core older
-  than 4.86.1 — open this integration's **Discovery** tab, run a scan, and click **Update** on the
-  device, the same as any other structural change (see Configuration below).
+- **Now playing** — the cover art (or station logo), title, artist or station, album, input and
+  sound mode, the live volume, with Previous, Play/Pause, Next and Mute. This is what Gladys'
+  "Music" card does not show: no title, no artwork, and no volume for an AV receiver. The cover
+  only appears when it is under 300 KB (Gladys' limit) and the integration's container can
+  download it (often from the Internet).
+- **Shortcuts** — four one-tap buttons, each picked among the inputs (with your "Rename/hide
+  sources" names), **Quick Select 1-5** (Smart Select on Marantz: input, volume and sound mode
+  stored in the receiver) and **HEOS favorites 1-8**. The active shortcut is ticked. Each button
+  can get a custom label.
+- **Amplifier** — power, input, sound mode and mute at a glance, the live volume, and Turn
+  on/Standby, Vol −, Vol + and Mute buttons.
+- **Remote** — four keys of your choice (Up, Down, Left, Right, OK, Back, Menu, Info, Vol −,
+  Vol +, Mute, Turn on, Standby; the four arrows by default). Place several side by side for a full
+  pad (for instance an "arrows" card and an "OK / Back / Menu / Info" card).
+- **Radio** — the FM/AM tuner: frequency, preset, band and tuning mode, with four buttons
+  of your choice (Freq −/+, Preset −/+, AM/FM, Auto/Manual, Tuner input). The receiver only
+  accepts these commands on the Tuner input: a press switches to it first when needed. Denon
+  documents the AM/FM switch for North American models only. Set its **Show** setting to
+  **Radio ad breaks** to see instead what was learned of the web radio's ads (see "Radio ad
+  breaks" below).
+
+## Scenes
+
+Since Gladys 5.1, the scene editor offers this integration's own actions and triggers (look for
+"AVR:"):
+
+- **AVR: recall a Quick Select** — Quick Select 1-5 (Smart Select on Marantz).
+- **AVR: play a HEOS favorite** — the n-th entry of the HEOS app favorites (a radio, a
+  playlist…), on the configured zone, switched on and to HEOS when needed.
+- **AVR: set up the receiver** — power, input, sound mode and volume in a single action; a field
+  left empty is not changed. Made for a "Movie" or "Music" scene.
+- **AVR: read the receiver state** — returns power, volume, input (code and name), sound mode,
+  Quick Select, playing, title and artist to the following actions of the scene — for instance a
+  "Continue only if" on the input.
+- Trigger **AVR: input changed** — from Gladys, the remote or the app, filterable on the receiver
+  and on the new input (for instance: TV input → dim the lights). The previous input is available
+  as a variable.
+- Trigger **AVR: track changed** — a new title on HEOS or the network input, with title, artist,
+  album and input as variables.
+
+The generic **"Control a device"** action still works for Source, Sound mode and Source index. If
+it shows nothing at all for this receiver, first try a **hard refresh / clear your browser cache**
+(confirmed once as the cause: a stale cached front-end bundle), then run a **Discovery** scan and
+click **Update** on the device.
 
 ## HEOS support
 
@@ -149,8 +183,139 @@ by the developer against a live HEOS streaming session, since that requires an a
 streaming account. If the buttons don't do anything on your setup even though the receiver is
 reachable, please report it (with the logs mentioned below) so it can be fixed.
 
+## Radio ad breaks
+
+**Off by default.** To use it, switch on **Detect radio ad breaks** in the configuration, then run a
+Discovery scan and click **Update** on the device to get its **Radio ad break** switch.
+
+While a radio station plays through HEOS (TuneIn, a favorite, a stream URL), the integration spots
+its ad breaks and turns the device's **Radio ad break** switch on during them. By default it also lowers
+the volume by 20 steps, never below 20, then restores it when the music resumes. If you changed the volume by hand
+meanwhile, your setting is kept. Everything is set in the "Radio ad breaks" section of the
+configuration. To act in a scene of your own instead (switch station, mute…), switch off the
+automatic volume drop and trigger your scene on **Radio ad break**. You can also switch it yourself: on means "it's an
+ad" (the volume drops right away, and the integration learns), off ends the break and restores
+the volume.
+
+**How it works.** No station says "this is an ad" in its stream. Many do say what song is playing,
+sometimes with its length. When a song ends and no other follows, the station is either airing ads
+or the host is talking, and the time of the hour tells the two apart. For each station, the
+integration learns the minutes of the hour its breaks (usually 4 to 8 minutes long; anything from
+3 min 20 s to 15 min counts) start at, e.g.
+:09–:14 and :34–:47 on OUI FM:
+
+- **inside one of these windows**, a song ending with ~45 s of no music afterwards counts as a
+  break. That delay lets the host talk before the ad jingle;
+- **outside them**, the volume never drops on a mere lack of music: a feature, the news or an
+  interview are not ads. Only the station's ad jingle, once learned, can open a break there;
+- the break ends when the next song starts, with a 10-minute safety limit.
+
+The windows depend on the day and the hour: weekdays, Saturdays and Sundays each have their own,
+and an hour in which the station usually airs no ads (evenings, nights) has none. The learning is
+continuous: while the station is followed, its playlist history is read again every hour, and
+everything comes from the last 2 weeks (every day of the week seen twice). A schedule change is
+picked up within days. The hours without ads are only learned on stations that publish their
+playlist history; elsewhere, every hour keeps the windows.
+
+**The ad jingle.** Each station opens its breaks with the same jingle (on OUI FM, "stay with us
+during the ads"). While a station plays, the integration decodes its stream (ffmpeg) and compares
+the sound of its breaks with each other. The sound found in most of them, even under the host's
+voice, becomes the station's jingle. It is only observed at first, and becomes active after 2
+detections followed by a real break. From then on the volume drops **at the jingle** instead of
+after 45 s, and the host is no longer ducked. A break that comes without its jingle is still
+caught by the windows rule. Expect a few hours of listening (3 long breaks), or 3
+times switching **Radio ad break** on right after the jingle. A jingle that starts giving false alarms is
+forgotten and learned again.
+
+**Where song changes come from:**
+
+- **HEOS metadata**: for any station that provides it (e.g. Radio Paradise through TuneIn). Song
+  lengths are looked up on Deezer.
+- **A dedicated feed**: for stations whose stream carries none. That is the case of **OUI FM**,
+  followed through the live feed of its own website (title, artist, exact length). The title then
+  also shows in "Now playing", instead of just the station's name. Its ad windows are learned from the ~3
+  days of playlist history the site publishes, as soon as the station is first played (also for
+  Voltage, Alouette, Hit West and the other stations of the Les Indés Radios platform).
+- **Nothing at all** (some TuneIn stations): switch **Radio ad break** on when the ads start,
+  and off when they end. After a few marked breaks the integration knows the station's schedule
+  and lowers the volume at those times on its own. This is less precise than with song changes,
+  since it cannot tell when the music actually stops.
+  Switch it on right after the opening jingle, off right after the closing one: the integration learns
+  both (they may differ). With no song changes to check them against, a detected jingle only
+  counts when it falls in one of the station's ad windows or you switch it on right after it; the
+  closing one, when it falls during a break.
+
+On a station with song changes, switching **Radio ad break** on also fine-tunes the delay: do it at the ad
+jingle and the integration learns the jingle itself and how long the host talks before the ads,
+hour by hour. For
+instance, OUI FM mornings have no host and the ads follow the song directly: two times at those
+hours are enough for the volume to drop right away then.
+
+**Known limit**: the end of a break is only known when the next song starts. If the host talks
+again after the ads, that stays at the lowered volume until the song.
+
+**Turning the radio on during the ads:**
+
+- **with a station feed** (OUI FM…): caught within seconds — the feed gives the last song and its
+  start, so the integration knows it ended without a next one, inside an ad window;
+- **with no titles at all**: inside one of the station's ad windows, the break starts right away,
+  for what is left of its usual length (counted from the window opening), unless less than
+  30 s is left. Pausing then resuming during it does the same; once switched off by hand, that
+  window stays off;
+- **with HEOS titles**: not caught — the first title seen has no known start, so its end is
+  unknown, and lowering the volume on a guess would also do it on music. The integration is back
+  on track at the next song; switch **Radio ad break** on meanwhile if you like.
+
+**Your volume always comes back.** A break never lasts more than 10 minutes. If the integration
+stops or restarts during a break (update, configuration change), the volume is restored on the
+way out. If the connection to the receiver drops, it is restored as soon as HEOS answers again
+(given up after an hour, or if the volume was changed meanwhile). A "Speak on a speaker"
+announcement during a break ends it first: the announcement plays at your normal volume, which
+comes back afterwards.
+
+**What was learned.** Add a **Radio** widget with **Show: Radio ad breaks** to the dashboard.
+It shows the station playing (else the last one played):
+
+- whether a break is on right now, or when the next ad window is (`Next ad window 14:34–14:47`);
+- the breaks heard over the last 14 days, their typical length, today's breaks;
+- each jingle: _active_ (with its confirmed detections), _observing_, or not learned yet;
+- where the song changes come from, how long the host usually talks before the ads, the volume
+  lowered right now;
+- one card per day type (weekdays, Saturday, Sunday): the hours with ads and their minute
+  windows (`6h–21h · :09–:14, :34–:47`); open it for the detail hour by hour, with the breaks
+  heard in each hour;
+- the recent breaks (date, time, length, how they were found) and the details of each jingle
+  (where it sits, when it was learned);
+- an **It's an ad!** / **Ads are over** button, the same as the **Radio ad break** switch.
+
+**The usual schedule in a chart.** The device also has a **Radio ad window** feature: 1 while the
+station (playing, else the last one played) is inside one of its usual ad windows, 0 outside —
+the learned schedule, minute by minute. Add Gladys' own **Chart** widget, type **Binary**, with
+**Radio ad window** and **Radio ad break** (the real breaks): over 24 hours or a week, the bands
+show when the ads usually come and when they actually came. The chart draws the past only; the
+next window is in the Radio widget. Like the switch, it needs the device updated from Discovery,
+and the detection on.
+
+The **Ad-break report** button of the Configuration screen sums up every station learned the same
+way, as text. Times are shown, and learned, in the **Time zone** of the configuration (Europe/Paris
+by default): Gladys runs integrations in UTC.
+
+**What it costs**, only while a station plays with the detection on:
+
+- internet requests to TuneIn (once per station), Deezer (song lengths) and, for stations like
+  OUI FM, their website (live song feed, hourly playlist history);
+- with **Recognize the ad jingles** on: the radio stream is downloaded a second time and decoded
+  (about 30 to 90 MB per hour, depending on the station's quality), and after each break a few
+  seconds of processing, kept off the integration's main thread. Switch it off to save the
+  bandwidth: breaks are then only caught by the windows rule.
+
+Switched off, the detection costs nothing; only the song title of stations whose stream carries
+none (OUI FM...) is still read from their website while they play. What is learned is kept in the
+integration's data folder (`/data/ad-breaks.json`, `/data/ad-jingles/`).
+
 ## Prerequisites
 
+- **Gladys 5.1.0 or newer** (the integration's own widgets and scene actions/triggers).
 - A Denon or Marantz AV receiver with a network (Ethernet/Wi-Fi) connection.
 - **Network Standby** (sometimes labelled "ECO" standby) enabled in the receiver's setup menu.
   Without it, the receiver drops off the network entirely when powered off and Gladys cannot
@@ -163,7 +328,9 @@ reachable, please report it (with the logs mentioned below) so it can be fixed.
 1. Open the **Discovery** tab of the integration and run a scan. Denon/Marantz receivers answer
    automatically (SSDP/UPnP) — no IP to type, no account. The receiver should appear with its
    real name and model.
-2. Add the discovered device. Gladys keeps a persistent connection to it from then on.
+2. Add the discovered device. Gladys keeps a persistent connection to it from then on. If the
+   receiver later gets a new IP address (DHCP), run a Discovery scan again and click **Update** on
+   the device: the connection moves to the new address right away, no restart needed.
 3. **If nothing is found**: your network likely blocks multicast between segments (VLANs, several
    network interfaces on the Gladys host, some mesh Wi-Fi setups...). Open the integration's
    **Configuration** tab and fill in the receiver's IP address manually, save, then scan again —
@@ -191,8 +358,21 @@ reachable, please report it (with the logs mentioned below) so it can be fixed.
    zone HEOS happened to use last. Pick **Zone 2**/**Zone 3** only to drive that zone instead
    (sound mode and the Setup-menu keys always act on the main zone, the only one with an on-screen
    menu). The change applies immediately, no need to re-add the device.
+7. **Announcements** (Configuration tab): **Announcement volume** (0 = keep the current volume)
+   and **Restore the receiver after an announcement**, for the "Speak on a speaker" action — see
+   "Play notification" above.
+8. **Radio ad breaks** (Configuration tab): off by default, see "Radio ad breaks" above — then
+   **Update** the device from Discovery to get its **Radio ad break** switch. **Time zone**: of
+   the ad-break hours (an IANA name, Europe/Paris by default). **Ad-break report**: what was
+   learned of every station.
 
 ## Troubleshooting
+
+- **The device badge** (device list) tells each receiver's state: _local_ = reachable;
+  _unreachable_ = neither the Telnet control nor HEOS answers (receiver unplugged, network standby
+  off, wrong IP); an **orange dot** flags a degraded mode, with the reason on hover — HEOS lists
+  no player at the receiver's IP ("Speak on a speaker" will not work), or only HEOS answers (a
+  standalone HEOS speaker, or a receiver whose port 23 is closed).
 
 - **Nothing found by the scan**: check that Gladys and the receiver are on the same network
   segment and that multicast/UPnP is not filtered by your router or switches, then use the
@@ -259,18 +439,28 @@ These are the settings Denon / Marantz AVR asks for in its configuration screen 
 | Getting started | `section` | No | Denon/Marantz AVRs are found automatically on the LAN (SSDP/UPnP) — open the Discovery tab and run a scan. Make sure 'Network Standby' (or 'ECO' network standby) is enabled in the receiver's setup menu so it stays reachable while off. If your network blocks multicast (VLANs...), fill in the manual IP below instead. |
 | Manual IP/hostname (fallback) | `string` | No | Only needed if the automatic scan does not find (all of) your receiver(s). Leave empty otherwise. Several networks/receivers: separate multiple addresses with commas, e.g. "192.168.1.50, 192.168.2.50". |
 | Zone | `select` | No | Which zone of the receiver Gladys controls: power, volume, mute and source commands, and "Speak on a speaker" announcements (the zone is switched on and to the HEOS/Network input first). Main zone by default; only change it to drive Zone 2/3 instead. |
+| Announcements | `section` | No | For the "Speak on a speaker" scene action (HEOS models). Gladys does not pass the volume chosen in the scene to external integrations, so it is set here. |
+| Announcement volume (%) | `number` | No | Volume set before each announcement, 1-100. 0 keeps the current volume. |
+| Restore the receiver after an announcement | `boolean` | No | Once the announcement is over, give back the volume, the input and the standby state the receiver had before. |
 | Telnet port (advanced) | `number` | No | Every Denon/Marantz model uses 23. Change only for a non-standard setup. |
 | Reconnect backoff base (s) | `number` | No | Base delay before a Telnet reconnect attempt; it grows with consecutive failures, capped at 120 s. |
 | Rename/hide sources (advanced) | `string` | No | Customize the source dropdown: comma-separated CODE=Label pairs to rename an entry (e.g. "SAT/CBL=Chromecast" if that's what's actually plugged into that input), or CODE= (empty label) to hide one entirely, e.g. "SAT/CBL=Chromecast, GAME=". Codes are the ones listed under Select input. After changing this, re-run a Discovery scan and click Update on the device — a dropdown's choices are part of its structure, so a config change alone does not refresh it. |
+| Radio ad breaks | `section` | No | While a radio station plays through HEOS, the integration learns when that station airs its ad breaks (from song changes: the station's metadata, or a dedicated feed for stations like OUI FM that publish none in their stream) and turns the device's "Radio ad break" switch on during them. You can switch it yourself too: on when ads start (it learns from it), off when they end. |
+| Detect radio ad breaks | `boolean` | No | Off by default. On, the integration reaches the internet while a radio station plays: TuneIn, Deezer (song durations), the station's website. Update the device from Discovery to get its "Radio ad break" switch. Off, only the song title of stations with no metadata in their stream (OUI FM...) is read from their website. |
+| Lower the volume during ad breaks | `boolean` | No | Switch off to only get the "Radio ad break" switch, and act on it in a scene of your own. |
+| Recognize the ad jingles | `boolean` | No | Learns each station's ad jingle to lower the volume right on it. Downloads the radio stream a second time while it plays (about 30 to 90 MB per hour). |
+| Volume drop during ad breaks | `number` | No | How many volume steps (0-100 scale) lower. The volume comes back when the music resumes, unless you changed it by hand meanwhile. |
+| Minimum volume during ad breaks | `number` | No | The volume is never lowered below this level (0-100 scale), so the ads stay audible. |
+| Time zone | `string` | No | Of the ad-break hours learned and shown, as an IANA name (Europe/Paris, Europe/Brussels, America/Montreal...). Integrations run in UTC otherwise. |
 
 ## How to install Denon / Marantz AVR in Gladys
 
 1. In Gladys, open **Integrations**: Denon / Marantz AVR appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-denon-avr:1.0.21`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-denon-avr:1.0.23`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-denon-avr](https://github.com/LM1LC3N7/gladys-denon-avr).
 
-Denon / Marantz AVR requires Gladys `>=4.86.1`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Denon / Marantz AVR requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

@@ -1,0 +1,176 @@
+---
+title: "Mapbox Traffic smart home integration, free and open source"
+sidebar_label: "Mapbox Traffic"
+description: "Live traffic on your routes: travel time, delay, charts and traffic jam alerts via Mapbox. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/quentinlegay--Gladys-mapbox-traffic.png"
+keywords:
+  - "mapbox traffic"
+  - "mapbox traffic smart home"
+  - "gladys mapbox traffic"
+  - "mapbox traffic gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/quentinlegay/Gladys-mapbox-traffic instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="mapbox-traffic" />
+
+Track the travel time of your usual routes (home → work, school…) with live
+traffic, see it as a chart and get notified of traffic jams or abnormally long
+trips. Data comes from the
+[Mapbox Directions API](https://docs.mapbox.com/api/navigation/directions/)
+(`driving-traffic` profile).
+
+## What you get
+
+One **route** device per configured route (up to 3), with:
+
+| Feature           | Description                                                     |
+| ----------------- | --------------------------------------------------------------- |
+| Travel time       | Duration with the current traffic, in minutes (kept in history) |
+| Usual travel time | Typical duration at this time of the week according to Mapbox   |
+| Delay             | Difference between both, in minutes                             |
+| Distance          | Length of the recommended route, in km                          |
+| Traffic level     | 0 fluid, 1 moderate, 2 traffic jam, 3 severe jam                |
+| Traffic           | The same level as a text                                        |
+| Via               | The main roads taken ("A86, A1")                                |
+
+Plus:
+
+- a **dashboard widget** "Travel time": duration, delay, chart of the current
+  vs usual travel time, traffic status and a "Refresh" button;
+- four **scene triggers**: _Traffic jam on a route_, _Traffic jam cleared_,
+  _Abnormally long travel time_, _Travel time back to normal_;
+- a **scene action** _Get the travel time of a route_, e.g. to send "32 min (+7
+  min) · Moderate" every morning.
+
+## Setup
+
+1. Create a free account on [mapbox.com](https://account.mapbox.com/) and copy
+   your **default public access token** (it starts with `pk.`). The free tier
+   includes 100,000 route requests a month.
+2. In the integration **Configuration** tab, paste the token.
+3. Fill in at least **route 1**:
+   - **Name**: "Work" for instance;
+   - **Origin**: leave empty to start from the home location set in Gladys
+     (Settings → Houses), or type an address or coordinates;
+   - **Destination**: an address or "latitude, longitude" coordinates
+     ("48.8924, 2.2369", as copied from Google Maps with a right click).
+4. Click **Test Mapbox**: the current travel time of route 1 shows under the
+   button.
+5. Open the **Discovery** tab and add your routes.
+
+### Refresh
+
+- **Interval**: 300 s by default (60 s minimum).
+- **Active days** / **Active hours**: only query Mapbox when it matters, e.g.
+  Monday to Friday, `07:00-09:30, 16:30-19:00`. Empty means always. Hours are
+  read in the configured **timezone** (`Europe/Paris` by default).
+- **Avoid**: tolls, motorways, ferries.
+
+### Mapbox free plan
+
+The Directions API includes **100,000 free requests a month**; beyond that,
+Mapbox bills the extra requests (see the
+[Mapbox pricing](https://www.mapbox.com/pricing#directions-api)). The
+integration makes one request per route at every refresh, and geocodes each
+address only once. Monthly usage ≈ routes × refreshes per hour × active hours
+per day × days.
+
+For example, 3 routes refreshed every 5 minutes for 5 hours each working day
+use about 4,000 requests a month, and about 26,000 when refreshed all day long:
+both stay within the free plan. Refreshing 3 routes every minute, 24/7, uses
+about 130,000 requests and goes over it.
+
+Your actual usage is shown in your [Mapbox account](https://account.mapbox.com/).
+
+### Alerts
+
+- **Traffic jam**: at least 10 % (configurable) of the distance is in heavy
+  congestion according to Mapbox, or the trip is clearly longer than usual
+  (+35 %).
+- **Abnormally long**: the travel time exceeds the usual one by 30 % **and**
+  by at least 5 minutes (both configurable), so a short trip going from 4 to
+  6 minutes does not alert.
+
+## Scene examples
+
+- **Traffic jam alert**: trigger _Traffic jam on a route_ (route "Work"),
+  action "Send a message": `Jam to work: {{triggerEvent.data.summary}}`.
+- **Morning briefing**: at 7 a.m. on weekdays, action _Get the travel time of
+  a route_, then "Send a message" with the _Summary_ (or _Travel time (min)_)
+  variable produced by the previous action.
+- **Personal threshold**: the route is a standard Gladys device, so the
+  native "Device value" trigger works too: "when Travel time (Work) > 45".
+
+Event triggers only fire on a **change** (a single "Traffic jam" while the jam
+lasts).
+
+## Troubleshooting
+
+- **"Mapbox refused the access token"**: check the token on
+  [account.mapbox.com](https://account.mapbox.com/access-tokens/).
+- **Address not found**: use a more complete address, or coordinates.
+- **"the home has no location"**: set the home location in Gladys, or fill in
+  the origin.
+- The integration logs (Logs tab, or `docker logs`) detail every refresh; set
+  `LOG_LEVEL=debug` to see the requests (the token is masked).
+
+## Configuration settings
+
+These are the settings Mapbox Traffic asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Mapbox account | `section` | No | Create a free Mapbox account and copy your default public access token (it starts with pk.). |
+| Mapbox free plan | `section` | No | The Directions API includes 100,000 free requests a month; beyond that, Mapbox bills the extra requests. This integration makes one request per route at every refresh (addresses are geocoded only once). Monthly usage ≈ routes × refreshes per hour × active hours per day × days. Examples: 3 routes every 5 min, 5 h per working day ≈ 4,000 requests (free); 3 routes every 5 min, 24/7 ≈ 26,000 (free); 3 routes every minute, 24/7 ≈ 130,000 (over the free plan). Use the active days and hours below to stay well within it. |
+| Mapbox access token | `secret` | Yes |  |
+| Language of the texts | `select` | No |  |
+| Route 1 | `section` | No | A place is either an address ("10 rue de Rivoli, Paris") or coordinates as "latitude, longitude" ("48.8566, 2.3522", as copied from Google Maps). Leave the origin empty to start from the home location set in Gladys. Leave the destination empty to disable the route. |
+| Name | `string` | No |  |
+| Origin (leave empty to start from your home) | `string` | No |  |
+| Destination | `string` | Yes |  |
+| Route 2 | `section` | No | Optional extra route, same format as route 1. |
+| Name | `string` | No |  |
+| Origin (leave empty to start from your home) | `string` | No |  |
+| Destination | `string` | No |  |
+| Route 3 | `section` | No | Optional extra route, same format as route 1. |
+| Name | `string` | No |  |
+| Origin (leave empty to start from your home) | `string` | No |  |
+| Destination | `string` | No |  |
+| Refresh | `section` | No | Routes are only refreshed during the active days and hours, to save your Mapbox quota. Leave them empty to refresh all the time. |
+| Refresh interval (s) | `number` | No |  |
+| Active days (empty = every day) | `multi_select` | No |  |
+| Active hours (empty = all day) | `string` | No |  |
+| Timezone | `string` | No |  |
+| Avoid | `multi_select` | No |  |
+| Alerts | `section` | No | A traffic jam is detected when at least the given share of the route is in heavy congestion. The travel time is abnormally long when it exceeds the usual one by both the given percentage and the given number of minutes. Both fire scene triggers. |
+| Traffic jam: congested share of the route (%) | `number` | No |  |
+| Abnormal: longer than usual by (%) | `number` | No |  |
+| Abnormal: and at least (min) late | `number` | No |  |
+
+## How to install Mapbox Traffic in Gladys
+
+1. In Gladys, open **Integrations**: Mapbox Traffic appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/quentinlegay/gladys-mapbox-traffic:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/quentinlegay/Gladys-mapbox-traffic](https://github.com/quentinlegay/Gladys-mapbox-traffic).
+
+Mapbox Traffic requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Mapbox Traffic is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [quentinlegay](https://github.com/quentinlegay), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/quentinlegay/Gladys-mapbox-traffic) — [source of this documentation](https://github.com/quentinlegay/Gladys-mapbox-traffic/blob/HEAD/docs/en.md)

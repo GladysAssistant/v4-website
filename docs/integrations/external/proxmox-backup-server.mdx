@@ -36,7 +36,25 @@ proxmox-backup-manager acl update /system Audit --auth-id gladys@pbs --propagate
 proxmox-backup-manager acl update /system Audit --auth-id 'gladys@pbs!monitoring' --propagate true
 ```
 
-PBS API tokens use separate ACL entries by design; `generate-token` does not accept a `--privsep` option. Effective token permissions are the intersection of the parent user's permissions and the token's own permissions, hence the matching ACLs. Replace `/datastore` with `/datastore/NAME` in both datastore commands to restrict monitoring to one store. Enter the full token ID and the one-time secret in Gladys. Keep TLS verification enabled unless the server uses a self-signed certificate on a trusted network.
+PBS API tokens use separate ACL entries by design; `generate-token` does not accept a `--privsep` option. Effective token permissions are the intersection of the parent user's permissions and the token's own permissions, hence the matching ACLs. Replace `/datastore` with `/datastore/NAME` in both datastore commands to restrict monitoring to one store. Enter the full token ID and the one-time secret in Gladys.
+
+## TLS and the self-signed PBS certificate
+
+Use an `https://` URL. An `http://` URL is accepted, but the API token then travels **in clear text** on the network at every refresh: anyone able to read that traffic can reuse it.
+
+PBS ships a **self-signed** certificate, which the container does not trust. From the best option to the worst:
+
+1. **Pin the fingerprint (recommended).** Paste the server's SHA-256 fingerprint into the `TLS certificate fingerprint` field. Only a server presenting exactly that certificate is accepted, and the fingerprint is checked **before** the token is sent: a server impersonating PBS never receives it. Find the fingerprint in the PBS web interface (**Dashboard → Show Fingerprint**) or in a shell on PBS:
+
+   ```bash
+   proxmox-backup-manager cert info | grep -i fingerprint
+   ```
+
+   Separators and case do not matter (`AA:BB:…` or `aabb…`). The fingerprint changes when the certificate is renewed or replaced: update the field then. A pinned fingerprint requires an `https://` URL and takes precedence over `Verify TLS certificate`.
+
+2. **A certificate signed by a trusted authority** (for example ACME / Let's Encrypt configured on PBS): leave the fingerprint empty and keep `Verify TLS certificate` on.
+
+3. **Turn `Verify TLS certificate` off**, as a last resort and on a trusted network only: the connection stays encrypted, but nothing proves the server is the real one, and the token is sent to whoever answers.
 
 The refresh interval defaults to 15 minutes. It cannot be set below 5 minutes to limit growth of the Gladys database, and it can be increased up to 24 hours.
 
@@ -114,9 +132,14 @@ They show up in the scene editor, in the "Integrations" category. Each filter is
 ## Behaviour notes
 
 - Snapshot count and backup freshness are read from the datastore's backup groups (`backup-count` and `last-backup`), so a datastore holding thousands of snapshots costs one small response per refresh. If a PBS release does not expose those counters, the integration falls back to listing the snapshots.
-- The task history is read page by page until the newest verify, garbage collection, and prune tasks have been found (up to 2000 tasks), so a busy datastore does not push them out of view and back to `Never run`.
-- Datastores that are offline or unmounted report no capacity; the integration then publishes `0` for usage, total size, and used space rather than an invalid value.
+- The task history is read with one filtered request per task type (verify, garbage collection, prune), so a busy datastore does not push them out of view and back to `Never run`, and a task type that never ran costs one empty answer. A PBS release that refuses the filter is read page by page instead (up to 2000 tasks).
+- The capacity of every datastore comes from one `/status/datastore-usage` read, shared by all the datastores refreshed within the same minute.
+- Datastores that are offline or unmounted report no capacity; the integration then publishes **nothing** for usage, total size, and used space (the last real values stay displayed) rather than a `0` that would look like an emptied datastore. Widgets show the capacity as unavailable.
+- Every request to PBS ends within 15 seconds, including an answer cut or stalled halfway, and answers larger than 8 MB are refused. The connection status names the cause: token refused (HTTP 401), missing role (HTTP 403), certificate, network, or timeout.
 - A refresh that fails (network error, timeout, PBS restart) is retried on the next one-minute Gladys tick instead of waiting a full refresh interval. At startup, the connection is retried four times with an exponential backoff before the integration reports itself as disconnected.
+- A refresh that PBS answered but Gladys could not store (Gladys restarting, for example) is retried on the next tick too; it is not reported as `PBS unreachable`.
+- A datastore deleted or renamed on PBS is dropped from the monitored list as soon as PBS stops listing it, without a `PBS unreachable` event, and no longer keeps the connection status red. Its device left in Gladys is looked up again after one refresh interval, then twice as long each time, up to once a day.
+- A device just added from the Discovery tab is read right away instead of at the next refresh.
 
 ## Checking which inventory route is used
 
@@ -131,7 +154,7 @@ PBS_TOKEN_SECRET='the-token-secret' \
 npm run check:pbs
 ```
 
-It prints, per datastore, the route actually used, how long each route takes, and the last verify/GC/prune task. It also cross-checks the snapshot count and the newest backup against the full snapshot list, and exits with code `1` if the two disagree. Add `PBS_NODE=...` for a node other than `localhost`, and `PBS_VERIFY_TLS=false` for a self-signed certificate.
+It prints, per datastore, the route actually used, how long each route takes, and the last verify/GC/prune task. It also cross-checks the snapshot count and the newest backup against the full snapshot list, and exits with code `1` if the two disagree. Add `PBS_NODE=...` for a node other than `localhost`, and `PBS_FINGERPRINT=AA:BB:...` for a self-signed certificate (or `PBS_VERIFY_TLS=false` on a trusted network).
 
 The same routes can be checked by hand:
 
@@ -149,19 +172,20 @@ These are the settings Proxmox Backup Server asks for in its configuration scree
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
 | Proxmox Backup Server connection | `section` | No | Create a dedicated API token with the read-only DatastoreAudit and Audit roles. See the documentation for the exact commands. |
-| Server URL | `string` | Yes | For example: https://pbs.example.com:8007 |
+| Server URL | `string` | Yes | For example: https://pbs.example.com:8007. Avoid http://: it sends the API token in clear text. |
 | API token ID | `string` | Yes | Full ID, for example gladys@pbs!monitoring |
 | API token secret | `secret` | Yes |  |
 | PBS node name | `string` | No |  |
 | Refresh interval (seconds) | `number` | No |  |
-| Verify TLS certificate | `boolean` | No |  |
+| TLS certificate fingerprint | `string` | No | Recommended with the default self-signed PBS certificate: its SHA-256 fingerprint (Dashboard > Show Fingerprint). The token is only sent to a server presenting it. Leave empty for a certificate signed by a trusted CA. |
+| Verify TLS certificate | `boolean` | No | Ignored when a fingerprint is pinned. Turn off only as a last resort, on a trusted network: the connection stays encrypted but nothing proves the server is the real one. |
 | Date format | `select` | No | Select how task dates are displayed, in the time zone set below. |
 | Time zone | `string` | No | IANA name used to display dates, for example Europe/Paris. Empty or unknown: UTC. |
 
 ## How to install Proxmox Backup Server in Gladys
 
 1. In Gladys, open **Integrations**: Proxmox Backup Server appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-proxmox-backup-server:2.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-proxmox-backup-server:2.5.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-proxmox-backup-server](https://github.com/prohand/gladys-proxmox-backup-server).
 

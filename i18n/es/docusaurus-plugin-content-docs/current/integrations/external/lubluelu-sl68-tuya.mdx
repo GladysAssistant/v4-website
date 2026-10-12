@@ -1,0 +1,272 @@
+---
+title: "Integración domótica Lubluelu SL68 (Tuya), gratuita y de código abierto"
+sidebar_label: "Lubluelu SL68 (Tuya)"
+description: "Control the Lubluelu SL68 and other Tuya/Smart Life robot vacuums over the LAN. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-lubluelu-vaccum.png"
+keywords:
+  - "lubluelu sl68 (tuya)"
+  - "domótica lubluelu sl68 (tuya)"
+  - "gladys lubluelu sl68 (tuya)"
+  - "lubluelu sl68 (tuya) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-lubluelu-vaccum instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="lubluelu-sl68-tuya" />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Control the Lubluelu SL68 robot vacuum — and other Tuya/Smart Life-based sweep robots — from
+Gladys, directly over your local network. No custom hub, no keeping the phone app open.
+
+## Overview
+
+Day-to-day control (start/pause, mode, water level, suction, return to dock) goes straight to the
+vacuum over the LAN, encrypted the same way the Smart Life/Tuya Smart app talks to it — no cloud
+round-trip once everything is set up. Bootstrapping still needs to reach your Tuya account once,
+for two things only:
+
+- fetching the device's `local_key`, the encryption key local control requires (it is never
+  broadcast on the LAN, only ever available behind your Tuya account);
+- reading which features your specific vacuum actually has (start/pause, mode, water level,
+  suction, battery...) — read from Tuya's own catalog for your device, not guessed.
+
+Two ways to do that — pick whichever suits you, or set up both:
+
+- **Smart Life account (recommended)** — no developer account, no Access ID/Secret to copy: scan
+  a QR code with the app you already use for the vacuum, and every device on the account is
+  discovered automatically, exactly like adding a device in the official app.
+- **Tuya Cloud account (advanced)** — a free Tuya IoT Platform project, for people who already
+  have one or want the explicit per-device control it gives.
+
+The `local_key` **rotates** whenever the vacuum re-links to the cloud, so this integration
+re-checks it periodically in the background (either method) — you never have to redo the setup
+for that.
+
+These features show up per vacuum, automatically adapted to what your specific device reports
+(not every vacuum has every one of these). Their names are in French or English, as set by the
+**Language of device names** field (Gladys keeps a name as it was when the device was added):
+
+- **State** — what the robot is doing: cleaning, paused, returning to the dock, charging, on the
+  dock, stopped, error. Gladys shows it as a badge, and it can start a scene ("when the vacuum is
+  back on its dock").
+- **Power** / **Pause** — start, stop or pause the current cleaning.
+- **Mode** — a dropdown (Smart, Along walls, Spot, Selected rooms, Mopping, Return to dock...).
+- **Return to dock** — a one-click button.
+- **Water level** — mopping water flow, when your vacuum has a mop function.
+- **Suction power** — when your vacuum reports a suction/power level.
+- **Battery** — read-only, 0-100%.
+- **Cleaned area / Cleaning time** — of the cleaning under way or last done, and their totals.
+- **Fault code** — read-only, 0 normally.
+- **Find robot** — makes the vacuum chirp, when supported.
+- **Roll brush / Side brush / Filter / Mop pad** — remaining life, and a **Reset** button for
+  each after you replace the part.
+- **Do not disturb** — when your vacuum has a quiet-hours setting.
+- **Zone - …** — one button per cleaning zone (see "Cleaning zones" below).
+
+Requires **Gladys 5.1** or later.
+
+## Dashboard widgets
+
+Add them from the dashboard editor (**Add a widget**, then this integration). Each one shows the
+vacuum picked in its settings, or the first one. They complement the core's **Devices** box,
+which stays the place for every setting (dropdowns, switches):
+
+- **Robot vacuum** — the robot at a glance: battery, state, program, suction, water, the area
+  and time of the cleaning under way, a fault in red, local or cloud link; and the everyday keys
+  of its remote: **Start** (or **Pause** / **Resume**, following the state), **Back to dock**,
+  **Locate**, **Stop**.
+- **Quick clean** — up to four one-tap cleanings, for a wall tablet. Each button is a program
+  (_smart_, _edges_, _spot_, _mop_) or a zone name, typed in the widget settings. Left empty, it
+  offers the vacuum's programs then its zones. The program under way is ticked.
+- **Vacuum remote** — manual driving: forward, turn left, turn right, stop, with the state and
+  battery. Only on vacuums that accept direction control; keep the robot in sight.
+- **Vacuum maintenance** — the remaining life of each part as gauges, the most worn first, and a
+  reset key (asking for confirmation) for each worn part once you have replaced it.
+
+## Scenes
+
+Triggers (**When…** in a scene):
+
+- **Vacuum: cleaning finished** — the robot ended a cleaning and went back to its dock. Gives
+  the cleaned area, the time and the battery to the next actions (for a message such as
+  "Cleaning done: \{\{area_m2\}\} m² in \{\{duration_min\}\} min").
+- **Vacuum: error** — the robot reported a fault (stuck, wheel, brush, dust bin...), with its
+  description.
+- **Vacuum: part worn out** — a part's remaining life dropped below 10%.
+
+The robot's **State** is also a regular device state, usable as a trigger.
+
+Actions (**Then…**):
+
+- **Vacuum: start cleaning** — program, suction and water level applied together, then start:
+  one card instead of three. _Unchanged_ keeps the robot's current setting.
+- **Vacuum: clean a zone** — clean a zone by its name, as on the vacuum's zone buttons
+  ("Zone - Kitchen" → `Kitchen`). Case and accents are ignored and a unique start is enough
+  (`bed` for "Bedrooms"); when several zones start the same way, the scene log lists them.
+  Gladys cannot show the zones in a drop-down here yet; the built-in **Control devices** action may
+  offer the vacuum's "Zone - …" buttons in a list instead.
+
+## Cleaning zones (LiDAR robots)
+
+On robots that clean room by room (LiDAR robots with rooms in the Smart Life app), Gladys can
+send the robot to clean one room, several rooms, or a zone drawn in the app:
+
+1. **The easy way — memorize it from the app.** Start the room or zone clean once from the
+   Smart Life app, while the integration is running. Then, in the integration's Configuration
+   screen, run **Memorize the last zone**: pick the vacuum, give it a name ("Kitchen"). Gladys
+   can now replay it any time.
+2. **Or type the rooms by number**, in **Rooms by id (advanced)**: `Kitchen=2, Living room=0+1,
+Bedrooms=3+4x2` (`+` for several rooms, `x2` for two passes). The room numbers are the
+   robot's own: the integration logs them each time a room clean is started from the app.
+
+Then open the **Discovery** tab and click **Update** on the vacuum: each zone gets its **Zone -
+…** button, usable from the dashboard, the **Quick clean** widget and the **Vacuum: clean a
+zone** scene action. **Forget a memorized zone** removes one. Re-mapping your home in the app
+can renumber the rooms: memorize the zones again after a new map.
+
+## Prerequisites
+
+- The vacuum already set up and working in the **Smart Life** or **Tuya Smart** app.
+- **"Local Network Discovery" (or similar) enabled** for the device in the Smart Life/Tuya Smart
+  app (usually on by default) — some models only broadcast their LAN presence when this is on.
+
+## Configuration — Smart Life account (recommended)
+
+This integration's Configuration screen follows these steps top to bottom, numbered:
+
+1. **1. Smart Life account**: open the app on your phone, go to **Me > Settings > Account and
+   Security > User Code**, copy it, then paste it into the **Smart Life user code** field.
+2. **2. Save**: click Save before continuing — the next step needs this code to already be
+   saved, or it fails with an error.
+3. **3. Connect and scan the QR code**: click this button, a QR code opens. In the Smart
+   Life/Tuya Smart app, tap **+ > Scan**, point at the QR code, and tap **Confirm login**. The
+   app may say the login is for "Home Assistant" — that's expected, this integration uses the
+   same official Tuya mechanism Home Assistant's own integration does; only confirm if you just
+   started this login yourself.
+4. Open the **Discovery** tab and run a scan — every device on the account appears automatically,
+   with the features each one actually supports. Add the ones you want.
+
+That's it — pairing a new vacuum later is just: pair it in the Smart Life app, then Discovery >
+Scan in Gladys. Nothing to configure per device.
+
+## Configuration — Tuya Cloud account (advanced)
+
+1. Go to [iot.tuya.com](https://iot.tuya.com/), create a **Cloud** project (the free "Smart Home"
+   template is enough).
+2. In the project's **Devices** tab, choose **Link Tuya App Account** and scan the QR code with
+   the Smart Life/Tuya Smart app you use for the vacuum. Its devices then appear under **All
+   Devices**.
+3. Copy the project's **Access ID/Client ID** and **Access Secret/Client Secret** from the
+   project's Overview tab into this integration's Configuration screen, along with the
+   **Region** your project was created in (visible in the project URL: eu/us/cn/in).
+4. Copy the vacuum's **Device ID** from the All Devices list into the **Device ID(s)** field
+   (comma-separated if you have several).
+5. Save, open the **Discovery** tab and run a scan, then add the device(s).
+
+Both methods can run at once; a device id configured under the Tuya Cloud account takes priority
+over the same device found via the Smart Life account.
+
+A **Test connection** action is available from the Configuration screen for any added vacuum: it
+reports whether the local session is up, and the vacuum's last known state (or its state read via
+the cloud if the local session is currently down).
+
+### If the vacuum's LAN IP isn't found automatically
+
+Discovery relies on the vacuum announcing itself on the LAN (the same broadcast the phone app
+uses to find it) — the Smart Life account method also reports the IP Tuya's servers have on file
+for the device as a second source. If neither finds it (blocked broadcast between VLANs, some
+mesh Wi-Fi setups...), fill in **Manual LAN IP(s) (advanced)**: `device_id=ip`, e.g.
+`eb1234567890abcdef01=192.168.1.42`. A fixed IP or a DHCP reservation for the vacuum is
+recommended in that case.
+
+## Only one connection at a time
+
+Like most Tuya local-control tools, only one client can hold the vacuum's local TCP session at
+once. Keeping the Smart Life/Tuya Smart app open on the vacuum's device screen at the same time
+this integration is connected can make both flaky — this is a limitation of the vacuum's own
+firmware, not something this integration can work around.
+
+## Troubleshooting
+
+- **"No room or zone clean seen since the integration started"** when memorizing a zone: start
+  the room/zone clean from the Smart Life app _after_ the integration started, wait a few
+  seconds, then run the action again. If it still fails, your robot doesn't report its room
+  selection: type the rooms by number instead.
+- **A zone button does nothing**: the room numbers may have changed after a new map in the app —
+  memorize the zone again.
+
+- **"Enter your Smart Life user code first" even though it's filled in**: the form wasn't
+  **saved** before clicking the connect button — those are two separate actions. Click Save, wait
+  for the confirmation, then click **3. Connect and scan the QR code**. If the error persists,
+  check the integration logs (`docker logs`): starting with 0.2.2, a failed attempt shows the
+  exact detail there.
+- **The QR code isn't confirmed / times out**: it expires in 1-2 minutes — reopen it (click
+  Connect again) and scan promptly. If the app doesn't recognize it as valid, try switching
+  **QR app (advanced)** between Smart Life and Tuya Smart in the Configuration screen and
+  reconnecting.
+- **Discovered but stuck "not connected"**: check the manual LAN IP fallback above, and make sure
+  nothing else (the phone app, another automation tool) is holding the local session.
+- **"Local session unreachable, falling back to the Tuya cloud API"** badge: the integration keeps
+  working through cloud commands/status while it retries the local connection in the background —
+  commands still work, just with more latency and a cloud round-trip until the LAN session
+  recovers.
+- **A feature you expect (e.g. Water level) is missing**: your vacuum's Tuya catalog entry may not
+  report that code, or reports it under a name this integration doesn't yet recognize. Check the
+  integration logs (`LOG_LEVEL=debug`) for the raw schema fetched from Tuya.
+- The integration logs everything it does: check the integration logs from the Gladys UI (or
+  `docker logs` on the host) with `LOG_LEVEL=debug` for the full detail.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Lubluelu SL68 (Tuya) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Language of device names | `select` | No | Names of the features and choices created in Gladys, and of the scene event messages. Widgets always follow your own language. |
+| 1. Smart Life account (simple, recommended) | `section` | No | No Tuya developer account needed. Enter your Smart Life user code below — Me > Settings > Account and Security > User Code in the app. |
+| Smart Life user code | `string` | No |  |
+| 2. Save | `section` | No | Click Save now, before continuing — step 3 below needs the user code you just entered to already be saved, or it will fail. |
+| 3. Connect and scan the QR code | `account_link` | No | Opens a QR code — scan it with the Smart Life/Tuya Smart app and tap "Confirm login". Every device on your account is then discovered automatically. |
+| QR app (advanced) | `select` | No | Change only if scanning or confirmation does not work for your account. |
+| Alternative: Tuya Cloud account (advanced, optional) | `section` | No | This vacuum is controlled directly over your LAN once configured — no cloud round-trip for day-to-day commands. But the device's local_key (and its rotation over time) only ever lives behind the Tuya Cloud account your Smart Life/Tuya Smart app uses, so a free Tuya IoT Platform project is required once: create a Cloud project, link your Smart Life/Tuya Smart app account to it (Devices tab -> Link Tuya App Account, scan the QR code with the app), then copy the project's Access ID/Client ID and Access Secret/Client Secret below, and the vacuum's Device ID from the All Devices list. |
+| Access ID / Client ID | `secret` | No |  |
+| Access Secret / Client Secret | `secret` | No |  |
+| Tuya data center | `select` | No | The data center your Cloud project was created in (visible in its URL on the Tuya IoT Platform: eu/us/cn/in). |
+| Device ID(s) | `string` | No | The vacuum's Device ID, from the Tuya IoT Platform's All Devices list (Devices tab). Several vacuums: separate their ids with commas. Not needed with the Smart Life account method above, which discovers every device automatically. |
+| Manual LAN IP(s) (advanced) | `string` | No | Only needed if the automatic LAN broadcast scan does not find a device's IP (blocked VLAN, "Local Network Discovery" disabled in the app...). Comma-separated device_id=ip pairs, e.g. "eb1234...=192.168.1.42". |
+| Tuya Cloud refresh interval (min) | `number` | No | How often the local_key and IP are re-checked against the Tuya Cloud API. The local_key rotates whenever the device re-links to the cloud, so this must run occasionally even though day-to-day control stays local. |
+| Local protocol version (advanced) | `select` | No | Fallback used only when the LAN broadcast scan hasn't identified the device's own version yet. Most devices from 2020 onwards use 3.3 or 3.4, recent ones 3.5. |
+| Cleaning zones (LiDAR robots) | `section` | No | Clean one room, several rooms or a zone drawn in the app, from a button, a widget or a scene. Easiest: start the clean from the Smart Life app once, then run the "Memorize the last zone" action below with a name. Or type the rooms by their id (the integration logs the ids each time a room clean is started from the app). Then click "Update" on the vacuum in the Discovery tab. |
+| Rooms by id (advanced) | `string` | No | Comma-separated name=ids, several rooms joined with +, x2 for two passes. Example: "Kitchen=2, Living room=0+1, Bedrooms=3+4x2". |
+
+## Cómo instalar Lubluelu SL68 (Tuya) en Gladys
+
+1. En Gladys, abre **Integraciones**: Lubluelu SL68 (Tuya) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-lubluelu-vaccum:0.3.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-lubluelu-vaccum](https://github.com/LM1LC3N7/gladys-lubluelu-vaccum).
+
+Lubluelu SL68 (Tuya) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Lubluelu SL68 (Tuya) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-lubluelu-vaccum) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-lubluelu-vaccum/blob/HEAD/docs/en.md)

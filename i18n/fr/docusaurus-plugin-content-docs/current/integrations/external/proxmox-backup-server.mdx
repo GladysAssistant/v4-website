@@ -50,7 +50,7 @@ proxmox-backup-manager user permissions 'gladys@pbs!monitoring'
 2. Identifiant du jeton : `gladys@pbs!monitoring`.
 3. Secret : la valeur affichée une seule fois à la création du jeton.
 4. Nœud : généralement `localhost`; indiquez le nom retourné par PBS si nécessaire.
-5. Gardez la vérification TLS activée. Ne la désactivez que pour un certificat autosigné sur un réseau de confiance.
+5. Pour un certificat autosigné, renseignez son empreinte SHA-256 dans `Empreinte du certificat TLS` (voir ci-dessous) et gardez la vérification TLS activée.
 6. L'intervalle de rafraîchissement est de 15 minutes par défaut. Il ne peut pas être inférieur à 5 minutes afin de limiter la croissance de la base Gladys, et peut être augmenté jusqu'à 24 heures.
 7. La liste déroulante générale `Format de date` s'applique à toutes les dates des tâches. Elle propose les formats ISO 8601, jour/mois/année, année-mois-jour et mois/jour/année.
 8. Le champ `Fuseau horaire` fixe le fuseau d'affichage des dates, sous forme de nom IANA comme `Europe/Paris` (heures d'été et d'hiver gérées). Il vaut `UTC` par défaut ; une valeur vide ou inconnue revient aussi à UTC. En ISO 8601, un fuseau autre que UTC ajoute son décalage, par exemple `2026-09-23T23:30:01+02:00`.
@@ -58,6 +58,24 @@ proxmox-backup-manager user permissions 'gladys@pbs!monitoring'
 > Après avoir modifié et sauvegardé le format de date ou le fuseau horaire, ouvrez l'appareil PBS concerné dans Gladys et sauvegardez-le de nouveau pour appliquer le changement.
 
 Le jeton est envoyé avec l'en-tête natif `Authorization: PBSAPIToken=...`; aucun mot de passe n'est envoyé à chaque requête.
+
+## TLS et le certificat autosigné de PBS
+
+Utilisez une URL `https://`. Une URL `http://` est acceptée, mais le jeton API circule alors **en clair** sur le réseau à chaque rafraîchissement : quiconque peut lire ce trafic peut le réutiliser.
+
+PBS est livré avec un certificat **autosigné**, que le conteneur ne reconnaît pas. De la meilleure option à la moins bonne :
+
+1. **Épingler l'empreinte (recommandé).** Collez l'empreinte SHA-256 du serveur dans le champ `Empreinte du certificat TLS`. Seul un serveur présentant exactement ce certificat est accepté, et l'empreinte est vérifiée **avant** l'envoi du jeton : un serveur qui se ferait passer pour PBS ne le reçoit jamais. L'empreinte s'affiche dans l'interface web de PBS (**Tableau de bord → Afficher l'empreinte**) ou dans un shell sur PBS :
+
+   ```bash
+   proxmox-backup-manager cert info | grep -i fingerprint
+   ```
+
+   Les séparateurs et la casse sont indifférents (`AA:BB:…` ou `aabb…`). L'empreinte change quand le certificat est renouvelé ou remplacé : mettez alors le champ à jour. Une empreinte épinglée exige une URL `https://` et prime sur `Vérifier le certificat TLS`.
+
+2. **Un certificat signé par une autorité reconnue** (par exemple ACME / Let's Encrypt configuré sur PBS) : laissez l'empreinte vide et gardez `Vérifier le certificat TLS` activé.
+
+3. **Désactiver `Vérifier le certificat TLS`**, en dernier recours et sur un réseau de confiance uniquement : la connexion reste chiffrée, mais rien ne prouve l'identité du serveur, et le jeton est envoyé à celui qui répond.
 
 ## Fonctionnalités exposées
 
@@ -127,9 +145,14 @@ Ils apparaissent dans l'éditeur de scène, dans la catégorie « Intégrations 
 ## Détails de fonctionnement
 
 - Le nombre de snapshots et la fraîcheur des sauvegardes sont lus depuis les groupes de sauvegarde du datastore (`backup-count` et `last-backup`) : un datastore contenant des milliers de snapshots ne coûte qu'une petite réponse par rafraîchissement. Si une version de PBS n'expose pas ces compteurs, l'intégration revient à la liste complète des snapshots.
-- L'historique des tâches est lu page par page jusqu'à trouver les dernières tâches de vérification, de garbage collection et de prune (jusqu'à 2000 tâches) : sur un datastore très actif, elles ne disparaissent plus de la fenêtre consultée et ne repassent pas à `Never run`.
-- Un datastore hors ligne ou non monté ne renvoie aucune capacité ; l'intégration publie alors `0` pour l'usage, la taille totale et l'espace utilisé, plutôt qu'une valeur invalide.
+- L'historique des tâches est lu avec une requête filtrée par type de tâche (vérification, garbage collection, prune) : sur un datastore très actif, elles ne disparaissent pas de la fenêtre consultée et ne repassent pas à `Never run`, et un type de tâche jamais lancé ne coûte qu'une réponse vide. Une version de PBS qui refuse ce filtre est lue page par page (jusqu'à 2000 tâches).
+- La capacité de tous les datastores provient d'une seule lecture de `/status/datastore-usage`, partagée par les datastores rafraîchis dans la même minute.
+- Un datastore hors ligne ou non monté ne renvoie aucune capacité ; l'intégration ne publie alors **rien** pour l'usage, la taille totale et l'espace utilisé (les dernières valeurs réelles restent affichées), plutôt qu'un `0` qui ferait croire à un datastore vidé. Les widgets affichent la capacité comme indisponible.
+- Chaque requête vers PBS se termine en 15 secondes au plus, y compris une réponse coupée ou bloquée en cours de route, et une réponse de plus de 8 Mo est refusée. L'état de connexion nomme la cause : jeton refusé (HTTP 401), rôle manquant (HTTP 403), certificat, réseau ou délai dépassé.
 - Un rafraîchissement en échec (erreur réseau, délai dépassé, redémarrage de PBS) est retenté au tick Gladys suivant, sans attendre un intervalle complet. Au démarrage, la connexion est retentée quatre fois avec un délai exponentiel avant que l'intégration ne se déclare déconnectée.
+- Un rafraîchissement auquel PBS a répondu mais que Gladys n'a pas pu enregistrer (Gladys en cours de redémarrage, par exemple) est lui aussi retenté au tick suivant ; il n'est pas signalé comme `PBS injoignable`.
+- Un datastore supprimé ou renommé sur PBS est retiré de la supervision dès que PBS ne le liste plus, sans événement `PBS injoignable`, et ne laisse plus l'état de connexion au rouge. Son appareil resté dans Gladys est recherché de nouveau après un intervalle de rafraîchissement, puis deux fois plus tard à chaque fois, jusqu'à une fois par jour.
+- Un appareil que vous venez d'ajouter depuis l'onglet Découverte est lu immédiatement, sans attendre le prochain rafraîchissement.
 
 ## Vérifier la route d'inventaire utilisée
 
@@ -144,7 +167,7 @@ PBS_TOKEN_SECRET='le-secret-du-jeton' \
 npm run check:pbs
 ```
 
-Il affiche, pour chaque datastore, la route réellement utilisée, le temps de réponse de chaque route et les dernières tâches verify/GC/prune. Il recoupe également le nombre de snapshots et la date du plus récent avec la liste complète des snapshots, et se termine avec le code `1` en cas de divergence. Ajoutez `PBS_NODE=...` pour un nœud autre que `localhost`, et `PBS_VERIFY_TLS=false` pour un certificat autosigné.
+Il affiche, pour chaque datastore, la route réellement utilisée, le temps de réponse de chaque route et les dernières tâches verify/GC/prune. Il recoupe également le nombre de snapshots et la date du plus récent avec la liste complète des snapshots, et se termine avec le code `1` en cas de divergence. Ajoutez `PBS_NODE=...` pour un nœud autre que `localhost`, et `PBS_FINGERPRINT=AA:BB:...` pour un certificat autosigné (ou `PBS_VERIFY_TLS=false` sur un réseau de confiance).
 
 Les mêmes routes se vérifient à la main :
 
@@ -162,19 +185,20 @@ Voici les paramètres demandés par Proxmox Backup Server dans son écran de con
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
 | Connexion à Proxmox Backup Server | `section` | Non | Créez un jeton API dédié avec les rôles de lecture seule DatastoreAudit et Audit. Consultez la documentation pour les commandes exactes. |
-| URL du serveur | `string` | Oui | Par exemple : https://pbs.example.com:8007 |
+| URL du serveur | `string` | Oui | Par exemple : https://pbs.example.com:8007. Évitez http:// : le jeton API circule alors en clair. |
 | Identifiant du jeton API | `string` | Oui | Identifiant complet, par exemple gladys@pbs!monitoring |
 | Secret du jeton API | `secret` | Oui |  |
 | Nom du nœud PBS | `string` | Non |  |
 | Intervalle de rafraîchissement (secondes) | `number` | Non |  |
-| Vérifier le certificat TLS | `boolean` | Non |  |
+| Empreinte du certificat TLS | `string` | Non | Recommandé avec le certificat auto-signé de PBS : son empreinte SHA-256 (Tableau de bord > Afficher l'empreinte). Le jeton n'est envoyé qu'à un serveur qui la présente. Laissez vide pour un certificat signé par une AC reconnue. |
+| Vérifier le certificat TLS | `boolean` | Non | Ignoré quand une empreinte est épinglée. À désactiver en dernier recours, sur un réseau de confiance : la connexion reste chiffrée mais rien ne prouve l'identité du serveur. |
 | Format de date | `select` | Non | Sélectionnez le format d'affichage des dates des tâches, dans le fuseau horaire indiqué ci-dessous. |
 | Fuseau horaire | `string` | Non | Nom IANA utilisé pour afficher les dates, par exemple Europe/Paris. Vide ou inconnu : UTC. |
 
 ## Comment installer Proxmox Backup Server dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Proxmox Backup Server apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-proxmox-backup-server:2.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-proxmox-backup-server:2.5.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-proxmox-backup-server](https://github.com/prohand/gladys-proxmox-backup-server).
 

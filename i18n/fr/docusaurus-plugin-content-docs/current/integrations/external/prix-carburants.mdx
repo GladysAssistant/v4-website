@@ -50,8 +50,12 @@ Pour **chaque station que vous ajoutez**, un appareil avec deux mesures :
   **et** par carburant : le gazole et le SP98 d'une même station ont chacun la
   leur.
 
-L'adresse, la marque, les coordonnées GPS et la distance au code postal sont
-enregistrées dans les paramètres de l'appareil.
+L'adresse, la marque et les coordonnées GPS de la station sont enregistrées
+dans les paramètres de l'appareil. La distance ne l'est pas : mesurée depuis
+votre maison, l'enregistrer à côté de la station trahirait où vous habitez. Elle
+est affichée sur les widgets du tableau de bord. (Sur un appareil créé par une
+version précédente, la distance reçue est effacée : le paramètre `distance_km`
+reste, vide.)
 
 ### L'appareil « Prix carburants - Mise à jour des données »
 
@@ -61,7 +65,10 @@ En plus des stations, l'onglet Découverte propose **un appareil unique, commun
 - **Dernière lecture des données** — la date et l'heure, au format
   `08/08/2026 à 21:00`,
   auxquelles l'intégration a lu le flux open data pour la dernière fois **avec
-  succès**.
+  succès**. L'heure est celle de la France métropolitaine (Europe/Paris), quelle
+  que soit l'horloge du conteneur ; une installation ailleurs peut indiquer son
+  fuseau dans la variable d'environnement `TZ` du conteneur
+  (`America/Martinique`).
 
 C'est une information différente de la « Dernière mise à jour » d'une station :
 celle-ci vous dit quand la station a bougé ses prix (ce qui peut remonter à une
@@ -187,6 +194,11 @@ Lyon` — car `Av.` et `Rue de`, toutes les rues de la commune les portent
   complet restent sur la page de l'appareil et sur la carte « Ma station ».
 - Un bouton vers la **carte officielle** (prix-carburants.gouv.fr).
 
+La liste des stations autour de vous est recherchée au plus toutes les cinq
+minutes, quel que soit le nombre de tableaux de bord qui affichent la carte ; les
+prix des stations que vous avez ajoutées sont ceux du dernier rafraîchissement,
+et le bouton **Rafraîchir les prix maintenant** relance une recherche.
+
 Quatre réglages : le carburant, le nombre de stations affichées (3, 5 ou 8), le
 périmètre — **autour de la maison ou du code postal** (comme l'onglet Découverte, selon le
 réglage « Mesurer les distances depuis » ; ce n'est pas la position du téléphone) ou **vos stations seulement** (celles que vous avez
@@ -214,7 +226,8 @@ elle-même, **au maximum une fois par heure**, et garde 30 jours dans `/data`.
 - Changer de code postal, de rayon ou de maison (champ « Quelle maison »)
   **repart d'une courbe vierge**, puisque ce n'est plus la même zone.
 - Si `/data` n'est pas accessible en écriture, tout continue de fonctionner :
-  seule la courbe repart de zéro au redémarrage.
+  seule la courbe repart de zéro au redémarrage. Les logs de l'intégration le
+  signalent une fois, en avertissement (« Price history cannot be written »).
 
 ### « Ma station »
 
@@ -229,8 +242,16 @@ carte :
   le flux ne publie pas son prix : la tuile garde alors le dernier prix connu de
   Gladys, en orange, et une ligne dit pourquoi (« En rupture », « Aucun prix
   publié aujourd'hui ») ;
-- l'enseigne, l'adresse, la distance et la date du dernier relevé ;
+- un de vos carburants que la station vend mais qui est **en rupture** garde
+  aussi sa tuile, en orange, avec le dernier prix connu de Gladys si vous avez
+  ajouté son appareil, et une ligne dit depuis quand. Seul un carburant que la
+  station ne vend pas n'a pas de tuile ;
+- l'enseigne (seulement si le nom de la station ne la donne pas déjà),
+  l'adresse, la distance et la date du dernier relevé ;
 - un bouton **Itinéraire** et un bouton **Rafraîchir**.
+
+Le réglage **« Détails »** sur **Compact** ne garde que les prix et la date du
+dernier relevé : ni enseigne, ni adresse, ni distance, ni bouton Itinéraire.
 
 Les prix sont affichés avec les **trois décimales** du
 prix à la pompe (`1,699 €/L`). Les tuiles étaient auparavant reliées à l'appareil
@@ -262,6 +283,9 @@ permet pas encore à une intégration de proposer la liste des maisons dans un
 menu déroulant : pour savoir quoi écrire, cliquez sur **« Aperçu des
 stations »**, le message affiche la maison utilisée et le nom de toutes celles
 que Gladys connaît.
+La carte **« Ma station »** fait exception : elle mesure depuis la maison **la
+plus proche de la station** et affiche son nom, donc une station près de votre
+résidence secondaire donne sa distance depuis celle-ci.
 
 Le code postal reste obligatoire dans tous les cas : c'est lui qui sert à
 interroger le jeu de données national.
@@ -344,6 +368,11 @@ scène quand vous ne suivez aucune station pour ce carburant — elle répond
 chiffres en France) et augmentez le rayon de recherche. Le bouton
 **Prévisualiser les stations proches** affiche le message d'erreur exact.
 
+**Un rafraîchissement a échoué puis réussi à l'essai suivant.** Chaque requête
+vers les API open data est retentée une fois, une seconde plus tard, quand le
+serveur répond « trop de requêtes » ou une erreur serveur, ou ne répond pas du
+tout. Seul un échec qui persiste arrive dans les logs et sous les boutons.
+
 **Le prix ne se met plus à jour.** Une station peut disparaître temporairement
 du flux national (travaux, fermeture). Le dernier prix connu reste affiché ;
 consultez les logs de l'intégration, qui indiquent les stations manquantes.
@@ -417,7 +446,7 @@ Voici les paramètres demandés par Prix carburants dans son écran de configura
 ## Comment installer Prix carburants dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Prix carburants apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-prixcarburants:2.0.11`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-prixcarburants:2.3.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-prixcarburants](https://github.com/prohand/gladys-prixcarburants).
 

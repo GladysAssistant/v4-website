@@ -87,17 +87,41 @@ l'historique »).
 ## Espace disque : quel disque est mesuré ?
 
 Un conteneur ne voit pas le système de fichiers de l'hôte, il voit le sien. Le
-chemin par défaut `/data` est le **volume monté par Gladys depuis l'hôte** :
-c'est le système de fichiers qui héberge vos données Gladys, donc celui dont
-l'espace libre vous intéresse en pratique.
+chemin par défaut `/data` est **le volume `/data` propre à l'intégration**, que
+Gladys monte depuis l'hôte : ce qui est mesuré, c'est le **disque (la
+partition) de l'hôte qui porte ce volume** — sur une installation standard, le
+disque où Docker et Gladys rangent leurs données, donc celui dont l'espace libre
+vous intéresse en pratique. Si Docker range ses volumes sur un autre disque que
+celui qui vous intéresse, les chiffres sont ceux du disque qui porte le volume.
 
 Pour surveiller un autre point de montage, renseignez son chemin dans
 **Chemin du disque à surveiller** — à condition qu'il soit visible depuis le
 conteneur.
 
+Un disque qui ne répond pas en **5 secondes** (un partage réseau bloqué, par
+exemple) est indiqué indisponible pour cette lecture : le CPU, la mémoire et la
+température sont publiés quand même.
+
 Le pourcentage est calculé comme celui de la commande `df` : les blocs réservés
 à root sont exclus, un disque ext4 fraîchement formaté affiche donc bien 0 % et
 non 5 %.
+
+## CPU et mémoire : quand ce ne sont pas ceux de l'hôte
+
+`/proc/stat` et `/proc/meminfo` ne sont pas isolés par Docker : sur une
+installation Linux classique, le CPU et la mémoire sont ceux de **toute la
+machine**. Deux cas font exception :
+
+- **Gladys dans un conteneur LXC** (Proxmox, par exemple) avec **lxcfs** activé
+  — le cas par défaut sous Proxmox : lxcfs réécrit ces fichiers, le CPU et la
+  mémoire sont donc ceux du **conteneur LXC** (sa propre charge, sa limite
+  mémoire), pas ceux de l'hôte physique.
+- **Docker Desktop** (macOS, Windows) : les conteneurs tournent dans une machine
+  virtuelle Linux, les chiffres sont donc ceux de **cette VM** (les CPU et la
+  mémoire attribués à Docker Desktop), pas ceux de votre ordinateur.
+
+Dans les deux cas, le disque reste celui qui porte le volume `/data`, vu depuis
+ce conteneur ou cette VM.
 
 ## Température du CPU
 
@@ -110,6 +134,11 @@ Si votre machine n'expose aucune sonde (machine virtuelle, conteneur LXC, hôte
 non Linux), le capteur de température **n'est simplement pas créé** : les quatre
 autres fonctionnent normalement.
 
+La sonde est choisie au démarrage de l'intégration (et à chaque recherche ou
+changement de configuration), puis **conservée** : une lecture aberrante isolée
+laisse la température vide pour cette lecture au lieu de basculer sur une autre
+sonde. La détection n'est relancée qu'après trois lectures ratées d'affilée.
+
 Si la sonde choisie n'est pas la bonne, utilisez le bouton **Lister les sondes
 de température** : il affiche toutes les sondes visibles avec leur valeur
 actuelle, et marque d'un `>` celle utilisée. Copiez le chemin qui vous convient
@@ -119,7 +148,9 @@ dans **Sonde de température CPU**.
 
 - **Lire les métriques maintenant** — lit tout immédiatement et affiche le
   résultat sous le bouton, sans attendre le prochain rafraîchissement. C'est le
-  test à faire en premier si une valeur vous semble fausse.
+  test à faire en premier si une valeur vous semble fausse. Recliqué dans les
+  10 secondes, il affiche la même lecture plutôt que de mesurer le CPU sur
+  quelques secondes seulement.
 - **Lister les sondes de température** — voir ci-dessus.
 
 ## Widget du tableau de bord
@@ -129,7 +160,8 @@ section des intégrations). Elle affiche :
 
 - trois jauges en pourcentage : CPU, mémoire, disque ;
 - la température du CPU (si une sonde existe) et l'espace disque libre ;
-- un graphique de l'historique CPU / mémoire / disque ;
+- un graphique de l'historique CPU / mémoire / disque, avec la courbe de
+  température du CPU quand l'appareil a une sonde ;
 - l'état de chaque alerte (voir plus bas) ;
 - un bouton **Lire maintenant**.
 
@@ -180,9 +212,15 @@ Exemple : « quand le disque atteint son seuil → m'envoyer un message avec
 - l'alerte est comparée à **chaque lecture**, même quand la valeur n'est pas
   écrite dans l'historique ;
 - l'usage CPU est une **moyenne sur l'intervalle de rafraîchissement** : un pic
-  de quelques secondes ne déclenche rien ;
-- après un redémarrage de l'intégration, une alerte encore en cours est
-  **déclenchée à nouveau** à la première lecture.
+  de quelques secondes ne déclenche rien. La toute première lecture après un
+  démarrage ne fait la moyenne que sur une seconde, elle ne déclenche donc pas
+  d'alerte CPU : c'est la lecture suivante qui tranche ;
+- l'état des alertes est **gardé en mémoire uniquement**. Après un redémarrage
+  de l'intégration (redémarrage de Gladys ou du conteneur, mise à jour), une
+  alerte encore en cours est **déclenchée à nouveau** à la première lecture —
+  mieux vaut une notification répétée qu'un disque plein silencieux. À
+  l'inverse, une mesure redescendue pendant que l'intégration était arrêtée
+  n'envoie pas de « Retour à la normale ».
 
 ### Action « Lire les mesures de l'hôte »
 
@@ -265,7 +303,7 @@ Voici les paramètres demandés par Supervision hôte dans son écran de configu
 ## Comment installer Supervision hôte dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Supervision hôte apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-host-monitoring:2.0.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-host-monitoring:2.2.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-host-monitoring](https://github.com/prohand/gladys-host-monitoring).
 

@@ -1,0 +1,170 @@
+---
+title: "Île-de-France Mobilités smart home integration, free and open source"
+sidebar_label: "Île-de-France Mobilités"
+description: "RER, Transilien, metro, tram, bus: departures and traffic in real time. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-idfm.jpg"
+keywords:
+  - "île-de-france mobilités"
+  - "île-de-france mobilités smart home"
+  - "gladys île-de-france mobilités"
+  - "île-de-france mobilités gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/William-De71/gladys-idfm instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="ile-de-france-mobilites" />
+
+This integration follows **the public transport of the Paris region in real time** in Gladys: the next departures at your stops — **RER, Transilien, metro, tram, bus** — with their **delays** and **cancellations**, and the **traffic** of your lines (incidents, works). It turns them into devices, scene triggers ("my RER is cancelled", "my metro leaves in 5 minutes", "line 13 is disrupted") and dashboard widgets.
+
+The data come from **PRIM**, the open data platform of Île-de-France Mobilités, and from its open reference data (lines and stops).
+
+> Community integration, not affiliated with Île-de-France Mobilités, SNCF or RATP.
+
+## Configuration
+
+### 1. Get an API key (free)
+
+1. Create an account on [prim.iledefrance-mobilites.fr](https://prim.iledefrance-mobilites.fr).
+2. In your account menu, open **Mes jetons d'authentification** (my authentication tokens), tab **API**, then click **Générer mon jeton**.
+3. Copy the token right away: it is **shown only once** (generating a new one invalidates the old one).
+
+A new account allows **1 000 requests a day per API**: enough for one or two stops with a travel window. For more, ask for a higher quota on the [Ma consommation API](https://prim.iledefrance-mobilites.fr/fr/ma-consommation-api) page (free, up to 1 000 000 a day for the departures), then enter the new quota in the **Daily quota of departures** setting.
+
+### 2. The followed stops (up to 3)
+
+| Field             | Role                                                                                          |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| **Stop**          | the name of the stop ("Massy - Palaiseau", "Châtelet") or its number given by **Find a stop** |
+| **Line**          | optional but advised: "RER B", "Transilien P", "Métro 13", "T3a", "Bus 91", "C01743"          |
+| **Direction**     | optional: words of the destination ("Robinson", "Saint-Rémy \| Massy" for two directions)     |
+| **Travel window** | optional, e.g. `07:00-09:30`                                                                  |
+| **Travel days**   | optional, e.g. Monday to Friday (empty: every day)                                            |
+
+For a line without a mode, a letter is a train line ("B" = RER B, "P" = Transilien P) and a number a metro line before a bus line ("13" = metro 13). For a bus, type "Bus 91"; when several networks have a line with that number, use the id given by **Find a line** ("C01122").
+
+With a line, the stop name is searched **among the stops of that line**: the most reliable. Without one, the integration takes the stop whose name matches exactly, train stations first, and shows **all** its lines. When it is not the right stop, use **Find a stop** and copy its number.
+
+#### The travel window
+
+The next departures are only known **two hours ahead**. With a travel window, the stop is read only from an hour before the window to its end, and **not at all** the rest of the time. It saves a lot of quota: a stop with a 2-hour window on weekdays costs about 65 requests a day, a stop read all day about 600.
+
+When the configured stops would need more than the quota, the integration **spaces the reads by itself** (the **Test the connection** button shows the interval actually used).
+
+### 3. Traffic
+
+In **Followed lines**, type up to 6 lines separated by commas: `RER B, Transilien P, Métro 13`. The whole network is read in **one request** every 5 minutes (adjustable), about 290 requests a day whatever the number of lines.
+
+A line is:
+
+- **interrupted** when a blocking disruption applies (no train on all or part of the line);
+- **disrupted** when a disruption applies without stopping the traffic (slowdowns, skipped stops…);
+- **normal** otherwise. Mere information messages (a broken lift…) do not count.
+
+Save, then click **Test the connection**: for each stop, it shows the departures found and the next one, the state of each line and the quota used.
+
+### 4. Add the devices
+
+On the **Discovery** tab, each stop shows up as "IDFM – _stop_ (_line_ → _direction_)" and each followed line as "IDFM – _line_ traffic". Add them and put them in a room.
+
+| Device | Feature                  | Value                                                                   |
+| ------ | ------------------------ | ----------------------------------------------------------------------- |
+| Stop   | **Next departure**       | text, e.g. "07:42 · RER B KASE → Aéroport CDG 2 · +5 min"               |
+| Stop   | **Leaves in**            | minutes, real time                                                      |
+| Stop   | **Delay**                | minutes (timetabled trains; always 0 for the metro, which has none)     |
+| Stop   | **Disrupted departures** | how many followed departures are late (from the threshold) or cancelled |
+| Line   | **Traffic**              | text: "Normal traffic", "Disrupted: …", "Interrupted: …"                |
+| Line   | **Current disruptions**  | the disruptions applying now (information messages left out)            |
+
+## Scenes
+
+### Triggers
+
+| Trigger                          | When                                                                                |
+| -------------------------------- | ----------------------------------------------------------------------------------- |
+| **IDFM: train delayed**          | a followed train becomes late (from the threshold), then again at 15 and 30 min     |
+| **IDFM: departure cancelled**    | a followed departure is cancelled                                                   |
+| **IDFM: departure soon**         | a followed departure leaves in 2, 5, 10, 15, 20 or 30 minutes, on its **real** time |
+| **IDFM: line disrupted**         | a new disruption applies to a followed line (filters: severity, incident/works)     |
+| **IDFM: traffic back to normal** | a followed line that was disrupted runs normally again                              |
+
+Every event carries a **Summary** variable, a sentence ready to send. An event fires only once per departure or disruption, even after a restart.
+
+### Actions
+
+- **IDFM: next departures**: the next departure of a stop (line, destination, time, delay, platform…) and a summary.
+- **IDFM: line traffic**: the state of a line, its main disruption and a summary.
+
+## Widgets
+
+- **IDFM departures**: the next departures of a stop, like the station screens, with "N min", "+N min", "Cancelled" or "At the stop". Pick a followed stop, or type another stop (and its line) in the widget — it then spends the quota on every refresh.
+- **IDFM traffic**: the state of each followed line (or of the ones typed in the widget), then the current disruptions and the ones planned in the next 24 hours; tap one to read the full message.
+
+## FAQ
+
+**No delay for the metro?** The metro and most buses have no timetable in the real-time data: only the wait is known. The delay and the "train delayed" trigger are for RER, Transilien and timetabled lines.
+
+**"The PRIM API key is refused".** The token was miscopied or regenerated since: generate a new one and paste it.
+
+**"Daily quota reached".** Add a travel window to your stops, slow the refresh down, or ask PRIM for a higher quota (free) and enter it in the settings.
+
+## Configuration settings
+
+These are the settings Île-de-France Mobilités asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| PRIM API key | `section` | No | The data come from PRIM, the open data platform of Île-de-France Mobilités: real-time departures of RER, Transilien, metro, tram and bus, and the traffic disruptions. The key is free: create an account, then generate a token in "My authentication tokens". A new account allows 1 000 requests a day per API; the integration counts them and spaces its reads to stay below. |
+| API key | `secret` | Yes | The token generated on PRIM (shown only once). |
+| Stop 1 | `section` | No | The stop where you take your train, metro, tram or bus, and its line: the departures are read in real time. A stop name ("Massy - Palaiseau") or its number given by the "Find a stop" button. With a line, the name is searched among its stops. The direction keeps only the departures whose destination contains these words ("Robinson", "Saint-Rémy \| Massy"). The travel window saves the quota: the stop is then read only from an hour before it to its end. |
+| Stop | `string` | No |  |
+| Line | `string` | No | RER B, Transilien P, Métro 13, T3a, Bus 91… Empty: every line of the stop. |
+| Direction | `string` | No | Words of the destination. Empty: every direction. |
+| Travel window | `string` | No | Departures between these times, e.g. 07:00-09:30. Empty: all day. |
+| Travel days | `multi_select` | No | Empty: every day. |
+| Stop 2 (optional) | `section` | No | Same fields as stop 1, for example the way back. Leave empty when unused. |
+| Stop | `string` | No |  |
+| Line | `string` | No | RER B, Transilien P, Métro 13, T3a, Bus 91… Empty: every line of the stop. |
+| Direction | `string` | No | Words of the destination. Empty: every direction. |
+| Travel window | `string` | No | Departures between these times, e.g. 07:00-09:30. Empty: all day. |
+| Travel days | `multi_select` | No | Empty: every day. |
+| Stop 3 (optional) | `section` | No | Same fields as stop 1, for example the way back. Leave empty when unused. |
+| Stop | `string` | No |  |
+| Line | `string` | No | RER B, Transilien P, Métro 13, T3a, Bus 91… Empty: every line of the stop. |
+| Direction | `string` | No | Words of the destination. Empty: every direction. |
+| Travel window | `string` | No | Departures between these times, e.g. 07:00-09:30. Empty: all day. |
+| Travel days | `multi_select` | No | Empty: every day. |
+| Traffic | `section` | No | The lines whose traffic you follow: a device per line (normal, disrupted, interrupted), scenes when a disruption starts or ends, and a widget. The whole network is read in one request every few minutes. |
+| Followed lines | `string` | No | Up to 6, separated by commas. |
+| Settings | `section` | No | With the default values, a stop read all day costs about 600 requests a day, a stop with a 2-hour window on weekdays about 65. When the stops would need more than the daily quota, the integration reads them less often by itself. |
+| Departures followed per stop | `number` | No | The next departures of each stop, between 1 and 8. |
+| Delay threshold (min) | `number` | No | From how many minutes a train counts as delayed (scenes, disrupted departures, colors). |
+| Departures refresh (min) | `number` | No | Within the travel window (all day without one), between 1 and 30 minutes. |
+| Traffic refresh (min) | `number` | No | Between 2 and 60 minutes. |
+| Daily quota of departures | `number` | No | The daily quota of the "Prochains passages (requête unitaire)" API on your account: 1 000 for a new one. Raise it here after asking PRIM for more (free). |
+
+## How to install Île-de-France Mobilités in Gladys
+
+1. In Gladys, open **Integrations**: Île-de-France Mobilités appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-idfm:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-idfm](https://github.com/William-De71/gladys-idfm).
+
+Île-de-France Mobilités requires Gladys `>=5.1.1`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Île-de-France Mobilités is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [William-De71](https://github.com/William-De71), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/William-De71/gladys-idfm) — [source of this documentation](https://github.com/William-De71/gladys-idfm/blob/HEAD/docs/en.md)

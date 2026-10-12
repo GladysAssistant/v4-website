@@ -89,15 +89,39 @@ checkbox there).
 ## Disk space: which disk is measured?
 
 A container does not see the host filesystem, it sees its own. The default path
-`/data` is the **volume Gladys mounts from the host**: it is the filesystem
-holding your Gladys data, so it is the free space that actually matters in
-practice.
+`/data` is **the integration's own `/data` volume**, which Gladys mounts from the
+host: what is measured is the **host disk (partition) holding that volume** —
+on a standard install, the disk where Docker and Gladys keep their data, so it
+is the free space that actually matters in practice. If Docker stores its
+volumes on another disk than the one you care about, the figures are those of
+the disk holding the volume.
 
 To monitor another mount point, put its path in **Disk path to monitor** — as
 long as it is visible from inside the container.
 
+A disk that does not answer within **5 seconds** (a hung network share, for
+instance) is reported as unavailable for that reading: the CPU, memory and
+temperature are published anyway.
+
 The percentage is computed the way `df` does: root-reserved blocks are excluded,
 so a freshly formatted ext4 filesystem reads 0%, not 5%.
+
+## CPU and memory: when they are not the host's
+
+`/proc/stat` and `/proc/meminfo` are not isolated by Docker: on a normal Linux
+install the CPU and memory are those of the **whole machine**. Two setups are
+exceptions:
+
+- **Gladys inside an LXC container** (Proxmox, for instance) with **lxcfs**
+  enabled — the default on Proxmox: lxcfs rewrites those files, so the CPU and
+  memory are those of the **LXC container** (its own load, its memory limit),
+  not those of the physical host.
+- **Docker Desktop** (macOS, Windows): containers run inside a Linux virtual
+  machine, so the figures are those of **that VM** (the CPUs and memory
+  allotted to Docker Desktop), not those of your computer.
+
+In both cases the disk is still the one holding the `/data` volume, as seen
+from that container or VM.
 
 ## CPU temperature
 
@@ -110,6 +134,11 @@ If your machine exposes no sensor at all (virtual machine, LXC container,
 non-Linux host), the temperature feature is **simply not created**: the other
 four keep working.
 
+The sensor is chosen when the integration starts (and on each scan or
+configuration change), then **kept**: an isolated implausible reading leaves the
+temperature empty for that reading instead of switching to another sensor. Only
+after three failed readings in a row is the sensor detected again.
+
 If the chosen sensor is not the right one, use the **List temperature sensors**
 button: it shows every visible sensor with its current reading and marks the one
 in use with a `>`. Copy the path you want into **CPU temperature sensor**.
@@ -118,7 +147,8 @@ in use with a `>`. Copy the path you want into **CPU temperature sensor**.
 
 - **Read the metrics now** — reads everything immediately and shows the result
   under the button, without waiting for the next refresh. This is the first test
-  to run when a value looks wrong.
+  to run when a value looks wrong. Clicked again within 10 seconds, it shows the
+  same reading rather than measuring the CPU over a few seconds only.
 - **List temperature sensors** — see above.
 
 ## Dashboard widget
@@ -128,7 +158,8 @@ shows:
 
 - three gauges in percent: CPU, memory, disk;
 - the CPU temperature (when a sensor exists) and the free disk space;
-- a CPU / memory / disk history chart;
+- a CPU / memory / disk history chart, plus the CPU temperature curve when the
+  device has a sensor;
 - the state of each alert (see below);
 - a **Read now** button.
 
@@ -178,9 +209,13 @@ Good to know:
 - the alert is checked on **every reading**, even when the value is not
   written to the history;
 - the CPU usage is an **average over the refresh interval**: a spike of a few
-  seconds triggers nothing;
-- after the integration restarts, an alert still in progress is **raised
-  again** on the first reading.
+  seconds triggers nothing. The very first reading after a start only averages
+  one second, so it raises no CPU alert: the next reading decides;
+- the state of the alerts is **kept in memory only**. After the integration
+  restarts (Gladys or container restart, update), an alert still in progress is
+  **raised again** on the first reading — a repeated notification rather than a
+  silent full disk. Conversely, a metric that came back down while the
+  integration was stopped sends no "Back to normal".
 
 ### "Read the host metrics" action
 
@@ -259,7 +294,7 @@ Diese Einstellungen fragt Supervision hôte in seinem Konfigurationsbildschirm i
 ## So installierst du Supervision hôte in Gladys
 
 1. Öffne in Gladys **Integrationen**: Supervision hôte erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-host-monitoring:2.0.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-host-monitoring:2.2.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-host-monitoring](https://github.com/prohand/gladys-host-monitoring).
 

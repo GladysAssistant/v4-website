@@ -23,7 +23,7 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 This integration monitors your network printers through the standard **IPP**
 protocol (Internet Printing Protocol) — the one AirPrint uses. It runs fully
-locally: no account, no cloud, no API key.
+locally: no account, no cloud, no API key. It requires Gladys 5.1 or newer.
 
 ## What you get
 
@@ -50,8 +50,16 @@ majority of printers sold since ~2012: HP, Epson, Canon, Brother, Lexmark…).
 The printer must be on the same network as Gladys, with IPP enabled (it is by
 default; some menus call it "AirPrint").
 
-Some printers do not advertise their ink levels over IPP: in that case the
-device only exposes its state.
+Printers report their levels in three different ways depending on the brand
+and firmware: the integration tries all three (the `marker-*` IPP attributes,
+the `printer-supply` variant, then SNMP — what CUPS uses — when IPP announces
+nothing). If none answers, the device only exposes its state.
+
+Many laser printers only announce their toners over IPP, while their SNMP
+table also lists the wear parts: drum or imaging unit, fuser, transfer belt,
+waste toner container. The integration reads those as a complement, never
+touching the cartridges IPP already announces. On a device already added, a
+part found this way is offered through "Update" in the **Discovery** tab.
 
 ## Configuration
 
@@ -66,8 +74,9 @@ device only exposes its state.
    continuously (every 15 s).
 4. Pick the language of the **sensor names** if you wish: by default they are
    the raw names reported by the printer (usually English, like "black
-   cartridge"); selecting French turns the recognized cartridges into
-   « Encre noire », « Toner cyan »… The setting applies to **newly added**
+   cartridge"); selecting English, French, German or Spanish turns the
+   recognized cartridges into "Black ink", « Encre noire », "Toner Schwarz",
+   "Tóner cian"… The setting applies to **newly added**
    devices — for an existing device, rename its features from its page, or
    delete and re-add it (the history of the old features is then lost).
 5. Add the discovered devices from the **Discovery** tab.
@@ -82,6 +91,39 @@ device only exposes its state.
   queries it live and shows the model, state and detected levels. The fastest
   way to check an address before adding it to the manual list.
 
+## Dashboard widgets
+
+With Gladys 5.1 or newer, the integration offers two widgets in the dashboard
+editor (under "IPP Printers").
+
+- **Printer**: one printer at a glance — a gauge per supply (ink, toner,
+  drum…), the state (idle, printing, stopped with its reason), the time of
+  the last reading and the lowest supply, plus a **Check** button that
+  queries the printer right away and re-publishes its values. Setting: the
+  printer to show (leave empty for the first one added to Gladys). The gauges
+  are bound to the device sensors: they follow the levels live, without
+  waiting for the widget refresh. Limits: at most **5 gauges** (the dashboard
+  caps a widget at 8 elements); beyond that, the cartridges (ink, toner)
+  come first, in the printer order, then the parts (drum, fuser, belt,
+  rollers…), the lowest first. No supply goes missing: the ones without a
+  gauge are listed under the state, the lowest first ("Fuser 92 %"). Gauges
+  are green from 25 %, orange below, red under 10 %. The common state
+  reasons are made readable ("Idle (toner low)").
+- **Supplies**: every printer in one list, the most critical first — for
+  each, the state and the lowest supply ("Idle · Black 12 %"), colored by
+  level (red under 10 %, orange under 25 %) — and the number of printers "to
+  watch" (a supply under 25 %). No setting. At most 10 printers are listed.
+
+Both widgets read the last reading made by the integration (every 15 s for
+the state, at the configured interval for the levels): they never query the
+printer themselves, except through the **Check** button. Until a printer has
+answered since the integration started, its state reads "Waiting for the
+first reading". The short supply names follow the **Sensor names** setting
+("Black", "Cyan", "Drum", "Pickup roller tray 1"… in English; the raw name
+reported by the printer otherwise). Two supplies of one printer never share
+a name: without a recognized qualifier, the raw printer name or a number
+("Roller 1", "Roller 2") tells them apart.
+
 ## Troubleshooting
 
 - **Printer not discovered**: check that it answers IPP with the "Test a
@@ -93,6 +135,11 @@ device only exposes its state.
   integration one. If SNMP is disabled in the printer network settings,
   turning it back on is sometimes enough for the cartridges to show up (the
   community name must stay `public`).
+- **The drum (or fuser, transfer belt…) does not show up**: those parts are
+  only read over SNMP. "Test a printer" ends with "(+ SNMP: Imaging Unit…)"
+  when SNMP added some; otherwise check that SNMP is enabled on the printer
+  (community `public`). A part IPP already announces under another name is
+  never added twice.
 - **A single cartridge shows "unknown" (often the black one, on HP)**: if
   that cartridge is refilled or third-party, this is by HP design — the
   firmware refuses to estimate the level of non-genuine cartridges (it shows
@@ -118,7 +165,7 @@ These are the settings IPP Printers asks for in its configuration screen in Glad
 
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
-| How it works | `section` | No | Printers advertising IPP (any AirPrint-capable printer) are discovered automatically on your network. You can also list printers manually below — useful when mDNS does not reach them. Each printer exposes one sensor per ink or toner cartridge, plus its state. Printers that announce no level over IPP are asked over SNMP instead, the way CUPS reads them. |
+| How it works | `section` | No | Printers advertising IPP (any AirPrint-capable printer) are discovered automatically on your network. You can also list printers manually below — useful when mDNS does not reach them. Each printer exposes one sensor per supply (ink, toner, drum…), plus its state. Levels missing over IPP (all of them, or a laser's drum, fuser, belt and waste container) are read over SNMP, the way CUPS does. |
 | Printers (manual list) | `string` | No | Optional. IPs, hostnames or ipp:// URIs, separated by commas — e.g. 192.168.1.20, printer.local, ipp://192.168.1.30/ipp/print. |
 | Sensor names | `select` | No | Applies to newly added devices. Printers report their supplies in their own words (usually English): keep them as-is, or translate the recognized cartridges. |
 | Levels refresh interval (s) | `number` | No | How often the ink/toner levels are recorded, in seconds. They move slowly: 900 s (15 min) is plenty. The printer state is watched continuously (sampled every 15 s) and updated as soon as it changes. |
@@ -126,11 +173,11 @@ These are the settings IPP Printers asks for in its configuration screen in Glad
 ## How to install IPP Printers in Gladys
 
 1. In Gladys, open **Integrations**: IPP Printers appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ipp:1.0.10`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ipp:1.3.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-ipp](https://github.com/guim31/gladys-ipp).
 
-IPP Printers requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+IPP Printers requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

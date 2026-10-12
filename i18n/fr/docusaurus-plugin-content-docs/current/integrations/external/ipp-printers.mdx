@@ -24,7 +24,7 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 Cette intégration surveille vos imprimantes réseau via le protocole standard
 **IPP** (Internet Printing Protocol) — celui qu'utilise AirPrint. Elle
 fonctionne entièrement en local : pas de compte, pas de cloud, pas de clé
-d'API.
+d'API. Elle demande Gladys 5.1 ou plus récent.
 
 ## Ce que vous obtenez
 
@@ -59,6 +59,13 @@ trois (les attributs IPP `marker-*`, la variante `printer-supply`, puis le
 protocole SNMP — celui qu'utilise CUPS — quand l'IPP n'annonce rien). Si
 aucune ne répond, l'appareil n'expose que son état.
 
+Beaucoup de lasers n'annoncent que leurs toners en IPP, alors que leur table
+SNMP liste aussi les pièces d'usure : tambour ou unité d'imagerie, four,
+courroie de transfert, récupérateur de toner. L'intégration les y lit en
+complément, sans jamais toucher aux cartouches déjà annoncées en IPP. Sur un
+appareil déjà ajouté, une pièce apparue ainsi se fait proposer par
+« Mettre à jour » dans l'onglet **Découverte**.
+
 ## Configuration
 
 1. Installez l'intégration : les imprimantes annonçant IPP en mDNS sont
@@ -72,8 +79,9 @@ aucune ne répond, l'appareil n'expose que son état.
    l'état est surveillé en continu (toutes les 15 s).
 4. Choisissez au besoin la langue des **noms des capteurs** : par défaut ce
    sont les noms bruts annoncés par l'imprimante (souvent en anglais, du type
-   « black cartridge ») ; en sélectionnant Français, les cartouches reconnues
-   deviennent « Encre noire », « Toner cyan »… Le réglage s'applique aux
+   « black cartridge ») ; en sélectionnant Français, Anglais, Allemand ou
+   Espagnol, les cartouches reconnues deviennent « Encre noire », « Black
+   ink », « Toner Schwarz », « Tóner cian »… Le réglage s'applique aux
    appareils **nouvellement ajoutés** — pour un appareil existant, renommez
    ses fonctionnalités depuis sa page, ou supprimez-le puis re-ajoutez-le
    (l'historique des anciennes fonctionnalités est alors perdu).
@@ -90,6 +98,43 @@ aucune ne répond, l'appareil n'expose que son état.
   et les niveaux détectés. Le moyen le plus rapide de vérifier une adresse
   avant de l'ajouter à la liste manuelle.
 
+## Widgets du tableau de bord
+
+Avec Gladys 5.1 ou plus récent, l'intégration propose deux widgets dans
+l'éditeur de tableau de bord (sous « IPP Printers », le nom de l'intégration).
+
+- **Imprimante** : une imprimante en un coup d'œil — une jauge par
+  consommable (encre, toner, tambour…), l'état (prête, impression, arrêtée
+  avec sa raison), l'heure du dernier relevé et le consommable le plus bas,
+  plus un bouton **Vérifier** qui interroge l'imprimante immédiatement et
+  republie ses valeurs. Réglage : l'imprimante à afficher (laissez vide pour
+  la première ajoutée à Gladys). Les jauges sont liées aux capteurs de
+  l'appareil : elles suivent les niveaux en direct, sans attendre le
+  rafraîchissement du widget. Limites : au plus **5 jauges** (le tableau de
+  bord limite un widget à 8 éléments) ; au-delà, les cartouches (encre,
+  toner) passent d'abord, dans l'ordre de l'imprimante, puis les pièces
+  (tambour, four, courroie, rouleaux…), la plus basse d'abord. Aucun
+  consommable ne disparaît : ceux qui n'ont pas de jauge sont listés sous
+  l'état, les plus bas d'abord (« Four 92 % »). Les jauges sont vertes à
+  partir de 25 %, orange en dessous, rouges sous 10 %. Les raisons d'état
+  courantes sont traduites (« Prête (toner bas) »).
+- **Consommables** : toutes vos imprimantes en une liste, les plus critiques
+  d'abord — pour chacune, l'état et le consommable le plus bas (« Prête ·
+  Noir 12 % »), avec la couleur du niveau (rouge sous 10 %, orange sous
+  25 %) — et le nombre d'imprimantes « à surveiller » (un consommable sous
+  25 %). Aucun réglage. Au plus 10 imprimantes sont listées.
+
+Les deux widgets lisent le dernier relevé fait par l'intégration (toutes les
+15 s pour l'état, à l'intervalle réglé pour les niveaux) : ils n'interrogent
+jamais l'imprimante eux-mêmes, sauf par le bouton **Vérifier**. Tant qu'une
+imprimante n'a pas encore répondu depuis le démarrage de l'intégration, son
+état indique « En attente du premier relevé ». Les noms courts des
+consommables suivent le réglage **Noms des capteurs** (« Noir », « Cyan »,
+« Tambour », « Rouleau prise bac 1 »… en français ; le nom brut annoncé par
+l'imprimante sinon). Deux consommables d'une même imprimante ne portent
+jamais le même nom : à défaut de qualificatif reconnu, le nom brut de
+l'imprimante ou un numéro (« Rouleau 1 », « Rouleau 2 ») les départage.
+
 ## Dépannage
 
 - **L'imprimante n'est pas découverte** : vérifiez qu'elle répond en IPP avec
@@ -102,6 +147,12 @@ aucune ne répond, l'appareil n'expose que son état.
   limite du firmware, pas de l'intégration. Si le SNMP est désactivé dans les
   réglages réseau de l'imprimante, le réactiver suffit parfois à faire
   apparaître les cartouches (le nom de communauté doit rester `public`).
+- **Le tambour (ou le four, la courroie…) n'apparaît pas** : ces pièces ne
+  sont lues qu'en SNMP. « Tester une imprimante » indique à la fin
+  « (+ SNMP : Imaging Unit…) » quand le SNMP en a ajouté ; sinon, vérifiez
+  que le SNMP est activé sur l'imprimante (communauté `public`). Une pièce
+  déjà annoncée en IPP sous un autre nom n'est jamais ajoutée une seconde
+  fois.
 - **Une seule cartouche affiche « inconnu » (souvent le noir, sur HP)** : si
   cette cartouche est rechargée ou compatible, c'est voulu par HP — le
   firmware refuse d'estimer le niveau des cartouches non authentiques (il
@@ -129,7 +180,7 @@ Voici les paramètres demandés par IPP Printers dans son écran de configuratio
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Fonctionnement | `section` | Non | Les imprimantes annonçant IPP (toute imprimante compatible AirPrint) sont découvertes automatiquement sur votre réseau. Vous pouvez aussi les déclarer manuellement ci-dessous — utile quand le mDNS ne les atteint pas. Chaque imprimante expose un capteur par cartouche d'encre ou de toner, plus son état. Les imprimantes qui n'annoncent aucun niveau en IPP sont interrogées en SNMP, comme le fait CUPS. |
+| Fonctionnement | `section` | Non | Les imprimantes annonçant IPP (toute imprimante compatible AirPrint) sont découvertes automatiquement sur votre réseau. Vous pouvez aussi les déclarer manuellement ci-dessous — utile quand le mDNS ne les atteint pas. Chaque imprimante expose un capteur par consommable (encre, toner, tambour…), plus son état. Les niveaux absents de l'IPP (tous, ou le tambour, le four, la courroie et le récupérateur d'une laser) sont lus en SNMP, comme le fait CUPS. |
 | Imprimantes (liste manuelle) | `string` | Non | Optionnel. IP, noms d'hôte ou URI ipp://, séparés par des virgules — ex. 192.168.1.20, imprimante.local, ipp://192.168.1.30/ipp/print. |
 | Noms des capteurs | `select` | Non | S'applique aux appareils nouvellement ajoutés. Les imprimantes annoncent leurs consommables dans leur propre langue (souvent l'anglais) : gardez-les tels quels, ou traduisez les cartouches reconnues. |
 | Rafraîchissement des niveaux (s) | `number` | Non | Fréquence d'enregistrement des niveaux d'encre/toner, en secondes. Ils évoluent lentement : 900 s (15 min) suffisent largement. L'état de l'imprimante est surveillé en continu (échantillonné toutes les 15 s) et mis à jour dès qu'il change. |
@@ -137,11 +188,11 @@ Voici les paramètres demandés par IPP Printers dans son écran de configuratio
 ## Comment installer IPP Printers dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : IPP Printers apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-ipp:1.0.10`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-ipp:1.3.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-ipp](https://github.com/guim31/gladys-ipp).
 
-IPP Printers nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+IPP Printers nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

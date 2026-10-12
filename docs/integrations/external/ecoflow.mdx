@@ -33,6 +33,8 @@ currently supported for this product line; the one exception in EcoFlow's
 whole catalog is the unrelated EZ1 sprinkler-timer-sized unit). Your device
 does need internet access on your network for this integration to work.
 
+**Requires Gladys Assistant 5.1 or later** (dashboard widget and scene cards).
+
 ## Two ways to connect
 
 - **Method 1 — Official Open Platform (recommended)**: a free developer
@@ -59,11 +61,79 @@ Every device exposes:
 - **Total output power** (W) — power leaving the unit across every output combined
 - **AC output power** (W)
 - **Solar input power** (W) — from a connected solar panel, if any
+- **Discharge remaining time** (minutes) — while running on battery
+- **Charging** (yes/no) — derived from the power balance (inputs above
+  outputs, battery not full)
 - **AC output** (on/off)
 - **X-Boost** (on/off) — lets the AC output power higher-draw appliances at
   the cost of a less clean sine wave
 - **DC (car) output** (on/off)
 - **Backup reserve** (on/off)
+
+A switch you flip in Gladys shows its new position at once, then the unit is
+re-read a few seconds later to confirm it.
+
+> Updating from 0.2.x: the two new sensors (remaining time, charging) make
+> Gladys show an **Update** button on your device in the **Discovery** tab —
+> click it to add them. Existing features and their history are kept.
+
+## Dashboard widget
+
+Add the **EcoFlow power station** widget to a dashboard (widget picker →
+EcoFlow section) and pick a station in its settings. It shows:
+
+- what the station is doing: "On battery · 3 h 10 left", "Charging · 300 W
+  in", "Offline — not answering"…;
+- live tiles: battery gauge, AC input, solar input, total output;
+- the settings that are not switches: AC/DC outputs, X-Boost, backup reserve
+  and its level, charge and discharge limits, connection method;
+- buttons to turn the AC and DC outputs on/off — or a **Retry** button while
+  the station does not answer.
+
+## Scenes
+
+**Triggers** (scene editor → "When…"), each with an optional station filter
+(empty = any station) and the variables _battery level_ and _total output
+power_:
+
+| Trigger                   | When it fires                                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wall power lost           | the AC input goes dead — e.g. a power cut on a unit used as a UPS                                                                                             |
+| Wall power restored       | the AC input comes back                                                                                                                                       |
+| Station stopped answering | offline in the EcoFlow cloud, or 3 failed refreshes in a row                                                                                                  |
+| Station answering again   | back from the state above                                                                                                                                     |
+| Charge limit reached      | the battery reaches its charge limit (100 % by default)                                                                                                       |
+| Battery low               | the battery falls to 50, 30, 20, 10 or 5 % — pick the level in the _Level reached_ filter (empty = any); extra variables _level reached_ and _remaining time_ |
+
+Each fires once per change, never at every refresh. "Battery low" fires again
+only after the battery climbed 5 points back above that level. For any other
+threshold ("battery below 25 %", "remaining time below 30 min"), use Gladys'
+standard trigger: _A device state changes_ → the station's _Battery level_
+(or _Discharge remaining time_) feature → `<` and your value, with the option
+to trigger only when the threshold is crossed.
+
+**Actions** (scene editor → "Then…"):
+
+| Action                  | Fields                                                                                                            |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Set the charge limit    | station, max charge level (50–100 %)                                                                              |
+| Set the discharge limit | station, min discharge level (0–30 %)                                                                             |
+| Set the backup reserve  | station, enabled, level (5–100 %, empty keeps the current one)                                                    |
+| Set AC charging         | station, AC charging power (100–1200 W), pause AC charging                                                        |
+| Read the station now    | station — outputs _battery level_, _remaining time_, _input power_, _output power_, _charging_ for the next steps |
+
+Example: "every weekday at 22:00 (off-peak), set AC charging to 600 W, not
+paused; at 06:00, pause it", or "when wall power is lost, send me a message
+with the battery level".
+
+## Connection status
+
+- The **Configuration** tab reports each method separately, after actually
+  trying it — e.g. "Official API: 2 devices · Simple login failed: incorrect
+  password". A serial number that does not look like one is pointed out too.
+- Each device card shows a **cloud** badge, with an orange dot when the last
+  refresh failed, and **unreachable** when EcoFlow reports the unit offline
+  or after 3 failed refreshes in a row.
 
 ## Configuration
 
@@ -91,59 +161,51 @@ Every device exposes:
 
 - **Test connection** — re-polls a specific device right now and reports its
   battery level and AC output power, or the exact API error if it fails.
+- **Diagnostics** — lists every telemetry key the device reports (serial
+  number, Wi-Fi and network values redacted); the full list is written to the
+  integration logs. Paste it into an issue when a value looks wrong, or to
+  help support another model.
 
 ## Possible follow-ups
 
-Deliberately out of scope for now, listed here rather than silently left out:
-
-- **Real-time MQTT push** instead of polling, for Method 1 — the private
-  method (Method 2) already talks MQTT, but Method 1's real-time push topic
-  has a message shape that needs confirming against a real account before it
-  can replace the current poll loop.
-- **Numeric charge/discharge-limit and backup-reserve-level** settings (the
-  percentages the EcoFlow app lets you set) — Gladys' `battery-storage`
-  device-feature category has no "target level" type distinct from the
-  battery-level sensor itself, so this needs either a Gladys core addition or
-  a deliberate (and clearly documented) reuse of an existing type.
+- **Real-time MQTT push** instead of polling, for Method 1 — the message
+  shape of the Open Platform push topic needs confirming against a real
+  account before it can complement the poll loop.
+- **Other EcoFlow models** (Delta, River 3…) — per-model feature tables, fed
+  by Diagnostics reports.
+- **Energy categories** — Gladys 4.86 files a plug-in battery's AC input
+  under the "grid" category; moving the existing _AC charging power_ feature
+  there would change how Gladys counts energy, so it is left as is for now.
 
 ## Tested and confirmed
 
-Honest status, so it's clear what "it works" actually rests on — **no
-EcoFlow account (developer or app) and no physical River 2 unit were
-available while writing this integration.**
+Honest status, so it's clear what "it works" actually rests on:
 
+- **Method 2 (simple login) was tested by the maintainer on a real River 2
+  Pro.** No real-account test of Method 1 is recorded here yet.
 - The REST API (device list, quota snapshot, set command) and its HMAC-SHA256
   request signing (Method 1) are hand-written and cross-confirmed against two
   independent, live-used implementations read directly: the Home Assistant
   community integration
   [`tolwi/hassio-ecoflow-cloud`](https://github.com/tolwi/hassio-ecoflow-cloud)'s
   own `api/public_api.py`, and [`rustyy/ecoflow-api`](https://github.com/rustyy/ecoflow-api)'s
-  `SignatureBuilder`/`RestClient` source — not executed as a dependency (see
-  the README), but read to confirm the algorithm and endpoints.
+  `SignatureBuilder`/`RestClient` source.
 - The simple login + MQTT path (Method 2) is likewise cross-confirmed against
   `tolwi/hassio-ecoflow-cloud`'s `api/private_api.py` and
-  `devices/__init__.py` (the `latestQuotas` request/reply and the
-  `{moduleType, operateType, params}` command shape are IDENTICAL to
-  Method 1's — only the transport envelope differs).
-- The River 2 family's quota field names (`pd.soc`, `inv.outputWatts`,
-  `mppt.inWatts`...) and set-command shapes (`acOutCfg`, `mpptCar`,
-  `upsConfig`, `dsgCfg`, `watthConfig`) are validated at runtime against
+  `devices/__init__.py`.
+- Every command shape (`acOutCfg`, `mpptCar`, `upsConfig`, `dsgCfg`,
+  `watthConfig`, `acChgCfg`) is validated at runtime against
   [`@ecoflow-api/schemas`](https://www.npmjs.com/package/@ecoflow-api/schemas)'
-  own zod schemas — real, current schemas published by that project, not a
-  hand-copied snapshot.
-- **A real bug was found and worked around**: the published
-  `@ecoflow-api/rest-client@0.6.0` package crashes on import for every
-  consumer (a broken internal path that can never resolve). This integration
-  does not depend on it — the REST/signing layer is hand-written instead,
-  confirmed to load and run correctly by this repository's own test suite.
-- What is **not** independently confirmed: an actual login against a real
-  EcoFlow account (either method), the exact `out_voltage`/`out_freq` values
-  a real River 2 reports for `mppt.cfgAcOutVol`/`mppt.cfgAcOutFreq` (used to
-  fill in the AC output command alongside whichever field you actually
-  toggle), and the device's real reported serial number prefix (a
-  placeholder was used in tests). Run this integration with `LOG_LEVEL=debug`
-  against your own River 2 and open an issue if something behaves
-  unexpectedly.
+  own zod schemas.
+- Safety: a command that must echo other current settings (AC output and
+  X-Boost travel with the output voltage/frequency, the backup reserve with
+  its level) re-reads the unit first, and is **not sent** if the unit has not
+  reported those values — never a made-up default.
+- **Not confirmed on a real unit yet**: the scene actions (charge/discharge
+  limits, backup reserve, AC charging), the wall-power detection from
+  `inv.acInVol` (when absent, the AC input power is used, confirmed on two
+  refreshes in a row), and the remaining-time field. Run Diagnostics and open
+  an issue if something behaves unexpectedly.
 
 ## Troubleshooting
 
@@ -170,11 +232,11 @@ These are the settings EcoFlow asks for in its configuration screen in Gladys.
 ## How to install EcoFlow in Gladys
 
 1. In Gladys, open **Integrations**: EcoFlow appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-ecoflow:0.2.5`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-ecoflow:0.3.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-ecoflow](https://github.com/LM1LC3N7/gladys-ecoflow).
 
-EcoFlow requires Gladys `>=4.86.1`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+EcoFlow requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

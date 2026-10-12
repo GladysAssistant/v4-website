@@ -1,0 +1,179 @@
+---
+title: "Integración domótica TickTick, gratuita y de código abierto"
+sidebar_label: "TickTick"
+description: "Shows your TickTick tasks on the dashboard and lets scenes create tasks or react to due ones. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/cicoub13--gladys-ticktick.png"
+keywords:
+  - "ticktick"
+  - "domótica ticktick"
+  - "gladys ticktick"
+  - "ticktick gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/cicoub13/gladys-ticktick instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="ticktick" />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+> **Requires Gladys 5.1 or later.** This integration is made of a dashboard
+> widget and scene triggers and actions, which ship with Gladys 5.1; on an
+> earlier version it cannot be installed.
+
+Bring your [TickTick](https://ticktick.com) tasks into Gladys: a dashboard
+widget with the tasks due today and the overdue ones, a scene action to create
+a task (from a button, a voice command, a sensor...), another one to read your
+tasks out loud or send them in a notification, and a scene trigger that fires
+when a task reaches its due time.
+
+## Requirements
+
+- A TickTick account (free or Premium).
+- Internet access from the machine running Gladys: the integration talks to
+  the TickTick cloud API.
+
+## Connecting your account
+
+1. Open the [TickTick developer site](https://developer.ticktick.com/manage),
+   sign in with your TickTick account and click **New App**. Any name will do,
+   e.g. "Gladys".
+2. Open the new app and click **Edit**. In **OAuth redirect URL**, paste the
+   **redirect URI** shown in the Gladys configuration screen, under the
+   **Connect** button (usually `https://my.gladysassistant.com/redirect/oauth`),
+   and save. Without it, TickTick answers "At least one redirect_uri must be
+   registered with the client".
+3. Copy the app's **Client ID** and **Client secret** into the Gladys
+   configuration screen and click **Save**, at the bottom of the form.
+4. **Only then** click **Connect**: the button does not save the form, and the
+   integration only sees saved values. TickTick asks you to allow access to
+   your tasks. Accept. You are brought back to Gladys, and the status turns to
+   connected.
+
+The access granted lasts several months. When TickTick ends it, the status of
+the integration says so: click **Connect** again.
+
+## Configuration
+
+| Field                      | Description                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Client ID / secret**     | From your TickTick developer app.                                                                            |
+| **TickTick account**       | The **Connect** button, once the Client ID and secret are saved.                                             |
+| **Refresh frequency**      | How often TickTick is read: 1 minute, 5 minutes (default) or 15 minutes.                                     |
+| **Hour for all-day tasks** | Hour (0-23, default 9) at which the "TickTick task due" trigger fires for a task that has a day but no time. |
+
+**Test the connection** checks the access and shows how many lists were found.
+It also resumes the refresh after a refused access was fixed.
+
+## Dashboard widget
+
+Add the **TickTick tasks** widget to a dashboard. It shows:
+
+- two counters: overdue tasks and tasks due today;
+- up to 8 tasks, overdue first, with their list, due time and priority. Tap a
+  task to see its notes and a link to open it in TickTick;
+- a line saying how many more tasks did not fit.
+
+The **Tasks shown** setting of each widget chooses between _Today and
+overdue_ (default), _Today_, _Overdue_ and _Next 7 days and overdue_.
+
+Tasks without a date are never shown. Tasks are completed in TickTick, not
+from the widget.
+
+## Scenes
+
+### Trigger: TickTick task due
+
+Fires when an undone task reaches its due time: at its time for a task with a
+time, at the **Hour for all-day tasks** for a task with only a day. Optional
+filters: the **priority**, and the **list** (its exact name, `Inbox` for the
+inbox).
+
+Variables for the next actions: `title`, `list_name`, `priority` (`none`,
+`low`, `medium`, `high`), `due_date` (`YYYY-MM-DD`), `due_time` (`HH:MM`, empty
+for an all-day task), `all_day` and `content` (the task notes).
+
+The schedule follows the refresh: a task created or moved less than one
+refresh period before its due time may be missed. A task already past due when
+Gladys starts does not fire.
+
+### Action: Create a TickTick task
+
+- **Title** (required, can use scene variables);
+- **List**: name of a TickTick list, case does not matter. Empty or unknown:
+  the inbox;
+- **Due**: no date, today or tomorrow, with an optional **Due time** (`18:30`);
+  without a time the task is for the whole day;
+- **Priority**: none, low, medium or high.
+
+Outputs: `task_id` and `list_name` (the list the task landed in).
+
+### Action: Get TickTick tasks
+
+Reads the tasks of a scope (same choices as the widget) from the last refresh.
+Outputs: `count`, `titles` (one task per line, with its time when it has one),
+and the first task's `next_title`, `next_list`, `next_due_date` and
+`next_due_time`. Example: every morning at 7:30, if `count` is above 0, send
+"Today: \{\{titles\}\}" in a notification.
+
+## Troubleshooting
+
+| Message                                                  | What to do                                                                                                                         |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| _Connect your TickTick account_                          | Nothing is connected yet: follow "Connecting your account".                                                                        |
+| _No saved Client ID_ / _No saved Client secret_          | Fill them in and click **Save** before clicking **Connect**.                                                                       |
+| _There was an error starting the connection_ (Gladys)    | Gladys does not show the cause: it is in the integration logs ("TickTick connection failed"). Usually the Client ID was not saved. |
+| _TickTick refused the access_                            | The access was revoked or expired: click **Connect** again. Refreshing waits until then.                                           |
+| _The TickTick authorization expired or does not match_   | More than 15 minutes passed on the TickTick page, or the integration restarted meanwhile: click **Connect** again.                 |
+| TickTick: _At least one redirect_uri must be registered_ | Your developer app has no **OAuth redirect URL**: set it to the redirect URI shown in Gladys (step 2).                             |
+| TickTick says the redirect URL is invalid                | The **OAuth redirect URL** of your developer app must be exactly the redirect URI shown in Gladys.                                 |
+| _TickTick cannot be reached_ / _did not answer in time_  | Check the Internet connection of the Gladys machine. The integration retries at every refresh.                                     |
+| _TickTick limits the number of requests_                 | Choose a longer refresh frequency.                                                                                                 |
+
+The integration logs (Supervision tab of the integration) give the details of
+every failure; your token never appears in them.
+
+## Parámetros de configuración
+
+Estos son los parámetros que TickTick te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Connect your TickTick account | `section` | No | 1. On the TickTick developer site, create an app (Manage Apps > New App). 2. In its settings, set the OAuth redirect URL to the redirect URI shown below the Connect button. 3. Copy its Client ID and Client secret here and click Save (bottom of the form). 4. Only then click Connect. |
+| Client ID | `string` | No |  |
+| Client secret | `secret` | No |  |
+| Click Save before Connect | `section` | No | The Connect button does not save the form: after entering the Client ID and Client secret, first click Save at the bottom of the form, then come back here and click Connect. |
+| TickTick account | `oauth2` | No |  |
+| Settings | `section` | No | How often TickTick is read, and when the "Task due" scene trigger fires for tasks without a time. |
+| Refresh frequency | `select` | No |  |
+| Hour for all-day tasks | `number` | No | Hour of the day (0-23) at which the "Task due" trigger fires for an all-day task. |
+
+## Cómo instalar TickTick en Gladys
+
+1. En Gladys, abre **Integraciones**: TickTick aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/cicoub13/gladys-ticktick:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/cicoub13/gladys-ticktick](https://github.com/cicoub13/gladys-ticktick).
+
+TickTick requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+TickTick es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [cicoub13](https://github.com/cicoub13), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/cicoub13/gladys-ticktick) — [fuente de esta documentación](https://github.com/cicoub13/gladys-ticktick/blob/HEAD/docs/en.md)

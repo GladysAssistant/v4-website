@@ -1,0 +1,302 @@
+---
+title: "Tesla Wall Connector smart home integration, free and open source"
+sidebar_label: "Tesla Wall Connector"
+description: "Tesla Wall Connector gen 3 read on your home network: power, energy, charge state. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-tesla-wall-connector.png"
+keywords:
+  - "tesla wall connector"
+  - "tesla wall connector smart home"
+  - "gladys tesla wall connector"
+  - "tesla wall connector gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-tesla-wall-connector instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="tesla-wall-connector" />
+
+Follow your **Tesla Wall Connector gen 3** in Gladys: charger and charging
+state, power, session energy and total energy delivered, voltage, current,
+handle temperature. The charger is read **directly on your home network**: no
+Tesla account, no cloud, no subscription.
+
+> **Tested on a gen 3 charger on a single-phase supply; three-phase not
+> tested.** A user tried it on their charger, with a Tesla and a plug-in hybrid
+> of another make: search, power (checked against the Tesla app and a meter),
+> consumption and cost. Three-phase and the North American split-phase supply
+> have not been checked on a real charger yet. If something looks wrong, say so
+> on the Gladys forum.
+
+This integration is not affiliated with Tesla, Inc.
+
+## What you need
+
+- Gladys **5.1** or later.
+- A **Wall Connector gen 3** (the Wi-Fi model), connected to your Wi-Fi (Tesla
+  One app). The gen 2 and the Universal Wall Connector have no such local API
+  and are not supported.
+- Gladys and the charger on the same home network.
+
+## Getting started
+
+1. Install the integration from the catalog, then open its **Configuration**
+   tab.
+2. Tell it where the charger is, either way:
+   - **you know its IP address** (in your router's interface): type it in
+     **Wall Connector addresses** (several chargers: separated by commas), save;
+   - **you do not**: press **Search for Wall Connectors** at the bottom of the
+     page (see [Automatic search](#automatic-search)).
+3. Open the **Discovery** tab and add the charger.
+4. Optional: press **Test the Wall Connectors**: each address shows the end of
+   the charger's serial number, its firmware and its state, or why it does not
+   answer.
+
+Give the charger a **fixed address** in your router, so it does not change. The
+charger is identified by its serial number: if its address changes anyway, type
+the new one (or search again) and the same device carries on, with its history.
+
+### Settings
+
+| Setting                      | Role                                                                                                                                                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Wall Connector addresses** | IP address (or host name) of each charger, separated by commas. The search fills it in too.                                                                                                                         |
+| **Search range (advanced)**  | Usually left empty: the search takes the network of Gladys. Otherwise a network (`192.168.1.0/24`), a range (`192.168.1.10-192.168.1.60`) or addresses, separated by commas. Private addresses only, 1,024 at most. |
+| **Temperature unit**         | Unit of the handle temperature as scenes compare it: automatic (°F on a North American charger, else °C), °C or °F. The dashboard always converts.                                                                  |
+| **Device names language**    | English, French, German or Spanish feature names for new devices. Gladys keeps a feature's name once the device is created.                                                                                         |
+
+## Automatic search
+
+The Wall Connector does not announce itself on the network (no mDNS, no SSDP:
+Home Assistant finds it through the DHCP server, which Gladys does not offer to
+integrations). The **Search for Wall Connectors** button therefore tries each
+address of a range: a quick connection to port 80 of each, then a call to the
+charger API (`/api/1/version` and `/api/1/vitals`) on the few addresses that
+answered, keeping only the answers shaped like a Wall Connector's.
+
+The chargers found are **added to the configuration** and read at once: they
+show up in the **Discovery** tab. A known charger found at a new address
+replaces its old address. **Reload the page before saving the configuration
+form again**, or it would put back the old addresses.
+
+**Which range?** The integration runs in an isolated container, on a Docker
+network of its own: it cannot see directly which network Gladys is on. So it
+asks Gladys: Gladys runs an **SSDP** search on your home network (the only
+network capture the integration asks for, shown at install time) and the
+devices answering (internet box, TV, speaker…) give the network, such as
+`10.0.0.0/24`. Without a **Search range**, the search tries, in this order:
+
+1. the network of the chargers already configured;
+2. the network of Gladys, found that way (the search message shows it:
+   "Network of Gladys: 10.0.0.0/24");
+3. if no device answered Gladys: `192.168.1.0/24` and `192.168.0.0/24`, the
+   most common home networks, and the message says so.
+
+The **Search range** setting is only needed when the charger is on another
+network than Gladys, or the search picks the wrong one. The "Searching the
+network" block of the configuration shows the address your browser reaches
+Gladys by: if it is `192.168.1.20`, the range of that network is
+`192.168.1.0/24` (addresses `192.168.1.1` to `192.168.1.254`).
+
+A search takes a few seconds to a minute. It never leaves the home network:
+only private addresses are accepted, 1,024 at most. When no charger answers,
+the result shows **in red**, with what to check.
+
+## What you get
+
+| Feature                | Details                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| Connector              | Available, occupied (a car is plugged in), unavailable, faulted                                   |
+| Charging state         | Charging, vehicle connected, paused (car or charger), idle (also as soon as the car is unplugged) |
+| Status                 | The charger's own state in words (see [States](#charger-states))                                  |
+| Charging power         | W                                                                                                 |
+| Session energy         | kWh delivered since the car was plugged in                                                        |
+| Total energy delivered | Cumulative index in kWh, for the energy monitoring of Gladys                                      |
+| Grid voltage, current  | V, A                                                                                              |
+| Handle temperature     | °C or °F (**Temperature unit** setting)                                                           |
+
+Everything is read-only: the charger's local API does not start, stop or limit
+a charge (do it from the car or the Tesla app).
+
+The charger is read every **15 seconds** (the total counter every minute), and
+only what changes is sent to Gladys. After three missed reads in a row, the
+charger shows as **unreachable** (badge on the device).
+
+**History.** Gladys keeps every value it receives. The grid voltage, the
+current, the handle temperature and the power move a little at every read, so
+they are sent only when they change significantly since the last value sent:
+
+| Measurement        | Sent when it moves by                                           |
+| ------------------ | --------------------------------------------------------------- |
+| Charging power     | 50 W, or 2 % during a charge (150 W at 7.4 kW); and back to 0 W |
+| Vehicle current    | 0.5 A; and back to 0 A                                          |
+| Grid voltage       | 2 V                                                             |
+| Handle temperature | 1 °C (1.8 °F)                                                   |
+
+Each one is also sent again **once an hour**, even if it did not move, so
+Gladys never sees it as stale. Expect a few dozen values a day for each of
+them, plus some during a charge, instead of one every 15 seconds (5,760 a
+day). The widget's power and current tiles show these values; its session tile
+and total row are read directly from the charger.
+
+The charger reports voltages and currents, not the power: it is computed phase
+by phase (three-phase in Europe), or as voltage × current on a North American
+240 V split-phase supply (recognized by its 60 Hz grid).
+
+## Charger states
+
+The charger reports a state number (`evse_state`). Their meaning comes from
+Home Assistant, corrected by what a user read on their single-phase charger
+(October 2026):
+
+| State | Status shown                          | What was seen                                                           |
+| ----- | ------------------------------------- | ----------------------------------------------------------------------- |
+| 1     | Vehicle not connected                 | No car                                                                  |
+| 4     | Ready to charge                       | Tesla plugged in, not charging                                          |
+| 7     | Plugged in, outside charging schedule | Tesla plugged in **outside its charging schedule**: normal, not a fault |
+| 8     | Charging finished                     | (not seen)                                                              |
+| 9     | Waiting for the car                   | Tesla plugged in, schedule open; also after a charge stops              |
+| 10    | Charging (likely non-Tesla)           | The non-Tesla car charging                                              |
+| 11    | Charging                              | The Tesla charging                                                      |
+| 12    | Plugged in (likely non-Tesla)         | The non-Tesla car being plugged in                                      |
+| 13    | Session ending (likely non-Tesla)     | End of charge and unplugging of the non-Tesla car                       |
+| 21    | Session ending                        | The Tesla being unplugged                                               |
+
+State 7 shows as an **Error** (connector "faulted", red in the widget) only
+when no car is plugged in or the charger raises an alert (`current_alerts`).
+
+**Tesla or another car?** States 10, 12 and 13 were only seen with the car of
+another make, and 4, 9, 11 and 21 only with the Tesla. That comes from a single
+test: the status therefore says "likely non-Tesla", no more.
+
+## Energy monitoring
+
+The **total energy delivered** is the charger's own counter. Gladys computes
+the consumption per half hour and its cost from it, and files it **under your
+main electric meter**: the charger is a sub-meter of your main meter, since its
+energy goes through it too.
+
+In a consumption widget, **do not tick both the main meter and the charger** if
+you want a correct total: the charger's energy would be counted twice. Show
+them in two widgets, or tick the main meter alone for the house total.
+
+## Dashboard
+
+The **Tesla Wall Connector** widget (Gladys 5.1+), set with the charger to
+show:
+
+- at the top, three tiles side by side: charging **power**, **current**, and
+  the energy of **This session** while a car is plugged in, **Last session**
+  otherwise (the charger keeps the energy of the finished session), in kWh with
+  one decimal;
+- below, the **Total** delivered, in whole kWh (in MWh from 100,000 kWh; the
+  feature keeps the exact value);
+- the state of the charger and of the car and, with a car plugged in,
+  **Plugged in for** (counted by the charger from the plug-in) and **Charging
+  time** (followed by the integration: the time the charger actually delivered
+  power during this plug-in, reset when the car is unplugged).
+
+The total is a row under the tiles, not a fourth tile: Gladys 5.1.4 puts all
+the tiles of a widget in a single row that wraps after three of them, and has
+no setting for the number of columns, so four tiles would show as three plus
+one.
+
+No button: the local API is read-only.
+
+## Scenes
+
+Triggers, each one can be limited to one charger, with the session energy in
+kWh:
+
+- **Wall Connector: car plugged in** (outside the charging schedule too)
+- **Wall Connector: car unplugged**
+- **Wall Connector started charging**
+- **Wall Connector charging finished**: the charge stops while the car stays
+  plugged in (charge complete, schedule closed…) or ends with the unplugging
+  (states 13 and 21)
+
+They only fire on an observed change: a restart of the integration neither
+replays nor loses an event. Every feature above also works in scenes the usual
+way ("when the charging power goes above 7,000 W"…).
+
+## Were you using the charger in the Tesla/Teslemetry integration?
+
+The charger had been added to the Tesla integration (version 1.1.0), which is
+mostly for cars and Powerwall through the Teslemetry service. It now has its
+own integration, this one, as in Home Assistant. The reading code is the same,
+and so are the features, the trigger names and the widget.
+
+Gladys ties each device to its integration: the charger of this integration is
+therefore a **new device**, and the history of the old one is not carried over.
+To move from one to the other:
+
+1. **Install this integration**, type the charger address (the same as in the
+   Tesla integration) or press **Search for Wall Connectors**, then add the
+   charger from the **Discovery** tab.
+2. **Update your scenes, widgets and energy monitoring**: pick the triggers of
+   this integration (same names), the **Tesla Wall Connector** widget of this
+   integration, and the new charger in the consumption widgets.
+3. **Remove the old charger**: in the Tesla integration, empty the **Wall
+   Connector addresses** field and save, then delete the old Wall Connector
+   device. Deleting the device deletes its history too: keep it as long as you
+   need it.
+
+Both integrations can read the charger at the same time without trouble for
+it, but the energy would then be counted twice in the energy monitoring, and
+the triggers would fire twice: keep the charger on one side only. If you only
+used the Tesla integration for the charger, you can uninstall it.
+
+## Troubleshooting
+
+- **"No Wall Connector answers"**: check the IP address in your router and that
+  the charger is on the Wi-Fi (Tesla One app), then press **Test the Wall
+  Connectors**.
+- **The search finds nothing**: look at the network it searched (in its
+  message); if it is not the charger's, give it in **Search range** (see
+  above). A charger on another network (a separate "IoT" Wi-Fi, a
+  VLAN) is searched with that network's range, if Gladys can reach it. A strict
+  firewall on the Gladys machine (ufw) can also block the integrations' traffic
+  to the home network.
+- **The charger answers slowly**: common with this firmware; the integration
+  waits up to 10 seconds and only flags it unreachable after three failures in
+  a row.
+- The integration logs what it does (searches, charger answers): open
+  its logs from the integration's tab in Gladys.
+
+## Configuration settings
+
+These are the settings Tesla Wall Connector asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Before you start | `section` | No | For the Tesla Wall Connector gen 3 (the Wi-Fi model). It is read directly on your home network: no Tesla account, no cloud, no subscription. The charger must be connected to your Wi-Fi (Tesla One app). Type its IP address below, or press “Search for Wall Connectors” at the bottom of this page. Give it a fixed address in your router, so it keeps the same one. |
+| Wall Connector addresses | `string` | No | IP address (or host name) of each Wall Connector, separated by commas. Filled in by the search too. |
+| Searching the network (advanced) | `section` | No | The charger does not announce itself on the network, so the search tries each address of the network Gladys is on: Gladys asks the devices of your home network (internet box, TV…) to answer an SSDP search and deduces the network from their addresses. It also tries the network of the chargers already configured. Only if your charger is on another network, give the range below. Your browser reaches Gladys at \{\{gladys_host\}\}: if that is an address like 192.168.1.20, the range of that network is 192.168.1.0/24 (every address from 192.168.1.1 to 192.168.1.254). |
+| Search range (advanced) | `string` | No | Leave empty to search the network of Gladys. Otherwise a network (192.168.1.0/24), a range (192.168.1.10-192.168.1.60) or addresses, separated by commas. Private addresses only, 1,024 at most. |
+| Temperature unit | `select` | No | Unit of the handle temperature, as scenes compare it. The dashboard always converts to each user's preference. |
+| Device names language | `select` | No | Language of the feature names given to new devices (Gladys keeps a name once the device is created). |
+
+## How to install Tesla Wall Connector in Gladys
+
+1. In Gladys, open **Integrations**: Tesla Wall Connector appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-tesla-wall-connector:1.3.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-tesla-wall-connector](https://github.com/guim31/gladys-tesla-wall-connector).
+
+Tesla Wall Connector requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Tesla Wall Connector is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-tesla-wall-connector) — [source of this documentation](https://github.com/guim31/gladys-tesla-wall-connector/blob/HEAD/docs/en.md)

@@ -1,0 +1,176 @@
+---
+title: "Intégration domotique SNCF, gratuite et open source"
+sidebar_label: "SNCF"
+description: "Vos trains SNCF en temps réel : retards, suppressions, scènes, widgets. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-sncf.jpg"
+keywords:
+  - "sncf"
+  - "domotique sncf"
+  - "gladys sncf"
+  - "sncf gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-sncf instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="sncf" />
+
+Cette intégration suit **vos trains SNCF en temps réel** dans Gladys : les prochains départs de vos trajets (domicile → travail, retour…), leurs **retards**, les **suppressions** et leur motif. Elle les transforme en appareils, en déclencheurs de scène (« mon train est supprimé », « mon train part dans 15 minutes ») et en widgets de tableau de bord.
+
+Les données viennent de l'**API officielle de la SNCF** : temps réel pour les TGV INOUI, OUIGO, Intercités, TER, Lyria et Eurostar. Les **Transilien** n'y sont qu'en horaires théoriques (ni retards ni suppressions).
+
+> Intégration communautaire, sans lien avec la SNCF.
+
+## Configuration
+
+### 1. Obtenir une clé d'API (gratuit)
+
+1. Ouvrez la page [Token développeur](https://numerique.sncf.com/startup/api/token-developpeur/) de la SNCF.
+2. Renseignez prénom, nom et email, acceptez les conditions d'utilisation.
+3. La clé (un identifiant de 36 caractères, du type `0f1e2d3c-4b5a-…`) arrive par email.
+
+La clé gratuite autorise **5 000 requêtes par jour**. L'intégration les compte elle-même et ralentit avant la limite : au-delà, la SNCF bloque la clé pendant des heures.
+
+### 2. Renseigner l'intégration
+
+| Champ                 | Rôle                                                                                          |
+| --------------------- | --------------------------------------------------------------------------------------------- |
+| **Clé d'API**         | obligatoire                                                                                   |
+| **Trajet 1, 2, 3**    | gare de départ et gare d'arrivée (seuls les **trains directs** sont suivis)                   |
+| **Plage horaire**     | optionnelle, par exemple `07:00-09:30` : les trains partant dans cette plage                  |
+| **Jours de trajet**   | optionnels, par exemple du lundi au vendredi (vide : tous les jours)                          |
+| **Trains suivis**     | combien de prochains trains par trajet (4 par défaut)                                         |
+| **Seuil de retard**   | à partir de combien de minutes un train compte comme « en retard » (5 par défaut)             |
+| **Rafraîchissements** | toutes les 3 minutes autour de la plage, toutes les 30 minutes le reste du temps (par défaut) |
+
+Pour une gare, vous pouvez saisir :
+
+- son **nom** : « Rennes », « Lyon Part Dieu », « Paris Montparnasse » — le premier résultat de la recherche SNCF est retenu ;
+- son **code UIC** : « 87471003 » ;
+- son **identifiant** : « stop_area:SNCF:87471003 ».
+
+Si le nom ne donne pas la bonne gare, utilisez le bouton **Chercher une gare** : il affiche les gares correspondantes avec leur identifiant, à copier dans le champ du trajet.
+
+Enregistrez, puis cliquez sur **Tester la connexion** : pour chaque trajet, il indique le nombre de trains trouvés et l'heure du prochain.
+
+#### La plage horaire
+
+Avec une plage horaire, l'intégration suit les trains de la **prochaine plage** : ceux du jour tant qu'elle n'est pas terminée, puis ceux du prochain jour de trajet. Le soir, le widget montre déjà les trains du lendemain matin, et une suppression annoncée la veille déclenche votre scène la veille.
+
+Elle lit aussi l'API souvent **seulement autour de la plage** (d'une heure avant jusqu'à sa fin), ce qui économise le quota : environ 250 requêtes par jour pour un trajet avec une plage de 2 h 30, contre 800 sans plage.
+
+### 3. Ajouter les appareils
+
+Dans l'onglet **Découverte**, chaque trajet apparaît comme un appareil « SNCF – _départ_ → _arrivée_ ». Ajoutez-le et placez-le dans une pièce. Les widgets et les scènes fonctionnent aussi sans appareil, mais le choix du trajet dans leurs réglages passe par la liste des appareils.
+
+| Fonctionnalité               | Valeur                                                                  |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| **Prochain train**           | texte, par exemple « 07:42 · TER 858311 · +5 min » ou « … · supprimé »  |
+| **Retard du prochain train** | en minutes, celui du prochain train qui circule (0 à l'heure)           |
+| **Trains perturbés**         | combien de trains suivis sont en retard (au-delà du seuil) ou supprimés |
+
+Exemples de scènes sur ces valeurs : « si le retard du prochain train dépasse 10 minutes, allumer la lampe du couloir en orange », « si des trains sont perturbés, l'annoncer sur l'enceinte ».
+
+## Scènes
+
+### Déclencheurs
+
+| Déclencheur                | Quand                                                                                            | Filtres                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------ |
+| **SNCF : train en retard** | un train suivi prend du retard (à partir du seuil), puis à nouveau s'il dépasse 15 et 30 minutes | trajet, niveau de retard |
+| **SNCF : train supprimé**  | un train suivi est supprimé, ou ne dessert plus une gare du trajet                               | trajet                   |
+| **SNCF : départ imminent** | un train suivi part dans 5, 10, 15, 20, 30, 45 ou 60 minutes                                     | trajet, minutes          |
+
+Le **départ imminent** se compte sur l'heure de départ **en temps réel** : si votre train de 7 h 42 a 5 minutes de retard, « départ dans 15 minutes » arrive à 7 h 32, pas à 7 h 27. Pratique pour « pars maintenant ».
+
+Chaque déclencheur fournit des variables : trajet, numéro et type du train, direction, date, heures prévue et estimée, retard, motif, et un **résumé** prêt à envoyer, par exemple :
+
+> Rennes → Nantes : le TER 858311 de 07:42 a 18 min de retard, départ à 08:00. Motif : Panne de signalisation.
+
+Chaque événement ne se déclenche qu'**une fois par train**, même après un redémarrage de l'intégration.
+
+### Action
+
+**SNCF : prochains trains** donne le prochain train d'un trajet (heures, retard, état, motif, minutes avant le départ, nombre de trains perturbés) et une phrase qui résume les suivants :
+
+> Rennes → Nantes : le TER 858311 de 07:42 a 5 min de retard, départ à 07:47. Ensuite : 08:12 à l'heure, 08:42 supprimé.
+
+Exemple : chaque matin de semaine à 7 h, « SNCF : prochains trains », puis envoyer `résumé` sur Telegram.
+
+## Widgets
+
+| Widget           | Contenu                                                                                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Trajet SNCF**  | l'heure du prochain départ et le temps restant, puis chaque train avec un badge à l'heure / +N min / supprimé ; touchez un train perturbé pour lire le motif |
+| **Départs SNCF** | le tableau des départs d'une gare, toutes directions : une gare saisie dans les réglages du widget, ou la gare de départ d'un trajet                         |
+
+## Limites
+
+- Seuls les **trains directs** sont suivis (pas de correspondance).
+- **Transilien** : horaires théoriques seulement, sans retards ni suppressions (limite de l'API SNCF).
+- La **voie** n'est pas fournie par l'API officielle.
+- Un train supprimé disparaît des données temps réel de la SNCF : l'intégration le retrouve en comparant avec les horaires théoriques, puis le confirme sur le tableau des départs de la gare. Si la confirmation est impossible, le train reste affiché comme prévu plutôt que d'être annoncé supprimé à tort.
+
+## Dépannage
+
+| Message                                      | Que faire                                                                                                                        |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| « La clé d'API SNCF est refusée »            | vérifiez la clé copiée depuis l'email (sans espace)                                                                              |
+| « Gare introuvable : … »                     | utilisez le bouton **Chercher une gare** et copiez l'identifiant proposé                                                         |
+| « Quota quotidien de l'API SNCF atteint »    | la SNCF a bloqué la clé jusqu'à l'heure indiquée : réduisez le nombre de trajets sans plage horaire ou augmentez les intervalles |
+| « Aucun train trouvé sur la période suivie » | pas de train direct dans la plage horaire : vérifiez les gares et la plage, ou videz-la                                          |
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par SNCF dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Clé d’API SNCF | `section` | Non | Les trains viennent de l’API officielle de la SNCF : TER, TGV INOUI, OUIGO, Intercités, Lyria, Eurostar… en temps réel (Transilien : horaires théoriques seulement, sans retards). La clé est gratuite : remplissez le formulaire de la page développeur SNCF, la clé arrive par email. Elle autorise 5 000 requêtes par jour ; l’intégration les compte et ralentit avant la limite. |
+| Clé d’API | `secret` | Oui | La clé reçue par email (un UUID, 36 caractères). |
+| Trajet 1 | `section` | Non | Un nom de gare (« Rennes », « Lyon Part Dieu »), son code UIC (« 87471003 ») ou l’identifiant donné par le bouton « Chercher une gare » (« stop_area:SNCF:87471003 »). Seuls les trains directs sont suivis. La plage horaire et les jours sont optionnels : avec eux, ce sont les trains de la prochaine plage qui sont suivis, et l’API n’est lue souvent qu’autour d’elle (cela économise le quota quotidien). |
+| Gare de départ | `string` | Non |  |
+| Gare d’arrivée | `string` | Non |  |
+| Plage horaire | `string` | Non | Départs entre ces heures, par exemple 07:00-09:30. Vide : les prochains trains, toute la journée. |
+| Jours de trajet | `multi_select` | Non | Vide : tous les jours. |
+| Trajet 2 (optionnel) | `section` | Non | Mêmes champs que le trajet 1, par exemple le retour. Laissez vide si inutile. |
+| Gare de départ | `string` | Non |  |
+| Gare d’arrivée | `string` | Non |  |
+| Plage horaire | `string` | Non | Départs entre ces heures, par exemple 07:00-09:30. Vide : les prochains trains, toute la journée. |
+| Jours de trajet | `multi_select` | Non | Vide : tous les jours. |
+| Trajet 3 (optionnel) | `section` | Non | Mêmes champs que le trajet 1, par exemple le retour. Laissez vide si inutile. |
+| Gare de départ | `string` | Non |  |
+| Gare d’arrivée | `string` | Non |  |
+| Plage horaire | `string` | Non | Départs entre ces heures, par exemple 07:00-09:30. Vide : les prochains trains, toute la journée. |
+| Jours de trajet | `multi_select` | Non | Vide : tous les jours. |
+| Réglages | `section` | Non | Avec une plage horaire, un trajet coûte environ 250 requêtes par jour avec les valeurs par défaut ; sans plage, environ 800. Trois trajets et un tableau des départs ouvert restent sous les 5 000 par jour. |
+| Trains suivis par trajet | `number` | Non | Les prochains trains de chaque trajet, entre 1 et 8. |
+| Seuil de retard (min) | `number` | Non | À partir de combien de minutes un train compte comme en retard (scènes, trains perturbés, couleurs). |
+| Rafraîchissement autour de la plage (min) | `number` | Non | D’une heure avant la plage horaire jusqu’à sa fin (toute la journée sans plage), entre 2 et 30 minutes. |
+| Rafraîchissement le reste du temps (min) | `number` | Non | En dehors de la plage (et la nuit), entre 10 et 180 minutes. |
+
+## Comment installer SNCF dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : SNCF apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-sncf:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-sncf](https://github.com/William-De71/gladys-sncf).
+
+SNCF nécessite Gladys `>=5.1.1`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+SNCF est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-sncf) — [source de cette documentation](https://github.com/William-De71/gladys-sncf/blob/HEAD/docs/fr.md)

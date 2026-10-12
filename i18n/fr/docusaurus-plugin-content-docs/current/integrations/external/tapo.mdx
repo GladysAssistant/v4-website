@@ -1,7 +1,7 @@
 ---
 title: "Intégration domotique Tapo, gratuite et open source"
 sidebar_label: "Tapo"
-description: "Vos caméras et sonnettes Tapo dans Gladys : images, appui sonnette et mouvement. Gratuite, open source, installable en un clic."
+description: "Vos caméras, sonnettes, prises, ampoules et capteurs Tapo dans Gladys. Gratuite, open source, installable en un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-tapo.jpg"
 keywords:
   - "tapo"
@@ -21,15 +21,15 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 <ExternalIntegrationHeader slug="tapo" />
 
-Cette intégration ajoute vos caméras et sonnettes **TP-Link Tapo** à Gladys : l'image de la caméra sur votre tableau de bord, l'appui sur la sonnette et la détection de mouvement comme déclencheurs de scènes, et le niveau de batterie des modèles sans fil.
+Cette intégration ajoute vos appareils **TP-Link Tapo** à Gladys : les caméras et sonnettes (image sur le tableau de bord, appui sur la sonnette et mouvement comme déclencheurs de scènes, niveau de batterie), mais aussi les prises, multiprises, ampoules, interrupteurs et les capteurs du hub H100 — voir [Prises, ampoules, interrupteurs et capteurs](#prises-ampoules-interrupteurs-et-capteurs).
 
 ## Comment ça marche
 
 Deux canaux, chacun pour ce qu'il sait faire :
 
-- **Le cloud TP-Link** sert à retrouver la liste de vos caméras et à remonter leurs événements (sonnerie, mouvement, batterie). C'est le même compte que dans l'application Tapo. En revanche, il ne communique **pas** l'adresse locale des caméras.
-- **Un scan de votre réseau** localise ensuite chaque caméra, exactement comme le fait l'application Tapo au démarrage. C'est ce qui évite d'avoir à saisir la moindre adresse IP.
-- **Votre réseau local** fournit les images. Elles ne transitent jamais par le cloud : Gladys interroge directement la caméra chez vous.
+- **Le cloud TP-Link** sert à retrouver la liste de vos caméras. C'est le même compte que dans l'application Tapo. En revanche, il ne communique **pas** l'adresse locale des caméras.
+- **Un scan de votre réseau** localise ensuite chaque caméra, exactement comme le fait l'application Tapo au démarrage. C'est ce qui évite, dans la plupart des cas, d'avoir à saisir la moindre adresse IP (voir [L'adresse IP de vos caméras](#ladresse-ip-de-vos-caméras) quand ce n'est pas le cas).
+- **Votre réseau local** fournit tout le reste : les images, la sonnette, le mouvement, la batterie. Rien de tout cela ne transite par le cloud : Gladys interroge directement la caméra chez vous.
 
 Pour capturer une image, l'intégration choisit automatiquement l'un des deux modes selon ce que la caméra accepte :
 
@@ -58,21 +58,54 @@ Si vos caméras sont filaires (C100, C200, C210, C500…), le mode RTSP est pré
 Attention : ce compte caméra est **différent** de votre compte Tapo, et il se crée **par caméra**. Deux façons de le renseigner :
 
 - si vous avez utilisé les **mêmes identifiants** sur toutes vos caméras, remplissez simplement les champs **Identifiant / Mot de passe du compte par défaut** ;
-- sinon, remplissez **Comptes par caméra**, en séparant les caméras par une **virgule**, chacune sous la forme `nom|identifiant|motdepasse` :
+- sinon, une fois les caméras ajoutées (étape 3), utilisez l'action **Enregistrer le compte d'une caméra** en bas de l'écran Configuration : choisissez la caméra dans la liste, saisissez l'identifiant et le mot de passe, validez. Gladys essaie aussitôt une capture et vous dit si le compte fonctionne. Recommencez pour chaque caméra.
 
-```
-Camera_jardin|gladys|MonMotDePasse, Camera_salon|gladys|AutreMotDePasse
-```
+Ces comptes par caméra sont prioritaires sur le compte par défaut, et restent attachés à la caméra même si vous la renommez. Si vous laissez tout vide, l'intégration utilisera le mode propriétaire pour toutes vos caméras.
 
-Le champ de saisie tient sur une seule ligne : c'est la virgule qui sépare les caméras. Un mot de passe contenant une virgule doit donc être placé dans les champs par défaut. Reprenez le nom de la caméra tel qu'il apparaît dans l'application Tapo. Ces comptes sont prioritaires sur le compte par défaut. Si vous laissez tout vide, l'intégration utilisera le mode propriétaire pour toutes vos caméras.
+Le champ **Comptes par caméra (avancé)** permet aussi une saisie à la main (`nom|identifiant|motdepasse`, séparés par des virgules), mais l'action est plus simple et accepte n'importe quel mot de passe, virgules comprises.
 
 Sur certains modèles, il faut également activer **Compatibilité tierce** (dans l'application Tapo, rubrique _Moi_ → _Tapo Lab_) pour que le flux RTSP soit accessible.
 
 ### 3. Lancez un scan
 
-Cliquez sur **Tester la connexion** pour vérifier que vos identifiants sont acceptés : Gladys vous indique combien de caméras ont été trouvées et combien répondent sur votre réseau.
+Cliquez sur **Tester la connexion** : Gladys se connecte au cloud, scanne votre réseau et affiche **une ligne par caméra** — son adresse, d'où vient cette adresse, et comment l'image sera capturée :
+
+```
+Connexion au cloud Tapo OK : 3 appareil(s), 2 joignable(s) sur votre réseau.
+✔ Salon (C230) : 192.168.1.20 (trouvée sur le réseau), images en RTSP
+✔ Garage (C210) : 192.168.1.21 (trouvée sur le réseau), images en RTSP
+✖ Jardin (C660) : introuvable sur votre réseau → utilisez « Définir l'adresse IP d'un appareil » ci-dessous.
+```
 
 Rendez-vous ensuite dans l'écran **Découverte** et lancez un scan. Vos caméras y apparaissent, prêtes à être ajoutées. Une fois créées, ajoutez le widget **Caméra** à votre tableau de bord.
+
+Si une caméra est marquée ✖, passez à l'étape suivante.
+
+## L'adresse IP de vos caméras
+
+Pour récupérer les images, Gladys doit connaître l'**adresse IP locale** de chaque caméra (par exemple `192.168.1.42`). Le cloud TP-Link ne la donne pas : l'intégration la cherche elle-même en scannant votre réseau, et retrouve chaque caméra grâce à son adresse MAC.
+
+### Quand le scan ne trouve pas une caméra
+
+C'est le cas si la caméra est sur un **autre sous-réseau ou VLAN** que Gladys, ou si votre box **filtre le broadcast**. La solution :
+
+1. Dans l'application Tapo, ouvrez la caméra, puis **Paramètres** (roue dentée) → **Infos sur l'appareil** : l'**adresse IP** y est affichée.
+2. Dans Gladys, écran **Configuration** de l'intégration, descendez jusqu'à l'action **Définir l'adresse IP d'un appareil**.
+3. Choisissez la caméra dans la liste, tapez son adresse, validez.
+
+Gladys vérifie aussitôt que quelque chose répond à cette adresse, capture une image et vous dit si tout fonctionne. L'adresse est rattachée à la caméra elle-même : elle reste valable si vous renommez la caméra, dans Gladys comme dans l'application Tapo.
+
+Pour revenir à la détection automatique, relancez l'action en laissant l'adresse **vide**.
+
+> **Conseil** — réservez l'adresse de chaque caméra dans votre box (« réservation DHCP » ou « bail statique »). Sans cela, la box peut lui en attribuer une autre après une coupure, et une adresse saisie à la main deviendrait fausse.
+
+### Et sans adresse IP, par le cloud ?
+
+Ce n'est pas possible. TP-Link ne met à disposition des applications tierces **aucun moyen** de récupérer l'image ou le flux d'une caméra par Internet : l'application Tapo passe par des serveurs relais réservés à son propre usage. Toutes les intégrations existantes — y compris celle de Home Assistant — passent donc par le réseau local, et c'est aussi ce qui garantit que vos images ne quittent jamais votre domicile.
+
+### Le champ « Adresses manuelles (avancé) »
+
+Il existe toujours, pour une saisie à la main : entrées séparées par des virgules, chacune sous la forme `nom|ip` (ou `nom=ip`), par exemple `Caméra jardin|192.168.1.42, Salon|192.168.1.43`. Le nom est comparé sans tenir compte des majuscules, des accents, des espaces ni des tirets bas, et peut aussi être l'adresse MAC de la caméra. L'action ci-dessus reste plus sûre : pas de nom à recopier, et l'adresse est vérifiée.
 
 ## Ce que les caméras sur batterie font — et ne font pas
 
@@ -120,6 +153,9 @@ Chaque caméra devient un appareil dans Gladys :
 - **Image** — la photo affichée par le widget caméra, rafraîchie à la demande.
 - **Sonnette** — un appui sur le bouton, utilisable comme déclencheur de scène.
 - **Mouvement** — la détection de mouvement, également utilisable comme déclencheur.
+- **Activée** — le mode privé : voir [Mode privé](#mode-privé).
+- **Capture** — un bouton pour demander une image tout de suite (modèles sur batterie, rafraîchis moins souvent).
+- **Orientation** et **Positions** — sur les caméras motorisées : voir [PTZ](#orienter-une-caméra-motorisée-ptz).
 - **Batterie** — le niveau restant, en pourcentage (modèles sur batterie).
 
 Lorsque quelqu'un sonne, l'intégration capture immédiatement une image et l'envoie à Gladys : le widget affiche déjà le visiteur au moment où vous consultez la notification.
@@ -143,15 +179,15 @@ Vous n'avez rien à configurer : si le compte caméra est renseigné et que la c
 
 ## Mode privé
 
-Les caméras Tapo disposent d'un mode privé qui masque physiquement l'objectif. Il apparaît dans Gladys comme un interrupteur, utilisable dans une scène — « quand j'arrive, coupe la caméra du salon ».
+Chaque caméra reçoit une commande **Activée** — le mode privé standard des caméras dans Gladys (Gladys 5.0 ou plus récent). Désactivez-la et Gladys cesse de capturer, d'afficher et d'enregistrer l'image de cette caméra, partout : tableau de bord, chat, scènes. Elle s'utilise dans une scène — « quand on rentre, désactive la caméra du salon ».
 
-Il ne passe pas par ONVIF (c'est une fonction propre à TP-Link) mais par le même canal local que le niveau de batterie. Aucun compte caméra n'est donc nécessaire : le mot de passe de votre compte Tapo suffit, et les modèles sur batterie en bénéficient aussi.
+Sur les caméras Tapo qui ont un **mode privé** (l'objectif est physiquement masqué), la commande le pilote aussi : désactiver la caméra masque l'objectif, la réactiver le découvre. Cela passe par le même canal local que le niveau de batterie : aucun compte caméra n'est nécessaire, et les modèles sur batterie en bénéficient aussi. Cela fonctionne **dans les deux sens** — un mode privé basculé depuis l'application Tapo remonte dans Gladys à la vérification suivante, dans la minute.
 
-L'interrupteur fonctionne **dans les deux sens**. Une bascule faite depuis l'application Tapo remonte dans Gladys à la vérification suivante, dans la minute.
+Sur une caméra sans mode privé, la commande n'agit que côté Gladys : la caméra continue de tourner, Gladys la laisse simplement tranquille.
 
-Pendant que le mode privé est actif, la caméra continue de diffuser mais ne montre plus qu'une image noire portant « Privacy Mode is on ». L'intégration ne la capture donc pas : le widget conserve sa dernière image utile au lieu de virer au noir, et une caméra sur batterie n'est pas réveillée pour rien. Les images reprennent dès que le mode privé est désactivé.
+Tant qu'une caméra est désactivée, une caméra sur batterie n'est pas réveillée pour rien, et le widget indique que la caméra est désactivée plutôt que d'afficher une vieille image.
 
-Si une caméra ne propose pas cette fonction, l'interrupteur n'est simplement pas créé.
+> **Si vous venez de la version 1.2 ou antérieure** — le mode privé était un **interrupteur** séparé. Il continue de fonctionner sur vos caméras existantes : vos scènes ne sont pas cassées. Quand vous mettez à jour une caméra depuis l'écran **Découverte**, l'interrupteur est remplacé par la commande **Activée** : repointez les scènes qui l'utilisaient (attention, les valeurs sont inversées — l'interrupteur était « allumé » quand l'objectif était masqué, la commande est « allumée » quand la caméra est active).
 
 ## Orienter une caméra motorisée (PTZ)
 
@@ -165,10 +201,49 @@ Un appui sur une flèche déplace la caméra **d'un pas**, pas en continu. C'est
 
 Une remarque sur la vitesse : les firmwares Tapo ignorent largement la vitesse demandée et déduisent l'allure de la distance à parcourir. Un pas peut donc paraître lent — c'est le comportement de la caméra, pas un réglage manquant.
 
+## Prises, ampoules, interrupteurs et capteurs
+
+Au-delà des caméras, l'intégration prend en charge les autres appareils Tapo de votre compte. Ils apparaissent dans l'écran **Découverte** au même titre que les caméras, et utilisent **votre compte Tapo** : aucun compte supplémentaire à créer.
+
+| Appareil             | Exemples                           | Dans Gladys                                                  |
+| -------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Prise                | P100, P105, P115                   | Marche/arrêt                                                 |
+| Prise avec mesure    | P110, P110M, P115                  | Marche/arrêt, puissance (W), énergie (kWh)                   |
+| Multiprise           | P300, P304M, P306                  | Un appareil par prise, chacune pilotée seule                 |
+| Ampoule, ruban LED   | L510, L530, L630, L900, L920, L930 | Marche/arrêt, luminosité, couleur et blanc (selon le modèle) |
+| Interrupteur mural   | S500, S505 / S500D, S505D          | Marche/arrêt / variateur (luminosité)                        |
+| Capteurs du hub H100 | T310, T315                         | Température, humidité                                        |
+|                      | T100                               | Mouvement                                                    |
+|                      | T110                               | Ouverture (porte, fenêtre)                                   |
+|                      | T300                               | Fuite d'eau                                                  |
+|                      | S200B, S200D                       | Bouton : simple clic, double clic                            |
+|                      | KE100                              | Température et consigne de la tête thermostatique            |
+
+Chaque capteur de hub devient un appareil à part, avec l'alerte de pile faible (et le niveau de pile quand le capteur le fournit). Les capacités sont **demandées à l'appareil**, jamais déduites du modèle : une ampoule n'a un réglage de couleur que si elle sait le faire.
+
+### Comment ça marche
+
+Ces appareils ne préviennent pas Gladys d'eux-mêmes : l'intégration les lit régulièrement, selon l'option **Intervalle de lecture des prises, lampes et capteurs** (5 secondes par défaut). Un appui sur un bouton ou l'ouverture d'une porte remonte donc à la lecture suivante. Une lecture par appareil physique suffit : un hub avec dix capteurs ne coûte qu'une requête. Seules les **valeurs qui changent** sont envoyées à Gladys.
+
+Le dialogue se fait **en local**, avec le protocole qu'utilise l'application Tapo (KLAP pour les firmwares récents, l'ancien chiffrement pour les autres — choisi automatiquement). L'adresse IP est trouvée par le scan réseau, comme pour les caméras ; sinon, utilisez l'action **Définir l'adresse IP d'un appareil** (pour un capteur, c'est l'adresse de son **hub** qui compte).
+
+### L'énergie des prises avec mesure
+
+Les prises renvoient leur consommation du jour, remise à zéro chaque nuit. L'intégration la transforme en un **compteur qui ne fait que monter** (kWh), ce que le suivi d'énergie de Gladys attend. Seule limite : ce qui est consommé pendant que l'intégration est arrêtée n'est pas compté.
+
+### Pas encore pris en charge
+
+- le **hub H200** (il parle le protocole des caméras) ;
+- les anciens appareils **Kasa** (protocole « IOT ») et les **aspirateurs robots** ;
+- les interrupteurs sans fil **S210 / S220** associés à un hub.
+
+Ils sont signalés dans **Tester la connexion** et dans les logs, plutôt que d'être ignorés en silence.
+
 ## Options
 
 - **Qualité de l'image** — HD donne une image plus nette, SD est plus légère et plus rapide à capturer.
-- **Adresses des caméras** — à remplir uniquement si le cloud ne remonte pas l'adresse locale d'une caméra. Une par ligne, sous la forme `nom|ip`.
+- **Adresses manuelles (avancé)** — voir [L'adresse IP de vos caméras](#ladresse-ip-de-vos-caméras) ; l'action **Définir l'adresse IP d'un appareil** est plus simple.
+- **Intervalle de lecture des prises, lampes et capteurs** — la fréquence de lecture de ces appareils (5 s par défaut) ; voir [Comment ça marche](#comment-ça-marche-1).
 - **Intervalle de vérification des événements** — la fréquence à laquelle l'intégration cherche une sonnerie ou un mouvement. Plus court, la réaction est plus rapide mais vos caméras sont davantage sollicitées. Ce réglage ne concerne que les caméras sans ONVIF : celles qui l'utilisent préviennent Gladys d'elles-mêmes, sans attendre.
 - **Délai de capture** — le temps accordé à une caméra pour fournir une image.
 
@@ -178,7 +253,9 @@ L'action **Rafraîchir les images** force une nouvelle capture de toutes vos cam
 
 **« Connexion refusée »** — vérifiez l'e-mail et le mot de passe de votre compte Tapo. Si vous utilisez la validation en deux étapes sur votre compte TP-Link, elle empêche cette connexion.
 
-**Une caméra est trouvée mais ne répond pas en local** — les logs de l'intégration indiquent précisément le cas rencontré : adresse inconnue, ou aucun port qui répond. Si le scan ne la localise pas (autre VLAN, broadcast filtré par votre routeur), saisissez son adresse dans le champ **Adresses des caméras** : elle est toujours prioritaire.
+**Le widget reste vide, les logs affichent `TAPO_CAMERA_IP_UNKNOWN`** — Gladys ne connaît pas l'adresse de la caméra : le scan ne l'a pas trouvée. Lancez **Tester la connexion** pour voir quelles caméras sont concernées, puis suivez [Quand le scan ne trouve pas une caméra](#quand-le-scan-ne-trouve-pas-une-caméra).
+
+**Une caméra a une adresse mais ne répond pas** — **Tester la connexion** l'indique par un ⚠ et précise d'où vient l'adresse. Vérifiez que la caméra est allumée, sur le même réseau que Gladys, et que la **Compatibilité tierce** est activée dans l'application Tapo. Si l'adresse a changé (pas de réservation DHCP), corrigez-la avec l'action **Définir l'adresse IP d'un appareil**.
 
 **Le widget affiche une erreur alors que la caméra répond** — si la caméra utilise le mode RTSP, assurez-vous que son compte caméra est bien renseigné. C'est la cause la plus fréquente : les logs affichent alors `TAPO_RTSP_ACCOUNT_MISSING`. Rappelez-vous que ce compte est propre à chaque caméra.
 
@@ -202,18 +279,19 @@ Voici les paramètres demandés par Tapo dans son écran de configuration dans G
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Pour commencer | `section` | Non | Cette intégration retrouve vos caméras via votre compte cloud TP-Link, puis capture leurs images sur votre réseau local. Renseignez votre compte Tapo ci-dessous, puis allez dans l'écran Découverte et lancez un scan : vos caméras y apparaissent, prêtes à être ajoutées.  Deux modes de capture, choisis automatiquement pour chaque caméra en la sondant : le flux RTSP standard quand la caméra en expose un, sinon le protocole propriétaire TP-Link — qui couvre aussi les modèles sur batterie et les sonnettes qui n'offrent aucun flux RTSP. |
+| Pour commencer | `section` | Non | Cette intégration retrouve vos appareils via votre compte cloud TP-Link, puis dialogue avec eux sur votre réseau local. Renseignez votre compte Tapo ci-dessous, puis allez dans l'écran Découverte et lancez un scan : vos appareils y apparaissent, prêts à être ajoutés.  Gladys localise chaque appareil sur votre réseau toute seule. Si l'un d'eux est signalé introuvable (autre sous-réseau ou VLAN, broadcast filtré par votre routeur), utilisez l'action « Définir l'adresse IP d'un appareil » en bas de cette page : choisissez l'appareil, tapez son adresse — elle est affichée dans l'application Tapo, dans les paramètres de l'appareil > Infos sur l'appareil. |
 | E-mail du compte Tapo | `string` | Oui | L'adresse e-mail de votre compte TP-Link / Tapo, celle que vous utilisez dans l'application Tapo. |
-| Mot de passe du compte Tapo | `secret` | Oui | Le mot de passe de votre compte TP-Link / Tapo. Il sert à lister vos caméras et, pour les caméras sans RTSP, à ouvrir le flux local. |
+| Mot de passe du compte Tapo | `secret` | Oui | Le mot de passe de votre compte TP-Link / Tapo. Il sert à lister vos appareils, à dialoguer avec vos prises, lampes et hubs sur votre réseau, et, pour les caméras sans RTSP, à ouvrir le flux local. |
 | Région du cloud | `select` | Non | Le serveur cloud TP-Link le plus proche de vous. À changer uniquement si le test de connexion échoue. |
 | Compte caméra (RTSP et ONVIF) | `section` | Non | Les caméras exposant un flux RTSP nécessitent le compte caméra créé dans l'application Tapo (Paramètres de la caméra > Paramètres avancés > Compte de la caméra). C'est aussi lui qui débloque ONVIF, qui permet à une caméra de signaler un mouvement à l'instant où il se produit au lieu d'être interrogée. Ce n'est PAS votre compte Tapo, et il se crée PAR CAMÉRA. Le plus simple pour le renseigner : utilisez l'action « Enregistrer le compte d'une caméra » en bas de cette page, une fois par caméra. Les deux champs ci-dessous ne servent que de valeur par défaut, si vous avez réutilisé les mêmes identifiants partout. |
 | Identifiant du compte par défaut | `string` | Non | Utilisé pour toutes les caméras RTSP n'ayant pas de compte spécifique ci-dessous. |
 | Mot de passe du compte par défaut | `secret` | Non | Utilisé pour toutes les caméras RTSP n'ayant pas de compte spécifique ci-dessous. |
-| Comptes par caméra (avancé) | `secret` | Non | Rempli automatiquement par l'action « Enregistrer le compte d'une caméra » ci-dessous — utilisez plutôt cette action. Format, si vous l'éditez à la main : caméras séparées par une virgule, chacune sous la forme `nom\|identifiant\|motdepasse`. |
+| Comptes par caméra (avancé) | `secret` | Non | Préférez l'action « Enregistrer le compte d'une caméra » ci-dessous : les comptes qu'elle enregistre sont stockés à part et n'apparaissent pas ici. Format, si vous saisissez ici : caméras séparées par une virgule, chacune sous la forme `nom\|identifiant\|motdepasse` (un mot de passe contenant une virgule doit passer par l'action). |
 | Qualité de l'image | `select` | Non | HD donne une image plus nette, SD est plus légère et plus rapide à capturer. |
-| Avancé | `section` | Non | Ne remplissez ces champs que si une caméra n'est pas trouvée automatiquement, ou pour ajuster la fréquence de vérification des événements. |
-| Adresses des caméras | `string` | Non | Caméras séparées par une virgule, chacune sous la forme `nom\|ip` — par exemple `Camera_jardin\|192.168.1.42, Camera_salon\|192.168.1.43`. Gladys cherche les adresses sur votre réseau tout seul ; remplissez ce champ pour une caméra que le scan ne trouve pas (autre VLAN, broadcast filtré par votre routeur). Une adresse saisie ici est toujours prioritaire. |
+| Avancé | `section` | Non | Utile seulement dans des cas particuliers : l'intégration trouve vos appareils et leurs adresses toute seule. |
+| Adresses manuelles (avancé) | `string` | Non | Préférez l'action « Définir l'adresse IP d'un appareil » en bas de la page : vous choisissez l'appareil dans une liste, et Gladys vérifie que l'adresse répond. Si vous saisissez ici : entrées séparées par des virgules, chacune sous la forme `nom\|ip` (ou `nom=ip`). Le nom est comparé sans tenir compte des majuscules, accents, espaces ou tirets bas, et peut aussi être l'adresse MAC de l'appareil. |
 | Intervalle de vérification des événements (s) | `number` | Non | Fréquence à laquelle l'intégration vérifie un appui sonnette ou une détection de mouvement. Un intervalle plus court réagit plus vite mais sollicite davantage vos caméras. Ne concerne que les caméras sans ONVIF : celles qui le proposent remontent leurs événements instantanément, sans attente. |
+| Intervalle de lecture des prises, lampes et capteurs (secondes) | `number` | Non | La fréquence à laquelle les prises, lampes et capteurs d'un hub sont lus. Ces appareils ne préviennent pas d'eux-mêmes : un appui sur un bouton ou l'ouverture d'une porte remonte à la lecture suivante. Chaque lecture est une courte requête par appareil sur votre réseau. |
 | Délai de capture (s) | `number` | Non | Temps accordé à une caméra pour fournir une image. Les caméras utilisant le protocole propriétaire — modèles sur batterie sortant de veille — ont besoin de plus de temps qu'une caméra RTSP. Au-delà de 14 s, la vue live du tableau de bord peut expirer avant, mais le rafraîchissement automatique aboutit quand même. |
 | Intervalle de rafraîchissement des images (s) | `number` | Non | Fréquence à laquelle une nouvelle image est capturée pour le tableau de bord, pour les caméras SUR SECTEUR uniquement. Les caméras sur batterie ou solaires ont leur propre réglage ci-dessous : garder vos images filaires fraîches ne coûte donc rien aux autres. |
 | Protection de la batterie | `section` | Non | La capture d'images est ce qui vide une caméra sur batterie ou solaire. Ces réglages s'appliquent UNIQUEMENT aux modèles sur batterie ou solaires — les caméras filaires gardent leur propre intervalle et ne sont jamais ralenties. Une fois passée sous la limite de pause, la capture ne reprend qu'au niveau de recharge : une recharge partielle relancerait la décharge, et les cycles courts répétés usent la batterie plus vite. |
@@ -230,7 +308,7 @@ Voici les paramètres demandés par Tapo dans son écran de configuration dans G
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-tapo](https://github.com/William-De71/gladys-tapo).
 
-Tapo nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Tapo nécessite Gladys `>=5.0.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

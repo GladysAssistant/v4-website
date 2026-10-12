@@ -23,6 +23,8 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 Cette intégration permet de piloter vos appareils **ESPHome** (ESP32, ESP8266) depuis Gladys Assistant, directement sur votre réseau local, via l'**API native** ESPHome. Aucun cloud, aucun broker MQTT, aucun Home Assistant nécessaire.
 
+![Gladys, l'intégration et vos nœuds ESPHome : les états sont poussés par les nœuds, les commandes partent de Gladys, et la découverte passe par le mDNS capturé par Gladys](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/overview.svg)
+
 ## Fonctionnalités
 
 Contrairement à un appareil du commerce, un nœud ESPHome expose exactement ce que **vous** avez déclaré dans son fichier YAML. L'intégration s'adapte donc à ce que chaque nœud annonce :
@@ -38,11 +40,13 @@ Contrairement à un appareil du commerce, un nœud ESPHome expose exactement ce 
 | `cover`           | Volet ou rideau : ouvrir, fermer, arrêter, position               |
 | `fan`             | Ventilateur : on/off et vitesse                                   |
 | `lock`            | Serrure : verrouiller / déverrouiller                             |
+| `siren`           | Sirène : marche / arrêt                                           |
+| `valve`           | Vanne : ouverte / fermée                                          |
 | `button`          | Bouton poussoir                                                   |
 | `number`          | Réglage numérique modifiable (curseur)                            |
-| `climate`         | Thermostat : consigne et température mesurée                      |
+| `climate`         | Thermostat : consigne (une seule) et température mesurée          |
 
-Les types qui n'ont pas d'équivalent dans Gladys (`media_player`, `camera`, `select`, `valve`, `date`...) sont simplement ignorés lors de la découverte.
+Les types qui n'ont pas d'équivalent dans Gladys (`media_player`, `camera`, `select`, `event`, `date`...) sont simplement ignorés lors de la découverte.
 
 ### Les états arrivent en temps réel
 
@@ -98,6 +102,8 @@ salon.local
 192.168.1.43:6054
 ```
 
+![L'intégration fusionne trois sources : les appareils déjà connus, le scan mDNS et les nœuds ajoutés à la main ; à la connexion, le nœud donne son vrai nom, qui sert d'identifiant](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/discovery.svg)
+
 Le port est facultatif (6053 par défaut). Une fois connecté, le nœud annonce lui-même son vrai nom : un nœud ajouté par son adresse IP apparaîtra bien sous son nom ESPHome, et il continuera de fonctionner même si son adresse IP change ensuite.
 
 > **Si ce nœud a une clé de chiffrement qui lui est propre**, indiquez-la dans **Clés par nœud** en utilisant **la même adresse** que celle saisie ici, et non son nom ESPHome :
@@ -116,6 +122,8 @@ Le port est facultatif (6053 par défaut). Une fois connecté, le nœud annonce 
 ## Comprendre les capteurs : l'importance de `device_class`
 
 Gladys a besoin de savoir **ce que mesure** un capteur pour l'afficher correctement (icône, unité, graphique). ESPHome transmet cette information via `device_class`.
+
+![Une entité YAML devient une ou plusieurs fonctionnalités Gladys : par son device_class, par la forme de sa déclaration, ou en mesure générique](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/mapping.svg)
 
 Avec un `device_class`, votre capteur arrive typé :
 
@@ -139,7 +147,7 @@ Deux familles de capteurs échappent à cette règle, parce qu'ESPHome ne leur d
 | `unit_of_measurement: "°"`             | Angle            |
 | aucune unité et `accuracy_decimals: 0` | Compteur entier  |
 
-C'est le cas typique des capteurs mmWave (`ld2350`, `ld2450`…) : leurs compteurs de cibles (_Moving / Still / Presence Target Count_) arrivent en **Compteur**, et leurs angles de cible (_Target-1 Angle_) en **Angle**. Un firmware qui déclare explicitement `state_class: measurement_angle`, `total` ou `total_increasing` est classé sur cette déclaration en priorité.
+C'est le cas typique des capteurs mmWave (`ld2410`, `ld2450`…) : leurs compteurs de cibles (_Moving / Still / Presence Target Count_) arrivent en **Compteur**, et leurs angles de cible (_Target-1 Angle_) en **Angle**. Un firmware qui déclare explicitement `state_class: measurement_angle`, `total` ou `total_increasing` est classé sur cette déclaration en priorité.
 
 Les `device_class` reconnus incluent : `temperature`, `humidity`, `pressure`, `illuminance`, `battery`, `signal_strength`, `carbon_dioxide`, `pm25`, `pm10`, `power`, `energy`, `voltage`, `current`, `distance`, `moisture`, `speed`, `duration`, et pour les capteurs binaires : `motion`, `occupancy`, `door`, `window`, `smoke`, `gas`, `moisture`, `vibration`, `tamper`, `battery`, `lock`.
 
@@ -156,6 +164,9 @@ C'est normal après un redémarrage du nœud (mise à jour OTA, coupure de coura
 
 **Un appareil s'affiche comme « injoignable »**
 La connexion vers ce nœud est tombée : nœud éteint, hors de portée Wi-Fi, ou en cours de redémarrage. L'intégration retente automatiquement. Sachez aussi qu'un nœud ESPHome n'accepte qu'un nombre limité de clients API simultanés : si le même nœud est déjà connecté à un Home Assistant ou à une console de logs ESPHome ouverte, il peut refuser une connexion de plus. Fermez les clients inutiles et utilisez l'action **Reconnecter les nœuds**.
+
+**Un thermostat n'affiche que la température mesurée, sans consigne**
+C'est un thermostat à deux consignes (`heat_cool`, une basse et une haute). Gladys ne gère qu'une consigne par thermostat : plutôt que d'afficher un curseur qui resterait à 0 et ne piloterait rien, l'intégration ne publie que la température mesurée.
 
 **Une entité n'apparaît pas du tout**
 Son type n'a pas d'équivalent dans Gladys (voir le tableau des fonctionnalités), ou elle est marquée `internal: true` dans votre YAML — auquel cas ESPHome ne l'expose pas du tout sur son API.
@@ -177,7 +188,7 @@ Voici les paramètres demandés par ESPHome dans son écran de configuration dan
 ## Comment installer ESPHome dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : ESPHome apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-esphome:1.0.5`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-esphome:1.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-esphome](https://github.com/William-De71/gladys-esphome).
 

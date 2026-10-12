@@ -35,6 +35,14 @@ upsc <nom-onduleur>@<adresse-serveur>
 
 Par défaut, `upsd` écoute en TCP sur le port **3493**. Vérifiez également que les règles réseau et les ACL NUT autorisent l’accès depuis Gladys.
 
+### Les identifiants circulent en clair
+
+L’intégration n’utilise pas TLS (`STARTTLS`) : l’utilisateur et le mot de passe NUT, ainsi que toutes les mesures, traversent le réseau en clair. Gardez-la sur un réseau de confiance :
+
+- faites écouter `upsd` uniquement sur l’interface que Gladys atteint (`LISTEN` dans `upsd.conf`), et filtrez le port 3493 pour que seul l’hôte Gladys puisse s’y connecter ;
+- créez dans `upsd.users` un utilisateur dédié à Gladys, sans `actions` ni `instcmds` : l’intégration ne fait que lire, elle n’en a jamais besoin ;
+- ne réutilisez ce mot de passe nulle part ailleurs.
+
 ## Configuration
 
 1. Ouvrez **Intégrations**, puis l’intégration **Network UPS Tools (NUT)**.
@@ -79,6 +87,8 @@ Dans **Tableau de bord → Modifier → Ajouter un widget**, choisissez **Ondule
 - l’état (sur secteur, sur batterie, batterie faible…), les alarmes NUT, la puissance et le serveur ;
 - un bouton **Actualiser**, qui relit l’onduleur tout de suite. Il n’envoie aucune commande à l’onduleur.
 
+Le widget affiche le dernier relevé fait par l’intégration (au plus 3 minutes). Si l’onduleur met trop de temps à répondre, il affiche « Lecture de l’onduleur… » et se met à jour quelques secondes plus tard.
+
 ### Déclencheurs de scène
 
 Dans l’éditeur de scènes, catégorie **Intégrations** :
@@ -103,17 +113,19 @@ Exemple : chaque matin, lire l’état de l’onduleur puis envoyer un message a
 
 ## Dépannage
 
-| Symptôme                                          | Vérifications recommandées                                                                                                                                                                                                                                             |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Aucun onduleur détecté                            | Vérifiez chaque hôte, port, pare-feu et la présence d’au moins un onduleur dans chaque `ups.conf`.                                                                                                                                                                     |
-| Erreur d’accès ou d’authentification              | Vérifiez les ACL dans `upsd.conf` et les identifiants définis dans `upsd.users`.                                                                                                                                                                                       |
-| Certaines mesures manquent                        | Exécutez `upsc <nom>@<serveur>` ; seules les variables retournées par votre pilote peuvent être créées dans Gladys.                                                                                                                                                    |
-| Données obsolètes                                 | Une mesure stable n’est réécrite qu’une fois par heure : c’est normal. Au-delà, vérifiez que le pilote NUT communique encore avec le matériel et consultez les logs `upsd`.                                                                                            |
-| La base de Gladys grossit trop vite               | Augmentez l’intervalle de rafraîchissement : le volume d’historique lui est directement proportionnel. Chaque onduleur ajouté écrit son propre historique.                                                                                                             |
-| Ajout refusé : « appareil incomplet ou invalide » | Mettez à jour l’intégration. Ce refus (HTTP 422) venait de fonctionnalités publiées sans bornes `min` et `max`, désormais toujours déclarées.                                                                                                                          |
-| Valeurs figées après l’ajout                      | Mettez à jour l’intégration : les appareils sont désormais publiés avec la scrutation périodique activée.                                                                                                                                                              |
-| Fonctionnalités affichées sans nom ni icône       | Mettez à jour l’intégration, puis ré-ajoutez l’onduleur depuis l’onglet **Découverte** pour mettre à jour ses fonctionnalités existantes : la charge et la puissance apparente étaient publiées sur un couple catégorie/type que le front Gladys ne sait pas dessiner. |
-| La charge de l’onduleur s’affiche « Inconnu »     | Mettez à jour l’intégration, puis ré-ajoutez l’onduleur depuis l’onglet **Découverte** : la charge (`ups.load`) est maintenant publiée dans une catégorie qui laisse Gladys afficher son nom « Load ».                                                                 |
+| Symptôme                                                                                  | Vérifications recommandées                                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Aucun onduleur détecté                                                                    | Vérifiez chaque hôte, port, pare-feu et la présence d’au moins un onduleur dans chaque `ups.conf`.                                                                                                                                                                     |
+| Erreur d’accès ou d’authentification                                                      | Vérifiez les ACL dans `upsd.conf` et les identifiants définis dans `upsd.users`.                                                                                                                                                                                       |
+| Le statut de connexion indique « Connecté, mais 1 serveur(s) NUT sur 2 ne répondent pas » | Les onduleurs des autres serveurs sont toujours lus. Vérifiez le serveur nommé (hôte, port, pare-feu, `upsd` démarré) ; le statut redevient « connecté » à sa prochaine réponse.                                                                                       |
+| Un onduleur ne se met plus à jour après le retrait d’un serveur de la configuration       | Son serveur n’est plus interrogé, ce que les logs indiquent une fois. Rajoutez le serveur, ou supprimez l’appareil dans Gladys.                                                                                                                                        |
+| Certaines mesures manquent                                                                | Exécutez `upsc <nom>@<serveur>` ; seules les variables retournées par votre pilote peuvent être créées dans Gladys.                                                                                                                                                    |
+| Données obsolètes                                                                         | Une mesure stable n’est réécrite qu’une fois par heure : c’est normal. Au-delà, vérifiez que le pilote NUT communique encore avec le matériel et consultez les logs `upsd`.                                                                                            |
+| La base de Gladys grossit trop vite                                                       | Augmentez l’intervalle de rafraîchissement : le volume d’historique lui est directement proportionnel. Chaque onduleur ajouté écrit son propre historique.                                                                                                             |
+| Ajout refusé : « appareil incomplet ou invalide »                                         | Mettez à jour l’intégration. Ce refus (HTTP 422) venait de fonctionnalités publiées sans bornes `min` et `max`, désormais toujours déclarées.                                                                                                                          |
+| Valeurs figées après l’ajout                                                              | Mettez à jour l’intégration : les appareils sont désormais publiés avec la scrutation périodique activée.                                                                                                                                                              |
+| Fonctionnalités affichées sans nom ni icône                                               | Mettez à jour l’intégration, puis ré-ajoutez l’onduleur depuis l’onglet **Découverte** pour mettre à jour ses fonctionnalités existantes : la charge et la puissance apparente étaient publiées sur un couple catégorie/type que le front Gladys ne sait pas dessiner. |
+| La charge de l’onduleur s’affiche « Inconnu »                                             | Mettez à jour l’intégration, puis ré-ajoutez l’onduleur depuis l’onglet **Découverte** : la charge (`ups.load`) est maintenant publiée dans une catégorie qui laisse Gladys afficher son nom « Load ».                                                                 |
 
 Pour obtenir les détails de l’erreur, ouvrez les journaux de l’intégration dans Gladys. Vous pouvez également régler `LOG_LEVEL=debug` pour disposer de logs plus détaillés.
 
@@ -153,7 +165,7 @@ Voici les paramètres demandés par Network UPS Tools (NUT) dans son écran de c
 ## Comment installer Network UPS Tools (NUT) dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Network UPS Tools (NUT) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-nut:2.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-nut:2.2.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-nut](https://github.com/prohand/gladys-nut).
 

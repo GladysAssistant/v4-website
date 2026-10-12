@@ -34,6 +34,9 @@ produits ; la seule exception dans tout le catalogue EcoFlow est l'EZ1, un
 minuteur d'arrosage sans rapport). Votre appareil a besoin d'un accès
 internet sur votre réseau pour que cette intégration fonctionne.
 
+**Nécessite Gladys Assistant 5.1 ou plus récent** (widget de tableau de bord et
+cartes de scène).
+
 ## Deux façons de se connecter
 
 - **Méthode 1 — Open Platform officielle (recommandée)** : un compte
@@ -65,11 +68,87 @@ qui l'a trouvé. Chaque appareil expose :
 - **Puissance de sortie AC** (W)
 - **Puissance d'entrée solaire** (W) — depuis un panneau solaire connecté,
   le cas échéant
+- **Autonomie restante** (minutes) — lorsque la station fonctionne sur batterie
+- **En charge** (oui/non) — déduit du bilan de puissance (entrées supérieures
+  aux sorties, batterie non pleine)
 - **Sortie AC** (marche/arrêt)
 - **X-Boost** (marche/arrêt) — permet à la sortie AC d'alimenter des
   appareils plus gourmands, au prix d'une onde sinusoïdale moins propre
 - **Sortie DC (allume-cigare)** (marche/arrêt)
 - **Réserve de secours** (marche/arrêt)
+
+Un interrupteur actionné dans Gladys affiche immédiatement sa nouvelle
+position, puis la station est relue quelques secondes plus tard pour
+confirmer.
+
+> Mise à jour depuis la 0.2.x : les deux nouveaux capteurs (autonomie, en
+> charge) font apparaître un bouton **Mettre à jour** sur votre appareil dans
+> l'onglet **Découverte** — cliquez dessus pour les ajouter. Les
+> fonctionnalités existantes et leur historique sont conservés.
+
+## Widget de tableau de bord
+
+Ajoutez le widget **Station EcoFlow** à un tableau de bord (sélecteur de
+widgets → section EcoFlow) et choisissez une station dans ses réglages. Il
+affiche :
+
+- ce que fait la station : « Sur batterie · 3 h 10 restantes », « En charge ·
+  300 W entrants », « Hors ligne — ne répond pas »… ;
+- des tuiles en direct : jauge de batterie, entrée secteur, entrée solaire,
+  sortie totale ;
+- les réglages qui ne sont pas des interrupteurs : sorties AC/DC, X-Boost,
+  réserve de secours et son niveau, limites de charge et de décharge, méthode
+  de connexion ;
+- des boutons pour activer/couper les sorties AC et DC — ou un bouton
+  **Réessayer** tant que la station ne répond pas.
+
+## Scènes
+
+**Déclencheurs** (éditeur de scènes → « Quand… »), chacun avec un filtre de
+station optionnel (vide = n'importe quelle station) et les variables _niveau de
+batterie_ et _puissance de sortie totale_ :
+
+| Déclencheur                 | Quand il se déclenche                                                                                                                                                                     |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Coupure de l'entrée secteur | l'entrée AC n'est plus alimentée — par exemple une coupure de courant sur une station utilisée comme onduleur                                                                             |
+| Retour de l'entrée secteur  | l'entrée AC est de nouveau alimentée                                                                                                                                                      |
+| La station ne répond plus   | hors ligne dans le cloud EcoFlow, ou 3 rafraîchissements en échec d'affilée                                                                                                               |
+| La station répond à nouveau | sortie de l'état précédent                                                                                                                                                                |
+| Limite de charge atteinte   | la batterie atteint sa limite de charge (100 % par défaut)                                                                                                                                |
+| Batterie faible             | la batterie descend à 50, 30, 20, 10 ou 5 % — choisissez le niveau dans le filtre _Niveau atteint_ (vide = n'importe lequel) ; variables en plus _niveau atteint_ et _autonomie restante_ |
+
+Chacun se déclenche une seule fois par changement, jamais à chaque
+rafraîchissement. « Batterie faible » ne se redéclenche qu'une fois la batterie
+remontée de 5 points au-dessus du niveau. Pour tout autre seuil (« batterie
+sous 25 % », « autonomie sous 30 min »), utilisez le déclencheur standard de
+Gladys : _Changement d'état d'un appareil_ → la fonctionnalité _Niveau de
+batterie_ (ou _Autonomie restante_) de la station → `<` et votre valeur, avec
+l'option pour ne déclencher qu'au franchissement du seuil.
+
+**Actions** (éditeur de scènes → « Alors… ») :
+
+| Action                        | Champs                                                                                                                                  |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Régler la limite de charge    | station, niveau de charge max (50–100 %)                                                                                                |
+| Régler la limite de décharge  | station, niveau de décharge min (0–30 %)                                                                                                |
+| Régler la réserve de secours  | station, activée, niveau (5–100 %, vide conserve l'actuel)                                                                              |
+| Régler la charge secteur      | station, puissance de charge secteur (100–1200 W), mise en pause                                                                        |
+| Relever la station maintenant | station — renvoie _niveau de batterie_, _autonomie_, _puissance d'entrée_, _puissance de sortie_, _en charge_ pour les étapes suivantes |
+
+Exemple : « en semaine à 22 h (heures creuses), régler la charge secteur à
+600 W sans pause ; à 6 h, la mettre en pause », ou « en cas de coupure de
+l'entrée secteur, m'envoyer un message avec le niveau de batterie ».
+
+## État de la connexion
+
+- L'onglet **Configuration** indique le résultat de chaque méthode séparément,
+  après l'avoir réellement essayée — par exemple « API officielle : 2
+  appareils · Échec de la connexion simple : incorrect password ». Un numéro
+  de série qui n'en a pas l'air est également signalé.
+- Chaque carte d'appareil affiche un badge **cloud**, avec un point orange
+  quand le dernier rafraîchissement a échoué, et **injoignable** quand EcoFlow
+  signale l'appareil hors ligne ou après 3 rafraîchissements en échec
+  d'affilée.
 
 ## Configuration
 
@@ -98,30 +177,32 @@ qui l'a trouvé. Chaque appareil expose :
 - **Tester la connexion** — rafraîchit immédiatement un appareil donné et
   rapporte son niveau de batterie et sa puissance de sortie AC, ou l'erreur
   API exacte en cas d'échec.
+- **Diagnostic** — liste toutes les clés de télémétrie remontées par
+  l'appareil (numéro de série, Wi-Fi et valeurs réseau masqués) ; la liste
+  complète est écrite dans les logs de l'intégration. Collez-la dans un ticket
+  quand une valeur semble fausse, ou pour aider à prendre en charge un autre
+  modèle.
 
 ## Suites possibles
 
-Volontairement hors du périmètre actuel, listées ici plutôt que simplement
-omises :
-
 - **Push MQTT en temps réel** à la place du sondage périodique, pour la
-  méthode 1 — la méthode privée (méthode 2) parle déjà MQTT, mais le sujet de
-  push temps réel de la méthode 1 a une forme de message qui reste à
-  confirmer sur un compte réel avant de pouvoir remplacer la boucle de
-  sondage actuelle.
-- **Réglages numériques de limite de charge/décharge et de niveau de réserve
-  de secours** (les pourcentages que l'application EcoFlow permet de régler)
-  — la catégorie de fonctionnalité `battery-storage` de Gladys n'a pas de
-  type « niveau cible » distinct du capteur de niveau de batterie lui-même :
-  cela nécessite soit un ajout au cœur de Gladys, soit une réutilisation
-  délibérée (et clairement documentée) d'un type existant.
+  méthode 1 — la forme des messages du sujet de push de l'Open Platform reste
+  à confirmer sur un compte réel avant de pouvoir compléter la boucle de
+  sondage.
+- **Autres modèles EcoFlow** (Delta, River 3…) — des tables de
+  fonctionnalités par modèle, alimentées par les rapports de Diagnostic.
+- **Catégories énergie** — Gladys 4.86 range l'entrée AC d'une batterie
+  branchée sur le réseau dans la catégorie « réseau » ; y déplacer la
+  fonctionnalité existante _Puissance de charge AC_ changerait la façon dont
+  Gladys compte l'énergie, elle est donc laissée telle quelle pour l'instant.
 
 ## Testé et confirmé
 
 État honnête, pour que ce que « ça fonctionne » recouvre réellement soit
-clair — **aucun compte EcoFlow (développeur ou app) ni appareil River 2
-physique n'étaient disponibles lors de l'écriture de cette intégration.**
+clair :
 
+- **La méthode 2 (connexion simple) a été testée par le mainteneur sur un vrai
+  River 2 Pro.** Aucun essai de la méthode 1 sur un vrai compte développeur n'est encore consigné ici.
 - L'API REST (liste des appareils, instantané de quota, envoi de commande)
   et sa signature de requête HMAC-SHA256 (méthode 1) sont écrites à la main
   et recoupées avec deux implémentations indépendantes et réellement
@@ -129,34 +210,24 @@ physique n'étaient disponibles lors de l'écriture de cette intégration.**
   communautaire Home Assistant
   [`tolwi/hassio-ecoflow-cloud`](https://github.com/tolwi/hassio-ecoflow-cloud),
   et le code source `SignatureBuilder`/`RestClient` de
-  [`rustyy/ecoflow-api`](https://github.com/rustyy/ecoflow-api) — non
-  exécutées comme dépendance (voir le README), mais lues pour confirmer
-  l'algorithme et les points d'accès.
+  [`rustyy/ecoflow-api`](https://github.com/rustyy/ecoflow-api).
 - Le chemin connexion simple + MQTT (méthode 2) est de même recoupé avec
   `api/private_api.py` et `devices/__init__.py` de
-  `tolwi/hassio-ecoflow-cloud` (la requête/réponse `latestQuotas` et la forme
-  de commande `{moduleType, operateType, params}` sont IDENTIQUES à la
-  méthode 1 — seule l'enveloppe de transport diffère).
-- Les noms des champs de quota de la gamme River 2 (`pd.soc`,
-  `inv.outputWatts`, `mppt.inWatts`...) et la forme des commandes
-  (`acOutCfg`, `mpptCar`, `upsConfig`, `dsgCfg`, `watthConfig`) sont validés
-  au moment de l'exécution par les schémas zod réels de
-  [`@ecoflow-api/schemas`](https://www.npmjs.com/package/@ecoflow-api/schemas)
-  — des schémas réels et à jour publiés par ce projet, pas une copie figée.
-- **Un bug réel a été trouvé et contourné** : le paquet publié
-  `@ecoflow-api/rest-client@0.6.0` plante à l'import pour tout consommateur
-  (un chemin interne cassé qui ne peut jamais se résoudre). Cette intégration
-  n'en dépend pas — la couche REST/signature est écrite à la main, et
-  confirmée fonctionnelle par la suite de tests de ce dépôt.
-- Ce qui n'est **pas** confirmé indépendamment : une vraie connexion à un
-  compte EcoFlow réel (les deux méthodes), les valeurs exactes de
-  `out_voltage`/`out_freq` qu'un vrai River 2 rapporte pour
-  `mppt.cfgAcOutVol`/`mppt.cfgAcOutFreq` (utilisées pour compléter la
-  commande de sortie AC en plus du champ que vous modifiez réellement), et
-  le préfixe réel du numéro de série rapporté par l'appareil (un
-  espace réservé a été utilisé dans les tests). Faites tourner cette
-  intégration avec `LOG_LEVEL=debug` sur votre propre River 2 et ouvrez un
-  ticket si quelque chose se comporte de façon inattendue.
+  `tolwi/hassio-ecoflow-cloud`.
+- Chaque forme de commande (`acOutCfg`, `mpptCar`, `upsConfig`, `dsgCfg`,
+  `watthConfig`, `acChgCfg`) est validée à l'exécution par les schémas zod de
+  [`@ecoflow-api/schemas`](https://www.npmjs.com/package/@ecoflow-api/schemas).
+- Sécurité : une commande qui doit reprendre d'autres réglages actuels (la
+  sortie AC et le X-Boost voyagent avec la tension/fréquence de sortie, la
+  réserve de secours avec son niveau) relit d'abord la station, et **n'est pas
+  envoyée** si la station n'a pas remonté ces valeurs — jamais de valeur par
+  défaut inventée.
+- **Pas encore confirmé sur un vrai appareil** : les actions de scène
+  (limites de charge/décharge, réserve, charge secteur), la détection de
+  l'entrée secteur via `inv.acInVol` (en son absence, la puissance d'entrée AC
+  est utilisée, confirmée sur deux rafraîchissements d'affilée), et le champ
+  d'autonomie restante. Lancez le Diagnostic et ouvrez un ticket si quelque
+  chose se comporte de façon inattendue.
 
 ## Dépannage
 
@@ -183,11 +254,11 @@ Voici les paramètres demandés par EcoFlow dans son écran de configuration dan
 ## Comment installer EcoFlow dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : EcoFlow apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ecoflow:0.2.5`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ecoflow:0.3.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-ecoflow](https://github.com/LM1LC3N7/gladys-ecoflow).
 
-EcoFlow nécessite Gladys `>=4.86.1`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+EcoFlow nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 
