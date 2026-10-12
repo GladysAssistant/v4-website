@@ -30,9 +30,11 @@ follow its battery, status and mowing progress.
 Each mower of your Mammotion account shows up with:
 
 - **Mowing** (switch): on = start a job (or resume the paused one), off = pause;
-- **Return to dock** (switch): on = go back to the dock, off = cancel. On a
-  paused job, the job is ended first (like "Stop" in the app), or it would
-  stay paused;
+- **Return to dock** (switch): on = go back to the dock to charge, off =
+  cancel. Like "Recharge" in the app: a job in progress stays paused,
+  **Mowing** resumes it later;
+- **Stop job** (button): ends the job, the mower stays where it is (like
+  "Stop" in the app). **Return to dock** then brings it home;
 - **Refresh** (button): asks the mower for its state right now;
 - **Status**: Mowing (45 %), Charging, Paused, Returning to dock, Offline…;
 - **Battery** (%) and **Charging**;
@@ -40,11 +42,13 @@ Each mower of your Mammotion account shows up with:
 - during a job: **Mowing progress** (%), **Elapsed** and **Remaining mowing
   time** (min), **Area to mow** (m²);
 - **Total mowing time** (h), **Total distance** (km);
-- **Map** (image, **Camera** widget of the dashboard): the zones (bright
-  green = zones of the next job, pale green = the others) with their name,
-  the no-go zones (grey) and the mower (red dot);
+- **Map**: a device of its own, "\<mower> – Map" (image, **Camera** widget
+  of the dashboard): the zones (bright green = zones of the next job, pale
+  green = the others) with their name, the no-go zones (grey) and the mower
+  (red dot);
 - the **zones of the next job**: one "Zone to mow – …" switch per zone of
-  the map. Several zones can be on; none on = every zone;
+  the map. Several zones can be on; none on = every zone. The zones are
+  mowed in the order they are switched on, as in the app;
 - the **other settings of the next job**, "Setting – …": lists for the blade
   height, speed, spacing, angle type (optimal, custom, random), pattern
   (zigzag, chessboard, adaptive zigzag), perimeter laps, obstacle detection,
@@ -103,6 +107,52 @@ same yes/no value, same use in a scene, no false alert.
 > app, and use that account here. Otherwise the app on your phone may be
 > logged out when Gladys connects.
 
+> Security: the recent mowers report through the Mammotion MQTT broker, and
+> its TLS certificate is **not checked** (like the Mammotion app and the other
+> open-source clients: the broker is not known to present a certificate a
+> standard check accepts). Someone able to intercept the traffic of your
+> network could pose as the broker and read the short-lived access token of
+> the account. A dedicated account with only the mower shared (tip above)
+> limits what it would give away.
+
+## Widget, scene triggers and actions (Gladys 5.1)
+
+### "Mammotion mower" widget
+
+In **Dashboard → Edit → Add a widget**, choose **Mammotion mower**, then the
+mower. The widget shows the state, the battery, the progress and remaining time
+of the job, and the buttons that make sense now: **Start mowing** (or
+**Resume**), **Pause**, **Back to dock**. It shows the last state received:
+opening the dashboard sends nothing to the mower.
+
+### Triggers
+
+| Trigger                     | When                                                                    |
+| --------------------------- | ----------------------------------------------------------------------- |
+| A mower starts mowing       | A new job, or a paused one resumed                                      |
+| A mowing job ends           | Finished or stopped (a recharge in the middle of a job does not end it) |
+| A mower is back on its dock | It starts charging                                                      |
+| A mower has a problem       | Offline, location error, out of boundary, locked, failed update         |
+
+Each fires once, on the change, never when the integration restarts.
+Variables: mower name, state, battery, and depending on the trigger the
+progress, "job paused to recharge" or the problem.
+
+### Actions
+
+- **Start mowing**: a new job with the zones and settings chosen in Gladys, or
+  a paused job resumed.
+- **Pause mowing**.
+- **Send a mower back to its dock** (the job is kept paused).
+- **Read a mower**: state, online, mowing, battery, progress, remaining time,
+  problem. Tick "Ask the mower first" for a fresh value.
+
+The first three return a **result** (`started`, `resumed`, `already_mowing`,
+`already_starting`, `paused`, `not_mowing`, `returning`, `already_docked`).
+A new job takes 30 to 60 s to start (zones, route, then start): another
+"Start mowing" meanwhile, from a scene, the widget or the **Mowing** switch,
+starts nothing and answers `already_starting`.
+
 ## Scene ideas
 
 - Start mowing every Saturday at 10 am if it does not rain.
@@ -111,7 +161,8 @@ same yes/no value, same use in a scene, no false alert.
   zone) then turn "Mowing" on.
 - Resume the paused job when the rain stops.
 - Send the mower back to its dock when the rain sensor detects rain.
-- Get a message when the status becomes "Location error".
+- Get a message when the mower has a problem ("A mower has a problem" trigger).
+- Get a message when the mowing job ends.
 
 ## Troubleshooting
 
@@ -121,8 +172,8 @@ same yes/no value, same use in a scene, no false alert.
   mower has not sent its map yet (off, offline). It is read again at the next
   start of the integration and with each job started from Gladys. Then
   **Update** in the **Discovery** tab.
-- **Show the map**: on the dashboard, add a **Camera** widget and pick the
-  mower. The image follows the mower during a job (at most every 15 s).
+- **Show the map**: **Discovery** tab, add the "\<mower> – Map" device, then
+  on the dashboard add a **Camera** widget and pick that device. The image follows the mower during a job (at most every 15 s).
 - **Check a setting of the app**: start a job from the Mammotion app, then
   look for "route settings seen" in the logs of the integration. The line
   shows what the app sent (`towardMode` = angle type, `channelMode` =
@@ -133,7 +184,8 @@ same yes/no value, same use in a scene, no false alert.
 - **No mower found**: make sure the mower shows up in the Mammotion app with
   this account (owner or shared).
 - **Values do not change**: press **Refresh** (on the dashboard) or **Refresh
-  the mowers now** (Configuration tab). Recent mowers
+  the mowers now** (Configuration tab), which reads every mower and names
+  those it could not read. Recent mowers
   (Mammotion broker) push their state on their own; Gladys asks them for a
   report at most every 5 minutes (and right after a command), to stay within
   the Mammotion cloud quota and not cut the app on your phone.
@@ -177,11 +229,11 @@ These are the settings Mammotion asks for in its configuration screen in Gladys.
 ## How to install Mammotion in Gladys
 
 1. In Gladys, open **Integrations**: Mammotion appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-mammotion:1.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-mammotion:1.4.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-mammotion](https://github.com/prohand/gladys-mammotion).
 
-Mammotion requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Mammotion requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica ESPHome, gratuita y de código abierto"
 sidebar_label: "ESPHome"
-description: "Control your ESPHome devices (ESP32/ESP8266) locally, over the native API. Free, open source, installable in one click."
+description: "Controle sus dispositivos ESPHome (ESP32/ESP8266) en local, mediante la API nativa. Gratuita, de código abierto, se instala con un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-esphome.jpg"
 keywords:
   - "esphome"
@@ -29,6 +29,8 @@ La documentación de esta integración la escribe su autor y, por ahora, solo es
 
 This integration controls your **ESPHome** devices (ESP32, ESP8266) from Gladys Assistant, directly on your local network, through the ESPHome **native API**. No cloud, no MQTT broker, no Home Assistant required.
 
+![Gladys, the integration and your ESPHome nodes: nodes push their states, commands leave from Gladys, and discovery goes through the mDNS Gladys captures](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/overview.svg)
+
 ## What it does
 
 Unlike an off-the-shelf device, an ESPHome node exposes exactly what **you** declared in its YAML file. The integration therefore adapts to whatever each node announces:
@@ -37,17 +39,20 @@ Unlike an off-the-shelf device, an ESPHome node exposes exactly what **you** dec
 | ----------------- | ------------------------------------------------------- |
 | `sensor`          | Numeric sensor (temperature, humidity, power, battery…) |
 | `binary_sensor`   | Binary sensor (motion, opening, presence, leak, smoke…) |
-| `text_sensor`     | Text sensor                                             |
+| `text_sensor`     | Text sensor (read-only)                                 |
+| `text`            | Writable text: send a message to a node (display)       |
 | `switch`          | Switch (on/off)                                         |
 | `light`           | Light: on/off, brightness, color, color temperature     |
 | `cover`           | Cover or curtain: open, close, stop, position           |
 | `fan`             | Fan: on/off and speed                                   |
 | `lock`            | Lock: lock / unlock                                     |
+| `siren`           | Siren: on / off                                         |
+| `valve`           | Valve: open / closed                                    |
 | `button`          | Push button                                             |
 | `number`          | Writable numeric setting (slider)                       |
-| `climate`         | Thermostat: setpoint and measured temperature           |
+| `climate`         | Thermostat: setpoint (single) and measured temperature  |
 
-Types Gladys has no equivalent for (`media_player`, `camera`, `select`, `valve`, `date`…) are simply left out of discovery.
+Types Gladys has no equivalent for (`media_player`, `camera`, `select`, `event`, `date`…) are simply left out of discovery.
 
 ### States arrive in real time
 
@@ -103,6 +108,8 @@ living-room.local
 192.168.1.43:6054
 ```
 
+![The integration merges three sources: the devices it already knows, the mDNS scan and the nodes added by hand; on connection, the node gives its real name, which becomes its id](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/discovery.svg)
+
 The port is optional (6053 by default). Once connected, the node reports its real name itself: a node added by IP address still shows up under its ESPHome name, and it keeps working even if its IP address changes later.
 
 > **If that node has an encryption key of its own**, declare it under **Keys per node** using **the same address** you typed here, not its ESPHome name:
@@ -121,6 +128,8 @@ The port is optional (6053 by default). Once connected, the node reports its rea
 ## Understanding sensors: why `device_class` matters
 
 Gladys needs to know **what a sensor measures** to display it properly (icon, unit, chart). ESPHome carries that information through `device_class`.
+
+![A YAML entity becomes one or more Gladys features: through its device_class, through the shape of its declaration, or as a generic measurement](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/mapping.svg)
 
 With a `device_class`, your sensor arrives typed:
 
@@ -144,7 +153,7 @@ Two families of sensors escape that rule, because ESPHome never gives them a `de
 | `unit_of_measurement: "°"`         | Angle           |
 | no unit and `accuracy_decimals: 0` | Counter         |
 
-This is the everyday case with mmWave sensors (`ld2350`, `ld2450`…): their target counters (_Moving / Still / Presence Target Count_) land under **Counter**, and their target angles (_Target-1 Angle_) under **Angle**. A firmware that explicitly declares `state_class: measurement_angle`, `total` or `total_increasing` is classified on that declaration first.
+This is the everyday case with mmWave sensors (`ld2410`, `ld2450`…): their target counters (_Moving / Still / Presence Target Count_) land under **Counter**, and their target angles (_Target-1 Angle_) under **Angle**. A firmware that explicitly declares `state_class: measurement_angle`, `total` or `total_increasing` is classified on that declaration first.
 
 Recognized `device_class` values include: `temperature`, `humidity`, `pressure`, `illuminance`, `battery`, `signal_strength`, `carbon_dioxide`, `pm25`, `pm10`, `power`, `energy`, `voltage`, `current`, `distance`, `moisture`, `speed`, `duration`, and for binary sensors: `motion`, `occupancy`, `door`, `window`, `smoke`, `gas`, `moisture`, `vibration`, `tamper`, `battery`, `lock`.
 
@@ -162,6 +171,9 @@ That is expected after a node reboot (OTA update, power cut). The integration re
 **A device shows up as "unreachable"**
 The connection to that node dropped: node powered off, out of Wi-Fi range, or rebooting. The integration retries automatically. Note also that an ESPHome node accepts a limited number of simultaneous API clients: if the same node is already connected to a Home Assistant or an open ESPHome log console, it may refuse one more connection. Close the clients you do not need and use the **Reconnect the nodes** action.
 
+**A thermostat only shows the measured temperature, with no setpoint**
+It is a two-point thermostat (`heat_cool`, with a low and a high setpoint). Gladys handles one setpoint per thermostat: rather than show a slider that would sit at 0 and drive nothing, the integration only publishes the measured temperature.
+
 **An entity does not show up at all**
 Its type has no Gladys equivalent (see the features table), or it is marked `internal: true` in your YAML — in which case ESPHome does not expose it on its API at all.
 
@@ -171,18 +183,18 @@ Estos son los parámetros que ESPHome te pide en su pantalla de configuración e
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| Getting started | `section` | No | This integration talks to your ESPHome nodes on your local network, through their native API (port 6053). Paste your encryption key below, then go to the Discover screen and run a scan: the nodes found on your network appear there with all their entities, ready to be added. No IP address to type. |
-| Encryption key | `secret` | No | The base64 key declared under `api: encryption: key:` in your ESPHome YAML. Used for every node that has no specific key below. Leave empty only if your nodes have no encryption. |
-| Nodes with a different key | `section` | No | Fill the two fields below only if some nodes do not share the key above, or if a node is not found by the network scan (another VLAN, mDNS filtered by your router). |
-| Keys per node | `secret` | No | One node per line, in the form `node\|key`. The node name is the one from your ESPHome YAML (`esphome: name:`), or its address. These keys take precedence over the key above. |
-| Nodes added by hand | `string` | No | One address per line (`salon.local`, `192.168.1.42`, or `192.168.1.42:6053`), for the nodes the network scan does not find. Nodes found by the scan need nothing here. |
-| Discovery duration (s) | `number` | No | How long the mDNS scan listens for ESPHome nodes on the network. |
-| Connection timeout (s) | `number` | No | How long to wait for a node to answer before giving up on it. |
+| Primeros pasos | `section` | No | Esta integración se comunica con sus nodos ESPHome en su red local, a través de su API nativa (puerto 6053). Pegue su clave de cifrado a continuación y luego vaya a la pantalla Descubrir e inicie una búsqueda: los nodos encontrados en su red aparecen allí con todas sus entidades, listos para añadirse. Sin ninguna dirección IP que escribir. |
+| Clave de cifrado | `secret` | No | La clave base64 declarada en `api: encryption: key:` de su YAML de ESPHome. Se usa para todos los nodos que no tengan una clave específica más abajo. Déjela vacía solo si sus nodos no tienen cifrado. |
+| Nodos con una clave distinta | `section` | No | Rellene los dos campos siguientes solo si algunos nodos no comparten la clave anterior, o si la búsqueda en la red no encuentra un nodo (otra VLAN, mDNS filtrado por su router). |
+| Claves por nodo | `secret` | No | Un nodo por línea, con el formato `nodo\|clave`. El nombre del nodo es el de su YAML de ESPHome (`esphome: name:`), o su dirección. Estas claves tienen prioridad sobre la clave anterior. |
+| Nodos añadidos a mano | `string` | No | Una dirección por línea (`salon.local`, `192.168.1.42` o `192.168.1.42:6053`), para los nodos que la búsqueda en la red no encuentra. Los nodos encontrados por la búsqueda no necesitan nada aquí. |
+| Duración de la búsqueda (s) | `number` | No | Tiempo durante el cual la búsqueda mDNS escucha los nodos ESPHome en la red. |
+| Tiempo de espera de conexión (s) | `number` | No | Tiempo de espera de la respuesta de un nodo antes de abandonarlo. |
 
 ## Cómo instalar ESPHome en Gladys
 
 1. En Gladys, abre **Integraciones**: ESPHome aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-esphome:1.0.5`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-esphome:1.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-esphome](https://github.com/William-De71/gladys-esphome).
 

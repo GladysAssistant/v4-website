@@ -41,6 +41,14 @@ upsc <ups-name>@<server-address>
 
 By default, `upsd` listens on TCP port **3493**. Ensure that both network rules and NUT ACLs allow access from Gladys.
 
+### Credentials travel in clear text
+
+The integration does not use TLS (`STARTTLS`): the NUT username and password, and every reading, cross the network in clear text. Keep it on a trusted network:
+
+- make `upsd` listen only on the interface Gladys reaches (`LISTEN` in `upsd.conf`), and filter port 3493 so that only the Gladys host can connect;
+- create a dedicated user in `upsd.users` for Gladys, with no `actions` nor `instcmds`: the integration only reads, so it never needs them;
+- never reuse that password elsewhere.
+
 ## Configuration
 
 1. Open **Integrations**, then **Network UPS Tools (NUT)**.
@@ -85,6 +93,8 @@ In **Dashboard → Edit → Add a widget**, choose **UPS**, then the UPS to show
 - the state (on mains, on battery, low battery…), the NUT alarms, the power and the server;
 - a **Refresh** button, which reads the UPS right away. It never sends a command to the UPS.
 
+The widget shows the last reading the integration made (3 minutes old at most). When the UPS is slow to answer, it shows "Reading the UPS…" and updates a few seconds later.
+
 ### Scene triggers
 
 In the scene editor, **Integrations** category:
@@ -109,17 +119,19 @@ Example: every morning, read the UPS status then send a message with the remaini
 
 ## Troubleshooting
 
-| Symptom                                                | Recommended checks                                                                                                                                                                                                                     |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| No UPS is found                                        | Check every host, port, firewall, and that at least one UPS is configured in each `ups.conf`.                                                                                                                                          |
-| Access or authentication error                         | Check the ACLs in `upsd.conf` and credentials defined in `upsd.users`.                                                                                                                                                                 |
-| Some values are missing                                | Run `upsc <ups>@<server>`; Gladys can only create variables exposed by your NUT driver.                                                                                                                                                |
-| Stale data                                             | A stable value is only rewritten once an hour, which is expected. Beyond that, verify that the NUT driver still communicates with the hardware and inspect the `upsd` logs.                                                            |
-| The Gladys database grows too fast                     | Raise the refresh interval: the amount of history is directly proportional to it. Every UPS you add writes its own history.                                                                                                            |
-| Adding a UPS fails with "incomplete or invalid device" | Update the integration. That rejection (HTTP 422) came from features published without their `min` and `max` bounds, which are now always declared.                                                                                    |
-| Values never change after adding the device            | Update the integration: devices are now published with periodic polling enabled.                                                                                                                                                       |
-| Some features are displayed without a name or an icon  | Update the integration, then add the UPS again from the **Discovery** tab so its existing features are updated: the load and the apparent power were published on a category/type pair the Gladys front-end does not know how to draw. |
-| The UPS load is displayed as "Unknown"                 | Update the integration, then add the UPS again from the **Discovery** tab: the load (`ups.load`) is now published on a category that lets Gladys show its name, "Load".                                                                |
+| Symptom                                                                      | Recommended checks                                                                                                                                                                                                                     |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No UPS is found                                                              | Check every host, port, firewall, and that at least one UPS is configured in each `ups.conf`.                                                                                                                                          |
+| Access or authentication error                                               | Check the ACLs in `upsd.conf` and credentials defined in `upsd.users`.                                                                                                                                                                 |
+| Some values are missing                                                      | Run `upsc <ups>@<server>`; Gladys can only create variables exposed by your NUT driver.                                                                                                                                                |
+| Stale data                                                                   | A stable value is only rewritten once an hour, which is expected. Beyond that, verify that the NUT driver still communicates with the hardware and inspect the `upsd` logs.                                                            |
+| The Gladys database grows too fast                                           | Raise the refresh interval: the amount of history is directly proportional to it. Every UPS you add writes its own history.                                                                                                            |
+| Adding a UPS fails with "incomplete or invalid device"                       | Update the integration. That rejection (HTTP 422) came from features published without their `min` and `max` bounds, which are now always declared.                                                                                    |
+| Values never change after adding the device                                  | Update the integration: devices are now published with periodic polling enabled.                                                                                                                                                       |
+| Some features are displayed without a name or an icon                        | Update the integration, then add the UPS again from the **Discovery** tab so its existing features are updated: the load and the apparent power were published on a category/type pair the Gladys front-end does not know how to draw. |
+| The connection status says "Connected, but 1 of 2 NUT servers do not answer" | The UPS of the other servers are still read. Check the named server (host, port, firewall, `upsd` running); the status goes back to plain "connected" at its next answer.                                                              |
+| A UPS stopped updating after a server was removed from the configuration     | Its server is no longer queried, which the logs say once. Add the server back, or delete the device in Gladys.                                                                                                                         |
+| The UPS load is displayed as "Unknown"                                       | Update the integration, then add the UPS again from the **Discovery** tab: the load (`ups.load`) is now published on a category that lets Gladys show its name, "Load".                                                                |
 
 For detailed errors, open the integration logs in Gladys. You can also set `LOG_LEVEL=debug` for more detailed logs.
 
@@ -159,7 +171,7 @@ Diese Einstellungen fragt Network UPS Tools (NUT) in seinem Konfigurationsbildsc
 ## So installierst du Network UPS Tools (NUT) in Gladys
 
 1. Öffne in Gladys **Integrationen**: Network UPS Tools (NUT) erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-nut:2.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-nut:2.2.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-nut](https://github.com/prohand/gladys-nut).
 

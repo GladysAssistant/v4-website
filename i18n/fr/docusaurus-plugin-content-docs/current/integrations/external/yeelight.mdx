@@ -23,6 +23,8 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 Cette intégration permet de piloter vos lampes **Yeelight** (ampoules, rubans LED, lampes de chevet, plafonniers) depuis Gladys Assistant, directement sur votre réseau local. Aucun compte cloud, aucune passerelle, aucun serveur intermédiaire : Gladys parle directement à vos lampes.
 
+![Gladys, l'intégration et vos lampes Yeelight : les lampes poussent leurs états sur une connexion ouverte chacune, les commandes partent de Gladys, et la découverte passe par le broadcast que Gladys envoie sur le port UDP 1982](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/overview.svg)
+
 ## Fonctionnalités
 
 L'intégration s'adapte à ce que chaque lampe sait faire — une lampe annonce elle-même ses capacités, et seules les fonctionnalités réellement disponibles sont créées :
@@ -66,6 +68,8 @@ Pour chaque lampe, dans l'application **Yeelight** :
 
 Une fois « Contrôle LAN » activé, allez dans l'écran **Découverte** de l'intégration et lancez un scan. Vos lampes apparaissent avec leur nom (celui que vous leur avez donné dans l'application Yeelight), prêtes à être ajoutées. **Aucune adresse IP à saisir.**
 
+![Deux sources alimentent l'écran Découverte : le scan réseau, dont les réponses portent l'identifiant d'usine, le modèle, les capacités et l'état, et les lampes ajoutées à la main, interrogées en TCP ; les deux donnent un appareil par lampe](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/discovery.svg)
+
 ### 2. Durée de transition
 
 Règle le fondu appliqué à chaque changement (allumage, variation, couleur). La valeur par défaut de **500 ms** donne une transition douce et naturelle. Mettez **0** pour un changement instantané.
@@ -77,12 +81,13 @@ Deux cas mènent ici, et le second est le plus courant :
 - « Contrôle LAN » n'est pas activé sur la lampe (voir Prérequis) ;
 - **vos lampes sont sur un autre sous-réseau / VLAN que Gladys** — le scan ne peut structurellement pas les atteindre, mais le pilotage fonctionne.
 
-Ajoutez alors leur adresse dans **Lampes ajoutées à la main**, une par ligne :
+Ajoutez alors leur adresse dans **Lampes ajoutées à la main**, séparées par une virgule (le port est facultatif, 55443 par défaut) :
 
 ```
-192.168.1.42
-192.168.1.43:55443
+192.168.1.42, 192.168.1.43:55443
 ```
+
+Une adresse IPv6 s'écrit entre crochets : `[fe80::1]` ou `[fe80::1]:55443`. Une lampe à la fois déclarée ici et trouvée par le scan n'apparaît qu'une fois, sous l'identité que lui donne le scan.
 
 > **Important :** donnez à ces lampes une **adresse IP fixe** dans votre routeur. Contrairement à une lampe trouvée par le scan — identifiée par son numéro de série, stable à vie — une lampe ajoutée à la main est identifiée par son adresse. Si son bail DHCP change, Gladys la verra comme une nouvelle lampe différente.
 
@@ -101,6 +106,10 @@ Temps pendant lequel le scan écoute les réponses. 5 secondes suffisent dans la
 
 Une lampe Yeelight refuse les commandes de couleur, de température et de luminosité quand elle est éteinte. L'intégration **l'allume automatiquement** avant d'appliquer votre réglage : cliquer sur une couleur allume donc la lampe dans cette couleur, ce qui est le comportement attendu.
 
+![Quand vous choisissez une couleur sur une lampe éteinte, l'intégration l'allume d'abord, puis envoie la couleur ; la lampe pousse ensuite son nouvel état](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/commands.svg)
+
+L'état d'allumage est connu grâce à ce que la lampe a déjà signalé : une lampe déjà allumée n'est donc pas rallumée — cela relancerait son fondu, de façon visible.
+
 ### La luminosité commence à 1 %, pas à 0 %
 
 Une Yeelight n'a pas d'état « 0 % » : le zéro, c'est l'extinction. Régler la luminosité sur 0 dans Gladys **éteint** donc la lampe.
@@ -113,14 +122,14 @@ Quand une lampe est en mode blanc (température de couleur), elle continue de m�
 
 Un plafonnier avec rétroéclairage (ceiling10, barres lumineuses…) expose **deux lumières séparées**, et Gladys les nomme explicitement :
 
-- **Lumière principale**, **Luminosité principale**, **Couleur principale**, **Température de couleur principale** ;
-- **Lumière d'ambiance**, **Luminosité d'ambiance**, **Couleur d'ambiance**, **Température de couleur d'ambiance**.
+- **Main light**, **Main brightness**, **Main colour**, **Main colour temperature** (lumière principale) ;
+- **Ambient light**, **Ambient brightness**, **Ambient colour**, **Ambient colour temperature** (lumière d'ambiance).
 
 Chacune s'allume et s'éteint indépendamment de l'autre. Pour piloter les deux d'un seul geste, créez une **scène** Gladys qui agit sur les deux interrupteurs : c'est la façon prévue par Gladys de grouper plusieurs commandes.
 
 La température de couleur d'ambiance n'apparaît que sur les modèles dont le rétroéclairage sait régler son blanc — c'est le curseur chaud/froid que l'application Yeelight affiche à côté de la roue chromatique de l'anneau.
 
-Sur une lampe sans rétroéclairage, il n'y a qu'une lumière et les libellés restent simples (**On/Off**, **Luminosité**, **Couleur**, **Température de couleur**).
+Sur une lampe sans rétroéclairage, il n'y a qu'une lumière et les libellés restent simples (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). Vous pouvez renommer chaque fonctionnalité dans Gladys.
 
 Si votre plafonnier allume ou éteint son anneau en même temps que la lumière principale, ce n'est pas Gladys : c'est l'option **« Marche/arrêt automatique avec la lumière principale »** de l'application Yeelight. Désactivez-la pour piloter chaque lumière séparément.
 
@@ -141,6 +150,7 @@ Chaque lampe accepte **4 connexions simultanées** et **60 commandes par minute*
 | Une lampe disparaît puis revient             | Coupure Wi-Fi ou interrupteur mural : l'intégration se reconnecte seule, en espaçant les essais |
 | Une lampe ajoutée à la main devient inconnue | Son adresse IP a changé — donnez-lui une adresse fixe dans votre routeur                        |
 | Les commandes ne passent plus après un temps | Un autre logiciel occupe les 4 connexions de la lampe                                           |
+| Une lampe ajoutée à la main est ignorée      | Son adresse a changé, ou il manque les crochets autour d'une adresse IPv6                       |
 
 ## Paramètres de configuration
 
@@ -157,7 +167,7 @@ Voici les paramètres demandés par Yeelight dans son écran de configuration da
 ## Comment installer Yeelight dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Yeelight apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-yeelight:1.2.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-yeelight:1.3.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-yeelight](https://github.com/William-De71/gladys-yeelight).
 

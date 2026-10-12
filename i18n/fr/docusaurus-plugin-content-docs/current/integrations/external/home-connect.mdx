@@ -188,10 +188,28 @@ Connect : une porte qui s'ouvre ou un programme qui se termine arrive dans
 Gladys en une seconde environ — y compris les actions faites directement sur
 l'appareil.
 
-Le polling (par défaut toutes les 15 minutes) tourne derrière, en filet de
-sécurité, car Home Connect coupe le flux environ une fois par jour. Home Connect
-applique un quota de requêtes : gardez un intervalle élevé sauf raison
-particulière.
+Le polling (toutes les 15 minutes par défaut, entre 15 et 60 minutes) tourne
+derrière, en filet de sécurité, car Home Connect coupe le flux environ une fois
+par jour.
+
+### Budget de requêtes
+
+Home Connect autorise **1 000 requêtes par jour** (et 50 par minute) par
+application développeur et par compte. L'intégration les dépense ainsi, par
+appareil :
+
+| Quand                                            | Requêtes                                |
+| ------------------------------------------------ | --------------------------------------- |
+| Chaque poll, flux d'événements sain              | 1 (états seuls)                         |
+| Chaque poll, flux coupé ou muet depuis 3 minutes | 5 (lecture complète)                    |
+| Chaque poll, des états ont changé sans événement | 1 + 5 (contrôle, puis lecture complète) |
+| Chaque reconnexion du flux (environ 1 par jour)  | 4, plus 1 pour la liste des appareils   |
+| Une commande (interrupteur, consigne, programme) | 1 ou 2                                  |
+
+Avec les 15 minutes par défaut et un flux sain, cela fait environ **100 requêtes
+par jour et par appareil**. Si le flux reste coupé, le polling seul coûte 480
+requêtes par jour et par appareil à 15 minutes : augmentez l'intervalle si vous
+avez plus d'un ou deux appareils et que le flux tombe souvent.
 
 Une valeur qui ne change pas est tout de même renvoyée à Gladys **au moins une
 fois par heure**. Gladys considère en effet qu'un état devient « périmé » au
@@ -233,6 +251,12 @@ quelques secondes par appareil.
 expire après environ deux mois sans utilisation, et il est également révoqué si
 vous retirez Gladys des applications autorisées de votre compte Home Connect.
 Cliquez de nouveau sur **Connecter**.
+
+**« Lecture de Home Connect impossible, nouvelle tentative automatique »** — le
+compte n'a pas pu être lu, le plus souvent parce que le réseau n'était pas encore
+prêt au démarrage de l'intégration. Les événements temps réel sont déjà actifs ;
+l'intégration relit le compte après 1, 5, puis toutes les 15 minutes, et le
+message disparaît de lui-même.
 
 **« Quota Home Connect atteint »** — trop de requêtes. L'intégration lève le pied
 d'elle-même ; augmentez l'intervalle de rafraîchissement si cela se répète.
@@ -277,7 +301,7 @@ Voici les paramètres demandés par Home Connect dans son écran de configuratio
 ## Comment installer Home Connect dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Home Connect apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-homeconnect:2.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-homeconnect:2.3.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-homeconnect](https://github.com/prohand/gladys-homeconnect).
 

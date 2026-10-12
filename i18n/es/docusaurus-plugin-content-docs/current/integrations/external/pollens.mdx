@@ -314,7 +314,8 @@ Three settings, per card:
 
 The curve shows **today and tomorrow**, hour by hour, with a marker at the
 current time. It is a forecast: Gladys keeps no history of it, so it is read
-again on every display. With four followed species or fewer, each gets its own
+from the source along with the current level — in the same request — and an
+answer less than 30 minutes old is reused rather than asked for again. With four followed species or fewer, each gets its own
 curve; beyond that, a single curve shows the worst of them.
 
 When you follow every species, the gauge is bound to the device measurement
@@ -399,8 +400,24 @@ species), then send a message containing the `summary` output. The `level` (0 to
 Each location is refreshed hourly by default. The CAMS forecast is recomputed
 once a day and interpolated hourly, so going below one hour gains nothing. The
 interval is configurable between 15 minutes and 24 hours in the Configuration
-tab. A device you have just created is refreshed straight away, without waiting
-for the next cycle.
+tab. A device you have just created is refreshed straight away — its place
+only — without waiting for the next cycle.
+
+A few things keep the integration gentle with both services:
+
+- **All your places are read in a single request** to Open-Meteo, and an answer
+  less than 30 minutes old is reused by the dashboard cards and the scene
+  actions instead of being asked for again.
+- **One refresh at a time**: a button pressed while a refresh is running waits
+  for it, or joins it, instead of starting a second one.
+- **A reconnection or a saved form does not re-read everything** when the last
+  refresh is recent: the cycle simply carries on at its usual pace.
+- **The measurements are sent to Gladys at its own pace**: Gladys accepts 300
+  values a minute per integration, and each place publishes 16. Twenty places
+  are therefore sent over two minutes rather than in one go, and a "too many
+  requests" answer from Gladys is retried once.
+- **A source that hiccups** (busy, restarting) is asked once more a few seconds
+  later before the refresh is counted as failed.
 
 ## Geographic coverage
 
@@ -410,14 +427,19 @@ a value.
 
 ## Troubleshooting
 
-- **"Test the pollen provider" button**: it queries the source live for _every_
-  location and prints one line per location, numbered like the listing. Each
+- **"Test the pollen provider" button**: it queries the source for _every_
+  location (an answer less than 30 minutes old is reused) and prints one line per location, numbered like the listing. Each
   line ends with the date of the data it read, so a source stuck in the past
   shows up here too. The quickest way to tell a network problem from a
   configuration one.
+- **The Supervision screen** says _who_ failed: "pollen forecast unavailable"
+  is the source (Open-Meteo), "Gladys rate limit reached" or "Gladys did not
+  accept the states" is your Gladys — the source is not at fault then, and the
+  next refresh publishes the values.
 - **The logs**: read the integration logs from the Gladys UI, or with
-  `docker logs`. Set `LOG_LEVEL` to `debug` to see the URLs being queried and
-  the exact device payload sent to Gladys.
+  `docker logs`. Set `LOG_LEVEL` to `debug` to see each request to the source
+  and the exact device payload sent to Gladys. The coordinates of your places
+  never appear in the logs, at any level.
 - **Nothing appears in the Discovery tab**: check the integration's status in
   the Supervision screen — when Gladys refuses a device, the reason is reported
   there.
@@ -439,7 +461,7 @@ Estos son los parámetros que Pollens te pide en su pantalla de configuración e
 ## Cómo instalar Pollens en Gladys
 
 1. En Gladys, abre **Integraciones**: Pollens aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-pollen:2.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-pollen:2.2.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-pollen](https://github.com/prohand/gladys-pollen).
 

@@ -1,0 +1,307 @@
+---
+title: "Intégration domotique DLNA, gratuite et open source"
+sidebar_label: "DLNA"
+description: "Pilotez vos lecteurs DLNA/UPnP (TV, ampli, enceinte) et vos serveurs multimédias, 100 % local. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dlna.png"
+keywords:
+  - "dlna"
+  - "domotique dlna"
+  - "gladys dlna"
+  - "dlna gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-dlna instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="dlna" />
+
+Pilotez depuis Gladys les lecteurs DLNA / UPnP de la maison (TV, ampli, enceinte, streamer) et
+lisez le contenu de vos serveurs multimédias (Plex, Jellyfin, Emby, MiniDLNA, un NAS…). Tout reste
+sur votre réseau local : ni compte, ni cloud.
+
+## Prérequis
+
+- Gladys 5.1.0 ou plus récent.
+- Les lecteurs et serveurs sur le même réseau que Gladys. Un appareil d'un autre réseau (VLAN,
+  autre sous-réseau) s'ajoute à la main, voir plus bas.
+- Sur un lecteur, le DLNA doit être activé : il s'appelle parfois « DLNA », « UPnP », « Media
+  renderer », « Lire sur » ou « AllShare » dans ses réglages, et certains téléviseurs ne répondent
+  qu'allumés (pas en veille).
+
+## Ajouter vos appareils
+
+1. Installez l'intégration, puis ouvrez son onglet **Découverte** : Gladys cherche sur le réseau et
+   liste les lecteurs et serveurs multimédias trouvés. Relancez la recherche avec le bouton s'il
+   manque un appareil (un téléviseur doit être allumé).
+2. Ajoutez les appareils voulus. Un **lecteur** reçoit les commandes de lecture ; un **serveur
+   multimédia** n'a aucune fonctionnalité, mais il apparaît alors dans les actions de scène.
+3. Certains appareils sont les deux : un ampli Denon, par exemple, est un lecteur et un petit
+   serveur multimédia. Le serveur est alors listé avec « (serveur multimédia) » après son nom.
+
+**Langue des noms et des messages** (anglais, français, allemand ou espagnol) : Gladys garde les
+noms d'un appareil une fois ajouté, choisissez donc la langue dans **Configuration** avant
+d'ajouter les appareils. C'est aussi la langue des messages d'erreur des commandes d'appareils et
+des actions de scène (Gladys ne transmet pas à une intégration la langue de son utilisateur).
+
+**Un appareil introuvable** : la découverte SSDP ne fonctionne que sur le réseau de Gladys.
+Trouvez l'URL de la description UPnP de l'appareil (dans la documentation de l'appareil ou du
+serveur : MiniDLNA sert
+`http://<adresse>:8200/rootDesc.xml`, un ampli Denon/HEOS
+`http://<adresse>:60006/upnp/desc/aios_device/aios_device.xml`). Vérifiez-la avec l'action
+**Tester une URL de description**, puis ajoutez-la aux **URL de description** de la configuration
+et relancez la recherche.
+
+## L'appareil lecteur
+
+| Fonctionnalité      | Rôle                                                                 |
+| ------------------- | -------------------------------------------------------------------- |
+| Lecture, Pause      | Lance ou reprend, met en pause (arrête si le lecteur ne sait pas)    |
+| Stop                | Arrête la lecture                                                    |
+| Précédent, Suivant  | Piste précédente ou suivante (de la file d'attente, voir plus bas)   |
+| Volume              | 0 à 100 %, ramené à la plage que le lecteur déclare                  |
+| Sourdine            | Active ou coupe la sourdine                                          |
+| État de lecture     | 1 pendant la lecture, 0 sinon (pause, arrêt, éteint)                 |
+| En cours de lecture | « Artiste — Titre » tel que le lecteur le décrit, « — » sinon        |
+| Notification        | Utilisée par l'action de scène « Diffuser une notification » du cœur |
+
+Volume et Sourdine n'apparaissent que si le lecteur les propose. L'appareil fonctionne avec le
+widget **Musique** du tableau de bord (précédent, lecture/pause, suivant, volume).
+
+**Ce que l'appareil joue par une autre voie** (Spotify Connect, AirPlay, Chromecast, une entrée
+HDMI…) : le **volume** et la **sourdine** sont ceux de l'appareil, donc ils se règlent depuis Gladys
+quelle que soit la source. Par exemple, une barre de son qui joue Spotify, même avec un compte
+gratuit, se pilote en volume depuis Gladys (constaté sur une Sennheiser AMBEO Soundbar). En
+revanche, l'état de lecture, le titre en cours et les commandes de lecture ne suivent que ce qui est
+joué **en DLNA** : pendant une écoute Spotify, l'appareil affiche « arrêté ».
+
+L'état est rafraîchi toutes les quelques secondes pendant la lecture, toutes les 15 secondes
+sinon. Un lecteur éteint affiche le badge **injoignable** et il est vérifié une fois par minute ;
+s'il revient sur une autre adresse, l'intégration le retrouve seule (une recherche réseau, au plus
+toutes les 5 minutes).
+
+## Scènes
+
+**Déclencheurs**
+
+- **Lecture DLNA démarrée**, **Lecture DLNA en pause**, **Lecture DLNA arrêtée** : choisissez un
+  lecteur, ou laissez vide pour n'importe lequel. Les actions suivantes peuvent utiliser
+  `{{triggerEvent.data.renderer}}`, `{{triggerEvent.data.title}}`, `{{triggerEvent.data.artist}}`
+  et `{{triggerEvent.data.album}}`. Usage typique : baisser la lumière quand la TV lance un film,
+  la rallumer à l'arrêt. Un lecteur qu'on éteint ne déclenche rien (ce n'est pas un « arrêt »), pas
+  plus que le court silence entre deux pistes d'une file d'attente.
+
+**Actions**
+
+- **Lire un serveur multimédia sur un lecteur DLNA** : choisissez le lecteur et le serveur, puis
+  ce qu'il faut chercher :
+  - _Tout_ : les titres, artistes et albums contenant le texte, puis un dossier de ce nom ;
+  - _Titre_, _Artiste_, _Album_ (un album est lu dans l'ordre des pistes) ;
+  - _Dossier_ : un nom de dossier (`Jazz`), ou un chemin depuis la racine du serveur
+    (`Musique/Jazz`). Les pistes des sous-dossiers sont comprises. L'action **Parcourir un serveur
+    multimédia** de la configuration aide à trouver les chemins.
+
+  Choisissez ensuite de tout lire dans l'ordre, tout en aléatoire, ou le premier résultat
+  seulement, et éventuellement un volume. Une recherche qui dure plus de 75 secondes (une très grande bibliothèque sur un serveur qui ne sait pas chercher) s'arrête sur une erreur : précisez-la, par exemple avec un chemin de dossier. L'action renvoie si quelque chose a été trouvé, le nombre
+  de pistes en file et le premier titre, pour les actions suivantes.
+
+- **Lire une URL sur un lecteur DLNA** : une radio web, un son ou un fichier d'annonce, par son URL
+  http(s), avec un titre et un volume facultatifs. L'URL doit être joignable par le lecteur
+  lui-même. Laissé vide, le titre est le nom que la radio web se donne (son en-tête `icy-name`, ou
+  à défaut le titre diffusé au démarrage du flux), et l'URL en dernier recours : l'intégration
+  interroge le flux une fois, 2,5 secondes au plus, sans le télécharger.
+
+- **Lire un favori DLNA** : lit sur un lecteur l'un des favoris de la configuration (voir plus
+  bas), avec un volume facultatif. L'action renvoie si la lecture a démarré et le nom du favori.
+
+**File d'attente** : un lecteur DLNA ne lit qu'un média à la fois. Pour un album ou un dossier,
+l'intégration garde la liste et lui passe les pistes l'une après l'autre (sans blanc si le lecteur
+le permet). Suivant et Précédent parcourent la liste. La file s'arrête quand autre chose est lu sur
+le lecteur, et elle n'avance que tant que Gladys et l'intégration tournent.
+
+**Annonces** : l'action **Diffuser une notification** du cœur fonctionne sur les lecteurs (elle
+demande Gladys Plus pour la synthèse vocale). Elle joue au volume courant (le cœur ne transmet pas
+son volume aux intégrations), et le média précédent ne reprend pas ensuite. Pour régler le volume
+d'une annonce, placez avant elle une action de contrôle d'appareil sur sa fonctionnalité Volume.
+
+## Favoris
+
+Dans **Configuration**, la partie **Favoris** accueille jusqu'à 8 favoris, chacun un groupe de
+champs numéroté :
+
+- **Nom** : affiché sur le bouton (24 caractères y tiennent). Laissé vide, le favori prend le nom
+  de l'hôte de son URL ou celui de sa recherche.
+- **URL** : une radio web ou un fichier, par son URL http(s) ; **ou** une recherche sur un
+  **serveur multimédia** : le nom du serveur tel qu'il apparaît dans Gladys (une partie suffit ;
+  vide quand un seul serveur est ajouté), le critère (tout, titre, artiste, album, dossier ou
+  playlist), la recherche (`Abbey Road`, `Musique/Jazz`) et la façon de lire ce qui est trouvé
+  (dans l'ordre, en aléatoire, le premier résultat). Si les deux sont remplis, l'URL l'emporte. Un
+  favori sans l'un ni l'autre est ignoré.
+
+Le serveur se donne par son nom plutôt que dans une liste, exprès : Gladys refuse d'enregistrer une
+configuration dont une liste contient un appareil qui n'existe plus, et un serveur supprimé
+bloquerait toute modification ultérieure de la configuration.
+
+## Tableau de bord
+
+Ajoutez le widget **Lecteur DLNA** et choisissez un lecteur dans ses réglages : il affiche le
+titre, l'album, l'état, la position dans la file, la sourdine, une jauge de volume en direct, et
+quatre boutons (lecture/pause, stop, volume − et +, par pas de 5 %).
+
+Ajoutez le widget **Favoris DLNA**, choisissez un lecteur et les favoris à afficher : un bouton par
+favori, quatre au plus par widget (Gladys admet quatre boutons par widget). Posez plusieurs widgets
+pour atteindre plus de favoris. Laissé vide, le widget affiche les quatre premiers favoris de la
+configuration. Il affiche aussi le favori que le lecteur tient en ce moment, avec son état, et
+coche son bouton : il y reste jusqu'à ce qu'autre chose soit lu sur le lecteur.
+
+## Actions de configuration
+
+- **Tester une URL de description** : lit une URL de description et dit ce qu'elle contient.
+- **Parcourir un serveur multimédia** : liste les dossiers et pistes d'un serveur, depuis la racine
+  ou depuis un chemin (`Musique/Albums`).
+
+## Sonos, Samsung, LG
+
+Les enceintes Sonos et les téléviseurs Samsung et LG webOS ont leur propre intégration Gladys, qui
+en fait plus que le DLNA (groupes, sources, applications). Cette intégration les voit quand même
+s'ils proposent le DLNA : elle sert alors à lire les médias d'un serveur ou des annonces, en
+complément de leur intégration.
+
+## Ce qui a été vérifié sur du vrai matériel
+
+- **Vérifié en réel sur un Denon AVR-S650H** (lecture, pause, volume, sourdine, arrêt, parcours du
+  serveur intégré) : un flux http se lit, la position avance, pause et reprise fonctionnent, le
+  volume réglé dans Gladys est celui de l'ampli (15 dans Gladys = MV15), la sourdine se règle et se
+  relit, l'arrêt arrête, et le serveur multimédia intégré se parcourt. L'ampli sort seul de veille
+  sur une commande. Sa description, ses descriptions de services et ses réponses d'état sont
+  rejouées par les tests.
+- **Un lecteur en veille peut mettre jusqu'à une minute à démarrer** : mesuré sur le Denon, il
+  accepte le média et la commande Lecture, ne donne aucune réponse utile pendant une douzaine de
+  secondes le temps de se réveiller, puis reste arrêté et ignore Lecture encore une quarantaine de
+  secondes avant de démarrer. L'intégration suit donc chaque démarrage jusqu'à 75 secondes, en
+  arrière-plan : elle attend tant que le lecteur ne répond pas, renvoie Lecture toutes les 5
+  secondes tant qu'il est arrêté (et recharge le média si besoin), relance une fois une lecture
+  coupée juste après son démarrage, et cesse dès qu'une autre commande ou un autre média arrive.
+  Les actions de scène répondent dès que le lecteur a accepté la commande ; un démarrage qui ne
+  vient jamais est noté dans les logs de l'intégration. Les flux https se lisent comme les flux
+  http.
+- **Vérifié par un utilisateur sur une Sennheiser AMBEO Soundbar** : trouvée seule à l'installation,
+  volume réglé depuis le widget, y compris pendant une lecture Spotify Connect.
+- **Pas encore vérifié sur du vrai matériel** : la file d'attente et ses enchaînements sans blanc,
+  la recherche réseau menée par Gladys, la recherche sur un vrai serveur (MiniDLNA, Plex,
+  Jellyfin), les favoris et leur widget, et le nom de station lu sur une vraie radio web. Ils sont couverts par des tests sur des appareils simulés, construits d'après des
+  formats publics. Signalez tout appareil qui se comporte mal, avec les logs de l'intégration.
+
+## Dépannage
+
+- **Rien dans l'onglet Découverte** : vérifiez que les appareils sont allumés et sur le même réseau
+  que Gladys ; lisez les logs de l'intégration (`Discovery: N SSDP answer(s)…`). Sinon, ajoutez une
+  URL de description à la main.
+- **« Le lecteur n'a rien à lire en DLNA »** (ou rien à mettre en pause, à arrêter, pas de piste
+  suivante) : le lecteur n'a aucun média DLNA chargé, et joue peut-être une autre source (Spotify,
+  AirPlay, une entrée HDMI…). Lancez un média depuis Gladys, ou utilisez l'application de cette
+  source. Stop est tout de même envoyé, car certains appareils arrêtent aussi l'autre source. Les
+  logs de l'intégration gardent le code UPnP répondu par le lecteur (par exemple
+  `Play failed: 701 Transition not available`).
+- **Un autre refus** se lit en clair (format refusé, média injoignable, lecteur en veille ou
+  occupé…) ; son code UPnP est dans les logs de l'intégration. Le message suit la langue de la
+  configuration, sauf sur les boutons du widget pour « rien en DLNA », affiché dans la langue de
+  l'utilisateur.
+- **Une radio web affiche son URL au lieu de son nom** : le flux ne donne pas de nom (pas d'en-tête
+  `icy-name`), ou n'a pas répondu en 2,5 secondes. Remplissez le titre de l'action de scène, ou
+  faites-en un favori nommé.
+- **Un fichier ou une radio ne se lit pas** : le lecteur doit accepter son format et joindre son
+  URL lui-même. Un lecteur en veille peut mettre une dizaine de secondes à démarrer : l'intégration
+  l'attend.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par DLNA dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Trouver vos appareils | `section` | Non | Les lecteurs et serveurs multimédias de votre réseau sont trouvés automatiquement : ouvrez l'onglet Découverte et ajoutez ceux que vous voulez. Un appareil d'un autre réseau (VLAN, autre sous-réseau) s'ajoute ci-dessous par l'URL de sa description UPnP. |
+| URL de description (facultatif) | `string` | Non | Une ou plusieurs URL de description UPnP, séparées par des virgules. Testez-en une d'abord avec l'action ci-dessous. |
+| Langue des noms et des messages | `select` | Non | Noms des fonctionnalités des appareils ajoutés désormais (Gladys les garde une fois l'appareil ajouté), et messages d'erreur des commandes et des scènes. |
+| Favoris | `section` | Non | Jusqu'à 8 médias à lancer d'un geste depuis le widget « Favoris DLNA » ou l'action de scène « Lire un favori DLNA ». Chaque favori est une URL (radio web, fichier) ou une recherche sur un serveur multimédia : remplissez l'une ou l'autre. Un favori sans l'une ni l'autre est ignoré. |
+| Favori 1 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+| Favori 2 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+| Favori 3 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+| Favori 4 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+| Favori 5 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+| Favori 6 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+| Favori 7 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+| Favori 8 | `section` | Non |  |
+| Nom (affiché sur le bouton) | `string` | Non |  |
+| URL (radio web, fichier) | `string` | Non |  |
+| Ou un serveur multimédia (son nom dans Gladys) | `string` | Non | Vide : le seul serveur multimédia ajouté à Gladys. |
+| Chercher par | `select` | Non |  |
+| Recherche sur le serveur | `string` | Non |  |
+| Lecture | `select` | Non |  |
+
+## Comment installer DLNA dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : DLNA apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-dlna:1.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-dlna](https://github.com/guim31/gladys-dlna).
+
+DLNA nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+DLNA est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-dlna) — [source de cette documentation](https://github.com/guim31/gladys-dlna/blob/HEAD/docs/fr.md)

@@ -184,9 +184,26 @@ The integration holds a permanent **event stream** open to Home Connect, so a
 door opening or a program finishing reaches Gladys in about a second — including
 changes made on the appliance itself.
 
-Polling (default: every 15 minutes) runs behind it as a safety net, because Home
-Connect closes the stream roughly once a day. Home Connect enforces a request
-quota, so keep the interval high unless you have a reason not to.
+Polling (every 15 minutes by default, between 15 and 60 minutes) runs behind it
+as a safety net, because Home Connect closes the stream roughly once a day.
+
+### Request budget
+
+Home Connect allows **1,000 requests a day** (and 50 a minute) per developer
+application and account. The integration spends them like this, per appliance:
+
+| When                                                  | Requests                         |
+| ----------------------------------------------------- | -------------------------------- |
+| Each poll, event stream healthy                       | 1 (statuses only)                |
+| Each poll, event stream down or silent for 3 minutes  | 5 (full read)                    |
+| Each poll, the statuses moved without an event        | 1 + 5 (check, then full read)    |
+| Each reconnection of the event stream (about 1 a day) | 4, plus 1 for the appliance list |
+| A command (switch, setpoint, program)                 | 1 or 2                           |
+
+With the default 15 minutes and a healthy stream, that is about **100 requests a
+day per appliance**. If the stream stays down, polling alone costs 480 a day per
+appliance at 15 minutes — raise the interval if you have more than one or two
+appliances and the stream keeps failing.
 
 A value that does not change is still re-sent to Gladys **at least once an
 hour**. Gladys declares a state outdated after a configurable delay (48 hours by
@@ -225,6 +242,11 @@ in the background, which takes a few seconds per appliance.
 token was refused. It expires after about two months without use, and it is also
 revoked when you remove Gladys from the authorized applications of your Home
 Connect account. Click **Connect** again.
+
+**"Home Connect could not be read, retrying automatically"** — the account could
+not be read, usually because the network was not up yet when the integration
+started. Real-time events are already on; the integration reads the account
+again after 1, 5, then every 15 minutes, and the message clears on its own.
 
 **"Home Connect rate limit reached"** — too many requests. The integration backs
 off on its own; raise the refresh interval if it keeps happening.
@@ -268,7 +290,7 @@ Diese Einstellungen fragt Home Connect in seinem Konfigurationsbildschirm in Gla
 ## So installierst du Home Connect in Gladys
 
 1. Öffne in Gladys **Integrationen**: Home Connect erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-homeconnect:2.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-homeconnect:2.3.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-homeconnect](https://github.com/prohand/gladys-homeconnect).
 

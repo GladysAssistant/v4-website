@@ -263,7 +263,9 @@ sous `channel` plutôt que le couple `pid` / `addr` à plat. Cela reste du JSON 
 | `features`          | Sur un capteur (`type: 1`) : `temperature`, `humidity`, `illuminance`, `click` |
 
 Un boîtier déclaré sans `sensors: true` ne crée aucun appareil dans Gladys :
-il n'est là que pour porter la chaîne de connexion.
+il n'est là que pour porter la chaîne de connexion. Quand le champ global
+**Chaîne de connexion** est vide, celle déclarée sur le boîtier sert à tous les
+appareils.
 
 ## Faire passer un ordre
 
@@ -282,7 +284,10 @@ Trois choses y répondent, sans rien à régler :
   seconde, dans l'ordre où vous les avez donnés ;
 - **un ordre que le boîtier n'a pas pu porter est renvoyé.** Un refus, lui, ne
   l'est pas : une chaîne de connexion rejetée et un canal inconnu répondront
-  exactement pareil la seconde fois ;
+  exactement pareil la seconde fois. Un TOGGLE de bouton poussoir n'est renvoyé
+  que s'il n'est certainement pas parti (service injoignable, boîtier occupé) :
+  après un délai dépassé, il a peut-être déjà ouvert le portail, et un second le
+  refermerait ;
 - **un ordre est répété sur l'air**, comme une vraie télécommande le répète tant
   qu'on garde le doigt appuyé. Par défaut, chaque ordre part deux fois.
 
@@ -370,7 +375,10 @@ Ce qui identifie un écho, c'est **l'adresse d'où il part**. Le canal sur leque
 Gladys émet est celui du boîtier : rien d'autre dans la maison ne parle avec
 cette voix, quel que soit le délai. Un boîtier qui met dix secondes à se répéter
 n'est donc plus pris pour une main sur une télécommande — c'était de quoi
-renvoyer en haut un volet arrêté à 40 %.
+renvoyer en haut un volet arrêté à 40 %. Cette voix reste celle de Gladys une
+minute après son dernier ordre : une télécommande recopiée dans l'appli AirSend
+(même adresse que l'appareil, l'usage pour un portail à code fixe) est de
+nouveau suivie une fois cette minute passée.
 
 Deux conséquences visibles :
 
@@ -470,7 +478,10 @@ Deux détails qui comptent :
   Demander une position avant cela envoie le volet à la butée la plus proche,
   ce qui est précisément ce qui établit la référence ;
 - la position **survit aux redémarrages** de l'intégration : elle repart de la
-  valeur conservée par Gladys.
+  valeur conservée par Gladys. Un volet ajouté dans Gladys après le démarrage de
+  l'intégration reçoit tout de suite la position déjà connue ;
+- un volet envoyé à une position est **arrêté à temps même si Gladys ne répond
+  plus un instant** : le STOP part avant que la position soit publiée.
 
 ### La position favorite
 
@@ -479,6 +490,14 @@ bouton « my » de Somfy). La radio dit « va à ta position » sans jamais dire
 laquelle. Mesurez-la une fois et déclarez-la avec `"favorite_position": 40` :
 appuyer sur ce bouton remonte alors 40 % dans Gladys. Sans elle, le volet est
 signalé arrêté quelque part entre les deux — la réponse honnête.
+
+La plupart des télécommandes Somfy RTS envoient ce bouton comme un simple
+**STOP** : il arrête un volet qui bouge, et envoie un volet à l'arrêt à sa
+position. Avec `favorite_position` déclarée, l'intégration fait la différence
+grâce à la course : un STOP reçu alors que le volet est à l'arrêt l'envoie
+aussi à sa position favorite dans Gladys. Il faut pour cela un volet minuté
+(`travel_up` / `travel_down`) : sans temps de course, rien ne dit s'il bouge, et
+un STOP reste un STOP.
 
 ## Écouter la radio
 
@@ -688,7 +707,9 @@ Ignored a radio frame (unreliable, graded 2): pid 25455, addr 94311, carrying le
 décodé l'émetteur et l'ordre, il n'est simplement pas sûr de lui — une
 télécommande en limite de portée, une bande encombrée. Activez **Accepter les
 trames peu fiables** : elles sont alors utilisées quand même, au prix d'une
-fausse détection de temps en temps.
+fausse détection de temps en temps. Une télécommande murale déclarée dans
+`remotes` avec son `pid` **et** son `addr` n'en a pas besoin : ses trames sont
+suivies quelle que soit leur note, une adresse exacte n'est pas du bruit.
 
 **Une trame sans adresse** (première ligne, `pid` seul) : le boîtier a capté le
 protocole **sans le décoder**. Il n'y a ni émetteur à nommer, ni ordre à
@@ -939,7 +960,8 @@ Dans l'éditeur de scènes, rubrique **Intégrations** :
   et sur l'ordre (`up`, `down`, `stop`, `favorite`, `on`, `off`, `toggle`). La
   scène peut lire `device_name`, `order`, `pid` et `addr`. Les ordres de Gladys
   ne le déclenchent jamais : une scène ne peut pas boucler sur elle-même. Une
-  télécommande tenue appuyée compte pour un seul appui.
+  télécommande tenue appuyée compte pour un seul appui — et pour un seul clic
+  sur la fonction `click` d'une télécommande de type `1`.
 - **Un ordre radio a échoué** — le boîtier n'a pas porté un ordre donné par
   Gladys : injoignable, chaîne de connexion refusée, boîtier occupé… La scène
   peut lire `device_name`, `reason` (`NETWORK`, `SECURITY`, `BUSY`, `HTTP_401`,
@@ -1028,7 +1050,7 @@ Voici les paramètres demandés par Devmel dans son écran de configuration dans
 ## Comment installer Devmel dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Devmel apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:2.0.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:2.2.4`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 

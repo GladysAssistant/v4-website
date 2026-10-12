@@ -76,6 +76,8 @@ obligatoire.
 | **URL du broker**                    | L'adresse de votre broker MQTT, par exemple `mqtt://192.168.1.10:1883`. Les schémas `mqtts://`, `ws://` et `wss://` sont acceptés. Saisir l'adresse seule (`192.168.1.10:1884`) fonctionne : `mqtt://` est ajouté pour vous. |
 | **Nom d'utilisateur / Mot de passe** | À laisser vides si votre broker accepte les connexions anonymes.                                                                                                                                                             |
 | **Topic de base**                    | Le `mqtt.base_topic` configuré dans Zigbee2MQTT. `zigbee2mqtt` dans la quasi-totalité des cas.                                                                                                                               |
+| **Certificat de l'autorité (PEM)**   | Uniquement en `mqtts://` ou `wss://` avec un certificat auto-signé ou une autorité privée : collez le certificat de l'autorité (ou celui, auto-signé, du broker). Le coller sur une seule ligne convient.                    |
+| **Vérifier le certificat du broker** | Activé par défaut. Le désactiver accepte n'importe quel certificat — y compris celui d'une machine qui se ferait passer pour votre broker. Préférez le certificat ci-dessus.                                                 |
 
 Cliquez ensuite sur **Tester la connexion MQTT** : le bouton indique s'il est
 connecté, combien d'appareils il voit et combien de messages il a reçus. C'est le
@@ -282,8 +284,12 @@ Bon à savoir sur ce déclencheur :
   compteur ci-dessous ne fait pas ;
 - **pas d'avalanche quand c'est Zigbee2MQTT qui tombe** : tant que le broker est
   injoignable ou que le bridge est hors ligne, aucun appareil n'est annoncé (tous
-  se taisent pour la même raison). Au retour du réseau, seuls ceux qui restent
-  muets sont annoncés ;
+  se taisent pour la même raison). Au retour du réseau, chaque appareil qui
+  répondait encore au début de la coupure dispose d'un seuil complet pour se
+  manifester à nouveau : une prise qui parle toutes les cinq minutes n'est donc
+  pas annoncée « silencieuse » puis « revenue » une minute plus tard. Seuls ceux
+  qui restent muets au-delà sont annoncés. Un redémarrage de l'intégration
+  compte comme une coupure ;
 - **pas d'alerte à l'installation ni à la mise à jour** pour les appareils déjà
   silencieux : seul un _passage_ de « en vie » à « silencieux » compte. Ce
   souvenir survit aux redémarrages ;
@@ -378,12 +384,29 @@ que de répondre une valeur fausse.
 - **Un appareil jamais entendu** dispose d'un seuil complet à partir du démarrage
   du moniteur avant d'être signalé. Une intégration fraîchement installée ne
   déclare donc pas tout le réseau mort à la première minute.
+- **Après une coupure** (broker injoignable, bridge hors ligne, intégration
+  arrêtée), un appareil qui répondait au début de la coupure dispose d'un seuil
+  complet, compté depuis le retour du réseau, avant d'être déclaré silencieux.
+  Sa fonctionnalité _Silence_ continue pourtant d'afficher la durée réelle
+  depuis son dernier message. Un appareil déjà silencieux avant la coupure le
+  reste. Le prix de ce choix : un appareil vraiment mort pendant la coupure est
+  signalé plus tard que d'habitude, au plus de la durée de la coupure — plutôt
+  que tous les appareils secteur signalés silencieux puis de retour à la fin
+  d'une seule panne.
+- **Les groupes Zigbee2MQTT sont ignorés** : ils publient sous le même topic que
+  les appareils, mais ne sont pas des appareils.
 
 ## En cas de problème
 
 **Le bouton de test dit qu'il n'est pas connecté.** Vérifiez l'URL (avec le port,
 `1883` par défaut), les identifiants, et que le broker autorise les connexions
-depuis l'adresse de Gladys.
+depuis l'adresse de Gladys. Des identifiants écrits dans l'URL
+(`mqtt://utilisateur:motdepasse@hote`) fonctionnent, mais ils sont affichés `***`
+dans les messages et les logs.
+
+**Le bouton de test parle d'un certificat auto-signé (« self-signed »).** Votre
+broker `mqtts://` utilise un certificat que Node ne reconnaît pas : collez son
+autorité de certification dans **Certificat de l'autorité (PEM)** (section TLS).
 
 **Il est connecté, mais ne voit aucun appareil.** Le topic de base ne correspond
 probablement pas à celui de Zigbee2MQTT. Comparez-le avec `mqtt.base_topic` dans
@@ -418,6 +441,9 @@ Voici les paramètres demandés par Z2M Devices Monitor dans son écran de confi
 | Nom d'utilisateur | `string` | Non | Laissez vide si votre broker accepte les connexions anonymes. |
 | Mot de passe | `secret` | Non |  |
 | Topic de base | `string` | Oui | Le topic de base configuré dans Zigbee2MQTT (mqtt.base_topic). |
+| TLS (mqtts:// et wss:// uniquement) | `section` | Non | Uniquement pour un broker joint en TLS. Un broker domestique utilise le plus souvent un certificat auto-signé ou une autorité de certification privée, refusés par défaut : collez ci-dessous le certificat de cette autorité (ou le certificat auto-signé du broker), au format PEM. Désactiver la vérification fonctionne aussi, mais n'importe quelle machine de votre réseau peut alors se faire passer pour votre broker. |
+| Certificat de l'autorité (PEM) | `string` | Non | Le texte complet, de -----BEGIN CERTIFICATE----- à -----END CERTIFICATE-----. Le coller sur une seule ligne convient. Laissez vide pour un certificat signé par une autorité publique. |
+| Vérifier le certificat du broker | `boolean` | Non | Laissez-la activée. Désactivée, n'importe quel certificat est accepté, y compris celui d'un attaquant. |
 | Seuils de silence | `section` | Non | Un appareil est déclaré mort dès qu'il se tait depuis plus longtemps que son seuil. Les capteurs sur pile parlent bien moins souvent que les appareils sur secteur, d'où deux valeurs par défaut distinctes. Commencez large : mieux vaut être alerté quelques heures trop tard que réveillé par une fausse alerte. |
 | Seuil pour les appareils sur secteur (min) | `number` | Non | S'applique aux prises, ampoules et routeurs, qui parlent souvent. |
 | Seuil pour les appareils sur pile (min) | `number` | Non | S'applique aux capteurs sur pile, qui dorment la plupart du temps. 1440 minutes valent 24 heures. |
@@ -434,7 +460,7 @@ Voici les paramètres demandés par Z2M Devices Monitor dans son écran de confi
 ## Comment installer Z2M Devices Monitor dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Z2M Devices Monitor apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-z2m-devices-monitor:2.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-z2m-devices-monitor:2.2.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-z2m-devices-monitor](https://github.com/prohand/gladys-z2m-devices-monitor).
 

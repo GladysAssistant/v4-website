@@ -40,8 +40,9 @@ La MFA est prise en charge avec les codes de vérification DSM (OTP). **Approuve
 - **URL DSM** : URL locale complète, par exemple `https://192.168.1.20:5001`.
 - **Nom d'utilisateur / mot de passe** : identifiants du compte DSM dédié.
 - **Code OTP actuel (MFA)** : code actuel à 6 chiffres pour la première connexion MFA ou après révocation de l'appareil approuvé dans DSM. Il n'est plus transmis lorsque l'appareil mémorisé est accepté.
-- **Vérifier le certificat TLS** : laissez cette option activée avec un certificat de confiance. Ne la désactivez que pour un certificat local auto-signé, après avoir vérifié vous-même l'adresse du NAS.
-- **NAS 2, NAS 3 et NAS 4** : connexions facultatives utilisant les mêmes champs URL, nom d'utilisateur, mot de passe, OTP et TLS que le NAS principal. Laissez l'URL d'un NAS vide pour ignorer cet emplacement. Chaque mot de passe et chaque OTP est conservé dans un champ secret Gladys dédié et n'apparaît jamais dans un document JSON.
+- **Vérifier le certificat TLS** : laissez cette option activée avec un certificat de confiance. Pour un certificat auto-signé, préférez épingler son empreinte (champ suivant) plutôt que désactiver cette vérification : une fois désactivée, tout appareil capable d'intercepter le trafic entre Gladys et le NAS sur votre réseau peut se faire passer pour le NAS et recevoir le mot de passe DSM (attaque de l'homme du milieu).
+- **Empreinte du certificat épinglé (SHA-256)** : facultatif. Une fois renseignée, le NAS n'est accepté que si son certificat a exactement cette empreinte, quel que soit le réglage ci-dessus ; sinon la connexion est coupée avant tout envoi, mot de passe compris. Relevez-la dans votre navigateur (cadenas → certificat → empreinte SHA-256) ou avec `openssl s_client -connect ADRESSE_DU_NAS:5001 </dev/null | openssl x509 -noout -fingerprint -sha256` ; les deux-points, les espaces et la casse sont sans importance. Mettez-la à jour à chaque renouvellement du certificat par DSM, et n'épinglez pas un certificat renouvelé automatiquement (Let's Encrypt) : gardez plutôt la vérification activée.
+- **NAS 2, NAS 3 et NAS 4** : connexions facultatives utilisant les mêmes champs URL, nom d'utilisateur, mot de passe, OTP, TLS et empreinte que le NAS principal. Laissez l'URL d'un NAS vide pour ignorer cet emplacement. Chaque mot de passe et chaque OTP est conservé dans un champ secret Gladys dédié et n'apparaît jamais dans un document JSON.
 - **Intervalle de rafraîchissement** : valeur saisie manuellement en secondes, entre 60 et 86400. La valeur recommandée et utilisée par défaut est 900 secondes (15 minutes). Un intervalle modéré évite de remplir inutilement la base Gladys.
 - **Format de date** : présentation des dates de sauvegarde dans Gladys. `ISO 8601` (valeur par défaut, UTC) conserve l'horodatage DSM brut ; `AAAA-MM-JJ HH:mm`, `JJ/MM/AAAA HH:mm` et `MM/JJ/AAAA hh:mm AM/PM` affichent l'heure locale du conteneur de l'intégration. Renseignez la variable d'environnement `TZ` du conteneur avec votre fuseau horaire si ces formats affichent une heure inattendue. Le changement de format s'applique à partir du rafraîchissement suivant : les dates déjà enregistrées conservent le format utilisé lors de leur publication.
 
@@ -98,7 +99,8 @@ Les **actions** interrogent le NAS au moment où la scène les atteint et renvoi
 - **DSM injoignable** : testez l'URL depuis l'hôte Gladys et vérifiez le pare-feu du NAS.
 - **DSM n'a pas répondu à temps** : le NAS a accepté la connexion mais n'a rien renvoyé en 20 secondes. Le cycle est abandonné puis réessayé au suivant ; vérifiez la charge du NAS et le réseau.
 - **Un seul NAS injoignable dans une configuration multi-NAS** : les autres NAS continuent de publier leurs valeurs et l'écran de configuration Gladys indique l'adresse en défaut. Seule une panne de tous les NAS signale l'intégration comme déconnectée.
-- **Erreur de certificat** : installez un certificat de confiance dans DSM. Pour une installation privée auto-signée uniquement, la vérification peut être désactivée.
+- **Erreur de certificat** (`certificate rejected`) : installez un certificat de confiance dans DSM. Pour une installation privée auto-signée, épinglez l'empreinte du certificat ; désactiver la vérification fonctionne aussi, mais expose le mot de passe à un homme du milieu sur votre réseau.
+- **`certificate does not match the pinned SHA-256 fingerprint`** : DSM a présenté un autre certificat. Si vous l'avez renouvelé ou remplacé vous-même, collez la nouvelle empreinte ; sinon, quelque chose se fait passer pour votre NAS — rien ne lui a été envoyé.
 - **Volume absent** : relancez une recherche après la création ou la suppression d'un volume.
 - **Tâches de sauvegarde absentes** : vérifiez que Hyper Backup ou Active Backup est installé, qu'au moins une tâche existe et que le compte DSM dédié peut ouvrir le paquet correspondant, puis relancez la recherche.
 - **La date d'une sauvegarde n'a aucune valeur** : mettez l'intégration à jour, enregistrez de nouveau la connexion et attendez le prochain rafraîchissement. Les détails Active Backup sont interrogés tâche par tâche, car la liste générale ne fournit pas toujours les dates des versions.
@@ -115,31 +117,35 @@ Voici les paramètres demandés par Synology DSM dans son écran de configuratio
 | Mot de passe | `secret` | Oui |  |
 | Code OTP actuel (MFA) | `secret` | Non | Requis uniquement pour approuver cette installation Gladys lors de la première connexion MFA, ou après révocation de l'appareil de confiance dans DSM. Saisissez un code de vérification actuel à 6 chiffres. |
 | Vérifier le certificat TLS | `boolean` | Non | Laissez activé sauf si DSM utilise un certificat auto-signé. |
+| Empreinte du certificat épinglé (SHA-256) | `string` | Non | Facultatif, pour un certificat auto-signé. Une fois renseignée, le NAS n'est accepté que si son certificat a exactement cette empreinte SHA-256 (sinon le mot de passe n'est jamais envoyé), quel que soit le réglage ci-dessus. |
 | NAS 2 (facultatif) | `section` | Non | Laissez l'URL vide pour ignorer cet emplacement. Les identifiants sont stockés dans des champs secrets dédiés. |
 | NAS 2 — URL DSM | `string` | Non |  |
 | NAS 2 — Nom d'utilisateur | `string` | Non |  |
 | NAS 2 — Mot de passe | `secret` | Non |  |
 | NAS 2 — Code OTP actuel | `secret` | Non |  |
 | NAS 2 — Vérifier le certificat TLS | `boolean` | Non |  |
+| NAS 2 — Empreinte du certificat épinglé (SHA-256) | `string` | Non |  |
 | NAS 3 (facultatif) | `section` | Non | Laissez l'URL vide pour ignorer cet emplacement. Les identifiants sont stockés dans des champs secrets dédiés. |
 | NAS 3 — URL DSM | `string` | Non |  |
 | NAS 3 — Nom d'utilisateur | `string` | Non |  |
 | NAS 3 — Mot de passe | `secret` | Non |  |
 | NAS 3 — Code OTP actuel | `secret` | Non |  |
 | NAS 3 — Vérifier le certificat TLS | `boolean` | Non |  |
+| NAS 3 — Empreinte du certificat épinglé (SHA-256) | `string` | Non |  |
 | NAS 4 (facultatif) | `section` | Non | Laissez l'URL vide pour ignorer cet emplacement. Les identifiants sont stockés dans des champs secrets dédiés. |
 | NAS 4 — URL DSM | `string` | Non |  |
 | NAS 4 — Nom d'utilisateur | `string` | Non |  |
 | NAS 4 — Mot de passe | `secret` | Non |  |
 | NAS 4 — Code OTP actuel | `secret` | Non |  |
 | NAS 4 — Vérifier le certificat TLS | `boolean` | Non |  |
+| NAS 4 — Empreinte du certificat épinglé (SHA-256) | `string` | Non |  |
 | Intervalle de rafraîchissement (s) | `number` | Non | Intervalle personnalisé en secondes (60 à 86400). La valeur par défaut est 900 secondes. Un intervalle modéré limite la croissance de la base Gladys. |
 | Format de date | `select` | Non | Format utilisé pour les dates de sauvegarde publiées dans Gladys. Tous les formats sauf ISO 8601 affichent l'heure locale du conteneur de l'intégration. |
 
 ## Comment installer Synology DSM dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Synology DSM apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:2.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:2.3.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-synology](https://github.com/prohand/gladys-synology).
 

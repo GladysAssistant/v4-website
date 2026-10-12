@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica Yeelight, gratuita y de código abierto"
 sidebar_label: "Yeelight"
-description: "Control your Yeelight Wi-Fi lights locally: on/off, brightness, color. Free, open source, installable in one click."
+description: "Controle sus luces Wi-Fi Yeelight en local: encendido, brillo, color. Gratuita, de código abierto, se instala con un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-yeelight.jpg"
 keywords:
   - "yeelight"
@@ -28,6 +28,8 @@ La documentación de esta integración la escribe su autor y, por ahora, solo es
 :::
 
 This integration lets you control your **Yeelight** lights (bulbs, LED strips, bedside lamps, ceiling lights) from Gladys Assistant, directly on your local network. No cloud account, no gateway, no middleman: Gladys talks to your lights itself.
+
+![Gladys, the integration and your Yeelight lights: lights push their states over one open connection each, commands leave from Gladys, and discovery goes through the broadcast Gladys sends on UDP 1982](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/overview.svg)
 
 ## Features
 
@@ -72,6 +74,8 @@ For each light, in the **Yeelight** app:
 
 Once "LAN Control" is enabled, open the integration's **Discover** screen and run a scan. Your lights appear with their name (the one you gave them in the Yeelight app), ready to be added. **No IP address to type.**
 
+![Two sources feed the Discover screen: the network scan, whose replies carry the factory id, the model, the capabilities and the state, and the lights added by hand, probed over TCP; both end up as one device per light](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/discovery.svg)
+
 ### 2. Transition duration
 
 Sets the fade applied to every change (switching on, dimming, color). The default of **500 ms** gives a smooth, natural transition. Set **0** for an instant change.
@@ -83,12 +87,13 @@ Two cases lead here, and the second is the most common:
 - "LAN Control" is not enabled on the light (see Requirements);
 - **your lights sit on another subnet / VLAN than Gladys** — the scan structurally cannot reach them, but control works.
 
-Add their address under **Lights added by hand**, one per line:
+Add their address under **Lights added by hand**, separated by a comma (the port is optional, 55443 by default):
 
 ```
-192.168.1.42
-192.168.1.43:55443
+192.168.1.42, 192.168.1.43:55443
 ```
+
+An IPv6 address goes in brackets: `[fe80::1]` or `[fe80::1]:55443`. A light both declared here and found by the scan is listed only once, under the identity the scan gives it.
 
 > **Important:** give those lights a **fixed IP address** in your router. Unlike a light found by the scan — identified by its serial number, stable for life — a light added by hand is identified by its address. If its DHCP lease changes, Gladys will see it as a different light.
 
@@ -106,6 +111,10 @@ How long the scan listens for answers. 5 seconds is plenty in most cases; raise 
 ### Setting a color on a light that is off
 
 A Yeelight refuses color, temperature and brightness commands while it is off. The integration **turns it on automatically** before applying your setting: clicking a color therefore switches the light on in that color, which is what you meant.
+
+![When you pick a colour on a light that is off, the integration switches it on first, then sends the colour; the light pushes its new state back](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/commands.svg)
+
+The power state is known from what the light already reported, so a light that is on is not switched on again — that would restart its fade, visibly.
 
 ### Brightness starts at 1 %, not 0 %
 
@@ -126,7 +135,7 @@ Each one switches on and off independently of the other. To drive both in one go
 
 Ambient colour temperature only appears on models whose backlight can tune its white — the warm/cold slider the Yeelight app shows next to the ring's colour wheel.
 
-On a light without a backlight there is only one light, and the labels stay simple (**On/Off**, **Brightness**, **Colour**, **Colour temperature**).
+On a light without a backlight there is only one light, and the labels stay simple (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). You can rename any feature in Gladys.
 
 If your ceiling light switches its ring on and off together with the main light, that is not Gladys: it is the **"Auto on/off with the main light"** option in the Yeelight app. Turn it off to drive each light separately.
 
@@ -147,6 +156,7 @@ Each light accepts **4 simultaneous connections** and **60 commands per minute**
 | A light disappears then comes back     | Wi-Fi drop or wall switch: the integration reconnects on its own, backing off |
 | A hand-added light becomes unknown     | Its IP address changed — give it a fixed address in your router               |
 | Commands stop working after a while    | Another piece of software is holding the light's 4 connection slots           |
+| A light added by hand is ignored       | Its address changed, or the brackets are missing around an IPv6 address       |
 
 ## Parámetros de configuración
 
@@ -154,16 +164,16 @@ Estos son los parámetros que Yeelight te pide en su pantalla de configuración 
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| Getting started | `section` | No | This integration talks to your Yeelight lights on your local network, with no cloud account involved.  One thing to do first: in the Yeelight app, open each light and enable "LAN Control" (Settings → LAN Control). A light without it refuses every local command and will not be found. Then go to the Discover screen and run a scan: your lights appear there, ready to be added. No IP address to type. |
-| Transition duration (ms) | `number` | No | How long a light takes to fade to its new state. Set 0 for an instant change. |
-| Lights not found by the scan | `section` | No | Fill the field below if a light is not found by the network scan. The most common reason: your lights sit on another subnet or VLAN than Gladys — the discovery broadcast does not cross a router, so the scan cannot reach them, while control itself works fine. Raising the discovery duration does not help in that case. |
-| Lights added by hand | `string` | No | One address per light (`192.168.1.42`, or `192.168.1.42:55443`), separated by a comma. Give these lights a fixed address in your router: unlike a light found by the scan, one added by hand is identified by its address, and a new DHCP lease would make Gladys see it as a different light. |
-| Discovery duration (s) | `number` | No | How long the scan listens for lights answering on the network. Only useful on a busy network: it cannot help if your lights are on another subnet. |
+| Primeros pasos | `section` | No | Esta integración se comunica con sus luces Yeelight en su red local, sin ninguna cuenta en la nube.  Antes de nada: en la aplicación Yeelight, abra cada luz y active «Control LAN» (Ajustes → Control LAN). Una luz sin esta opción rechaza cualquier comando local y no se encontrará. Luego vaya a la pantalla Descubrir e inicie una búsqueda: sus luces aparecen allí, listas para añadirse. Sin ninguna dirección IP que escribir. |
+| Duración de la transición (ms) | `number` | No | Tiempo que tarda una luz en pasar a su nuevo estado con un fundido. Ponga 0 para un cambio instantáneo. |
+| Luces no encontradas por la búsqueda | `section` | No | Rellene el campo de abajo si la búsqueda en la red no encuentra una luz. La causa más habitual: sus luces están en otra subred o VLAN distinta de la de Gladys — el broadcast de la búsqueda no atraviesa un router, así que no puede alcanzarlas, mientras que el control sí funciona. Aumentar la duración de la búsqueda no cambia nada en ese caso. |
+| Luces añadidas a mano | `string` | No | Una dirección por luz (`192.168.1.42` o `192.168.1.42:55443`), separadas por comas. Asigne a estas luces una dirección fija en su router: a diferencia de una luz encontrada por la búsqueda, una añadida a mano se identifica por su dirección, y una nueva concesión DHCP haría que Gladys la viera como una luz diferente. |
+| Duración de la búsqueda (s) | `number` | No | Tiempo durante el que la búsqueda escucha las luces que responden en la red. Solo útil en una red muy cargada: no sirve de nada si sus luces están en otra subred. |
 
 ## Cómo instalar Yeelight en Gladys
 
 1. En Gladys, abre **Integraciones**: Yeelight aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-yeelight:1.2.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-yeelight:1.3.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-yeelight](https://github.com/William-De71/gladys-yeelight).
 

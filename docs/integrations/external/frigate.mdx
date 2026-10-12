@@ -1,0 +1,310 @@
+---
+title: "Frigate smart home integration, free and open source"
+sidebar_label: "Frigate"
+description: "Frigate NVR cameras: snapshots, motion, objects, reviews and scene triggers. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-frigate.png"
+keywords:
+  - "frigate"
+  - "frigate smart home"
+  - "gladys frigate"
+  - "frigate gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-frigate instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="frigate" />
+
+Bring the cameras of your [Frigate NVR](https://frigate.video) into Gladys
+Assistant: snapshots, motion, detected objects, review alerts, camera
+switches, and scene triggers to react when a person, a car or an animal shows
+up.
+
+## Requirements
+
+- **Gladys Assistant 5.1 or later.**
+- **Frigate 0.16, 0.17 or 0.18.** The integration reads the Frigate version
+  and configuration and only exposes what your Frigate actually enables.
+- Recommended: the MQTT broker Frigate publishes to. Without a broker, the
+  integration falls back to the Frigate WebSocket.
+
+## Quick start
+
+1. In Frigate, create a dedicated account: **Settings → Users → Add user**,
+   role `viewer` (enough when an MQTT broker is used, see below).
+2. In Gladys, install **Frigate** from the integration store, then open its
+   **Configuration** tab: Frigate URL `https://<frigate-ip>:8971`, the
+   account, and the MQTT broker Frigate publishes to. Save.
+3. The status at the top says "Connected to Frigate …, Real-time feed: MQTT
+   broker connected". **Test the connection** gives the details.
+4. In the **Discover** tab, press **Add to Gladys** on your cameras.
+5. Create scenes with the **Frigate** triggers (see Scenes).
+
+## Frigate connection
+
+| Field               | What to enter                                                                                                                                                          |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frigate URL         | `https://<frigate-ip>:8971` (authenticated port, recommended). Port `5000` works but has **no authentication at all**: a warning is shown in the connection status.    |
+| Username / password | A **dedicated Frigate account**. The `viewer` role (or a custom role limited to your cameras) is enough: camera commands go through MQTT, not through the Frigate API. |
+
+### Certificate: trusted on first connection
+
+Frigate's port 8971 serves a self-signed certificate by default. You do not
+have to do anything:
+
+- a certificate **signed by an authority** (Let's Encrypt, your company CA
+  installed in the system…) is verified normally, and renewals keep working,
+  as long as the Frigate URL uses a name the certificate covers (reached by
+  its IP address instead, it is handled like a self-signed one, and each
+  renewal asks you to trust it again);
+- a **self-signed** certificate is **trusted on the first connection**, then
+  **pinned**: if it changes later (Frigate reinstalled, certificate
+  regenerated… or someone impersonating Frigate), the connection is refused
+  and the status explains why.
+
+When you know the certificate changed for a legitimate reason, press
+**Trust the new certificate** in the Configuration tab: the next connection
+trusts and pins the new certificate. The same applies to the MQTT broker when
+TLS is enabled.
+
+The first connection is the only moment the certificate is not checked: run
+it on your local network, not through an untrusted network.
+
+### Expert settings (optional)
+
+At the bottom of the Configuration tab, fill in **one** of these fields to
+replace the trust on first use:
+
+- **Pinned certificate SHA-256 fingerprint**: only this exact certificate is
+  accepted. To read it, from the Frigate host itself or a trusted machine:
+
+  ```bash
+  openssl s_client -connect <frigate-ip>:8971 </dev/null 2>/dev/null \
+    | openssl x509 -noout -fingerprint -sha256
+  ```
+
+- **Certificate authority (PEM)**: your own authority; the certificate must be
+  signed by it and match the host name.
+
+## Real-time feed (MQTT)
+
+Enter the broker host, port, credentials and the Frigate topic prefix
+(`frigate` by default). Give the integration its own broker account with this
+ACL (Mosquitto syntax):
+
+```
+user gladys-frigate
+topic read frigate/#
+topic write frigate/+/+/set
+```
+
+Leave the broker host empty to use the Frigate WebSocket instead. Camera
+commands (the switches) then need an **admin** Frigate account: since Frigate
+0.17, the WebSocket refuses them from other roles.
+
+The connection status shows the state of the feed ("Real-time feed: MQTT
+broker connected", or why not). A network failure is retried on its own; a
+refused certificate or account stops the feed until you fix it and press
+**Test the connection** (or save the configuration). When Frigate announces
+it is offline (restart), the status says so, and its configuration is read
+again when it comes back.
+
+Each incident is also written to the integration logs (**View logs**):
+`front: person detected, 87 %`, `front: person entered porch, 87 %`,
+`front: review alert, person, car in porch`.
+
+## Cameras in Gladys
+
+Open the **Discover** tab of the integration: every Frigate camera is
+listed (press **Scan** to read Frigate again). Press **Add to Gladys** on the
+ones you want. Each camera device carries what its Frigate configuration
+enables:
+
+| Feature                                 | What it does                                                                                                               |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Image                                   | Refreshed every minute, taken fresh when Gladys asks (chat, scenes). Frigate resizes it to fit the 150 KB Gladys accepts.  |
+| Camera enabled                          | Turns the camera on or off **in Frigate** (no detection, no recording while off); Gladys then shows no image of it either. |
+| Object detection, Snapshots             | Frigate's switches.                                                                                                        |
+| Recordings, Audio detection             | Only when enabled in the Frigate configuration file: Frigate refuses to turn them on otherwise.                            |
+| Motion                                  | Motion seen by Frigate.                                                                                                    |
+| One sensor per tracked object (Person…) | Present / absent, and its count. Plus the total of objects.                                                                |
+| Review status                           | none, detection or alert.                                                                                                  |
+| Zone sensors                            | With the "Zone occupancy sensors" option: one presence sensor per zone and object.                                         |
+
+A switch is only shown as changed once Frigate confirms it. Without an MQTT
+broker, the Frigate WebSocket only accepts commands from an **admin** account
+(Frigate 0.17 and later): with another role, the command fails with that
+explanation.
+
+The badge of each camera says when it is not nominal: unreachable when
+Frigate does not answer, announces it is offline, or the camera stream has
+been lost for 30 seconds; degraded when its recording stream is interrupted
+or the real-time feed is down (the states may then be outdated).
+
+A camera added with an older version of the integration shows **Update** in
+the Discover tab: press it to add the new features.
+
+## Scenes
+
+Three triggers, fired **once per incident** (never once per frame), above
+the minimum confidence and outside the cooldown (see Options). False
+positives and objects standing still never fire.
+
+| Trigger                       | Fires when                                                                                    | Filters                        |
+| ----------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------ |
+| Frigate: new review           | Frigate opens a review item (alert or detection); once more when a detection becomes an alert | camera, severity, object, zone |
+| Frigate: object detected      | Frigate starts tracking an object (person, car…)                                              | camera, object, zone           |
+| Frigate: object enters a zone | A tracked object enters a zone defined in Frigate                                             | camera, zone, object           |
+
+Object and zone are the names used in Frigate, in lowercase (`person`,
+`car`, `dog`, `cat`, `bicycle`… for objects, those of `objects.track`;
+`porch`… for zones); an empty field accepts any value. The objects a camera
+tracks are also its presence sensors (Person, Car…). "Object detected" only
+fires on an object confirmed by Frigate's detection, above the minimum
+confidence: plain motion never fires it (motion is the camera's "Motion"
+sensor).
+A review is filtered on its **main** object (the first of the camera's
+tracked objects, in the order of the Frigate configuration) and its first
+zone; all of them are in the `objects` and `zones` variables. Variables
+available in the following actions: `camera`, `camera_name`, `label`,
+`sub_label` (face or plate recognized by Frigate), `zone`, `zones`, `score`
+(%), `severity`, `objects`, `event_id`, `review_id`.
+
+On an alert, the integration pushes a fresh image of the camera **before**
+firing the trigger: the core action "Send a camera image" placed right
+after it sends the alert.
+
+**Action "Frigate: attach the event snapshot"**: publishes the snapshot
+Frigate kept for an event (with or without its bounding box) as the image of
+the camera (the event's camera by default). Use `{{triggerEvent.data.event_id}}`
+as the event id, then "Send a camera image". For one minute, the snapshot is
+also what Gladys gets when it asks for a live image of that camera ("Send a
+camera image", the dashboard live view). When Frigate keeps no snapshot for
+the camera, or keeps one too large for Gladys, its thumbnail is used. Once
+the event is over, Frigate serves the snapshot it saved: the bounding box
+then follows its own `snapshots.bounding_box` setting.
+
+Example — a photo on your phone when someone comes to the door:
+
+1. Trigger **Frigate: new review**, camera _Front door_, severity _Alert_,
+   object `person`.
+2. Action **Frigate: attach the event snapshot**, event id
+   `{{triggerEvent.data.event_id}}`.
+3. Action **Send a camera image** of _Front door_ to yourself.
+
+## Options
+
+- **Minimum confidence** (default 70 %): object triggers only fire above it
+  (reviews carry no score: Frigate's own thresholds apply).
+- **Trigger cooldown** (default 30 s): at most one trigger per camera and
+  object type (and zone, for zone triggers; per camera and severity for
+  reviews) and period, so an incident never floods your scenes. False positives and
+  objects that stay still (a parked car) never trigger.
+- **Zone occupancy sensors** (off by default): one presence sensor per zone
+  and tracked object.
+
+## Live video
+
+Live video is not carried by this integration. Use the built-in **RTSP
+camera** service of Gladys pointed at the Frigate go2rtc restream:
+`rtsp://<frigate-ip>:8554/<camera_name>`.
+
+## Configuration buttons
+
+- **Test the connection**: Frigate's version and cameras, how its
+  certificate is trusted, the account used, and a connection to the MQTT
+  broker (or a reminder that the Frigate WebSocket is used without one).
+- **Refresh the cameras**: reads the Frigate configuration again (for
+  instance after adding a camera) and updates the list of the Discover
+  tab.
+- **Trust the new certificate**: forgets the pinned certificates of Frigate
+  and of the broker, reconnects, and shows the fingerprint now pinned.
+  Compare it with the one of your Frigate (command above) when in doubt.
+
+When Frigate cannot be reached, the integration tries again every minute. A
+refused certificate or refused credentials wait for you instead: retrying
+would only lock the account out (Frigate limits failed logins).
+
+## Security
+
+- The integration only talks to Frigate and to the broker, on your network;
+  it runs in an isolated container (read-only, no privileges, its only
+  writable folder holds the pinned certificates).
+- A dedicated Frigate account with the `viewer` role (or a role limited to
+  some cameras) cannot change Frigate's configuration. With MQTT, the broker
+  account above can only read Frigate's topics and send the camera commands.
+- Certificates: verified by an authority, or pinned on first use (see
+  above); the Frigate token and the broker password are only sent once the
+  certificate is trusted.
+- Passwords, tokens and cookies never appear in the logs or the status.
+- Port 5000 and MQTT without TLS work, with a warning in the status: use them
+  only on a network you trust.
+
+## Troubleshooting
+
+The connection status at the top of the Configuration tab says what is wrong;
+**Test the connection** checks everything again. The integration logs
+(supervision controls, **View logs**) never contain passwords or tokens.
+
+| Symptom                                             | What to check                                                                                                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The certificate of … changed"                      | Frigate reinstalled or certificate regenerated: press **Trust the new certificate**. Otherwise, someone may be impersonating Frigate.             |
+| "Frigate refused the username or the password"      | The account of the Configuration tab. After several failures Frigate blocks logins for a while: the integration does not retry by itself.         |
+| The Discover tab is empty                           | The status: Frigate must be reachable. Then **Scan**.                                                                                             |
+| No image on the dashboard                           | The camera is on in Frigate and in Gladys; wait one minute after adding it.                                                                       |
+| A switch fails ("did not confirm", "admin account") | Without a broker, Frigate 0.17+ only accepts commands from an admin account; with a broker, its ACL must allow `frigate/+/+/set`.                 |
+| "Real-time feed stopped"                            | The broker refused the account or the certificate: fix it, then **Test the connection**.                                                          |
+| Camera badge "unreachable"                          | Frigate is down or restarting, or the camera stream has been lost for 30 s (check the camera in Frigate).                                         |
+| A scene does not fire                               | The minimum confidence and the cooldown (Options); the object and zone names are Frigate's (`person`, not `Person`); the logs show each incident. |
+| A camera added before an update misses features     | The Discover tab shows **Update** on it.                                                                                                          |
+
+## Configuration settings
+
+These are the settings Frigate asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Frigate server | `section` | No | Frigate 0.16 or later. Use the authenticated port (https://\<ip>:8971) with a dedicated Frigate account; the viewer role is enough, camera commands go through MQTT. Frigate's self-signed certificate is trusted on first connection, then pinned. Port 5000 has no authentication at all. |
+| Frigate URL | `string` | Yes |  |
+| Frigate username | `string` | No |  |
+| Frigate password | `secret` | No |  |
+| Real-time feed | `section` | No | Enter the MQTT broker Frigate publishes to (recommended). Leave the host empty to use the Frigate WebSocket instead, without a broker. The broker account needs read access to \<prefix>/# and write access to \<prefix>/+/+/set. |
+| MQTT broker host | `string` | No |  |
+| MQTT broker port | `number` | No |  |
+| MQTT username | `string` | No |  |
+| MQTT password | `secret` | No |  |
+| MQTT over TLS | `boolean` | No | The broker certificate is checked like Frigate's: trusted if signed by an authority, otherwise trusted on first connection and pinned. |
+| Frigate topic prefix | `string` | No |  |
+| Options | `section` | No | Scene triggers only fire above the minimum confidence, and at most once per camera and cooldown period. |
+| Minimum confidence (%) | `number` | No |  |
+| Trigger cooldown (s) | `number` | No |  |
+| Zone occupancy sensors | `boolean` | No | Adds one presence sensor per zone and tracked object. |
+| Expert: TLS certificate | `section` | No | Optional. By default, a certificate signed by an authority is verified normally, and a self-signed one is trusted on the first connection, then pinned: if it changes later, the connection is refused until you press "Trust the new certificate". Fill in ONE of the fields below to pin a known certificate or use your own authority instead. |
+| Pinned certificate SHA-256 fingerprint | `string` | No |  |
+| Certificate authority (PEM) | `string` | No | Paste the PEM certificate of your authority; a single line is fine. |
+
+## How to install Frigate in Gladys
+
+1. In Gladys, open **Integrations**: Frigate appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-frigate:0.3.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-frigate](https://github.com/LM1LC3N7/gladys-frigate).
+
+Frigate requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Frigate is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-frigate) — [source of this documentation](https://github.com/LM1LC3N7/gladys-frigate/blob/HEAD/docs/en.md)

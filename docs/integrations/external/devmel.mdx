@@ -254,7 +254,8 @@ under `channel` instead of the flat `pid` / `addr` pair. It stays JSON:
 | `features`          | On a sensor (`type: 1`): `temperature`, `humidity`, `illuminance`, `click` |
 
 A box declared without `sensors: true` creates no device in Gladys — it is
-only there to carry the connection string.
+only there to carry the connection string. When the global **Connection
+string** field is empty, the one declared on the box serves every device.
 
 ## Getting an order through
 
@@ -272,7 +273,9 @@ Three things answer it, with nothing to set:
   order you gave them;
 - **an order the box could not carry is sent again.** A refusal is not: a
   rejected connection string and an unknown channel answer exactly the same way
-  the second time;
+  the second time. A push button TOGGLE is only sent again when it certainly
+  never went out (the service unreachable, the box busy): after a timeout it may
+  well have opened the gate, and a second one would close it;
 - **an order is repeated on the air**, the way a real remote repeats it for as
   long as the button is held. By default every order goes out twice.
 
@@ -356,7 +359,9 @@ What identifies an echo is **the address it comes from**. The channel Gladys
 transmits on is the box's own: nothing else in the house speaks with that voice,
 whatever the delay. A box that takes ten seconds to repeat itself is no longer
 mistaken for a hand on a remote — which was enough to send a shutter stopped at
-40 % back to the top.
+40 % back to the top. That voice is Gladys' for a minute after its last order:
+a remote copied into the AirSend app (same address as the device, the usual
+way for a fixed-code gate) is followed again once that minute has passed.
 
 Two visible consequences:
 
@@ -451,7 +456,10 @@ Two more things worth knowing:
   shutter to the nearest end stop, which is exactly what establishes the
   reference;
 - the position is **remembered across restarts** of the integration: it starts
-  again from the value Gladys kept.
+  again from the value Gladys kept. A shutter you add in Gladys after the
+  integration started gets the position already known straight away;
+- a shutter driven to a position is **stopped on time even when Gladys is
+  briefly unreachable**: the STOP goes out before the position is published.
 
 ### The favourite position
 
@@ -461,6 +469,13 @@ what that position is. Measure it once and declare it with
 `"favorite_position": 40`: pressing that button then reports 40 % in Gladys.
 Without it, the shutter is reported as stopped somewhere in between — the
 honest answer.
+
+Most Somfy RTS remotes send that button as a plain **STOP**: it stops a shutter
+that moves, and sends a still one to its position. With `favorite_position`
+declared, the integration tells the two apart with the travel: a STOP heard
+while the shutter is still sends it to its favourite position in Gladys too.
+That takes a timed shutter (`travel_up` / `travel_down`): without travel times
+nothing says whether it is moving, and a STOP stays a STOP.
 
 ## Listening to the radio
 
@@ -659,7 +674,9 @@ Ignored a radio frame (unreliable, graded 2): pid 25455, addr 94311, carrying le
 **A frame with an address, graded too low** (second line): the box decoded both
 the emitter and the order, it is simply not confident — a remote at the edge of
 its range, a crowded band. Turn on **Accept unreliable frames**: they are then
-used anyway, at the price of the occasional false trigger.
+used anyway, at the price of the occasional false trigger. A wall remote
+declared in `remotes` by its `pid` **and** `addr` needs none of that: its frames
+are followed whatever their grade, since an exact address is no noise.
 
 **A frame with no address** (first line, a `pid` and nothing else): the box
 picked the protocol up **without decoding it**. There is no emitter to name and
@@ -896,7 +913,8 @@ In the scene editor, under **Integrations**:
   drives and on the order (`up`, `down`, `stop`, `favorite`, `on`, `off`,
   `toggle`). The scene can read `device_name`, `order`, `pid` and `addr`.
   Gladys' own orders never fire it, so a scene cannot loop on itself. A remote
-  held down is one press, not one event per frame.
+  held down is one press, not one event per frame — and one click on the
+  `click` feature of a type `1` remote, too.
 - **A radio order failed** — the box did not carry an order Gladys gave:
   unreachable, connection string refused, box busy… The scene can read
   `device_name`, `reason` (`NETWORK`, `SECURITY`, `BUSY`, `HTTP_401`,
@@ -982,7 +1000,7 @@ These are the settings Devmel asks for in its configuration screen in Gladys.
 ## How to install Devmel in Gladys
 
 1. In Gladys, open **Integrations**: Devmel appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:2.0.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:2.2.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 

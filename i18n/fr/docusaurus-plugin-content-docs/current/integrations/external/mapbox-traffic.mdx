@@ -1,0 +1,187 @@
+---
+title: "Intégration domotique Mapbox Traffic, gratuite et open source"
+sidebar_label: "Mapbox Traffic"
+description: "Trafic en temps réel sur vos trajets : durée, retard, graphique et alertes embouteillage via Mapbox. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/quentinlegay--Gladys-mapbox-traffic.png"
+keywords:
+  - "mapbox traffic"
+  - "domotique mapbox traffic"
+  - "gladys mapbox traffic"
+  - "mapbox traffic gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/quentinlegay/Gladys-mapbox-traffic instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="mapbox-traffic" />
+
+Suivez la durée de vos trajets habituels (maison → travail, école…) avec le
+trafic en temps réel, visualisez-la en graphique et soyez prévenu en cas
+d'embouteillage ou de durée anormalement longue. Les données viennent de
+l'[API Mapbox Directions](https://docs.mapbox.com/api/navigation/directions/)
+(profil `driving-traffic`).
+
+## Ce que vous obtenez
+
+Un appareil **trajet** par trajet configuré (jusqu'à 3), avec :
+
+| Fonctionnalité   | Description                                                       |
+| ---------------- | ----------------------------------------------------------------- |
+| Durée du trajet  | Durée avec le trafic actuel, en minutes (historisée → graphique)  |
+| Durée habituelle | Durée typique à ce moment de la semaine selon Mapbox (historisée) |
+| Retard           | Différence entre les deux, en minutes                             |
+| Distance         | Longueur de l'itinéraire recommandé, en km                        |
+| Niveau de trafic | 0 fluide, 1 ralenti, 2 embouteillage, 3 bouchon important         |
+| Trafic           | Le même niveau en texte (« Fluide », « Embouteillage »…)          |
+| Par              | Les routes principales empruntées (« A86, A1 »)                   |
+
+Plus :
+
+- un **widget de tableau de bord** « Durée de trajet » : durée, retard,
+  graphique durée actuelle vs durée habituelle, état du trafic et bouton
+  « Actualiser » ;
+- quatre **déclencheurs de scène** : _Embouteillage sur un trajet_, _Fin
+  d'embouteillage_, _Durée de trajet anormalement longue_, _Durée revenue à la
+  normale_ ;
+- une **action de scène** _Obtenir la durée d'un trajet_, pour envoyer par
+  exemple chaque matin « 32 min (+7 min) · Ralenti ».
+
+## Configuration
+
+1. Créez un compte gratuit sur [mapbox.com](https://account.mapbox.com/) et
+   copiez votre **jeton d'accès public par défaut** (il commence par `pk.`).
+   L'offre gratuite inclut 100 000 calculs d'itinéraire par mois.
+2. Dans l'onglet **Configuration** de l'intégration, collez le jeton.
+3. Renseignez au moins le **trajet 1** :
+   - **Nom** : « Travail » par exemple ;
+   - **Départ** : laissez vide pour partir de la position de la maison
+     définie dans Gladys (Paramètres → Maisons), ou indiquez une adresse ou
+     des coordonnées ;
+   - **Destination** : une adresse (« 1 place de la Défense, Puteaux ») ou des
+     coordonnées « latitude, longitude » (« 48.8924, 2.2369 », le format copié
+     depuis Google Maps par un clic droit).
+4. Cliquez sur **Tester Mapbox** : la durée actuelle du trajet 1 s'affiche
+   sous le bouton.
+5. Ouvrez l'onglet **Découverte** et ajoutez vos trajets.
+
+### Actualisation
+
+- **Intervalle** : 300 s par défaut (minimum 60 s).
+- **Jours actifs** / **Heures actives** : pour n'interroger Mapbox qu'aux
+  heures utiles, par exemple du lundi au vendredi, `07:00-09:30, 16:30-19:00`.
+  Vides, les trajets sont actualisés en permanence. Les heures sont lues dans
+  le **fuseau horaire** configuré (`Europe/Paris` par défaut).
+- **Éviter** : péages, autoroutes, ferries.
+
+### Offre gratuite Mapbox
+
+L'API Directions inclut **100 000 requêtes gratuites par mois** ; au-delà,
+Mapbox facture les requêtes supplémentaires (voir les
+[tarifs Mapbox](https://www.mapbox.com/pricing#directions-api)). L'intégration
+fait une requête par trajet à chaque actualisation, et ne géocode chaque
+adresse qu'une fois. Consommation mensuelle ≈ trajets × actualisations par
+heure × heures actives par jour × jours.
+
+Par exemple, 3 trajets actualisés toutes les 5 minutes pendant 5 h par jour
+ouvré consomment environ 4 000 requêtes par mois, et environ 26 000 s'ils sont
+actualisés 24 h/24 : les deux restent dans l'offre gratuite. Actualiser 3
+trajets chaque minute, 24 h/24, consomme environ 130 000 requêtes et la
+dépasse.
+
+Votre consommation réelle est visible dans votre
+[compte Mapbox](https://account.mapbox.com/).
+
+### Alertes
+
+- **Embouteillage** : détecté quand au moins 10 % (réglable) de la distance
+  est en circulation dense selon Mapbox, ou que la durée dépasse nettement la
+  durée habituelle (+35 %).
+- **Durée anormalement longue** : quand la durée dépasse la durée habituelle
+  de 30 % **et** d'au moins 5 minutes (réglables), pour éviter les alertes
+  sur un trajet court qui passe de 4 à 6 minutes.
+
+## Exemples de scènes
+
+- **Prévenir en cas de bouchon** : déclencheur _Embouteillage sur un trajet_
+  (trajet « Travail »), action « Envoyer un message » :
+  `Bouchon vers le travail : {{triggerEvent.data.summary}}`.
+- **Réveil adaptatif** : à 7 h en semaine, action _Obtenir la durée d'un
+  trajet_, puis action « Envoyer un message » en insérant la variable
+  _Résumé_ (ou _Durée du trajet (min)_) produite par l'action précédente.
+- **Seuil personnel** : comme l'appareil est un appareil Gladys standard, le
+  déclencheur natif « Valeur d'un appareil » fonctionne aussi :
+  « quand Durée du trajet (Travail) > 45 ».
+
+Les déclencheurs d'événement ne se déclenchent qu'au **changement** d'état
+(un seul « Embouteillage » tant que le bouchon dure).
+
+## Dépannage
+
+- **« Mapbox a refusé le jeton d'accès »** : vérifiez le jeton sur
+  [account.mapbox.com](https://account.mapbox.com/access-tokens/).
+- **Adresse introuvable** : essayez une adresse plus complète, ou des
+  coordonnées.
+- **« la maison n'a pas de position »** : définissez la position de la
+  maison dans Gladys, ou renseignez le départ.
+- Les logs de l'intégration (onglet Logs, ou `docker logs`) détaillent chaque
+  actualisation ; passez `LOG_LEVEL=debug` pour voir les requêtes (le jeton y
+  est masqué).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Mapbox Traffic dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Compte Mapbox | `section` | Non | Créez un compte Mapbox gratuit et copiez votre jeton d'accès public par défaut (il commence par pk.). |
+| Offre gratuite Mapbox | `section` | Non | L'API Directions inclut 100 000 requêtes gratuites par mois ; au-delà, Mapbox facture les requêtes supplémentaires. Cette intégration fait une requête par trajet à chaque actualisation (les adresses ne sont géocodées qu'une fois). Consommation mensuelle ≈ trajets × actualisations par heure × heures actives par jour × jours. Exemples : 3 trajets toutes les 5 min, 5 h par jour ouvré ≈ 4 000 requêtes (gratuit) ; 3 trajets toutes les 5 min, 24 h/24 ≈ 26 000 (gratuit) ; 3 trajets chaque minute, 24 h/24 ≈ 130 000 (au-delà de l'offre gratuite). Utilisez les jours et heures actifs ci-dessous pour rester largement dans l'offre. |
+| Jeton d'accès Mapbox | `secret` | Oui |  |
+| Langue des textes | `select` | Non |  |
+| Trajet 1 | `section` | Non | Un lieu est soit une adresse (« 10 rue de Rivoli, Paris »), soit des coordonnées « latitude, longitude » (« 48.8566, 2.3522 », copiées depuis Google Maps). Laissez le départ vide pour partir de la position de la maison définie dans Gladys. Laissez la destination vide pour désactiver le trajet. |
+| Nom | `string` | Non |  |
+| Départ (laissez vide pour partir de votre maison) | `string` | Non |  |
+| Destination | `string` | Oui |  |
+| Trajet 2 | `section` | Non | Trajet supplémentaire facultatif, même format que le trajet 1. |
+| Nom | `string` | Non |  |
+| Départ (laissez vide pour partir de votre maison) | `string` | Non |  |
+| Destination | `string` | Non |  |
+| Trajet 3 | `section` | Non | Trajet supplémentaire facultatif, même format que le trajet 1. |
+| Nom | `string` | Non |  |
+| Départ (laissez vide pour partir de votre maison) | `string` | Non |  |
+| Destination | `string` | Non |  |
+| Actualisation | `section` | Non | Les trajets ne sont actualisés que pendant les jours et heures actifs, pour économiser votre quota Mapbox. Laissez vide pour actualiser en permanence. |
+| Intervalle d'actualisation (s) | `number` | Non |  |
+| Jours actifs (vide = tous les jours) | `multi_select` | Non |  |
+| Heures actives (vide = toute la journée) | `string` | Non |  |
+| Fuseau horaire | `string` | Non |  |
+| Éviter | `multi_select` | Non |  |
+| Alertes | `section` | Non | Un embouteillage est détecté quand au moins la part indiquée du trajet est en circulation dense. La durée est anormalement longue quand elle dépasse la durée habituelle à la fois du pourcentage et du nombre de minutes indiqués. Les deux déclenchent des scènes. |
+| Embouteillage : part du trajet encombrée (%) | `number` | Non |  |
+| Anormal : plus long que d'habitude de (%) | `number` | Non |  |
+| Anormal : et au moins (min) de retard | `number` | Non |  |
+
+## Comment installer Mapbox Traffic dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Mapbox Traffic apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/quentinlegay/gladys-mapbox-traffic:1.0.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/quentinlegay/Gladys-mapbox-traffic](https://github.com/quentinlegay/Gladys-mapbox-traffic).
+
+Mapbox Traffic nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Mapbox Traffic est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [quentinlegay](https://github.com/quentinlegay), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/quentinlegay/Gladys-mapbox-traffic) — [source de cette documentation](https://github.com/quentinlegay/Gladys-mapbox-traffic/blob/HEAD/docs/fr.md)

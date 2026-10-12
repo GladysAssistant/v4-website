@@ -31,9 +31,12 @@ Chaque tondeuse de votre compte Mammotion apparaît avec :
 
 - **Tonte** (interrupteur) : allumé = lancer une tonte (ou reprendre celle en
   pause), éteint = pause ;
-- **Retour à la base** (interrupteur) : allumé = retour à la base, éteint =
-  annuler. Sur une tonte en pause, la tonte est d'abord arrêtée (comme
-  « Arrêter » dans l'application), sinon elle resterait en pause ;
+- **Retour à la base** (interrupteur) : allumé = retour à la base pour
+  recharger, éteint = annuler. Comme « Recharge » dans l'application : une
+  tonte en cours reste en pause, **Tonte** la reprend ensuite ;
+- **Arrêter la tâche** (bouton) : termine la tonte, la tondeuse reste sur
+  place (comme « Stop » dans l'application). **Retour à la base** la ramène
+  ensuite ;
 - **Rafraîchir** (bouton) : demande tout de suite son état à la tondeuse ;
 - **État** : En tonte (45 %), En charge, En pause, Retour à la base, Hors ligne… ;
 - **Batterie** (%) et **En charge** ;
@@ -41,12 +44,14 @@ Chaque tondeuse de votre compte Mammotion apparaît avec :
 - pendant une tonte : **Avancement de la tonte** (%), **Temps de tonte
   écoulé** et **restant** (min), **Surface à tondre** (m²) ;
 - **Temps de tonte total** (h), **Distance totale** (km) ;
-- **Carte** (image, widget **Caméra** du tableau de bord) : les zones (vert
-  vif = zones de la prochaine tonte, vert pâle = les autres) avec leur nom,
-  les zones interdites (gris) et la tondeuse (point rouge) ;
+- **Carte** : un appareil à part, « \<tondeuse> – Carte » (image, widget
+  **Caméra** du tableau de bord) : les zones (vert vif = zones de la
+  prochaine tonte, vert pâle = les autres) avec leur nom, les zones
+  interdites (gris) et la tondeuse (point rouge) ;
 - les **zones de la prochaine tonte** : un interrupteur « Zone à tondre – … »
   par zone de la carte. Plusieurs zones peuvent être allumées ; aucune
-  allumée = toutes les zones ;
+  allumée = toutes les zones. Les zones sont tondues dans l'ordre où on les
+  allume, comme dans l'appli ;
 - les **autres réglages de la prochaine tonte**, « Réglage – … » : en listes
   pour la hauteur de coupe, la vitesse, l'espacement, le type d'angle
   (optimal, personnaliser, aléatoire), le mode de trajectoire (zigzag, damier,
@@ -114,6 +119,55 @@ une scène, sans fausse alerte.
 > l'application, et utilisez ce compte ici. Sinon l'application sur votre
 > téléphone peut être déconnectée quand Gladys se connecte.
 
+> Sécurité : les tondeuses récentes passent par le broker MQTT de Mammotion,
+> dont le certificat TLS n'est **pas vérifié** (comme le font l'application
+> Mammotion et les autres clients open source : rien n'indique que le broker
+> présente un certificat qu'une vérification standard accepte). Quelqu'un
+> capable d'intercepter le trafic de votre réseau pourrait se faire passer
+> pour le broker et lire le jeton d'accès, de courte durée, du compte. Un
+> compte dédié avec la seule tondeuse partagée (conseil ci-dessus) limite ce
+> qu'il obtiendrait.
+
+## Widget, déclencheurs et actions de scène (Gladys 5.1)
+
+### Widget « Tondeuse Mammotion »
+
+Dans **Tableau de bord → Modifier → Ajouter un widget**, choisissez
+**Tondeuse Mammotion**, puis la tondeuse. Le widget montre l'état, la batterie,
+l'avancement et le temps restant de la tâche, et propose les boutons utiles
+selon l'état : **Tondre** (ou **Reprendre**), **Pause**, **Rentrer**. Il affiche
+le dernier état reçu : ouvrir le tableau de bord n'envoie rien à la tondeuse.
+
+### Déclencheurs
+
+| Déclencheur                            | Quand                                                                          |
+| -------------------------------------- | ------------------------------------------------------------------------------ |
+| Une tondeuse commence à tondre         | Nouvelle tâche, ou reprise d'une tâche en pause                                |
+| Une tâche de tonte se termine          | Tâche terminée ou arrêtée (une recharge en cours de tâche n'en est pas la fin) |
+| Une tondeuse est de retour sur sa base | Elle commence à charger                                                        |
+| Une tondeuse a un problème             | Hors ligne, erreur de position, hors zone, verrouillée, mise à jour échouée    |
+
+Chacun se déclenche une fois, au changement, jamais au redémarrage de
+l'intégration. Variables : nom de la tondeuse, état, batterie, et selon le
+déclencheur l'avancement, « tâche en pause pour recharger » ou le problème.
+
+### Actions
+
+- **Lancer la tonte** : nouvelle tâche avec les zones et réglages choisis dans
+  Gladys, ou reprise d'une tâche en pause.
+- **Mettre la tonte en pause**.
+- **Renvoyer une tondeuse à sa base** (la tâche est gardée en pause).
+- **Lire une tondeuse** : état, en ligne, en tonte, batterie, avancement,
+  temps restant, problème. Cochez « Interroger la tondeuse d'abord » pour une
+  valeur fraîche.
+
+Les trois premières renvoient un **résultat** (`started`, `resumed`,
+`already_mowing`, `already_starting`, `paused`, `not_mowing`, `returning`,
+`already_docked`). Une nouvelle tâche met 30 à 60 s à démarrer (zones,
+trajet, puis départ) : un autre « Lancer la tonte » pendant ce temps, depuis
+une scène, le widget ou l'interrupteur **Tonte**, ne lance rien et répond
+`already_starting`.
+
 ## Exemples de scènes
 
 - Lancer une tonte chaque samedi à 10 h s'il ne pleut pas.
@@ -122,7 +176,9 @@ une scène, sans fausse alerte.
   (toutes les zones) puis allumer « Tonte ».
 - Reprendre la tonte en pause quand la pluie s'arrête.
 - Renvoyer la tondeuse à la base quand le capteur de pluie détecte de la pluie.
-- Recevoir un message quand l'état passe à « Erreur de position ».
+- Recevoir un message quand la tondeuse a un problème (déclencheur « Une tondeuse
+  a un problème »).
+- Recevoir un message quand la tâche de tonte se termine.
 
 ## Dépannage
 
@@ -133,8 +189,9 @@ une scène, sans fausse alerte.
   réseau). Elle est relue au prochain démarrage de l'intégration et à chaque
   tonte lancée par Gladys. Puis **Mettre à jour** dans l'onglet
   **Découverte**.
-- **Afficher la carte** : sur le tableau de bord, ajoutez un widget
-  **Caméra** et choisissez la tondeuse. L'image suit la tondeuse pendant la
+- **Afficher la carte** : onglet **Découverte**, ajoutez l'appareil
+  « \<tondeuse> – Carte », puis sur le tableau de bord ajoutez un widget
+  **Caméra** et choisissez cet appareil. L'image suit la tondeuse pendant la
   tonte (au plus toutes les 15 s).
 - **Vérifier un réglage de l'application** : lancez une tonte depuis
   l'application Mammotion, puis cherchez « route settings seen » dans les
@@ -146,7 +203,8 @@ une scène, sans fausse alerte.
 - **Aucune tondeuse trouvée** : vérifiez que la tondeuse apparaît bien dans
   l'application Mammotion avec ce compte (propriétaire ou partage).
 - **Les valeurs ne bougent pas** : appuyez sur **Rafraîchir** (sur le tableau
-  de bord) ou sur **Rafraîchir les tondeuses** (onglet Configuration).
+  de bord) ou sur **Rafraîchir les tondeuses** (onglet Configuration), qui
+  lit toutes les tondeuses et nomme celles qu'il n'a pas pu lire.
   Les tondeuses récentes (broker Mammotion) envoient leur état d'elles-mêmes ;
   Gladys ne leur demande un rapport qu'au plus toutes les 5 minutes (et juste
   après une commande), pour ne pas dépasser le quota du cloud Mammotion ni
@@ -192,11 +250,11 @@ Voici les paramètres demandés par Mammotion dans son écran de configuration d
 ## Comment installer Mammotion dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Mammotion apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-mammotion:1.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-mammotion:1.4.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-mammotion](https://github.com/prohand/gladys-mammotion).
 
-Mammotion nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Mammotion nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

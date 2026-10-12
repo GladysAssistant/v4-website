@@ -1,0 +1,307 @@
+---
+title: "DLNA Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "DLNA"
+description: "DLNA/UPnP-Geräte (TV, Verstärker, Lautsprecher) steuern und Medienserver abspielen, 100 % lokal. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dlna.png"
+keywords:
+  - "dlna"
+  - "dlna smart home"
+  - "gladys dlna"
+  - "dlna gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-dlna instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="dlna" />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Control the DLNA / UPnP renderers of your home (TV, amplifier, speaker, streamer) and play the
+content of your media servers (Plex, Jellyfin, Emby, MiniDLNA, a NAS…) from Gladys. Everything stays
+on your local network: no account, no cloud.
+
+## Requirements
+
+- Gladys 5.1.0 or later.
+- The renderers and servers on the same network as Gladys. A device on another network (VLAN, other
+  subnet) can be added by hand, see below.
+- On a renderer, DLNA must be enabled: it is sometimes called "DLNA", "UPnP", "Media renderer",
+  "Play to" or "AllShare" in its settings, and some TVs only answer when they are on (not in
+  standby).
+
+## Adding your devices
+
+1. Install the integration, then open its **Discovery** tab: Gladys searches the network and lists
+   the renderers and the media servers it found. Run the search again with the button if a device is
+   missing (a TV must be on).
+2. Add the devices you want. A **renderer** gets the playback commands; a **media server** gets no
+   feature, but it then appears in the scene actions.
+3. Some devices are both: a Denon amplifier, for instance, is a renderer and a small media server.
+   The server is then listed with "(media server)" after its name.
+
+**Language of names and messages** (English, French, German or Spanish): Gladys keeps the names
+of a device once it is added, so pick the language in **Configuration** before adding the devices.
+It is also the language of the error messages of device commands and scene actions (Gladys does not
+tell an integration the language of its user).
+
+**A device that is not found**: SSDP discovery only works on the network of Gladys. Find the URL
+of the UPnP description of the device (in the documentation of the device or the server: MiniDLNA serves
+`http://<address>:8200/rootDesc.xml`, a Denon/HEOS amplifier
+`http://<address>:60006/upnp/desc/aios_device/aios_device.xml`). Check it with the **Test a
+description URL** action, then add it to **Description URLs** in the configuration and run the
+search again.
+
+## The renderer device
+
+| Feature        | What it does                                                     |
+| -------------- | ---------------------------------------------------------------- |
+| Play, Pause    | Starts or resumes, pauses (stops when the renderer cannot pause) |
+| Stop           | Stops the playback                                               |
+| Previous, Next | Previous or next track (of the queue, see below)                 |
+| Volume         | 0 to 100 %, mapped to the range the renderer declares            |
+| Mute           | Toggles mute                                                     |
+| Playback state | 1 while playing, 0 otherwise (paused, stopped, off)              |
+| Now playing    | "Artist — Title" as the renderer describes it, "—" when nothing  |
+| Notification   | Used by the core "Play a notification" scene action              |
+
+Volume and Mute only appear when the renderer has them. The device works with the core **Music**
+widget of the dashboard (previous, play/pause, next, volume).
+
+**What the device plays some other way** (Spotify Connect, AirPlay, Chromecast, an HDMI input…):
+**volume** and **mute** are the device's own, so Gladys sets them whatever the source. For example,
+a soundbar playing Spotify, even on a free account, has its volume controlled from Gladys (seen on
+a Sennheiser AMBEO Soundbar). The playback state, the now-playing title and the transport commands,
+on the other hand, only follow what is played **over DLNA**: during a Spotify session, the device
+shows "stopped".
+
+The state is refreshed every few seconds while playing, every 15 seconds otherwise. A renderer
+that is off shows the **unreachable** badge and is checked once a minute; when it comes back on
+another address, the integration finds it again by itself (a network search, at most every 5
+minutes).
+
+## Scenes
+
+**Triggers**
+
+- **DLNA playback started**, **DLNA playback paused**, **DLNA playback stopped**: pick a renderer,
+  or leave it empty for any. The following actions can use `{{triggerEvent.data.renderer}}`,
+  `{{triggerEvent.data.title}}`, `{{triggerEvent.data.artist}}` and `{{triggerEvent.data.album}}`.
+  Typical use: dim the lights when the TV starts playing a film, turn them back on when it stops.
+  A renderer that is switched off fires nothing (it is not a "stop"), and neither does the short
+  gap between two tracks of a queue.
+
+**Actions**
+
+- **Play a media server on a DLNA renderer**: pick the renderer and the server, then what to
+  search:
+  - _Anything_: titles, artists and albums containing the text, then a folder of that name;
+  - _Title_, _Artist_, _Album_ (an album plays in track order);
+  - _Folder_: a folder name (`Jazz`), or a path from the root of the server (`Music/Jazz`). The
+    tracks of its sub-folders are included. Use the **Browse a media server** action of the
+    configuration to find the paths.
+
+  Then choose to play everything in order, everything shuffled, or the first result only, and
+  optionally a volume. A search that takes more than 75 seconds (a huge library on a server that cannot search) stops with an error: give a narrower one, such as a folder path. The action returns whether something was found, the number of tracks queued
+  and the first title, for the following actions.
+
+- **Play a URL on a DLNA renderer**: a web radio, a sound or an announcement file, by its http(s)
+  URL, with an optional title and volume. The URL must be reachable by the renderer itself. Left
+  empty, the title is the name the web radio gives itself (its `icy-name` header, or else the title
+  on air when the stream starts), and the URL as a last resort: the integration asks the stream
+  once, for at most 2.5 seconds, without downloading it.
+
+- **Play a DLNA favorite**: plays one of the favorites of the configuration (see below) on a
+  renderer, with an optional volume. It returns whether it started and the name of the favorite.
+
+**Queue**: a DLNA renderer plays one media at a time. For an album or a folder, the integration
+keeps the list and hands the tracks over one after the other (without a gap when the renderer
+supports it). Next and Previous walk the list. The queue stops when something else is played on
+the renderer, and it only advances while Gladys and the integration run.
+
+**Announcements**: the core **Play a notification** action works on the renderers (it needs Gladys
+Plus for the text-to-speech). It plays at the current volume (the core does not pass its volume to
+the integrations), and the previous media is not resumed afterwards. To set the volume of an
+announcement, place a device control action on its Volume feature before it.
+
+## Favorites
+
+In **Configuration**, the **Favorites** part holds up to 8 favorites, each one a numbered group of
+fields:
+
+- **Name**: shown on the button (24 characters fit). Left empty, the favorite is named after the
+  host of its URL or after its search.
+- **URL**: a web radio or a file, by its http(s) URL; **or** a search on a **media server**: the
+  name of the server as it appears in Gladys (part of it is enough; empty when only one server is
+  added), what to search by (anything, title, artist, album, folder or playlist), the search
+  (`Abbey Road`, `Music/Jazz`), and how to play what is found (in order, shuffled, the first
+  result). When both are filled, the URL wins. A favorite with neither is ignored.
+
+The server is named rather than picked in a list on purpose: Gladys refuses to save a configuration
+whose list holds a device that no longer exists, and a deleted server would block every later
+change of the configuration.
+
+## Dashboard
+
+Add the **DLNA player** widget and pick a renderer in its settings: it shows the title, the album,
+the state, the queue position, mute, a live volume gauge, and four buttons (play/pause, stop,
+volume − and +, by steps of 5 %).
+
+Add the **DLNA favorites** widget, pick a renderer and the favorites to show: one button per
+favorite, four at most per widget (Gladys allows four buttons in a widget). Add several widgets to
+reach more favorites. Left empty, the widget shows the first four favorites of the configuration.
+It also shows the favorite the renderer holds now, with its state, and marks its button with a
+check: it stays until something else is played on the renderer.
+
+## Configuration actions
+
+- **Test a description URL**: reads a description URL and tells what it holds.
+- **Browse a media server**: lists the folders and tracks of a server, from the root or from a
+  path (`Music/Albums`).
+
+## Sonos, Samsung, LG
+
+Sonos speakers, Samsung TVs and LG webOS TVs have their own Gladys integrations, which do more than
+DLNA (groups, sources, applications). This integration still sees them when they offer DLNA: it is
+useful to play media from a server or announcements, next to their own integration.
+
+## What has been checked on real hardware
+
+- **Checked for real on a Denon AVR-S650H** (playback, pause, volume, mute, stop, browsing of the
+  built-in server): an http stream plays, the position advances, pause and resume work, the volume
+  set in Gladys is the volume of the amplifier (15 in Gladys is MV15), mute is set and read back,
+  stop stops, and the built-in media server is browsed. The amplifier wakes from standby by itself
+  on a command. Its description, service descriptions and state answers are replayed by the tests.
+- **A renderer in standby can take up to a minute to start**: measured on the Denon, it accepts
+  the media and the Play command, gives no usable answer for about 12 seconds while it wakes up,
+  then stays stopped and ignores Play for about 40 more seconds before it starts. The integration
+  therefore follows every start for up to 75 seconds, in the background: it waits while the
+  renderer does not answer, presses Play again every 5 seconds while it is stopped (and loads the
+  media again if needed), restarts once a playback cut right after it started, and stops following
+  as soon as another command or media comes in. Scene actions answer as soon as the renderer
+  accepted the command; a start that never comes is written in the logs of the integration. https
+  streams play like http ones.
+- **Checked by a user on a Sennheiser AMBEO Soundbar**: found by itself at install time, volume set
+  from the widget, including during a Spotify Connect session.
+- **Not checked on real hardware yet**: the play queue and its gapless transitions, the network
+  search run by Gladys, searching a real media server (MiniDLNA, Plex, Jellyfin), the favorites and
+  their widget, and the station name read from a real web radio. They are
+  covered by tests on simulated devices built from public formats. Please report any device that
+  misbehaves, with the logs of the integration.
+
+## Troubleshooting
+
+- **Nothing in the Discovery tab**: check that the devices are on and on the same network as
+  Gladys; read the logs of the integration (`Discovery: N SSDP answer(s)…`). Add a description URL
+  by hand otherwise.
+- **"Nothing to play over DLNA"** (or nothing to pause, stop, no next track): the renderer has no
+  DLNA media loaded, and may be playing another source (Spotify, AirPlay, an HDMI input…). Start a
+  media from Gladys, or use the app of that source. Stop is still sent, since some devices stop the
+  other source too. The logs of the integration keep the UPnP code the renderer answered (for
+  instance `Play failed: 701 Transition not available`).
+- **Another refusal** reads as its meaning (format not accepted, media not reachable, renderer in
+  standby or busy…); its UPnP code is in the logs of the integration. The message follows the
+  language of the configuration, except on the widget buttons for "nothing over DLNA", shown in
+  the language of the user.
+- **A web radio shows its URL instead of its name**: the stream does not give a name (no `icy-name`
+  header), or did not answer within 2.5 seconds. Fill the title of the scene action, or make it a
+  favorite with a name.
+- **A file or a radio does not play**: the renderer must support its format, and reach its URL
+  itself. A renderer in standby may take about ten seconds to start: the integration waits for it.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt DLNA in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Geräte finden | `section` | Nein | Wiedergabegeräte und Medienserver in deinem Netzwerk werden automatisch gefunden: Öffne den Tab „Entdecken“ und füge die gewünschten hinzu. Ein Gerät in einem anderen Netzwerk (VLAN, anderes Subnetz) lässt sich unten über die URL seiner UPnP-Beschreibung hinzufügen. |
+| Beschreibungs-URLs (optional) | `string` | Nein | Eine oder mehrere URLs von UPnP-Beschreibungen, durch Kommas getrennt. Teste zuerst eine mit der Aktion unten. |
+| Sprache der Namen und Meldungen | `select` | Nein | Namen der Funktionen der ab jetzt hinzugefügten Geräte (Gladys behält sie, sobald ein Gerät hinzugefügt ist) und Fehlermeldungen von Befehlen und Szenen. |
+| Favoriten | `section` | Nein | Bis zu 8 Medien, die sich mit einem Tipp über das Widget „DLNA-Favoriten“ oder die Szenenaktion „DLNA-Favorit abspielen“ starten lassen. Jeder Favorit ist eine URL (Webradio, Datei) oder eine Suche auf einem Medienserver: Fülle das eine oder das andere aus. Ein Favorit ohne beides wird ignoriert. |
+| Favorit 1 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+| Favorit 2 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+| Favorit 3 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+| Favorit 4 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+| Favorit 5 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+| Favorit 6 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+| Favorit 7 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+| Favorit 8 | `section` | Nein |  |
+| Name (auf der Schaltfläche) | `string` | Nein |  |
+| URL (Webradio, Datei) | `string` | Nein |  |
+| Oder ein Medienserver (sein Name in Gladys) | `string` | Nein | Leer: der einzige in Gladys hinzugefügte Medienserver. |
+| Suchen nach | `select` | Nein |  |
+| Suche auf dem Server | `string` | Nein |  |
+| Wiedergabe | `select` | Nein |  |
+
+## So installierst du DLNA in Gladys
+
+1. Öffne in Gladys **Integrationen**: DLNA erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-dlna:1.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-dlna](https://github.com/guim31/gladys-dlna).
+
+DLNA benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+DLNA ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)
+- [Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-dlna) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-dlna/blob/HEAD/docs/en.md)
