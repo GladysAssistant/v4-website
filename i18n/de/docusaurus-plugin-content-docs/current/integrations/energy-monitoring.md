@@ -11,7 +11,7 @@ Mit der Integration „Energiemonitoring“ kannst du deinen Energieverbrauch mi
 So machst du aus den Daten echte Einsparungen: [Senke deine Stromrechnung](/de/home-energy-monitoring/). Hast du einen zeitabhängigen Tarif? Sieh dir live die [EDF-Tempo-Farbe](/de/edf-tempo/), die [Hydro-Québec-Spitzenlastereignisse](/de/hydro-quebec-peak-events/) und die [Stromtarife in Ontario](/de/ontario-electricity-rates/) an.
 :::
 
-Sie ist seit Gladys Assistant 4.66 verfügbar.
+Sie ist seit Gladys Assistant 4.66 verfügbar. Seit Gladys Assistant 5.2 werden die Kosten deines Verbrauchs anhand von **Energieverträgen** berechnet, die die Stromverträge fast aller Länder beschreiben können: Zeitfenster, Jahreszeiten, Tagesfarben, Verbrauchsstufen, Spotpreise …
 
 ## Kompatible Hardware
 
@@ -85,54 +85,77 @@ Nach Abschluss der Synchronisierung kannst du prüfen, ob dein Enedis-Gerät die
 
 Siehst du deinen gesamten Verbrauch in kWh, super – dann kannst du zum nächsten Schritt übergehen!
 
-### Schritt 2: Deine Energietarife einrichten
+### Schritt 2: Deinen Energievertrag anlegen
 
-Jetzt musst du Gladys mitteilen, welchen Energieversorger du nutzt und welchen Tarif du hast.
+Jetzt musst du Gladys sagen, wie dein Anbieter dir die Energie berechnet. Seit Gladys Assistant 5.2 ist das ein **Energievertrag**: ein Gültigkeitszeitraum, eine Währung, eine Zeitzone und eine Tarifdefinition, die deinem Stromzähler zugeordnet sind.
 
-Es gibt zwei Möglichkeiten: Entweder hast du einen Vertrag, den Gladys kennt und den du einfach importieren kannst, oder du hast einen unbekannten Vertrag und musst ihn manuell einrichten.
+Öffne die Integration „Energieüberwachung“, Reiter „Verträge“, und klicke auf „Erstellen“. Ein Assistent führt dich in 4 Schritten durch die Einrichtung.
 
-Hinweis: Die Liste der Energieverträge ist Open Source und kann von jedem in [diesem GitHub-Repository](https://github.com/GladysAssistant/energy-contracts) bearbeitet werden.
+**1. Zähler**
 
-#### Einen Vertrag importieren
+Wähle deinen Stromzähler aus. Wenn du die Enedis-Integration nutzt, solltest du deinen Zähler hier sehen und kannst ihn auswählen.
 
-Um deinen Vertrag einzurichten, öffne die Integration „Energiemonitoring“, Tab „Energietarife“, und klicke auf „Importieren“:
+Andernfalls wähle „Stromzähler erstellen“, damit Gladys automatisch ein Gerät anlegt, das das „Elternteil“ aller Energiesensoren in deinem Zuhause wird.
 
-![Energiemonitoring Preis erstellen](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-create-price.png)
+**2. Vorlage**
 
-Gladys bittet dich, einen Stromzähler auszuwählen.
+Wähle deinen Vertrag in der Liste aus. Du kannst nach Land filtern und nach Anbieter oder Vertragsname suchen. Jede Vorlage zeigt, woher sie stammt: aus dem Community-Katalog, von einem Gladys-Dienst (EDF Tempo, mit den Tagesfarben aus Gladys Plus) oder von einer installierten Integration.
 
-Nutzt du die Enedis-Integration, solltest du hier deinen Zähler sehen und kannst ihn auswählen.
+![Die Liste der Vertragsvorlagen, mit Suchfeld und Länderfilter](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-templates.webp)
 
-Andernfalls kannst du auf „Einen Stromzähler erstellen“ klicken, damit Gladys automatisch ein Gerät anlegt, das als „Elternelement“ aller Energiesensoren in deinem Zuhause dient.
+Die Liste der Community-Verträge ist Open Source und kann von allen in [diesem GitHub-Repository](https://github.com/GladysAssistant/energy-contracts) bearbeitet werden.
 
-Wähle dann deinen Vertrag aus der Liste und anschließend deine vertraglich vereinbarte Leistung:
+**3. Parameter**
 
-![Energiemonitoring Vertrag importieren](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-create-price-import-contract.png)
+Prüfe den Namen des Vertrags, sein Startdatum (und sein Enddatum, falls er eins hat), die Währung, die Zeitzone und den Tag, an dem deine Abrechnungsperiode beginnt. Fülle dann die Parameter der Vorlage aus: die Anschlussleistung, die Preise, deine Niedertarifzeiten auf einem Raster aus 30-Minuten-Slots bei einem Hoch-/Niedertarifvertrag …
 
-Hast du einen Tarif mit Haupt- und Nebenzeiten (HT/NT), musst du die Zeitfenster deines Vertrags auswählen.
+![Die Parameter eines EDF-Tempo-Vertrags: ein Preis pro Tagesfarbe und Zeitfenster sowie die monatliche Grundgebühr](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-parameters.webp)
 
-Beim Tempo-Tarif werden dabei Dutzende Preise angelegt, weil der gesamte Verlauf dieses Vertrags mit 6 Preisen pro Zeitraum importiert wird!
+**4. Vorschau**
 
-![Energiemonitoring Vertragsliste](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-contract-list.png)
+Bevor irgendetwas gespeichert wird, berechnet Gladys deinen **realen Verbrauch der letzten 7 Tage** mit diesem Vertrag: die Summe, die Aufschlüsselung nach Bestandteilen (Energie, Grundgebühr …) und eine Auswahl an 30-Minuten-Intervallen mit dem jeweils angewendeten Preis. So prüfst du am einfachsten, ob der Vertrag zu deiner Rechnung passt.
 
-### Einen Vertrag manuell anlegen
+![Die Vorschau: die Kosten der letzten 7 Tage mit diesem Vertrag und der Preis jedes Intervalls](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-preview.webp)
 
-Ist dein Vertrag nicht in der Liste, klicke auf „Erstellen“.
+Klicke auf „Speichern“: Der Vertrag erscheint in der Liste, mit seinem Status (aktiv, geplant, abgelaufen).
 
-Du musst einen Preis pro Zeitraum und pro Preisart anlegen. Hast du einen Tarif mit Haupt- und Nebenzeiten, musst du für jeden Zeitraum 2 Preise anlegen.
+Wenn sich deine Preise ändern, fasst du die Vergangenheit nicht an: Beende den laufenden Vertrag zum Datum der Änderung und lege einen neuen an, der am Tag danach beginnt. Ein Zähler hat an einem bestimmten Datum höchstens einen aktiven Vertrag.
 
-Beispiel:
+:::info[Du kommst von einer älteren Version?]
+Deine vor Gladys 5.2 angelegten Energiepreise werden beim ersten Start automatisch in Verträge umgewandelt, ohne die bereits berechnete Kostenhistorie anzutasten. Prüfe sie im Reiter „Verträge“: Ein umgewandelter Vertrag, dessen Berechnung von der alten abweicht, wird markiert.
+:::
 
-Wenn dein Energietarif 2024 bei 0,15 €/kWh in der Hauptzeit und 0,10 €/kWh in der Nebenzeit lag und die Preise 2025 um 0,05 €/kWh sinken, musst du 4 Preise anlegen:
+#### Mein Vertrag ist nicht in der Liste
 
-- 2024 Hauptzeit
-- 2024 Nebenzeit
-- 2025 Hauptzeit
-- 2025 Nebenzeit
+Du hast drei Möglichkeiten:
 
-Das kann schnell mühsam werden, wenn sich die Preise deines Vertrags häufig ändern. Deshalb möchte ich dich ausdrücklich ermutigen, deinen Vertrag zur gemeinsamen Vertragsdatenbank im [GitHub-Repository](https://github.com/GladysAssistant/energy-contracts) hinzuzufügen.
+1. **Ihn der Community vorschlagen**, im [Repository der Energieverträge](https://github.com/GladysAssistant/energy-contracts). Gladys lädt diese Liste direkt herunter: Sobald dein Vertrag hinzugefügt ist, erscheint er in jeder Gladys-Instanz, ohne Update.
+2. **Ihn als externe Integration veröffentlichen**: Eine Integration kann Vertragsvorlagen deklarieren, Tarifkalender (Tagesfarben, Spotpreise, Feiertage) liefern und die Kosten sogar selbst berechnen. Siehe [die Entwicklerdokumentation](/de/docs/dev/external-integrations/).
+3. **Ihn selbst anlegen**: Aktiviere im Schritt „Parameter“ die Option „Erweitert: Tarifdefinition bearbeiten (JSON)“ und beschreibe deinen Vertrag. Mit „Als Vorlage exportieren“ erhältst du anschließend eine Vorlage, die du teilen kannst.
 
-Das Projekt ist kollaborativ, und jeder kann einen Tarif vorschlagen!
+#### Was ein Vertrag ausdrücken kann
+
+Die Tarif-Engine von Gladys kennt keinen Anbieter beim Namen: Ein Vertrag ist eine Liste von Regeln, die für jedes 30-Minuten-Intervall ausgewertet werden. Eine Regel kann abhängen von:
+
+- der **Uhrzeit** (Hoch-/Niedertarif, Zeitfenster);
+- dem **Wochentag** (günstigere Wochenenden);
+- dem **Monat oder der Jahreszeit** (Sommer-/Wintertarife);
+- einem **Datumsbereich** (Aktion, Übergangszeit);
+- einem **Tarifkalender**: Tagesfarbe (Tempo), Feiertage, Spitzenlasttage;
+- **Verbrauchsstufen**, pro Tag, pro Monat oder pro Abrechnungsperiode (progressive Tarife);
+- der **Spitzenleistung** des Intervalls.
+
+Außerdem kann ein Vertrag **Fixkosten** (pro Tag oder pro Monat), **Steuern** in Prozent, einen **Leistungspreis** pro kW Spitzenleistung und **stündliche oder viertelstündliche Börsenpreise** (Spotpreise) mit Faktor und Aufschlag enthalten.
+
+Die Engine wird mit echten Verträgen aus Frankreich, Belgien, dem Vereinigten Königreich, Deutschland, Finnland, Norwegen, den USA, Kanada, Australien, Japan, Südkorea und Indien getestet.
+
+#### Die Tarifkalender
+
+Manche Verträge hängen von Werten ab, die sich jeden Tag ändern: die Tempo-Farbe, Spotpreise, Spitzenlasttage. Diese Werte werden in **Tarifkalendern** gespeichert, die im Reiter „Einstellungen“ der Integration sichtbar sind, mit ihrem Anbieter, ihrer Granularität (Tag, 30 Minuten, 15 Minuten), ihrer Abdeckung und ihren letzten Werten.
+
+![Die Tarifkalender, die Gladys kennt, hier die EDF-Tempo-Farben](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-calendars.webp)
+
+Auf derselben Karte berechnet „Kosten neu berechnen ab“ die Kosten aller Zähler ab dem gewählten Datum neu, zum Beispiel nachdem du einen Preis korrigiert hast.
 
 ### Schritt 3: Deine Zigbee-Geräte aktualisieren
 
@@ -150,26 +173,21 @@ Wenn du in der MQTT-Integration Geräte mit „Index“-Funktionen hast, siehst 
 
 Dadurch werden die für das Energiemonitoring nötigen Funktionen hinzugefügt.
 
-### Schritt 5: Die Hierarchie deines Stromnetzes prüfen
+### Schritt 5: Prüfen, an welchem Zähler jedes Gerät hängt
 
-Öffne die Integration „Energiemonitoring“. Auf dem ersten Tab solltest du die Hierarchie deines Stromnetzes sehen.
+Öffne die Integration „Energieüberwachung“, Reiter „Meine Geräte“. Dort siehst du jeden Stromzähler (ein Gerät mit einem Energievertrag) und die Geräte, die er bepreist.
 
-![Energiemonitoring-Hierarchie](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-hiearchy.png)
+![Jeder Stromzähler mit den ihm zugeordneten Geräten, und ein Gerät, das keinem Zähler zugeordnet ist](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-meters.webp)
 
-Prüfe, ob jedes Gerät korrekt seinem Elternelement zugeordnet ist.
+Seit Gladys Assistant 5.2 **verwaltet Gladys die Verknüpfungen zwischen den Energiefunktionen deiner Geräte** für dich: Der Energiezähler einer Steckdose, ihr 30-Minuten-Verbrauch und ihre Kosten werden automatisch verknüpft, und jedes neue Energiegerät wird deinem Hauptzähler zugeordnet. Jedes Gerät wird mit dem Vertrag des Zählers bepreist, dem es zugeordnet ist.
 
-In der Logik von Gladys entspricht das „Elternelement“ eines Geräts dem, woran das Gerät angeschlossen ist.
+Die einzige Entscheidung, die dir bleibt, ist **an welchem Zähler ein Gerät hängt**, und das nur, wenn du mehrere hast (ein Zweitwohnsitz, ein Nebengebäude mit eigenem Zähler …). Nutze dafür die Liste „Zähler“ neben dem Gerät: Seine Kosten werden mit dem Vertrag dieses Zählers neu berechnet.
 
-Ein Beispiel für eine Hierarchie:
+Ein Gerät unter „Keinem Zähler zugeordnet“ wird nicht bepreist: Wähle den Zähler, an dem es angeschlossen ist.
 
-```
-- Stromzähler
-  - NOUS-A1Z-Steckdose (Verbrauchte Energie)
-     - NOUS-A1Z-Steckdose (30-Minuten-Verbrauch)
-        - NOUS-A1Z-Steckdose (30-Minuten-Kosten)
-```
-
-Die Hierarchie ist sehr wichtig, damit Gladys die Kosten deines Verbrauchs korrekt berechnen kann.
+:::info[Du kommst von einer älteren Version?]
+Die frühere Seite ließ dich jede Verknüpfung von Hand bearbeiten, und ihr Button „beheben“ konnte die ganze Hierarchie flachklopfen und die Kostenberechnung stoppen. Beim ersten Start von Gladys 5.2 wird die Hierarchie automatisch repariert: Schleifen werden aufgelöst, jeder Zähler mit Vertrag wird wieder zur Wurzel, und verlorene Verknüpfungen werden wiederhergestellt. Um die Kosten des reparierten Zeitraums neu zu berechnen, nutze „Kosten von Anfang an berechnen“ im Reiter „Einstellungen“ (Schritt 6).
+:::
 
 ### Schritt 6: Den gesamten historischen Verbrauch neu berechnen
 
@@ -192,6 +210,25 @@ So kannst du deinen Verbrauch anzeigen:
 Du kannst auch jedes Gerät einzeln anzeigen, zum Beispiel meine Waschmaschine:
 
 ![Energiemonitoring-Diagramm](../../../../../static/img/docs/en/configuration/energy-monitoring/dashboard-washing-machine-widget.png)
+
+### Schritt 8: Den aktuellen Strompreis anzeigen
+
+Das Widget „Strompreis“ zeigt für den gewählten Vertrag den aktuellen Preis pro kWh, die aktuelle Stufe (zum Beispiel „Blue peak“), bis wann sie gilt und wie der nächste Preis lautet, sowie den heutigen Verbrauch.
+
+![Das Strompreis-Widget auf dem Dashboard](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-price-widget.webp)
+
+Es funktioniert mit jedem Vertrag, unabhängig von Anbieter oder Land, und aktualisiert sich alle 5 Minuten.
+
+### Schritt 9: Den Preis in deinen Szenen nutzen
+
+Zwei Szenen-Bausteine verwenden deinen Vertrag:
+
+- der Auslöser **„Strompreis geändert“** startet eine Szene, sobald sich der Preis pro kWh (oder die Tarifstufe) des Vertrags ändert, zum Beispiel beim Wechsel vom Hoch- in den Niedertarif;
+- die Aktion **„Bedingung zum Strompreis“** lässt die Szene nur weiterlaufen, wenn der aktuelle Preis unter, über oder gleich dem gewählten Schwellenwert liegt.
+
+Zum Beispiel, um den Geschirrspüler zu starten, sobald der Strom günstiger wird:
+
+![Eine Szene, die den Geschirrspüler startet, wenn der Strompreis unter 0,15 €/kWh fällt](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-contract-scene.webp)
 
 ## Feedback?
 

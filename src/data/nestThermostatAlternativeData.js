@@ -100,7 +100,7 @@ const nestThermostatAlternativeContent = {
         {
           icon: "📅",
           title: "Schedules you own",
-          text: "Your heating schedule lives in Gladys scenes on your own machine, not in a vendor's app.",
+          text: "Since Gladys 5.2, the Thermostat integration puts a weekly schedule on your Matter or Zigbee thermostat. It lives on your own machine, not in a vendor's app.",
         },
         {
           icon: "🏠",
@@ -126,7 +126,7 @@ const nestThermostatAlternativeContent = {
         "Install Gladys on a mini-PC or a Raspberry Pi.",
         "Choose a replacement that fits your heating system and speaks Matter or Zigbee, and have it wired if needed.",
         "Pair it: Matter devices directly in Gladys, Zigbee devices through Zigbee2MQTT with a USB dongle.",
-        "Rebuild your schedule as Gladys scenes, and add presence and window-open rules.",
+        "Rebuild your schedule in the Gladys Thermostat integration, and add presence and window-open rules.",
         "Add the thermostat to your dashboard, and use Gladys Plus if you want to control it from outside the home.",
       ],
       outro:
@@ -268,7 +268,7 @@ const nestThermostatAlternativeContent = {
         {
           icon: "📅",
           title: "Des programmations à vous",
-          text: "Votre programmation de chauffage vit dans des scènes Gladys sur votre propre machine, pas dans l'application d'un fabricant.",
+          text: "Depuis Gladys 5.2, l'intégration Thermostat pose un planning hebdomadaire sur votre thermostat Matter ou Zigbee. Il vit sur votre propre machine, pas dans l'application d'un fabricant.",
         },
         {
           icon: "🏠",
@@ -294,7 +294,7 @@ const nestThermostatAlternativeContent = {
         "Installez Gladys sur un mini-PC ou un Raspberry Pi.",
         "Choisissez un remplaçant adapté à votre installation de chauffage et qui parle Matter ou Zigbee, et faites-le câbler si besoin.",
         "Associez-le : les appareils Matter directement dans Gladys, les appareils Zigbee via Zigbee2MQTT avec une clé USB.",
-        "Recréez votre programmation en scènes Gladys, et ajoutez des règles de présence et de fenêtre ouverte.",
+        "Recréez votre programmation dans l'intégration Thermostat de Gladys, et ajoutez des règles de présence et de fenêtre ouverte.",
         "Ajoutez le thermostat à votre tableau de bord, et utilisez Gladys Plus pour le piloter depuis l'extérieur.",
       ],
       outro:
@@ -436,7 +436,7 @@ const nestThermostatAlternativeContent = {
         {
           icon: "📅",
           title: "Zeitpläne, die dir gehören",
-          text: "Dein Heizplan lebt in Gladys-Szenen auf deinem eigenen Rechner, nicht in der App eines Herstellers.",
+          text: "Seit Gladys 5.2 legt die Thermostat-Integration einen Wochenplan auf dein Matter- oder Zigbee-Thermostat. Er lebt auf deinem eigenen Rechner, nicht in der App eines Herstellers.",
         },
         {
           icon: "🏠",
@@ -462,7 +462,7 @@ const nestThermostatAlternativeContent = {
         "Installiere Gladys auf einem Mini-PC oder Raspberry Pi.",
         "Wähle einen Ersatz, der zu deiner Heizungsanlage passt und Matter oder Zigbee spricht, und lass ihn bei Bedarf anschließen.",
         "Kopple ihn: Matter-Geräte direkt in Gladys, Zigbee-Geräte über Zigbee2MQTT mit einem USB-Stick.",
-        "Bau deinen Zeitplan als Gladys-Szenen nach und ergänze Regeln für Anwesenheit und offene Fenster.",
+        "Bau deinen Zeitplan in der Thermostat-Integration von Gladys nach und ergänze Regeln für Anwesenheit und offene Fenster.",
         "Füge das Thermostat deinem Dashboard hinzu und nutze Gladys Plus, wenn du es auch von unterwegs steuern willst.",
       ],
       outro:
@@ -603,7 +603,7 @@ const nestThermostatAlternativeContent = {
         {
           icon: "📅",
           title: "Programaciones que son tuyas",
-          text: "La programación de tu calefacción vive en escenas de Gladys en tu propio equipo, no en la app de un fabricante.",
+          text: "Desde Gladys 5.2, la integración Termostato pone una programación semanal en tu termostato Matter o Zigbee. Vive en tu propio equipo, no en la app de un fabricante.",
         },
         {
           icon: "🏠",
@@ -629,7 +629,7 @@ const nestThermostatAlternativeContent = {
         "Instala Gladys en un mini-PC o una Raspberry Pi.",
         "Elige un sustituto que se adapte a tu sistema de calefacción y hable Matter o Zigbee, y haz que lo instalen si hace falta.",
         "Vincúlalo: los dispositivos Matter directamente en Gladys, los dispositivos Zigbee a través de Zigbee2MQTT con un dongle USB.",
-        "Rehaz tu programación como escenas de Gladys y añade reglas de presencia y de ventana abierta.",
+        "Rehaz tu programación en la integración Termostato de Gladys y añade reglas de presencia y de ventana abierta.",
         "Añade el termostato a tu panel y usa Gladys Plus si quieres controlarlo desde fuera de casa.",
       ],
       outro:
