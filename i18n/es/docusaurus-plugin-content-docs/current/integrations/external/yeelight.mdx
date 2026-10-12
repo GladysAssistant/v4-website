@@ -14,149 +14,143 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/es.md in
 https://github.com/William-De71/gladys-yeelight instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
 <ExternalIntegrationHeader slug="yeelight" />
 
-:::info
+Esta integración le permite controlar sus luces **Yeelight** (bombillas, tiras LED, lámparas de mesita, plafones) desde Gladys Assistant, directamente en su red local. Sin cuenta en la nube, sin pasarela, sin servidor intermedio: Gladys habla directamente con sus luces.
 
-La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+![Gladys, la integración y sus luces Yeelight: las luces envían sus estados por una conexión abierta cada una, los comandos salen de Gladys y la búsqueda pasa por el broadcast que Gladys envía en el puerto UDP 1982](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/overview.svg)
 
-:::
+## Funciones
 
-This integration lets you control your **Yeelight** lights (bulbs, LED strips, bedside lamps, ceiling lights) from Gladys Assistant, directly on your local network. No cloud account, no gateway, no middleman: Gladys talks to your lights itself.
+La integración se adapta a lo que sabe hacer cada luz — una luz anuncia ella misma sus capacidades, y solo se crean las funciones realmente disponibles:
 
-![Gladys, the integration and your Yeelight lights: lights push their states over one open connection each, commands leave from Gladys, and discovery goes through the broadcast Gladys sends on UDP 1982](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/overview.svg)
+| Función                  | Luces afectadas                                       |
+| ------------------------ | ----------------------------------------------------- |
+| Encender / apagar        | Todas                                                 |
+| Brillo (1 a 100 %)       | Todas las luces regulables                            |
+| Color (RGB)              | Modelos de color (`color`, tiras, lámparas de mesita) |
+| Temperatura de color     | Modelos de blanco regulable y de color                |
+| Luz ambiental            | Plafones y barras de luz con retroiluminación         |
+| Luz nocturna (modo luna) | Plafones                                              |
 
-## Features
+### Los estados llegan en tiempo real
 
-The integration adapts to what each light can do — a light advertises its own capabilities, and only the features actually available are created:
+Sus luces **envían** ellas mismas sus cambios de estado: la integración mantiene una conexión abierta con cada luz, y Gladys recibe el nuevo valor en el momento en que cambia — también cuando usa la aplicación Yeelight, el mando o el interruptor de pared. No hay ningún intervalo de consulta que ajustar.
 
-| Feature                 | Lights concerned                               |
-| ----------------------- | ---------------------------------------------- |
-| On / off                | All                                            |
-| Brightness (1 to 100 %) | All dimmable lights                            |
-| Color (RGB)             | Color models (`color`, strips, bedside lamps)  |
-| Color temperature       | Tunable-white and color models                 |
-| Ambient light           | Ceiling lights and light bars with a backlight |
-| Night light (moonlight) | Ceiling lights                                 |
+## Requisitos
 
-### States arrive in real time
+### Activar «Control LAN» — imprescindible
 
-Your lights **push** their state changes: the integration keeps a connection open to each light, and Gladys receives the new value the moment it changes — including when you use the Yeelight app, the remote, or the wall switch. There is no polling interval to set.
+Es **el paso que no hay que olvidar**: por defecto, una luz Yeelight rechaza cualquier comando local. Sin esta opción, la luz no se encontrará ni se podrá controlar.
 
-## Requirements
+Para cada luz, en la aplicación **Yeelight**:
 
-### Enable "LAN Control" — mandatory
+1. Abra la luz.
+2. Vaya a **Ajustes** (icono arriba a la derecha).
+3. Active **Control LAN** («LAN Control», también llamado «Modo desarrollador»).
 
-This is **the step not to skip**: by default a Yeelight light refuses every local command. Without this option the light is neither discoverable nor controllable.
+> Hay que repetirlo para cada luz, una por una. Es un ajuste guardado en la propia luz.
 
-For each light, in the **Yeelight** app:
+### Red
 
-1. Open the light.
-2. Go to **Settings** (icon in the top right corner).
-3. Enable **LAN Control** (also called "Developer mode").
+- Gladys y sus luces deben estar en la **misma subred** para que funcione la búsqueda automática.
+- La búsqueda difunde una petición en broadcast por el puerto UDP 1982. **Un broadcast nunca atraviesa un router**: si sus luces están en otra VLAN u otra subred que Gladys, la búsqueda no las encontrará — es un límite de la red, no un ajuste. Alargar la duración de la búsqueda no cambia nada.
+- En ese caso, añada sus luces **a mano** (ver más abajo): el control, en cambio, va por TCP directo y funciona perfectamente entre subredes siempre que estén enrutadas.
 
-> Do this for every light, one by one. It is a setting stored in the light itself.
+## Configuración
 
-### Network
+### 1. Descubrir sus luces
 
-- Gladys and your lights must be on the **same subnet** for automatic discovery to work.
-- Discovery broadcasts a request on UDP port 1982. **A broadcast never crosses a router**: if your lights sit on another VLAN or subnet than Gladys, the scan will not find them — that is a network boundary, not a setting to tune. Raising the scan duration changes nothing.
-- In that case, add your lights **by hand** (see below): control itself is direct TCP and works fine across subnets, as long as they are routed.
+Una vez activado «Control LAN», vaya a la pantalla **Descubrir** de la integración e inicie una búsqueda. Sus luces aparecen con su nombre (el que les dio en la aplicación Yeelight), listas para añadirse. **Sin ninguna dirección IP que escribir.**
 
-## Configuration
+![Dos fuentes alimentan la pantalla Descubrir: la búsqueda en la red, cuyas respuestas contienen el identificador de fábrica, el modelo, las capacidades y el estado, y las luces añadidas a mano, consultadas por TCP; ambas dan un dispositivo por luz](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/discovery.svg)
 
-### 1. Discover your lights
+### 2. Duración de la transición
 
-Once "LAN Control" is enabled, open the integration's **Discover** screen and run a scan. Your lights appear with their name (the one you gave them in the Yeelight app), ready to be added. **No IP address to type.**
+Ajusta el fundido aplicado a cada cambio (encendido, regulación, color). El valor por defecto de **500 ms** da una transición suave y natural. Ponga **0** para un cambio instantáneo.
 
-![Two sources feed the Discover screen: the network scan, whose replies carry the factory id, the model, the capabilities and the state, and the lights added by hand, probed over TCP; both end up as one device per light](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/discovery.svg)
+### 3. Luces no encontradas por la búsqueda
 
-### 2. Transition duration
+Dos casos llevan hasta aquí, y el segundo es el más habitual:
 
-Sets the fade applied to every change (switching on, dimming, color). The default of **500 ms** gives a smooth, natural transition. Set **0** for an instant change.
+- «Control LAN» no está activado en la luz (ver Requisitos);
+- **sus luces están en otra subred / VLAN que Gladys** — la búsqueda no puede alcanzarlas por definición, pero el control funciona.
 
-### 3. Lights not found by the scan
-
-Two cases lead here, and the second is the most common:
-
-- "LAN Control" is not enabled on the light (see Requirements);
-- **your lights sit on another subnet / VLAN than Gladys** — the scan structurally cannot reach them, but control works.
-
-Add their address under **Lights added by hand**, separated by a comma (the port is optional, 55443 by default):
+Añada entonces su dirección en **Luces añadidas a mano**, separadas por comas (el puerto es opcional, 55443 por defecto):
 
 ```
 192.168.1.42, 192.168.1.43:55443
 ```
 
-An IPv6 address goes in brackets: `[fe80::1]` or `[fe80::1]:55443`. A light both declared here and found by the scan is listed only once, under the identity the scan gives it.
+Una dirección IPv6 se escribe entre corchetes: `[fe80::1]` o `[fe80::1]:55443`. Una luz declarada aquí y encontrada también por la búsqueda aparece una sola vez, con la identidad que le da la búsqueda.
 
-> **Important:** give those lights a **fixed IP address** in your router. Unlike a light found by the scan — identified by its serial number, stable for life — a light added by hand is identified by its address. If its DHCP lease changes, Gladys will see it as a different light.
+> **Importante:** asigne a estas luces una **dirección IP fija** en su router. A diferencia de una luz encontrada por la búsqueda — identificada por su número de serie, que nunca cambia —, una luz añadida a mano se identifica por su dirección. Si cambia su concesión DHCP, Gladys la verá como una luz diferente.
 
-### 4. Discovery duration
+### 4. Duración de la búsqueda
 
-How long the scan listens for answers. 5 seconds is plenty in most cases; raise it if your network is busy and some lights are missing.
+Tiempo durante el que la búsqueda escucha las respuestas. 5 segundos bastan en la gran mayoría de los casos; aumente este valor si su red está muy cargada y faltan algunas luces.
 
-## Available actions
+## Acciones disponibles
 
-- **Test the connection**: runs a discovery and reports how many lights answered.
-- **Reconnect the lights**: closes every connection and reopens them. Useful after a power cut or a network change.
+- **Probar la conexión**: lanza una búsqueda e indica cuántas luces han respondido.
+- **Reconectar las luces**: cierra todas las conexiones y las vuelve a abrir. Útil tras un corte de corriente o un cambio en la red.
 
-## Good to know
+## Conviene saber
 
-### Setting a color on a light that is off
+### Ajustar un color en una luz apagada
 
-A Yeelight refuses color, temperature and brightness commands while it is off. The integration **turns it on automatically** before applying your setting: clicking a color therefore switches the light on in that color, which is what you meant.
+Una luz Yeelight rechaza los comandos de color, temperatura y brillo mientras está apagada. La integración **la enciende automáticamente** antes de aplicar su ajuste: hacer clic en un color enciende la luz en ese color, que es lo que se espera.
 
-![When you pick a colour on a light that is off, the integration switches it on first, then sends the colour; the light pushes its new state back](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/commands.svg)
+![Cuando elige un color en una luz apagada, la integración la enciende primero y luego envía el color; la luz comunica después su nuevo estado](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/commands.svg)
 
-The power state is known from what the light already reported, so a light that is on is not switched on again — that would restart its fade, visibly.
+El estado de encendido se conoce por lo que la luz ya ha comunicado: una luz ya encendida no se vuelve a encender — eso relanzaría su fundido, de forma visible.
 
-### Brightness starts at 1 %, not 0 %
+### El brillo empieza en 1 %, no en 0 %
 
-A Yeelight has no "0 %" state: zero means off. Setting the brightness to 0 in Gladys therefore **switches the light off**.
+Una luz Yeelight no tiene estado «0 %»: el cero es el apagado. Poner el brillo a 0 en Gladys **apaga** por tanto la luz.
 
-### The color shown in white mode
+### El color mostrado en modo blanco
 
-When a light is in white mode (color temperature), it still remembers the last color used. Gladys deliberately does not show it as the active color, so you never see a color the light is not actually displaying.
+Cuando una luz está en modo blanco (temperatura de color), sigue recordando el último color usado. Gladys no lo muestra a propósito como color activo, para no enseñar un color que la luz no está mostrando.
 
-### Ceiling lights have two independent lights
+### Los plafones tienen dos luces independientes
 
-A ceiling light with a backlight (ceiling10, light bars…) exposes **two separate lights**, and Gladys names them explicitly:
+Un plafón con retroiluminación (ceiling10, barras de luz…) expone **dos luces separadas**, y Gladys las nombra explícitamente:
 
-- **Main light**, **Main brightness**, **Main colour**, **Main colour temperature**;
-- **Ambient light**, **Ambient brightness**, **Ambient colour**, **Ambient colour temperature**.
+- **Main light**, **Main brightness**, **Main colour**, **Main colour temperature** (luz principal);
+- **Ambient light**, **Ambient brightness**, **Ambient colour**, **Ambient colour temperature** (luz ambiental).
 
-Each one switches on and off independently of the other. To drive both in one go, create a Gladys **scene** acting on both switches — that is how Gladys groups several commands.
+Cada una se enciende y se apaga independientemente de la otra. Para controlar ambas de un solo gesto, cree una **escena** de Gladys que actúe sobre los dos interruptores: es la forma prevista por Gladys de agrupar varios comandos.
 
-Ambient colour temperature only appears on models whose backlight can tune its white — the warm/cold slider the Yeelight app shows next to the ring's colour wheel.
+La temperatura de color ambiental solo aparece en los modelos cuya retroiluminación puede regular su blanco — el control cálido/frío que la aplicación Yeelight muestra junto a la rueda de color del anillo.
 
-On a light without a backlight there is only one light, and the labels stay simple (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). You can rename any feature in Gladys.
+En una luz sin retroiluminación solo hay una luz, y las etiquetas siguen siendo sencillas (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). Puede renombrar cada función en Gladys.
 
-If your ceiling light switches its ring on and off together with the main light, that is not Gladys: it is the **"Auto on/off with the main light"** option in the Yeelight app. Turn it off to drive each light separately.
+Si su plafón enciende o apaga su anillo a la vez que la luz principal, no es cosa de Gladys: es la opción **«Encendido/apagado automático con la luz principal»** de la aplicación Yeelight. Desactívela para controlar cada luz por separado.
 
-### Colour temperature
+### La temperatura de color
 
-The temperature slider follows the Gladys gradient: **left is cold, bluish light; right is warm, orange light.** The integration converts that value into the Kelvin the light understands, respecting the real range of your model (2700–6500 K on a ceiling light, 1700–6500 K on a colour bulb).
+El control de temperatura sigue el degradado de Gladys: **a la izquierda, una luz fría y azulada; a la derecha, una luz cálida y anaranjada.** La integración convierte automáticamente este valor a los Kelvin que entiende la luz, respetando el rango real de su modelo (2700–6500 K en un plafón, 1700–6500 K en una bombilla de color).
 
-### Light limits
+### Límites de las luces
 
-Each light accepts **4 simultaneous connections** and **60 commands per minute**. The integration opens a single connection per light and smooths command bursts automatically, but keep those limits in mind if you also drive your lights from other apps at the same time.
+Cada luz acepta **4 conexiones simultáneas** y **60 comandos por minuto**. La integración solo abre una conexión por luz y suaviza automáticamente las ráfagas de comandos, pero tenga en cuenta estos límites si también controla sus luces desde otras aplicaciones al mismo tiempo.
 
-## Troubleshooting
+## Solución de problemas
 
-| Symptom                                | Most likely cause                                                             |
-| -------------------------------------- | ----------------------------------------------------------------------------- |
-| No light found                         | "LAN Control" is not enabled in the Yeelight app                              |
-| Only one light out of several is found | The option is only enabled on that one — it is set per light                  |
-| A light disappears then comes back     | Wi-Fi drop or wall switch: the integration reconnects on its own, backing off |
-| A hand-added light becomes unknown     | Its IP address changed — give it a fixed address in your router               |
-| Commands stop working after a while    | Another piece of software is holding the light's 4 connection slots           |
-| A light added by hand is ignored       | Its address changed, or the brackets are missing around an IPv6 address       |
+| Síntoma                                            | Causa más probable                                                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| No se encuentra ninguna luz                        | «Control LAN» no está activado en la aplicación Yeelight                                         |
+| Solo se encuentra una luz de varias                | La opción solo está activada en esa luz — se ajusta luz por luz                                  |
+| Una luz desaparece y luego vuelve                  | Corte de Wi-Fi o interruptor de pared: la integración se reconecta sola, espaciando los intentos |
+| Una luz añadida a mano pasa a ser desconocida      | Su dirección IP ha cambiado — asígnele una dirección fija en su router                           |
+| Los comandos dejan de funcionar al cabo de un rato | Otro programa ocupa las 4 conexiones de la luz                                                   |
+| Una luz añadida a mano se ignora                   | Su dirección ha cambiado, o faltan los corchetes alrededor de una dirección IPv6                 |
 
 ## Parámetros de configuración
 
@@ -188,4 +182,4 @@ Yeelight es una **integración externa**: una integración comunitaria empaqueta
 - [Explorar todas las integraciones externas](/es/docs/integrations/external/)
 - [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
 - [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
-- [Código fuente en GitHub](https://github.com/William-De71/gladys-yeelight) — [fuente de esta documentación](https://github.com/William-De71/gladys-yeelight/blob/HEAD/docs/en.md)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-yeelight) — [fuente de esta documentación](https://github.com/William-De71/gladys-yeelight/blob/HEAD/docs/es.md)

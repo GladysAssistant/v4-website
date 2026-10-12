@@ -139,6 +139,9 @@ nobody asked for, an `rhost` left on the old IP. The password itself is never
 shown and never logged — only its length is, which is enough to spot a mask
 pasted in its place.
 
+A string written on a device of the list (a second box) is checked the same way,
+and shown on a line of its own: `Connection string of "Box garage": sp://<…>`.
+
 #### Using a service you already run
 
 If the AirSend Web Service is already running somewhere on your network — the
@@ -160,7 +163,9 @@ The **AirSend Web Service URL** is only needed in the case described above: a
 service of your own.
 
 Each device shows as a badge the channel that carried its last order — `local`
-when your box answered, `unreachable` when it could not be reached.
+when your box answered, `unreachable` when it could not be reached. Once you
+change the service or the connection string, the badge shows what the new
+configuration allows until the device's next order.
 
 ## The device list
 
@@ -257,6 +262,10 @@ A box declared without `sensors: true` creates no device in Gladys — it is
 only there to carry the connection string. When the global **Connection
 string** field is empty, the one declared on the box serves every device.
 
+A box declared with a connection string **other** than the global one is a
+second box: the one behind the global string is still listened through and kept
+warm, alongside it.
+
 ## Getting an order through
 
 Nothing acknowledges a radio order. A 433 MHz shutter has no way back: the box
@@ -270,12 +279,16 @@ Three things answer it, with nothing to set:
 - **orders go out one at a time.** A box has one radio: while it transmits it
   hears nothing, and a second order fired straight after reaches a box that is
   still busy. Orders therefore queue up, a quarter of a second apart, in the
-  order you gave them;
+  order you gave them — one queue per box, so a box that does not answer never
+  holds up the orders sent through another one;
 - **an order the box could not carry is sent again.** A refusal is not: a
   rejected connection string and an unknown channel answer exactly the same way
-  the second time. A push button TOGGLE is only sent again when it certainly
-  never went out (the service unreachable, the box busy): after a timeout it may
-  well have opened the gate, and a second one would close it;
+  the second time. A push button TOGGLE, or a Stop, is only sent again when it
+  certainly never went out (the service unreachable, the box busy): after a
+  timeout it may well have opened the gate, and a second one would close it.
+  Nor is an order sent again once you gave the device a newer one — from Gladys
+  or from its wall remote: an Open sent again after your Stop would set the
+  shutter off again;
 - **an order is repeated on the air**, the way a real remote repeats it for as
   long as the button is held. By default every order goes out twice.
 
@@ -288,16 +301,22 @@ others:
 { "devices": { "Patio door": { "type": 4098, "pid": 25455, "addr": 8295, "repeat": 3 } } }
 ```
 
-Only orders that mean the same thing twice are repeated — Open, Stop, Close, a
+Only orders that mean the same thing twice are repeated — Open, Close, a
 position. A push button TOGGLE goes out once: heard twice, it is back where it
-started.
+started. So does Stop: on Somfy RTS, STOP and the "my" button are the same
+frame, and a second one reaching a shutter the first has just stopped sends it
+to its favourite position. A repeat still waiting its turn is dropped when the
+device is given a newer order, from Gladys or from its wall remote.
 
 Those repeats do **not** make the interface wait: Gladys is answered as soon as
 the order is on the air, and the repeats keep going behind it, in their place in
 the queue. They are a second chance for a frame lost in the noise, not part of
 the answer — and re-arming the listener, which needs the radio too, now waits
 for the queue to empty instead of slipping between two orders. That is what made
-a "Close" clicked right after an "Open" take a few seconds to go out.
+a "Close" clicked right after an "Open" take a few seconds to go out. It also
+waits for the Stop of a shutter driven to a position when that Stop is due in
+the next few seconds: held behind the re-arm, it went out late, and the shutter
+stopped past the position asked for.
 
 ### The first order after a long pause
 
@@ -326,7 +345,10 @@ faster than it was being kept warm… Touching it every 2 min from now on.
 ```
 
 It only ever shortens: a fast wake proves the interval it was made at works,
-never that a longer one would.
+never that a longer one would. And only a box that answered teaches it anything:
+the first contact after start-up builds the session and is slow whatever the
+interval, and a box that is switched off makes every wake last the whole timeout.
+Each box is kept warm after its own silence.
 
 When an order still takes more than a second and a half to leave, the logs say
 so, and say **where the time went**:
@@ -361,16 +383,51 @@ whatever the delay. A box that takes ten seconds to repeat itself is no longer
 mistaken for a hand on a remote — which was enough to send a shutter stopped at
 40 % back to the top. That voice is Gladys' for a minute after its last order:
 a remote copied into the AirSend app (same address as the device, the usual
-way for a fixed-code gate) is followed again once that minute has passed.
+way for a fixed-code gate) speaks with it too. Within that minute such a remote
+is still followed — the Up, Down or Stop of a shutter or a gate, the ON, OFF or
+level of a switch or a light — drops the repeat of a Gladys order still waiting
+for the radio, and fires **A radio remote is pressed**, like any remote. Only a
+press repeating what Gladys has just said, which changes nothing, or what the
+box has not yet been heard repeating, is taken for the echo. And only a frame
+the integration would follow at any other time: with listening off, or graded
+too low (see **Accept unreliable frames**), it is dropped within that minute
+too. The answer of the box to one of Gladys' orders is never a press, however
+late it comes back.
 
-Two visible consequences:
+The same goes for a percentage or an ON/OFF Gladys sent: its echo is not taken
+for the device reporting where it is. Read that way, a timed 4099 sent to 30 %
+showed 30 % a second after it set off, and a late echo of an ON switched a plug
+back on after the OFF given since.
+
+Visible consequences:
 
 - a wall remote emits from **another address**: it is never taken for that echo,
   and goes on driving the shutter in Gladys;
-- when the box answers that it **did not carry the order**, the integration
-  writes it in its logs, naming the device and what the box said. It is the only
-  trace of an order that went nowhere, and it is worth a look if you often click
-  twice.
+- a device that lists that channel in its `remotes` (a group channel driving it
+  with others) **does** follow the order: it never acted on it, and for it the
+  frame is an order like any other. Once: the further echoes of that order, and
+  any echo arriving after an order given to that device since, are not
+  replayed — "close all, then the living room to 50 %" leaves the living room
+  at 50 %. A late echo of the group's Close, heard after its Stop, is that
+  Close, not the Stop: "close all, then stop all" stops the living room too;
+- when the box answers that it **did not carry the order** — every emission of
+  it, repeats included: a repeat refused after the order went out changes
+  nothing — the integration writes it in its logs, naming the device and what
+  the box said. It is the only trace of an order that went nowhere, and it is
+  worth a look if you often click twice. When the box says nothing went out on
+  the air (`NETWORK`, `BUSY`…), the device's badge turns to `unreachable`, a
+  switch or a light is shown again in the state it had before (unless a remote
+  changed it since), and a timed shutter's travel is taken back, with the Stop it would have sent at the
+  end — sent to a still Somfy shutter, that Stop is the "my" button.
+  Only the order that failed: a refused "Identify" PING does not switch back a
+  plug whose ON went out, and when a short positioning's Open is refused after
+  its Stop was sent, it is that Open which is taken back, not the Stop. Each
+  answer is counted against the order it is about, however late it comes back:
+  ON, OFF, ON clicked faster than the box answers, all refused, leave the plug
+  shown as it was before the three. An order whose repeat never went out (a
+  remote pressed meanwhile, the AirSend Web Service restarting) is reported as
+  soon as that is known, not with the next order; and an order the service
+  never received at all does not count as replacing the one before it.
 
 ### When the box says no
 
@@ -429,7 +486,10 @@ moment it stops by itself, and write the two durations down:
 
 From then on the integration follows the shutter second by second, whether the
 order came from Gladys or from a wall remote it heard on the radio (which needs
-the listening channel below). Three things follow:
+the listening channel below). A remote whose protocol only knows On/Off
+(Chacon DiO) counts as Up/Down. When many shutters move at once, each publishes
+its position less often, so together they stay well under the 300 states a
+minute Gladys accepts and every end stop gets through. Three things follow:
 
 - a **`4098` gets a position too** — the feature appears as soon as the shutter
   is timed, and its slider drives the motor with a timed Open/Stop: the
@@ -454,12 +514,28 @@ Two more things worth knowing:
   the integration publishes nothing rather than inventing a value. Open or
   close it once and it is set. Asking for a position before that sends the
   shutter to the nearest end stop, which is exactly what establishes the
-  reference;
+  reference. The same goes for a shutter you have just timed, whatever its
+  orders said before, and for one sent somewhere nobody can tell: the "my"
+  button without `favorite_position`, a one-button keyfob (toggle). A
+  reconnection to Gladys does not fill it in with the older value Gladys kept;
 - the position is **remembered across restarts** of the integration: it starts
   again from the value Gladys kept. A shutter you add in Gladys after the
-  integration started gets the position already known straight away;
+  integration started gets the position already known straight away, and a
+  position Gladys missed while it was unreachable (restarted, updated) is
+  published again when it comes back. Correcting `invert` mirrors the remembered
+  position, a shutter on the move included: the shutter itself did not move. A
+  shutter still moving when the integration stops (update, restart of Gladys) is
+  not lost either: one driven to a position gets its Stop there and then (or the
+  one already on its way to the radio), and Gladys keeps where it was stopped;
+  one opening or closing fully is published at the end stop it is heading for;
 - a shutter driven to a position is **stopped on time even when Gladys is
-  briefly unreachable**: the STOP goes out before the position is published.
+  briefly unreachable or slow to answer**: the STOP goes out before the position
+  is published, and never waits for Gladys. A STOP the box could not send,
+  whether it says so at once or a moment later (BUSY, NETWORK…), fires the **A
+  radio order failed** trigger, and the position follows the shutter to its end
+  stop, since nothing stopped it — a Stop given from Gladys while the shutter
+  moves too. A STOP still waiting for the radio when a wall
+  remote sets the shutter off again is dropped.
 
 ### The favourite position
 
@@ -508,6 +584,11 @@ Leave the **Listening channel** field empty.
 Fill it in only to listen to something else: the `pid` of a protocol you have
 not declared yet, or `0` to turn listening off.
 
+A `pid` typed there goes through the same table as a deduced one: a protocol the
+service decodes with the generic 433 MHz decoder is listened to on channel `1`,
+which is what hears it. And with `0`, the frames the box still pushes from the
+subscription made before are ignored until it stops sending them.
+
 **`1` and an empty field mean the same thing: "deduce it".** That is the value
 the field defaulted to before the deduction existed, and it is read as such — a
 `1` does not ask for generic 433 MHz listening. Generic listening is what the
@@ -534,6 +615,10 @@ When two protocols are declared equally — a shutter on one side, the wall remo
 attached to it on the other — the one that **emits** wins. A shutter, a switch,
 a lamp do not talk: they are talked to. A remote declared in `remotes` is there
 precisely to be heard, so that is what the box is subscribed to.
+
+Each emitter counts once, however many devices declare it: a general remote
+written into the `remotes` of every shutter is one remote, and does not outvote
+three sensors on another protocol.
 
 #### A protocol nobody speaks on
 
@@ -682,7 +767,8 @@ are followed whatever their grade, since an exact address is no noise.
 picked the protocol up **without decoding it**. There is no emitter to name and
 no order to replay, and no setting makes usable what was never decoded. It is
 the signature of a box listening to the **wrong decoder**: put that `pid` in the
-**Listening channel** field so the box listens to that protocol on its own
+**Listening channel** field (the word `generic` for pid 1, which typed as is
+means "deduce") so the box listens to that protocol on its own
 decoder, then run **Test the connection** again. If the frames come back with an
 address, attach it as usual.
 
@@ -708,7 +794,7 @@ knowingly.
 Once the emitter is declared the frame does reach the device — what remains is
 whether it **carries an order**. Start with **Test the connection**: its _Heard_
 line answers without going through the logs (see "What the box actually heard").
-It tells apart three cases that look alike and are unrelated:
+It tells apart five cases that look alike and are unrelated:
 
 - `declared on Living room shutter, but its frames carry no order to replay` —
   the frame arrived, the device has no use for it. That is the fate of
@@ -717,6 +803,15 @@ It tells apart three cases that look alike and are unrelated:
   cannot follow**, and attaching the remote cannot change that; on the first
   frame from that emitter the integration says so in the logs too, at info level
   (`no note the service could decode`);
+- `declared on Plug, which does nothing with the order decoded` — the frame is
+  fully decoded, but into an order that device type does not act on: a TOGGLE
+  from a one-button remote attached to a switch or a light, say. The protocol is
+  fine; check the type declared on airsend.cloud (a remote sending TOGGLE drives
+  a Button, type `4096`) or that the right remote is attached;
+- `not heard since the configuration changed` — the emitter was heard before
+  the last save (before it was attached, typically), and what its frames did
+  then says nothing about the device declaring it now: press the remote, then
+  run the action again;
 - `no device declares it` — the emitter is heard, it is simply attached to
   nothing: run **Attach a remote** again;
 - the emitter is not listed at all — the frame no longer arrives. When the remote
@@ -801,13 +896,16 @@ brand printed on the plastic does not always say — a shutter sold under one na
 may carry another manufacturer's radio — while the name here is the decoder that
 actually decoded the frame.
 
-Three possible verdicts per emitter:
+The possible verdicts per emitter:
 
-| Verdict                    | What it means                                                             |
-| -------------------------- | ------------------------------------------------------------------------- |
-| `followed by <device>`     | it works: those frames do drive the device                                |
-| `no device declares it`    | the emitter is heard but attached to nothing — **Attach a remote**        |
-| `carry no order to replay` | the frame reaches its device and carries nothing to replay (rolling code) |
+| Verdict                                     | What it means                                                                                |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `followed by <device>`                      | it works: those frames do drive the device                                                   |
+| `no device declares it`                     | the emitter is heard but attached to nothing — **Attach a remote**                           |
+| `does not declare`                          | a sensor decoded fine, into readings missing from its `features`: add them                   |
+| `does nothing with the order decoded`       | the order is decoded, but that device type does not act on it — check its type               |
+| `carry no order to replay`                  | the frame reaches its device and carries nothing to replay (rolling code)                    |
+| `not heard since the configuration changed` | its frames were judged under the previous configuration: press it, then run the action again |
 
 The line quotes **every** distinct note an emitter has been heard saying, not
 just its last frame — that is what tells a remote whose buttons the service
@@ -913,13 +1011,17 @@ In the scene editor, under **Integrations**:
   drives and on the order (`up`, `down`, `stop`, `favorite`, `on`, `off`,
   `toggle`). The scene can read `device_name`, `order`, `pid` and `addr`.
   Gladys' own orders never fire it, so a scene cannot loop on itself. A remote
-  held down is one press, not one event per frame — and one click on the
-  `click` feature of a type `1` remote, too.
+  held down is one press, however long, not one event per frame — and one
+  click on the `click` feature of a type `1` remote, too, whichever button
+  (stop and _my_ included). That feature, like the readings of a radio sensor,
+  can also start a scene through Gladys' own device triggers.
 - **A radio order failed** — the box did not carry an order Gladys gave:
   unreachable, connection string refused, box busy… The scene can read
   `device_name`, `reason` (`NETWORK`, `SECURITY`, `BUSY`, `HTTP_401`,
   `UNREACHABLE`…) and `message`. One event per device and reason per minute:
-  made for a notification.
+  made for a notification. Only the radio order itself: a repeat refused while
+  the order went out, or a state Gladys refused once the order was on the air,
+  does not fire it.
 
 ### Scene actions
 
@@ -973,7 +1075,7 @@ last emitters heard with what became of them (followed, unknown, dropped…). It
 | Remote attached, nothing moves        | **Test the connection**, _Heard_ line: it says whether the frames carry an order                                 |
 | `unreliable, graded N` in the logs    | A frame graded too low: **Accept unreliable frames**, or move the box closer                                     |
 | `did not carry the order` in the logs | The name that line gives the failure — see [When the box says no](#when-the-box-says-no)                         |
-| A frame with a `pid` and no `addr`    | The protocol is not decoded: put that `pid` in **Listening channel**                                             |
+| A frame with a `pid` and no `addr`    | The protocol is not decoded: put that `pid` (`generic` for 1) in **Listening channel**                           |
 
 The integration logs everything it does: read the integration logs from the
 Gladys UI (or `docker logs` on the host), and tick **Detailed logs (debug)** in
@@ -993,14 +1095,14 @@ These are the settings Devmel asks for in its configuration screen in Gladys.
 | Listening channel | `string` | No | Which radio protocol the box listens to, by its pid. Leave it empty — or 1, which means the same thing — and it is deduced from the devices you declared: that is what pushes to Gladys what the box hears (wall remotes, sensors). "Test the connection" says on its Listening line which protocol was chosen and what it covers, and "Find a radio protocol" searches the pids by brand. Fill in a pid to listen to another protocol, the word generic for generic 433 MHz listening (its pid, 1, is taken), 0 to turn listening off. |
 | Command repeats | `number` | No | How many extra times an order is sent on the air, the way a real remote repeats it while the button is held. Nothing acknowledges a radio order, so a frame lost in the noise is a click that did nothing: raise this to 2 or 3 if a device sometimes ignores Gladys. 0 sends each order once. A device can override it with its own repeat value. It answers a frame lost in the noise, which nothing reports: an order the box itself says it did not carry is a different problem, and the logs name it. |
 | Refresh interval (s) | `number` | No | How often the box sensors are read, in seconds. A device can override it with its own refresh value. |
-| Accept unreliable frames | `boolean` | No | The box grades every frame it decodes, and the badly graded ones are normally ignored — as the official Jeedom plugin does. Turn this on when a remote is heard but never followed: its frames are then used anyway, at the risk of the occasional false trigger. It changes nothing for a protocol the box picks up without decoding it (no address in the logs): that one needs the listening channel set to its pid. |
+| Accept unreliable frames | `boolean` | No | The box grades every frame it decodes, and the badly graded ones are normally ignored — as the official Jeedom plugin does. Turn this on when a remote is heard but never followed: its frames are then used anyway, at the risk of the occasional false trigger. It changes nothing for a protocol the box picks up without decoding it (no address in the logs): that one needs the listening channel set to its pid, or to the word generic for pid 1. |
 | Detailed logs (debug) | `boolean` | No | Log every radio frame the box hears, including the ones dropped as unreliable or left undecoded. Turn it on to find out why a remote does not show up, and off again once you know: it is verbose. The password of your connection string is never logged; the rest of it is, at this level, so you can see what Gladys is really holding. |
 | Time zone of the logs | `string` | No | The time zone the log lines are stamped in, so they show the same hour as the dashboard widget. An IANA name such as Europe/Paris or America/Montreal. Left empty: the TZ of the container, or UTC. |
 
 ## How to install Devmel in Gladys
 
 1. In Gladys, open **Integrations**: Devmel appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:2.2.4`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-devmel:3.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 

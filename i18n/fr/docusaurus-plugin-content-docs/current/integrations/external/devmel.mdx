@@ -145,6 +145,10 @@ boîtier, un `gw=1` que personne n'a demandé, un `rhost` resté sur l'ancienne 
 Le mot de passe, lui, n'est jamais affiché ni journalisé — seule sa longueur
 l'est, ce qui suffit à repérer un masque collé à sa place.
 
+Une chaîne écrite sur un appareil de la liste (un second boîtier) est vérifiée
+de la même façon, et affichée sur sa propre ligne :
+`Chaîne de connexion de « Box garage » : sp://<…>`.
+
 #### Utiliser un service que vous faites déjà tourner
 
 Si le service web AirSend tourne déjà quelque part sur votre réseau — l'add-on
@@ -168,7 +172,9 @@ service à vous.
 
 Chaque appareil affiche en pastille le canal qui a porté son dernier ordre :
 `local` quand votre boîtier a répondu, `unreachable` quand il n'a pas pu être
-joint.
+joint. Après un changement du service ou de la chaîne de connexion, la pastille
+indique ce que permet la nouvelle configuration, jusqu'au prochain ordre de
+l'appareil.
 
 ## La liste d'appareils
 
@@ -267,6 +273,10 @@ il n'est là que pour porter la chaîne de connexion. Quand le champ global
 **Chaîne de connexion** est vide, celle déclarée sur le boîtier sert à tous les
 appareils.
 
+Un boîtier déclaré avec une chaîne de connexion **différente** de la chaîne
+globale est un second boîtier : celui de la chaîne globale reste écouté et
+maintenu éveillé, à côté de lui.
+
 ## Faire passer un ordre
 
 Rien n'accuse réception d'un ordre radio. Un volet 433 MHz n'a pas de voie de
@@ -281,13 +291,18 @@ Trois choses y répondent, sans rien à régler :
 - **les ordres passent un par un.** Un boîtier n'a qu'une radio : pendant qu'il
   émet, il n'entend rien, et un deuxième ordre envoyé dans la foulée arrive sur
   un boîtier occupé. Les ordres font donc la queue, espacés d'un quart de
-  seconde, dans l'ordre où vous les avez donnés ;
+  seconde, dans l'ordre où vous les avez donnés — une file par boîtier, si bien
+  qu'un boîtier qui ne répond pas ne retient jamais les ordres envoyés par un
+  autre ;
 - **un ordre que le boîtier n'a pas pu porter est renvoyé.** Un refus, lui, ne
   l'est pas : une chaîne de connexion rejetée et un canal inconnu répondront
-  exactement pareil la seconde fois. Un TOGGLE de bouton poussoir n'est renvoyé
-  que s'il n'est certainement pas parti (service injoignable, boîtier occupé) :
-  après un délai dépassé, il a peut-être déjà ouvert le portail, et un second le
-  refermerait ;
+  exactement pareil la seconde fois. Un TOGGLE de bouton poussoir, ou un Stop,
+  n'est renvoyé que s'il n'est certainement pas parti (service injoignable,
+  boîtier occupé) : après un délai dépassé, il a peut-être déjà ouvert le
+  portail, et un second le refermerait. Un ordre n'est pas non plus renvoyé une
+  fois que vous avez donné à l'appareil un ordre plus récent — depuis Gladys ou
+  sa télécommande murale : un Ouvrir renvoyé après votre Stop relancerait le
+  volet ;
 - **un ordre est répété sur l'air**, comme une vraie télécommande le répète tant
   qu'on garde le doigt appuyé. Par défaut, chaque ordre part deux fois.
 
@@ -301,8 +316,12 @@ avoir la sienne, sans changer celle des autres :
 ```
 
 Seuls les ordres qui veulent dire la même chose deux fois sont répétés — Ouvrir,
-Stop, Fermer, une position. Un TOGGLE de bouton poussoir, lui, part une seule
-fois : entendu deux fois, il revient d'où il part.
+Fermer, une position. Un TOGGLE de bouton poussoir, lui, part une seule fois :
+entendu deux fois, il revient d'où il part. Stop aussi : en Somfy RTS, STOP et
+le bouton « my » sont la même trame, et un second arrivant sur un volet que le
+premier vient d'arrêter l'envoie à sa position favorite. Une répétition qui
+attend encore son tour est abandonnée quand l'appareil reçoit un ordre plus
+récent, de Gladys ou de sa télécommande murale.
 
 Ces répétitions ne font **pas attendre l'interface** : Gladys est servie dès que
 l'ordre est sur l'air, et les répétitions continuent derrière, à leur place dans
@@ -310,7 +329,10 @@ la file. C'est une seconde chance pour une trame perdue dans le bruit, pas une
 partie de la réponse — et le réabonnement à l'écoute, qui a lui aussi besoin de
 la radio, attend maintenant que la file soit vide au lieu de se glisser entre
 deux ordres. C'est ce qui faisait qu'un « Fermer » cliqué juste après un
-« Ouvrir » mettait quelques secondes à partir.
+« Ouvrir » mettait quelques secondes à partir. Il attend aussi le Stop d'un
+volet envoyé à une position quand ce Stop doit partir dans les secondes qui
+viennent : retenu derrière le réabonnement, il partait en retard, et le volet
+s'arrêtait au-delà de la position demandée.
 
 ### Le premier ordre après une longue pause
 
@@ -341,7 +363,11 @@ faster than it was being kept warm… Touching it every 2 min from now on.
 ```
 
 Elle ne fait que raccourcir : un réveil rapide prouve que l'intervalle où il a
-eu lieu fonctionne, jamais qu'un plus long fonctionnerait.
+eu lieu fonctionne, jamais qu'un plus long fonctionnerait. Et seul un boîtier qui
+a répondu lui apprend quelque chose : le premier contact après le démarrage
+refait la session et est lent quel que soit l'intervalle, et un boîtier éteint
+fait durer chaque réveil tout le délai d'attente. Chaque boîtier est gardé au
+chaud après son propre silence.
 
 Quand un ordre met tout de même plus d'une seconde et demie à partir, les
 journaux le disent, et disent **où le temps est passé** :
@@ -377,17 +403,55 @@ cette voix, quel que soit le délai. Un boîtier qui met dix secondes à se rép
 n'est donc plus pris pour une main sur une télécommande — c'était de quoi
 renvoyer en haut un volet arrêté à 40 %. Cette voix reste celle de Gladys une
 minute après son dernier ordre : une télécommande recopiée dans l'appli AirSend
-(même adresse que l'appareil, l'usage pour un portail à code fixe) est de
-nouveau suivie une fois cette minute passée.
+(même adresse que l'appareil, l'usage pour un portail à code fixe) parle aussi
+avec elle. Pendant cette minute, une telle télécommande est tout de même suivie
+— la montée, la descente ou le stop d'un volet ou d'un portail, le ON, le OFF
+ou le niveau d'une prise ou d'une lumière —, annule la répétition d'un ordre de
+Gladys qui attendait encore la radio, et déclenche **Une télécommande radio est
+actionnée**, comme toute télécommande. Seul un appui qui répète ce que Gladys
+vient de dire, et qui ne change rien, ou ce que le boîtier n'a pas encore été
+entendu répéter, est pris pour l'écho. Et seulement une trame que
+l'intégration suivrait à tout autre moment : écoute coupée, ou trame trop mal
+notée (voir **Accepter les trames peu fiables**), elle est ignorée pendant
+cette minute aussi. La réponse du boîtier à un ordre de Gladys n'est jamais un
+appui, aussi tard qu'elle revienne.
 
-Deux conséquences visibles :
+Il en va de même d'un pourcentage ou d'un ON/OFF envoyé par Gladys : son écho
+n'est pas pris pour l'appareil qui dirait où il en est. Lu ainsi, un 4099
+chronométré envoyé à 30 % affichait 30 % une seconde après son départ, et l'écho
+tardif d'un ON rallumait une prise éteinte entre-temps.
+
+Conséquences visibles :
 
 - une télécommande murale émet depuis une **autre adresse** : elle n'est jamais
   prise pour cet écho, et continue de piloter le volet dans Gladys ;
-- quand le boîtier répond qu'il **n'a pas porté l'ordre**, l'intégration l'écrit
-  dans ses journaux, en nommant l'appareil et ce que le boîtier a dit. C'est la
-  seule trace d'un ordre parti dans le vide, et elle vaut le coup d'œil si vous
-  cliquez souvent deux fois.
+- un appareil qui liste ce canal dans ses `remotes` (un canal de groupe qui le
+  pilote avec d'autres) **suit** l'ordre : il n'y a pas réagi, et pour lui la
+  trame est un ordre comme un autre. Une fois : les échos suivants de cet ordre,
+  et tout écho arrivé après un ordre donné depuis à cet appareil, ne sont pas
+  rejoués — « tout fermer, puis le salon à 50 % » laisse le salon à 50 %. Un
+  écho tardif du Fermer du groupe, entendu après son Stop, est ce Fermer, pas
+  le Stop : « tout fermer, puis tout arrêter » arrête aussi le salon ;
+- quand le boîtier répond qu'il **n'a pas porté l'ordre** — aucune de ses
+  émissions, répétitions comprises : une répétition refusée après le départ de
+  l'ordre ne change rien —, l'intégration l'écrit dans ses journaux, en nommant
+  l'appareil et ce que le boîtier a dit. C'est la seule trace d'un ordre parti
+  dans le vide, et elle vaut le coup d'œil si vous cliquez souvent deux fois.
+  Quand le boîtier dit que rien n'est parti sur les ondes (`NETWORK`, `BUSY`…),
+  le badge de l'appareil passe à `unreachable`, une prise ou une lumière
+  retrouve dans Gladys l'état d'avant (sauf si une télécommande l'a changé
+  depuis), et la course d'un volet chronométré est annulée, avec le Stop qu'elle aurait envoyé à l'arrivée —
+  envoyé à un volet Somfy immobile, ce Stop est le bouton « my ».
+  Seul l'ordre qui a échoué : un PING « Identifier » refusé ne rééteint pas une
+  prise dont l'allumage est parti, et quand l'Ouvrir d'un court
+  positionnement est refusé après l'envoi de son Stop, c'est cet Ouvrir qui
+  est annulé, pas le Stop. Chaque réponse est comptée à l'ordre qu'elle
+  concerne, aussi tard qu'elle revienne : allumer, éteindre, allumer cliqués
+  plus vite que le boîtier ne répond, tous refusés, laissent la prise affichée
+  comme avant les trois. Un ordre dont la répétition n'est jamais partie (une
+  télécommande actionnée entre-temps, l'AirSend Web Service qui redémarre) est
+  signalé dès que c'est su, pas avec l'ordre suivant ; et un ordre que le
+  service n'a jamais reçu ne compte pas comme remplaçant celui d'avant.
 
 ### Quand le boîtier dit non
 
@@ -448,7 +512,11 @@ les deux durées :
 
 L'intégration suit alors le volet seconde par seconde, que l'ordre vienne de
 Gladys ou d'une télécommande murale entendue à la radio (ce qui suppose le
-canal d'écoute décrit plus bas). Trois conséquences :
+canal d'écoute décrit plus bas). Une télécommande dont le protocole ne connaît
+que Marche/Arrêt (Chacon DiO) vaut Monter/Descendre. Quand beaucoup de volets bougent en même
+temps, chacun publie sa position moins souvent : ensemble, ils restent bien
+sous les 300 états par minute qu'accepte Gladys, et chaque butée passe. Trois
+conséquences :
 
 - un **`4098` obtient lui aussi une position** — la fonctionnalité apparaît dès
   que le volet est chronométré, et son curseur pilote le moteur par un
@@ -476,12 +544,31 @@ Deux détails qui comptent :
   chronométré est **inconnue**, et l'intégration ne publie rien plutôt que
   d'inventer une valeur. Ouvrez-le ou fermez-le une fois et c'est réglé.
   Demander une position avant cela envoie le volet à la butée la plus proche,
-  ce qui est précisément ce qui établit la référence ;
+  ce qui est précisément ce qui établit la référence. Il en va de même d'un
+  volet que vous venez de chronométrer, quoi que ses ordres aient dit avant, et
+  d'un volet parti à un endroit que personne ne peut connaître : le bouton
+  « my » sans `favorite_position`, une télécommande à un seul bouton (toggle).
+  Une reconnexion à Gladys ne la remplace pas par la valeur, plus ancienne,
+  conservée par Gladys ;
 - la position **survit aux redémarrages** de l'intégration : elle repart de la
   valeur conservée par Gladys. Un volet ajouté dans Gladys après le démarrage de
-  l'intégration reçoit tout de suite la position déjà connue ;
+  l'intégration reçoit tout de suite la position déjà connue, et une position
+  que Gladys a manquée pendant qu'elle était injoignable (redémarrage, mise à
+  jour) lui est republiée à son retour. Corriger `invert` inverse la position
+  retenue, volet en mouvement compris : le volet, lui, n'a pas bougé. Un volet
+  encore en mouvement quand l'intégration s'arrête (mise à jour, redémarrage de
+  Gladys) n'est pas perdu non plus : celui envoyé à une position reçoit son Stop
+  sur-le-champ (ou celui qui attendait déjà la radio), et Gladys garde l'endroit
+  où il s'est arrêté ; celui qui s'ouvre ou se ferme complètement est publié à
+  la butée vers laquelle il va ;
 - un volet envoyé à une position est **arrêté à temps même si Gladys ne répond
-  plus un instant** : le STOP part avant que la position soit publiée.
+  plus un instant ou tarde à répondre** : le STOP part avant que la position
+  soit publiée, et n'attend jamais Gladys. Un STOP que le boîtier n'a pas pu
+  envoyer, qu'il le dise tout de suite ou un instant plus tard (BUSY, NETWORK…),
+  active le déclencheur **Un ordre radio a échoué**, et la position suit le
+  volet jusqu'à sa butée, puisque rien ne l'a arrêté — un Stop donné depuis
+  Gladys pendant que le volet bouge aussi. Un STOP qui attend encore
+  la radio quand une télécommande murale relance le volet est abandonné.
 
 ### La position favorite
 
@@ -532,6 +619,12 @@ Laissez le champ **Canal d'écoute** vide.
 Renseignez-le seulement pour écouter autre chose : le `pid` d'un protocole que
 vous n'avez pas encore déclaré, ou `0` pour couper l'écoute.
 
+Un `pid` tapé là passe par la même table qu'un canal déduit : un protocole que
+le service décode avec le décodeur générique 433 MHz est écouté sur le canal
+`1`, celui qui l'entend. Et avec `0`, les trames que le boîtier pousse encore au
+titre de l'abonnement d'avant sont ignorées jusqu'à ce qu'il cesse de les
+envoyer.
+
 **`1` et un champ vide veulent dire la même chose : « déduis-le ».** C'est la
 valeur que le champ prenait par défaut avant que la déduction n'existe, et elle
 est lue comme telle — un `1` ne demande donc pas l'écoute générique 433 MHz.
@@ -559,6 +652,11 @@ télécommande murale qu'on lui a rattachée de l'autre —, c'est **celui qui �
 qui l'emporte. Un volet, un interrupteur, une lampe ne parlent pas : on leur
 parle. Une télécommande déclarée dans `remotes` est là, elle, précisément pour
 être entendue : c'est donc elle que le boîtier écoute.
+
+Chaque émetteur compte une fois, quel que soit le nombre d'appareils qui le
+déclarent : une télécommande générale recopiée dans les `remotes` de chaque
+volet reste une seule télécommande, et ne l'emporte pas sur trois capteurs d'un
+autre protocole.
 
 #### Un protocole où personne ne parle
 
@@ -715,7 +813,8 @@ suivies quelle que soit leur note, une adresse exacte n'est pas du bruit.
 protocole **sans le décoder**. Il n'y a ni émetteur à nommer, ni ordre à
 rejouer, et aucun réglage ne rend exploitable ce qui n'a pas été décodé. C'est
 la signature d'un boîtier à l'écoute du **mauvais décodeur** : renseignez ce
-`pid` dans le champ **Canal d'écoute**, pour que le boîtier écoute ce protocole
+`pid` dans le champ **Canal d'écoute** (le mot `générique` pour le pid 1, qui
+tapé tel quel veut dire « déduire »), pour que le boîtier écoute ce protocole
 sur son propre décodeur, puis relancez **Tester la connexion**. Si les trames
 reviennent alors avec une adresse, rattachez-la comme d'habitude.
 
@@ -741,7 +840,7 @@ votre volet. À n'utiliser qu'en connaissance de cause.
 Une fois l'émetteur déclaré, la trame arrive bien à l'appareil — reste à savoir
 si elle **porte un ordre**. Commencez par **Tester la connexion** : la ligne
 _Entendu_ répond sans passer par les logs (voir « Ce que le boîtier a entendu »).
-Elle distingue trois cas qui se ressemblent et n'ont rien à voir :
+Elle distingue cinq cas qui se ressemblent et n'ont rien à voir :
 
 - `déclaré sur « Baie vitrée », mais ses trames ne portent aucun ordre
 rejouable` — la trame est arrivée, l'appareil ne sait qu'en faire. C'est le lot
@@ -750,6 +849,16 @@ rejouable` — la trame est arrivée, l'appareil ne sait qu'en faire. C'est le l
   rejouer. **La position ne peut pas suivre**, et le rattachement n'y changera
   rien : à la première trame de cet émetteur, l'intégration le dit aussi dans ses
   logs, au niveau info (`no note the service could decode`) ;
+- `déclaré sur « Prise », qui ne fait rien de l'ordre décodé` — la trame est
+  entièrement décodée, mais en un ordre que ce type d'appareil ne suit pas : un
+  TOGGLE de télécommande à un bouton rattachée à une prise ou à une lampe, par
+  exemple. Le protocole n'y est pour rien ; vérifiez le type déclaré sur
+  airsend.cloud (une télécommande qui envoie TOGGLE commande un Bouton, type
+  `4096`) ou que c'est la bonne télécommande qui est rattachée ;
+- `pas entendu depuis le changement de configuration` — l'émetteur a été
+  entendu avant le dernier enregistrement (avant d'être rattaché, le plus
+  souvent), et ce que ses trames ont donné alors ne dit rien de l'appareil qui le
+  déclare maintenant : appuyez sur la télécommande, puis relancez l'action ;
 - `aucun appareil ne le déclare` — l'émetteur est bien entendu, il n'est
   simplement rattaché à rien : relancez **Rattacher une télécommande** ;
 - l'émetteur n'apparaît pas du tout — la trame n'arrive plus. Si la télécommande
@@ -839,13 +948,16 @@ marque inscrite sur le boîtier plastique ne le dit pas toujours — un volet ve
 sous une marque française peut embarquer la radio d'un autre fabricant — alors
 que le nom donné ici est celui du décodeur qui a réellement décodé la trame.
 
-Trois verdicts possibles pour un émetteur :
+Les verdicts possibles pour un émetteur :
 
-| Verdict                            | Ce que ça veut dire                                                           |
-| ---------------------------------- | ----------------------------------------------------------------------------- |
-| `suivi par <appareil>`             | tout marche : ses trames pilotent bien l'appareil                             |
-| `aucun appareil ne le déclare`     | l'émetteur est entendu, mais rattaché à rien — **Rattacher une télécommande** |
-| `ne portent aucun ordre rejouable` | la trame arrive à l'appareil et ne porte rien à rejouer (code tournant)       |
+| Verdict                                             | Ce que ça veut dire                                                                                 |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `suivi par <appareil>`                              | tout marche : ses trames pilotent bien l'appareil                                                   |
+| `aucun appareil ne le déclare`                      | l'émetteur est entendu, mais rattaché à rien — **Rattacher une télécommande**                       |
+| `ne déclare pas`                                    | un capteur bien décodé, en mesures absentes de ses `features` : ajoutez-les                         |
+| `ne fait rien de l'ordre décodé`                    | l'ordre est décodé, mais ce type d'appareil ne le suit pas — vérifiez son type                      |
+| `ne portent aucun ordre rejouable`                  | la trame arrive à l'appareil et ne porte rien à rejouer (code tournant)                             |
+| `pas entendu depuis le changement de configuration` | ses trames ont été jugées sous la configuration précédente : appuyez dessus, puis relancez l'action |
 
 La ligne cite **toutes** les notes différentes entendues d'un même émetteur, pas
 seulement la dernière — c'est ce qui distingue une télécommande dont le service
@@ -960,13 +1072,18 @@ Dans l'éditeur de scènes, rubrique **Intégrations** :
   et sur l'ordre (`up`, `down`, `stop`, `favorite`, `on`, `off`, `toggle`). La
   scène peut lire `device_name`, `order`, `pid` et `addr`. Les ordres de Gladys
   ne le déclenchent jamais : une scène ne peut pas boucler sur elle-même. Une
-  télécommande tenue appuyée compte pour un seul appui — et pour un seul clic
-  sur la fonction `click` d'une télécommande de type `1`.
+  télécommande tenue appuyée compte pour un seul appui, aussi long soit-il — et
+  pour un seul clic sur la fonction `click` d'une télécommande de type `1`,
+  quel que soit le bouton (stop et _my_ compris). Cette fonction, comme les
+  mesures d'un capteur radio, peut aussi lancer une scène par les déclencheurs
+  d'appareil de Gladys.
 - **Un ordre radio a échoué** — le boîtier n'a pas porté un ordre donné par
   Gladys : injoignable, chaîne de connexion refusée, boîtier occupé… La scène
   peut lire `device_name`, `reason` (`NETWORK`, `SECURITY`, `BUSY`, `HTTP_401`,
   `UNREACHABLE`…) et `message`. Un seul événement par appareil et par raison
-  et par minute : fait pour une notification.
+  et par minute : fait pour une notification. Seulement l'ordre radio lui-même :
+  une répétition refusée alors que l'ordre est parti, ou un état refusé par
+  Gladys une fois l'ordre sur les ondes, ne le déclenche pas.
 
 ### Actions de scène
 
@@ -1022,7 +1139,7 @@ scène. Le réglage **Émetteurs affichés** (0 à 8) règle la longueur de la l
 | Télécommande rattachée, rien ne bouge    | **Tester la connexion**, ligne _Entendu_ : elle dit si les trames portent un ordre                                                   |
 | `unreliable, graded N` (logs)            | Trame notée trop bas : **Accepter les trames peu fiables**, ou rapprochez le boîtier                                                 |
 | `did not carry the order` (logs)         | Le nom que cette ligne donne à l'échec — voir [Quand le boîtier dit non](#quand-le-boîtier-dit-non)                                  |
-| Une trame avec un `pid` et sans `addr`   | Le protocole n'est pas décodé : mettez ce `pid` dans **Canal d'écoute**                                                              |
+| Une trame avec un `pid` et sans `addr`   | Le protocole n'est pas décodé : mettez ce `pid` (`générique` pour 1) dans **Canal d'écoute**                                         |
 
 L'intégration journalise tout ce qu'elle fait : consultez les logs de
 l'intégration depuis l'interface de Gladys (ou `docker logs` sur l'hôte), et
@@ -1043,14 +1160,14 @@ Voici les paramètres demandés par Devmel dans son écran de configuration dans
 | Canal d'écoute | `string` | Non | Le protocole radio écouté par le boîtier, par son pid. Laissez le champ vide — ou 1, qui veut dire la même chose — et il est déduit des appareils que vous avez déclarés : c'est ce qui remonte vers Gladys ce que le boîtier entend (télécommandes murales, capteurs). « Tester la connexion » indique sur sa ligne Écoute le protocole retenu et ce qu'il couvre, et « Chercher un protocole radio » cherche les pid par marque. Renseignez un pid pour écouter un autre protocole, le mot générique pour l'écoute générique 433 MHz (son pid, 1, est déjà pris), 0 pour désactiver l'écoute. |
 | Répétitions des commandes | `number` | Non | Nombre d'émissions supplémentaires d'un ordre radio, comme une vraie télécommande le répète tant qu'on appuie. Rien n'accuse réception d'un ordre radio : une trame perdue dans le bruit, c'est un clic sans effet. Montez à 2 ou 3 si un appareil ignore parfois Gladys. 0 n'envoie chaque ordre qu'une fois. Un appareil peut la surcharger avec sa propre valeur repeat. Cela répond à une trame perdue dans le bruit, que rien ne signale : un ordre que le boîtier dit lui-même ne pas avoir porté est un autre problème, et les journaux le nomment. |
 | Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture des capteurs du boîtier, en secondes. Un appareil peut la surcharger avec sa propre valeur refresh. |
-| Accepter les trames peu fiables | `boolean` | Non | Le boîtier note chaque trame qu'il décode, et celles qu'il note mal sont ignorées — comme le fait le plugin Jeedom officiel. Activez ceci si une télécommande est entendue sans jamais être suivie : ses trames seront alors utilisées quand même, au risque d'une fausse détection de temps en temps. Sans effet sur un protocole que le boîtier capte sans le décoder (aucune adresse dans les journaux) : celui-là demande son pid dans le canal d'écoute. |
+| Accepter les trames peu fiables | `boolean` | Non | Le boîtier note chaque trame qu'il décode, et celles qu'il note mal sont ignorées — comme le fait le plugin Jeedom officiel. Activez ceci si une télécommande est entendue sans jamais être suivie : ses trames seront alors utilisées quand même, au risque d'une fausse détection de temps en temps. Sans effet sur un protocole que le boîtier capte sans le décoder (aucune adresse dans les journaux) : celui-là demande son pid dans le canal d'écoute, ou le mot générique pour le pid 1. |
 | Journaux détaillés (debug) | `boolean` | Non | Journalise chaque trame radio entendue par le boîtier, y compris celles écartées comme peu fiables ou non décodées. Activez-le pour comprendre pourquoi une télécommande ne remonte pas, puis désactivez-le : c'est verbeux. Le mot de passe de votre chaîne de connexion n'est jamais journalisé ; le reste de la chaîne l'est à ce niveau, pour que vous voyiez ce que Gladys tient vraiment. |
 | Fuseau horaire des journaux | `string` | Non | Le fuseau horaire des heures écrites dans les journaux, pour qu'ils affichent la même heure que le widget du tableau de bord. Un nom IANA comme Europe/Paris ou America/Montreal. Laissé vide : le TZ du conteneur, ou UTC. |
 
 ## Comment installer Devmel dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Devmel apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:2.2.4`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-devmel:3.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-devmel](https://github.com/prohand/gladys-devmel).
 

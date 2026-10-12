@@ -1,0 +1,235 @@
+---
+title: "Intégration domotique RFPlayer, gratuite et open source"
+sidebar_label: "RFPlayer"
+description: "Clé RFPlayer 433/868 MHz : capteurs, télécommandes, alarmes et actionneurs radio. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-rfplayer.png"
+keywords:
+  - "rfplayer"
+  - "domotique rfplayer"
+  - "gladys rfplayer"
+  - "rfplayer gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-rfplayer instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="rfplayer" />
+
+Reliez une clé **RFPlayer RFP1000 de Ziblue / GCE Electronics** (433 et 868
+MHz) à Gladys : capteurs et détecteurs radio, télécommandes et interrupteurs
+muraux, et les récepteurs pilotés par la clé (prises, lampes, volets Somfy RTS,
+portails).
+
+## 1. Rendre la clé accessible en TCP
+
+L'intégration tourne dans un conteneur isolé qui **ne peut pas ouvrir de port
+USB**. Le RFPlayer reste branché sur une machine de votre réseau (la machine de
+Gladys, un Raspberry Pi…), et une petite « passerelle série-TCP » rend son port
+série accessible sur le réseau. Les données sont les mêmes, à 115200 bauds.
+
+Trouvez le nom stable de la clé :
+
+```bash
+ls -l /dev/serial/by-id/
+```
+
+### Avec ser2net 4 (Debian 11+, Raspberry Pi OS)
+
+```bash
+sudo apt install ser2net
+```
+
+`/etc/ser2net.yaml` :
+
+```yaml
+connection: &rfplayer
+  accepter: tcp,4000
+  enable: on
+  options:
+    kickolduser: true
+  connector: serialdev,/dev/serial/by-id/usb-XXXX-if00-port0,115200n81,local
+```
+
+Remplacez le chemin `/dev/serial/by-id/...` par le vôtre, puis
+`sudo systemctl restart ser2net`.
+
+### Avec ser2net 3
+
+`/etc/ser2net.conf` :
+
+```
+4000:raw:0:/dev/serial/by-id/usb-XXXX-if00-port0:115200 8DATABITS NONE 1STOPBIT
+```
+
+### Avec socat (test rapide)
+
+```bash
+socat TCP-LISTEN:4000,reuseaddr,fork FILE:/dev/serial/by-id/usb-XXXX-if00-port0,b115200,raw,echo=0
+```
+
+> La passerelle n'a **pas de mot de passe** : qui joint le port pilote vos
+> appareils radio. Gardez-la sur votre réseau local, ne l'ouvrez jamais sur
+> Internet. Avec ser2net, vous pouvez la limiter à une adresse :
+> `accepter: tcp,192.168.1.10,4000`.
+
+## 2. Configurer l'intégration
+
+| Champ                              | Quoi mettre                                                                                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Hôte de la passerelle              | IP de la machine de la passerelle. Pour la machine de Gladys elle-même, son **IP sur le réseau local** — `localhost` est le conteneur. |
+| Port TCP de la passerelle          | `4000` dans les exemples ci-dessus.                                                                                                    |
+| Protocoles reçus                   | Vide pour tous. Décochez ce que vous n'utilisez pas pour entendre moins de voisins.                                                    |
+| Qualité radio minimale             | 0 garde tout ; 3 ou 4 écarte les émetteurs lointains (ceux des voisins).                                                               |
+| Seuil de détection de brouillage   | 7 par défaut ; 1 = très sensible, 10 = brouilleur sur les deux bandes, 0 = désactivé.                                                  |
+| Identifier les sondes Oregon / OWL | « Adresse » (par défaut) ou « Modèle et canal » — voir plus bas.                                                                       |
+| Actionneurs                        | Les récepteurs pilotés par la clé — voir la partie 4.                                                                                  |
+| Types de détecteurs                | Quel détecteur est un contact de porte, un détecteur de fumée… — voir la partie 3.                                                     |
+
+Cliquez sur **Tester la connexion** : vous voyez le modèle, le firmware, le
+temps de réponse et les protocoles reçus, ainsi que les erreurs de vos
+réglages.
+
+## 3. Capteurs, détecteurs et télécommandes (entendus)
+
+Rien à déclarer : dès que la clé entend un appareil, il apparaît dans l'onglet
+**Découverte**. Créez ceux qui sont à vous — les sondes des voisins sont aussi
+entendues, elles restent simplement là. Les valeurs et les déclencheurs de
+scène ne vont qu'aux appareils créés.
+
+- **Sondes Oregon Scientific** : température, humidité, pression, vitesse et
+  direction du vent, pluie, UV. Compteurs **OWL** : puissance (par phase sur
+  CM180i) et énergie. Les sondes Oregon tirent une nouvelle adresse au hasard à
+  chaque changement de piles. Avec « Adresse », deux sondes identiques sur le
+  même canal sont distinguées, mais un changement de piles crée un nouvel
+  appareil. Avec « Modèle et canal », l'appareil survit aux changements de
+  piles, tant que chaque sonde d'un même modèle a son propre canal. Changer ce
+  réglage crée de nouveaux appareils.
+- **Détecteurs Visonic et X2D** : alarme, autoprotection et pile faible. Sur
+  les ondes, un contact de porte ressemble à un détecteur de mouvement :
+  précisez-le dans **Types de détecteurs**, par exemple
+  `VISONIC 1166992416 = opening; X2D 7894561 = smoke` (types : `motion`,
+  `opening`, `smoke`, `leak`, `vibration`, `presence`). L'id est affiché dans le
+  widget et dans les paramètres de l'appareil. Les détecteurs de mouvement et
+  de fumée n'envoient jamais « c'est fini » : leur alarme revient à 0 après 1 à
+  2 minutes.
+- **Détecteurs de fumée KD101** : l'alerte.
+- **Télécommandes et interrupteurs muraux** (Chacon/DiO, X10, Domia, Blyss,
+  Somfy RTS, X2D, porte-clés Visonic, FS20…) : l'appareil montre le dernier
+  ordre marche/arrêt (monter/my/descendre pour une télécommande RTS), et chaque
+  appui lance le déclencheur **Une télécommande radio est actionnée** avec
+  l'ordre exact.
+
+## 4. Actionneurs (pilotés par la clé)
+
+Un récepteur ne se découvre pas par les ondes : il faut le déclarer. Le plus
+simple est le bouton **Appairer un actionneur** :
+
+1. mettez le récepteur en mode apprentissage (bouton d'une prise Chacon appuyé,
+   PROG maintenu sur la télécommande d'origine d'un volet Somfy RTS jusqu'à ce
+   qu'il bouge un peu…) ;
+2. indiquez un nom, le type, le protocole et une adresse libre (0 à 255, ou A1
+   à P16), puis lancez l'action ;
+3. la clé envoie la trame d'appairage, et le récepteur est ajouté au champ
+   **Actionneurs**. Créez-le depuis l'onglet **Découverte**.
+
+Vous pouvez aussi remplir le champ à la main, entrées séparées par `;` :
+
+```
+Volet salon = shutter RTS 1; Lampe bureau = switch CHACON 12; Entrée = light X10 A3; Portail = button RTS 2 qualifier=1
+```
+
+| Type      | Ce qu'il fait                                                                             |
+| --------- | ----------------------------------------------------------------------------------------- |
+| `switch`  | Marche / arrêt.                                                                           |
+| `light`   | Marche / arrêt et luminosité (protocoles avec variation : X10, variateurs Chacon, FS20…). |
+| `shutter` | Ouvrir / stop / fermer. En Somfy RTS, stop est le bouton « my ».                          |
+| `button`  | Un seul ordre (portail, porte de garage, sonnette). Un portail RTS demande `qualifier=1`. |
+
+L'adresse n'est pas celle de votre ancienne télécommande : la clé la combine
+avec son propre identifiant, donc l'`ID 1` de votre RFPlayer ne pilote jamais
+l'appareil d'un voisin. Les ordres radio ne sont jamais confirmés : Gladys
+affiche ce qu'il a envoyé.
+
+## 5. Scènes et tableau de bord (Gladys 5.1+)
+
+Déclencheurs :
+
+- **Une télécommande radio est actionnée** — filtre sur la télécommande et
+  l'ordre ; variables : nom, ordre, protocole, adresse.
+- **Un détecteur radio se déclenche** — alarme ou autoprotection.
+- **La pile d'un appareil radio est faible**.
+- **Brouillage radio** — commencé ou terminé. Un brouilleur est le moyen
+  classique d'aveugler une alarme sans fil : faites-en une scène de
+  notification.
+
+Actions :
+
+- **Envoyer un ordre radio** — n'importe quel ordre à n'importe quelle adresse,
+  même non déclarée (un deuxième canal, le « my » RTS…). Sa sortie `sent` vaut
+  faux quand la clé n'est pas connectée.
+- **Simuler un brouillage radio** — pour tester votre scène d'alarme de bout en
+  bout.
+
+Le widget **Radio RFPlayer** montre si la clé est connectée, l'état du
+brouillage, les compteurs et les derniers émetteurs entendus, avec un badge qui
+dit si chacun est déjà un appareil dans Gladys.
+
+## En cas de problème
+
+- **« RFPlayer injoignable »** : vérifiez la passerelle
+  (`systemctl status ser2net`), l'IP et le port, et qu'aucun autre programme
+  n'utilise le port série (`kickolduser` aide avec ser2net). Depuis une autre
+  machine : `nc 192.168.1.10 4000` puis tapez `ZIA++HELLO` + Entrée : la clé
+  répond `ZIA--Welcome to Ziblue Dongle…`.
+- **Connecté, puis injoignable chaque minute** : le port de la passerelle est
+  ouvert mais la clé ne répond pas au PING — débranchée, ou mauvaise vitesse.
+- **Une télécommande n'est pas vue** : son protocole est-il coché dans
+  « Protocoles reçus » ? La qualité minimale est-elle trop haute ? Le widget
+  liste ce qui est entendu, créé ou non.
+- **Un volet ne bouge pas** : il doit être appairé une fois (partie 4). En RTS,
+  le volet doit être en mode programmation (PROG maintenu sur sa télécommande)
+  au moment de l'envoi de la trame d'appairage.
+- **Trop d'appareils dans Découverte** : montez la qualité radio minimale,
+  décochez les protocoles inutilisés.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par RFPlayer dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | L'intégration tourne dans un conteneur isolé qui ne peut pas ouvrir de port USB : branchez le RFPlayer sur une machine de votre réseau et exposez son port série en TCP avec ser2net (ou socat, un ESP-Link…), à 115200 bauds. Indiquez ensuite cette adresse ci-dessous. La documentation donne une configuration ser2net prête à l'emploi. |
+| Hôte de la passerelle | `string` | Oui | Adresse IP ou nom de la machine qui fait tourner la passerelle série-TCP. Pour joindre la machine de Gladys elle-même, utilisez son IP sur le réseau local (pas localhost : l'intégration a son propre réseau). |
+| Port TCP de la passerelle | `number` | Non | Port TCP sur lequel écoute la passerelle (exemple ser2net : 4000). |
+| Protocoles reçus | `multi_select` | Non | Protocoles radio décodés par la clé. Ne cochez rien pour tous les recevoir. Décocher les protocoles inutilisés réduit les fausses détections et les voisins entendus. |
+| Qualité radio minimale | `number` | Non | Les trames entendues avec une qualité inférieure (1 à 10, notée par la clé) sont ignorées : montez à 3 ou 4 pour ne plus capter les voisins. 0 garde tout. |
+| Seuil de détection de brouillage | `number` | Non | Sensibilité du détecteur de brouillage intégré à la clé : 1 est très sensible (fausses alertes), 10 demande un brouilleur sur les deux bandes, 0 le désactive. La valeur par défaut de la clé est 7. |
+| Identifier les sondes Oregon / OWL par | `select` | Non | Leur adresse aléatoire change à chaque changement de piles. « Adresse » distingue deux sondes identiques sur le même canal, mais crée un nouvel appareil après un changement de piles. « Modèle et canal » survit aux changements de piles, tant que chaque sonde d'un modèle a son propre canal. Changer ce choix crée de nouveaux appareils. |
+| Actionneurs | `string` | Non | Récepteurs pilotés par la clé, séparés par « ; » : Nom = type PROTOCOLE adresse. Types : switch, light, shutter, button. Adresse : 0 à 255, ou A1 à P16. Options : qualifier=n, burst=n. Le bouton « Appairer un actionneur » remplit ce champ pour vous. |
+| Types de détecteurs | `string` | Non | Sur les ondes, un contact de porte et un détecteur de mouvement se ressemblent. Précisez lequel est lequel, séparés par « ; » : PROTOCOLE id = type (motion, opening, smoke, leak, vibration, presence). L'id est affiché dans le widget. Les détecteurs non listés sont des détecteurs de mouvement (fumée pour KD101). |
+
+## Comment installer RFPlayer dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : RFPlayer apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-rfplayer:2.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-rfplayer](https://github.com/prohand/gladys-rfplayer).
+
+RFPlayer nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+RFPlayer est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-rfplayer) — [source de cette documentation](https://github.com/prohand/gladys-rfplayer/blob/HEAD/docs/fr.md)
