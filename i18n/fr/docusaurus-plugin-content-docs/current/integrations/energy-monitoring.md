@@ -163,26 +163,21 @@ Dans l'intégration MQTT, si vous aviez ajouté des appareils MQTT avec des fonc
 
 Si vous cliquez sur ce bouton, Gladys créera automatiquement les fonctionnalités nécessaires au suivi de l'énergie pour cet index.
 
-### Étape n°5 : Vérifier la hiérarchie de votre réseau électrique
+### Étape n°5 : Vérifier le compteur de chaque appareil
 
-Rendez-vous dans l'intégration "Suivi de l'énergie", et sur le premier onglet, vous devriez voir la hiérarchie de votre réseau électrique.
+Rendez-vous dans l'intégration "Suivi de l'énergie", onglet "Mes appareils". Vous y voyez chaque compteur électrique (un appareil qui a un contrat d'énergie) et les appareils qu'il tarifie.
 
-![Hiérarchie suivi de l'énergie](../../../../../static/img/docs/fr/configuration/energy-monitoring/energy-monitoring-hiearchy.png)
+![Chaque compteur électrique avec les appareils qui y sont rattachés, et un appareil rattaché à aucun compteur](../../../../../static/img/docs/fr/configuration/energy-monitoring/energy-monitoring-meters.webp)
 
-Vérifiez que chaque appareil est bien associé à son parent.
+Depuis Gladys Assistant 5.2, **Gladys gère pour vous les liens entre les fonctionnalités d'énergie de vos appareils** : l'index d'énergie d'une prise, sa consommation 30 minutes et son coût sont reliés automatiquement, et chaque nouvel appareil d'énergie est rattaché à votre compteur principal. Chaque appareil est tarifé par le contrat du compteur auquel il est rattaché.
 
-Dans la logique de Gladys, le "parent" d'un appareil correspond à celui sur lequel l'appareil est branché.
+Le seul choix qui vous reste est **le compteur sur lequel se trouve un appareil**, et seulement si vous en avez plusieurs (une résidence secondaire, une dépendance avec son propre compteur...). Utilisez la liste "Compteur" en face de l'appareil : ses coûts sont recalculés avec le contrat de ce compteur.
 
-Un exemple de hiérarchie :
+Un appareil listé dans "Non rattachés à un compteur" n'est pas tarifé : choisissez le compteur sur lequel il est branché.
 
-```
-- Compteur électrique
-  - Prise NOUS A1Z (Energie consommée)
-     - Prise NOUS A1Z (Consommation 30 minutes)
-        - Prise NOUS A1Z (Coût 30 minutes)
-```
-
-La hiérarchie est très importante pour que Gladys puisse calculer correctement le coût de votre consommation.
+:::info[Vous venez d'une version précédente ?]
+L'ancienne page permettait de modifier chaque lien à la main, et son bouton "Corriger" pouvait aplatir toute la hiérarchie et arrêter le calcul des coûts. Au premier démarrage de Gladys 5.2, la hiérarchie est réparée automatiquement : les boucles sont coupées, chaque compteur qui a un contrat redevient une racine, et les liens perdus sont restaurés. Pour recalculer les coûts de la période réparée, utilisez "Calculer le coût depuis le début" dans l'onglet "Paramètres" (étape n°6).
+:::
 
 ### Étape n°6 : Recalculer toutes les consommations historiques
 

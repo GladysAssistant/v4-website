@@ -74,6 +74,8 @@ The preview prices your real consumption of the last 7 days with the contract, w
 
 Your existing prices are **converted automatically** into contracts on the first start, without touching the cost history. Gladys checks the conversion itself by comparing the old and new calculation over the last 7 days, and flags a contract that differs.
 
+And you no longer have to maintain the energy hierarchy by hand. Gladys now links the energy features of your devices itself: a plug's index, its consumption and its cost, attached to your main meter. The only choice left is which meter a device is on, and only when you have several: the meter of a second home is finally priced by its own contract. Installations whose hierarchy was broken by the old "Fix" button are repaired on the first start.
+
 ### The price on the dashboard, and in your scenes
 
 A new **Electricity price** widget shows the current price, the current tier, until when it applies and the next price, as well as today's consumption.
@@ -126,6 +128,7 @@ The devices page now flags them: a banner tells you which share of the history t
 
 - **Calendars**: a new `calendar` integration type lets an integration sync calendars and their events into Gladys: a CalDAV or Nextcloud server, iCloud, a public ICS feed (school timetable, waste collection, sports fixtures)... They show up in the calendar view and work with the calendar scene triggers, exactly like the calendars of the CalDAV integration, and each user links their own account from the integration page. Google Calendar and Outlook, which need a per-user OAuth login, will come in a second step.
 - **Energy contracts**: the new `energy_contracts` capability, described above.
+- **Late readings**: an integration whose supplier only serves yesterday's readings (Hydro-Québec) can publish a dated consumption, priced at the right half-hour, critical peaks included.
 - **Widgets**: a widget button can now open a short form (4 fields maximum) before sending its action, for example the price of a pellet delivery typed from the wall tablet.
 - **Houses**: a field can offer the list of the houses of Gladys with `source: "houses"`, in the configuration, the widgets and the scenes.
 
@@ -140,18 +143,20 @@ Four patch releases went out since 5.1 (5.1.1 to 5.1.4). Here is what they and t
 - **Zigbee2MQTT**: the bundled container is upgraded to 2.14.2.
 - **Broadlink**: the toggle of smart plugs stays in sync with the real state of the plug.
 - **Vacuum cleaners**: the cleaning mode and run mode controls only offer the options the device supports.
-- **Camera widget**: only the text states of the image feature are displayed.
-- **Integrations**: secret fields of actions can be typed in, default values of action fields are applied, number fields accept decimals, and widget buttons keep their colours in dark mode.
+- **Camera widget**: only the text states of the image feature are displayed, and a dashboard whose camera widget had its PTZ controls toggled can be saved again.
+- **Integrations**: secret fields of actions can be typed in, default values of action fields are applied, number fields accept decimals, widget buttons keep their colours in dark mode, and widget tiles are laid out in a balanced grid that keeps its icon colours in the glass theme.
+- **AI**: the assistant could fail on any scene-related question through Gladys Plus (an error 502): its requests are accepted again, and much lighter.
+- **Tablet mode**: opening Gladys through Gladys Plus or with an API key no longer fails on the tablet mode.
 - **Login**: after a local login, Gladys takes you back to the page you were trying to open.
 - **Database**: the daily purge keeps the 1,000 most recent messages per user and the 2,000 most recent background jobs, so these tables no longer grow forever.
 - **Security**: the location and presence routes of a user are now restricted to that user and to administrators, and several dependencies are upgraded to clear npm advisories.
-- **Gladys Plus**: the version check is only sent by the official release images, and the pricing page now shows the offline email alert introduced in 5.1.
+- **Gladys Plus**: the nightly backup no longer gets Gladys killed for lack of memory on a machine with a large history. If your Gladys Plus account has no two-factor recovery codes, a banner on the dashboard now asks you to generate them, so you can't be locked out by losing your phone. The version check is only sent by the official release images, and the pricing page shows the offline email alert introduced in 5.1.
 
-That makes 38 pull requests since version 5.1, 19 of them in this release.
+That makes 47 pull requests since version 5.1, 28 of them in this release.
 
 ## Thanks to the contributors
 
-Thanks to [@William-De71](https://github.com/William-De71) for the thermostat, to [@cicoub13](https://github.com/cicoub13) for the system messages channel and the camera widget fix, and to [@bertrandda](https://github.com/bertrandda) for the CalDAV fix. And thanks to everyone who reported bugs on the forum!
+Thanks to [@William-De71](https://github.com/William-De71) for the thermostat, to [@cicoub13](https://github.com/cicoub13) for the system messages channel and the camera widget, PTZ and tablet mode fixes, and to [@bertrandda](https://github.com/bertrandda) for the CalDAV fix. And thanks to everyone who reported bugs on the forum!
 
 See you on [the forum](https://community.gladysassistant.com/) if you want to talk about this release :)
 

@@ -927,6 +927,21 @@ A tener en cuenta:
 - **La tarificación delegada nunca se da por buena sin más**: cada intervalo pedido debe recibir exactamente un coste finito, por debajo de un límite de sentido común. Una respuesta no válida o una excepción falla como un timeout: los intervalos no reciben un nuevo coste (nunca un cero silencioso) y la siguiente ejecución lo vuelve a intentar, así que la misma petición debe dar la misma respuesta. Nunca recibes el contador ni su historial, solo los intervalos que tarificar.
 - **Ciclo de vida**: una integración detenida mantiene calculados sus contratos `rules` mientras sus calendarios estén alimentados. Una desinstalación conserva los contratos y los calendarios.
 
+#### Proveedores cuyas lecturas llegan a posteriori
+
+Un contador conectado publica un **índice** acumulado y el núcleo deduce el resto: el consumo de 30 minutos, su coste, la vinculación al contador principal. Pero ese camino es en directo: un índice publicado con un día de retraso (Hydro-Québec, y todos los portales de proveedores que sirven las lecturas del día anterior) aplastaría un día entero en una sola media hora. Una integración así no publica **ningún índice**, sino una función de consumo que alimenta ella misma, `energy-sensor` / `thirty-minutes-consumption` (lo que necesita una tarifa por franjas o de puntas) o `daily-consumption`, y fecha cada intervalo:
+
+```js
+// 30-minute slots of the Gladys timezone, or `date` (the local YYYY-MM-DD) on a daily feature.
+// Upserted by instant: a corrected reading replaces the stored value, an unchanged one writes nothing.
+const { count, changed_from } = await gladys.publishEnergyConsumption(ids.feature("consumption"), [
+  { starts_at: "2026-01-12T05:00:00Z", kwh: 0.42 },
+  { starts_at: "2026-01-12T05:30:00Z", kwh: 0.38 },
+]);
+```
+
+El núcleo deriva la función de coste de ese consumo y recalcula los costes desde el valor modificado más antiguo (como mucho una vez por contador cada 10 minutos). Los intervalos están acotados: 2000 por llamada, `kwh` finito y ≥ 0, alineados, ya transcurridos y de 5 años como máximo. La función debe pertenecer a tu integración y haber sido creada por el usuario (`404` hasta entonces: vuelve a intentarlo cuando exista el dispositivo). Estos estados nunca pasan por `publishStates`. Declara un rango `gladys_version` que empiece en `5.2.0`.
+
 La gramática de tarifas del modo `rules` se describe en [la especificación de los contratos de energía](https://github.com/GladysAssistant/Gladys/blob/master/docs/specs/energy-contracts.md) del repositorio de Gladys.
 
 ### Coordenadas de las casas {/* #house-coordinates */}

@@ -927,6 +927,21 @@ What to know:
 - **Delegated pricing is never trusted**: every requested interval must get exactly one finite cost, under a sanity bound. An invalid answer or a throw fails like a timeout: the intervals get no new cost (never a silent zero), and the next run retries, so the same request must give the same answer. You never receive the meter nor its history, only the intervals to price.
 - **Lifecycle**: a stopped integration keeps its `rules` contracts computed as long as its calendars are fed. An uninstall keeps the contracts and the calendars.
 
+#### Suppliers whose readings arrive after the fact
+
+A connected meter publishes a cumulative **index**, and the core derives the rest: the 30-minute consumption, its cost, the attachment to the main meter. That path is live, though: an index published a day late (Hydro-Québec, and every supplier portal that serves yesterday's readings) would collapse a whole day into one half-hour. Such an integration publishes **no index** but a consumption feature it feeds itself, `energy-sensor` / `thirty-minutes-consumption` (what a time-of-use or critical-peak tariff needs) or `daily-consumption`, and dates every interval:
+
+```js
+// 30-minute slots of the Gladys timezone, or `date` (the local YYYY-MM-DD) on a daily feature.
+// Upserted by instant: a corrected reading replaces the stored value, an unchanged one writes nothing.
+const { count, changed_from } = await gladys.publishEnergyConsumption(ids.feature("consumption"), [
+  { starts_at: "2026-01-12T05:00:00Z", kwh: 0.42 },
+  { starts_at: "2026-01-12T05:30:00Z", kwh: 0.38 },
+]);
+```
+
+The core derives the cost feature of that consumption and recomputes the costs from the earliest changed value (at most once per meter every 10 minutes). Intervals are bounded: 2,000 per call, `kwh` finite and ≥ 0, aligned, elapsed and at most 5 years old. The feature must belong to your integration and be created by the user (`404` until then: retry once the device exists). These states never go through `publishStates`. Declare a `gladys_version` range starting at `5.2.0`.
+
 The tariff grammar of the `rules` mode is described in [the energy contracts specification](https://github.com/GladysAssistant/Gladys/blob/master/docs/specs/energy-contracts.md) of the Gladys repository.
 
 ### House coordinates

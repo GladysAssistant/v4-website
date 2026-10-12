@@ -173,26 +173,21 @@ En la integración MQTT, si tienes dispositivos con funciones "Índice", verás 
 
 Así se añadirán las funciones necesarias para la monitorización de energía.
 
-### Paso 5: Comprobar la jerarquía de tu red eléctrica
+### Paso 5: Comprobar en qué contador está cada dispositivo
 
-Ve a la integración "Monitorización de energía". En la primera pestaña deberías ver la jerarquía de tu red eléctrica.
+Ve a la integración «Supervisión de energía», pestaña «Mis dispositivos». Ahí ves cada contador eléctrico (un dispositivo con un contrato de energía) y los dispositivos que tarifica.
 
-![Jerarquía de la monitorización de energía](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-hiearchy.png)
+![Cada contador eléctrico con los dispositivos vinculados, y un dispositivo no vinculado a ningún contador](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-meters.webp)
 
-Comprueba que cada dispositivo está correctamente asociado a su padre.
+Desde Gladys Assistant 5.2, **Gladys gestiona por ti los vínculos entre las funciones de energía de tus dispositivos**: el índice de energía de un enchufe, su consumo de 30 minutos y su coste se vinculan automáticamente, y cada nuevo dispositivo de energía se vincula a tu contador principal. Cada dispositivo se tarifica con el contrato del contador al que está vinculado.
 
-En la lógica de Gladys, el "padre" de un dispositivo corresponde a aquello a lo que está conectado el dispositivo.
+La única elección que te queda es **en qué contador está un dispositivo**, y solo si tienes varios (una segunda residencia, un anexo con su propio contador…). Usa la lista «Contador» junto al dispositivo: sus costes se recalculan con el contrato de ese contador.
 
-Un ejemplo de jerarquía:
+Un dispositivo que aparece en «No vinculados a un contador» no se tarifica: elige el contador al que está conectado.
 
-```
-- Contador eléctrico
-  - Enchufe NOUS A1Z (Energía consumida)
-     - Enchufe NOUS A1Z (Consumo de 30 minutos)
-        - Enchufe NOUS A1Z (Coste de 30 minutos)
-```
-
-La jerarquía es muy importante para que Gladys calcule correctamente el coste de tu consumo.
+:::info[¿Vienes de una versión anterior?]
+La página anterior te permitía editar cada vínculo a mano, y su botón «Corregir» podía aplanar toda la jerarquía y detener el cálculo de costes. En el primer arranque de Gladys 5.2, la jerarquía se repara automáticamente: se cortan los bucles, cada contador con contrato vuelve a ser una raíz y se restauran los vínculos perdidos. Para recalcular los costes del periodo reparado, usa «Calcular coste desde el inicio» en la pestaña «Configuración» (paso 6).
+:::
 
 ### Paso 6: Recalcular todo el consumo histórico
 

@@ -927,6 +927,21 @@ Gut zu wissen:
 - **Delegierter Preisberechnung wird nie blind vertraut**: Jedes angefragte Intervall muss genau einen endlichen Preis erhalten, unter einer Plausibilitätsgrenze. Eine ungültige Antwort oder eine Exception schlägt wie ein Timeout fehl: Die Intervalle erhalten keine neuen Kosten (nie eine stille Null), und der nächste Lauf versucht es erneut, dieselbe Anfrage muss also dieselbe Antwort liefern. Du erhältst nie den Zähler oder seine Historie, nur die zu bepreisenden Intervalle.
 - **Lebenszyklus**: Eine gestoppte Integration lässt ihre `rules`-Verträge weiter berechnen, solange ihre Kalender gefüllt sind. Eine Deinstallation behält die Verträge und die Kalender.
 
+#### Anbieter, deren Messwerte erst im Nachhinein kommen
+
+Ein vernetzter Zähler veröffentlicht einen kumulierten **Zählerstand**, und der Kern leitet den Rest ab: den 30-Minuten-Verbrauch, seine Kosten, die Zuordnung zum Hauptzähler. Dieser Weg läuft allerdings live: Ein Zählerstand, der einen Tag zu spät veröffentlicht wird (Hydro-Québec und jedes Anbieterportal, das die Werte vom Vortag liefert), würde einen ganzen Tag in eine einzige halbe Stunde zusammendrücken. Eine solche Integration veröffentlicht **keinen Zählerstand**, sondern eine Verbrauchsfunktion, die sie selbst befüllt, `energy-sensor` / `thirty-minutes-consumption` (was ein Zeitfenster- oder Spitzenlasttarif braucht) oder `daily-consumption`, und datiert jedes Intervall:
+
+```js
+// 30-minute slots of the Gladys timezone, or `date` (the local YYYY-MM-DD) on a daily feature.
+// Upserted by instant: a corrected reading replaces the stored value, an unchanged one writes nothing.
+const { count, changed_from } = await gladys.publishEnergyConsumption(ids.feature("consumption"), [
+  { starts_at: "2026-01-12T05:00:00Z", kwh: 0.42 },
+  { starts_at: "2026-01-12T05:30:00Z", kwh: 0.38 },
+]);
+```
+
+Der Kern leitet die Kostenfunktion dieses Verbrauchs ab und berechnet die Kosten ab dem frühesten geänderten Wert neu (höchstens einmal pro Zähler alle 10 Minuten). Die Intervalle sind begrenzt: 2.000 pro Aufruf, `kwh` endlich und ≥ 0, ausgerichtet, vergangen und höchstens 5 Jahre alt. Die Funktion muss zu deiner Integration gehören und vom Nutzer angelegt worden sein (bis dahin `404`: versuche es erneut, sobald das Gerät existiert). Diese Zustände laufen nie über `publishStates`. Deklariere einen `gladys_version`-Bereich, der bei `5.2.0` beginnt.
+
 Die Tarifgrammatik des Modus `rules` ist in [der Spezifikation der Energieverträge](https://github.com/GladysAssistant/Gladys/blob/master/docs/specs/energy-contracts.md) im Gladys-Repository beschrieben.
 
 ### Hauskoordinaten {/* #house-coordinates */}

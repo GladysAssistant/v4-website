@@ -173,26 +173,21 @@ In the MQTT integration, if you have devices with "Index" features, you will see
 
 This will add the features necessary for energy monitoring.
 
-### Step 5: Verify your electrical network hierarchy
+### Step 5: Check which meter each device is on
 
-Go to the "Energy Monitoring" integration, and on the first tab, you should see your electrical network hierarchy.
+Go to the "Energy Monitoring" integration, "My Devices" tab. You see each electric meter (a device with an energy contract) and the devices it prices.
 
-![Energy monitoring hierarchy](../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-hiearchy.png)
+![Each electric meter with the devices attached to it, and a device not attached to any meter](../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-meters.webp)
 
-Verify that each device is properly associated with its parent.
+Since Gladys Assistant 5.2, **Gladys maintains the links between the energy features of your devices** for you: a plug's energy index, its 30-minute consumption and its cost are linked automatically, and every new energy device is attached to your main meter. Each device is priced by the contract of the meter it is attached to.
 
-In Gladys logic, a device's "parent" corresponds to what the device is plugged into.
+The only choice left to you is **which meter a device is on**, and only when you have several (a second home, an outbuilding with its own meter...). Use the "Meter" list in front of the device: its costs are recalculated with the contract of that meter.
 
-An example hierarchy:
+A device listed under "Not attached to a meter" is not priced: choose the meter it is plugged into.
 
-```
-- Electricity meter
-  - NOUS A1Z plug (Energy consumed)
-     - NOUS A1Z plug (30-minute consumption)
-        - NOUS A1Z plug (30-minute cost)
-```
-
-The hierarchy is very important for Gladys to correctly calculate your consumption cost.
+:::info[Coming from an older version?]
+The former page let you edit every link by hand, and its "Fix" button could flatten the whole hierarchy and stop the cost calculation. On the first start of Gladys 5.2, the hierarchy is repaired automatically: loops are cut, every meter with a contract becomes a root, and the lost links are restored. To recompute the costs of the repaired period, use "Calculate cost from the beginning" in the "Settings" tab (step 6).
+:::
 
 ### Step 6: Recalculate all historical consumption
 

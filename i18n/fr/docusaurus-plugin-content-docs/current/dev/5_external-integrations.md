@@ -933,6 +933,21 @@ gladys.onEnergyCurrent(async ({ contract }) => {
 - **La tarification déléguée n'est jamais crue sur parole** : chaque créneau demandé doit recevoir exactement un coût fini, sous une borne de bon sens. Une réponse invalide ou une exception échoue comme un timeout : les créneaux ne reçoivent pas de nouveau coût (jamais un zéro silencieux), et le passage suivant réessaie, la même requête doit donc donner la même réponse. Vous ne recevez jamais le compteur ni son historique, seulement les créneaux à tarifer.
 - **Cycle de vie** : une intégration arrêtée garde ses contrats `rules` calculés tant que ses calendriers sont alimentés. Une désinstallation conserve les contrats et les calendriers.
 
+#### Les fournisseurs dont les relevés arrivent après coup
+
+Un compteur connecté publie un **index** cumulé, et le cœur en déduit le reste : la consommation 30 minutes, son coût, le rattachement au compteur principal. Ce chemin est en direct, en revanche : un index publié avec un jour de retard (Hydro-Québec, et tous les portails de fournisseurs qui servent les relevés de la veille) écraserait une journée entière dans une seule demi-heure. Une telle intégration ne publie **pas d'index** mais une fonctionnalité de consommation qu'elle alimente elle-même, `energy-sensor` / `thirty-minutes-consumption` (ce dont a besoin un tarif à plages horaires ou à pointes) ou `daily-consumption`, et date chaque créneau :
+
+```js
+// 30-minute slots of the Gladys timezone, or `date` (the local YYYY-MM-DD) on a daily feature.
+// Upserted by instant: a corrected reading replaces the stored value, an unchanged one writes nothing.
+const { count, changed_from } = await gladys.publishEnergyConsumption(ids.feature("consumption"), [
+  { starts_at: "2026-01-12T05:00:00Z", kwh: 0.42 },
+  { starts_at: "2026-01-12T05:30:00Z", kwh: 0.38 },
+]);
+```
+
+Le cœur dérive la fonctionnalité de coût de cette consommation et recalcule les coûts depuis la plus ancienne valeur modifiée (au plus une fois par compteur toutes les 10 minutes). Les créneaux sont bornés : 2 000 par appel, `kwh` fini et ≥ 0, alignés, écoulés et vieux de 5 ans au plus. La fonctionnalité doit appartenir à votre intégration et avoir été créée par l'utilisateur (`404` d'ici là : réessayez une fois l'appareil créé). Ces états ne passent jamais par `publishStates`. Déclarez un `gladys_version` qui démarre à `5.2.0`.
+
 La grammaire des tarifs du mode `rules` est décrite dans [la spécification des contrats d'énergie](https://github.com/GladysAssistant/Gladys/blob/master/docs/specs/energy-contracts.md) du dépôt Gladys.
 
 ### Coordonnées des maisons

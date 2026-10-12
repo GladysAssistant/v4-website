@@ -74,6 +74,8 @@ L'aperçu tarifie votre consommation réelle des 7 derniers jours avec le contra
 
 Vos prix existants sont **convertis automatiquement** en contrats au premier démarrage, sans toucher à l'historique des coûts. Gladys vérifie elle-même la conversion en comparant l'ancien et le nouveau calcul sur les 7 derniers jours, et signale un contrat qui diffère.
 
+Et vous n'avez plus à entretenir la hiérarchie énergétique à la main. Gladys relie maintenant elle-même les fonctionnalités d'énergie de vos appareils : l'index d'une prise, sa consommation et son coût, rattachés à votre compteur principal. Le seul choix qui reste, c'est le compteur d'un appareil, et seulement si vous en avez plusieurs : le compteur d'une résidence secondaire est enfin tarifé par son propre contrat. Les installations dont la hiérarchie avait été cassée par l'ancien bouton « Corriger » sont réparées au premier démarrage.
+
 ### Le prix sur le tableau de bord, et dans vos scènes
 
 Un nouveau widget **Prix de l'électricité** affiche le prix actuel, la tranche en cours, jusqu'à quand il s'applique et le prix suivant, ainsi que la consommation du jour.
@@ -126,6 +128,7 @@ La page des appareils les signale maintenant : un bandeau indique quelle part de
 
 - **Calendriers** : un nouveau type d'intégration `calendar` permet à une intégration de synchroniser des calendriers et leurs événements dans Gladys : un serveur CalDAV ou Nextcloud, iCloud, un flux ICS public (emploi du temps scolaire, collecte des déchets, matchs)… Ils apparaissent dans la vue calendrier et fonctionnent avec les déclencheurs de scène calendrier, exactement comme les calendriers de l'intégration CalDAV, et chaque utilisateur relie son propre compte depuis la page de l'intégration. Google Agenda et Outlook, qui demandent une connexion OAuth par utilisateur, viendront dans un second temps.
 - **Contrats d'énergie** : la nouvelle capacité `energy_contracts`, décrite plus haut.
+- **Relevés en retard** : une intégration dont le fournisseur ne sert que les relevés de la veille (Hydro-Québec) peut publier une consommation datée, tarifée à la bonne demi-heure, pointes comprises.
 - **Widgets** : un bouton de widget peut maintenant ouvrir un petit formulaire (4 champs maximum) avant d'envoyer son action, par exemple le prix d'une livraison de granulés tapé depuis la tablette murale.
 - **Maisons** : un champ peut proposer la liste des maisons de Gladys avec `source: "houses"`, dans la configuration, les widgets et les scènes.
 
@@ -140,18 +143,20 @@ Quatre versions correctives sont sorties depuis la 5.1 (5.1.1 à 5.1.4). Voici c
 - **Zigbee2MQTT** : le conteneur embarqué passe en 2.14.2.
 - **Broadlink** : l'interrupteur des prises connectées reste synchronisé avec l'état réel de la prise.
 - **Aspirateurs robots** : les commandes de mode de nettoyage et de mode de fonctionnement ne proposent que les options gérées par l'appareil.
-- **Widget caméra** : seuls les états texte de la fonctionnalité image sont affichés.
-- **Intégrations** : les champs secrets des actions peuvent être saisis, les valeurs par défaut des champs d'action sont appliquées, les champs numériques acceptent les décimales, et les boutons de widget gardent leurs couleurs en mode sombre.
+- **Widget caméra** : seuls les états texte de la fonctionnalité image sont affichés, et un tableau de bord dont on avait touché l'option de contrôle PTZ du widget caméra peut de nouveau être enregistré.
+- **Intégrations** : les champs secrets des actions peuvent être saisis, les valeurs par défaut des champs d'action sont appliquées, les champs numériques acceptent les décimales, les boutons de widget gardent leurs couleurs en mode sombre, et les tuiles des widgets s'alignent sur une grille équilibrée qui garde la couleur de ses icônes dans le thème verre.
+- **IA** : l'assistant pouvait échouer sur toute question liée aux scènes via Gladys Plus (une erreur 502) : ses requêtes sont de nouveau acceptées, et bien plus légères.
+- **Mode tablette** : ouvrir Gladys via Gladys Plus ou avec une clé d'API n'échoue plus sur le mode tablette.
 - **Connexion** : après une connexion locale, Gladys vous ramène sur la page que vous essayiez d'ouvrir.
 - **Base de données** : la purge quotidienne garde les 1 000 messages les plus récents par utilisateur et les 2 000 tâches de fond les plus récentes, ces tables ne grossissent donc plus indéfiniment.
 - **Sécurité** : les routes de localisation et de présence d'un utilisateur sont maintenant réservées à cet utilisateur et aux administrateurs, et plusieurs dépendances sont mises à jour pour corriger des alertes npm.
-- **Gladys Plus** : la vérification de version n'est envoyée que par les images officielles, et la page des tarifs met en avant l'alerte e-mail hors ligne arrivée avec la 5.1.
+- **Gladys Plus** : la sauvegarde nocturne ne fait plus tuer Gladys par manque de mémoire sur une machine avec un gros historique. Si votre compte Gladys Plus n'a pas de codes de récupération pour la double authentification, un bandeau sur le tableau de bord vous invite maintenant à les générer, pour ne pas vous retrouver bloqué en perdant votre téléphone. La vérification de version n'est envoyée que par les images officielles, et la page des tarifs met en avant l'alerte e-mail hors ligne arrivée avec la 5.1.
 
-Ça fait 38 pull requests depuis la version 5.1, dont 19 dans cette version.
+Ça fait 47 pull requests depuis la version 5.1, dont 28 dans cette version.
 
 ## Remerciements aux contributeurs
 
-Merci à [@William-De71](https://github.com/William-De71) pour le thermostat, à [@cicoub13](https://github.com/cicoub13) pour le canal des messages système et le correctif du widget caméra, et à [@bertrandda](https://github.com/bertrandda) pour le correctif CalDAV. Et merci à tous ceux qui ont remonté des bugs sur le forum !
+Merci à [@William-De71](https://github.com/William-De71) pour le thermostat, à [@cicoub13](https://github.com/cicoub13) pour le canal des messages système et les correctifs du widget caméra, du PTZ et du mode tablette, et à [@bertrandda](https://github.com/bertrandda) pour le correctif CalDAV. Et merci à tous ceux qui ont remonté des bugs sur le forum !
 
 On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette version :)
 

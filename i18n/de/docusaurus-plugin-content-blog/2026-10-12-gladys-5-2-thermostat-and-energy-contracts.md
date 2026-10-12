@@ -74,6 +74,8 @@ Die Vorschau berechnet deinen realen Verbrauch der letzten 7 Tage mit dem Vertra
 
 Deine bestehenden Preise werden beim ersten Start **automatisch in Verträge umgewandelt**, ohne die Kostenhistorie anzutasten. Gladys prüft die Umwandlung selbst, indem sie die alte und die neue Berechnung über die letzten 7 Tage vergleicht, und markiert einen Vertrag, der abweicht.
 
+Und die Energiehierarchie musst du nicht mehr von Hand pflegen. Gladys verknüpft die Energiefunktionen deiner Geräte jetzt selbst: den Zählerstand einer Steckdose, ihren Verbrauch und ihre Kosten, zugeordnet zu deinem Hauptzähler. Die einzige verbleibende Wahl ist der Zähler eines Geräts, und das nur, wenn du mehrere hast: Der Zähler eines Zweitwohnsitzes wird endlich mit seinem eigenen Vertrag bepreist. Installationen, deren Hierarchie durch den alten Button „beheben“ kaputtgegangen war, werden beim ersten Start repariert.
+
 ### Der Preis auf dem Dashboard und in deinen Szenen
 
 Ein neues Widget **Strompreis** zeigt den aktuellen Preis, die aktuelle Stufe, bis wann er gilt und den nächsten Preis sowie den heutigen Verbrauch.
@@ -126,6 +128,7 @@ Die Geräteseite markiert sie jetzt: Ein Banner zeigt, welchen Anteil der Histor
 
 - **Kalender**: Ein neuer Integrationstyp `calendar` erlaubt es einer Integration, Kalender und ihre Termine in Gladys zu synchronisieren: ein CalDAV- oder Nextcloud-Server, iCloud, ein öffentlicher ICS-Feed (Stundenplan, Müllabfuhr, Spielpläne) … Sie erscheinen in der Kalenderansicht und funktionieren mit den Kalender-Auslösern der Szenen, genau wie die Kalender der CalDAV-Integration, und jeder Benutzer verknüpft sein eigenes Konto auf der Seite der Integration. Google Kalender und Outlook, die eine OAuth-Anmeldung pro Benutzer brauchen, folgen in einem zweiten Schritt.
 - **Energieverträge**: die neue Fähigkeit `energy_contracts`, oben beschrieben.
+- **Verspätete Messwerte**: Eine Integration, deren Anbieter nur die Werte vom Vortag liefert (Hydro-Québec), kann einen datierten Verbrauch veröffentlichen, der zur richtigen halben Stunde bepreist wird, Spitzenlastzeiten inklusive.
 - **Widgets**: Ein Widget-Button kann jetzt ein kleines Formular (höchstens 4 Felder) öffnen, bevor er seine Aktion sendet, zum Beispiel den Preis einer Pelletlieferung, eingetippt auf dem Wandtablet.
 - **Häuser**: Ein Feld kann mit `source: "houses"` die Liste der Häuser in Gladys anbieten, in der Konfiguration, in Widgets und in Szenen.
 
@@ -140,18 +143,20 @@ Seit 5.1 sind vier Korrektur-Releases erschienen (5.1.1 bis 5.1.4). Das haben si
 - **Zigbee2MQTT**: Der mitgelieferte Container wird auf 2.14.2 aktualisiert.
 - **Broadlink**: Der Schalter smarter Steckdosen bleibt mit dem echten Zustand der Steckdose synchron.
 - **Saugroboter**: Die Steuerungen für Reinigungs- und Betriebsmodus bieten nur die Optionen an, die das Gerät unterstützt.
-- **Kamera-Widget**: Es werden nur die Textzustände der Bildfunktion angezeigt.
-- **Integrationen**: Geheime Felder von Aktionen lassen sich eingeben, die Standardwerte von Aktionsfeldern werden angewendet, Zahlenfelder akzeptieren Dezimalzahlen, und Widget-Buttons behalten ihre Farben im Dunkelmodus.
+- **Kamera-Widget**: Es werden nur die Textzustände der Bildfunktion angezeigt, und ein Dashboard, bei dem der PTZ-Schalter des Kamera-Widgets angefasst wurde, lässt sich wieder speichern.
+- **Integrationen**: Geheime Felder von Aktionen lassen sich eingeben, die Standardwerte von Aktionsfeldern werden angewendet, Zahlenfelder akzeptieren Dezimalzahlen, Widget-Buttons behalten ihre Farben im Dunkelmodus, und die Kacheln der Widgets liegen in einem ausgewogenen Raster, das im Glas-Theme die Farben seiner Icons behält.
+- **KI**: Der Assistent konnte über Gladys Plus bei jeder Frage zu Szenen scheitern (ein Fehler 502): Seine Anfragen werden wieder angenommen und sind viel leichter.
+- **Tablet-Modus**: Gladys über Gladys Plus oder mit einem API-Schlüssel zu öffnen, scheitert nicht mehr am Tablet-Modus.
 - **Anmeldung**: Nach einer lokalen Anmeldung bringt dich Gladys zurück auf die Seite, die du öffnen wolltest.
 - **Datenbank**: Die tägliche Bereinigung behält die 1.000 neuesten Nachrichten pro Benutzer und die 2.000 neuesten Hintergrundaufgaben, diese Tabellen wachsen also nicht mehr endlos.
 - **Sicherheit**: Die Standort- und Anwesenheitsrouten eines Benutzers sind jetzt diesem Benutzer und den Administratoren vorbehalten, und mehrere Abhängigkeiten wurden aktualisiert, um npm-Sicherheitswarnungen zu beheben.
-- **Gladys Plus**: Die Versionsprüfung wird nur noch von den offiziellen Release-Images gesendet, und die Preisseite stellt die mit 5.1 eingeführte E-Mail-Warnung bei Ausfall vor.
+- **Gladys Plus**: Die nächtliche Sicherung bringt Gladys auf einem Rechner mit großer Historie nicht mehr wegen Speichermangels zum Absturz. Wenn dein Gladys-Plus-Konto keine Wiederherstellungscodes für die Zwei-Faktor-Authentifizierung hat, fordert dich jetzt ein Banner auf dem Dashboard auf, sie zu erzeugen, damit du dich nicht aussperrst, wenn du dein Handy verlierst. Die Versionsprüfung wird nur noch von den offiziellen Release-Images gesendet, und die Preisseite stellt die mit 5.1 eingeführte E-Mail-Warnung bei Ausfall vor.
 
-Das macht 38 Pull Requests seit Version 5.1, davon 19 in diesem Release.
+Das macht 47 Pull Requests seit Version 5.1, davon 28 in diesem Release.
 
 ## Danke an die Mitwirkenden
 
-Danke an [@William-De71](https://github.com/William-De71) für das Thermostat, an [@cicoub13](https://github.com/cicoub13) für den Kanal der Systemnachrichten und die Korrektur des Kamera-Widgets und an [@bertrandda](https://github.com/bertrandda) für die CalDAV-Korrektur. Und danke an alle, die im Forum Bugs gemeldet haben!
+Danke an [@William-De71](https://github.com/William-De71) für das Thermostat, an [@cicoub13](https://github.com/cicoub13) für den Kanal der Systemnachrichten und die Korrekturen am Kamera-Widget, an PTZ und am Tablet-Modus und an [@bertrandda](https://github.com/bertrandda) für die CalDAV-Korrektur. Und danke an alle, die im Forum Bugs gemeldet haben!
 
 Wir sehen uns im [Forum](https://community.gladysassistant.com/), wenn du über dieses Release sprechen möchtest :)
 

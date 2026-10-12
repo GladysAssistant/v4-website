@@ -173,26 +173,21 @@ Wenn du in der MQTT-Integration Geräte mit „Index“-Funktionen hast, siehst 
 
 Dadurch werden die für das Energiemonitoring nötigen Funktionen hinzugefügt.
 
-### Schritt 5: Die Hierarchie deines Stromnetzes prüfen
+### Schritt 5: Prüfen, an welchem Zähler jedes Gerät hängt
 
-Öffne die Integration „Energiemonitoring“. Auf dem ersten Tab solltest du die Hierarchie deines Stromnetzes sehen.
+Öffne die Integration „Energieüberwachung“, Reiter „Meine Geräte“. Dort siehst du jeden Stromzähler (ein Gerät mit einem Energievertrag) und die Geräte, die er bepreist.
 
-![Energiemonitoring-Hierarchie](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-hiearchy.png)
+![Jeder Stromzähler mit den ihm zugeordneten Geräten, und ein Gerät, das keinem Zähler zugeordnet ist](../../../../../static/img/docs/en/configuration/energy-monitoring/energy-monitoring-meters.webp)
 
-Prüfe, ob jedes Gerät korrekt seinem Elternelement zugeordnet ist.
+Seit Gladys Assistant 5.2 **verwaltet Gladys die Verknüpfungen zwischen den Energiefunktionen deiner Geräte** für dich: Der Energiezähler einer Steckdose, ihr 30-Minuten-Verbrauch und ihre Kosten werden automatisch verknüpft, und jedes neue Energiegerät wird deinem Hauptzähler zugeordnet. Jedes Gerät wird mit dem Vertrag des Zählers bepreist, dem es zugeordnet ist.
 
-In der Logik von Gladys entspricht das „Elternelement“ eines Geräts dem, woran das Gerät angeschlossen ist.
+Die einzige Entscheidung, die dir bleibt, ist **an welchem Zähler ein Gerät hängt**, und das nur, wenn du mehrere hast (ein Zweitwohnsitz, ein Nebengebäude mit eigenem Zähler …). Nutze dafür die Liste „Zähler“ neben dem Gerät: Seine Kosten werden mit dem Vertrag dieses Zählers neu berechnet.
 
-Ein Beispiel für eine Hierarchie:
+Ein Gerät unter „Keinem Zähler zugeordnet“ wird nicht bepreist: Wähle den Zähler, an dem es angeschlossen ist.
 
-```
-- Stromzähler
-  - NOUS-A1Z-Steckdose (Verbrauchte Energie)
-     - NOUS-A1Z-Steckdose (30-Minuten-Verbrauch)
-        - NOUS-A1Z-Steckdose (30-Minuten-Kosten)
-```
-
-Die Hierarchie ist sehr wichtig, damit Gladys die Kosten deines Verbrauchs korrekt berechnen kann.
+:::info[Du kommst von einer älteren Version?]
+Die frühere Seite ließ dich jede Verknüpfung von Hand bearbeiten, und ihr Button „beheben“ konnte die ganze Hierarchie flachklopfen und die Kostenberechnung stoppen. Beim ersten Start von Gladys 5.2 wird die Hierarchie automatisch repariert: Schleifen werden aufgelöst, jeder Zähler mit Vertrag wird wieder zur Wurzel, und verlorene Verknüpfungen werden wiederhergestellt. Um die Kosten des reparierten Zeitraums neu zu berechnen, nutze „Kosten von Anfang an berechnen“ im Reiter „Einstellungen“ (Schritt 6).
+:::
 
 ### Schritt 6: Den gesamten historischen Verbrauch neu berechnen
 

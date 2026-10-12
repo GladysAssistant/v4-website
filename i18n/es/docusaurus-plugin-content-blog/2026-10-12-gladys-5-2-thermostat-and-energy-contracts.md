@@ -74,6 +74,8 @@ La vista previa tarifica tu consumo real de los últimos 7 días con el contrato
 
 Tus precios actuales se **convierten automáticamente** en contratos en el primer arranque, sin tocar el historial de costes. Gladys comprueba ella misma la conversión comparando el cálculo antiguo y el nuevo sobre los últimos 7 días, y señala un contrato que difiere.
 
+Y ya no tienes que mantener a mano la jerarquía energética. Gladys vincula ahora ella misma las funciones de energía de tus dispositivos: el índice de un enchufe, su consumo y su coste, vinculados a tu contador principal. La única elección que queda es el contador de un dispositivo, y solo si tienes varios: el contador de una segunda residencia se tarifica por fin con su propio contrato. Las instalaciones cuya jerarquía había roto el antiguo botón «Corregir» se reparan en el primer arranque.
+
 ### El precio en el panel, y en tus escenas
 
 Un nuevo widget **Precio de la electricidad** muestra el precio actual, el tramo en curso, hasta cuándo se aplica y el siguiente precio, además del consumo del día.
@@ -126,6 +128,7 @@ La página de dispositivos los señala ahora: un banner indica qué parte del hi
 
 - **Calendarios**: un nuevo tipo de integración `calendar` permite a una integración sincronizar calendarios y sus eventos en Gladys: un servidor CalDAV o Nextcloud, iCloud, un feed ICS público (horario escolar, recogida de basura, partidos)… Aparecen en la vista de calendario y funcionan con los disparadores de escena de calendario, exactamente como los calendarios de la integración CalDAV, y cada usuario vincula su propia cuenta desde la página de la integración. Google Calendar y Outlook, que necesitan un inicio de sesión OAuth por usuario, llegarán en una segunda fase.
 - **Contratos de energía**: la nueva capacidad `energy_contracts`, descrita más arriba.
+- **Lecturas con retraso**: una integración cuyo proveedor solo sirve las lecturas del día anterior (Hydro-Québec) puede publicar un consumo fechado, tarificado en la media hora correcta, puntas incluidas.
 - **Widgets**: un botón de widget puede ahora abrir un pequeño formulario (4 campos como máximo) antes de enviar su acción, por ejemplo el precio de una entrega de pellets introducido desde la tableta de la pared.
 - **Casas**: un campo puede ofrecer la lista de las casas de Gladys con `source: "houses"`, en la configuración, los widgets y las escenas.
 
@@ -140,18 +143,20 @@ Desde la 5.1 han salido cuatro versiones correctivas (de la 5.1.1 a la 5.1.4). E
 - **Zigbee2MQTT**: el contenedor incluido pasa a la versión 2.14.2.
 - **Broadlink**: el interruptor de los enchufes inteligentes se mantiene sincronizado con el estado real del enchufe.
 - **Robots aspiradores**: los controles de modo de limpieza y de modo de funcionamiento solo ofrecen las opciones que admite el aparato.
-- **Widget de cámara**: solo se muestran los estados de texto de la función de imagen.
-- **Integraciones**: los campos secretos de las acciones se pueden escribir, se aplican los valores por defecto de los campos de acción, los campos numéricos aceptan decimales y los botones de los widgets conservan sus colores en modo oscuro.
+- **Widget de cámara**: solo se muestran los estados de texto de la función de imagen, y un panel en el que se había tocado el interruptor de control PTZ del widget de cámara se puede volver a guardar.
+- **Integraciones**: los campos secretos de las acciones se pueden escribir, se aplican los valores por defecto de los campos de acción, los campos numéricos aceptan decimales los botones de los widgets conservan sus colores en modo oscuro, y las fichas de los widgets se colocan en una cuadrícula equilibrada que conserva el color de sus iconos en el tema de cristal.
+- **IA**: el asistente podía fallar con cualquier pregunta sobre escenas a través de Gladys Plus (un error 502): sus peticiones se aceptan de nuevo y son mucho más ligeras.
+- **Modo tableta**: abrir Gladys a través de Gladys Plus o con una clave de API ya no falla por el modo tableta.
 - **Inicio de sesión**: tras un inicio de sesión local, Gladys te lleva a la página que intentabas abrir.
 - **Base de datos**: la purga diaria conserva los 1000 mensajes más recientes por usuario y las 2000 tareas en segundo plano más recientes, así que estas tablas ya no crecen sin fin.
 - **Seguridad**: las rutas de ubicación y de presencia de un usuario quedan reservadas a ese usuario y a los administradores, y varias dependencias se han actualizado para corregir alertas de npm.
-- **Gladys Plus**: la comprobación de versión solo la envían las imágenes oficiales, y la página de precios presenta la alerta por correo de caída llegada con la 5.1.
+- **Gladys Plus**: la copia de seguridad nocturna ya no hace que Gladys se detenga por falta de memoria en una máquina con mucho historial. Si tu cuenta de Gladys Plus no tiene códigos de recuperación de la doble autenticación, un banner en el panel te invita ahora a generarlos, para que no te quedes bloqueado si pierdes el móvil. La comprobación de versión solo la envían las imágenes oficiales, y la página de precios presenta la alerta por correo de caída llegada con la 5.1.
 
-Eso suma 38 pull requests desde la versión 5.1, 19 de ellas en esta versión.
+Eso suma 47 pull requests desde la versión 5.1, 28 de ellas en esta versión.
 
 ## Gracias a los colaboradores
 
-Gracias a [@William-De71](https://github.com/William-De71) por el termostato, a [@cicoub13](https://github.com/cicoub13) por el canal de los mensajes del sistema y la corrección del widget de cámara, y a [@bertrandda](https://github.com/bertrandda) por la corrección de CalDAV. ¡Y gracias a todos los que habéis reportado bugs en el foro!
+Gracias a [@William-De71](https://github.com/William-De71) por el termostato, a [@cicoub13](https://github.com/cicoub13) por el canal de los mensajes del sistema y las correcciones del widget de cámara, del PTZ y del modo tableta, y a [@bertrandda](https://github.com/bertrandda) por la corrección de CalDAV. ¡Y gracias a todos los que habéis reportado bugs en el foro!
 
 Nos vemos en [el foro](https://community.gladysassistant.com/) si quieres hablar de esta versión :)
 
