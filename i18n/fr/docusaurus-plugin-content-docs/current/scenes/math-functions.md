@@ -30,7 +30,7 @@ Dans ces actions, l'éditeur de scène affiche un lien **« Fonctions disponible
 
 ## Fonctions
 
-Une fonction prend ses arguments entre parenthèses, séparés par des virgules. Les fonctions peuvent s'imbriquer : `round(min(100, 3 * 45) / 2)` donne `68`.
+Une fonction prend ses arguments entre parenthèses, séparés par des virgules. Les fonctions peuvent s'imbriquer : `round(min(100, 3 * 45) / 2)` donne `50`.
 
 **Arrondis et signe**
 

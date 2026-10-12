@@ -1,6 +1,6 @@
 ---
 title: "Gladys Assistant 5.2: ein echtes Thermostat und Energieverträge für jedes Land"
-description: "Gladys kann jetzt dein Thermostat sein oder das programmieren, das du schon hast, mit Wochenplänen und einem ganz neuen Widget. Die Energieüberwachung öffnet sich für jeden Stromvertrag der Welt. Außerdem in diesem Release: der Kanal für Systemnachrichten, 35 mathematische Funktionen in Szenen und die Geräte, die deine Datenbank füllen."
+description: "Gladys kann jetzt dein Thermostat sein oder das programmieren, das du schon hast, mit Wochenplänen und einem ganz neuen Widget. Die Energieüberwachung öffnet sich für jeden Stromvertrag der Welt. Außerdem in diesem Release: der Kanal für Systemnachrichten, 34 mathematische Funktionen in Szenen und die Geräte, die deine Datenbank füllen."
 authors: pierregilles
 image: /img/presentation/gladys-assistant-5-2-de.jpg
 slug: gladys-5-2-thermostat-and-energy-contracts
@@ -102,9 +102,9 @@ Du wählst den Kanal jetzt unter `Einstellungen / System`: alle, nur Telegram od
 
 Danke an [@cicoub13](https://github.com/cicoub13) dafür!
 
-## 35 mathematische Funktionen in Szenen-Formeln
+## 34 mathematische Funktionen in Szenen-Formeln
 
-Die berechneten Werte in Szenen (warten, Gerätewert setzen, Variable definieren, Bedingungen, Lautsprecherlautstärke) kannten nur `+ - * / % ^` und fünf Funktionen. Jetzt sind es 35, plus 3 Konstanten: `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, die trigonometrischen Funktionen, `pi` … Und ein Link „Verfügbare Funktionen und Syntax“ klappt die vollständige Liste direkt unter dem Feld auf.
+Die berechneten Werte in Szenen (warten, Gerätewert setzen, Variable definieren, Bedingungen, Lautsprecherlautstärke) kannten nur `+ - * / % ^` und fünf Funktionen. Jetzt sind es 34, plus 3 Konstanten: `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, die trigonometrischen Funktionen, `pi` … Und ein Link „Verfügbare Funktionen und Syntax“ klappt die vollständige Liste direkt unter dem Feld auf.
 
 ![Das Formelfeld einer Szene mit der Liste der verfügbaren Funktionen](../../../static/img/articles/gladys-assistant-5-2/08-formula-functions-de.webp)
 

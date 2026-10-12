@@ -39,11 +39,13 @@ No tienes que implementar toda esta infraestructura tú mismo: el [SDK de JavaSc
 
 Además de lo básico (dispositivos, estados, configuración), la plataforma también admite **cámaras** (incluido el **control PTZ**), **servicios en la nube con OAuth2**, **botones de acción bajo demanda**, **insignias de transporte local/nube** (con un estado degradado), **descubrimiento de red mediado** (mDNS, SSDP, broadcast UDP), **Wake-on-LAN**, **subcontenedores con acceso al hardware**, **canales de mensajería**, **proveedores meteorológicos**, **las coordenadas de las casas del usuario** y **webhooks entrantes** (a través de Gladys Plus). Cada uno de estos puntos se trata en su propia sección más abajo.
 
-Una integración declara uno de **tres tipos** en su manifiesto:
+Una integración declara uno de **cinco tipos** en su manifiesto:
 
 - **`device`** (de lejos el más habitual): publica los dispositivos que descubre: sensores, interruptores, luces, cámaras, etc.
 - **`communication`**: un canal de mensajería en lugar de dispositivos, es decir, un puente de chat o de notificaciones como Telegram; consulta [Canales de mensajería](#messaging-channels).
 - **`weather`**: un proveedor meteorológico (Météo France, Open-Meteo, AccuWeather…) que responde a las peticiones meteorológicas del núcleo de Gladys y alimenta el widget del panel, el asistente de chat y los desencadenantes de escenas de alertas meteorológicas; consulta [Proveedores meteorológicos](#weather-providers).
+- **`calendar`**: un proveedor de calendarios (un servidor CalDAV o Nextcloud, un feed ICS público…) que sincroniza los calendarios y eventos de los usuarios que lo activan; consulta [Calendarios](#calendars-the-calendar-type).
+- **`provider`**: ningún dispositivo, solo lo que declara la integración (widgets del panel, desencadenantes y acciones de escena, contratos de energía); consulta [Integraciones sin dispositivos](#integrations-with-no-devices-the-provider-type).
 
 Algunas reglas de diseño importantes que debes tener en cuenta:
 
@@ -799,7 +801,7 @@ Los campos llegan **resueltos**: variables de escena sustituidas, valores por de
 
 Una imagen no es un output: publícala mediante `publishCameraImage` y deja que la escena use las acciones de cámara del núcleo.
 
-### Integraciones sin dispositivos: el tipo `provider`
+### Integraciones sin dispositivos: el tipo `provider` {/* #integrations-with-no-devices-the-provider-type */}
 
 *Requiere Gladys 5.1.0 o superior.*
 

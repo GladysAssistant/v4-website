@@ -30,7 +30,7 @@ In these actions, the scene editor has an **"Available functions and syntax"** l
 
 ## Functions
 
-A function takes its arguments between parentheses, separated by commas. Functions can be nested: `round(min(100, 3 * 45) / 2)` gives `68`.
+A function takes its arguments between parentheses, separated by commas. Functions can be nested: `round(min(100, 3 * 45) / 2)` gives `50`.
 
 **Rounding and sign**
 

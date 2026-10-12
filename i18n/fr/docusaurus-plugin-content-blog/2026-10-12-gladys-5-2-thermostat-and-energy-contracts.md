@@ -1,6 +1,6 @@
 ---
 title: "Gladys Assistant 5.2 : un vrai thermostat, et des contrats d'énergie pour tous les pays"
-description: "Gladys peut maintenant être votre thermostat, ou programmer celui que vous avez déjà, avec des plannings hebdomadaires et un tout nouveau widget. Le suivi de l'énergie s'ouvre à tous les contrats d'électricité du monde. Au programme aussi : le canal des messages système, 35 fonctions mathématiques dans les scènes et les appareils qui remplissent votre base de données."
+description: "Gladys peut maintenant être votre thermostat, ou programmer celui que vous avez déjà, avec des plannings hebdomadaires et un tout nouveau widget. Le suivi de l'énergie s'ouvre à tous les contrats d'électricité du monde. Au programme aussi : le canal des messages système, 34 fonctions mathématiques dans les scènes et les appareils qui remplissent votre base de données."
 authors: pierregilles
 image: /img/presentation/gladys-assistant-5-2-fr.jpg
 slug: gladys-5-2-thermostat-and-energy-contracts
@@ -102,9 +102,9 @@ Vous choisissez maintenant le canal dans `Paramètres / Système` : tous, Telegr
 
 Merci à [@cicoub13](https://github.com/cicoub13) pour celle-ci !
 
-## 35 fonctions mathématiques dans les formules de scène
+## 34 fonctions mathématiques dans les formules de scène
 
-Les valeurs calculées des scènes (attendre, contrôler un appareil, définir une variable, conditions, volume d'une enceinte) ne connaissaient que `+ - * / % ^` et cinq fonctions. Il y en a maintenant 35, plus 3 constantes : `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, les fonctions trigonométriques, `pi`… Et un lien « Fonctions disponibles et syntaxe » déplie la liste complète juste sous le champ.
+Les valeurs calculées des scènes (attendre, contrôler un appareil, définir une variable, conditions, volume d'une enceinte) ne connaissaient que `+ - * / % ^` et cinq fonctions. Il y en a maintenant 34, plus 3 constantes : `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, les fonctions trigonométriques, `pi`… Et un lien « Fonctions disponibles et syntaxe » déplie la liste complète juste sous le champ.
 
 ![Le champ de formule d'une scène, avec la liste des fonctions disponibles](../../../static/img/articles/gladys-assistant-5-2/08-formula-functions-fr.webp)
 

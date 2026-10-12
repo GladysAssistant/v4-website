@@ -39,11 +39,13 @@ Diese ganze Infrastruktur musst du nicht selbst bauen: Das offizielle [JavaScrip
 
 Über die Grundlagen (Geräte, Zustände, Konfiguration) hinaus unterstützt die Plattform auch **Kameras** (inklusive **PTZ-Steuerung**), **OAuth2-Clouddienste**, **Aktionsbuttons auf Abruf**, **Lokal/Cloud-Transport-Badges** (mit einem eingeschränkten Zustand), **vermittelte Netzwerkerkennung** (mDNS, SSDP, UDP-Broadcast), **Wake-on-LAN**, **Sub-Container mit Hardwarezugriff**, **Messaging-Kanäle**, **Wetteranbieter**, **die Koordinaten der Häuser des Nutzers** und **eingehende Webhooks** (über Gladys Plus). Jeder dieser Punkte wird weiter unten in einem eigenen Abschnitt behandelt.
 
-Eine Integration deklariert in ihrem Manifest einen von **drei Typen**:
+Eine Integration deklariert in ihrem Manifest einen von **fünf Typen**:
 
 - **`device`** (mit Abstand der häufigste): Sie veröffentlicht die Geräte, die sie erkennt – Sensoren, Schalter, Lampen, Kameras usw.
 - **`communication`**: ein Messaging-Kanal statt Geräten, also eine Chat- oder Benachrichtigungsbrücke wie Telegram; siehe [Messaging-Kanäle](#messaging-channels).
 - **`weather`**: ein Wetteranbieter (Météo France, Open-Meteo, AccuWeather …), der die Wetteranfragen des Gladys-Kerns beantwortet und das Dashboard-Widget, den Chat-Assistenten und die Szenen-Auslöser für Wetterwarnungen versorgt; siehe [Wetteranbieter](#weather-providers).
+- **`calendar`**: ein Kalenderanbieter (ein CalDAV- oder Nextcloud-Server, ein öffentlicher ICS-Feed …), der die Kalender und Termine der Nutzer synchronisiert, die ihn aktivieren; siehe [Kalender](#calendars-the-calendar-type).
+- **`provider`**: gar kein Gerät, nur das, was die Integration deklariert (Dashboard-Widgets, Szenen-Auslöser und -Aktionen, Energieverträge); siehe [Integrationen ohne Geräte](#integrations-with-no-devices-the-provider-type).
 
 Ein paar wichtige Designregeln solltest du im Kopf behalten:
 
@@ -799,7 +801,7 @@ Die Felder kommen **aufgelöst** an: Szenenvariablen ersetzt, Standardwerte ange
 
 Ein Bild ist keine Ausgabe: Veröffentliche es über `publishCameraImage` und lass die Szene die Kamera-Aktionen des Kerns verwenden.
 
-### Integrationen ohne Geräte: der Typ `provider`
+### Integrationen ohne Geräte: der Typ `provider` {/* #integrations-with-no-devices-the-provider-type */}
 
 *Erfordert Gladys 5.1.0 oder neuer.*
 

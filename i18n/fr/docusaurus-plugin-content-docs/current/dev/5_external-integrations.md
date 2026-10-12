@@ -45,11 +45,13 @@ Vous n'avez à implémenter aucune de cette plomberie vous-même : le [SDK JavaS
 
 Au-delà des bases (appareils, états, configuration), la plateforme prend aussi en charge les **caméras** (y compris le **contrôle PTZ**), les **services cloud OAuth2**, les **boutons d'action à la demande**, les **badges de transport local/cloud** (avec un état dégradé), la **découverte réseau médiée** (mDNS, SSDP, broadcast UDP), le **Wake-on-LAN**, les **sous-conteneurs avec accès au matériel**, les **canaux de messagerie**, les **fournisseurs météo**, les **coordonnées des maisons de l'utilisateur**, et les **webhooks entrants** (via Gladys Plus). Chacun de ces points est couvert dans sa propre section ci-dessous.
 
-Une intégration déclare dans son manifeste l'un des **trois types** suivants :
+Une intégration déclare dans son manifeste l'un des **cinq types** suivants :
 
 - **`device`** (de loin le plus courant) : elle publie les appareils qu'elle découvre — capteurs, interrupteurs, lampes, caméras, etc.
 - **`communication`** : un canal de messagerie plutôt que des appareils, un pont de chat ou de notifications comme Telegram ; voir [Canaux de messagerie](#canaux-de-messagerie).
 - **`weather`** : un fournisseur météo (Météo France, Open-Meteo, AccuWeather…) qui répond aux demandes météo du cœur de Gladys et alimente le widget du tableau de bord, l'assistant conversationnel et les déclencheurs de scène sur alerte météo ; voir [Fournisseurs météo](#fournisseurs-météo).
+- **`calendar`** : un fournisseur de calendriers (un serveur CalDAV ou Nextcloud, un flux ICS public…) qui synchronise les calendriers et les événements des utilisateurs qui l'activent ; voir [Calendriers](#calendriers--le-type-calendar).
+- **`provider`** : aucun appareil, seulement ce que l'intégration déclare (widgets de tableau de bord, déclencheurs et actions de scène, contrats d'énergie) ; voir [Intégrations sans appareil](#intégrations-sans-appareil--le-type-provider).
 
 Quelques règles de conception importantes à garder en tête :
 

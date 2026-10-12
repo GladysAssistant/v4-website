@@ -1,6 +1,6 @@
 ---
 title: "Gladys Assistant 5.2: un termostato de verdad y contratos de energía para todos los países"
-description: "Gladys ya puede ser tu termostato, o programar el que ya tienes, con programaciones semanales y un widget totalmente nuevo. La supervisión de energía se abre a cualquier contrato de electricidad del mundo. Y además en esta versión: el canal de los mensajes del sistema, 35 funciones matemáticas en las escenas y los dispositivos que llenan tu base de datos."
+description: "Gladys ya puede ser tu termostato, o programar el que ya tienes, con programaciones semanales y un widget totalmente nuevo. La supervisión de energía se abre a cualquier contrato de electricidad del mundo. Y además en esta versión: el canal de los mensajes del sistema, 34 funciones matemáticas en las escenas y los dispositivos que llenan tu base de datos."
 authors: pierregilles
 image: /img/presentation/gladys-assistant-5-2-es.jpg
 slug: gladys-5-2-thermostat-and-energy-contracts
@@ -102,9 +102,9 @@ Ahora eliges el canal en `Configuración / Sistema`: todos, solo Telegram o solo
 
 ¡Gracias a [@cicoub13](https://github.com/cicoub13) por esta!
 
-## 35 funciones matemáticas en las fórmulas de escena
+## 34 funciones matemáticas en las fórmulas de escena
 
-Los valores calculados de las escenas (esperar, establecer el valor de un dispositivo, establecer una variable, condiciones, volumen de un altavoz) solo conocían `+ - * / % ^` y cinco funciones. Ahora hay 35, más 3 constantes: `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, las funciones trigonométricas, `pi`… Y un enlace «Funciones disponibles y sintaxis» despliega la lista completa justo debajo del campo.
+Los valores calculados de las escenas (esperar, establecer el valor de un dispositivo, establecer una variable, condiciones, volumen de un altavoz) solo conocían `+ - * / % ^` y cinco funciones. Ahora hay 34, más 3 constantes: `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, las funciones trigonométricas, `pi`… Y un enlace «Funciones disponibles y sintaxis» despliega la lista completa justo debajo del campo.
 
 ![El campo de fórmula de una escena, con la lista de funciones disponibles](../../../static/img/articles/gladys-assistant-5-2/08-formula-functions-es.webp)
 

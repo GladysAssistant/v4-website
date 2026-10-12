@@ -30,7 +30,7 @@ In diesen Aktionen zeigt der Szenen-Editor direkt unter dem Feld einen Link **�
 
 ## Funktionen
 
-Eine Funktion erhält ihre Argumente in Klammern, durch Kommas getrennt. Funktionen lassen sich verschachteln: `round(min(100, 3 * 45) / 2)` ergibt `68`.
+Eine Funktion erhält ihre Argumente in Klammern, durch Kommas getrennt. Funktionen lassen sich verschachteln: `round(min(100, 3 * 45) / 2)` ergibt `50`.
 
 **Runden und Vorzeichen**
 

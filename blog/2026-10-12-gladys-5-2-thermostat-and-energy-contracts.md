@@ -1,6 +1,6 @@
 ---
 title: "Gladys Assistant 5.2: a real thermostat, and energy contracts for every country"
-description: "Gladys can now be your thermostat, or programme the one you already have, with weekly schedules and a brand new widget. Energy tracking opens up to every electricity contract in the world. Also in this release: the channel of system messages, 35 math functions in scenes and the devices that fill your database."
+description: "Gladys can now be your thermostat, or programme the one you already have, with weekly schedules and a brand new widget. Energy tracking opens up to every electricity contract in the world. Also in this release: the channel of system messages, 34 math functions in scenes and the devices that fill your database."
 authors: pierregilles
 image: /img/presentation/gladys-assistant-5-2-en.jpg
 slug: gladys-5-2-thermostat-and-energy-contracts
@@ -102,9 +102,9 @@ You now choose the channel in `Settings / System`: all of them, Telegram only, o
 
 Thanks to [@cicoub13](https://github.com/cicoub13) for this one!
 
-## 35 math functions in scene formulas
+## 34 math functions in scene formulas
 
-The calculated values of scenes (wait, set a device value, set a variable, conditions, speaker volume) only knew `+ - * / % ^` and five functions. There are now 35 of them, plus 3 constants: `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, the trigonometric functions, `pi`... And a "Available functions and syntax" link opens the full list right under the field.
+The calculated values of scenes (wait, set a device value, set a variable, conditions, speaker volume) only knew `+ - * / % ^` and five functions. There are now 34 of them, plus 3 constants: `min`, `max`, `mean`, `median`, `sum`, `sqrt`, `pow`, `log10`, `exp`, the trigonometric functions, `pi`... And a "Available functions and syntax" link opens the full list right under the field.
 
 ![The formula field of a scene, with the list of available functions](../static/img/articles/gladys-assistant-5-2/08-formula-functions-en.webp)
 

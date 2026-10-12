@@ -39,11 +39,13 @@ You do not have to implement any of this plumbing yourself: the official [JavaSc
 
 On top of the basics (devices, states, configuration), the platform also supports **cameras** (including **PTZ control**), **OAuth2 cloud services**, **on-demand action buttons**, **local/cloud transport badges** (with a degraded state), **mediated network discovery** (mDNS, SSDP, UDP broadcast), **Wake-on-LAN**, **sub-containers with hardware access**, **messaging channels**, **weather providers**, **the coordinates of the user's houses**, and **incoming webhooks** (through Gladys Plus). Each of these is covered in its own section below.
 
-An integration declares one of **three types** in its manifest:
+An integration declares one of **five types** in its manifest:
 
 - **`device`** (by far the most common): it publishes the devices it discovers — sensors, switches, lights, cameras, and so on.
 - **`communication`**: a messaging channel instead of devices, a chat or notification bridge like Telegram; see [Messaging channels](#messaging-channels).
 - **`weather`**: a weather provider (Météo France, Open-Meteo, AccuWeather…) that answers the weather requests of the Gladys core and feeds the dashboard widget, the chat assistant and the weather-alert scene triggers; see [Weather providers](#weather-providers).
+- **`calendar`**: a calendar provider (a CalDAV or Nextcloud server, a public ICS feed…) that syncs the calendars and events of the users who enable it; see [Calendars](#calendars-the-calendar-type).
+- **`provider`**: no device at all, only what the integration declares (dashboard widgets, scene triggers and actions, energy contracts); see [Integrations with no devices](#integrations-with-no-devices-the-provider-type).
 
 A few important design rules to keep in mind:
 

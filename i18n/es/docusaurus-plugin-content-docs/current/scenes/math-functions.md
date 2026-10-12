@@ -30,7 +30,7 @@ En estas acciones, el editor de escenas muestra un enlace **«Funciones disponib
 
 ## Funciones
 
-Una función recibe sus argumentos entre paréntesis, separados por comas. Las funciones se pueden anidar: `round(min(100, 3 * 45) / 2)` da `68`.
+Una función recibe sus argumentos entre paréntesis, separados por comas. Las funciones se pueden anidar: `round(min(100, 3 * 45) / 2)` da `50`.
 
 **Redondeo y signo**
 
