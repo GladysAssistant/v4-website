@@ -1,0 +1,188 @@
+---
+title: "Xbox smart home integration, free and open source"
+sidebar_label: "Xbox"
+description: "Turn your Xbox consoles on and off, control them and see the game being played. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-xbox.png"
+keywords:
+  - "xbox"
+  - "xbox smart home"
+  - "gladys xbox"
+  - "xbox gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-xbox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="xbox" />
+
+Control your Xbox consoles (Xbox One, Xbox Series X|S) from Gladys: turn them on
+and off, see whether they are on and which game is being played, use them in
+scenes and on the dashboard.
+
+## Two channels
+
+| Channel                  | Needs               | What it does                                                                                               |
+| ------------------------ | ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Local** (your network) | nothing             | finds the consoles, sees whether they are on, turns them on                                                |
+| **Cloud** (Xbox Live)    | a Microsoft account | everything above, plus: turn off, volume, mute, media keys, controller buttons, launch a game, game played |
+
+You can use the local channel alone, the cloud channel alone, or both. With
+both, the **Prefer the local (LAN) connection when available** switch of the
+configuration picks the one asked first; the other one takes over when the first
+does not answer. The badge of each console says which channel served it last
+(orange dot: the cloud serves a console the local search did not find).
+
+## Prepare the console
+
+1. **Power mode**: Settings → General → Power options → **Sleep** (Xbox Series)
+   or **Instant-on** (Xbox One). In "Shut down (energy saving)" mode the console
+   cannot be turned on from the network, by any channel.
+2. **Remote features** (cloud channel): Settings → Devices & connections →
+   Remote features → tick **Enable remote features**.
+3. In the same screen, under **Xbox app preferences**, choose **Allow
+   connections from any device**: it helps the local channel.
+
+## Local channel
+
+Nothing to fill in: open the integration, click **Test the connection and search
+for consoles**, then create your consoles in the **Discover** tab.
+
+The search asks Gladys to send a SmartGlass discovery on UDP port 5050 of your
+network (Gladys shows this permission when you install the integration). A
+console on another subnet, or behind a router that filters broadcasts, is not
+found that way: type its IP address in **Console IP addresses** (several
+addresses separated by commas). Give the console a fixed address in your router
+so it does not change.
+
+## Cloud channel
+
+The cloud channel signs in to Xbox Live with your Microsoft account, through an
+application **you** register at Microsoft (free). Gladys never sees your
+password.
+
+1. Open the [Azure portal](https://portal.azure.com) → **App registrations** →
+   **New registration**.
+   - Name: `Gladys Xbox` (anything).
+   - Supported account types: **Personal Microsoft accounts only** (or "any
+     organizational directory and personal Microsoft accounts").
+   - Redirect URI: platform **Web**, address: the one of the Gladys **Connect**
+     button (see below).
+2. In the application, copy the **Application (client) ID**.
+3. **Certificates & secrets** → **New client secret** → copy its **Value** (not
+   its ID: the value is only shown once).
+4. In Gladys, paste the two values in **Application (client) ID** and **Client
+   secret**, save, then click **Connect** next to **Microsoft account** and sign
+   in.
+
+**Which redirect URI?** The integration writes it in its logs when you click
+Connect (`Redirect URI to register in Azure: …`), and Microsoft shows it in the
+error page if it is not registered yet. Microsoft only accepts an **https**
+address (or `http://localhost`): open Gladys through its https address (Gladys
+Plus, your reverse proxy) when you click Connect.
+
+The link lasts: the integration renews its access by itself. If the
+configuration shows "The Microsoft account link expired", click **Connect**
+again.
+
+## The console in Gladys
+
+Each console is a television-type device:
+
+- **Power**: on/off. On: local packet or cloud, by preference. Off: cloud only.
+- **Mute**, **Volume up / down**, **Play**, **Pause**, **Previous**, **Next**,
+  the arrows, **A (select)**, **B (back)**, **Menu**, **View**, **Xbox button
+  (guide)**: cloud only.
+- **Game being played**: the name of the game or app in the foreground, `-` on
+  the home screen or when the console is off (cloud only).
+
+The console is read every 60 seconds by default (**Refresh interval**, 30
+seconds minimum), and again within 30 seconds after a command.
+
+## Scenes
+
+Triggers:
+
+- **A game starts on an Xbox**: filter on the console and on the exact game
+  name. Variables: `title_name`, `title_id`.
+- **A game stops on an Xbox**: same filters. Variables: `title_name`,
+  `title_id`, `played_minutes`.
+
+Use them in the next actions as `{{triggerEvent.data.title_name}}`, e.g. send
+"Lucas played 95 minutes of Minecraft" by message.
+
+Actions:
+
+- **Turn on an Xbox and wait**: turns the console on, then waits until it
+  answers (up to 100 s). Output `awake` (true / false) to gate the next actions.
+- **Launch a game on an Xbox**: by its Microsoft Store product ID, the 12
+  characters at the end of the game page address on xbox.com, e.g.
+  `xbox.com/…/games/store/<name>/9NBLGGH2JHXJ`. Output `launched`.
+- **Press a controller button**: A, B, X, Y, arrows, Xbox button, View, Menu.
+  Output `pressed`.
+
+The power, mute and keys are also available in the standard "Set device value"
+action, and the power state in the standard "Device state change" trigger.
+
+The game being played comes from the **presence of your Xbox Live account**, not
+from one console: with several consoles on at the same time, they all show the
+game of the linked account.
+
+## Dashboard widget
+
+In **Dashboard → Edit → New widget**, add the **Xbox console** widget and pick a
+console (the first one by default): power, game being played, connection,
+account, and quick buttons — turn on, and with the cloud channel: home,
+play/pause, turn off.
+
+## Troubleshooting
+
+- **No console found**: is it on, or in Sleep / Instant-on mode? Is Gladys on
+  the same network? Try typing its IP address.
+- **The console does not turn on**: check the power mode (Sleep / Instant-on).
+  On the local channel, the console must have answered at least once so its
+  Live ID is known.
+- **"needs the cloud channel"**: turning off and the keys need the Microsoft
+  account.
+- **The commands do nothing**: enable the remote features on the console.
+- **Logs**: Gladys → Integrations → Xbox → **Logs** tab. They never contain your
+  tokens nor your secret.
+
+## Configuration settings
+
+These are the settings Xbox asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Local channel, no account needed: the integration finds the consoles of your network, sees whether they are on and turns them on. Set the console power mode to Sleep (instant-on). Cloud channel, optional: with your Microsoft account it also turns them off, controls the volume, the media and the controller buttons, launches games and shows the game being played. |
+| Console IP addresses | `string` | No | Optional. The consoles are found automatically on the network; list here the ones that are not (another subnet, a router that filters broadcasts), separated by commas. |
+| Cloud channel (optional) | `section` | No | Register an application in the Microsoft Azure portal (personal Microsoft accounts, Web platform), with the redirect URI shown by the Connect button. Copy its application (client) ID and a client secret below, save, then click Connect. On the console, enable Settings > Devices & connections > Remote features. |
+| Application (client) ID | `string` | No | The application ID of your Azure app registration. |
+| Client secret | `secret` | No | The value of a client secret of the same application (Certificates & secrets). Leave it empty for a public client application. |
+| Microsoft account | `oauth2` | No | Links the Microsoft account that owns the consoles. Only a refresh token is kept, never your password. |
+| Refresh interval (s) | `number` | No | How often each console is read, in seconds (30 seconds minimum). |
+
+## How to install Xbox in Gladys
+
+1. In Gladys, open **Integrations**: Xbox appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-xbox:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-xbox](https://github.com/prohand/gladys-xbox).
+
+Xbox requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Xbox is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-xbox) — [source of this documentation](https://github.com/prohand/gladys-xbox/blob/HEAD/docs/en.md)

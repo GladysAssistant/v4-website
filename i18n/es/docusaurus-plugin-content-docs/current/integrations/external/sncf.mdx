@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica SNCF, gratuita y de código abierto"
 sidebar_label: "SNCF"
-description: "Your SNCF trains in real time: delays, cancellations, scenes, widgets. Free, open source, installable in one click."
+description: "Tus trenes SNCF en tiempo real: retrasos, cancelaciones, escenas, widgets. Gratuita, de código abierto, se instala con un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-sncf.jpg"
 keywords:
   - "sncf"
@@ -14,113 +14,123 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/es.md in
 https://github.com/William-De71/gladys-sncf instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
 <ExternalIntegrationHeader slug="sncf" />
 
-:::info
+Esta integración sigue **tus trenes SNCF en tiempo real** en Gladys: las próximas salidas de tus trayectos (casa → trabajo, la vuelta…), sus **retrasos**, las **cancelaciones** y su motivo. Los convierte en dispositivos, en disparadores de escena («mi tren está cancelado», «mi tren sale dentro de 15 minutos») y en widgets del panel.
 
-La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+Los datos proceden de la **API oficial de SNCF**: tiempo real para TGV INOUI, OUIGO, Intercités, TER, Lyria y Eurostar. Los trenes **Transilien** solo aparecen con su horario teórico (sin retrasos ni cancelaciones).
 
-:::
+> Integración comunitaria, sin relación con SNCF ni respaldada por ella.
 
-This integration follows **your SNCF trains in real time** in Gladys: the next departures of your trips (home → work, the way back…), their **delays**, the **cancellations** and their cause. It turns them into devices, scene triggers ("my train is cancelled", "my train leaves in 15 minutes") and dashboard widgets.
+## Configuración
 
-The data comes from the **official SNCF API**: real time for TGV INOUI, OUIGO, Intercités, TER, Lyria and Eurostar. **Transilien** trains are timetable only (no delays, no cancellations).
+### 1. Obtener una clave de API (gratuita)
 
-> Community integration, not affiliated with or endorsed by SNCF.
+1. Abre la página [Token développeur](https://numerique.sncf.com/startup/api/token-developpeur/) de SNCF.
+2. Indica tu nombre, apellidos y correo electrónico, y acepta las condiciones de uso.
+3. La clave (un identificador de 36 caracteres, del tipo `0f1e2d3c-4b5a-…`) llega por correo electrónico.
 
-## Configuration
+La clave gratuita permite **5 000 peticiones al día**. La integración las cuenta ella misma y reduce el ritmo antes del límite: si se supera, SNCF bloquea la clave durante horas.
 
-### 1. Get an API key (free)
+### 2. Rellenar la integración
 
-1. Open the SNCF [developer token](https://numerique.sncf.com/startup/api/token-developpeur/) page.
-2. Fill in your first name, last name and email, accept the terms of use.
-3. The key (a 36-character identifier, like `0f1e2d3c-4b5a-…`) arrives by email.
+| Campo                 | Función                                                                                |
+| --------------------- | -------------------------------------------------------------------------------------- |
+| **Clave de API**      | obligatoria                                                                            |
+| **Trayecto 1, 2, 3**  | estación de salida y estación de llegada (solo se siguen los **trenes directos**)      |
+| **Franja horaria**    | opcional, por ejemplo `07:00-09:30`: los trenes que salen en esa franja                |
+| **Días de viaje**     | opcionales, por ejemplo de lunes a viernes (vacío: todos los días)                     |
+| **Trenes seguidos**   | cuántos próximos trenes por trayecto (4 por defecto)                                   |
+| **Umbral de retraso** | a partir de cuántos minutos un tren cuenta como «retrasado» (5 por defecto)            |
+| **Actualización**     | cada 3 minutos en torno a la franja, cada 30 minutos el resto del tiempo (por defecto) |
+| **Idioma**            | de los nombres de dispositivos y textos de escena (automático: el idioma de tu panel)  |
 
-The free key allows **5 000 requests a day**. The integration counts them itself and slows down before the limit: past it, the SNCF blocks the key for hours.
+Para una estación, puedes escribir:
 
-### 2. Fill in the integration
+- su **nombre**: «Rennes», «Lyon Part Dieu», «Paris Montparnasse» — se toma el primer resultado de la búsqueda de SNCF;
+- su **código UIC**: «87471003»;
+- su **identificador**: «stop_area:SNCF:87471003».
 
-| Field               | Role                                                                                  |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| **API key**         | required                                                                              |
-| **Trip 1, 2, 3**    | departure and arrival stations (only **direct trains** are followed)                  |
-| **Travel window**   | optional, e.g. `07:00-09:30`: the trains leaving in that window                       |
-| **Travel days**     | optional, e.g. Monday to Friday (empty: every day)                                    |
-| **Trains followed** | how many next trains per trip (4 by default)                                          |
-| **Delay threshold** | from how many minutes a train counts as "delayed" (5 by default)                      |
-| **Refresh**         | every 3 minutes around the window, every 30 minutes the rest of the time (by default) |
+Si el nombre no da la estación correcta, usa el botón **Buscar una estación**: muestra las estaciones que coinciden con su identificador, para copiarlo en el campo del trayecto.
 
-For a station, type:
+Guarda y haz clic en **Probar la conexión**: para cada trayecto, indica cuántos trenes ha encontrado y la hora del próximo.
 
-- its **name**: "Rennes", "Lyon Part Dieu", "Paris Montparnasse" — the first result of the SNCF search is kept;
-- its **UIC code**: "87471003";
-- its **identifier**: "stop_area:SNCF:87471003".
+#### La franja horaria
 
-When the name does not give the right station, use the **Find a station** button: it lists the matching stations with their identifier, to copy into the trip field.
+Con una franja horaria, la integración sigue los trenes de la **próxima franja**: los del día mientras no haya terminado, y después los del siguiente día de viaje. Por la noche, el widget ya muestra los trenes de la mañana siguiente, y una cancelación anunciada la víspera dispara tu escena la víspera.
 
-Save, then click **Test the connection**: for each trip, it tells how many trains were found and the time of the next one.
+Además, solo consulta la API a menudo **en torno a la franja** (desde una hora antes hasta su final), lo que ahorra cuota: unas 250 peticiones al día para un trayecto con una franja de 2 h 30, frente a 800 sin franja.
 
-#### The travel window
+### 3. Añadir los dispositivos
 
-With a travel window, the integration follows the trains of the **next window**: today's while it is not over, then the next travel day's. In the evening, the widget already shows tomorrow morning's trains, and a cancellation announced the evening before fires your scene the evening before.
+En la pestaña **Descubrir**, cada trayecto aparece como un dispositivo «SNCF – _salida_ → _llegada_». Añádelo y colócalo en una habitación. Los widgets y las escenas también funcionan sin el dispositivo, pero la elección del trayecto en sus ajustes pasa por la lista de dispositivos.
 
-It also reads the API often **only around the window** (from an hour before to its end), which saves the quota: about 250 requests a day for a trip with a 2.5-hour window, 800 without a window.
+| Funcionalidad                | Valor                                                                       |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| **Próximo tren**             | texto, por ejemplo «07:42 · TER 858311 · +5 min» o «… · cancelado»          |
+| **Retraso del próximo tren** | en minutos, el del próximo tren que circula (0 si va en hora)               |
+| **Trenes con incidencias**   | cuántos trenes seguidos van retrasados (desde el umbral) o están cancelados |
 
-### 3. Add the devices
+Ejemplos de escenas sobre estos valores: «si el retraso del próximo tren supera los 10 minutos, encender la lámpara del pasillo en naranja», «si hay trenes con incidencias, anunciarlo por el altavoz».
 
-In the **Discovery** tab, each trip shows up as a device "SNCF – _from_ → _to_". Add it and put it in a room. Widgets and scenes also work without the device, but choosing the trip in their settings goes through the device list.
+En la pantalla **Dispositivos**, la insignia de cada trayecto indica **cloud** mientras la API de SNCF responde, **inaccesible** cuando su última lectura ha fallado, y se pone naranja cuando las lecturas están en pausa por la cuota diaria.
 
-| Feature                     | Value                                                               |
-| --------------------------- | ------------------------------------------------------------------- |
-| **Next train**              | text, e.g. "07:42 · TER 858311 · +5 min" or "… · cancelled"         |
-| **Delay of the next train** | in minutes, the one of the next train that runs (0 when on time)    |
-| **Disrupted trains**        | how many followed trains are late (from the threshold) or cancelled |
+## Escenas
 
-## Scenes
+### Disparadores
 
-### Triggers
+| Disparador                 | Cuándo                                                                                      | Filtros                    |
+| -------------------------- | ------------------------------------------------------------------------------------------- | -------------------------- |
+| **SNCF: tren con retraso** | un tren seguido se retrasa (desde el umbral), y de nuevo al superar los 15 y los 30 minutos | trayecto, nivel de retraso |
+| **SNCF: tren cancelado**   | un tren seguido se cancela, o ya no para en una estación del trayecto                       | trayecto                   |
+| **SNCF: salida inminente** | un tren seguido sale dentro de 5, 10, 15, 20, 30, 45 o 60 minutos                           | trayecto, minutos          |
 
-| Trigger                      | When                                                                                  | Filters           |
-| ---------------------------- | ------------------------------------------------------------------------------------- | ----------------- |
-| **SNCF: train delayed**      | a followed train becomes late (from the threshold), then again past 15 and 30 minutes | trip, delay level |
-| **SNCF: train cancelled**    | a followed train is cancelled, or no longer stops at a station of the trip            | trip              |
-| **SNCF: train leaving soon** | a followed train leaves in 5, 10, 15, 20, 30, 45 or 60 minutes                        | trip, minutes     |
+La **salida inminente** se cuenta sobre la hora de salida **en tiempo real**: si tu tren de las 7:42 lleva 5 minutos de retraso, «sale en 15 minutos» llega a las 7:32, no a las 7:27. Práctico para un «sal ahora».
 
-**Leaving soon** counts on the **real-time** departure: when your 7:42 train is 5 minutes late, "leaves in 15 minutes" comes at 7:32, not 7:27.
+Cada disparador proporciona variables: trayecto, número y tipo del tren, dirección, fecha, horas prevista y estimada, retraso, motivo y un **resumen** listo para enviar, por ejemplo:
 
-Every trigger provides variables: trip, train number and type, direction, date, scheduled and expected times, delay, cause, and a **summary** ready to send. Each event fires **once per train**, even after a restart of the integration.
+> Rennes → Nantes: el TER 858311 de las 07:42 lleva 18 min de retraso, sale a las 08:00. Motivo: Panne de signalisation.
 
-### Action
+Cada evento se dispara **una sola vez por tren**, incluso tras reiniciar la integración. El motivo lo da SNCF y queda en francés.
 
-**SNCF: next trains** gives the next train of a trip (times, delay, status, cause, minutes until departure, number of disrupted trains) and a sentence summarizing the following ones.
+### Acción
+
+**SNCF: próximos trenes** da el próximo tren de un trayecto (horas, retraso, estado, motivo, minutos hasta la salida, número de trenes con incidencias) y una frase que resume los siguientes:
+
+> Rennes → Nantes: el TER 858311 de las 07:42 lleva 5 min de retraso, sale a las 07:47. Después: 08:12 en hora, 08:42 cancelado.
+
+Ejemplo: cada mañana laborable a las 7, «SNCF: próximos trenes» y luego enviar el `resumen` por Telegram.
 
 ## Widgets
 
-| Widget              | Content                                                                                                                                        |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **SNCF trip**       | the next departure time and the time left, then each train with an on time / +N min / cancelled badge; tap a disrupted train to read the cause |
-| **SNCF departures** | the departures board of a station, every direction: a station typed in the widget settings, or the departure station of a trip                 |
+![El widget «Trayecto SNCF» (los próximos trenes de Rennes a Nantes, uno cancelado y otro con retraso) junto al widget «Salidas SNCF» (el panel de salidas de Rennes) — ilustración generada, no una captura de pantalla](https://raw.githubusercontent.com/William-De71/gladys-sncf/main/docs/assets/widgets.es.png)
 
-## Limits
+| Widget            | Contenido                                                                                                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Trayecto SNCF** | la hora de la próxima salida y el tiempo que falta, y después cada tren con una insignia puntual / +N min / cancelado; toca un tren con incidencias para leer el motivo |
+| **Salidas SNCF**  | el panel de salidas de una estación, todas las direcciones: una estación escrita en los ajustes del widget, o la estación de salida de un trayecto                      |
 
-- Only **direct trains** are followed (no change).
-- **Transilien**: timetable only, no delays and no cancellations (a limit of the SNCF API).
-- The **platform** is not provided by the official API.
-- A cancelled train vanishes from the real-time data of the SNCF: the integration finds it by comparing with the timetable, then confirms it on the departures board of the station. When it cannot be confirmed, the train stays shown as scheduled rather than wrongly announced as cancelled.
+## Límites
 
-## Troubleshooting
+- Solo se siguen los **trenes directos** (sin transbordo).
+- **Transilien**: solo horario teórico, sin retrasos ni cancelaciones (un límite de la API de SNCF).
+- La **vía** no la proporciona la API oficial.
+- Un tren cancelado desaparece de los datos en tiempo real de SNCF: la integración lo encuentra comparando con el horario teórico y luego lo confirma en el panel de salidas de la estación. Si no puede confirmarlo, el tren sigue mostrándose como previsto en lugar de anunciarse cancelado por error.
 
-| Message                                 | What to do                                                                                       |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| "The SNCF API key is refused"           | check the key copied from the email (no space)                                                   |
-| "Station not found: …"                  | use the **Find a station** button and copy the identifier it gives                               |
-| "Daily quota of the SNCF API reached"   | the SNCF blocked the key until the time shown: fewer trips without a window, or longer intervals |
-| "No train found in the followed period" | no direct train in the travel window: check the stations and the window, or empty it             |
+## Solución de problemas
+
+| Mensaje                                        | Qué hacer                                                                                                     |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| «La clave de API de SNCF es rechazada»         | comprueba la clave copiada del correo (sin espacios)                                                          |
+| «Estación no encontrada: …»                    | usa el botón **Buscar una estación** y copia el identificador propuesto                                       |
+| «Cuota diaria de la API de SNCF alcanzada»     | SNCF ha bloqueado la clave hasta la hora indicada: menos trayectos sin franja horaria o intervalos más largos |
+| «Ningún tren encontrado en el periodo seguido» | ningún tren directo en la franja horaria: comprueba las estaciones y la franja, o vacíala                     |
+| Nombres de dispositivos o resúmenes en inglés  | ajusta **Idioma de los textos** en los ajustes, o abre una vez un widget de SNCF                              |
 
 ## Parámetros de configuración
 
@@ -128,33 +138,34 @@ Estos son los parámetros que SNCF te pide en su pantalla de configuración en G
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| SNCF API key | `section` | No | The trains come from the official SNCF API: TER, TGV INOUI, OUIGO, Intercités, Lyria, Eurostar… in real time (Transilien: timetable only, no delays). The key is free: fill in the form of the SNCF developer page, the key arrives by email. It allows 5 000 requests a day; the integration counts them and slows down before the limit. |
-| API key | `secret` | Sí | The key received by email (a UUID, 36 characters). |
-| Trip 1 | `section` | No | A station name ("Rennes", "Lyon Part Dieu"), its UIC code ("87471003") or the identifier given by the "Find a station" button ("stop_area:SNCF:87471003"). Only direct trains are followed. The travel window and days are optional: with them, the trains of the next window are followed and the API is read often only around it (it saves the daily quota). |
-| Departure station | `string` | No |  |
-| Arrival station | `string` | No |  |
-| Travel window | `string` | No | Departures between these times, e.g. 07:00-09:30. Empty: the next trains, all day. |
-| Travel days | `multi_select` | No | Empty: every day. |
-| Trip 2 (optional) | `section` | No | Same fields as trip 1, for example the way back. Leave empty when unused. |
-| Departure station | `string` | No |  |
-| Arrival station | `string` | No |  |
-| Travel window | `string` | No | Departures between these times, e.g. 07:00-09:30. Empty: the next trains, all day. |
-| Travel days | `multi_select` | No | Empty: every day. |
-| Trip 3 (optional) | `section` | No | Same fields as trip 1, for example the way back. Leave empty when unused. |
-| Departure station | `string` | No |  |
-| Arrival station | `string` | No |  |
-| Travel window | `string` | No | Departures between these times, e.g. 07:00-09:30. Empty: the next trains, all day. |
-| Travel days | `multi_select` | No | Empty: every day. |
-| Settings | `section` | No | With a travel window, a trip costs about 250 requests a day with the default values; without one, about 800. Three trips and an open departures board stay within the 5 000 a day. |
-| Trains followed per trip | `number` | No | The next trains of each trip, between 1 and 8. |
-| Delay threshold (min) | `number` | No | From how many minutes a train counts as delayed (scenes, disrupted trains, colors). |
-| Refresh around the window (min) | `number` | No | From an hour before the travel window to its end (all day without a window), between 2 and 30 minutes. |
-| Refresh the rest of the time (min) | `number` | No | Outside the window (and at night), between 10 and 180 minutes. |
+| Clave de API de SNCF | `section` | No | Los trenes proceden de la API oficial de SNCF: TER, TGV INOUI, OUIGO, Intercités, Lyria, Eurostar… en tiempo real (Transilien: solo horarios teóricos, sin retrasos). La clave es gratuita: rellena el formulario de la página para desarrolladores de SNCF y la clave llega por correo electrónico. Permite 5 000 peticiones al día; la integración las cuenta y reduce el ritmo antes del límite. |
+| Clave de API | `secret` | Sí | La clave recibida por correo electrónico (un UUID, 36 caracteres). |
+| Trayecto 1 | `section` | No | Un nombre de estación («Rennes», «Lyon Part Dieu»), su código UIC («87471003») o el identificador que da el botón «Buscar una estación» («stop_area:SNCF:87471003»). Solo se siguen los trenes directos. La franja horaria y los días son opcionales: con ellos se siguen los trenes de la próxima franja, y la API solo se consulta a menudo alrededor de ella (ahorra la cuota diaria). |
+| Estación de salida | `string` | No |  |
+| Estación de llegada | `string` | No |  |
+| Franja horaria | `string` | No | Salidas entre estas horas, por ejemplo 07:00-09:30. Vacío: los próximos trenes, todo el día. |
+| Días de viaje | `multi_select` | No | Vacío: todos los días. |
+| Trayecto 2 (opcional) | `section` | No | Los mismos campos que el trayecto 1, por ejemplo para la vuelta. Déjalo vacío si no lo usas. |
+| Estación de salida | `string` | No |  |
+| Estación de llegada | `string` | No |  |
+| Franja horaria | `string` | No | Salidas entre estas horas, por ejemplo 07:00-09:30. Vacío: los próximos trenes, todo el día. |
+| Días de viaje | `multi_select` | No | Vacío: todos los días. |
+| Trayecto 3 (opcional) | `section` | No | Los mismos campos que el trayecto 1, por ejemplo para la vuelta. Déjalo vacío si no lo usas. |
+| Estación de salida | `string` | No |  |
+| Estación de llegada | `string` | No |  |
+| Franja horaria | `string` | No | Salidas entre estas horas, por ejemplo 07:00-09:30. Vacío: los próximos trenes, todo el día. |
+| Días de viaje | `multi_select` | No | Vacío: todos los días. |
+| Ajustes | `section` | No | Con franja horaria, un trayecto cuesta unas 250 peticiones al día con los valores por defecto; sin ella, unas 800. Tres trayectos y un panel de salidas abierto se quedan por debajo de las 5 000 diarias. |
+| Trenes seguidos por trayecto | `number` | No | Los próximos trenes de cada trayecto, entre 1 y 8. |
+| Umbral de retraso (min) | `number` | No | A partir de cuántos minutos un tren cuenta como retrasado (escenas, trenes con incidencias, colores). |
+| Actualización en torno a la franja (min) | `number` | No | Desde una hora antes de la franja horaria hasta su final (todo el día sin franja), entre 2 y 30 minutos. |
+| Actualización el resto del tiempo (min) | `number` | No | Fuera de la franja (y de noche), entre 10 y 180 minutos. |
+| Idioma de los textos | `select` | No | Nombres de los dispositivos, resúmenes y salidas de las escenas. Automático: el idioma de tu panel, en cuanto se haya mostrado un widget de SNCF. |
 
 ## Cómo instalar SNCF en Gladys
 
 1. En Gladys, abre **Integraciones**: SNCF aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-sncf:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-sncf:1.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-sncf](https://github.com/William-De71/gladys-sncf).
 
@@ -169,4 +180,4 @@ SNCF es una **integración externa**: una integración comunitaria empaquetada c
 - [Explorar todas las integraciones externas](/es/docs/integrations/external/)
 - [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
 - [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
-- [Código fuente en GitHub](https://github.com/William-De71/gladys-sncf) — [fuente de esta documentación](https://github.com/William-De71/gladys-sncf/blob/HEAD/docs/en.md)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-sncf) — [fuente de esta documentación](https://github.com/William-De71/gladys-sncf/blob/HEAD/docs/es.md)

@@ -23,7 +23,7 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 Mit dieser Integration steuern Sie Ihre **ESPHome**-Geräte (ESP32, ESP8266) aus Gladys Assistant heraus, direkt in Ihrem lokalen Netzwerk, über die **native API** von ESPHome. Keine Cloud, kein MQTT-Broker, kein Home Assistant nötig.
 
-![Gladys, die Integration und Ihre ESPHome-Knoten: Die Knoten senden ihre Zustände selbst, Befehle gehen von Gladys aus, und die Suche läuft über das von Gladys mitgeschnittene mDNS](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/overview.svg)
+![Gladys, die Integration und Ihre ESPHome-Knoten: Die Knoten senden ihre Zustände selbst, Befehle gehen von Gladys aus, und die Suche läuft über das von Gladys mitgeschnittene mDNS](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/overview.svg)
 
 ## Funktionen
 
@@ -45,15 +45,17 @@ Anders als ein Gerät von der Stange stellt ein ESPHome-Knoten genau das bereit,
 | `button`           | Taster                                                         |
 | `number`           | Beschreibbarer Zahlenwert (Schieberegler)                      |
 | `climate`          | Thermostat: Sollwert (ein einzelner) und gemessene Temperatur  |
+| `event`            | Keine Funktion: der Szenen-Auslöser „ESPHome-Ereignis“         |
 
-Typen ohne Entsprechung in Gladys (`media_player`, `camera`, `select`, `event`, `date`, …) werden bei der Suche einfach ausgelassen.
+Typen ohne Entsprechung in Gladys (`media_player`, `camera`, `select`, `date`, …) werden bei der Suche einfach ausgelassen. Ein `energy`-Sensor (in kWh oder Wh) ist ein kumulativer Zählerstand: Gladys berechnet daraus den Verbrauch und seine Kosten.
 
 ### Zustände kommen in Echtzeit an
 
-ESPHome **sendet** seine Zustandsänderungen von selbst: Die Integration hält zu jedem Knoten eine Verbindung offen, und Gladys erhält den neuen Wert in dem Moment, in dem er sich ändert. Es gibt kein Abfrageintervall einzustellen.
+ESPHome **sendet** seine Zustandsänderungen von selbst: Die Integration hält zu jedem Knoten eine Verbindung offen, und Gladys erhält den neuen Wert in dem Moment, in dem er sich ändert. Es gibt kein Abfrageintervall einzustellen. Ein hinzugefügtes Gerät erhält sofort die Werte, die sein Knoten bereits gemeldet hat, und ein unveränderter Messwert wird nicht erneut gesendet (er wird einmal pro Stunde aufgefrischt).
 
 ## Voraussetzungen
 
+- Gladys **5.1.0** oder neuer.
 - Ein oder mehrere Geräte mit **ESPHome 2025.10 oder neuer**.
 - Die native API in Ihrer YAML aktiviert (das ist standardmäßig der Fall):
 
@@ -102,7 +104,7 @@ wohnzimmer.local
 192.168.1.43:6054
 ```
 
-![Die Integration führt drei Quellen zusammen: die bereits bekannten Geräte, die mDNS-Suche und die manuell hinzugefügten Knoten; beim Verbinden nennt der Knoten seinen echten Namen, der zu seiner Kennung wird](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/discovery.svg)
+![Die Integration führt drei Quellen zusammen: die bereits bekannten Geräte, die mDNS-Suche und die manuell hinzugefügten Knoten; beim Verbinden nennt der Knoten seinen echten Namen, der zu seiner Kennung wird](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/discovery.svg)
 
 Der Port ist optional (standardmäßig 6053). Sobald er verbunden ist, meldet der Knoten selbst seinen echten Namen: Ein per IP-Adresse hinzugefügter Knoten erscheint trotzdem unter seinem ESPHome-Namen und funktioniert weiter, auch wenn sich seine IP-Adresse später ändert.
 
@@ -119,11 +121,62 @@ Der Port ist optional (standardmäßig 6053). Sobald er verbunden ist, meldet de
 - **Verbindung testen**: startet eine vollständige Suche und zeigt an, wie viele Knoten geantwortet haben und wie viele Funktionen verfügbar sind.
 - **Knoten neu verbinden**: schließt alle Verbindungen und öffnet sie neu. Nützlich, nachdem ein Knoten neu geflasht oder ein Schlüssel geändert wurde.
 
+## Szenen
+
+### Auslöser
+
+- **ESPHome-Ereignis**: Eine `event`-Entität eines Knotens hat ausgelöst — eine Taste einmal, zweimal oder lange gedrückt, eine Türklingel, ein empfangener Fernbedienungscode. Filter: der Knoten (`esphome: name:`), die Entität (ihr `name:`) und der Ereignistyp (einer ihrer `event_types`); lassen Sie einen Filter leer, um alles zu akzeptieren. Variablen: `node`, `entity`, `entity_id`, `event_type`.
+- **ESPHome-Knoten offline**: Ein Knoten war eine Minute lang getrennt. Ein Neustart oder ein OTA-Update, das innerhalb der Minute abgeschlossen ist, löst nichts aus. Variablen: `node`, `address`.
+- **ESPHome-Knoten wieder online**: Ein als offline gemeldeter Knoten ist wieder verbunden. Variablen: `node`, `address`, `offline_minutes`.
+
+Eine Ereignis-Entität, ausgelöst von einer Taste, die Einfach- und Doppelklick unterscheidet:
+
+```yaml
+event:
+  - platform: template
+    name: 'Button'
+    id: button_event
+    event_types: [single, double]
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO0
+    on_multi_click:
+      - timing:
+          [ON for at most 0.5s, OFF for at most 0.3s, ON for at most 0.5s, OFF for at least 0.2s]
+        then:
+          - event.trigger: { id: button_event, event_type: double }
+      - timing: [ON for at most 0.5s, OFF for at least 0.4s]
+        then:
+          - event.trigger: { id: button_event, event_type: single }
+```
+
+### Aktion „ESPHome-Aktion ausführen“
+
+Führt eine Aktion aus, die in der YAML eines Knotens unter `api: actions:` angegeben ist: eine Melodie abspielen, eine Nachricht anzeigen, ein Skript starten.
+
+```yaml
+api:
+  actions:
+    - action: play_rtttl
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+```
+
+- **Knoten**: der ESPHome-Name des Knotens oder der Name seines Geräts in Gladys.
+- **Aktion**: `play_rtttl`.
+- **Argumente**: ein JSON-Objekt mit einem Eintrag pro Variable, zum Beispiel `{"song_str": "two_short:d=4,o=5,b=100:16e6,16e6"}`. Szenenvariablen sind erlaubt. Leer lassen für eine Aktion ohne Variablen.
+
+Ein fehlendes, unbekanntes oder falsch typisiertes Argument lässt die Aktion mit einer klaren Meldung fehlschlagen, ebenso ein Aktionsname, den der Knoten nicht angibt (die Meldung listet die angegebenen auf). Die Ausgaben `node` und `action` stehen den folgenden Aktionen der Szene zur Verfügung. Zwei Sekunden lang nach dieser Aktion starten die Ereignisse dieses Knotens keine Szene: Eine Aktion, die ein Ereignis auslöst, kann nicht in einer Schleife auf die Szene zurückwirken, die sie aufgerufen hat.
+
 ## Sensoren verstehen: warum `device_class` wichtig ist
 
 Gladys muss wissen, **was ein Sensor misst**, um ihn richtig darzustellen (Symbol, Einheit, Diagramm). ESPHome übermittelt diese Information über `device_class`.
 
-![Eine YAML-Entität wird zu einer oder mehreren Gladys-Funktionen: über ihre device_class, über die Form ihrer Deklaration oder als allgemeiner Messwert](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/mapping.svg)
+![Eine YAML-Entität wird zu einer oder mehreren Gladys-Funktionen: über ihre device_class, über die Form ihrer Deklaration oder als allgemeiner Messwert](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/mapping.svg)
 
 Mit einer `device_class` kommt Ihr Sensor typisiert an:
 
@@ -168,6 +221,9 @@ Die Verbindung zu diesem Knoten ist abgebrochen: Knoten ausgeschaltet, außer WL
 **Ein Thermostat zeigt nur die gemessene Temperatur, ohne Sollwert**
 Es handelt sich um ein Thermostat mit zwei Sollwerten (`heat_cool`, ein unterer und ein oberer). Gladys verwaltet einen Sollwert pro Thermostat: Statt eines Schiebereglers, der auf 0 stünde und nichts steuern würde, veröffentlicht die Integration nur die gemessene Temperatur.
 
+**Die Aktion „ESPHome-Aktion ausführen“ schlägt fehl**
+Der Knoten muss verbunden sein, der Aktionsname muss der in der YAML nach `action:` angegebene sein, und die Argumente müssen zu ihren `variables:` passen (Namen und Typen). Die Fehlermeldung der Szene nennt, was nicht stimmt.
+
 **Eine Entität erscheint überhaupt nicht**
 Ihr Typ hat keine Entsprechung in Gladys (siehe Funktionstabelle), oder sie ist in Ihrer YAML als `internal: true` markiert — dann stellt ESPHome sie gar nicht über seine API bereit.
 
@@ -188,11 +244,11 @@ Diese Einstellungen fragt ESPHome in seinem Konfigurationsbildschirm in Gladys a
 ## So installierst du ESPHome in Gladys
 
 1. Öffne in Gladys **Integrationen**: ESPHome erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-esphome:1.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-esphome:1.2.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-esphome](https://github.com/William-De71/gladys-esphome).
 
-ESPHome benötigt Gladys `>=4.86.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+ESPHome benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
 
 Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
 

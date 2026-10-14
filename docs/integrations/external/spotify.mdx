@@ -31,6 +31,7 @@ This integration lets you control your **Spotify Connect** devices from Gladys A
 - **Playback state**: Gladys reflects in real time whether a device is playing or paused.
 - **"Spotify" device**: a separate, single device carries three lists — playlists, recent tracks, favorites. Picking an option there does not play anything: it is only remembered as a pending selection, and the play button of any Spotify Connect device launches it as soon as it is pressed.
 - **Dashboard widgets**: now playing with cover and controls, quick play of your favorite playlists/albums, recently played tracks.
+- **Scenes**: start a scene when playback starts, stops or the track changes, and play, pause or read what is playing from a scene.
 - **Actions**: test the connection, finish a connection by hand, refresh the playlists/recent tracks/favorites, and disconnect, directly from the configuration screen. To reauthorize, simply click "Connect with Spotify" again.
 
 ## Requirements
@@ -109,6 +110,8 @@ If, on the way back from Spotify, your browser shows an **error page** ("this si
 
 Only devices **currently online** (Spotify app open, speaker awake and connected) are returned by the Spotify API. If a device does not appear, open Spotify on it and run discovery again.
 
+Each Spotify Connect device shows a **Cloud** badge while Spotify runs on it, and **Unreachable** once it is offline (checked every minute): a command sent to it then fails until Spotify is opened on it again.
+
 ## The "Spotify" device: playlists, recent tracks and favorites
 
 In addition to your Spotify Connect devices, the integration creates one separate, single device named **"Spotify"**. It carries three independent lists:
@@ -140,6 +143,34 @@ The integration provides three widgets, added from the dashboard editor ("Integr
 The widget buttons act directly on the device shown: they do not use the pending selection of the "Spotify" device. As for the rest of the integration, a **Premium** account is required for playback commands.
 
 > ℹ️ Some Spotify editorial playlists ("Today's Top Hits", Daily Mix…) are no longer readable by third-party apps: their name and cover may then be missing from quick play (the widget shows "Playlist 1"…), and Spotify may refuse to play them.
+
+![Illustration of the three widgets in English: now playing with its cover and buttons, quick play with four covers, recently played tracks (generated illustration, not a screenshot)](https://raw.githubusercontent.com/William-De71/gladys-spotify/main/docs/assets/widgets.en.png)
+
+## Scenes
+
+Requires Gladys 5.1.0 or later, like the widgets.
+
+### Triggers
+
+Checked on every playback read (every 15 seconds), one event per change. Each trigger can be limited to one **Spotify Connect device** (leave empty for any device).
+
+| Trigger                   | When                                                                              | Variables                                  |
+| ------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------ |
+| Spotify: playback started | A device starts playing (or playback moves to it)                                 | device, title, artists, album, Spotify URI |
+| Spotify: playback stopped | A device that was playing is paused, stopped, or playback moves to another device | same, about what stopped                   |
+| Spotify: track changed    | A device keeps playing, but another track or episode                              | same, about the new track                  |
+
+Example: _when playback starts on "Salon", dim the living room lights_. Nothing fires at integration startup, and the changes caused by this integration's own scene actions never fire these triggers, so a scene cannot loop through Spotify. A change shorter than 15 seconds may go unnoticed.
+
+### Actions
+
+| Action                   | Parameters                                                                                                      | Results for the next actions                                           |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Spotify: play            | Spotify link or URI (playlist, album, artist or track, scene variables allowed), device (empty: the active one) | device, Spotify URI                                                    |
+| Spotify: pause           | Device (empty: whatever is playing)                                                                             | device, was playing                                                    |
+| Spotify: what is playing | —                                                                                                               | playing, device, title, artists, album, Spotify URI, volume (0 to 100) |
+
+Example: _at 7:00 on weekdays, play the "Morning" playlist on the kitchen speaker_, or _when I leave home, pause Spotify_. Pausing a device that is not playing does nothing and succeeds. The chosen device must be online (Spotify open on it).
 
 ## Troubleshooting
 
@@ -174,7 +205,7 @@ These are the settings Spotify asks for in its configuration screen in Gladys.
 ## How to install Spotify in Gladys
 
 1. In Gladys, open **Integrations**: Spotify appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-spotify:1.4.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-spotify:1.5.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-spotify](https://github.com/William-De71/gladys-spotify).
 

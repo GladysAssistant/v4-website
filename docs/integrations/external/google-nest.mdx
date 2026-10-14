@@ -1,0 +1,227 @@
+---
+title: "Google Nest smart home integration, free and open source"
+sidebar_label: "Google Nest"
+description: "Unofficial connector: Nest thermostats, cameras and doorbells, with their events. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-google-nest.png"
+keywords:
+  - "google nest"
+  - "google nest smart home"
+  - "gladys google nest"
+  - "google nest gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-google-nest instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="google-nest" />
+
+**Unofficial connector, not affiliated with Google.** It brings your Google
+Nest thermostats, cameras, doorbells and Nest Hub Max into Gladys through
+Google's official **Smart Device Management API** (the Device Access
+program). Google Nest is a trademark of Google LLC.
+
+## What you get
+
+| Device                         | In Gladys                                                                                                                                      |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Thermostat                     | temperature, humidity, activity (heating / cooling / idle), mode (heat, cool, heat · cool, off), heating and cooling setpoints, Eco, fan timer |
+| Camera, doorbell, Nest Hub Max | picture, motion, person, doorbell press                                                                                                        |
+| Events (optional)              | instant thermostat updates, scene triggers "doorbell pressed", "motion detected", "person detected", "sound detected"                          |
+
+The **"Take a Nest snapshot"** scene action refreshes a camera picture before
+a "send a camera image" action.
+
+**Camera pictures**: older cameras (Nest Cam IQ, Nest Cam Indoor/Outdoor on
+the Nest app, Nest Hub Max, wired Nest Hello) stream over RTSP, so Gladys gets
+a live picture on demand. Every newer camera and doorbell only streams over
+WebRTC: Gladys shows the picture of its last event (motion, person, ring),
+taken from the event's clip preview, and has no live picture.
+
+**Not supported by Google's API**: Nest Protect, Nest x Yale, Nest
+Temperature Sensors, Learning Thermostats 1st and 2nd gen (dropped by Google
+on 2025-10-25), Google Workspace accounts.
+
+## Local first: Matter thermostats
+
+The **Nest Thermostat (2020)** and the **Nest Learning Thermostat (4th gen)**
+speak Matter: pair them with the **Matter integration of Gladys**, entirely
+local, with no Google account linking, no Device Access fee and no Internet
+needed afterwards. In the Google Home app, open the thermostat, **Settings →
+Linked Matter apps & services → Link apps & services**, and enter the pairing
+code in Gladys. Matter gives the essentials (temperature, setpoint, mode); Eco,
+fan, humidity and every camera need this connector.
+
+Nest cameras, doorbells and the other thermostats have no local interface at
+all: Google's cloud API is the only way, below.
+
+## Setup
+
+Google requires your **own** Device Access project and your **own** Google
+Cloud OAuth client: allow 15 minutes, once. Nothing goes through Gladys Plus
+nor through a server of the author: each Gladys talks to Google with its
+owner's credentials.
+
+### 1. Register for Device Access (US$5, once)
+
+Open the [Device Access console](https://console.nest.google.com/device-access)
+with the **personal** Google account of your Nest devices, accept the terms
+and pay the one-time US$5 fee. Keep this tab open.
+
+### 2. Create a Google Cloud project
+
+1. In the [Google Cloud console](https://console.cloud.google.com/), create a
+   project (for example "gladys-nest"), with the same Google account. Note
+   its **project ID** (lowercase letters, digits and hyphens, such as
+   `gladys-nest-123456`): the events need it.
+2. **APIs & Services → Library**: enable the **Smart Device Management API**
+   and the **Cloud Pub/Sub API**.
+3. **APIs & Services → OAuth consent screen**: choose **External**, give an
+   app name and your email, and add yourself as a test user. Then click
+   **Publish app** so that the status reads **In production**. Without it,
+   Google disconnects Gladys **every 7 days**. Google then shows an
+   "unverified app" warning when you connect: expected for a personal
+   project, click "Continue".
+4. **APIs & Services → Credentials → Create credentials → OAuth client ID**,
+   type **Web application**. Under **Authorized redirect URIs**, add the
+   address Gladys shows under "Google account" on the Configuration screen
+   of the integration (`https://my.gladysassistant.com/redirect/oauth`, or
+   the address of your Gladys if you pick the instance option there). Copy
+   the **client ID** and the **client secret**.
+
+### 3. Create the Device Access project
+
+In the Device Access console, **Create project**: give a name, paste the
+**OAuth client ID** of step 2, and skip the events for now (step 5 comes
+back to them). Copy the **project ID** shown afterwards (a UUID like
+`32c4b0a1-…`, not the Cloud project ID).
+
+### 4. Connect Gladys
+
+1. Install the integration from the store, open its **Configuration** screen.
+2. Fill in the **Device Access project ID**, the **OAuth client ID** and the
+   **client secret**. Save.
+3. Click **Connect** under "Google account". Sign in with your Google
+   account, select the homes and the devices to share, then allow **both**
+   permissions (devices, and events through Pub/Sub). The browser comes back
+   to Gladys and the status turns green.
+4. Open **Discovery** and create the devices you want.
+
+**Local connection (advanced)**: to go through no third-party page at all,
+not even the Gladys one, add `https://www.google.com` as an authorized
+redirect URI instead (step 2.4) and click **Connect** under "Google account
+(local)". Google ends on the www.google.com page: copy the **whole address**
+from the address bar (it contains `code=`), paste it into the **Finish the
+connection** action and run it. The code works once, for a few minutes.
+
+### 5. Turn on the events (optional)
+
+Skip this step if you only want the thermostats, refreshed every few minutes.
+
+1. Fill in the **Google Cloud project ID** of step 2 and save. The
+   integration creates the topic `projects/<project>/topics/gladys-google-nest`
+   in your project, lets Google publish on it and creates its own
+   subscription. The status now shows the topic name.
+2. In the Device Access console, open your project and **enable the events**
+   with that topic name.
+3. From the next doorbell press, motion or thermostat change, the events
+   flow and the hint of the status disappears.
+
+**Advanced**: an existing topic, on which `sdm-publisher@googlegroups.com`
+holds the Pub/Sub Publisher role, or an existing subscription
+(`projects/…/subscriptions/…`) can be given instead, in "Existing Pub/Sub
+topic".
+
+## Options
+
+- **Refresh the devices**: a full read of every device, on top of the events
+  (every 5 minutes by default). Google allows 5 reads a minute.
+- **Refresh the camera pictures**: periodic live pictures of the RTSP
+  cameras. Off by default: pictures come with the events and on request.
+  Each live picture costs two of the 10 commands a minute Google allows.
+- **Fan run time**: how long the fan runs when turned on from Gladys.
+
+The **Test the connection** button lists the devices Google shares, checks
+the Pub/Sub subscription.
+
+## Troubleshooting
+
+- **"redirect_uri_mismatch"**: the OAuth client must list, as an authorized
+  redirect URI, the address shown under "Google account" (or
+  `https://www.google.com` for the local connection), see step 2.4.
+- **Disconnected every 7 days**: the OAuth consent screen is still in
+  "Testing": publish it (step 2.3), then connect again.
+- **Connected but no device**: click **Connect** again and tick your devices
+  on Google's sharing screen.
+- **"The Cloud Pub/Sub API is not enabled"**: step 2.2, then save again.
+- **"The Google account cannot manage Pub/Sub"**: the connected account must
+  own the Cloud project (create both with the same account), or hold the
+  Pub/Sub Admin role on it.
+- **No events**: the topic must be entered in the Device Access project
+  (step 5.2), and you must have allowed the Pub/Sub permission when
+  connecting. The notification settings of the Google Home app also decide
+  which camera events Google sends.
+- **"Too many commands"**: Google limits each device to a few commands a
+  minute; wait a minute.
+
+## Privacy
+
+The integration talks to Google directly, with your own credentials: no
+server of the author, no Gladys Plus. The tokens are exchanged and stored by
+your Gladys only; the client secret never leaves it. With the "Google
+account" button, the authorization code transits through the Gladys redirect
+page (a static page that stores nothing, see its
+[source](https://github.com/GladysAssistant/my.gladysassistant.com)) or, with
+the instance option, through your own address only; that code is useless
+without your client secret. With the local connection, the code goes from
+Google's page to Gladys by your own copy and paste, and no third party sees
+it.
+
+## Configuration settings
+
+These are the settings Google Nest asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| 1. Before you start (15 minutes, once) | `section` | No | Unofficial connector, not affiliated with Google. Google requires your own Device Access project (a one-time US$5 fee) and your own Google Cloud project: register with the Google account of your Nest devices, then follow sections 2 to 5 in order. The Nest Thermostat 2020 and Learning Thermostat 4th gen can instead be paired locally with the Matter integration of Gladys, free, without any Google account. |
+| 2. Your Google Cloud project | `section` | No | In the Cloud console, with the same Google account: create a project, enable the two APIs below, publish the OAuth consent screen (External, then "Publish app" so it reads "In production": otherwise Google disconnects you every 7 days; the "unverified app" warning is normal), then create an OAuth client of type "Web application" whose authorized redirect URI is the one shown in section 4. Keep its client ID and secret, and the project ID. |
+| 3. Your Device Access project | `section` | No | In the Device Access console, create a project with the OAuth client ID of section 2 (the events can wait, see section 5), then copy its ID and the client's ID and secret below. Save. |
+| Device Access project ID | `string` | Yes | The UUID shown in the Device Access console, not the Google Cloud project ID. |
+| OAuth client ID | `string` | Yes | Google Cloud console > APIs & Services > Credentials, client of type "Web application". |
+| OAuth client secret | `secret` | Yes |  |
+| 4. Connect your Google account | `section` | No | Once saved: add the redirect URI shown below to your OAuth client (section 2), click "Connect", select the homes and devices to share and allow both permissions. The browser comes back here and the status turns green; the devices appear in Discovery. The Gladys redirect page only sees a code that is useless without your client secret, which never leaves your Gladys. |
+| Google account | `oauth2` | No | Opens the Google consent: select the homes and devices to share and allow both permissions (devices, and events through Pub/Sub). |
+| 5. Real-time events (optional) | `section` | No | Doorbell presses, motion, persons, sounds and instant thermostat updates. Enter the ID of your Cloud project (section 2) and save: the integration creates the Pub/Sub topic "gladys-google-nest" and its permission itself, then the status shows the topic to enter in your Device Access project ("Enable events"). Without it, the thermostats are refreshed periodically and the cameras send nothing. |
+| Google Cloud project ID | `string` | No | The project ID of the Cloud console (lowercase letters, digits, hyphens), where your OAuth client lives. The connected Google account must own it. |
+| Options | `section` | No |  |
+| Refresh the devices | `select` | No | A full read of every device, on top of the events. Google allows 5 reads a minute. |
+| Refresh the camera pictures | `select` | No | Live pictures only exist for RTSP cameras (older Nest Cams, Nest Hub Max, wired doorbell). Newer cameras show the picture of their last event. |
+| Fan run time | `select` | No | How long the fan runs when you turn it on from Gladys. |
+| Advanced | `section` | No | Local connection, without any third-party page, not even the Gladys one: add https://www.google.com as an authorized redirect URI of your OAuth client, click "Connect" below, allow the access, then copy the address of the google.com page Google ends on and paste it in the "Finish the connection" action. An existing Pub/Sub topic or subscription can also replace the Cloud project ID. |
+| Google account (local) | `account_link` | No | Same Google consent; at the end, Google shows www.google.com: copy the whole address of that page. |
+| Existing Pub/Sub topic (advanced) | `string` | No | Instead of the project ID: a topic you created yourself, on which sdm-publisher@googlegroups.com can publish (the integration creates its subscription "gladys-google-nest" on it), or a subscription (projects/…/subscriptions/…). |
+
+## How to install Google Nest in Gladys
+
+1. In Gladys, open **Integrations**: Google Nest appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-google-nest:1.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-google-nest](https://github.com/LM1LC3N7/gladys-google-nest).
+
+Google Nest requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Google Nest is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-google-nest) — [source of this documentation](https://github.com/LM1LC3N7/gladys-google-nest/blob/HEAD/docs/en.md)

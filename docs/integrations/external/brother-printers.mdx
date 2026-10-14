@@ -1,0 +1,222 @@
+---
+title: "Brother Printers smart home integration, free and open source"
+sidebar_label: "Brother Printers"
+description: "Toner, ink, drum and page counters of your Brother printers over SNMP. Local, no cloud. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-brother.png"
+keywords:
+  - "brother printers"
+  - "brother printers smart home"
+  - "gladys brother printers"
+  - "brother printers gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-brother instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="brother-printers" />
+
+This integration reads your **Brother** printers and multifunction devices over
+**SNMP**, on your local network: toner or ink levels, drum, belt, fuser and
+other wear parts, page counters, and the message shown on the printer's
+display. No account, no cloud. It requires Gladys 5.1 or newer.
+
+It complements the **IPP Printers** integration, which gives the state and ink
+levels of printers of every brand: Brother printers tell over SNMP what IPP
+does not (drum life, pages left before a part is due, page counters).
+
+> **Developed without the hardware: feedback welcome.** The decoding was tested
+> against real answers of 14 Brother models (the test data of the `brother`
+> library that Home Assistant uses), not on a printer. Please share on the
+> Gladys forum what your model shows, especially if a value looks wrong.
+
+## What you get
+
+One Gladys device per printer, named after its model (`Brother HL-L2350DW`).
+Only what your model reports is created:
+
+| Sensor                                                     | Unit  | Notes                                                       |
+| ---------------------------------------------------------- | ----- | ----------------------------------------------------------- |
+| Status                                                     | text  | The message on the display (`Ready`, `Sleep`, `Paper Jam`…) |
+| Black, cyan, magenta, yellow toner (laser) or ink (inkjet) | %     | Remaining                                                   |
+| Drum, or one drum per colour                               | %     | Remaining life                                              |
+| Belt unit, fuser unit, laser unit, paper feed kits         | %     | Remaining life (lasers that report them)                    |
+| Waste ink box                                              | %     | Remaining capacity (inkjets that report it)                 |
+| Drum, belt, fuser… : pages left                            | pages | Pages before the part is due                                |
+| Pages printed, black and white pages, colour pages, duplex | pages | Counters                                                    |
+| Drum: pages printed                                        | pages | Pages printed with the current drum                         |
+| Uptime                                                     | hours | Time since the printer was switched on                      |
+
+Model, serial number, firmware and MAC address are kept in the device
+parameters. The device's badge says **local** while the printer answers and
+**unreachable** when it stops answering; its status then reads `Not
+responding`. The levels keep their last known value.
+
+## Compatibility
+
+- Brother laser printers and inkjets with a network connection (Wi-Fi or
+  Ethernet): HL, DCP and MFC ranges, including the ink tank models (DCP-T,
+  MFC-T). A few very old models (MFC-8660DN, MFC-8860DN) do not answer.
+- **SNMP must be enabled** on the printer. It is by default; it can be checked
+  in the printer's web page (Network → Protocol → SNMP). Version 1 or 2c, with
+  the `public` read community by default.
+- The printer must be reachable from Gladys in unicast UDP, port 161 (same
+  network, or a route between the two).
+
+## Configuration
+
+1. Install the integration. Printers announcing themselves over mDNS (Bonjour)
+   are found automatically: open the **Discover** tab of the integration and
+   add yours.
+2. If a printer is not found (mDNS blocked, another subnet), enter its **IP
+   address** in **Printers (IP addresses)**, several separated by commas. A
+   `.local` name does not work here. Give the printer a fixed address (DHCP
+   reservation on your router) if you can.
+3. **SNMP community**: leave empty for `public`, the factory setting. If you
+   changed it on the printer, enter the same one here.
+4. **SNMP version**: v1 suits every Brother printer; choose v2c only if v1 is
+   disabled on the printer.
+5. **Reading interval**: 60 seconds by default (30 to 3600). Each reading is
+   a single small SNMP request per printer.
+6. **Language of the names** (French by default): the language of the sensor names of the printers
+   you add from now on, and of the texts sent to scenes. Names are fixed when
+   the device is added.
+
+The **Test a printer** button reads an IP address now and tells you what
+answers there, without adding anything.
+
+## Dashboard widget
+
+**Brother supplies** shows one printer (the first one added if you choose
+none):
+
+- up to 5 gauges: the cartridges first, then the most worn parts, coloured
+  green, orange (25 % or less) or red (10 % or less);
+- a list with the message on the display, the current alerts (paper jam,
+  cover open…), the pages printed, the other supplies and the time of the last
+  reading;
+- a **Read now** button, which reads the printer at once.
+
+## Scene triggers
+
+**Printer supply low**: a toner, an ink or a wear part goes down to the chosen
+level (50, 25, 20, 15, 10, 5 % or empty). It fires once, when the level is
+crossed, and again only after the supply went back up (a new cartridge).
+Filters: the printer, the supplies, the level. Information passed on to the
+scene: the printer, the supply, the remaining percentage, the level reached.
+
+**Printer alert**: the printer raises an alert, at the moment it appears:
+paper jam, out of paper, paper low, cover open, toner or ink low or empty,
+cartridge missing, tray missing, output tray full, service requested,
+maintenance overdue… Filters: the printer, the alerts. Information passed on
+to the scene: the printer, the alert, the message on the display.
+
+Nothing fires at the first reading of a printer: a toner already at 5 % when
+you install the integration is a state, not a change. Restarting Gladys or the
+integration neither repeats nor loses an event.
+
+## Scene action
+
+**Read a printer** reads the printer now and passes on to the next actions of
+the scene: whether it answered, the message on the display, the pages
+printed, the lowest supply and its percentage, the current alerts. Useful in a
+message: "\{printer\} has printed \{pages\} pages, lowest supply: \{name\}
+\{percent\} %".
+
+## Scene examples
+
+- _Order in time_: **Printer supply low**, supplies = black toner, level = 20
+  % → send a message "Black toner at 20 % on the office printer, time to order
+  one".
+- _Paper jam_: **Printer alert**, alerts = paper jam, out of paper → send a
+  message with the message on the display.
+- _Monthly report_: every 1st of the month at 9:00 → **Read a printer** → send
+  a message with the pages printed and the lowest supply.
+- _Drum to replace_: **Printer supply low**, supplies = drum, level = 10 % →
+  send a message with the supply and the remaining percentage.
+
+## Troubleshooting
+
+- **No printer in the Discover tab**: enter its IP address in the
+  configuration and save; use **Test a printer** to see what answers.
+- **"No SNMP answer"**: check the address, that SNMP is enabled on the
+  printer, and the community. A printer in deep sleep may miss a request; the
+  integration tries again before declaring it unreachable.
+- **"Not a Brother printer this integration can read"**: something answers
+  SNMP at this address, but not with the Brother identification (another
+  printer, a box…).
+- **A sensor is missing**: the printer does not report it. If a part appears
+  later, the **Discover** tab offers to update the device.
+- **A value looks wrong**: please report it on the Gladys forum with your
+  model; the integration logs (level `debug`) show each reading.
+- **Logs**: by default the integration only writes its start, the printers
+  found, a printer that stops answering or comes back, and errors (a repeated
+  error once, then a line when it is solved). For every reading and every
+  discovery, start the container with the environment variable
+  `LOG_LEVEL=debug` (`info` by default; also `warn`, `error`, `silent`). The
+  SNMP community never appears in the logs.
+
+## Limits
+
+- Developed without the hardware: the decoding comes from real answers of 14
+  models, not from tests on a printer.
+- Laser or inkjet is detected from what the printer says; on a few old models
+  it cannot be, and the cartridges are then called "Black cartridge"…
+- The alerts come from the standard printer alert register: printers that do
+  not report it never fire **Printer alert** (the status message still
+  changes).
+- The percentages are the printer's own estimates, rounded like Home Assistant
+  does.
+- Read only: the integration never changes a printer setting.
+
+## Network and privacy
+
+Only SNMP requests to the printers' own addresses (UDP 161), one at a time, and
+an mDNS scan through Gladys. Nothing leaves your network. Stored in the
+integration's `/data` volume: the levels and alerts of the last reading of
+each printer, to fire each scene event once.
+
+## Credits
+
+The decoding of the Brother SNMP data is a JavaScript port of the
+[`brother`](https://github.com/bieniu/brother) Python library by Maciej
+Bieniek (Apache 2.0), used by Home Assistant. Brother is a trademark of Brother
+Industries; this integration is not affiliated with Brother.
+
+## Configuration settings
+
+These are the settings Brother Printers asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Brother printers on your network are found automatically (mDNS) and read over SNMP: toner or ink, drum, belt, fuser and other wear parts, page counters and the message on the display. SNMP must be enabled on the printer (it is by default). Add the IP address below if a printer is not found. |
+| Printers (IP addresses) | `string` | No | Optional. IP addresses separated by commas, for printers the automatic discovery does not find. A .local name does not work here. |
+| SNMP community | `secret` | No | Leave empty to use "public", the printer's factory setting. |
+| SNMP version | `select` | No | v1 works with every Brother printer. Choose v2c only if v1 is disabled on the printer. |
+| Reading interval (s) | `number` | No | How often each printer is read, in seconds (one small SNMP request). 60 s reports a paper jam within a minute. |
+| Language of the names | `select` | No | Names of the sensors of newly added printers, and texts sent to scenes. |
+
+## How to install Brother Printers in Gladys
+
+1. In Gladys, open **Integrations**: Brother Printers appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-brother:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-brother](https://github.com/guim31/gladys-brother).
+
+Brother Printers requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Brother Printers is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-brother) — [source of this documentation](https://github.com/guim31/gladys-brother/blob/HEAD/docs/en.md)

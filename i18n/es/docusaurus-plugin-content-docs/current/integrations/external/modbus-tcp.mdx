@@ -1,0 +1,401 @@
+---
+title: "Integración domótica Modbus TCP, gratuita y de código abierto"
+sidebar_label: "Modbus TCP"
+description: "Leer y escribir registros Modbus TCP: contadores, inversores, bombas de calor, PLC. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-modbus.png"
+keywords:
+  - "modbus tcp"
+  - "domótica modbus tcp"
+  - "gladys modbus tcp"
+  - "modbus tcp gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-modbus instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="modbus-tcp" />
+
+Lee, y si se lo pide escribe, los registros de los dispositivos Modbus TCP:
+contadores de energía, inversores solares, baterías, bombas de calor, equipos
+de ventilación, autómatas. Unos perfiles listos para usar cubren los
+dispositivos más comunes; para los demás, usted describe los registros en una
+línea cada uno, sin editar ningún archivo.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** Los
+> perfiles siguen las tablas de registros publicadas por los fabricantes y se
+> prueban con dispositivos simulados, no con dispositivos reales. Si un valor le
+> parece incorrecto, abra una incidencia en
+> [GitHub](https://github.com/guim31/gladys-modbus/issues) con el resultado del
+> botón **Probar una lectura**.
+
+## Qué hace la integración
+
+- Hasta cuatro dispositivos Modbus, cada uno un dispositivo de Gladys con sus
+  funciones (potencia, energía, tensión, temperatura, estado...), actualizadas
+  cada 5 segundos a 5 minutos.
+- Perfiles listos para usar: contadores Eastron SDM630 y SDM120, inversores y
+  contadores SunSpec (SMA, SolarEdge, Fronius, Kostal y muchos otros),
+  inversores Huawei SUN2000 (con su contador y su batería), sistemas Victron
+  GX.
+- Registros propios para todo lo demás: registros holding e input, coils,
+  entradas discretas, enteros de 16 a 64 bits y flotantes en cualquier orden de
+  palabras, escala, desplazamiento, unidad, naturaleza.
+- Índices de energía en kWh: Gladys les añade su seguimiento de energía
+  (consumo por 30 minutos y coste).
+- La escritura, desactivada por defecto, solo para los registros que usted
+  declara como interruptor o consigna con límites.
+- Un botón **Probar una lectura** para encontrar el tipo de un registro
+  desconocido, un widget y dos disparadores de escena (un dispositivo deja de
+  responder, vuelve a responder).
+
+## Requisitos
+
+- Gladys Assistant 5.1 o posterior.
+- Un dispositivo que hable **Modbus TCP** en su red, o un dispositivo RS-485
+  detrás de una **pasarela Modbus TCP** (USR-TCP232, Waveshare RS485-to-ETH,
+  Elfin EW11/EE11...). La pasarela funciona como pasarela Modbus TCP (modo
+  «Modbus TCP to RTU») o en modo transparente («RTU sobre TCP» en esta
+  integración).
+- Modbus TCP activado en el dispositivo: en un inversor SMA (Sunny Portal o la
+  interfaz local, servidor «Modbus»), en un Victron GX (Ajustes > Servicios >
+  Modbus TCP), en un inversor SolarEdge (SetApp, Modbus TCP), en un inversor
+  Fronius (Comunicación > Modbus, tipo de modelo «SunSpec»), en un inversor
+  Huawei (SDongle, Modbus TCP «Activar (sin restricciones)»).
+- Una **dirección IP fija** para el dispositivo o la pasarela (reserva DHCP en
+  su router): Gladys identifica el dispositivo por su dirección, su puerto y su
+  identificador de esclavo.
+
+## Configuración
+
+### Ajustes generales
+
+- **Idioma de los nombres de funciones**: Gladys conserva los nombres dados al
+  añadir un dispositivo.
+- **Leer cada**: de 5 segundos a 5 minutos. Gladys acepta 300 valores por
+  minuto y por integración: con muchos registros y un intervalo corto, la
+  integración se ralentiza por sí sola para quedar por debajo (un aviso en los
+  registros).
+- **Tiempo de respuesta**: 3 segundos por defecto; auméntelo para un bus
+  RS-485 lento.
+- **Permitir la escritura**: vea [Escribir registros](#escribir-registros).
+
+### Dispositivos
+
+Cada uno de los cuatro bloques de dispositivo tiene:
+
+- **Dirección IP o nombre de host** del dispositivo o de su pasarela. Vacía:
+  el bloque no se usa.
+- **Puerto TCP**: 502 casi siempre.
+- **Identificador de esclavo**: 1 la mayoría de las veces. SMA: 126 para
+  SunSpec (3 para los registros propios de SMA). Victron GX: 100 para los
+  valores del sistema. Fronius Smart Meter: 240. Contadores Eastron: la
+  dirección Modbus configurada en el contador (001 por defecto).
+- **Perfil**: un perfil listo para usar, o ninguno.
+- **Trama**: Modbus TCP, o RTU sobre TCP para una pasarela en modo
+  transparente.
+- **Registros propios**: vea más abajo. Se suman a las funciones del perfil.
+
+Varios dispositivos RS-485 detrás de una misma pasarela: un bloque por
+dispositivo, con la misma dirección y el mismo puerto y cada uno su
+identificador de esclavo. Comparten una sola conexión, y sus peticiones salen
+de una en una, como exige el bus.
+
+### Perfiles
+
+| Perfil         | Dispositivo                                     | Esclavo habitual |
+| -------------- | ----------------------------------------------- | ---------------- |
+| Eastron SDM630 | contador trifásico (a través de una pasarela)   | 1                |
+| Eastron SDM120 | contador monofásico (a través de una pasarela)  | 1                |
+| SunSpec        | inversores y contadores que siguen SunSpec      | 1, 126 (SMA)     |
+| Huawei SUN2000 | inversor Huawei, su contador y su batería       | 1                |
+| Victron GX     | Cerbo GX, Venus GX, Ekrano: valores del sistema | 100              |
+
+El perfil SunSpec lee la lista de modelos SunSpec que anuncia el dispositivo
+(en el registro 40000, o 0, o 50000) y publica los inversores y contadores que
+encuentra. El perfil Huawei busca una vez un contador y una batería. Lo que
+tiene un dispositivo se guarda en `/data`: un dispositivo dormido al reiniciar
+(un inversor por la noche) se publica igualmente.
+
+### Registros propios
+
+Una entrada por registro, entradas separadas por punto y coma (el campo de
+configuración es de una sola línea):
+
+```
+Ida: holding 100 int16 scale=0.1 temperature; Bomba: coil 5 switch
+```
+
+Una entrada se escribe `nombre: tabla dirección` y luego, en cualquier orden,
+un tipo de dato, una naturaleza y opciones.
+
+- **nombre**: el nombre de la función en Gladys (40 caracteres como máximo).
+- **tabla**: `holding` (registro de retención, función 3), `input` (registro
+  de entrada, función 4), `coil` (función 1), `discrete` (entrada discreta,
+  función 2).
+- **dirección**: la dirección del registro tal como se envía por el cable, de
+  0 a 65535, en decimal o en hexadecimal (`0x0034`). Algunos documentos cuentan
+  desde 1, o suman 30001 o 40001: réstelos.
+- **tipo de dato** (solo registros): `int16` (por defecto), `uint16`, `int32`,
+  `uint32`, `float32`, `int64`, `uint64`, `float64`, o de `bit0` a `bit15` para
+  un bit de un registro.
+- **naturaleza**: lo que es el valor.
+
+| Naturaleza    | Función de Gladys                              | Unidades (la primera por defecto)       |
+| ------------- | ---------------------------------------------- | --------------------------------------- |
+| `temperature` | temperatura                                    | °C, °F, K                               |
+| `humidity`    | humedad                                        | %                                       |
+| `pressure`    | presión                                        | bar, mbar, hPa, kPa, Pa, psi            |
+| `power`       | potencia (sensor de energía)                   | W, kW                                   |
+| `energy`      | índice de energía, seguimiento                 | kWh, Wh, MWh (publicado en kWh)         |
+| `production`  | índice de producción                           | kWh, Wh, MWh (publicado en kWh)         |
+| `solar_power` | potencia de producción                         | W, kW                                   |
+| `grid_power`  | potencia de red (importación +, exportación −) | W, kW                                   |
+| `voltage`     | tensión                                        | V, mV                                   |
+| `current`     | corriente                                      | A, mA                                   |
+| `battery`     | nivel de batería                               | %                                       |
+| `volume`      | volumen                                        | L, mL, m3                               |
+| `duration`    | duración                                       | s, ms, min, h, d                        |
+| `value`       | un número mostrado tal cual (defecto)          | cualquiera de las anteriores, o ninguna |
+| `binary`      | encendido/apagado, solo lectura                |                                         |
+| `switch`      | encendido/apagado, modificable                 |                                         |
+| `setpoint`    | consigna de temperatura con límites            | °C, °F                                  |
+
+- **opciones**:
+  - `scale=0.1` multiplica el valor en bruto, `offset=-40` se le suma (después
+    de la escala). La coma decimal también funciona (`scale=0,1`).
+  - `unit=kW` elige otra unidad de la naturaleza.
+  - `swap=word` (registros en orden inverso, «CDAB»), `swap=byte` («BADC»),
+    `swap=word_byte` («DCBA»). Sin ella: registro más significativo primero
+    («ABCD»). Los nombres son los de la integración `modbus` de Home Assistant.
+  - `min=` y `max=`: los límites de visualización; para una consigna, los
+    límites fuera de los cuales no se escribe nada (obligatorios).
+  - `precision=2`: decimales conservados (según la escala por defecto, 2 para
+    los flotantes).
+  - `on=` y `off=`: los valores que escribe un interruptor sobre registro (1 y
+    0 por defecto).
+
+Cada error aparece bajo el estado de la configuración (distintivo rojo
+«Desconectado») y en rojo con el botón **Comprobar la configuración**, con el
+dispositivo, el número de entrada, su nombre y la palabra errónea, por ejemplo
+`Dispositivo 1, entrada 2 «Bomba»: un coil es un bit: no lleva tipo de dato.`
+Las demás entradas siguen funcionando.
+
+## Dispositivos y funciones
+
+Cada dispositivo lo consulta la propia integración, con el intervalo elegido;
+solo se envían a Gladys los valores que cambian, y además cada valor una vez
+cada 6 horas.
+
+### Eastron SDM630 y SDM120
+
+Potencia total, energía importada (índice de energía, con seguimiento de
+energía), energía exportada, y por fase (SDM630) o para la línea (SDM120)
+tensión, corriente y potencia. Los contadores cuentan la potencia positiva al
+importar.
+
+### SunSpec
+
+Por modelo de inversor (101-103, 111-113): potencia CA, producción total
+(índice en kWh), potencia CC, corriente CA, tensión CA (fase A), temperatura
+interna (armario), estado de funcionamiento (apagado, en reposo, arrancando,
+produciendo, limitado, apagándose, fallo, en espera). Por modelo de contador
+(201-204, 211-214): potencia del contador (con el signo del fabricante),
+corriente, tensión, energía importada y exportada. El dispositivo lleva el
+nombre de su fabricante y de su modelo, su número de serie está en los
+parámetros del dispositivo. Un valor que el dispositivo no implementa no se
+publica.
+
+### Huawei SUN2000
+
+Potencia CA, producción total, potencia CC de entrada, tensión y corriente CA
+(fase A), temperatura interna, estado de funcionamiento. Con un contador:
+potencia de red (positiva al importar, como la cuenta Gladys), índices de
+energía tomada de la red e inyectada. Con una batería LUNA2000: nivel de
+batería, potencia de carga y de descarga.
+
+### Victron GX
+
+Potencia de red (suma de las fases, positiva al importar), consumo de la casa,
+potencia solar (fotovoltaica en el lado CA y en el lado CC). Con una batería:
+nivel de batería, potencia de carga y de descarga, tensión de la batería.
+
+### Registros propios
+
+Una función por entrada, de la categoría que da su naturaleza.
+
+## Escribir registros
+
+La escritura está **desactivada por defecto**. Solo las entradas que usted
+declara como `switch` o `setpoint` son mandos en Gladys, nada más; mientras
+**Permitir la escritura** esté desactivado, rechazan cualquier cambio (el estado
+de la configuración lo indica). Actívelo en la configuración cuando esté seguro
+de los registros.
+
+- `switch`: en un coil, escribe 1 o 0; en un registro holding, escribe el valor
+  `on` u `off` (`Calefacción: holding 111 switch on=1 off=0`). Se muestra como
+  un interruptor encendido/apagado, fuera de los asistentes de voz.
+- `setpoint`: una temperatura escrita en un registro holding
+  (`Consigna ACS: holding 110 uint16 setpoint min=40 max=55`). `min` y `max`
+  son obligatorios: un valor fuera de ellos se rechaza y no se escribe nada. La
+  escala se aplica al revés (con `scale=0.1`, 42,5 °C escribe 425).
+
+**Escribir un registro equivocado puede dañar una instalación** (una bomba de
+calor, un inversor, una caldera): compruebe cada dirección, tipo de dato y
+valor en la documentación del fabricante, empiece por un valor que pueda
+deshacer, y deje la escritura desactivada cuando no la necesite. Cada
+escritura queda registrada con su registro y su valor. Un bit de un registro
+no se puede escribir (habría que reescribir los otros 15), ni un valor de 64
+bits.
+
+## Acciones
+
+- **Probar una lectura**: elija un dispositivo guardado, escriba un registro
+  con la sintaxis de los registros propios sin el nombre
+  (`holding 100 int16 scale=0.1`), y las palabras en bruto se muestran en
+  hexadecimal y en decimal, con el valor convertido y la lectura de los mismos
+  registros en cada tipo de dato y cada orden de palabras. Añada `count=10`
+  para leer diez registros desde esa dirección. Escriba `sunspec` para listar
+  los modelos SunSpec del dispositivo. Funciona aunque el dispositivo aún no
+  tenga ningún registro declarado.
+- **Comprobar la configuración**: los errores entrada por entrada (en rojo), y
+  luego cada dispositivo con su perfil, su número de funciones y si responde.
+
+## Widget del panel
+
+**Dispositivo Modbus**: elija un dispositivo; el widget muestra sus valores
+principales en mosaicos en directo (potencia y producción de un inversor,
+potencia e índices de un contador, red, casa, solar y batería de un sistema
+Victron) y el estado de su enlace: responde o no, hora de la última lectura,
+estado de funcionamiento de un inversor, último error.
+
+## Disparadores de escena
+
+- **Un dispositivo Modbus deja de responder**: dos lecturas seguidas han
+  fallado. Variables: el nombre del dispositivo y el error. Filtro: un
+  dispositivo, o cualquiera.
+- **Un dispositivo Modbus vuelve a responder**: un dispositivo que había dejado
+  de responder vuelve a leerse.
+
+## Ejemplos de escenas
+
+- Avisarme cuando la pasarela de la bomba de calor deje de responder:
+  disparador **Un dispositivo Modbus deja de responder** en la bomba de calor,
+  acción «Enviar un mensaje» con `{{triggerEvent.data.error}}`.
+- Encender el enchufe del lavavajillas cuando la potencia solar supere
+  2000 W: disparador «el valor de un dispositivo cambia» en **Potencia solar**
+  (Victron) o **Potencia CA** (inversor), condición por encima de 2000, acción
+  «encender».
+- Bajar la consigna de agua caliente por la noche: disparador programado a las
+  22:00, acción «fijar el valor» de **Consigna ACS** a 45 (escritura
+  permitida, consigna declarada con sus límites).
+
+## Resolución de problemas
+
+- **«Cannot connect ... ECONNREFUSED»**: nada escucha en esa dirección y ese
+  puerto, o Modbus TCP no está activado en el dispositivo. **«No answer ...
+  within 3000 ms»**: dirección equivocada, dispositivo dormido (inversor por la
+  noche), pasarela cuyos ajustes serie (velocidad, paridad) no corresponden al
+  dispositivo, o trama equivocada.
+- **«Modbus exception 11»**: la pasarela responde, pero no el dispositivo que
+  está detrás: compruebe el identificador de esclavo y el cableado RS-485
+  (A/B).
+- **«rechaza todos los registros» / excepción 2**: el perfil o las direcciones
+  no corresponden al dispositivo. Use **Probar una lectura** con `count=`
+  alrededor de la dirección, y compruebe si el documento cuenta desde 1 o suma
+  30001/40001.
+- **Un valor 10 o 100 veces demasiado grande**: añada `scale=0.1` o
+  `scale=0.01`. **Un valor enorme o absurdo**: pruebe otro tipo de dato o
+  `swap=word` con **Probar una lectura**, que muestra todas las lecturas a la
+  vez.
+- **Un inversor Huawei que no responde**: solo acepta un cliente Modbus TCP a
+  la vez (cierre los demás), y necesita Modbus TCP en «Activar (sin
+  restricciones)» en el SDongle.
+- **Registros**: configure `LOG_LEVEL=debug` en la integración para ver cada
+  lectura.
+
+## Límites
+
+- Cuatro dispositivos como máximo, 40 registros propios por dispositivo.
+- Solo Modbus TCP y RTU sobre TCP: sin puerto serie (el contenedor no tiene),
+  sin Modbus UDP, sin ASCII.
+- Sin descubrimiento automático: Modbus no lo tiene, las direcciones se
+  escriben.
+- El perfil SunSpec solo lee los modelos de inversor y de contador (no el
+  modelo de batería 802, no el modelo MPPT 160).
+- Escritura: solo interruptores y consignas de temperatura; ningún bit de un
+  registro, ningún valor de 64 bits, ninguna otra consigna numérica (Gladys no
+  tiene un mando numérico neutro).
+- Los nombres de las funciones quedan fijados al añadir un dispositivo (regla
+  de Gladys).
+- Desarrollada sin el hardware: los perfiles se prueban con dispositivos
+  simulados construidos según las tablas de los fabricantes.
+
+Eastron, SMA, SolarEdge, Fronius, Kostal, Huawei, Victron Energy y SunSpec son
+marcas de sus propietarios. Esta integración no está afiliada a ninguno de
+ellos ni respaldada por ellos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Modbus TCP te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Para empezar | `section` | No | Describa hasta cuatro dispositivos Modbus a continuación: la dirección del dispositivo o de su pasarela Modbus TCP, su identificador de esclavo y luego un perfil listo para usar o sus propios registros. Guarde y añada los dispositivos desde la pestaña Descubrimiento. El botón «Probar una lectura» lee un registro para encontrar su tipo antes de declararlo. |
+| Idioma de los nombres de funciones | `select` | No | Gladys conserva los nombres dados al añadir un dispositivo. |
+| Leer cada | `select` | No | Gladys acepta 300 valores por minuto: con muchos registros, las lecturas se ralentizan para quedar por debajo. |
+| Tiempo de respuesta (s) | `number` | No | Auméntelo para un bus RS-485 lento (9600 baudios o menos). |
+| Permitir la escritura | `boolean` | No | Desactivada por defecto. Activada, solo los registros declarados como switch o setpoint se pueden cambiar desde Gladys. Escribir un registro equivocado puede dañar una instalación: compruebe cada dirección en la documentación del fabricante. |
+| Dispositivo 1 | `section` | No | Un dispositivo y su pasarela Modbus TCP si la tiene. Varios dispositivos detrás de una misma pasarela RS-485 comparten su dirección y su puerto, con identificadores de esclavo distintos. Dé una dirección IP fija al dispositivo (o a la pasarela): Gladys lo identifica por ella. |
+| Dirección IP o nombre de host | `string` | No |  |
+| Puerto TCP | `number` | No | 502 para Modbus TCP. Huawei: 502 a través del SDongle, 6607 en algunos inversores. |
+| Identificador de esclavo (unit id) | `number` | No | Normalmente 1. SMA: 126 (SunSpec) o 3. Victron GX: 100. Contador Fronius: 240. Contadores Eastron: la dirección configurada en el contador. |
+| Perfil | `select` | No | Un perfil conoce los registros del dispositivo. SunSpec cubre muchos inversores y contadores (SMA, SolarEdge, Fronius, Kostal...): sus modelos se detectan. |
+| Trama | `select` | No | RTU sobre TCP para una pasarela RS-485 en modo transparente (USR, Waveshare, Elfin en «none» / «transparent»). |
+| Registros propios | `string` | No | Entradas separadas por punto y coma: nombre: tabla dirección, luego tipo, naturaleza y opciones. Tablas: holding, input, coil, discrete. Tipos: int16 (por defecto), uint16, int32, uint32, float32, int64, uint64, float64, bit0-bit15. Naturalezas: temperature, humidity, pressure, power, energy, production, solar_power, grid_power, voltage, current, battery, volume, duration, value (por defecto), binary, switch, setpoint. Opciones: scale=0.1 offset= unit= swap=word min= max= precision= on= off=. |
+| Dispositivo 2 | `section` | No | Deje la dirección vacía si no usa este dispositivo. |
+| Dirección IP o nombre de host | `string` | No |  |
+| Puerto TCP | `number` | No |  |
+| Identificador de esclavo (unit id) | `number` | No |  |
+| Perfil | `select` | No |  |
+| Trama | `select` | No |  |
+| Registros propios | `string` | No |  |
+| Dispositivo 3 | `section` | No | Deje la dirección vacía si no usa este dispositivo. |
+| Dirección IP o nombre de host | `string` | No |  |
+| Puerto TCP | `number` | No |  |
+| Identificador de esclavo (unit id) | `number` | No |  |
+| Perfil | `select` | No |  |
+| Trama | `select` | No |  |
+| Registros propios | `string` | No |  |
+| Dispositivo 4 | `section` | No | Deje la dirección vacía si no usa este dispositivo. |
+| Dirección IP o nombre de host | `string` | No |  |
+| Puerto TCP | `number` | No |  |
+| Identificador de esclavo (unit id) | `number` | No |  |
+| Perfil | `select` | No |  |
+| Trama | `select` | No |  |
+| Registros propios | `string` | No |  |
+
+## Cómo instalar Modbus TCP en Gladys
+
+1. En Gladys, abre **Integraciones**: Modbus TCP aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-modbus:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-modbus](https://github.com/guim31/gladys-modbus).
+
+Modbus TCP requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Modbus TCP es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-modbus) — [fuente de esta documentación](https://github.com/guim31/gladys-modbus/blob/HEAD/docs/es.md)

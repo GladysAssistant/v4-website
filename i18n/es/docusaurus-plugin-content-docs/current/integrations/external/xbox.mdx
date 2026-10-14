@@ -1,0 +1,198 @@
+---
+title: "Integración domótica Xbox, gratuita y de código abierto"
+sidebar_label: "Xbox"
+description: "Encienda y apague sus consolas Xbox, contrólelas y vea el juego en curso. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-xbox.png"
+keywords:
+  - "xbox"
+  - "domótica xbox"
+  - "gladys xbox"
+  - "xbox gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-xbox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="xbox" />
+
+Controle sus consolas Xbox (Xbox One, Xbox Series X|S) desde Gladys: enciéndalas
+y apáguelas, vea si están encendidas y a qué juego se está jugando, y úselas en
+escenas y en el panel.
+
+## Dos canales
+
+| Canal                | Requisito            | Qué hace                                                                                                                     |
+| -------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Local** (su red)   | nada                 | encuentra las consolas, detecta si están encendidas, las enciende                                                            |
+| **Nube** (Xbox Live) | una cuenta Microsoft | todo lo anterior y además: apagar, volumen, silencio, teclas multimedia, botones del mando, iniciar un juego, juego en curso |
+
+Puede usar solo el canal local, solo el canal en la nube o ambos. Con ambos, el
+interruptor **Preferir la conexión local (LAN) cuando esté disponible** de la
+configuración elige el que se consulta primero; el otro toma el relevo cuando el
+primero no responde. La insignia de cada consola indica qué canal la atendió por
+última vez (punto naranja: la nube atiende una consola que la búsqueda local no
+ha encontrado).
+
+## Preparar la consola
+
+1. **Modo de energía**: Configuración → General → Opciones de energía →
+   **Suspensión** (Xbox Series) o **Inicio instantáneo** (Xbox One). En el modo
+   «Apagado (ahorro de energía)» la consola no se puede encender desde la red,
+   por ningún canal.
+2. **Características remotas** (canal en la nube): Configuración → Dispositivos y
+   conexiones → Características remotas → marque **Habilitar características
+   remotas**.
+3. En la misma pantalla, en **Preferencias de la aplicación Xbox**, elija
+   **Permitir conexiones desde cualquier dispositivo**: ayuda al canal local.
+
+## Canal local
+
+No hay nada que rellenar: abra la integración, pulse **Probar la conexión y
+buscar consolas** y, después, cree sus consolas en la pestaña **Descubrir**.
+
+La búsqueda pide a Gladys que envíe un descubrimiento SmartGlass en el puerto UDP
+5050 de su red (Gladys muestra este permiso al instalar la integración). Una
+consola en otra subred, o detrás de un router que filtra la difusión, no se
+encuentra de este modo: escriba su dirección IP en **Direcciones IP de las
+consolas** (varias direcciones separadas por comas). Asigne a la consola una
+dirección fija en su router para que no cambie.
+
+## Canal en la nube
+
+El canal en la nube inicia sesión en Xbox Live con su cuenta Microsoft, a través
+de una aplicación que **usted** registra en Microsoft (gratis). Gladys nunca ve
+su contraseña.
+
+1. Abra el [portal de Azure](https://portal.azure.com) → **Registros de
+   aplicaciones** → **Nuevo registro**.
+   - Nombre: `Gladys Xbox` (el que quiera).
+   - Tipos de cuenta compatibles: **Solo cuentas personales de Microsoft** (o
+     «cuentas de cualquier directorio organizativo y cuentas personales de
+     Microsoft»).
+   - URI de redirección: plataforma **Web**, dirección: la del botón
+     **Conectar** de Gladys (véase más abajo).
+2. En la aplicación, copie el **Id. de aplicación (cliente)**.
+3. **Certificados y secretos** → **Nuevo secreto de cliente** → copie su
+   **Valor** (no su Id.: el valor solo se muestra una vez).
+4. En Gladys, pegue los dos valores en **Id. de aplicación (cliente)** y
+   **Secreto de cliente**, guarde y, después, pulse **Conectar** junto a
+   **Cuenta Microsoft** e inicie sesión.
+
+**¿Qué URI de redirección?** La integración lo escribe en sus registros cuando
+pulsa Conectar (`Redirect URI to register in Azure: …`), y Microsoft lo muestra
+en la página de error si todavía no está registrado. Microsoft solo acepta una
+dirección **https** (o `http://localhost`): abra Gladys a través de su dirección
+https (Gladys Plus, su proxy inverso) cuando pulse Conectar.
+
+El vínculo se mantiene: la integración renueva su acceso por sí misma. Si la
+configuración muestra «El vínculo con la cuenta Microsoft ha caducado», pulse
+**Conectar** de nuevo.
+
+## La consola en Gladys
+
+Cada consola es un dispositivo de tipo televisor:
+
+- **Encendido**: encendido/apagado. Encendido: paquete local o nube, según la
+  preferencia. Apagado: solo nube.
+- **Silencio**, **Subir / bajar volumen**, **Reproducir**, **Pausa**,
+  **Anterior**, **Siguiente**, las flechas, **A (seleccionar)**, **B (atrás)**,
+  **Menú**, **Vista**, **Botón Xbox (guía)**: solo nube.
+- **Juego en curso**: el nombre del juego o de la aplicación en primer plano,
+  `-` en la pantalla de inicio o cuando la consola está apagada (solo nube).
+
+La consola se lee cada 60 segundos de forma predeterminada (**Intervalo de
+actualización**, 30 segundos como mínimo), y de nuevo en los 30 segundos
+siguientes a un comando.
+
+## Escenas
+
+Disparadores:
+
+- **Un juego se inicia en una Xbox**: filtro por la consola y por el nombre
+  exacto del juego. Variables: `title_name`, `title_id`.
+- **Un juego se detiene en una Xbox**: los mismos filtros. Variables:
+  `title_name`, `title_id`, `played_minutes`.
+
+Utilícelas en las acciones siguientes como `{{triggerEvent.data.title_name}}`,
+por ejemplo para enviar por mensaje «Lucas ha jugado 95 minutos a Minecraft».
+
+Acciones:
+
+- **Encender una Xbox y esperar**: enciende la consola y espera a que responda
+  (hasta 100 s). Salida `awake` (true / false) para condicionar las acciones
+  siguientes.
+- **Iniciar un juego en una Xbox**: por su ID de producto de Microsoft Store,
+  los 12 caracteres al final de la dirección de la página del juego en xbox.com,
+  p. ej. `xbox.com/…/games/store/<name>/9NBLGGH2JHXJ`. Salida `launched`.
+- **Pulsar un botón del mando**: A, B, X, Y, flechas, botón Xbox, Vista, Menú.
+  Salida `pressed`.
+
+El encendido, el silencio y las teclas también están disponibles en la acción
+estándar «Establecer valor del dispositivo», y el estado de encendido en el
+disparador estándar «Cambio de estado del dispositivo».
+
+El juego en curso procede de la **presencia de su cuenta de Xbox Live**, no de
+una consola: con varias consolas encendidas al mismo tiempo, todas muestran el
+juego de la cuenta vinculada.
+
+## Widget del panel
+
+En **Panel → Editar → Nuevo widget**, añada el widget **Consola Xbox** y elija
+una consola (la primera de forma predeterminada): alimentación, juego en curso,
+conexión, cuenta y botones rápidos — encender y, con el canal en la nube:
+inicio, reproducir/pausa, apagar.
+
+## Solución de problemas
+
+- **No se encuentra ninguna consola**: ¿está encendida, o en modo Suspensión /
+  Inicio instantáneo? ¿Está Gladys en la misma red? Pruebe a escribir su
+  dirección IP.
+- **La consola no se enciende**: compruebe el modo de energía (Suspensión /
+  Inicio instantáneo). En el canal local, la consola debe haber respondido al
+  menos una vez para que se conozca su Live ID.
+- **«needs the cloud channel»**: apagar y las teclas necesitan la cuenta
+  Microsoft.
+- **Los comandos no hacen nada**: habilite las características remotas en la
+  consola.
+- **Registros**: Gladys → Integraciones → Xbox → pestaña **Registros**. Nunca
+  contienen sus tokens ni su secreto.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Xbox te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Canal local, sin cuenta: la integración encuentra las consolas de su red, detecta si están encendidas y las enciende. Configure el modo de energía de la consola en Suspensión (inicio instantáneo). Canal en la nube, opcional: con su cuenta Microsoft también las apaga, ajusta el volumen, controla la multimedia y los botones del mando, inicia juegos y muestra el juego en curso. |
+| Direcciones IP de las consolas | `string` | No | Opcional. Las consolas se encuentran automáticamente en la red; indique aquí las que no se encuentran (otra subred, un router que filtra la difusión), separadas por comas. |
+| Canal en la nube (opcional) | `section` | No | Registre una aplicación en el portal de Microsoft Azure (cuentas personales de Microsoft, plataforma Web), con el URI de redirección que muestra el botón Conectar. Copie abajo su Id. de aplicación (cliente) y un secreto de cliente, guarde y, después, pulse Conectar. En la consola, active Configuración > Dispositivos y conexiones > Características remotas. |
+| Id. de aplicación (cliente) | `string` | No | El Id. de aplicación de su registro de aplicación de Azure. |
+| Secreto de cliente | `secret` | No | El valor de un secreto de cliente de la misma aplicación (Certificados y secretos). Déjelo vacío para una aplicación cliente pública. |
+| Cuenta Microsoft | `oauth2` | No | Vincula la cuenta Microsoft propietaria de las consolas. Solo se conserva un token de actualización, nunca su contraseña. |
+| Intervalo de actualización (s) | `number` | No | Frecuencia de lectura de cada consola, en segundos (30 segundos como mínimo). |
+
+## Cómo instalar Xbox en Gladys
+
+1. En Gladys, abre **Integraciones**: Xbox aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-xbox:1.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-xbox](https://github.com/prohand/gladys-xbox).
+
+Xbox requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Xbox es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-xbox) — [fuente de esta documentación](https://github.com/prohand/gladys-xbox/blob/HEAD/docs/es.md)

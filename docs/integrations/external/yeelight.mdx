@@ -23,7 +23,7 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 This integration lets you control your **Yeelight** lights (bulbs, LED strips, bedside lamps, ceiling lights) from Gladys Assistant, directly on your local network. No cloud account, no gateway, no middleman: Gladys talks to your lights itself.
 
-![Gladys, the integration and your Yeelight lights: lights push their states over one open connection each, commands leave from Gladys, and discovery goes through the broadcast Gladys sends on UDP 1982](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/overview.svg)
+![Gladys, the integration and your Yeelight lights: lights push their states over one open connection each, commands leave from Gladys, and discovery goes through the broadcast Gladys sends on UDP 1982](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/overview.svg)
 
 ## Features
 
@@ -38,11 +38,21 @@ The integration adapts to what each light can do — a light advertises its own 
 | Ambient light           | Ceiling lights and light bars with a backlight |
 | Night light (moonlight) | Ceiling lights                                 |
 
+It also brings **scenes**: start a scene when a light goes offline or comes back, and play a light effect (sunrise, sunset, alert, notification, candle) from a scene. See the Scenes section below.
+
 ### States arrive in real time
 
-Your lights **push** their state changes: the integration keeps a connection open to each light, and Gladys receives the new value the moment it changes — including when you use the Yeelight app, the remote, or the wall switch. There is no polling interval to set.
+Your lights **push** their state changes: the integration keeps a connection open to each light, and Gladys receives the new value the moment it changes — including when you use the Yeelight app, the remote, or the wall switch. There is no polling interval to set. Only the values that actually changed are sent to Gladys.
+
+### A light switched off at the wall
+
+A light cut at the wall switch cannot say goodbye: it simply goes silent. So every minute, the integration asks each silent light whether it is still there. A light that does not answer is shown as **Unreachable** in Gladys within one to two minutes. When it is powered again, the integration reconnects to it on its own and the light goes back to **Local** — no action needed on your side.
 
 ## Requirements
+
+### Gladys version
+
+The integration requires **Gladys 5.1.0 or newer**, because of its scenes. On an older Gladys, the integration no longer receives updates and stays on version 1.3.0: update Gladys to get the new versions.
 
 ### Enable "LAN Control" — mandatory
 
@@ -68,7 +78,7 @@ For each light, in the **Yeelight** app:
 
 Once "LAN Control" is enabled, open the integration's **Discover** screen and run a scan. Your lights appear with their name (the one you gave them in the Yeelight app), ready to be added. **No IP address to type.**
 
-![Two sources feed the Discover screen: the network scan, whose replies carry the factory id, the model, the capabilities and the state, and the lights added by hand, probed over TCP; both end up as one device per light](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/discovery.svg)
+![Two sources feed the Discover screen: the network scan, whose replies carry the factory id, the model, the capabilities and the state, and the lights added by hand, probed over TCP; both end up as one device per light](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/discovery.svg)
 
 ### 2. Transition duration
 
@@ -100,13 +110,50 @@ How long the scan listens for answers. 5 seconds is plenty in most cases; raise 
 - **Test the connection**: runs a discovery and reports how many lights answered.
 - **Reconnect the lights**: closes every connection and reopens them. Useful after a power cut or a network change.
 
+## Scenes
+
+### Triggers
+
+- **Yeelight light offline**: a light stopped answering for 30 seconds — switched off at the wall, a power cut or a Wi-Fi problem. It is detected within about two minutes. A light switched off and on again within 30 seconds starts nothing, nor does a light that was already off when the integration started. Filter: the light; leave it empty to watch every light. Variables: **Light identifier**, **Light name**, **Address**.
+- **Yeelight light back online**: a light reported offline answers again. It only follows a **Yeelight light offline** that was fired. Filter: the light. Variables: **Light identifier**, **Light name**, **Address**, **Minutes offline**.
+
+Only the lights you added to Gladys can start these scenes.
+
+### Actions
+
+**Yeelight: play a light effect** — fields: the light, the effect, and the **Duration (minutes)** (1 to 60, 15 by default; sunrise and sunset only).
+
+| Effect                    | What the light does                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------- |
+| Sunrise (ends on)         | Goes from a deep orange at 1 % to a neutral white at 100 % over the duration; stays on |
+| Sunset (ends off)         | Goes from a warm white to a deep orange at 1 % over the duration, then turns off       |
+| Alert: red flashes        | 10 red flashes (about 5 seconds), then back to how it was — off if it was off          |
+| Notification: blue pulses | 4 soft blue pulses (about 5 seconds), then back to how it was — off if it was off      |
+| Candle (until stopped)    | An amber flicker that lasts until you stop it or send the light another command        |
+
+The effect runs inside the light itself: a 30-minute sunrise keeps going even if Gladys restarts in the meantime. A white-only light (ceiling light, desk lamp) plays the same effect in white: a cold white flash for the alert, a warm flicker for the candle. The output **Light name** is available to the next actions of the scene.
+
+**Yeelight: stop the light effect** — field: the light. Stops the effect in progress; the light keeps its current colour and brightness.
+
+An effect never starts the **offline** or **back online** triggers: it changes the colour of a light, not its connection.
+
+### Examples
+
+**Wake up with a sunrise.** Trigger **Scheduled trigger**, 6:45 on weekdays. Action **Yeelight: play a light effect**: light "Bedroom", effect **Sunrise (ends on)**, duration 20. The light starts at a faint orange glow and reaches full white at 7:05.
+
+**Get warned when a light is switched off at the wall.** Trigger **Yeelight light offline**, light left empty. Action **Send Message**: "Light name has been switched off at the wall", inserting the variable **Light name** in the message. Handy for a light that must stay powered, like a hallway light used by your motion scenes.
+
+**A discreet notification.** Trigger **Device state change**: the washing machine plug drops below 5 W. Action **Yeelight: play a light effect**: light "Living room", effect **Notification: blue pulses**. If the light was off, it turns back off after the pulses.
+
+**A candle in the evening.** One scene at sunset plays **Candle (until stopped)**; another, at bedtime, runs **Yeelight: stop the light effect** then switches the light off.
+
 ## Good to know
 
 ### Setting a color on a light that is off
 
 A Yeelight refuses color, temperature and brightness commands while it is off. The integration **turns it on automatically** before applying your setting: clicking a color therefore switches the light on in that color, which is what you meant.
 
-![When you pick a colour on a light that is off, the integration switches it on first, then sends the colour; the light pushes its new state back](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/commands.svg)
+![When you pick a colour on a light that is off, the integration switches it on first, then sends the colour; the light pushes its new state back](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/commands.svg)
 
 The power state is known from what the light already reported, so a light that is on is not switched on again — that would restart its fade, visibly.
 
@@ -129,7 +176,7 @@ Each one switches on and off independently of the other. To drive both in one go
 
 Ambient colour temperature only appears on models whose backlight can tune its white — the warm/cold slider the Yeelight app shows next to the ring's colour wheel.
 
-On a light without a backlight there is only one light, and the labels stay simple (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). You can rename any feature in Gladys.
+On a light without a backlight there is only one light, and the labels stay simple (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). The night light of a ceiling light is called **Night light**. These names are set by the integration in English, whatever the language of Gladys; you can rename any feature in Gladys.
 
 If your ceiling light switches its ring on and off together with the main light, that is not Gladys: it is the **"Auto on/off with the main light"** option in the Yeelight app. Turn it off to drive each light separately.
 
@@ -139,18 +186,21 @@ The temperature slider follows the Gladys gradient: **left is cold, bluish light
 
 ### Light limits
 
-Each light accepts **4 simultaneous connections** and **60 commands per minute**. The integration opens a single connection per light and smooths command bursts automatically, but keep those limits in mind if you also drive your lights from other apps at the same time.
+Each light accepts **4 simultaneous connections** and **60 commands per minute**. The integration opens a single connection per light and smooths command bursts automatically, but keep those limits in mind if you also drive your lights from other apps at the same time. The check of a silent light costs one command per minute.
 
 ## Troubleshooting
 
-| Symptom                                | Most likely cause                                                             |
-| -------------------------------------- | ----------------------------------------------------------------------------- |
-| No light found                         | "LAN Control" is not enabled in the Yeelight app                              |
-| Only one light out of several is found | The option is only enabled on that one — it is set per light                  |
-| A light disappears then comes back     | Wi-Fi drop or wall switch: the integration reconnects on its own, backing off |
-| A hand-added light becomes unknown     | Its IP address changed — give it a fixed address in your router               |
-| Commands stop working after a while    | Another piece of software is holding the light's 4 connection slots           |
-| A light added by hand is ignored       | Its address changed, or the brackets are missing around an IPv6 address       |
+| Symptom                                | Most likely cause                                                                                              |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| No light found                         | "LAN Control" is not enabled in the Yeelight app                                                               |
+| Only one light out of several is found | The option is only enabled on that one — it is set per light                                                   |
+| A light disappears then comes back     | Wi-Fi drop or wall switch: the integration reconnects on its own, backing off                                  |
+| A light shows "Unreachable"            | It is switched off at the wall or out of Wi-Fi range; it comes back once powered again                         |
+| A hand-added light becomes unknown     | Its IP address changed — give it a fixed address in your router                                                |
+| Commands stop working after a while    | Another piece of software is holding the light's 4 connection slots                                            |
+| A light added by hand is ignored       | Its address changed, or the brackets are missing around an IPv6 address                                        |
+| The "offline" scene does not start     | The light came back within 30 seconds, was already off when the integration started, or is not added to Gladys |
+| The effect action fails                | The light is unreachable at that moment, or its model does not support effects                                 |
 
 ## Configuration settings
 
@@ -167,11 +217,11 @@ These are the settings Yeelight asks for in its configuration screen in Gladys.
 ## How to install Yeelight in Gladys
 
 1. In Gladys, open **Integrations**: Yeelight appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-yeelight:1.3.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-yeelight:1.4.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-yeelight](https://github.com/William-De71/gladys-yeelight).
 
-Yeelight requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Yeelight requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

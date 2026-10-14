@@ -1,0 +1,254 @@
+---
+title: "Bambu Lab smart home integration, free and open source"
+sidebar_label: "Bambu Lab"
+description: "Follow and control your Bambu Lab 3D printers locally: progress, temperatures, AMS, alerts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-bambulab.png"
+keywords:
+  - "bambu lab"
+  - "bambu lab smart home"
+  - "gladys bambu lab"
+  - "bambu lab gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-bambulab instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="bambu-lab" />
+
+Follow and control your Bambu Lab 3D printers (X1, P1, A1, H2 and P2S series)
+from Gladys: state, progress, time left, layers, temperatures, AMS spools, HMS
+errors, chamber light, speed, pause and resume, camera image (P1 and A1).
+Everything stays on your local network: Gladys talks to the printer directly
+(encrypted MQTT on port 8883, like Bambu Studio in LAN mode), without the
+Bambu Lab cloud.
+
+**Developed without the hardware**: the integration was tested against real
+printer reports (published by the ha-bambulab project) replayed by a real
+encrypted MQTT broker, but not on a physical printer yet. Feedback is welcome
+on the Gladys forum.
+
+## Requirements
+
+- Gladys Assistant 5.1 or later.
+- A Bambu Lab printer on the same local network as Gladys.
+- Its **serial number** (printer settings, device information, or Bambu
+  Handy / Bambu Studio) and its **LAN access code** (shown on the printer
+  screen, in the network / WLAN settings).
+- To **pause, resume, cancel or change the speed** from Gladys with a recent
+  firmware (X1 01.08.05, P1 01.08.02, A1 01.05 and later, the 2025
+  "Authorization Control"): turn on **LAN only mode**, then **Developer mode**
+  on the printer. Without it, the printer refuses these commands; the state,
+  the light and the camera work anyway. Note: in LAN only mode, Bambu Handy and
+  remote printing through the cloud stop working. See the
+  [Bambu Lab wiki](https://wiki.bambulab.com/en/knowledge-sharing/enable-lan-mode).
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. Enter the **Serial number** (for example `01P00A000000000`) and the
+   **Access code** of the printer.
+3. **IP address**: optional. Left empty, Gladys listens to the printer's
+   announcements on the network and finds it by itself (and follows it when
+   its address changes). Enter it if the search does not find the printer.
+   Save.
+4. The **Find printers on the network** button lists the printers that
+   announce themselves: name, model, address, serial number, LAN mode.
+5. A second or third printer: fill in **Printer 2** and **Printer 3** the same
+   way.
+6. **Camera images** (on by default): one image a minute during a print, and
+   on demand, for the P1 and A1 series.
+7. **Check the printer certificate** (on by default): the connection is
+   encrypted and the printer certificate is checked against the Bambu Lab
+   authorities. Turn it off only if the connection fails with a certificate
+   error (a very recent model).
+8. **Language** picks the language of the feature names and of the texts the
+   integration creates (French by default). Feature names are set when the
+   device is added to Gladys.
+
+The **Test the connection** button gives, for each printer, its model,
+firmware and state, and whether the firmware refuses commands. Then add the
+printer from the **Discover** tab.
+
+## The printer device
+
+One device per printer, named after the name given to the printer (found by
+the network search) or after its model. The printer sends its state every
+second; the integration passes it on to Gladys at most every 5 seconds, and
+at once when the print state changes.
+
+| Feature             | What it shows                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------- |
+| State               | Ready, Preparing, Printing, Paused, Finished, Failed, Offline, Printer unreachable, Access code refused |
+| File                | The name of the current print, or of the last one                                                       |
+| Progress            | Percentage of the print                                                                                 |
+| Time left           | Estimated by the printer, in minutes                                                                    |
+| Layer, Total layers | Layer numbers (a scene can test "layer > 3")                                                            |
+| Nozzle, Bed         | Temperatures, in whole degrees, and their targets, read only                                            |
+| Chamber             | Chamber temperature (X1, H2, P2S), and its target on the models with a heated chamber (X1E, H2)         |
+| Print speed         | List: Silent, Standard, Sport, Ludicrous (during a print)                                               |
+| Chamber light       | Switch                                                                                                  |
+| Pause, Resume       | Push buttons                                                                                            |
+| HMS errors          | "No error", or the code and text of the first HMS error (and how many others)                           |
+| Camera              | The camera image (P1 and A1 series)                                                                     |
+
+There is no **cancel** button on the device, on purpose: one tap without a
+confirmation would ruin a print. Cancelling is offered by the widget (with a
+confirmation) and by the scenes. The temperature targets are read only and
+the integration never heats: nothing can start heating from the dashboard,
+HomeKit, Alexa or Google. For Gladys they are "device temperatures": they
+never count in the room temperature. The light is a switch, not a lamp: a
+"turn off every light" scene does not plunge a print (and its timelapse) into
+the dark.
+
+## Dashboard widget
+
+Add the **Bambu Lab 3D print** widget to a dashboard and choose the printer in
+its settings. It shows:
+
+- the progress gauge, the time left, the nozzle and bed temperatures (live);
+- the last camera image (P1, A1);
+- the state, the file, the layer, the expected end time, the speed, the HMS
+  errors;
+- the spools loaded in the AMS (`AMS A1`, `AMS A2`… `AMS B1` for a second
+  AMS): material, colour and estimated remainder, the one in use marked with
+  a tick; otherwise the external spool;
+- the buttons that matter at the moment: **Pause** or **Resume** and
+  **Cancel** (asks for a confirmation) during a print, **Light on** or
+  **Light off** otherwise. When the firmware refuses commands, the widget
+  says so ("Developer mode needed") instead of showing useless buttons.
+
+## Scene triggers
+
+In the **Integrations** category of the scene editor. Each can be limited to
+one printer.
+
+- **Print started**: variables printer name, file.
+- **Print finished**: variables printer name, file, print time (as text, like
+  `1 h 05 min`, and in minutes).
+- **Print failed or cancelled**: can be limited to a reason (cancelled,
+  error). Variables printer name, file, print time, reason, error code and
+  message.
+- **Print paused**: by someone or by the printer itself (filament runout,
+  jam). Variables printer name, file, elapsed time, error code and message
+  when there is one.
+- **HMS error**: a new alert of the printer's health monitoring. Can be
+  limited to a severity (fatal, serious, common, information). Variables
+  printer name, code (`0300_0100_0001_0007`), message (in the language of the
+  integration), severity.
+
+The variables are read in the following actions with, for example,
+`{{triggerEvent.data.file}}` and `{{triggerEvent.data.message}}`. The
+triggers follow the printer itself: a print started from Bambu Studio or
+paused on the screen fires them too.
+
+## Scene actions
+
+- **Pause, resume or cancel a print**: returns **Applied** false when there
+  was nothing to pause, resume or cancel (the scene goes on). Cancelling
+  cannot be undone.
+- **Turn the chamber light on or off**: works without Developer mode too.
+- **Change the print speed**: Silent, Standard, Sport, Ludicrous; during a
+  print only (Applied false otherwise).
+
+## Scene examples
+
+- **Print finished → notification**: trigger Print finished, action "Send a
+  message": `{{triggerEvent.data.file}} done in {{triggerEvent.data.duration}}`.
+- **Smoke detected → stop everything**: trigger on the smoke detector,
+  actions Pause, resume or cancel a print (cancel), then turn off the smart
+  plug of the printer.
+- **Quiet at night**: at 10 pm, Change the print speed (Silent); no effect
+  when nothing prints.
+- **Serious error → alert**: trigger HMS error limited to the fatal and
+  serious severities, action "Send a message":
+  `{{triggerEvent.data.printer}}: {{triggerEvent.data.message}}`.
+
+## Troubleshooting
+
+- **Printer unreachable**: check the IP address (printer screen, network
+  settings), that the printer is on and on the same network as Gladys. Leave
+  the address empty to let Gladys find it.
+- **Access code or serial number refused**: the access code may change (LAN
+  mode turned off and on again, reset); enter it again. Check the serial
+  number too (15 characters). After a refusal, the integration waits 5 minutes
+  before trying again.
+- **Unexpected certificate**: a model more recent than the authorities the
+  integration knows; turn off **Check the printer certificate** and report it
+  on the forum. Without the check, Gladys no longer follows the printer when
+  its address changes (a network announcement could be forged): enter its IP
+  address.
+- **"The printer firmware only accepts commands from Bambu Lab apps"**: turn
+  on LAN only mode, then Developer mode on the printer (see Requirements).
+- **The network search finds nothing**: it listens to the printers'
+  announcements for 10 seconds (UDP ports 1990 and 2021, through Gladys); a
+  network that blocks broadcasts (VLAN, guest Wi-Fi) hides them. Enter the IP
+  address then.
+- **No camera image**: only the P1 and A1 series have a camera reachable this
+  way; Gladys refuses an image over 150 KB.
+- Logs: on the integration page in Gladys, or `docker logs` on the host.
+  `LOG_LEVEL=debug` gives the details. The access code never appears in the
+  logs.
+
+## Limits
+
+- Three printers at most.
+- No file upload nor print start, no G-code commands, no temperature setting,
+  no timelapse.
+- Camera: P1 and A1 series only (the X1, H2 and P2S series film over RTSPS,
+  which the integration does not read), one image a minute during a print and
+  on demand, no video stream.
+- H2D: the temperature shown is the one of the active nozzle.
+- The texts of the HMS errors come from the tables Bambu Lab publishes (as
+  collected by ha-bambulab): a very recent code may show without text.
+- A print finished while the integration was disconnected fires no scene.
+- Developed without the hardware: feedback welcome.
+- Not affiliated with Bambu Lab.
+
+## Configuration settings
+
+These are the settings Bambu Lab asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect your Bambu Lab printer | `section` | No | Gladys talks to the printer on your local network, without the Bambu Lab cloud. On the printer screen, open the network settings: note the access code (and the IP address), and turn on LAN only mode with Developer mode if you want to pause, resume or cancel prints from Gladys (recent firmwares refuse these commands otherwise; reading always works). The serial number is in the device settings of the printer or in Bambu Handy. Up to three printers. |
+| Serial number | `string` | Yes |  |
+| Access code | `secret` | Yes | Shown on the printer screen, in the network (WLAN) settings. |
+| IP address | `string` | No | Optional: left empty, Gladys looks for the printer on the network. |
+| Printer 2 (optional) | `section` | No | Another Bambu Lab printer, connected the same way. |
+| Serial number 2 | `string` | No |  |
+| Access code 2 | `secret` | No | Shown on the printer screen, in the network (WLAN) settings. |
+| IP address 2 | `string` | No | Optional: left empty, Gladys looks for the printer on the network. |
+| Printer 3 (optional) | `section` | No | Another Bambu Lab printer, connected the same way. |
+| Serial number 3 | `string` | No |  |
+| Access code 3 | `secret` | No | Shown on the printer screen, in the network (WLAN) settings. |
+| IP address 3 | `string` | No | Optional: left empty, Gladys looks for the printer on the network. |
+| Options | `section` | No | Language of the names and texts the integration creates (feature names are set when a device is added). |
+| Camera images (P1 and A1 series) | `boolean` | No | One image a minute during a print, and on demand. |
+| Check the printer certificate | `boolean` | No | Against the Bambu Lab authorities. Turn it off only if the connection fails with a certificate error. |
+| Language | `select` | No |  |
+
+## How to install Bambu Lab in Gladys
+
+1. In Gladys, open **Integrations**: Bambu Lab appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-bambulab:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-bambulab](https://github.com/guim31/gladys-bambulab).
+
+Bambu Lab requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Bambu Lab is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-bambulab) — [source of this documentation](https://github.com/guim31/gladys-bambulab/blob/HEAD/docs/en.md)

@@ -1,0 +1,399 @@
+---
+title: "Modbus TCP Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Modbus TCP"
+description: "Modbus-TCP-Register lesen und schreiben: Zähler, Wechselrichter, Wärmepumpen, SPS. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-modbus.png"
+keywords:
+  - "modbus tcp"
+  - "modbus tcp smart home"
+  - "gladys modbus tcp"
+  - "modbus tcp gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-modbus instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="modbus-tcp" />
+
+Liest, und auf Wunsch schreibt, die Register von Modbus-TCP-Geräten:
+Energiezähler, Solar-Wechselrichter, Batterien, Wärmepumpen,
+Lüftungsanlagen, SPS. Fertige Profile decken die häufigsten Geräte ab; für die
+anderen beschreibst du die Register mit je einer Zeile, ohne eine Datei zu
+bearbeiten.
+
+> **Ohne die Hardware entwickelt: Rückmeldungen sind willkommen.** Die Profile
+> folgen den veröffentlichten Registertabellen der Hersteller und werden mit
+> simulierten Geräten getestet, nicht mit echten. Wenn dir ein Wert falsch
+> vorkommt, eröffne ein Issue auf
+> [GitHub](https://github.com/guim31/gladys-modbus/issues) mit der Ausgabe der
+> Schaltfläche **Lesen testen**.
+
+## Was die Integration macht
+
+- Bis zu vier Modbus-Geräte, jedes ein Gladys-Gerät mit seinen Funktionen
+  (Leistung, Energie, Spannung, Temperatur, Zustand...), alle 5 Sekunden bis 5
+  Minuten aktualisiert.
+- Fertige Profile: Eastron-Zähler SDM630 und SDM120, SunSpec-Wechselrichter
+  und -Zähler (SMA, SolarEdge, Fronius, Kostal und viele andere),
+  Huawei-SUN2000-Wechselrichter (mit Zähler und Batterie), Victron-GX-Systeme.
+- Eigene Register für alles andere: Holding- und Input-Register, Coils,
+  diskrete Eingänge, Ganzzahlen von 16 bis 64 Bit und Gleitkommazahlen in jeder
+  Wortreihenfolge, Skalierung, Versatz, Einheit, Art.
+- Energiezählerstände in kWh: Gladys ergänzt sie um seine Energieüberwachung
+  (Verbrauch pro 30 Minuten und Kosten).
+- Schreiben, standardmäßig aus, nur für die Register, die du als Schalter oder
+  begrenzten Sollwert deklarierst.
+- Eine Schaltfläche **Lesen testen**, um den Typ eines unbekannten Registers zu
+  finden, ein Widget und zwei Szenen-Auslöser (ein Gerät antwortet nicht mehr,
+  antwortet wieder).
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1 oder neuer.
+- Ein Gerät, das in deinem Netzwerk **Modbus TCP** spricht, oder ein
+  RS-485-Gerät hinter einem **Modbus-TCP-Gateway** (USR-TCP232, Waveshare
+  RS485-to-ETH, Elfin EW11/EE11...). Das Gateway arbeitet entweder als
+  Modbus-TCP-Gateway (Modus „Modbus TCP to RTU“) oder im transparenten Modus
+  („RTU über TCP“ in dieser Integration).
+- Modbus TCP auf dem Gerät aktiviert: bei einem SMA-Wechselrichter (Sunny
+  Portal oder lokale Oberfläche, Server „Modbus“), bei einem Victron GX
+  (Einstellungen > Dienste > Modbus TCP), bei einem SolarEdge-Wechselrichter
+  (SetApp, Modbus TCP), bei einem Fronius-Wechselrichter (Kommunikation >
+  Modbus, Modelltyp „SunSpec“), bei einem Huawei-Wechselrichter (SDongle,
+  Modbus TCP „Aktivieren (uneingeschränkt)“).
+- Eine **feste IP-Adresse** für das Gerät oder das Gateway (DHCP-Reservierung
+  im Router): Gladys erkennt das Gerät an Adresse, Port und Unit-ID.
+
+## Konfiguration
+
+### Allgemeine Einstellungen
+
+- **Sprache der Funktionsnamen**: Gladys behält die Namen, die beim
+  Hinzufügen eines Geräts vergeben werden.
+- **Lesen alle**: 5 Sekunden bis 5 Minuten. Gladys nimmt 300 Werte pro Minute
+  und Integration an: Bei vielen Registern und kurzem Intervall wird die
+  Integration von selbst langsamer, um darunter zu bleiben (eine Warnung in den
+  Protokollen).
+- **Antwortzeit**: standardmäßig 3 Sekunden; für einen langsamen RS-485-Bus
+  erhöhen.
+- **Schreiben erlauben**: siehe [Register schreiben](#register-schreiben).
+
+### Geräte
+
+Jeder der vier Geräteblöcke hat:
+
+- **IP-Adresse oder Hostname** des Geräts oder seines Gateways. Leer: Der
+  Block wird nicht genutzt.
+- **TCP-Port**: fast immer 502.
+- **Unit-ID**: meist 1. SMA: 126 für SunSpec (3 für die eigenen Register von
+  SMA). Victron GX: 100 für die Systemwerte. Fronius Smart Meter: 240.
+  Eastron-Zähler: die am Zähler eingestellte Modbus-Adresse (standardmäßig
+  001).
+- **Profil**: ein fertiges Profil, oder keins.
+- **Framing**: Modbus TCP, oder RTU über TCP für ein Gateway im transparenten
+  Modus.
+- **Eigene Register**: siehe unten. Diese Register kommen zu den Funktionen des Profils
+  hinzu.
+
+Mehrere RS-485-Geräte hinter einem Gateway: ein Block pro Gerät, mit gleicher
+Adresse und gleichem Port und jeweils eigener Unit-ID. Die Geräte teilen sich eine
+Verbindung, und ihre Anfragen gehen nacheinander raus, wie es der Bus
+verlangt.
+
+### Profile
+
+| Profil         | Gerät                                              | Übliche Unit-ID |
+| -------------- | -------------------------------------------------- | --------------- |
+| Eastron SDM630 | Drehstromzähler (über ein Gateway)                 | 1               |
+| Eastron SDM120 | Wechselstromzähler (über ein Gateway)              | 1               |
+| SunSpec        | Wechselrichter und Zähler nach SunSpec             | 1, 126 (SMA)    |
+| Huawei SUN2000 | Huawei-Wechselrichter, sein Zähler, seine Batterie | 1               |
+| Victron GX     | Cerbo GX, Venus GX, Ekrano: Systemwerte            | 100             |
+
+Das SunSpec-Profil liest die Liste der SunSpec-Modelle, die das Gerät
+ankündigt (bei Register 40000, oder 0, oder 50000), und veröffentlicht die
+gefundenen Wechselrichter und Zähler. Das Huawei-Profil sucht einmal nach
+einem Zähler und einer Batterie. Was ein Gerät hat, wird in `/data`
+gespeichert: Ein Gerät, das beim Neustart schläft (ein Wechselrichter nachts),
+wird trotzdem veröffentlicht.
+
+### Eigene Register
+
+Ein Eintrag pro Register, Einträge durch Semikolons getrennt (das
+Konfigurationsfeld ist einzeilig):
+
+```
+Vorlauf: holding 100 int16 scale=0.1 temperature; Pumpe: coil 5 switch
+```
+
+Ein Eintrag lautet `Name: Tabelle Adresse`, dann in beliebiger Reihenfolge ein
+Datentyp, eine Art und Optionen.
+
+- **Name**: der Name der Funktion in Gladys (höchstens 40 Zeichen).
+- **Tabelle**: `holding` (Holding-Register, Funktion 3), `input`
+  (Input-Register, Funktion 4), `coil` (Funktion 1), `discrete` (diskreter
+  Eingang, Funktion 2).
+- **Adresse**: die Registeradresse, wie sie über die Leitung geht, von 0 bis
+  65535, dezimal oder hexadezimal (`0x0034`). Manche Unterlagen zählen ab 1
+  oder addieren 30001 oder 40001: zieh das ab.
+- **Datentyp** (nur Register): `int16` (Standard), `uint16`, `int32`,
+  `uint32`, `float32`, `int64`, `uint64`, `float64`, oder `bit0` bis `bit15`
+  für ein Bit eines Registers.
+- **Art**: was der Wert ist.
+
+| Art           | Gladys-Funktion                        | Einheiten (erste = Standard)   |
+| ------------- | -------------------------------------- | ------------------------------ |
+| `temperature` | Temperatur                             | °C, °F, K                      |
+| `humidity`    | Luftfeuchtigkeit                       | %                              |
+| `pressure`    | Druck                                  | bar, mbar, hPa, kPa, Pa, psi   |
+| `power`       | Leistung (Energiesensor)               | W, kW                          |
+| `energy`      | Energiezählerstand, Energieüberwachung | kWh, Wh, MWh (in kWh gesendet) |
+| `production`  | Erzeugungszählerstand                  | kWh, Wh, MWh (in kWh gesendet) |
+| `solar_power` | Erzeugungsleistung                     | W, kW                          |
+| `grid_power`  | Netzleistung (Bezug +, Einspeisung −)  | W, kW                          |
+| `voltage`     | Spannung                               | V, mV                          |
+| `current`     | Strom                                  | A, mA                          |
+| `battery`     | Batteriestand                          | %                              |
+| `volume`      | Volumen                                | L, mL, m3                      |
+| `duration`    | Dauer                                  | s, ms, min, h, d               |
+| `value`       | eine Zahl, so angezeigt (Standard)     | jede der obigen, oder keine    |
+| `binary`      | an/aus, schreibgeschützt               |                                |
+| `switch`      | an/aus, schreibbar                     |                                |
+| `setpoint`    | begrenzter Temperatur-Sollwert         | °C, °F                         |
+
+- **Optionen**:
+  - `scale=0.1` multipliziert den Rohwert, `offset=-40` wird addiert (nach der
+    Skalierung). Ein Dezimalkomma geht auch (`scale=0,1`).
+  - `unit=kW` wählt eine andere Einheit der Art.
+  - `swap=word` (Register in umgekehrter Reihenfolge, „CDAB“), `swap=byte`
+    („BADC“), `swap=word_byte` („DCBA“). Ohne: höchstwertiges Register zuerst
+    („ABCD“). Die Namen sind die der `modbus`-Integration von Home Assistant.
+  - `min=` und `max=`: die Anzeigegrenzen; bei einem Sollwert die Grenzen,
+    außerhalb derer nichts geschrieben wird (Pflicht).
+  - `precision=2`: behaltene Nachkommastellen (standardmäßig aus der
+    Skalierung, 2 bei Gleitkommazahlen).
+  - `on=` und `off=`: die Werte, die ein Register-Schalter schreibt
+    (standardmäßig 1 und 0).
+
+Jeder Fehler wird unter dem Konfigurationsstatus aufgeführt (rotes Abzeichen
+„Getrennt“) und von der Schaltfläche **Konfiguration prüfen** rot angezeigt,
+mit Gerät, Eintragsnummer, Name und dem falschen Wort, zum Beispiel
+`Gerät 1, Eintrag 2 „Pumpe“: ein coil ist ein Bit: Es braucht keinen Datentyp.`
+Die anderen Einträge funktionieren weiter.
+
+## Geräte und Funktionen
+
+Jedes Gerät wird von der Integration selbst im gewählten Intervall abgefragt;
+nur geänderte Werte gehen an Gladys, dazu jeder Wert einmal alle 6 Stunden.
+
+### Eastron SDM630 und SDM120
+
+Gesamtleistung, bezogene Energie (Energiezählerstand, mit
+Energieüberwachung), gelieferte Energie, und pro Phase (SDM630) oder für die
+Leitung (SDM120) Spannung, Strom und Leistung. Die Zähler zählen die Leistung
+beim Bezug positiv.
+
+### SunSpec
+
+Pro Wechselrichtermodell (101-103, 111-113): AC-Leistung, Gesamtertrag
+(Zählerstand in kWh), DC-Leistung, AC-Strom, AC-Spannung (Phase A),
+Innentemperatur (Gehäuse), Betriebszustand (aus, Ruhemodus, startet,
+produziert, begrenzt, fährt herunter, Störung, Bereitschaft). Pro Zählermodell
+(201-204, 211-214): Zählerleistung (mit dem Vorzeichen des Herstellers), Strom,
+Spannung, bezogene und gelieferte Energie. Das Gerät trägt den Namen seines
+Herstellers und Modells, seine Seriennummer steht in den Geräteparametern.
+Ein Wert, den das Gerät nicht implementiert, wird nicht veröffentlicht.
+
+### Huawei SUN2000
+
+AC-Leistung, Gesamtertrag, DC-Eingangsleistung, AC-Spannung und -Strom (Phase
+A), Innentemperatur, Betriebszustand. Mit einem Zähler: Netzleistung (beim
+Bezug positiv, wie Gladys sie zählt), Zählerstände für Netzbezug und
+Netzeinspeisung. Mit einer LUNA2000-Batterie: Batteriestand, Lade- und
+Entladeleistung.
+
+### Victron GX
+
+Netzleistung (Summe der Phasen, beim Bezug positiv), Hausverbrauch,
+Solarleistung (PV auf der AC- und der DC-Seite). Mit einer Batterie:
+Batteriestand, Lade- und Entladeleistung, Batteriespannung.
+
+### Eigene Register
+
+Eine Funktion pro Eintrag, in der Kategorie, die ihre Art ergibt.
+
+## Register schreiben
+
+Schreiben ist **standardmäßig aus**. Nur die Einträge, die du als `switch` oder
+`setpoint` deklarierst, sind Bedienelemente in Gladys, sonst nichts; solange
+**Schreiben erlauben** aus ist, lehnen sie jede Änderung ab (der
+Konfigurationsstatus sagt es). Schalte es in der Konfiguration ein, wenn du dir
+der Register sicher bist.
+
+- `switch`: auf einem Coil schreibt er 1 oder 0; auf einem Holding-Register
+  den Wert `on` oder `off` (`Heizung: holding 111 switch on=1 off=0`). Er
+  erscheint als An/Aus-Schalter, außerhalb der Sprachassistenten.
+- `setpoint`: eine Temperatur, in ein Holding-Register geschrieben
+  (`WW-Sollwert: holding 110 uint16 setpoint min=40 max=55`). `min` und `max`
+  sind Pflicht: Ein Wert außerhalb wird abgelehnt und nichts geschrieben. Die
+  Skalierung wird rückwärts angewandt (mit `scale=0.1` schreibt 42,5 °C den
+  Wert 425).
+
+**Ein falsch geschriebenes Register kann eine Anlage beschädigen** (eine
+Wärmepumpe, einen Wechselrichter, einen Heizkessel): Prüfe jede Adresse, jeden
+Datentyp und jeden Wert in der Dokumentation des Herstellers, beginne mit einem
+Wert, den du rückgängig machen kannst, und lass das Schreiben aus, wenn du es
+nicht brauchst. Jeder Schreibvorgang wird mit Register und Wert protokolliert.
+Ein einzelnes Bit eines Registers lässt sich nicht schreiben (die 15 anderen
+müssten mitgeschrieben werden), ebenso wenig ein 64-Bit-Wert.
+
+## Aktionen
+
+- **Lesen testen**: Wähle ein gespeichertes Gerät, gib ein Register in der
+  Syntax der eigenen Register ohne Namen ein (`holding 100 int16 scale=0.1`),
+  und die Rohwerte erscheinen hexadezimal und dezimal, mit dem umgerechneten
+  Wert und der Lesart derselben Register in jedem Datentyp und jeder
+  Wortreihenfolge. Mit `count=10` werden zehn Register ab dieser Adresse
+  gelesen. Gib `sunspec` ein, um die SunSpec-Modelle des Geräts aufzulisten.
+  Funktioniert auch, wenn das Gerät noch kein Register deklariert hat.
+- **Konfiguration prüfen**: die Fehler Eintrag für Eintrag (rot), dann jedes
+  Gerät mit Profil, Anzahl der Funktionen und ob es antwortet.
+
+## Dashboard-Widget
+
+**Modbus-Gerät**: Wähle ein Gerät; das Widget zeigt seine wichtigsten Werte als
+Live-Kacheln (Leistung und Ertrag eines Wechselrichters, Leistung und
+Zählerstände eines Zählers, Netz, Haus, Solar und Batterie eines
+Victron-Systems) und den Zustand seiner Verbindung: antwortet oder nicht,
+Uhrzeit der letzten Abfrage, Betriebszustand eines Wechselrichters, letzter
+Fehler.
+
+## Szenen-Auslöser
+
+- **Ein Modbus-Gerät antwortet nicht mehr**: Zwei Abfragen in Folge sind
+  fehlgeschlagen. Variablen: der Gerätename und der Fehler. Filter: ein Gerät,
+  oder beliebig.
+- **Ein Modbus-Gerät antwortet wieder**: Ein Gerät, das nicht mehr antwortete,
+  wird wieder gelesen.
+
+## Szenen-Beispiele
+
+- Benachrichtige mich, wenn das Gateway der Wärmepumpe nicht mehr antwortet:
+  Auslöser **Ein Modbus-Gerät antwortet nicht mehr** auf der Wärmepumpe, Aktion
+  „Nachricht senden“ mit `{{triggerEvent.data.error}}`.
+- Die Steckdose der Spülmaschine einschalten, wenn die Solarleistung 2000 W
+  übersteigt: Auslöser „ein Gerätewert ändert sich“ auf **Solarleistung**
+  (Victron) oder **AC-Leistung** (Wechselrichter), Bedingung über 2000,
+  Aktion „einschalten“.
+- Den Warmwasser-Sollwert nachts senken: geplanter Auslöser um 22 Uhr, Aktion
+  „Wert setzen“ von **WW-Sollwert** auf 45 (Schreiben erlaubt, Sollwert mit
+  seinen Grenzen deklariert).
+
+## Fehlerbehebung
+
+- **„Cannot connect ... ECONNREFUSED“**: An dieser Adresse und diesem Port
+  lauscht nichts, oder Modbus TCP ist auf dem Gerät nicht aktiviert. **„No
+  answer ... within 3000 ms“**: falsche Adresse, ein schlafendes Gerät
+  (Wechselrichter nachts), ein Gateway, dessen serielle Einstellungen
+  (Baudrate, Parität) nicht zum Gerät passen, oder das falsche Framing.
+- **„Modbus exception 11“**: Das Gateway antwortet, aber nicht das Gerät
+  dahinter: Prüfe die Unit-ID und die RS-485-Verkabelung (A/B).
+- **„lehnt jedes Register ab“ / Ausnahme 2**: Profil oder Adressen passen nicht
+  zum Gerät. Nutze **Lesen testen** mit `count=` rund um die Adresse und prüfe,
+  ob die Unterlagen ab 1 zählen oder 30001/40001 addieren.
+- **Ein Wert 10- oder 100-mal zu groß**: Füge `scale=0.1` oder `scale=0.01`
+  hinzu. **Ein riesiger oder unsinniger Wert**: Probiere mit **Lesen testen**
+  einen anderen Datentyp oder `swap=word`; die Aktion zeigt alle Lesarten auf
+  einmal.
+- **Ein Huawei-Wechselrichter, der nicht antwortet**: Er nimmt nur einen
+  Modbus-TCP-Client gleichzeitig an (schließe die anderen) und braucht Modbus
+  TCP auf „Aktivieren (uneingeschränkt)“ im SDongle.
+- **Protokolle**: Setze `LOG_LEVEL=debug` bei der Integration, um jede Abfrage
+  zu sehen.
+
+## Grenzen
+
+- Höchstens vier Geräte, 40 eigene Register pro Gerät.
+- Nur Modbus TCP und RTU über TCP: keine serielle Schnittstelle (der Container
+  hat keine), kein Modbus UDP, kein ASCII.
+- Keine automatische Erkennung: Modbus hat keine, die Adressen werden
+  eingetragen.
+- Das SunSpec-Profil liest nur die Wechselrichter- und Zählermodelle (kein
+  Batteriemodell 802, kein MPPT-Modell 160).
+- Schreiben: nur Schalter und Temperatur-Sollwerte; kein Bit eines Registers,
+  kein 64-Bit-Wert, kein anderer numerischer Sollwert (Gladys hat kein
+  neutrales numerisches Bedienelement).
+- Funktionsnamen werden beim Hinzufügen eines Geräts festgelegt
+  (Gladys-Regel).
+- Ohne die Hardware entwickelt: Die Profile werden mit simulierten Geräten
+  getestet, die nach den Tabellen der Hersteller gebaut sind.
+
+Eastron, SMA, SolarEdge, Fronius, Kostal, Huawei, Victron Energy und SunSpec
+sind Marken ihrer jeweiligen Inhaber. Diese Integration ist mit keinem von
+ihnen verbunden und wird von keinem von ihnen unterstützt.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Modbus TCP in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Beschreibe unten bis zu vier Modbus-Geräte: die Adresse des Geräts oder seines Modbus-TCP-Gateways, seine Unit-ID, dann ein fertiges Profil oder deine eigenen Register. Speichere und füge die Geräte im Tab „Entdecken“ hinzu. Die Schaltfläche „Lesen testen“ liest ein Register, um seinen Typ zu finden, bevor du es deklarierst. |
+| Sprache der Funktionsnamen | `select` | Nein | Gladys behält die Namen, die beim Hinzufügen eines Geräts vergeben werden. |
+| Lesen alle | `select` | Nein | Gladys nimmt 300 Werte pro Minute an: Bei vielen Registern wird langsamer gelesen, um darunter zu bleiben. |
+| Antwortzeit (s) | `number` | Nein | Für einen langsamen RS-485-Bus (9600 Baud und weniger) erhöhen. |
+| Schreiben erlauben | `boolean` | Nein | Standardmäßig aus. Eingeschaltet lassen sich nur die als switch oder setpoint deklarierten Register aus Gladys ändern. Ein falsch geschriebenes Register kann eine Anlage beschädigen: Prüfe jede Adresse in der Dokumentation des Herstellers. |
+| Gerät 1 | `section` | Nein | Ein Gerät und gegebenenfalls sein Modbus-TCP-Gateway. Mehrere Geräte hinter einem RS-485-Gateway teilen seine Adresse und seinen Port, mit verschiedenen Unit-IDs. Gib dem Gerät (oder dem Gateway) eine feste IP-Adresse: Gladys erkennt das Gerät daran. |
+| IP-Adresse oder Hostname | `string` | Nein |  |
+| TCP-Port | `number` | Nein | 502 für Modbus TCP. Huawei: 502 über den SDongle, 6607 bei manchen Wechselrichtern. |
+| Unit-ID (Slave) | `number` | Nein | Meist 1. SMA: 126 (SunSpec) oder 3. Victron GX: 100. Fronius-Zähler: 240. Eastron-Zähler: die am Zähler eingestellte Adresse. |
+| Profil | `select` | Nein | Ein Profil kennt die Register des Geräts. SunSpec deckt viele Wechselrichter und Zähler ab (SMA, SolarEdge, Fronius, Kostal...): Die Modelle werden erkannt. |
+| Framing | `select` | Nein | RTU über TCP für ein RS-485-Gateway im transparenten Modus (USR, Waveshare, Elfin auf „none“ / „transparent“). |
+| Eigene Register | `string` | Nein | Einträge durch Semikolons getrennt: Name: Tabelle Adresse, dann Typ, Art und Optionen. Tabellen: holding, input, coil, discrete. Typen: int16 (Standard), uint16, int32, uint32, float32, int64, uint64, float64, bit0-bit15. Arten: temperature, humidity, pressure, power, energy, production, solar_power, grid_power, voltage, current, battery, volume, duration, value (Standard), binary, switch, setpoint. Optionen: scale=0.1 offset= unit= swap=word min= max= precision= on= off=. |
+| Gerät 2 | `section` | Nein | Lass die Adresse leer, wenn du dieses Gerät nicht nutzt. |
+| IP-Adresse oder Hostname | `string` | Nein |  |
+| TCP-Port | `number` | Nein |  |
+| Unit-ID (Slave) | `number` | Nein |  |
+| Profil | `select` | Nein |  |
+| Framing | `select` | Nein |  |
+| Eigene Register | `string` | Nein |  |
+| Gerät 3 | `section` | Nein | Lass die Adresse leer, wenn du dieses Gerät nicht nutzt. |
+| IP-Adresse oder Hostname | `string` | Nein |  |
+| TCP-Port | `number` | Nein |  |
+| Unit-ID (Slave) | `number` | Nein |  |
+| Profil | `select` | Nein |  |
+| Framing | `select` | Nein |  |
+| Eigene Register | `string` | Nein |  |
+| Gerät 4 | `section` | Nein | Lass die Adresse leer, wenn du dieses Gerät nicht nutzt. |
+| IP-Adresse oder Hostname | `string` | Nein |  |
+| TCP-Port | `number` | Nein |  |
+| Unit-ID (Slave) | `number` | Nein |  |
+| Profil | `select` | Nein |  |
+| Framing | `select` | Nein |  |
+| Eigene Register | `string` | Nein |  |
+
+## So installierst du Modbus TCP in Gladys
+
+1. Öffne in Gladys **Integrationen**: Modbus TCP erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-modbus:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-modbus](https://github.com/guim31/gladys-modbus).
+
+Modbus TCP benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Modbus TCP ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)
+- [Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-modbus) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-modbus/blob/HEAD/docs/de.md)

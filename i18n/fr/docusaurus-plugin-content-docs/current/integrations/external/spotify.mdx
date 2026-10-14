@@ -31,6 +31,7 @@ Cette intégration permet de contrôler vos appareils **Spotify Connect** depuis
 - **État de lecture** : Gladys reflète en temps réel si un appareil est en lecture ou en pause.
 - **Appareil « Spotify »** : un appareil séparé, unique, porte trois listes — playlists, morceaux récents, favoris. Choisir une option n'y lance rien : elle est simplement mémorisée comme sélection en attente, et le bouton lecture de n'importe quel appareil Spotify Connect la lance dès qu'on l'actionne.
 - **Widgets de tableau de bord** : lecture en cours avec pochette et commandes, lancement rapide de vos playlists/albums favoris, titres écoutés récemment.
+- **Scènes** : déclenchez une scène quand la lecture démarre, s’arrête ou change de titre, et lancez, mettez en pause ou lisez la lecture en cours depuis une scène.
 - **Actions** : tester la connexion, terminer une connexion manuellement, actualiser les playlists/morceaux récents/favoris, et se déconnecter, directement depuis l'écran de configuration. Pour réautoriser, il suffit de cliquer à nouveau sur « Se connecter avec Spotify ».
 
 ## Prérequis
@@ -109,6 +110,8 @@ Si, au retour de Spotify, votre navigateur affiche une **page d'erreur** (« imp
 
 Seuls les appareils **actuellement en ligne** (application Spotify ouverte, enceinte allumée et connectée) sont renvoyés par l'API Spotify. Si un appareil n'apparaît pas, ouvrez Spotify dessus puis relancez une découverte.
 
+Chaque appareil Spotify Connect affiche un badge **Cloud** tant que Spotify y tourne, et **Injoignable** une fois hors ligne (vérifié chaque minute) : une commande envoyée échoue alors jusqu’à ce que Spotify y soit rouvert.
+
 ## L'appareil « Spotify » : playlists, morceaux récents et favoris
 
 En plus de vos appareils Spotify Connect, l'intégration crée un appareil séparé et unique nommé **« Spotify »**. Il porte trois listes indépendantes :
@@ -140,6 +143,34 @@ L'intégration propose trois widgets, à ajouter depuis l'édition du tableau de
 Les boutons des widgets agissent directement sur l'appareil indiqué : ils n'utilisent pas la sélection en attente de l'appareil « Spotify ». Comme pour le reste de l'intégration, un compte **Premium** est nécessaire pour les commandes de lecture.
 
 > ℹ️ Certaines playlists éditoriales de Spotify (« Today's Top Hits », Mix du jour…) ne sont plus lisibles par les applications tierces : leur nom et leur pochette peuvent alors manquer dans le lancement rapide (le widget affiche « Playlist 1 »…), et leur lecture peut être refusée par Spotify.
+
+![Illustration des trois widgets en français : lecture en cours avec pochette et boutons, lancement rapide avec quatre pochettes, titres écoutés récemment (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-spotify/main/docs/assets/widgets.fr.png)
+
+## Scènes
+
+Nécessite Gladys 5.1.0 ou plus récent, comme les widgets.
+
+### Déclencheurs
+
+Vérifiés à chaque lecture de l’état (toutes les 15 secondes), un événement par changement. Chaque déclencheur peut être limité à un **appareil Spotify Connect** (laissez vide pour tous).
+
+| Déclencheur                | Quand                                                                                      | Variables                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| Spotify : lecture démarrée | Un appareil commence à jouer (ou la lecture passe sur lui)                                 | appareil, titre, artistes, album, URI Spotify |
+| Spotify : lecture arrêtée  | Un appareil qui jouait est mis en pause, arrêté, ou la lecture passe sur un autre appareil | les mêmes, sur ce qui s’est arrêté            |
+| Spotify : nouveau titre    | Un appareil continue de jouer, mais un autre titre ou épisode                              | les mêmes, sur le nouveau titre               |
+
+Exemple : _quand la lecture démarre sur « Salon », baisser les lumières du salon_. Rien n’est déclenché au démarrage de l’intégration, et les changements provoqués par les actions de scène de cette intégration ne déclenchent jamais ces déclencheurs : une scène ne peut pas boucler via Spotify. Un changement de moins de 15 secondes peut passer inaperçu.
+
+### Actions
+
+| Action                      | Paramètres                                                                                                                | Résultats pour les actions suivantes                                        |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Spotify : lancer la lecture | Lien ou URI Spotify (playlist, album, artiste ou titre, variables de scène acceptées), appareil (vide : l’appareil actif) | appareil, URI Spotify                                                       |
+| Spotify : mettre en pause   | Appareil (vide : ce qui joue)                                                                                             | appareil, était en lecture                                                  |
+| Spotify : lecture en cours  | —                                                                                                                         | en lecture, appareil, titre, artistes, album, URI Spotify, volume (0 à 100) |
+
+Exemple : _à 7 h en semaine, lancer la playlist « Matin » sur l’enceinte de la cuisine_, ou _quand je quitte la maison, mettre Spotify en pause_. Mettre en pause un appareil qui ne joue pas ne fait rien et réussit. L’appareil choisi doit être en ligne (Spotify ouvert dessus).
 
 ## Dépannage
 
@@ -174,7 +205,7 @@ Voici les paramètres demandés par Spotify dans son écran de configuration dan
 ## Comment installer Spotify dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Spotify apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-spotify:1.4.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-spotify:1.5.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-spotify](https://github.com/William-De71/gladys-spotify).
 

@@ -1,0 +1,212 @@
+---
+title: "Integración domótica Faikout, gratuita y de código abierto"
+sidebar_label: "Faikout"
+description: "Controle sus aires acondicionados Daikin en local mediante su módulo Faikout. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-faikout.png"
+keywords:
+  - "faikout"
+  - "domótica faikout"
+  - "gladys faikout"
+  - "faikout gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-faikout instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="faikout" />
+
+Esta integración conecta Gladys con sus aires acondicionados **Daikin**
+equipados con un módulo [**Faikout**](https://www.faikin.au) (antes _Faikin_).
+El Faikout sustituye el módulo Wi-Fi original y se controla **en local**, en su
+propia red: sin nube, sin cuenta, sin necesidad de Internet.
+
+En Gladys, cada aire acondicionado se convierte en un dispositivo con:
+
+- **encendido**, **modo** (auto, frío, calor, deshumidificación, solo
+  ventilación), **consigna** y **velocidad del ventilador**;
+- **oscilación** horizontal y vertical (activada o desactivada: sin posición fija), y los modos **Econo**, **Powerful**,
+  **Comfort**, **Streamer** y **unidad exterior silenciosa**, cuando su unidad
+  los tiene;
+- las lecturas: **temperatura de la habitación**, **temperatura exterior**,
+  temperaturas de **aspiración** y del **refrigerante**, **humedad**, **consumo eléctrico** y el **contador de energía** (kWh).
+
+La integración solo crea lo que su aire acondicionado realmente comunica: una
+función que su modelo no tiene no aparece.
+
+## Antes de empezar
+
+1. Instale el módulo Faikout en el aire acondicionado (consulte el
+   [manual de instalación de Faikout](https://codeberg.org/RevK/ESP32-Faikout/src/branch/main/Manuals/Setup.md)).
+2. Conéctelo a su Wi-Fi: en el primer arranque abre su propio punto de acceso,
+   con una página de configuración.
+3. Compruebe que puede abrir su página web (`http://<module address>/`) desde su
+   red y controlar el aire acondicionado desde ella.
+4. **Asígnele una dirección IP fija** (una reserva DHCP en su router). Esa es la
+   dirección que usará Gladys.
+
+Gladys habla con el módulo como lo hace su propia página web: mantenga
+activados los **controles web** del Faikout (`webcontrol`, activado por
+defecto).
+
+## Configuración
+
+En **Integraciones → Faikout → Configuración**:
+
+| Campo                          | Función                                                                                                                                                                                   |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Unidades Faikout**           | La dirección de cada módulo, separadas por comas. Un nombre seguido de `=` delante de la dirección da nombre al dispositivo.                                                              |
+| **Contraseña web**             | Solo si hay una **contraseña web** definida en los ajustes del Faikout (la misma para todas las unidades). En caso contrario, déjelo vacío. La contraseña de los ajustes no es necesaria. |
+| **Intervalo de actualización** | Frecuencia de lectura de cada aire acondicionado, en segundos (30 por defecto, de 5 a 600). Un cambio hecho con el mando aparece en Gladys dentro de este plazo.                          |
+
+Ejemplo:
+
+```
+Living room=192.168.1.50, Bedroom=192.168.1.51, 192.168.1.52
+```
+
+- Sin nombre, el dispositivo toma el nombre propio del módulo (su _hostname_).
+- Un nombre terminado en `.local` (p. ej. `guestac.local`) a menudo **no se
+  resuelve** dentro del contenedor de la integración: es preferible la
+  dirección IP.
+- Un puerto distinto de 80 se escribe `192.168.1.50:8080`.
+- Con una **contraseña web**, Gladys la envía como lo hace la página del
+  Faikout una vez iniciada la sesión (una cookie, en claro en su red, como
+  advierten los ajustes del Faikout). Gladys no conoce la contraseña de los
+  ajustes: nunca la necesita.
+
+Después pulse **Probar la conexión**: para cada unidad, el mensaje indica si
+responde, su modelo, su protocolo (S21, X50A…), su modo y la temperatura de la
+habitación.
+
+Por último, abra la pestaña **Descubrir** de la integración y cree los
+dispositivos que ofrece.
+
+## Qué significa el distintivo de cada dispositivo
+
+| Distintivo                | Significado                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| **Local**                 | El Faikout responde, y el aire acondicionado también.                               |
+| **Local** + punto naranja | El Faikout responde, pero **no el aire acondicionado**: compruebe el cable S21/X50. |
+| **Inaccesible**           | El Faikout no responde: apagado, fuera del Wi-Fi o con una dirección nueva.         |
+
+## Escenas
+
+### Desencadenantes
+
+| Desencadenante                                             | Cuándo                                                                                                                                                               |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Un aire acondicionado se desconecta o vuelve**           | El Faikout deja de responder (motivo `unreachable`), el aire acondicionado deja de responder al Faikout (motivo `aircon`), y después cuando todo vuelve a responder. |
+| **Un aire acondicionado se cambia fuera de Gladys**        | Encendido, modo, consigna o ventilador cambiados con el mando IR, la página web del Faikout o un temporizador del Faikout. Nunca por el propio Gladys.               |
+| **Un aire acondicionado empieza o termina un desescarche** | Al calentar con frío, la unidad exterior se detiene unos minutos para fundir su escarcha.                                                                            |
+
+Cada desencadenante puede filtrarse por aire acondicionado y por estado (o por
+lo que ha cambiado). Los valores están disponibles en la escena, p. ej.
+`{{triggerEvent.data.mode}}` o `{{triggerEvent.data.temperature}}`.
+
+Los cambios hechos por **Faikout auto** (que mueve la consigna y el modo por sí
+solo) no activan «se cambia fuera de Gladys».
+
+### Acciones
+
+| Acción                            | Función                                                                                                                                                     |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ajustar un aire acondicionado** | Encendido, modo, consigna y ventilador de una vez. Un campo vacío conserva su valor.                                                                        |
+| **Ajustar Faikout auto**          | El Faikout calienta o enfría por sí solo para mantener la habitación entre _objetivo − margen_ y _objetivo + margen_. Un margen de 0 lo detiene.            |
+| **Leer un aire acondicionado**    | Una lectura reciente: en línea, encendido, modo, consigna, temperatura de la habitación y exterior, humedad. Nunca falla: compruebe la salida **En línea**. |
+
+Sus salidas pueden usarse en las siguientes acciones de la escena
+(condiciones, mensajes…).
+
+Para una sola orden (encender, cambiar la consigna), también funciona la acción
+estándar **Establecer valor del dispositivo** de Gladys.
+
+## Supervisión de energía
+
+Cuando el aire acondicionado comunica su contador de energía (campo de Faikout
+`Whoutside`, normalmente con el protocolo S21), el dispositivo obtiene una
+función **Contador de energía**, en kWh. Es un _índice_: Gladys calcula por sí
+solo el consumo cada 30 minutos y su coste, y los muestra en la integración
+**Supervisión de energía**.
+
+- Una vez creado el dispositivo, abra **Integraciones → Supervisión de energía** en Gladys: el aire
+  acondicionado aparece allí, vinculado a su contador principal si tiene uno.
+- El contador avanza en pasos de 100 Wh: en un periodo corto, el consumo
+  aparece en escalones.
+- El **consumo eléctrico** (en W) sigue disponible para los valores en directo.
+- Un aire acondicionado que no comunica este contador no obtiene la función.
+- **Multi-split** (varias unidades interiores en una unidad exterior): el
+  contador es el de la unidad exterior, así que cada Faikout puede comunicar el
+  mismo: compruebe en **Supervisión de energía** que no se cuenta dos veces.
+
+## Widgets del panel
+
+- **Aire acondicionado Faikout**: una unidad. Mosaicos en directo (habitación,
+  consigna, exterior, potencia), una curva de las temperaturas de la
+  habitación, de consigna y exterior en 24 h, y después estado, modo,
+  ventilador, lamas, modos de confort, y Faikout auto o desescarche mientras
+  están en marcha. Un botón **Encender** o **Apagar** (lo contrario del estado
+  actual) y **Actualizar**. Elija la unidad en la configuración del widget.
+- **Vista general Faikout**: todos sus aires acondicionados en una tarjeta, con
+  su modo y la temperatura de la habitación.
+
+## Solución de problemas
+
+- **«sin respuesta»** en la prueba de conexión: abra `http://<address>/` desde
+  un ordenador de la misma red que Gladys. Si la página no se abre, el problema
+  es la red (dirección, Wi-Fi, VLAN), no Gladys.
+- **«falta la contraseña web o es incorrecta»**: hay una contraseña web definida
+  en el Faikout. Escriba la misma en **Contraseña web** (cópiela de los ajustes
+  del Faikout).
+- **Una orden falla con «did not apply»**: el aire acondicionado no tiene esa
+  función, o el Faikout no puede controlarla.
+- **Faikout auto no se aplica**: el Faikout está controlado por un regulador
+  externo (EnvMon, orden MQTT `control`), que tiene prioridad.
+- **Un dispositivo sigue inaccesible tras un cambio de dirección**: ponga la
+  nueva dirección en **Unidades Faikout**. El dispositivo de Gladys está ligado
+  a la dirección MAC del módulo: conserva su historial y sus escenas.
+
+## Privacidad
+
+Todo se queda en su red: la integración solo habla con las direcciones que
+usted le indica, por HTTP y WebSocket locales. La contraseña web, si la hay, la
+guarda Gladys con la configuración y solo se envía a las unidades. En su volumen
+`/data` solo guarda la dirección MAC, el nombre, el modelo y la lista de
+funciones de cada unidad, para volver a encontrar sus dispositivos incluso
+cuando un aire acondicionado está apagado al arrancar.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Faikout te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Faikout sustituye el módulo Wi-Fi de un aire acondicionado Daikin y se controla en su red, sin nube. Conecte primero cada unidad a su Wi-Fi (consulte el manual de instalación de Faikout), mantenga activados sus controles web (lo están por defecto) y después indique las unidades a continuación. Gladys detecta sus funciones por sí solo. |
+| Unidades Faikout | `string` | No | La dirección de cada unidad, separadas por comas. Es preferible una dirección IP fija: los nombres terminados en .local a menudo no se resuelven dentro de la integración. Ponga un nombre y = delante para nombrar el dispositivo, p. ej. Salón=192.168.1.50. |
+| Contraseña web | `secret` | No | Solo si hay una contraseña web definida en los ajustes del Faikout: la misma para todas las unidades. En caso contrario, déjelo vacío. La contraseña de los ajustes no es necesaria. |
+| Intervalo de actualización (s) | `number` | No | Frecuencia de lectura de cada unidad, en segundos. Un cambio hecho con el mando a distancia aparece en Gladys como máximo tras este plazo. |
+
+## Cómo instalar Faikout en Gladys
+
+1. En Gladys, abre **Integraciones**: Faikout aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-faikout:1.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-faikout](https://github.com/prohand/gladys-faikout).
+
+Faikout requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Faikout es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-faikout) — [fuente de esta documentación](https://github.com/prohand/gladys-faikout/blob/HEAD/docs/es.md)

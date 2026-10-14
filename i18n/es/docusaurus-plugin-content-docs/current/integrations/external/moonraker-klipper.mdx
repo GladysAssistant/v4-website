@@ -1,0 +1,264 @@
+---
+title: "Integración domótica Moonraker (Klipper), gratuita y de código abierto"
+sidebar_label: "Moonraker (Klipper)"
+description: "Siga y controle sus impresoras 3D Klipper: progreso, temperaturas, alertas, macros. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-moonraker.png"
+keywords:
+  - "moonraker (klipper)"
+  - "domótica moonraker (klipper)"
+  - "gladys moonraker (klipper)"
+  - "moonraker (klipper) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-moonraker instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="moonraker-klipper" />
+
+Siga y controle sus impresoras 3D Klipper desde Gladys gracias a
+[Moonraker](https://moonraker.readthedocs.io), el servidor de API detrás de
+Mainsail y Fluidd: Voron, RatRig, Sovol, Elegoo, Creality K1 o K2 rooteadas y
+cualquier impresora con Klipper. Todo se queda en su red local: Gladys habla
+directamente con Moonraker, sin cuenta en la nube.
+
+La integración se ha probado con un Moonraker real que controla Klipper con
+un microcontrolador simulado (simulavr): impresiones reales, pausa,
+reanudación, cancelación, un error de impresión, una parada de emergencia,
+una webcam. **Desarrollada sin impresora física: sus comentarios son
+bienvenidos** en el foro de Gladys.
+
+## Requisitos
+
+- Gladys Assistant 5.1 o posterior.
+- Una impresora con Klipper y Moonraker (instalados con Mainsail o Fluidd,
+  KIAUH, MainsailOS, FluiddPi…), accesible desde la máquina de Gladys por el
+  puerto 7125 o por la dirección de Mainsail o Fluidd.
+- O bien un Moonraker que confíe en la red de Gladys (`trusted_clients` en
+  `moonraker.conf`, el ajuste por defecto de la mayoría de las instalaciones
+  para las redes locales), o bien una clave de API de Moonraker.
+- Para la imagen de la webcam: una webcam declarada en Mainsail o Fluidd, con
+  una dirección de captura (el caso por defecto con crowsnest o
+  mjpg-streamer).
+
+## Configuración
+
+1. Abra la pestaña **Configuración** de la integración.
+2. En **Dirección de Moonraker**, introduzca la dirección IP de la impresora,
+   por ejemplo `192.168.1.50`: la integración usa entonces el puerto 7125, el
+   de Moonraker. También puede introducir la dirección con la que abre
+   Mainsail o Fluidd, como `http://192.168.1.50` (su servidor web reenvía la
+   API de Moonraker), o un puerto propio (`192.168.1.50:7126`). Prefiera una
+   dirección IP: los nombres como `voron.local` no se resuelven en el
+   contenedor de la integración.
+3. **Clave de API** solo es necesaria si Moonraker no confía en la red de
+   Gladys. Mainsail: **Ajustes → Autorización**; Fluidd: **Ajustes →
+   Autenticación**; o `http://<impresora>:7125/access/api_key` desde una
+   máquina de confianza.
+4. Una segunda o tercera impresora: rellene **Impresora 2** e **Impresora 3**
+   de la misma forma (un Moonraker cada una).
+5. **Idioma** elige el idioma de los nombres de las funciones y de los textos
+   que crea la integración (francés por defecto). Los nombres de las funciones
+   se fijan al añadir el dispositivo en Gladys.
+6. Guarde. **Probar la conexión** muestra el estado de cada impresora y la
+   lista de sus macros.
+
+Después, añada la impresora desde la pestaña **Descubrimiento**.
+
+## El dispositivo impresora
+
+Un dispositivo por Moonraker, con el nombre de host de la impresora (`voron`,
+`mainsailos`…), o «Klipper». Los valores llegan en directo de Moonraker
+(Klipper envía sus cambios varias veces por segundo); la integración los
+transmite a Gladys como mucho cada 5 segundos, los cambios de estado al
+instante.
+
+| Función                     | Qué muestra                                                                                                                                                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Estado                      | Lista, Imprimiendo, En pausa, Terminada, Cancelada, Error de impresión, Klipper detenido (shutdown), Error de Klipper, Klipper arrancando, Klipper desconectado, Moonraker inaccesible, Clave de API ausente o rechazada |
+| Archivo                     | El archivo que se está imprimiendo, o el último                                                                                                                                                                          |
+| Progreso                    | Avance de la impresión, como en la pantalla de la impresora (el 100 % se conserva tras una impresión terminada)                                                                                                          |
+| Tiempo transcurrido         | Desde el inicio de la impresión, en minutos                                                                                                                                                                              |
+| Tiempo restante             | Según la estimación del laminador cuando el archivo la tiene, si no extrapolado del progreso, en minutos (0 en reposo)                                                                                                   |
+| Capa, Capas totales         | Cuando el laminador las envía (`SET_PRINT_STATS_INFO`, como los perfiles Klipper de PrusaSlicer, OrcaSlicer y SuperSlicer); 0 si no                                                                                      |
+| Boquilla, Boquilla 2, Cama… | Temperaturas, en grados enteros: cada extrusor, la cama caliente, cada `heater_generic` (un recinto…)                                                                                                                    |
+| … (consigna)                | Consignas, solo lectura: calentar con el widget o las acciones de escena                                                                                                                                                 |
+| Sensores de temperatura     | Cada `temperature_sensor` y `temperature_fan` de Klipper (Raspberry Pi, MCU, recinto…), seis como máximo                                                                                                                 |
+| Ventilador de capa          | Velocidad del `[fan]`, en porcentaje                                                                                                                                                                                     |
+| Pausar, Reanudar            | Pulsadores                                                                                                                                                                                                               |
+| Webcam                      | La captura de la primera webcam de Mainsail o Fluidd, actualizada cada minuto                                                                                                                                            |
+
+A propósito, el dispositivo no tiene botón **cancelar**: una pulsación sin
+confirmación arruinaría una impresión. La cancelación la ofrecen el widget
+(con confirmación) y las escenas. Las temperaturas y consignas también son de
+solo lectura: un calentador de la impresora nunca puede encenderse por error
+desde el panel, ni con HomeKit, Alexa o Google. Se calienta con el widget
+(precalentar, enfriar) y las acciones de escena. Para Gladys son
+«temperaturas de dispositivo»: nunca cuentan en la temperatura de la
+habitación. Los límites de cada calentador son el `max_temp` de Klipper.
+
+Lo que tiene la impresora (calentadores, sensores, ventilador, webcam) se lee
+en Klipper en cada conexión. Cuando cambia, Gladys propone actualizar el
+dispositivo en la pestaña **Descubrimiento**.
+
+## Widget del panel
+
+Añada el widget **Impresión 3D Klipper** a un panel y elija la impresora en
+sus ajustes. Muestra:
+
+- el indicador de progreso, el tiempo restante, las temperaturas de la
+  boquilla y de la cama (en directo);
+- el estado, el archivo, la capa, el tiempo transcurrido, la hora de fin
+  prevista, las consignas activas;
+- los botones útiles en cada momento: **Pausar** o **Reanudar** y
+  **Cancelar** (pide confirmación) durante una impresión; **Precalentar** y,
+  cuando algo calienta, **Enfriar** en reposo; **Reiniciar Klipper** (pide
+  confirmación) después de que Klipper se detenga por un error.
+
+Las temperaturas de precalentamiento son ajustes del widget (200 °C y 60 °C
+por defecto, PLA). No hay botón de parada de emergencia: la parada de
+emergencia de Klipper es para alguien que está junto a la impresora.
+
+## Desencadenantes de escena
+
+En la categoría **Integraciones** del editor de escenas. Cada uno puede
+limitarse a una impresora.
+
+- **Impresión iniciada**: variables nombre de la impresora, archivo.
+- **Impresión terminada**: variables nombre de la impresora, archivo, tiempo
+  de impresión (en texto, como `1 h 05 min`, y en minutos).
+- **Impresión fallida o cancelada**: puede limitarse a un motivo (cancelada,
+  error). Un error incluye una parada de Klipper durante la impresión.
+  Variables nombre de la impresora, archivo, tiempo de impresión, motivo.
+- **Impresión en pausa**: desde Gladys, Mainsail, Fluidd, la pantalla de la
+  impresora o un sensor de filamento. Variables nombre de la impresora,
+  archivo, tiempo transcurrido.
+- **Klipper detenido por un error**: Klipper ha pasado a parada (shutdown) o
+  error (fallo de calentador, microcontrolador perdido, parada de
+  emergencia). Variables nombre de la impresora, mensaje de Klipper (por
+  ejemplo `MCU 'mcu' shutdown: ADC out of range`).
+
+Las variables se leen en las acciones siguientes con, por ejemplo,
+`{{triggerEvent.data.file}}` y `{{triggerEvent.data.duration}}`.
+
+## Acciones de escena
+
+- **Pausar, reanudar o cancelar una impresión**: devuelve **Aplicado** falso
+  cuando no había nada que pausar, reanudar o cancelar (la escena continúa).
+- **Precalentar la impresora**: consignas de todas las boquillas y de la
+  cama, 200 °C y 60 °C por defecto, dentro del `max_temp` de cada
+  calentador. Se rechaza durante una impresión (Aplicado: falso): una escena
+  que precalienta a una hora fija nunca toca una impresión en curso.
+- **Apagar los calentadores**: `TURN_OFF_HEATERS`, también durante una
+  impresión (que entonces falla).
+- **Ejecutar una macro de Klipper**: ejecuta una macro G-code de la
+  impresora por su nombre, sin parámetros, por ejemplo `LIGHTS_ON`. Solo se
+  aceptan las macros que lista Klipper (vea **Probar la conexión**); las
+  macros privadas (cuyo nombre empieza por `_`) y el G-code libre se
+  rechazan. Aplicado: falso cuando Klipper no está listo.
+
+Una orden que Klipper tarda en confirmar (una pausa espera los movimientos de
+su cola, una macro puede calentar durante minutos) se considera aceptada al
+cabo de 15 segundos.
+
+## Ejemplos de escenas
+
+- **Impresión terminada → notificación**: desencadenante Impresión
+  terminada, acción «Enviar un mensaje»:
+  `{{triggerEvent.data.file}} terminado en {{triggerEvent.data.duration}}`.
+- **Klipper detenido → alerta**: desencadenante Klipper detenido por un
+  error, mensaje `Impresora detenida: {{triggerEvent.data.message}}`.
+- **Humo detectado → pararlo todo**: desencadenante en el detector de humo,
+  acciones Pausar, reanudar o cancelar una impresión (cancelar), luego Apagar
+  los calentadores, luego apagar el enchufe inteligente de la impresora.
+- **Lista para el desayuno**: a las 7 h entre semana, Precalentar la
+  impresora (sin efecto si hay una impresión en curso).
+- **Luz para la webcam**: Impresión iniciada → Ejecutar una macro de Klipper
+  `LIGHTS_ON`, o encender la luz del taller; Impresión terminada o fallida →
+  apagarla.
+
+## Solución de problemas
+
+- **Moonraker inaccesible**: compruebe la dirección desde la máquina de
+  Gladys (`curl http://192.168.1.50:7125/server/info`). Use una dirección IP
+  en lugar de `voron.local`. Detrás de Mainsail o Fluidd, introduzca su
+  dirección sin el puerto.
+- **Clave de API ausente o rechazada**: Moonraker no confía en la red de
+  Gladys. Pegue su clave de API, o añada la red de Gladys a
+  `trusted_clients` en `moonraker.conf`. Una clave regenerada invalida la
+  anterior.
+- **Klipper detenido (shutdown)** o **Error de Klipper**: Klipper necesita su
+  atención (su mensaje está en el desencadenante, y en Mainsail o Fluidd).
+  Una vez corregida la causa, **Reiniciar Klipper** en el widget ejecuta
+  `FIRMWARE_RESTART`.
+- **La capa se queda en 0**: el laminador no envía `SET_PRINT_STATS_INFO`;
+  añádalo al G-code de cambio de capa del laminador (vea la documentación de
+  Klipper).
+- **El tiempo restante es aproximado**: sin los metadatos del laminador, se
+  extrapola del progreso del archivo, poco fiable al principio de una
+  impresión.
+- **No hay imagen de la webcam**: la imagen debe ser un JPEG de 150 KB como
+  máximo (límite de Gladys): reduzca la resolución de la webcam. Una
+  dirección de captura relativa a Mainsail (`/webcam/?action=snapshot`) se
+  lee en el puerto 80 de la impresora.
+- Registros: en la página de la integración en Gladys, o `docker logs` en el
+  host. `LOG_LEVEL=debug` da el detalle. La clave de API nunca aparece en los
+  registros.
+
+## Límites
+
+- Tres Moonraker como máximo.
+- No se envían archivos, no se inician impresiones desde Gladys, no hay
+  G-code libre, ni timelapse, ni Spoolman, ni los enchufes («power devices»)
+  de Moonraker.
+- La imagen de la webcam es una captura actualizada cada minuto (y bajo
+  demanda), no un flujo de vídeo; solo se usa la primera webcam.
+- Klipper puede fusionar un evento de menos de un cuarto de segundo con el
+  siguiente (una impresión que falla al instante se indica como fallida, sin
+  «iniciada»).
+- Desarrollada sin impresora física (se usó Klipper con un microcontrolador
+  simulado): sus comentarios son bienvenidos.
+- Sin relación con los proyectos Klipper y Moonraker.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Moonraker (Klipper) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conecte su impresora Klipper | `section` | No | Introduzca la dirección de Moonraker: la dirección IP de la impresora (puerto 7125 por defecto) o la dirección con la que abre Mainsail o Fluidd. Solo se necesita una clave de API si Moonraker no confía en su red. Hasta tres impresoras. |
+| Dirección de Moonraker | `string` | No |  |
+| Clave de API (opcional) | `secret` | No | Mainsail: Ajustes, Autorización, clave de API. Fluidd: Ajustes, Autenticación. Déjela vacía en una red de confianza. |
+| Impresora 2 (opcional) | `section` | No |  |
+| Dirección de Moonraker 2 | `string` | No |  |
+| Clave de API 2 (opcional) | `secret` | No |  |
+| Impresora 3 (opcional) | `section` | No |  |
+| Dirección de Moonraker 3 | `string` | No |  |
+| Clave de API 3 (opcional) | `secret` | No |  |
+| Opciones | `section` | No | Idioma de los nombres y textos que crea la integración (los nombres de las funciones se fijan al añadir el dispositivo). |
+| Idioma | `select` | No |  |
+
+## Cómo instalar Moonraker (Klipper) en Gladys
+
+1. En Gladys, abre **Integraciones**: Moonraker (Klipper) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-moonraker:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-moonraker](https://github.com/guim31/gladys-moonraker).
+
+Moonraker (Klipper) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Moonraker (Klipper) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-moonraker) — [fuente de esta documentación](https://github.com/guim31/gladys-moonraker/blob/HEAD/docs/es.md)

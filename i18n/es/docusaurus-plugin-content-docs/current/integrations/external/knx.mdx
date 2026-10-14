@@ -1,0 +1,157 @@
+---
+title: "Integración domótica KNX, gratuita y de código abierto"
+sidebar_label: "KNX"
+description: "Controle su instalación KNX con una interfaz IP: luces, persianas, sensores, escenas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-knx.jpg"
+keywords:
+  - "knx"
+  - "domótica knx"
+  - "gladys knx"
+  - "knx gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/William-De71/gladys-knx instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="knx" />
+
+## Presentación
+
+Esta integración conecta Gladys con una instalación KNX a través de una **interfaz o un router IP KNX** de su red local. Luces, interruptores, persianas y cortinas, sensores y termostatos de estancia del bus KNX se convierten en dispositivos de Gladys: los controla desde el panel y las escenas, y sus estados siguen al bus en tiempo real.
+
+Los dispositivos KNX no se pueden descubrir: el significado de cada dirección de grupo está en su proyecto ETS. Declara cada dispositivo una vez en la configuración de la integración, con sus direcciones de grupo, y luego lo añade desde la pestaña **Descubrir** como cualquier dispositivo descubierto.
+
+Todo permanece en su red local (insignia **local**): la integración se comunica con la interfaz por KNXnet/IP, ningún dato sale a Internet.
+
+![Widget Bus KNX: conexión, telegramas por minuto, últimos telegramas y botones (ilustración generada, no una captura de pantalla)](https://raw.githubusercontent.com/William-De71/gladys-knx/main/docs/assets/widgets.es.png)
+
+## Requisitos
+
+- Gladys Assistant 5.1.1 o posterior.
+- Una interfaz IP KNX (tunneling) o un router IP KNX en la misma red que Gladys, con un túnel libre.
+- Su proyecto ETS, o al menos la lista de direcciones de grupo de los dispositivos que quiere integrar (con sus tipos de punto de datos, DPT).
+- Para una interfaz KNX IP Secure: la dirección individual, el ID de usuario y la contraseña de un túnel (ETS, propiedades de la interfaz).
+
+## Configuración
+
+### Conexión
+
+1. **Conexión**: el tunneling UDP sirve para la mayoría de las interfaces. Elija tunneling TCP para KNX IP Secure y las interfaces recientes. El enrutamiento (multicast) necesita un router IP KNX y normalmente no llega al contenedor de la integración: es preferible el tunneling.
+2. **Dirección de la interfaz IP KNX**: su dirección IP o su nombre de host. Déjela vacía para usar la primera interfaz encontrada en la red; el botón **Buscar interfaces IP KNX** muestra las que responden.
+3. **Puerto**: 3671, salvo que su interfaz use otro.
+4. **Dirección individual de Gladys**: opcional con tunneling (la interfaz asigna la dirección de su túnel), obligatoria con enrutamiento (una dirección libre de la línea, reservada en ETS).
+5. Guarde y pulse **Probar la conexión**.
+
+### KNX IP Secure
+
+Elija **tunneling TCP**, marque **Usar KNX IP Secure** e indique la **dirección individual del túnel** (por ejemplo 1.1.254), el **ID de usuario del túnel** y la **contraseña del usuario del túnel** de ETS. El **código de autenticación del dispositivo** es opcional: con él, la integración comprueba que habla con su interfaz. KNX Data Secure (comunicación de grupo cifrada) no es compatible.
+
+### Declarar sus dispositivos
+
+Al final de la página de configuración, un botón por clase de dispositivo abre un formulario. Las direcciones de grupo se escriben como en ETS: 1/2/3 (tres niveles), 1/515 (dos niveles) y 2563 (libre) son la misma dirección. La **dirección de estado** es el objeto de estado del actuador (indicador de lectura activado en ETS): sin ella, Gladys conserva la última orden como estado.
+
+| Botón                      | Direcciones de grupo                                                                                                                                              | Funciones de Gladys                                    |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Declarar una luz           | conmutación (DPT 1.001) y estado, brillo (5.001) y estado, color RGB (232.600) y estado, temperatura de color (7.600) y estado                                    | encendido/apagado, brillo, color, temperatura de color |
+| Declarar un interruptor    | conmutación (1.001) y estado                                                                                                                                      | encendido/apagado (enchufe, válvula, bomba…)           |
+| Declarar una persiana      | subir/bajar (1.008), parada (1.007 o 1.010), posición (5.001) y estado                                                                                            | abrir / cerrar / parar, posición                       |
+| Declarar un sensor         | valor: temperatura, humedad, iluminancia, CO2, presión atmosférica, velocidad del viento, potencia, contador de energía, tensión, corriente, porcentaje, contador | la medida, con su unidad                               |
+| Declarar un sensor binario | estado (1.x): movimiento, presencia, contacto de ventana o puerta, humo, fuga de agua, lluvia, otro                                                               | el estado                                              |
+| Declarar un termostato     | consigna (9.001) y estado, temperatura medida                                                                                                                     | consigna, temperatura                                  |
+
+La **dirección de grupo principal** (la de conmutación, la de subir/bajar, la del valor, la de consigna) identifica el dispositivo: declarar de nuevo la misma clase con la misma dirección principal lo actualiza. **Listar los dispositivos** muestra las declaraciones, **Quitar un dispositivo declarado** acepta un nombre o una dirección principal. Las declaraciones se guardan en la configuración de Gladys, y por tanto en sus copias de seguridad.
+
+Abra después la pestaña **Descubrir** y añada los dispositivos. En Gladys una persiana está abierta al 100 % y cerrada al 0 % (KNX indica lo contrario; marque **Invertir la posición** si la suya ya lo hace). También se entiende una temperatura, una potencia o una tensión enviada como número de coma flotante de 4 bytes (DPT 14).
+
+### Estados y escenas
+
+- **Leer los estados al arrancar** y **Volver a leer los estados cada (minutos)**: la integración pide su valor a las direcciones de estado al conectarse y luego en este intervalo (0: nunca). Los dispositivos KNX envían ellos mismos sus cambios; esto solo recupera los telegramas enviados mientras Gladys estaba detenida.
+- **Direcciones de grupo para escenas**: los telegramas en estas direcciones inician las escenas «Se recibe un telegrama KNX». Sepárelas con comas, use * para todo un grupo principal o intermedio (1/0/_, 2/_) y añada :DPT para decodificar el valor (1/0/7:9.001).
+- **Idioma de los nombres de funciones**: el idioma de los nombres que reciben las funciones al añadir un dispositivo.
+
+## Uso
+
+### Dispositivos
+
+Los dispositivos añadidos se comportan como cualquier dispositivo de Gladys: panel, habitaciones, historial, escenas, voz y chat. Un dispositivo sin dirección de estado muestra la última orden enviada desde Gladys, y también las órdenes que llegan del bus (un pulsador de pared en la misma dirección de grupo).
+
+### Widget
+
+El widget **Bus KNX** muestra la conexión, los telegramas del último minuto, el número de dispositivos declarados y los últimos telegramas con el nombre del dispositivo y su valor. **Leer estados** pide su valor a todas las direcciones de estado, **Reconectar** abre una nueva conexión con la interfaz. Sus ajustes: el número de telegramas mostrados y un filtro de direcciones de grupo (1/_, 2/1/_).
+
+### Disparadores de escena
+
+- **Se recibe un telegrama KNX**: en una dirección del campo «Direcciones de grupo para escenas». Filtros: dirección de grupo (forma de tres niveles), tipo de telegrama (escritura, respuesta, solicitud de lectura), valor (true, false, 21.5…). Variables: dirección de grupo, emisor, tipo de telegrama, valor, valor numérico, datos en bruto.
+- **Se pierde la conexión KNX**, **Se restablece la conexión KNX** (tras una pérdida): la interfaz y el motivo, o la duración del corte en segundos.
+
+### Acciones de escena
+
+- **Enviar un valor al bus KNX**: una dirección de grupo, un tipo de punto de datos (1.001, 5.001, 9.001, 232.600…) y un valor (on, off, 21.5, #ff8000, un texto o una variable de escena). Cualquier dirección de grupo, aunque no sea un dispositivo en Gladys.
+- **Leer un valor del bus KNX**: pide su valor a una dirección de grupo; las acciones siguientes reciben el valor, el valor numérico y los datos en bruto.
+- **Recuperar una escena KNX**: envía un número de escena de 1 a 64 (DPT 17.001) a una dirección de grupo de escena.
+
+### Ejemplos de escenas
+
+- Cuando el pulsador «Apagar todo» de la entrada (dirección de grupo 0/0/1 en «Direcciones de grupo para escenas») envía off → apagar las luces de Gladys que no son KNX y enviar una notificación.
+- Cuando se activa la alarma → recuperar la escena KNX 3 «Ausente» en 0/1/0 y cerrar las persianas.
+- Cuando se pierde la conexión KNX → enviar un mensaje al hogar con el motivo.
+
+## Solución de problemas
+
+- **«No se encontró ninguna interfaz IP KNX»**: la búsqueda pasa por el núcleo de Gladys en la red local; algunas interfaces no responden. Introduzca la dirección IP de la interfaz en la configuración.
+- **La conexión falla o se corta**: una interfaz solo tiene unos pocos túneles (a menudo 4 o 5), compartidos con ETS y otros programas. Cierre el monitor de bus de ETS o reserve un túnel para Gladys en ETS. Con KNX IP Secure, compruebe el ID de usuario y la contraseña del túnel.
+- **Un estado nunca llega**: compruebe que el objeto de estado del actuador tiene activado el indicador de lectura en ETS y que la dirección de estado es la correcta (el monitor de bus del widget muestra lo que llega).
+- **Un valor erróneo** (temperatura disparatada, porcentaje en 255): el tipo de punto de datos de la dirección no es el esperado; compruébelo en ETS.
+- **Una persiana va en sentido contrario**: marque o desmarque **Invertir la posición** y vuelva a declararla (misma dirección de subir/bajar: el dispositivo se actualiza).
+- Registros: pestaña **Registros** de la integración. Para más detalles, añada la variable de entorno `DEBUG=gladys-integration-sdk` al contenedor. Informe de los problemas en [GitHub](https://github.com/William-De71/gladys-knx/issues) con la versión de Gladys, la versión de la integración, el modelo de interfaz y los registros.
+
+KNX y el logotipo KNX son marcas de KNX Association cvba. Esta integración no está afiliada, respaldada ni certificada por KNX Association.
+
+## Parámetros de configuración
+
+Estos son los parámetros que KNX te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conectar Gladys a su instalación KNX | `section` | No | Gladys se comunica con el bus KNX a través de una interfaz o un router IP KNX de su red. Deje su dirección vacía para usar la primera que se encuentre en la red. Los dispositivos KNX no se pueden descubrir: declare cada uno abajo con los botones «Declarar …» y las direcciones de grupo de su proyecto ETS, y luego añádalos desde la pestaña Descubrir. |
+| Conexión | `select` | No | El enrutamiento usa multicast, que normalmente no llega al contenedor de la integración: es preferible el tunneling. |
+| Dirección de la interfaz IP KNX | `string` | No | Dirección IP o nombre de host. Vacío: la primera interfaz encontrada en la red (el botón «Buscar interfaces IP KNX» las muestra). |
+| Puerto | `number` | No |  |
+| Dirección individual de Gladys | `string` | No | Opcional con tunneling (la interfaz asigna la dirección de su túnel). Obligatoria con enrutamiento: una dirección libre de la línea, reservada en ETS. |
+| KNX IP Secure | `section` | No | Para una interfaz KNX IP Secure, elija tunneling TCP e indique el usuario del túnel de su proyecto ETS (propiedades de la interfaz, pestaña del túnel). KNX Data Secure (comunicación de grupo cifrada) no es compatible. |
+| Usar KNX IP Secure | `boolean` | No |  |
+| Dirección individual del túnel | `string` | No |  |
+| ID de usuario del túnel | `number` | No |  |
+| Contraseña del usuario del túnel | `secret` | No |  |
+| Código de autenticación del dispositivo (opcional) | `secret` | No | Del proyecto ETS: permite a la integración comprobar que habla con su interfaz. |
+| Estados y escenas | `section` | No | Los dispositivos KNX envían ellos mismos sus cambios. La integración también lee las direcciones de estado al arrancar y en el intervalo elegido, para recuperar los telegramas enviados mientras Gladys estaba detenida. |
+| Leer los estados al arrancar | `boolean` | No |  |
+| Volver a leer los estados cada (minutos) | `number` | No | 0: nunca. |
+| Direcciones de grupo para escenas | `string` | No | Los telegramas en estas direcciones inician las escenas «Se recibe un telegrama KNX». Sepárelas con comas; * cubre un grupo principal o intermedio; añada :DPT para decodificar el valor (1/0/7:9.001). |
+| Idioma de los nombres de funciones | `select` | No | Se usa al añadir un dispositivo desde la pestaña Descubrir. |
+
+## Cómo instalar KNX en Gladys
+
+1. En Gladys, abre **Integraciones**: KNX aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-knx:0.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-knx](https://github.com/William-De71/gladys-knx).
+
+KNX requiere Gladys `>=5.1.1`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+KNX es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [William-De71](https://github.com/William-De71), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-knx) — [fuente de esta documentación](https://github.com/William-De71/gladys-knx/blob/HEAD/docs/es.md)

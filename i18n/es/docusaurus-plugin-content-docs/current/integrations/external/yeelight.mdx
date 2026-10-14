@@ -23,7 +23,7 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 Esta integración le permite controlar sus luces **Yeelight** (bombillas, tiras LED, lámparas de mesita, plafones) desde Gladys Assistant, directamente en su red local. Sin cuenta en la nube, sin pasarela, sin servidor intermedio: Gladys habla directamente con sus luces.
 
-![Gladys, la integración y sus luces Yeelight: las luces envían sus estados por una conexión abierta cada una, los comandos salen de Gladys y la búsqueda pasa por el broadcast que Gladys envía en el puerto UDP 1982](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/overview.svg)
+![Gladys, la integración y sus luces Yeelight: las luces envían sus estados por una conexión abierta cada una, los comandos salen de Gladys y la búsqueda pasa por el broadcast que Gladys envía en el puerto UDP 1982](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/overview.svg)
 
 ## Funciones
 
@@ -38,11 +38,21 @@ La integración se adapta a lo que sabe hacer cada luz — una luz anuncia ella 
 | Luz ambiental            | Plafones y barras de luz con retroiluminación         |
 | Luz nocturna (modo luna) | Plafones                                              |
 
+También aporta **escenas**: iniciar una escena cuando una luz se desconecta o vuelve, y reproducir un efecto de luz (amanecer, atardecer, alerta, notificación, vela) desde una escena. Consulte la sección Escenas más abajo.
+
 ### Los estados llegan en tiempo real
 
-Sus luces **envían** ellas mismas sus cambios de estado: la integración mantiene una conexión abierta con cada luz, y Gladys recibe el nuevo valor en el momento en que cambia — también cuando usa la aplicación Yeelight, el mando o el interruptor de pared. No hay ningún intervalo de consulta que ajustar.
+Sus luces **envían** ellas mismas sus cambios de estado: la integración mantiene una conexión abierta con cada luz, y Gladys recibe el nuevo valor en el momento en que cambia — también cuando usa la aplicación Yeelight, el mando o el interruptor de pared. No hay ningún intervalo de consulta que ajustar. Solo los valores que han cambiado de verdad se envían a Gladys.
+
+### Una luz apagada en el interruptor de pared
+
+Una luz apagada en el interruptor de pared no puede avisar: simplemente se queda en silencio. Por eso, cada minuto, la integración pregunta a cada luz silenciosa si sigue ahí. Una luz que no responde aparece como **Inaccesible** en Gladys en uno o dos minutos. Cuando vuelve a tener corriente, la integración se reconecta a ella sola y la luz vuelve a **Local** — no tiene que hacer nada.
 
 ## Requisitos
+
+### Versión de Gladys
+
+La integración requiere **Gladys 5.1.0 o posterior**, por sus escenas. En un Gladys más antiguo, la integración ya no recibe actualizaciones y se queda en la versión 1.3.0: actualice Gladys para obtener las nuevas versiones.
 
 ### Activar «Control LAN» — imprescindible
 
@@ -68,7 +78,7 @@ Para cada luz, en la aplicación **Yeelight**:
 
 Una vez activado «Control LAN», vaya a la pantalla **Descubrir** de la integración e inicie una búsqueda. Sus luces aparecen con su nombre (el que les dio en la aplicación Yeelight), listas para añadirse. **Sin ninguna dirección IP que escribir.**
 
-![Dos fuentes alimentan la pantalla Descubrir: la búsqueda en la red, cuyas respuestas contienen el identificador de fábrica, el modelo, las capacidades y el estado, y las luces añadidas a mano, consultadas por TCP; ambas dan un dispositivo por luz](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/discovery.svg)
+![Dos fuentes alimentan la pantalla Descubrir: la búsqueda en la red, cuyas respuestas contienen el identificador de fábrica, el modelo, las capacidades y el estado, y las luces añadidas a mano, consultadas por TCP; ambas dan un dispositivo por luz](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/discovery.svg)
 
 ### 2. Duración de la transición
 
@@ -100,13 +110,50 @@ Tiempo durante el que la búsqueda escucha las respuestas. 5 segundos bastan en 
 - **Probar la conexión**: lanza una búsqueda e indica cuántas luces han respondido.
 - **Reconectar las luces**: cierra todas las conexiones y las vuelve a abrir. Útil tras un corte de corriente o un cambio en la red.
 
+## Escenas
+
+### Activadores
+
+- **Luz Yeelight desconectada**: una luz ha dejado de responder durante 30 segundos — apagada en el interruptor, un corte de luz o un problema de Wi-Fi. Se detecta en unos dos minutos. Una luz apagada y vuelta a encender en menos de 30 segundos no activa nada, como tampoco una luz que ya estaba apagada al arrancar la integración. Filtro: la luz; déjelo vacío para vigilar todas las luces. Variables: **Identificador de la luz**, **Nombre de la luz**, **Dirección**.
+- **Luz Yeelight de nuevo conectada**: una luz señalada como desconectada vuelve a responder. Solo sigue a un **Luz Yeelight desconectada** que se haya activado. Filtro: la luz. Variables: **Identificador de la luz**, **Nombre de la luz**, **Dirección**, **Minutos desconectada**.
+
+Solo las luces que ha añadido a Gladys pueden iniciar estas escenas.
+
+### Acciones
+
+**Yeelight: reproducir un efecto de luz** — campos: la luz, el efecto y la **Duración (minutos)** (de 1 a 60, 15 por defecto; solo amanecer y atardecer).
+
+| Efecto                        | Lo que hace la luz                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| Amanecer (se queda encendida) | Pasa de un naranja intenso al 1 % a un blanco neutro al 100 % durante ese tiempo; sigue encendida |
+| Atardecer (termina apagada)   | Pasa de un blanco cálido a un naranja intenso al 1 % durante ese tiempo, y luego se apaga         |
+| Alerta: destellos rojos       | 10 destellos rojos (unos 5 segundos), luego vuelve a como estaba — apagada si lo estaba           |
+| Notificación: pulsos azules   | 4 pulsos azules suaves (unos 5 segundos), luego vuelve a como estaba — apagada si lo estaba       |
+| Vela (hasta detenerla)        | Un parpadeo ámbar que dura hasta que lo detenga o envíe otro comando a la luz                     |
+
+El efecto se ejecuta en la propia luz: un amanecer de 30 minutos continúa aunque Gladys se reinicie mientras tanto. Una luz solo blanca (plafón, lámpara de escritorio) reproduce el mismo efecto en blanco: un destello blanco frío para la alerta, un parpadeo cálido para la vela. La salida **Nombre de la luz** está disponible para las acciones siguientes de la escena.
+
+**Yeelight: detener el efecto de luz** — campo: la luz. Detiene el efecto en curso; la luz conserva su color y brillo actuales.
+
+Un efecto nunca inicia los activadores **desconectada** o **de nuevo conectada**: cambia el color de una luz, no su conexión.
+
+### Ejemplos
+
+**Despertar con un amanecer.** Activador **Activador programado**, a las 6:45 los días laborables. Acción **Yeelight: reproducir un efecto de luz**: luz «Dormitorio», efecto **Amanecer (se queda encendida)**, duración 20. La luz empieza con un tenue brillo anaranjado y llega al blanco a plena potencia a las 7:05.
+
+**Recibir un aviso cuando una luz se apaga en la pared.** Activador **Luz Yeelight desconectada**, luz vacía. Acción **Enviar mensaje**: «Nombre de la luz se ha apagado en el interruptor», insertando la variable **Nombre de la luz** en el mensaje. Útil para una luz que debe seguir con corriente, como la del pasillo que usan sus escenas de detección de movimiento.
+
+**Una notificación discreta.** Activador **Cambio de estado del dispositivo**: el enchufe de la lavadora baja de 5 W. Acción **Yeelight: reproducir un efecto de luz**: luz «Salón», efecto **Notificación: pulsos azules**. Si la luz estaba apagada, se vuelve a apagar después de los pulsos.
+
+**Una vela por la noche.** Una escena al atardecer reproduce **Vela (hasta detenerla)**; otra, a la hora de dormir, ejecuta **Yeelight: detener el efecto de luz** y después apaga la luz.
+
 ## Conviene saber
 
 ### Ajustar un color en una luz apagada
 
 Una luz Yeelight rechaza los comandos de color, temperatura y brillo mientras está apagada. La integración **la enciende automáticamente** antes de aplicar su ajuste: hacer clic en un color enciende la luz en ese color, que es lo que se espera.
 
-![Cuando elige un color en una luz apagada, la integración la enciende primero y luego envía el color; la luz comunica después su nuevo estado](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/commands.svg)
+![Cuando elige un color en una luz apagada, la integración la enciende primero y luego envía el color; la luz comunica después su nuevo estado](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/commands.svg)
 
 El estado de encendido se conoce por lo que la luz ya ha comunicado: una luz ya encendida no se vuelve a encender — eso relanzaría su fundido, de forma visible.
 
@@ -129,7 +176,7 @@ Cada una se enciende y se apaga independientemente de la otra. Para controlar am
 
 La temperatura de color ambiental solo aparece en los modelos cuya retroiluminación puede regular su blanco — el control cálido/frío que la aplicación Yeelight muestra junto a la rueda de color del anillo.
 
-En una luz sin retroiluminación solo hay una luz, y las etiquetas siguen siendo sencillas (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). Puede renombrar cada función en Gladys.
+En una luz sin retroiluminación solo hay una luz, y las etiquetas siguen siendo sencillas (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). La luz nocturna de un plafón se llama **Night light**. Estos nombres los fija la integración en inglés, sea cual sea el idioma de Gladys; puede renombrar cada función en Gladys.
 
 Si su plafón enciende o apaga su anillo a la vez que la luz principal, no es cosa de Gladys: es la opción **«Encendido/apagado automático con la luz principal»** de la aplicación Yeelight. Desactívela para controlar cada luz por separado.
 
@@ -139,18 +186,21 @@ El control de temperatura sigue el degradado de Gladys: **a la izquierda, una lu
 
 ### Límites de las luces
 
-Cada luz acepta **4 conexiones simultáneas** y **60 comandos por minuto**. La integración solo abre una conexión por luz y suaviza automáticamente las ráfagas de comandos, pero tenga en cuenta estos límites si también controla sus luces desde otras aplicaciones al mismo tiempo.
+Cada luz acepta **4 conexiones simultáneas** y **60 comandos por minuto**. La integración solo abre una conexión por luz y suaviza automáticamente las ráfagas de comandos, pero tenga en cuenta estos límites si también controla sus luces desde otras aplicaciones al mismo tiempo. La comprobación de una luz silenciosa cuesta un comando por minuto.
 
 ## Solución de problemas
 
-| Síntoma                                            | Causa más probable                                                                               |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| No se encuentra ninguna luz                        | «Control LAN» no está activado en la aplicación Yeelight                                         |
-| Solo se encuentra una luz de varias                | La opción solo está activada en esa luz — se ajusta luz por luz                                  |
-| Una luz desaparece y luego vuelve                  | Corte de Wi-Fi o interruptor de pared: la integración se reconecta sola, espaciando los intentos |
-| Una luz añadida a mano pasa a ser desconocida      | Su dirección IP ha cambiado — asígnele una dirección fija en su router                           |
-| Los comandos dejan de funcionar al cabo de un rato | Otro programa ocupa las 4 conexiones de la luz                                                   |
-| Una luz añadida a mano se ignora                   | Su dirección ha cambiado, o faltan los corchetes alrededor de una dirección IPv6                 |
+| Síntoma                                            | Causa más probable                                                                                              |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| No se encuentra ninguna luz                        | «Control LAN» no está activado en la aplicación Yeelight                                                        |
+| Solo se encuentra una luz de varias                | La opción solo está activada en esa luz — se ajusta luz por luz                                                 |
+| Una luz desaparece y luego vuelve                  | Corte de Wi-Fi o interruptor de pared: la integración se reconecta sola, espaciando los intentos                |
+| Una luz aparece como «Inaccesible»                 | Está apagada en el interruptor o fuera del alcance del Wi-Fi; vuelve en cuanto recupera la corriente            |
+| Una luz añadida a mano pasa a ser desconocida      | Su dirección IP ha cambiado — asígnele una dirección fija en su router                                          |
+| Los comandos dejan de funcionar al cabo de un rato | Otro programa ocupa las 4 conexiones de la luz                                                                  |
+| Una luz añadida a mano se ignora                   | Su dirección ha cambiado, o faltan los corchetes alrededor de una dirección IPv6                                |
+| La escena «desconectada» no se inicia              | La luz volvió en menos de 30 segundos, ya estaba apagada al arrancar la integración, o no está añadida a Gladys |
+| La acción de efecto falla                          | La luz está inaccesible en ese momento, o su modelo no admite efectos                                           |
 
 ## Parámetros de configuración
 
@@ -167,11 +217,11 @@ Estos son los parámetros que Yeelight te pide en su pantalla de configuración 
 ## Cómo instalar Yeelight en Gladys
 
 1. En Gladys, abre **Integraciones**: Yeelight aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-yeelight:1.3.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-yeelight:1.4.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-yeelight](https://github.com/William-De71/gladys-yeelight).
 
-Yeelight requiere Gladys `>=4.86.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+Yeelight requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
 
 ¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
 

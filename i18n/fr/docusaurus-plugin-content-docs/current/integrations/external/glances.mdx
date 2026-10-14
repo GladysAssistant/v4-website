@@ -1,0 +1,301 @@
+---
+title: "Intégration domotique Glances, gratuite et open source"
+sidebar_label: "Glances"
+description: "Suivez NAS, serveurs et PC avec Glances : processeur, mémoire, disques, températures, conteneurs. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-glances.png"
+keywords:
+  - "glances"
+  - "domotique glances"
+  - "gladys glances"
+  - "glances gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-glances instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="glances" />
+
+[Glances](https://nicolargo.github.io/glances/) est un outil de supervision
+multiplateforme : processeur, mémoire, disques, réseau, températures,
+conteneurs Docker et Podman. Cette intégration lit le serveur web Glances de
+vos **autres machines** — un NAS, un serveur maison, un PC — et les amène dans
+Gladys : un appareil par serveur, plus les disques, interfaces réseau, capteurs
+de température et conteneurs que vous choisissez. Des scènes peuvent réagir
+quand un disque se remplit, qu'une machine chauffe, qu'un conteneur s'arrête ou
+qu'un serveur ne répond plus, et un widget résume un serveur sur le tableau de
+bord. Tout reste sur votre réseau local.
+
+Testée contre de vrais serveurs Glances 4.5.8 et 3.4.0.5 (Docker), avec et
+sans mot de passe ; les conteneurs au travers d'un moteur Docker simulé. Pas
+encore sur tous les NAS : vos retours sont les bienvenus dans
+[les issues](https://github.com/guim31/gladys-glances/issues).
+
+## Ce qu'il vous faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Sur chaque machine à suivre, Glances 3.x ou 4.x lancé en serveur web
+  (`glances -w`), joignable depuis la machine de Gladys (port 61208 par
+  défaut).
+- Trois machines au plus par installation de l'intégration.
+
+L'intégration ne fait que lire : elle ne modifie jamais rien sur vos machines.
+
+## Mise en route
+
+### 1. Lancer Glances en mode serveur web
+
+Sur la machine à suivre :
+
+- installé par pip ou par votre distribution : `glances -w` (en service pour
+  qu'il survive à un redémarrage) ; ajoutez `--password` pour le protéger,
+  Glances demande le mot de passe une fois et peut l'enregistrer ;
+- avec Docker : l'image `nicolargo/glances` avec `GLANCES_OPT="-w"`, le port
+  61208 publié et, pour voir les conteneurs, le socket Docker monté en lecture
+  seule (`-v /var/run/docker.sock:/var/run/docker.sock:ro`). Pour voir les
+  disques de l'hôte, montez sa racine en lecture seule (`-v /:/rootfs:ro`).
+
+Vérifiez depuis un navigateur que `http://<adresse de la machine>:61208`
+affiche Glances.
+
+### 2. Configurer l'intégration
+
+Dans **Intégrations → Glances → Configuration** :
+
+- **Adresse de Glances** : `192.168.1.20`, `nas.lan`, ou l'adresse copiée
+  depuis votre navigateur (`http://nas.lan:61208`) ; le port 61208 est ajouté
+  quand aucun n'est indiqué ;
+- **Nom d'utilisateur (facultatif)** et **Mot de passe (facultatif)** :
+  seulement si Glances a été lancé avec `--password` (le nom d'utilisateur est
+  `glances`, sauf si Glances a été lancé avec `--username`) ;
+- **Nom (facultatif)** : le nom affiché dans les appareils, le widget et les
+  messages ; par défaut, le nom d'hôte donné par Glances (ou l'adresse quand
+  Glances tourne dans Docker et ne connaît que l'identifiant de son conteneur) ;
+- de même pour un **deuxième** et un **troisième** serveur, si vous en avez ;
+- **Intervalle de rafraîchissement** : de 15 secondes à 5 minutes (30 secondes
+  par défaut) ;
+- **Accepter les certificats auto-signés** : seulement pour une adresse en
+  `https://` (Glances derrière un proxy inverse) dont le certificat est
+  auto-signé ;
+- **Langue des noms** : la langue des noms des fonctionnalités (fixés à
+  l'ajout d'un appareil), des résultats de scène et du test de connexion
+  (français par défaut).
+
+**Tester la connexion** lit maintenant chaque serveur et dit ce qu'il a
+trouvé : la version de Glances, le nombre de disques, d'interfaces, de capteurs
+et de conteneurs en marche.
+
+### 3. Ajouter les appareils
+
+Ouvrez l'onglet **Découverte** : l'intégration propose le serveur lui-même,
+puis chacun de ses disques, interfaces réseau, capteurs de température et
+conteneurs. N'ajoutez que ce que vous voulez suivre : un NAS en a facilement
+une trentaine. Les déclencheurs de scène fonctionnent pour tous les disques,
+capteurs et conteneurs, ajoutés ou non.
+
+## Les appareils
+
+Les valeurs sont arrondies et envoyées seulement quand elles changent ; celles
+qui bougent sans cesse (processeur, charge, débits, températures, conteneurs)
+au plus une fois par minute.
+
+### Le serveur
+
+| Fonctionnalité            | Valeur                                                             |
+| ------------------------- | ------------------------------------------------------------------ |
+| En ligne                  | Allumé tant que Glances répond, éteint après deux lectures muettes |
+| Processeur                | Utilisation de tous les cœurs, en %                                |
+| Mémoire                   | Mémoire utilisée, en %                                             |
+| Swap                      | Swap utilisé, en % (quand la machine en a)                         |
+| Charge (1 min)            | Charge moyenne sur 1 minute                                        |
+| Charge (5 min)            | Charge moyenne sur 5 minutes                                       |
+| Charge (15 min)           | Charge moyenne sur 15 minutes                                      |
+| Durée de fonctionnement   | Temps depuis le dernier démarrage, en jours                        |
+| Conteneurs en marche      | Conteneurs Docker ou Podman en marche (quand il y en a)            |
+| Température la plus haute | Le capteur de température le plus chaud, en °C                     |
+
+### Disques
+
+Un appareil par point de montage : **Espace utilisé** (%) et **Espace libre**
+(Go). Les fichiers que Docker monte dans un conteneur Glances et les pseudo
+systèmes de fichiers du système sont écartés. Glances 4 mesure les disques une
+fois par minute.
+
+### Interfaces réseau
+
+Un appareil par interface : **Réception** et **Émission**, en Mbit/s. La
+boucle locale, les ponts Docker et les interfaces virtuelles (`veth…`, `br-…`,
+`docker0`…) sont écartés.
+
+### Capteurs de température
+
+Un appareil par capteur de température lu par Glances (`Core 0`,
+`Package id 0`, `Composite` pour un SSD NVMe…) : **Température**, en °C.
+
+### Conteneurs
+
+Un appareil par conteneur, conservé quand le conteneur est recréé sous le même
+nom (une mise à jour `docker compose`) : **En marche** (allumé/éteint),
+**Processeur** (%, un cœur compte pour 100 %, comme `docker stats`) et
+**Mémoire** (Mo, cache de pages exclu). Par défaut, Glances ne liste que les
+conteneurs en marche : un conteneur arrêté disparaît de Glances, et son
+appareil passe à éteint après deux lectures sans lui. Pour lister aussi les
+conteneurs arrêtés, mettez `all=True` dans la section `[containers]` de
+`glances.conf`.
+
+## Tableau de bord
+
+Ajoutez le widget **Serveur Glances** à un tableau de bord et choisissez le
+serveur dans ses réglages (n'importe quel appareil du serveur convient : le
+serveur lui-même, un de ses disques…). Il affiche :
+
+- trois jauges : **processeur**, **mémoire** et **disque** (le disque racine,
+  ou l'appareil disque choisi dans les réglages), en orange dès 75 %, en rouge
+  dès 90 % ;
+- la **température la plus haute** (orange dès 70 °C, rouge dès 85 °C) et le
+  nombre de **conteneurs en marche** (rouge quand un conteneur s'est arrêté) ;
+- des lignes : les conteneurs arrêtés (en rouge, d'abord), l'espace libre du
+  disque, le swap, la charge et la durée de fonctionnement ;
+- un serveur qui ne répond pas, et pourquoi ;
+- un bouton **Actualiser** qui relit le serveur.
+
+## Scènes
+
+### Déclencheurs
+
+Ils fonctionnent pour tous les disques, capteurs et conteneurs, ajoutés à
+Gladys ou non. Le champ **Serveur** limite un déclencheur à un serveur
+(choisissez l'appareil du serveur lui-même) ; laissez-le vide pour tous.
+
+- **Disque presque plein** : un disque atteint le taux d'utilisation choisi
+  (80, 85, 90, 95 ou 98 %). Une fois par palier ; de nouveau seulement après
+  être redescendu 2 points en dessous. Filtre facultatif : un disque.
+  Variables : serveur, point de montage, espace utilisé (%), espace libre
+  (Go), seuil.
+- **Température élevée** : un capteur reste au-dessus de la température
+  choisie (de 50 à 100 °C) deux lectures de suite. De nouveau seulement après
+  être redescendu de 5 °C, et pas deux fois en 30 minutes. Filtre facultatif :
+  un capteur. Variables : serveur, capteur, température, seuil.
+- **Conteneur arrêté** : un conteneur qui tournait s'arrête, est mis en pause
+  ou redémarre en boucle, deux lectures de suite (un conteneur recréé par une
+  mise à jour n'est pas un arrêt). Filtre facultatif : un conteneur.
+  Variables : serveur, conteneur, état (« Arrêté », « En pause »,
+  « Redémarre »).
+- **Serveur injoignable** : un serveur ne répond plus (deux lectures de suite,
+  à 15 secondes d'intervalle). Un mot de passe refusé n'est pas annoncé :
+  l'état de connexion le montre. Variables : serveur, raison.
+
+Chaque seuil est un filtre : une scène par seuil qui vous intéresse. Ce qui a
+été annoncé est conservé : un redémarrage de Gladys ou de l'intégration ne
+répète pas une annonce et n'en manque pas. Un disque ou un capteur déjà
+au-dessus d'un seuil quand il est vu pour la première fois n'annonce rien.
+
+### Actions
+
+- **État d'un serveur** : lit un serveur pour les actions suivantes de la
+  scène : nom, répond (oui/non), processeur, mémoire et swap (%), charges
+  moyennes, durée de fonctionnement (jours), disque principal utilisé (%) et
+  libre (Go), température la plus haute, conteneurs en marche et arrêtés, et
+  un **résumé** prêt à envoyer comme « NAS : processeur 12 %, mémoire 45 %,
+  disque / 78 % (110 Go libres), 52 °C, 12 conteneur(s) en marche ». Un serveur
+  qui ne répond pas n'est pas une erreur : « répond » vaut non et le résumé dit
+  pourquoi.
+
+Elle relit le serveur quand la dernière lecture date de plus de 15 secondes.
+
+### Idées de scènes
+
+- **Alerte disque** : déclencheur « Disque presque plein » au seuil de 90 % →
+  envoyer un message « 💾 Le disque … de … est à … % », en insérant les
+  variables « Point de montage », « Serveur » et « Espace utilisé (%) ».
+- **Bilan du matin** : chaque jour à 8 h → « État d'un serveur » sur le NAS →
+  envoyer la sortie « Résumé » par message.
+- **Un service est tombé** : déclencheur « Conteneur arrêté » sur le conteneur
+  de Nextcloud → envoyer un message, ou passer une lampe au rouge.
+- **Surchauffe** : déclencheur « Température élevée » à 85 °C → envoyer un
+  message, allumer le ventilateur du placard technique (une prise connectée).
+
+## Dépannage
+
+- **« ne répond pas »** : Glances n'est pas lancé en mode serveur web, le port
+  n'est pas 61208, ou un pare-feu le bloque. Ouvrez `http://<adresse>:61208`
+  depuis une autre machine.
+- **« nom d'utilisateur ou mot de passe refusé »** : vérifiez le mot de passe
+  de `glances -w --password`, et le nom d'utilisateur si Glances a été lancé
+  avec `--username`.
+- **« Glances demande un mot de passe »** : Glances a été lancé avec
+  `--password` ; saisissez-le dans la configuration.
+- **« aucun serveur web Glances (API 3 ou 4) à cette adresse »** : un autre
+  service répond sur ce port, ou Glances est antérieur à la 3.0.
+- **Aucun conteneur dans l'onglet Découverte** : Glances ne voit pas le moteur
+  de conteneurs. Dans Docker, montez le socket Docker dans le conteneur
+  Glances.
+- **Un disque manque** : Glances masque `/boot` et `/snap`, et ne liste pas
+  par défaut les tmpfs ni les partages réseau (voir la section `[fs]` de
+  `glances.conf`). Dans Docker, montez la racine de l'hôte (`-v /:/rootfs:ro`).
+- **Le processeur ne bouge pas pendant un moment** : Glances 4 répond parfois un
+  processeur à zéro partout (à sa première lecture, ou après une pause) ; cette
+  lecture est ignorée, la valeur arrive à la suivante.
+
+## Limites
+
+- Lecture seule : l'intégration ne démarre ni n'arrête rien, ni conteneur ni
+  machine.
+- Trois serveurs au plus par installation.
+- Les valeurs des appareils non ajoutés ne sont pas envoyées à Gladys ; les
+  déclencheurs et le widget s'en servent quand même.
+- Un conteneur supprimé pour de bon est oublié au bout d'une semaine.
+- GPU, RAID, entrées/sorties disque, processus, ventilateurs et batteries ne
+  sont pas lus.
+- Sans lien avec le projet Glances.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Glances dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos serveurs Glances | `section` | Non | Sur chaque machine à suivre (NAS, serveur, PC), lancez Glances en serveur web : « glances -w », ou l'image Docker nicolargo/glances avec GLANCES_OPT="-w". Saisissez son adresse ci-dessous, puis ajoutez le serveur, ses disques, interfaces, capteurs et conteneurs depuis l'onglet Découverte. |
+| Adresse de Glances | `string` | Non | Adresse de la machine où tourne « glances -w » (port 61208 par défaut) : 192.168.1.20, nas.lan ou http://nas.lan:61208. |
+| Nom d'utilisateur (facultatif) | `string` | Non | Seulement avec un mot de passe : « glances », sauf si Glances a été lancé avec --username. |
+| Mot de passe (facultatif) | `secret` | Non | Le mot de passe de « glances -w --password ». Laissez vide si Glances n'en demande pas. |
+| Nom (facultatif) | `string` | Non | Affiché dans les noms des appareils, le widget et les messages. Par défaut, le nom d'hôte donné par Glances. |
+| Deuxième serveur Glances (facultatif) | `section` | Non | Une autre machine, avec sa propre adresse et son mot de passe. |
+| Adresse du deuxième Glances | `string` | Non |  |
+| Deuxième nom d'utilisateur (facultatif) | `string` | Non |  |
+| Deuxième mot de passe (facultatif) | `secret` | Non |  |
+| Deuxième nom (facultatif) | `string` | Non |  |
+| Troisième serveur Glances (facultatif) | `section` | Non | Une autre machine, avec sa propre adresse et son mot de passe. |
+| Adresse du troisième Glances | `string` | Non |  |
+| Troisième nom d'utilisateur (facultatif) | `string` | Non |  |
+| Troisième mot de passe (facultatif) | `secret` | Non |  |
+| Troisième nom (facultatif) | `string` | Non |  |
+| Options | `section` | Non | Seuls les appareils ajoutés à Gladys reçoivent des valeurs ; les déclencheurs de scène fonctionnent pour tous les disques, capteurs et conteneurs. |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture de chaque serveur Glances. |
+| Accepter les certificats auto-signés | `boolean` | Non | Seulement pour une adresse en https:// (Glances derrière un proxy inverse) dont votre navigateur ne reconnaît pas non plus le certificat. |
+| Langue des noms | `select` | Non | Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil), des résultats de scène et du test de connexion. |
+
+## Comment installer Glances dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Glances apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-glances:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-glances](https://github.com/guim31/gladys-glances).
+
+Glances nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Glances est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-glances) — [source de cette documentation](https://github.com/guim31/gladys-glances/blob/HEAD/docs/fr.md)
