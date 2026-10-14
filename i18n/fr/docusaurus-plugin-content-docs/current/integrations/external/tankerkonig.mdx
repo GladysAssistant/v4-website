@@ -1,0 +1,185 @@
+---
+title: "Intégration domotique Tankerkönig, gratuite et open source"
+sidebar_label: "Tankerkönig"
+description: "Connecteur non officiel : prix des carburants en Allemagne, station la moins chère, alertes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tankerkoenig.png"
+keywords:
+  - "tankerkönig"
+  - "domotique tankerkönig"
+  - "gladys tankerkönig"
+  - "tankerkönig gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-tankerkoenig instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="tankerkonig" />
+
+**Connecteur non officiel, sans lien avec Tankerkönig.** Il amène les prix des
+carburants en Allemagne dans Gladys via l'API ouverte de
+[Tankerkönig](https://creativecommons.tankerkoenig.de/) : chaque station
+allemande doit déclarer ses prix Super E5, Super E10 et Diesel à la
+Markttransparenzstelle für Kraftstoffe (MTS-K), et Tankerkönig les republie
+sous licence CC BY 4.0. Données : Tankerkönig / MTS-K, CC BY 4.0
+([tankerkoenig.de](https://www.tankerkoenig.de/)).
+
+## Ce que vous obtenez
+
+| Surface                            | Contenu                                                                                                                                                                     |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Un appareil par **station suivie** | le prix de chaque carburant suivi que la station vend (€ par litre) et son ouverture                                                                                        |
+| L'appareil **Cheapest nearby**     | par carburant, le prix le plus bas parmi les stations suivies ouvertes et le nom de la station                                                                              |
+| Déclencheurs de scène              | **prix du carburant sous un seuil** (1,40 à 2,20 €/L), **baisse du prix du carburant** (2 à 10 centimes), **station la moins chère changée**, **station ouverte ou fermée** |
+| Action de scène                    | **station la moins chère à proximité** : nom, marque, adresse, prix et distance de la station ouverte la moins chère autour de la maison, pour un carburant                 |
+| Widget                             | **Prix des carburants** : le prix le plus bas par carburant, les stations suivies avec leurs prix (la moins chère en vert), l'attribution des données                       |
+
+## Installation
+
+1. Demandez une clé d'API personnelle gratuite sur
+   [onboarding.tankerkoenig.de](https://onboarding.tankerkoenig.de/) (une clé
+   par personne ; Tankerkönig demande de ne jamais en demander une seconde
+   sans le contacter d'abord).
+2. Collez-la dans **Clé d'API Tankerkönig**, choisissez les **carburants à
+   suivre** et le **rayon autour de la maison** (5 km par défaut, 25 km au
+   plus), puis enregistrez.
+3. Ouvrez **Découverte** : les stations dans le rayon de votre maison (la
+   position de la maison dans Gladys, les 25 plus proches au plus) et
+   l'appareil **Cheapest nearby** sont proposés. Ajoutez ceux que vous
+   utilisez.
+4. Une station plus loin : le bouton **Chercher des stations** liste les
+   stations autour de la maison dont le nom, la marque, la rue, la ville ou le
+   code postal contient un texte, avec leur identifiant. Saisissez les
+   identifiants dans **Autres stations**, séparés par des virgules, avec un nom
+   personnalisé facultatif après deux-points
+   (`278130b1-e062-4a0f-80cc-19e486b4c024:Aral du bureau`), enregistrez, et
+   rouvrez Découverte.
+5. Placez le widget **Prix des carburants** sur un tableau de bord ; son
+   réglage n'affiche qu'un carburant quand vous en choisissez un.
+
+### À quelle fréquence Tankerkönig est appelé
+
+Tankerkönig limite son API gratuite à une requête par minute (« die
+Abfragefrequenz auf einen requet/Minute beschränkt », sic) et demande d'éviter
+les requêtes régulières que l'utilisateur n'a pas demandées (« Regelmäßige,
+nicht explizit vom User initiierte Requests sind zu vermeiden »). Donc :
+
+- les prix des stations suivies sont lus toutes les 10 minutes (option
+  **Intervalle de rafraîchissement**, au moins 5 minutes), 10 stations par
+  requête, quelques secondes aléatoires à côté des heures rondes, et jamais
+  une station deux fois en moins de 5 minutes ;
+- ce que personne n'a demandé à l'instant (cette boucle, la lecture au
+  démarrage ou après une reconnexion, la liste de Découverte préparée au
+  démarrage) part au moins une minute après la requête précédente : avec 25
+  stations, les trois requêtes d'un rafraîchissement prennent deux minutes ;
+- ce que vous demandez (ouvrir Découverte, les boutons **Tester** et
+  **Chercher**, une scène qui lance l'action) n'attend que 2 secondes, et
+  réutilise les réponses déjà connues : une recherche autour de la maison
+  5 minutes, le détail d'une station une journée ;
+- une station ajoutée dans Découverte est lue au prochain créneau libre, dans
+  la minute environ.
+
+## Prix, unités et stations fermées
+
+- Un prix est en euros par litre avec trois décimales (1,739). Gladys n'a pas
+  d'unité « par litre » : les fonctionnalités utilisent l'unité **euro** et
+  indiquent « €/L » dans leur nom.
+- La fonctionnalité **Open** vaut 1 quand la station est ouverte, 0 quand elle
+  est fermée.
+- Une station fermée ne déclare aucun prix : ses fonctionnalités gardent le
+  dernier prix connu. L'appareil **Cheapest nearby** ne compte que les
+  stations ouvertes ; quand elles sont toutes fermées, son nom de station
+  affiche « — » et son prix reste.
+- Un carburant que la station ne vend pas n'a pas de fonctionnalité.
+
+## Scènes
+
+- **Prix du carburant sous un seuil** : choisissez le carburant, le seuil et
+  la station ; la scène s'exécute quand le prix passe dessous, une fois, pas à
+  chaque rafraîchissement. La station est soit une station suivie, soit
+  **Cheapest nearby**, qui vaut pour toutes les stations suivies : la scène
+  s'exécute alors une fois, quand le prix le plus bas parmi elles passe
+  dessous, quelle que soit la station. Variables : la station, le carburant,
+  le prix et le prix précédent.
+- **Baisse du prix du carburant** : le prix a baissé d'au moins 2, 3, 5 ou 10
+  centimes entre deux lectures, dans la station choisie ou, avec **Cheapest
+  nearby**, pour le prix le plus bas parmi les stations suivies.
+- **Station la moins chère changée** : une autre station suivie a désormais le
+  prix ouvert le plus bas pour un carburant. Ajouter ou retirer une station ne
+  compte pas.
+- **Station ouverte ou fermée** : selon sa déclaration à la MTS-K.
+
+L'action **station la moins chère à proximité** lance une recherche autour de
+la maison (le rayon de la configuration, ou celui que vous donnez) et renvoie
+`{{name}}`, `{{brand}}`, `{{address}}`, `{{price}}`, `{{distance}}` et
+`{{found}}` pour un message ou une condition. Les recherches sont gardées
+5 minutes : une scène qui s'exécute souvent ne surcharge pas Tankerkönig.
+
+## Dépannage
+
+- **« Tankerkönig refuse la clé d'API »** : la clé est fausse ou désactivée.
+  Tankerkönig demande aux clients de cesser d'envoyer des requêtes après une
+  telle erreur : l'intégration le fait, jusqu'à ce que vous réenregistriez la
+  configuration (avec la clé corrigée, ou une fois que Tankerkönig l'a
+  réactivée). Le bouton **Tester la clé d'API** la vérifie en une seule
+  requête.
+- **Aucune station dans Découverte** : renseignez la position de votre maison
+  dans Gladys (Paramètres → Maisons), vérifiez le rayon, et rappelez-vous que
+  les données ne couvrent que l'Allemagne.
+- **« Tankerkönig est injoignable »** : le service est tenu par des bénévoles ;
+  l'intégration réessaie à chaque rafraîchissement.
+- Logs : le niveau de log de l'intégration se règle avec la variable
+  `LOG_LEVEL`. La clé d'API n'y apparaît jamais.
+
+## Données et licence
+
+Les prix et les informations des stations viennent de la
+Markttransparenzstelle für Kraftstoffe via Tankerkönig, sous licence
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.fr) ; le widget
+affiche l'attribution « Tankerkönig / MTS-K (CC BY 4.0) ». Tankerkönig
+interdit l'usage de son API aux compagnies pétrolières et aux stations-service.
+
+## Confidentialité
+
+La clé d'API n'est envoyée qu'à Tankerkönig. Les recherches autour de la
+maison (Découverte, l'action de scène, le bouton Chercher) envoient à
+Tankerkönig la position de la maison arrondie à une centaine de mètres ; la
+lecture des prix n'envoie que des identifiants de stations.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Tankerkönig dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Les prix des carburants en Allemagne | `section` | Non | Connecteur non officiel, sans lien avec Tankerkönig. Il lit l'API ouverte de Tankerkönig (les prix que chaque station allemande déclare à la MTS-K, sous licence CC BY 4.0) : un appareil par station suivie avec ses prix Super E5, Super E10 et Diesel et son ouverture, un appareil « Le moins cher à proximité », des déclencheurs quand un prix passe sous un seuil, baisse, ou que la station la moins chère change, une action de scène et un widget. Demandez une clé d'API personnelle gratuite (lien ci-dessous) et collez-la ici : les stations autour de votre maison sont alors proposées dans Découverte. |
+| Clé d'API Tankerkönig | `secret` | Oui | Stockée chiffrée par Gladys et envoyée uniquement à creativecommons.tankerkoenig.de. |
+| Carburants à suivre | `multi_select` | Non | Une fonctionnalité de prix par carburant sur chaque station (si elle le vend). Aucun coché : les trois. |
+| Rayon autour de la maison (km) | `number` | Non | Les stations à cette distance sont proposées dans Découverte (les 25 plus proches au plus), et l'action « Station la moins chère à proximité » cherche là par défaut. Tankerkönig autorise 25 km au plus. |
+| Autres stations (identifiants) | `string` | Non | Identifiants de stations Tankerkönig, séparés par des virgules, avec un nom personnalisé facultatif après : — le bouton « Chercher des stations » donne les identifiants. |
+| Intervalle de rafraîchissement (min) | `number` | Non | Fréquence de lecture des prix des stations suivies (10 par requête). Tankerkönig demande au moins 5 minutes aux systèmes domotiques. |
+
+## Comment installer Tankerkönig dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Tankerkönig apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tankerkoenig:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-tankerkoenig](https://github.com/LM1LC3N7/gladys-tankerkoenig).
+
+Tankerkönig nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Tankerkönig est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-tankerkoenig) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-tankerkoenig/blob/HEAD/docs/fr.md)

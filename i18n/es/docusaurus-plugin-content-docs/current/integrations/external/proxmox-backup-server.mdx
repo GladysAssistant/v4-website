@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica Proxmox Backup Server, gratuita y de código abierto"
 sidebar_label: "Proxmox Backup Server"
-description: "Read-only monitoring of Proxmox Backup Server datastores and maintenance tasks. Free, open source, installable in one click."
+description: "Supervisión de solo lectura de los datastores y tareas de mantenimiento de Proxmox Backup Server. Gratuita, de código abierto, se instala con un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-proxmox-backup-server.png"
 keywords:
   - "proxmox backup server"
@@ -14,24 +14,18 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/es.md in
 https://github.com/prohand/gladys-proxmox-backup-server instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
 <ExternalIntegrationHeader slug="proxmox-backup-server" />
 
-:::info
+Esta integración solo llama a rutas `GET` de la API de PBS. No puede iniciar, modificar, depurar (prune) ni eliminar copias de seguridad ni trabajos.
 
-La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+## Permisos exactos de solo lectura
 
-:::
-
-This integration only calls PBS API `GET` routes. It cannot start, alter, prune, or delete backups or jobs.
-
-## Exact read-only permissions
-
-Grant the built-in `DatastoreAudit` role (`Datastore.Audit`) on `/datastore`, and the built-in `Audit` role (`Sys.Audit`) on `/system` so the task history can be read. Do not grant any datastore write, backup, prune, verify, or admin role.
+Conceda el rol integrado `DatastoreAudit` (`Datastore.Audit`) sobre `/datastore`, y el rol integrado `Audit` (`Sys.Audit`) sobre `/system` para que se pueda leer el historial de tareas. No conceda ningún rol de escritura, copia de seguridad, prune, verificación o administración sobre los datastores.
 
 ```bash
 proxmox-backup-manager user create gladys@pbs --password 'A_LONG_UNIQUE_PASSWORD'
@@ -42,116 +36,116 @@ proxmox-backup-manager acl update /system Audit --auth-id gladys@pbs --propagate
 proxmox-backup-manager acl update /system Audit --auth-id 'gladys@pbs!monitoring' --propagate true
 ```
 
-PBS API tokens use separate ACL entries by design; `generate-token` does not accept a `--privsep` option. Effective token permissions are the intersection of the parent user's permissions and the token's own permissions, hence the matching ACLs. Replace `/datastore` with `/datastore/NAME` in both datastore commands to restrict monitoring to one store. Enter the full token ID and the one-time secret in Gladys.
+Los tokens de API de PBS tienen, por diseño, sus propias entradas de ACL; `generate-token` no acepta la opción `--privsep`. Los permisos efectivos de un token son la intersección de los permisos del usuario al que pertenece y los del propio token, de ahí las ACL emparejadas. Sustituya `/datastore` por `/datastore/NAME` en los dos comandos de datastore para limitar la supervisión a un solo datastore. Introduzca en Gladys el ID completo del token y el secreto, que solo se muestra una vez.
 
-## TLS and the self-signed PBS certificate
+## TLS y el certificado autofirmado de PBS
 
-Use an `https://` URL. An `http://` URL is accepted, but the API token then travels **in clear text** on the network at every refresh: anyone able to read that traffic can reuse it.
+Use una URL `https://`. Se acepta una URL `http://`, pero entonces el token de API viaja **sin cifrar** por la red en cada actualización: cualquiera que pueda leer ese tráfico puede reutilizarlo.
 
-PBS ships a **self-signed** certificate, which the container does not trust. From the best option to the worst:
+PBS se entrega con un certificado **autofirmado**, en el que el contenedor no confía. De la mejor opción a la peor:
 
-1. **Pin the fingerprint (recommended).** Paste the server's SHA-256 fingerprint into the `TLS certificate fingerprint` field. Only a server presenting exactly that certificate is accepted, and the fingerprint is checked **before** the token is sent: a server impersonating PBS never receives it. Find the fingerprint in the PBS web interface (**Dashboard → Show Fingerprint**) or in a shell on PBS:
+1. **Fijar la huella (recomendado).** Pegue la huella SHA-256 del servidor en el campo `Huella del certificado TLS`. Solo se acepta un servidor que presente exactamente ese certificado, y la huella se comprueba **antes** de enviar el token: un servidor que se haga pasar por PBS nunca lo recibe. La huella aparece en la interfaz web de PBS (**Dashboard → Show Fingerprint**) o en un shell en PBS:
 
    ```bash
    proxmox-backup-manager cert info | grep -i fingerprint
    ```
 
-   Separators and case do not matter (`AA:BB:…` or `aabb…`). The fingerprint changes when the certificate is renewed or replaced: update the field then. A pinned fingerprint requires an `https://` URL and takes precedence over `Verify TLS certificate`.
+   Los separadores y las mayúsculas no importan (`AA:BB:…` o `aabb…`). La huella cambia cuando el certificado se renueva o se sustituye: actualice entonces el campo. Una huella fijada requiere una URL `https://` y tiene prioridad sobre `Verificar el certificado TLS`.
 
-2. **A certificate signed by a trusted authority** (for example ACME / Let's Encrypt configured on PBS): leave the fingerprint empty and keep `Verify TLS certificate` on.
+2. **Un certificado firmado por una autoridad de confianza** (por ejemplo ACME / Let's Encrypt configurado en PBS): deje la huella vacía y mantenga activado `Verificar el certificado TLS`.
 
-3. **Turn `Verify TLS certificate` off**, as a last resort and on a trusted network only: the connection stays encrypted, but nothing proves the server is the real one, and the token is sent to whoever answers.
+3. **Desactivar `Verificar el certificado TLS`**, como último recurso y solo en una red de confianza: la conexión sigue cifrada, pero nada garantiza que el servidor sea el auténtico, y el token se envía a quien responda.
 
-The refresh interval defaults to 15 minutes. It cannot be set below 5 minutes to limit growth of the Gladys database, and it can be increased up to 24 hours.
+El intervalo de actualización es de 15 minutos por defecto. No puede bajar de 5 minutos, para limitar el crecimiento de la base de datos de Gladys, y puede aumentarse hasta 24 horas.
 
-The general `Date format` dropdown controls all task dates. It offers ISO 8601, day/month/year, year-month-day, and month/day/year formats.
+La lista desplegable general `Formato de fecha` controla todas las fechas de las tareas. Ofrece los formatos ISO 8601, día/mes/año, año-mes-día y mes/día/año.
 
-The `Time zone` field sets the zone dates are shown in, as an IANA name such as `Europe/Paris` (summer and winter time are handled). It defaults to `UTC`; an empty or unknown value also falls back to UTC. In ISO 8601, a zone other than UTC adds its offset, for example `2026-09-23T23:30:01+02:00`.
+El campo `Zona horaria` define la zona en la que se muestran las fechas, como nombre IANA, por ejemplo `Europe/Paris` (se tienen en cuenta el horario de verano y el de invierno). Su valor por defecto es `UTC`; un valor vacío o desconocido también vuelve a UTC. En ISO 8601, una zona distinta de UTC añade su desfase, por ejemplo `2026-09-23T23:30:01+02:00`.
 
-> After changing and saving the date format or the time zone, open the affected PBS device in Gladys and save it again to apply the change.
+> Tras cambiar y guardar el formato de fecha o la zona horaria, abra el dispositivo PBS afectado en Gladys y guárdelo de nuevo para aplicar el cambio.
 
-## Exposed features
+## Funciones expuestas
 
-Each PBS datastore is exposed as one Gladys device with these read-only features:
+Cada datastore de PBS se expone como un dispositivo de Gladys con estas funciones de solo lectura:
 
-The three capacity values (`Usage`, `Total size`, and `Used space`) are mapped to the Gladys `data/size` capability while retaining their percent or gigabyte unit.
+Los tres valores de capacidad (`Usage`, `Total size` y `Used space`) se asignan a la función `data/size` de Gladys, conservando su unidad en porcentaje o en gigabytes.
 
-| Feature                        | Value      | Description                                                                |
-| ------------------------------ | ---------- | -------------------------------------------------------------------------- |
-| Usage                          | Percentage | Used datastore capacity, rounded to two decimal places.                    |
-| Total size                     | Gigabytes  | Total datastore capacity, rounded to two decimal places.                   |
-| Used space                     | Gigabytes  | Used datastore capacity, rounded to two decimal places.                    |
-| Snapshot count                 | Integer    | Number of snapshots currently stored, summed over the backup groups.       |
-| Last verify status             | Text       | Latest verification status, for example `OK`.                              |
-| Last verify date               | Text       | Latest verification date, in the configured format.                        |
-| Last garbage collection status | Text       | Latest garbage collection status, for example `OK`.                        |
-| Last garbage collection date   | Text       | Latest garbage collection date, in the configured format.                  |
-| Last prune status              | Text       | Latest prune status, for example `OK`.                                     |
-| Last prune date                | Text       | Latest prune date, in the configured format.                               |
-| Backup stale (> 26 h)          | `0` or `1` | `1` when no snapshot exists or the newest snapshot is older than 26 hours. |
+| Función                        | Valor      | Descripción                                                                                  |
+| ------------------------------ | ---------- | -------------------------------------------------------------------------------------------- |
+| Usage                          | Porcentaje | Capacidad usada del datastore, redondeada a dos decimales.                                   |
+| Total size                     | Gigabytes  | Capacidad total del datastore, redondeada a dos decimales.                                   |
+| Used space                     | Gigabytes  | Capacidad usada del datastore, redondeada a dos decimales.                                   |
+| Snapshot count                 | Entero     | Número de snapshots almacenados actualmente, sumado sobre los grupos de copias de seguridad. |
+| Last verify status             | Texto      | Estado de la última verificación, por ejemplo `OK`.                                          |
+| Last verify date               | Texto      | Fecha de la última verificación, en el formato configurado.                                  |
+| Last garbage collection status | Texto      | Estado de la última garbage collection, por ejemplo `OK`.                                    |
+| Last garbage collection date   | Texto      | Fecha de la última garbage collection, en el formato configurado.                            |
+| Last prune status              | Texto      | Estado del último prune, por ejemplo `OK`.                                                   |
+| Last prune date                | Texto      | Fecha del último prune, en el formato configurado.                                           |
+| Backup stale (> 26 h)          | `0` o `1`  | `1` cuando no existe ningún snapshot o el más reciente tiene más de 26 horas.                |
 
-## Dashboard widgets, scene triggers, and scene actions (Gladys 5.1)
+## Widgets del panel, activadores y acciones de escena (Gladys 5.1)
 
-These require Gladys **5.1.0** or later. They only read PBS: no button, trigger, or action can start, change, or delete anything on the server.
+Requieren Gladys **5.1.0** o posterior. Solo leen PBS: ningún botón, activador ni acción puede iniciar, cambiar o eliminar nada en el servidor.
 
-### Dashboard widgets
+### Widgets del panel
 
-Add them from the dashboard editor, in the widget list of this integration.
+Añádalos desde **Panel → Editar → Nuevo widget**, en **Widgets de integraciones**.
 
-| Widget        | Settings                                | Content                                                                                                                                                |
-| ------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| PBS datastore | One datastore, show tiles (default: on) | Usage gauge, free space, snapshot count, one card per verify/GC/prune task (date and result badge), last backup, used / total space, `Refresh` button. |
-| PBS backups   | None                                    | Usage of the fullest datastore, stale backups, failed tasks, one status row per datastore (up to 10), `Refresh` button.                                |
+| Widget                  | Configuración                                          | Contenido                                                                                                                                                                                                     |
+| ----------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Datastore PBS           | Un datastore, mostrar mosaicos (por defecto: activado) | Indicador de uso, espacio libre, número de snapshots, una tarjeta por tarea de verificación/GC/prune (fecha y distintivo de resultado), última copia de seguridad, espacio usado / total, botón `Actualizar`. |
+| Copias de seguridad PBS | Ninguna                                                | Uso del datastore más lleno, copias de seguridad demasiado antiguas, tareas fallidas, una fila de estado por datastore (hasta 10), botón `Actualizar`.                                                        |
 
-The snapshot tile follows the device state live. The other tiles, the task cards, and the status rows are updated after each refresh. The `Refresh` button reads PBS again right away. Turn off `Show usage, free space and snapshot tiles` to hide the three tiles.
+El mosaico de snapshots sigue el estado del dispositivo en directo. Los demás mosaicos, las tarjetas de tareas y las filas de estado se actualizan tras cada actualización. El botón `Actualizar` vuelve a leer PBS de inmediato. Desactive `Mostrar los mosaicos de uso, espacio libre y snapshots` para ocultar los tres mosaicos.
 
-### Scene triggers
+### Activadores de escena
 
-They show up in the scene editor, in the "Integrations" category. Each filter is optional: leave it empty to match any value.
+Aparecen en el editor de escenas, en la categoría «Integraciones». Cada filtro es opcional: déjelo vacío para aceptar cualquier valor.
 
-| Trigger                       | Fires when                                             | Filters                      | Variables                                                 |
-| ----------------------------- | ------------------------------------------------------ | ---------------------------- | --------------------------------------------------------- |
-| PBS maintenance task finished | A verify, garbage collection, or prune task has ended. | Datastore, task type, result | `datastore_name`, `task_type`, `result`, `status`, `date` |
-| New PBS backup                | A newer snapshot appeared on the datastore.            | Datastore                    | `datastore_name`, `last_backup`, `snapshot_count`         |
-| PBS backup is stale           | The newest snapshot just became older than 26 hours.   | Datastore                    | `datastore_name`, `last_backup`, `hours_since_backup`     |
-| PBS unreachable               | A datastore refresh failed (once per outage).          | Datastore                    | `datastore_name`, `error`                                 |
-| PBS reachable again           | A datastore refresh succeeded after a failure.         | Datastore                    | `datastore_name`                                          |
+| Activador                                | Se activa cuando                                                    | Filtros                             | Variables                                                 |
+| ---------------------------------------- | ------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------- |
+| Tarea de mantenimiento PBS finalizada    | Ha terminado una tarea de verificación, garbage collection o prune. | Datastore, tipo de tarea, resultado | `datastore_name`, `task_type`, `result`, `status`, `date` |
+| Nueva copia de seguridad PBS             | Ha aparecido un snapshot más reciente en el datastore.              | Datastore                           | `datastore_name`, `last_backup`, `snapshot_count`         |
+| Copia de seguridad PBS demasiado antigua | El snapshot más reciente acaba de superar las 26 horas.             | Datastore                           | `datastore_name`, `last_backup`, `hours_since_backup`     |
+| PBS inaccesible                          | Ha fallado la lectura de un datastore (una vez por caída).          | Datastore                           | `datastore_name`, `error`                                 |
+| PBS accesible de nuevo                   | La lectura de un datastore ha funcionado tras un fallo.             | Datastore                           | `datastore_name`                                          |
 
-`result` is `ok`, `warning`, or `error`; `status` is the raw PBS status, for example `OK`, `WARNINGS: 2`, or the error text.
+`result` es `ok`, `warning` o `error`; `status` es el estado de PBS tal cual, por ejemplo `OK`, `WARNINGS: 2` o el texto del error.
 
-- Triggers fire **once per change**, never at every refresh. Example: a backup that stays stale fires `PBS backup is stale` only once.
-- Changes are detected by the scheduled refresh (the refresh interval). A refresh asked by a widget or a scene action never fires a trigger itself; the next scheduled refresh reports the change.
-- The first refresh after a start or a configuration change fires nothing: it sets the reference point.
-- If several tasks of the same type finish between two refreshes, only the newest is reported.
+- Los activadores se disparan **una vez por cambio**, nunca en cada actualización. Ejemplo: una copia de seguridad que sigue siendo demasiado antigua dispara `Copia de seguridad PBS demasiado antigua` una sola vez.
+- Los cambios los detecta la actualización programada (el intervalo de actualización). Una actualización solicitada por un widget o una acción de escena nunca dispara un activador por sí misma; la siguiente actualización programada informa del cambio.
+- La primera actualización tras un arranque o un cambio de configuración no dispara nada: establece el punto de referencia.
+- Si varias tareas del mismo tipo terminan entre dos actualizaciones, solo se informa de la más reciente.
 
-### Scene actions
+### Acciones de escena
 
-| Action                   | Fields                                                 | Outputs                                                                                                                                                                                                                                             |
-| ------------------------ | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Get PBS datastore status | Datastore (required), `Read PBS now` (default: off)    | `datastore_name`, `usage_percent`, `used_gb`, `total_gb`, `snapshot_count`, `backup_stale`, `last_backup`, `hours_since_backup`, `last_verify_status`, `last_verify_date`, `last_gc_status`, `last_gc_date`, `last_prune_status`, `last_prune_date` |
-| Get PBS backup report    | `Read PBS now` (default: off), report language (en/fr) | `datastore_count`, `stale_count`, `failed_task_count`, `unreachable_count`, `max_usage_percent`, `all_ok`, `summary`                                                                                                                                |
+| Acción                                        | Campos                                                                        | Salidas                                                                                                                                                                                                                                             |
+| --------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Obtener el estado de un datastore PBS         | Datastore (obligatorio), `Leer PBS ahora` (por defecto: desactivado)          | `datastore_name`, `usage_percent`, `used_gb`, `total_gb`, `snapshot_count`, `backup_stale`, `last_backup`, `hours_since_backup`, `last_verify_status`, `last_verify_date`, `last_gc_status`, `last_gc_date`, `last_prune_status`, `last_prune_date` |
+| Obtener el informe de copias de seguridad PBS | `Leer PBS ahora` (por defecto: desactivado), idioma del informe (en/fr/de/es) | `datastore_count`, `stale_count`, `failed_task_count`, `unreachable_count`, `max_usage_percent`, `all_ok`, `summary`                                                                                                                                |
 
-- Without `Read PBS now`, the action answers from the last refresh and costs nothing on PBS.
-- `summary` is a ready-to-send text, one line per datastore. Example for a daily report: "Every day at 8:00" → "Get PBS backup report" → "Send a message" with the `summary` output.
-- Example alert: "PBS maintenance task finished" filtered on result `error` → "Send a message": `PBS {{triggerEvent.data.task_type}} failed on {{triggerEvent.data.datastore_name}}: {{triggerEvent.data.status}}`.
+- Sin `Leer PBS ahora`, la acción responde con los valores de la última actualización y no supone ninguna carga para PBS.
+- `summary` es un texto listo para enviar, con una línea por datastore. Ejemplo de informe diario: «Activador programado» (cada día a las 8:00) → «Obtener el informe de copias de seguridad PBS» → «Enviar mensaje» con la salida `summary`.
+- Ejemplo de alerta: «Tarea de mantenimiento PBS finalizada» filtrada por el resultado `error` → «Enviar mensaje»: `PBS {{triggerEvent.data.task_type}} ha fallado en {{triggerEvent.data.datastore_name}}: {{triggerEvent.data.status}}`.
 
-## Behaviour notes
+## Notas sobre el funcionamiento
 
-- Snapshot count and backup freshness are read from the datastore's backup groups (`backup-count` and `last-backup`), so a datastore holding thousands of snapshots costs one small response per refresh. If a PBS release does not expose those counters, the integration falls back to listing the snapshots.
-- The task history is read with one filtered request per task type (verify, garbage collection, prune), so a busy datastore does not push them out of view and back to `Never run`, and a task type that never ran costs one empty answer. A PBS release that refuses the filter is read page by page instead (up to 2000 tasks).
-- The capacity of every datastore comes from one `/status/datastore-usage` read, shared by all the datastores refreshed within the same minute.
-- Datastores that are offline or unmounted report no capacity; the integration then publishes **nothing** for usage, total size, and used space (the last real values stay displayed) rather than a `0` that would look like an emptied datastore. Widgets show the capacity as unavailable.
-- Every request to PBS ends within 15 seconds, including an answer cut or stalled halfway, and answers larger than 8 MB are refused. The connection status names the cause: token refused (HTTP 401), missing role (HTTP 403), certificate, network, or timeout.
-- A refresh that fails (network error, timeout, PBS restart) is retried on the next one-minute Gladys tick instead of waiting a full refresh interval. At startup, the connection is retried four times with an exponential backoff before the integration reports itself as disconnected.
-- A refresh that PBS answered but Gladys could not store (Gladys restarting, for example) is retried on the next tick too; it is not reported as `PBS unreachable`.
-- A datastore deleted or renamed on PBS is dropped from the monitored list as soon as PBS stops listing it, without a `PBS unreachable` event, and no longer keeps the connection status red. Its device left in Gladys is looked up again after one refresh interval, then twice as long each time, up to once a day.
-- A device just added from the Discovery tab is read right away instead of at the next refresh.
+- El número de snapshots y la antigüedad de las copias de seguridad se leen de los grupos de copias de seguridad del datastore (`backup-count` y `last-backup`), de modo que un datastore con miles de snapshots solo cuesta una respuesta pequeña por actualización. Si una versión de PBS no expone esos contadores, la integración recurre a la lista de snapshots.
+- El historial de tareas se lee con una petición filtrada por tipo de tarea (verificación, garbage collection, prune), de modo que un datastore con mucha actividad no las saca de la vista para devolverlas a `Never run`, y un tipo de tarea que nunca se ha ejecutado solo cuesta una respuesta vacía. Una versión de PBS que rechace el filtro se lee en su lugar página a página (hasta 2000 tareas).
+- La capacidad de todos los datastores procede de una sola lectura de `/status/datastore-usage`, compartida por todos los datastores actualizados en el mismo minuto.
+- Los datastores sin conexión o no montados no informan de su capacidad; la integración no publica entonces **nada** para el uso, el tamaño total y el espacio usado (los últimos valores reales siguen mostrándose) en lugar de un `0` que parecería un datastore vaciado. Los widgets muestran la capacidad como no disponible.
+- Toda petición a PBS termina en 15 segundos, incluida una respuesta cortada o bloqueada a medias, y se rechazan las respuestas de más de 8 MB. El estado de la conexión indica la causa: token rechazado (HTTP 401), rol ausente (HTTP 403), certificado, red o tiempo de espera agotado.
+- Una actualización que falla (error de red, tiempo de espera agotado, reinicio de PBS) se reintenta en el siguiente ciclo de un minuto de Gladys en lugar de esperar un intervalo de actualización completo. Al arrancar, la conexión se reintenta cuatro veces con una espera exponencial antes de que la integración se declare desconectada.
+- Una actualización a la que PBS respondió pero que Gladys no pudo guardar (por ejemplo, mientras Gladys se reinicia) también se reintenta en el siguiente ciclo; no se notifica como `PBS inaccesible`.
+- Un datastore eliminado o renombrado en PBS se retira de la lista supervisada en cuanto PBS deja de listarlo, sin evento `PBS inaccesible`, y deja de mantener en rojo el estado de la conexión. Su dispositivo, que permanece en Gladys, se vuelve a buscar tras un intervalo de actualización y después cada vez con el doble de espera, hasta una vez al día.
+- Un dispositivo recién añadido desde la pestaña «Descubrir» se lee de inmediato en lugar de en la siguiente actualización.
 
-## Checking which inventory route is used
+## Comprobar qué ruta de inventario se usa
 
-The integration prefers the cheap `groups` route and falls back to the full snapshot list; the fallback is logged as a warning in the container logs (`Falling back to the snapshot list for datastore ...`, with the PBS error that caused it).
+La integración prefiere la ruta económica `groups` y recurre a la lista completa de snapshots; ese recurso se registra como advertencia en la pestaña **Registros** de la integración (`Falling back to the snapshot list for datastore ...`, con el error de PBS que lo provocó).
 
-To check it against your server without installing anything in Gladys, run the read-only diagnostic from a clone of this repository:
+Para comprobarlo con su servidor sin instalar nada en Gladys, ejecute el diagnóstico de solo lectura desde un clon de este repositorio:
 
 ```bash
 PBS_URL=https://pbs.example.com:8007 \
@@ -160,16 +154,16 @@ PBS_TOKEN_SECRET='the-token-secret' \
 npm run check:pbs
 ```
 
-It prints, per datastore, the route actually used, how long each route takes, and the last verify/GC/prune task. It also cross-checks the snapshot count and the newest backup against the full snapshot list, and exits with code `1` if the two disagree. Add `PBS_NODE=...` for a node other than `localhost`, and `PBS_FINGERPRINT=AA:BB:...` for a self-signed certificate (or `PBS_VERIFY_TLS=false` on a trusted network).
+Muestra, por datastore, la ruta realmente usada, cuánto tarda cada ruta y la última tarea de verificación/GC/prune. También contrasta el número de snapshots y la copia de seguridad más reciente con la lista completa de snapshots, y termina con el código `1` si no coinciden. Añada `PBS_NODE=...` para un nodo distinto de `localhost`, y `PBS_FINGERPRINT=AA:BB:...` para un certificado autofirmado (o `PBS_VERIFY_TLS=false` en una red de confianza).
 
-The same routes can be checked by hand:
+Las mismas rutas pueden comprobarse a mano:
 
 ```bash
 curl -sSf -H "Authorization: PBSAPIToken=gladys@pbs!monitoring:SECRET" \
   'https://pbs.example.com:8007/api2/json/admin/datastore/NAME/groups' | head -c 400
 ```
 
-An HTTP 403 means the ACL is missing `Datastore.Audit` on that datastore; an HTTP 404 means this PBS release does not serve the route and the snapshot fallback is expected.
+Un HTTP 403 significa que a la ACL le falta `Datastore.Audit` sobre ese datastore; un HTTP 404 significa que esta versión de PBS no ofrece la ruta y que el recurso a la lista de snapshots es lo esperado.
 
 ## Parámetros de configuración
 
@@ -177,21 +171,21 @@ Estos son los parámetros que Proxmox Backup Server te pide en su pantalla de co
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| Proxmox Backup Server connection | `section` | No | Create a dedicated API token with the read-only DatastoreAudit and Audit roles. See the documentation for the exact commands. |
-| Server URL | `string` | Sí | For example: https://pbs.example.com:8007. Avoid http://: it sends the API token in clear text. |
-| API token ID | `string` | Sí | Full ID, for example gladys@pbs!monitoring |
-| API token secret | `secret` | Sí |  |
-| PBS node name | `string` | No |  |
-| Refresh interval (seconds) | `number` | No |  |
-| TLS certificate fingerprint | `string` | No | Recommended with the default self-signed PBS certificate: its SHA-256 fingerprint (Dashboard > Show Fingerprint). The token is only sent to a server presenting it. Leave empty for a certificate signed by a trusted CA. |
-| Verify TLS certificate | `boolean` | No | Ignored when a fingerprint is pinned. Turn off only as a last resort, on a trusted network: the connection stays encrypted but nothing proves the server is the real one. |
-| Date format | `select` | No | Select how task dates are displayed, in the time zone set below. |
-| Time zone | `string` | No | IANA name used to display dates, for example Europe/Paris. Empty or unknown: UTC. |
+| Conexión con Proxmox Backup Server | `section` | No | Cree un token de API dedicado con los roles de solo lectura DatastoreAudit y Audit. Consulte la documentación para ver los comandos exactos. |
+| URL del servidor | `string` | Sí | Por ejemplo: https://pbs.example.com:8007. Evite http://: el token de API viaja entonces sin cifrar. |
+| ID del token de API | `string` | Sí | ID completo, por ejemplo gladys@pbs!monitoring |
+| Secreto del token de API | `secret` | Sí |  |
+| Nombre del nodo PBS | `string` | No |  |
+| Intervalo de actualización (segundos) | `number` | No |  |
+| Huella del certificado TLS | `string` | No | Recomendado con el certificado autofirmado predeterminado de PBS: su huella SHA-256 (Dashboard > Show Fingerprint). El token solo se envía a un servidor que la presente. Déjelo vacío con un certificado firmado por una CA de confianza. |
+| Verificar el certificado TLS | `boolean` | No | Se ignora cuando hay una huella fijada. Desactívelo solo como último recurso, en una red de confianza: la conexión sigue cifrada, pero nada garantiza que el servidor sea el auténtico. |
+| Formato de fecha | `select` | No | Seleccione cómo se muestran las fechas de las tareas, en la zona horaria indicada abajo. |
+| Zona horaria | `string` | No | Nombre IANA usado para mostrar las fechas, por ejemplo Europe/Paris. Vacío o desconocido: UTC. |
 
 ## Cómo instalar Proxmox Backup Server en Gladys
 
 1. En Gladys, abre **Integraciones**: Proxmox Backup Server aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-proxmox-backup-server:2.5.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-proxmox-backup-server:2.6.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-proxmox-backup-server](https://github.com/prohand/gladys-proxmox-backup-server).
 
@@ -206,4 +200,4 @@ Proxmox Backup Server es una **integración externa**: una integración comunita
 - [Explorar todas las integraciones externas](/es/docs/integrations/external/)
 - [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
 - [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
-- [Código fuente en GitHub](https://github.com/prohand/gladys-proxmox-backup-server) — [fuente de esta documentación](https://github.com/prohand/gladys-proxmox-backup-server/blob/HEAD/docs/en.md)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-proxmox-backup-server) — [fuente de esta documentación](https://github.com/prohand/gladys-proxmox-backup-server/blob/HEAD/docs/es.md)

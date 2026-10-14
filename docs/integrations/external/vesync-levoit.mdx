@@ -1,0 +1,249 @@
+---
+title: "VeSync (Levoit) smart home integration, free and open source"
+sidebar_label: "VeSync (Levoit)"
+description: "Levoit air purifiers and humidifiers, Etekcity plugs, through the VeSync cloud. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-vesync.png"
+keywords:
+  - "vesync (levoit)"
+  - "vesync (levoit) smart home"
+  - "gladys vesync (levoit)"
+  - "vesync (levoit) gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-vesync instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="vesync-levoit" />
+
+This integration drives the devices of the **VeSync** app from Gladys: **Levoit air purifiers**
+and **humidifiers**, and **Etekcity smart plugs**. It goes through the VeSync cloud, like the app
+and like the Home Assistant integration.
+
+> **Developed without the hardware** nor a VeSync account: the code follows the pyvesync library
+> (used by Home Assistant) and its recorded answers closely, but has not been tried on a real
+> device yet. Feedback is welcome on
+> [GitHub](https://github.com/guim31/gladys-vesync/issues).
+
+Not affiliated with VeSync, Levoit or Etekcity: the brands belong to their owners.
+
+## Overview
+
+- Every purifier, humidifier or plug of your VeSync account shows up in the **Discover** tab; you
+  add the ones you want to Gladys.
+- The states are refreshed every minute (adjustable); a command from Gladys applies at once.
+- Two **scene triggers**: "Purifier filter to replace" and "Humidifier tank empty".
+- A dashboard **widget**: air quality and the main devices.
+
+## Requirements
+
+- Gladys **5.1.0** or later.
+- A VeSync account (e-mail and password) where your devices are already set up with the VeSync
+  app. An account created with Google or Apple has no password: add one in the app (Profile,
+  Account) before configuring the integration.
+- Gladys must reach the Internet: the integration talks to the VeSync cloud
+  (`smartapi.vesync.eu` in Europe, `smartapi.vesync.com` in the United States), never to the
+  devices themselves.
+
+## Installation
+
+1. In Gladys, open **Integrations**, then **Install from GitHub**.
+2. Paste `https://github.com/guim31/gladys-vesync` and confirm.
+3. Open the installed integration: the **Configuration** tab shows up.
+
+## Configuration
+
+| Field                         | Purpose                                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| VeSync e-mail                 | the e-mail of your VeSync account                                                                                   |
+| VeSync password               | its password; it stays in the Gladys configuration, never in the logs                                               |
+| Account region                | Europe (default) or United States; a wrong choice is corrected at login and reported by "Test the connection"       |
+| Refresh interval (s)          | seconds between two reads of each added device, 60 at least (default)                                               |
+| Filter alert threshold (%)    | the "filter to replace" trigger fires when a filter goes down to this value (10 % by default)                       |
+| Language of the feature names | language of the names given to the features of a device when it is added, and of the mode lists (French by default) |
+
+Save, then click **Test the connection**: the message gives the number of devices on the account,
+the supported ones, the models that are not supported, and the account's region when it differs
+from the chosen one. On failure, the reason shows in red.
+
+Then open the **Discover** tab and add the devices you want. The VeSync session token is kept in
+the integration's `/data` volume: a restart does not log in again.
+
+## Devices
+
+The names are the ones of the VeSync app. The features depend on the model.
+
+### Air purifiers
+
+Models: Core 200S, Core 300S, Core 400S, Core 600S, Vital 100S, Vital 200S, EverestAir,
+Sprout Air.
+
+| Feature     | Type              | Detail                                                                         |
+| ----------- | ----------------- | ------------------------------------------------------------------------------ |
+| Power       | switch            |                                                                                |
+| Mode        | list              | Auto, Manual, Sleep; Pet (Vital), Turbo (EverestAir); no Auto on the Core 200S |
+| Fan speed   | level 1 to 3 or 4 | choosing a speed switches the purifier to Manual mode                          |
+| PM2.5       | sensor, µg/m³     | except the Core 200S, which has no sensor                                      |
+| Filter life | %                 | except the Sprout Air, which does not report it                                |
+| Child lock  | switch            |                                                                                |
+| Display     | switch            | the display setting (some models turn it off by themselves in the dark)        |
+
+The air quality (excellent, good, moderate, poor) is shown by the widget.
+
+### Humidifiers
+
+Models: Classic 200S, Classic 300S, Dual 200S, LV600S, OasisMist 450S, OasisMist 1000S,
+Superior 6000S, Sprout.
+
+| Feature         | Type                   | Detail                                                  |
+| --------------- | ---------------------- | ------------------------------------------------------- |
+| Power           | switch                 |                                                         |
+| Humidity        | sensor, %              | the humidity measured by the device                     |
+| Target humidity | list from 30 % to 80 % | the humidity aimed at in Auto mode                      |
+| Mode            | list                   | Auto, Manual; Sleep and Humidity depending on the model |
+| Mist level      | level 1 to 2 or 9      | Dual 200S and Sprout: 2 levels, the others: 9           |
+| Water tank      | liquid level state     | "Low" when the tank is empty, "Normal" otherwise        |
+
+### Plugs
+
+| Model                                         | Features                                               |
+| --------------------------------------------- | ------------------------------------------------------ |
+| Etekcity 10 A (ESW01, ESW03, EU and US), 15 A | Power, Power draw (W), Voltage (V), Energy today (kWh) |
+| Etekcity ESW10                                | Power                                                  |
+
+"Energy today" is the energy of the day reported by VeSync: it starts over from zero every day.
+
+When a device is no longer connected to the VeSync cloud (unplugged, Wi-Fi lost), its badge turns
+"unreachable"; it is back to "cloud" as soon as it answers.
+
+## Widget
+
+The **VeSync air quality** widget goes on a dashboard (edit the dashboard, add a widget). It
+shows:
+
+- one tile per purifier (PM2.5) and per humidifier (humidity), six at most, updated live;
+- one row per device (ten at most): the air quality and mode of a purifier, with "filter 8 %"
+  when the filter reaches the threshold; the humidity and mode of a humidifier, or "Tank empty" in
+  red; the state and power of a plug; "Offline" for an unreachable device.
+
+The **Only this device** setting narrows the widget to one device (one widget per room, for
+instance). The widget is shown in the user's language.
+
+## Scene triggers
+
+| Trigger                    | When                                                                    | Variables                      |
+| -------------------------- | ----------------------------------------------------------------------- | ------------------------------ |
+| Purifier filter to replace | a purifier filter goes down to the alert threshold of the configuration | purifier name, filter life (%) |
+| Humidifier tank empty      | a humidifier reports its tank empty                                     | humidifier name                |
+
+Each trigger can be narrowed to one device, or left empty for all. It fires **once** per change:
+once per filter (a new filter, above the threshold again, re-arms it), once per empty tank
+(filling it re-arms it). The integration compares two successive reads: a filter already low or a
+tank already empty when the integration starts fires nothing.
+
+## Configuration action
+
+**Test the connection** (Configuration tab) logs in to VeSync with the saved credentials and reads
+the device list again. The message says how many devices the account holds, how many are
+supported, which models are not, and whether the account is on the other region. On failure, the
+error shows in red: credentials refused, VeSync unreachable, too many requests.
+
+## Scene examples
+
+- **Warn when the filter is worn out**: trigger "Purifier filter to replace", action "Send a
+  message": `Replace the filter of \{\{triggerEvent.data.device_name\}\}
+(\{\{triggerEvent.data.filter_life\}\} %).`
+- **Empty tank**: trigger "Humidifier tank empty", action "Send a message":
+  `The tank of {{triggerEvent.data.device_name}} is empty.`
+- **Polluted air**: trigger "Device state change" on the PM2.5 feature of the purifier, above
+  35 µg/m³; actions: set the Mode to Auto and turn the purifier on.
+- **Quiet night**: at 10:30 pm, set the Mode of the bedroom purifier to Sleep and turn its display
+  off.
+
+## Refresh and quotas
+
+- The integration reads the devices **added to Gladys** on its own timer: a device only
+  discovered is never read. The Gladys core's scheduling ("poll") is only a fallback, skipped when
+  the device was just read.
+- One read per device and per interval (60 s by default), the devices one after the other, plus
+  the device list every 30 minutes. VeSync publishes no quota: one read a minute is the pace of the
+  Home Assistant integration. A new login only happens when the token expires.
+- Only the values that change are sent to Gladys, plus every value once every 12 hours so that it
+  stays "recent".
+- A refused password stops every request until a new configuration: retrying every minute could
+  get the account locked.
+
+## Troubleshooting
+
+- **"VeSync refused the e-mail or the password"**: check them in the VeSync app (log out, log
+  in). An account created with Google or Apple needs a password first.
+- **"VeSync cannot be reached"**: Gladys has no Internet access, or the VeSync cloud is down. The
+  integration retries by itself at every interval.
+- **A device is missing from Discover**: "Test the connection" lists the models that are not
+  supported. A device removed from the VeSync app disappears from Discover.
+- **A device stays "unreachable"**: it is no longer connected to the VeSync cloud; check it in the
+  VeSync app.
+- **The account is on the other region**: choose the region given by "Test the connection".
+- **Logs**: normally the integration only writes the start, the connection losses and returns,
+  and one line per command. To see everything, add the environment variable `LOG_LEVEL=debug`.
+  Neither the password nor the token ever appears there.
+
+## Limits
+
+- **Developed without the hardware**: the models are supported after pyvesync and its recorded
+  answers. Report on GitHub any device that misbehaves.
+- Not supported: fans (tower, pedestal), bulbs, wall switches, air fryers, thermostats, the
+  LV-PUR131S and LV-RH131S purifiers, 7 A, outdoor and partner-brand plugs. "Test the connection"
+  lists them.
+- No timers, schedules, night light, warm mist, drying nor filter reset: use the VeSync app for
+  those.
+- The target humidity is a list (30 % to 80 %), Gladys having no humidity setpoint.
+- Everything goes through the VeSync cloud: without Internet, no reading and no command.
+- Feature names are set when the device is added: changing the language later only renames the
+  mode lists.
+
+## Credits
+
+- [pyvesync](https://github.com/webdjoe/pyvesync) (MIT, Mark Perdue and contributors): the VeSync
+  cloud protocol and the recorded answers of its tests, ported to JavaScript.
+- The [Home Assistant VeSync](https://www.home-assistant.io/integrations/vesync) integration
+  (Apache 2.0): the reference behaviour and test answers.
+
+## Configuration settings
+
+These are the settings VeSync (Levoit) asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your VeSync account | `section` | No | Enter the e-mail and password of the VeSync app, where your Levoit and Etekcity devices are set up. Then click Test the connection, and add the devices from the Discover tab. Not affiliated with VeSync, Levoit or Etekcity. |
+| VeSync e-mail | `string` | Yes |  |
+| VeSync password | `secret` | Yes |  |
+| Account region | `select` | No | Europe for an account created in Europe, United States for America and Japan. A wrong choice is corrected at login and reported by Test the connection. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of each added device, one minute at least. |
+| Filter alert threshold (%) | `number` | No | The filter to replace trigger fires when a purifier filter goes down to this value. |
+| Language of the feature names | `select` | No | Names given to the features of a device when it is added, and labels of the mode lists. |
+
+## How to install VeSync (Levoit) in Gladys
+
+1. In Gladys, open **Integrations**: VeSync (Levoit) appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-vesync:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-vesync](https://github.com/guim31/gladys-vesync).
+
+VeSync (Levoit) requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+VeSync (Levoit) is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-vesync) — [source of this documentation](https://github.com/guim31/gladys-vesync/blob/HEAD/docs/en.md)

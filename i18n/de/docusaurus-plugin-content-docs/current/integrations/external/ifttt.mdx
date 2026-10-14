@@ -1,0 +1,145 @@
+---
+title: "IFTTT Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "IFTTT"
+description: "Unofficial connector: trigger IFTTT applets from scenes, start scenes from IFTTT (Plus). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ifttt.png"
+keywords:
+  - "ifttt"
+  - "ifttt smart home"
+  - "gladys ifttt"
+  - "ifttt gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ifttt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="ifttt" />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial connector, not affiliated with IFTTT.** It links Gladys scenes to
+the [IFTTT Webhooks service](https://ifttt.com/maker_webhooks): a scene can
+trigger any applet listening to an event name, and, with Gladys Plus, an
+applet can start a Gladys scene. IFTTT is a trademark of IFTTT Inc.
+
+## What you get
+
+| Surface                                        | Content                                                                                                                                           |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scene action **Trigger an IFTTT event**        | event name + `value1`, `value2`, `value3` (the applet's ingredients)                                                                              |
+| Scene action **Trigger an IFTTT event (JSON)** | event name + a JSON object (the applet's "JSON payload" ingredient)                                                                               |
+| Scene trigger **IFTTT event received**         | fires when an applet (or any HTTP client) calls the inbound webhook relayed by Gladys Plus, with the event name, `value1..3` and the other fields |
+| Dashboard widget **IFTTT button**              | one button that triggers an event, with an optional confirmation                                                                                  |
+| **Send a test event** button                   | checks the key and shows the inbound URL                                                                                                          |
+
+Nothing runs in the background: the integration only talks to IFTTT when a
+scene, a button or a webhook asks it to.
+
+## Setup
+
+1. On [ifttt.com/maker_webhooks](https://ifttt.com/maker_webhooks), click
+   **Documentation**: the page shows your key ("Your key is: ...").
+2. Install the integration, paste the key in **IFTTT Webhooks key**, save,
+   then click **Send a test event**.
+3. In IFTTT, create an applet whose **If This** is **Webhooks → Receive a web
+   request** with the event name of your choice (letters, digits and
+   underscores, e.g. `coffee_on`), and whatever **Then That** you like.
+4. In a Gladys scene, add the action **Trigger an IFTTT event** with that
+   name. `value1`, `value2` and `value3` accept scene variables
+   (`{{device.living_room.temperature}}`).
+
+A free IFTTT account allows a few applets; the Webhooks service itself has no
+limit on the number of events.
+
+## From IFTTT to Gladys (Gladys Plus)
+
+A Gladys at home is not reachable from the Internet: Gladys Plus relays the
+inbound requests.
+
+1. Link Gladys Plus, open the integration and paste your **Open API key** in
+   the **Gladys Plus webhooks** block: Gladys shows the public URL of the
+   "IFTTT inbound events" webhook (the **Send a test event** button repeats
+   it).
+2. In IFTTT, create an applet with the action **Webhooks → Make a web
+   request**: URL = that URL, method **POST**, content type
+   **application/json**, body:
+
+   ```json
+   { "event": "leaving_home", "value1": "{{OccurredAt}}" }
+   ```
+
+   Any other key of the body is relayed in the `payload` variable (as JSON).
+   A `GET` with `?event=leaving_home&value1=...` works too.
+
+3. In Gladys, create a scene with the trigger **IFTTT event received** and
+   the event name as filter (leave it empty to react to every event). The
+   variables `{{triggerEvent.data.value1}}` etc. are available in the
+   following actions.
+
+The URL is a secret. For an extra check, set a **shared secret** in the
+configuration and add `"secret": "<value>"` to the body sent by IFTTT:
+requests without it are ignored.
+
+## Dashboard
+
+The **IFTTT button** widget shows a title, a caption and a button that
+triggers the event of its settings (with an optional `value1`). Tick **Ask
+for confirmation** for an action with consequences.
+
+## Troubleshooting
+
+- **"IFTTT refused the Webhooks key"**: the key is wrong or revoked; copy it
+  again from the Webhooks documentation page.
+- **The applet does not run**: the event name must be exactly the one typed
+  in the applet (case-sensitive); check the applet's activity on IFTTT.
+- **"Inbound events need Gladys Plus"**: without Plus the outbound direction
+  still works; only the trigger needs the relay.
+- Logs: the integration's log level is set with the `LOG_LEVEL` variable
+  (`debug` shows every call).
+
+## Privacy
+
+The integration sends IFTTT only what your scenes put in the events. The key
+is stored encrypted by Gladys and never leaves your instance except to reach
+`maker.ifttt.com`.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt IFTTT in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| IFTTT Webhooks | `section` | Nein | Unofficial connector, not affiliated with IFTTT. Your scenes can trigger any IFTTT applet whose "If This" is the Webhooks service (event name + up to three values, or a JSON payload), and, with Gladys Plus, an IFTTT applet can start a Gladys scene through the inbound webhook below. Create an applet with the Webhooks trigger "Receive a web request" and copy your key from the Webhooks settings page. |
+| IFTTT Webhooks key | `secret` | Ja | The key shown after "Your key is:" on the Webhooks settings page (or the end of the URL after /use/). Stored encrypted by Gladys. |
+| From IFTTT to Gladys (Gladys Plus) | `section` | Nein | To start a Gladys scene from IFTTT, link Gladys Plus and paste your Open API key in the "Gladys Plus webhooks" block: Gladys then shows the public URL to use in an IFTTT applet with the action "Webhooks: Make a web request" (POST, Content Type application/json, body \{"event": "my_event", "value1": "..."\}). Your scenes then use the trigger "IFTTT event received". The URL is a secret: add the optional shared secret below to refuse requests that do not carry it. |
+| Shared secret for inbound requests (optional) | `secret` | Nein | When set, an inbound request is accepted only if its JSON body, form body or query string carries "secret" with this value. |
+
+## So installierst du IFTTT in Gladys
+
+1. Öffne in Gladys **Integrationen**: IFTTT erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ifttt:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-ifttt](https://github.com/LM1LC3N7/gladys-ifttt).
+
+IFTTT benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+IFTTT ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)
+- [Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-ifttt) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-ifttt/blob/HEAD/docs/en.md)

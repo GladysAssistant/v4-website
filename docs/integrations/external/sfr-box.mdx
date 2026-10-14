@@ -1,0 +1,187 @@
+---
+title: "SFR Box smart home integration, free and open source"
+sidebar_label: "SFR Box"
+description: "Line, Internet connection, Wi-Fi and connected devices of your SFR Box, on the local network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sfr-box.png"
+keywords:
+  - "sfr box"
+  - "sfr box smart home"
+  - "gladys sfr box"
+  - "sfr box gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-sfr-box instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="sfr-box" />
+
+Follow your SFR Box from Gladys: line, Internet connection, Wi-Fi, connected
+devices, and reboot it from a scene or the dashboard. Everything stays on your
+local network: Gladys reads the box once a minute through its local API, with
+no cloud account.
+
+> **Developed without the hardware: feedback welcome.** This integration was
+> written from the public documentation of the box API and from real answers
+> collected by the open-source library
+> [hacf-fr/sfrbox-api](https://github.com/hacf-fr/sfrbox-api) (Home Assistant).
+> If something is missing or wrong on your box, please open an issue with your
+> model and firmware (shown by the **Test the connection** button).
+>
+> This integration is not affiliated with SFR.
+
+## Compatible boxes
+
+The box must expose the local "neufbox" API (`http://192.168.1.1/api/1.0/`).
+
+| Box                                       | Status                                                                                                                                         |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| NB4, NB5, NB6, NB6V, NB6VAC               | The API is documented for these models.                                                                                                        |
+| Newer firmwares (`BOX10H`, `3DCM` / FTTB) | System information confirmed by real answers; the rest is untested.                                                                            |
+| SFR Box 8 and 8X                          | Unknown: not listed by the API documentation nor by Home Assistant. The newer firmwares above suggest it may answer. Your feedback is welcome. |
+| Boxes without this API (e.g. `NCC`)       | Not supported.                                                                                                                                 |
+
+## Prerequisites
+
+- Gladys 5.1 or later.
+- Gladys and the box on the same local network.
+- Optional: the **administrator password** of the box. By default it is the
+  Wi-Fi key printed on the label of the box, unless you changed it in the box
+  interface (`http://192.168.1.1`).
+
+## Configuration
+
+1. Install the integration from the Gladys catalog, then open its
+   **Configuration** tab.
+2. **Box address**: `192.168.1.1` unless your network uses another one.
+3. **Administrator login** (`admin`) and **password**: optional. Without them,
+   you get the line, the Internet connection and the system information. With
+   them, you also get the Wi-Fi state and the reboot.
+4. **Discover the connected devices**: lists the devices the box sees, for
+   presence detection.
+5. **Language of the feature names**: the names given to the features when you
+   add a device (they cannot change afterwards).
+6. Save, then click **Test the connection**: the result shows the model, the
+   firmware, the line, the number of connected devices and whether the password
+   was accepted.
+7. Open the **Discovery** tab and add the **SFR Box** device, and the connected
+   devices you want to follow.
+
+The password is stored by Gladys and is never written in the logs.
+
+## What you get
+
+**The "SFR Box" device**
+
+| Feature                                   | When                                  |
+| ----------------------------------------- | ------------------------------------- |
+| Internet connection (connected or not)    | always                                |
+| IPv6 connection                           | always                                |
+| Public IPv4 address                       | always                                |
+| Line type (ADSL, FTTH…)                   | always                                |
+| DSL line synchronized                     | DSL line                              |
+| DSL download and upload rates (kbit/s)    | DSL line                              |
+| Attenuation and noise margin, down and up | DSL line                              |
+| Fibre line up                             | fibre line                            |
+| Wi-Fi enabled                             | with the administrator password       |
+| Box uptime (hours)                        | always                                |
+| Box temperature                           | when the box has a temperature sensor |
+| Model, firmware                           | always                                |
+
+The fibre line exposes no rate through this API: rates are for DSL only. If
+you add the password later or your line moves to fibre, the **Discovery** tab
+offers to **Update** the device.
+
+**Connected devices (presence)**
+
+Each device the box sees can be added as a Gladys device with a **Presence**
+feature, shown as "seen N minutes ago". It is refreshed when the device appears
+on the network, then every 5 minutes while it stays connected. To mark someone
+as away, use the Gladys scene action **Check user presence** with a delay of
+**10 minutes or more**.
+
+Phones often use a **private (random) Wi-Fi address** per network: turn it off
+for your home network in the phone's Wi-Fi settings, or the device will show up
+under a new address. Depending on the firmware, the box may only give this list
+with the administrator password.
+
+## Scenes
+
+- **Internet connection lost** (trigger): the box reports its Internet
+  connection down. Not fired during a reboot asked through Gladys.
+- **Internet connection restored** (trigger): the connection is back. The
+  following actions can read the outage duration with
+  `{{triggerEvent.data.outage_seconds}}` (about one minute of precision, empty
+  when the outage started before Gladys was watching).
+- **Reboot the SFR Box** (action): Internet, TV and phone are cut for a few
+  minutes. Needs the administrator password.
+
+These triggers rely on the box's own report: if the box itself is unreachable
+(powered off, rebooting), nothing is fired.
+
+## Dashboard
+
+The **SFR Box** widget shows the Internet connection, the line state, the DSL
+rates, the uptime and the temperature. Its **Show a reboot button** setting
+adds a reboot button, with a confirmation, when the password is configured.
+
+## Actions
+
+- **Test the connection**: reads the box now and checks the password.
+- **Reboot the box**: tick **I confirm the reboot**, then run the action.
+
+## Troubleshooting
+
+- **"SFR Box unreachable"**: check the address, and that Gladys runs on the
+  same network as the box (a VPN or a second router in between prevents the
+  access).
+- **"Password refused by the box"**: check the password in the box interface.
+  Gladys stops trying after a refusal, to avoid locking the account: save the
+  configuration again to retry.
+- **"The box only accepts authentication by its button"**: the box disables
+  password authentication. Enable it in the box interface to use the Wi-Fi
+  state and the reboot.
+- A value stays empty: your firmware may not provide it. Run **Test the
+  connection** and share the result in an issue.
+- The integration logs are available in Gladys, in the **Logs** tab of the
+  integration. In normal operation they stay quiet: startup, connection,
+  failures and their recovery, and your actions. Set `LOG_LEVEL=debug` for
+  more detail; passwords and tokens are never logged.
+
+## Configuration settings
+
+These are the settings SFR Box asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your SFR Box | `section` | No | Gladys reads the box on your local network once a minute. Without a password: line, Internet connection and system information. With the administrator password of the box (by default, the Wi-Fi key printed on the box label): Wi-Fi state and reboot. Developed without the hardware: feedback welcome. Not affiliated with SFR. |
+| Box address | `string` | Yes | IP address or name of the box on your network, 192.168.1.1 by default. |
+| Administrator login | `string` | No | Login of the box web interface, admin unless you changed it. |
+| Administrator password | `secret` | No | Optional. Needed for the Wi-Fi state and the reboot. Stored by Gladys, never written in the logs. |
+| Discover the connected devices | `boolean` | No | Lists the devices the box sees in the Discovery tab, for presence detection by MAC address. |
+| Language of the feature names | `select` | No | Names given to the features when you add a device to Gladys. |
+
+## How to install SFR Box in Gladys
+
+1. In Gladys, open **Integrations**: SFR Box appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-sfr-box:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-sfr-box](https://github.com/guim31/gladys-sfr-box).
+
+SFR Box requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+SFR Box is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-sfr-box) — [source of this documentation](https://github.com/guim31/gladys-sfr-box/blob/HEAD/docs/en.md)

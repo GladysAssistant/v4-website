@@ -1,7 +1,7 @@
 ---
 title: "VigiEau Smart-Home-Integration, kostenlos und Open Source"
 sidebar_label: "VigiEau"
-description: "French drought alert levels and water restrictions, from the official VigiEau service. Free, open source, installable in one click."
+description: "Dürrewarnstufen und Wasserbeschränkungen in Frankreich, vom offiziellen Dienst VigiEau. Kostenlos, Open Source, mit einem Klick installiert."
 image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-vigieau.png"
 keywords:
   - "vigieau"
@@ -14,399 +14,422 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/de.md in
 https://github.com/prohand/gladys-vigieau instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
 <ExternalIntegrationHeader slug="vigieau" />
 
-:::info
+Diese Integration fragt [VigiEau](https://vigieau.gouv.fr) ab, den Dienst des
+französischen Staates, der die **Dürrewarnstufe** und die an einer Adresse
+geltenden **Wasserbeschränkungen** veröffentlicht, und stellt das Ergebnis als
+Gladys-Sensoren bereit.
 
-Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+Die VigiEau-API ist kostenlos und öffentlich: **kein Konto, kein API-Schlüssel**.
+Sie deckt **nur Frankreich** ab.
 
-:::
+## Was du erhältst
 
-This integration queries [VigiEau](https://vigieau.gouv.fr), the French
-government service publishing the **drought alert level** and the **water
-restrictions** in force at a given address, and exposes the result as Gladys
-sensors.
+**Ein Gerät pro überwachtem Ort**, benannt „Vigilance sécheresse — _dein Ort_“,
+mit jeweils sieben Sensoren. Du kannst bis zu **zehn Orte** überwachen: Ein
+Haus, ein Zweitwohnsitz und ein Schrebergarten fallen selten unter denselben
+Präfekturerlass.
 
-The VigiEau API is free and public: **no account, no API key**. It covers
-**France only**.
+| Sensor                       | Wert                                                                        |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| **Dürrewarnstufe**           | 0 bis 3 — die schlechteste der drei Wasserarten                             |
+| **Stufe (Text)**             | „Alerte renforcée“, „Crise“…                                                |
+| **Stufe Oberflächenwasser**  | 0 bis 3 — Flüsse und Seen (Zonen `SUP`)                                     |
+| **Stufe Grundwasser**        | 0 bis 3 — Grundwasserleiter (Zonen `SOU`)                                   |
+| **Stufe Trinkwasser**        | 0 bis 3 — das Leitungswassernetz (Zonen `AEP`)                              |
+| **Dernière mise à jour**     | „15/06/2026 09:26“ — die letzte erfolgreiche VigiEau-Abfrage für diesen Ort |
+| **Arrêté en vigueur depuis** | „15/06/2026“ — der Tag, an dem der Erlass dieser Stufe in Kraft trat        |
 
-## What you get
+> **Die beiden Daten sagen nicht dasselbe aus.** VigiEau veröffentlicht keinen
+> Zeitstempel seiner eigenen Daten: Nichts in der API sagt „diese Information
+> stammt vom…“. **Dernière mise à jour** ist daher der Moment, in dem _die
+> Integration_ VigiEau zuletzt erfolgreich für diesen Ort abgefragt hat — das
+> unterscheidet einen eingefrorenen Sensor von einer Stufe, die sich einfach
+> nicht geändert hat. Der Wert ändert sich nur bei einer erfolgreichen Abfrage:
+> Nach einem Ausfall bleibt er wie die Stufe auf seinem vorherigen Wert.
+> **Arrêté en vigueur depuis** ist ein Datum aus der Quelle: der Tag, an dem der
+> geltende Präfekturerlass in Kraft trat. Ist nichts in Kraft, zeigt der Sensor
+> „Aucun arrêté en vigueur“, statt das Datum eines aufgehobenen Erlasses zu
+> behalten. Beide werden in Pariser Zeit angezeigt, unabhängig von der Zeitzone
+> des Servers.
 
-**One device per watched location**, named "Vigilance sécheresse — _your
-location_", each carrying seven sensors. You can watch up to **ten locations**: a
-house, a second home and an allotment garden are rarely under the same
-prefectoral decree.
+Die numerische Skala folgt den Präfekturerlassen, zusammengefasst auf die vier
+Werte, die Gladys benennen kann:
 
-| Sensor                       | Value                                                                   |
-| ---------------------------- | ----------------------------------------------------------------------- |
-| **Drought alert level**      | 0 to 3 — the worst of the three water types                             |
-| **Level (text)**             | "Alerte renforcée", "Crise"…                                            |
-| **Surface water level**      | 0 to 3 — rivers and lakes (`SUP` zones)                                 |
-| **Groundwater level**        | 0 to 3 — aquifers (`SOU` zones)                                         |
-| **Drinking water level**     | 0 to 3 — the tap water network (`AEP` zones)                            |
-| **Dernière mise à jour**     | "15/06/2026 09:26" — the last successful VigiEau read for this location |
-| **Arrêté en vigueur depuis** | "15/06/2026" — the day the decree setting this level came into force    |
+| Wert | Anzeige in Gladys | VigiEau-Stufe                   | Bedeutung                                             |
+| ---- | ----------------- | ------------------------------- | ----------------------------------------------------- |
+| 0    | Kein Risiko       | Pas de restriction              | An dieser Adresse gilt nichts                         |
+| 1    | Niedrig           | Vigilance                       | Wassersparen empfohlen, noch kein Verbot              |
+| 2    | Mittel            | Alerte                          | Erste Verbote (Bewässerung, Autowäsche…)              |
+| 3    | Hoch              | Alerte renforcée **oder** Crise | Weitere Verbote, bis hin zu nur vorrangigen Nutzungen |
 
-> **The two dates do not say the same thing.** VigiEau publishes no timestamp of
-> its own data: nothing in the API says "this information dates from…". So
-> **Dernière mise à jour** is the moment _the integration_ last queried VigiEau
-> successfully for this location — what tells a frozen sensor from a level that
-> simply has not changed. It only moves on a successful read: after an outage it
-> stays on its previous value, alongside the level. **Arrêté en vigueur depuis**
-> is a date from the source: the day the applicable prefectoral decree came into
-> force. When nothing is in force, the sensor reads "Aucun arrêté en vigueur"
-> rather than keeping the date of a decree that has been lifted. Both are shown
-> in Paris time, whatever the server's timezone.
+> Gladys kann eine Risikostufe nur von 0 bis 3 benennen; alles darüber wird als
+> „Unbekannt“ angezeigt. „Alerte renforcée“ und „Crise“ teilen sich daher den
+> Wert 3. Der Sensor **Stufe (Text)** behält den genauen amtlichen Wortlaut,
+> „Crise“ eingeschlossen — nutze ihn, um die beiden zu unterscheiden.
 
-The numeric scale follows the prefectoral decrees, folded onto the four values
-Gladys knows how to name:
+Ein Ort kann zu mehreren Zonen gehören: Ein Erlass kann das Grundwasser
+einschränken, ohne das Leitungswasser zu betreffen. Deshalb werden die drei
+Wasserarten zusätzlich zur Gesamtstufe getrennt bereitgestellt.
 
-| Value | Shown by Gladys | VigiEau level                 | What it means                        |
-| ----- | --------------- | ----------------------------- | ------------------------------------ |
-| 0     | Pas de risque   | Pas de restriction            | Nothing in force at this address     |
-| 1     | Faible          | Vigilance                     | Water savings encouraged, no ban yet |
-| 2     | Moyen           | Alerte                        | First bans (watering, car washing…)  |
-| 3     | Élevé           | Alerte renforcée **or** Crise | Wider bans, up to priority uses only |
+## Konfiguration
 
-> Gladys can only label a risk level from 0 to 3; anything above shows as
-> "Inconnu". "Alerte renforcée" and "Crise" therefore share the value 3. The
-> **Level (text)** sensor keeps the exact official wording, "Crise" included —
-> use it to tell the two apart.
+1. Öffne den Tab **Konfiguration** der Integration.
+2. Klicke auf **„Ort hinzufügen (Adresse suchen)“**, gib deine Adresse ein
+   (Straße, Postleitzahl, Gemeinde) und, wenn du möchtest, einen **Namen**
+   („Maison“, „Jardin“… — bleibt er leer, wird die Gemeinde verwendet). Der Ort
+   wird angelegt, seine Koordinaten werden für dich geokodiert, und sein Gerät
+   erscheint im Tab **Entdecken**, bereit zum Hinzufügen. Kennst du den Punkt
+   bereits, füll stattdessen die optionalen Felder **Breitengrad** und
+   **Längengrad** aus: Sie werden unverändert verwendet, ohne Geokodierung.
+3. Wiederhole das für jeden Ort, den du überwachen möchtest, bis zu zehn.
+   Sind die gewünschten Orte deine **Gladys-Zuhause**, erspart dir die
+   Schaltfläche **„Meine Gladys-Zuhause hinzufügen“** jede Eingabe: siehe
+   „Deine Gladys-Zuhause mit einem Klick hinzufügen“ weiter unten.
+4. Wähle unter **„Allgemeine Einstellungen“** dein **Nutzerprofil**:
+   Privathaushalt, Unternehmen, Gebietskörperschaft oder landwirtschaftlicher
+   Betrieb. Die Beschränkungen hängen vom Profil ab, und VigiEau liefert die,
+   die für deines gelten. Diese Einstellung gilt für **alle Orte**.
+5. Belasse das **Aktualisierungsintervall** bei 3600 s (1 Stunde):
+   Präfekturerlasse ändern sich höchstens einmal am Tag. Die Integration hält
+   diesen Takt selbst ein, zwischen 15 Minuten und 24 Stunden, was immer du
+   eingibst.
+6. Speichere.
 
-A single location can belong to several zones: a decree may restrict groundwater
-without touching the tap. That is why the three water types are exposed
-separately, in addition to the overall level.
+> Solange kein Ort einen verwendbaren Punkt hat, wird kein Gerät angeboten. Das
+> ist gewollt: Kein Gerät ist besser als ein Gerät, das an einen leeren Ort
+> gebunden ist.
 
-## Configuration
+### Deine Gladys-Zuhause mit einem Klick hinzufügen
 
-1. Open the integration's **Configuration** tab.
-2. Click **"Add a location (search for an address)"**, type your address
-   (street, postal code, town) and, if you like, a **name** ("Maison",
-   "Jardin"… — the town is used when you leave it empty). The location is
-   created, its coordinates are geocoded for you, and its device shows up in the
-   **Discovery** tab, ready to be added. If you already know the point, fill the
-   optional **Latitude** and **Longitude** fields in instead: they are used as
-   they are, with no geocoding.
-3. Repeat for every location you want to watch, up to ten. If the locations you
-   want are your **Gladys houses**, the **"Add my Gladys houses"** button spares
-   you all typing: see "Adding your Gladys houses in one click" below.
-4. In **"General settings"**, pick your **user profile**: household, company, local authority or farm.
-   Restrictions differ per profile, and VigiEau returns the ones that apply to
-   yours. This setting applies to **every location**.
-5. Leave the **refresh interval** at 3600 s (1 hour): prefectoral decrees change
-   once a day at most. The integration keeps that pace itself, between 15 minutes
-   and 24 hours whatever you type.
-6. Save.
+Du hast Gladys bereits mitgeteilt, wo du wohnst: Das ist die Karte unter
+**Einstellungen > Zuhause**. Die Schaltfläche **„Meine Gladys-Zuhause
+hinzufügen“** liest diese Zuhause und legt für jedes, das noch nicht überwacht
+wird, einen Ort an — keine Adresse einzugeben, kein Risiko, die falsche Gemeinde
+zu geokodieren. Der Ort übernimmt den Namen, den das Zuhause in Gladys trägt,
+und die in der Liste angezeigte Adresse wird für dich anhand des Punktes
+gesucht.
 
-> Until one location has a usable point, no device is offered. That is
-> deliberate: no device beats a device pinned to an empty location.
+Einige Regeln, die die Meldung unter der Schaltfläche jedes Mal wiederholt:
 
-### Adding your Gladys houses in one click
+- **Das Lesen der Koordinaten deiner Zuhause ist eine Berechtigung.** Wo du
+  wohnst, sind personenbezogene Daten: Die Integration fordert sie in ihrem
+  Manifest an, und Gladys zeigt dir diese Anfrage bei der Installation. Meldet
+  die Schaltfläche, dass Gladys die Weitergabe dieser Koordinaten verweigert,
+  hat die installierte Version sie nie angefordert: Aktualisiere die
+  Integration, oder entferne sie, installiere sie neu und akzeptiere die
+  Anfrage.
+- **Ein Zuhause, das nie auf der Karte platziert wurde, hat keine
+  Koordinaten.** Es wird in der Antwort genannt, und an seiner Stelle wird
+  nichts überwacht: Verorte es unter **Einstellungen > Zuhause** und
+  klicke dann erneut.
+- **Ein bereits überwachtes Zuhause wird nicht doppelt hinzugefügt.** Klicke so
+  oft du möchtest: Die Meldung sagt dir, welcher Ort es bereits überwacht.
+- **Es ist keine Synchronisierung.** Die Zuhause werden einmal beim Klick
+  gelesen. Ein so angelegter Ort ist ein gewöhnlicher Ort: Verschiebe das
+  Zuhause danach in Gladys, bleibt der Ort, wo er war — lösche ihn und
+  klicke erneut.
 
-You have already told Gladys where you live: that is the map in
-**Settings > Houses**. The **"Add my Gladys houses"** button reads those houses
-and creates a location for each one that is not watched yet — no address to
-type, no risk of geocoding the wrong town. The location takes the name the house
-has in Gladys, and the address shown in the listing is looked up for you from
-the point.
+### Deine Orte anzeigen
 
-A few rules, which the message under the button repeats every time:
-
-- **Reading your houses' coordinates is an authorization.** Where you live is
-  personal data: the integration asks for it in its manifest, and Gladys shows
-  you that request when you install it. If the button answers that Gladys
-  refuses to share those coordinates, the installed version never asked for it:
-  update the integration, or remove and re-install it and accept the request.
-- **A house you never placed on the map has no coordinates.** It is named in the
-  answer and nothing is watched in its place: locate it in
-  **Settings > Houses**, then click again.
-- **A house already watched is not added twice.** Click as often as you like:
-  the message tells you which location already watches it.
-- **It is not a sync.** The houses are read once, when you click. A location
-  created this way is an ordinary one: move the house in Gladys afterwards and
-  the location stays where it was — delete it and click again.
-
-### Viewing your locations
-
-Run the **"Show the locations"** action: the message under the button lists
-**every configured location**, numbered, in the form
+Führe die Aktion **„Orte anzeigen“** aus: Die Meldung unter der
+Schaltfläche listet **alle konfigurierten Orte** nummeriert auf, in der Form
 
 ```
 • number. name — address (latitude, longitude)
 ```
 
-The numbers are the ones the **"Delete a location"** dropdown offers — that is
-where you read which location "Location 2" is. A location whose coordinates are
-unusable is listed too, with a dash where its point should be: it is neither
-published nor queried, and that line is the only thing that says so.
+(in der deutschen Oberfläche: `• Nummer. Name — Adresse (Breitengrad, Längengrad)`).
 
-> **Why does every location run on one single line?** The integration does send
-> a real line break between two locations — the container logs show it. The
-> Configuration screen, though, displays an action's answer as the **text** of a
-> plain alert box, and a browser renders a line break there as a space: no
-> formatting is possible, whatever the integration sends. Hence the **"•"**
-> opening every location — it is what visibly separates the entries for as long
-> as Gladys collapses the line breaks.
+Die Nummern sind diejenigen, die die Auswahlliste von **„Ort löschen“**
+anbietet — hier liest du ab, welcher Ort „Ort 2“ ist. Ein Ort mit unbrauchbaren
+Koordinaten wird ebenfalls aufgeführt, mit einem Gedankenstrich an der Stelle
+seines Punktes: Er wird weder veröffentlicht noch abgefragt, und diese Zeile ist
+das Einzige, was darauf hinweist.
 
-> **Why a button and not a table on the page?** The Configuration screen shows
-> nothing an integration has to say, except the message of an **action**, under
-> its button — and it only renders input fields, never a read-only text. A list
-> you build as you go has no place there. That is also what makes "Show the
-> locations" always current: there is nothing to reload.
+> **Warum stehen alle Orte in einer einzigen Zeile?** Die Integration sendet
+> sehr wohl einen echten Zeilenumbruch zwischen zwei Orten — die Container-Logs
+> zeigen ihn. Der Konfigurationsbildschirm zeigt die Antwort einer Aktion jedoch
+> als **Text** eines einfachen Hinweisfelds an, und ein Browser stellt einen
+> Zeilenumbruch dort als Leerzeichen dar: Keine Formatierung ist möglich, was
+> auch immer die Integration sendet. Daher das **„•“** am Anfang jedes Ortes —
+> es trennt die Einträge sichtbar, solange Gladys die Zeilenumbrüche
+> zusammenfasst.
 
-> **A location cannot be edited.** To change an address, add the new location
-> with "Add a location", then delete the old one. What you get is a **new
-> device** in the Discovery tab: the old one keeps its own history, and a
-> location's name is the one you give it when you create it.
->
-> Why the limitation? Editing a location meant designating one on the
-> Configuration screen, and an integration's dropdown can only offer options
-> written in advance in its manifest — never your location names. The fields
-> that followed such a dropdown also kept showing the previous location until
-> the page was reloaded, with the risk of writing one location's address onto
-> another.
+> **Warum eine Schaltfläche und keine Tabelle auf der Seite?** Der
+> Konfigurationsbildschirm zeigt nichts von dem, was eine Integration zu sagen
+> hat, außer der Meldung einer **Aktion** unter ihrer Schaltfläche — und er
+> stellt nur Eingabefelder dar, nie einen schreibgeschützten Text. Eine Liste,
+> die du nach und nach aufbaust, hat dort keinen Platz. Genau das macht
+> „Orte anzeigen“ auch immer aktuell: Es gibt nichts neu zu laden.
 
-### Deleting a location
+> **Ein Ort kann nicht bearbeitet werden.** Um eine Adresse zu ändern, füge >
+> den neuen Ort mit „Ort hinzufügen“ hinzu und lösche dann den alten. Du >
+> erhältst ein **neues Gerät** im Tab „Entdecken“: Das alte behält seinen >
+> eigenen Verlauf, und der Name eines Ortes ist der, den du ihm beim Anlegen >
+> gibst. > > Warum diese Einschränkung? Einen Ort zu bearbeiten hieße, ihn im >
+> Konfigurationsbildschirm auszuwählen, und die Auswahlliste einer Integration >
+> kann nur Optionen anbieten, die vorab in ihrem Manifest stehen — nie deine >
+> Ortsnamen. Die Felder, die einer solchen Auswahlliste folgten, zeigten zudem >
+> den vorherigen Ort an, bis die Seite neu geladen wurde, mit dem Risiko, die >
+> Adresse eines Ortes auf einen anderen zu schreiben.
 
-In the **"Delete a location"** action, pick the **number** shown by "Show the
-locations", tick **"I confirm the deletion"** and run it. Run unticked, it only
-tells you which location would go.
+### Einen Ort löschen
 
-> The locations after the one you delete **move up a rank**: the message says
-> so. Run "Show the locations" again to see the new numbering before the next
-> deletion.
+Wähle in der Aktion **„Ort löschen“** die **Nummer**, die „Orte anzeigen“
+zeigt, setze das Häkchen bei **„Ich bestätige das Löschen“** und führe
+sie aus. Ohne Häkchen ausgeführt, sagt sie dir nur, welcher Ort entfernt würde.
 
-What happens to the device depends on what you had done with it:
+> Die Orte nach dem gelöschten **rücken eine Stelle nach oben**: Die Meldung
+> weist darauf hin. Führe „Orte anzeigen“ erneut aus, um vor dem nächsten
+> Löschen die neue Nummerierung zu sehen.
 
-- **You never added it** (it was only offered in the Discovery tab): it leaves
-  the discovery straight away, the integration having stopped offering it. The
-  message confirms it.
-- **You had added it to Gladys**: it **stays**, and stops updating. An
-  integration is not allowed to delete a device — Gladys gives it no way to. The
-  message gives you its exact name: delete it yourself from the integration's
-  **Devices** tab.
+Was mit dem Gerät geschieht, hängt davon ab, was du damit gemacht hattest:
 
-> Deleting a location does not delete its Gladys device — an integration is not
-> allowed to. Delete it yourself if you no longer want it.
+- **Du hattest es nie hinzugefügt** (es wurde nur im Tab „Entdecken“
+  angeboten): Es verschwindet sofort aus der Erkennung, da die Integration es
+  nicht mehr anbietet. Die Meldung bestätigt das.
+- **Du hattest es zu Gladys hinzugefügt**: Es **bleibt** und wird nicht mehr
+  aktualisiert. Eine Integration darf kein Gerät löschen — Gladys bietet ihr
+  keine Möglichkeit dazu. Die Meldung nennt dir seinen genauen Namen: Lösche es
+  selbst im Tab **Geräte** der Integration.
 
-## Why an address and not a postal code
+> Das Löschen eines Ortes löscht nicht sein Gladys-Gerät — eine Integration
+> darf das nicht. Lösche es selbst, wenn du es nicht mehr brauchst.
 
-The watched location is a **precise point**, not a commune.
+## Warum eine Adresse und keine Postleitzahl
 
-> A **postal code** often covers several communes, and one commune can span
-> **several restriction zones** for the same water type. That is exactly when
-> VigiEau refuses to answer and asks for your street: the commune code cannot
-> name the applicable zone.
+Der überwachte Ort ist ein **genauer Punkt**, keine Gemeinde.
 
-A geocoded point never has that problem — it falls inside exactly one zone per
-water type. The integration therefore always queries VigiEau by coordinates.
+> Eine **Postleitzahl** umfasst oft mehrere Gemeinden, und eine Gemeinde kann
+> für dieselbe Wasserart in **mehreren Beschränkungszonen** liegen. Genau dann
+> verweigert VigiEau die Antwort und verlangt deine Straße: Der Gemeindecode kann
+> die geltende Zone nicht benennen.
 
-### The search button
+Ein geokodierter Punkt hat dieses Problem nie — er liegt in genau einer Zone pro
+Wasserart. Die Integration fragt VigiEau daher immer über Koordinaten ab.
 
-1. Click **"Add a location (search for an address)"**.
-2. Type your address. The more precise, the better: "12 rue des Lilas, 82000
-   Montauban" beats "Montauban".
-3. The integration geocodes it on the official
-   [Base Adresse Nationale](https://adresse.data.gouv.fr) — the same service
-   the VigiEau website uses — creates the location and publishes its device in
-   the **Discovery** tab.
+### Die Suchschaltfläche
 
-When several addresses match with **no clear winner**, the integration **does
-not guess**: it lists the candidates and asks you to be more precise. Add the
-number, the street or the town, and search again.
+1. Klicke auf **„Ort hinzufügen (Adresse suchen)“**.
+2. Gib deine Adresse ein. Je genauer, desto besser: „12 rue des Lilas,
+   82000 Montauban“ ist besser als „Montauban“.
+3. Die Integration geokodiert sie über die offizielle
+   [Base Adresse Nationale](https://adresse.data.gouv.fr) — denselben Dienst,
+   den die VigiEau-Website nutzt —, legt den Ort an und veröffentlicht sein Gerät
+   im Tab **Entdecken**.
 
-The confirmation message shows the address it settled on and its coordinates:
-check it at a glance before moving on.
+Passen mehrere Adressen **ohne eindeutigen Treffer**, **rät die Integration
+nicht**: Sie listet die Kandidaten auf und bittet dich um eine genauere Angabe.
+Ergänze die Hausnummer, die Straße oder die Gemeinde und suche erneut.
 
-### Typing a latitude and a longitude yourself
+Die Bestätigungsmeldung zeigt die gewählte Adresse und ihre Koordinaten: Prüfe
+sie kurz, bevor du weitermachst.
 
-The **"Latitude"** and **"Longitude"** fields of the same action are
-**optional**. Fill both in and the location is created on that point **as it
-is**, with no geocoding: the way out of the cases an address cannot serve — a
-plot with no street, a hamlet the Base Adresse Nationale does not know, or a
-point read off a map.
+### Breiten- und Längengrad selbst eingeben
 
-- They are **WGS-84 decimal degrees**: latitude -90 to 90, longitude -180 to 180. Both the comma and the dot are accepted ("48,8566" as well as "48.8566"),
-  and a value out of range is refused with a message showing what was received.
-- **Both go together**: a latitude alone is not a point, and the action refuses
-  it rather than completing it with a zero — which would have you watching the
-  Gulf of Guinea.
-- If you type an **address as well**, the **coordinates win**: the address is
-  then only the label "Show the locations" displays (and the name, if you give
-  none). With neither address nor name, the location is named after its own
-  coordinates.
-- A point picked off a map is still just a point: check it with **"Test the
-  VigiEau connection"** right after adding it.
+Die Felder **„Breitengrad“** und **„Längengrad“** derselben Aktion sind
+**optional**. Füllst du beide aus, wird der Ort **unverändert** auf diesem
+Punkt angelegt, ohne Geokodierung: der Ausweg für die Fälle, die eine Adresse
+nicht abdecken kann — ein Grundstück ohne Straße, ein Weiler, den die Base
+Adresse Nationale nicht kennt, oder ein auf einer Karte abgelesener Punkt.
 
-## Actions
+- Es sind **Dezimalgrad WGS-84**: Breitengrad -90 bis 90, Längengrad -180 bis 180. Komma und Punkt werden beide akzeptiert („48,8566“ wie „48.8566“), und
+  ein Wert außerhalb des Bereichs wird mit einer Meldung abgelehnt, die zeigt,
+  was empfangen wurde.
+- **Beide gehören zusammen**: Ein Breitengrad allein ist kein Punkt, und die
+  Aktion lehnt ihn ab, statt ihn mit einer Null zu ergänzen — damit würdest du
+  den Golf von Guinea überwachen.
+- Gibst du **zusätzlich eine Adresse** ein, **haben die Koordinaten Vorrang**:
+  Die Adresse ist dann nur die Bezeichnung, die „Orte anzeigen“ anzeigt (und der
+  Name, wenn du keinen angibst). Ohne Adresse und ohne Namen wird der Ort nach
+  seinen eigenen Koordinaten benannt.
+- Ein auf einer Karte gewählter Punkt bleibt nur ein Punkt: Prüfe ihn
+  direkt nach dem Hinzufügen mit **„VigiEau-Verbindung testen“**.
 
-- **Add a location (search for an address)** — geocodes the address and creates
-  the location, or creates it straight on the latitude and longitude you type
-  (both optional). See "Why an address and not a postal code" above.
-- **Add my Gladys houses** — reads the houses configured in Gladys and adds a
-  location for each one that is not watched yet, with nothing to type. Requires
-  the authorization accepted at install time.
-- **Show the locations** — lists every configured location, numbered, with its
-  name, address and coordinates. Those numbers are the ones the deletion offers.
-- **Test the VigiEau connection (all locations)** — runs a live request and
-  shows the current level of every location, for the three water types. Use it
-  right after the configuration to check that your locations are covered.
-- **Show the restrictions in force (all locations)** — lists the water usages
-  currently restricted at each address for your profile, with a link to the
-  decree.
-- **Delete a location** — stops watching the location whose number you pick,
-  after confirmation. Its Gladys device stays: delete it yourself. It is the
-  last button of the screen, the only one that destroys anything.
+## Aktionen
 
-## Widgets, scene triggers and scene actions (Gladys 5.1)
+- **Ort hinzufügen (Adresse suchen)** — geokodiert die Adresse und legt den Ort
+  an, oder legt ihn direkt auf dem eingegebenen Breiten- und Längengrad an
+  (beide optional). Siehe „Warum eine Adresse und keine Postleitzahl“ oben.
+- **Meine Gladys-Zuhause hinzufügen** — liest die in Gladys konfigurierten
+  Zuhause und fügt für jedes, das noch nicht überwacht wird, einen Ort hinzu,
+  ohne etwas einzugeben. Wähle im Feld **Zuhause** ein Zuhause, um nur
+  dieses hinzuzufügen (ein Ferienhaus, das nicht überwacht werden soll, bleibt
+  außen vor); lass das Feld leer, um alle hinzuzufügen. Erfordert die bei
+  der Installation akzeptierte Berechtigung und Gladys 5.2 oder neuer.
+- **Orte anzeigen** — listet alle konfigurierten Orte nummeriert auf, mit Name,
+  Adresse und Koordinaten. Diese Nummern sind die, die das Löschen anbietet.
+- **VigiEau-Verbindung testen (alle Orte)** — führt eine Live-Abfrage aus und
+  zeigt die aktuelle Stufe jedes Ortes für die drei Wasserarten. Nutze sie
+  direkt nach der Konfiguration, um zu prüfen, ob deine Orte abgedeckt sind.
+- **Geltende Beschränkungen anzeigen (alle Orte)** — listet die an jeder
+  Adresse für dein Profil derzeit eingeschränkten Wassernutzungen auf, mit einem
+  Link zum Erlass.
+- **Ort löschen** — beendet nach Bestätigung die Überwachung des Ortes, dessen
+  Nummer du wählst. Sein Gladys-Gerät bleibt: Lösche es selbst. Es ist die
+  letzte Schaltfläche des Bildschirms, die einzige, die etwas zerstört.
 
-Since Gladys 5.1, the integration adds its own cards to the dashboard and its
-own blocks to the scene editor. They all designate a location by **its
-device**: a location whose device you have not added from the Discovery tab
-yet does not show in those lists.
+## Widgets, Szenenauslöser und Szenenaktionen (Gladys 5.1)
 
-### Dashboard widgets
+Seit Gladys 5.1 fügt die Integration dem Dashboard eigene Karten und dem
+Szeneneditor eigene Bausteine hinzu. Sie alle bezeichnen einen Ort über **sein
+Gerät**: Ein Ort, dessen Gerät du noch nicht aus dem Tab „Entdecken“
+hinzugefügt hast, erscheint nicht in diesen Listen.
 
-- **Drought watch** — one location, picked in the widget's settings: the
-  overall level and the level of each water type (colored dot), the decree
-  date, the time of the last read, the number of restricted uses and their list
-  (tap a use to read the details). Two buttons: **View the decree** and
-  **Refresh**.
-- **Drought: all locations** — every location on one card, one colored row
-  each, with the number of locations under restriction (Alerte level or above)
-  and a **Refresh** button.
+### Dashboard-Widgets
 
-The widgets follow the integration's reads, without querying VigiEau every time
-a dashboard is displayed.
+- **Dürrewarnung** — ein Ort, in den Einstellungen des Widgets gewählt: die
+  Gesamtstufe und die Stufe jeder Wasserart (farbiger Punkt), das Datum des
+  Erlasses, die Uhrzeit der letzten Abfrage, die Anzahl der eingeschränkten
+  Nutzungen und ihre Liste (tippe auf eine Nutzung, um die Details zu
+  lesen). Zwei Schaltflächen: **Erlass ansehen** und **Aktualisieren**.
+- **Dürre: alle Orte** — alle Orte auf einer Karte, eine farbige Zeile pro Ort,
+  mit der Anzahl der Orte mit Einschränkung (Stufe Alerte oder höher) und einer
+  Schaltfläche **Aktualisieren**.
 
-### Scene triggers
+Die Widgets folgen den Abfragen der Integration, ohne VigiEau bei jeder Anzeige
+eines Dashboards abzufragen.
 
-- **The drought level changed** — a read gives a location another level than
-  the previous one. Optional filters (empty = any): the location, the new level
-  (the five VigiEau levels, **Crise** included, which the numeric sensor cannot
-  tell from "Alerte renforcée") and the direction (worsening or easing).
-- **A new decree is in force** — a read finds a prefectoral decree the
-  previous read did not have, even at an unchanged level. Optional filter: the
-  location.
+### Szenenauslöser
 
-Both hand the following actions the location name, the level in words, the
-decree link, and so on: insert them in a message with the editor's variable
-picker ("Location name", "Level (wording)"…).
+- **Die Dürrestufe hat sich geändert** — eine Abfrage ergibt für einen Ort eine
+  andere Stufe als die vorherige. Optionale Filter (leer = beliebig): der Ort,
+  die neue Stufe (die fünf VigiEau-Stufen, **Crise** eingeschlossen, die der
+  numerische Sensor nicht von „Alerte renforcée“ unterscheiden kann) und die
+  Richtung (Verschlechterung oder Verbesserung).
+- **Ein neuer Erlass ist in Kraft** — eine Abfrage findet einen
+  Präfekturerlass, den die vorherige Abfrage nicht hatte, selbst bei
+  unveränderter Stufe. Optionaler Filter: der Ort.
 
-The **first** read of a location fires nothing: it sets the reference. That
-reference survives a restart, so a change that happened during an update of
-the integration still fires the scene at the next read. A trigger fires at the
-pace of the reads: at most once per "Refresh interval".
+Beide geben den folgenden Aktionen den Namen des Ortes, die Stufe in Worten,
+den Link zum Erlass usw. weiter: Füge sie mit der Variablenauswahl des
+Editors in eine Nachricht ein („Name des Ortes“, „Stufe (Text)“…).
 
-### Scene actions
+Die **erste** Abfrage eines Ortes löst nichts aus: Sie legt den Bezugswert fest.
+Dieser Bezugswert übersteht einen Neustart, sodass eine Änderung, die während
+eines Updates der Integration eingetreten ist, die Szene bei der nächsten
+Abfrage trotzdem auslöst. Ein Auslöser feuert im Takt der Abfragen: höchstens
+einmal pro „Aktualisierungsintervall“.
 
-- **Read the drought level** — queries VigiEau right away for a location and
-  hands the following actions its level (in words, and a 0-4 code where
-  4 = Crise), the level of each water type, the restricted uses and the decree.
-- **Check whether a water use is restricted** — queries VigiEau for a location
-  and tells whether a use is restricted: type a word of its French name or
-  theme ("arrosage", "piscine", "lavage"…). The `Restricted` output
-  (true / false) can be tested in a condition of the scene.
+### Szenenaktionen
 
-These actions publish nothing: they move neither the sensors nor the triggers,
-so a scene can never restart itself.
+- **Dürrestufe abfragen** — fragt VigiEau sofort für einen Ort ab und gibt den
+  folgenden Aktionen seine Stufe (in Worten und als Code von 0 bis 4, wobei
+  4 = Crise), die Stufe jeder Wasserart, die eingeschränkten Nutzungen und den
+  Erlass weiter.
+- **Prüfen, ob eine Wassernutzung eingeschränkt ist** — fragt VigiEau für einen
+  Ort ab und meldet, ob eine Nutzung eingeschränkt ist: Gib ein Wort ihres
+  französischen Namens oder Themas ein („arrosage“, „piscine“, „lavage“…). Die
+  Ausgabe „Eingeschränkt“ (wahr / falsch) lässt sich in einer Bedingung der
+  Szene prüfen.
 
-## Scene ideas
+Diese Aktionen veröffentlichen nichts: Sie bewegen weder die Sensoren noch die
+Auslöser, sodass sich eine Szene nie selbst neu starten kann.
 
-- **Stop the automatic watering** as soon as "Drought alert level" reaches 1
-  (Vigilance) or 2 (Alerte), depending on how cautious you want to be.
-- **Get notified** when the level changes: trigger "The drought level
-  changed", then a message carrying the "Level (wording)" and "Decree URL"
-  variables.
-- **Check before watering**: in the watering scene, action "Check whether a
-  water use is restricted" with "arrosage", then a condition on `Restricted`
-  before opening the valve.
-- **Follow the season**: the numeric sensors keep their history, so a chart shows
-  the severity climbing through the summer.
+## Ideen für Szenen
 
-## Troubleshooting
+- **Die automatische Bewässerung stoppen**, sobald die „Dürrewarnstufe“ 1
+  (Vigilance) oder 2 (Alerte) erreicht, je nachdem, wie vorsichtig du sein
+  möchtest.
+- **Sich benachrichtigen lassen**, wenn sich die Stufe ändert: Auslöser „Die
+  Dürrestufe hat sich geändert“, dann eine Nachricht mit den Variablen „Stufe
+  (Text)“ und „Link zum Erlass“.
+- **Vor dem Bewässern prüfen**: In der Bewässerungsszene die Aktion „Prüfen, ob
+  eine Wassernutzung eingeschränkt ist“ mit „arrosage“, dann eine Bedingung auf
+  „Eingeschränkt“, bevor das Ventil geöffnet wird.
+- **Die Saison verfolgen**: Die numerischen Sensoren behalten ihren Verlauf,
+  sodass ein Diagramm zeigt, wie die Stufe im Laufe des Sommers steigt.
 
-- **No device in the Discovery tab** — in order:
-  1. **Have you added a location?** Without a located location the integration
-     deliberately publishes no device. Use the
-     **"Add a location (search for an address)"** button; the
-     **"Show the locations"** action lists what is actually stored.
-  2. Click **Scan** in the Discovery tab to force a new publication.
-  3. Read the **integration logs**. A line starting with `Published` confirms
-     Gladys accepted the device. If you see
-     `Post-connection initialization failed` instead, the message that follows
-     gives the exact reason — it is also shown in the Configuration screen.
-  4. Check that the container is actually running: a Docker image that cannot
-     be pulled (`manifest unknown`) stops the integration from starting, and
-     nothing is ever published.
-- **I would like to correct a location's latitude or longitude** — a location is
-  never edited: add a new one, either with a more precise address or by typing
-  the coordinates you want straight into "Add a location", then delete the old
-  one.
-- **Two "Vigilance sécheresse" devices after changing the address** — that was
-  the case up to version 1.1.1: the device id was built from the coordinates, so
-  every address created its own device and the previous one stopped refreshing.
-  The device now follows the address. After the update, the integration keeps
-  the device you already created, history included — the log line
-  `Keeping the existing identity of drought-zone` says which one. Any other
-  device left over from an older address can be deleted in Gladys.
-- **I cannot find my locations anywhere on the page** — that is deliberate: a
-  configuration screen only renders input fields, and shows nothing an
-  integration has to say except the message of an action. Run **"Show the
-  locations"**: the list appears under the button, always current, with nothing
-  to reload.
-- **The deletion dropdown shows "Location 1", "Location 2"… rather than my
-  names** — the options of a dropdown are written in advance in the integration
-  manifest: they can only be numbers. "Show the locations" is what maps a number
-  to a name.
-- **A device that stopped refreshing after a location was deleted** — that is
-  expected: an integration cannot delete a Gladys device, it can only stop
-  offering it. Delete it in Gladys.
-- **"No recent value" on every feature** — right after adding the device this
-  is normal for a few seconds: Gladys drops the states published before the
-  device existed. The integration notices the creation and refreshes straight
-  away. If it is still empty after a minute, use the **Test the VigiEau
-  connection** action: it queries the API live and shows any error.
-- **Every feature is called "Risk level"** — that is how Gladys displays them:
-  the "Features" list on the device page shows the generic category label, not
-  the name published by the integration. The three text sensors — level (text),
-  last update, decree in force since — share the same fate and carry an
-  identical generic label. In order they are: overall level, text, surface
-  water, groundwater, drinking water, last update, decree in force since. On a
-  dashboard or in a scene, they all do show their real names.
-- **"VigiEau cannot tell which zone applies here"** — the configured point does
-  not fall inside a single zone. The message names the location: add it again
-  with a more precise address (number and street rather than just the town
-  name), then delete the old one.
-- **No data / errors in the logs** — start with the **Test the VigiEau
-  connection** action. A `VigiEau HTTP 5xx` error means the service is
-  temporarily unavailable: it is shown in the Configuration screen, and the
-  integration retries at the next refresh without giving up.
-- **The values do not refresh every minute** — that is expected. The device
-  does not use Gladys' polling mechanism (capped at one minute): the
-  integration refreshes on its own at the configured interval, immediately on
-  connection and then hourly by default.
-- **All levels at 0** — that is the normal answer when no restriction zone covers
-  the address (VigiEau only covers France).
-- **The level stopped moving although the API changed** — the integration never
-  publishes a value it did not understand, so it cannot wrongly announce "no
-  restriction". The logs then carry a `VigiEau returned an unknown severity`
-  warning.
+## Fehlerbehebung
 
-The integration logs everything it does: read its logs from the Gladys interface
-(or `docker logs` on the host) with `LOG_LEVEL=debug` for the full detail,
-including the URL being called.
+- **Kein Gerät im Tab „Entdecken“** — der Reihe nach:
+  1. **Hast du einen Ort hinzugefügt?** Ohne einen verorteten Ort
+     veröffentlicht die Integration bewusst kein Gerät. Nutze die
+     Schaltfläche **„Ort hinzufügen (Adresse suchen)“**; die Aktion
+     **„Orte anzeigen“** listet auf, was tatsächlich gespeichert ist.
+  2. Klicke im Tab „Entdecken“ auf **Scannen**, um eine neue
+     Veröffentlichung zu erzwingen.
+  3. Lies die **Protokolle der Integration**. Eine Zeile, die mit `Published`
+     beginnt, bestätigt, dass Gladys das Gerät angenommen hat. Siehst du
+     stattdessen `Post-connection initialization failed`, nennt die folgende
+     Meldung den genauen Grund — er wird auch im Konfigurationsbildschirm
+     angezeigt.
+  4. Prüfe, ob der Container tatsächlich läuft: Ein Docker-Image, das nicht
+     heruntergeladen werden kann (`manifest unknown`), verhindert den Start der
+     Integration, und es wird nie etwas veröffentlicht.
+- **Ich möchte Breiten- oder Längengrad eines Ortes korrigieren** — ein Ort wird
+  nie bearbeitet: Füge einen neuen hinzu, entweder mit einer genaueren
+  Adresse oder indem du die gewünschten Koordinaten direkt in „Ort hinzufügen“
+  eingeben, und lösche dann den alten.
+- **Zwei „Vigilance sécheresse“-Geräte nach einer Adressänderung** — das war bis
+  Version 1.1.1 der Fall: Die Gerätekennung wurde aus den Koordinaten gebildet,
+  sodass jede Adresse ihr eigenes Gerät erzeugte und das vorherige nicht mehr
+  aktualisiert wurde. Das Gerät folgt jetzt der Adresse. Nach dem Update behält
+  die Integration das bereits angelegte Gerät samt Verlauf — die Protokollzeile
+  `Keeping the existing identity of drought-zone` sagt, welches. Jedes andere
+  Gerät, das von einer älteren Adresse übrig ist, kann in Gladys gelöscht
+  werden.
+- **Ich finde meine Orte nirgends auf der Seite** — das ist gewollt: Ein
+  Konfigurationsbildschirm stellt nur Eingabefelder dar und zeigt nichts von
+  dem, was eine Integration zu sagen hat, außer der Meldung einer Aktion. Führe
+  **„Orte anzeigen“** aus: Die Liste erscheint unter der Schaltfläche, immer
+  aktuell, ohne etwas neu zu laden.
+- **Die Auswahlliste zum Löschen zeigt „Ort 1“, „Ort 2“… statt meiner Namen** —
+  die Optionen einer Auswahlliste stehen vorab im Manifest der Integration: Es
+  können nur Nummern sein. „Orte anzeigen“ ordnet einer Nummer einen Namen zu.
+- **Ein Gerät, das nach dem Löschen eines Ortes nicht mehr aktualisiert wird** —
+  das ist zu erwarten: Eine Integration kann kein Gladys-Gerät löschen, sie kann
+  es nur nicht mehr anbieten. Lösche es in Gladys.
+- **„Kein aktueller Wert“ bei allen Funktionen** — direkt nach dem Hinzufügen
+  des Geräts ist das für einige Sekunden normal: Gladys verwirft die Zustände,
+  die veröffentlicht wurden, bevor das Gerät existierte. Die Integration bemerkt
+  das Anlegen und aktualisiert sofort. Ist es nach einer Minute noch leer,
+  nutze die Aktion **VigiEau-Verbindung testen**: Sie fragt die API live ab
+  und zeigt jeden Fehler an.
+- **Alle Funktionen heißen „Risikostufe“** — so zeigt Gladys sie an: Die Liste
+  „Funktionen“ auf der Geräteseite zeigt die allgemeine Bezeichnung der
+  Kategorie, nicht den von der Integration veröffentlichten Namen. Den drei
+  Textsensoren — Stufe (Text), letzte Aktualisierung, Erlass in Kraft seit —
+  geht es genauso, sie tragen eine identische allgemeine Bezeichnung. Der Reihe
+  nach sind es: Gesamtstufe, Text, Oberflächenwasser, Grundwasser, Trinkwasser,
+  letzte Aktualisierung, Erlass in Kraft seit. In einem Dashboard oder einer
+  Szene zeigen sie alle ihren echten Namen.
+- **„VigiEau kann nicht bestimmen, welche Zone hier gilt“** — der konfigurierte
+  Punkt liegt nicht in einer einzigen Zone. Die Meldung nennt den Ort: Füge
+  ihn mit einer genaueren Adresse erneut hinzu (Hausnummer und Straße statt nur
+  des Gemeindenamens) und lösche dann den alten.
+- **Keine Daten / Fehler in den Protokollen** — beginne mit der Aktion
+  **VigiEau-Verbindung testen**. Ein Fehler `VigiEau HTTP 5xx` bedeutet, dass
+  der Dienst vorübergehend nicht verfügbar ist: Er wird im
+  Konfigurationsbildschirm angezeigt, und die Integration versucht es bei der
+  nächsten Aktualisierung erneut, ohne aufzugeben.
+- **Die Werte werden nicht jede Minute aktualisiert** — das ist zu erwarten. Das
+  Gerät nutzt nicht den Abfragemechanismus von Gladys (auf eine Minute
+  begrenzt): Die Integration aktualisiert selbstständig im konfigurierten
+  Intervall, sofort beim Verbinden und danach standardmäßig stündlich.
+- **Alle Stufen auf 0** — das ist die normale Antwort, wenn keine
+  Beschränkungszone die Adresse abdeckt (VigiEau deckt nur Frankreich ab).
+- **Die Stufe bewegt sich nicht mehr, obwohl sich die API geändert hat** — die
+  Integration veröffentlicht nie einen Wert, den sie nicht verstanden hat, und
+  kann daher nicht fälschlich „keine Einschränkung“ melden. Die Protokolle
+  enthalten dann eine Warnung `VigiEau returned an unknown severity`.
 
-## Data source
+Die Integration protokolliert alles, was sie tut: Lies ihre Protokolle in
+der Gladys-Oberfläche (oder mit `docker logs` auf dem Host) mit
+`LOG_LEVEL=debug` für alle Details, einschließlich der aufgerufenen URL.
 
-Data comes from VigiEau, operated by the French Ministry for Ecological
-Transition. It is provided for information only: in case of doubt, the
-prefectoral decree published by your prefecture prevails.
+## Datenquelle
+
+Die Daten stammen von VigiEau, betrieben vom französischen Ministerium für den
+ökologischen Wandel. Sie dienen nur zur Information: Im Zweifelsfall ist der von
+deiner Präfektur veröffentlichte Präfekturerlass maßgeblich.
 
 ## Konfigurationseinstellungen
 
@@ -414,19 +437,19 @@ Diese Einstellungen fragt VigiEau in seinem Konfigurationsbildschirm in Gladys a
 
 | Einstellung | Typ | Pflichtfeld | Beschreibung |
 | --- | --- | --- | --- |
-| Getting started | `section` | Nein | VigiEau is the French government service publishing the drought alert level and the water restrictions in force at a given address. The API is free and needs no account: just tell the integration which location to watch. |
-| General settings | `section` | Nein | These two settings apply to every watched location. |
-| User profile (all locations) | `select` | Ja | Restrictions differ per profile: VigiEau returns the ones that apply to yours. |
-| Refresh interval (s) | `number` | Nein | How often the integration queries VigiEau, in seconds. Prefectoral decrees change once a day at most: one hour is plenty. |
+| Erste Schritte | `section` | Nein | VigiEau ist der Dienst des französischen Staates, der die Dürrewarnstufe und die an einer Adresse geltenden Wasserbeschränkungen veröffentlicht. Die API ist kostenlos und erfordert kein Konto: Gib der Integration einfach an, welchen Ort sie überwachen soll. |
+| Allgemeine Einstellungen | `section` | Nein | Diese beiden Einstellungen gelten für alle überwachten Orte. |
+| Nutzerprofil (alle Orte) | `select` | Ja | Die Beschränkungen hängen vom Profil ab: VigiEau liefert die, die für deines gelten. |
+| Aktualisierungsintervall (s) | `number` | Nein | Wie oft die Integration VigiEau abfragt, in Sekunden. Präfekturerlasse ändern sich höchstens einmal am Tag: Eine Stunde ist mehr als genug. |
 
 ## So installierst du VigiEau in Gladys
 
 1. Öffne in Gladys **Integrationen**: VigiEau erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-vigieau:3.3.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-vigieau:3.5.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-vigieau](https://github.com/prohand/gladys-vigieau).
 
-VigiEau benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+VigiEau benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
 
 Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
 
@@ -437,4 +460,4 @@ VigiEau ist eine **externe Integration**: eine Community-Integration, die als Do
 - [Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)
 - [Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind
 - [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
-- [Quellcode auf GitHub](https://github.com/prohand/gladys-vigieau) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-vigieau/blob/HEAD/docs/en.md)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-vigieau) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-vigieau/blob/HEAD/docs/de.md)

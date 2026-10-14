@@ -120,7 +120,22 @@ seule ; un certificat ou un compte refusé arrête le flux jusqu'à ce que vous
 corrigiez le problème et cliquiez sur **Tester la connexion** (ou
 enregistriez la configuration). Quand Frigate s'annonce hors ligne
 (redémarrage), le statut le signale, et sa configuration est relue à son
-retour.
+retour (au plus une fois par minute).
+
+MQTT ne conserve aucun comptage d'objets : quand le flux se connecte, et
+quand Frigate revient en ligne, l'intégration lit une fois les objets
+présents sur chaque caméra via le WebSocket de Frigate. Une présence ne reste
+donc jamais bloquée sur un comptage perdu entre-temps. Le compte Frigate doit
+pouvoir ouvrir son WebSocket (c'est le cas de tous les rôles).
+
+Un Frigate qui perd sans cesse sa connexion au broker (trois fois en cinq
+minutes) perd ses messages : détections, comptages et mouvements arrivent en
+retard dans Gladys, ou jamais. Le statut et les logs l'indiquent alors
+(« Frigate perd sans cesse sa connexion MQTT »). La cause habituelle : un
+autre client MQTT utilise le même identifiant que Frigate (`mqtt.client_id`,
+`frigate` par défaut), par exemple une seconde instance de Frigate, un ancien
+conteneur resté démarré ou un autre outil. Donnez à chacun son propre
+`client_id`. Les logs de Frigate montrent alors `MQTT disconnected`.
 
 Chaque incident est aussi écrit dans les logs de l'intégration (**Voir les
 logs**) : `front: person detected, 87 %`, `front: person entered porch,
@@ -135,7 +150,7 @@ porte ce que sa configuration Frigate active :
 
 | Fonctionnalité                       | Rôle                                                                                                                                         |
 | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Image                                | Rafraîchie chaque minute, prise à l'instant quand Gladys la demande (chat, scènes). Frigate la réduit sous les 150 Ko acceptés par Gladys.   |
+| Image                                | Rafraîchie chaque minute (moins de 60 Ko, voir plus bas), prise à l'instant jusqu'à 150 Ko quand Gladys la demande (vue live, chat, scènes). |
 | Caméra activée (Camera enabled)      | Allume ou éteint la caméra **dans Frigate** (ni détection ni enregistrement quand elle est éteinte) ; Gladys n'en montre alors plus l'image. |
 | Détection d'objets, instantanés      | Les interrupteurs de Frigate.                                                                                                                |
 | Enregistrements, détection audio     | Seulement s'ils sont activés dans le fichier de configuration de Frigate : sinon Frigate refuse de les allumer.                              |
@@ -149,11 +164,18 @@ Sans broker MQTT, le WebSocket de Frigate n'accepte les commandes que d'un
 compte **admin** (Frigate 0.17 et plus) : avec un autre rôle, la commande
 échoue avec cette explication.
 
+Frigate réduit les images (le conteneur n'embarque aucune bibliothèque
+d'image). L'image enregistrée sur l'appareil reste sous 60 Ko : l'écran des
+appareils de Gladys enregistre un appareil en le renvoyant en entier, image
+comprise, et refuse plus de 100 Ko. Avec une image plus grosse, renommer une
+caméra ou changer sa pièce échouait.
+
 Le badge de chaque caméra signale quand elle n'est pas nominale : injoignable
-quand Frigate ne répond pas, s'annonce hors ligne, ou que le flux de la
-caméra est perdu depuis 30 secondes ; dégradée quand son flux
-d'enregistrement est interrompu ou que le flux temps réel est coupé (les
-états peuvent alors être périmés).
+quand Frigate ne répond pas, s'annonce hors ligne depuis 30 secondes, ou que
+le flux de la caméra est perdu depuis 30 secondes ; dégradée quand son flux
+d'enregistrement est interrompu, que le flux temps réel est coupé, ou que
+Frigate perd sans cesse sa connexion au broker (les états peuvent alors être
+périmés).
 
 Une caméra ajoutée avec une version précédente de l'intégration affiche
 **Mettre à jour** dans l'onglet Découverte : cliquez dessus pour ajouter les
@@ -271,17 +293,19 @@ pas ; **Tester la connexion** revérifie tout. Les logs de l'intégration
 (contrôles de supervision, **Voir les logs**) ne contiennent jamais de mot de
 passe ni de jeton.
 
-| Symptôme                                                | À vérifier                                                                                                                                                        |
-| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| « Le certificat de … a changé »                         | Frigate réinstallé ou certificat régénéré : cliquez sur **Faire confiance au nouveau certificat**. Sinon, quelqu'un se fait peut-être passer pour Frigate.        |
-| « Frigate a refusé l'utilisateur ou le mot de passe »   | Le compte de l'onglet Configuration. Après plusieurs échecs, Frigate bloque les connexions un moment : l'intégration ne réessaie pas d'elle-même.                 |
-| L'onglet Découverte est vide                            | Le statut : Frigate doit être joignable. Puis **Scanner**.                                                                                                        |
-| Pas d'image sur le tableau de bord                      | La caméra est allumée dans Frigate et dans Gladys ; attendez une minute après l'avoir ajoutée.                                                                    |
-| Un interrupteur échoue (« did not confirm », « admin ») | Sans broker, Frigate 0.17+ n'accepte les commandes que d'un compte admin ; avec un broker, son ACL doit autoriser `frigate/+/+/set`.                              |
-| « Flux temps réel arrêté »                              | Le broker a refusé le compte ou le certificat : corrigez, puis **Tester la connexion**.                                                                           |
-| Badge de caméra « injoignable »                         | Frigate est arrêté ou redémarre, ou le flux de la caméra est perdu depuis 30 s (vérifiez la caméra dans Frigate).                                                 |
-| Une scène ne se déclenche pas                           | La confiance minimale et le cooldown (Options) ; les noms d'objet et de zone sont ceux de Frigate (`person`, pas `Personne`) ; les logs montrent chaque incident. |
-| Une caméra ajoutée avant une mise à jour n'a pas tout   | L'onglet Découverte affiche **Mettre à jour** à côté d'elle.                                                                                                      |
+| Symptôme                                                | À vérifier                                                                                                                                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| « Le certificat de … a changé »                         | Frigate réinstallé ou certificat régénéré : cliquez sur **Faire confiance au nouveau certificat**. Sinon, quelqu'un se fait peut-être passer pour Frigate.         |
+| « Frigate a refusé l'utilisateur ou le mot de passe »   | Le compte de l'onglet Configuration. Après plusieurs échecs, Frigate bloque les connexions un moment : l'intégration ne réessaie pas d'elle-même.                  |
+| L'onglet Découverte est vide                            | Le statut : Frigate doit être joignable. Puis **Scanner**.                                                                                                         |
+| Pas d'image sur le tableau de bord                      | La caméra est allumée dans Frigate et dans Gladys ; attendez une minute après l'avoir ajoutée.                                                                     |
+| Un interrupteur échoue (« did not confirm », « admin ») | Sans broker, Frigate 0.17+ n'accepte les commandes que d'un compte admin ; avec un broker, son ACL doit autoriser `frigate/+/+/set`.                               |
+| « Flux temps réel arrêté »                              | Le broker a refusé le compte ou le certificat : corrigez, puis **Tester la connexion**.                                                                            |
+| Badge de caméra « injoignable »                         | Frigate est arrêté ou redémarre, ou le flux de la caméra est perdu depuis 30 s (vérifiez la caméra dans Frigate).                                                  |
+| Une scène ne se déclenche pas                           | La confiance minimale et le cooldown (Options) ; les noms d'objet et de zone sont ceux de Frigate (`person`, pas `Personne`) ; les logs montrent chaque incident.  |
+| Une caméra ajoutée avant une mise à jour n'a pas tout   | L'onglet Découverte affiche **Mettre à jour** à côté d'elle.                                                                                                       |
+| « Frigate perd sans cesse sa connexion MQTT »           | Un autre client MQTT utilise le `mqtt.client_id` de Frigate (`frigate` par défaut) : donnez à chacun le sien. En attendant, états et scènes ratent des événements. |
+| Renommer une caméra ou changer sa pièce échoue          | Corrigé en 0.3.2 : attendez une minute après la mise à jour (la petite image remplace celle enregistrée), puis enregistrez de nouveau.                             |
 
 ## Paramètres de configuration
 
@@ -311,7 +335,7 @@ Voici les paramètres demandés par Frigate dans son écran de configuration dan
 ## Comment installer Frigate dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Frigate apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-frigate:0.3.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-frigate:0.3.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-frigate](https://github.com/LM1LC3N7/gladys-frigate).
 

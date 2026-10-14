@@ -1,0 +1,205 @@
+---
+title: "UGREEN NAS smart home integration, free and open source"
+sidebar_label: "UGREEN NAS"
+description: "Monitor a UGREEN NASync (UGOS Pro): CPU, memory, temperatures, volumes and disks. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ugreen-nas.png"
+keywords:
+  - "ugreen nas"
+  - "ugreen nas smart home"
+  - "gladys ugreen nas"
+  - "ugreen nas gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-ugreen-nas instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="ugreen-nas" />
+
+Follow a UGREEN NASync running UGOS Pro from Gladys: CPU, memory,
+temperatures, network, volumes and disks, with scenes when a volume or a disk
+needs attention and a dashboard widget.
+
+The integration only **reads**: it never changes anything on the NAS — no
+shutdown, no restart, no file operation.
+
+> **Developed without the hardware: feedback welcome.** The UGOS Pro API is
+> undocumented; this integration follows what other open-source projects read
+> on real NAS. If something is missing or wrong on yours, please open an issue:
+> [https://github.com/guim31/gladys-ugreen-nas/issues](https://github.com/guim31/gladys-ugreen-nas/issues).
+
+Not affiliated with, endorsed by or sponsored by UGREEN. UGREEN, NASync and
+UGOS are trademarks of their owners.
+
+## What you get
+
+After the configuration, the **Discover** tab proposes the following devices.
+Add the ones you want to follow: nothing is created on your behalf.
+
+### The NAS
+
+- **Online**: 1 while the NAS answers, 0 once it stopped answering.
+- **CPU** and **Memory**: use, in %.
+- **CPU temperature**, in °C (when the firmware gives it).
+- **Download** and **Upload**: network rates of the NAS, in Mbit/s.
+- **Uptime**, in days.
+- **UGOS version**.
+
+### Volumes
+
+One device per volume (`Volume 1`, `Volume 2`…):
+
+- **Space used**, in %;
+- **Capacity** and **Free space**, in GB;
+- **State**: Healthy, Warning, Rebuilding, Degraded, Faulty (the worse of the
+  volume and its storage pool);
+- **Alert**: 1 when the state needs attention, 0 otherwise — handy in scenes
+  and in the history.
+
+### Disks
+
+One device per disk (hard disks and M.2 drives):
+
+- **Temperature**, in °C;
+- **State**, as UGOS rates the disk from its health checks: Healthy, Warning,
+  Critical, Failing (also Not detected, Locked);
+- **Alert**: 1 for Warning, Critical or Failing.
+
+The integration never starts a SMART test and never reads the SMART details:
+those requests wake sleeping disks. The state shown is the one UGOS already
+keeps.
+
+## Before you start
+
+### A dedicated account
+
+Create an account on the NAS for Gladys (UGOS Pro → Control Panel → Users).
+As far as we know, UGOS offers no read-only role: start with a standard
+user. If the volumes and
+disks stay missing (the **Test the connection** action says "storage not
+readable with this account"), add that account to the administrators group.
+Its password then gives access to the NAS: keep it for Gladys only.
+
+### Two-factor authentication
+
+The integration cannot type a two-factor code: use an account without
+two-factor authentication.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. **NAS address**: its IP address on your network, e.g. `192.168.1.50`. The
+   port of the API, 9999, is added. A full address works too:
+   `http://192.168.1.50:9999`.
+3. **User name** and **Password** of the account above. The password is sent
+   encrypted with the key of the NAS, and is never written in the logs.
+4. **Refresh interval**: every minute (default), 2 or 5 minutes.
+5. **Language of the names and states**: Gladys does not tell an integration
+   your language. The feature names (frozen when a device is added), the
+   states and the scene variables use this one.
+6. Save, then add the devices from the **Discover** tab.
+
+Why plain HTTP on port 9999: it is where UGOS Pro serves its API, as the web
+interface and the other projects use it. The password never travels in clear
+(RSA encryption, as the web interface does). Over HTTPS, the NAS shows a
+self-signed certificate: an `https://` address works too, the certificate
+is then accepted without being checked.
+
+## Scenes
+
+The integration adds three triggers to the scene editor, under the
+**Integrations** category:
+
+- **Volume degraded**: a volume or its storage pool needs attention
+  (Warning, Rebuilding, Degraded or Faulty). Fired again only if it gets
+  worse, and once more after it was healthy again. Optionally pick the volume.
+  Variables: NAS, Volume, State.
+- **Disk alert**: UGOS rates a disk Warning, Critical or Failing. Same rules.
+  Optionally pick the disk. Variables: NAS, Disk, Model, State,
+  Temperature (°C).
+- **NAS unreachable**: the NAS did not answer two reads in a row, about 15
+  seconds apart. Once, until it answers again. Variables: NAS, Reason.
+
+The states seen are kept under `/data`: a restart of Gladys or of the
+integration neither repeats an announcement nor misses one. The very first
+read only records the states.
+
+## Dashboard widget
+
+The **UGREEN NAS** widget shows the CPU and memory gauges, the CPU
+temperature, then the volumes and disks that need attention, every volume
+with its use and free space, the network rates and the uptime. The
+**Refresh** button reads the NAS again.
+
+## Test the connection
+
+The **Test the connection** action in the Configuration tab reads the NAS
+right away and tells the model, the UGOS version and the number of volumes
+and disks found — or why it failed.
+
+## Limits
+
+- One NAS per installation.
+- Tested against reconstructed answers only, not on a real NAS (see above).
+- No action on the NAS. A "Restart the NAS" button was left out on purpose: it
+  would need an administrator account, and a misfire costs too much.
+- After a refused password, the integration stops trying on its own (UGOS
+  blocks an address after a few failed logins). Fix the password and save,
+  or use **Test the connection** to try again.
+
+## Troubleshooting
+
+- **"does not answer"**: check the address, that the NAS is on, and that
+  Gladys can reach port 9999 (firewall, other network).
+- **"no UGOS Pro API at this address"**: the address answers, but not as
+  UGOS Pro does. Check the port (9999); older UGOS (not Pro) is not supported.
+- **"user name or password refused"**: check them in UGOS, then save the
+  configuration again.
+- **No volume, no disk**: see "A dedicated account" above.
+- **A temperature missing**: some firmwares give none, or none while a disk
+  sleeps.
+
+## Feedback
+
+Models covered: the UGREEN NASync range running UGOS Pro (DXP2800, DXP4800,
+DXP4800 Plus, DXP6800 Pro, DXP8800 Plus, DXP480T Plus…), in theory: no model
+could be tested. A report from your NAS — what works, what is missing — is
+the most useful contribution: [https://github.com/guim31/gladys-ugreen-nas/issues](https://github.com/guim31/gladys-ugreen-nas/issues).
+
+## Configuration settings
+
+These are the settings UGREEN NAS asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your UGREEN NAS | `section` | No | Gladys reads the NAS on your local network through the UGOS Pro API (port 9999). Create a dedicated NAS account without two-factor authentication, enter it below, then add the NAS, volumes and disks from the Discover tab. Read only: nothing is changed. Not affiliated with UGREEN. |
+| NAS address | `string` | Yes | IP address or name of the NAS on your network: 192.168.1.50 (port 9999 added) or http://192.168.1.50:9999. |
+| User name | `string` | Yes | An account of the NAS. A dedicated one is best; if the storage stays empty, it needs to be an administrator. |
+| Password | `secret` | Yes | Sent encrypted with the key of the NAS, never written in the logs. |
+| Refresh interval | `select` | No |  |
+| Language of the names and states | `select` | No | Gladys does not tell the integration your language: the feature names, the states and the scene variables use this one. |
+
+## How to install UGREEN NAS in Gladys
+
+1. In Gladys, open **Integrations**: UGREEN NAS appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ugreen-nas:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-ugreen-nas](https://github.com/guim31/gladys-ugreen-nas).
+
+UGREEN NAS requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+UGREEN NAS is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-ugreen-nas) — [source of this documentation](https://github.com/guim31/gladys-ugreen-nas/blob/HEAD/docs/en.md)

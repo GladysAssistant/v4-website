@@ -23,6 +23,8 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 Cette intégration ajoute vos appareils **TP-Link Tapo** à Gladys : les caméras et sonnettes (image sur le tableau de bord, appui sur la sonnette et mouvement comme déclencheurs de scènes, niveau de batterie), mais aussi les prises, multiprises, ampoules, interrupteurs et les capteurs du hub H100 — voir [Prises, ampoules, interrupteurs et capteurs](#prises-ampoules-interrupteurs-et-capteurs).
 
+![Appareils Tapo pris en charge et ce que Gladys obtient de chacun](https://raw.githubusercontent.com/William-De71/gladys-tapo/main/docs/assets/devices.svg)
+
 ## Comment ça marche
 
 Deux canaux, chacun pour ce qu'il sait faire :
@@ -30,6 +32,8 @@ Deux canaux, chacun pour ce qu'il sait faire :
 - **Le cloud TP-Link** sert à retrouver la liste de vos caméras. C'est le même compte que dans l'application Tapo. En revanche, il ne communique **pas** l'adresse locale des caméras.
 - **Un scan de votre réseau** localise ensuite chaque caméra, exactement comme le fait l'application Tapo au démarrage. C'est ce qui évite, dans la plupart des cas, d'avoir à saisir la moindre adresse IP (voir [L'adresse IP de vos caméras](#ladresse-ip-de-vos-caméras) quand ce n'est pas le cas).
 - **Votre réseau local** fournit tout le reste : les images, la sonnette, le mouvement, la batterie. Rien de tout cela ne transite par le cloud : Gladys interroge directement la caméra chez vous.
+
+![Le cloud TP-Link liste les appareils, un scan du réseau les localise, images, événements et commandes restent sur votre réseau local](https://raw.githubusercontent.com/William-De71/gladys-tapo/main/docs/assets/overview.svg)
 
 Pour capturer une image, l'intégration choisit automatiquement l'un des deux modes selon ce que la caméra accepte :
 
@@ -40,7 +44,11 @@ Pour capturer une image, l'intégration choisit automatiquement l'un des deux mo
 
 Le second mode est le protocole interne de TP-Link, celui qu'utilise l'application mobile. Il permet de récupérer une image des modèles — souvent sur batterie — qui ne proposent aucun flux standard.
 
+![Le mode de capture suit les ports sur lesquels la caméra répond : RTSP avec un compte caméra, le protocole Tapo sinon](https://raw.githubusercontent.com/William-De71/gladys-tapo/main/docs/assets/capture-modes.svg)
+
 ## Installation
+
+L'intégration exige **Gladys 5.1.0** ou plus récent, à cause de son déclencheur de scène. Un Gladys plus ancien ne reçoit pas ses mises à jour et reste en version 2.0.0 jusqu'à ce que Gladys lui-même soit mis à jour.
 
 ### 1. Renseignez votre compte Tapo
 
@@ -53,7 +61,7 @@ Si vos caméras sont filaires (C100, C200, C210, C500…), le mode RTSP est pré
 1. Ouvrez l'application Tapo et sélectionnez votre caméra.
 2. Allez dans **Paramètres de la caméra** → **Paramètres avancés** → **Compte de la caméra**.
 3. Définissez un identifiant et un mot de passe.
-4. Reportez-les dans la section **Compte caméra (RTSP)** de la configuration Gladys.
+4. Reportez-les dans la section **Compte caméra (RTSP et ONVIF)** de la configuration Gladys.
 
 Attention : ce compte caméra est **différent** de votre compte Tapo, et il se crée **par caméra**. Deux façons de le renseigner :
 
@@ -97,6 +105,8 @@ Gladys vérifie aussitôt que quelque chose répond à cette adresse, capture un
 
 Pour revenir à la détection automatique, relancez l'action en laissant l'adresse **vide**.
 
+![D'où vient l'adresse d'un appareil, la première trouvée l'emporte : l'adresse que vous avez saisie, le scan du réseau, le cloud Tapo, la dernière adresse connue](https://raw.githubusercontent.com/William-De71/gladys-tapo/main/docs/assets/ip-resolution.svg)
+
 > **Conseil** — réservez l'adresse de chaque caméra dans votre box (« réservation DHCP » ou « bail statique »). Sans cela, la box peut lui en attribuer une autre après une coupure, et une adresse saisie à la main deviendrait fausse.
 
 ### Et sans adresse IP, par le cloud ?
@@ -133,6 +143,8 @@ Une caméra passée sous le premier seuil ne reprend qu'à **80 %**, volontairem
 
 Le niveau de batterie et les événements continuent d'être lus dans tous les cas : cela ne coûte presque rien, et c'est ce qui permet de savoir quand la caméra est rechargée.
 
+![Niveaux de batterie et ce que chacun permet : tout au-dessus de 60 %, à la demande seulement entre 40 % et 60 %, rien sous 40 %, retour à la normale à 80 %](https://raw.githubusercontent.com/William-De71/gladys-tapo/main/docs/assets/battery.svg)
+
 Une caméra sur batterie qui **cesse de répondre** — veille profonde, session refusée, réseau coupé — est également ramenée au mode « à la demande » : son dernier niveau connu n'est plus fiable, et une caméra muette a plus de chances d'être vide que pleine.
 
 ### Un intervalle de capture propre aux caméras sur batterie
@@ -150,13 +162,15 @@ C'est le réglage le plus efficace de tous : c'est le **réveil** de la caméra 
 
 Chaque caméra devient un appareil dans Gladys :
 
-- **Image** — la photo affichée par le widget caméra, rafraîchie à la demande.
-- **Sonnette** — un appui sur le bouton, utilisable comme déclencheur de scène.
-- **Mouvement** — la détection de mouvement, également utilisable comme déclencheur.
-- **Activée** — le mode privé : voir [Mode privé](#mode-privé).
-- **Capture** — un bouton pour demander une image tout de suite (modèles sur batterie, rafraîchis moins souvent).
-- **Orientation** et **Positions** — sur les caméras motorisées : voir [PTZ](#orienter-une-caméra-motorisée-ptz).
-- **Batterie** — le niveau restant, en pourcentage (modèles sur batterie).
+- **Image** — la photo affichée par le widget caméra, rafraîchie à la demande. Cette fonctionnalité porte le nom de la caméra.
+- **Sonnette** (`Doorbell`) — un appui sur le bouton, utilisable comme déclencheur de scène.
+- **Mouvement** (`Motion`) — la détection de mouvement, également utilisable comme déclencheur.
+- **Activée** (`Enabled`) — le mode privé : voir [Mode privé](#mode-privé).
+- **Capture** (`Capture`) — un bouton pour demander une image tout de suite (modèles sur batterie, rafraîchis moins souvent).
+- **Orientation** (`Move`) et **Positions** (`Preset`) — sur les caméras motorisées : voir [PTZ](#orienter-une-caméra-motorisée-ptz).
+- **Batterie** (`Battery`) — le niveau restant, en pourcentage (modèles sur batterie).
+
+L'intégration nomme ces fonctionnalités en anglais (par exemple `Garage - Motion`), quelle que soit la langue de Gladys ; vous pouvez renommer chacune. Pour lancer une scène selon ce que voit une caméra — une personne, un véhicule, un animal — utilisez le déclencheur décrit dans [Scènes](#scènes).
 
 Lorsque quelqu'un sonne, l'intégration capture immédiatement une image et l'envoie à Gladys : le widget affiche déjà le visiteur au moment où vous consultez la notification.
 
@@ -169,6 +183,8 @@ Deux chemins possibles, choisis automatiquement pour chaque caméra :
 | **ONVIF**         | La caméra prévient Gladys au moment où elle détecte quelque chose | quasi immédiat        |
 | **Interrogation** | Gladys demande régulièrement à la caméra ce qu'elle a détecté     | jusqu'à un intervalle |
 
+![Événements des caméras : ONVIF les pousse aussitôt quand le compte caméra est renseigné, sinon l'intégration lit la liste des détections à chaque vérification](https://raw.githubusercontent.com/William-De71/gladys-tapo/main/docs/assets/events.svg)
+
 ONVIF est nettement préférable pour déclencher une scène : un mouvement remonte en une seconde au lieu d'attendre la prochaine vérification. Il demande simplement que le **compte caméra** soit renseigné — ce sont ces identifiants-là qu'ONVIF utilise, pas votre compte Tapo.
 
 C'est aussi le seul chemin qui signale la **fin** d'un mouvement : le capteur retombe quand la caméra le dit, et non au bout d'un délai fixe.
@@ -179,7 +195,7 @@ Vous n'avez rien à configurer : si le compte caméra est renseigné et que la c
 
 ## Mode privé
 
-Chaque caméra reçoit une commande **Activée** — le mode privé standard des caméras dans Gladys (Gladys 5.0 ou plus récent). Désactivez-la et Gladys cesse de capturer, d'afficher et d'enregistrer l'image de cette caméra, partout : tableau de bord, chat, scènes. Elle s'utilise dans une scène — « quand on rentre, désactive la caméra du salon ».
+Chaque caméra reçoit une commande **Activée** — le mode privé standard des caméras dans Gladys. Désactivez-la et Gladys cesse de capturer, d'afficher et d'enregistrer l'image de cette caméra, partout : tableau de bord, chat, scènes. Elle s'utilise dans une scène — « quand on rentre, désactive la caméra du salon ».
 
 Sur les caméras Tapo qui ont un **mode privé** (l'objectif est physiquement masqué), la commande le pilote aussi : désactiver la caméra masque l'objectif, la réactiver le découvre. Cela passe par le même canal local que le niveau de batterie : aucun compte caméra n'est nécessaire, et les modèles sur batterie en bénéficient aussi. Cela fonctionne **dans les deux sens** — un mode privé basculé depuis l'application Tapo remonte dans Gladys à la vérification suivante, dans la minute.
 
@@ -200,6 +216,35 @@ Comme pour les événements, cela passe par ONVIF et demande donc que le **compt
 Un appui sur une flèche déplace la caméra **d'un pas**, pas en continu. C'est délibéré : une commande envoyée depuis une scène, ou un appui dont le relâchement se perd, doit rester un petit mouvement et non plusieurs secondes de rotation. Chaque pas s'arrête donc de lui-même : même si Gladys perd le contact avec la caméra juste après, aucun mouvement ne reste en cours.
 
 Une remarque sur la vitesse : les firmwares Tapo ignorent largement la vitesse demandée et déduisent l'allure de la distance à parcourir. Un pas peut donc paraître lent — c'est le comportement de la caméra, pas un réglage manquant.
+
+## Scènes
+
+Une caméra ou une sonnette peut lancer une scène avec le déclencheur **Détection d'une caméra Tapo**. Il indique _ce que_ la caméra a vu, et une seule scène peut surveiller plusieurs caméras. Les fonctionnalités **Motion** et **Doorbell** de chaque caméra restent utilisables avec le déclencheur standard **Changement d'état de l'appareil**.
+
+### Le déclencheur Détection d'une caméra Tapo
+
+| Champ       | Que choisir                                                                                                           |
+| ----------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Caméra**  | la caméra ou la sonnette à surveiller ; laissez vide pour toutes les caméras                                          |
+| **Détecté** | **Personne**, **Véhicule**, **Animal**, **Mouvement** ou **Appui sur la sonnette** ; laissez vide pour tous les types |
+
+La scène reçoit trois variables, que vous pouvez insérer dans un message : **Identifiant de la caméra**, **Nom de la caméra** et **Détecté** (`person`, `vehicle`, `pet`, `motion` ou `doorbell`).
+
+- **Personne**, **Véhicule** et **Animal** demandent une caméra à détection intelligente, activée dans l'application Tapo. La caméra dit alors ce qu'elle a vu ; sans elle, toute détection arrive en **Mouvement**. L'intégration ne devine jamais à partir de l'image.
+- Chaque caméra et chaque type lancent la scène **au plus une fois par minute** : quelqu'un qui se promène trois minutes dans le jardin la lance au plus une fois par minute, pas à chaque notification de la caméra.
+- Quand une personne, un véhicule ou un animal est reconnu, le simple mouvement qui l'accompagne ne lance rien de plus : une scène sur **Mouvement** ne tourne que pour ce que la caméra n'a pas identifié. Laissez **Détecté** vide pour réagir une fois à tout.
+- Une caméra en ONVIF (compte caméra renseigné) signale en moins d'une seconde. Sinon la détection arrive au prochain **Intervalle de vérification des événements** et, pour une caméra sur batterie, au prochain **Intervalle de vérification des caméras sur batterie** (5 minutes par défaut). Les sonnettes sont toujours vérifiées à l'intervalle des événements.
+- Seules les caméras ajoutées à Gladys lancent le déclencheur.
+
+### Exemples
+
+**Éclairer le jardin quand quelqu'un y passe la nuit.** Déclencheur **Détection d'une caméra Tapo** : caméra « Jardin », détecté **Personne**. Condition **Condition temporelle** : après 22:00 et avant 06:00. Actions **Allumer les lumières** (les lampes du jardin), **Attendre** 5 minutes, puis **Eteindre les lumières**. Le chat du voisin qui traverse la pelouse n'allume rien.
+
+**Recevoir la photo de la sonnette sur votre téléphone.** Déclencheur **Détection d'une caméra Tapo** : détecté **Appui sur la sonnette**, caméra laissée vide. Action **Envoyer une image de caméra** avec la sonnette. L'intégration capture une image dès l'appui sur le bouton : la photo montre qui a sonné. Avec plusieurs sonnettes, ajoutez **Envoyer un message** « On a sonné à Nom de la caméra », en insérant la variable **Nom de la caméra**.
+
+**Ignorer les animaux.** Construisez la scène sur **Personne** (et une autre sur **Véhicule** au besoin) plutôt que de laisser **Détecté** vide : un chien ou un chat qui passe devant la caméra ne lance alors rien.
+
+**Une voiture dans l'allée.** Déclencheur **Détection d'une caméra Tapo** : caméra « Allée », détecté **Véhicule**. Action **Envoyer un message** « Un véhicule vient d'arriver ».
 
 ## Prises, ampoules, interrupteurs et capteurs
 
@@ -265,6 +310,10 @@ L'action **Rafraîchir les images** force une nouvelle capture de toutes vos cam
 
 **Aucun mouvement détecté sur une caméra ONVIF** — dans l'application Tapo, vérifiez que la détection de mouvement est activée et que le mode privé est désactivé : une caméra en mode privé ne signale plus rien.
 
+**La scène de détection ne se lance jamais pour une personne** — la caméra ne signale que du **Mouvement** : activez la détection intelligente (personne, véhicule, animal) dans l'application Tapo, si le modèle l'a. Vérifiez aussi que la caméra est ajoutée à Gladys et que le champ **Caméra** du déclencheur la désigne.
+
+**La scène ne se lance pas à chaque mouvement** — c'est voulu : chaque caméra la lance au plus une fois par minute et par type, et le simple mouvement qui accompagne une personne, un véhicule ou un animal reconnu ne lance rien de plus.
+
 **Caméras sans flux RTSP** — les modèles sur batterie et les sonnettes (C610, C425, D230…) n'exposent ni RTSP ni ONVIF. Ce n'est pas un obstacle : l'intégration bascule automatiquement sur le protocole propriétaire TP-Link, celui qu'utilise l'application Tapo, et récupère leurs images sans compte caméra. Seule différence : pas de flux vidéo direct pour ces caméras, uniquement des images rafraîchies régulièrement.
 
 Ces caméras se réveillent parfois lentement : si la capture échoue avec un message de délai dépassé, augmentez le **délai de capture**.
@@ -304,11 +353,11 @@ Voici les paramètres demandés par Tapo dans son écran de configuration dans G
 ## Comment installer Tapo dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Tapo apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-tapo:1.2.5`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-tapo:2.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-tapo](https://github.com/William-De71/gladys-tapo).
 
-Tapo nécessite Gladys `>=5.0.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Tapo nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

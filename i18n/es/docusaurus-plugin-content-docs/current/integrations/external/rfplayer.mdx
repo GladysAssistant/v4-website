@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica RFPlayer, gratuita y de código abierto"
 sidebar_label: "RFPlayer"
-description: "Ziblue RFPlayer 433/868 MHz dongle: sensors, remotes, alarms and RF actuators. Free, open source, installable in one click."
+description: "Llave RFPlayer de Ziblue 433/868 MHz: sensores, mandos, alarmas y actuadores de radio. Gratuita, de código abierto, se instala con un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-rfplayer.png"
 keywords:
   - "rfplayer"
@@ -14,37 +14,31 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/es.md in
 https://github.com/prohand/gladys-rfplayer instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
 <ExternalIntegrationHeader slug="rfplayer" />
 
-:::info
+Conecte un **Ziblue / GCE Electronics RFPlayer RFP1000** (433 y 868 MHz) a
+Gladys: sensores y detectores de radio, mandos e interruptores de pared, y los
+receptores que controla la llave (enchufes, luces, persianas Somfy RTS, portones).
 
-La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+## 1. Exponer la llave por TCP
 
-:::
+La integración se ejecuta en un contenedor aislado que **no puede abrir un puerto
+USB**. El RFPlayer sigue conectado a un equipo de su red (el equipo de Gladys,
+una Raspberry Pi…), y un pequeño «puente serie-TCP» hace accesible su puerto
+serie en la red. Los datos son los mismos, a 115200 baudios.
 
-Connect a **Ziblue / GCE Electronics RFPlayer RFP1000** (433 and 868 MHz) to
-Gladys: radio sensors and detectors, remotes and wall switches, and the
-receivers the dongle drives (plugs, lights, Somfy RTS shutters, gates).
-
-## 1. Expose the dongle over TCP
-
-The integration runs in an isolated container that **cannot open a USB
-port**. The RFPlayer stays plugged into a machine of your network (the Gladys
-host, a Raspberry Pi…), and a small "serial-to-TCP bridge" makes its serial
-port reachable on the network. The data is the same, at 115200 bauds.
-
-Find the stable name of the dongle:
+Busque el nombre estable de la llave:
 
 ```bash
 ls -l /dev/serial/by-id/
 ```
 
-### With ser2net 4 (Debian 11+, Raspberry Pi OS)
+### Con ser2net 4 (Debian 11+, Raspberry Pi OS)
 
 ```bash
 sudo apt install ser2net
@@ -61,10 +55,10 @@ connection: &rfplayer
   connector: serialdev,/dev/serial/by-id/usb-XXXX-if00-port0,115200n81,local
 ```
 
-Replace the `/dev/serial/by-id/...` path with yours, then
+Sustituya la ruta `/dev/serial/by-id/...` por la suya y después ejecute
 `sudo systemctl restart ser2net`.
 
-### With ser2net 3
+### Con ser2net 3
 
 `/etc/ser2net.conf`:
 
@@ -72,126 +66,133 @@ Replace the `/dev/serial/by-id/...` path with yours, then
 4000:raw:0:/dev/serial/by-id/usb-XXXX-if00-port0:115200 8DATABITS NONE 1STOPBIT
 ```
 
-### With socat (quick test)
+### Con socat (prueba rápida)
 
 ```bash
 socat TCP-LISTEN:4000,reuseaddr,fork FILE:/dev/serial/by-id/usb-XXXX-if00-port0,b115200,raw,echo=0
 ```
 
-> The bridge has **no password**: whoever reaches the port drives your radio
-> devices. Keep it on your LAN, never forward it to the Internet. With ser2net
-> you can bind it to one address: `accepter: tcp,192.168.1.10,4000`.
+> El puente **no tiene contraseña**: quien llegue al puerto controla sus
+> dispositivos de radio. Manténgalo en su red local y nunca lo redirija a
+> Internet. Con ser2net puede vincularlo a una sola dirección:
+> `accepter: tcp,192.168.1.10,4000`.
 
-## 2. Configure the integration
+## 2. Configurar la integración
 
-| Field                        | What to put                                                                                                             |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Bridge host                  | IP of the machine running the bridge. For the Gladys host itself, its **LAN IP** — `localhost` is the container itself. |
-| Bridge TCP port              | `4000` in the examples above.                                                                                           |
-| Protocols received           | Leave empty for all. Untick what you do not use to hear fewer neighbours.                                               |
-| Minimum radio quality        | 0 keeps everything; 3 or 4 drops the far-away (neighbours') emitters.                                                   |
-| Jamming detection threshold  | 7 by default; 1 = very sensitive, 10 = needs a jammer on both bands, 0 = off.                                           |
-| Identify Oregon / OWL probes | "Address" (default) or "Model and channel" — see below.                                                                 |
-| Actuators                    | The receivers the dongle drives — see section 4.                                                                        |
-| Detector types               | Which detector is a door contact, a smoke detector… — see section 3.                                                    |
+| Campo                                   | Qué indicar                                                                                                                  |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Host del puente                         | IP del equipo que ejecuta el puente. Para el propio equipo de Gladys, su **IP local** — `localhost` es el propio contenedor. |
+| Puerto TCP del puente                   | `4000` en los ejemplos anteriores.                                                                                           |
+| Protocolos recibidos                    | Vacío para todos. Desmarque lo que no use para captar menos vecinos.                                                         |
+| Calidad de radio mínima                 | 0 lo conserva todo; 3 o 4 descarta los emisores lejanos (de los vecinos).                                                    |
+| Umbral de detección de interferencias   | 7 por defecto; 1 = muy sensible, 10 = necesita un inhibidor en ambas bandas, 0 = desactivado.                                |
+| Identificar las sondas Oregon / OWL por | «Dirección» (por defecto) o «Modelo y canal» — vea más abajo.                                                                |
+| Actuadores                              | Los receptores que controla la llave — vea la sección 4.                                                                     |
+| Tipos de detectores                     | Qué detector es un contacto de puerta, un detector de humo… — vea la sección 3.                                              |
 
-Click **Test the connection**: it shows the model, the firmware, the answer
-time and the protocols received, plus any error in your settings.
+Pulse **Probar la conexión**: muestra el modelo, el firmware, el tiempo de
+respuesta y los protocolos recibidos, además de cualquier error en sus ajustes.
 
-## 3. Sensors, detectors and remotes (heard)
+## 3. Sensores, detectores y mandos (recibidos)
 
-Nothing to declare: as soon as the dongle hears a device, it appears in the
-**Discovery** tab. Create the ones that are yours — the neighbours' probes are
-heard too, they simply stay there. Values and scene triggers only reach the
-devices you created.
+Nada que declarar: en cuanto la llave recibe un dispositivo, aparece en la
+pestaña **Descubrir**. Cree los que son suyos — las sondas de los vecinos también
+se reciben, simplemente se quedan ahí. Los valores y los disparadores de escena
+solo llegan a los dispositivos que ha creado.
 
-- **Oregon Scientific probes**: temperature, humidity, pressure, wind speed and
-  direction, rain, UV. **OWL** meters: power (per phase on CM180i) and energy.
-  Oregon probes draw a new random address at every battery change. With
-  "Address", two identical probes on the same channel are told apart, but a
-  battery change creates a new device. With "Model and channel", the device
-  survives battery changes, as long as each probe of a model is set on its own
-  channel. Changing this setting creates new devices.
-- **Visonic and X2D detectors**: alarm, tamper and low battery. On the air a
-  door contact looks like a motion detector, so tell the integration in
-  **Detector types**, e.g. `VISONIC 1166992416 = opening; X2D 7894561 = smoke`
-  (kinds: `motion`, `opening`, `smoke`, `leak`, `vibration`, `presence`). The id
-  is shown in the widget and in the device parameters. Motion and smoke
-  detectors never send "it stopped": their alarm returns to 0 after 1 to 2
-  minutes.
-- **KD101 smoke detectors**: the alert.
-- **Remotes and wall switches** (Chacon/DiO, X10, Domia, Blyss, Somfy RTS, X2D,
-  Visonic keyfobs, FS20…): the device shows the last on/off order (up/my/down
-  for an RTS remote), and every press fires the **A radio remote is pressed**
-  scene trigger with the exact order.
+- **Sondas Oregon Scientific**: temperatura, humedad, presión, velocidad y
+  dirección del viento, lluvia, UV. Medidores **OWL**: potencia (por fase en el
+  CM180i) y energía. Las sondas Oregon eligen una nueva dirección aleatoria en
+  cada cambio de pilas. Con «Dirección», dos sondas idénticas en el mismo canal
+  se distinguen, pero un cambio de pilas crea un dispositivo nuevo. Con «Modelo y
+  canal», el dispositivo sobrevive a los cambios de pilas, siempre que cada sonda
+  de un modelo esté configurada en su propio canal. Cambiar este ajuste crea
+  dispositivos nuevos.
+- **Detectores Visonic y X2D**: alarma, sabotaje y pila baja. Por radio, un
+  contacto de puerta parece un detector de movimiento, así que indíqueselo a la
+  integración en **Tipos de detectores**, p. ej.
+  `VISONIC 1166992416 = opening; X2D 7894561 = smoke` (tipos: `motion`,
+  `opening`, `smoke`, `leak`, `vibration`, `presence`). El id se muestra en el
+  widget y en los parámetros del dispositivo. Los detectores de movimiento y de
+  humo nunca envían «ha terminado»: su alarma vuelve a 0 al cabo de 1 a 2 minutos.
+- **Detectores de humo KD101**: la alerta.
+- **Mandos e interruptores de pared** (Chacon/DiO, X10, Domia, Blyss, Somfy RTS,
+  X2D, llaveros Visonic, FS20…): el dispositivo muestra la última orden de
+  encendido/apagado (subir/my/bajar en un mando RTS), y cada pulsación dispara el
+  disparador de escena **Se pulsa un mando de radio** con la orden exacta.
 
-## 4. Actuators (driven by the dongle)
+## 4. Actuadores (controlados por la llave)
 
-A receiver cannot be discovered over the air: declare it. The easiest way is
-the **Pair an actuator** button:
+Un receptor no puede descubrirse por radio: declárelo. La forma más sencilla es
+el botón **Emparejar un actuador**:
 
-1. put the receiver in learning mode (press the button of a Chacon plug, hold
-   PROG on the original remote of a Somfy RTS shutter until it jogs…);
-2. fill in a name, the kind, the protocol and a free address (0 to 255, or A1
-   to P16), then run the action;
-3. the dongle sends the pairing frame, and the receiver is added to the
-   **Actuators** field. Create it from the **Discovery** tab.
+1. ponga el receptor en modo aprendizaje (pulse el botón de un enchufe Chacon,
+   mantenga PROG en el mando original de una persiana Somfy RTS hasta que dé un
+   pequeño movimiento…);
+2. indique un nombre, el tipo, el protocolo y una dirección libre (0 a 255, o A1
+   a P16), y después ejecute la acción;
+3. la llave envía la trama de emparejamiento y el receptor se añade al campo
+   **Actuadores**. Créelo desde la pestaña **Descubrir**.
 
-You can also type the field by hand, entries separated by `;`:
+También puede escribir el campo a mano, con las entradas separadas por `;`:
 
 ```
 Living room shutter = shutter RTS 1; Desk lamp = switch CHACON 12; Hall = light X10 A3; Gate = button RTS 2 qualifier=1
 ```
 
-| Kind      | What it does                                                                      |
-| --------- | --------------------------------------------------------------------------------- |
-| `switch`  | On / off.                                                                         |
-| `light`   | On / off and brightness (protocols with a dim order: X10, Chacon dimmers, FS20…). |
-| `shutter` | Open / stop / close. On Somfy RTS, stop is the "my" button.                       |
-| `button`  | A single order (gate, garage door, bell). An RTS gate needs `qualifier=1`.        |
+| Tipo      | Qué hace                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------ |
+| `switch`  | Encender / apagar.                                                                               |
+| `light`   | Encender / apagar y brillo (protocolos con orden de atenuación: X10, reguladores Chacon, FS20…). |
+| `shutter` | Abrir / parar / cerrar. En Somfy RTS, parar es el botón «my».                                    |
+| `button`  | Una única orden (portón, puerta de garaje, timbre). Un portón RTS necesita `qualifier=1`.        |
 
-The address is not the one of your old remote: the dongle combines it with its
-own identifier, so `ID 1` of your RFPlayer never drives a neighbour's device.
-Radio orders are never acknowledged: Gladys shows what it sent.
+La dirección no es la de su antiguo mando: la llave la combina con su propio
+identificador, de modo que el `ID 1` de su RFPlayer nunca controla un dispositivo
+de un vecino. Las órdenes de radio nunca se confirman: Gladys muestra lo que ha
+enviado.
 
-## 5. Scenes and dashboard (Gladys 5.1+)
+## 5. Escenas y panel (Gladys 5.1+)
 
-Triggers:
+Disparadores:
 
-- **A radio remote is pressed** — filter on the remote and the order;
-  variables: name, order, protocol, address.
-- **A radio detector is triggered** — alarm or tamper.
-- **A radio device battery is low**.
-- **Radio jamming** — started or stopped. A jammer is the classic way to blind
-  a wireless alarm: build a notification scene on it.
+- **Se pulsa un mando de radio** — filtro por el mando y la orden; variables:
+  nombre, orden, protocolo, dirección.
+- **Se dispara un detector de radio** — alarma o sabotaje.
+- **Pila baja en un dispositivo de radio**.
+- **Interferencia de radio** — iniciada o terminada. Un inhibidor es la forma
+  clásica de cegar una alarma inalámbrica: cree una escena de notificación con él.
 
-Actions:
+Acciones:
 
-- **Send a radio order** — any order to any address, even one not declared
-  (a second channel, the RTS "my"…). Its `sent` output is false when the dongle
-  is not connected.
-- **Simulate a radio jamming** — to test your alarm scene end to end.
+- **Enviar una orden de radio** — cualquier orden a cualquier dirección, incluso
+  una no declarada (un segundo canal, el «my» de RTS…). Su salida `sent` es false
+  cuando la llave no está conectada.
+- **Simular una interferencia de radio** — para probar su escena de alarma de
+  principio a fin.
 
-The **RFPlayer radio** widget shows whether the dongle is connected, the
-jamming state, the counters and the last emitters heard, with a badge telling
-whether each one is already a device in Gladys.
+El widget **Radio RFPlayer** muestra si la llave está conectada, el estado de
+interferencia, los contadores y los últimos emisores recibidos, con una insignia
+que indica si cada uno ya es un dispositivo en Gladys.
 
-## Troubleshooting
+## Solución de problemas
 
-- **"RFPlayer unreachable"**: check the bridge (`systemctl status ser2net`),
-  the IP and port, and that no other program holds the serial port
-  (`kickolduser` helps with ser2net). From another machine:
-  `nc 192.168.1.10 4000` then type `ZIA++HELLO` + Enter: the dongle answers
+- **«RFPlayer inaccesible»**: compruebe el puente (`systemctl status ser2net`),
+  la IP y el puerto, y que ningún otro programa ocupe el puerto serie
+  (`kickolduser` ayuda con ser2net). Desde otro equipo:
+  `nc 192.168.1.10 4000` y después escriba `ZIA++HELLO` + Intro: la llave responde
   `ZIA--Welcome to Ziblue Dongle…`.
-- **Connected, then unreachable every minute**: the bridge port is open but the
-  dongle does not answer PING — unplugged, or another baud rate.
-- **A remote is not seen**: is its protocol ticked in "Protocols received"? Is
-  the minimum quality too high? The widget lists what is heard, created or not.
-- **A shutter does not move**: it must be paired once (section 4). For RTS,
-  the shutter must be in programming mode (PROG held on its remote) when the
-  pairing frame is sent.
-- **Too many devices in Discovery**: raise the minimum radio quality, untick
-  the protocols you do not use.
+- **Conectada y después inaccesible cada minuto**: el puerto del puente está
+  abierto pero la llave no responde al PING — desconectada, o con otra velocidad
+  en baudios.
+- **No se ve un mando**: ¿está marcado su protocolo en «Protocolos recibidos»?
+  ¿Es demasiado alta la calidad mínima? El widget lista lo que se recibe, creado o
+  no.
+- **Una persiana no se mueve**: debe emparejarse una vez (sección 4). En RTS, la
+  persiana debe estar en modo programación (PROG mantenido en su mando) cuando se
+  envía la trama de emparejamiento.
+- **Demasiados dispositivos en Descubrir**: suba la calidad de radio mínima y
+  desmarque los protocolos que no use.
 
 ## Parámetros de configuración
 
@@ -199,20 +200,20 @@ Estos son los parámetros que RFPlayer te pide en su pantalla de configuración 
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| Getting started | `section` | No | The integration runs in a sandboxed container that cannot open a USB port: plug the RFPlayer into a machine of your network and expose its serial port over TCP with ser2net (or socat, an ESP-Link…), at 115200 bauds. Then type that address below. The documentation gives a ready-to-use ser2net configuration. |
-| Bridge host | `string` | Sí | IP address or name of the machine running the serial-to-TCP bridge. To reach the Gladys host itself, use its LAN IP (not localhost: the integration has its own network). |
-| Bridge TCP port | `number` | No | TCP port the bridge listens on (ser2net example: 4000). |
-| Protocols received | `multi_select` | No | Radio protocols the dongle decodes. Leave everything unticked to receive them all. Unticking the protocols you do not use reduces false detections and the neighbours heard. |
-| Minimum radio quality | `number` | No | Frames heard with a quality below this value (1 to 10, as graded by the dongle) are ignored: raise it to 3 or 4 to stop picking up the neighbours. 0 keeps everything. |
-| Jamming detection threshold | `number` | No | Sensitivity of the jamming detector built into the dongle: 1 is very sensitive (false alarms), 10 needs a jammer on both bands, 0 turns it off. The dongle default is 7. |
-| Identify Oregon / OWL probes by | `select` | No | Their random address changes at every battery change. "Address" tells apart two identical probes on the same channel, but creates a new device after a battery change. "Model and channel" survives battery changes, as long as each probe of a model has its own channel. Changing this creates new devices. |
-| Actuators | `string` | No | Receivers the dongle drives, separated by ";": Name = kind PROTOCOL address. Kinds: switch, light, shutter, button. Address: 0 to 255, or A1 to P16. Options: qualifier=n, burst=n. The "Pair an actuator" button fills this field for you. |
-| Detector types | `string` | No | On the air a door contact and a motion detector look the same. Tell which is which, separated by ";": PROTOCOL id = kind (motion, opening, smoke, leak, vibration, presence). The id is shown in the widget. Unlisted detectors are motion detectors (smoke for KD101). |
+| Primeros pasos | `section` | No | La integración se ejecuta en un contenedor aislado que no puede abrir un puerto USB: conecte el RFPlayer a un equipo de su red y exponga su puerto serie por TCP con ser2net (o socat, un ESP-Link…), a 115200 baudios. Después indique esa dirección abajo. La documentación ofrece una configuración de ser2net lista para usar. |
+| Host del puente | `string` | Sí | Dirección IP o nombre del equipo que ejecuta el puente serie-TCP. Para llegar al propio equipo de Gladys, use su IP de la red local (no localhost: la integración tiene su propia red). |
+| Puerto TCP del puente | `number` | No | Puerto TCP en el que escucha el puente (ejemplo de ser2net: 4000). |
+| Protocolos recibidos | `multi_select` | No | Protocolos de radio que decodifica la llave. No marque ninguno para recibirlos todos. Desmarcar los protocolos que no usa reduce las falsas detecciones y los vecinos captados. |
+| Calidad de radio mínima | `number` | No | Las tramas recibidas con una calidad inferior a este valor (1 a 10, según la llave) se ignoran: súbalo a 3 o 4 para dejar de captar a los vecinos. 0 lo conserva todo. |
+| Umbral de detección de interferencias | `number` | No | Sensibilidad del detector de interferencias integrado en la llave: 1 es muy sensible (falsas alarmas), 10 necesita un inhibidor en ambas bandas, 0 lo desactiva. El valor por defecto de la llave es 7. |
+| Identificar las sondas Oregon / OWL por | `select` | No | Su dirección aleatoria cambia en cada cambio de pilas. «Dirección» distingue dos sondas idénticas en el mismo canal, pero crea un dispositivo nuevo tras un cambio de pilas. «Modelo y canal» sobrevive a los cambios de pilas, siempre que cada sonda de un modelo tenga su propio canal. Cambiar esta opción crea dispositivos nuevos. |
+| Actuadores | `string` | No | Receptores que controla la llave, separados por «;»: Nombre = tipo PROTOCOLO dirección. Tipos: switch, light, shutter, button. Dirección: 0 a 255, o A1 a P16. Opciones: qualifier=n, burst=n. El botón «Emparejar un actuador» rellena este campo por usted. |
+| Tipos de detectores | `string` | No | Por radio, un contacto de puerta y un detector de movimiento parecen iguales. Indique cuál es cuál, separados por «;»: PROTOCOLO id = tipo (motion, opening, smoke, leak, vibration, presence). El id se muestra en el widget. Los detectores no indicados son detectores de movimiento (humo para KD101). |
 
 ## Cómo instalar RFPlayer en Gladys
 
 1. En Gladys, abre **Integraciones**: RFPlayer aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-rfplayer:2.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-rfplayer:2.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-rfplayer](https://github.com/prohand/gladys-rfplayer).
 
@@ -227,4 +228,4 @@ RFPlayer es una **integración externa**: una integración comunitaria empaqueta
 - [Explorar todas las integraciones externas](/es/docs/integrations/external/)
 - [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
 - [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
-- [Código fuente en GitHub](https://github.com/prohand/gladys-rfplayer) — [fuente de esta documentación](https://github.com/prohand/gladys-rfplayer/blob/HEAD/docs/en.md)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-rfplayer) — [fuente de esta documentación](https://github.com/prohand/gladys-rfplayer/blob/HEAD/docs/es.md)

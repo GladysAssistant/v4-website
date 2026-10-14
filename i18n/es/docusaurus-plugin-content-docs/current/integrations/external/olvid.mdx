@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica Olvid, gratuita y de código abierto"
 sidebar_label: "Olvid"
-description: "Chat with your home from Olvid, the end-to-end encrypted messenger (personal profile). Free, open source, installable in one click."
+description: "Converse con su casa desde Olvid, la mensajería cifrada de extremo a extremo. Gratuita, de código abierto, se instala con un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-olvid.png"
 keywords:
   - "olvid"
@@ -14,146 +14,150 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/es.md in
 https://github.com/prohand/gladys-olvid instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
 <ExternalIntegrationHeader slug="olvid" />
 
-:::info
+Esta integración añade [Olvid](https://olvid.io) como canal de chat en Gladys,
+exactamente igual que la integración de Telegram: haga una pregunta a su casa
+desde Olvid, Gladys responde en la conversación, y sus escenas pueden enviarle
+notificaciones por el mismo canal — cifrado de extremo a extremo, sin directorio
+de empresa, con un **perfil personal de Olvid («particulier»)**.
 
-La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+## Cómo funciona
 
-:::
+Olvid no tiene API de bots en la nube: no existe un equivalente del BotFather de
+Telegram. Un bot de Olvid se compone de dos mitades:
 
-This integration adds [Olvid](https://olvid.io) as a chat channel in Gladys,
-exactly like the Telegram integration: ask your home a question from Olvid,
-Gladys answers in the discussion, and your scenes can send you notifications
-through the same channel — end-to-end encrypted, with no company directory, on
-a **personal ("particulier") Olvid profile**.
+- el **daemon de Olvid** (`olvid/bot-daemon`): un cliente de Olvid completo que
+  integra el motor criptográfico, aloja su perfil y expone una API gRPC;
+- el **bot**: esta integración. Controla el daemon, transmite los mensajes a
+  Gladys y devuelve las respuestas.
 
-## How it works
+**Gladys ejecuta el daemon por usted**: está declarado en el manifiesto de la
+integración, así que el supervisor de Gladys lo inicia en su propio contenedor,
+en la red privada de la integración. Ningún archivo `docker-compose` que
+escribir, ninguna línea de comandos que teclear, ninguna clave que copiar de un
+lado a otro.
 
-Olvid has no cloud bot API: there is no equivalent of Telegram's BotFather. An
-Olvid bot is made of two halves:
+Ningún servicio de terceros adicional ve sus mensajes: el daemon es un cliente
+de Olvid, igual que su teléfono, y su API gRPC no se publica en ningún puerto —
+solo la integración puede hablar con él.
 
-- the **Olvid daemon** (`olvid/bot-daemon`): a complete Olvid client embedding
-  the cryptographic engine and holding your profile, exposing a gRPC API;
-- the **bot**: this integration. It drives the daemon, relays messages to
-  Gladys and sends the answers back.
+## 1. Instalar la integración
 
-**Gladys runs the daemon for you**: it is declared in the integration manifest,
-so the Gladys supervisor starts it in its own container, on the integration's
-private network. No `docker-compose` file to write, no command line to type, no
-key to copy around.
+Instale la integración de Olvid desde la tienda de Gladys. La pantalla de
+instalación le indica lo que ejecuta además de sí misma (`olvid/bot-daemon`, su
+límite de memoria y el hecho de que no se publica ningún puerto): ese es el
+contrato que acepta.
 
-No extra third-party service sees your messages: the daemon is an Olvid client,
-just like your phone, and its gRPC API is published on no port at all — only the
-integration can talk to it.
+En el primer arranque, sin nada que rellenar, la integración:
 
-## 1. Install the integration
+1. genera la clave de administrador del daemon (nunca la ve ni la teclea) e
+   inicia el contenedor del daemon;
+2. crea un perfil personal de Olvid, ya que el daemon está vacío;
+3. crea su propia clave de cliente, limitada a ese perfil (la clave de
+   administrador solo sirve para eso);
+4. activa la aceptación automática de las invitaciones entrantes;
+5. define una política de conservación de mensajes: el daemon elimina los
+   mensajes de más de 30 días (campo **Conservación de los mensajes**, 0 lo
+   conserva todo).
 
-Install the Olvid integration from the Gladys store. The install screen tells
-you what it runs besides itself (`olvid/bot-daemon`, its memory limit, and the
-fact that no port is published): that is the contract you accept.
+El inicio del daemon tarda unas decenas de segundos la primera vez (descarga de
+la imagen incluida): el estado de la integración pasa por sí solo de «Iniciando
+el daemon de Olvid…» a conectado. Pulse **Probar la conexión** para
+comprobarlo: Gladys responde con la versión del daemon y el nombre del perfil.
 
-On the first run, with nothing to fill in, the integration:
+Después puede ajustar, si lo desea:
 
-1. generates the admin key of the daemon (you never see nor type it) and starts
-   the daemon container;
-2. creates a personal Olvid profile, since the daemon is empty;
-3. mints its own client key, scoped to that profile (the admin key is only used
-   for that);
-4. enables automatic acceptance of incoming invitations;
-5. sets a message retention policy: the daemon deletes the messages older than
-   30 days (**Message retention** field, 0 keeps everything).
+| Campo             | Valor                                                   |
+| ----------------- | ------------------------------------------------------- |
+| Nombre / apellido | el nombre mostrado a sus contactos («Gladys Assistant») |
+| Número del perfil | `0` (Gladys toma el primer perfil, o crea uno)          |
 
-Starting the daemon takes a few tens of seconds the first time (image download
-included): the integration status goes from "Starting the Olvid daemon…" to
-connected on its own. Click **Test the connection** to check it: Gladys answers
-with the daemon version and the profile name.
+> Su **identidad de Olvid** (perfil, contactos, mensajes) se encuentra en el
+> volumen del contenedor del daemon, gestionado por Gladys junto con los datos
+> de la integración. Desinstalar la integración destruye ese perfil: sus
+> contactos tendrán que volver a invitarle. Téngalo en cuenta antes de
+> desinstalar, y haga copias de seguridad de sus datos de Gladys como de
+> costumbre.
 
-You can then adjust, if you want to:
+## 2. Añadir Gladys a sus contactos de Olvid
 
-| Field             | Value                                                |
-| ----------------- | ---------------------------------------------------- |
-| First / last name | the name shown to your contacts ("Gladys Assistant") |
-| Profile number    | `0` (Gladys takes the first profile, or creates one) |
+Es el recorrido habitual de Olvid para un particular: una invitación y, después,
+un código de 4 cifras intercambiado entre los dos dispositivos. Olvid nunca
+automatiza ese paso — es lo que demuestra que realmente está hablando con su
+propia casa.
 
-> Your **Olvid identity** (profile, contacts, messages) lives in the volume of
-> the daemon container, managed by Gladys along with the integration data.
-> Uninstalling the integration destroys that profile: your contacts will have to
-> invite you again. Keep that in mind before uninstalling, and back your Gladys
-> data up as usual.
+1. pulse **Mostrar el enlace de invitación**: Gladys muestra un enlace
+   `https://invitation.olvid.io/…`;
+2. abra ese enlace en el teléfono donde está instalado Olvid y envíe la
+   invitación;
+3. Gladys la acepta automáticamente (si desactivó esa opción, pulse **Aceptar
+   las invitaciones pendientes**). Su aplicación muestra entonces un código de
+   4 cifras y espera otro;
+4. en Gladys, pulse **Invitaciones en curso**: ahí se muestra el código que debe
+   introducir en Olvid. Cópielo en la aplicación;
+5. introduzca el código que muestra Olvid en la acción **Validar una
+   invitación** de Gladys.
 
-## 2. Add Gladys to your Olvid contacts
+Una vez completado el intercambio, «Gladys Assistant» aparece en sus contactos
+de Olvid.
 
-This is the regular Olvid journey for an individual: an invitation, then a
-4-digit code exchanged between the two devices. Olvid never automates that
-step — it is what proves you are really talking to your own home.
+## 3. Vincular su cuenta de Olvid a su usuario de Gladys
 
-1. click **Show the invitation link**: Gladys displays an
-   `https://invitation.olvid.io/…` link;
-2. open that link on the phone where Olvid is installed and send the
-   invitation;
-3. Gladys accepts it automatically (if you turned that option off, click
-   **Accept pending invitations**). Your app then shows a 4-digit code and
-   waits for another one;
-4. in Gladys, click **Invitations in progress**: the code to type into Olvid is
-   displayed there. Copy it into the app;
-5. type the code displayed by Olvid into the **Validate an invitation** action
-   of Gladys.
+Ser contacto no basta: Gladys tiene que saber **qué usuario** está hablando, ya
+que un mensaje entrante controla la casa con los derechos de ese usuario.
 
-Once the exchange completes, "Gladys Assistant" appears in your Olvid contacts.
+1. en Gladys, en la página de la integración de Olvid, pulse **Vincular mi
+   cuenta**: se muestra un código corto (válido durante 15 minutos);
+2. envíe ese código a Gladys en la conversación de Olvid;
+3. Gladys responde «Cuenta vinculada a …». Ya está.
 
-## 3. Link your Olvid account to your Gladys user
+Mientras un contacto no esté vinculado, Gladys no transmite nada a su cerebro:
+simplemente responde con las instrucciones. Un contacto no vinculado dispone de
+**5 mensajes cada 15 minutos**: tras un quinto mensaje sin un código válido,
+Gladys lo indica y luego ignora esa conversación (ningún intento de vinculación,
+ninguna respuesta) hasta que pasen los 15 minutos — quien tenga el enlace de
+invitación no puede probar códigos en bucle. Puede revocar una vinculación en
+cualquier momento desde la misma página.
 
-Being a contact is not enough: Gladys has to know **which user** is speaking,
-since an incoming message drives the home with that user's rights.
+## Uso
 
-1. in Gladys, on the Olvid integration page, click **Link my account**: a short
-   code is displayed (valid for 15 minutes);
-2. send that code to Gladys in the Olvid discussion;
-3. Gladys answers "Account linked to …". You are done.
+- pregunte en lenguaje natural: «¿qué temperatura hace en el salón?», «enciende
+  la luz del despacho»;
+- las escenas que envían un mensaje pueden elegir el canal de Olvid;
+- las imágenes enviadas por Gladys (una captura de cámara) llegan como archivo
+  adjunto;
+- las respuestas largas se dividen en varios mensajes;
+- el daemon elimina los mensajes antiguos tras el plazo del campo
+  **Conservación de los mensajes** (30 días por defecto), por privacidad y por
+  espacio en disco.
 
-Until a contact is linked, Gladys forwards nothing to its brain: it simply
-answers with the instructions. An unlinked contact gets **5 messages per 15
-minutes**: after a fifth message without a valid code, Gladys says so, then
-ignores that discussion (no linking attempt, no answer) until the 15 minutes are
-over — anybody holding the invitation link cannot try codes in a loop. You can
-revoke a link at any time from the same page.
+Las conversaciones de **grupo** se ignoran deliberadamente: un mensaje entrante
+habla con la autoridad del usuario vinculado, lo que solo tiene sentido en una
+conversación individual.
 
-## Usage
+## Usar su propio daemon (avanzado)
 
-- ask in plain language: "what is the temperature in the living room?", "turn
-  on the office light";
-- scenes that send a message can pick the Olvid channel;
-- images sent by Gladys (a camera snapshot) arrive as an attachment;
-- long answers are split into several messages;
-- old messages are deleted by the daemon after the delay of the **Message
-  retention** field (30 days by default), for privacy and disk space.
+Si **ya** ejecuta un daemon de Olvid — porque lo usa para otros bots, o porque
+quiere controlar su versión y sus copias de seguridad —, cambie el campo
+**Daemon de Olvid** a «Mi propio daemon» y rellene:
 
-**Group** discussions are deliberately ignored: an incoming message speaks with
-the authority of the linked user, which only makes sense one-to-one.
+| Campo                   | Valor                                       |
+| ----------------------- | ------------------------------------------- |
+| URL del daemon de Olvid | `http://olvid-daemon:50051`                 |
+| Clave de cliente admin  | el valor de `OLVID_ADMIN_CLIENT_KEY_GLADYS` |
 
-## Using your own daemon (advanced)
+Gladys detiene entonces el daemon que gestionaba, para que nunca se ejecuten dos
+clientes de Olvid en paralelo. El daemon debe ser accesible desde el contenedor
+de la integración: comparta una red Docker (el contenedor es entonces accesible
+por su nombre), o publique el puerto 50051 y use la dirección IP del host.
 
-If you **already** run an Olvid daemon — because you use it for other bots, or
-because you want to control its version and its backups — switch the **Olvid
-daemon** field to "My own daemon", then fill in:
-
-| Field            | Value                                        |
-| ---------------- | -------------------------------------------- |
-| Olvid daemon URL | `http://olvid-daemon:50051`                  |
-| Admin client key | the value of `OLVID_ADMIN_CLIENT_KEY_GLADYS` |
-
-Gladys then stops the daemon it managed, so two Olvid clients never run in
-parallel. The daemon must be reachable from the integration container: share a
-Docker network (the container is then reachable by its name), or publish port
-50051 and use the host IP address.
-
-A minimal `docker-compose.yml` for that case:
+Un `docker-compose.yml` mínimo para ese caso:
 
 ```yaml
 services:
@@ -169,25 +173,25 @@ services:
       - ./daemon-data:/daemon/data
 ```
 
-> In that mode the Olvid identity lives in your `./daemon-data` folder: backing
-> it up is up to you.
+> En ese modo, la identidad de Olvid se encuentra en su carpeta
+> `./daemon-data`: hacer copias de seguridad es cosa suya.
 
-## Troubleshooting
+## Solución de problemas
 
-| Symptom                                            | Likely cause                                                                                                                                                                                                                                                                                       |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "Starting the Olvid daemon…" that stays            | The image download is still running, or it failed: check the integration logs.                                                                                                                                                                                                                     |
-| "The Olvid daemon container stopped"               | The daemon exited at startup: its own logs, in Gladys, give the reason.                                                                                                                                                                                                                            |
-| "Olvid daemon unreachable"                         | The daemon has not finished starting (the integration retries on its own). With your own daemon: URL or Docker network.                                                                                                                                                                            |
-| `unauthenticated` on the connection test           | With your own daemon: the admin client key does not match the one of the daemon container.                                                                                                                                                                                                         |
-| The invitation stays stuck                         | The 4-digit code was not exchanged both ways (the "Invitations" and "Validate" actions).                                                                                                                                                                                                           |
-| "Your Olvid account is not linked yet"             | The linking code was never sent, or it expired (15 minutes).                                                                                                                                                                                                                                       |
-| Nothing arrives after a restart                    | Messages received while offline are replayed on startup; check the integration logs.                                                                                                                                                                                                               |
-| A scene notification never arrived                 | It was sent while the daemon was down and waited more than 5 minutes, or more than 20 messages piled up: the integration logs say so.                                                                                                                                                              |
-| "Connection to the Olvid daemon lost" now and then | The daemon container stopped — most often because Gladys itself restarted. The integration notices at once, starts it back up when needed and reconnects within seconds; a daemon that is already running is never restarted. Why a one-off stop happened is in the `olvid-daemon` container logs. |
+| Síntoma                                                    | Causa probable                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| «Iniciando el daemon de Olvid…» que no avanza              | La descarga de la imagen sigue en curso, o ha fallado: consulte los registros de la integración.                                                                                                                                                                                                                                          |
+| «El contenedor del daemon de Olvid se ha detenido»         | El daemon se cerró al arrancar: sus propios registros, en Gladys, indican el motivo.                                                                                                                                                                                                                                                      |
+| «Daemon de Olvid inaccesible»                              | El daemon no ha terminado de arrancar (la integración lo reintenta por sí sola). Con su propio daemon: URL o red Docker.                                                                                                                                                                                                                  |
+| `unauthenticated` en la prueba de conexión                 | Con su propio daemon: la clave de cliente admin no coincide con la del contenedor del daemon.                                                                                                                                                                                                                                             |
+| La invitación se queda bloqueada                           | El código de 4 cifras no se intercambió en ambos sentidos (acciones «Invitaciones en curso» y «Validar una invitación»).                                                                                                                                                                                                                  |
+| «Su cuenta de Olvid aún no está vinculada a Gladys»        | El código de vinculación nunca se envió, o ha caducado (15 minutos).                                                                                                                                                                                                                                                                      |
+| No llega nada tras un reinicio                             | Los mensajes recibidos sin conexión se procesan de nuevo al arrancar; consulte los registros de la integración.                                                                                                                                                                                                                           |
+| Una notificación de escena nunca llegó                     | Se envió mientras el daemon estaba detenido y esperó más de 5 minutos, o se acumularon más de 20 mensajes: los registros de la integración lo indican.                                                                                                                                                                                    |
+| «Conexión con el daemon de Olvid perdida» de vez en cuando | El contenedor del daemon se detuvo — casi siempre porque el propio Gladys se reinició. La integración lo detecta enseguida, lo vuelve a iniciar si es necesario y se reconecta en pocos segundos; un daemon que ya está en marcha nunca se reinicia. El motivo de una parada puntual está en los registros del contenedor `olvid-daemon`. |
 
-The integration logs (`LOG_LEVEL=debug` for details) show every step: profile
-provisioning, invitations, incoming messages.
+Los registros de la integración (`LOG_LEVEL=debug` para más detalle) muestran
+cada paso: aprovisionamiento del perfil, invitaciones, mensajes entrantes.
 
 ## Parámetros de configuración
 
@@ -195,20 +199,20 @@ Estos son los parámetros que Olvid te pide en su pantalla de configuración en 
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| How it works | `section` | No | Olvid has no cloud bot API: messages go through an Olvid daemon holding your personal Olvid profile. Gladys runs that daemon for you, in its own container, with a key it generates — nothing to install by hand. Use the buttons below to introduce Gladys to your Olvid app, then link your account. |
-| Olvid daemon | `select` | No | Managed by Gladys: the daemon runs in a container Gladys starts, keeps up and secures with a generated key — leave the two fields below empty. Pick your own daemon only if you already run one, then fill them in. |
-| Olvid daemon URL | `string` | No | Your own daemon only: gRPC endpoint, reachable from this container. http:// for plaintext, https:// when the daemon serves TLS. |
-| Admin client key | `secret` | No | Your own daemon only: its OLVID_ADMIN_CLIENT_KEY_* value. Gladys uses it once to pick its profile and mint its own key. |
-| Olvid profile number | `number` | No | Which profile of the daemon to use. Leave 0 to take the first one, and create one when the daemon is empty. |
-| Profile first name | `string` | No | Name shown to your contacts, used when Gladys creates the Olvid profile. |
-| Profile last name | `string` | No |  |
-| Accept invitations automatically | `boolean` | No | Gladys accepts the invitations it receives, so you only have to exchange the 4-digit code. Group invitations are never accepted. |
-| Message retention (days) | `number` | No | The Olvid daemon deletes the messages older than this. 0 keeps everything. |
+| Cómo funciona | `section` | No | Olvid no tiene API de bots en la nube: los mensajes pasan por un daemon de Olvid que aloja su perfil personal de Olvid. Gladys ejecuta ese daemon por usted, en su propio contenedor, con una clave que genera ella misma — no hay nada que instalar a mano. Use los botones de abajo para presentar Gladys a su aplicación Olvid y, después, vincule su cuenta. |
+| Daemon de Olvid | `select` | No | Gestionado por Gladys: el daemon se ejecuta en un contenedor que Gladys inicia, mantiene en marcha y protege con una clave generada — deje vacíos los dos campos de abajo. Elija su propio daemon solo si ya ejecuta uno y, en ese caso, rellénelos. |
+| URL del daemon de Olvid | `string` | No | Solo para su propio daemon: punto de acceso gRPC, accesible desde este contenedor. http:// sin cifrar, https:// si el daemon ofrece TLS. |
+| Clave de cliente admin | `secret` | No | Solo para su propio daemon: su valor OLVID_ADMIN_CLIENT_KEY_*. Gladys la usa una sola vez para elegir su perfil y crear su propia clave. |
+| Número del perfil de Olvid | `number` | No | Perfil del daemon que se va a usar. Deje 0 para tomar el primero, y crear uno si el daemon está vacío. |
+| Nombre del perfil | `string` | No | Nombre mostrado a sus contactos, utilizado cuando Gladys crea el perfil de Olvid. |
+| Apellido del perfil | `string` | No |  |
+| Aceptar invitaciones automáticamente | `boolean` | No | Gladys acepta las invitaciones que recibe, así que solo tiene que intercambiar el código de 4 cifras. Las invitaciones de grupo nunca se aceptan. |
+| Conservación de los mensajes (días) | `number` | No | El daemon de Olvid elimina los mensajes más antiguos que este plazo. 0 lo conserva todo. |
 
 ## Cómo instalar Olvid en Gladys
 
 1. En Gladys, abre **Integraciones**: Olvid aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-olvid:1.2.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-olvid:1.3.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-olvid](https://github.com/prohand/gladys-olvid).
 
@@ -223,4 +227,4 @@ Olvid es una **integración externa**: una integración comunitaria empaquetada 
 - [Explorar todas las integraciones externas](/es/docs/integrations/external/)
 - [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
 - [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
-- [Código fuente en GitHub](https://github.com/prohand/gladys-olvid) — [fuente de esta documentación](https://github.com/prohand/gladys-olvid/blob/HEAD/docs/en.md)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-olvid) — [fuente de esta documentación](https://github.com/prohand/gladys-olvid/blob/HEAD/docs/es.md)

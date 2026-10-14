@@ -23,7 +23,7 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 This integration controls your **ESPHome** devices (ESP32, ESP8266) from Gladys Assistant, directly on your local network, through the ESPHome **native API**. No cloud, no MQTT broker, no Home Assistant required.
 
-![Gladys, the integration and your ESPHome nodes: nodes push their states, commands leave from Gladys, and discovery goes through the mDNS Gladys captures](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/overview.svg)
+![Gladys, the integration and your ESPHome nodes: nodes push their states, commands leave from Gladys, and discovery goes through the mDNS Gladys captures](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/overview.svg)
 
 ## What it does
 
@@ -45,15 +45,17 @@ Unlike an off-the-shelf device, an ESPHome node exposes exactly what **you** dec
 | `button`          | Push button                                             |
 | `number`          | Writable numeric setting (slider)                       |
 | `climate`         | Thermostat: setpoint (single) and measured temperature  |
+| `event`           | No feature: the scene trigger "ESPHome event"           |
 
-Types Gladys has no equivalent for (`media_player`, `camera`, `select`, `event`, `date`…) are simply left out of discovery.
+Types Gladys has no equivalent for (`media_player`, `camera`, `select`, `date`…) are simply left out of discovery. An `energy` sensor (in kWh or Wh) is a cumulative index: Gladys computes the consumption and its cost from it.
 
 ### States arrive in real time
 
-ESPHome **pushes** its state changes: the integration keeps a connection open to every node, and Gladys receives the new value the moment it changes. There is no polling interval to tune.
+ESPHome **pushes** its state changes: the integration keeps a connection open to every node, and Gladys receives the new value the moment it changes. There is no polling interval to tune. A device you add receives right away the values its node already reported, and a reading that does not change is not sent again (it is refreshed once an hour).
 
 ## Requirements
 
+- Gladys **5.1.0** or newer.
 - One or more devices running **ESPHome 2025.10 or newer**.
 - The native API enabled in your YAML (it is by default):
 
@@ -102,7 +104,7 @@ living-room.local
 192.168.1.43:6054
 ```
 
-![The integration merges three sources: the devices it already knows, the mDNS scan and the nodes added by hand; on connection, the node gives its real name, which becomes its id](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/discovery.svg)
+![The integration merges three sources: the devices it already knows, the mDNS scan and the nodes added by hand; on connection, the node gives its real name, which becomes its id](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/discovery.svg)
 
 The port is optional (6053 by default). Once connected, the node reports its real name itself: a node added by IP address still shows up under its ESPHome name, and it keeps working even if its IP address changes later.
 
@@ -119,11 +121,62 @@ The port is optional (6053 by default). Once connected, the node reports its rea
 - **Test the connection**: runs a full discovery and tells you how many nodes answered and how many features are available.
 - **Reconnect the nodes**: closes every connection and reopens them. Useful after reflashing a node or changing a key.
 
+## Scenes
+
+### Triggers
+
+- **ESPHome event**: an `event` entity of a node fired — a button clicked once, twice or held, a doorbell, a remote code received. Filters: the node (`esphome: name:`), the entity (its `name:`) and the event type (one of its `event_types`); leave a filter empty to accept everything. Variables: `node`, `entity`, `entity_id`, `event_type`.
+- **ESPHome node offline**: a node stayed disconnected for one minute. A reboot or an OTA update that is over within the minute fires nothing. Variables: `node`, `address`.
+- **ESPHome node back online**: a node reported offline is connected again. Variables: `node`, `address`, `offline_minutes`.
+
+An event entity, fired by a button that tells single and double clicks apart:
+
+```yaml
+event:
+  - platform: template
+    name: 'Button'
+    id: button_event
+    event_types: [single, double]
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO0
+    on_multi_click:
+      - timing:
+          [ON for at most 0.5s, OFF for at most 0.3s, ON for at most 0.5s, OFF for at least 0.2s]
+        then:
+          - event.trigger: { id: button_event, event_type: double }
+      - timing: [ON for at most 0.5s, OFF for at least 0.4s]
+        then:
+          - event.trigger: { id: button_event, event_type: single }
+```
+
+### Action "Run an ESPHome action"
+
+Runs an action declared under `api: actions:` in the YAML of a node: play a melody, show a message, start a script.
+
+```yaml
+api:
+  actions:
+    - action: play_rtttl
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+```
+
+- **Node**: the ESPHome name of the node, or the name of its device in Gladys.
+- **Action**: `play_rtttl`.
+- **Arguments**: a JSON object with one entry per variable, for example `{"song_str": "two_short:d=4,o=5,b=100:16e6,16e6"}`. Scene variables are accepted. Leave it empty for an action without variables.
+
+A missing, unknown or mistyped argument fails the action with a clear message, as does an action name the node does not declare (the message lists the ones it does). The outputs `node` and `action` are available to the next actions of the scene. For two seconds after this action, the events of that node start no scene: an action that fires an event cannot loop on the scene that called it.
+
 ## Understanding sensors: why `device_class` matters
 
 Gladys needs to know **what a sensor measures** to display it properly (icon, unit, chart). ESPHome carries that information through `device_class`.
 
-![A YAML entity becomes one or more Gladys features: through its device_class, through the shape of its declaration, or as a generic measurement](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/mapping.svg)
+![A YAML entity becomes one or more Gladys features: through its device_class, through the shape of its declaration, or as a generic measurement](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/mapping.svg)
 
 With a `device_class`, your sensor arrives typed:
 
@@ -168,6 +221,9 @@ The connection to that node dropped: node powered off, out of Wi-Fi range, or re
 **A thermostat only shows the measured temperature, with no setpoint**
 It is a two-point thermostat (`heat_cool`, with a low and a high setpoint). Gladys handles one setpoint per thermostat: rather than show a slider that would sit at 0 and drive nothing, the integration only publishes the measured temperature.
 
+**The action "Run an ESPHome action" fails**
+The node must be connected, the action name must be the one written after `action:` in the YAML, and the arguments must match its `variables:` (names and types). The error message of the scene says which one is wrong.
+
 **An entity does not show up at all**
 Its type has no Gladys equivalent (see the features table), or it is marked `internal: true` in your YAML — in which case ESPHome does not expose it on its API at all.
 
@@ -188,11 +244,11 @@ These are the settings ESPHome asks for in its configuration screen in Gladys.
 ## How to install ESPHome in Gladys
 
 1. In Gladys, open **Integrations**: ESPHome appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-esphome:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-esphome:1.2.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-esphome](https://github.com/William-De71/gladys-esphome).
 
-ESPHome requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+ESPHome requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

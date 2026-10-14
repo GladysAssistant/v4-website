@@ -1,0 +1,303 @@
+---
+title: "Integración domótica VLC, gratuita y de código abierto"
+sidebar_label: "VLC"
+description: "Controle VLC: reproducción, volumen, título actual, radios web, avisos y escenas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-vlc.png"
+keywords:
+  - "vlc"
+  - "domótica vlc"
+  - "gladys vlc"
+  - "vlc gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-vlc instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="vlc" />
+
+Controle [VLC media player](https://www.videolan.org/vlc/) desde Gladys: en un
+ordenador, una Raspberry Pi o un servidor, siga lo que reproduce, maneje la
+reproducción y el volumen, inicie una radio web o un archivo desde una escena,
+y haga oír los avisos de Gladys en sus altavoces.
+
+Esta integración no está afiliada a VideoLAN. VLC es una marca de VideoLAN.
+
+## Presentación
+
+La integración habla con VLC a través de su **interfaz web** (la interfaz
+HTTP Lua, puerto 8080), solo en su red local: sin nube, sin cuenta.
+
+- **Un dispositivo por VLC** (hasta tres): estado, título, artista, álbum,
+  progreso, tiempo restante, volumen, y los botones reproducir, pausa,
+  detener, anterior, siguiente y silencio.
+- El cuadro **Música** del panel del núcleo funciona con él
+  (reproducir/pausa, anterior, siguiente, volumen).
+- **Avisos**: la acción de escena **Hablar en un altavoz** del núcleo suena en
+  VLC, y después vuelve lo que sonaba.
+- Un widget **Reproductor VLC**, cuatro **disparadores de escena**
+  (reproducción iniciada, en pausa, reanudada, detenida) y dos **acciones de
+  escena** (reproducir una dirección, vaciar la lista).
+
+Desarrollada y probada con un VLC 3.0.20 real en Linux, sin una instalación de
+Gladys alrededor: sus comentarios son bienvenidos, sobre todo en Windows y
+macOS.
+
+**¿Por qué la interfaz web y no telnet?** VLC tiene dos interfaces de control
+remoto. La interfaz web responde en JSON con todo a la vez: estado, volumen,
+posición, duración y las etiquetas del elemento actual, incluida la canción
+de una radio web (`now_playing`) y su carátula. La interfaz telnet (la que usa
+Home Assistant) responde texto pensado para una persona, en parte traducido
+al idioma de VLC, por una conexión que hay que mantener abierta. Las dos piden
+una contraseña; las dos existen en todo VLC 3.
+
+## Requisitos
+
+- Gladys Assistant 5.1 o posterior.
+- VLC 3.0 o posterior, con su interfaz web activada y una contraseña (VLC no
+  la inicia sin ella).
+- El equipo de VLC accesible desde el servidor Gladys en el puerto de la
+  interfaz web (8080 salvo cambio): autorice VLC en el cortafuegos cuando el
+  sistema lo pida.
+
+### Activar la interfaz web de VLC
+
+**Desde la ventana de VLC (Windows, Linux):**
+
+1. **Herramientas → Preferencias**, y abajo a la izquierda **Mostrar ajustes:
+   Todo**.
+2. **Interfaz → Interfaces principales**: marque **Web**.
+3. **Interfaz → Interfaces principales → Lua**: escriba una contraseña en
+   **Lua HTTP → Contraseña**.
+4. **Guardar**, y después cierre y vuelva a abrir VLC.
+
+**En macOS:** **VLC → Ajustes** (o Preferencias), **Mostrar todo**, y los
+mismos tres pasos: **Interfaz → Interfaces principales**, marque **Web**;
+**Interfaces principales → Lua**, la contraseña; guarde y vuelva a abrir VLC.
+
+**Desde la línea de comandos** (una Raspberry Pi o un servidor sin pantalla,
+o para conservar también la ventana):
+
+```sh
+## Con la ventana de VLC
+vlc --extraintf http --http-password 'su-contraseña'
+## Sin ventana (Linux, Raspberry Pi)
+cvlc --intf http --http-password 'su-contraseña'
+## Otro puerto
+cvlc --intf http --http-port 9090 --http-password 'su-contraseña'
+```
+
+En Windows: `"C:\Program Files\VideoLAN\VLC\vlc.exe" --extraintf http
+--http-password su-contraseña`. En macOS:
+`/Applications/VLC.app/Contents/MacOS/VLC --extraintf http --http-password
+su-contraseña`.
+
+Compruébelo desde el navegador de otro equipo: `http://<dirección>:8080` pide
+una contraseña (deje vacío el usuario) y muestra el mando web de VLC.
+
+## Configuración
+
+En **Integraciones → VLC → Configuración**:
+
+- **Dirección de VLC**: la dirección IP del equipo que ejecuta VLC, por
+  ejemplo `192.168.1.20`. Añada `:puerto` si la interfaz web no usa el 8080
+  (`192.168.1.20:9090`). También vale un nombre de host. No escriba
+  `localhost` ni `127.0.0.1`, aunque VLC se ejecute en el servidor Gladys: la
+  integración se ejecuta en su propio contenedor, indique la dirección de red
+  del equipo.
+- **Contraseña**: la contraseña Lua HTTP elegida en VLC.
+- **VLC 2** y **VLC 3**: otros dos VLC, opcionales, configurados de la misma
+  manera.
+- **Idioma**: el idioma de los nombres de las funciones y de los textos que
+  escribe la integración (francés por defecto). Los nombres de las funciones
+  se fijan al añadir el dispositivo.
+
+Pulse **Guardar**, y después **Probar la conexión**: cada VLC responde con su
+versión y lo que está haciendo. Por último, en la pestaña **Descubrir**, añada
+cada VLC: su dispositivo se llama `VLC (<dirección>)`, cámbiele el nombre a su
+gusto.
+
+## Dispositivos
+
+Cada VLC es un dispositivo con estas funciones:
+
+| Función                | Lo que muestra o hace                                              |
+| ---------------------- | ------------------------------------------------------------------ |
+| Reproduciendo          | 1 mientras VLC reproduce, 0 si no (pausa, detenido, cerrado)       |
+| Estado de reproducción | Reproduciendo, En pausa, Detenido, o Apagado o inaccesible         |
+| Título                 | El título del elemento; en una radio web, la canción que anuncia   |
+| Artista                | El artista; en una radio web que no lo da, el nombre de la emisora |
+| Álbum                  | El álbum (— si es desconocido)                                     |
+| Progreso               | El porcentaje reproducido (0 en un flujo en directo)               |
+| Tiempo restante        | Los minutos restantes (0 en un flujo en directo)                   |
+| Volumen                | Un deslizador, de 0 a 100 %                                        |
+| Reproducir             | Reanuda un elemento en pausa, o inicia la lista                    |
+| Pausa                  | Pone en pausa (no pasa nada si no suena nada)                      |
+| Detener                | Detiene                                                            |
+| Anterior, Siguiente    | Se mueve por la lista                                              |
+| Silencio               | Silencia, o devuelve el volumen                                    |
+| Notificación           | La usa la acción de escena **Hablar en un altavoz** del núcleo     |
+
+**Volumen**: el deslizador de VLC llega al 125 % (y más desde la interfaz
+web). Gladys muestra 100 % por encima, y su deslizador ajusta de 0 a 100 %.
+
+**Silencio**: la interfaz web de VLC no informa ni ajusta su silencio. El
+botón Silencio pone el volumen a 0 y recuerda el anterior; pulsado de nuevo,
+lo devuelve (50 % si se perdió). Un VLC al 0 % aparece silenciado.
+
+**Avisos**: la acción de escena **Hablar en un altavoz** del núcleo (síntesis
+de voz, necesita Gladys Plus) envía la dirección de un MP3 a la función
+Notificación. VLC lo reproduce enseguida, al volumen actual (el núcleo no
+transmite su volumen a las integraciones: ponga antes una acción **Establecer
+valor del dispositivo** sobre la función Volumen). Al terminar, la
+integración lo quita de la lista y, si VLC estaba reproduciendo, vuelve a lo
+que sonaba: un archivo donde estaba, una radio web en directo. Los
+disparadores de escena permanecen callados mientras tanto. VLC debe poder
+alcanzar la dirección del MP3 (Gladys Plus o su servidor Gladys).
+
+**Actualización**: VLC no envía nada por su cuenta, la integración lo lee.
+Cada 3 segundos mientras algo suena, cada 5 segundos detenido, cada minuto
+para un VLC aún no añadido a Gladys, y cada 30 segundos cuando VLC está
+cerrado o inaccesible: peticiones locales que VLC contesta en pocos
+milisegundos, sin cuota. Una sola respuesta perdida se ignora; tras dos, VLC
+queda «Apagado o inaccesible».
+
+## Widget del panel
+
+Añada el widget **Reproductor VLC** (un widget de integración externa) y
+elija un VLC. Muestra:
+
+- la carátula del elemento cuando VLC la tiene (si no, el indicador de
+  progreso);
+- el título, y luego el artista, el álbum y el nombre del VLC;
+- el estado, la posición (`1:23 / 3:20`) y el volumen;
+- cuatro botones: reproducir/pausa, siguiente, bajar y subir el volumen
+  (pasos de 5 %).
+
+El cuadro **Música** del núcleo también funciona con cada VLC:
+reproducir/pausa, anterior, siguiente y el deslizador de volumen.
+
+## Disparadores de escena
+
+Cada disparador puede limitarse a un VLC (vacío: cualquiera), y transmite a la
+escena el **nombre del VLC**, el **título**, el **artista** y el **álbum**.
+
+- **Reproducción iniciada**: VLC empieza a reproducir: un archivo, una radio
+  web, el siguiente elemento de la lista. Una radio web que anuncia su
+  siguiente canción no es un nuevo inicio.
+- **Reproducción en pausa**: lo que reproduce VLC se pone en pausa.
+- **Reproducción reanudada**: el elemento en pausa se reanuda.
+- **Reproducción detenida**: ya no suena nada: detenido, fin de la lista o
+  VLC cerrado. El título es el que se detuvo.
+
+La primera lectura tras un reinicio de Gladys o de la integración no dispara
+nada.
+
+## Acciones de escena
+
+- **Reproducir una dirección en VLC**: una radio web, un flujo o un archivo.
+  La dirección es una URL `http(s)`, `rtsp`, `rtp`, `udp`, `mms`, `ftp`, `smb`
+  o `file`, o una ruta completa en el equipo de VLC
+  (`/home/yo/Música/cancion.mp3`, `C:\Users\yo\Music\cancion.mp3`). **Cómo**:
+  añadir a la lista y reproducir ya (por defecto), sustituir la lista y
+  reproducir, o añadir al final de la lista. **Volumen**: opcional, de 0 a
+  100 %. Los comandos propios de VLC (`vlc://quit`), la pantalla y los
+  dispositivos de captura se rechazan.
+- **Vaciar la lista de VLC**: detiene la reproducción y quita todos los
+  elementos.
+
+Reproducir, pausar, el volumen y los demás botones están en la acción
+**Establecer valor del dispositivo** del núcleo, sobre las funciones del
+dispositivo.
+
+## Ejemplos de escenas
+
+- **Despertar con la radio**: a las 7:00 entre semana, **Reproducir una
+  dirección en VLC** con la dirección de su radio, volumen 20 %; diez minutos
+  después, una acción **Establecer valor del dispositivo** sube el Volumen al
+  40 %.
+- **Noche de cine**: disparador **Reproducción iniciada** en el VLC del salón,
+  y bajar las luces; **Reproducción en pausa** las sube un poco;
+  **Reproducción detenida** las vuelve a encender.
+- **Timbre**: cuando llaman, **Establecer valor del dispositivo** sobre el
+  botón Pausa del VLC, y después **Hablar en un altavoz** «Alguien llama a la
+  puerta»; la música vuelve tras el aviso.
+- **Salir de casa**: cuando todos se van, **Vaciar la lista de VLC**.
+
+No inicie una reproducción desde un disparador **Reproducción iniciada** en el
+mismo VLC: la escena se volvería a lanzar sola.
+
+## Solución de problemas
+
+- **«Sin respuesta (cerrado o interfaz web desactivada)»**: VLC está cerrado,
+  su interfaz web no está activada, o un cortafuegos bloquea el puerto. Abra
+  `http://<dirección>:8080` desde otro equipo para comprobarlo.
+- **«Contraseña rechazada»**: vuelva a escribir la contraseña Lua HTTP en los
+  dos sitios. El usuario queda vacío en un navegador.
+- **«Indique la dirección de red del equipo, no localhost»**: escriba la
+  dirección IP del equipo que ejecuta VLC.
+- **«Esta dirección no responde como VLC»**: otro programa usa ese puerto (un
+  router, otro servidor web): compruebe el puerto de la interfaz web de VLC.
+- **El título muestra un nombre de archivo**: el archivo no tiene etiquetas;
+  VLC muestra su nombre.
+- **La carátula no aparece**: VLC solo tiene la carátula del archivo o la que
+  encontró por sí mismo; una radio web no suele tenerla.
+- **Detalles**: ponga `LOG_LEVEL=debug` en la integración para ver cada
+  lectura.
+
+## Límites
+
+- Sin búsqueda en la red: la interfaz web de VLC no se anuncia por ningún
+  protocolo que Gladys sepa recorrer. Escriba la dirección.
+- Hasta tres VLC.
+- Sin silencio real (vea Dispositivos), sin avance dentro de un medio, ni
+  aleatorio ni repetición desde Gladys.
+- El estado se lee cada 3 a 5 segundos: una pausa y una reanudación en el
+  mismo segundo pueden pasar desapercibidas.
+- VLC 4 aún no ha salido: su interfaz web podría cambiar.
+- Probada con VLC 3.0.20 para Linux (reproducción de archivos, de una radio
+  web, de un aviso, carátula, volumen, contraseña errónea, VLC cerrado y de
+  vuelta), no en Windows, macOS ni Android: sus comentarios son bienvenidos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que VLC te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conecte su VLC | `section` | No | Active la interfaz web de VLC: en VLC, Herramientas > Preferencias, Mostrar ajustes: Todo, Interfaz > Interfaces principales, marque Web; después Interfaces principales > Lua, elija una contraseña Lua HTTP y reinicie VLC. O inícielo con --extraintf http --http-password \<contraseña>. Introduzca abajo la dirección del equipo que ejecuta VLC (puerto 8080 salvo cambio) y esa contraseña. Hasta tres VLC. |
+| Dirección de VLC | `string` | No | Dirección IP del equipo que ejecuta VLC. Añada :puerto si su interfaz web no usa el 8080. |
+| Contraseña | `secret` | No | La contraseña Lua HTTP elegida en VLC (VLC no inicia su interfaz web sin ella). |
+| VLC 2 (opcional) | `section` | No | Otro VLC, configurado de la misma manera. |
+| Dirección de VLC 2 | `string` | No |  |
+| Contraseña 2 | `secret` | No |  |
+| VLC 3 (opcional) | `section` | No | Otro VLC, configurado de la misma manera. |
+| Dirección de VLC 3 | `string` | No |  |
+| Contraseña 3 | `secret` | No |  |
+| Opciones | `section` | No | Idioma de los nombres y textos que crea la integración (los nombres de las funciones se fijan al añadir el dispositivo). |
+| Idioma | `select` | No |  |
+
+## Cómo instalar VLC en Gladys
+
+1. En Gladys, abre **Integraciones**: VLC aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-vlc:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-vlc](https://github.com/guim31/gladys-vlc).
+
+VLC requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+VLC es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-vlc) — [fuente de esta documentación](https://github.com/guim31/gladys-vlc/blob/HEAD/docs/es.md)

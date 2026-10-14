@@ -1,0 +1,243 @@
+---
+title: "Ping & Wake-on-LAN smart home integration, free and open source"
+sidebar_label: "Ping & Wake-on-LAN"
+description: "See which computers, NAS, TVs or phones are on, and wake them up with Wake-on-LAN. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ping-wol.png"
+keywords:
+  - "ping & wake-on-lan"
+  - "ping & wake-on-lan smart home"
+  - "gladys ping & wake-on-lan"
+  - "ping & wake-on-lan gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-ping-wol instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="ping-wake-on-lan" />
+
+Know which computers, NAS, TVs or phones of your home network are on, and switch them on from
+Gladys. Each watched host becomes a Gladys device that says whether it answers (online / offline)
+and how fast (latency), with a **Wake up** button when its MAC address is known (Wake-on-LAN).
+
+Typical uses: switch on the NAS before a backup and wait until it answers, see on the dashboard
+that the kids' console is still on, know that a phone is home (presence), get warned when a
+server stops answering.
+
+> **Developed without the hardware: feedback welcome.** The integration is covered by automated
+> tests, but has not yet been tried in a real Gladys installation with a real Wake-on-LAN
+> computer. Tell us on the Gladys forum how it works with yours.
+
+## What you get
+
+- **One device per host**, with these features:
+
+  | Feature     | Type in Gladys                | Shows                                                    |
+  | ----------- | ----------------------------- | -------------------------------------------------------- |
+  | **Online**  | presence sensor (yes/no)      | green "presence detected" when it answers, red otherwise |
+  | **Latency** | duration, in milliseconds     | average round trip of the last check (history chart)     |
+  | **Wake up** | push button (only with a MAC) | **Push** sends the Wake-on-LAN packet                    |
+
+- A **Network devices** dashboard widget: several hosts at a glance, with a **Wake** button for
+  the ones that are off.
+- A scene trigger, **A device did not wake up**, and two scene actions, **Wake a device
+  (Wake-on-LAN)** (which can wait until the device answers) and **Check an address**.
+
+## Requirements
+
+- Gladys Assistant **5.1.0** or later.
+- For the checks: hosts reachable from the Gladys machine, by **IP address** (a fixed one is best:
+  reserve it in the DHCP settings of your router) or by a DNS name. `.local` names (mDNS) cannot
+  be resolved inside the integration.
+- For Wake-on-LAN:
+  - the computer is on the **same local network** as Gladys, and preferably **wired** (Wake-on-LAN
+    over Wi-Fi rarely works);
+  - Wake-on-LAN is enabled in its **BIOS/UEFI** and in its system (Windows: properties of the
+    network card, **Wake on Magic Packet**; turning off **Fast startup** often helps; Linux:
+    `ethtool -s <interface> wol g`; NAS: power settings);
+  - its **MAC address** (written on the router's list of devices, or `ipconfig /all`,
+    `ip link`).
+- At installation, Gladys asks you to allow two accesses: **Wake-on-LAN access** (the core sends
+  the magic packets: the integration's container cannot send broadcasts) and **SSDP search for
+  ssdp:all** (the network search).
+
+## Configuration
+
+### Settings
+
+| Setting                           | Default   | What it does                                                                                        |
+| --------------------------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| **Check interval**                | 30 s      | How often every host is checked (15 s to 5 min).                                                    |
+| **Offline after**                 | 1 minute  | Time without any answer before a host is shown offline. "At the first failed check" reacts at once. |
+| **Wake-up timeout**               | 3 minutes | Time a woken device has to answer before **A device did not wake up** fires.                        |
+| **Language of the feature names** | French    | Names of the features of new devices (Online, Latency, Wake up) and language of the messages.       |
+
+### Adding a host
+
+In **Integrations → Ping & Wake-on-LAN → Configuration**, fill in the **Add or update a host**
+form and run it:
+
+- **Name** and **IP address or host name** (required);
+- **MAC address**, to get the **Wake up** button (any notation: `64:e4:d5:b4:12:66`,
+  `64-E4-D5-B4-12-66`…);
+- **Broadcast address**, only if the computer ignores the default wake-up (try the broadcast
+  address of its network, e.g. `192.168.1.255`);
+- **Check method**: **Automatic** (ping, then TCP when the ping gets no answer), **Ping (ICMP)
+  only**, or **TCP port only**;
+- **TCP port**: the port tried when the ping fails (e.g. 445 for a Windows PC, 62078 for an
+  iPhone). Without it, the automatic method tries a few usual ports;
+- **Offline after (this host)**: overrides the setting for this host (phones: 10 to 30 minutes).
+
+The integration checks the host once and tells you whether it answers. Then open the **Discover**
+tab and press **Add to Gladys**. To change a host, run the form again with the same name or the
+same address: the device keeps its history. If the MAC address was added, press **Update** in the
+**Discover** tab to get the button. **Remove a host** takes it out of the list (its device stays
+in Gladys until you delete it).
+
+### Network search
+
+**Search the network** (and the **Scan** button of the **Discover** tab) asks Gladys for the
+devices that announce themselves on the network (UPnP/SSDP: TVs, NAS, media servers, routers,
+printers, game consoles, Windows PCs with network discovery on) and proposes them in the
+**Discover** tab, named after their UPnP description. When the Gladys machine knows its MAC
+address, the device comes with the **Wake up** button. Phones and most computers do not announce
+themselves: add them by hand.
+
+## Devices
+
+- **Online**: 1 as soon as the host answers, 0 once it has not answered for the **Offline after**
+  delay. A host never checked yet has no value.
+- **Latency**: average round trip of the last check, in milliseconds, published again when it
+  moves by 20 % (1 ms at least): the history stays readable. Nothing is published while the host
+  is offline.
+- **Wake up**: sends the Wake-on-LAN packet. The host is then checked every 5 seconds; a packet is
+  sent again every 30 seconds while it stays silent, until it answers or the **Wake-up timeout**
+  ends.
+
+How a host is checked:
+
+- **Ping (ICMP)**: three echo requests 0.2 s apart, 1 second to answer.
+- **TCP**: a connection to a port. A refused connection proves the host is up too: only silence
+  means offline. It catches the hosts that ignore pings (Windows firewall, some phones). Without a
+  port, the automatic method tries 80, 443, 22, 445, 139, 3389, 5000, 8080, 8009 and 62078
+  together.
+
+Gladys shows "No recent value" on a value older than 48 hours: an unchanged state is published
+again every 12 hours to avoid it.
+
+## Dashboard widget
+
+**Edit dashboard → add a widget → Network devices**. Leave **Devices shown** empty to see every
+host (10 at most), or pick some. Each line gives the state of a host: **Online** with its latency,
+**Offline**, or **Starting** after a wake-up. Up to four **Wake** buttons are shown for the
+offline hosts that have a MAC address.
+
+## Scene trigger
+
+**A device did not wake up** fires when a device woken by the integration (button, widget or
+scene) still does not answer at the end of the **Wake-up timeout**. The **Device** filter is
+optional. Variables: **Device name**, **Address**, **Seconds waited**.
+
+**Beware of loops**: a scene that wakes the device again on this trigger starts over at every failure, every few minutes, with no end (a computer unplugged from the mains will never answer). Send a message instead, or stop after one retry with a condition of your own.
+
+For "the device is on / off", use the core trigger **Device state change** on the **Online**
+feature, and tick **Execute only when threshold is passed**: the state is sent again every
+12 hours, and without the box the scene would run again each time.
+
+## Scene actions
+
+- **Wake a device (Wake-on-LAN)**: **Device** (required) and **Wait until it answers**. Without
+  waiting, the packet is sent and the scene goes on. With it, the next steps start once the device
+  answers, or after 100 seconds (Gladys gives an action 120 seconds at most). Results:
+  **Answering** (1 or 0) and **Start-up time** in seconds. A device already on is not woken
+  (Answering 1, Start-up time 0).
+- **Check an address**: an IP address or a host name (scene variables allowed) and an optional
+  **TCP port** (then only this port is tried). Results: **Answers** (1 or 0) and **Latency**. No
+  device is created.
+
+The results are numbers (1/0) so that **Condition on variables** can compare them: choose the
+result, **=**, and type `1`.
+
+## Scene examples
+
+1. **Backup on the NAS at night**: **Scheduled trigger** at 2:00 → **Wake a device** NAS with
+   **Wait until it answers** → **Condition on variables**: Answering = 1 → your backup steps (for
+   example **Make a HTTP request** to the NAS) → **Send Message** with the **Start-up time**
+   result (insert it from the variable list).
+2. **Movie evening**: in the scene that sets up the living room → **Wake a device** media PC
+   (without waiting) → **Wait** 1 minute → turn on the TV.
+3. **Server watch**: **Device state change** on **Online** of the server, value **No presence**, threshold
+   box ticked → **Send Message** "The server no longer answers". A second scene on **A device did
+   not wake up** → **Send Message** with the **Device name** and **Seconds waited** variables.
+
+## Troubleshooting
+
+- **A host stays offline although it is on**: it ignores pings (Windows firewall, phones). Use
+  **Check method → TCP port only** with a port it opens (445 for Windows file sharing, 3389 for
+  remote desktop, 22 for SSH, 62078 for an iPhone), or keep **Automatic** with that port.
+- **A phone goes offline and back all the time**: phones asleep on Wi-Fi stop answering for
+  minutes. Give the host **Offline after** 10 to 30 minutes.
+- **The Configuration screen says that ping (ICMP) is not allowed**: the Docker of your Gladys
+  machine does not let containers send pings (Docker older than 20.10). Hosts are then checked
+  over TCP only: give each one a port, or update Docker.
+- **Wake up does nothing**: check the MAC address, that Wake-on-LAN is enabled in the BIOS/UEFI
+  and the system, and that the computer is wired. Try the broadcast address of its network. A
+  computer that was unplugged from the mains often needs one normal start before Wake-on-LAN works
+  again.
+- **The network search finds nothing**: many devices do not answer SSDP; add them by hand. If the
+  message says the search is unavailable, Gladys refused the SSDP access.
+- **"No recent value" on a device**: the integration may be stopped; look at its logs in the
+  **Supervision** tab.
+- **Logs**: on the integration page in Gladys, or `docker logs` on the host. They stay quiet:
+  the start, a host going offline or coming back, each Wake-on-LAN, and a problem once when it
+  starts and once when it is over. `LOG_LEVEL=debug` shows every check.
+
+## Limits
+
+- IPv4 addresses and DNS names only; `.local` (mDNS) names are not resolved.
+- Wake-on-LAN reaches the local network of the Gladys machine: waking a computer on another
+  network (VPN, other VLAN) depends on your router forwarding broadcasts, which most do not.
+- Gladys sends one magic packet every 2 seconds at most: waking ten computers at once takes
+  20 seconds.
+- A successful wake-up only means the packet left: only the next answers prove the device is on.
+- 64 hosts at most. Each check sends 3 pings or, in TCP, up to 10 connection attempts per host;
+  nothing leaves your network, no account and no cloud service are involved.
+- What the integration stores: the list of hosts and their options, in `/data/hosts.json` in its
+  container.
+
+## Configuration settings
+
+These are the settings Ping & Wake-on-LAN asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your hosts | `section` | No | Add each computer, NAS, TV or phone to watch with the "Add or update a host" action below, then create its device in the Discover tab. "Search the network" proposes the devices that announce themselves (UPnP), with their MAC address when Gladys knows it. |
+| Check interval | `select` | No | How often every host is checked. |
+| Offline after | `select` | No | Time without any answer before a host is shown offline. Phones asleep on Wi-Fi skip answers: give them 5 to 10 minutes (per host, in the action below). |
+| Wake-up timeout | `select` | No | How long a woken device has to answer before the "A device did not wake up" trigger fires. A packet is sent again every 30 seconds meanwhile. |
+| Language of the feature names | `select` | No | Names given to the features of new devices (Online, Latency, Wake up) and language of the messages. |
+
+## How to install Ping & Wake-on-LAN in Gladys
+
+1. In Gladys, open **Integrations**: Ping & Wake-on-LAN appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ping-wol:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-ping-wol](https://github.com/guim31/gladys-ping-wol).
+
+Ping & Wake-on-LAN requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Ping & Wake-on-LAN is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-ping-wol) — [source of this documentation](https://github.com/guim31/gladys-ping-wol/blob/HEAD/docs/en.md)

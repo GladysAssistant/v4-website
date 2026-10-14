@@ -1,0 +1,230 @@
+---
+title: "Integración domótica Brother Printers, gratuita y de código abierto"
+sidebar_label: "Brother Printers"
+description: "Tóner, tinta, tambor y contadores de páginas de sus impresoras Brother por SNMP. Local. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-brother.png"
+keywords:
+  - "brother printers"
+  - "domótica brother printers"
+  - "gladys brother printers"
+  - "brother printers gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-brother instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="brother-printers" />
+
+Esta integración lee sus impresoras y equipos multifunción **Brother** por
+**SNMP**, en su red local: niveles de tóner o tinta, tambor, correa, unidad de
+fusión y otras piezas de desgaste, contadores de páginas y el mensaje que
+muestra la pantalla de la impresora. Sin cuenta, sin nube. Requiere Gladys 5.1
+o posterior.
+
+Complementa la integración **IPP Printers**, que da el estado y los niveles de
+tinta de impresoras de todas las marcas: las Brother dicen por SNMP lo que IPP
+no dice (vida del tambor, páginas restantes antes de sustituir una pieza,
+contadores de páginas).
+
+> **Desarrollada sin el hardware: se agradecen sus comentarios.** La
+> decodificación se ha probado con respuestas reales de 14 modelos Brother (los
+> datos de prueba de la biblioteca `brother` que usa Home Assistant), no con
+> una impresora. Cuente en el foro de Gladys lo que muestra su modelo, sobre
+> todo si un valor le parece incorrecto.
+
+## Lo que obtiene
+
+Un dispositivo de Gladys por impresora, con el nombre de su modelo (`Brother
+HL-L2350DW`). Solo se crea lo que su modelo indica:
+
+| Sensor                                                           | Unidad  | Notas                                                    |
+| ---------------------------------------------------------------- | ------- | -------------------------------------------------------- |
+| Estado                                                           | texto   | El mensaje de la pantalla (`Lista`, `Espera`, `Atasco`…) |
+| Tóner (láser) o tinta (inyección) negro, cian, magenta, amarillo | %       | Restante                                                 |
+| Tambor, o un tambor por color                                    | %       | Vida restante                                            |
+| Unidad de correa, de fusión, láser, kits de alimentación         | %       | Vida restante (láseres que la indican)                   |
+| Depósito de tinta residual                                       | %       | Capacidad restante (impresoras de tinta que la indican)  |
+| Tambor, correa, fusión… : páginas restantes                      | páginas | Páginas antes de sustituir la pieza                      |
+| Páginas impresas, en blanco y negro, en color, a doble cara      | páginas | Contadores                                               |
+| Tambor: páginas impresas                                         | páginas | Páginas impresas con el tambor actual                    |
+| Tiempo de funcionamiento                                         | horas   | Desde que se encendió la impresora                       |
+
+Modelo, número de serie, firmware y dirección MAC se guardan en los parámetros
+del dispositivo. La insignia del dispositivo indica **local** mientras la
+impresora responde e **inaccesible** cuando deja de responder; su estado indica
+entonces `No responde`. Los niveles conservan su último valor conocido.
+
+## Compatibilidad
+
+- Impresoras láser y de inyección de tinta Brother en red (Wi-Fi o Ethernet):
+  gamas HL, DCP y MFC, incluidos los modelos de depósito de tinta (DCP-T,
+  MFC-T). Algunos modelos muy antiguos (MFC-8660DN, MFC-8860DN) no responden.
+- **SNMP debe estar activado** en la impresora. Lo está de fábrica; se
+  comprueba en la página web de la impresora (Red → Protocolo → SNMP). Versión
+  1 o 2c, con la comunidad de lectura `public` por defecto.
+- La impresora debe ser accesible desde Gladys en UDP unicast, puerto 161
+  (misma red, o una ruta entre ambas).
+
+## Configuración
+
+1. Instale la integración. Las impresoras que se anuncian por mDNS (Bonjour)
+   se encuentran automáticamente: abra la pestaña **Descubrir** de la
+   integración y añada la suya.
+2. Si no se encuentra una impresora (mDNS bloqueado, otra subred), introduzca
+   su **dirección IP** en **Impresoras (direcciones IP)**, varias separadas por
+   comas. Un nombre `.local` no funciona aquí. Si puede, dé a la impresora una
+   dirección fija (reserva DHCP en su router).
+3. **Comunidad SNMP**: déjela vacía para `public`, el ajuste de fábrica. Si la
+   cambió en la impresora, introduzca la misma aquí.
+4. **Versión de SNMP**: la v1 sirve para todas las Brother; elija la v2c solo
+   si la v1 está desactivada en la impresora.
+5. **Intervalo de lectura**: 60 segundos por defecto (de 30 a 3600). Cada
+   lectura es una sola petición SNMP pequeña por impresora.
+6. **Idioma de los nombres** (francés por defecto): el idioma de los nombres de los sensores de las
+   impresoras que añada a partir de ahora, y de los textos enviados a las
+   escenas. Los nombres se fijan al añadir el dispositivo.
+
+El botón **Probar una impresora** lee una dirección IP en el acto y le indica
+qué responde en ella, sin añadir nada.
+
+## Widget del panel
+
+**Consumibles Brother** muestra una impresora (la primera añadida si no elige
+ninguna):
+
+- hasta 5 indicadores: primero los cartuchos, luego las piezas más gastadas,
+  en verde, naranja (25 % o menos) o rojo (10 % o menos);
+- una lista con el mensaje de la pantalla, las alertas en curso (atasco,
+  cubierta abierta…), las páginas impresas, los demás consumibles y la hora de
+  la última lectura;
+- un botón **Leer ahora**, que lee la impresora en el acto.
+
+## Disparadores de escena
+
+**Consumible de impresora bajo**: un tóner, una tinta o una pieza de desgaste
+baja al nivel elegido (50, 25, 20, 15, 10, 5 % o vacío). Se dispara una vez,
+al cruzar el nivel, y de nuevo solo después de que el consumible haya vuelto a
+subir (un cartucho nuevo). Filtros: la impresora, los consumibles, el nivel.
+Información transmitida a la escena: la impresora, el consumible, el
+porcentaje restante, el nivel alcanzado.
+
+**Alerta de impresora**: la impresora emite una alerta, en el momento en que
+aparece: atasco de papel, sin papel, poco papel, cubierta abierta, tóner o
+tinta bajo o agotado, falta un cartucho, falta una bandeja, bandeja de salida
+llena, se solicita servicio técnico, mantenimiento atrasado… Filtros: la
+impresora, las alertas. Información transmitida a la escena: la impresora, la
+alerta, el mensaje de la pantalla.
+
+No se dispara nada en la primera lectura de una impresora: un tóner que ya está
+al 5 % cuando instala la integración es un estado, no un cambio. Reiniciar
+Gladys o la integración no repite ni pierde ningún evento.
+
+## Acción de escena
+
+**Leer una impresora** lee la impresora en el acto y pasa a las acciones
+siguientes de la escena: si respondió, el mensaje de la pantalla, las páginas
+impresas, el consumible más bajo y su porcentaje, las alertas en curso. Útil
+en un mensaje: «\{impresora\} ha impreso \{páginas\} páginas, consumible más bajo:
+\{nombre\} \{porcentaje\} %».
+
+## Ejemplos de escenas
+
+- _Pedir a tiempo_: **Consumible de impresora bajo**, consumibles = tóner
+  negro, nivel = 20 % → enviar un mensaje «Tóner negro al 20 % en la impresora
+  de la oficina, es hora de pedir uno».
+- _Atasco_: **Alerta de impresora**, alertas = atasco de papel, sin papel →
+  enviar un mensaje con el mensaje de la pantalla.
+- _Informe mensual_: cada día 1 del mes a las 9:00 → **Leer una impresora** →
+  enviar un mensaje con las páginas impresas y el consumible más bajo.
+- _Tambor que cambiar_: **Consumible de impresora bajo**, consumibles = tambor,
+  nivel = 10 % → enviar un mensaje con el consumible y el porcentaje restante.
+
+## Solución de problemas
+
+- **Ninguna impresora en la pestaña Descubrir**: introduzca su dirección IP en
+  la configuración y guarde; **Probar una impresora** muestra qué responde.
+- **«Ninguna respuesta SNMP»**: compruebe la dirección, que SNMP esté activado
+  en la impresora y la comunidad. Una impresora en reposo profundo puede no
+  contestar a una petición; la integración lo reintenta antes de declararla
+  inaccesible.
+- **«No es una impresora Brother que esta integración pueda leer»**: algo
+  responde por SNMP en esa dirección, pero sin la identificación de Brother
+  (otra impresora, un router…).
+- **Falta un sensor**: la impresora no lo indica. Si una pieza aparece más
+  tarde, la pestaña **Descubrir** propone actualizar el dispositivo.
+- **Un valor parece incorrecto**: indíquelo en el foro de Gladys con su
+  modelo; los registros de la integración (nivel `debug`) muestran cada
+  lectura.
+- **Registros**: por defecto, la integración solo escribe su inicio, las
+  impresoras encontradas, una impresora que deja de responder o que vuelve, y
+  los errores (un error repetido una sola vez, y luego una línea cuando se
+  resuelve). Para ver cada lectura y cada descubrimiento, inicie el contenedor
+  con la variable de entorno `LOG_LEVEL=debug` (`info` por defecto; también
+  `warn`, `error`, `silent`). La comunidad SNMP nunca aparece en los registros.
+
+## Limitaciones
+
+- Desarrollada sin el hardware: la decodificación procede de respuestas reales
+  de 14 modelos, no de pruebas con una impresora.
+- Láser o inyección de tinta se detecta a partir de lo que dice la impresora;
+  en algunos modelos antiguos no es posible, y los cartuchos se llaman
+  entonces «Cartucho negro»…
+- Las alertas proceden del registro de alertas estándar de las impresoras: una
+  impresora que no lo indica nunca dispara **Alerta de impresora** (el mensaje
+  de la pantalla cambia de todos modos).
+- Los porcentajes son estimaciones de la impresora, redondeados como en Home
+  Assistant.
+- Solo lectura: la integración nunca cambia un ajuste de la impresora.
+
+## Red y privacidad
+
+Solo peticiones SNMP a las direcciones de las impresoras (UDP 161), de una en
+una, y una búsqueda mDNS a través de Gladys. Nada sale de su red. Se guarda en
+el volumen `/data` de la integración: los niveles y alertas de la última
+lectura de cada impresora, para disparar cada evento de escena una sola vez.
+
+## Créditos
+
+La decodificación de los datos SNMP de Brother es una adaptación a JavaScript
+de la biblioteca Python [`brother`](https://github.com/bieniu/brother) de
+Maciej Bieniek (Apache 2.0), que usa Home Assistant. Brother es una marca de
+Brother Industries; esta integración no está afiliada a Brother.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Brother Printers te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Funcionamiento | `section` | No | Las impresoras Brother de su red se encuentran automáticamente (mDNS) y se leen por SNMP: tóner o tinta, tambor, correa, unidad de fusión y otras piezas de desgaste, contadores de páginas y el mensaje de la pantalla. SNMP debe estar activado en la impresora (lo está de fábrica). Introduzca la dirección IP abajo si no se encuentra una impresora. |
+| Impresoras (direcciones IP) | `string` | No | Opcional. Direcciones IP separadas por comas, para las impresoras que el descubrimiento automático no encuentra. Un nombre .local no funciona aquí. |
+| Comunidad SNMP | `secret` | No | Déjelo vacío para usar «public», el ajuste de fábrica de la impresora. |
+| Versión de SNMP | `select` | No | La v1 funciona con todas las impresoras Brother. Elija la v2c solo si la v1 está desactivada en la impresora. |
+| Intervalo de lectura (s) | `number` | No | Frecuencia de lectura de cada impresora, en segundos (una pequeña petición SNMP). Con 60 s, un atasco se señala en menos de un minuto. |
+| Idioma de los nombres | `select` | No | Nombres de los sensores de las impresoras añadidas a partir de ahora, y textos enviados a las escenas. |
+
+## Cómo instalar Brother Printers en Gladys
+
+1. En Gladys, abre **Integraciones**: Brother Printers aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-brother:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-brother](https://github.com/guim31/gladys-brother).
+
+Brother Printers requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Brother Printers es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-brother) — [fuente de esta documentación](https://github.com/guim31/gladys-brother/blob/HEAD/docs/es.md)

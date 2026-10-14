@@ -23,7 +23,7 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 Cette intégration permet de piloter vos lampes **Yeelight** (ampoules, rubans LED, lampes de chevet, plafonniers) depuis Gladys Assistant, directement sur votre réseau local. Aucun compte cloud, aucune passerelle, aucun serveur intermédiaire : Gladys parle directement à vos lampes.
 
-![Gladys, l'intégration et vos lampes Yeelight : les lampes poussent leurs états sur une connexion ouverte chacune, les commandes partent de Gladys, et la découverte passe par le broadcast que Gladys envoie sur le port UDP 1982](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/overview.svg)
+![Gladys, l'intégration et vos lampes Yeelight : les lampes poussent leurs états sur une connexion ouverte chacune, les commandes partent de Gladys, et la découverte passe par le broadcast que Gladys envoie sur le port UDP 1982](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/overview.svg)
 
 ## Fonctionnalités
 
@@ -38,11 +38,21 @@ L'intégration s'adapte à ce que chaque lampe sait faire — une lampe annonce 
 | Lumière d'ambiance     | Plafonniers et barres lumineuses avec rétroéclairage |
 | Veilleuse (mode lune)  | Plafonniers                                          |
 
+Elle apporte aussi des **scènes** : démarrer une scène quand une lampe passe hors ligne ou revient, et lancer un effet lumineux (lever de soleil, coucher de soleil, alerte, notification, bougie) depuis une scène. Voir la section Scènes plus bas.
+
 ### Les états arrivent en temps réel
 
-Vos lampes **poussent** leurs changements d'état : l'intégration garde une connexion ouverte vers chaque lampe, et Gladys reçoit la nouvelle valeur à l'instant où elle change — y compris quand vous utilisez l'application Yeelight, la télécommande, ou l'interrupteur mural. Il n'y a pas d'intervalle d'interrogation à régler.
+Vos lampes **poussent** leurs changements d'état : l'intégration garde une connexion ouverte vers chaque lampe, et Gladys reçoit la nouvelle valeur à l'instant où elle change — y compris quand vous utilisez l'application Yeelight, la télécommande, ou l'interrupteur mural. Il n'y a pas d'intervalle d'interrogation à régler. Seules les valeurs qui ont réellement changé sont envoyées à Gladys.
+
+### Une lampe coupée à l'interrupteur
+
+Une lampe coupée à l'interrupteur mural ne peut pas prévenir : elle se tait, tout simplement. Chaque minute, l'intégration demande donc à chaque lampe silencieuse si elle est toujours là. Une lampe qui ne répond pas apparaît **Injoignable** dans Gladys en une à deux minutes. Quand elle est de nouveau alimentée, l'intégration s'y reconnecte d'elle-même et la lampe repasse en **Local** — rien à faire de votre côté.
 
 ## Prérequis
+
+### Version de Gladys
+
+L'intégration exige **Gladys 5.1.0 ou plus récent**, à cause de ses scènes. Sur un Gladys plus ancien, l'intégration ne reçoit plus de mises à jour et reste en version 1.3.0 : mettez Gladys à jour pour obtenir les nouvelles versions.
 
 ### Activer « Contrôle LAN » — indispensable
 
@@ -68,7 +78,7 @@ Pour chaque lampe, dans l'application **Yeelight** :
 
 Une fois « Contrôle LAN » activé, allez dans l'écran **Découverte** de l'intégration et lancez un scan. Vos lampes apparaissent avec leur nom (celui que vous leur avez donné dans l'application Yeelight), prêtes à être ajoutées. **Aucune adresse IP à saisir.**
 
-![Deux sources alimentent l'écran Découverte : le scan réseau, dont les réponses portent l'identifiant d'usine, le modèle, les capacités et l'état, et les lampes ajoutées à la main, interrogées en TCP ; les deux donnent un appareil par lampe](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/discovery.svg)
+![Deux sources alimentent l'écran Découverte : le scan réseau, dont les réponses portent l'identifiant d'usine, le modèle, les capacités et l'état, et les lampes ajoutées à la main, interrogées en TCP ; les deux donnent un appareil par lampe](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/discovery.svg)
 
 ### 2. Durée de transition
 
@@ -100,13 +110,50 @@ Temps pendant lequel le scan écoute les réponses. 5 secondes suffisent dans la
 - **Tester la connexion** : relance une découverte et indique combien de lampes ont répondu.
 - **Reconnecter les lampes** : ferme toutes les connexions et les rouvre. Utile après une coupure de courant ou un changement de réseau.
 
+## Scènes
+
+### Déclencheurs
+
+- **Lampe Yeelight hors ligne** : une lampe ne répond plus depuis 30 secondes — coupée à l'interrupteur, coupure de courant ou problème Wi-Fi. C'est détecté en deux minutes environ. Une lampe éteinte puis rallumée en moins de 30 secondes ne déclenche rien, pas plus qu'une lampe déjà éteinte au démarrage de l'intégration. Filtre : la lampe ; laissez-le vide pour surveiller toutes les lampes. Variables : **Identifiant de la lampe**, **Nom de la lampe**, **Adresse**.
+- **Lampe Yeelight de retour** : une lampe signalée hors ligne répond de nouveau. Ne suit qu'un **Lampe Yeelight hors ligne** qui a été déclenché. Filtre : la lampe. Variables : **Identifiant de la lampe**, **Nom de la lampe**, **Adresse**, **Minutes hors ligne**.
+
+Seules les lampes que vous avez ajoutées à Gladys peuvent démarrer ces scènes.
+
+### Actions
+
+**Yeelight : lancer un effet lumineux** — champs : la lampe, l'effet, et la **Durée (minutes)** (1 à 60, 15 par défaut ; lever et coucher de soleil uniquement).
+
+| Effet                             | Ce que fait la lampe                                                                                |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Lever de soleil (reste allumée)   | Passe d'un orange profond à 1 % à un blanc neutre à 100 % sur la durée ; reste allumée              |
+| Coucher de soleil (finit éteinte) | Passe d'un blanc chaud à un orange profond à 1 % sur la durée, puis s'éteint                        |
+| Alerte : flashs rouges            | 10 flashs rouges (environ 5 secondes), puis revient comme avant — éteinte si elle l'était           |
+| Notification : pulsations bleues  | 4 pulsations bleues douces (environ 5 secondes), puis revient comme avant — éteinte si elle l'était |
+| Bougie (jusqu'à l'arrêt)          | Un scintillement ambré qui dure jusqu'à ce que vous l'arrêtiez ou envoyiez une autre commande       |
+
+L'effet s'exécute dans la lampe elle-même : un lever de soleil de 30 minutes continue même si Gladys redémarre entre-temps. Une lampe blanche seulement (plafonnier, lampe de bureau) joue le même effet en blanc : un flash blanc froid pour l'alerte, un scintillement chaud pour la bougie. La sortie **Nom de la lampe** est disponible pour les actions suivantes de la scène.
+
+**Yeelight : arrêter l'effet lumineux** — champ : la lampe. Arrête l'effet en cours ; la lampe garde sa couleur et sa luminosité du moment.
+
+Un effet ne démarre jamais les déclencheurs **hors ligne** ou **de retour** : il change la couleur d'une lampe, pas sa connexion.
+
+### Exemples
+
+**Se réveiller avec un lever de soleil.** Déclencheur **Déclenchement programmé**, 6 h 45 les jours de semaine. Action **Yeelight : lancer un effet lumineux** : lampe « Chambre », effet **Lever de soleil (reste allumée)**, durée 20. La lampe démarre sur une faible lueur orangée et atteint le blanc à pleine puissance à 7 h 05.
+
+**Être prévenu quand une lampe est coupée au mur.** Déclencheur **Lampe Yeelight hors ligne**, lampe laissée vide. Action **Envoyer un message** : « Nom de la lampe a été coupée à l'interrupteur », en insérant la variable **Nom de la lampe** dans le message. Pratique pour une lampe qui doit rester alimentée, comme celle d'un couloir utilisée par vos scènes de détection de mouvement.
+
+**Une notification discrète.** Déclencheur **Changement d'état de l'appareil** : la prise du lave-linge passe sous 5 W. Action **Yeelight : lancer un effet lumineux** : lampe « Salon », effet **Notification : pulsations bleues**. Si la lampe était éteinte, elle se rééteint après les pulsations.
+
+**Une bougie en soirée.** Une scène au coucher du soleil lance **Bougie (jusqu'à l'arrêt)** ; une autre, à l'heure du coucher, exécute **Yeelight : arrêter l'effet lumineux** puis éteint la lampe.
+
 ## Bon à savoir
 
 ### Régler une couleur sur une lampe éteinte
 
 Une lampe Yeelight refuse les commandes de couleur, de température et de luminosité quand elle est éteinte. L'intégration **l'allume automatiquement** avant d'appliquer votre réglage : cliquer sur une couleur allume donc la lampe dans cette couleur, ce qui est le comportement attendu.
 
-![Quand vous choisissez une couleur sur une lampe éteinte, l'intégration l'allume d'abord, puis envoie la couleur ; la lampe pousse ensuite son nouvel état](https://github.com/William-De71/gladys-yeelight/raw/HEAD/images/commands.svg)
+![Quand vous choisissez une couleur sur une lampe éteinte, l'intégration l'allume d'abord, puis envoie la couleur ; la lampe pousse ensuite son nouvel état](https://raw.githubusercontent.com/William-De71/gladys-yeelight/main/docs/assets/commands.svg)
 
 L'état d'allumage est connu grâce à ce que la lampe a déjà signalé : une lampe déjà allumée n'est donc pas rallumée — cela relancerait son fondu, de façon visible.
 
@@ -129,7 +176,7 @@ Chacune s'allume et s'éteint indépendamment de l'autre. Pour piloter les deux 
 
 La température de couleur d'ambiance n'apparaît que sur les modèles dont le rétroéclairage sait régler son blanc — c'est le curseur chaud/froid que l'application Yeelight affiche à côté de la roue chromatique de l'anneau.
 
-Sur une lampe sans rétroéclairage, il n'y a qu'une lumière et les libellés restent simples (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). Vous pouvez renommer chaque fonctionnalité dans Gladys.
+Sur une lampe sans rétroéclairage, il n'y a qu'une lumière et les libellés restent simples (**On/Off**, **Brightness**, **Colour**, **Colour temperature**). La veilleuse d'un plafonnier s'appelle **Night light**. Ces noms sont fixés par l'intégration, en anglais, quelle que soit la langue de Gladys ; vous pouvez renommer chaque fonctionnalité dans Gladys.
 
 Si votre plafonnier allume ou éteint son anneau en même temps que la lumière principale, ce n'est pas Gladys : c'est l'option **« Marche/arrêt automatique avec la lumière principale »** de l'application Yeelight. Désactivez-la pour piloter chaque lumière séparément.
 
@@ -139,18 +186,21 @@ Le curseur de température suit le dégradé de Gladys : **vers la gauche, une l
 
 ### Limites des lampes
 
-Chaque lampe accepte **4 connexions simultanées** et **60 commandes par minute**. L'intégration n'ouvre qu'une seule connexion par lampe et lisse automatiquement les rafales de commandes, mais gardez ces limites en tête si vous pilotez aussi vos lampes depuis d'autres applications en parallèle.
+Chaque lampe accepte **4 connexions simultanées** et **60 commandes par minute**. L'intégration n'ouvre qu'une seule connexion par lampe et lisse automatiquement les rafales de commandes, mais gardez ces limites en tête si vous pilotez aussi vos lampes depuis d'autres applications en parallèle. La vérification d'une lampe silencieuse coûte une commande par minute.
 
 ## En cas de problème
 
-| Symptôme                                     | Cause la plus probable                                                                          |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Aucune lampe trouvée                         | « Contrôle LAN » n'est pas activé dans l'application Yeelight                                   |
-| Une seule lampe sur plusieurs est trouvée    | L'option n'est activée que sur cette lampe — elle se règle lampe par lampe                      |
-| Une lampe disparaît puis revient             | Coupure Wi-Fi ou interrupteur mural : l'intégration se reconnecte seule, en espaçant les essais |
-| Une lampe ajoutée à la main devient inconnue | Son adresse IP a changé — donnez-lui une adresse fixe dans votre routeur                        |
-| Les commandes ne passent plus après un temps | Un autre logiciel occupe les 4 connexions de la lampe                                           |
-| Une lampe ajoutée à la main est ignorée      | Son adresse a changé, ou il manque les crochets autour d'une adresse IPv6                       |
+| Symptôme                                     | Cause la plus probable                                                                                                        |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Aucune lampe trouvée                         | « Contrôle LAN » n'est pas activé dans l'application Yeelight                                                                 |
+| Une seule lampe sur plusieurs est trouvée    | L'option n'est activée que sur cette lampe — elle se règle lampe par lampe                                                    |
+| Une lampe disparaît puis revient             | Coupure Wi-Fi ou interrupteur mural : l'intégration se reconnecte seule, en espaçant les essais                               |
+| Une lampe apparaît « Injoignable »           | Elle est coupée à l'interrupteur ou hors de portée Wi-Fi ; elle revient une fois réalimentée                                  |
+| Une lampe ajoutée à la main devient inconnue | Son adresse IP a changé — donnez-lui une adresse fixe dans votre routeur                                                      |
+| Les commandes ne passent plus après un temps | Un autre logiciel occupe les 4 connexions de la lampe                                                                         |
+| Une lampe ajoutée à la main est ignorée      | Son adresse a changé, ou il manque les crochets autour d'une adresse IPv6                                                     |
+| La scène « hors ligne » ne démarre pas       | La lampe est revenue en moins de 30 secondes, était déjà éteinte au démarrage de l'intégration, ou n'est pas ajoutée à Gladys |
+| L'action d'effet échoue                      | La lampe est injoignable à ce moment-là, ou son modèle ne prend pas en charge les effets                                      |
 
 ## Paramètres de configuration
 
@@ -167,11 +217,11 @@ Voici les paramètres demandés par Yeelight dans son écran de configuration da
 ## Comment installer Yeelight dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Yeelight apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-yeelight:1.3.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-yeelight:1.4.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-yeelight](https://github.com/William-De71/gladys-yeelight).
 
-Yeelight nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Yeelight nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

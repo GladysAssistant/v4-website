@@ -23,37 +23,39 @@ import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationH
 
 Esta integración permite controlar sus dispositivos **ESPHome** (ESP32, ESP8266) desde Gladys Assistant, directamente en su red local, mediante la **API nativa** de ESPHome. Sin nube, sin broker MQTT y sin necesidad de Home Assistant.
 
-![Gladys, la integración y sus nodos ESPHome: los nodos envían sus estados por sí mismos, los comandos salen de Gladys y la búsqueda pasa por el mDNS que captura Gladys](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/overview.svg)
+![Gladys, la integración y sus nodos ESPHome: los nodos envían sus estados por sí mismos, los comandos salen de Gladys y la búsqueda pasa por el mDNS que captura Gladys](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/overview.svg)
 
 ## Funcionalidades
 
 A diferencia de un aparato comercial, un nodo ESPHome expone exactamente lo que **usted** ha declarado en su archivo YAML. Por eso la integración se adapta a lo que anuncia cada nodo:
 
-| Componente ESPHome | Lo que obtiene en Gladys                                        |
-| ------------------ | --------------------------------------------------------------- |
-| `sensor`           | Sensor numérico (temperatura, humedad, potencia, batería…)      |
-| `binary_sensor`    | Sensor binario (movimiento, apertura, presencia, fuga, humo…)   |
-| `text_sensor`      | Sensor de texto (solo lectura)                                  |
-| `text`             | Texto editable: enviar un mensaje al nodo (pantalla)            |
-| `switch`           | Interruptor (encendido/apagado)                                 |
-| `light`            | Lámpara: encendido/apagado, brillo, color, temperatura de color |
-| `cover`            | Persiana o cortina: abrir, cerrar, detener, posición            |
-| `fan`              | Ventilador: encendido/apagado y velocidad                       |
-| `lock`             | Cerradura: bloquear / desbloquear                               |
-| `siren`            | Sirena: encendida / apagada                                     |
-| `valve`            | Válvula: abierta / cerrada                                      |
-| `button`           | Pulsador                                                        |
-| `number`           | Ajuste numérico editable (control deslizante)                   |
-| `climate`          | Termostato: consigna (una sola) y temperatura medida            |
+| Componente ESPHome | Lo que obtiene en Gladys                                           |
+| ------------------ | ------------------------------------------------------------------ |
+| `sensor`           | Sensor numérico (temperatura, humedad, potencia, batería…)         |
+| `binary_sensor`    | Sensor binario (movimiento, apertura, presencia, fuga, humo…)      |
+| `text_sensor`      | Sensor de texto (solo lectura)                                     |
+| `text`             | Texto editable: enviar un mensaje al nodo (pantalla)               |
+| `switch`           | Interruptor (encendido/apagado)                                    |
+| `light`            | Lámpara: encendido/apagado, brillo, color, temperatura de color    |
+| `cover`            | Persiana o cortina: abrir, cerrar, detener, posición               |
+| `fan`              | Ventilador: encendido/apagado y velocidad                          |
+| `lock`             | Cerradura: bloquear / desbloquear                                  |
+| `siren`            | Sirena: encendida / apagada                                        |
+| `valve`            | Válvula: abierta / cerrada                                         |
+| `button`           | Pulsador                                                           |
+| `number`           | Ajuste numérico editable (control deslizante)                      |
+| `climate`          | Termostato: consigna (una sola) y temperatura medida               |
+| `event`            | Ninguna funcionalidad: el disparador de escena «Evento de ESPHome» |
 
-Los tipos que no tienen equivalente en Gladys (`media_player`, `camera`, `select`, `event`, `date`…) simplemente se omiten en la búsqueda.
+Los tipos que no tienen equivalente en Gladys (`media_player`, `camera`, `select`, `date`…) simplemente se omiten en la búsqueda. Un sensor `energy` (en kWh o Wh) es un índice acumulado: Gladys calcula a partir de él el consumo y su coste.
 
 ### Los estados llegan en tiempo real
 
-ESPHome **envía** sus cambios de estado por sí mismo: la integración mantiene una conexión abierta con cada nodo, y Gladys recibe el nuevo valor en el instante en que cambia. No hay ningún intervalo de consulta que ajustar.
+ESPHome **envía** sus cambios de estado por sí mismo: la integración mantiene una conexión abierta con cada nodo, y Gladys recibe el nuevo valor en el instante en que cambia. No hay ningún intervalo de consulta que ajustar. Un dispositivo que usted añade recibe de inmediato los valores que su nodo ya ha comunicado, y una lectura que no cambia no se vuelve a enviar (se actualiza una vez por hora).
 
 ## Requisitos
 
+- Gladys **5.1.0** o posterior.
 - Uno o varios dispositivos con **ESPHome 2025.10 o posterior**.
 - La API nativa activada en su YAML (lo está por defecto):
 
@@ -102,7 +104,7 @@ salon.local
 192.168.1.43:6054
 ```
 
-![La integración combina tres fuentes: los dispositivos ya conocidos, la búsqueda mDNS y los nodos añadidos a mano; al conectarse, el nodo da su nombre real, que se convierte en su identificador](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/discovery.svg)
+![La integración combina tres fuentes: los dispositivos ya conocidos, la búsqueda mDNS y los nodos añadidos a mano; al conectarse, el nodo da su nombre real, que se convierte en su identificador](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/discovery.svg)
 
 El puerto es opcional (6053 por defecto). Una vez conectado, el nodo anuncia él mismo su nombre real: un nodo añadido por su dirección IP aparecerá con su nombre ESPHome, y seguirá funcionando aunque su dirección IP cambie después.
 
@@ -119,11 +121,62 @@ El puerto es opcional (6053 por defecto). Una vez conectado, el nodo anuncia él
 - **Probar la conexión**: vuelve a lanzar una búsqueda completa y le indica cuántos nodos han respondido y cuántas funcionalidades están disponibles.
 - **Reconectar los nodos**: cierra todas las conexiones y las vuelve a abrir. Útil tras reprogramar un nodo o cambiar una clave.
 
+## Escenas
+
+### Disparadores
+
+- **Evento de ESPHome**: una entidad `event` de un nodo se ha activado: un botón pulsado una o dos veces o mantenido, un timbre, un código de mando recibido. Filtros: el nodo (`esphome: name:`), la entidad (su `name:`) y el tipo de evento (uno de sus `event_types`); deje un filtro vacío para aceptarlo todo. Variables: `node`, `entity`, `entity_id`, `event_type`.
+- **Nodo ESPHome desconectado**: un nodo ha permanecido desconectado durante un minuto. Un reinicio o una actualización OTA que terminan en ese minuto no activan nada. Variables: `node`, `address`.
+- **Nodo ESPHome conectado de nuevo**: un nodo notificado como desconectado vuelve a estar conectado. Variables: `node`, `address`, `offline_minutes`.
+
+Una entidad de evento, activada por un botón que distingue los clics simples y dobles:
+
+```yaml
+event:
+  - platform: template
+    name: 'Button'
+    id: button_event
+    event_types: [single, double]
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO0
+    on_multi_click:
+      - timing:
+          [ON for at most 0.5s, OFF for at most 0.3s, ON for at most 0.5s, OFF for at least 0.2s]
+        then:
+          - event.trigger: { id: button_event, event_type: double }
+      - timing: [ON for at most 0.5s, OFF for at least 0.4s]
+        then:
+          - event.trigger: { id: button_event, event_type: single }
+```
+
+### Acción «Ejecutar una acción de ESPHome»
+
+Ejecuta una acción declarada en `api: actions:` en el YAML de un nodo: reproducir una melodía, mostrar un mensaje, lanzar un script.
+
+```yaml
+api:
+  actions:
+    - action: play_rtttl
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+```
+
+- **Nodo**: el nombre ESPHome del nodo, o el nombre de su dispositivo en Gladys.
+- **Acción**: `play_rtttl`.
+- **Argumentos**: un objeto JSON con una entrada por variable, por ejemplo `{"song_str": "two_short:d=4,o=5,b=100:16e6,16e6"}`. Se aceptan variables de escena. Déjelo vacío para una acción sin variables.
+
+Un argumento ausente, desconocido o de tipo incorrecto hace fallar la acción con un mensaje claro, al igual que un nombre de acción que el nodo no declara (el mensaje enumera las que sí declara). Las salidas `node` y `action` están disponibles para las acciones siguientes de la escena. Durante los dos segundos posteriores a esta acción, los eventos de ese nodo no inician ninguna escena: una acción que activa un evento no puede entrar en bucle con la escena que la llamó.
+
 ## Entender los sensores: la importancia de `device_class`
 
 Gladys necesita saber **qué mide** un sensor para mostrarlo correctamente (icono, unidad, gráfico). ESPHome transmite esa información mediante `device_class`.
 
-![Una entidad YAML se convierte en una o varias funcionalidades de Gladys: por su device_class, por la forma de su declaración o como medida genérica](https://github.com/William-De71/gladys-esphome/raw/HEAD/images/mapping.svg)
+![Una entidad YAML se convierte en una o varias funcionalidades de Gladys: por su device_class, por la forma de su declaración o como medida genérica](https://raw.githubusercontent.com/William-De71/gladys-esphome/main/docs/assets/mapping.svg)
 
 Con un `device_class`, su sensor llega tipado:
 
@@ -168,6 +221,9 @@ La conexión con ese nodo se ha perdido: nodo apagado, fuera del alcance del Wi-
 **Un termostato solo muestra la temperatura medida, sin consigna**
 Es un termostato de dos consignas (`heat_cool`, una baja y una alta). Gladys gestiona una sola consigna por termostato: en lugar de mostrar un control deslizante que se quedaría en 0 y no controlaría nada, la integración solo publica la temperatura medida.
 
+**La acción «Ejecutar una acción de ESPHome» falla**
+El nodo debe estar conectado, el nombre de la acción debe ser el que figura tras `action:` en el YAML, y los argumentos deben corresponder a sus `variables:` (nombres y tipos). El mensaje de error de la escena indica cuál es incorrecto.
+
 **Una entidad no aparece en absoluto**
 Su tipo no tiene equivalente en Gladys (ver la tabla de funcionalidades), o está marcada como `internal: true` en su YAML; en ese caso, ESPHome no la expone en su API.
 
@@ -188,11 +244,11 @@ Estos son los parámetros que ESPHome te pide en su pantalla de configuración e
 ## Cómo instalar ESPHome en Gladys
 
 1. En Gladys, abre **Integraciones**: ESPHome aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-esphome:1.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-esphome:1.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-esphome](https://github.com/William-De71/gladys-esphome).
 
-ESPHome requiere Gladys `>=4.86.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+ESPHome requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
 
 ¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
 

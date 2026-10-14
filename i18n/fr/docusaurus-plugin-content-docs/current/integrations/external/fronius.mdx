@@ -1,0 +1,328 @@
+---
+title: "Intégration domotique Fronius, gratuite et open source"
+sidebar_label: "Fronius"
+description: "Onduleurs solaires Fronius en local : production, réseau, consommation de la maison, batterie. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-fronius.png"
+keywords:
+  - "fronius"
+  - "domotique fronius"
+  - "gladys fronius"
+  - "fronius gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-fronius instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="fronius" />
+
+Suivez votre installation solaire **Fronius** dans Gladys : production
+solaire, consommation de la maison, soutirage et injection réseau, batterie,
+onduleurs et compteurs, lus **sur votre réseau local** par la Solar API de
+Fronius, sans compte cloud.
+
+> **Développée sans le matériel : vos retours sont les bienvenus.** Cette
+> intégration a été écrite et testée sur de vraies réponses d'installations
+> Fronius (Symo, Primo, GEN24 avec et sans batterie) publiées par le projet
+> Home Assistant, mais pas encore sur une installation réelle. Si quelque chose
+> semble faux, ouvrez une issue sur GitHub avec les journaux
+> (`LOG_LEVEL=debug`).
+>
+> Sans lien avec Fronius International GmbH. Fronius, Symo, Primo, Eco, GEN24
+> et Tauro sont des marques de leurs propriétaires.
+
+## Présentation
+
+L'intégration lit la **Fronius Solar API v1** (JSON local, sans
+authentification) d'un **Datamanager Fronius** (carte ou boîtier, dans un
+Symo, Primo, Eco, Galvo ou IG Plus) ou d'un onduleur **GEN24 / GEN24 Plus /
+Tauro**, qui répond lui-même. Elle crée :
+
+- un appareil **installation** : les flux de puissance de tout le site et
+  l'énergie produite ;
+- un appareil par **onduleur** : puissance AC, tensions et courants, énergie
+  du jour, état et code d'erreur ;
+- un appareil par **compteur** (Fronius Smart Meter, compteur S0) :
+  puissance par phase, tensions, index de soutirage et d'injection ;
+- un appareil par **batterie** (BYD Battery-Box, Fronius Solar Battery,
+  Reserva…) : niveau de charge, énergie stockée, température.
+
+Elle ajoute aussi un **widget** de tableau de bord, trois **déclencheurs de
+scène** (onduleur en défaut, batterie pleine, batterie vide) et alimente le
+**suivi d'énergie** de Gladys avec l'index de soutirage du compteur.
+
+## Prérequis
+
+- Gladys **5.1.0** ou plus récent.
+- Un Datamanager Fronius 1.0 / 2.0 (carte ou boîtier), ou un onduleur GEN24,
+  GEN24 Plus ou Tauro, branché sur le **même réseau** que Gladys (Ethernet ou
+  Wi-Fi).
+- Son **adresse IP**, idéalement fixe : réservez-la dans le DHCP de votre
+  box, sinon l'intégration la perd quand elle change.
+- Sur un **GEN24 / Tauro** : la Solar API est **désactivée par défaut**.
+  Ouvrez l'interface web de l'onduleur, allez dans **Communication > Solar
+  API** et activez la communication par la Solar API. Sur un
+  Datamanager, la Solar API est active par défaut ; si elle a été désactivée,
+  réactivez-la dans son interface web.
+
+L'ancien Datalogger Web Fronius (API v0) n'est pas pris en charge.
+
+## Configuration
+
+Ouvrez **Intégrations > Fronius > Configuration** :
+
+| Champ                          | Ce qu'il faut saisir                                                                                                                                                                               |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adresse IP                     | L'adresse IP (ou le nom d'hôte) du Datamanager ou de l'onduleur GEN24 / Tauro, par exemple `192.0.2.10`. `http://` est ajouté pour vous ; `https://` fonctionne aussi (un GEN24 peut y rediriger). |
+| Intervalle de rafraîchissement | Fréquence de lecture des flux de puissance : 10, 15 (par défaut), 20, 30 ou 60 secondes. Onduleurs, compteurs et batteries sont lus une fois par minute.                                           |
+| Langue                         | Langue des noms des nouveaux appareils et fonctionnalités, et des textes d'état des onduleurs (français par défaut).                                                                               |
+| Batterie pleine à (%)          | Niveau de charge du déclencheur **Batterie pleine** (100 par défaut).                                                                                                                              |
+| Batterie vide à (%)            | Niveau de charge du déclencheur **Batterie vide** (5 par défaut) : en général, la réserve minimale réglée sur votre onduleur.                                                                      |
+
+Enregistrez : l'état de la connexion indique si l'installation répond. Ouvrez
+ensuite l'onglet **Découverte** et ajoutez les appareils voulus. Seuls les
+appareils ajoutés sont rafraîchis.
+
+**Cadence et charge.** Fronius ne fixe aucun quota à son API locale, mais le
+Datamanager (surtout le 2.0) est lent : l'intégration envoie **une requête à la
+fois**, lit le flux de puissance (une requête légère) à l'intervalle choisi, et
+les onduleurs, compteurs et batteries une fois par minute, comme Home
+Assistant. Rien n'est lu tant qu'aucun appareil n'est ajouté (sauf, au plus une
+fois par intervalle, pour le widget).
+
+## Appareils
+
+Les noms des appareils viennent de l'installation (noms personnalisés des
+onduleurs, modèles des compteurs et des batteries) et se renomment dans Gladys.
+Les noms des fonctionnalités sont donnés une fois, à la création de l'appareil,
+dans la langue de la configuration.
+
+### Installation
+
+Depuis `GetPowerFlowRealtimeData`. Chaque flux est **positif**, une
+fonctionnalité par sens, pour qu'une scène n'ait jamais à gérer de signe :
+
+| Fonctionnalité            | Signification                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| Production solaire        | Puissance produite par les panneaux (W).                                                 |
+| Consommation de la maison | Puissance consommée par la maison (W). Demande un compteur.                              |
+| Soutirage du réseau       | Puissance prise au réseau (W). Demande un compteur.                                      |
+| Injection dans le réseau  | Puissance envoyée au réseau, votre surplus (W). Demande un compteur.                     |
+| Charge de la batterie     | Puissance qui entre dans la batterie (W). Avec une batterie seulement.                   |
+| Décharge de la batterie   | Puissance qui sort de la batterie (W). Avec une batterie seulement.                      |
+| Production du jour        | Énergie produite depuis minuit (kWh). Sur un GEN24, qui ne la compte pas, voir plus bas. |
+| Production totale         | Compteur de production depuis la mise en service (kWh).                                  |
+
+Un GEN24 / Tauro ne donne que son compteur total : l'intégration en déduit la
+production du jour, à partir d'une lecture prise quand les panneaux ne
+produisent rien (avant le lever du soleil, ou la veille au soir). **Le jour où
+l'intégration est installée en pleine journée, « Production du jour » reste vide
+jusqu'au lendemain matin** : un compte partiel serait faux. Le compte survit
+aux redémarrages (gardé dans `/data`).
+
+### Onduleurs
+
+Depuis `GetInverterRealtimeData` : puissance AC (W), tension AC (V), courant
+AC (A), tension et courant DC de chaque entrée utilisée (MPPT 1, 2…),
+production du jour (kWh), **État** (En production, Veille, Démarrage, En
+sommeil, Erreur…) et **Code d'erreur** (« Aucune erreur » ou « Code 307 »…).
+La nuit, un Symo ou un Primo dort : sa puissance AC vaut 0 W, les autres
+valeurs gardent leur dernière lecture. Les codes 306 et 307 affichés au
+crépuscule (tension PV trop faible) sont normaux.
+
+### Compteurs
+
+Depuis `GetMeterRealtimeData`. Ce que donne un compteur dépend de sa place :
+
+- **au point d'injection** (le Smart Meter habituel) : l'échange avec le
+  réseau (positif en soutirage, négatif en injection), la puissance de chaque
+  phase, la tension de chaque phase, et deux index : **Énergie soutirée
+  (index)** et **Énergie injectée (index)**, en kWh ;
+- **sur le circuit de consommation** : la consommation de la maison
+  (positive) et, pour un compteur triphasé, les phases et les tensions ;
+- ailleurs (sous-circuit, générateur externe) : sa puissance, signée comme le
+  compteur la donne.
+
+### Batteries
+
+Depuis `GetStorageRealtimeData` : **Niveau de charge** (%), **Énergie
+stockée** (kWh, d'après le niveau de charge et la capacité utile) et
+**Température des cellules** (°C). Les puissances de charge et de décharge
+sont sur l'appareil installation ; la capacité utile s'affiche dans le widget.
+
+## Suivi d'énergie
+
+L'index **Énergie soutirée (index)** du compteur d'injection est publié comme
+**index** d'énergie : quand vous ajoutez l'appareil compteur, Gladys crée ses
+fonctionnalités « consumption » et « cost » et calcule l'énergie prise au
+réseau toutes les demi-heures, avec le coût de votre contrat (paramètres
+Énergie de Gladys : choisissez ce compteur comme compteur électrique principal
+si c'est celui de votre abonnement). C'est ce que votre fournisseur facture :
+l'énergie solaire que vous consommez vous-même est gratuite et n'y figure pas.
+
+Les autres index ne comptent jamais comme consommation : **Énergie injectée**
+est un index d'export réseau, **Production totale** un index de production.
+Gladys 5.2.1 garde leur historique mais ne calcule pas encore de production par
+demi-heure pour une intégration externe : les graphiques des écrans Énergie
+montrent la consommation.
+
+## Widget
+
+Éditez un tableau de bord et ajoutez le widget **Fronius**. Il affiche, dans
+une seule carte :
+
+- les tuiles **Solaire**, **Maison**, **Soutirage**, **Injection**,
+  **Batterie** (niveau de charge) et **Aujourd'hui** (production du jour), en
+  direct ;
+- un graphique de la production et de la consommation des dernières 24 heures ;
+- une liste : autoconsommation et autonomie (%), état et mode de la batterie,
+  état de chaque onduleur, production de l'année (Datamanager) et totale,
+  heure de la dernière lecture.
+
+Le widget ne fait jamais travailler davantage le Datamanager : il montre la
+dernière lecture. Les tuiles qu'une installation ne mesure pas (pas de
+compteur, pas de batterie) sont retirées.
+
+## Déclencheurs de scène
+
+Dans l'éditeur de scènes, rubrique **Intégrations** :
+
+- **Onduleur Fronius en défaut** : un onduleur est passé en état d'erreur.
+  Choisissez un onduleur ou laissez vide pour n'importe lequel. Variables :
+  `{{triggerEvent.data.inverter}}` (nom) et `{{triggerEvent.data.error_code}}`.
+  Se déclenche une fois par défaut, au plus toutes les 10 minutes par
+  onduleur ; les codes du crépuscule (306, 307) ne sont pas des défauts.
+- **Batterie Fronius pleine** : le niveau de charge a atteint le seuil
+  « pleine » de la configuration. Ne se redéclenche qu'après une baisse de
+  5 points.
+- **Batterie Fronius vide** : le niveau de charge est descendu au seuil
+  « vide ». Ne se redéclenche qu'après une hausse de 5 points. Variables des
+  deux : `{{triggerEvent.data.battery}}` et `{{triggerEvent.data.level}}`.
+
+Aucun déclencheur ne part à la première lecture après un démarrage : seuls les
+changements comptent.
+
+Un **surplus solaire** n'a pas besoin de déclencheur à lui : utilisez le
+déclencheur **Changement d'état de l'appareil** sur la fonctionnalité
+**Injection dans le réseau** de l'appareil installation, avec le seuil
+(« supérieur à 1500 W ») et, si vous le souhaitez, une durée.
+
+## Action
+
+**Tester la connexion** (onglet Configuration) lit toute l'installation et
+liste ce qu'elle a trouvé : Datamanager ou GEN24, nombre d'onduleurs, de
+compteurs et de batteries. Les appareils trouvés sont publiés dans l'onglet
+Découverte.
+
+## Exemples de scènes
+
+- **Profiter du surplus** : _Changement d'état de l'appareil_ — « Injection
+  dans le réseau » de l'installation Fronius supérieure à 1500 W pendant
+  10 minutes → allumer la prise du chauffe-eau. Une seconde scène l'éteint
+  quand « Soutirage du réseau » dépasse 500 W.
+- **Être prévenu d'un défaut** : _Onduleur Fronius en défaut_ → envoyer un
+  message « Onduleur \{\{triggerEvent.data.inverter\}\} en défaut, code
+  \{\{triggerEvent.data.error_code\}\} ».
+- **Batterie pleine à midi** : _Batterie Fronius pleine_ → lancer la prise du
+  lave-vaisselle, ou la borne de recharge de la voiture.
+- **Batterie vide le soir** : _Batterie Fronius vide_ → envoyer un message, ou
+  baisser la consigne de chauffage d'un degré.
+
+## Dépannage
+
+- **« L'installation Fronius ne répond pas »** : vérifiez l'adresse IP (elle
+  a pu changer : réservez-la dans votre box), que Gladys et l'installation
+  Fronius sont sur le même réseau, et sur un GEN24 que la Solar API est active
+  (Communication > Solar API). Testez dans un navigateur :
+  `http://<ip>/solar_api/v1/GetPowerFlowRealtimeData.fcgi` doit afficher du
+  JSON.
+- **Un GEN24 redirige vers https** : depuis le firmware 1.35.4-1.
+  L'intégration suit la redirection et accepte le certificat auto-signé de
+  l'onduleur.
+- **Aucun appareil dans l'onglet Découverte** : appuyez sur **Tester la
+  connexion** ; son message dit ce que l'installation a répondu.
+- **Les valeurs ne bougent pas** : seuls les appareils ajoutés à Gladys sont
+  rafraîchis. Consultez les journaux de l'intégration (Supervision), et
+  passez `LOG_LEVEL=debug` pour voir chaque lecture.
+- **« Production du jour » vide sur un GEN24** : normal le jour de
+  l'installation (voir Installation plus haut) ; elle démarre le lendemain
+  matin.
+- **La nuit** : les onduleurs dorment (état En sommeil ou Démarrage, 0 W) ; un
+  Datamanager éteint la nuit est signalé une fois dans les journaux et les
+  appareils apparaissent injoignables jusqu'au matin.
+- **Un appareil a de nouvelles fonctionnalités après une mise à jour** :
+  Gladys propose **Mettre à jour** dans l'onglet Découverte ; l'historique est
+  conservé.
+
+## Limites
+
+- Développée sans le matériel (voir le haut de cette page) : les retours
+  d'expérience sont bienvenus.
+- Lecture seule : rien n'est piloté (ni batterie, ni limitation de puissance,
+  ni Modbus). Un onduleur ou une batterie ne doit pas être commuté par erreur
+  par une scène.
+- Une installation Fronius par intégration (une adresse IP). Un Datamanager
+  voit tous les onduleurs de son Solar Net.
+- Pas de découverte automatique : le Datamanager et le GEN24 ne s'annoncent
+  ni en mDNS ni en SSDP (Home Assistant les trouve par leur adresse MAC dans le
+  DHCP, que Gladys ne relaie pas à une intégration).
+- Pas de fréquence AC (Gladys n'a pas d'unité en hertz), pas d'Ohmpilot, pas
+  de puissance réactive ni apparente.
+- Autoconsommation et autonomie s'affichent dans le widget seulement : Gladys
+  n'a pas de type de fonctionnalité pour un ratio d'énergie.
+- Les index d'un compteur placé sur le circuit de consommation ne sont pas
+  publiés (leur sens n'est pas assez documenté pour alimenter le suivi
+  d'énergie).
+- Les déclencheurs partent sur un changement seulement, jamais à la première
+  lecture après un démarrage.
+
+## Données et réseau
+
+- L'intégration ne parle qu'à l'adresse saisie, sur votre réseau local, en
+  HTTP (ou HTTPS pour un GEN24 qui redirige). Pas de cloud, pas de compte,
+  aucune donnée envoyée à l'extérieur.
+- La Solar API n'a pas de mot de passe : l'intégration ne stocke aucun
+  secret. Si une adresse contenant un identifiant et un mot de passe est
+  saisie, ils sont retirés.
+- Elle garde deux petits fichiers dans son volume `/data` : la liste des
+  appareils de votre installation (numéros de série, pour que les appareils
+  restent après un redémarrage, même Datamanager éteint) et, pour un GEN24, la
+  base de la production du jour.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Fronius dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connecter votre installation Fronius | `section` | Non | Saisissez l'adresse IP du Datamanager Fronius (Symo, Primo, Eco, IG Plus) ou de l'onduleur GEN24 / Tauro, telle que l'affiche votre box ou l'interface web Fronius. Sur un GEN24, activez d'abord la Solar API : interface web, Communication > Solar API. Ouvrez ensuite l'onglet Découverte. |
+| Adresse IP | `string` | Oui | Du Datamanager, ou de l'onduleur GEN24 / Tauro. Un nom d'hôte convient aussi. |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture des flux de puissance. Onduleurs, compteurs et batteries sont lus une fois par minute. |
+| Langue des textes des appareils | `select` | Non | Noms donnés aux nouveaux appareils et fonctionnalités, et textes d'état des onduleurs. |
+| Batterie pleine à (%) | `number` | Non | Niveau de charge qui déclenche le déclencheur de scène « Batterie pleine ». |
+| Batterie vide à (%) | `number` | Non | Niveau de charge qui déclenche le déclencheur de scène « Batterie vide » : en général, la réserve réglée sur votre onduleur. |
+
+## Comment installer Fronius dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Fronius apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-fronius:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-fronius](https://github.com/guim31/gladys-fronius).
+
+Fronius nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Fronius est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)
+- [Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-fronius) — [source de cette documentation](https://github.com/guim31/gladys-fronius/blob/HEAD/docs/fr.md)

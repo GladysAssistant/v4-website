@@ -1,0 +1,300 @@
+---
+title: "Unraid smart home integration, free and open source"
+sidebar_label: "Unraid"
+description: "Unraid server: array, parity, disks, Docker containers, VMs, UPS and alerts in Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unraid.png"
+keywords:
+  - "unraid"
+  - "unraid smart home"
+  - "gladys unraid"
+  - "unraid gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-unraid instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="unraid" />
+
+[Unraid](https://unraid.net/) is the operating system of many home NAS and
+servers: an array of disks protected by parity, Docker containers and virtual
+machines. This integration reads your Unraid server through its **official
+API** and brings it into Gladys: the server itself, and the disks, containers,
+VMs and UPS you choose. Scenes can react when a disk fails or overheats, when a
+parity check ends, when a container stops or when Unraid posts a notification;
+they can start, stop or restart a container or a VM. A dashboard widget sums
+the server up. Everything stays on your local network.
+
+**Tested on a real Unraid server** by the author, on top of the automated tests
+against a simulated server. Feedback welcome on
+[the issues](https://github.com/guim31/gladys-unraid/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Unraid **7.2 or later**: its API is built in. Unraid 6.x has no such API and
+  is not supported; Unraid 7.0 and 7.1 may work with the Unraid Connect plugin,
+  untested.
+- The Unraid server reachable from the Gladys machine (its web interface
+  address).
+
+Reading the server **never wakes a sleeping disk**: the temperatures come from
+what Unraid already knows, and a disk in standby simply has none.
+
+## Getting started
+
+### 1. Create an API key
+
+In the Unraid web interface: **Settings → Management Access → API Keys →
+Create**. Give it a name (`Gladys`) and:
+
+- the **Viewer** role, to watch the server (read only);
+- to start, stop and restart containers and VMs from Gladys, also the
+  **Docker** and **VMs** permissions with the update action. Without them,
+  every command is refused by Unraid and Gladys says so.
+
+Copy the key: Unraid shows it once.
+
+### 2. Configure the integration
+
+In Gladys, **Integrations → Unraid → Configuration**:
+
+- **Address**: the address of the Unraid web interface, as in your browser
+  (`192.168.1.10`, `tower.local`, `https://192.168.1.10`). The integration
+  follows Unraid's own "Use SSL/TLS" redirects: to HTTPS on the same address,
+  or to your `myunraid.net` address.
+- **API key**: the key created above.
+- **Name** (optional): the name of the server in Gladys; empty, the name of the
+  Unraid server.
+- **Accept self-signed certificates**: tick it when "Use SSL/TLS" is "Yes" in
+  Unraid (its certificate is self-signed).
+- **Refresh interval**: 15 seconds to 5 minutes (1 minute by default).
+- **Language of the names and texts**: the names given to the features, the
+  state texts and the texts of the scene events (French by default).
+
+Save, then **Test the connection**: it reads the server and reports what it
+finds (Unraid version, disks, containers, VMs, UPS).
+
+### 3. Add the devices
+
+Open the **Discover** tab of the integration: the server, its disks, its
+containers, its VMs and its UPS are listed. Add the ones you want to follow;
+the others stay out of Gladys (the scene triggers watch them all the same).
+
+## The devices
+
+### The server
+
+| Feature                 | Value                                                      |
+| ----------------------- | ---------------------------------------------------------- |
+| Online                  | 1 while Unraid answers, 0 after two failed reads           |
+| CPU                     | CPU usage, %                                               |
+| Memory                  | memory used (without the cache), %                         |
+| CPU temperature         | the hottest CPU package, °C                                |
+| Uptime                  | days since the last boot                                   |
+| Array started           | 1 started, 0 stopped                                       |
+| Array state             | text: "Started", "Stopped", "Started · parity check 45 %"… |
+| Array space used        | %                                                          |
+| Array free space        | terabytes                                                  |
+| Parity check progress   | % while a check, a rebuild or a clear runs, 0 otherwise    |
+| Parity errors           | errors of the running or last check                        |
+| Disks needing attention | disks not "normal", or with read errors                    |
+| Unread alerts           | unread Unraid notifications of the alert or warning level  |
+| Container updates       | containers with a newer image                              |
+| Unraid version          | text                                                       |
+
+A feature the server cannot give (an older API, no CPU sensor) is not created.
+
+### Disks
+
+One device per slot of the array: parity, data disks, pool disks (cache). The
+device follows the slot (`Disk 3`), like Unraid: a replaced disk keeps its
+device and its history.
+
+| Feature     | Value                                                            |
+| ----------- | ---------------------------------------------------------------- |
+| Temperature | °C, while the disk spins; nothing while it sleeps                |
+| Standby     | 1 asleep, 0 spinning (hard disks only)                           |
+| Space used  | % (not on parity disks)                                          |
+| Free space  | gigabytes (not on parity disks)                                  |
+| Errors      | read errors counted by Unraid since the last boot                |
+| Status      | text: "Normal", "Disabled", "Missing", "Emulated", "Wrong disk"… |
+
+### Containers
+
+One device per Docker container, named after the container (its identity: an
+update recreates the container and keeps the device).
+
+| Feature          | Value                                            |
+| ---------------- | ------------------------------------------------ |
+| Running          | switch: on starts the container, off stops it    |
+| Update available | 1 when a newer image exists (Unraid's own check) |
+
+The containers of Gladys itself (Gladys and its integrations) are read only:
+Gladys never stops itself from here. CPU and memory per container are not
+given by the API without a permanent connection: not supported.
+
+### Virtual machines
+
+| Feature | Value                                                              |
+| ------- | ------------------------------------------------------------------ |
+| Running | switch: on starts the VM, off shuts it down cleanly (power button) |
+| State   | text: "Running", "Stopped", "Paused", "Shutting down", "Crashed"…  |
+
+Turning a VM off asks its operating system to shut down, like the power button:
+never a forced stop. A VM that ignores it keeps running.
+
+### UPS
+
+When Unraid manages a UPS (Settings → UPS Settings):
+
+| Feature       | Value                              |
+| ------------- | ---------------------------------- |
+| Battery       | charge, %                          |
+| Runtime left  | minutes on battery                 |
+| Load          | %                                  |
+| On battery    | 1 on battery, 0 on mains           |
+| Power         | watts drawn, when the UPS tells it |
+| Input voltage | volts                              |
+| Status        | text given by the UPS ("ONLINE"…)  |
+
+## Dashboard
+
+The **Unraid** widget shows the server at a glance: CPU, memory and array space
+used, then a list with what needs attention first (a disk in trouble, a disk
+Unraid calls full, a warm disk, a container set to autostart that is not
+running, a UPS on battery, unread alerts), then the array, the last parity
+check, the disks, the containers, the VMs, the UPS and the container updates.
+
+In its settings, choose a container or a VM to get its buttons: **Start**,
+**Stop** and **Restart** (containers only); Stop and Restart ask for a
+confirmation. Without a choice, a **Refresh** button reads the server again.
+
+## Scenes
+
+### Triggers
+
+- **Unraid disk in error**: a disk of the array becomes disabled, missing or
+  emulated, or its read errors grow. Filter: a disk (empty: any). Information
+  passed on: server name, disk name, disk status, read errors.
+- **Unraid disk too hot**: a disk reaches the chosen temperature (40 to
+  70 °C), on two reads in a row; announced again once it cooled 3 °C below,
+  and not twice within 30 minutes. A sleeping disk is never woken to read it.
+  Information passed on: server name, disk name, temperature, threshold.
+- **Unraid parity check finished**: a parity check, a rebuild or a disk clear
+  ended. Filter: the result (no error, with errors, stopped before the end).
+  Information passed on: server name, result, errors found, duration in
+  minutes, operation. A check that ends while Gladys is stopped is announced
+  at the next read.
+- **Unraid container stopped**: a container that was running stopped or was
+  removed, on two reads in a row and for a minute at least (an update recreates
+  it within seconds), and not by Gladys. Filter: a container (empty: any). Information passed on:
+  server name, container name, state.
+- **Unraid notification**: Unraid posted a new notification (SMART warnings,
+  temperatures, array events, updates, a disk almost full…). Filter: the
+  importance (alert, warning, information; empty: any). Information passed on:
+  server name, importance, title, subject, description. The notifications
+  present when the integration starts are not announced.
+
+The disk states and temperatures are also features: for a threshold of your
+own, use a condition on the feature.
+
+### Actions
+
+- **Control an Unraid container**: start, stop or restart a container. Output:
+  the container name.
+- **Control an Unraid VM**: start a VM, or shut it down cleanly. Output: the VM
+  name.
+- **Unraid server status**: reads the server for the next actions. Outputs:
+  answers (yes/no), a ready-made summary ("Array: Started. 6 disk(s) OK. 12/14
+  container(s) running."), array state, disks needing attention, CPU, memory,
+  containers running, unread alerts.
+
+Nothing stops the array or the server from Gladys: too risky for a scene or a
+voice command. Use the Unraid interface for that.
+
+### Scene ideas
+
+- **Parity check with errors** → send yourself a message: "Parity check: \{errors\}
+  errors in \{duration\} minutes".
+- **Unraid notification**, importance alert → a notification on your phone with
+  its subject.
+- Every night at 4:00 → **Control an Unraid container**: restart the container
+  that needs it (a stuck media server, a VPN).
+- **Unraid disk too hot**, 50 °C → turn on the fan of the closet.
+- Every morning → **Unraid server status**, then send its summary.
+
+## Troubleshooting
+
+- **"API key refused"**: the key was deleted or mistyped. Create a new one in
+  Settings → Management Access → API Keys.
+- **"No Unraid API at this address"**: Unraid older than 7.2 (without the
+  Unraid Connect plugin), or the address of another service.
+- **"The Unraid API does not answer"**: the web interface answers but not the
+  API behind it: Unraid is starting, or the API stopped
+  (`unraid-api restart` in a terminal).
+- **"Certificate refused"**: "Use SSL/TLS" is "Yes": tick "Accept self-signed
+  certificates".
+- **"Your DNS blocks myunraid.net"**: with "Use SSL/TLS" set to "Strict",
+  Unraid redirects to an `myunraid.net` address that many routers block (DNS
+  rebinding protection). Enter `https://` and the IP of the server, and tick
+  "Accept self-signed certificates"; or allow `myunraid.net` in your router.
+- **A command is refused**: give the API key the Docker and VMs permissions.
+- **No temperature for a disk**: it sleeps; the temperature comes back when it
+  spins.
+- **A device shows "Update" in Discover**: a feature appeared (a parity check
+  ran for the first time, the API gained a field). Update it to get it.
+
+## Limits
+
+- One Unraid server per installation.
+- Read every 15 seconds to 5 minutes: a change shows at the next read.
+- No CPU and memory per container (the API only gives them over a permanent
+  connection), no network traffic, no shares.
+- Unraid OS updates are not reported by the API: only container updates are.
+- The integration stores in `/data` only what the scene triggers compare
+  with (disk states, containers seen running, the parity operation in
+  progress, the notifications already announced) and the features each device
+  had; the API key stays in the Gladys configuration and is never logged.
+- Not affiliated with Lime Technology, Inc. Unraid is a trademark of Lime
+  Technology, Inc.
+
+## Configuration settings
+
+These are the settings Unraid asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Unraid server | `section` | No | Unraid 7.2 or later (its API is built in). In Unraid, create an API key: Settings, Management Access, API Keys, role Viewer. To start and stop containers and VMs from Gladys, also give it the Docker and VMs permissions. |
+| Address | `string` | Yes | IP address or name of the Unraid server, as in your browser: with https:// for HTTPS and :port if not the default. |
+| API key | `secret` | Yes | Created in Unraid: Settings, Management Access, API Keys. |
+| Name | `string` | No | Name of the server in Gladys. Empty: the name of the Unraid server. |
+| Options | `section` | No |  |
+| Accept self-signed certificates | `boolean` | No | When Unraid's "Use SSL/TLS" is "Yes": its certificate is self-signed. Tick only for your own server. |
+| Refresh interval | `select` | No | How often the Unraid server is read. Reading never wakes a sleeping disk. |
+| Language of the names and texts | `select` | No | Names given to the features when a device is added, state texts, and texts of the scene events. |
+
+## How to install Unraid in Gladys
+
+1. In Gladys, open **Integrations**: Unraid appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-unraid:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-unraid](https://github.com/guim31/gladys-unraid).
+
+Unraid requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Unraid is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all external integrations](/docs/integrations/external/)
+- [Discover the native integrations](/docs/integrations/) built into Gladys
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-unraid) — [source of this documentation](https://github.com/guim31/gladys-unraid/blob/HEAD/docs/en.md)

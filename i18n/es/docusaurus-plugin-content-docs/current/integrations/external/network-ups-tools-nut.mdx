@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica Network UPS Tools (NUT), gratuita y de código abierto"
 sidebar_label: "Network UPS Tools (NUT)"
-description: "Monitor the status, load and battery runtime of the UPS devices on your NUT servers. Free, open source, installable in one click."
+description: "Supervise el estado, la carga y la autonomía de los SAI de sus servidores NUT. Gratuita, de código abierto, se instala con un clic."
 image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-nut.jpg"
 keywords:
   - "network ups tools (nut)"
@@ -14,130 +14,124 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/es.md in
 https://github.com/prohand/gladys-nut instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
 <ExternalIntegrationHeader slug="network-ups-tools-nut" />
 
-:::info
+La integración **Network UPS Tools (NUT)** permite a Gladys obtener valores y estados de los SAI expuestos por un servidor NUT `upsd` accesible en la red local.
 
-La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+> Esta integración está pensada para la supervisión. No envía comandos de apagado, reinicio ni configuración a los SAI.
 
-:::
+## Requisitos previos
 
-The **Network UPS Tools (NUT)** integration lets Gladys retrieve values and states from UPS devices exposed by a reachable NUT `upsd` server on the local network.
-
-> This integration is designed for monitoring. It does not send shutdown, restart, or configuration commands to UPS devices.
-
-## Prerequisites
-
-Your UPS must already work in NUT. From the machine hosting Gladys, the NUT server should answer the following command, after replacing the placeholders with your own values:
+Su SAI ya debe funcionar en NUT. Desde la máquina que aloja Gladys, el servidor NUT debería responder al siguiente comando, tras sustituir los marcadores por sus propios valores:
 
 ```bash
 upsc <ups-name>@<server-address>
 ```
 
-By default, `upsd` listens on TCP port **3493**. Ensure that both network rules and NUT ACLs allow access from Gladys.
+Por defecto, `upsd` escucha en el puerto TCP **3493**. Asegúrese de que tanto las reglas de red como las ACL de NUT permiten el acceso desde Gladys.
 
-### Credentials travel in clear text
+### Las credenciales viajan en texto plano
 
-The integration does not use TLS (`STARTTLS`): the NUT username and password, and every reading, cross the network in clear text. Keep it on a trusted network:
+La integración no utiliza TLS (`STARTTLS`): el usuario y la contraseña de NUT, así como todas las mediciones, atraviesan la red en texto plano. Manténgala en una red de confianza:
 
-- make `upsd` listen only on the interface Gladys reaches (`LISTEN` in `upsd.conf`), and filter port 3493 so that only the Gladys host can connect;
-- create a dedicated user in `upsd.users` for Gladys, with no `actions` nor `instcmds`: the integration only reads, so it never needs them;
-- never reuse that password elsewhere.
+- haga que `upsd` escuche solo en la interfaz por la que lo alcanza Gladys (`LISTEN` en `upsd.conf`) y filtre el puerto 3493 para que solo el host de Gladys pueda conectarse;
+- cree en `upsd.users` un usuario dedicado para Gladys, sin `actions` ni `instcmds`: la integración solo lee, así que nunca los necesita;
+- no reutilice nunca esa contraseña en otro sitio.
 
-## Configuration
+## Configuración
 
-1. Open **Integrations**, then **Network UPS Tools (NUT)**.
-2. In the **Configuration** tab, enter the first `upsd` server; its host is required.
-3. Add up to four additional servers in the optional slots when needed.
-4. For each server, keep port `3493` unless your installation uses another port. Enter NUT credentials when authentication is required.
-5. Choose a refresh interval. The default value of 300 seconds is appropriate for most installations. Gladys polls devices once a minute at most: a longer interval is applied on the closest polling tick.
-6. Save, then use **Test NUT connections**.
+1. Abra **Integraciones** y luego **Network UPS Tools (NUT)**.
+2. En la pestaña **Configuración**, introduzca el primer servidor `upsd`; su host es obligatorio.
+3. Añada hasta cuatro servidores adicionales en los campos opcionales si lo necesita.
+4. Para cada servidor, mantenga el puerto `3493` salvo que su instalación use otro. Introduzca las credenciales de NUT si se requiere autenticación.
+5. Elija un intervalo de actualización. El valor predeterminado de 300 segundos es adecuado para la mayoría de las instalaciones. Gladys consulta los dispositivos como mucho una vez por minuto: un intervalo más largo se aplica en la consulta más cercana.
+6. Pulse **Guardar configuración** y luego use **Probar las conexiones NUT**.
 
-### Choosing the refresh interval
+### Elegir el intervalo de actualización
 
-Every published value is kept in the Gladys history, and a UPS exposes up to twelve values. A short interval therefore grows the database quickly: at 60 seconds, a single UPS writes around 17,000 rows per day, against around 3,500 with the default interval of 300 seconds.
+Cada valor publicado se conserva en el historial de Gladys, y un SAI expone hasta doce valores. Un intervalo corto hace crecer rápidamente la base de datos: a 60 segundos, un solo SAI escribe unas 17 000 filas al día, frente a unas 3500 con el intervalo predeterminado de 300 segundos.
 
-To reduce that volume further, the integration only publishes the values that changed since the previous reading; a value that stayed stable is republished at least once an hour so it is never displayed as stale. Go down to 60 seconds only when you need fine-grained monitoring — the remaining runtime during an outage, for instance — and raise the interval up to 86,400 seconds when you would rather spare the database.
+Para reducir aún más ese volumen, la integración solo publica los valores que han cambiado desde la medición anterior; un valor que se mantiene estable se vuelve a publicar al menos una vez por hora para que nunca aparezca como obsoleto. Baje a 60 segundos solo si necesita una supervisión fina —la autonomía restante durante un corte, por ejemplo— y suba el intervalo hasta 86 400 segundos si prefiere cuidar la base de datos.
 
-Once the connection succeeds, Gladys discovers every UPS returned by the NUT server. Each UPS appears as a distinct Gladys device in discovery. In the **Discovery** tab, click **Add** for every UPS you want to integrate: you can add several devices independently. The list is rebuilt on each scan from the NUT `LIST UPS` command.
+Una vez establecida la conexión, Gladys detecta todos los SAI que devuelve el servidor NUT. Cada SAI aparece en **Dispositivos descubiertos** como un dispositivo Gladys distinto. En la pestaña **Descubrir**, haga clic en **Añadir a Gladys** en cada SAI que quiera integrar: puede añadir varios dispositivos de forma independiente. La lista se reconstruye en cada búsqueda (**Buscar**) a partir del comando NUT `LIST UPS`.
 
-## Available information
+## Información disponible
 
-NUT drivers do not all report the same variables, so the integration only creates sensors for information actually provided by each UPS.
+No todos los controladores NUT informan de las mismas variables, así que la integración solo crea sensores para la información que cada SAI proporciona realmente.
 
-| Domain  | Possible values                                 |
-| ------- | ----------------------------------------------- |
-| Battery | Charge, runtime, voltage, and temperature       |
-| Power   | Input/output voltage and current                |
-| Load    | Load percentage, real power, and apparent power |
-| UPS     | Temperature, status, and alarms                 |
+| Ámbito    | Valores posibles                                         |
+| --------- | -------------------------------------------------------- |
+| Batería   | Carga, autonomía, tensión y temperatura                  |
+| Corriente | Tensión y corriente de entrada/salida                    |
+| Carga     | Porcentaje de carga, potencia activa y potencia aparente |
+| SAI       | Temperatura, estado y alarmas                            |
 
-Values are published only when they are numeric and actually reported by the driver. NUT text statuses are read during communication but are not published as Gladys features, keeping the discovery payload compatible with Core versions that do not yet recognize the `text` category.
+Los valores solo se publican cuando son numéricos y el controlador los informa realmente. Los estados de texto de NUT se leen durante la comunicación, pero no se publican como funciones de Gladys, para que los datos de detección sigan siendo compatibles con las versiones del Core que aún no reconocen la categoría `text`.
 
-## Widget, scenes and actions (Gladys 5.1)
+## Widget, escenas y acciones (Gladys 5.1)
 
-The integration requires **Gladys 5.1 or later**.
+La integración requiere **Gladys 5.1 o posterior**.
 
-### "UPS" widget
+### Widget «SAI»
 
-In **Dashboard → Edit → Add a widget**, choose **UPS**, then the UPS to show. The widget displays:
+En **Panel → Editar → Nuevo widget**, en la sección **Widgets de integraciones**, elija **SAI** y luego el SAI que quiere mostrar. El widget muestra:
 
-- the battery charge (gauge) and the remaining runtime;
-- the UPS load and the input voltage;
-- a 24 h chart (battery charge and load);
-- the state (on mains, on battery, low battery…), the NUT alarms, the power and the server;
-- a **Refresh** button, which reads the UPS right away. It never sends a command to the UPS.
+- la carga de la batería (indicador) y la autonomía restante;
+- la carga del SAI y la tensión de entrada;
+- un gráfico de 24 h (carga de la batería y carga del SAI);
+- el estado (con red eléctrica, con batería, batería baja…), las alarmas de NUT, la potencia y el servidor;
+- un botón **Actualizar**, que lee el SAI al instante. Nunca envía un comando al SAI.
 
-The widget shows the last reading the integration made (3 minutes old at most). When the UPS is slow to answer, it shows "Reading the UPS…" and updates a few seconds later.
+El widget muestra la última medición realizada por la integración (de 3 minutos como máximo). Cuando el SAI tarda en responder, muestra «Leyendo el SAI…» y se actualiza unos segundos después.
 
-### Scene triggers
+### Activadores de escena
 
-In the scene editor, **Integrations** category:
+En una escena, **Añadir activador → Integraciones**:
 
-| Trigger                        | When                               |
-| ------------------------------ | ---------------------------------- |
-| UPS: power failure, on battery | the UPS switches to battery (`OB`) |
-| UPS: power restored            | the UPS is back on mains (`OL`)    |
-| UPS: battery low               | NUT reports a low battery (`LB`)   |
-| UPS: battery to replace        | NUT asks for a replacement (`RB`)  |
+| Activador                            | Cuándo                                     |
+| ------------------------------------ | ------------------------------------------ |
+| SAI: corte de corriente, con batería | el SAI pasa a funcionar con batería (`OB`) |
+| SAI: corriente restablecida          | el SAI vuelve a la red eléctrica (`OL`)    |
+| SAI: batería baja                    | NUT informa de una batería baja (`LB`)     |
+| SAI: sustituir la batería            | NUT pide una sustitución (`RB`)            |
 
-- Leave the **UPS** field empty to react to every UPS.
-- The state is checked **every minute**, whatever the refresh interval: a power cut is seen within a minute.
-- Variables available in the scene: `ups_name`, `status`, `battery_charge` (%), `battery_runtime` (min), `load` (%).
-- When the integration starts, the first reading is the reference: no event is sent for a UPS already on battery.
+- Deje vacío el campo **SAI** para reaccionar a todos los SAI.
+- El estado se comprueba **cada minuto**, sea cual sea el intervalo de actualización: un corte de corriente se detecta en menos de un minuto.
+- Variables disponibles en la escena: `ups_name`, `status`, `battery_charge` (%), `battery_runtime` (min), `load` (%).
+- Al iniciarse la integración, la primera medición sirve de referencia: no se envía ningún evento para un SAI que ya funciona con batería.
 
-### "Read a UPS status" scene action
+### Acción de escena «Leer el estado de un SAI»
 
-It reads the chosen UPS and returns to the following actions: `ups_name`, `status` (`online`, `on_battery`, `low_battery`, `forced_shutdown`, `off`, `bypass`, `unknown`), `on_battery`, `low_battery`, `replace_battery`, `battery_charge`, `battery_runtime` (min), `load`, `input_voltage`. A reading the UPS does not report is left out.
+En una escena, **Nueva acción → Integraciones**. Lee el SAI elegido y devuelve a las acciones siguientes: `ups_name`, `status` (`online`, `on_battery`, `low_battery`, `forced_shutdown`, `off`, `bypass`, `unknown`), `on_battery`, `low_battery`, `replace_battery`, `battery_charge`, `battery_runtime` (min), `load`, `input_voltage`. Una medición de la que el SAI no informa se omite.
 
-Example: every morning, read the UPS status then send a message with the remaining runtime.
+Ejemplo: cada mañana, leer el estado del SAI y luego enviar un mensaje con la autonomía restante.
 
-## Troubleshooting
+## Solución de problemas
 
-| Symptom                                                                      | Recommended checks                                                                                                                                                                                                                     |
-| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| No UPS is found                                                              | Check every host, port, firewall, and that at least one UPS is configured in each `ups.conf`.                                                                                                                                          |
-| Access or authentication error                                               | Check the ACLs in `upsd.conf` and credentials defined in `upsd.users`.                                                                                                                                                                 |
-| Some values are missing                                                      | Run `upsc <ups>@<server>`; Gladys can only create variables exposed by your NUT driver.                                                                                                                                                |
-| Stale data                                                                   | A stable value is only rewritten once an hour, which is expected. Beyond that, verify that the NUT driver still communicates with the hardware and inspect the `upsd` logs.                                                            |
-| The Gladys database grows too fast                                           | Raise the refresh interval: the amount of history is directly proportional to it. Every UPS you add writes its own history.                                                                                                            |
-| Adding a UPS fails with "incomplete or invalid device"                       | Update the integration. That rejection (HTTP 422) came from features published without their `min` and `max` bounds, which are now always declared.                                                                                    |
-| Values never change after adding the device                                  | Update the integration: devices are now published with periodic polling enabled.                                                                                                                                                       |
-| Some features are displayed without a name or an icon                        | Update the integration, then add the UPS again from the **Discovery** tab so its existing features are updated: the load and the apparent power were published on a category/type pair the Gladys front-end does not know how to draw. |
-| The connection status says "Connected, but 1 of 2 NUT servers do not answer" | The UPS of the other servers are still read. Check the named server (host, port, firewall, `upsd` running); the status goes back to plain "connected" at its next answer.                                                              |
-| A UPS stopped updating after a server was removed from the configuration     | Its server is no longer queried, which the logs say once. Add the server back, or delete the device in Gladys.                                                                                                                         |
-| The UPS load is displayed as "Unknown"                                       | Update the integration, then add the UPS again from the **Discovery** tab: the load (`ups.load`) is now published on a category that lets Gladys show its name, "Load".                                                                |
+| Síntoma                                                                         | Comprobaciones recomendadas                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No se encuentra ningún SAI                                                      | Compruebe cada host, cada puerto, el cortafuegos y que haya al menos un SAI configurado en cada `ups.conf`.                                                                                                                                                 |
+| Error de acceso o de autenticación                                              | Compruebe las ACL de `upsd.conf` y las credenciales definidas en `upsd.users`.                                                                                                                                                                              |
+| Faltan algunos valores                                                          | Ejecute `upsc <ups>@<server>`; Gladys solo puede crear las variables que expone su controlador NUT.                                                                                                                                                         |
+| Datos obsoletos                                                                 | Un valor estable solo se reescribe una vez por hora, lo cual es normal. Más allá de eso, verifique que el controlador NUT sigue comunicándose con el hardware y revise los registros de `upsd`.                                                             |
+| La base de datos de Gladys crece demasiado rápido                               | Aumente el intervalo de actualización: el volumen del historial es directamente proporcional a él. Cada SAI añadido escribe su propio historial.                                                                                                            |
+| Añadir un SAI falla con «dispositivo incompleto o no válido»                    | Actualice la integración. Ese rechazo (HTTP 422) se debía a funciones publicadas sin sus límites `min` y `max`, que ahora siempre se declaran.                                                                                                              |
+| Los valores no cambian nunca tras añadir el dispositivo                         | Actualice la integración: los dispositivos se publican ahora con la consulta periódica activada.                                                                                                                                                            |
+| Algunas funciones se muestran sin nombre ni icono                               | Actualice la integración y luego vuelva a añadir el SAI desde la pestaña **Descubrir** para que se actualicen sus funciones existentes: la carga y la potencia aparente se publicaban con un par categoría/tipo que el front-end de Gladys no sabe dibujar. |
+| El estado de conexión dice «Conectado, pero 1 de 2 servidores NUT no responden» | Los SAI de los demás servidores se siguen leyendo. Compruebe el servidor indicado (host, puerto, cortafuegos, `upsd` en marcha); el estado vuelve a ser simplemente «conectado» en su siguiente respuesta.                                                  |
+| Un SAI dejó de actualizarse tras quitar un servidor de la configuración         | Su servidor ya no se consulta, y los registros lo indican una vez. Vuelva a añadir el servidor o elimine el dispositivo en Gladys.                                                                                                                          |
+| La carga del SAI se muestra como «Desconocido»                                  | Actualice la integración y luego vuelva a añadir el SAI desde la pestaña **Descubrir**: la carga (`ups.load`) se publica ahora en una categoría que permite a Gladys mostrar su nombre, «Load».                                                             |
 
-For detailed errors, open the integration logs in Gladys. You can also set `LOG_LEVEL=debug` for more detailed logs.
+Para ver los errores detallados, abra la pestaña **Registros** de la integración en Gladys. También puede definir `LOG_LEVEL=debug` para obtener registros más detallados.
 
-## Resources
+## Recursos
 
-The [official NUT network protocol specification](https://networkupstools.org/docs/developer-guide.chunked/net-protocol.html) details the discovery and read commands used by this integration.
+La [especificación oficial del protocolo de red de NUT](https://networkupstools.org/docs/developer-guide.chunked/net-protocol.html) detalla los comandos de detección y de lectura que utiliza esta integración.
 
 ## Parámetros de configuración
 
@@ -145,33 +139,33 @@ Estos son los parámetros que Network UPS Tools (NUT) te pide en su pantalla de 
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| NUT servers | `section` | No | Configure one or more reachable upsd servers. Every UPS exposed by every configured server is discovered as a separate Gladys device. |
-| Server 1 host | `string` | Sí | IP address or DNS name of the first NUT upsd server. |
-| Server 1 port | `number` | No | The default NUT TCP port is 3493. |
-| Server 1 username (optional) | `string` | No |  |
-| Server 1 password (optional) | `secret` | No | Required when a username is configured. |
-| Server 2 host (optional) | `string` | No |  |
-| Server 2 port | `number` | No |  |
-| Server 2 username | `string` | No |  |
-| Server 2 password | `secret` | No |  |
-| Server 3 host (optional) | `string` | No |  |
-| Server 3 port | `number` | No |  |
-| Server 3 username | `string` | No |  |
-| Server 3 password | `secret` | No |  |
-| Server 4 host (optional) | `string` | No |  |
-| Server 4 port | `number` | No |  |
-| Server 4 username | `string` | No |  |
-| Server 4 password | `secret` | No |  |
-| Server 5 host (optional) | `string` | No |  |
-| Server 5 port | `number` | No |  |
-| Server 5 username | `string` | No |  |
-| Server 5 password | `secret` | No |  |
-| Refresh interval (s) | `number` | No | How often the readings are written to the Gladys history. Each one is a row in the database: keep 300 s unless you need finer measurements. The UPS status is still checked every minute for the scenes. |
+| Servidores NUT | `section` | No | Configure uno o varios servidores upsd accesibles. Cada SAI expuesto por cada servidor configurado se detecta como un dispositivo Gladys independiente. |
+| Host del servidor 1 | `string` | Sí | Dirección IP o nombre DNS del primer servidor NUT upsd. |
+| Puerto del servidor 1 | `number` | No | El puerto TCP predeterminado de NUT es 3493. |
+| Usuario del servidor 1 (opcional) | `string` | No |  |
+| Contraseña del servidor 1 (opcional) | `secret` | No | Obligatoria si se ha configurado un usuario. |
+| Host del servidor 2 (opcional) | `string` | No |  |
+| Puerto del servidor 2 | `number` | No |  |
+| Usuario del servidor 2 | `string` | No |  |
+| Contraseña del servidor 2 | `secret` | No |  |
+| Host del servidor 3 (opcional) | `string` | No |  |
+| Puerto del servidor 3 | `number` | No |  |
+| Usuario del servidor 3 | `string` | No |  |
+| Contraseña del servidor 3 | `secret` | No |  |
+| Host del servidor 4 (opcional) | `string` | No |  |
+| Puerto del servidor 4 | `number` | No |  |
+| Usuario del servidor 4 | `string` | No |  |
+| Contraseña del servidor 4 | `secret` | No |  |
+| Host del servidor 5 (opcional) | `string` | No |  |
+| Puerto del servidor 5 | `number` | No |  |
+| Usuario del servidor 5 | `string` | No |  |
+| Contraseña del servidor 5 | `secret` | No |  |
+| Intervalo de actualización (s) | `number` | No | Frecuencia con la que las mediciones se escriben en el historial de Gladys. Cada medición es una fila en la base de datos: mantenga 300 s salvo que necesite mediciones más finas. El estado del SAI se sigue comprobando cada minuto para las escenas. |
 
 ## Cómo instalar Network UPS Tools (NUT) en Gladys
 
 1. En Gladys, abre **Integraciones**: Network UPS Tools (NUT) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-nut:2.2.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-nut:2.3.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-nut](https://github.com/prohand/gladys-nut).
 
@@ -186,4 +180,4 @@ Network UPS Tools (NUT) es una **integración externa**: una integración comuni
 - [Explorar todas las integraciones externas](/es/docs/integrations/external/)
 - [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
 - [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
-- [Código fuente en GitHub](https://github.com/prohand/gladys-nut) — [fuente de esta documentación](https://github.com/prohand/gladys-nut/blob/HEAD/docs/en.md)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-nut) — [fuente de esta documentación](https://github.com/prohand/gladys-nut/blob/HEAD/docs/es.md)

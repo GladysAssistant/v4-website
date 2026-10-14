@@ -113,7 +113,21 @@ broker connected", or why not). A network failure is retried on its own; a
 refused certificate or account stops the feed until you fix it and press
 **Test the connection** (or save the configuration). When Frigate announces
 it is offline (restart), the status says so, and its configuration is read
-again when it comes back.
+again when it comes back (at most once a minute).
+
+MQTT keeps no object count: when the feed connects, and when Frigate comes
+back online, the integration reads the current objects of every camera once
+over the Frigate WebSocket, so a presence never stays stuck on a count lost
+in between. The Frigate account must be allowed to open its WebSocket (any
+role is).
+
+A Frigate that drops its broker connection again and again (three times in
+five minutes) loses its messages: detections, counts and motion reach Gladys
+late or never. The status and the logs then say "Frigate keeps dropping its
+MQTT connection". The usual cause is another MQTT client using the same
+client id as Frigate (`mqtt.client_id`, `frigate` by default): a second
+Frigate instance, an old container still running, or another tool. Give each
+one its own `client_id`. Frigate's own logs show `MQTT disconnected`.
 
 Each incident is also written to the integration logs (**View logs**):
 `front: person detected, 87 %`, `front: person entered porch, 87 %`,
@@ -128,7 +142,7 @@ enables:
 
 | Feature                                 | What it does                                                                                                               |
 | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Image                                   | Refreshed every minute, taken fresh when Gladys asks (chat, scenes). Frigate resizes it to fit the 150 KB Gladys accepts.  |
+| Image                                   | Refreshed every minute (under 60 KB, see below), taken fresh up to 150 KB when Gladys asks (live view, chat, scenes).      |
 | Camera enabled                          | Turns the camera on or off **in Frigate** (no detection, no recording while off); Gladys then shows no image of it either. |
 | Object detection, Snapshots             | Frigate's switches.                                                                                                        |
 | Recordings, Audio detection             | Only when enabled in the Frigate configuration file: Frigate refuses to turn them on otherwise.                            |
@@ -142,10 +156,17 @@ broker, the Frigate WebSocket only accepts commands from an **admin** account
 (Frigate 0.17 and later): with another role, the command fails with that
 explanation.
 
+Frigate resizes the images (no image library in the container). The image
+stored on the device stays under 60 KB: the Gladys device screen saves a
+device by sending it back whole, image included, and refuses more than
+100 KB, so renaming a camera or moving it to another room failed with a
+larger image.
+
 The badge of each camera says when it is not nominal: unreachable when
-Frigate does not answer, announces it is offline, or the camera stream has
-been lost for 30 seconds; degraded when its recording stream is interrupted
-or the real-time feed is down (the states may then be outdated).
+Frigate does not answer, has announced it is offline for 30 seconds, or the
+camera stream has been lost for 30 seconds; degraded when its recording
+stream is interrupted, the real-time feed is down, or Frigate keeps dropping
+its broker connection (the states may then be outdated).
 
 A camera added with an older version of the integration shows **Update** in
 the Discover tab: press it to add the new features.
@@ -263,6 +284,8 @@ The connection status at the top of the Configuration tab says what is wrong;
 | Camera badge "unreachable"                          | Frigate is down or restarting, or the camera stream has been lost for 30 s (check the camera in Frigate).                                         |
 | A scene does not fire                               | The minimum confidence and the cooldown (Options); the object and zone names are Frigate's (`person`, not `Person`); the logs show each incident. |
 | A camera added before an update misses features     | The Discover tab shows **Update** on it.                                                                                                          |
+| "Frigate keeps dropping its MQTT connection"        | Another MQTT client uses Frigate's `mqtt.client_id` (`frigate` by default): give each its own. Meanwhile states and scenes miss events.           |
+| Renaming a camera or changing its room fails        | Fixed in 0.3.2: wait one minute after the update, so that the smaller image replaces the stored one, then save again.                             |
 
 ## Configuration settings
 
@@ -292,7 +315,7 @@ These are the settings Frigate asks for in its configuration screen in Gladys.
 ## How to install Frigate in Gladys
 
 1. In Gladys, open **Integrations**: Frigate appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-frigate:0.3.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-frigate:0.3.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-frigate](https://github.com/LM1LC3N7/gladys-frigate).
 

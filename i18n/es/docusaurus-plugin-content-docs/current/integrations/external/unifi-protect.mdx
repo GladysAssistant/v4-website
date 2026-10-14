@@ -1,0 +1,294 @@
+---
+title: "Integración domótica UniFi Protect, gratuita y de código abierto"
+sidebar_label: "UniFi Protect"
+description: "Cámaras, timbres, focos y sensores UniFi Protect en local: detecciones, imágenes, timbre. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unifi-protect.png"
+keywords:
+  - "unifi protect"
+  - "domótica unifi protect"
+  - "gladys unifi protect"
+  - "unifi protect gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-unifi-protect instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader slug="unifi-protect" />
+
+Lleva a Gladys las cámaras, timbres, focos y sensores de una consola UniFi
+Protect (UDM, UCG, UNVR, Cloud Key), **en local**: movimiento y detecciones
+inteligentes (persona, vehículo, animal, paquete), imágenes de las cámaras,
+pulsaciones del timbre, control de los focos, sensores de puertas y ventanas,
+temperatura, humedad, luminosidad, fugas de agua, baterías. Todo pasa por la
+API oficial «Integration» de Protect en su consola: ninguna cuenta en la nube
+de Ubiquiti, nada sale de su red.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** Esta
+> integración se escribió a partir de la especificación oficial de la API y de
+> respuestas reales, sin una consola Protect a mano. Si algo no funciona como
+> se describe, abra una incidencia en
+> [github.com/guim31/gladys-unifi-protect/issues](https://github.com/guim31/gladys-unifi-protect/issues)
+> con los registros de la integración (`LOG_LEVEL=debug`).
+>
+> Esta integración no está afiliada a Ubiquiti. UniFi y UniFi Protect son
+> marcas de Ubiquiti Inc.
+
+## Lo que necesita
+
+- Una consola UniFi con **UniFi Protect 6 o posterior** (la API Integration;
+  se recomienda 7.x): Dream Machine, Cloud Gateway, UNVR, Cloud Key Gen2+…
+- Una **clave de API** creada en la consola (ver más abajo). Un usuario sin
+  derechos de administrador en Protect puede obtener una clave que no ve
+  nada.
+- Gladys **5.1 o posterior**, capaz de llegar a la consola por HTTPS (puerto
+  443 por defecto) en su red.
+
+## Puesta en marcha
+
+### Crear una clave de API
+
+1. Abra su consola UniFi en local en un navegador (por ejemplo
+   `https://192.168.1.1`).
+2. Vaya a **Settings**, **Control Plane**, **Integrations**.
+3. Cree una clave de API, póngale un nombre (por ejemplo «Gladys») y cópiela:
+   la consola solo la muestra una vez.
+
+### Ajustes
+
+En Gladys, abra la integración y luego su pestaña **Configuración**:
+
+- **Dirección de la consola**: la dirección IP o el nombre de la consola, con
+  `:puerto` si no es 443. También sirve una URL copiada del navegador.
+- **Clave de API**: la clave que acaba de crear. Solo se envía a su consola.
+- **Aceptar el certificado autofirmado**: las consolas UniFi presentan un
+  certificado autofirmado, del que avisa un navegador. Marque esta casilla
+  para aceptarlo, salvo si su consola tiene un certificado reconocido por su
+  red. La casilla está desmarcada por defecto: aceptar un certificado que no
+  se puede verificar debe ser su decisión.
+- **Imágenes de las cámaras**: frecuencia de actualización de la imagen de
+  cada cámara añadida a Gladys (cada 5 minutos por defecto, o solo al
+  detectar). Las detecciones, el timbre y la vista en directo siempre piden
+  una imagen nueva.
+- **Idioma de los nombres**: el idioma de los nombres de funciones y de los
+  textos enviados a las escenas (francés por defecto). Los nombres se fijan
+  al añadir un dispositivo a Gladys.
+
+Guarde: el estado bajo el nombre de la integración pasa a conectado, y los
+dispositivos aparecen en la pestaña **Descubrir**. Añada los que quiera.
+
+### Acciones de la configuración
+
+- **Probar la conexión**: lee la consola al momento y muestra su versión de
+  Protect, cuántas cámaras, focos y sensores tiene, y la huella SHA-256 del
+  certificado aceptado (compárela con la que su navegador muestra para la
+  consola).
+- **Mostrar la dirección del flujo de vídeo**: elija una cámara, y la
+  dirección RTSP de su flujo de vídeo aparece bajo el botón, lista para la
+  integración «Cámara RTSP» de Gladys (vea
+  [Vídeo en directo](#vídeo-en-directo)).
+
+## Los dispositivos
+
+### Cámaras
+
+Un dispositivo por cámara, con el nombre que tiene en Protect:
+
+- **Imagen**: la imagen de la cámara, actualizada en el intervalo elegido, en
+  cada detección y cada timbrazo, y cada vez que la abre en el panel;
+- **En línea**: activado mientras la cámara está conectada a la consola;
+- **Movimiento**: activado mientras Protect ve movimiento;
+- **Persona**, **Vehículo**, **Animal**, **Paquete**: activados durante una
+  detección inteligente de ese tipo — solo los tipos que su cámara sabe
+  detectar. Protect avisa de un paquete una sola vez: la función se activa
+  10 segundos.
+
+### Timbres
+
+Un timbre es una cámara con una función más, **Timbre**: se activa 10
+segundos en cada pulsación, y Gladys muestra cuándo llamaron por última vez.
+Un timbre que la consola no nombra como tal (firmware antiguo) recibe esta
+función en su primera pulsación: haga clic en **Actualizar** sobre él en la
+pestaña **Descubrir**.
+
+### Focos
+
+- **Luz**: encenderla fuerza la luz; apagarla la devuelve a su propio modo de
+  iluminación (movimiento, horario…) — puede quedarse encendida hasta el final
+  de su temporizador. El estado mostrado es el estado real de la luz, sea lo
+  que sea que la haya encendido.
+- **Movimiento**: el detector de movimiento del foco.
+- **En línea**.
+
+### Sensores
+
+Los sensores UP-Sense reciben las funciones que permite su montaje:
+
+- **Apertura**: abierto o cerrado, para un sensor colocado en una puerta, una
+  ventana o una puerta de garaje;
+- **Temperatura** (°C), **Humedad** (%), **Luminosidad** (lux),
+  **Movimiento**;
+- **Fuga de agua**, para un sensor montado como detector de fugas;
+- **Batería** (%);
+- **En línea**.
+
+## Panel
+
+El widget **UniFi Protect** muestra de un vistazo:
+
+- las cámaras en línea (3/4) y las detecciones de las últimas 24 horas;
+- las últimas detecciones y timbrazos, de la más reciente a la más antigua,
+  cada uno con la imagen tomada en ese momento;
+- el estado de cada cámara, y los focos y sensores sin conexión, si los hay.
+
+En sus ajustes, elija una cámara para mostrar solo esa. Las detecciones se
+guardan en memoria: la lista empieza vacía tras un reinicio de la
+integración.
+
+## Escenas
+
+### Disparadores
+
+- **Objeto detectado por una cámara**: una detección inteligente de Protect.
+  Filtros: la cámara, y lo detectado (persona, vehículo, animal, paquete,
+  matrícula, cara); vacíos, todo coincide. Una detección que ve una persona y
+  luego un vehículo inicia la escena una vez por cada uno. Las acciones
+  pueden usar el nombre de la cámara y el tipo de objeto (código `person`, o
+  su nombre en el idioma de la integración). Cuando la escena empieza, la
+  imagen de la cámara en Gladys ya es la de la detección.
+- **Alguien llama al timbre**: se ha pulsado un timbre. Filtro: el timbre.
+  Las acciones pueden usar su nombre. La imagen del timbre en Gladys ya es la
+  de la pulsación.
+
+Los estados de los dispositivos (movimiento, persona, apertura,
+temperatura…) también sirven para el disparador habitual «cambio de estado de
+un dispositivo» de Gladys.
+
+### Acciones
+
+- **Actualizar la imagen de una cámara**: toma una imagen nueva de una cámara
+  para Gladys, para que la acción siguiente («enviar una imagen de cámara» en
+  un mensaje) envíe lo que la cámara ve ahora.
+- **Mostrar un mensaje en el timbre**: cambia el mensaje de la pantalla del
+  timbre: no molestar, dejar el paquete en la puerta, su propio texto (30
+  caracteres como máximo), o lo borra — durante un número de minutos, o hasta
+  el próximo cambio (0).
+
+Ninguna acción arma, desarma, silencia ni detiene la grabación de nada: la
+API Integration de Protect no da acceso ni al modo de grabación ni a las
+notificaciones, y nada en Gladys debe poder bajar la seguridad de la casa por
+error.
+
+### Ideas de escenas
+
+- **Llaman al timbre**: disparador «Alguien llama al timbre», y luego «enviar
+  una imagen de cámara» del timbre a su teléfono con el mensaje «Alguien en
+  la puerta».
+- **Una persona en la entrada de noche**: disparador «Objeto detectado por
+  una cámara» (cámara Entrada, Persona), una condición sobre la hora, y luego
+  encender las luces del jardín 5 minutos.
+- **Han entregado un paquete**: disparador «Objeto detectado por una cámara»
+  (Paquete), y luego un mensaje «Han entregado un paquete» con la imagen.
+- **Fuera de casa**: cuando la casa se queda vacía, «Mostrar un mensaje en el
+  timbre» (dejar el paquete en la puerta, duración 0); al volver, borrarlo.
+- **Fuga de agua**: disparador «cambio de estado» en la función **Fuga de
+  agua**, y luego una alerta en todos los teléfonos.
+
+## Vídeo en directo
+
+La función **Imagen** muestra imágenes fijas. Para el vídeo en directo, use
+la integración «Cámara RTSP» de Gladys:
+
+1. En Protect, abra los ajustes de la cámara, **Avanzado**, y active un flujo
+   **RTSP** (calidad alta, media o baja).
+2. En Gladys, ejecute **Mostrar la dirección del flujo de vídeo** con esa
+   cámara.
+3. Añada la cámara en la integración «Cámara RTSP» con esa dirección
+   (`rtsp://<consola>:7447/…`).
+
+La dirección funciona como la contraseña del flujo: no la comparta con nadie.
+
+## Actualización y límites de la API
+
+Gladys nunca consulta estos dispositivos: la integración sigue la consola en
+directo por dos WebSockets de la API Integration (dispositivos y eventos), y
+vuelve a leer el estado completo cada 5 minutos (cada minuto mientras el
+enlace en directo está cortado). Los valores solo se envían a Gladys cuando
+cambian, y de nuevo cada 6 horas si no cambian.
+
+Imágenes: como máximo una imagen cada 6 segundos por cámara (Gladys acepta 12
+por minuto), leídas una cámara tras otra. La consola limita la API a unas 10
+solicitudes por segundo; la integración se queda muy por debajo.
+
+## Solución de problemas
+
+- **«La consola no responde»**: compruebe la dirección, que la consola está
+  encendida y que Gladys puede alcanzarla (misma red, cortafuegos).
+- **«certificado autofirmado»**: marque **Aceptar el certificado
+  autofirmado**.
+- **«Clave de API rechazada»**: la clave se borró o se copió mal. Cree una
+  nueva y péguela de nuevo.
+- **«No hay API Integration de UniFi Protect en esta dirección»**: Protect no
+  está instalado en esta consola, o es anterior a la versión 6. Actualícelo.
+- **«los eventos en directo están cortados»**: los estados siguen, cada
+  minuto; las detecciones y el timbre esperan a que vuelva el enlace. Se
+  reconecta solo.
+- **Sin imagen**: la integración reduce imágenes de hasta 4K; un JPEG
+  progresivo mayor que 1080p no se puede reducir en la memoria del
+  contenedor. Los registros lo dicen una vez.
+- **Un timbre sin su función de timbre**: llame una vez y luego haga clic en
+  **Actualizar** sobre él en la pestaña **Descubrir**.
+- Para más detalle, configure `LOG_LEVEL=debug` en la integración y lea sus
+  registros. Nunca contienen su clave de API.
+
+## Límites
+
+- Desarrollada sin consola: probada con las respuestas de la API, no con
+  dispositivos reales.
+- Sin control de la grabación, las notificaciones, la alarma, los carillones
+  ni las sirenas: la API Integration no los expone de forma limpia, o un
+  error bajaría la seguridad de la casa.
+- No se usan las detecciones de sonido (alarma de humo, rotura de cristal…),
+  el texto de las matrículas ni la identidad de las caras.
+- La lista de detecciones del widget empieza vacía en cada reinicio: la API
+  Integration no guarda historial de eventos.
+- Las imágenes se reducen a 960 píxeles de ancho como máximo (el límite de
+  Gladys es de 150 KB por imagen).
+
+## Parámetros de configuración
+
+Estos son los parámetros que UniFi Protect te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su consola UniFi | `section` | No | UniFi Protect 6 o posterior. En la consola, cree una clave de API: Settings, Control Plane, Integrations. Todo se queda en su red. |
+| Dirección de la consola | `string` | Sí | Dirección IP o nombre de la consola (UDM, UCG, UNVR, Cloud Key), con :puerto si no es 443. |
+| Clave de API | `secret` | Sí | La clave creada en la consola. Solo se envía a la consola, nunca a una nube. |
+| Aceptar el certificado autofirmado | `boolean` | No | Las consolas UniFi presentan un certificado autofirmado: marque esta casilla, salvo si la suya tiene uno reconocido. |
+| Imágenes de las cámaras | `select` | No | Frecuencia de actualización de la imagen de las cámaras añadidas. Detecciones y timbre siempre envían una nueva. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de funciones y de los textos enviados a las escenas. Se fijan al añadir un dispositivo. |
+
+## Cómo instalar UniFi Protect en Gladys
+
+1. En Gladys, abre **Integraciones**: UniFi Protect aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-unifi-protect:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-unifi-protect](https://github.com/guim31/gladys-unifi-protect).
+
+UniFi Protect requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+UniFi Protect es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones externas](/es/docs/integrations/external/)
+- [Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-unifi-protect) — [fuente de esta documentación](https://github.com/guim31/gladys-unifi-protect/blob/HEAD/docs/es.md)
