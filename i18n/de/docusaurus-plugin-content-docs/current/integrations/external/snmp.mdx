@@ -1,0 +1,303 @@
+---
+title: "SNMP Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "SNMP"
+description: "Überwache Switches, Router, NAS und USV per SNMP: Status, Traffic, CPU, Akku. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-snmp.png"
+keywords:
+  - "snmp"
+  - "snmp smart home"
+  - "gladys snmp"
+  - "snmp gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/prohand/gladys-snmp instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SNMP","description":"Überwache Switches, Router, NAS und USV per SNMP: Status, Traffic, CPU, Akku.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-snmp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-snmp.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T21:41:32Z"}} />
+
+Diese Integration liest deine Netzwerkgeräte per **SNMP** — Switches, Router,
+WLAN-Access-Points, NAS, Server, USV, PDUs, Drucker — und macht aus jedem ein
+Gladys-Gerät: Ist es erreichbar, wie schnell antwortet es, wie lange läuft es
+seit dem letzten Neustart, und die Werte, die du auswählst (Port-Traffic, CPU,
+Festplatten, Akku, beliebige OIDs).
+
+Alles bleibt in deinem lokalen Netzwerk: Gladys fragt deine Geräte direkt ab
+(UDP-Port 161), nichts geht über eine Cloud.
+
+## Bevor du beginnst
+
+Aktiviere SNMP auf jedem Gerät:
+
+- **SNMP v2c** mit einer **Read-only-Community** ist am einfachsten. Die
+  Community ist ein Passwort: Wähle deine eigene statt `public`.
+- **SNMP v3** verschlüsselt die Anfragen: Lege einen Benutzer mit
+  SHA-Authentifizierung und AES-Verschlüsselung (`authPriv`) an, wenn das
+  Gerät es anbietet.
+- Erlaube die Adresse deines Gladys-Servers, wenn das Gerät filtert, wer
+  abfragen darf.
+
+Wo du es meist findest: Synology _Systemsteuerung → Terminal & SNMP_, QNAP
+_Netzwerk- & Dateidienste → SNMP_, UniFi _Einstellungen → System → SNMP_,
+MikroTik _IP → SNMP_, ein Linux-Server `snmpd` (`/etc/snmp/snmpd.conf`), eine
+Eaton- oder APC-Netzwerkkarte _Network → SNMP_.
+
+## Konfiguration
+
+Öffne den Reiter **Konfiguration** der Integration.
+
+### SNMP-Agenten
+
+Liste die zu lesenden Geräte auf, durch Kommas getrennt:
+
+```
+host[:port];name;profile
+```
+
+Zum Beispiel:
+
+```
+192.168.1.1;Router, 192.168.1.10;NAS;host, 192.168.1.20;USV;ups
+```
+
+- `host` — eine IP-Adresse oder ein Hostname. Ein anderer Port als 161 steht
+  nach einem Doppelpunkt (`192.168.1.2:1161`), eine IPv6-Adresse in eckigen
+  Klammern (`[fe80::1]:161`).
+- `name` — der Name des Geräts in Gladys (der Host, wenn weggelassen).
+- `profile` — was zusätzlich gelesen wird, mit `+` verbunden (`host+ups`):
+  - `host` — CPU-Last, belegter Speicher, vollste Festplatte
+    (HOST-RESOURCES-MIB: Linux, Windows, Synology, QNAP…);
+  - `ups` — Akkuladung, Restlaufzeit, Akku schwach, Netzspannung vorhanden,
+    Eingangsspannung, Last und Ausgangsleistung (UPS-MIB: Eaton, APC mit
+    Netzwerkkarte, die meisten USV-Karten);
+  - `interfaces` — siehe die JSON-Form unten.
+
+### Die JSON-Form
+
+Für Schnittstellen, eigene OIDs oder Zugangsdaten, die sich von Gerät zu Gerät
+unterscheiden, füge stattdessen eine JSON-Liste ein:
+
+```json
+[
+  {
+    "name": "Büro-Switch",
+    "host": "192.168.1.2",
+    "interfaces": [1, 2, "ge-0/0/24"]
+  },
+  {
+    "id": "nas",
+    "name": "NAS",
+    "host": "192.168.1.10",
+    "profiles": ["host"],
+    "refresh": 300,
+    "oids": [
+      {
+        "oid": "1.3.6.1.4.1.6574.1.2.0",
+        "key": "temperature",
+        "name": "Systemtemperatur",
+        "category": "temperature-sensor",
+        "type": "decimal",
+        "unit": "celsius"
+      }
+    ]
+  },
+  {
+    "name": "PDU",
+    "host": "192.168.1.30",
+    "community": "meine-schreib-community",
+    "oids": [
+      {
+        "oid": "1.3.6.1.4.1.318.1.1.12.3.3.1.1.4.1",
+        "key": "outlet1",
+        "name": "Steckdose 1",
+        "writable": true,
+        "on": 1,
+        "off": 2
+      }
+    ]
+  }
+]
+```
+
+Felder eines Agenten:
+
+| Feld                                                                        | Bedeutung                                                                                                                                  |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `host`                                                                      | IP-Adresse oder Hostname (Pflicht)                                                                                                         |
+| `port`                                                                      | UDP-Port, standardmäßig 161                                                                                                                |
+| `name`                                                                      | Name in Gladys                                                                                                                             |
+| `id`                                                                        | woran Gladys das Gerät erkennt. Setze es, wenn sich die IP-Adresse ändern kann: Eine Änderung von `id` oder `host` erzeugt ein neues Gerät |
+| `version`                                                                   | `1`, `2c` oder `3` (standardmäßig die der Konfiguration)                                                                                   |
+| `community`                                                                 | v1/v2c-Community dieses Geräts                                                                                                             |
+| `user`, `auth_protocol`, `auth_key`, `priv_protocol`, `priv_key`, `context` | SNMPv3-Einstellungen dieses Geräts                                                                                                         |
+| `profiles`                                                                  | `host`, `ups`, `interfaces`                                                                                                                |
+| `interfaces`                                                                | die zu verfolgenden Schnittstellen, per Index oder Name (höchstens 16)                                                                     |
+| `oids`                                                                      | eigene OIDs, siehe unten                                                                                                                   |
+| `refresh`                                                                   | Aktualisierungsintervall dieses Geräts, in Sekunden (mindestens 60)                                                                        |
+
+**Schnittstellen.** Jede Schnittstelle liefert drei Funktionen: Link (1 =
+aktiv), eingehende und ausgehende Rate in kbit/s. Mit **Schnittstellen
+auflisten** (unten) findest du den Index oder Namen. Die Raten werden zwischen
+zwei Abfragen berechnet und erscheinen ab der zweiten.
+
+**Eigene OIDs.** Nur `oid` ist Pflicht: Der Wert wird als einfache Zahl
+angezeigt. Ergänze:
+
+- `category`, `type`, `unit` — die Gladys-Funktion (z. B.
+  `temperature-sensor` / `decimal` / `celsius`, `energy-sensor` / `power` /
+  `watt`); `text` / `text` zeigt einen Text;
+- `scale` — multipliziert den Rohwert (`0.1` für Zehntelgrad);
+- `on` / `off` — die Rohwerte für ein und aus, bei einer binären Funktion;
+- `writable: true` — macht daraus einen Schalter, den Gladys steuern kann
+  (ein SNMP-SET mit `on` oder `off`); `set_type` ist `integer` (Standard),
+  `unsigned` oder `string`. Dafür braucht nur dieses Gerät eine
+  **Read-write**-Community;
+- `key` — der feste Name der Funktion (standardmäßig aus der OID gebildet);
+- `min` / `max` — der Wertebereich der Funktion.
+
+### SNMP-Zugang
+
+- **SNMP-Version** — gilt für jeden Agenten ohne eigene Angabe.
+- **Community** — v1/v2c, `public`, wenn leer.
+- **SNMPv3** — Benutzer, Authentifizierungsprotokoll und -schlüssel,
+  Verschlüsselungsprotokoll und -schlüssel. Die Sicherheitsstufe ergibt sich
+  aus den Angaben: nur ein Benutzer ergibt `noAuthNoPriv`, mit
+  Authentifizierungsschlüssel `authNoPriv`, mit beiden Schlüsseln `authPriv`.
+
+### Abfrage
+
+- **Aktualisierungsintervall** — wie oft jedes Gerät gelesen wird, mindestens
+  60 Sekunden (Gladys fragt höchstens einmal pro Minute ab). Jeder Wert landet
+  im Verlauf: In einem großen Netzwerk sind 300 Sekunden besser.
+- **Zeitlimit** und **Wiederholungen** — wie lange und wie oft auf eine
+  Antwort gewartet wird, bevor ein Gerät als nicht erreichbar gilt.
+- **Detaillierte Protokolle** — protokolliert jeden SNMP-Fehler, um ein Gerät
+  zu verstehen, das nicht antwortet. Communities und Schlüssel werden nie
+  protokolliert.
+
+Speichere: Die Geräte erscheinen im Reiter **Erkennung** und können
+hinzugefügt werden.
+
+## Was du bekommst
+
+Jedes Gerät hat:
+
+| Funktion    | Bedeutung                                                |
+| ----------- | -------------------------------------------------------- |
+| Erreichbar  | 1, wenn das Gerät per SNMP antwortet, 0, wenn nicht mehr |
+| Antwortzeit | Zeit bis zur Antwort, in Millisekunden                   |
+| Laufzeit    | Tage seit dem (Neu-)Start des Geräts                     |
+
+Die Gerätekarte zeigt außerdem ein Abzeichen **local**, oder **unreachable**,
+wenn das Gerät nicht mehr antwortet.
+
+## Aktionen
+
+- **Verbindung testen** — liest sofort alle Geräte und sagt für jedes, ob es
+  geantwortet hat, wie schnell und mit welchem Systemnamen. Fehler in der
+  Agentenliste erscheinen hier ebenfalls.
+- **Schnittstellen auflisten** — die Schnittstellen eines Geräts: Index, Name
+  und ▲ für die mit aktivem Link. Kopiere Index oder Namen in seine Liste
+  `interfaces`.
+- **OID durchlaufen** — die Objekte unter einer OID (standardmäßig 20 Zeilen),
+  um die richtige für `oids` zu finden. `1.3.6.1.2.1.1` ist die Systemgruppe,
+  `1.3.6.1.4.1` die Hersteller-MIBs.
+
+## Szenen und Dashboard (Gladys 5.1)
+
+### Auslöser
+
+- **Ein SNMP-Agent antwortet nicht mehr** — ein Gerät, das geantwortet hat,
+  hat die letzte Abfrage verpasst. Variablen: `device_name`, `host`, `error`.
+- **Ein SNMP-Agent antwortet wieder** — Variablen: `device_name`, `host`,
+  `downtime_minutes`.
+- **Eine Netzwerkschnittstelle geht hoch oder runter** — Filter auf aktiv,
+  ausgefallen oder beides. Variablen: `device_name`, `interface`, `status`.
+
+Sie lösen einmal pro Änderung aus, nie bei jeder Abfrage. Ein Gerät, das beim
+Start von Gladys bereits aus ist, löst nichts aus.
+
+Für einen Schwellwert (eine Festplatte über 90 %, ein Akku unter 30 %) nutze
+den üblichen Gladys-Auslöser **Gerätewert** auf der Funktion.
+
+### Aktionen
+
+- **SNMP-Wert lesen** — eine OID eines Geräts. Ausgaben: `success`, `value`
+  (Text), `number`, `error`.
+- **SNMP-Wert schreiben** — eine OID als Ganzzahl, vorzeichenlos oder Text:
+  eine PDU-Steckdose ausschalten, einen PoE-Port neu starten… Ausgaben:
+  `success`, `error`.
+- **SNMP-Agent jetzt abfragen** — liest ein Gerät ohne zu warten. Ausgaben:
+  `reachable`, `response_time`.
+
+Eine fehlgeschlagene Aktion stoppt die Szene nie: Prüfe `success` (oder
+`reachable`) in einer Bedingung danach.
+
+### Widget
+
+Das Widget **SNMP-Agenten** zeigt, wie viele Geräte antworten, eine Zeile pro
+Gerät mit seiner Antwortzeit und einen Button **Jetzt abfragen**. Wähle in
+seinen Einstellungen ein Gerät, um auch dessen Live-Werte zu sehen
+(Antwortzeit, Laufzeit, CPU, Speicher, Akku…).
+
+## Fehlerbehebung
+
+- **Ein Gerät bleibt nicht erreichbar** — prüfe, ob SNMP aktiv ist, ob die
+  Community (oder der v3-Benutzer und die Schlüssel) stimmt und ob das Gerät
+  Anfragen von der Adresse deines Gladys-Servers annimmt. Schalte
+  **Detaillierte Protokolle** ein und führe **Verbindung testen** aus.
+- **Erreichbar, aber ein Profil zeigt nichts** — das Gerät hat diese MIB nicht
+  (viele Switches haben kein HOST-RESOURCES). Nutze **OID durchlaufen**, um zu
+  sehen, was es bietet, und füge eigene OIDs hinzu.
+- **Ein Schnittstellenname wird nicht gefunden** — führe **Schnittstellen
+  auflisten** aus und kopiere den Namen exakt, oder nutze den Index.
+- **Ein Schalter schaltet nicht** — die Community dieses Geräts muss
+  Read-write sein, und `on` / `off` müssen die Werte sein, die die
+  Hersteller-MIB erwartet.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt SNMP in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Gladys liest deine Geräte per SNMP in deinem lokalen Netzwerk (UDP 161): Switches, Router, WLAN-Access-Points, NAS, Server, USV, Drucker. Aktiviere SNMP auf jedem Gerät (v2c mit einer Read-only-Community ist am einfachsten) und liste die Geräte unten auf. Jedes wird zu einem Gladys-Gerät: erreichbar, Antwortzeit und Laufzeit, dazu die gewählten Profile (interfaces, host, ups) und eigene OIDs. |
+| SNMP-Agenten | `string` | Nein | Die zu lesenden Geräte, durch Kommas getrennt: Host[:Port];Name;Profile — z. B. 192.168.1.10;NAS;host, 192.168.1.20;USV;ups. Profile: interfaces, host, ups (mehrere mit +). Für Schnittstellen, eigene OIDs oder Zugangsdaten pro Gerät füge stattdessen eine JSON-Liste ein: siehe Dokumentation. |
+| SNMP-Zugang | `section` | Nein | Gilt für jeden Agenten, der in der JSON-Liste nichts anderes angibt. |
+| SNMP-Version | `select` | Nein |  |
+| Community (v1 / v2c) | `secret` | Nein | Die Lese-Community deiner Geräte. Leer gelassen: public. Verwende eine Read-only-Community: Gladys schreibt nur die OIDs, die du als beschreibbar markierst. |
+| SNMPv3 | `section` | Nein | Nur für Version 3. Die Sicherheitsstufe ergibt sich aus den Angaben: nur ein Benutzer ergibt noAuthNoPriv, mit Authentifizierungsschlüssel authNoPriv, mit beiden Schlüsseln authPriv. |
+| Benutzer | `string` | Nein |  |
+| Authentifizierungsprotokoll | `select` | Nein |  |
+| Authentifizierungsschlüssel | `secret` | Nein |  |
+| Verschlüsselungsprotokoll | `select` | Nein |  |
+| Verschlüsselungsschlüssel | `secret` | Nein |  |
+| Abfrage | `section` | Nein | Gladys fragt jedes Gerät höchstens einmal pro Minute ab. Jeder Wert landet im Verlauf: In einem großen Netzwerk hält ein längeres Intervall ihn schlank. |
+| Aktualisierungsintervall (s) | `number` | Nein | Wie oft jedes Gerät gelesen wird, in Sekunden (60 bis 3600). Ein Gerät kann dies mit seinem eigenen refresh-Wert überschreiben. |
+| Zeitlimit (s) | `number` | Nein | Wie lange auf eine Antwort gewartet wird, bevor erneut versucht wird, in Sekunden. |
+| Wiederholungen | `number` | Nein | Wie oft eine Anfrage erneut gesendet wird, bevor das Gerät als nicht erreichbar gilt. |
+| Detaillierte Protokolle (Debug) | `boolean` | Nein | Protokolliert jeden SNMP-Fehler und jedes Szenenereignis. Schalte es wieder aus, sobald du es weißt: Es ist ausführlich. Communities und Schlüssel werden nie protokolliert. |
+
+## So installierst du SNMP in Gladys
+
+1. Öffne in Gladys **Integrationen**: SNMP erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-snmp:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-snmp](https://github.com/prohand/gladys-snmp).
+
+SNMP benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+SNMP ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [prohand](https://github.com/prohand) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-snmp) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-snmp/blob/HEAD/docs/de.md)

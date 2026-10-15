@@ -1,0 +1,269 @@
+---
+title: "Integración domótica Syncthing, gratuita y de código abierto"
+sidebar_label: "Syncthing"
+description: "Sus carpetas y equipos de Syncthing en Gladys, con escenas cuando una sincronización acaba o falla. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-syncthing.png"
+keywords:
+  - "syncthing"
+  - "domótica syncthing"
+  - "gladys syncthing"
+  - "syncthing gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-syncthing instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Syncthing","description":"Sus carpetas y equipos de Syncthing en Gladys, con escenas cuando una sincronización acaba o falla.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-syncthing","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-syncthing.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T22:05:11Z"}} />
+
+[Syncthing](https://syncthing.net/) mantiene carpetas sincronizadas entre sus
+ordenadores, teléfonos y NAS, de igual a igual, sin nube. Esta integración lo
+trae a Gladys: cada carpeta se convierte en un dispositivo que indica si está
+actualizada, su progreso y sus errores, con un interruptor para pausarla; cada
+dispositivo remoto (portátil, teléfono, otro NAS) indica si está conectado, sus
+velocidades y desde cuándo está ausente. Las escenas pueden reaccionar cuando
+una carpeta termina de sincronizarse o falla, y un widget del panel lo resume
+todo.
+
+Probada con Syncthing 1.30.0, 2.0.10 y 2.1.6 reales (dos instancias
+enlazadas); todavía no en todas las instalaciones: sus comentarios son
+bienvenidos en [las issues](https://github.com/guim31/gladys-syncthing/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Syncthing 1.12 o posterior (probado en 1.30 y 2.x), en una máquina que
+  Gladys pueda alcanzar en la red local: normalmente su NAS o su servidor.
+- La clave API de ese Syncthing.
+
+La integración sigue **un** Syncthing: el de su servidor. Sus otros equipos
+aparecen como sus dispositivos remotos, no instala nada en ellos.
+
+## Primeros pasos
+
+### 1. Preparar Syncthing
+
+En la interfaz web de Syncthing, abra **Acciones → Ajustes → GUI**:
+
+- copie la **clave API**;
+- ponga la **dirección de escucha de la interfaz** en `0.0.0.0:8384`. Por
+  defecto, Syncthing solo responde en `127.0.0.1`, que Gladys no puede
+  alcanzar desde su propio contenedor. Con la interfaz abierta a la red,
+  defina un **usuario** y una contraseña para la interfaz si aún no lo ha
+  hecho: la clave API sigue sirviendo a Gladys.
+
+Syncthing en Docker (linuxserver, imagen oficial): publique el puerto 8384 y
+conserve la dirección de escucha de la imagen (`0.0.0.0:8384`).
+
+### 2. Configurar la integración
+
+En Gladys, **Integraciones → Syncthing → Configuración**:
+
+- **Dirección de Syncthing**: por ejemplo `http://192.168.1.10:8384`. Una
+  simple dirección IP también vale (se añaden `http://` y el puerto 8384).
+- **Clave API**: la clave del paso 1.
+- **Aceptar certificados autofirmados**: solo para una dirección `https://`,
+  cuando la interfaz usa el certificado que generó Syncthing («Usar HTTPS para
+  la GUI»).
+- **Idioma de los nombres**: el idioma de los nombres de las funciones y de
+  los estados de las carpetas (francés por defecto).
+
+Guarde y pulse **Probar la conexión**: Syncthing responde con su versión, sus
+carpetas y sus dispositivos remotos.
+
+### 3. Añadir las carpetas y los dispositivos
+
+Abra la pestaña **Descubrir**: se proponen todas las carpetas y todos los
+dispositivos remotos de Syncthing. Añada los que quiera ver en Gladys; no se
+añade nada sin usted. Una carpeta o un dispositivo añadido más tarde en
+Syncthing aparece ahí por sí solo.
+
+## El dispositivo de cada carpeta
+
+| Función                     | Valor                                                                       |
+| --------------------------- | --------------------------------------------------------------------------- |
+| Estado                      | Actualizado, Sincronizando, Analizando, No sincronizado, Error, En pausa    |
+| Actualizado                 | Encendido cuando la carpeta lo tiene todo, apagado si no (nada en pausa)    |
+| Progreso                    | La parte de la carpeta que tiene este Syncthing, en porcentaje              |
+| Pendiente de recibir        | Lo que queda por descargar, en megabytes                                    |
+| Elementos fallidos          | Los archivos que Syncthing no pudo sincronizar                              |
+| Último archivo sincronizado | El último archivo recibido (con «(eliminado)» si fue una eliminación)       |
+| En pausa                    | Un interruptor: encendido pausa la carpeta en Syncthing, apagado la reanuda |
+
+«No sincronizado» significa que a la carpeta le falta algo pero no llega nada:
+el dispositivo que lo tiene está desconectado. «Error» abarca tanto una
+carpeta detenida por un error (marcador de carpeta ausente, disco lleno) como
+elementos fallidos.
+
+Durante una sincronización, el progreso, los megabytes restantes y el último
+archivo se envían a Gladys como mucho cada 30 segundos, siempre su último
+valor: una sincronización grande queda muy por debajo de los 300 valores por
+minuto que acepta Gladys.
+
+## El dispositivo de cada dispositivo remoto
+
+| Función                 | Valor                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| Conectado               | Encendido mientras el dispositivo está conectado a su Syncthing                                   |
+| En pausa                | Un interruptor: encendido pausa el dispositivo en Syncthing (sin intercambio), apagado lo reanuda |
+| Descarga                | Lo que su Syncthing recibe de él, en kB/s                                                         |
+| Subida                  | Lo que su Syncthing le envía, en kB/s                                                             |
+| Desconectado desde hace | Horas desde la última vez que se vio (0 mientras está conectado)                                  |
+
+«Desconectado desde hace» es un número: un disparador de escena en ese
+dispositivo «mayor que 24» responde a «mi portátil no se ha sincronizado desde
+hace un día» sin nada más.
+
+## Panel
+
+Añada el widget **Syncthing** a un panel. Muestra:
+
+- las **carpetas al día** (por ejemplo `2/3`, en rojo cuando una tiene un
+  error);
+- los **equipos conectados**, y las velocidades totales de **descarga** y de
+  **subida**;
+- una fila por carpeta y por dispositivo remoto, los problemas primero:
+  carpetas con error, no sincronizadas, dispositivos desconectados (desde
+  cuándo), luego sincronizando (con el porcentaje), en pausa, actualizadas —
+  diez filas como máximo, después el número de las demás;
+- tres botones: **Analizar** (todas las carpetas), **Pausar todo** (pide
+  confirmación) y **Reanudar todo**, según el estado de las carpetas.
+
+El widget muestra todas las carpetas y dispositivos de Syncthing, añadidos a
+Gladys o no. En sus ajustes, **Mostrar** deja solo las carpetas o solo los
+equipos.
+
+## Escenas
+
+### Disparadores
+
+Valen para todas las carpetas, añadidas a Gladys o no. Deje **Carpeta** vacío
+para reaccionar a cualquiera, o elija una.
+
+- **Carpeta sincronizada**: una carpeta recibió lo que le faltaba y vuelve a
+  estar actualizada. Solo cuenta una transferencia real: los análisis y las
+  actualizaciones de índice nunca lo disparan. Variables: nombre de la
+  carpeta, archivos recibidos.
+- **Error de sincronización**: una carpeta se detuvo por un error, o algunos
+  de sus archivos no se pudieron sincronizar. Una vez por problema: Syncthing
+  reintenta cada minuto, el disparador no se repite hasta que la carpeta vuelve
+  a estar limpia. Variables: nombre de la carpeta, elementos fallidos, mensaje
+  de error (el motivo que da Syncthing, con el archivo).
+
+La primera lectura tras un arranque solo toma nota: una carpeta que ya falla al
+arrancar Gladys no dispara nada.
+
+### Acciones
+
+- **Pausar carpetas**: pausa una carpeta, o todas cuando **Carpeta** está
+  vacío. Resultado: el número de carpetas pausadas.
+- **Reanudar carpetas**: reanuda una carpeta en pausa, o todas. Resultado: el
+  número de carpetas reanudadas.
+- **Analizar carpetas**: pide a Syncthing que busque cambios ahora, en una
+  carpeta o en todas (un análisis largo continúa después de la acción).
+  Resultado: el número de carpetas analizadas.
+
+Nada de esto elimina nada: una carpeta en pausa conserva sus archivos y sigue
+donde se quedó.
+
+### Ideas de escenas
+
+- **Fotos guardadas**: disparador «Carpeta sincronizada» en la carpeta Photos
+  → enviar un mensaje «📷 … fotos recibidas en el NAS», insertando «Archivos
+  recibidos».
+- **Algo va mal**: disparador «Error de sincronización» (Carpeta vacía) →
+  enviar un mensaje «⚠️ …: …» con «Nombre de la carpeta» y «Mensaje de error».
+- **Videollamada tranquila**: una escena lanzada desde un botón del panel →
+  «Pausar carpetas» (Carpeta vacía); una segunda, o una espera de una hora →
+  «Reanudar carpetas».
+- **Portátil olvidado**: disparador en el dispositivo «portátil», función
+  «Desconectado desde hace», mayor que 72 → enviar un mensaje «El portátil no
+  se ha sincronizado desde hace tres días».
+
+## Cómo lee la integración Syncthing
+
+- **En directo**: la API de eventos de Syncthing (`/rest/events`, una petición
+  que se mantiene abierta hasta que pasa algo) trae los estados de las
+  carpetas, el progreso, los archivos recibidos, los errores, las pausas y los
+  dispositivos que se conectan o se van.
+- **Cada 30 segundos**: las conexiones (para las velocidades, que ningún
+  evento da) y la última vez que se vio cada dispositivo.
+- **Cada 5 minutos**, y después de un cambio en la configuración de Syncthing:
+  todo de nuevo, por seguridad. El resumen de una carpeta es la única llamada
+  que la documentación de Syncthing considera costosa en carpetas grandes: se
+  lee así de poco. Si la API de eventos no funciona (un proxy que corta las
+  peticiones largas), se lee todo cada 30 segundos en su lugar.
+
+Syncthing no fija ninguna cuota de peticiones en su API. La integración solo
+escribe cuando usted lo pide: pausar, reanudar, analizar.
+
+## Solución de problemas
+
+- **«Syncthing no responde»**: compruebe la dirección y el puerto desde la
+  máquina de Gladys, y que la dirección de escucha de la interfaz es
+  `0.0.0.0:8384` (paso 1). `localhost` es el propio contenedor de la
+  integración: utilice la dirección IP de la máquina que ejecuta Syncthing.
+- **«Clave API rechazada»**: copie de nuevo la clave desde Acciones → Ajustes →
+  GUI (cambia cuando se pulsa «Generar»).
+- **«Syncthing rechaza este nombre de host»**: la interfaz escucha en
+  `127.0.0.1` detrás de un proxy inverso: utilice la dirección IP, o abra la
+  interfaz en `0.0.0.0`.
+- **«Certificado rechazado»**: la interfaz usa HTTPS con su propio
+  certificado; marque «Aceptar certificados autofirmados».
+- **«La dirección redirige»**: la interfaz está en HTTPS: escriba `https://`.
+- **«No hay ningún Syncthing en esta dirección»**: otro servicio responde en
+  ese puerto.
+- **Una carpeta sigue «No sincronizado»**: el dispositivo con los archivos que
+  faltan está desconectado; se pondrá al día cuando vuelva.
+- **«Probar la conexión» dice que el seguimiento en directo no está
+  disponible**: un proxy entre Gladys y Syncthing corta las peticiones
+  abiertas; la integración funciona igualmente, leída cada 30 segundos.
+
+## Límites
+
+- Un solo Syncthing por integración: el que alcanza Gladys.
+- El progreso y las velocidades se actualizan como mucho cada 30 segundos.
+- «Carpeta sincronizada» se dispara en el Syncthing que recibe los archivos:
+  en el que los envía (un portátil que manda sus fotos al NAS), no se dispara.
+- Los patrones de exclusión, el versionado, los conflictos y el uso compartido
+  de las carpetas siguen en la interfaz de Syncthing; la integración nunca
+  elimina un archivo.
+- Gladys congela los nombres de las funciones al crearlas: cambiar el idioma
+  después solo cambia los estados de las carpetas y los dispositivos añadidos
+  más tarde.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Syncthing te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Syncthing | `section` | No | En Syncthing, abra Acciones → Ajustes → GUI: copie la clave API y ponga la dirección de escucha en 0.0.0.0:8384 para que Gladys llegue a ella. Después, añada las carpetas y equipos que quiera seguir desde la pestaña Descubrir. |
+| Dirección de Syncthing | `string` | Sí | La dirección de la interfaz web de Syncthing, puerto incluido (8384 por defecto). |
+| Clave API | `secret` | Sí | Acciones → Ajustes → GUI → Clave API en Syncthing. |
+| Aceptar certificados autofirmados | `boolean` | No | Solo para una dirección https:\/\/ con el certificado que Syncthing generó. |
+| Idioma de los nombres | `select` | No | Nombres de las funciones y estados de las carpetas, tal como Gladys los muestra. |
+
+## Cómo instalar Syncthing en Gladys
+
+1. En Gladys, abre **Integraciones**: Syncthing aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-syncthing:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-syncthing](https://github.com/guim31/gladys-syncthing).
+
+Syncthing requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Syncthing es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-syncthing) — [fuente de esta documentación](https://github.com/guim31/gladys-syncthing/blob/HEAD/docs/es.md)

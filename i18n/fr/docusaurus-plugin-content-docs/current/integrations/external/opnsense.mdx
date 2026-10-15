@@ -1,0 +1,178 @@
+---
+title: "Intégration domotique OPNsense, gratuite et open source"
+sidebar_label: "OPNsense"
+description: "Pare-feu OPNsense : santé, passerelles, trafic, présence réseau, règles, WireGuard, scènes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-opnsense.jpg"
+keywords:
+  - "opnsense"
+  - "domotique opnsense"
+  - "gladys opnsense"
+  - "opnsense gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-opnsense instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OPNsense","description":"Pare-feu OPNsense : santé, passerelles, trafic, présence réseau, règles, WireGuard, scènes.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-opnsense","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-opnsense.jpg","type":"device","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T04:38:16Z"}} />
+
+## Présentation
+
+Cette intégration amène votre pare-feu **OPNsense** dans Gladys, par l'API d'OPNsense sur votre réseau local :
+
+- un appareil **pare-feu** : utilisation CPU, mémoire et disque, température, temps de fonctionnement, mises à jour en attente, version et pairs WireGuard connectés ;
+- un appareil par **passerelle** (état, latence, perte de paquets) et par **interface** (débits reçu et envoyé, lien, adresse IPv4) ;
+- les **règles de pare-feu** d'une catégorie de votre choix, sous forme d'interrupteurs : activez ou désactivez une règle depuis un tableau de bord ou une scène ;
+- les **appareils de votre réseau** (téléphones, ordinateurs…) comme capteurs de présence, d'après la table ARP et les baux DHCP ;
+- des **scènes** : passerelle tombée, quelqu'un est rentré, nouvel appareil sur le réseau, connexion VPN, service arrêté, mise à jour disponible ; et des actions pour réveiller un ordinateur, bloquer un appareil, redémarrer un service, rechercher les mises à jour ou redémarrer ;
+- quatre **widgets de tableau de bord**.
+
+![Les quatre widgets de l'intégration : vue du pare-feu, connexion internet, appareils du réseau et VPN WireGuard (illustration générée, pas une capture d'écran)](https://raw.githubusercontent.com/William-De71/gladys-opnsense/main/docs/assets/widgets.fr.png)
+
+Tout reste sur votre réseau : l'intégration ne parle qu'à OPNsense, jamais à un cloud.
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- OPNsense 25.1 ou plus récent (écrit d'après l'API d'OPNsense 26.7), joignable depuis la machine de Gladys.
+- Un utilisateur OPNsense dédié à Gladys, avec une clé d'API. Créez-le dans **Système > Accès > Utilisateurs**, puis donnez-lui les droits des fonctions voulues (champ **Privilèges**) :
+
+| Fonction                            | Droit OPNsense                                                         |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| Pare-feu (CPU, mémoire, disque)     | Lobby: Dashboard                                                       |
+| Passerelles                         | System: Gateways                                                       |
+| Interfaces                          | Status: Interfaces, Reporting: Traffic                                 |
+| Appareils du réseau                 | Diagnostics: ARP Table, et Services: Dnsmasq DNS/DHCP ou DHCP: Kea(v4) |
+| WireGuard                           | VPN: WireGuard: Status                                                 |
+| Services (déclencheur, redémarrage) | Status: Services                                                       |
+| Mises à jour (recherche)            | System: Firmware                                                       |
+| Interrupteurs de règles             | Firewall: Rules [new], Firewall: Categories                            |
+| Action sur les alias                | Diagnostics: PF Table IP addresses                                     |
+| Redémarrage                         | Diagnostics: Reboot System                                             |
+| Wake-on-LAN (plugin os-wol)         | Services: Wake on LAN                                                  |
+
+Un droit non accordé désactive simplement sa fonction. « System: Firmware » permet aussi d'installer les mises à jour par l'API : ne l'accordez que si vous voulez la recherche de mises à jour. Les noms des droits sont ceux de l'interface anglaise d'OPNsense.
+
+Dans la page de l'utilisateur, section **Clés d'API**, cliquez sur **+** : un fichier `key.txt` est téléchargé, avec une ligne `key=` et une ligne `secret=`.
+
+## Configuration
+
+Dans Gladys, ouvrez **Intégrations > OPNsense**, installez-la, puis remplissez :
+
+| Champ                        | Quoi saisir                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Adresse d'OPNsense           | L'adresse de l'interface web, par exemple `https://192.168.1.1` (ajoutez le port s'il n'est pas 443).         |
+| Clé d'API                    | La ligne `key=` de `key.txt`.                                                                                 |
+| Secret de l'API              | La ligne `secret=` de `key.txt`. Il n'est plus jamais affiché ni écrit dans les logs.                         |
+| Vérifier le certificat       | Laissez décoché avec le certificat auto-signé d'OPNsense ; cochez-le avec un certificat valide.               |
+| Intervalle de lecture        | De 10 à 300 secondes, 30 par défaut.                                                                          |
+| Appareils du réseau proposés | Les appareils proposés à la découverte : ceux qui ont un nom (par défaut), tous, ou aucun.                    |
+| Délai d'absence              | Minutes sans réponse avant qu'un appareil soit absent, 5 par défaut.                                          |
+| Catégorie des règles         | Les règles de pare-feu de cette catégorie deviennent des interrupteurs (`gladys` par défaut ; vide : aucune). |
+| Langue des textes            | Langue des noms, états et résumés de scènes ; automatique suit votre tableau de bord.                         |
+
+Cliquez sur **Tester la connexion** : Gladys affiche le nom et la version de votre OPNsense.
+
+## Utilisation
+
+### Appareils
+
+Ouvrez **Intégrations > OPNsense > Découverte** et ajoutez les appareils voulus. Rien n'est créé sans vous.
+
+| Appareil            | Fonctionnalités                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| OPNsense (pare-feu) | Utilisation CPU, mémoire et disque (%), température, temps de fonctionnement (jours), mises à jour en attente, version, pairs VPN |
+| Passerelle          | État (en ligne, hors ligne, dégradée, en attente), latence (ms), perte de paquets (%)                                             |
+| Interface           | Débits reçu et envoyé (Mbit/s, vus depuis l'interface : sur le WAN, reçu est la réception), lien, adresse IPv4                    |
+| Règle               | Activée : un interrupteur                                                                                                         |
+| Appareil du réseau  | Présence                                                                                                                          |
+
+### Présence des appareils
+
+Un appareil de votre réseau est **présent** dès qu'il répond dans la table ARP d'OPNsense, et **absent** une fois parti depuis le délai d'absence. Le capteur de présence envoie 1 chaque minute tant que l'appareil est là, comme la présence Bluetooth de Gladys : utilisez-le dans l'action de scène **Vérifier la présence** pour savoir si quelqu'un est à la maison. Un téléphone avec une adresse Wi-Fi privée (aléatoire) ne garde la même adresse sur votre réseau que si l'option est réglée par réseau : vérifiez-le sur le téléphone.
+
+### Règles de pare-feu
+
+Dans OPNsense, ouvrez **Pare-feu > Règles**, modifiez une règle (par exemple « Bloquer la tablette des enfants ») et donnez-lui la catégorie `gladys` (créez-la dans **Pare-feu > Catégories**). Après une découverte, la règle apparaît comme un interrupteur : allumé active la règle, éteint la désactive, et OPNsense applique le changement aussitôt. Seules les règles du nouvel éditeur de règles peuvent être basculées, pas les règles automatiques.
+
+### Widgets du tableau de bord
+
+- **Pare-feu OPNsense** : jauges CPU, mémoire et disque, température, passerelles, temps de fonctionnement, mises à jour, et deux boutons : rechercher les mises à jour, et redémarrer (avec confirmation).
+- **Connexion internet** : latence, perte de paquets, réception et envoi d'une passerelle et d'une interface (le WAN par défaut), avec le graphique du trafic dès que l'appareil de l'interface est ajouté.
+- **Appareils du réseau** : les appareils connectés en ce moment, ceux partis, ou tous.
+- **VPN WireGuard** : les pairs, connectés ou non, et leur dernier échange.
+
+### Scènes
+
+Déclencheurs :
+
+- **État de passerelle changé** : en ligne, dégradée (latence, perte) ou hors ligne, filtré par passerelle et par état.
+- **Appareil arrivé ou parti** : pour un appareil du réseau ajouté dans Gladys.
+- **Nouvel appareil sur le réseau** : une adresse MAC jamais vue, une fois par adresse.
+- **Pair VPN connecté ou non** : un pair WireGuard.
+- **Service démarré ou arrêté** : Unbound, Dnsmasq, WireGuard…
+- **Mise à jour disponible** : une recherche de mises à jour a trouvé du nouveau.
+
+Actions : lire l'état (CPU, passerelles, appareils présents… pour un message), réveiller un appareil (Wake-on-LAN, plugin os-wol, à travers les VLAN), ajouter ou retirer une adresse d'un alias, redémarrer un service, rechercher les mises à jour, redémarrer.
+
+Exemples :
+
+- Quand la passerelle `WAN_DHCP` passe hors ligne → envoyer un message « Internet est coupé, la 4G prend le relais ».
+- Quand un nouvel appareil apparaît sur le réseau → envoyer son nom, son fabricant et son adresse IP à l'administrateur.
+- Chaque soir à 21 h → ajouter l'IP de la tablette des enfants à l'alias `kids_block`, utilisé par une règle de blocage ; la retirer à 7 h.
+
+### Transport
+
+Local uniquement : l'intégration parle à l'API d'OPNsense en HTTPS sur votre réseau, avec la clé d'API. Aucune donnée ne quitte votre réseau (OPNsense lui-même contacte son miroir de mises à jour lors d'une recherche).
+
+## Dépannage
+
+- **« OPNsense refuse la clé d'API »** : recopiez la clé et le secret depuis `key.txt`, sans espaces.
+- **« Le certificat HTTPS est refusé »** : décochez « Vérifier le certificat », ou installez un certificat valide pour l'adresse saisie.
+- **« n'a pas un des droits nécessaires »** : ajoutez les droits listés plus haut à l'utilisateur OPNsense de la clé.
+- **Aucun appareil du réseau** : vérifiez le droit « Diagnostics: ARP Table » et l'option « Appareils du réseau proposés ».
+- **Une règle manque** : elle doit porter la catégorie, et venir du nouvel éditeur de règles.
+- **Le Wake-on-LAN échoue** : installez le plugin `os-wol` dans **Système > Firmware > Plugins**, et saisissez l'interface (`lan`, `opt1`…) pour un appareil jamais vu.
+- **Logs** : ajoutez la variable d'environnement `DEBUG=gladys-integration-sdk`, puis ouvrez une issue sur [GitHub](https://github.com/William-De71/gladys-opnsense/issues) avec les versions de Gladys, de l'intégration et d'OPNsense, et les logs (la clé d'API et son secret n'y apparaissent jamais).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par OPNsense dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Clé d’API OPNsense | `section` | Non | Dans OPNsense, créez un utilisateur dédié (Système > Accès > Utilisateurs), donnez-lui les droits listés dans la documentation, puis ajoutez une clé d’API : un fichier key.txt est téléchargé avec la clé et son secret. Tout reste sur votre réseau. |
+| Adresse d’OPNsense | `string` | Oui | L’adresse de son interface web, avec le port s’il n’est pas 443. |
+| Clé d’API | `string` | Oui | La ligne « key= » de key.txt. |
+| Secret de l’API | `secret` | Oui | La ligne « secret= » de key.txt. |
+| Vérifier le certificat | `boolean` | Non | Laissez décoché avec le certificat auto-signé livré avec OPNsense. Cochez-le avec un certificat valide (Let’s Encrypt, autorité interne). |
+| Options | `section` | Non | Les règles de pare-feu deviennent des interrupteurs quand elles portent la catégorie ci-dessous. Les appareils du réseau deviennent des capteurs de présence une fois ajoutés depuis l’écran de découverte. |
+| Intervalle de lecture (s) | `number` | Non | De 10 à 300 secondes, 30 par défaut. |
+| Appareils du réseau proposés | `select` | Non | Les appareils de la table ARP et des baux DHCP qui apparaissent dans l’écran de découverte. |
+| Délai d’absence (min) | `number` | Non | Un appareil est absent après ce délai sans réponse. De 1 à 60, 5 par défaut : un téléphone en veille quitte le réseau un moment. |
+| Catégorie des règles | `string` | Non | Les règles de pare-feu de cette catégorie (Pare-feu > Règles) deviennent des interrupteurs. Vide : aucune. |
+| Langue des textes | `select` | Non | Noms, états et résumés des scènes. Automatique : la langue de votre tableau de bord, dès qu’un widget OPNsense a été affiché. |
+
+## Comment installer OPNsense dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : OPNsense apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-opnsense:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-opnsense](https://github.com/William-De71/gladys-opnsense).
+
+OPNsense nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+OPNsense est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-opnsense) — [source de cette documentation](https://github.com/William-De71/gladys-opnsense/blob/HEAD/docs/fr.md)

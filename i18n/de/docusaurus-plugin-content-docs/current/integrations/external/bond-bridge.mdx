@@ -1,0 +1,262 @@
+---
+title: "Bond Bridge Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Bond Bridge"
+description: "Deckenventilatoren, Rollos und Lichter der Bond Bridge: lokale Steuerung, Live-Zustand. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-bond.png"
+keywords:
+  - "bond bridge"
+  - "bond bridge smart home"
+  - "gladys bond bridge"
+  - "bond bridge gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-bond instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Bond Bridge","description":"Deckenventilatoren, Rollos und Lichter der Bond Bridge: lokale Steuerung, Live-Zustand.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-bond","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-bond.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T20:46:21Z"}} />
+
+Steuere von Gladys aus die Deckenventilatoren, Rollos, Lichter und anderen ferngesteuerten Geräte einer
+[Bond Bridge](https://bondhome.io/), einer Bond Bridge Pro oder eines Smart-by-Bond-Geräts, über das **lokale
+Netzwerk**: keine Cloud, kein Bond-Konto für Gladys nötig.
+
+> **Ohne die Hardware entwickelt: Rückmeldungen willkommen.** Diese Integration folgt der offiziellen lokalen
+> Bond-API v2 und dem Verhalten der Home-Assistant-Integration `bond` und wird gegen eine simulierte Bridge getestet.
+> Wenn sich deine Bridge anders verhält, eröffne ein Issue im GitHub-Repository. Nicht mit Bond oder Olibra
+> verbunden.
+
+## Überblick
+
+Eine Bond Bridge lernt die Funkfernbedienungen (RF) deiner Deckenventilatoren, Rollos, Kamine und Lichter und
+spielt sie auf Befehl ab. Diese Integration spricht mit der Bridge in deinem Netzwerk und legt ein Gladys-Gerät pro
+Bond-Gerät an:
+
+- **Deckenventilatoren**: Ein/Aus, Geschwindigkeit, Drehrichtung, Brise-Modus, Licht und Helligkeit, oberes und
+  unteres Licht;
+- **Rollos, Jalousien, Markisen**: öffnen, schließen, stoppen, Position;
+- **Lichter**: Ein/Aus, Helligkeit, Farbtemperatur;
+- **generische Geräte**: Ein/Aus;
+- **Kamine**: standardmäßig ausgeblendet, schreibgeschützt, wenn angezeigt (siehe unten).
+
+Ein **Dashboard-Widget** steuert einen Deckenventilator wie seine Wandfernbedienung, zwei **Szenen-Auslöser**
+melden, wenn eine Bridge nicht mehr antwortet und wieder da ist, und eine **Szenen-Aktion** korrigiert, was Bond
+über ein Gerät annimmt.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1 oder neuer.
+- Eine Bond Bridge, Bond Bridge Pro oder ein Smart-by-Bond-Gerät, **zuerst in der Bond-App eingerichtet** (WLAN,
+  Geräte hinzugefügt).
+- Bridge und Gladys im selben lokalen Netzwerk. Gib der Bridge im Router eine feste IP-Adresse
+  (DHCP-Reservierung): Gladys erreicht sie über ihre Adresse.
+- Der **lokale Token** der Bridge (16 Zeichen), einmal ausgelesen — siehe unten.
+
+## Konfiguration
+
+Öffne in Gladys **Integrationen**, installiere **Bond Bridge** und dann ihren Reiter **Konfiguration**.
+
+### Die Bridge finden
+
+Drück auf **Bridges suchen**: Gladys sucht Bond Bridges in deinem Netzwerk (mDNS) und trägt die leeren Adressen
+ein. Wird nichts gefunden (anderes Subnetz, mDNS blockiert), gib die IP-Adresse der Bridge selbst ein, zum Beispiel
+`192.168.1.20`. Du kannst bis zu drei Bridges konfigurieren.
+
+### Den lokalen Token abrufen
+
+Jede Anfrage an die Bridge trägt ihren lokalen Token. Zwei Wege, ihn zu bekommen:
+
+1. **Aus Gladys**: Zieh den Stecker der Bridge, steck ihn wieder ein, warte, bis ihre Leuchte wieder an ist, und
+   drück dann innerhalb von **10 Minuten** auf **Lokalen Token abrufen**. Die Bridge gibt ihren Token in den 10
+   Minuten nach dem Start heraus; Gladys speichert ihn in der Konfiguration.
+2. **Aus der Bond-App**: Öffne die Bridge (oder das Smart-by-Bond-Gerät), **Settings**, **Advanced**, **Local
+   token**, und kopiere ihn in das Feld **Lokaler Token**.
+
+Drück dann auf **Verbindung testen**: Jede Bridge antwortet mit ihrer Firmware, der Zahl der Geräte für Gladys und
+ob die Live-Updates funktionieren.
+
+### Optionen
+
+- **Kamine**: `Ausgeblendet` (Standard) oder `Angezeigt, schreibgeschützt`.
+- **Sprache der Funktionsnamen**: die Namen, die die Funktionen beim Hinzufügen eines Geräts zu Gladys bekommen
+  (standardmäßig Französisch). Danach ändern sich die Namen nicht mehr.
+
+Geh dann in den Reiter **Entdecken** und füge die gewünschten Geräte hinzu.
+
+## Geräte
+
+Ein Gerät bekommt eine Funktion nur, wenn seine Fernbedienung, wie in der Bond-App eingerichtet, die passende Aktion
+hat: Eine Ventilatorfernbedienung ohne Lichttaste bekommt kein Licht.
+
+### Deckenventilatoren
+
+| Funktion               | Gladys-Typ        | Was sie tut                                                         |
+| ---------------------- | ----------------- | ------------------------------------------------------------------- |
+| Ein / Aus              | Schalter          | an / aus                                                            |
+| Geschwindigkeit        | Lüfterstufe       | 1 bis zur Zahl der Stufen der Fernbedienung, 0 schaltet aus         |
+| Drehrichtung           | Luftstromrichtung | vorwärts (Sommer) / rückwärts (Winter)                              |
+| Brise-Modus            | Schalter          | der Modus „natürliche Brise“ von Bond, falls der Ventilator ihn hat |
+| Licht                  | Licht             | das Licht des Ventilators                                           |
+| Helligkeit             | Helligkeit        | 1 bis 100 %, 0 schaltet das Licht aus                               |
+| Oberes / Unteres Licht | Schalter          | die getrennten oberen und unteren Lichter mancher Ventilatoren      |
+
+Ist der Ventilator aus, zeigt seine Geschwindigkeit 0: Die Bridge behält die letzte Stufe und nutzt sie beim
+nächsten „Ein“ wieder. Eine Fernbedienung mit reinen Umschalttasten (eine Taste für Ein und Aus) wird nur betätigt,
+wenn der Zustand, den Bond annimmt, vom gewünschten abweicht.
+
+### Rollos
+
+**Öffnen / Schließen** (öffnen, schließen, stoppen) und **Position** (0 % geschlossen, 100 % offen), wenn der Motor
+eine Position kennt. Bond zählt andersherum (0 offen, 100 geschlossen): Die Integration rechnet um.
+
+### Lichter
+
+**Licht** (Ein/Aus), **Helligkeit** (1 bis 100 %) und **Farbtemperatur** (in Kelvin, im Bereich des Lichts), je
+nach Fernbedienung.
+
+### Kamine
+
+Ein Kamin wird **nie von Gladys gesteuert**. Eine Gasflamme aus Versehen zu zünden — eine Szene, ein
+Sprachassistent, ein Kind am Dashboard — ist nicht harmlos. Standardmäßig sind Kamine ausgeblendet; mit
+**Angezeigt, schreibgeschützt** erscheinen sie mit **Ein / Aus** und **Flamme** als schreibgeschützte Werte, für
+die Anzeige und Szenenbedingungen. Zünde ihn weiter mit der Bond-App oder der Fernbedienung des Kamins.
+
+### Generische Geräte
+
+Ein Gerät vom Typ „Generic“ in der Bond-App bekommt einen Schalter **Ein / Aus**. Verwende ihn nicht für Heizungen.
+
+### Nicht unterstützt
+
+Garagentore (ein aus Versehen geöffnetes Tor ist ein Sicherheitsproblem), Klimaanlagen und Bidets werden nicht
+veröffentlicht. Gruppen der Bond-App auch nicht: Pack die Geräte lieber in eine Gladys-Szene.
+
+## Was Bond annimmt
+
+Eine Funkfernbedienung sendet, antwortet aber nie: **Bond kennt den tatsächlichen Zustand eines Geräts nicht**, es
+merkt sich, was es zuletzt gesendet hat. Der Zustand in Gladys ist diese Annahme. Er wird falsch, wenn das Gerät mit
+seiner eigenen Fernbedienung (die Bond Bridge Pro hört manche Fernbedienungen und folgt ihnen), einem Wandschalter
+oder nach einem Stromausfall benutzt wird.
+
+Um ihn zu korrigieren, ohne etwas zu senden, verwende **Bond-Zustand korrigieren** (im Reiter Konfiguration oder als
+Szenen-Aktion): Wähle das Gerät und seinen tatsächlichen Zustand (an, aus, Licht an, Licht aus, offen,
+geschlossen). Bond übernimmt ihn, es wird kein Signal gesendet, und der nächste Befehl von Gladys geht vom richtigen
+Zustand aus. Die Bond-App bietet dieselbe Korrektur für jedes Gerät.
+
+## Widget
+
+Das Widget **Deckenventilator** zeigt einen Ventilator, gewählt in seinen Einstellungen:
+
+- die Stufe (und die Helligkeit seines Lichts) als Live-Kacheln;
+- ob Ventilator und Licht an sind, seine Richtung, den Brise-Modus;
+- vier Knöpfe: **Langsamer**, **Schneller**, **Licht** (an/aus) und **Einschalten / Ausschalten**.
+
+„Langsamer“ auf Stufe 1 schaltet den Ventilator aus; „Schneller“ bei einem ausgeschalteten Ventilator startet ihn
+auf Stufe 1. Antwortet die Bridge nicht mehr, zeigt das Widget es an.
+
+## Szenen-Auslöser und -Aktionen
+
+| Art      | Name                         | Variablen                             |
+| -------- | ---------------------------- | ------------------------------------- |
+| Auslöser | Bond Bridge nicht erreichbar | Name der Bridge, Bond-ID              |
+| Auslöser | Bond Bridge wieder da        | Name der Bridge, Bond-ID, Minuten weg |
+| Aktion   | Bond-Zustand korrigieren     | Gerät, tatsächlicher Zustand          |
+
+Eine Bridge gilt nach zwei fehlgeschlagenen Abfragen in Folge (etwa eine Minute) als nicht erreichbar; ein falscher
+Token ist kein „nicht erreichbar“, er erscheint im Verbindungsstatus. Die Geräte selbst haben hier keinen Auslöser:
+Verwende den üblichen Gladys-Auslöser „Gerätezustand geändert“ auf ihren Funktionen.
+
+## Szenenbeispiele
+
+- **Sommernacht**: Um 23 Uhr, wenn das Schlafzimmer wärmer als 26 °C ist, den Schlafzimmerventilator auf Stufe 2
+  stellen und sein Licht ausschalten.
+- **Sonnenuntergang**: Bei Sonnenuntergang die Terrassenrollos schließen (Position 0 %) und sie werktags um 8 Uhr
+  öffnen.
+- **Bridge-Wache**: Wenn eine Bond Bridge nicht erreichbar ist, die Nachricht „Die Bond Bridge \{\{bridge\}\} antwortet
+  nicht“ senden.
+- **Wandschalter**: Die Schlafzimmerventilatoren werden jede Nacht um 1 Uhr per Wandschalter abgeschaltet: Eine
+  Szene um 1:05 Uhr führt auf ihnen „Bond-Zustand korrigieren: aus“ aus, damit das nächste „Ein“ von Gladys sie nicht
+  ausschaltet.
+
+## Aktualisierung und Netzwerk
+
+- **Live-Updates**: Die Bridge schickt jede Zustandsänderung per UDP (BPUP, Port 30007) an die Clients, die ein
+  Abo offen halten; die Integration erneuert es alle 60 Sekunden. Änderungen in der Bond-App (und bei einer Bond
+  Bridge Pro mit den Fernbedienungen, die sie hört) erscheinen in Gladys innerhalb einer Sekunde.
+- **Abfrage**: Solange die Live-Updates stumm sind, wird jedes zu Gladys hinzugefügte Gerät alle 30 Sekunden
+  abgefragt; wenn sie funktionieren, zur Sicherheit alle 10 Minuten. Nur die zu Gladys hinzugefügten Geräte werden
+  abgefragt.
+- **Last auf der Bridge**: höchstens zwei Anfragen gleichzeitig, eine neue Verbindung pro Anfrage, 5 Sekunden
+  Zeitlimit. Auf einen Befehl folgt eine Abfrage des Geräts.
+- Alles bleibt in deinem Netzwerk: keine Cloud, kein Bond-Konto, nichts in `/data` gespeichert.
+
+## Fehlerbehebung
+
+- **„Lokaler Token abgelehnt“**: Der Token hat sich geändert (ein Zurücksetzen der Bridge ändert ihn) oder wurde
+  falsch eingegeben. Hol ihn erneut (siehe oben).
+- **„Lokaler Token fehlt“**: Drück innerhalb von 10 Minuten nach dem Wiedereinstecken der Bridge auf **Lokalen
+  Token abrufen**.
+- **„Gesperrt“ beim Abrufen des Tokens**: mehr als 10 Minuten seit dem Start der Bridge. Zieh den Stecker, steck
+  ihn wieder ein, versuch es noch einmal; oder kopiere den Token aus der Bond-App.
+- **„Antwortet nicht“**: Prüf die IP-Adresse (leg sie im Router fest), ob die Bridge an ist (ihre Leuchte) und ob
+  Gladys und die Bridge im selben Netzwerk sind.
+- **„Bridges suchen“ findet nichts**: mDNS geht nicht über Router und manche Mesh-WLAN-Einstellungen. Gib die
+  Adresse ein.
+- **Der Zustand in Gladys ist falsch**: Jemand hat die Originalfernbedienung benutzt. Verwende **Bond-Zustand
+  korrigieren**.
+- **Verbindung testen meldet „keine Live-Updates“**: Eine Firewall zwischen Gladys und der Bridge blockiert
+  vielleicht den UDP-Port 30007. Alles funktioniert, etwas langsamer (Abfrage alle 30 s).
+- Mehr Details in den Protokollen der Integration (`LOG_LEVEL=debug` zeigt jede Abfrage).
+
+## Grenzen
+
+- **Ohne die Hardware entwickelt**: Das Verhalten folgt der Bond-Dokumentation, der Home-Assistant-Integration und
+  der Bibliothek `bond-async`; es wurde nicht an einer echten Bridge ausprobiert. Rückmeldungen willkommen.
+- Der Zustand ist, was Bond annimmt, nie eine Messung (siehe oben).
+- Kamine sind schreibgeschützt; Garagentore, Klimaanlagen und Bidets bleiben außen vor.
+- Keine Lamellenneigung bei Rollos, keine Timer, keine Gruppen und keine Szenen der Bond-App.
+- Bis zu drei Bridges.
+- Die Live-Updates queren das Docker-Netzwerk der Gladys-Sandbox per Unicast (Erneuerung alle 60 s); das wurde
+  nicht an echter Hardware geprüft. Ohne sie übernimmt die Abfrage alle 30 s.
+- Nicht mit Bond oder Olibra verbunden. Bond, Bond Bridge und Smart by Bond sind Marken ihrer Inhaber.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Bond Bridge in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Bond Bridge | `section` | Nein | Bond Bridge, Bond Bridge Pro oder Smart-by-Bond-Gerät, zuerst in der Bond-App eingerichtet. Drück unten auf „Bridges suchen“, um die Adresse einzutragen, dann innerhalb von 10 Minuten nach dem Wiedereinstecken der Bridge auf „Lokalen Token abrufen“. Bis zu drei Bridges. |
+| IP-Adresse | `string` | Nein | Adresse der Bond Bridge in deinem Netzwerk. Leg sie im Router fest (DHCP-Reservierung). |
+| Lokaler Token | `secret` | Nein | 16 Zeichen. Bond-App: die Bridge, Settings, Advanced, Local token. Oder der Knopf „Lokalen Token abrufen“ weiter unten. |
+| Zweite Bridge (optional) | `section` | Nein | Dieselben Felder, für eine weitere Bond Bridge oder ein Smart-by-Bond-Gerät. |
+| IP-Adresse | `string` | Nein | Adresse der Bond Bridge in deinem Netzwerk. Leg sie im Router fest (DHCP-Reservierung). |
+| Lokaler Token | `secret` | Nein | 16 Zeichen. Bond-App: die Bridge, Settings, Advanced, Local token. Oder der Knopf „Lokalen Token abrufen“ weiter unten. |
+| Dritte Bridge (optional) | `section` | Nein | Dieselben Felder, für eine dritte. |
+| IP-Adresse | `string` | Nein | Adresse der Bond Bridge in deinem Netzwerk. Leg sie im Router fest (DHCP-Reservierung). |
+| Lokaler Token | `secret` | Nein | 16 Zeichen. Bond-App: die Bridge, Settings, Advanced, Local token. Oder der Knopf „Lokalen Token abrufen“ weiter unten. |
+| Optionen | `section` | Nein | Kamine werden nie von Gladys gesteuert: Eine Gasflamme aus Versehen zu zünden (eine Szene, ein Sprachassistent) ist nicht harmlos. Man kann sie schreibgeschützt anzeigen. |
+| Kamine | `select` | Nein |  |
+| Sprache der Funktionsnamen | `select` | Nein | Wird beim Hinzufügen eines Geräts zu Gladys verwendet; die Namen ändern sich danach nicht mehr. |
+
+## So installierst du Bond Bridge in Gladys
+
+1. Öffne in Gladys **Integrationen**: Bond Bridge erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-bond:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-bond](https://github.com/guim31/gladys-bond).
+
+Bond Bridge benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Bond Bridge ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-bond) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-bond/blob/HEAD/docs/de.md)

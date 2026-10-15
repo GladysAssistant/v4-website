@@ -1,0 +1,186 @@
+---
+title: "SMA Solar smart home integration, free and open source"
+sidebar_label: "SMA Solar"
+description: "SMA inverters, batteries and energy meters on your local network (Modbus TCP). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SMA-Solar.png"
+keywords:
+  - "sma solar"
+  - "sma solar smart home"
+  - "gladys sma solar"
+  - "sma solar gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/gboulvin/Gladys-SMA-Solar instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SMA Solar","description":"SMA inverters, batteries and energy meters on your local network (Modbus TCP).","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-SMA-Solar","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SMA-Solar.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T22:09:59Z"}} />
+
+Follow your SMA solar installation in Gladys: production, energy of the day,
+battery, grid exchange and the condition of every device, read **directly on
+your local network** through Modbus TCP. No cloud, no Sunny Portal account,
+no API key: the values stay at home and keep coming when the Internet is down.
+
+## Compatible devices
+
+Every SMA device that speaks the **SMA Modbus profile** over TCP, in
+particular:
+
+- PV inverters: Sunny Boy, Sunny Tripower (including the X and CORE
+  series), Sunny Highpower;
+- hybrid inverters: Sunny Tripower Smart Energy, Sunny Boy Smart Energy;
+- battery inverters: Sunny Boy Storage, Sunny Island;
+- the devices behind an SMA Data Manager or Cluster Controller.
+
+The grid exchange (power drawn from and fed into the grid) appears when an
+**SMA Energy Meter** or a **Sunny Home Manager** is connected to the
+inverter: the inverter then reports it over Modbus.
+
+## Prerequisites
+
+1. **Enable Modbus TCP** on each device. Depending on its generation:
+   - devices with a web interface (WebConnect, ennexOS): log in with the
+     **Installer** user, open **Device parameters → External communication →
+     Modbus → TCP server** and switch it **On**;
+   - devices managed in Sunny Portal: **Configuration → Device configuration →
+     External communication → Modbus → TCP server: On**;
+   - with Sunny Explorer: same parameter, logged in as installer.
+2. Give each device a **fixed IP address** (a DHCP reservation in your router
+   is enough).
+3. Gladys and the devices must be on the same network, or the network must
+   let Gladys reach TCP port **502** of the devices.
+
+> Modbus TCP has no password: keep it on your local network and **never**
+> forward port 502 on your Internet box.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **SMA devices**, enter the IP address of each device, separated by
+   commas: `192.168.1.50, 192.168.1.51`.
+   - another port: `192.168.1.50:1502`;
+   - another Modbus unit ID (devices behind a Data Manager, which shows the
+     unit ID of each device in its Modbus settings): `192.168.1.30/4`;
+   - both: `192.168.1.30:502/5`.
+3. The **port** (502) and **unit ID** (3) apply to the addresses that do not
+   set their own: keep them unless you changed them on your devices.
+4. **Refresh interval**: how often the devices are read, 30 seconds by
+   default (10 seconds minimum).
+5. **Production threshold**: the power (in W, 50 by default) above which an
+   inverter is considered as producing, for the start / end of production
+   scene triggers.
+6. Save, then click **Test the connection**: it lists the devices that
+   answered and those that did not, with the reason.
+7. Open the **Discovery** tab and add your devices.
+
+## What you get
+
+One device per SMA device, named after its serial number, with the features
+it carries:
+
+| Feature                                                       | Devices                 |
+| ------------------------------------------------------------- | ----------------------- |
+| Solar production (W), production today (kWh), total (kWh)     | PV and hybrid inverters |
+| Battery level (%), charge / discharge power (W), energy (kWh) | battery, hybrid         |
+| Power drawn from / fed into the grid (W), energy (kWh)        | with an Energy Meter    |
+| AC voltage (V), AC current (A), inverter temperature (°C)     | all                     |
+
+The production and battery features feed the **Energy** view of Gladys. Each
+device also shows a **local / unreachable** badge.
+
+Many inverters switch their network interface off at night: the integration
+then shows them as unreachable and their production at 0 W, and remembers
+them so they stay available after a restart of Gladys.
+
+## Scenes
+
+The integration adds its own cards to the scene editor (Gladys 5.1 or
+later), under the **Integrations** category.
+
+Triggers:
+
+- **Solar production started** — an inverter starts producing (its power
+  goes above the production threshold). Variables: `power`, `device_name`.
+- **Solar production stopped** — it stops (below half the threshold, or
+  asleep). Variable `daily_energy`: the energy produced today, in kWh — for
+  a daily production report.
+- **SMA device condition changed** — the condition of a device changes: OK,
+  warning, fault, off or unreachable. Filter on the new condition to be
+  alerted of a fault only. Variables: `condition`, `previous_condition`,
+  `device_name`.
+
+Read the variables in the following actions with
+`{{triggerEvent.data.<variable>}}`, e.g. "Production of the day:
+\{\{triggerEvent.data.daily_energy\}\} kWh".
+
+Actions:
+
+- **Read an SMA device** — reads the chosen device now and gives the next
+  actions its values: `reachable`, `condition`, `power`, `daily_energy`,
+  `battery_level`, `grid_import_power`, `grid_export_power`.
+- **Read the solar installation** — reads every device and gives the
+  totals: `power`, `daily_energy`, `battery_level` (average),
+  `grid_import_power`, `grid_export_power`, `reachable_devices`.
+
+Example: every day at 1 pm, read the installation, and if `power` is above
+2000 W, start the water heater.
+
+## Dashboard
+
+Two widgets are available:
+
+- **Solar installation** — current production, energy of the day, grid
+  exchange, battery level, a chart of the day's production and the condition
+  of each device, with a **Refresh** button.
+- **SMA device** — pick one device in the widget settings: its live values,
+  its condition, address, last reading, temperature and grid frequency.
+
+## Troubleshooting
+
+- **"connect ECONNREFUSED"**: Modbus TCP is not enabled on the device, or
+  uses another port.
+- **"connect EHOSTUNREACH" / timed out**: wrong IP address, device off or
+  asleep (normal at night for many inverters), or a firewall in between.
+- **"No SMA serial number at this address"**: the device answers but not
+  with this unit ID: check the unit ID (3 for an inverter reached directly,
+  see the Modbus settings of the Data Manager otherwise).
+- **A device appears twice**: it is listed under two addresses; keep one.
+- The integration logs are in the Gladys UI (or `docker logs`); start the
+  integration with `LOG_LEVEL=debug` for the full detail.
+
+## Configuration settings
+
+These are the settings SMA Solar asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Before you start | `section` | No | The integration reads your SMA devices on the local network through Modbus TCP, without any cloud. Enable Modbus TCP on each device (Sunny Portal, Sunny Explorer or the device web interface, installer access), give it a fixed IP address, then enter that address below. |
+| SMA devices | `string` | Yes | IP addresses of your SMA devices, separated by commas. Add :port or /unit_id to override the defaults (e.g. a device behind a Data Manager: 192.168.1.30/4). |
+| Modbus TCP port | `number` | No | 502 unless you changed it on the devices. |
+| Modbus unit ID | `number` | No | 3 for an SMA inverter reached directly. |
+| Refresh interval (s) | `number` | No | How often the devices are read, in seconds. |
+| Production threshold (W) | `number` | No | Power above which an inverter is producing, for the production started / stopped scene triggers. |
+
+## How to install SMA Solar in Gladys
+
+1. In Gladys, open **Integrations**: SMA Solar appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/gboulvin/gladys-sma-solar:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/gboulvin/Gladys-SMA-Solar](https://github.com/gboulvin/Gladys-SMA-Solar).
+
+SMA Solar requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+SMA Solar is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [gboulvin](https://github.com/gboulvin), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/gboulvin/Gladys-SMA-Solar) — [source of this documentation](https://github.com/gboulvin/Gladys-SMA-Solar/blob/HEAD/docs/en.md)

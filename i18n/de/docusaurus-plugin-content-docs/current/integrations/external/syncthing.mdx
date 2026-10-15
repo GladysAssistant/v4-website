@@ -1,0 +1,270 @@
+---
+title: "Syncthing Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Syncthing"
+description: "Deine Syncthing-Ordner und -Geräte in Gladys, mit Szenen am Ende oder bei Fehlern einer Synchro. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-syncthing.png"
+keywords:
+  - "syncthing"
+  - "syncthing smart home"
+  - "gladys syncthing"
+  - "syncthing gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-syncthing instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Syncthing","description":"Deine Syncthing-Ordner und -Geräte in Gladys, mit Szenen am Ende oder bei Fehlern einer Synchro.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-syncthing","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-syncthing.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T22:05:11Z"}} />
+
+[Syncthing](https://syncthing.net/) hält Ordner zwischen deinen Computern,
+Handys und NAS synchron, direkt von Gerät zu Gerät, ohne Cloud. Diese
+Integration bringt es in Gladys: Jeder Ordner wird ein Gerät, das zeigt, ob er
+aktuell ist, seinen Fortschritt und seine Fehler, mit einem Schalter zum
+Pausieren; jedes entfernte Gerät (Laptop, Handy, anderes NAS) zeigt, ob es
+verbunden ist, seine Übertragungsraten und wie lange es schon weg ist. Szenen
+können reagieren, wenn ein Ordner fertig synchronisiert ist oder scheitert, und
+ein Dashboard-Widget fasst alles zusammen.
+
+Getestet mit echtem Syncthing 1.30.0, 2.0.10 und 2.1.6 (zwei verbundene
+Instanzen); noch nicht in jeder Umgebung: Rückmeldungen sind willkommen in
+[den Issues](https://github.com/guim31/gladys-syncthing/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Syncthing 1.12 oder neuer (getestet mit 1.30 und 2.x) auf einem Rechner, den
+  Gladys im lokalen Netz erreicht: meist dein NAS oder Heimserver.
+- Den API-Schlüssel dieses Syncthing.
+
+Die Integration folgt **einem** Syncthing: dem auf deinem Server. Deine
+anderen Geräte erscheinen als dessen entfernte Geräte, du installierst nichts
+darauf.
+
+## Erste Schritte
+
+### 1. Syncthing vorbereiten
+
+Öffne in der Weboberfläche von Syncthing **Aktionen → Einstellungen → GUI**:
+
+- kopiere den **API-Schlüssel**;
+- setze die **GUI-Adresse** auf `0.0.0.0:8384`. Standardmäßig antwortet
+  Syncthing nur auf `127.0.0.1`, das Gladys aus seinem eigenen Container nicht
+  erreicht. Ist die Oberfläche im Netz offen, lege einen **GUI-Benutzer** und
+  ein Passwort fest, falls noch nicht geschehen: Der API-Schlüssel funktioniert
+  für Gladys weiterhin.
+
+Syncthing in Docker (linuxserver, offizielles Image): Veröffentliche Port 8384
+und behalte die Adresse des Images (`0.0.0.0:8384`).
+
+### 2. Integration konfigurieren
+
+In Gladys **Integrationen → Syncthing → Konfiguration**:
+
+- **Adresse von Syncthing**: zum Beispiel `http://192.168.1.10:8384`. Eine
+  reine IP-Adresse geht auch (`http://` und Port 8384 werden ergänzt).
+- **API-Schlüssel**: der Schlüssel aus Schritt 1.
+- **Selbstsignierte Zertifikate akzeptieren**: nur für eine `https://`-Adresse,
+  wenn die Oberfläche das Zertifikat nutzt, das Syncthing selbst erzeugt hat
+  („HTTPS für GUI verwenden“).
+- **Sprache der Namen**: die Sprache der Funktionsnamen und der Ordnerstatus
+  (standardmäßig Französisch).
+
+Speichere und klicke auf **Verbindung testen**: Syncthing antwortet mit seiner
+Version, seinen Ordnern und seinen entfernten Geräten.
+
+### 3. Ordner und Geräte anlegen
+
+Öffne den Tab **Entdecken**: Jeder Ordner und jedes entfernte Gerät von
+Syncthing wird dort vorgeschlagen. Lege die an, die du in Gladys sehen willst;
+nichts wird ohne dich angelegt. Ein später in Syncthing hinzugefügter Ordner
+oder ein Gerät erscheint dort von selbst.
+
+## Das Gerät jedes Ordners
+
+| Funktion                      | Wert                                                                  |
+| ----------------------------- | --------------------------------------------------------------------- |
+| Status                        | Aktuell, Synchronisiert, Scannt, Nicht synchron, Fehler, Pausiert     |
+| Aktuell                       | An, wenn der Ordner alles hat, sonst aus (nichts während einer Pause) |
+| Fortschritt                   | Der Anteil des Ordners, den dieses Syncthing hat, in Prozent          |
+| Noch zu empfangen             | Was noch herunterzuladen ist, in Megabyte                             |
+| Fehlgeschlagene Elemente      | Die Dateien, die Syncthing nicht synchronisieren konnte               |
+| Zuletzt synchronisierte Datei | Die zuletzt empfangene Datei („(gelöscht)“ bei einer Löschung)        |
+| Pausiert                      | Ein Schalter: an pausiert den Ordner in Syncthing, aus setzt ihn fort |
+
+„Nicht synchron“ heißt: Dem Ordner fehlt etwas, aber nichts kommt an, weil das
+Gerät, das es hat, offline ist. „Fehler“ umfasst sowohl einen durch einen
+Fehler gestoppten Ordner (fehlende Ordnermarkierung, volle Festplatte) als
+auch fehlgeschlagene Elemente.
+
+Während einer Synchronisation werden Fortschritt, verbleibende Megabyte und
+letzte Datei höchstens alle 30 Sekunden an Gladys gesendet, ihr letzter Wert
+immer: Eine große Synchronisation bleibt weit unter den 300 Werten pro Minute,
+die Gladys annimmt.
+
+## Das Gerät jedes entfernten Geräts
+
+| Funktion     | Wert                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------ |
+| Verbunden    | An, solange das Gerät mit deinem Syncthing verbunden ist                             |
+| Pausiert     | Ein Schalter: an pausiert das Gerät in Syncthing (kein Austausch), aus setzt es fort |
+| Download     | Was dein Syncthing von ihm empfängt, in kB/s                                         |
+| Upload       | Was dein Syncthing an es sendet, in kB/s                                             |
+| Offline seit | Stunden seit es zuletzt gesehen wurde (0, solange es verbunden ist)                  |
+
+„Offline seit“ ist eine Zahl: Ein Szenen-Auslöser auf diesem Gerät „größer als
+24“ beantwortet „mein Laptop hat seit einem Tag nicht synchronisiert“ ohne
+weiteres.
+
+## Dashboard
+
+Füge das Widget **Syncthing** zu einem Dashboard hinzu. Es zeigt:
+
+- die **aktuellen Ordner** (zum Beispiel `2/3`, rot, wenn einer einen Fehler
+  hat);
+- die **verbundenen Geräte** und die gesamten Raten von **Download** und
+  **Upload**;
+- eine Zeile pro Ordner und pro entferntem Gerät, die Probleme zuerst: Ordner
+  mit Fehler, nicht synchron, Geräte offline (seit wann), dann synchronisierend
+  (mit Prozentsatz), pausiert, aktuell — höchstens zehn Zeilen, dann die Anzahl
+  der übrigen;
+- drei Tasten: **Neu scannen** (alle Ordner), **Alle pausieren** (fragt nach)
+  und **Alle fortsetzen**, je nach Status der Ordner.
+
+Das Widget zeigt alle Ordner und Geräte von Syncthing, in Gladys angelegt oder
+nicht. In seinen Einstellungen behält **Anzeigen** nur die Ordner oder nur die
+Geräte.
+
+## Szenen
+
+### Auslöser
+
+Die Auslöser gelten für alle Ordner, in Gladys angelegt oder nicht. Lass **Ordner**
+leer, um auf jeden zu reagieren, oder wähle einen.
+
+- **Ordner synchronisiert**: Ein Ordner hat empfangen, was ihm fehlte, und ist
+  wieder aktuell. Nur eine echte Übertragung zählt: Scans und Index-Updates
+  lösen ihn nie aus. Variablen: Ordnername, empfangene Dateien.
+- **Synchronisationsfehler**: Ein Ordner wurde durch einen Fehler gestoppt,
+  oder einige seiner Dateien ließen sich nicht synchronisieren. Einmal pro
+  Problem: Syncthing versucht es jede Minute erneut, der Auslöser wiederholt
+  sich nicht, bis der Ordner wieder sauber ist. Variablen: Ordnername,
+  fehlgeschlagene Elemente, Fehlermeldung (der Grund von Syncthing, mit der
+  Datei).
+
+Das erste Lesen nach einem Start nimmt nur zur Kenntnis: Ein Ordner, der beim
+Start von Gladys schon scheitert, löst nichts aus.
+
+### Aktionen
+
+- **Ordner pausieren**: pausiert einen Ordner, oder alle, wenn **Ordner** leer
+  ist. Ergebnis: die Anzahl der pausierten Ordner.
+- **Ordner fortsetzen**: setzt einen pausierten Ordner fort, oder alle.
+  Ergebnis: die Anzahl der fortgesetzten Ordner.
+- **Ordner neu scannen**: bittet Syncthing, jetzt nach Änderungen zu suchen, in
+  einem Ordner oder in allen (ein langer Scan läuft nach der Aktion weiter).
+  Ergebnis: die Anzahl der neu gescannten Ordner.
+
+Nichts davon löscht etwas: Ein pausierter Ordner behält seine Dateien und macht
+dort weiter, wo er aufgehört hat.
+
+### Ideen für Szenen
+
+- **Fotos gesichert**: Auslöser „Ordner synchronisiert“ auf dem Ordner Photos
+  → sende eine Nachricht „📷 … Fotos auf dem NAS empfangen“ mit „Empfangene
+  Dateien“.
+- **Etwas stimmt nicht**: Auslöser „Synchronisationsfehler“ (Ordner leer) →
+  sende eine Nachricht „⚠️ …: …“ mit „Ordnername“ und „Fehlermeldung“.
+- **Ruhiger Videoanruf**: eine Szene, die über eine Dashboard-Taste startet →
+  „Ordner pausieren“ (Ordner leer); eine zweite, oder eine Stunde warten →
+  „Ordner fortsetzen“.
+- **Laptop vergessen**: Auslöser auf dem Gerät „Laptop“, Funktion „Offline
+  seit“, größer als 72 → sende eine Nachricht „Der Laptop hat seit drei Tagen
+  nicht synchronisiert“.
+
+## Wie die Integration Syncthing liest
+
+- **Live**: die Ereignis-API von Syncthing (`/rest/events`, eine Anfrage, die
+  offen bleibt, bis etwas passiert) liefert die Ordnerstatus, den Fortschritt,
+  die empfangenen Dateien, die Fehler, die Pausen und die Geräte, die sich
+  verbinden oder gehen.
+- **Alle 30 Sekunden**: die Verbindungen (für die Übertragungsraten, die kein
+  Ereignis liefert) und wann jedes Gerät zuletzt gesehen wurde.
+- **Alle 5 Minuten** und nach einer Änderung der Konfiguration von Syncthing:
+  alles noch einmal, zur Sicherheit. Die Zusammenfassung eines Ordners ist der
+  einzige Aufruf, den die Dokumentation von Syncthing bei großen Ordnern teuer
+  nennt: Er wird so selten gelesen. Funktioniert die Ereignis-API nicht (ein
+  Proxy, der lange Anfragen abbricht), wird stattdessen alle 30 Sekunden alles
+  gelesen.
+
+Syncthing setzt kein Anfragekontingent auf seine API. Die Integration schreibt
+nur, wenn du es willst: pausieren, fortsetzen, neu scannen.
+
+## Fehlerbehebung
+
+- **„Syncthing antwortet nicht“**: Prüfe Adresse und Port vom Rechner von
+  Gladys aus, und dass die GUI-Adresse `0.0.0.0:8384` ist (Schritt 1).
+  `localhost` ist der Container der Integration selbst: Verwende die
+  IP-Adresse des Rechners, auf dem Syncthing läuft.
+- **„API-Schlüssel abgelehnt“**: Kopiere den Schlüssel erneut unter Aktionen →
+  Einstellungen → GUI (er ändert sich, wenn du auf „Generieren“ klickst).
+- **„Syncthing lehnt diesen Hostnamen ab“**: Die Oberfläche lauscht hinter
+  einem Reverse-Proxy auf `127.0.0.1`: Verwende die IP-Adresse oder öffne die
+  Oberfläche auf `0.0.0.0`.
+- **„Zertifikat abgelehnt“**: Die Oberfläche nutzt HTTPS mit eigenem
+  Zertifikat; aktiviere „Selbstsignierte Zertifikate akzeptieren“.
+- **„Die Adresse leitet um“**: Die Oberfläche ist in HTTPS: Gib `https://` ein.
+- **„Kein Syncthing unter dieser Adresse“**: Ein anderer Dienst antwortet auf
+  diesem Port.
+- **Ein Ordner bleibt „Nicht synchron“**: Das Gerät mit den fehlenden Dateien
+  ist offline; es holt auf, wenn es zurück ist.
+- **„Verbindung testen“ meldet, dass die Live-Verfolgung nicht verfügbar
+  ist**: Ein Proxy zwischen Gladys und Syncthing bricht offene Anfragen ab; die
+  Integration funktioniert trotzdem, alle 30 Sekunden neu gelesen.
+
+## Grenzen
+
+- Ein Syncthing pro Integration: das, welches Gladys erreicht.
+- Fortschritt und Raten werden höchstens alle 30 Sekunden aktualisiert.
+- „Ordner synchronisiert“ wird auf dem Syncthing ausgelöst, das die Dateien
+  empfängt: auf dem, das sie sendet (ein Laptop, der seine Fotos ans NAS
+  schickt), nicht.
+- Ignoriermuster, Versionierung, Konflikte und das Teilen von Ordnern bleiben
+  in der Oberfläche von Syncthing; die Integration löscht nie eine Datei.
+- Gladys friert die Funktionsnamen beim Anlegen ein: Eine spätere Änderung der
+  Sprache ändert nur die Ordnerstatus und die danach angelegten Geräte.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Syncthing in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Syncthing | `section` | Nein | Öffne in Syncthing Aktionen → Einstellungen → GUI: Kopiere den API-Schlüssel und setze die GUI-Adresse auf 0.0.0.0:8384, damit Gladys sie erreicht. Lege dann die Ordner und Geräte, denen du folgen willst, im Tab „Entdecken“ an. |
+| Adresse von Syncthing | `string` | Ja | Die Adresse der Weboberfläche von Syncthing, mit Port (standardmäßig 8384). |
+| API-Schlüssel | `secret` | Ja | Aktionen → Einstellungen → GUI → API-Schlüssel in Syncthing. |
+| Selbstsignierte Zertifikate akzeptieren | `boolean` | Nein | Nur für eine https:\/\/-Adresse mit dem Zertifikat, das Syncthing selbst erzeugt hat. |
+| Sprache der Namen | `select` | Nein | Namen der Funktionen und Ordnerstatus, wie Gladys sie anzeigt. |
+
+## So installierst du Syncthing in Gladys
+
+1. Öffne in Gladys **Integrationen**: Syncthing erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-syncthing:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-syncthing](https://github.com/guim31/gladys-syncthing).
+
+Syncthing benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Syncthing ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-syncthing) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-syncthing/blob/HEAD/docs/de.md)

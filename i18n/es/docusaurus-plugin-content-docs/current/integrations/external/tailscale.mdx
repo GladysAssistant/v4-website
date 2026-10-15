@@ -1,0 +1,232 @@
+---
+title: "Integración domótica Tailscale, gratuita y de código abierto"
+sidebar_label: "Tailscale"
+description: "Supervise las máquinas de su red Tailscale: conexión, actualizaciones y claves. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-tailscale.png"
+keywords:
+  - "tailscale"
+  - "domótica tailscale"
+  - "gladys tailscale"
+  - "tailscale gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-tailscale instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tailscale","description":"Supervise las máquinas de su red Tailscale: conexión, actualizaciones y claves.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-tailscale","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-tailscale.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T21:43:54Z"}} />
+
+Esta integración conecta Gladys con su red **Tailscale** (su «tailnet»): cada
+máquina de la tailnet — un servidor, un NAS, un teléfono, un router de
+subred — se convierte en un dispositivo de Gladys que indica si está en línea,
+si espera una actualización de Tailscale y cuándo caduca su clave.
+
+Lee la tailnet a través de la **API de Tailscale, en la nube**
+(`api.tailscale.com`). No hay nada que instalar en sus máquinas, y Gladys no
+necesita estar en la tailnet.
+
+Requiere Gladys 5.1 o posterior.
+
+## Antes de empezar
+
+Debe ser **administrador** de la tailnet (rol Owner, Admin o IT admin) para
+crear las credenciales siguientes.
+
+La integración se conecta con uno de estos métodos:
+
+| Método              | Dónde crearlo                                                                | Caducidad           |
+| ------------------- | ---------------------------------------------------------------------------- | ------------------- |
+| Token de acceso API | [Settings → Keys](https://login.tailscale.com/admin/settings/keys)           | tras 1 a 90 días    |
+| Cliente OAuth       | [Settings → OAuth clients](https://login.tailscale.com/admin/settings/oauth) | nunca (recomendado) |
+
+### Token de acceso API
+
+1. Abra [Settings → Keys](https://login.tailscale.com/admin/settings/keys) en
+   la consola de administración de Tailscale.
+2. En **API access tokens**, pulse **Generate access token**, indique una
+   descripción («Gladys») y una duración.
+3. Copie el token (`tskey-api-…`): Tailscale solo lo muestra una vez.
+
+Cuando el token caduca, la integración muestra «Tailscale rechaza las
+credenciales» y los dispositivos pasan a **inaccesibles**: genere uno nuevo y
+péguelo en la configuración.
+
+### Cliente OAuth (recomendado)
+
+Un cliente OAuth nunca caduca, y usted elige exactamente lo que puede hacer.
+
+1. Abra [Settings → OAuth clients](https://login.tailscale.com/admin/settings/oauth).
+2. Pulse **Generate OAuth client**.
+3. Marque el permiso **Devices → Core**:
+   - **Read** basta para supervisar las máquinas;
+   - **Write** también es necesario para activar o desactivar la caducidad de
+     la clave de una máquina desde Gladys.
+4. Copie el **Client ID** y el **Client secret** (`tskey-client-…`): el
+   secreto solo se muestra una vez.
+
+## Configuración
+
+1. Abra la pestaña **Configuración** de la integración.
+2. Elija el **Método de conexión** y complete sus campos:
+   - token de acceso API: péguelo en **Token de acceso API**;
+   - cliente OAuth: pegue **ID del cliente OAuth** y **Secreto del cliente
+     OAuth**.
+3. **Tailnet**: deje `-`, la tailnet de las credenciales. Cámbielo solo si su
+   token puede llegar a varias tailnets: ponga el ID de la tailnet que aparece
+   en **Settings → General** de la consola de administración.
+4. **Intervalo de actualización**: cada cuánto se lee la tailnet, cada 60
+   segundos por defecto (30 segundos como mínimo). Cada lectura es una sola
+   petición, sea cual sea el número de máquinas.
+5. **Aviso de caducidad de claves**: cuántos días antes de que caduque una
+   clave se señala la máquina (14 por defecto).
+6. **Incluir las máquinas compartidas con usted**: las máquinas que otra
+   tailnet comparte con la suya están ocultas por defecto, ya que usted no las
+   administra.
+7. Guarde y pulse **Probar la conexión**: el mensaje indica cuántas máquinas
+   ve la integración.
+8. Abra la pestaña **Descubrimiento** y añada las máquinas que quiera seguir.
+
+## Lo que obtiene
+
+Cada máquina se convierte en un dispositivo con cuatro funciones:
+
+| Función             | Significado                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------------------- |
+| Online              | La máquina está conectada a la tailnet en este momento                                         |
+| Update available    | Existe una versión más reciente de Tailscale para esta máquina                                 |
+| Key expiry          | Días que faltan para que caduque su clave (no se actualiza mientras la caducidad está apagada) |
+| Key expiry disabled | El interruptor del menú **Disable key expiry** de la consola — puede cambiarlo                 |
+
+Activar **Key expiry disabled** desde Gladys equivale a **Disable key expiry**
+en la consola de administración: la máquina no tendrá que volver a
+conectarse nunca. Necesita un token de acceso API, o un cliente OAuth con el
+permiso **Devices → Core: Write**.
+
+Cada dispositivo lleva una insignia **cloud** mientras la API de Tailscale
+responde, e **inaccesible** cuando no: los valores mostrados son entonces los
+últimos leídos.
+
+Las máquinas se reconocen por su identificador de Tailscale: renombrar una
+máquina en la consola conserva su dispositivo y su historial en Gladys.
+
+## Escenas
+
+La integración añade sus propias tarjetas al editor de escenas, en la
+categoría **Integraciones**.
+
+### Disparadores
+
+- **Máquina en línea o sin conexión** — una máquina se conectó a la tailnet o
+  se desconectó. Elija si quiere la máquina y el nuevo estado; vacíos, vale
+  cualquier máquina y cualquier cambio. Variables: `device_name`, `state`
+  (`online` u `offline`), `ip`, `last_seen`.
+- **Nueva máquina en la tailnet** — una máquina se unió a la tailnet. Filtre
+  por **Aprobación** para enterarse solo de las máquinas pendientes de
+  aprobación (si la aprobación de dispositivos está activada). Variables:
+  `device_name`, `authorization` (`authorized` o `pending`), `os`, `user`,
+  `ip`.
+- **Actualización de Tailscale disponible** — hay una versión más reciente de
+  Tailscale para una máquina. Variables: `device_name`, `client_version`.
+- **Clave a punto de caducar** — la clave de una máquina entra en el plazo de
+  aviso de la configuración. Variables: `device_name`, `days_left`,
+  `expires`.
+
+Las acciones siguientes de la escena leen una variable como
+`{{triggerEvent.data.device_name}}`.
+
+Cada disparador se activa **una vez por cambio**, cuando la integración lo
+detecta (en el intervalo de actualización). Arrancar la integración no activa
+nada: primero toma nota de la tailnet tal como está.
+
+Ejemplo: _cuando una máquina se desconecte, enviarme el mensaje
+«\{\{triggerEvent.data.device_name\}\} está sin conexión»_.
+
+### Acciones
+
+- **Actualizar la tailnet** — lee todas las máquinas ahora. Devuelve
+  `machine_count`, `online_count` y `offline_count`.
+- **Leer el estado de una máquina** — devuelve `name`, `online`, `ip`,
+  `last_seen`, `os`, `client_version`, `update_available`,
+  `key_expiry_disabled` y `key_expiry_days` (`-1` cuando la clave no caduca
+  nunca), para las condiciones y mensajes siguientes.
+- **Cambiar la caducidad de la clave** — desactiva la caducidad de la clave de
+  una máquina, o la reactiva. Devuelve `key_expiry_disabled`.
+
+## Panel
+
+Añada el widget **Red Tailscale** a un panel. Muestra:
+
+- cuántas máquinas están en línea y sin conexión;
+- si la API responde, cuándo se leyó la tailnet por última vez, cuántas
+  máquinas tienen una actualización pendiente, una clave a punto de caducar o
+  esperan aprobación;
+- una lista de máquinas, con una insignia para el problema más urgente. Toque
+  una máquina para ver sus direcciones, propietario, etiquetas y fecha de
+  caducidad de la clave, con un enlace a su página en la consola.
+
+Ajustes de cada widget:
+
+- **Máquinas mostradas**: las que requieren atención (por defecto), solo las
+  que están sin conexión, o todas;
+- **Filas**: cuántas máquinas muestra la lista (0 a 8).
+
+El botón **Actualizar** lee la tailnet en el acto; **Consola de admin** abre
+la consola de administración de Tailscale.
+
+## Solución de problemas
+
+| Mensaje                                                 | Qué hacer                                                                        |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Sin credenciales de Tailscale                           | Complete los campos del método de conexión elegido                               |
+| Tailscale rechaza las credenciales                      | El token caducó o fue revocado, o el cliente OAuth es incorrecto: cree uno nuevo |
+| Acceso denegado: al token le falta el permiso «devices» | Dé al cliente OAuth el permiso **Devices → Core**                                |
+| Tailnet no encontrada                                   | Vuelva a poner `-` en **Tailnet**, o el ID exacto de **Settings → General**      |
+| Tailscale limita las peticiones                         | Aumente el intervalo de actualización                                            |
+| La API de Tailscale no es accesible desde Gladys        | Compruebe el acceso a internet del equipo de Gladys (`api.tailscale.com`, HTTPS) |
+
+¿Una máquina aparece **sin conexión** aunque funciona? Está sin conexión para
+Tailscale: el cliente está parado, desconectado o su clave caducó. La consola
+de administración muestra lo mismo.
+
+La integración registra todo lo que hace: abra los registros de la
+integración en Gladys. Nunca escribe un token ni un secreto en los registros.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Tailscale te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | La integración lee su tailnet a través de la API de Tailscale, en la nube: no hay nada que instalar en sus máquinas. Cree un token de acceso API (Settings → Keys, caduca como máximo a los 90 días) o, mejor, un cliente OAuth con el permiso «devices:core» (Settings → OAuth clients, nunca caduca) y péguelo abajo. |
+| Método de conexión | `select` | Sí |  |
+| Token de acceso API | `secret` | No | Solo para el método «Token de acceso API». |
+| ID del cliente OAuth | `string` | No | Solo para el método «Cliente OAuth». |
+| Secreto del cliente OAuth | `secret` | No |  |
+| Tailnet | `string` | No | Deje «-» para la tailnet del token. Si no, su ID, visible en Settings → General. |
+| Intervalo de actualización (s) | `number` | No | Cada cuánto se lee la tailnet, en segundos. Una petición por lectura, sea cual sea el número de máquinas. |
+| Aviso de caducidad de claves (días) | `number` | No | Una máquina cuya clave caduca en este plazo activa «Clave a punto de caducar». |
+| Incluir las máquinas compartidas con usted | `boolean` | No | Máquinas que otra tailnet comparte con la suya. Ocultas por defecto: usted no las administra. |
+
+## Cómo instalar Tailscale en Gladys
+
+1. En Gladys, abre **Integraciones**: Tailscale aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-tailscale:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-tailscale](https://github.com/prohand/gladys-tailscale).
+
+Tailscale requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Tailscale es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-tailscale) — [fuente de esta documentación](https://github.com/prohand/gladys-tailscale/blob/HEAD/docs/es.md)

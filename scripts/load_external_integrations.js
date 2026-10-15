@@ -179,8 +179,7 @@ const TEXTS = {
     aboutBody: (name, ownerName, ownerUrl) =>
       `${name} is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [${ownerName}](${ownerUrl}), not by the Gladys core team.`,
     aboutLinks: (repoUrl, docPath) => [
-      `[Browse all external integrations](/docs/integrations/external/)`,
-      `[Discover the native integrations](/docs/integrations/) built into Gladys`,
+      `[Browse all integrations](/docs/integrations/), native and community`,
       `[Build and publish your own external integration](/docs/dev/external-integrations/)`,
       `[Source code on GitHub](${repoUrl}) — [source of this documentation](${repoUrl}/blob/HEAD/${docPath})`,
     ],
@@ -218,8 +217,7 @@ const TEXTS = {
     aboutBody: (name, ownerName, ownerUrl) =>
       `${name} est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [${ownerName}](${ownerUrl}), et non par l'équipe cœur de Gladys.`,
     aboutLinks: (repoUrl, docPath) => [
-      `[Parcourir toutes les intégrations externes](/fr/docs/integrations/external/)`,
-      `[Découvrir les intégrations natives](/fr/docs/integrations/) intégrées à Gladys`,
+      `[Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires`,
       `[Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)`,
       `[Code source sur GitHub](${repoUrl}) — [source de cette documentation](${repoUrl}/blob/HEAD/${docPath})`,
     ],
@@ -259,8 +257,7 @@ const TEXTS = {
     aboutBody: (name, ownerName, ownerUrl) =>
       `${name} ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [${ownerName}](${ownerUrl}) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.`,
     aboutLinks: (repoUrl, docPath) => [
-      `[Alle externen Integrationen durchsuchen](/de/docs/integrations/external/)`,
-      `[Die nativen Integrationen entdecken](/de/docs/integrations/), die in Gladys eingebaut sind`,
+      `[Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community`,
       `[Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)`,
       `[Quellcode auf GitHub](${repoUrl}) — [Quelle dieser Dokumentation](${repoUrl}/blob/HEAD/${docPath})`,
     ],
@@ -301,16 +298,17 @@ const TEXTS = {
     aboutBody: (name, ownerName, ownerUrl) =>
       `${name} es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [${ownerName}](${ownerUrl}), no el equipo principal de Gladys.`,
     aboutLinks: (repoUrl, docPath) => [
-      `[Explorar todas las integraciones externas](/es/docs/integrations/external/)`,
-      `[Descubrir las integraciones nativas](/es/docs/integrations/) incluidas en Gladys`,
+      `[Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad`,
       `[Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)`,
       `[Código fuente en GitHub](${repoUrl}) — [fuente de esta documentación](${repoUrl}/blob/HEAD/${docPath})`,
     ],
   },
 };
 
-// Keep only what the website needs, so the committed snapshot stays small
-// (config_schema is dropped from it when written, see below).
+// Keep only what the website needs. `categories` (browse categories of the
+// in-app catalog, from the store index entry rather than the manifest, so the
+// store's fallback mapping applies), `transports` and `first_seen_at` feed the
+// filters and the sorting of the integrations catalog.
 const trimIntegration = (integration, slug) => ({
   slug,
   store_slug: integration.store_slug,
@@ -318,17 +316,85 @@ const trimIntegration = (integration, slug) => ({
   name: integration.manifest.name,
   type: integration.manifest.type,
   version: integration.manifest.version,
-  description: integration.manifest.description,
+  description: Object.fromEntries(
+    LOCALES.filter((locale) => integration.manifest.description[locale]).map(
+      (locale) => [locale, integration.manifest.description[locale]]
+    )
+  ),
   cover_url: integration.cover_url,
   docker_image: integration.manifest.docker_image,
   gladys_version: integration.manifest.gladys_version,
   config_schema: integration.manifest.config_schema || [],
+  categories: integration.categories || [],
+  transports: integration.manifest.transports || [],
   stars: integration.github ? integration.github.stars : 0,
+  first_seen_at: integration.first_seen_at || null,
   pushed_at: integration.github ? integration.github.pushed_at : null,
   owner_avatar_url: integration.github
     ? integration.github.owner_avatar_url
     : null,
 });
+
+// What the integrations catalog needs from each integration. The snapshot is
+// bundled with the catalog page only (every integration page gets its own
+// header data inline, see headerProps), so it can grow to thousands of
+// entries without weighing on the rest of the site.
+const catalogEntry = ({
+  slug,
+  store_slug,
+  repo_url,
+  name,
+  type,
+  description,
+  cover_url,
+  categories,
+  transports,
+  stars,
+  first_seen_at,
+  pushed_at,
+  owner_avatar_url,
+}) => ({
+  slug,
+  store_slug,
+  repo_url,
+  name,
+  type,
+  description,
+  cover_url,
+  categories,
+  transports,
+  stars,
+  first_seen_at,
+  pushed_at,
+  owner_avatar_url,
+});
+
+// Data of the header of a generated page, in the page's language.
+const headerProps = (integration, locale) => ({
+  name: integration.name,
+  description:
+    integration.description[locale] || integration.description.en || "",
+  owner: owner(integration.store_slug),
+  owner_avatar_url: integration.owner_avatar_url,
+  repo_url: integration.repo_url,
+  cover_url: integration.cover_url,
+  type: integration.type,
+  version: integration.version,
+  gladys_version: integration.gladys_version,
+  stars: integration.stars,
+  pushed_at: integration.pushed_at,
+});
+
+// A JavaScript literal for an MDX expression. MDX finds the end of an
+// expression by balancing braces before parsing it, so the braces inside
+// strings (an author's description can contain `{{gladys_host}}`) are written
+// as escapes.
+const jsLiteral = (value) =>
+  JSON.stringify(value).replace(/"(?:[^"\\]|\\.)*"/g, (string) =>
+    string.replace(/[{}]/g, (brace) =>
+      brace === "{" ? "\\u007b" : "\\u007d"
+    )
+  );
 
 const oneLine = (value) =>
   String(value === undefined || value === null ? "" : value)
@@ -341,9 +407,13 @@ const yaml = (value) =>
 // Manifest values are written by the integration author too, so they get the
 // same treatment as the documentation below: a configuration description
 // containing `{{gladys_host}}` would otherwise reach the MDX compiler as a JSX
-// expression and fail the build.
+// expression and fail the build. A bare URL would become a link, and an
+// example one such as `http://user:password@…` is not a valid URL, which fails
+// the build too: escaping its slashes keeps it as plain text.
 const text = (value) =>
-  oneLine(value).replace(/[<{}]/g, (character) => `\\${character}`);
+  oneLine(value)
+    .replace(/[<{}]/g, (character) => `\\${character}`)
+    .replace(/:\/\//g, ":\\/\\/");
 
 const cell = (value) => text(value).replace(/\|/g, "\\|");
 
@@ -497,7 +567,9 @@ const buildPage = (integration, authorDoc, locale, docLocale, hasNativeDoc) => {
     "",
     `import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";`,
     "",
-    `<ExternalIntegrationHeader slug="${integration.slug}" />`,
+    `<ExternalIntegrationHeader integration={${jsLiteral(
+      headerProps(integration, locale)
+    )}} />`,
     "",
     ...(authorDoc && docLocale !== locale && texts.docInEnglish
       ? [texts.docInEnglish, ""]
@@ -569,13 +641,16 @@ const removeStalePages = (directory, keptFiles) => {
   const integrations = index.integrations.map((integration) =>
     trimIntegration(integration, slugs[integration.store_slug])
   );
-  integrations.sort((a, b) => b.stars - a.stars || a.name.localeCompare(b.name));
+  // Alphabetical, so that a refresh only adds or edits lines (the catalog
+  // sorts on its own).
+  integrations.sort(
+    (a, b) =>
+      a.name.localeCompare(b.name) || a.store_slug.localeCompare(b.store_slug)
+  );
 
-  // config_schema only feeds the configuration table of the generated pages:
-  // leave it out of the snapshot, which every integration page bundles.
   const snapshot = {
     generated_at: index.generated_at,
-    integrations: integrations.map(({ config_schema, ...rest }) => rest),
+    integrations: integrations.map(catalogEntry),
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(snapshot, null, 2)}\n`);
   console.log(

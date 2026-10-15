@@ -1,0 +1,184 @@
+---
+title: "Hikvision smart home integration, free and open source"
+sidebar_label: "Hikvision"
+description: "Hikvision cameras and recorders: images, detections, alarm I/O and PTZ, on your network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-hikvision.png"
+keywords:
+  - "hikvision"
+  - "hikvision smart home"
+  - "gladys hikvision"
+  - "hikvision gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-hikvision instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Hikvision","description":"Hikvision cameras and recorders: images, detections, alarm I/O and PTZ, on your network.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-hikvision","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-hikvision.png","type":"device","version":"0.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T12:01:34Z"}} />
+
+Connect your **Hikvision IP cameras and recorders (NVR / DVR)** to Gladys, **on your local
+network**: camera images, real-time detections (motion, line crossing, intrusion, tampering…), alarm
+inputs and outputs, PTZ, scenes and a dashboard widget.
+
+- **Local only**: Gladys talks directly to each device through its ISAPI. No Hik-Connect account, no
+  cloud, nothing to open on your router.
+- **One recorder brings all its cameras**: add the address of the NVR, not each camera behind it.
+
+## What you need
+
+- Gladys **5.1 or later**.
+- A Hikvision camera or recorder on the same network as Gladys, with a fixed IP address (DHCP
+  reservation).
+- A user account on that device (see below).
+
+## 1. Prepare the device
+
+In the web interface of the camera or recorder:
+
+1. **Create a dedicated user**: _Configuration > System > User Management > Add_. Give it the
+   **Operator** role. Avoid using `admin`: Gladys does not need it.
+   - To let Gladys switch detections on and off (arm / disarm), the user needs the right to change
+     the settings ("Parameters Settings" / remote configuration).
+2. **Enable the ISAPI**: _Configuration > Network > Advanced Settings > Integration Protocol_ — tick
+   **Enable Hikvision-CGI** with the **Digest** authentication. On recent firmwares it is enabled by
+   default.
+3. **Note the HTTP port** (_Network > Basic Settings > Port_) if it is not 80.
+
+> **Careful with passwords**: Hikvision locks the account (often for 30 minutes) after a few wrong
+> passwords. The integration therefore never retries a refused password by itself: fix it, then
+> save the configuration again (or press **Test the connection**).
+
+## 2. Configure the integration
+
+In Gladys: _Integrations > Hikvision > Configuration_.
+
+| Field                       | What to enter                                                                                                                            |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Addresses                   | IP address of each camera or recorder, separated by commas: `192.168.1.64, 192.168.1.70:8080`. Add `https://` for HTTPS.                 |
+| User name / Password        | The account created above. The same account is used on every device.                                                                     |
+| Check the HTTPS certificate | Leave off: Hikvision devices use a self-signed certificate.                                                                              |
+| Snapshot interval (s)       | How often each camera's image is refreshed in Gladys (60 s by default, 10 s minimum, 0 = only when Gladys asks).                         |
+| Image quality               | **Sub-stream** (recommended). Gladys accepts images up to 150 KB; the main stream is reduced to 1280×720, and replaced if still too big. |
+| Detection hold (s)          | How long a detection stays "on" after the last event of the camera (10 s by default).                                                    |
+| Health check interval (s)   | How often each device is checked (60 s by default).                                                                                      |
+| Detailed logs               | Turn on to diagnose, then off again.                                                                                                     |
+
+Save, then press **Test the connection**: one line per device tells the model, the firmware, the
+cameras online, the detections found, whether events are received live, and the alarm inputs and
+outputs. When something is wrong, the line says what to do.
+
+Then open the **Discover** tab and create the devices you want.
+
+## 3. The devices in Gladys
+
+**One device per camera** (a camera has one, a recorder one per camera behind it):
+
+| Feature                   | Type          | Notes                                                           |
+| ------------------------- | ------------- | --------------------------------------------------------------- |
+| Image                     | camera        | refreshed at the snapshot interval, and on demand               |
+| Motion                    | motion sensor | always present                                                  |
+| Line crossing / Intrusion | motion sensor | when the camera supports these smart detections                 |
+| Tampering                 | tamper        | when the camera supports it                                     |
+| Motion / … detection      | switch        | turns that detection on or off **on the camera** (arm / disarm) |
+| PTZ                       | camera move   | PTZ cameras only: short pan / tilt / zoom steps, always stopped |
+| Preset                    | camera preset | PTZ cameras with saved presets: the list comes from the camera  |
+
+**One "alarm I/O" device per camera or recorder that has dry contacts**: each **alarm input** is a
+binary input (1 while in alarm), each **alarm output** (relay, siren) is a switch.
+
+Each device shows a **local** badge when it answers, **unreachable** otherwise. An orange dot means
+the device answers but its event stream is not connected: detections do not arrive.
+
+## 4. Scenes
+
+### Triggers
+
+- **A Hikvision camera detects something** — filters: the camera, the event (motion, line crossing,
+  intrusion, region entrance / exiting, tampering, face, scene change, unattended or removed object,
+  PIR, video loss, alarm input) and, for smart events, the target (person or vehicle). Fired once per
+  detection, not for every repeat of the camera. Variables: `event_type`, `target`, `device_name`,
+  `channel`, `description`.
+- **A Hikvision camera goes offline** / **is back online** — variables: `device_name` (and `reason`
+  when going offline).
+
+The detection features (Motion, Intrusion…) can also be used with the standard "device state"
+trigger.
+
+### Actions
+
+- **Take a Hikvision snapshot** — captures the image now. Put it right before the Gladys action
+  "Send a camera image" to receive the very moment of the detection. Output: `captured`.
+- **Arm or disarm a Hikvision detection** — switches a detection (motion, line crossing, intrusion,
+  tampering) of a camera on or off. Outputs: `applied`, `enabled`.
+- **Move a Hikvision PTZ camera to a preset** — preset number as saved on the camera. Output:
+  `moved`.
+
+Example: _When an intrusion with target "person" is detected by the Garden camera, and nobody is
+home → take a snapshot → send the camera image → switch the siren (alarm output) on._
+
+## 5. Dashboard widget
+
+Add the **Hikvision** widget to a dashboard: cameras online, detections of the last 24 hours, the
+image of a camera (the one chosen in the widget settings, or by default the one that detected
+something last) and the last detection of each camera. Buttons: **Snapshot**, **Disarm** and
+**Arm** (all the detections of every camera, after confirmation).
+
+## Troubleshooting
+
+| Problem                                 | Solution                                                                                                                                                |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "user name or password refused"         | Check them in the web interface of the device. If the account got locked, wait about 30 minutes, then save the configuration again.                     |
+| "the device does not answer the ISAPI"  | Enable the integration protocol (step 1.2).                                                                                                             |
+| "this user lacks the rights"            | Give the user the Operator role, or the right to change parameters.                                                                                     |
+| No detection arrives                    | Check that the detection is enabled on the camera **and** that "Notify surveillance center" is ticked in its linkage method. Turn on the detailed logs. |
+| "the snapshot is over the 150 KB"       | Lower the sub-stream resolution of the camera (e.g. 640×360).                                                                                           |
+| A camera behind the recorder is offline | Gladys shows it unreachable and fires "goes offline"; it comes back by itself.                                                                          |
+| HTTPS refused                           | Use `http://` or untick "Check the HTTPS certificate"; check the port.                                                                                  |
+
+## Privacy and security
+
+Everything stays between Gladys and your devices, on your network. The password is stored in a
+secret field of Gladys and never written to the logs. The integration keeps in its `/data` folder
+only what it learnt from the devices (model, serial number, channels) so that a device that is off
+at startup still shows up as offline.
+
+## Configuration settings
+
+These are the settings Hikvision asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Everything stays on your network: Gladys talks to each camera or recorder (NVR) over its local ISAPI, no Hik-Connect account needed. Create a dedicated user on the device (Operator role), check that the integration protocol (ISAPI) is enabled, then enter the address of each device below. |
+| Addresses | `string` | Yes | IP address (or name) of each camera or recorder, separated by commas. Add the port when it is not 80, and https:\/\/ for HTTPS. A recorder brings all its cameras: do not add them as well. |
+| User name | `string` | Yes | The same account on every device. A dedicated Operator user is better than admin. |
+| Password | `secret` | Yes | Hikvision locks the account after a few wrong passwords: a refused password is not retried until you save the configuration again. |
+| Check the HTTPS certificate | `boolean` | No | Only for https:\/\/ addresses. Hikvision devices ship a self-signed certificate: leave this off unless you installed a certificate Gladys trusts. |
+| Snapshot interval (s) | `number` | No | How often each camera's image is refreshed in Gladys, in seconds (10 minimum). 0 turns it off: Gladys then gets an image only when it asks for one. |
+| Image quality | `select` | No | Gladys accepts images up to 150 KB. The sub-stream always fits; the main stream is reduced to 1280×720 and replaced by the sub-stream when still too heavy. |
+| Detection hold (s) | `number` | No | How long a detection stays on after the last event the camera sent. Cameras repeat their events while something moves: one scene trigger per detection, not per repeat. |
+| Health check interval (s) | `number` | No | How often each device is checked: reachable or not, cameras online, alarm outputs and detection switches. |
+| Detailed logs (debug) | `boolean` | No | Log every event the devices send. Turn it on to understand why a detection does not show up, then off again: it is verbose. Passwords are never logged. |
+
+## How to install Hikvision in Gladys
+
+1. In Gladys, open **Integrations**: Hikvision appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-hikvision:0.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-hikvision](https://github.com/prohand/gladys-hikvision).
+
+Hikvision requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Hikvision is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-hikvision) — [source of this documentation](https://github.com/prohand/gladys-hikvision/blob/HEAD/docs/en.md)

@@ -1,0 +1,185 @@
+---
+title: "Integración domótica Huawei Solar, gratuita y de código abierto"
+sidebar_label: "Huawei Solar"
+description: "Inversores Huawei SUN2000, baterías LUNA2000 y medidores, local o nube. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Huawei-Solar.png"
+keywords:
+  - "huawei solar"
+  - "domótica huawei solar"
+  - "gladys huawei solar"
+  - "huawei solar gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/gboulvin/Gladys-Huawei-Solar instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Huawei Solar","description":"Inversores Huawei SUN2000, baterías LUNA2000 y medidores, local o nube.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Huawei-Solar","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Huawei-Solar.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T22:02:36Z"}} />
+
+Supervise y controle su instalación solar Huawei desde Gladys: inversores
+**SUN2000**, baterías **LUNA2000** y el medidor **DTSU666-H / DDSU666-H**
+conectado al inversor.
+
+Hay dos conexiones disponibles, por separado o juntas:
+
+| Conexión  | Cómo                                                           | Actualización          | Órdenes |
+| --------- | -------------------------------------------------------------- | ---------------------- | ------- |
+| **Local** | Modbus TCP mediante el SDongle, un EMMA o el WLAN del inversor | cada 30 s o más        | sí      |
+| **Nube**  | API Northbound de FusionSolar                                  | cada 5 min como máximo | no      |
+
+Con ambas, el interruptor **Preferir la conexión local** elige la preferida;
+si falla, la otra toma el relevo y la insignia de los dispositivos muestra un
+punto naranja.
+
+Requiere **Gladys 5.1.0** o posterior.
+
+## 1. Conexión local (recomendada)
+
+1. En la **app FusionSolar**, abra la _Puesta en servicio_ de su inversor
+   (acceso de instalador), luego _Ajustes > Configuración de comunicación >
+   Parámetros del Dongle > Modbus TCP_ y elija **Activar (sin restricción)**.
+2. Asigne una IP fija al SDongle en su router.
+3. En Gladys, indique:
+   - **Dirección del inversor / SDongle**: la IP del SDongle, p. ej.
+     `192.168.1.50`;
+   - **Puerto Modbus**: `502` (SDongle / EMMA), `6607` (WLAN del inversor);
+   - **Unit id Modbus**: normalmente `1` (SDongle), `0` (WLAN del inversor).
+4. Pulse **Probar la conexión**.
+
+Conviene saber:
+
+- el SDongle solo acepta unos pocos clientes Modbus simultáneos: si otro
+  sistema domótico ya lo lee, mantenga un intervalo de 60 s o más;
+- algunas órdenes (limitación de inyección, arranque / apagado del inversor)
+  pueden requerir permisos de instalador según el firmware: la acción de
+  escena responde entonces `success: false` con el mensaje del inversor.
+
+## 2. Conexión en la nube (FusionSolar)
+
+La nube usa la **API Northbound** de FusionSolar, que necesita una cuenta API
+dedicada: su usuario habitual de la app **no sirve**.
+
+1. Pida a su instalador que cree una cuenta API en FusionSolar
+   (_Sistema > Gestión de empresa > Gestión Northbound_), con acceso a su
+   planta.
+2. En Gladys, indique:
+   - **Servidor FusionSolar**: la dirección que usa en el navegador, p. ej.
+     `https://eu5.fusionsolar.huawei.com`;
+   - **Usuario de la API** y **Contraseña API (system code)**.
+3. Pulse **Probar la conexión**.
+
+Huawei limita el número de llamadas a la API: la nube se lee cada 5 minutos
+como máximo, sea cual sea el intervalo de actualización.
+
+## 3. Crear los dispositivos
+
+Abra la pestaña **Descubrimiento** de la integración y cree los dispositivos
+encontrados:
+
+- **Huawei SUN2000…** (inversor): producción solar (W), producción total
+  (kWh), producción de hoy (kWh), potencia de entrada FV (W), temperatura
+  interna, estado;
+- **Huawei power meter** (medidor): potencia de red (W, positiva al consumir
+  de la red, negativa al inyectar), potencias (W) e índices (kWh) de consumo /
+  inyección, consumo de la casa (W), tensión, corriente;
+- **Huawei LUNA2000 battery** (batería): nivel (%), potencia de carga /
+  descarga (W), total cargado / descargado (kWh, en local), energía restante
+  (kWh, en local), estado, **modo de funcionamiento** (modificable desde
+  Gladys con la conexión local: maximizar autoconsumo, por franjas horarias,
+  inyección total a la red).
+
+Los índices de producción y de red alimentan el seguimiento de energía de
+Gladys.
+
+## 4. Escenas
+
+**Disparadores** (categoría _Integraciones_):
+
+- **Cambio de estado del inversor**: la producción empieza, se detiene, el
+  inversor entra en avería… Variables: `status`, `previous_status`,
+  `production_power`.
+- **Cambio en el intercambio con la red**: la casa empieza a **inyectar**
+  excedente, a **consumir** de la red, o está **equilibrada** (banda muerta
+  ajustable en la configuración, 100 W por defecto). Ideal para arrancar un
+  termo o un cargador de coche con excedente. Variables: `flow`,
+  `previous_flow`, `grid_power`.
+- **Nivel de batería cruzado**: la batería sube o baja de un nivel, en pasos
+  del 10 %. Variables: `direction`, `level`, `battery_level`.
+
+**Acciones** (conexión local, salvo la última):
+
+- forzar la **carga** o la **descarga** de la batería (potencia, duración),
+  **detener** el forzado;
+- cambiar el **modo de funcionamiento** de la batería;
+- **limitar la inyección a la red**: sin límite, inyección cero o límite en
+  vatios;
+- **arrancar o apagar** el inversor;
+- **leer la instalación solar**: expone `production_power`,
+  `daily_production`, `house_power`, `grid_power`, `battery_level`,
+  `battery_power` e `inverter_status` a las acciones siguientes.
+
+Cada orden devuelve `success` y `message`: use una condición sobre `success`
+para reaccionar a un fallo.
+
+## 5. Widgets del panel
+
+- **Resumen solar**: producción, casa, red y batería en directo, curva del
+  día, estado del inversor, producción de hoy, intercambio con la red y
+  conexión.
+- **Control de batería**: nivel, potencia de carga y descarga, modo de
+  funcionamiento, y botones para forzar una carga o una descarga, detenerla o
+  cambiar el modo.
+
+## Solución de problemas
+
+- _Cannot connect to …:502_: Modbus TCP no está activado en el dongle, la IP
+  es incorrecta o el dongle está ocupado por otro cliente.
+- _illegal data address_: el registro no existe en su modelo (p. ej. sin
+  batería): la integración lo ignora al leer.
+- _FusionSolar login refused_: compruebe la dirección del servidor, el
+  usuario de la API y el system code; una cuenta normal no sirve.
+- _rate limit reached_: espere unos minutos y use esta cuenta API desde una
+  sola integración.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Huawei Solar te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Conecte su instalación Huawei en local (Modbus TCP mediante el SDongle, el EMMA o el WLAN del inversor) y/o mediante la nube FusionSolar (cuenta API Northbound). Con ambas, el interruptor de abajo elige la preferida y la otra sirve de respaldo. Las órdenes (batería, límite de inyección) requieren la conexión local. |
+| Conexión local (Modbus TCP) | `section` | No | Active Modbus TCP en el SDongle desde la app FusionSolar (Puesta en servicio > Ajustes > Configuración de comunicación > Parámetros del Dongle > Modbus TCP: Activar (sin restricción)). Puerto 502 mediante el SDongle; puerto 6607 y unit id 0 mediante el WLAN del inversor. |
+| Dirección del inversor / SDongle | `string` | No | Dirección IP o nombre de host en su red local. Déjelo vacío para usar solo la nube. |
+| Puerto Modbus | `number` | No |  |
+| Unit id Modbus | `number` | No | Normalmente 1 mediante el SDongle, 0 mediante el WLAN del inversor. |
+| Conexión en la nube (FusionSolar) | `section` | No | Usa la API Northbound de FusionSolar: pida a su instalador una cuenta API (Sistema > Gestión de empresa > Gestión Northbound). Su usuario habitual de la app no sirve aquí. Los datos se actualizan cada 5 minutos como máximo. |
+| Servidor FusionSolar | `string` | No | La dirección que usa para entrar en FusionSolar desde un navegador, p. ej. https:\/\/eu5.fusionsolar.huawei.com o https:\/\/intl.fusionsolar.huawei.com. |
+| Usuario de la API | `string` | No |  |
+| Contraseña API (system code) | `secret` | No |  |
+| Ajustes avanzados | `section` | No | Intervalo de lectura de las medidas y banda muerta del disparador de escena «cambio en el intercambio con la red». |
+| Intervalo de actualización (s) | `number` | No | Cada cuánto se lee la instalación, en segundos (mínimo 30 s en local, 300 s mediante la nube). |
+| Banda muerta de red (W) | `number` | No | Por debajo de esta potencia, el intercambio con la red se considera equilibrado: evita disparos repetidos en torno a cero. |
+
+## Cómo instalar Huawei Solar en Gladys
+
+1. En Gladys, abre **Integraciones**: Huawei Solar aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/gboulvin/gladys-huawei-solar:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/gboulvin/Gladys-Huawei-Solar](https://github.com/gboulvin/Gladys-Huawei-Solar).
+
+Huawei Solar requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Huawei Solar es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [gboulvin](https://github.com/gboulvin), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/gboulvin/Gladys-Huawei-Solar) — [fuente de esta documentación](https://github.com/gboulvin/Gladys-Huawei-Solar/blob/HEAD/docs/es.md)

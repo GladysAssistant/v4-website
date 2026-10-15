@@ -1,0 +1,172 @@
+---
+title: "Lyrion Music Server smart home integration, free and open source"
+sidebar_label: "Lyrion Music Server"
+description: "Control Squeezebox and squeezelite players of Lyrion (LMS): music, volume, favorites, announcements. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-lyrion.png"
+keywords:
+  - "lyrion music server"
+  - "lyrion music server smart home"
+  - "gladys lyrion music server"
+  - "lyrion music server gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-lyrion instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Lyrion Music Server","description":"Control Squeezebox and squeezelite players of Lyrion (LMS): music, volume, favorites, announcements.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-lyrion","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-lyrion.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T21:57:34Z"}} />
+
+Control the players of your **Lyrion Music Server** (formerly Logitech Media Server, LMS) from Gladys:
+Squeezebox Touch, Radio, Boom, Duet, piCorePlayer, squeezelite and every compatible player. Gladys
+follows what each player plays, controls it, plays your Lyrion favorites, pauses the whole house and
+plays announcements that give the music back where it was.
+
+Tested with Lyrion Music Server 9.1 and squeezelite players, not with a physical Squeezebox: feedback
+welcome. This integration is not affiliated with the Lyrion project nor with Logitech.
+
+## Requirements
+
+- Gladys Assistant 5.1 or later.
+- A Lyrion Music Server reachable from Gladys on the local network: web
+  port **9000** and, for instant updates, CLI port **9090** (both open by default). Logitech Media
+  Server 8 has the same API and should work too.
+- Nothing to install on the players.
+
+## Configuration
+
+1. In **Integrations**, open **Lyrion Music Server** and type the **server address** (IP address or
+   host name, e.g. `192.168.1.20`). Change the **web port** if yours is not 9000.
+2. If password protection is on in Lyrion (**Settings → Advanced → Security**), type the **user name**
+   and the **password**.
+3. **CLI port**: Lyrion announces every change on it (9090 by default), so Gladys sees a new song or
+   a volume change at once. `0` turns it off: Gladys then reads the players every 5 seconds.
+4. **Language of the feature names**: French by default. It is also used for the error messages of
+   the scene actions.
+5. Open the **Discovery** tab: every player of the server is there. Click **Add to Gladys**.
+
+## Devices
+
+One device per player, identified by its Lyrion player id (the MAC address of a Squeezebox or of
+squeezelite): renaming a player or changing its IP address keeps the same device.
+
+| Feature        | What it does                                                                          |
+| -------------- | ------------------------------------------------------------------------------------- |
+| Power          | Turns the player on or off (Lyrion's power button).                                   |
+| Playback state | 1 while the player plays, 0 otherwise (paused, stopped, off).                         |
+| Play, Pause    | Play or resume, pause.                                                                |
+| Stop           | Stops the playback.                                                                   |
+| Previous, Next | Previous or next song of the queue.                                                   |
+| Volume         | 0 to 100.                                                                             |
+| Mute           | Mutes or unmutes (each press toggles).                                                |
+| Title, Artist  | What plays now; for a radio, the song it announces when it does, else the station.    |
+| Announcement   | Target of Gladys' **Talk on a speaker** scene action: speaks, then the music resumes. |
+
+The playback buttons and the volume belong to the **Music** category of Gladys: the **Music** box of
+the dashboard drives them. The **Lyrion players** widget below shows the rest.
+
+## Dashboard widget
+
+**Lyrion players** has one optional setting, a **player**:
+
+- **Empty**: every player of the server in a list, with what it plays and its state, and a
+  **Pause all** button while something plays.
+- **A player**: the cover (when Lyrion has one), the song, the artist and the album, the state, the
+  volume, the group it plays with, and four buttons: play/pause, next, volume − and volume +.
+  A player that is off offers **Turn on**.
+
+## Scene triggers
+
+| Trigger          | When                                                          | Filters                                      | Variables                         |
+| ---------------- | ------------------------------------------------------------- | -------------------------------------------- | --------------------------------- |
+| Playback started | A player starts or resumes playing.                           | Player                                       | Player name, title, artist, album |
+| Playback stopped | A player stops playing.                                       | Player, reason (paused, stopped, turned off) | Same, plus the reason (key)       |
+| Song changed     | A player starts a new song, or a radio announces a new title. | Player                                       | Player name, title, artist, album |
+
+Triggers reflect what the players really do, whoever asked: a scene that starts the music on
+"Playback stopped" would loop. Nothing fires for what was already playing when the integration
+starts, nor during an announcement.
+
+## Scene actions
+
+| Action                  | Fields                                              | Result                                |
+| ----------------------- | --------------------------------------------------- | ------------------------------------- |
+| Play a Lyrion favorite  | Player, favorite (name or position: `FIP`, `1`)     | Turns the player on and plays it.     |
+| Set the volume          | Player (empty: every player), volume                |                                       |
+| Pause every player      | —                                                   | Output: the number of players paused. |
+| Play an announcement    | Player, audio address (http/https), optional volume | Plays it, then gives the music back.  |
+| Join a group of players | Player, player to join                              | Both play in sync (Lyrion sync).      |
+| Leave the group         | Player                                              | The player plays on its own again.    |
+
+A favorite is found by its name (case and accents ignored), else by its position among the playable
+favorites of the top level of Lyrion (folders do not count). An announcement is inserted after the
+current song, played, then removed: the player gets back its song, position, volume, state, repeat
+mode and power.
+
+## Scene examples
+
+- **Morning radio**: at 7:30 on weekdays, _Play a Lyrion favorite_ `FIP` on the kitchen player, then
+  _Set the volume_ to 25.
+- **Doorbell**: when the doorbell rings, _Play an announcement_ with the address of a chime MP3 on
+  the hall player (one action per player), at volume 60.
+- **Leaving home**: when the last person leaves, _Pause every player_.
+- **Party**: _Join a group_ for the living room and the kitchen, and _Leave the group_ at midnight.
+
+## Troubleshooting
+
+- **"The Lyrion server does not answer"**: check the address and the web port (open
+  `http://<address>:9000` in a browser from the same network).
+- **"Lyrion refused the user name or the password"**: same credentials as the Lyrion web interface.
+- **Changes take 5 seconds**: the CLI port is closed or off; Gladys reads the players every 5 seconds
+  instead. Check port 9090, or the "CLI" plugin of Lyrion.
+- **A player is missing**: it must be connected to this server (it shows in the Lyrion web
+  interface), then run a scan in the Discovery tab.
+- Logs: in the integration page; `LOG_LEVEL=debug` shows every read.
+
+## Limits
+
+- One Lyrion server per integration; no automatic discovery (Lyrion only answers broadcast queries,
+  which the sandbox does not carry): type its address.
+- The music features have no row in the "devices in a room" box of Gladys: use the Music box or the
+  Lyrion players widget.
+- An announcement on a group plays on the whole group; with shuffle on, the position given back may
+  differ. A stream that never ends is cut after 10 minutes.
+- Only the top level of the favorites is offered.
+- The local network only: the integration talks to the server, never to a cloud service.
+
+## Configuration settings
+
+These are the settings Lyrion Music Server asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect your Lyrion server | `section` | No | Type the address of the computer that runs Lyrion Music Server (formerly Logitech Media Server). Every player it knows (Squeezebox, piCorePlayer, squeezelite...) then shows up in the Discovery tab. |
+| Server address | `string` | Yes | IP address or host name of the Lyrion server. |
+| Web port | `number` | No | Port of the Lyrion web interface (9000 by default). |
+| User name | `string` | No | Only if password protection is on in Lyrion (Settings, Advanced, Security). |
+| Password | `secret` | No |  |
+| CLI port | `number` | No | Lyrion announces every change on this port (9090 by default): instant updates. 0 turns it off: the players are then read every 5 seconds. |
+| Language of the feature names | `select` | No | Also used for the error messages of the scene actions. |
+
+## How to install Lyrion Music Server in Gladys
+
+1. In Gladys, open **Integrations**: Lyrion Music Server appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-lyrion:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-lyrion](https://github.com/guim31/gladys-lyrion).
+
+Lyrion Music Server requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Lyrion Music Server is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-lyrion) — [source of this documentation](https://github.com/guim31/gladys-lyrion/blob/HEAD/docs/en.md)
