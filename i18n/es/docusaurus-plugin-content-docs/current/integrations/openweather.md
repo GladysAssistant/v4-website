@@ -9,7 +9,7 @@ Esta integración te permite mostrar la previsión meteorológica en Gladys Assi
 
 :::info[Desde Gladys 4.85, el tiempo también puede venir de una integración externa]
 
-Los proveedores meteorológicos ahora pueden crearse como [integraciones externas](/es/docs/integrations/external/), que admiten cualquier proveedor (Météo France, Open-Meteo, AccuWeather…) y son compatibles con las alertas meteorológicas, las imágenes del proveedor y los desencadenadores de escena de alertas meteorológicas. Al instalar una, esta tiene prioridad automáticamente sobre este servicio OpenWeather integrado, por lo que ahora aparece marcado como obsoleto en el catálogo.
+Los proveedores meteorológicos ahora pueden crearse como [integraciones externas](/es/docs/integrations/?origin=community), que admiten cualquier proveedor (Météo France, Open-Meteo, AccuWeather…) y son compatibles con las alertas meteorológicas, las imágenes del proveedor y los desencadenadores de escena de alertas meteorológicas. Al instalar una, esta tiene prioridad automáticamente sobre este servicio OpenWeather integrado, por lo que ahora aparece marcado como obsoleto en el catálogo.
 
 :::
 

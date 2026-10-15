@@ -15,7 +15,7 @@ slug: matterbridge-ai-plugin-factory
 :::info[Este artículo ya no describe el método recomendado]
 Desde la publicación de este artículo, Gladys cuenta con **integraciones externas**: integraciones empaquetadas como contenedores Docker, publicadas en GitHub e instalables con un solo clic desde el catálogo de Gladys. Ahora son la forma recomendada de añadir un dispositivo que no es compatible de forma nativa, y cualquiera puede crear una, en cualquier lenguaje, sin revisión.
 
-👉 [Explora el catálogo de integraciones externas](/es/docs/integrations/external/) o [descubre cómo crear una](/es/docs/dev/external-integrations/).
+👉 [Explora el catálogo de integraciones externas](/es/docs/integrations/?origin=community) o [descubre cómo crear una](/es/docs/dev/external-integrations/).
 
 Este artículo se conserva a modo de archivo.
 :::

@@ -25,7 +25,7 @@ const worksWithContent = {
       primaryCta: { label: "Browse all integrations", href: "/docs/integrations/" },
       secondaryCta: {
         label: "Community integrations →",
-        href: "/docs/integrations/external/",
+        href: "/docs/integrations/?origin=community",
       },
     },
     problem: {
@@ -259,7 +259,7 @@ const worksWithContent = {
       primaryCta: { label: "Voir toutes les intégrations", href: "/docs/integrations/" },
       secondaryCta: {
         label: "Intégrations communautaires →",
-        href: "/docs/integrations/external/",
+        href: "/docs/integrations/?origin=community",
       },
     },
     problem: {
@@ -493,7 +493,7 @@ const worksWithContent = {
       primaryCta: { label: "Alle Integrationen ansehen", href: "/docs/integrations/" },
       secondaryCta: {
         label: "Community-Integrationen →",
-        href: "/docs/integrations/external/",
+        href: "/docs/integrations/?origin=community",
       },
     },
     problem: {
@@ -727,7 +727,7 @@ const worksWithContent = {
       primaryCta: { label: "Ver todas las integraciones", href: "/docs/integrations/" },
       secondaryCta: {
         label: "Integraciones de la comunidad →",
-        href: "/docs/integrations/external/",
+        href: "/docs/integrations/?origin=community",
       },
     },
     problem: {

@@ -51,7 +51,7 @@ It's also true for all Wi-Fi devices like smart plugs or bulbs directly connecte
 
 ### If your device isn't Matter-compatible
 
-You don't need Matter to use a device in Gladys. If your device or service has no native integration, look at the [external integrations catalog](/docs/integrations/external/): community integrations you install in one click, without any command line or configuration file.
+You don't need Matter to use a device in Gladys. If your device or service has no native integration, look at the [external integrations catalog](/docs/integrations/?origin=community): community integrations you install in one click, without any command line or configuration file.
 
 And if the one you need doesn't exist yet, you can create it: see the [external integrations developer guide](/docs/dev/external-integrations/).
 

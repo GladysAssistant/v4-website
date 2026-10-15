@@ -43,7 +43,7 @@ Das hat die Community bereits veröffentlicht:
 
 Danke an [@callemand](https://github.com/callemand), [@cicoub13](https://github.com/cicoub13), [@Dreamthy](https://github.com/Dreamthy), [@Terdious](https://github.com/Terdious) und [@William-De71](https://github.com/William-De71) für diese ersten Integrationen!
 
-👉 **[Den vollständigen Katalog auf der Website ansehen](/de/docs/integrations/external/)**, live aktualisiert.
+👉 **[Den vollständigen Katalog auf der Website ansehen](/de/docs/integrations/?origin=community)**, live aktualisiert.
 
 ## 👨‍💻 Ein Aufruf an alle Entwickler: Wir brauchen dich
 
