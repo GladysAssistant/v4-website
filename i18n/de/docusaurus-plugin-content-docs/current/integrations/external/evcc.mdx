@@ -1,0 +1,202 @@
+---
+title: "evcc Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "evcc"
+description: "Solarladen mit evcc: Energiefluss, Ladepunkte, Fahrzeuge, Modi und Limits. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-evcc.png"
+keywords:
+  - "evcc"
+  - "evcc smart home"
+  - "gladys evcc"
+  - "evcc gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-evcc instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"evcc","description":"Solarladen mit evcc: Energiefluss, Ladepunkte, Fahrzeuge, Modi und Limits.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-evcc","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-evcc.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T11:50:38Z"}} />
+
+Diese Integration bringt [evcc](https://evcc.io) in Gladys. evcc steuert das Laden von
+Elektrofahrzeugen mit Solarüberschuss, dynamischen Tarifen oder einem Ladeplan. Gladys folgt evcc
+live (Solarproduktion, Haus, Netz, Batterie, Ladepunkte, Fahrzeuge), ändert Lademodus und Limits
+und startet Szenen, wenn ein Fahrzeug angesteckt wird oder ein Ladevorgang endet.
+
+Die Integration spricht mit evcc in deinem lokalen Netz, ohne Cloud. Entwickelt und getestet wurde
+sie gegen den Demo-Modus von evcc (Versionen 0.210 und 0.317), **ohne echte Wallbox: Rückmeldungen
+sind willkommen**.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1 oder neuer.
+- Ein evcc in deinem Netz (Raspberry Pi, Docker, Home Assistant…), empfohlen ab Version 0.200.
+  Ältere Versionen werden so gut wie möglich gelesen.
+- Die Adresse von evcc, wie du sie im Browser öffnest, zum Beispiel `http://192.168.1.20:7070`.
+  Gladys muss sie erreichen können.
+
+## Konfiguration
+
+1. **Integrationen → evcc**, dann **Konfiguration**.
+2. **Adresse von evcc**: die Adresse seiner Weboberfläche. Ohne Port wird 7070 verwendet. Hinter
+   einem Reverse-Proxy ist ein Pfad erlaubt (`https://example.org/evcc`).
+3. **Admin-Passwort**: optional. Neuere evcc-Versionen ändern Modus und Limits ohne Passwort. Wenn
+   dein evcc (oder dein Proxy) mit „nicht autorisiert“ antwortet, gib es ein.
+4. **Sprache der Funktionsnamen**: standardmäßig Französisch. Die Namen werden beim Hinzufügen des
+   Geräts festgelegt.
+5. Speichere und klicke auf **Verbindung testen**: die evcc-Version und die Anzahl der Ladepunkte
+   und Fahrzeuge werden angezeigt.
+6. Füge im Tab **Entdecken** die gewünschten Geräte hinzu.
+
+Die Integration folgt evcc über seinen Websocket: die Werte kommen bei jedem evcc-Zyklus
+(standardmäßig 30 s). Fällt der Websocket aus, liest sie den Zustand alle 30 s und verbindet sich
+selbst neu.
+
+## Die Geräte
+
+### Standort
+
+Ein Gerät mit dem Namen deines evcc-Standorts, mit dem, was evcc misst:
+
+| Funktion        | Detail                                                                 |
+| --------------- | ---------------------------------------------------------------------- |
+| Solarproduktion | W, wenn evcc einen PV-Zähler hat                                       |
+| Hausverbrauch   | W                                                                      |
+| Netz            | W, positiv beim Bezug, negativ bei der Einspeisung                     |
+| Hausbatterie    | Stand in %, Lade- und Entladeleistung in W, wenn es eine Batterie gibt |
+| Netzpreis       | aktueller Preis einer kWh, wenn in evcc ein Tarif eingerichtet ist     |
+
+### Ladepunkt
+
+Ein Gerät pro evcc-Ladepunkt:
+
+| Funktion                 | Detail                                                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Modus                    | **steuerbar**: Aus, PV, Min + PV, Schnell                                                                                |
+| Ladezustand              | lädt, angesteckt, wartet (evcc wartet auf Sonne oder ein Zeitfenster), Pause (Fahrzeug voll), frei                       |
+| Fahrzeug angesteckt      | ja oder nein                                                                                                             |
+| Ladeleistung             | kW                                                                                                                       |
+| Ladestrom                | A                                                                                                                        |
+| Energie des Ladevorgangs | seit dem Anstecken geladene kWh                                                                                          |
+| Restzeit                 | Minuten, Schätzung von evcc während des Ladens                                                                           |
+| Ladelimit                | **steuerbar**: angestrebter Batteriestand für diesen Ladevorgang, in %                                                   |
+| Fahrzeug                 | Name des von evcc erkannten Fahrzeugs                                                                                    |
+| Günstiges Netzladen      | evcc lädt, weil das Netz günstig ist (dynamischer Tarif)                                                                 |
+| Zähler der Wallbox       | Zählerstand in kWh, wenn die Wallbox einen Zähler hat: Gladys leitet daraus Verbrauch und Kosten im Energiemonitoring ab |
+
+Seit evcc 0.317 heißt der Modus „PV“ in evcc **Smart**, und „Min + PV“ ist Smart mit der Option
+**Immer laden**. Die Integration behält die vier bisherigen Modi, die jede evcc-Version versteht.
+
+Ein integriertes Gerät (Wärmepumpe, von evcc geschaltete Steckdose) hat nur Modus, Zustand,
+Leistung, Energie und Zähler.
+
+### Fahrzeug
+
+Ein Gerät pro in evcc eingerichtetem Fahrzeug:
+
+| Funktion      | Detail                                                                   |
+| ------------- | ------------------------------------------------------------------------ |
+| Batteriestand | %, bekannt, solange das Fahrzeug angesteckt ist (der letzte Wert bleibt) |
+| Reichweite    | km, ebenso                                                               |
+| Ladelimit     | **steuerbar**: maximaler Batteriestand des Fahrzeugs in evcc, in %       |
+| Angesteckt    | das Fahrzeug ist an einem Ladepunkt angesteckt                           |
+| Ladeplan      | der nächste Plan (Stand und Uhrzeit) oder „Kein Plan“                    |
+
+## Dashboard-Widget
+
+Das Widget **evcc** zeigt den Energiefluss (Solar, Haus, Netz in kW), die Hausbatterie, den
+Netzpreis und eine Zeile pro Ladepunkt (Zustand, Leistung, Modus). Vier Tasten ändern den Modus
+eines Ladepunkts: den in den Widget-Einstellungen gewählten, sonst den ersten. Der aktuelle Modus
+trägt ein Häkchen. Antwortet evcc nicht mehr, zeigt das Widget die letzten bekannten Werte, ohne
+Tasten.
+
+## Szenen-Auslöser
+
+| Auslöser            | Wann                                                                            | Variablen                                                                |
+| ------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Fahrzeug angesteckt | ein Fahrzeug wird angesteckt, sobald evcc es erkennt (höchstens 2 Minuten)      | Ladepunkt, Fahrzeug                                                      |
+| Fahrzeug abgesteckt | ein Fahrzeug wird abgesteckt                                                    | Ladepunkt, Fahrzeug, geladene Energie (kWh), angesteckt (Minuten)        |
+| Laden gestartet     | ein Ladevorgang beginnt; eine kurze Pause (Wolken) ist kein neuer Ladevorgang   | Ladepunkt, Fahrzeug, Modus                                               |
+| Laden beendet       | der Ladevorgang steht seit 10 Minuten still, oder das Fahrzeug wurde abgesteckt | Ladepunkt, Fahrzeug, Energie (kWh), Ladedauer (Minuten), Solaranteil (%) |
+| Lademodus geändert  | der Modus eines Ladepunkts ändert sich, in evcc oder über Gladys                | Ladepunkt, neuer Modus, vorheriger Modus                                 |
+
+In einer Nachricht schreibst du eine Variable als `{{triggerEvent.data.vehicle}}`,
+`{{triggerEvent.data.energy_kwh}}`…
+
+Jeder Auslöser lässt sich auf einen Ladepunkt und, außer der Modusänderung, auf ein Fahrzeug
+beschränken. Die Modusänderung lässt sich auf einen Modus beschränken.
+
+## Szenen-Aktionen
+
+| Aktion               | Wirkung                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Lademodus einstellen | Aus, PV, Min + PV oder Schnell an einem Ladepunkt                                                            |
+| Ladelimit einstellen | Batteriestand (%) eines Ladepunkts oder Fahrzeugs, oder Energie (kWh) eines Ladepunkts; 0 entfernt das Limit |
+
+Eine abgelehnte Aktion (evcc nicht erreichbar, Wert außerhalb der Grenzen, ein Gerät, das kein
+Ladepunkt ist) schlägt mit einer klaren Meldung fehl, und die Szene läuft weiter.
+
+## Szenen-Beispiele
+
+- **Abends schnell laden, wenn die Batterie leer ist**: um 21 Uhr, wenn der Batteriestand des
+  Fahrzeugs unter 30 % liegt, den Modus des Ladepunkts auf Schnell stellen, dann das Limit auf 60 %.
+- **Wissen, wann das Auto voll ist**: Auslöser „Laden beendet“ für dein Fahrzeug, Nachricht „Laden
+  beendet: `{{triggerEvent.data.energy_kwh}}` kWh, `{{triggerEvent.data.solar_percent}}` % Solar“.
+- **Beim Losfahren zurück auf PV**: Auslöser „Fahrzeug abgesteckt“, den Modus auf PV stellen, damit
+  der nächste Ladevorgang wieder mit dem Überschuss beginnt.
+
+## Fehlerbehebung
+
+- **„evcc antwortet nicht unter der eingestellten Adresse“**: öffne die Adresse in einem Browser aus
+  dem Netz von Gladys. Prüfe den Port (standardmäßig 7070) und dass keine Firewall Gladys blockiert.
+- **„Die eingestellte Adresse antwortet nicht wie evcc“**: die Adresse zeigt auf einen anderen Dienst,
+  oder ein Proxy liefert eine Fehlerseite.
+- **„evcc verlangt sein Admin-Passwort“**: gib es in der Konfiguration ein.
+- **Der Batteriestand eines Fahrzeugs ändert sich nicht**: evcc liest das Fahrzeug nur, solange es
+  angesteckt ist (oder wenn es eine Hersteller-Integration hat). Der letzte Wert bleibt sichtbar.
+- **„Fahrzeug angesteckt“ kommt ohne Fahrzeug**: evcc hat das Fahrzeug nicht innerhalb von 2 Minuten
+  erkannt. Prüfe die Erkennung in evcc oder lege ein Standardfahrzeug für den Ladepunkt fest.
+- **Ausführliche Protokolle**: füge dem Container die Variable `LOG_LEVEL=debug` hinzu.
+
+## Einschränkungen
+
+- Eine evcc-Instanz pro Installation der Integration.
+- Ladepläne werden gelesen, aber nicht aus Gladys erstellt (nutze evcc).
+- Wiederkehrende Pläne (jeden Wochentag) werden nicht angezeigt.
+- Phasenanzahl, Mindest- und Maximalstrom, Hausbatterie und erweiterte Einstellungen bleiben in evcc.
+- Ohne echte Wallbox entwickelt, gegen den Demo-Modus von evcc: Rückmeldungen im Gladys-Forum sind
+  willkommen.
+- Unabhängiges Projekt, nicht mit evcc verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt evcc in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Verbinde dein evcc | `section` | Nein | Gib die Adresse von evcc ein, wie du sie im Browser öffnest (standardmäßig Port 7070). Die Integration folgt evcc live über seinen Websocket. Das Admin-Passwort brauchst du nur, wenn dein evcc es zum Ändern eines Modus oder Limits verlangt. |
+| Adresse von evcc | `string` | Ja | Ohne Port wird 7070 verwendet. Hinter einem Reverse-Proxy ist ein Pfad erlaubt. |
+| Admin-Passwort (optional) | `secret` | Nein | Neuere evcc-Versionen ändern Modi und Limits ohne Passwort. |
+| Sprache der Funktionsnamen | `select` | Nein |  |
+
+## So installierst du evcc in Gladys
+
+1. Öffne in Gladys **Integrationen**: evcc erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-evcc:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-evcc](https://github.com/guim31/gladys-evcc).
+
+evcc benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+evcc ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-evcc) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-evcc/blob/HEAD/docs/de.md)

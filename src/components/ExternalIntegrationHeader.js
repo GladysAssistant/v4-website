@@ -4,44 +4,43 @@ import Translate, { translate } from "@docusaurus/Translate";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { useLocation } from "@docusaurus/router";
 import JsonLd from "@site/src/components/seo/JsonLd";
-import snapshot from "@site/src/data/externalIntegrations.json";
 import styles from "./ExternalIntegrationHeader.module.css";
 
 // Header of a generated external integration page: cover, metadata, call to
-// action, and the structured data search engines read.
-function ExternalIntegrationHeader({ slug }) {
+// action, and the structured data search engines read. The generated page
+// passes the data of its integration, already in its language: importing the
+// whole catalog snapshot here would ship it with every page of the site.
+function ExternalIntegrationHeader({ integration }) {
   const {
     siteConfig: { url: siteUrl },
     i18n: { currentLocale },
   } = useDocusaurusContext();
   const { pathname } = useLocation();
-  const integration = snapshot.integrations.find((item) => item.slug === slug);
 
   // Rendered on the client only: the server-rendered HTML would otherwise
   // carry a date formatted in the build machine's timezone.
+  const pushedAt = integration ? integration.pushed_at : null;
   const [updatedAt, setUpdatedAt] = useState(null);
   useEffect(() => {
-    if (!integration || !integration.pushed_at) {
+    if (!pushedAt) {
       return;
     }
     setUpdatedAt(
-      new Date(integration.pushed_at).toLocaleDateString(currentLocale, {
+      new Date(pushedAt).toLocaleDateString(currentLocale, {
         dateStyle: "long",
       })
     );
-  }, [integration, currentLocale]);
+  }, [pushedAt, currentLocale]);
 
   if (!integration) {
     return null;
   }
 
-  const description =
-    integration.description[currentLocale] || integration.description.en;
-  const owner = integration.store_slug.split("/")[0];
+  const { description, owner } = integration;
   const catalogUrl =
     currentLocale === "en"
-      ? "/docs/integrations/external/"
-      : `/${currentLocale}/docs/integrations/external/`;
+      ? "/docs/integrations/"
+      : `/${currentLocale}/docs/integrations/`;
 
   // The docs plugin already emits the BreadcrumbList of the page: this only
   // describes the integration itself.
@@ -169,10 +168,10 @@ function ExternalIntegrationHeader({ slug }) {
           </Link>
           <Link className="button button--secondary" to={catalogUrl}>
             <Translate
-              id="externalIntegration.browseCatalog"
-              description="Link back to the external integrations catalog"
+              id="externalIntegration.browseAllIntegrations"
+              description="Link back to the integrations catalog"
             >
-              All external integrations
+              All integrations
             </Translate>
           </Link>
         </div>

@@ -1,0 +1,162 @@
+---
+title: "Integración domótica Hoymiles (OpenDTU), gratuita y de código abierto"
+sidebar_label: "Hoymiles (OpenDTU)"
+description: "Unofficial connector: Hoymiles micro-inverters through OpenDTU, solar production, power limit. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hoymiles.png"
+keywords:
+  - "hoymiles (opendtu)"
+  - "domótica hoymiles (opendtu)"
+  - "gladys hoymiles (opendtu)"
+  - "hoymiles (opendtu) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-hoymiles instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Hoymiles (OpenDTU)","description":"Unofficial connector: Hoymiles micro-inverters through OpenDTU, solar production, power limit.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hoymiles","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hoymiles.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T20:14:14Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+**Unofficial connector, not affiliated with Hoymiles nor with the OpenDTU
+project.** It brings your Hoymiles micro-inverters into Gladys through
+[OpenDTU](https://www.opendtu.solar/), the open-source gateway (an ESP32 with
+an NRF24 or CMT2300A radio module) that talks to the inverters. Everything
+stays on your local network: no cloud, no account. Hoymiles is a trademark
+of Hoymiles Power Electronics Inc.
+
+## What you need
+
+- An OpenDTU that already shows your inverters in its own web interface
+  (HM, HMS and HMT series). AhoyDTU, the other open firmware, is not
+  supported yet.
+- Its **IP address** on your network. Give it a fixed address in your router
+  (DHCP reservation) so it does not move.
+- Optional: the OpenDTU **admin password** (the one of its web interface,
+  user `admin`), to change the power limit and turn an inverter on or off.
+
+## What you get
+
+| Surface                     | Content                                                                                                                                                                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| One device per **inverter** | solar power (W), the power of each panel named as in OpenDTU, the energy of the day (kWh), the lifetime energy (kWh) for the energy monitoring, grid voltage and frequency, inverter temperature, efficiency, power limit, on/off |
+| Scene triggers              | **production started** (morning), **production stopped** (evening, with the energy of the day), **inverter alarm** (grid overvoltage, over temperature…)                                                                          |
+| Scene actions               | **set the power limit** (watts or percent), **solar production** (power, energy of the day and lifetime, of one inverter or all of them)                                                                                          |
+| Dashboard widget            | **Solar production**: power now, today, lifetime, each panel, the limit, and whether the inverter sleeps                                                                                                                          |
+
+## Setup
+
+1. Install the integration and type the **OpenDTU address** (for example
+   `192.168.1.50`). Its `OpenDTU-xxxxxx` name only works if your router's DNS
+   knows it: the integration runs in a container that does not see the mDNS
+   names of the network.
+2. Optional: type the **admin password**. Without it the integration only
+   reads. If you turned off "Allow read-only access" in OpenDTU (Settings →
+   Security), the password is needed to read as well.
+3. Press **Test OpenDTU**: it lists your inverters and checks the password.
+4. Open **Discovery** and add your inverters. Put the **Solar production**
+   widget on a dashboard.
+
+OpenDTU is read every 15 seconds (option **Refresh interval**, 5 seconds at
+least: OpenDTU itself polls the inverters every 5 seconds).
+
+## The night is not an error
+
+A micro-inverter is powered by its panels: without sun it switches off and
+OpenDTU no longer reaches it. The integration then shows a power of **0 W**,
+keeps the energy indexes, marks the inverter "sleeping (night)" and reads
+OpenDTU once a minute until an inverter wakes up. The status of the
+integration stays green. After midnight, the energy of the day reads 0 until
+the inverter wakes up.
+
+## Energy monitoring
+
+The **lifetime energy** feature is a production index: Gladys turns it into a
+30-minute production (the "Lifetime energy (30-minute production)" feature,
+which Gladys fills itself) for its energy screens. The index never goes back:
+if OpenDTU restarts and has not read the inverter yet, the integration waits
+for the real value.
+
+## Power limit and on/off
+
+The limit is **temporary** (non-persistent): the inverter forgets it when it
+restarts, at the latest the next morning. A persistent limit is never sent,
+because it is written to the inverter's memory, which wears out. Use the
+slider of the device, a scene, or the **set the power limit** action (in
+watts or in percent of the maximum power). Both commands need the admin
+password and an inverter that is awake: at night OpenDTU cannot reach it and
+would drop the command. Turning an inverter **off** stops its production until
+you turn it back on.
+
+## Scenes
+
+- **Production started**: the inverter has produced for 5 minutes after a
+  pause. The flicker of dawn fires nothing: once a day as a rule.
+- **Production stopped**: no production for 15 minutes.
+  `{{triggerEvent.data.energy_today}}` holds the energy of the day, for an
+  evening summary.
+- **Inverter alarm**: a new entry in the inverter's event log, with
+  `{{triggerEvent.data.alarm}}` (the message in English) and
+  `{{triggerEvent.data.code}}`. The daily entries (start, "no input" at
+  dusk) are left out.
+
+Leave the inverter empty to react to any of them. The **solar production**
+action gives `power`, `energy_today`, `energy_total`, `producing` and
+`sleeping` for a message or a condition. The following actions of the scene
+find them in their variable list (written `{{<step>.<action>.<key>}}`, for
+instance `{{0.0.power}}` when this action is the first of the scene).
+
+## Troubleshooting
+
+- **"OpenDTU does not answer"**: check the address in a browser on the same
+  network; the Gladys host must be able to reach it (same LAN or a route).
+- **"OpenDTU refused the access"**: "Allow read-only access" is off in
+  OpenDTU and the password is missing or wrong.
+- **A panel is missing**: the inverter was added while OpenDTU could not give
+  its inputs; open Discovery again and press **Update** on the device.
+- **A command fails with "sleeping"**: try again while the inverter produces.
+- Logs: the integration's log level is set with the `LOG_LEVEL` variable.
+
+## Privacy
+
+The integration talks to your OpenDTU only, on your local network. The
+password is sent to OpenDTU and nowhere else; it is never logged.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Hoymiles (OpenDTU) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Hoymiles through OpenDTU | `section` | No | Unofficial connector, not affiliated with Hoymiles nor with the OpenDTU project. It reads OpenDTU, the open-source gateway (an ESP32 with an NRF24 or CMT2300A radio) that talks to Hoymiles micro-inverters, on your local network, no cloud: one device per inverter with its power, the power of each panel, the energy of the day and a lifetime index for the energy monitoring, the temperature, the power limit and an on/off switch. At night the inverters sleep: the power reads 0, that is not an error. Scene triggers when production starts or stops and on an inverter alarm, and a dashboard widget. AhoyDTU is not supported. |
+| OpenDTU address | `string` | Sí | The IP address of OpenDTU on your network (a fixed DHCP lease helps), optionally with a port. Its "OpenDTU-xxxxxx" name only works if your DNS knows it: the integration runs in a container that does not see mDNS. |
+| OpenDTU admin password | `secret` | No | The password of the OpenDTU web interface (user "admin"). Needed to change the power limit and to turn an inverter on or off, and to read when "Allow read-only access" is off in OpenDTU. Leave empty to only read. Sent to OpenDTU only, stored encrypted by Gladys. |
+| Refresh interval (s) | `number` | No | How often OpenDTU is read during the day. OpenDTU itself polls the inverters every 5 s at best; at night (every inverter asleep) the integration reads it once a minute. |
+
+## Cómo instalar Hoymiles (OpenDTU) en Gladys
+
+1. En Gladys, abre **Integraciones**: Hoymiles (OpenDTU) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-hoymiles:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-hoymiles](https://github.com/LM1LC3N7/gladys-hoymiles).
+
+Hoymiles (OpenDTU) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Hoymiles (OpenDTU) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-hoymiles) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-hoymiles/blob/HEAD/docs/en.md)

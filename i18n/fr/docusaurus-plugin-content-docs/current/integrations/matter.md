@@ -51,7 +51,7 @@ C'est aussi le cas de tous les appareils Wi-Fi comme des prises connectées ou d
 
 ### Si votre appareil n'est pas compatible Matter
 
-Matter n'est pas indispensable pour utiliser un appareil dans Gladys. Si votre appareil ou service n'a pas d'intégration native, regardez le [catalogue des intégrations externes](/docs/integrations/external/) : des intégrations communautaires que vous installez en un clic, sans ligne de commande ni fichier de configuration.
+Matter n'est pas indispensable pour utiliser un appareil dans Gladys. Si votre appareil ou service n'a pas d'intégration native, regardez le [catalogue des intégrations externes](/fr/docs/integrations/?origin=community) : des intégrations communautaires que vous installez en un clic, sans ligne de commande ni fichier de configuration.
 
 Et si celle dont vous avez besoin n'existe pas encore, vous pouvez la créer : voir le [guide développeur des intégrations externes](/docs/dev/external-integrations/).
 

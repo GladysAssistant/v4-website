@@ -1,0 +1,184 @@
+---
+title: "Integración domótica Certificate Expiry, gratuita y de código abierto"
+sidebar_label: "Certificate Expiry"
+description: "Vigile los certificados TLS de sus sitios y equipos, con aviso antes de que caduquen. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-certificatexpiry.png"
+keywords:
+  - "certificate expiry"
+  - "domótica certificate expiry"
+  - "gladys certificate expiry"
+  - "certificate expiry gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-certificatexpiry instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Certificate Expiry","description":"Vigile los certificados TLS de sus sitios y equipos, con aviso antes de que caduquen.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-certificatexpiry","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-certificatexpiry.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T11:49:32Z"}} />
+
+Vigile desde Gladys los certificados TLS de sus sitios web, NAS, router, proxy
+inverso o servidor de correo, y reciba un aviso **antes** de que caduquen.
+
+La integración se conecta directamente a cada host, desde su máquina Gladys:
+una negociación TLS, se lee el certificado y se cierra la conexión. Ninguna
+petición HTTP, ninguna cuenta, ningún servicio en la nube. Funciona tanto para
+sitios públicos como para los equipos de su red local.
+
+## Instalación
+
+1. Instale la integración desde la tienda de Gladys.
+2. En **Configuración**, rellene el campo **Hosts** y guarde.
+3. Abra la pestaña **Descubrimiento**: cada host aparece como un dispositivo.
+   Cree los que quiera conservar en Gladys.
+
+### El campo Hosts
+
+Los hosts se separan con comas, espacios o saltos de línea. Cada entrada puede
+ser:
+
+| Usted escribe              | Comprobado en                                |
+| -------------------------- | -------------------------------------------- |
+| `ejemplo.es`               | `ejemplo.es`, puerto 443                     |
+| `nas.local:5001`           | `nas.local`, puerto 5001                     |
+| `192.168.1.1:8443`         | `192.168.1.1`, puerto 8443                   |
+| `[fe80::1]:8443`           | IPv6 `fe80::1`, puerto 8443                  |
+| `https://ejemplo.es/login` | `ejemplo.es`, puerto 443 (la ruta se ignora) |
+
+Una entrada que no es un host se ignora; el botón **Comprobar ahora** lista las
+entradas ignoradas. Hasta 100 hosts.
+
+### Otros ajustes
+
+| Ajuste                              | Por defecto | Significado                                                                                                                                                                                                           |
+| ----------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Umbral de aviso (días)              | 30          | Con estos días restantes o menos, el certificado **caduca pronto**.                                                                                                                                                   |
+| Umbral crítico (días)               | 7           | Con estos días restantes o menos, es **crítico**.                                                                                                                                                                     |
+| Intervalo de comprobación (horas)   | 12          | Frecuencia de comprobación de cada host. También se comprueba al arrancar y al guardar la configuración.                                                                                                              |
+| Tiempo de espera de conexión (s)    | 10          | Pasado ese tiempo, el host es **inaccesible**.                                                                                                                                                                        |
+| Señalar los certificados no fiables | activado    | Señala también un certificado autofirmado, firmado por una autoridad privada o que no corresponde al nombre del host. Desactívelo si sus equipos locales usan certificados autofirmados: su caducidad sigue vigilada. |
+
+## Lo que obtiene
+
+### Un dispositivo por host
+
+| Funcionalidad  | Contenido                                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Days remaining | Días completos antes de la caducidad. `0` el último día, negativo una vez caducado. Se guarda en el historial, para hacer un gráfico. |
+| Expiry date    | Fecha y hora de caducidad, en UTC.                                                                                                    |
+| Issuer         | Quién firmó el certificado (p. ej. `R11` para Let's Encrypt).                                                                         |
+
+La tarjeta del dispositivo muestra también una **insignia de conexión**: verde
+cuando el host ha respondido, roja cuando es inaccesible, con un punto naranja
+cuando el certificado no es fiable (el motivo aparece en la información
+emergente).
+
+Cuando un host no responde, se conservan sus últimos valores y los días
+restantes siguen descontándose desde la última fecha de caducidad leída: no se
+pierde un aviso porque el servidor estuviera apagado ese día.
+
+### Botones de la pantalla de Configuración
+
+- **Comprobar ahora**: comprueba todos los hosts y lista el resultado.
+- **Inspeccionar un host**: lee el certificado de cualquier host, vigilado o
+  no, y lo muestra completo: nombres cubiertos, emisor, fechas, confianza,
+  versión TLS, huella SHA-256. Útil antes de añadir un host, o después de
+  renovar un certificado.
+
+### Widget «Certificados» del panel
+
+Tres contadores (válidos, por renovar, problemas), los certificados ordenados
+por urgencia y un botón **Comprobar**. Ajustes por widget: número de filas
+mostradas (1 a 10), y «Solo lo que requiere atención» para ocultar los
+certificados que están bien.
+
+### Disparadores de escena
+
+Cada disparador se activa **una vez por cambio**, no en cada comprobación.
+
+| Disparador                                   | Cuándo                                                                    | Filtros               | Variables                                                     |
+| -------------------------------------------- | ------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------- |
+| Un certificado está caducando                | Un certificado entra en el periodo de aviso, el periodo crítico o caduca. | certificado, nivel    | host, level, days_remaining, expires_at, issuer               |
+| Se ha renovado un certificado                | Un host presenta un certificado nuevo que dura más que el anterior.       | certificado           | host, days_remaining, expires_at, previous_expires_at, issuer |
+| Ha fallado la comprobación de un certificado | Un host deja de responder, o presenta un certificado no fiable.           | certificado, problema | host, reason, error, message                                  |
+
+Ejemplo: _«Cuando un certificado está caducando, nivel Crítico → envíeme un
+mensaje: `{{triggerEvent.data.host}} caduca en {{triggerEvent.data.days_remaining}} días`»._
+
+También puede usar el disparador estándar **estado de un dispositivo** sobre la
+funcionalidad **Days remaining** (por ejemplo «menor que 15»).
+
+La integración recuerda el último estado de cada certificado en su volumen de
+datos, así que un reinicio de Gladys no vuelve a enviar los mismos avisos.
+
+### Acciones de escena
+
+| Acción                           | Resultado (para las acciones siguientes)                        |
+| -------------------------------- | --------------------------------------------------------------- |
+| Comprobar un certificado         | `days_remaining`, `expires_at`, `level`, `reachable`, `trusted` |
+| Comprobar todos los certificados | `checked`, `expiring`, `problems`                               |
+
+`level` es uno de `ok`, `warning`, `critical`, `expired`, `unreachable`,
+`untrusted`. Una comprobación lanzada por una acción de escena nunca activa un
+disparador por sí misma (una escena podría si no lanzarse a sí misma); la
+siguiente comprobación automática lo hace.
+
+## Límites
+
+- Solo se comprueba TLS directo (HTTPS, IMAPS 993, SMTPS 465, LDAPS 636…). Los
+  servicios que empiezan en claro y pasan luego a TLS (STARTTLS en SMTP 587 o
+  IMAP 143) no son compatibles.
+- La confianza se comprueba con las autoridades públicas que conoce Node.js.
+  Una autoridad privada (su propia CA) aparece como «no fiable»: desactive
+  **Señalar los certificados no fiables** en ese caso.
+- Los días restantes y la fecha de caducidad están en UTC.
+
+## Resolución de problemas
+
+- **Inaccesible (ENOTFOUND)**: el nombre no se resuelve desde la máquina Gladys.
+  Pruebe con la dirección IP.
+- **Inaccesible (ETIMEDOUT / ECONNREFUSED)**: nada responde en ese puerto, o un
+  cortafuegos lo bloquea. Compruebe el puerto.
+- **No fiable (DEPTH_ZERO_SELF_SIGNED_CERT, SELF_SIGNED_CERT_IN_CHAIN)**:
+  certificado autofirmado o autoridad privada.
+- **No fiable (ERR_TLS_CERT_ALTNAME_INVALID)**: el certificado no cubre el
+  nombre escrito. **Inspeccionar un host** muestra los nombres que cubre.
+- **No fiable (UNABLE_TO_VERIFY_LEAF_SIGNATURE)**: el servidor no envía su
+  certificado intermedio. Corrija la cadena de certificados en el servidor.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Certificate Expiry te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Indique los hosts cuyo certificado quiere vigilar: sitios web, NAS, router, proxy inverso, servidor de correo... Cada host se convierte en un dispositivo en la pestaña Descubrimiento, con sus días restantes, su fecha de caducidad y su emisor. La integración se conecta directamente a cada host (una negociación TLS, ninguna petición HTTP) y no necesita cuenta ni servicio en la nube. |
+| Hosts | `string` | Sí | Separados por comas o espacios. Un nombre, una dirección IP, nombre:puerto o una URL https:\/\/ pegada; el puerto es 443 si no se indica. IPv6: [fe80::1]:8443. |
+| Umbral de aviso (días) | `number` | No | Un certificado con estos días restantes o menos «caduca pronto». |
+| Umbral crítico (días) | `number` | No | Un certificado con estos días restantes o menos es «crítico». Menor que el umbral de aviso. |
+| Intervalo de comprobación (horas) | `number` | No | Frecuencia de comprobación de cada host. También se comprueba al arrancar y al guardar la configuración. |
+| Tiempo de espera de conexión (s) | `number` | No | Tiempo para alcanzar un host y leer su certificado. Pasado ese tiempo, el host es inaccesible. |
+| Señalar los certificados no fiables | `boolean` | No | Señala también un certificado que ninguna autoridad pública ha firmado (autofirmado, CA privada) o que no corresponde al nombre del host. Desactívelo si sus equipos locales usan certificados autofirmados: su caducidad sigue vigilada. |
+
+## Cómo instalar Certificate Expiry en Gladys
+
+1. En Gladys, abre **Integraciones**: Certificate Expiry aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-certificatexpiry:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-certificatexpiry](https://github.com/prohand/gladys-certificatexpiry).
+
+Certificate Expiry requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Certificate Expiry es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-certificatexpiry) — [fuente de esta documentación](https://github.com/prohand/gladys-certificatexpiry/blob/HEAD/docs/es.md)

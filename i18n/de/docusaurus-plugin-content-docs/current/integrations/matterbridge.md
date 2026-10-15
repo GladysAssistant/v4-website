@@ -6,9 +6,9 @@ sidebar_label: Matterbridge
 ---
 
 :::tip
-Um ein Gerät oder einen Dienst ohne native Integration hinzuzufügen, sind [externe Integrationen](/de/docs/integrations/external/) der empfohlene Weg: Du installierst sie mit einem Klick aus Gladys heraus, und jeder kann [selbst eine erstellen](/de/docs/dev/external-integrations/).
+Um ein Gerät oder einen Dienst ohne native Integration hinzuzufügen, sind [externe Integrationen](/de/docs/integrations/?origin=community) der empfohlene Weg: Du installierst sie mit einem Klick aus Gladys heraus, und jeder kann [selbst eine erstellen](/de/docs/dev/external-integrations/).
 
-Für die meisten Geräte, für die früher Matterbridge empfohlen wurde, gibt es inzwischen eine externe Integration, die direkt mit ihnen kommuniziert, ohne zwischengeschaltete Matter-Bridge: [Overkiz](/de/docs/integrations/external/overkiz/) für Somfy TaHoma, TaHoma Switch und Connexoon, [Shelly](/de/docs/integrations/external/shelly/) für Shelly-Geräte. [Stöbere zuerst im Katalog](/de/docs/integrations/external/): Matterbridge ist die Notlösung, wenn dort nichts für dein Gerät dabei ist.
+Für die meisten Geräte, für die früher Matterbridge empfohlen wurde, gibt es inzwischen eine externe Integration, die direkt mit ihnen kommuniziert, ohne zwischengeschaltete Matter-Bridge: [Overkiz](/de/docs/integrations/external/overkiz/) für Somfy TaHoma, TaHoma Switch und Connexoon, [Shelly](/de/docs/integrations/external/shelly/) für Shelly-Geräte. [Stöbere zuerst im Katalog](/de/docs/integrations/?origin=community): Matterbridge ist die Notlösung, wenn dort nichts für dein Gerät dabei ist.
 :::
 
 [Matterbridge](https://github.com/Luligu/matterbridge) ist eine Matter-Bridge, mit der du Nicht-Matter-Geräte in ein Matter-Ökosystem einbinden kannst. Dank seiner zahlreichen Plugins kann Matterbridge Geräte verschiedenster Hersteller über das Matter-Protokoll an Gladys weitergeben.

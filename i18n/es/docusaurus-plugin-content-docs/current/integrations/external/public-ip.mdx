@@ -1,0 +1,179 @@
+---
+title: "Integración domótica Public IP, gratuita y de código abierto"
+sidebar_label: "Public IP"
+description: "Unofficial connector: public IP, IP change and outage triggers, Duck DNS and Cloudflare updates. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-public-ip.png"
+keywords:
+  - "public ip"
+  - "domótica public ip"
+  - "gladys public ip"
+  - "public ip gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-public-ip instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Public IP","description":"Unofficial connector: public IP, IP change and outage triggers, Duck DNS and Cloudflare updates.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-public-ip","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-public-ip.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T20:14:20Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+**Unofficial connector, not affiliated with ipify, icanhazip, ident.me, Duck DNS
+or Cloudflare.** It tells Gladys the public address of your home (IPv4, and
+IPv6 when available), warns your scenes when it changes or when the Internet
+goes down, and can keep a Duck DNS or Cloudflare name pointed at your home. No
+account needed for the detection.
+
+## What you get
+
+| Surface                 | Content                                                                                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| The **Internet** device | Internet connected (yes / no), public IPv4, public IPv6                                                                                  |
+| Scene triggers          | **public IP changed** (IPv4, IPv6 or both; old and new address), **Internet lost**, **Internet restored** (with the outage duration)     |
+| Scene actions           | **get the public IP** (IPv4, IPv6, last change, connected), **update the DNS now**                                                       |
+| Dashboard widget        | **Public IP**: the connection, the addresses, how long they have not changed, the state of each DNS provider, an "Update DNS now" button |
+| Dynamic DNS (optional)  | **Duck DNS** and **Cloudflare**, updated at start and whenever the address changes                                                       |
+
+## Setup
+
+1. Install the integration. The check starts right away.
+2. Open **Discovery** and add the **Internet** device to see the connection
+   and the addresses on the device page.
+3. Optional: put the **Public IP** widget on a dashboard.
+4. Optional: fill the Duck DNS or Cloudflare section (below), save, then press
+   **Test detection and DNS** to check everything without writing anything.
+
+The address is checked every 5 minutes (option **Check interval**, 1 to 60).
+Each check is one tiny request to one of three free services (ipify,
+icanhazip, ident.me), taken in turn. A new address is only believed once two
+different services give the same one: a broken service cannot fire a false
+"public IP changed".
+
+**IPv6**: a Docker container usually has no IPv6. The integration then says
+so calmly in its status ("IPv6 is not available from the container") and
+tries again every 30 minutes; nothing is wrong. Turn **Detect the public IPv6
+too** off to stop trying.
+
+## Dynamic DNS
+
+### Duck DNS
+
+1. Sign in on [duckdns.org](https://www.duckdns.org/), create a sub-domain
+   (`myhome` gives `myhome.duckdns.org`) and copy the **token** shown on the
+   page.
+2. In the configuration, type the sub-domain(s) (separated by commas) and
+   paste the token.
+3. **Also send the IPv6** is off by default: an IPv6 name only helps when
+   your router lets incoming IPv6 through, otherwise it can break access over
+   IPv4.
+
+Duck DNS is updated once at start, then only when the address changes. Duck
+DNS has no test mode: the Test button only checks the fields.
+
+### Cloudflare
+
+1. In the Cloudflare dashboard, **My Profile → API Tokens → Create Token**,
+   template **Edit zone DNS**, limited to your zone. Copy the token.
+2. Create the records you want to follow (type A, and AAAA for IPv6) in the
+   DNS page of the zone, with any address: the integration never creates nor
+   deletes a record, it only changes the address of existing ones. The proxy
+   setting (orange cloud) and the TTL are kept as they are.
+3. In the configuration, paste the token, type the zone (`example.com`, or
+   its Zone ID from the zone's Overview page) and the record names
+   (`home.example.com, vpn` — a short name is completed with the zone, `@`
+   is the zone itself).
+4. Press **Test detection and DNS**: it shows the token status and, for each
+   record, whether it is up to date or would be updated.
+
+An update that fails is tried again after 2, 4, 8… minutes, at most every
+hour. A refused token stops the updates until you save the configuration
+again; the **Update DNS now** button always tries.
+
+## Scenes
+
+- **Public IP changed**: leave the version empty for both, or pick IPv4 or
+  IPv6. Variables: `family` (`ipv4` or `ipv6`), `old_ip`, `new_ip`. Example:
+  send yourself the new address, restart a VPN.
+- **Internet lost**: no service answered the chosen number of checks in a
+  row (2 by default; while the checks fail they run every minute). Variables:
+  `lost_at`, `ipv4` (the last known address).
+- **Internet restored**: the services answer again. Variables:
+  `duration_minutes`, `lost_at`, `ipv4`.
+
+The action **get the public IP** gives `ipv4`, `ipv6`, `last_change` and
+`online`; **update the DNS now** gives `success`, `updated` and `error`.
+
+The first check after a start only learns the address; after a restart, the
+address kept by the **Internet** device is compared with the new one, so a
+change during a power cut is still announced.
+
+## Troubleshooting
+
+- **"The IP services disagree"**: your connection leaves through several
+  addresses (load balancing, VPN). The address is kept until two services
+  agree.
+- **"Behind a carrier-grade NAT"**: your operator shares one public address
+  between several customers. A DNS name cannot reach your home; ask your
+  operator for a full-stack (dedicated) IPv4, or use IPv6.
+- **Internet lost while it works**: a firewall or an ad blocker may block the
+  three services (`api.ipify.org`, `ipv4.icanhazip.com`, `4.ident.me`).
+- **Duck DNS answered KO**: the token or a sub-domain is wrong.
+- **Cloudflare: zone not found**: check the name, or paste the Zone ID
+  instead (some tokens cannot list zones).
+- Logs: the integration's log level is set with the `LOG_LEVEL` variable.
+  The addresses and the tokens never appear in the logs.
+
+## Privacy
+
+The IP services see the address of your home (that is what they echo back),
+nothing else. Duck DNS and Cloudflare receive the addresses you ask them to
+publish. The tokens are stored by Gladys as secrets and only sent to their
+own service: Duck DNS in its update request, Cloudflare in the
+`Authorization` header.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Public IP te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your public IP address in Gladys | `section` | No | Unofficial connector, not affiliated with ipify, icanhazip, ident.me, Duck DNS or Cloudflare. No account needed: the public address of your home is asked to three free IP services in turn, and a change is only believed once two of them agree. You get an "Internet" device (connected, IPv4, IPv6) to add from Discovery, the scene triggers "public IP changed", "Internet lost" and "Internet restored", two scene actions and a dashboard widget. Optionally, a Duck DNS or Cloudflare name follows the address (sections below). |
+| Check interval (minutes) | `number` | No | How often the public address is checked. One small request per check; while the Internet looks down, every minute. |
+| Failed checks before "Internet lost" | `number` | No | The Internet is declared lost when no IP service answers this many checks in a row. |
+| Detect the public IPv6 too | `boolean` | No | Only works when the container has IPv6 (a Docker bridge usually has not: it is then reported calmly and probed every 30 minutes). |
+| Duck DNS (optional) | `section` | No | Keep a name.duckdns.org pointed at your home. Fill the sub-domains and the token shown on duckdns.org once signed in; leave them empty to turn it off. The name is updated at start and whenever the address changes. |
+| Duck DNS sub-domains | `string` | No | Separated by commas, with or without .duckdns.org. |
+| Duck DNS token | `secret` | No |  |
+| Also send the IPv6 to Duck DNS (AAAA) | `boolean` | No | Off by default: an IPv6 name is only useful when your router lets incoming IPv6 through. |
+| Cloudflare DNS (optional) | `section` | No | Keep A / AAAA records of a domain managed by Cloudflare pointed at your home. Create an API token from the "Edit zone DNS" template, limited to that zone. Only the address (content) of existing records is changed: their proxy status and TTL are kept, no record is ever created or deleted. Leave the fields empty to turn it off. |
+| Cloudflare API token | `secret` | No |  |
+| Zone (domain name or Zone ID) | `string` | No |  |
+| Record names to update | `string` | No | Separated by commas: full names, a name relative to the zone, or @ for the zone itself. |
+
+## Cómo instalar Public IP en Gladys
+
+1. En Gladys, abre **Integraciones**: Public IP aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-public-ip:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-public-ip](https://github.com/LM1LC3N7/gladys-public-ip).
+
+Public IP requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Public IP es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-public-ip) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-public-ip/blob/HEAD/docs/en.md)

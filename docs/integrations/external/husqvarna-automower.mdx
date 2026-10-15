@@ -1,0 +1,162 @@
+---
+title: "Husqvarna Automower smart home integration, free and open source"
+sidebar_label: "Husqvarna Automower"
+description: "Unofficial connector: Automower robotic mowers, status, battery, start, park and errors. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-automower.png"
+keywords:
+  - "husqvarna automower"
+  - "husqvarna automower smart home"
+  - "gladys husqvarna automower"
+  - "husqvarna automower gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-automower instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Husqvarna Automower","description":"Unofficial connector: Automower robotic mowers, status, battery, start, park and errors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-automower","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-automower.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T20:14:06Z"}} />
+
+**Unofficial connector, not affiliated with Husqvarna.** It brings Husqvarna
+Automower® robotic mowers into Gladys through the official
+[Automower Connect API](https://developer.husqvarnagroup.cloud/apis/automower-connect-api),
+with an application you create yourself on the Husqvarna Developer Portal.
+Automower is a trademark of Husqvarna AB.
+
+## What you get
+
+| Surface              | Content                                                                                                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| One device per mower | operational state, battery, activity, mode, error code and error text, connection to the Husqvarna cloud, next start, a **mow / pause** select and a **return to dock** button |
+| Scene triggers       | **error**, **activity changed**, **mowing finished**, **disconnected**                                                                                                         |
+| Scene actions        | **start mowing** (for a duration), **park** (until the next schedule, until further notice or for a duration), **pause**, **resume the schedule**                              |
+| Dashboard widget     | **Robotic mower**: battery, next start, activity, state, mode, error, connection, and Start / Park / Pause / Resume buttons                                                    |
+| Configuration screen | a **Test Husqvarna** button listing your mowers                                                                                                                                |
+
+## Setup
+
+1. Open the [Husqvarna Developer Portal](https://developer.husqvarnagroup.cloud/)
+   and sign in with your **Automower Connect** account (the one of the
+   phone app, where your mowers are paired).
+2. **Create an application**: any name, and `http://localhost:8080` as the
+   redirect URL (it is not used).
+3. In the application, **connect** it to the **Authentication API** and to
+   the **Automower Connect API**. Without the second one, Husqvarna refuses
+   every request.
+4. Copy the **application key** and the **application secret** into the
+   configuration of the integration in Gladys, and save.
+5. Open **Discovery** and add your mowers.
+6. Put the **Robotic mower** widget on a dashboard.
+
+The key and the secret are stored encrypted by Gladys and only sent to
+Husqvarna. If Husqvarna refuses them, the integration stops trying until you
+save the configuration again: repeated failed logins lock the Husqvarna
+account for 30 minutes.
+
+## The device
+
+Gladys has no robotic mower category yet: the state and the two commands
+use the **robot vacuum** category, the only one describing a robot that
+runs, docks and charges. The device card therefore shows:
+
+- **State**: Running (mowing or leaving the station), Returning to dock,
+  Charging, Docked, Paused, Error, Stopped;
+- **Mowing (idle: pause)**: a select whose "Clean" choice starts mowing for
+  the configured duration (3 hours by default) and "Idle" pauses the mower;
+- **Park until the next schedule**: the "Return to dock" button.
+
+The other features are the battery (%), the activity and the mode (texts in
+the language chosen in the configuration), the error code (0: none) and its
+text, the connection to the Husqvarna cloud and the next start, in the
+mower's own time.
+
+A start command does not make a mower leave its station at once: Husqvarna
+says it leaves once **fully charged**.
+
+## Scenes
+
+- **Automower error**: once per error (trapped, lifted, outside the working
+  area...). Variables: the code, the text in English and in French, the
+  time, the mower state.
+- **Automower activity changed**: optionally for one activity (mowing,
+  going home, charging, leaving, parked, stopped in the garden...).
+  Variables: the new and the previous activity, the state, the battery.
+- **Automower mowing finished**: the mower ended a session (parked in its
+  station, stopped in the garden or waiting for a manual start). Going home
+  to charge in the middle of a session does not count. Variables: where it
+  ended, the session length in minutes (empty when the session began before
+  Gladys saw it), the battery, the error code.
+- **Automower disconnected**: the mower lost its connection to the Husqvarna
+  cloud. Husqvarna only reports it in a full refresh: up to 30 minutes late
+  by default.
+
+The actions **start mowing**, **park**, **pause** and **resume the
+schedule** act on the chosen mower, or on every mower when the field is
+empty. They give `mower_name` and `count` to the following actions of the
+scene, which find them in their variable list (written
+`{{<step>.<action>.<key>}}`, for instance `{{0.0.count}}` when this action
+is the first of the scene).
+
+## How often Husqvarna is called
+
+Husqvarna allows 21,000 requests per week and application. The integration
+reads all the mowers once at start, then follows them through the live
+events of the Automower Connect websocket. It reads everything again every
+30 minutes (option **Full refresh interval**), and every 10 minutes while
+the live link is down. A command is read back once, 30 seconds later. A
+typical week uses about 2 % of the allowance.
+
+## Troubleshooting
+
+- **"Husqvarna refused the application key or secret"**: copy them again
+  from the portal (My applications), then save the configuration.
+- **"The application is not connected to the Automower Connect API"**:
+  connect it on the portal (step 3), then save the configuration again.
+- **No live events** while REST works: Husqvarna advises renewing the
+  application secret on the portal.
+- **The next start is one hour off**: the mower sends its own local time;
+  the integration reads it in the time zone of Gladys.
+- Logs: the integration's log level is set with the `LOG_LEVEL` variable.
+
+## Privacy
+
+The integration uses the state of your mowers only: the GPS positions
+Husqvarna sends along are dropped at once, never stored nor shown. The application key and secret go to Husqvarna
+only, and never appear in a log, a status or a scene.
+
+## Configuration settings
+
+These are the settings Husqvarna Automower asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Husqvarna Automower in Gladys | `section` | No | Unofficial connector, not affiliated with Husqvarna. It reads your robotic mowers through the official Automower Connect API with your own Developer Portal application: one device per mower (state, battery, activity, mode, error, connection, next start, a mow / pause select and a return to dock button), live events over a websocket, scene triggers on errors, activity changes, the end of mowing and a lost connection, scene actions to start, park, pause and resume the schedule, and a dashboard widget. Automower is a trademark of Husqvarna AB. |
+| Your Husqvarna application | `section` | No | On the Developer Portal, sign in with your Automower Connect account, create an application (any name, redirect URL http:\/\/localhost:8080), then connect it to the "Authentication API" and the "Automower Connect API". Copy its application key and application secret below. Your mowers must be paired in the Automower Connect app. |
+| Application key | `secret` | Yes | Stored encrypted by Gladys and only sent to Husqvarna. |
+| Application secret | `secret` | Yes | Stored encrypted by Gladys and only sent to the Husqvarna authentication service. |
+| Mowing time of a start (minutes) | `number` | No | Used by the mow / pause select of the device, the Start button of the widget and the start scene action without a duration. The mower overrides its schedule for that long, then goes back to it. |
+| Full refresh interval (minutes) | `number` | No | The live events carry the changes; the whole account is read again at this pace (the connection to Husqvarna is only seen this way). Husqvarna limits the API calls per week and application: 30 minutes uses a few percent of it. |
+| Language of the texts (activity, mode, error) | `select` | No |  |
+
+## How to install Husqvarna Automower in Gladys
+
+1. In Gladys, open **Integrations**: Husqvarna Automower appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-automower:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-automower](https://github.com/LM1LC3N7/gladys-automower).
+
+Husqvarna Automower requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Husqvarna Automower is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-automower) — [source of this documentation](https://github.com/LM1LC3N7/gladys-automower/blob/HEAD/docs/en.md)

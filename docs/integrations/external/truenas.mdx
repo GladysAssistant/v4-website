@@ -1,0 +1,267 @@
+---
+title: "TrueNAS smart home integration, free and open source"
+sidebar_label: "TrueNAS"
+description: "Monitor a TrueNAS NAS: pools, disks, apps, VMs, alerts, CPU, memory and updates. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-truenas.png"
+keywords:
+  - "truenas"
+  - "truenas smart home"
+  - "gladys truenas"
+  - "truenas gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-truenas instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TrueNAS","description":"Monitor a TrueNAS NAS: pools, disks, apps, VMs, alerts, CPU, memory and updates.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-truenas","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-truenas.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T21:44:18Z"}} />
+
+This integration follows a **TrueNAS** NAS (Community Edition, formerly
+SCALE, version 25.04 or later) from Gladys, over its local API: CPU, memory,
+temperatures, ZFS pools, disks, apps, virtual machines, alerts and updates.
+It fires scenes when a pool is degraded or when TrueNAS raises an alert, and
+puts the NAS on the dashboard.
+
+> **Not affiliated with iXsystems.** TrueNAS is a trademark of iXsystems,
+> Inc., named here only to describe compatibility.
+
+> **Developed without the hardware: feedback welcome.** No TrueNAS was
+> available while writing this integration: it reads the API as the TrueNAS
+> middleware documents it (25.04, 25.10 and 26.0) and was tested against
+> answers rebuilt from it. Tell us how it behaves on your NAS:
+> [github.com/guim31/gladys-truenas/issues](https://github.com/guim31/gladys-truenas/issues).
+
+## What you get
+
+Nothing is created on your behalf: the **Discover** tab of the integration
+lists the NAS, its pools, disks, apps and virtual machines, and you add the
+ones you want to follow. Feature names and states are in the language chosen
+in the configuration.
+
+### The NAS
+
+| Feature             | What it says                                                      |
+| ------------------- | ----------------------------------------------------------------- |
+| Online              | 1 while the NAS answers, 0 after two failed reads in a row        |
+| CPU                 | CPU use, in %                                                     |
+| Memory              | Memory in use, in % (the ZFS cache counts as used, as in TrueNAS) |
+| CPU temperature     | The hottest core, in °C (absent on a NAS without sensor)          |
+| Uptime              | In days                                                           |
+| TrueNAS version     | e.g. 25.10.1                                                      |
+| Update available    | 1 when TrueNAS offers a newer version (checked every 6 hours)     |
+| Active alerts       | The number of alerts not dismissed                                |
+| Highest alert level | None, Info, Notice, Warning, Error, Critical, Alert or Emergency  |
+
+### Pools
+
+One device per ZFS pool:
+
+| Feature               | What it says                                                                  |
+| --------------------- | ----------------------------------------------------------------------------- |
+| State                 | Online, Errors, Degraded, Offline, Faulted, Unavailable, Removed or Suspended |
+| Alert                 | 1 when the state is anything but Online                                       |
+| Space used            | In %, as the TrueNAS storage page counts it (parity excluded)                 |
+| Free space            | In GB                                                                         |
+| Capacity              | In GB, used plus free                                                         |
+| Days since last scrub | Since the end of the last scrub that finished                                 |
+| Last scrub errors     | The errors that scrub found                                                   |
+
+_Errors_ means the pool is online, but ZFS saw read, write or checksum
+errors on one of its disks.
+
+### Disks
+
+One device per disk, named after its serial number (the name sda, sdb… moves
+at reboot):
+
+| Feature     | What it says                                                            |
+| ----------- | ----------------------------------------------------------------------- |
+| Temperature | In °C, read every 5 minutes; the last value stays while the disk sleeps |
+| State       | No SMART alert, SMART warning or SMART test failed                      |
+| Alert       | 1 on a SMART warning or a failed SMART test                             |
+
+TrueNAS 25.10 removed SMART tests from its API: the state comes from the
+SMART alerts TrueNAS raises for the disk. On 25.04, a failed last self-test
+counts too.
+
+### Apps and virtual machines
+
+One device per app and per virtual machine (and, on 25.04 and 25.10, per
+Incus instance or container):
+
+| Feature          | What it says                                                              |
+| ---------------- | ------------------------------------------------------------------------- |
+| Running          | 1 when it runs                                                            |
+| State            | Running, Stopped, Deploying, Starting, Stopping, Crashed, Paused or Error |
+| Update available | Apps only: a new version of the app or of its image                       |
+| Start / stop     | Only with **Allow starting and stopping apps and VMs** (see below)        |
+
+Stopping a VM is the graceful shutdown, never a forced power off.
+
+## Before you start
+
+### TrueNAS version
+
+TrueNAS **25.04 or later** (Community Edition, formerly SCALE). The JSON-RPC
+API this integration uses does not exist on TrueNAS CORE nor on SCALE 24.10
+and older.
+
+### A user and an API key
+
+1. In TrueNAS, **Credentials → Users → Add**: a user `gladys`, with the
+   _Read-only Administrator_ role (the built-in privilege group
+   `truenas_readonly_administrators`). No shell, no SMB access needed.
+2. Log in as that user (or as an administrator, for that user), open the user
+   menu at the top right, **API Keys → Add**, and copy the key: TrueNAS shows
+   it once.
+
+A read-only key is enough for everything but the commands:
+
+- starting and stopping apps and VMs needs a user with the `APPS_WRITE` and
+  `VM_WRITE` roles (a custom privilege);
+- restarting and shutting down the NAS needs a full administrator.
+
+### HTTPS and the certificate
+
+TrueNAS **revokes an API key that is used over plain HTTP**: this integration
+only talks HTTPS (secure WebSocket) and refuses an address starting with
+`http://`. The certificate TrueNAS generates is self-signed: tick
+**Accept a self-signed certificate**, or install a certificate Gladys can
+verify.
+
+## Configuration
+
+| Field                                        | Default      | Notes                                                   |
+| -------------------------------------------- | ------------ | ------------------------------------------------------- |
+| NAS address                                  |              | `192.168.1.20`, `truenas.local`, or with its HTTPS port |
+| API key                                      |              | Never written in the logs                               |
+| Accept a self-signed certificate             | off          | For a NAS on your local network                         |
+| Refresh interval                             | every minute | Every 1, 2 or 5 minutes                                 |
+| Allow starting and stopping apps and VMs     | off          | Adds the Start / stop switch                            |
+| Allow scenes to restart or shut down the NAS | off          | Needs a full administrator key                          |
+| Language of the names and states             | French       | Gladys does not tell the integration your language      |
+
+Save, then use **Test the connection**: it reads the NAS at once and tells
+what it found (version, pools, disks, apps, VMs, alerts). It also tries again
+a key refused before.
+
+Turning on **Allow starting and stopping apps and VMs** adds a feature to the
+apps and VMs already added: open the **Discover** tab and press **Update** on
+each of them. Turning it off again refuses the switch at once.
+
+## Dashboard widget
+
+The **TrueNAS** widget shows the CPU and memory gauges and the CPU
+temperature, then, problems first: the most serious active alerts, a pool
+that is not online, a disk with a SMART alert, a crashed app, the update
+offered; then each pool with its use and free space, the apps and VMs
+running, and the uptime. **Refresh** reads the NAS at once. It needs no
+device added.
+
+## Scene triggers
+
+**Pool degraded**: a pool goes from Online to Errors, Degraded, Offline,
+Faulted, Unavailable, Removed or Suspended, and again if it gets worse
+(Degraded to Faulted). Filter: one pool, or every pool. Variables: the NAS,
+the pool, its state.
+
+**New TrueNAS alert**: TrueNAS raised an alert (a SMART error, a pool, an
+update, a certificate about to expire…), once per alert. Filter: the levels
+(Info to Emergency; empty means any). Variables: the NAS, the level
+(`info` … `emergency`), the text of the alert (in English, as TrueNAS writes
+it) and its class (e.g. `SMARTUncorrectedErrors`).
+
+Both fire on transitions only, for pools and alerts whether added to Gladys
+or not, and remember what they announced across restarts: the alerts present
+at installation are not announced.
+
+## Scene actions
+
+**Restart the TrueNAS NAS** and **Shut down the TrueNAS NAS** are refused
+unless **Allow scenes to restart or shut down the NAS** is ticked, and need
+the key of a full administrator. A NAS shut down must be turned back on by
+hand, or by Wake-on-LAN.
+
+## Scene ideas
+
+- **New TrueNAS alert**, levels Error to Emergency → send the text of the
+  alert to your phone: _"\{\{triggerEvent.data.nas_name\}\}:
+  \{\{triggerEvent.data.text\}\}"_.
+- **Pool degraded** → a message, and a red light in the office until it is
+  fixed.
+- Every first Sunday of the month, if **Days since last scrub** of a pool is
+  above 35 → remind yourself to check the scrub tasks.
+- **Highest alert level** is Critical in the morning → announce it on the
+  speaker.
+
+## How often the NAS is read
+
+At every refresh (every minute by default), on one WebSocket kept open
+between reads: the system information, three reporting graphs (CPU, memory,
+CPU temperature), the alerts, the pools and their root dataset, the apps and
+the VMs: about ten light calls. The disks and their temperatures every 5
+minutes; the update check every 6 hours (it makes the NAS ask the TrueNAS
+update server). Only the values that change are sent to Gladys, every value
+again after 6 hours.
+
+## Troubleshooting
+
+- **API key refused**: wrong, expired or revoked. A key used once over
+  `http://` is revoked by TrueNAS (an _API key revoked_ alert says so): create
+  a new one, and keep the address without `http://`.
+- **HTTPS certificate refused**: tick **Accept a self-signed certificate**.
+- **No TrueNAS 25.04+ API at this address**: an older TrueNAS, TrueNAS CORE,
+  or another port (the HTTPS port of the web interface, 443 by default).
+- **The user lacks a right**: give it the _Read-only Administrator_ role. A
+  part it may not read (apps, VMs…) is left out and named in the logs.
+- **No CPU temperature**: a virtual NAS or a board without sensor.
+- More detail: set the `LOG_LEVEL` of the integration to `debug`.
+
+## Limits
+
+- One NAS per installation; TrueNAS 25.04 or later only.
+- Read only, but for the options above: nothing is deleted, no dataset,
+  share or snapshot is touched.
+- The texts of the alerts are in English, as TrueNAS writes them.
+- Datasets, shares, snapshots, replication and cloud sync tasks are not read.
+- Tested against rebuilt answers, not on a real NAS (see the top of this
+  page).
+
+## Configuration settings
+
+These are the settings TrueNAS asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your TrueNAS | `section` | No | Gladys reads TrueNAS 25.04 or later over its local API (HTTPS). Create an API key for a user with the Read-only Administrator role, enter it below, then add the NAS, pools, disks, apps and VMs from the Discover tab. Not affiliated with iXsystems. |
+| NAS address | `string` | Yes | IP address or name of the NAS, always reached over HTTPS: 192.168.1.20, truenas.local, or with its HTTPS port (192.168.1.20:8443). |
+| API key | `secret` | Yes | Created in TrueNAS under your user menu, API Keys. Never written in the logs. |
+| Accept a self-signed certificate | `boolean` | No | The certificate TrueNAS generates is self-signed. Tick only for a NAS on your local network. |
+| Refresh interval | `select` | No |  |
+| Allow starting and stopping apps and VMs | `boolean` | No | Off by default. Adds a Start / stop switch (Update in the Discover tab). The user of the key needs the APPS_WRITE and VM_WRITE roles. |
+| Allow scenes to restart or shut down the NAS | `boolean` | No | Off by default. Needs a key of a full administrator. A shutdown NAS must be turned back on by hand (or Wake-on-LAN). |
+| Language of the names and states | `select` | No | Gladys does not tell the integration your language: the feature names, the states and the scene variables use this one. |
+
+## How to install TrueNAS in Gladys
+
+1. In Gladys, open **Integrations**: TrueNAS appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-truenas:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-truenas](https://github.com/guim31/gladys-truenas).
+
+TrueNAS requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+TrueNAS is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-truenas) — [source of this documentation](https://github.com/guim31/gladys-truenas/blob/HEAD/docs/en.md)

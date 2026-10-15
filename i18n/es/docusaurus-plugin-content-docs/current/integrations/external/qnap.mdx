@@ -1,0 +1,310 @@
+---
+title: "Integración domótica QNAP, gratuita y de código abierto"
+sidebar_label: "QNAP"
+description: "Supervise un NAS QNAP (QTS, QuTS hero): procesador, memoria, temperaturas, volúmenes, discos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-qnap.png"
+keywords:
+  - "qnap"
+  - "domótica qnap"
+  - "gladys qnap"
+  - "qnap gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-qnap instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"QNAP","description":"Supervise un NAS QNAP (QTS, QuTS hero): procesador, memoria, temperaturas, volúmenes, discos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-qnap","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-qnap.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T20:09:53Z"}} />
+
+Siga un NAS QNAP con QTS o QuTS hero desde Gladys: procesador, memoria,
+temperaturas, ventiladores, red, volúmenes, discos y el SAI que comparte, con
+escenas cuando un volumen o un disco requiere atención o sale una
+actualización de firmware, y un widget para el panel.
+
+La integración **lee**. Lo único que puede hacer en el NAS es reiniciarlo o
+apagarlo desde una escena, y solo cuando usted lo haya permitido en la
+configuración (desactivado por defecto).
+
+> **Desarrollada sin el hardware: se agradecen los comentarios.** La
+> integración lee la misma API web que la integración de Home Assistant y la
+> biblioteca qnapstats, comprobada con respuestas reales de nueve modelos QNAP
+> (QTS 4.2 a 4.5). Si falta algo o un valor no es correcto en su NAS, abra una
+> issue: [https://github.com/guim31/gladys-qnap/issues](https://github.com/guim31/gladys-qnap/issues).
+
+No afiliada a QNAP. Ni respaldada ni patrocinada por QNAP Systems, Inc. QNAP,
+QTS y QuTS hero son marcas de sus propietarios.
+
+## Lo que obtiene
+
+Tras la configuración, la pestaña **Descubrir** propone los dispositivos
+siguientes. Añada los que quiera seguir: no se crea nada en su lugar.
+
+### El NAS
+
+- **En línea**: 1 mientras el NAS responde, 0 en cuanto deja de responder.
+- **Procesador** y **Memoria**: uso, en %.
+- **Temperatura del procesador** y **Temperatura del sistema**, en °C (cuando
+  el modelo las da: algunos modelos ARM no tienen sensor de procesador).
+- **Ventilador 1 (rpm)**, **Ventilador 2 (rpm)**…: la velocidad de cada
+  ventilador del sistema. Gladys no tiene unidad «rpm»: el valor es un número
+  simple, el nombre indica la unidad.
+- **Recepción** y **Envío** de cada interfaz de red (`Recepción LAN 1`,
+  `Envío LAN 1`…), en Mbit/s.
+- **Tiempo en marcha**, en días.
+- **Versión del firmware**, por ejemplo `5.2.1.3000 build 20261001`.
+- **Actualización disponible**: 1 cuando el NAS ofrece un firmware más
+  reciente (comprobado cada 6 horas; requiere una cuenta de administrador,
+  véase más abajo).
+
+### Volúmenes
+
+Un dispositivo por volumen (`DataVol1`…):
+
+- **Espacio usado**, en %;
+- **Capacidad** y **Espacio libre**, en GB;
+- **Estado**: Listo, Reconstruyendo (reconstrucción, resincronización o
+  migración RAID en curso), Degradado o anómalo;
+- **Alerta**: 1 cuando el estado requiere atención, 0 si no — práctico en las
+  escenas y en el historial.
+
+QTS da un código de estado para cada volumen, y solo el código de un volumen
+listo se conoce con certeza. Cualquier otro código se muestra como
+**Degradado o anómalo** y activa la alerta: pasar por alto un RAID degradado
+es peor que una falsa alarma. El código se escribe en los registros: le
+agradecemos que lo comunique junto con lo que muestra QTS.
+
+### Discos
+
+Un dispositivo por disco, su modelo como modelo del dispositivo:
+
+- **Temperatura**, en °C;
+- **Estado**: el resumen SMART de QTS — Bueno, Advertencia o Error;
+- **Alerta**: 1 para Advertencia o Error.
+
+Los discos se leen como mucho cada 5 minutos, sea cual sea el intervalo de
+actualización.
+
+### El SAI
+
+Cuando el NAS comparte su SAI (véase más abajo), un dispositivo más:
+
+- **Batería**, en %;
+- **Autonomía**, en minutos;
+- **Carga**, en %;
+- **Con batería**: 1 con batería, 0 con red eléctrica;
+- **Batería baja**: 1 cuando el SAI indica que su batería está baja.
+
+## Antes de empezar
+
+### Una cuenta dedicada
+
+Cree una cuenta en el NAS para Gladys (Panel de control → Privilegios →
+Usuarios), sin acceso a las carpetas compartidas ni a las aplicaciones.
+
+- **Para leer**: en las versiones recientes de QTS y QuTS hero (con
+  **administración delegada**), conceda a esa cuenta el rol **Supervisión del
+  sistema**. En firmwares más antiguos, sin administración delegada, la cuenta
+  debe estar en el grupo **administradores**: QTS no ofrece otro acceso de
+  solo lectura a esta información.
+- **Para comprobar las actualizaciones, reiniciar o apagar**: QTS solo lo
+  permite a un administrador. Con una cuenta de Supervisión del sistema, todo
+  lo demás funciona; **Actualización disponible** se queda sin valor y las
+  acciones de escena se rechazan.
+
+Inicie sesión una vez en la interfaz web de QTS con esa cuenta y acepte los
+acuerdos o asistentes que QTS muestre primero: hasta entonces, QTS puede
+rechazarla.
+
+### Verificación en 2 pasos
+
+La integración no puede escribir un código de verificación en 2 pasos: use
+una cuenta **sin** verificación en 2 pasos. Si su política de seguridad la
+exige para todas las cuentas, mantenga el NAS fuera de Internet, dé a la
+cuenta de Gladys una contraseña larga y aleatoria y ningún otro derecho, y
+limite las direcciones autorizadas a acceder al NAS (Panel de control →
+Seguridad → Lista de permitidos/denegados) a su red local.
+
+### HTTP o HTTPS
+
+- **HTTP** (puerto 8080 por defecto): QTS recibe la contraseña codificada en
+  base64, lo que no es un cifrado. Aceptable en una red doméstica de
+  confianza.
+- **HTTPS** (puerto 443 por defecto): la contraseña va cifrada. El certificado
+  que genera QTS es autofirmado: marque **Aceptar un certificado
+  autofirmado**, o instale en el NAS un certificado reconocido (Let's
+  Encrypt).
+
+### Compartir el SAI
+
+QTS no tiene una forma documentada de leer su página del SAI. La integración
+lee el SAI como lo hacen otros NAS QNAP: con Network UPS Tools (NUT), puerto 3493.
+
+1. En el NAS: Panel de control → Dispositivo externo → UPS, marque
+   **Habilitar el soporte de UPS en red** (maestro de UPS en red).
+2. Añada la dirección IP del equipo donde funciona Gladys a las direcciones IP
+   permitidas.
+
+No hace falta nada más: leer el SAI no requiere contraseña. Sin ello, la
+integración simplemente no encuentra ningún SAI.
+
+## Configuración
+
+1. Abra la pestaña **Configuración** de la integración.
+2. **Dirección del NAS**: su dirección IP en su red, por ejemplo
+   `192.168.1.50`: HTTP en el puerto 8080. `https://192.168.1.50` usa HTTPS en
+   el puerto 443; añada el puerto si lo ha cambiado
+   (`https://192.168.1.50:5001`).
+3. **Nombre de usuario** y **Contraseña** de la cuenta anterior. La contraseña
+   nunca se escribe en los registros.
+4. **Aceptar un certificado autofirmado**: solo HTTPS, véase más arriba.
+5. **Intervalo de actualización**: cada minuto (por defecto), cada 2 o
+   5 minutos.
+6. **Leer el SAI del NAS**: activado por defecto; desactívelo si el NAS no
+   tiene SAI.
+7. **Permitir que las escenas reinicien o apaguen el NAS**: desactivado por
+   defecto. Déjelo desactivado salvo que una escena lo necesite de verdad.
+8. **Idioma de los nombres y estados**: francés por defecto. Gladys no
+   transmite su idioma a la integración: los nombres de las funciones, los
+   estados y las variables de escena usan este.
+9. Guarde y use **Probar la conexión**: lee el NAS y su SAI en ese momento e
+   indica lo que encontró, por ejemplo «NAS: conectado, TS-464, QTS
+   5.2.1.3000 build 20261001, 1 volumen(es), 4 disco(s), SAI leído». Añada
+   después los dispositivos desde la pestaña **Descubrir**.
+
+## Widget del panel
+
+Añada el widget **NAS QNAP** a un panel: dos indicadores (procesador,
+memoria), la temperatura y luego una lista donde va primero lo que requiere
+atención (un volumen, un disco, un ventilador en alerta, el SAI con batería,
+una actualización de firmware), después cada volumen con su uso y su espacio
+libre, el SAI y el tiempo en marcha. El botón **Actualizar** vuelve a leer el
+NAS. Un NAS que no responde se indica con palabras.
+
+## Disparadores de escena
+
+- **Volumen degradado**: un volumen pasa a Reconstruyendo o Degradado o
+  anómalo; de nuevo si empeora. Filtro: un volumen, o todos (vacío).
+  Variables: el NAS, el volumen, su estado.
+- **Alerta de disco**: QTS califica un disco con Advertencia o Error; de
+  nuevo si pasa de Advertencia a Error. Filtro: un disco, o todos. Variables:
+  el NAS, el disco, su modelo, su estado, su temperatura.
+- **Actualización de firmware disponible**: el NAS ofrece un QTS o QuTS hero
+  más reciente; una vez por versión. Variables: el NAS, la versión instalada,
+  la nueva.
+
+Estos disparadores valen para todos los volúmenes y discos, añadidos a Gladys
+o no, y no se repiten tras un reinicio de Gladys o de la integración. El
+estado encontrado en la primera lectura se registra sin evento.
+
+## Acciones de escena
+
+- **Reiniciar el NAS QNAP** y **Apagar el NAS QNAP**: rechazadas salvo que
+  **Permitir que las escenas reinicien o apaguen el NAS** esté marcado y la
+  cuenta sea administradora. Un NAS apagado se enciende a mano, o por
+  Wake-on-LAN si lo ha activado en el NAS.
+
+## Ideas de escenas
+
+- **Un RAID degradado**: disparador **Volumen degradado** → mensaje
+  «\{\{triggerEvent.data.volume_name\}\} está \{\{triggerEvent.data.state\}\}» a toda
+  la casa, y una lámpara se pone en rojo.
+- **Un disco cansado**: disparador **Alerta de disco** → mensaje con el disco,
+  su modelo y su temperatura, para pedir un repuesto antes de la avería.
+- **Corte de luz**: disparador «estado de un dispositivo» sobre **Con
+  batería** = 1 → mensaje; después, si **Batería** baja del 30 %, la acción
+  **Apagar el NAS QNAP** (opción marcada). QTS también puede apagarse solo
+  según su propio ajuste del SAI: prefiéralo cuando baste.
+- **Actualizaciones**: disparador **Actualización de firmware disponible** →
+  mensaje el domingo por la mañana con `{{triggerEvent.data.new_version}}`.
+- **Un NAS demasiado caliente**: disparador «estado de un dispositivo» sobre
+  **Temperatura del sistema** por encima de 50 °C → mensaje.
+
+## Con qué frecuencia se lee el NAS
+
+En cada actualización, tres peticiones a la API web del NAS (sistema,
+volúmenes, red); los discos cada 5 minutos; la comprobación del firmware cada
+6 horas; el SAI en cada actualización (cada 10 minutos mientras el NAS no
+comparta ninguno). Solo los valores que cambian se envían a Gladys, cada valor
+al menos cada 6 horas.
+
+La integración mantiene su sesión abierta entre dos lecturas y de un reinicio
+a otro (guardada en `/data`, nunca en los registros): no llena el registro de
+conexiones del NAS con un inicio de sesión por minuto. Una contraseña
+rechazada nunca se vuelve a probar sola: QTS bloquea una dirección tras
+algunos fallos. Corríjala y guarde, o use **Probar la conexión**.
+
+## Solución de problemas
+
+- **«nombre de usuario o contraseña rechazados»**: compruébelos iniciando
+  sesión en la interfaz web de QTS. Demasiados fallos pueden haber bloqueado la
+  dirección de Gladys: Panel de control → Seguridad → Protección de acceso IP.
+- **«esta cuenta usa la verificación en 2 pasos»**: use una cuenta sin ella.
+- **«esta cuenta no puede leer el sistema»**: concédale el rol Supervisión del
+  sistema, o añádala al grupo administradores.
+- **«certificado HTTPS rechazado»**: marque **Aceptar un certificado
+  autofirmado**.
+- **«no hay interfaz QTS en esta dirección»**: compruebe el puerto (Panel de
+  control → Configuración general → Puerto del sistema; puerto HTTPS en
+  Servidor web/Seguridad).
+- **«no responde»**: ¿está el NAS encendido, en la misma red, y es correcta la
+  dirección?
+- **Sin SAI**: compruebe el soporte de UPS en red del NAS y que la dirección
+  del equipo de Gladys está permitida. **Probar la conexión** indica «SAI
+  rechazado (¿direcciones IP permitidas?)» cuando el NAS rechaza a Gladys.
+- **Más detalles**: ajuste `LOG_LEVEL=debug` en la integración para ver cada
+  lectura en sus registros.
+
+## Limitaciones
+
+- Un solo NAS por instalación de la integración.
+- Desarrollada sin el hardware: QNAP no documenta los códigos de estado de
+  volumen distintos de «listo». QuTS hero debería responder como QTS, pero no
+  se ha probado.
+- El rol de solo lectura (Supervisión del sistema) no alcanza la comprobación
+  del firmware; reiniciar y apagar requieren un administrador.
+- Ningún control de aplicaciones, carpetas compartidas, instantáneas,
+  Container Station o máquinas virtuales.
+- Los discos sin SMART (algunas cajas USB) y las unidades de expansión pueden
+  faltar o estar incompletos.
+- Gladys no tiene unidad «rpm»: las velocidades de los ventiladores son
+  números simples.
+
+## Parámetros de configuración
+
+Estos son los parámetros que QNAP te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su NAS QNAP | `section` | No | Gladys lee el NAS en su red local mediante la interfaz web de QTS. Cree una cuenta dedicada sin verificación en 2 pasos, introdúzcala abajo y añada el NAS, volúmenes y discos desde la pestaña Descubrir. Sin relación con QNAP. |
+| Dirección del NAS | `string` | Sí | Dirección IP o nombre del NAS: 192.168.1.50 (HTTP, se añade el puerto 8080), https:\/\/192.168.1.50 (HTTPS, puerto 443) o con otro puerto. |
+| Nombre de usuario | `string` | Sí | Una cuenta dedicada con el rol Supervisión del sistema (administración delegada), o administradora para reiniciar o apagar. |
+| Contraseña | `secret` | Sí | Nunca se escribe en los registros. Prefiera HTTPS: por HTTP, QTS la recibe solo codificada en base64. |
+| Aceptar un certificado autofirmado | `boolean` | No | Solo HTTPS: el certificado que genera QTS es autofirmado. Márquelo solo para un NAS de su red local. |
+| Intervalo de actualización | `select` | No |  |
+| Leer el SAI del NAS | `boolean` | No | Cuando el NAS comparte su SAI (soporte de SAI en red, puerto 3493) e incluye la dirección de Gladys en las IP permitidas. |
+| Permitir que las escenas reinicien o apaguen el NAS | `boolean` | No | Desactivado por defecto. Requiere una cuenta de administrador. Un NAS apagado se enciende a mano (o por Wake-on-LAN). |
+| Idioma de los nombres y estados | `select` | No | Gladys no transmite su idioma a la integración: los nombres de las funciones, los estados y las variables de escena usan este. |
+
+## Cómo instalar QNAP en Gladys
+
+1. En Gladys, abre **Integraciones**: QNAP aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-qnap:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-qnap](https://github.com/guim31/gladys-qnap).
+
+QNAP requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+QNAP es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-qnap) — [fuente de esta documentación](https://github.com/guim31/gladys-qnap/blob/HEAD/docs/es.md)

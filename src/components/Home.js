@@ -244,7 +244,7 @@ const FAQQuestions = {
           <br />
           <br />
           Votre appareil n'est pas encore listé ? Découvrez les{" "}
-          <Link href="/fr/docs/integrations/external/">
+          <Link href="/fr/docs/integrations/?origin=community">
             intégrations externes
           </Link>{" "}
           : des intégrations créées par la communauté, installables en un clic,
@@ -339,7 +339,7 @@ const FAQQuestions = {
           <br />
           <br />
           Device not listed yet? Have a look at{" "}
-          <Link href="/docs/integrations/external/">external integrations</Link>{" "}
+          <Link href="/docs/integrations/?origin=community">external integrations</Link>{" "}
           : community-built integrations you can install in one click, and the
           list keeps growing. If yours is missing,{" "}
           <Link href="/docs/dev/external-integrations/">build it yourself</Link>{" "}
@@ -440,7 +440,7 @@ const FAQQuestions = {
           <br />
           <br />
           Dein Gerät ist noch nicht dabei? Schau dir die{" "}
-          <Link href="/de/docs/integrations/external/">
+          <Link href="/de/docs/integrations/?origin=community">
             externen Integrationen
           </Link>{" "}
           an: Von der Community entwickelte Integrationen, die du mit einem
@@ -549,7 +549,7 @@ const FAQQuestions = {
           <br />
           <br />
           ¿Tu dispositivo aún no aparece? Echa un vistazo a las{" "}
-          <Link href="/es/docs/integrations/external/">
+          <Link href="/es/docs/integrations/?origin=community">
             integraciones externas
           </Link>
           : integraciones creadas por la comunidad que puedes instalar con un

@@ -1,0 +1,177 @@
+---
+title: "MJPEG & snapshot cameras Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "MJPEG & snapshot cameras"
+description: "ESP32-CAM, MJPEG and JPEG snapshot IP cameras of your network in Gladys, without RTSP. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mjpeg-camera.png"
+keywords:
+  - "mjpeg & snapshot cameras"
+  - "mjpeg & snapshot cameras smart home"
+  - "gladys mjpeg & snapshot cameras"
+  - "mjpeg & snapshot cameras gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-mjpeg-camera instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"MJPEG & snapshot cameras","description":"ESP32-CAM, MJPEG and JPEG snapshot IP cameras of your network in Gladys, without RTSP.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-mjpeg-camera","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mjpeg-camera.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T16:11:35Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Brings the cameras that speak **plain HTTP** into Gladys: an ESP32-CAM, an
+older IP camera, a webcam served by motion, motionEye or mjpg-streamer. Two
+kinds of address work: a **JPEG snapshot** URL and an **MJPEG stream**
+(`multipart/x-mixed-replace`). No ffmpeg, no RTSP, nothing in the cloud:
+everything stays on your local network.
+
+**For an RTSP camera, use the RTSP camera integration built into Gladys
+instead**: this one is the light path for the cameras that only offer HTTP.
+Not affiliated with any camera maker; the brand names below only identify
+compatible products.
+
+## What you get
+
+| Surface         | Content                                                                                                         |
+| --------------- | --------------------------------------------------------------------------------------------------------------- |
+| Device          | One camera device per address, with its image on the dashboard camera widget                                    |
+| Live view       | A fresh image each time Gladys asks for one (live view, "show me the camera", the "send a camera image" action) |
+| Scene triggers  | **Camera offline** (3 failed captures in a row) and **Camera back online**                                      |
+| Settings button | **Test cameras**: one image of each camera, with its kind, resolution, size and time, or the error              |
+| Device badge    | "Local" while the camera answers, "Unreachable" once offline, an orange dot when its images must be downscaled  |
+
+## Setup
+
+Type the addresses in **Cameras**, separated by commas. Each address may be
+followed by a **name**, after a space or a `|`:
+
+```
+http://192.168.1.50:81/stream Garden, http://192.168.1.20/cgi-bin/snapshot.cgi|Front door
+```
+
+Then open **Discovery** and add the cameras. Only the cameras you add are
+read. Press **Test cameras** to check each address.
+
+Common addresses (check the documentation of your camera; `<ip>` is its
+address on your network):
+
+| Camera                               | Snapshot                                           | Stream                                |
+| ------------------------------------ | -------------------------------------------------- | ------------------------------------- |
+| ESP32-CAM ("CameraWebServer" sketch) | `http://<ip>/capture`                              | `http://<ip>:81/stream`               |
+| mjpg-streamer                        | `http://<ip>:8080/?action=snapshot`                | `http://<ip>:8080/?action=stream`     |
+| motionEye                            | `http://<ip>:8765/picture/1/current/`              | `http://<ip>:8081/`                   |
+| motion                               | -                                                  | `http://<ip>:8081/`                   |
+| Many IP cameras (Dahua, Amcrest…)    | `http://<ip>/cgi-bin/snapshot.cgi`                 | -                                     |
+| Hikvision                            | `http://<ip>/ISAPI/Streaming/channels/101/picture` | -                                     |
+| Axis                                 | `http://<ip>/axis-cgi/jpg/image.cgi`               | `http://<ip>/axis-cgi/mjpg/video.cgi` |
+| "IP Webcam" Android app              | `http://<ip>:8080/shot.jpg`                        | `http://<ip>:8080/video`              |
+
+A snapshot address is the lightest choice when the camera offers one. An
+**ESP32-CAM serves its stream to one client at a time**: while a browser
+watches `:81/stream`, Gladys waits; `/capture` avoids that.
+
+## Passwords
+
+- Type them in the address: `http://user:password@192.168.1.20/…`. A special
+  character of the password is written in percent-encoding (`@` is `%40`, a
+  comma `%2C`).
+- Or type only the user name in the address (`http://admin@192.168.1.20/…`)
+  and the password in **Camera password**: it stays hidden in the
+  configuration screen, unlike a password typed in the address.
+- Basic and **Digest** (MD5, SHA-256) authentication are supported. The
+  password is never sent before the camera asks for it, it is never sent in
+  clear text to a camera that offers Digest, and it goes to that camera only
+  (never to another address it redirects to, except the same camera over
+  https).
+- An address carrying a token in its query (`?user=…&pwd=…`) works too: the
+  logs and the statuses never show an address, only the camera name and host.
+- An https camera with a self-signed certificate needs **Accept self-signed
+  certificates**.
+
+## Images and pace
+
+- Every camera added sends an image to Gladys every **10 seconds** by
+  default (**Image refresh**, 5 seconds at least: Gladys takes 12 images a
+  minute per camera; 0 for on demand only). The live view and the scenes get
+  a fresh image whatever this setting.
+- Gladys takes images of **150 KB** at most. A bigger image is downscaled
+  (halved until it fits) inside the integration, which costs CPU: such a
+  camera is then refreshed every 30 seconds at most, and the status and the
+  device badge say so. **Set a lower resolution on the camera** instead: VGA
+  (640×480) or SVGA (800×600) with a JPEG quality around 12 on an ESP32-CAM.
+- An image is read once per camera at a time, whoever asks: the periodic
+  image, the live view and the test button share it.
+- An MJPEG stream is never watched continuously: the integration takes its
+  first image, then closes the connection.
+
+## Scenes
+
+- **Camera offline**: a camera that was sending images failed 3 captures in
+  a row. Variables: `name`, `error`, `failures`.
+- **Camera back online**: the same camera sends images again. Variables:
+  `name`, `offline_minutes`.
+
+Both have an optional **Camera** filter (empty: any camera). They come in
+pairs: a camera that is already down when the integration starts announces
+nothing, and its return is not announced either. An offline camera is tried
+again every minute.
+
+To send an image in a message, use the "send a camera image" action of
+Gladys with one of these cameras.
+
+## Status messages and errors
+
+| Message                                          | Meaning                                                                           |
+| ------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `no image within 10 s`                           | The camera does not answer (address, power, an ESP32-CAM busy with a browser)     |
+| `the camera asks for a user name and password`   | Add them to the address (see Passwords)                                           |
+| `user name or password refused`                  | Wrong credentials                                                                 |
+| `not a JPEG image (text/html)`                   | The address shows a web page (a login page, the camera's home page): fix the path |
+| `certificate not trusted`                        | An https camera with a self-signed certificate: see Passwords                     |
+| `TLS handshake failed`                           | An old https camera (TLS 1.0 or 1.1): use its http address                        |
+| `frame over 4 MB` or `too big to downscale here` | Lower the camera resolution                                                       |
+
+## Privacy
+
+Nothing leaves your network and nothing is written on disk: the images go to
+your Gladys only. The configuration keeps the addresses; the camera devices
+only show the host of each camera.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt MJPEG & snapshot cameras in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Cameras without RTSP | `section` | Nein | For the cameras that speak plain HTTP: an ESP32-CAM, an older IP camera, a webcam behind motion, motionEye or mjpg-streamer. Each address below becomes a camera in Discovery; its image reaches the dashboard every few seconds and whenever you open the live view. Both kinds of address work: a JPEG snapshot URL and an MJPEG stream (the first frame is taken, then the connection is closed). Everything stays on your local network, no ffmpeg. For an RTSP camera, use the RTSP camera integration built into Gladys instead. Not affiliated with any camera maker. |
+| Cameras | `string` | Nein | Addresses separated by commas, each followed by an optional name after a space or \|. A password can go in the address (http:\/\/user:password@…, Basic or Digest), or only the user name, with the password in the field below. |
+| Camera password (optional) | `secret` | Nein | Used for the addresses that carry a user name without a password (http:\/\/admin@192.168.1.20/…): it stays hidden here, unlike a password typed in the address. |
+| Image refresh (seconds) | `number` | Nein | How often each camera's image is sent to Gladys: 5 at least (Gladys takes 12 images a minute per camera), 0 for on demand only (the live view and the scenes still get a fresh image). |
+| Accept self-signed certificates (https cameras of your network) | `boolean` | Nein |  |
+
+## So installierst du MJPEG & snapshot cameras in Gladys
+
+1. Öffne in Gladys **Integrationen**: MJPEG & snapshot cameras erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-mjpeg-camera:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-mjpeg-camera](https://github.com/LM1LC3N7/gladys-mjpeg-camera).
+
+MJPEG & snapshot cameras benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+MJPEG & snapshot cameras ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-mjpeg-camera) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-mjpeg-camera/blob/HEAD/docs/en.md)

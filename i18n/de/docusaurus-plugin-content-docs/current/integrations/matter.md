@@ -51,7 +51,7 @@ Ebenso gilt es für alle WLAN-Geräte wie smarte Steckdosen oder Lampen, die dir
 
 ### Wenn dein Gerät nicht Matter-kompatibel ist
 
-Du brauchst kein Matter, um ein Gerät in Gladys zu nutzen. Wenn es für dein Gerät oder deinen Dienst keine native Integration gibt, wirf einen Blick in den [Katalog der externen Integrationen](/de/docs/integrations/external/): Community-Integrationen, die du mit einem Klick installierst, ganz ohne Kommandozeile oder Konfigurationsdatei.
+Du brauchst kein Matter, um ein Gerät in Gladys zu nutzen. Wenn es für dein Gerät oder deinen Dienst keine native Integration gibt, wirf einen Blick in den [Katalog der externen Integrationen](/de/docs/integrations/?origin=community): Community-Integrationen, die du mit einem Klick installierst, ganz ohne Kommandozeile oder Konfigurationsdatei.
 
 Und falls die passende noch nicht existiert, kannst du sie selbst erstellen: Siehe den [Entwickler-Leitfaden für externe Integrationen](/de/docs/dev/external-integrations/).
 

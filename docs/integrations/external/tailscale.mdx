@@ -1,0 +1,226 @@
+---
+title: "Tailscale smart home integration, free and open source"
+sidebar_label: "Tailscale"
+description: "Watch the machines of your Tailscale network: online status, updates and key expiry. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-tailscale.png"
+keywords:
+  - "tailscale"
+  - "tailscale smart home"
+  - "gladys tailscale"
+  - "tailscale gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-tailscale instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tailscale","description":"Watch the machines of your Tailscale network: online status, updates and key expiry.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-tailscale","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-tailscale.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T21:43:54Z"}} />
+
+This integration connects Gladys to your **Tailscale** network (your
+"tailnet"): every machine of the tailnet — a server, a NAS, a phone, a subnet
+router — becomes a Gladys device that shows whether it is online, whether a
+Tailscale update is waiting, and when its key expires.
+
+It reads the tailnet through the **Tailscale API, in the cloud**
+(`api.tailscale.com`). Nothing needs to be installed on your machines, and
+Gladys does not have to be on the tailnet itself.
+
+Requires Gladys 5.1 or later.
+
+## Before you begin
+
+You need to be an **admin** of the tailnet (Owner, Admin or IT admin role) to
+create the credentials below.
+
+The integration signs in with one of these:
+
+| Method           | Where to create it                                                           | Expires             |
+| ---------------- | ---------------------------------------------------------------------------- | ------------------- |
+| API access token | [Settings → Keys](https://login.tailscale.com/admin/settings/keys)           | after 1 to 90 days  |
+| OAuth client     | [Settings → OAuth clients](https://login.tailscale.com/admin/settings/oauth) | never (recommended) |
+
+### API access token
+
+1. Open [Settings → Keys](https://login.tailscale.com/admin/settings/keys) in
+   the Tailscale admin console.
+2. Under **API access tokens**, click **Generate access token**, give it a
+   description ("Gladys") and an expiry.
+3. Copy the token (`tskey-api-…`): Tailscale shows it only once.
+
+When the token expires, the integration shows "Tailscale refused the
+credentials" and the devices turn **unreachable**: generate a new one and
+paste it in the configuration.
+
+### OAuth client (recommended)
+
+An OAuth client never expires, and you choose exactly what it may do.
+
+1. Open [Settings → OAuth clients](https://login.tailscale.com/admin/settings/oauth).
+2. Click **Generate OAuth client**.
+3. Tick the **Devices → Core** scope:
+   - **Read** is enough to watch the machines;
+   - **Write** is also needed to turn a machine's key expiry on or off from
+     Gladys.
+4. Copy the **Client ID** and the **Client secret** (`tskey-client-…`): the
+   secret is shown only once.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. Pick the **Sign-in method** and fill in its fields:
+   - API access token: paste it in **API access token**;
+   - OAuth client: paste **OAuth client ID** and **OAuth client secret**.
+3. **Tailnet**: leave `-`, the tailnet of the credentials. Only change it if
+   your token can reach several tailnets: put the tailnet ID shown in
+   **Settings → General** of the admin console.
+4. **Refresh interval**: how often the tailnet is read, every 60 seconds by
+   default (30 seconds minimum). Each refresh is a single request, whatever
+   the number of machines.
+5. **Key expiry warning**: how many days before a key expires the machine is
+   flagged (14 by default).
+6. **Include machines shared with you**: machines another tailnet shares into
+   yours are hidden by default, since you do not manage them.
+7. Save, then click **Test the connection**: it says how many machines the
+   integration sees.
+8. Open the **Discovery** tab and add the machines you want to follow.
+
+## What you get
+
+Each machine becomes a device with four features:
+
+| Feature             | Meaning                                                                           |
+| ------------------- | --------------------------------------------------------------------------------- |
+| Online              | The machine is connected to the tailnet right now                                 |
+| Update available    | A newer Tailscale version exists for this machine                                 |
+| Key expiry          | Days left before its key expires (not updated while key expiry is off)            |
+| Key expiry disabled | The switch of the admin console's **Disable key expiry** menu — you can change it |
+
+Turning **Key expiry disabled** on from Gladys is the same as **Disable key
+expiry** in the admin console: the machine will never have to sign in again.
+It needs an API token, or an OAuth client with the **Devices → Core: Write**
+scope.
+
+Every device shows a **cloud** badge while the Tailscale API answers, and
+**unreachable** when it does not: the values shown are then the last ones
+read.
+
+The machines are matched on their Tailscale ID: renaming a machine in the
+admin console keeps its device and its history in Gladys.
+
+## Scenes
+
+The integration adds its own cards to the scene editor, under the
+**Integrations** category.
+
+### Triggers
+
+- **Machine online or offline** — a machine connected to or disconnected from
+  the tailnet. Optionally pick the machine and the new state; left empty, any
+  machine and any change match. Variables: `device_name`, `state` (`online` or
+  `offline`), `ip`, `last_seen`.
+- **New machine in the tailnet** — a machine joined the tailnet. Filter on
+  **Approval** to be told only about machines waiting for approval (with
+  device approval turned on). Variables: `device_name`, `authorization`
+  (`authorized` or `pending`), `os`, `user`, `ip`.
+- **Tailscale update available** — a newer Tailscale client is available for
+  a machine. Variables: `device_name`, `client_version`.
+- **Key expiring soon** — a machine's key enters the warning period of the
+  configuration. Variables: `device_name`, `days_left`, `expires`.
+
+The following actions of the scene read a variable as
+`{{triggerEvent.data.device_name}}`.
+
+Each trigger fires **once per change**, when the integration notices it (at
+the refresh interval). Starting the integration fires nothing: it first takes
+note of the tailnet as it is.
+
+Example: _when a machine goes offline, send me a message "\{\{triggerEvent.data.device_name\}\} is offline"_.
+
+### Actions
+
+- **Refresh the tailnet** — reads every machine now. Returns `machine_count`,
+  `online_count` and `offline_count`.
+- **Read a machine's status** — returns `name`, `online`, `ip`, `last_seen`,
+  `os`, `client_version`, `update_available`, `key_expiry_disabled` and
+  `key_expiry_days` (`-1` when the key never expires), for the conditions and
+  messages that follow.
+- **Change a machine's key expiry** — turns key expiry off for a machine, or
+  back on. Returns `key_expiry_disabled`.
+
+## Dashboard
+
+Add the **Tailscale network** widget to a dashboard. It shows:
+
+- how many machines are online and offline;
+- whether the API answers, when the tailnet was last read, how many machines
+  have an update waiting, a key about to expire or are waiting for approval;
+- a list of machines, with a badge for the most pressing problem. Tap a
+  machine to see its addresses, owner, tags and key expiry date, with a link
+  to its page in the admin console.
+
+Settings of each widget:
+
+- **Machines listed**: those that need attention (default), the offline ones
+  only, or all of them;
+- **Rows**: how many machines the list shows (0 to 8).
+
+The **Refresh** button reads the tailnet at once; **Admin console** opens the
+Tailscale admin console.
+
+## Troubleshooting
+
+| Message                                            | What to do                                                                       |
+| -------------------------------------------------- | -------------------------------------------------------------------------------- |
+| No Tailscale credentials                           | Fill in the fields of the chosen sign-in method                                  |
+| Tailscale refused the credentials                  | The token expired or was revoked, or the OAuth client is wrong: create a new one |
+| Access denied: the token lacks the "devices" scope | Give the OAuth client the **Devices → Core** scope                               |
+| Tailnet not found                                  | Put `-` back in **Tailnet**, or the exact ID from **Settings → General**         |
+| Tailscale limits the requests                      | Raise the refresh interval                                                       |
+| The Tailscale API cannot be reached from Gladys    | Check the internet access of the Gladys host (`api.tailscale.com`, HTTPS)        |
+
+A machine shows **offline** while it works? It is offline for Tailscale: the
+client is stopped, logged out, or its key expired. The admin console shows the
+same thing.
+
+The integration logs everything it does: open the integration logs in Gladys.
+It never logs a token or a secret.
+
+## Configuration settings
+
+These are the settings Tailscale asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | The integration reads your tailnet through the Tailscale API, in the cloud: nothing to install on your machines. Create an API access token (Settings → Keys, it expires after 90 days at most) or, better, an OAuth client with the "devices:core" scope (Settings → OAuth clients, it never expires), then paste it below. |
+| Sign-in method | `select` | Yes |  |
+| API access token | `secret` | No | Only for the "API access token" method. |
+| OAuth client ID | `string` | No | Only for the "OAuth client" method. |
+| OAuth client secret | `secret` | No |  |
+| Tailnet | `string` | No | Leave "-" for the tailnet of the token. Otherwise its ID, shown in Settings → General. |
+| Refresh interval (s) | `number` | No | How often the tailnet is read, in seconds. One request per refresh, whatever the number of machines. |
+| Key expiry warning (days) | `number` | No | A machine whose key expires within this many days fires the "Key expiring soon" trigger. |
+| Include machines shared with you | `boolean` | No | Machines another tailnet shares into yours. Hidden by default: they are not yours to manage. |
+
+## How to install Tailscale in Gladys
+
+1. In Gladys, open **Integrations**: Tailscale appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-tailscale:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-tailscale](https://github.com/prohand/gladys-tailscale).
+
+Tailscale requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Tailscale is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-tailscale) — [source of this documentation](https://github.com/prohand/gladys-tailscale/blob/HEAD/docs/en.md)

@@ -9,7 +9,7 @@ Mit dieser Integration kannst du die Wettervorhersage in Gladys Assistant anzeig
 
 :::info[Seit Gladys 4.85 kann das Wetter auch aus einer externen Integration kommen]
 
-Wetteranbieter lassen sich jetzt als [externe Integrationen](/de/docs/integrations/external/) umsetzen. Diese decken jeden Anbieter ab (Météo France, Open-Meteo, AccuWeather…) und unterstützen Wetterwarnungen, Bilder des Anbieters und die Szenen-Auslöser für Wetterwarnungen. Wird eine solche Integration installiert, hat sie automatisch Vorrang vor diesem eingebauten OpenWeather-Dienst, weshalb er im Katalog nun als veraltet markiert ist.
+Wetteranbieter lassen sich jetzt als [externe Integrationen](/de/docs/integrations/?origin=community) umsetzen. Diese decken jeden Anbieter ab (Météo France, Open-Meteo, AccuWeather…) und unterstützen Wetterwarnungen, Bilder des Anbieters und die Szenen-Auslöser für Wetterwarnungen. Wird eine solche Integration installiert, hat sie automatisch Vorrang vor diesem eingebauten OpenWeather-Dienst, weshalb er im Katalog nun als veraltet markiert ist.
 
 :::
 

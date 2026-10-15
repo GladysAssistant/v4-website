@@ -1,0 +1,256 @@
+---
+title: "SMS Gateway for Android smart home integration, free and open source"
+sidebar_label: "SMS Gateway for Android"
+description: "Send and receive SMS from Gladys with an Android phone and the free SMS Gateway app. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sms-gateway.png"
+keywords:
+  - "sms gateway for android"
+  - "sms gateway for android smart home"
+  - "gladys sms gateway for android"
+  - "sms gateway for android gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-sms-gateway instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SMS Gateway for Android","description":"Send and receive SMS from Gladys with an Android phone and the free SMS Gateway app.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-sms-gateway","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sms-gateway.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T12:37:49Z"}} />
+
+Send SMS from your Gladys scenes, and start scenes when an SMS arrives, with an
+Android phone and the free app
+[SMS Gateway for Android](https://github.com/capcom6/android-sms-gateway). It
+works with any operator, with no paid third-party service: an old phone with a
+SIM card is enough.
+
+**Developed without the hardware: feedback welcome.** This integration was
+written and tested against a simulation of the app's API, not a real phone.
+Please report what works and what does not on
+[GitHub](https://github.com/guim31/gladys-sms-gateway/issues).
+
+This integration is not affiliated with the SMS Gateway for Android project.
+
+## Requirements
+
+- Gladys 5.1.0 or later.
+- An Android phone (5.0 or later) with a SIM card that can send SMS, plugged in
+  permanently.
+- The SMS Gateway for Android app, version 1.59.0 or later to read the SMS
+  received: [download it from GitHub](https://github.com/capcom6/android-sms-gateway/releases).
+- Your operator's prices apply to every SMS sent.
+
+## Configuration
+
+Open the app, then choose how Gladys reaches the phone.
+
+### Local network (recommended)
+
+1. In the app, turn on **Local server**. It shows the address (for example
+   `192.168.1.50:8080`), a username and a password.
+2. Give the phone a fixed address in your router.
+3. In Gladys, choose **Local network**, then enter the address, the username
+   and the password.
+
+Nothing leaves your home: Gladys talks to the phone over your network.
+
+### Cloud server
+
+1. In the app, turn on **Cloud server**. It shows a username and a password.
+2. In Gladys, choose **Cloud server**, then enter the username and the
+   password.
+
+The SMS go through the project's public server, `api.sms-gate.app`, run by its
+author. Turn on the app's **Ping** setting so the server knows the phone is
+alive, and choose in **Phone unreachable after (cloud)** how long a silence is
+acceptable.
+
+### Private server
+
+If you host the SMS Gateway server yourself, choose **Private server** and
+enter its address (for example `https://sms.example.com`), then the username
+and password of the app's **Cloud server** card. The toggle "Prefer the local
+connection" shown by Gladys has no effect here: the **Connection** setting
+decides.
+
+### Sending safety
+
+An SMS can cost money, and a scene can loop (for instance a scene that answers
+every SMS received, talking to an automatic reply). **SMS per hour, at most**
+(20 by default) caps what Gladys sends over any sliding hour: beyond it, the
+SMS is refused, the scene says why and when the next one fits. A message to
+three numbers counts as three SMS. The limit survives a restart of the
+integration.
+
+### Received SMS and refresh
+
+Gladys reads the phone at the **Refresh interval** (1 minute by default): its
+state, the SMS it sent, and the SMS received, which start the scenes with the
+**SMS received** trigger. Turn off **Read the SMS received** if you only send.
+**Language of names and messages** sets the names of the devices (French by
+default) and the language of the scene action messages.
+
+## The device
+
+Each phone becomes a device **SMS gateway** in the Discovery tab, with:
+
+| Feature         | What it shows                                                              |
+| --------------- | -------------------------------------------------------------------------- |
+| Phone reachable | 1 when the phone answers (local), or contacted the server recently (cloud) |
+| Phone battery   | Battery level, in percent (local mode only)                                |
+| Phone charging  | 1 when the phone is charging (local mode only)                             |
+| SMS sent        | SMS sent by Gladys since the integration was installed (one per recipient) |
+| SMS failed      | SMS that could not be sent or delivered                                    |
+| SMS received    | SMS received while Gladys was reading the phone                            |
+
+A scene can use them like any device: "if Phone battery is below 20" or "if
+Phone reachable is 0", to be warned through another channel.
+
+## Scene action: Send an SMS
+
+The **Send an SMS** action sends one message:
+
+- **Numbers (international format)**: `+33639980012`, several separated by
+  commas (10 at most). A national number such as `0639980012` is refused: the
+  international format is the only one that means the same thing for every
+  SIM card.
+- **Text**: up to 1600 characters (a long text is several SMS for your
+  operator). Type `{{` to insert scene information: a sensor value, the sender
+  of the SMS received, the answer of the AI…
+- **SIM card**: the phone's default, or SIM 1, 2 or 3 on a dual-SIM phone.
+- **Phone**: in cloud mode with several phones, the one to send from.
+
+The following actions of the scene can read the **Message identifier**, the
+**Number of recipients** and the **State when queued** (`pending`, `sent`,
+`delivered`, `failed`). If the SMS cannot be sent (invalid number, hourly limit
+reached, phone unreachable), the action fails with the reason in the scene
+logs, and the scene goes on.
+
+To get Gladys messages by SMS, add this action where your scenes use "Send
+Message", with the same text.
+
+## Scene triggers
+
+### SMS received
+
+Starts the scene when the phone receives an SMS. Filters: the **Sender**
+(exactly as the phone shows it: `+33639980012`, or a name such as a bank's;
+empty = anyone) and the **Phone**. Information passed to the actions: the
+sender, the **Text of the SMS**, when it was received and the SIM card.
+
+Each SMS starts the scenes once, even after a restart. The SMS already in the
+phone when the integration starts are not announced. An SMS received is never
+an order from someone you trust: the sender of an SMS can be faked.
+
+### SMS failed
+
+Starts the scene when an SMS sent by Gladys could not be sent or delivered,
+with the recipients not reached and the reason given by the phone. Useful to
+fall back on another channel.
+
+## Widget
+
+The **SMS gateway** widget shows the battery, the SMS sent this hour against
+the limit, the SMS received, whether each phone is reachable, and the state of
+the last five SMS sent. The **Refresh** button reads the phone now. Choose a
+phone in its settings, or leave it empty for all.
+
+## Configuration screen actions
+
+- **Test the connection**: reads the phone now and says what answers: phone,
+  battery, app version, inbox, SMS sent this hour.
+- **Send a test SMS**: sends one SMS to the number typed, under the same limit.
+- **Recent SMS**: the last SMS sent by Gladys and their state: pending, sent,
+  delivered or failed.
+
+## Scene examples
+
+- **Water leak**: trigger "a leak sensor detects water" → action **Send an
+  SMS** to two numbers, "Water leak in the laundry room!".
+- **SMS forwarded**: trigger **SMS received** → send a Gladys message "SMS
+  from" followed by the **Sender** and the **Text of the SMS** (type `{{` to
+  insert them), to read the SMS of a second line in the Gladys app.
+- **Acknowledgement**: trigger **SMS received** with sender `+33639980012` →
+  **Send an SMS** to the **Sender** (inserted with `{{`): "Received, thanks".
+  Never arm or disarm an alarm, nor open a door, on an SMS: its sender can be
+  faked.
+- **Fallback**: trigger **SMS failed** → send a message through Telegram with
+  the recipients not reached.
+- **Old phone watch**: trigger "Phone battery is below 15" → notify the
+  family on the Gladys app.
+
+## Troubleshooting
+
+- **"no answer"**: the phone is off, the app stopped, or the address changed.
+  Open the app, check that the server is on and that Android does not put it
+  to sleep (Settings → Battery → no optimization for SMS Gateway).
+- **"username or password refused"**: copy them again from the app; the local
+  and cloud pairs are different.
+- **"unknown address on the API"**: update the app; for a private server,
+  check its address.
+- **No SMS received in Gladys**: the app must be 1.59.0 or later, and **Read
+  the SMS received** on. In the app, end-to-end encryption must be off: an
+  encrypted SMS cannot be read.
+- **"Limit of 20 SMS per hour reached"**: a scene sends more than expected.
+  Look for a loop, or raise the limit.
+- **The SMS stays "sent"**: your operator does not return delivery reports.
+- Logs: Integrations → SMS Gateway for Android → Logs. Set `LOG_LEVEL=debug` to
+  see every reading. Numbers appear masked (last two digits), texts never.
+
+## Limits
+
+- Developed without a phone: the API was simulated from its documentation and
+  its source code.
+- SMS only: no MMS, no binary data SMS.
+- Received SMS are read every interval (1 minute by default), not instantly:
+  the app's webhooks need an address the phone can reach, which the Gladys
+  sandbox does not offer.
+- The battery is only known in local mode; in cloud mode, "Phone reachable"
+  depends on the app's last contact with the server.
+- The core's "Send Message" and system messages do not go out by SMS: use
+  the **Send an SMS** action in your scenes.
+- A self-signed certificate on a private server is refused.
+- Android itself limits how many SMS an app may send in a short time: beyond,
+  the phone may ask for a confirmation on its screen.
+
+## Configuration settings
+
+These are the settings SMS Gateway for Android asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Install the free SMS Gateway for Android app on a phone with a SIM card (an old phone is fine), and choose how Gladys reaches it: on the local network (the app's Local server), or through the project's cloud server or your own server. The app shows the username and password to enter below. Gladys then sends SMS from scenes and reads the SMS the phone receives. Your operator's prices apply. |
+| Connection | `select` | Yes | Local: the phone is on the same network as Gladys. Cloud: through api.sms-gate.app. Private server: your own server. |
+| Phone address (local) | `string` | No | The address shown on the app's Local server card. Port 8080 when none is given. Give the phone a fixed address in your router. |
+| Server address (private) | `string` | No | Private server mode only: the address of your SMS Gateway server. |
+| Username | `string` | Yes | Shown by the app on its Local server card (local mode) or Cloud server card (cloud and private modes). |
+| Password | `secret` | Yes |  |
+| Sending safety | `section` | No | An SMS can cost money, and a scene can loop. Beyond the hourly limit, Gladys refuses to send and says why. A message to three numbers counts as three SMS. |
+| SMS per hour, at most | `number` | Yes |  |
+| Received SMS and refresh | `section` | No | Gladys reads the phone at the chosen interval: its state, the SMS sent, and the SMS received (app 1.59.0 or later), which start the scenes with the SMS received trigger. |
+| Read the SMS received | `boolean` | No |  |
+| Refresh interval | `select` | No |  |
+| Phone unreachable after (cloud) | `select` | No | Cloud and private modes: how long without contact with the server before the phone counts as unreachable. Turn on the app's Ping setting to keep it in contact. |
+| Language of names and messages | `select` | No | Names of the devices and features (fixed once added), and messages of the scene actions. |
+
+## How to install SMS Gateway for Android in Gladys
+
+1. In Gladys, open **Integrations**: SMS Gateway for Android appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-sms-gateway:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-sms-gateway](https://github.com/guim31/gladys-sms-gateway).
+
+SMS Gateway for Android requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+SMS Gateway for Android is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-sms-gateway) — [source of this documentation](https://github.com/guim31/gladys-sms-gateway/blob/HEAD/docs/en.md)

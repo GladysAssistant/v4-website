@@ -51,7 +51,7 @@ También es el caso de todos los dispositivos Wi-Fi, como enchufes o bombillas i
 
 ### Si tu dispositivo no es compatible con Matter
 
-No necesitas Matter para usar un dispositivo en Gladys. Si tu dispositivo o servicio no tiene una integración nativa, echa un vistazo al [catálogo de integraciones externas](/es/docs/integrations/external/): integraciones de la comunidad que se instalan con un clic, sin línea de comandos ni archivo de configuración.
+No necesitas Matter para usar un dispositivo en Gladys. Si tu dispositivo o servicio no tiene una integración nativa, echa un vistazo al [catálogo de integraciones externas](/es/docs/integrations/?origin=community): integraciones de la comunidad que se instalan con un clic, sin línea de comandos ni archivo de configuración.
 
 Y si la que necesitas todavía no existe, puedes crearla: consulta la [guía para desarrolladores de integraciones externas](/es/docs/dev/external-integrations/).
 

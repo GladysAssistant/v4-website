@@ -15,7 +15,7 @@ La semana pasada pasé mucho tiempo trasteando con Matterbridge y tuve un verdad
 :::info[Este artículo ya no describe el enfoque recomendado]
 Desde la publicación de este artículo, Gladys cuenta con **integraciones externas**: integraciones empaquetadas como contenedores Docker, publicadas en GitHub e instalables con un clic desde el catálogo dentro de Gladys. Ahora son la forma recomendada de añadir un dispositivo que no es compatible de forma nativa, y cualquiera puede crear una, en cualquier lenguaje y sin revisión.
 
-👉 [Explora el catálogo de integraciones externas](/es/docs/integrations/external/) o [aprende a crear una](/es/docs/dev/external-integrations/).
+👉 [Explora el catálogo de integraciones externas](/es/docs/integrations/?origin=community) o [aprende a crear una](/es/docs/dev/external-integrations/).
 
 Este artículo se conserva como referencia.
 :::
