@@ -5,20 +5,71 @@
 import snapshot from "@site/src/data/externalIntegrations.json";
 import nativeIntegrations from "@site/src/data/nativeIntegrations";
 
+// The community catalog the page is built and server-rendered with: the
+// snapshot committed by `yarn load-external-integrations`.
+export { snapshot };
+
+// The lighter store index: index.json without the install-time contracts of
+// the manifests (configuration forms, widgets, scene triggers…), about 20
+// times smaller, and rebuilt every hour like it.
+export const STORE_INDEX_URL =
+  "https://integration-store-storage.gladysassistant.com/index-lite.json";
+
 const DAY = 24 * 60 * 60 * 1000;
 
 // A community integration first seen less than this many days before the
-// snapshot gets the "New" badge.
+// catalog date gets the "New" badge.
 export const NEW_DAYS = 14;
 
 // The GitHub organization of the core team, which also publishes a few
 // integrations in the store: they are not counted as community contributors.
 const CORE_TEAM = "GladysAssistant";
 
-// Every date is relative to the snapshot, not to the clock of the visitor:
-// the page renders the same on the server and in the browser, and the figures
-// describe the catalog the page actually lists.
-export const catalogDate = Date.parse(snapshot.generated_at);
+// Every date is relative to the community catalog (its `generated_at`), not
+// to the clock of the visitor: the page renders the same on the server and in
+// the browser, and the figures describe the catalog the page actually lists.
+export const catalogDate = (community) => Date.parse(community.generated_at);
+
+// Slug of the generated page of each community integration. An integration
+// published after the last `yarn load-external-integrations` run has no page
+// yet: its card links to its GitHub repository.
+const pageSlugs = new Map(
+  snapshot.integrations.map((item) => [item.store_slug, item.slug])
+);
+
+// The store index (index-lite.json) in the shape of the committed snapshot,
+// or null when it is not a document this page can read (the snapshot then
+// stays).
+export function snapshotFromStoreIndex(index) {
+  if (
+    !index ||
+    index.index_format !== 1 ||
+    Number.isNaN(Date.parse(index.generated_at)) ||
+    !Array.isArray(index.integrations)
+  ) {
+    return null;
+  }
+  return {
+    generated_at: index.generated_at,
+    integrations: index.integrations.map((integration) => ({
+      slug: pageSlugs.get(integration.store_slug) || null,
+      store_slug: integration.store_slug,
+      repo_url: integration.repo_url,
+      name: integration.manifest.name,
+      type: integration.manifest.type,
+      description: integration.manifest.description || {},
+      cover_url: integration.cover_url,
+      categories: integration.categories || [],
+      transports: integration.manifest.transports || [],
+      stars: integration.github ? integration.github.stars : 0,
+      first_seen_at: integration.first_seen_at || null,
+      pushed_at: integration.github ? integration.github.pushed_at : null,
+      owner_avatar_url: integration.github
+        ? integration.github.owner_avatar_url
+        : null,
+    })),
+  };
+}
 
 export const normalize = (value) =>
   String(value || "")
@@ -33,8 +84,9 @@ const parseDate = (value) => {
   return Number.isNaN(time) ? null : time;
 };
 
-export function buildCatalog(locale) {
+export function buildCatalog(locale, community = snapshot) {
   const prefix = localePrefix(locale);
+  const date = catalogDate(community);
 
   const native = nativeIntegrations.map((item) => ({
     id: `native/${item.key}`,
@@ -52,7 +104,7 @@ export function buildCatalog(locale) {
     isNew: false,
   }));
 
-  const community = snapshot.integrations.map((item) => {
+  const fromStore = community.integrations.map((item) => {
     const firstSeenAt = parseDate(item.first_seen_at);
     return {
       id: item.store_slug,
@@ -60,7 +112,9 @@ export function buildCatalog(locale) {
       name: item.name,
       description: item.description[locale] || item.description.en || "",
       cover: item.cover_url,
-      url: `${prefix}/docs/integrations/external/${item.slug}/`,
+      url: item.slug
+        ? `${prefix}/docs/integrations/external/${item.slug}/`
+        : item.repo_url,
       categories: item.categories || [],
       transports: item.transports || [],
       gladysPlus: false,
@@ -70,11 +124,11 @@ export function buildCatalog(locale) {
       },
       firstSeenAt,
       pushedAt: parseDate(item.pushed_at),
-      isNew: firstSeenAt !== null && catalogDate - firstSeenAt < NEW_DAYS * DAY,
+      isNew: firstSeenAt !== null && date - firstSeenAt < NEW_DAYS * DAY,
     };
   });
 
-  return [...native, ...community].map((item) => ({
+  return [...native, ...fromStore].map((item) => ({
     ...item,
     searchName: normalize(item.name),
     searchText: normalize(
@@ -157,10 +211,10 @@ export function sortCatalog(scored, sort, locale) {
     .map(({ item }) => item);
 }
 
-// The figures of the header of the page.
-export function catalogStats(items) {
+// The figures of the header of the page, as of `date` (catalogDate).
+export function catalogStats(items, date) {
   const community = items.filter((item) => item.origin === "community");
-  const since = (days) => catalogDate - days * DAY;
+  const since = (days) => date - days * DAY;
 
   const contributors = new Map();
   community.forEach(({ author }) => {
@@ -173,7 +227,7 @@ export function catalogStats(items) {
   // Community integrations in the store at the end of each of the last 12
   // weeks, the last point being the catalog itself.
   const growth = Array.from({ length: 12 }, (_, index) => {
-    const end = catalogDate - (11 - index) * 7 * DAY;
+    const end = date - (11 - index) * 7 * DAY;
     return {
       date: end,
       count: community.filter(
