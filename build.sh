@@ -12,11 +12,15 @@ npm run load-dev-activity || echo ">> Keeping the committed dev activity snapsho
 # Building website
 npm run build
 
-# Moving Cloudflare Pages _redirects file
-cp ./_redirects ./build/_redirects
+# Writing Cloudflare Pages _redirects file, with the trailing-slash spelling of
+# every rule (see the script)
+node scripts/build_redirects.js ./build/_redirects
 
 # Moving Cloudflare Pages _headers file
 cp ./_headers ./build/_headers
 
 # Moving robots.txt
 cp ./robots.txt ./build/robots.txt
+
+# Browsers and crawlers request /favicon.ico whatever the page declares
+cp ./static/img/favicon/favicon.ico ./build/favicon.ico
