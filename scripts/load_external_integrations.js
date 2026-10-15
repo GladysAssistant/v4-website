@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
+// The full index, not index-lite.json like the catalog page: the configuration
+// table of each generated page needs the manifests' `config_schema`, which the
+// lite index leaves out.
 const STORE_INDEX_URL =
   "https://integration-store-storage.gladysassistant.com/index.json";
 const OUTPUT_FILE = path.join(

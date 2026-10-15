@@ -14,11 +14,14 @@ import { usePluralForm } from "@docusaurus/theme-common";
 import integrationCategories from "@site/src/data/integrationCategories";
 import Icon from "./icons";
 import {
+  STORE_INDEX_URL,
   buildCatalog,
   catalogDate,
   catalogStats,
   filterCatalog,
   latestAdditions,
+  snapshot,
+  snapshotFromStoreIndex,
   sortCatalog,
 } from "./catalog";
 import styles from "./IntegrationsCatalog.module.css";
@@ -151,6 +154,31 @@ function useRelativeDays(locale) {
       return formatter.format(-Math.floor(days / 30), "month");
     };
   }, [now, locale]);
+}
+
+// The community catalog: the committed snapshot (refreshed every week) on the
+// server and on the first render, so that hydration matches the HTML; then,
+// once mounted, the live store index, rebuilt every hour, so that a newly
+// published integration shows up without waiting for the next refresh. If the
+// request fails (offline, blocked), the snapshot stays.
+function useCommunityCatalog() {
+  const [community, setCommunity] = useState(snapshot);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(STORE_INDEX_URL)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((index) => {
+        const live = snapshotFromStoreIndex(index);
+        if (live && !cancelled) {
+          setCommunity(live);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return community;
 }
 
 function Sparkline({ points, label }) {
@@ -607,8 +635,13 @@ function IntegrationsCatalog() {
   const { selectMessage } = usePluralForm();
   const formatNumber = useFormatNumber(currentLocale);
 
-  const items = useMemo(() => buildCatalog(currentLocale), [currentLocale]);
-  const stats = useMemo(() => catalogStats(items), [items]);
+  const community = useCommunityCatalog();
+  const date = catalogDate(community);
+  const items = useMemo(
+    () => buildCatalog(currentLocale, community),
+    [currentLocale, community]
+  );
+  const stats = useMemo(() => catalogStats(items, date), [items, date]);
   const latest = useMemo(() => latestAdditions(items, LATEST_SIZE), [items]);
 
   // The server renders the default view; the query string is applied once
@@ -966,7 +999,7 @@ function IntegrationsCatalog() {
           description="When the community catalog listed on the page was last refreshed"
           values={{
             // UTC, so the server and the browser print the same day.
-            date: new Date(catalogDate).toLocaleDateString(currentLocale, {
+            date: new Date(date).toLocaleDateString(currentLocale, {
               dateStyle: "long",
               timeZone: "UTC",
             }),
