@@ -23,13 +23,13 @@ To join Gladys plus, head over to the [dedicated page](/plus), and enter your em
 
 ## Configure Gladys Plus
 
-Gladys Plus needs to be fully configured before you can use the Google Home integration.
+Gladys Plus needs to be fully configured before you can use the Alexa integration.
 
 We recommended you follow the step you received by email to configure Gladys Plus.
 
 At the end, you should be able to connect to [plus.gladysassistant.com](https://plus.gladysassistant.com) without any issue.
 
-Once you have successfully logged in to Gladys plus, you can configure Google Home!
+Once you have successfully logged in to Gladys plus, you can configure Alexa!
 
 ## Configure Alexa
 
@@ -63,9 +63,10 @@ Alexa will now scan for all your devices on Gladys side.
 
 ## Compatible devices
 
-For now, only:
+The following devices are currently supported:
 
 - Lights (On/Off / Color / Brightness)
 - Switch (On/Off)
+- Rolling shutters & curtains (Open/Close / Position), since Gladys 4.81
 
-Additionnal compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).
+Additional compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).

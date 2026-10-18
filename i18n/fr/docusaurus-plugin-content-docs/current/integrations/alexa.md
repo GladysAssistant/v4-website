@@ -77,5 +77,6 @@ Actuellement, les appareils suivants sont pris en charge :
 
 - **Lampes** : On/Off, couleur et luminosité
 - **Prises** : On/Off
+- **Volets roulants et rideaux** : ouverture/fermeture et position (depuis Gladys 4.81)
 
 Nous ajouterons d'autres types d'appareils en fonction des besoins de la communauté. N'hésitez pas à en faire la demande sur [le forum](https://community.gladysassistant.com/) ou à nous contacter par email !
