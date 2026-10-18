@@ -65,9 +65,11 @@ Deine Geräte sollten jetzt in Google Home erscheinen.
 
 ## Kompatible Geräte
 
-Aktuell nur:
+Aktuell werden folgende Geräte unterstützt:
 
-- Lampen (Ein/Aus / Farbe / Helligkeit)
-- Schalter (Ein/Aus)
+- Lampen (Ein/Aus / Farbe / Farbtemperatur / Helligkeit)
+- Schalter (Ein/Aus / Dimmer)
+- Rollläden & Vorhänge (Öffnen/Schließen / Position), sofern das Gerät eine Positionsfunktion hat
+- Temperatur- & Feuchtigkeitssensoren (nur Anzeige), seit Gladys 5.0
 
 Weitere Gerätetypen werden auf Anfrage ergänzt. Schick uns deine Feature-Wünsche gerne über [das Forum](https://community.gladysassistant.com/).

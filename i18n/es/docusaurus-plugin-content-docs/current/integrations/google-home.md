@@ -65,9 +65,11 @@ Ahora deberías ver tus dispositivos en Google Home.
 
 ## Dispositivos compatibles
 
-Por ahora, solo:
+Actualmente se admiten los siguientes dispositivos:
 
-- Luces (encendido/apagado / color / brillo)
-- Interruptores (encendido/apagado)
+- Luces (encendido/apagado / color / temperatura de color / brillo)
+- Interruptores (encendido/apagado / regulador)
+- Persianas y cortinas (abrir/cerrar / posición), si el dispositivo tiene una función de posición
+- Sensores de temperatura y humedad (solo lectura), desde Gladys 5.0
 
 Se irán añadiendo más compatibilidades según las peticiones. No dudes en enviarnos tus sugerencias de funcionalidades en [el foro](https://community.gladysassistant.com/).
