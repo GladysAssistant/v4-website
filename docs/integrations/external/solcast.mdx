@@ -1,0 +1,243 @@
+---
+title: "Solcast smart home integration, free and open source"
+sidebar_label: "Solcast"
+description: "Solcast rooftop PV forecasts: power now, energy today and tomorrow, with the P10/P90 range. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-solcast.png"
+keywords:
+  - "solcast"
+  - "solcast smart home"
+  - "gladys solcast"
+  - "solcast gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-solcast instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Solcast","description":"Solcast rooftop PV forecasts: power now, energy today and tomorrow, with the P10/P90 range.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-solcast","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-solcast.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T14:44:37Z"}} />
+
+This integration brings into Gladys the **solar production forecasts** that
+[Solcast](https://solcast.com) computes for your rooftop PV system, with a free
+Solcast **home user** (hobbyist) account. It complements the
+[Forecast.Solar](https://github.com/prohand/gladys-forecastsolar) integration:
+same sensors, same units, so the two forecasts can be compared side by side.
+Unofficial, not affiliated with Solcast.
+
+Requires **Gladys 5.1.0** or later.
+
+> **Development version (0.1).** Built from the Solcast documentation and the
+> Home Assistant community integration, tested with simulated answers, not
+> with a real Solcast account yet. Feedback is welcome on the GitHub
+> repository.
+
+## Solcast or Forecast.Solar?
+
+Both, if you like: they do not use the same data.
+
+|                     | Solcast (this integration)                              | Forecast.Solar                          |
+| ------------------- | ------------------------------------------------------- | --------------------------------------- |
+| Source              | satellite images (clouds now) and weather models        | weather models                          |
+| Range               | P10 (dull day) and P90 (bright day) around the forecast | the forecast only                       |
+| Roof planes         | up to 2 rooftop sites (e.g. east and west)              | one plane in the integration            |
+| Account             | free Solcast account, API key                           | none                                    |
+| Requests            | **10 per UTC day** for the whole account                | 12 per hour                             |
+| Panels described in | the Solcast toolkit                                     | the Gladys configuration and its houses |
+
+## The free Solcast account (checked on 16 October 2026)
+
+Solcast still opens free **Home User** accounts: on
+[toolkit.solcast.com.au/register](https://toolkit.solcast.com.au/register),
+the "Home User" offer is "designed for solar hobbyists at home who only need
+Rooftop PV Power forecasts", for a single residential location under 50 kW.
+The Solcast documentation (Rooftop Sites (Hobbyist)) gives its limits:
+
+- **10 API requests per UTC day** (reset at midnight UTC, 01:00 or 02:00 in
+  France), for all the sites of the account together. Some accounts made
+  before the limit was lowered keep 50 a day;
+- **up to 2 rooftop sites** (arrays), within 1 km of each other;
+- 30-minute periods, live estimates and forecasts only, for personal use.
+
+Listing the sites of the key does not use a request; each forecast of a site
+uses one.
+
+### Create the account and the sites
+
+1. Open [toolkit.solcast.com.au/register](https://toolkit.solcast.com.au/register),
+   choose **Home User**, register and confirm your e-mail.
+2. On the dashboard, click **Add your first Home PV system**: location,
+   capacity (AC and DC, in kW), **azimuth**, **tilt**, installation date and
+   efficiency factor, then save.
+   - Solcast's azimuth is measured **from the north**: 0° = north,
+     90° = west, 180° = south, -90° = east (Forecast.Solar counts from the
+     south: its 0° is Solcast's 180°).
+3. For a second roof plane (east/west, garage…), click **Add another Home PV
+   system** and give it **the same latitude and longitude** as the first one
+   (otherwise Solcast refuses it: both must be within 1 km).
+4. Copy the **API key** from the account menu (your user name, top right).
+5. Optional: the **resource id** of each site is on its **View site detail**
+   page. You only need it to use one site of the two (see the options).
+
+## Installation
+
+1. Install the integration from the Gladys store.
+2. In the **Configuration** tab, paste the API key and save. The status says
+   "Connected to Solcast: 2 sites" (reading the sites uses no request).
+3. Open the **Discovery** tab and add the sites you want to follow, and
+   "Solcast forecast (all sites)" for the total of both. **Only the added
+   sites are downloaded**: nothing is spent before.
+4. The first forecast is downloaded right away; the values arrive with it.
+
+## What you get
+
+One device per rooftop site, and, with two sites, one for their total. Each
+has 12 read-only sensors:
+
+| Sensor                           | Unit | Content                                   |
+| -------------------------------- | ---- | ----------------------------------------- |
+| Estimated power now              | W    | estimated power right now                 |
+| Estimated energy today           | kWh  | estimated production of the whole day     |
+| Estimated energy remaining today | kWh  | estimated production until the end of day |
+| Estimated energy tomorrow        | kWh  | estimated production of tomorrow          |
+| … (P10) and … (P90) of each      |      | the dull-day and bright-day ends of range |
+
+- The names and units are those of Forecast.Solar: put both on a dashboard
+  or a chart to compare them.
+- **P50** (the sensors without suffix) is the most likely value; **P10** a
+  dull day (9 chances in 10 to produce more); **P90** a bright day (1 chance
+  in 10 to produce more).
+- These are **forecasts**, not measurements: they are not counted in the
+  Gladys **energy monitoring** (it only reads production indexes).
+- "Today" and "tomorrow" are the days of the time zone of Gladys.
+- **Energy today** needs the morning: Solcast only sends the forecast from
+  the current half hour on, and the integration keeps the earlier periods of
+  the day from its previous downloads. Added during the day, a site shows its
+  "energy today" from the next day on (the remaining energy and tomorrow are
+  there at once).
+- The badge of each device shows `cloud`, with an orange dot when the
+  forecast is more than 26 hours old (Solcast could not be read since).
+
+## How the 10 requests are used
+
+- The downloads are **spread over the daylight hours** of the day, read on
+  the forecast itself: the first one when production starts (a fresh forecast
+  for the day), then evenly, the last one well before sunset. With two sites:
+  5 downloads of both a day; with one site: 10.
+- The requests made are **counted and kept** across restarts: restarting
+  Gladys or the integration never spends one more.
+- Between two downloads, the values are **recomputed every 5 minutes** from
+  the last forecast (the power follows the curve), and sent to Gladys only
+  when they change, or every 30 minutes.
+- When Solcast is busy (HTTP 429 "try again later", frequent on the quarter
+  hours), the integration tries again 5, 10, 20, 40 then 60 minutes later; a
+  busy answer uses no request. Its downloads are shifted by a few minutes
+  away from the quarter hours.
+- When Solcast says the daily limit is reached (another tool uses the same
+  key, for example), nothing is downloaded until midnight UTC; the values
+  follow the last forecast.
+- The forecast covers 3 days: even without any download for a day, the
+  values stay known.
+
+The **estimated actuals** of Solcast (what your panels probably produced)
+cost requests too: they are not used.
+
+## Buttons
+
+- **Test the connection (no call used)**: reads the sites of the key and
+  tells how many requests are left today.
+- **Refresh the forecast now (uses calls)**: downloads the forecast of the
+  added sites at once (one request per site), unless it was downloaded less
+  than 10 minutes ago or no request is left; says how many are left. The
+  automatic downloads then share what remains.
+
+## Scenes
+
+Four scene triggers, for one site or any:
+
+| Trigger                           | When                                    |
+| --------------------------------- | --------------------------------------- |
+| Solar forecast updated (Solcast)  | each new forecast (5 to 10 times a day) |
+| Solar production starts (Solcast) | estimated start of production (sunrise) |
+| Solar production peak (Solcast)   | estimated peak of the day               |
+| Solar production ends (Solcast)   | estimated end of production (sunset)    |
+
+Variables: `site`, `power_now`, `energy_today`, `energy_remaining_today`,
+`energy_tomorrow` (each with its `_p10` and `_p90`), `peak_power`,
+`peak_time` (HH:MM) and `calls_left`. A value the forecast does not know is
+empty. The start, peak and end fire once a day, when the clock passes them;
+missed by more than 5 minutes (Gladys stopped), they do not fire late.
+
+For a threshold ("if tomorrow > 10 kWh"), use the usual "Device state
+changed" trigger on the sensor.
+
+## Options
+
+| Option                        | Default | Purpose                                               |
+| ----------------------------- | ------- | ----------------------------------------------------- |
+| Solcast API key               | —       | the key of the account menu of the toolkit            |
+| Rooftop sites (optional)      | empty   | resource ids to use, separated by commas; empty: all  |
+| Forecast calls per day        | 10      | the limit of the account (50 for some older accounts) |
+| Language of the feature names | French  | names of the devices and features added from now on   |
+
+Lower the calls per day if another tool (Home Assistant…) uses the same key:
+the integration only knows its own requests.
+
+## Troubleshooting
+
+- **"Solcast refused the API key"**: copy it again from the toolkit. The
+  integration waits for a change, or a click on **Test the connection**.
+- **"This Solcast key has no rooftop site"**: add your system in the
+  toolkit, then **Scan** in the Discovery tab.
+- **"No Solcast call left today"**: the 10 requests of the UTC day are spent
+  (by this integration or another tool). The values follow the last forecast;
+  the next download comes after midnight UTC.
+- **"Solcast is busy"**: nothing to do, the integration tries again.
+- **"Energy today" stays empty**: the site was added during the day; it comes
+  the next day.
+- **Values far from your production**: check the azimuth (from the north in
+  Solcast), tilt and capacity of the site in the toolkit.
+- Solcast's own status page (status.solcast.com) does not cover the free
+  accounts.
+
+## Privacy
+
+The API key is stored by Gladys as a secret (never sent back to the browser).
+The integration only sends it to `api.solcast.com.au`, in the authorization
+header. It keeps the forecasts, the rooftop sites and the request counter in
+its `/data` folder, with a hash of the key (never the key itself). Solcast is
+a trademark of its owner; this integration is not affiliated with Solcast.
+
+## Configuration settings
+
+These are the settings Solcast asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Solcast account | `section` | No | Brings the forecasts of a free Solcast home user (hobbyist) account into Gladys, next to Forecast.Solar: satellite-based forecasts for up to 2 rooftop sites (two roof planes) with their P10-P90 range, as estimated power now and energy today, remaining today and tomorrow. Create the account and its rooftop sites at toolkit.solcast.com.au, paste the API key of the account menu below, then add the sites from the Discovery tab: only the added sites are downloaded. A free account has 10 forecast calls per UTC day for all its sites: the integration spreads them over the daylight hours (5 a day with 2 sites), counts them across restarts and follows the last forecast in between. Forecasts are not counted in the energy monitoring. Unofficial, not affiliated with Solcast. |
+| Solcast API key | `secret` | Yes | In the Solcast toolkit: the account menu (your user name), then API Key. |
+| Rooftop sites (optional) | `string` | No | Leave empty to use every rooftop site of the key (2 at most on a free account). Otherwise the resource ids to use, separated by commas (site detail page of the toolkit). |
+| Forecast calls per day | `number` | No | The daily limit of the Solcast account, reset at midnight UTC: 10 for the accounts made today, 50 for some older ones. Lower it if another tool uses the same key. |
+| Language of the feature names | `select` | No | Used for the names of the devices and features added from now on. |
+
+## How to install Solcast in Gladys
+
+1. In Gladys, open **Integrations**: Solcast appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-solcast:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-solcast](https://github.com/LM1LC3N7/gladys-solcast).
+
+Solcast requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Solcast is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-solcast) — [source of this documentation](https://github.com/LM1LC3N7/gladys-solcast/blob/HEAD/docs/en.md)

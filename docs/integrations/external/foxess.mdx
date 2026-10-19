@@ -1,0 +1,241 @@
+---
+title: "FoxESS smart home integration, free and open source"
+sidebar_label: "FoxESS"
+description: "FoxESS inverters and batteries through the FoxESS Cloud: solar, house, grid and battery. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-foxess.png"
+keywords:
+  - "foxess"
+  - "foxess smart home"
+  - "gladys foxess"
+  - "foxess gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-foxess instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"FoxESS","description":"FoxESS inverters and batteries through the FoxESS Cloud: solar, house, grid and battery.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-foxess","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-foxess.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T14:18:58Z"}} />
+
+FoxESS inverters and batteries (H1, H3, KH, AIO, T and F series…) in Gladys, through the official
+**FoxESS Cloud Open API**: solar production, house consumption, grid import and export, battery
+charge, inverter status and faults, on your dashboard and in your scenes.
+
+This integration was developed without the hardware, from the Open API document and the open
+source projects that use it: feedback welcome. It is not affiliated with FoxESS.
+
+## What you get
+
+- **One device per inverter** of your FoxESS Cloud account, read every 5 minutes by default.
+- The **energy flows**: solar power (total and per PV string), house consumption, grid import and
+  export, battery charging and discharging.
+- The **meters**: production of the day, total production (the index Gladys' energy tracking
+  reads), grid import and export meters, battery charge and discharge meters.
+- The **battery**: charge level and temperature.
+- The **inverter**: status (on grid, off grid, fault…), current alarm, online or not, temperature.
+- A **dashboard widget** with the flows of one inverter, its battery and its work mode.
+- A **scene trigger** when the inverter reports a new fault.
+- Optional **control** (off by default): work mode and minimum battery charge, from scenes and the
+  widget.
+
+## Prerequisites
+
+- Gladys Assistant **5.1.0** or later.
+- A **FoxESS Cloud** account (foxesscloud.com) where your inverter shows up: the same account as
+  the FoxESS app.
+- An **API key** for that account: on foxesscloud.com, open your profile (top right), **User
+  Profile**, **API Management**, then **Generate API key**. Copy the long key it shows.
+- The Gladys server needs internet access and a clock on time (the requests are signed with the
+  time: a clock more than a minute off is refused).
+
+## Configuration
+
+Install the integration (**Integrations → Install from GitHub**, or from the store), then fill in
+its configuration:
+
+| Field                         | What to put                                                                                                                                   |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| API key                       | The key generated in API Management.                                                                                                          |
+| Inverter serial numbers       | Empty to show every inverter of the account, or the serial numbers to keep, separated by commas (FoxESS Cloud, **Device**, **Inverter**).     |
+| Refresh interval              | 5 minutes (default) to 1 hour. The FoxESS Cloud updates its values about every 5 minutes: reading faster would only spend the quota.          |
+| Number of PV strings          | 0 (default): one feature per string the inverter reports. Some models report 4 or 6 strings when 2 are wired: type 2 to keep strings 1 and 2. |
+| Language of the feature names | The language of the feature names when an inverter is added (Gladys keeps them afterwards), and of the status texts.                          |
+| Allow inverter control        | Off by default. See [Scene actions](#scene-actions).                                                                                          |
+
+**Test the connection** lists the inverters of the account and, when the cloud gives it, the
+number of API calls left today. Then open the **Discovery** tab and add your inverters.
+
+## The inverter device
+
+| Feature                 | Type in Gladys    | Unit | Notes                                               |
+| ----------------------- | ----------------- | ---- | --------------------------------------------------- |
+| Solar power             | Production power  | W    | All the PV strings together.                        |
+| PV string               | Production power  | W    | One per string: "PV string 1", "PV string 2"…       |
+| Production today        | Daily production  | kWh  | Back to 0 at midnight (time of the installation).   |
+| Total production        | Production index  | kWh  | Lifetime meter, for the energy tracking.            |
+| House consumption       | Power             | W    | What the house draws, whatever the source.          |
+| Grid import             | Grid import power | W    |                                                     |
+| Grid export             | Grid export power | W    |                                                     |
+| Grid import meter       | Grid import index | kWh  | Lifetime meter of the inverter's grid meter.        |
+| Grid export meter       | Grid export index | kWh  |                                                     |
+| Battery level           | Battery level     | %    | Inverters with a battery only, like the next five.  |
+| Battery charging        | Charge power      | W    |                                                     |
+| Battery discharging     | Discharge power   | W    |                                                     |
+| Battery charge meter    | Charge index      | kWh  |                                                     |
+| Battery discharge meter | Discharge index   | kWh  |                                                     |
+| Battery temperature     | Temperature       | °C   |                                                     |
+| Inverter temperature    | Temperature       | °C   |                                                     |
+| Inverter status         | Text              |      | Online, On grid, Off grid (backup), Fault, Offline… |
+| Inverter alarm          | Text              |      | The fault FoxESS reports, "None" otherwise.         |
+| Online                  | State of input    |      | 1 when the inverter talks to the FoxESS Cloud.      |
+
+An inverter the FoxESS Cloud reports **offline** (at night for an inverter without battery, or when
+its Wi-Fi dongle is down) only updates its status and "Online": the cloud would otherwise serve its
+last values as if they were live.
+
+The total production is a cumulative **production index** for Gladys' energy tracking; its history
+is kept. Whether Gladys draws a 30-minute production from it depends on your Gladys version: 5.2.1
+derives it automatically for consumption indexes only.
+
+## Dashboard widget
+
+**FoxESS solar** shows, for the inverter chosen in its settings (the first one added when none is
+chosen):
+
+- tiles for solar power, house consumption, battery level, grid import and export, production of
+  the day — live, they follow the states;
+- the inverter status, its current alarm, what the battery does (charging, discharging, idle), its
+  minimum charge, the work mode and the time of the last reading;
+- with inverter control allowed and a battery: three buttons **Self-use**, **Feed-in first** and
+  **Backup**, each one asking for a confirmation. The current mode has a check mark. With the
+  buttons there is room for four tiles: grid export and production of the day become status rows.
+
+## Scene trigger
+
+**Inverter fault** fires when the inverter reports a fault it did not report at the previous
+reading (a new fault, or another one replacing it). Filter on one inverter or leave it empty for
+all. The **Fault** variable holds the description FoxESS gives (for example "Grid Lost Fault").
+A fault already present when the integration starts does not fire it, nor does a fault that clears:
+the "Inverter alarm" feature then goes back to "None".
+
+## Scene actions
+
+Both actions are **refused while "Allow inverter control" is off**, the default: a scene that
+changes how the battery is used should never run by accident. Turn it on in the configuration to use
+them. They need an inverter with a battery.
+
+- **Set the inverter work mode**: Self-use (the battery covers the house first), Feed-in first
+  (the solar goes to the grid first) or Backup (the battery is kept full for a power cut). Output:
+  the mode applied.
+- **Set the minimum battery charge**: the charge the battery keeps off grid and on grid, 10 to
+  100 %, the on-grid one not below the other. Outputs: both values applied.
+
+These settings go through the official Open API (`setting/set` with the `WorkMode` key, and
+`battery/soc/set`). When a **schedule** (time segments) is active in the FoxESS app, the inverter
+refuses them: the action fails with "a schedule is active in the FoxESS app". The forced charge and
+discharge windows of the FoxESS scheduler are not offered.
+
+## Scene examples
+
+- **Fault alert**: trigger "Inverter fault", action "Send a message": "FoxESS:
+  \{\{triggerEvent.data.fault\}\}".
+- **Storm coming**: when the weather forecasts a storm, "Set the inverter work mode" to Backup;
+  the next morning, back to Self-use.
+- **Use the surplus**: when "Grid export" stays above 2,000 W for 15 minutes and "Battery level" is
+  above 90 %, turn on the water heater.
+
+## API quota
+
+The FoxESS Cloud allows **1,440 Open API calls a day** (one a minute on average) and refuses
+bursts. The integration spaces its calls by one second at least and reads, per cycle:
+
+- the real-time values of every added inverter, in one call;
+- every 15 minutes at most: the inverter list (online, alarm, offline) and the production of the
+  day of each inverter;
+- every hour, for an inverter with a battery: its minimum charge and its work mode.
+
+Calls a day for **one** inverter with a battery:
+
+| Refresh interval | Calls a day |
+| ---------------- | ----------- |
+| 5 minutes        | 528         |
+| 10 minutes       | 384         |
+| 15 minutes       | 336         |
+| 30 minutes       | 192         |
+| 1 hour           | 120         |
+
+Without battery, 48 fewer. Each more inverter adds 96 calls (its production) plus 48 with a
+battery. The quota is shared with every other tool using the same API key (Home Assistant, a
+script…): give each its own key, or slow down the refresh. When the cloud refuses a call for
+quota or burst, the readings pause for 30 minutes and the Configuration screen says so.
+
+## Troubleshooting
+
+- **"The FoxESS Cloud refused the API key"**: the key is invalid, or was deleted or regenerated. Generate a new one
+  in API Management and paste it again. The readings pause an hour after a refusal, or until the
+  configuration changes.
+- **"The FoxESS Cloud refused the request signature"**: the clock of the Gladys server is off by
+  more than a minute. Set it on time (NTP).
+- **"FoxESS Cloud call limit reached"**: another tool uses the same key, or the refresh is too fast.
+  See [API quota](#api-quota).
+- **"Serial number(s) not on this account"**: check the serial numbers of the configuration against
+  FoxESS Cloud, **Device**, **Inverter**, or leave the field empty.
+- **No PV string**, or too many: the strings come from what the inverter reports; set "Number of PV
+  strings", then "Update" the inverter in the Discovery tab.
+- **"No recent value"** on a stable value: values that do not change are sent again every 6
+  hours, which is enough; an offline inverter keeps its last values.
+- More detail: set `LOG_LEVEL=debug` on the integration and read its logs. The API key never
+  appears in them.
+
+## Limits
+
+- **Cloud only**: no local (Modbus) access. For a local link, `foxess_modbus` exists for Home
+  Assistant; it is not part of this integration.
+- **Not real time**: the FoxESS Cloud updates every 5 minutes or so, a reading can be that old.
+- **Developed without the hardware**: the answers of the API come from its documentation and from
+  the projects that use it. Fields named differently on some models may be missing: tell us.
+- The **minimum charge** and **work mode** are read once an hour: a change made in the FoxESS app
+  shows in the widget within the hour.
+- The **forced charge or discharge windows** and the **scheduler** of the FoxESS app are not
+  offered; nor are the export limit or the battery heating.
+- The house consumption index is not published (only its power): priced by the energy tracking, it
+  would count self-consumed solar as bought from the grid.
+- Not affiliated with FoxESS. FoxESS is a trademark of its owner.
+
+## Configuration settings
+
+These are the settings FoxESS asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your FoxESS Cloud account | `section` | No | On foxesscloud.com, open your profile (top right), User Profile, API Management, then Generate API key. The FoxESS Cloud allows 1,440 API calls a day per inverter: keep the refresh at 5 minutes or more. |
+| API key | `secret` | Yes | The key generated in API Management of your FoxESS Cloud profile. |
+| Inverter serial numbers | `string` | No | Empty: every inverter of the account. Otherwise the serial numbers to show, separated by commas (Device, Inverter in FoxESS Cloud). |
+| Refresh interval | `select` | No | The FoxESS Cloud itself updates its values about every 5 minutes. |
+| Number of PV strings | `number` | No | 0: every string the inverter reports. Otherwise only strings 1 to this number get a feature. |
+| Language of the feature names | `select` | No | Used when an inverter is added to Gladys, and for the status texts. |
+| Inverter control | `section` | No | Off by default. When on, scenes and the dashboard widget can change the work mode and the minimum battery charge. A wrong setting can leave the battery empty during a power cut. |
+| Allow inverter control | `boolean` | No |  |
+
+## How to install FoxESS in Gladys
+
+1. In Gladys, open **Integrations**: FoxESS appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-foxess:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-foxess](https://github.com/guim31/gladys-foxess).
+
+FoxESS requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+FoxESS is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-foxess) — [source of this documentation](https://github.com/guim31/gladys-foxess/blob/HEAD/docs/en.md)

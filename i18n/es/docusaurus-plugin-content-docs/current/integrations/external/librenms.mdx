@@ -1,0 +1,261 @@
+---
+title: "Integración domótica LibreNMS, gratuita y de código abierto"
+sidebar_label: "LibreNMS"
+description: "Sus equipos, alertas y puertos de LibreNMS en Gladys, y escenas cuando algo cae. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-librenms.png"
+keywords:
+  - "librenms"
+  - "domótica librenms"
+  - "gladys librenms"
+  - "librenms gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-librenms instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"LibreNMS","description":"Sus equipos, alertas y puertos de LibreNMS en Gladys, y escenas cuando algo cae.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-librenms","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-librenms.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T21:04:45Z"}} />
+
+Lleve su supervisión de red [LibreNMS](https://www.librenms.org/) a Gladys:
+cada equipo que supervisa LibreNMS se convierte en un dispositivo de Gladys
+(en línea, tiempo en funcionamiento, alertas activas, sensores de salud), los
+puertos que elija tienen su propio dispositivo (en línea, velocidad de
+entrada y de salida), un dispositivo «LibreNMS» cuenta los equipos fuera de
+línea y las alertas, y sus escenas reaccionan cuando un equipo o un puerto
+cae, vuelve, o cuando se activa o se resuelve una alerta. Una escena también
+puede reconocer las alertas de un equipo, y un widget del panel muestra lo
+que va mal.
+
+La integración lee la API de LibreNMS en su red local, con un token de API.
+Nada pasa por una nube.
+
+Probado con un LibreNMS 26.9.1 real (imagen Docker oficial), con un agente
+SNMP detenido y vuelto a arrancar: equipo fuera de línea y de vuelta, alerta
+activada, reconocida y resuelta. Los sensores de salud de un hardware real y
+la caída del enlace de un puerto de switch real solo se comprobaron por la
+forma de las respuestas de la API. Sus comentarios son bienvenidos:
+[github.com/guim31/gladys-librenms/issues](https://github.com/guim31/gladys-librenms/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- LibreNMS con su API (cualquier versión reciente), accesible desde la
+  máquina de Gladys (la dirección de su interfaz web).
+- Un usuario de LibreNMS para Gladys. El rol **global-read** basta para leer;
+  la acción de escena de reconocimiento necesita un rol que pueda modificar
+  las alertas (admin).
+
+## Primeros pasos
+
+### 1. Crear un token de API
+
+En LibreNMS, abra el menú ⚙ → **API → API Settings**, haga clic en **Create
+API access token**, elija el usuario, añada una descripción y copie el token.
+
+### 2. Configurar la integración
+
+En Gladys, abra la configuración de la integración:
+
+- **Dirección de LibreNMS**: la dirección con la que abre LibreNMS, p. ej.
+  `http://192.168.1.2:8000` o `https://librenms.example.com`. Una página
+  copiada del navegador (`…/devices`) también funciona.
+- **Token de API**: el token del paso 1.
+- **Grupos de equipos (opcional)**: nombres de grupos de equipos de LibreNMS,
+  separados por comas. Vacío: todos los equipos ni desactivados ni ignorados.
+- **Puertos a seguir (opcional)**: pares `equipo:puerto` separados por comas,
+  el equipo por su nombre de host (o su nombre de sistema, o su nombre
+  mostrado), el puerto por su nombre en LibreNMS, p. ej.
+  `switch:ge-0/0/1, nas:eth0`. `equipo:*` sigue todos los puertos del equipo
+  activados por el administrador. 20 puertos como máximo.
+- **Intervalo de actualización**: de 30 segundos a 5 minutos (1 minuto por
+  defecto).
+- **Permitir reconocer desde escenas**: desmarque para desactivar la acción
+  de reconocimiento.
+- **Aceptar certificados autofirmados**: para una dirección `https://` cuyo
+  certificado tampoco reconoce su navegador.
+- **Idioma de los nombres**: idioma de los nombres de las funciones y de los
+  resultados de escena.
+
+Guarde y haga clic en **Probar la conexión**: el informe muestra la versión
+de LibreNMS, el número de equipos, de equipos fuera de línea, de alertas
+activas, y los puertos seguidos que no se encontraron.
+
+### 3. Añadir los dispositivos
+
+Abra la pestaña **Descubrir** de la integración y añada los equipos y puertos
+que quiera seguir, y el dispositivo «LibreNMS» para los totales. Los
+disparadores de escena valen para todos los equipos, añadidos a Gladys o no.
+
+## Los dispositivos
+
+Cada **equipo** de LibreNMS:
+
+| Función                  | Valor                                                                                    |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| En línea                 | 1 en línea, 0 fuera de línea, tal como lo ve LibreNMS (ping, SNMP)                       |
+| Tiempo en funcionamiento | en días (solo equipos SNMP)                                                              |
+| Alertas activas          | número de alertas activas, reconocidas incluidas                                         |
+| Sensores de salud        | hasta 10: temperaturas, ventiladores (rpm), carga, potencia, tensión, corriente, humedad |
+
+Los sensores de salud son los que LibreNMS descubrió en el equipo, con su
+nombre de LibreNMS; primero las temperaturas.
+
+Cada **puerto seguido**:
+
+- En línea: 1 cuando el enlace está activo
+- Velocidad de entrada, en Mbit/s
+- Velocidad de salida, en Mbit/s
+
+El dispositivo **LibreNMS**:
+
+- Equipos fuera de línea
+- Alertas activas
+- Alertas críticas
+
+Los valores solo se envían a Gladys cuando cambian, y si no cada 6 horas.
+Mientras un equipo está fuera de línea, su tiempo en funcionamiento y sus
+puertos conservan su último valor y su insignia lo muestra inaccesible.
+
+## Panel
+
+El widget **Resumen de LibreNMS** muestra tres mosaicos — los equipos fuera
+de línea, las alertas activas, las que aún no se han reconocido — y una
+lista: primero los equipos fuera de línea, luego las alertas, las más graves
+primero (regla, equipo, ✓ una vez reconocida). Diez filas como máximo.
+**Actualizar** vuelve a leer LibreNMS. En sus ajustes, elija equipos para
+mostrar solo los suyos (vacío: todos).
+
+## Escenas
+
+### Disparadores
+
+- **Un equipo cae**: LibreNMS ve un equipo fuera de línea. Filtro:
+  dispositivos (vacío: cualquiera). Variables: nombre del equipo, nombre de
+  host, motivo (`icmp`, `snmp`).
+- **Un equipo vuelve**: un equipo visto fuera de línea vuelve a estar en
+  línea, con la duración en minutos.
+- **Se activa una alerta**: una regla de alerta de LibreNMS se cumple en un
+  equipo. Filtros: dispositivos, gravedades (Advertencia, Crítica, OK).
+  Variables: nombre del equipo, regla de alerta, gravedad (en palabras y como
+  clave), id. de la regla, id. de la alerta.
+- **Se resuelve una alerta**: una alerta ha terminado, con los mismos filtros
+  y variables, más su duración en minutos.
+- **Un puerto seguido cae**: un puerto seguido pierde su enlace (no cuando el
+  administrador lo apaga, ni mientras su equipo está fuera de línea).
+  Variables: nombre del equipo, puerto, descripción del puerto, estado. El
+  filtro se aplica a los dispositivos de puerto.
+- **Un puerto seguido vuelve**: el enlace vuelve a estar activo, con la
+  duración en minutos.
+- **LibreNMS ya no responde**: la API no responde dos veces seguidas
+  (variables: dirección de LibreNMS, error).
+
+Lo que ya está presente al arrancar la integración no se anuncia. Un cambio
+ocurrido durante un reinicio de Gladys o de la integración se anuncia una vez
+en la lectura siguiente. Reconocer una alerta no la resuelve ni la vuelve a
+activar.
+
+### Acciones
+
+- **Reconocer las alertas de un equipo**: reconoce las alertas activas del
+  equipo en LibreNMS, con una nota en su historial (vacío: «Reconocido desde
+  Gladys»). LibreNMS vuelve a notificar si una alerta empeora. Devuelve el
+  número de alertas reconocidas. Se desactiva con «Permitir reconocer desde
+  escenas».
+- **Leer el estado de la red**: cuenta y enumera los equipos fuera de línea y
+  las alertas activas, de un equipo o de todos, para las acciones siguientes:
+  equipos fuera de línea (número y nombres), alertas, sin reconocer, críticas,
+  gravedad más alta, y la lista «equipo: regla».
+
+### Ideas de escenas
+
+- **El router ha caído**: disparador «Un equipo cae» en el router → poner en
+  rojo la lámpara de la entrada y enviar
+  `{{triggerEvent.data.name}} está fuera de línea`.
+- **Solo las alertas críticas**: disparador «Se activa una alerta», gravedad
+  Crítica → mensaje `{{triggerEvent.data.name}}: {{triggerEvent.data.rule}}`.
+- **El enlace troncal del switch**: seguir `switch:ge-0/0/1`, disparador «Un
+  puerto seguido cae» → mensaje, y «Un puerto seguido vuelve» → «De vuelta
+  tras \{\{triggerEvent.data.duration_minutes\}\} min».
+- **Visto desde el sofá**: un botón del panel lanza «Reconocer las alertas de
+  un equipo» en el NAS.
+
+## Solución de problemas
+
+- **«Token de API rechazado»**: compruebe el token en API Settings (no
+  desactivado) y que su usuario sigue existiendo.
+- **«LibreNMS no responde»**: compruebe la dirección desde la máquina de
+  Gladys. `localhost` es el propio contenedor de la integración: use la
+  dirección IP de la máquina de LibreNMS.
+- **«No hay ninguna API de LibreNMS en esta dirección»** o **«la dirección
+  redirige»**: la dirección no lleva a LibreNMS; `/api/v0` debe responder en
+  su raíz (o bajo su subruta).
+- **«Certificado rechazado»**: marque «Aceptar certificados autofirmados», o
+  use la dirección `http://` en la red local.
+- **«Ningún grupo de equipos con estos nombres»**: los nombres deben ser los
+  de LibreNMS.
+- **Falta un equipo**: está desactivado o ignorado en LibreNMS, fuera de los
+  grupos de equipos, o el usuario del token no lo ve.
+- **No se encuentra un puerto**: «Probar la conexión» enumera los pares que
+  no pudo asociar; use el nombre de puerto que muestra LibreNMS (ifName).
+- **Se rechaza el reconocimiento**: el usuario del token necesita un rol que
+  modifique las alertas (admin). Un usuario global-read recibe un error.
+- **Un valor va con retraso**: LibreNMS consulta sus equipos cada 5 minutos;
+  un intervalo más corto solo ve los cambios antes.
+
+## Límites
+
+- Un solo servidor LibreNMS por integración.
+- Sin uso de procesador ni de memoria: la API los da equipo por equipo, lo
+  que multiplicaría las peticiones; los sensores «load» se conservan cuando
+  LibreNMS los tiene.
+- Como máximo 10 sensores de salud por equipo, 20 puertos seguidos, 30
+  eventos de escena por lectura (una avería puede hacer caer decenas de
+  equipos a la vez; el resto sigue en las lecturas siguientes).
+- Las velocidades de ventilador no tienen unidad en Gladys: «(rpm)» termina
+  su nombre.
+- Sin cuota en la API de LibreNMS: cada lectura envía cuatro o cinco
+  peticiones (una más por grupo de equipos), sea cual sea el número de
+  equipos.
+
+Sin relación con el proyecto LibreNMS.
+
+## Parámetros de configuración
+
+Estos son los parámetros que LibreNMS te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor LibreNMS | `section` | No | En LibreNMS, abra el menú ⚙ → API → API Settings, cree un token y péguelo abajo con la dirección de LibreNMS. Después, añada los equipos que quiera seguir desde la pestaña Descubrir: los disparadores de escena valen para todos, añadidos o no. |
+| Dirección de LibreNMS | `string` | Sí | La dirección con la que abre LibreNMS en su navegador. |
+| Token de API | `secret` | Sí | Basta un usuario con el rol global-read; para reconocer hace falta un rol que modifique alertas (admin). |
+| Grupos de equipos (opcional) | `string` | No | Nombres separados por comas. Vacío: todos los equipos ni desactivados ni ignorados. |
+| Puertos a seguir (opcional) | `string` | No | Pares equipo:puerto separados por comas (equipo por nombre de host, puerto por nombre), equipo:* para todos sus puertos activos. 20 como máximo. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee LibreNMS (4 o 5 peticiones). LibreNMS consulta los equipos cada 5 minutos. |
+| Permitir reconocer desde escenas | `boolean` | No | Desmarque para desactivar la acción de escena «Reconocer las alertas de un equipo». |
+| Aceptar certificados autofirmados | `boolean` | No | Solo para una dirección https:\/\/ cuyo certificado tampoco reconoce su navegador. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo) y de los resultados de escena. |
+
+## Cómo instalar LibreNMS en Gladys
+
+1. En Gladys, abre **Integraciones**: LibreNMS aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-librenms:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-librenms](https://github.com/guim31/gladys-librenms).
+
+LibreNMS requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+LibreNMS es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-librenms) — [fuente de esta documentación](https://github.com/guim31/gladys-librenms/blob/HEAD/docs/es.md)

@@ -1,0 +1,171 @@
+---
+title: "Tedee smart home integration, free and open source"
+sidebar_label: "Tedee"
+description: "Tedee GO and PRO smart locks through the local API of the Tedee Bridge. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tedee.png"
+keywords:
+  - "tedee"
+  - "tedee smart home"
+  - "gladys tedee"
+  - "tedee gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-tedee instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tedee","description":"Tedee GO and PRO smart locks through the local API of the Tedee Bridge.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tedee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tedee.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T02:42:40Z"}} />
+
+Unofficial integration, not affiliated with Tedee. It brings the **Tedee GO**
+and **Tedee PRO** smart locks paired with a **Tedee Bridge** into Gladys,
+through the official local API of the bridge (Bridge API v1.0): everything
+stays on your local network, without the Tedee cloud.
+
+> **Warning: this integration has never been tested with a real bridge or a
+> real lock.** It was written from the official Bridge API documentation and
+> the aiotedee library, and tested against a fake bridge only. Feedback is
+> welcome.
+
+## What you get
+
+For each lock:
+
+| Feature                     | Detail                                                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Lock                        | Command: 1 locks, 0 unlocks (when allowed). Shows 1 locked, 0 unlocked or half-locked.                                    |
+| Lock state                  | 0 unlocked, 1 locked, 2 moving, 3 error (jammed or not calibrated).                                                       |
+| Status                      | Text: locked, unlocked, half-locked, latch pulled, moving, jammed, not calibrated, updating, not connected to the bridge. |
+| Open the door (pull spring) | Button, only when the pull spring is on in the Tedee app (when both options are allowed).                                 |
+| Door                        | Opening sensor, only when a Tedee Door Sensor is paired.                                                                  |
+| Battery                     | In %.                                                                                                                     |
+| Charging                    | Tedee PRO only (rechargeable battery).                                                                                    |
+
+The connection of each lock to the bridge shows in the device badge:
+"unreachable" (with an orange dot) when the lock is no longer connected to the
+bridge, "unreachable" for all when the bridge no longer answers.
+
+A **Tedee Keypad** listed by the bridge shows with its battery only; the local
+API does not document keypads, this is not verified.
+
+## Setup
+
+1. In the Tedee app, open the bridge, then **Settings > Local API** (Bridge
+   API), turn it on and note the **token** and the **Encrypted token** switch
+   (on = **Hashed** mode, off = **Plain** mode). The bridge firmware must be
+   recent enough to offer the local API.
+2. Give the bridge a fixed IP address in your router (DHCP reservation).
+3. In Gladys, install the Tedee integration and enter the **IP address of the
+   bridge**, the **API token** and the **token mode**.
+4. Click **Test the connection**, then add the locks from the **Discovery**
+   tab.
+
+## Safety
+
+- **Locking is always possible.**
+- **Unlocking** is off by default: turn on **Allow unlocking the locks from
+  Gladys** to allow it (scenes, dashboard, voice assistants).
+- **Opening the door (pull spring)** is off by default and **always needs both
+  options**: **Allow unlocking** and **Allow opening the door**, whatever the
+  state of the lock. On a locked lock, the button sends "unlock or pull"
+  (mode 4): the lock unlocks, and pulls the latch only when the automatic pull
+  spring is on in the Tedee app; Gladys then shows "Unlocking…".
+- When the **automatic pull spring** is on in the Tedee app, unlocking also
+  opens the door: unlocking is then refused until the option to open the door
+  is on.
+- Before each command, the integration **reads the lock again** on the
+  bridge. The command is refused when that read fails, when the lock is not
+  connected to the bridge, when it moves (latch pulled included), or when its
+  state is unknown (not calibrated, updating).
+- The commands of one lock run **one at a time**, and one request at a time
+  goes to the bridge (the commands before the reads).
+- After a command, any new command of the same lock is refused ("movement in
+  progress") until the bridge shows the expected state (or a jammed lock), for
+  10 seconds at most; the lock shows as moving meanwhile.
+- A command that cannot be sent within **3.5 seconds** of its arrival is
+  refused: Gladys shows a failure after 5 seconds, and nothing must move after
+  that failure.
+- When the bridge does not confirm a command in time, Gladys shows a failure,
+  but the lock may still move: check its state.
+
+## Token and privacy
+
+- The token is **kept by Gladys in its database, never shown again, sent only
+  to the bridge**. It never appears in the logs.
+- The local API of the bridge is **plain HTTP, without encryption**. In
+  **hashed** mode (recommended), the token never travels: each request carries
+  a SHA-256 digest of the token and the time. This mode needs the clock of the
+  Gladys host on time. In **plain** mode, the token travels in clear on the
+  local network: whoever watches it can command your locks.
+- Nothing goes to the Internet.
+
+## Refresh
+
+The bridge is read every 10 seconds by default (5 to 300 seconds), and a few
+times right after a command to follow the movement. The bridge can call an
+HTTP address on each event (callbacks), but a Gladys integration container
+cannot declare a port reachable from the local network: the integration polls
+the bridge instead.
+
+## Errors
+
+- **Token refused** (401, after a second try with a new time): check the
+  token; in hashed mode, the clock of the Gladys host. Tried again every 5
+  minutes, or at once with **Test the connection**.
+- **HTTP 403 on a read**: the cause is not documented for the reads; most
+  likely a token mode that does not match the "Encrypted token" switch of the
+  app (an assumption). Tried again every 5 minutes.
+- **HTTP 403 on an unlock**: the bridge refused the unlock mode (specification
+  v1.19); the lock did not unlock.
+- **Lock disconnected** (405) and **Bluetooth error** between the bridge and
+  the lock (406): the command is not executed, a message says so.
+- **Bridge unreachable**: tried again after 10 s, 30 s, 1 min, 2 min, then
+  every 5 minutes.
+- **The bridge asks to slow down** (429): a pause of at least 1 minute (at
+  most 6 h), reads and commands included.
+
+## Credits
+
+- Official documentation of the Tedee Bridge API:
+  https://docs.tedee.com/bridge-api
+- The logic of the local client is ported to JavaScript from
+  [aiotedee](https://github.com/zweckj/aiotedee) by Josef Zweck (MIT license,
+  see `THIRD_PARTY_NOTICES.md`).
+
+## Configuration settings
+
+These are the settings Tedee asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Tedee Bridge | `section` | No | Brings the Tedee GO and PRO locks paired with a Tedee Bridge into Gladys, on your local network, without the Tedee cloud: lock state (locked, unlocked, half-locked, moving, jammed), door sensor, battery and charging, connection. In the Tedee app, open the bridge settings, turn on the Local API (Bridge API) and copy its token and the IP address of the bridge here. Locking is always possible; unlocking and opening the door (pull spring) stay off until you allow them below. The bridge is read every few seconds. Unofficial, not affiliated with Tedee. |
+| IP address of the bridge | `string` | Yes |  |
+| API token of the bridge | `secret` | Yes | Kept by Gladys in its database, never shown again, sent only to the bridge. |
+| Token mode | `select` | No | As the "Encrypted token" switch of the Tedee app: on = Hashed, off = Plain. Hashed: the token never travels on the network (needs the clock of the Gladys host on time). Plain: the token travels in clear on the local network. |
+| Allow unlocking the locks from Gladys | `boolean` | No | Off by default: Gladys can lock, never unlock. |
+| Allow opening the door (pull spring) from Gladys | `boolean` | No | Off by default. Opening the door always needs the unlocking option too. Also needed to unlock a lock whose automatic pull spring is on in the Tedee app. |
+| Refresh interval (s) | `number` | No | How often the bridge is read, in seconds (5 to 300). |
+| Language of the feature names | `select` | No | Used for the names of the features of the devices added from now on, and for the status texts. |
+
+## How to install Tedee in Gladys
+
+1. In Gladys, open **Integrations**: Tedee appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-tedee:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-tedee](https://github.com/LM1LC3N7/gladys-tedee).
+
+Tedee requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Tedee is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-tedee) — [source of this documentation](https://github.com/LM1LC3N7/gladys-tedee/blob/HEAD/docs/en.md)

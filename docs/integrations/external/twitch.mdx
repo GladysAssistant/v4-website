@@ -1,0 +1,159 @@
+---
+title: "Twitch smart home integration, free and open source"
+sidebar_label: "Twitch"
+description: "Follow Twitch channels: live status, viewers, category, scenes and a dashboard widget. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-twitch.png"
+keywords:
+  - "twitch"
+  - "twitch smart home"
+  - "gladys twitch"
+  - "twitch gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-twitch instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Twitch","description":"Follow Twitch channels: live status, viewers, category, scenes and a dashboard widget.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-twitch","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-twitch.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T17:42:43Z"}} />
+
+Follow Twitch channels in Gladys: know who is live, in which category and for
+how many viewers, start scenes when a stream begins or ends, and show the
+channels on a dashboard.
+
+The integration only reads **public** data. No Twitch account is linked: it
+uses the identifiers of a free Twitch application you create once.
+
+## 1. Create a Twitch application
+
+1. Go to the [Twitch developer console](https://dev.twitch.tv/console/apps/create)
+   and sign in with any Twitch account (two-factor authentication must be on).
+2. Fill in the form:
+   - **Name**: anything unique, e.g. `Gladys my-home`;
+   - **OAuth Redirect URLs**: `http://localhost` (not used, but required);
+   - **Category**: `Other`;
+   - **Client Type**: `Confidential`.
+3. Click **Create**, then **Manage** on the new application.
+4. Copy the **Client ID**, then click **New Secret** and copy the **Client
+   Secret** (it is only shown once).
+
+## 2. Configure the integration
+
+1. Open the **Configuration** tab of the integration in Gladys.
+2. Paste the **Client ID** and the **Client Secret**.
+3. In **Channels**, list the channels to watch, separated by commas. Names
+   (`twitchdev`), `@names` and links (`https://www.twitch.tv/twitchdev`) are all
+   accepted, up to 100 channels.
+4. Optionally change the **Refresh interval**: Twitch is read every 60 seconds
+   by default (30 seconds to one hour).
+5. Save, then click **Test the connection**: the answer says how many channels
+   were found, how many are live, and which names do not exist on Twitch.
+6. Open the **Discovery** tab and add the channels you want as devices.
+
+## What you get
+
+One device per channel, named `Twitch <channel>`, with:
+
+| Feature  | Value                                               |
+| -------- | --------------------------------------------------- |
+| Live     | 1 when the channel is streaming, 0 otherwise        |
+| Viewers  | Current number of viewers                           |
+| Uptime   | Minutes since the stream started                    |
+| Title    | Title of the stream (the last one when offline)     |
+| Category | Game or category played (the last one when offline) |
+
+The device is tied to the Twitch **user id** of the channel: a streamer who
+renames their channel keeps the same device, history and scenes.
+
+## Scenes
+
+The integration adds its own cards to the scene editor (Gladys 5.1 or later).
+
+Triggers:
+
+- **Twitch stream started** — a watched channel goes live. Optionally pick the
+  channel and a category (exact name, e.g. `Just Chatting`). Variables:
+  `{{triggerEvent.data.channel_name}}`, `title`, `game` and `url`.
+- **Twitch stream ended** — a watched channel stops streaming. Variable:
+  `duration_minutes`, how long the stream lasted.
+- **Twitch category changed** — a live channel switches to another game.
+  Variables: `game`, `previous_game`, `title`.
+
+Actions:
+
+- **Check a Twitch channel** — is any public channel (watched or not) live
+  right now? Returns `is_live`, `channel_name`, `viewer_count`, `title`, `game`
+  and `uptime_minutes`, which the following actions can use.
+- **Refresh Twitch channels** — reads the watched channels now, without
+  waiting for the next refresh, and returns `live_count`.
+
+You can also use the standard **device state** trigger and condition on the
+**Live** or **Viewers** features ("when more than 100 viewers…").
+
+Example: _when a stream starts on my favourite channel, send me a message
+"\{\{triggerEvent.data.channel_name\}\} is live: \{\{triggerEvent.data.title\}\}
+\{\{triggerEvent.data.url\}\}"_.
+
+## Dashboard
+
+Add the **Twitch channels** widget to a dashboard. It shows how many channels
+are live, then one row per channel: avatar, live badge, category and viewers.
+Tap a row for the stream title and a link to the channel. The **Refresh**
+button reads Twitch at once.
+
+Widget settings: pick the channels to show (all when empty) and/or show only
+the live ones.
+
+## Good to know
+
+- A stream is declared ended only after it is missing from two Twitch answers
+  in a row: Twitch sometimes forgets a live stream for one request, and scenes
+  would otherwise announce a stream end and a new start a minute later.
+- A channel added to the list while it is already live does not fire
+  **Twitch stream started**: it did not just start.
+- The integration remembers the last state of each channel in its data
+  volume: after a restart, a stream that was already running is not announced
+  again, and a stream that started meanwhile is.
+
+## Troubleshooting
+
+- **"Twitch refused the Client ID or Client Secret"**: copy them again from the
+  developer console. A new secret invalidates the previous one.
+- **A channel is "unknown on Twitch"**: check its spelling in the channel URL.
+- The device badge shows **cloud** when Twitch answers, **unreachable** when it
+  does not. Check the integration logs from the Gladys interface for details.
+
+## Configuration settings
+
+These are the settings Twitch asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Twitch application | `section` | No | Register a free application on the Twitch developer console (OAuth Redirect URL: http:\/\/localhost, category: Other, client type: Confidential), then paste its Client ID and a new Client Secret below. No Twitch account is linked: the integration only reads public data. |
+| Client ID | `string` | Yes |  |
+| Client Secret | `secret` | Yes |  |
+| Channels | `string` | No | Twitch channels to watch, separated by commas (names or twitch.tv links, 100 at most). |
+| Refresh interval (s) | `number` | No | How often Twitch is read, in seconds (30 to 3600). |
+
+## How to install Twitch in Gladys
+
+1. In Gladys, open **Integrations**: Twitch appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-twitch:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-twitch](https://github.com/prohand/gladys-twitch).
+
+Twitch requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Twitch is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-twitch) — [source of this documentation](https://github.com/prohand/gladys-twitch/blob/HEAD/docs/en.md)

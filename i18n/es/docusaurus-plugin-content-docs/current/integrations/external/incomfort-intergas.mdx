@@ -1,0 +1,168 @@
+---
+title: "Integración domótica InComfort (Intergas), gratuita y de código abierto"
+sidebar_label: "InComfort (Intergas)"
+description: "Intergas boilers through the local Lan2RF gateway: temperatures, pressure, status, rooms. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-incomfort.png"
+keywords:
+  - "incomfort (intergas)"
+  - "domótica incomfort (intergas)"
+  - "gladys incomfort (intergas)"
+  - "incomfort (intergas) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-incomfort instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"InComfort (Intergas)","description":"Intergas boilers through the local Lan2RF gateway: temperatures, pressure, status, rooms.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-incomfort","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-incomfort.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T13:09:33Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Your Intergas boilers in Gladys, through the local **Lan2RF** gateway
+(InComfort / InTouch) on your network, without any cloud:
+
+- each boiler bound to the gateway becomes a Gladys device: **heating water
+  temperature**, **pressure** (bar), **hot water temperature**, **burner on**,
+  **pump on**, **hot water function**, **fault (lockout)**, and in words its
+  **status** (standby, central heating, hot water…) and its **fault** (`E…`
+  code and label);
+- each room thermostat (two at most per boiler) becomes a device with the
+  **room temperature**, the **setpoint** and **heating** (burner and pump on).
+
+> **This integration has never been tested on a real gateway.** This first
+> version was written from the incomfort-client library and the incomfort
+> integration of Home Assistant, and tested only against a fake gateway.
+> Tell on the Gladys forum what works and what does not.
+
+Unofficial integration, not affiliated with Intergas.
+
+## Configuration
+
+- **Gateway address**: its IP address on your network (`192.168.1.20`); a
+  port may follow (`192.168.1.20:80`). Prefer the IP address: a `.local`
+  (mDNS) name does not resolve inside the container of the integration. Give
+  it a fixed address in your router. The gateway only speaks plain http: an `https://` address is
+  refused with a clear message.
+- **User name** and **password**: leave them empty for an older gateway.
+  Newer gateways ask for those printed on their label or in their manual;
+  Gladys then uses the `/protect/` pages of the gateway. The password is kept
+  by Gladys in its database, never shown again, sent only to the gateway, in
+  the HTTP authentication header (never in an address, never in a log).
+  Beware: the gateway has no https, so the user name and password cross your
+  local network in clear, at every reading.
+- **Allow changing the room setpoint**: off by default (see Command).
+- **Language of the devices**: French (default) or English, for the device
+  names and the status and fault texts.
+
+Then open the **Discovery** tab and create the boilers and thermostats to
+follow. The **Test the connection** button reads the gateway right away and
+lists what it sees.
+
+## Command
+
+- **Only the room setpoint** can be changed, and only once **Allow changing
+  the room setpoint** is ticked. Once ticked, the dashboard, the scenes, the
+  voice assistants (Siri / HomeKit...) and the Thermostat service of Gladys
+  can change the setpoint, from 5 to 30 °C. Nothing turns the boiler on or
+  off and nothing touches the hot water: no feature is a switch, so "turn
+  everything off" cannot act on the boiler.
+- The setpoint goes from **5 to 30 °C** (the bounds of the gateway), to a
+  tenth of a degree: a value outside is refused, never clamped.
+- Just before acting, Gladys reads the boiler list and the boiler again: when
+  the reading fails, the boiler is no longer bound or the thermostat no longer
+  answers, nothing is sent; when the thermostat is already at this setpoint
+  (and no other remote setpoint is pending), nothing is sent either. When the command cannot be checked within 3.5 s,
+  nothing is sent and Gladys shows a failure (never an action after a failure
+  was shown). Once sent, Gladys answers at most 4.3 s after your command; the
+  setpoint shown follows the answer of the gateway.
+- Commands run one after the other (one gateway).
+- The setpoint shown is, like in Home Assistant, the setpoint sent remotely
+  when there is one, else the thermostat's own. The thermostat gets the
+  setpoint by radio: it may take a moment to show there. Some older
+  thermostats keep the remote setpoint even after a change by hand: the
+  setpoint shown in Gladys may then stay the old one.
+
+## Refresh and limits
+
+- The gateway is read every **30 seconds**: the boiler list, then each boiler
+  (its thermostats come with it). States are up to 30 seconds late. Only the
+  values that change are sent to Gladys (and each one at least every 30
+  minutes).
+- A boiler that does not answer makes only its own devices unreachable; the
+  others go on.
+- The water temperatures (heating water, hot water) are probes: Gladys keeps
+  them out of the temperature of the room the boiler is in.
+- A Lan2RF gateway handles 8 boilers at most, 2 room thermostats per boiler.
+  A thermostat shows up only once the gateway gives a valid temperature for
+  it.
+- Boilers are recognised by their **serial number** (the one the gateway
+  lists), not by their position in the list: a boiler that moves keeps its
+  device, its history and its scenes.
+
+## Connection problems
+
+- **Gateway unreachable**: every device shows unreachable; retried after
+  30 s, then less and less often up to every 10 min (never faster than the
+  normal reading).
+- **Credentials asked or refused** (HTTP 401): Gladys does not try again by
+  itself, not even after a reconnection to Gladys. Fix the user name and
+  password and save, or press **Test the connection**. A restart of the
+  integration makes one new try.
+- **HTTP 404 with a user name**: the gateway is an older one without
+  protected pages: clear the user name and the password.
+- **Gateway overloaded** (HTTP 429): every request stops for 1 minute to 6
+  hours; saving the configuration or pressing **Test the connection** lifts
+  the pause.
+- The logs hold neither the password nor the text of the gateway's answers,
+  only codes (HTTP 500, no connection…).
+
+## Limits
+
+- One gateway per integration.
+- No hot water command nor boiler mode: the gateway offers none, and hot
+  water is read only on purpose.
+- Neither the radio signal strength nor the node number are published.
+- Never tested on a real gateway, nor with real credentials.
+
+## Parámetros de configuración
+
+Estos son los parámetros que InComfort (Intergas) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Gladys reads your Intergas boilers every 30 seconds through the Lan2RF (InComfort) gateway, on your local network, without any cloud. Each boiler becomes a Gladys device (Discovery tab): heating water temperature, pressure, hot water temperature, burner, pump, hot water, fault, status; each room thermostat becomes a device with its temperature and setpoint. Unofficial integration, not affiliated with Intergas. Never tested on a real gateway: see the documentation. |
+| Gateway address | `string` | Sí | The IP address (or name) of the Lan2RF gateway on your network. Give it a fixed address in your router. Plain http: the gateway has no https. |
+| Credentials (newer gateways) | `section` | No | Older gateways answer without credentials: leave both fields empty. Newer ones ask for a user name and password (those of the gateway, see its label or manual). They go to the gateway in an HTTP header, in clear on your local network (the gateway has no https). |
+| User name (optional) | `string` | No |  |
+| Password (optional) | `secret` | No | Kept by Gladys in its database, never shown again, sent only to the gateway. |
+| Options | `section` | No | By default Gladys only reads. Once the option below is ticked, the dashboard, the scenes, the voice assistants (Siri / HomeKit...) and the Thermostat service of Gladys can change the setpoint of the room thermostats, from 5 to 30 °C. Nothing ever turns the boiler on or off, and hot water is never commanded. |
+| Allow changing the room setpoint | `boolean` | No |  |
+| Language of the devices | `select` | No | Names of the devices and features, status and fault texts. |
+
+## Cómo instalar InComfort (Intergas) en Gladys
+
+1. En Gladys, abre **Integraciones**: InComfort (Intergas) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-incomfort:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-incomfort](https://github.com/LM1LC3N7/gladys-incomfort).
+
+InComfort (Intergas) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+InComfort (Intergas) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-incomfort) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-incomfort/blob/HEAD/docs/en.md)

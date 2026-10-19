@@ -1,0 +1,188 @@
+---
+title: "Integración domótica TTLock, gratuita y de código abierto"
+sidebar_label: "TTLock"
+description: "Cerraduras TTLock por la nube: estado, batería, último acceso, bloqueo y disparadores. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ttlock.png"
+keywords:
+  - "ttlock"
+  - "domótica ttlock"
+  - "gladys ttlock"
+  - "ttlock gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-ttlock instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TTLock","description":"Cerraduras TTLock por la nube: estado, batería, último acceso, bloqueo y disparadores.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ttlock","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ttlock.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T23:36:40Z"}} />
+
+Integra sus **cerraduras inteligentes TTLock** en Gladys mediante la API en la nube oficial de la TTLock Open Platform: cerraduras de puerta, candados y cajas de llaves de las numerosas marcas basadas en TTLock (la cerradura se configura en la aplicación TTLock), alcanzadas mediante una pasarela TTLock (G2, G3...) o su propio WiFi.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** Esta integración se escribió a partir de la documentación de la API de TTLock y de las respuestas publicadas por la integración de Home Assistant, sin cerradura ni cuenta reales. Cuente lo que funciona y lo que no en el foro de Gladys o en una issue de GitHub.
+
+Esta integración no está afiliada a TTLock, Sciener ni a ninguna marca de cerraduras.
+
+## Presentación
+
+- Un dispositivo de Gladys por cerradura de su cuenta TTLock, con su **estado** (bloqueada / desbloqueada), su **batería**, si su **pasarela está en línea** y su **último acceso** (quién, cómo, cuándo).
+- Un botón **Bloquear**. Bloquear es siempre seguro: es el único comando que ofrece un dispositivo.
+- **El desbloqueo está desactivado por defecto**, y nunca se ofrece como interruptor, botón del panel o comando de voz. Si usted lo permite explícitamente, solo existe como acción de escena. Lo mismo para el modo de paso.
+- Dos disparadores de escena: **Cerradura desbloqueada** (con el método: código, tarjeta, huella, aplicación...) y **Batería baja**.
+- Un widget del panel: estado, batería, pasarela, último acceso y un botón **Bloquear**.
+
+## Requisitos
+
+- Gladys Assistant 5.1.0 o posterior.
+- Sus cerraduras añadidas en la **aplicación TTLock**, con la cuenta que las administra (el «admin» de la cerradura, no una persona que recibió una eKey).
+- Para leer el estado y bloquear desde Gladys: una **pasarela TTLock** (G2, G3, G4...) emparejada con la cerradura, o una **cerradura WiFi**. Una cerradura solo Bluetooth sin pasarela muestra únicamente su batería y sus últimos accesos, tal como los sincroniza la aplicación.
+- Una **aplicación de desarrollador** gratuita en la TTLock Open Platform:
+  1. Cree una cuenta en [euopen.ttlock.com](https://euopen.ttlock.com/manager) (China: cnopen.ttlock.com). Esta cuenta de desarrollador **no** es su cuenta de la aplicación TTLock.
+  2. Cree una aplicación. TTLock puede tardar unos días en aprobarla.
+  3. Anote su **client ID** y su **client secret**.
+
+## Configuración
+
+En Gladys, abra **Integraciones → TTLock → Configuración** e introduzca:
+
+| Campo                                    | Qué introducir                                                                                           |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Nube de TTLock                           | «Europa y mundo» para una aplicación creada en euopen.ttlock.com, «China» para cnopen.                   |
+| Client ID / Client secret                | Los valores de su aplicación de desarrollador.                                                           |
+| Cuenta / contraseña de la app TTLock     | El correo o el número de teléfono y la contraseña **con los que inicia sesión en la aplicación TTLock**. |
+| Intervalo de actualización               | 5, 10, 15 o 30 minutos (vea [Llamadas a la API y cuota](#llamadas-a-la-api-y-cuota)).                    |
+| Batería baja por debajo de               | El nivel por debajo del cual se activa el disparador «Batería baja».                                     |
+| Idioma de los textos de los dispositivos | Idioma de los nombres de las funciones (fijados al añadir un dispositivo) y del texto del último acceso. |
+| Permitir el desbloqueo desde escenas     | Desactivado por defecto. Lea primero [Seguridad](#seguridad).                                            |
+| Permitir el modo de paso desde escenas   | Desactivado por defecto.                                                                                 |
+
+Pulse **Probar la conexión**: el mensaje indica el número de cerraduras y pasarelas, y una estimación de las llamadas a la API por día. Después abra la pestaña **Descubrimiento** y añada sus cerraduras.
+
+La contraseña se envía a TTLock como hash MD5, igual que hace la aplicación TTLock. El token de acceso que devuelve TTLock (válido 90 días, renovado automáticamente) se guarda en el volumen privado de la integración, `/data`.
+
+## Dispositivos
+
+Cada cerradura de la cuenta se convierte en un dispositivo, con el nombre que tiene en la aplicación TTLock.
+
+| Función                | Tipo                          | Lo que muestra                                                                                                        |
+| ---------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Estado de la cerradura | Estado de cerradura (lectura) | Bloqueada o desbloqueada, según responde la cerradura mediante su pasarela o su WiFi.                                 |
+| Bloquear               | Pulsador                      | Bloquea la puerta. Solo para una cerradura con pasarela o WiFi.                                                       |
+| Batería                | Batería (%)                   | El nivel de batería de la cerradura.                                                                                  |
+| Pasarela en línea      | Sí / No                       | Una pasarela al alcance de la cerradura está conectada a TTLock. Solo para una cerradura con pasarela.                |
+| Último acceso          | Texto                         | El último desbloqueo: cómo, quién (cuenta de la aplicación, o nombre dado al código, la tarjeta o la huella), cuándo. |
+
+El estado de la cerradura nunca es un interruptor: un interruptor podría abrir la puerta con un solo toque, desde una escena que «apaga todo» o desde un asistente de voz.
+
+Cómo se actualizan los valores: cada actualización lee los nuevos registros de la cerradura (accesos) y el estado de las pasarelas. El estado se pide a la propia cerradura, mediante su pasarela, al arrancar, tras un comando, en cuanto aparece un nuevo acceso o bloqueo, y cada 30 minutos en otro caso: pedirlo despierta la cerradura, lo que consume su batería y llamadas a la API.
+
+## Widget
+
+**Cerradura TTLock**: elija una cerradura en los ajustes del widget. Muestra la batería, el estado, la pasarela, el último acceso y un botón **Bloquear**. No hay botón de desbloqueo. Para una cerradura sin pasarela ni WiFi, una frase sustituye al botón.
+
+## Disparadores de escena
+
+**Cerradura desbloqueada**: alguien desbloqueó una cerradura. Filtros: la cerradura (vacío: cualquiera) y el método (vacío: cualquiera). Información transmitida a la escena: el nombre de la cerradura, quién (la cuenta de la aplicación, o el nombre del código, la tarjeta o la huella) y cómo.
+
+- Se activa en la actualización que ve el acceso: hasta un intervalo de actualización después de abrir la puerta.
+- Un acceso que la pasarela sube con retraso (más de 15 minutos después) actualiza el último acceso pero no activa nada: es historia, no una novedad.
+- Los intentos fallidos no activan nada.
+
+**Batería baja**: la batería de una cerradura bajó del nivel configurado. Se activa una vez, y de nuevo solo cuando el nivel haya subido 5 puntos por encima del umbral (pilas nuevas). Información transmitida: el nombre de la cerradura y el nivel de batería.
+
+## Acciones de escena
+
+- **Bloquear una cerradura TTLock**: bloquea y luego vuelve a leer el estado. Resultado: «Bloqueada según la cerradura» (sí / no).
+- **Desbloquear una cerradura TTLock**: rechazada mientras «Permitir el desbloqueo desde escenas» esté desactivado. Resultado: «Desbloqueada según la cerradura».
+- **Modo de paso TTLock**: rechazada mientras «Permitir el modo de paso desde escenas» esté desactivado. Activado: una vez abierta, la cerradura sigue abierta todo el día, todos los días, hasta desactivar el modo de paso; no se abre sola. Desactivado: la cerradura vuelve a bloquearse con normalidad.
+
+## Seguridad
+
+El desbloqueo y el modo de paso abren su puerta a quien esté delante. Por eso están desactivados por defecto y solo existen como acciones de escena, nunca como interruptor, botón de widget, comando de voz o dispositivo HomeKit / Google Home / Alexa.
+
+Antes de permitirlos:
+
+- Piense en todos los disparadores de la escena: una presencia detectada por error, un teléfono olvidado en casa, una escena lanzada desde el panel por cualquiera en la casa.
+- Los usuarios de Gladys pueden modificar las escenas: cualquiera de ellos puede entonces abrir la puerta.
+- Para una visita, es mejor un código temporal o una eKey enviada desde la aplicación TTLock.
+
+## Ejemplos de escenas
+
+- **Quién llegó a casa**: disparador «Cerradura desbloqueada», método = huella o código → enviar el mensaje «\{\{nombre de la cerradura\}\}: \{\{quién\}\} (\{\{cómo\}\})».
+- **Cerrar por la noche**: cada día a las 23:00, si el estado de la puerta de entrada es «desbloqueada» → acción «Bloquear una cerradura TTLock».
+- **Cambiar las pilas**: disparador «Batería baja» → enviar el mensaje «Cambie las pilas de \{\{nombre de la cerradura\}\} (\{\{batería\}\} %)».
+- **Salir de casa**: cuando sale la última persona → «Bloquear una cerradura TTLock» en cada puerta, y luego enviar un mensaje si «Bloqueada según la cerradura» es no.
+
+## Llamadas a la API y cuota
+
+TTLock no puede avisar a un Gladys local: su URL de retorno debe ser accesible desde Internet. Por eso la integración consulta la nube de TTLock. TTLock limita las llamadas a la API de una aplicación de desarrollador (error 30006, «exceeds the restrictions of API call number»); el límite en sí no está publicado.
+
+Lo que cuesta una actualización:
+
+- en cada actualización: 1 llamada para las pasarelas de la cuenta, 1 llamada por cerradura (sus registros);
+- cada 30 minutos, y tras cada acceso: 1 llamada por cerradura con pasarela o WiFi (su estado);
+- cada hora: 1 llamada para la lista de cerraduras, 1 por cerradura con pasarela (sus pasarelas).
+
+Una cerradura con pasarela, cada 5 minutos: unas 670 llamadas al día, 20 000 al mes. Cada 15 minutos: unas 290 al día. **Probar la conexión** da la estimación para sus cerraduras. Si se alcanza el límite, la pantalla de configuración lo indica: elija un intervalo más largo.
+
+Solo se actualizan las cerraduras añadidas en Gladys.
+
+## Solución de problemas
+
+- **«TTLock rechaza la conexión»**: compruebe el client ID y el secreto (página de la aplicación en la Open Platform), y que la cuenta es la de la **aplicación TTLock**, no la de desarrollador. La región debe ser la de la aplicación.
+- **Ninguna cerradura en la pestaña Descubrimiento**: la cuenta debe ser administradora de las cerraduras. TTLock no lista las cerraduras compartidas con usted mediante eKey.
+- **El estado sigue desconocido**: la cerradura necesita una pasarela (o WiFi), y la pasarela debe estar en línea. Mire «Pasarela en línea».
+- **«Límite de llamadas de la API de TTLock alcanzado»**: elija un intervalo de actualización más largo, o quite de Gladys las cerraduras innecesarias.
+- **El último acceso llega con retraso**: los accesos llegan a la nube mediante la pasarela, y a Gladys en la siguiente actualización.
+- Registros detallados: ponga la variable de entorno `LOG_LEVEL` de la integración en `debug`. Nunca se escriben tokens, contraseñas ni códigos.
+
+## Limitaciones
+
+- Desarrollada sin el hardware ni una cuenta TTLock: las respuestas de la API proceden de su documentación.
+- Sin eventos en tiempo real: el retraso es el intervalo de actualización. El retorno de TTLock exige una URL pública.
+- Una sola cuenta TTLock por Gladys. Solo las cerraduras que administra la cuenta.
+- Sin gestión del sensor de puerta, códigos, tarjetas ni huellas: use la aplicación TTLock.
+- Como máximo se leen 50 registros por cerradura en cada actualización: en una cerradura muy usada con un intervalo largo, pueden faltar accesos.
+- Los nombres de las funciones se fijan al añadir el dispositivo: cambiar el idioma después solo renombra los dispositivos nuevos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que TTLock te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Para empezar | `section` | No | Cree una aplicación gratuita en la TTLock Open Platform (regístrese y cree una aplicación; la aprobación puede tardar unos días): le da un client ID y un secreto. Después introduzca la cuenta de la aplicación TTLock propietaria de las cerraduras, no la cuenta de desarrollador. Las cerraduras se alcanzan mediante una pasarela (G2, G3...) o su propio WiFi. |
+| Nube de TTLock | `select` | Sí | Donde se creó la aplicación: euopen.ttlock.com (Europa y resto del mundo) o cnopen.ttlock.com (China). |
+| Client ID | `string` | Sí | Se muestra en la página de la aplicación, en la TTLock Open Platform. |
+| Client secret | `secret` | Sí |  |
+| Cuenta de la aplicación TTLock | `string` | Sí | La dirección de correo o el número de teléfono con el que inicia sesión en la aplicación TTLock. Use la cuenta administradora de las cerraduras. |
+| Contraseña de la aplicación TTLock | `secret` | Sí |  |
+| Intervalo de actualización | `select` | Sí | TTLock no puede avisar a Gladys: cada actualización consume llamadas a la API. El estado se pide a la cerradura cada 30 minutos, o en cuanto aparece un nuevo acceso. |
+| Batería baja por debajo de | `select` | Sí | Nivel por debajo del cual se activa el disparador «Batería baja», una vez por pila. |
+| Idioma de los textos de los dispositivos | `select` | Sí | Nombres de las funciones (fijados al añadir un dispositivo), último acceso y textos de los disparadores. |
+| Abrir desde Gladys | `section` | No | Desactivado por defecto. Una vez permitidos, el desbloqueo y el modo de paso solo existen como acciones de escena, nunca como interruptor, botón del panel o comando de voz. Una escena que abre la puerta la abre para quien esté delante: lea primero la documentación. |
+| Permitir el desbloqueo desde escenas | `boolean` | No |  |
+| Permitir el modo de paso desde escenas | `boolean` | No |  |
+
+## Cómo instalar TTLock en Gladys
+
+1. En Gladys, abre **Integraciones**: TTLock aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-ttlock:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-ttlock](https://github.com/guim31/gladys-ttlock).
+
+TTLock requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+TTLock es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-ttlock) — [fuente de esta documentación](https://github.com/guim31/gladys-ttlock/blob/HEAD/docs/es.md)

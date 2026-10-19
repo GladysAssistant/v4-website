@@ -1,0 +1,229 @@
+---
+title: "Integración domótica GeoSphere Austria, gratuita y de código abierto"
+sidebar_label: "GeoSphere Austria"
+description: "Tiempo de Austria de GeoSphere Austria (ex ZAMG): estaciones, previsión y alertas oficiales. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-geosphere.png"
+keywords:
+  - "geosphere austria"
+  - "domótica geosphere austria"
+  - "gladys geosphere austria"
+  - "geosphere austria gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-geosphere instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"GeoSphere Austria","description":"Tiempo de Austria de GeoSphere Austria (ex ZAMG): estaciones, previsión y alertas oficiales.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-geosphere","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-geosphere.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T21:32:32Z"}} />
+
+El tiempo oficial de **Austria** en Gladys, de **GeoSphere Austria** (antes ZAMG), el servicio
+meteorológico nacional austriaco: los datos de la **estación meteorológica TAWES** más cercana cada
+10 minutos, la **previsión** de su modelo de 2,5 km y las **alertas meteorológicas oficiales**
+(temporal, lluvia, nieve, hielo, tormenta, calor, frío).
+
+Datos abiertos: sin cuenta ni clave de API. Esta integración no tiene relación con GeoSphere
+Austria.
+
+> Desarrollada sin acceso a la API real de GeoSphere, a partir de respuestas publicadas de los
+> servicios: sus comentarios son bienvenidos.
+
+## Presentación
+
+- **Dos dispositivos**: la estación más cercana (temperatura, humedad, presión, viento, ráfagas,
+  lluvia, sol, espesor de nieve) y su lugar (previsión de las próximas 24 horas y de mañana, niveles
+  de alerta).
+- **Un disparador de escena**, «Nueva alerta de GeoSphere», en cuanto se anuncia una alerta, a
+  menudo horas antes de que empiece.
+- **Un widget** del panel con los datos, la curva de temperatura de las próximas 24 horas, las
+  alertas y la previsión de mañana.
+- **Solo lectura**: GeoSphere es una fuente de datos, no se controla nada.
+
+## Requisitos
+
+- Gladys **5.2.0** o posterior.
+- Un lugar en **Austria** (la previsión cubre también las zonas vecinas; las estaciones y las
+  alertas, solo Austria).
+- Su casa de Gladys situada en el mapa (**Ajustes → Casas**), o coordenadas indicadas en la
+  configuración.
+- Gladys debe acceder a Internet (`dataset.api.hub.geosphere.at` y `warnungen.zamg.at`).
+
+## Configuración
+
+Instale la integración desde **Integraciones → Instalar desde GitHub** (o desde la tienda) y abra
+su configuración. Todos los campos son opcionales: por defecto, la integración usa la posición de
+su primera casa situada, la estación más cercana, y se actualiza cada 10 minutos.
+
+| Campo                              | Uso                                                                                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Casa                               | La casa cuya posición se usa. Vacío: la primera casa con posición.                                                                    |
+| Latitud, Longitud                  | Otro lugar que una casa, por ejemplo `47,07` y `15,44` (el punto también sirve). Las dos, o ninguna.                                  |
+| Estación meteorológica             | El identificador de una estación GeoSphere, por ejemplo `11035` (Wien/Hohe Warte). Vacío: la más cercana.                             |
+| Intervalo de actualización         | 10, 15, 30 o 60 minutos. Las estaciones publican cada 10 minutos.                                                                     |
+| Idioma de los nombres de funciones | Idioma de los nombres de funciones (fijados al crear los dispositivos) y de los textos de los eventos de escena. Francés por defecto. |
+
+La posición de la casa se lee con el permiso `location` de Gladys, mostrado en la instalación. Solo
+se envía a GeoSphere Austria, para obtener la previsión y las alertas del lugar, y nunca se escribe
+en los registros.
+
+Abra luego la pestaña **Descubrimiento** de la integración y añada los dos dispositivos a Gladys.
+
+## Dispositivos
+
+### Estación
+
+El nombre es «GeoSphere» seguido del nombre de la estación. Valores de la última observación de 10
+minutos:
+
+| Función                 | Unidad | Nota                                                       |
+| ----------------------- | ------ | ---------------------------------------------------------- |
+| Temperatura             | °C     | Temperatura del aire a 2 m                                 |
+| Punto de rocío          | °C     |                                                            |
+| Humedad                 | %      |                                                            |
+| Presión (nivel del mar) | hPa    | Presión reducida al nivel del mar, como en las previsiones |
+| Velocidad del viento    | km/h   | Media de 10 minutos                                        |
+| Ráfagas                 | km/h   | Ráfaga más fuerte de los últimos 10 minutos                |
+| Dirección del viento    | °      | De dónde viene el viento: 0 = norte, 90 = este             |
+| Intensidad de lluvia    | mm/h   | Lluvia de los últimos 10 minutos, como tasa horaria        |
+| Sol (últimos 10 min)    | min    | 0 a 10                                                     |
+| Espesor de nieve        | cm     |                                                            |
+
+Una estación que no mide un valor (muchas no tienen sensor de sol ni de nieve) deja la función
+vacía. Una estación en silencio desde hace más de 3 horas no se vuelve a publicar como actual.
+
+### Lugar
+
+El nombre es «GeoSphere» seguido del nombre de la casa (o de las coordenadas). Previsión del modelo
+en el lugar y alertas de su municipio:
+
+| Función                     | Unidad | Nota                                                                   |
+| --------------------------- | ------ | ---------------------------------------------------------------------- |
+| Tiempo                      | texto  | El tiempo de la próxima hora, p. ej. «Parcialmente nuboso»             |
+| Mínima próximas 24 h        | °C     |                                                                        |
+| Máxima próximas 24 h        | °C     |                                                                        |
+| Precipitación próximas 24 h | mm     |                                                                        |
+| Ráfaga máxima próximas 24 h | km/h   |                                                                        |
+| Mínima mañana               | °C     | Mañana en la zona horaria de Gladys                                    |
+| Máxima mañana               | °C     |                                                                        |
+| Precipitación mañana        | mm     |                                                                        |
+| Nivel de alerta             | 0 a 3  | Nivel más alto en vigor: 0 ninguna, 1 amarilla, 2 naranja, 3 roja      |
+| Alerta de temporal          | 0 a 3  | Nivel en vigor para este tipo                                          |
+| Alerta de lluvia            | 0 a 3  |                                                                        |
+| Alerta de nieve             | 0 a 3  |                                                                        |
+| Alerta de hielo             | 0 a 3  |                                                                        |
+| Alerta de tormenta          | 0 a 3  |                                                                        |
+| Alerta de calor             | 0 a 3  |                                                                        |
+| Alerta de frío              | 0 a 3  |                                                                        |
+| Alertas meteorológicas      | texto  | Las alertas en vigor o anunciadas, p. ej. «Naranja · Temporal → 18:00» |
+
+Los niveles son los **en vigor ahora**: una alerta anunciada los sube cuando empieza. Para actuar en
+cuanto se anuncia, use el disparador de escena.
+
+## Widget
+
+**Tiempo GeoSphere** muestra, en el idioma y las unidades del panel:
+
+- el nombre del lugar, luego la temperatura, la humedad, el viento y las ráfagas de la estación;
+- la curva de temperatura de las próximas 24 horas;
+- las alertas en vigor (hasta cuándo) y anunciadas (desde cuándo), o una línea verde «Ninguna»;
+- el tiempo de la próxima hora, las próximas 24 horas y mañana (mínima, máxima, lluvia);
+- la fuente y la hora de la observación.
+
+## Disparador de escena
+
+**Nueva alerta de GeoSphere** se activa cuando GeoSphere Austria emite una alerta para el lugar, o
+sube su nivel: una vez por alerta y por nivel, en cuanto se anuncia. Un reinicio no la vuelve a
+activar. El primerísimo arranque solo toma nota de las alertas ya emitidas.
+
+Filtros (vacío = todos): **Tipos de alerta** (temporal, lluvia, nieve, hielo, tormenta, calor,
+frío) y **Niveles** (amarilla, naranja, roja).
+
+Información transmitida a las acciones de la escena: tipo de alerta, nivel, nivel (1 a 3), inicio,
+fin, ya en vigor, nivel subido, texto oficial (en alemán, o en inglés para los demás idiomas) y
+municipio. Por ejemplo, un mensaje: `GeoSphere: alerta de \{\{triggerEvent.data.type_label\}\}
+\{\{triggerEvent.data.level_label\}\} de \{\{triggerEvent.data.starts_at\}\} a
+\{\{triggerEvent.data.ends_at\}\}`.
+
+## Acciones de configuración
+
+- **Listar las estaciones cercanas**: las 8 estaciones activas más cercanas al lugar, con su
+  identificador, región, altitud y distancia. Copie un identificador en «Estación meteorológica»
+  para elegir otra (una estación del mismo valle suele convenir más que la más cercana tras una
+  montaña).
+- **Comprobar la conexión**: lee todas las fuentes al momento e indica qué respondió: la
+  temperatura de la estación y su hora, la previsión, el número de alertas.
+
+## Ejemplos de escenas
+
+- **Temporal en camino**: disparador «Nueva alerta de GeoSphere», tipos «Temporal» y «Tormenta»,
+  niveles «Naranja» y «Roja» → cerrar las persianas, recoger el toldo, enviar un mensaje con la hora
+  de inicio.
+- **Día de calor**: cuando la función «Alerta de calor» pasa a ser mayor o igual que 2 → cerrar las
+  persianas del lado sur a las 10:00 y enviar un recordatorio para beber.
+- **Helada esta noche**: cada tarde a las 20:00, si «Mínima próximas 24 h» está por debajo de 0 °C
+  → avisar para proteger las plantas y el parabrisas.
+
+## Solución de problemas
+
+- **«Ningún lugar»**: ninguna casa tiene posición. Sitúe su casa en el mapa en **Ajustes →
+  Casas**, o indique coordenadas, o elija una estación.
+- **«Fuera de la zona de GeoSphere Austria»**: el lugar está fuera de la zona del modelo (latitud
+  43 a 51,8, longitud 5,5 a 22,1).
+- **«GeoSphere Austria no responde»**: Gladys no alcanza el servicio; los valores se actualizarán
+  cuando vuelva. Los registros indican qué fuente falla, una vez, y cuándo vuelve a funcionar.
+- **Una función queda vacía**: la estación no la mide. Elija otra estación con **Listar las
+  estaciones cercanas**.
+- **Más detalles**: ponga la variable `LOG_LEVEL` del contenedor en `debug`.
+
+## Límites
+
+- **Datos**: datos abiertos de GeoSphere Austria, licencia
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.es) («Fuente: GeoSphere Austria»,
+  mostrado por el widget).
+- **Solicitudes**: unas 13 por hora al ritmo por defecto (observación y alertas en cada
+  actualización, previsión una vez por hora, lista de estaciones una vez al día), muy por debajo de
+  los límites publicados por el GeoSphere Data Hub (5 solicitudes por segundo, 240 por hora, en el
+  momento de escribir).
+- Un lugar y una estación por instalación.
+- Los nombres de las funciones se fijan al crear los dispositivos: cambiar el idioma después no los
+  renombra.
+- La API de alertas es la del sitio de alertas de GeoSphere; GeoSphere puede cambiarla sin aviso.
+- Desarrollada sin acceso a la API real: los formatos proceden de las respuestas publicadas por
+  python-zamg e ioBroker.weather-warnings. Sus comentarios son bienvenidos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que GeoSphere Austria te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| GeoSphere Austria | `section` | No | Datos abiertos de GeoSphere Austria, el servicio meteorológico austriaco: sin cuenta ni clave. Por defecto, la integración usa la posición de su primera casa de Gladys: la estación más cercana, la previsión y las alertas de ese lugar. Sin relación con GeoSphere Austria. |
+| Casa | `select` | No | La casa cuya posición se usa. Vacío: la primera casa con posición. |
+| Latitud (opcional) | `string` | No | Para otro lugar que una casa. Tiene prioridad sobre la casa. |
+| Longitud (opcional) | `string` | No |  |
+| Estación meteorológica (opcional) | `string` | No | Identificador de una estación GeoSphere. Vacío: la más cercana. La acción de abajo las lista. |
+| Intervalo de actualización | `select` | No | Las estaciones publican cada 10 minutos. |
+| Idioma de los nombres de funciones | `select` | No | Se usa al crear los dispositivos y para los textos de los eventos de escena. |
+
+## Cómo instalar GeoSphere Austria en Gladys
+
+1. En Gladys, abre **Integraciones**: GeoSphere Austria aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-geosphere:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-geosphere](https://github.com/guim31/gladys-geosphere).
+
+GeoSphere Austria requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+GeoSphere Austria es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-geosphere) — [fuente de esta documentación](https://github.com/guim31/gladys-geosphere/blob/HEAD/docs/es.md)

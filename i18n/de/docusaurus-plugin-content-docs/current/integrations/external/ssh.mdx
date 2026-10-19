@@ -1,0 +1,301 @@
+---
+title: "SSH Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "SSH"
+description: "Überwache deine Linux-Rechner per SSH und starte festgelegte Befehle aus Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ssh.png"
+keywords:
+  - "ssh"
+  - "ssh smart home"
+  - "gladys ssh"
+  - "ssh gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-ssh instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SSH","description":"Überwache deine Linux-Rechner per SSH und starte festgelegte Befehle aus Szenen.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ssh","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ssh.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T19:08:18Z"}} />
+
+Überwache deine Linux-Rechner — einen Heimserver, ein NAS, einen Raspberry Pi —
+per SSH und starte aus Gladys die Befehle, die **du** festgelegt hast: einen
+Dienst neu starten, eine Sicherung anstoßen, eine Temperatur lesen. Alles
+bleibt in deinem lokalen Netzwerk: keine Cloud, kein Konto, auf den Rechnern
+nichts zu installieren außer einem SSH-Server, den sie fast immer schon haben.
+
+Getestet mit einem echten OpenSSH-Server (Docker-Image
+`linuxserver/openssh-server`), mit Schlüssel und mit Passwort. Rückmeldungen
+von echten Rechnern sind in den
+[Issues](https://github.com/guim31/gladys-ssh/issues) willkommen.
+
+## Was du bekommst
+
+- **Ein Gerät pro Rechner**: _Erreichbar_, _Last (1 Min.)_, _Belegter
+  Speicher_, _Belegte Festplatte (/)_ und _Betriebszeit_, alle 1 bis 30
+  Minuten gelesen.
+- **Eigene Sensoren**: Jeder Befehl, dessen Ausgabe eine Zahl (mit Einheit)
+  oder ein Text ist, wird zu einer Funktion des Geräts: eine CPU-Temperatur,
+  der Zustand eines Dienstes, die Zahl wartender Updates…
+- **Festgelegte Befehle**, gestartet aus einer Szene oder über eine
+  Widget-Schaltfläche: Plex neu starten, eine Sicherung anstoßen, einen
+  Rechner herunterfahren. **Sonst wird nie etwas ausgeführt**: Szenen und
+  Widget nennen nur einen Befehl der Konfiguration.
+- **Drei Szenen-Auslöser**: _Ein Host ist nicht mehr erreichbar_, _Ein Host
+  ist wieder erreichbar_, _Ein Befehl ist fehlgeschlagen_.
+- **Eine Szenen-Aktion**, _SSH-Befehl ausführen_, deren Rückgabewert und
+  Ausgabe die nächsten Schritte nutzen.
+- **Ein Dashboard-Widget** pro Rechner: sein Zustand und seine Werte und bis
+  zu vier Befehlsschaltflächen.
+
+## Voraussetzungen
+
+- Gladys Assistant **5.1.0** oder neuer.
+- Rechner mit einem **SSH-Server** (OpenSSH, Dropbear), der vom Gladys-Rechner
+  aus erreichbar ist, und einer POSIX-Shell. Die Standardwerte lesen `/proc`
+  und `df`: jedes Linux, auch BusyBox (Alpine, OpenWrt, die meisten NAS).
+  Andere Systeme schalten sie aus und nutzen nur eigene Sensoren.
+- Am besten ein **eigener Benutzer für Gladys** auf jedem Rechner, ohne
+  Administratorrechte.
+
+## Konfiguration
+
+### Einstellungen
+
+- **Leseintervall**: wie oft jeder Rechner gelesen wird, eine SSH-Verbindung
+  pro Rechner und Zyklus (standardmäßig 5 Minuten).
+- **Last, Speicher, Festplatte und Betriebszeit lesen**: ausschalten für
+  Rechner ohne `/proc` oder für einen Benutzer, der auf einen einzigen
+  erzwungenen Befehl beschränkt ist.
+- **Dein eigener privater Schlüssel** (optional) und seine **Passphrase**:
+  leer lassen, um den Schlüssel der Integration zu nutzen (empfohlen). Sonst
+  füge einen privaten OpenSSH- oder unverschlüsselten PEM-Schlüssel ein; die
+  vom Formular verlorenen Zeilenumbrüche werden wiederhergestellt. Alte
+  verschlüsselte PEM-Schlüssel (`Proc-Type: 4,ENCRYPTED`) werden nicht
+  unterstützt: Wandle sie mit `ssh-keygen -p -f schlüssel` um.
+- **Sprache der Funktionsnamen**: standardmäßig Französisch; auch Englisch,
+  Deutsch und Spanisch. Gilt für danach angelegte Geräte.
+
+### Die Integration auf einem Rechner autorisieren
+
+1. Starte **Öffentlichen Schlüssel anzeigen**. Beim ersten Start hat die
+   Integration ihren eigenen Ed25519-Schlüssel erzeugt und in ihrem privaten
+   Volume gespeichert; der private Teil verlässt es nie.
+2. Lege auf dem Rechner einen eigenen Benutzer an und autorisiere den
+   Schlüssel:
+
+   ```sh
+   sudo adduser --disabled-password gladys
+   sudo -u gladys mkdir -p ~gladys/.ssh
+   echo 'no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty ssh-ed25519 AAAA… gladys-ssh' \
+     | sudo tee -a ~gladys/.ssh/authorized_keys
+   sudo chmod 700 ~gladys/.ssh && sudo chmod 600 ~gladys/.ssh/authorized_keys
+   sudo chown -R gladys: ~gladys/.ssh
+   ```
+
+   Die Optionen `no-…` verbieten diesem Schlüssel Tunnel und Terminals: Er
+   kann nur Befehle ausführen.
+
+3. Ein Befehl braucht root? Erlaube **nur diesen Befehl** mit sudo, zum
+   Beispiel in `/etc/sudoers.d/gladys` (bearbeiten mit
+   `sudo visudo -f /etc/sudoers.d/gladys`):
+
+   ```
+   gladys ALL=(root) NOPASSWD: /usr/bin/systemctl restart plex
+   ```
+
+   Gib dem Benutzer nie `ALL`.
+
+### Einen Host hinzufügen
+
+Starte **Host hinzufügen oder ändern** mit einem Namen, der IP-Adresse oder
+dem Hostnamen, dem Port (22, wenn leer) und dem Benutzernamen. Ein Passwort
+kann den Schlüssel ersetzen: Es ist bei der Eingabe sichtbar, wird im Volume
+der Integration gespeichert und nie wieder angezeigt; lass das Feld später
+leer, um es zu behalten.
+
+Die Integration verbindet sich sofort und meldet, was passiert ist. Bei der
+ersten Verbindung **merkt sie sich den Host-Schlüssel** des Rechners (seinen
+Fingerabdruck, `SHA256:…`): Vergleiche ihn mit
+`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` auf dem Rechner. Danach
+wird ein Rechner mit einem anderen Host-Schlüssel vor jeder Anmeldung
+**abgelehnt**. Nach einer Neuinstallation starte **Neuen Host-Schlüssel
+akzeptieren** und speichere den Host dann erneut. Eine neue Adresse oder ein
+neuer Port lässt den Host-Schlüssel ebenfalls vergessen.
+
+Lege dann das Gerät im Tab **Entdecken** an. Einen Host unter demselben Namen
+zu speichern, aktualisiert ihn und behält sein Gerät.
+
+### Befehle festlegen
+
+Starte **Befehl hinzufügen oder ändern** mit dem Host, einem Namen, dem Befehl
+und seiner Art:
+
+- **Aktion**: nur aus einer Szene oder über eine Widget-Schaltfläche
+  gestartet. Beim Speichern wird sie nie ausgeführt.
+- **Sensor: eine Zahl**: bei jedem Zyklus gelesen; die erste Zahl der Ausgabe
+  zählt (`48250`, `temp=47,8'C` → 47,8): Filtere eine ausführliche Ausgabe
+  mit `awk` oder `cut` (`temp1: +45.0°C` ergäbe 1). Wähle ihre Einheit: Prozent, °C,
+  Dauern, Größen, Datenrate, Watt, Volt oder keine.
+- **Sensor: ein Text**: bei jedem Zyklus gelesen; die Ausgabe in einer Zeile,
+  höchstens 250 Zeichen.
+
+Ein Sensor wird beim Speichern einmal probiert, und die Antwort zeigt seinen
+ersten Wert. Seine Funktion erscheint am Gerät nach **Aktualisieren** im Tab
+„Entdecken“. **Schaltfläche im Widget** fügt dem Widget des Hosts eine
+Schaltfläche hinzu. Das **Zeitlimit** (10 Sekunden, wenn leer, höchstens 90)
+stoppt einen zu langen Befehl: Er gilt dann als fehlgeschlagen. Ausgaben sind
+auf 64 KB begrenzt.
+
+Der Befehl wird unverändert von der Shell des Benutzers ausgeführt, wie bei
+`ssh benutzer@host 'befehl'`. **Hosts und Befehle anzeigen** listet alles auf;
+**Befehl entfernen** und **Host entfernen** räumen auf.
+
+Beispiele für Befehle:
+
+| Name             | Befehl                                                               | Art                  |
+| ---------------- | -------------------------------------------------------------------- | -------------------- |
+| CPU              | `cat /sys/class/thermal/thermal_zone0/temp \| awk '{print $1/1000}'` | Zahl, °C             |
+| Updates          | `apt list --upgradable 2>/dev/null \| grep -c upgradable`            | Zahl                 |
+| Plex             | `systemctl is-active plex`                                           | Text                 |
+| Plex neu starten | `sudo systemctl restart plex`                                        | Aktion, Schaltfläche |
+| Sicherung        | `/home/gladys/backup.sh`                                             | Aktion               |
+| Herunterfahren   | `sudo /sbin/poweroff`                                                | Aktion               |
+
+## Geräte
+
+| Funktion                | Inhalt                                                               |
+| ----------------------- | -------------------------------------------------------------------- |
+| Erreichbar              | 1, wenn die SSH-Sitzung aufgeht (Adresse, Host-Schlüssel, Anmeldung) |
+| Last (1 Min.)           | durchschnittliche Last über eine Minute                              |
+| Belegter Speicher       | belegter Speicher in % (verfügbarer Speicher ausgenommen)            |
+| Belegte Festplatte (/)  | belegter Platz im Wurzeldateisystem in %                             |
+| Betriebszeit            | in Tagen                                                             |
+| eine pro eigenem Sensor | seine Zahl oder sein Text                                            |
+
+Eine fehlgeschlagene Verbindung wird 5 Sekunden später einmal wiederholt,
+bevor der Rechner als nicht erreichbar gilt: Ein verlorenes Paket ändert
+nichts. Werte werden nur bei Änderung veröffentlicht und mindestens alle 12
+Stunden. Solange ein Rechner nicht erreichbar ist, behalten seine Werte ihren
+letzten Stand.
+
+## Dashboard-Widget
+
+Das Widget **SSH-Host** zeigt einen Rechner (den ersten, wenn keiner gewählt
+ist): seinen Zustand — oder warum er nicht erreichbar ist —, Last, Speicher,
+Festplatte, Betriebszeit und eigene Sensoren, mit bis zu vier Schaltflächen
+für die Befehle mit _Schaltfläche im Widget_. Eine Schaltfläche startet den
+Befehl und zeigt sein Ergebnis (Rückgabewert, erste Zeile der Ausgabe) in
+einer Benachrichtigung. Eine Aktion fragt vorher nach (Gladys 5.2.0 oder
+neuer).
+
+## Szenen-Auslöser
+
+- **Ein Host ist nicht mehr erreichbar**: zweimal hintereinander keine
+  Antwort oder abgelehnt, oder sofort bei abgelehnter Anmeldung oder
+  geändertem Host-Schlüssel. Variablen: Name des Hosts, Adresse, Grund
+  (`timeout`, `refused`, `unreachable`, `dns`, `auth`, `host_key_changed`,
+  `error`). Filter: der Host.
+- **Ein Host ist wieder erreichbar**: Variablen Name des Hosts, Adresse,
+  Minuten nicht erreichbar.
+- **Ein Befehl ist fehlgeschlagen**: Ein von einer Szene oder dem Widget
+  gestarteter Befehl hat einen Fehlercode geliefert, sein Zeitlimit
+  überschritten oder konnte nicht starten; ein Sensor löst einmal aus, bis er
+  wieder funktioniert. Variablen: Name des Hosts, Name des Befehls,
+  Rückgabewert (-1: nicht gestartet oder gestoppt), Ausgabe. Filter: der Host,
+  der Name des Befehls.
+
+Diese Ereignisse tragen, was ein Funktionszustand nicht tragen kann: den
+Grund, die Dauer, die Ausgabe. Eine Schwelle auf einem Wert (Festplatte über
+90 %…) bleibt eine normale Szene auf der Gerätefunktion.
+
+## Szenen-Aktion
+
+**SSH-Befehl ausführen**: Wähle den Host und gib den Namen eines festgelegten
+Befehls an. Ausgaben: _Erfolgreich_ (1 oder 0), _Rückgabewert_, _Ausgabe_
+(höchstens 1000 Zeichen), für einen Schritt „Nur fortfahren, wenn“ oder eine
+Nachricht. Ein fehlgeschlagener Befehl stoppt die Szene nicht: Prüfe
+_Erfolgreich_. Ein unbekannter Host oder Befehl schon.
+
+## Szenen-Beispiele
+
+- **Alarm, wenn das NAS ausfällt**: Auslöser _Ein Host ist nicht mehr
+  erreichbar_ (NAS) → Nachricht „NAS nicht erreichbar:
+  \{\{triggerEvent.data.reason\}\}“ senden.
+- **Hängenden Dienst neu starten**: alle 15 Minuten → _SSH-Befehl ausführen_
+  „Plex prüfen“ (`systemctl is-active plex`, das scheitert, wenn der Dienst
+  steht) → nur fortfahren, wenn _Erfolgreich_ 0 ist → _SSH-Befehl ausführen_
+  „Plex neu starten“ → seine Ausgabe senden.
+- **Nächtliche Sicherung**: um 3:00 → _SSH-Befehl ausführen_ „Sicherung“ →
+  den Rückgabewert senden; Auslöser _Ein Befehl ist fehlgeschlagen_
+  (Sicherung) für einen Alarm.
+- **Alles aus beim Gehen**: _SSH-Befehl ausführen_ „Herunterfahren“ auf dem
+  Medien-PC, wenn das Haus leer ist.
+
+## Fehlerbehebung
+
+- **„Anmeldung abgelehnt“**: Der öffentliche Schlüssel steht nicht in
+  `~/.ssh/authorized_keys` dieses Benutzers, oder die Rechte sind zu offen
+  (`chmod 700 ~/.ssh`, `chmod 600 ~/.ssh/authorized_keys`, Eigentum des
+  Benutzers). Das Protokoll des Servers (`journalctl -u ssh`) sagt warum.
+- **„der Host-Schlüssel hat sich geändert“**: Der Rechner wurde neu
+  installiert, oder ein anderer Rechner hat seine Adresse übernommen. Prüfe es
+  und starte dann **Neuen Host-Schlüssel akzeptieren**.
+- **„keine Antwort“**: Adresse, Port, Firewall. mDNS-Namen (`.local`) werden
+  von der Integration nicht aufgelöst: Nutze die IP-Adresse.
+- **Die Standardwerte bleiben leer**: Der Rechner hat weder `/proc` noch
+  `df`, oder der Schlüssel ist auf einen erzwungenen Befehl beschränkt
+  (`command=` in `authorized_keys`): Schalte sie aus und nutze eigene
+  Sensoren.
+- **Ein Zahlensensor bleibt leer**: Sein Befehl muss mit 0 enden und eine
+  Zahl ausgeben. Starte ihn von Hand mit `ssh gladys@host 'befehl'`.
+- Protokolle: in Gladys die Container-Protokolle der Integration;
+  `LOG_LEVEL=debug` zeigt jeden Zyklus.
+
+## Grenzen
+
+- Linux und andere POSIX-Systeme; keine Windows-spezifischen Werte (eigene
+  Sensoren funktionieren, wenn das OpenSSH von Windows eine POSIX-Shell
+  startet).
+- Ein Passwort pro Host, bei der Eingabe sichtbar: Nimm lieber den Schlüssel.
+- 20 Hosts, 15 Befehle pro Host, 4 Schaltflächen pro Widget.
+- Ein Zeitlimit sendet ein KILL-Signal (OpenSSH 7.9 oder neuer) und schließt
+  den Kanal; ein älterer Server lässt den Befehl eventuell allein zu Ende
+  laufen.
+- Szenenparameter können absichtlich nicht an einen Befehl übergeben werden.
+- Keine Verbindung zu OpenSSH oder dem OpenBSD-Projekt.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt SSH in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Rechner | `section` | Nein | 1. „Öffentlichen Schlüssel anzeigen“: Füge ihn in ~/.ssh/authorized_keys eines eigenen Benutzers auf jedem Rechner ein. 2. „Host hinzufügen oder ändern“, dann sein Gerät im Tab „Entdecken“ anlegen. 3. „Befehl hinzufügen oder ändern“: Nur festgelegte Befehle laufen. |
+| Leseintervall | `select` | Nein | Wie oft jeder Host gelesen wird (eine SSH-Verbindung pro Host). |
+| Last, Speicher, Festplatte und Betriebszeit lesen | `boolean` | Nein | Linux-Standardwerte (/proc und df). Schalte sie für Rechner ohne diese aus oder für einen auf einen Befehl beschränkten Benutzer. |
+| Dein eigener privater Schlüssel (optional) | `secret` | Nein | Leer: Die Integration nutzt ihren eigenen, beim ersten Start erzeugten Schlüssel (empfohlen). Sonst füge einen privaten OpenSSH- oder PEM-Schlüssel ein. |
+| Passphrase deines privaten Schlüssels | `secret` | Nein | Nur wenn dein eigener privater Schlüssel verschlüsselt ist. |
+| Sprache der Funktionsnamen | `select` | Nein | Namen der Funktionen neuer Geräte (Erreichbar, Last…) und Sprache der Widget- und Szenentexte. |
+
+## So installierst du SSH in Gladys
+
+1. Öffne in Gladys **Integrationen**: SSH erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-ssh:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-ssh](https://github.com/guim31/gladys-ssh).
+
+SSH benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+SSH ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-ssh) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-ssh/blob/HEAD/docs/de.md)

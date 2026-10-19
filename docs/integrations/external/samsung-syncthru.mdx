@@ -1,0 +1,194 @@
+---
+title: "Samsung SyncThru smart home integration, free and open source"
+sidebar_label: "Samsung SyncThru"
+description: "Toner, drums, paper trays and state of Samsung printers over SyncThru. Local, no cloud. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-syncthru.png"
+keywords:
+  - "samsung syncthru"
+  - "samsung syncthru smart home"
+  - "gladys samsung syncthru"
+  - "samsung syncthru gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-syncthru instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Samsung SyncThru","description":"Toner, drums, paper trays and state of Samsung printers over SyncThru. Local, no cloud.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-syncthru","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-syncthru.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T07:50:58Z"}} />
+
+## Overview
+
+This integration follows your **Samsung printers** (Xpress, ProXpress, MultiXpress, CLP, CLX,
+SCX, ML… and the HP models of the former Samsung range that kept the same web interface) through
+their built-in **SyncThru** web service: the printer state, the level of each toner, the imaging
+units (drums), the paper trays and the page counter. Everything stays on your local network: no
+cloud, no account, no password.
+
+It is **read only**: it never prints, never changes a setting of the printer, and offers nothing
+to switch on or off.
+
+It completes the **IPP Printers** integration, for the Samsung models whose IPP service does not
+report the supplies.
+
+> **Developed without the hardware: feedback welcome.** The integration was written and tested
+> against real SyncThru answers published by the pysyncthru and Home Assistant projects, not on a
+> printer. If something is missing or wrong on yours, open an issue on the GitHub repository with
+> the output of the **Test a printer** button.
+
+Not affiliated with Samsung or HP.
+
+## Requirements
+
+- Gladys Assistant 5.1 or later.
+- A Samsung printer connected to your network (Ethernet or Wi-Fi), whose **SyncThru** page opens
+  in a browser at `http://<printer address>/`. The integration reads
+  `http://<printer address>/sws/app/information/home/home.json`: if this address shows a page of
+  text in your browser, the printer is compatible.
+- Better: a fixed address for the printer (a DHCP reservation in your router). The integration
+  looks for a printer that moved, but a fixed address is more reliable.
+
+## Configuration
+
+1. Install the integration from the store (or **Integrations → Install from GitHub** with the
+   address of the repository).
+2. Open its **Configuration** tab:
+   - **Printers (manual list)**: optional. The IP addresses or hostnames of your printers,
+     separated by commas (`192.168.1.20, printer.local`). An `http://` or `https://` address with
+     a port works too. Fill it in when the printer is not found automatically.
+   - **Language of the names**: the language of the feature names (fixed when the printer is
+     added) and of the texts sent to Gladys (state, scene variables). French by default.
+   - **Refresh interval**: how often each printer is read, 60 seconds by default (30 to 3600).
+   - **Low supply threshold**: the level, in %, at which the **Supply running low** trigger fires
+     (10 % by default). It also colours the gauges of the widget.
+3. Save, open the **Discover** tab and add your printers to Gladys.
+
+Printers that answer the network search (SSDP, the way Windows finds them) appear in the Discover
+tab without typing anything: Gladys sends the search and hands the answers to the integration,
+which only keeps the ones that really serve SyncThru.
+
+Network use: one small request per printer at each refresh interval, the page counters every
+15 minutes, and a network search at startup, when you open the Discover tab, and at most every
+30 minutes while a printer does not answer. Only the values that changed are sent to Gladys, and
+the stable ones again every 6 hours.
+
+## Devices
+
+One device per printer, named after its model and location (`Samsung C430W (Living room)`). Its
+features depend on what the printer reports:
+
+| Feature                                       | Type                     | Value                                                                                                        |
+| --------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| State                                         | text                     | Ready, Printing, Sleeping, Warming up, Busy, Toner low, Warning, Paper jam, Out of paper, Error, Unreachable |
+| Online                                        | presence sensor (yes/no) | 1 when the printer answers, 0 otherwise                                                                      |
+| Black / Cyan / Magenta / Yellow toner         | level (%)                | the remaining toner of each cartridge                                                                        |
+| Black / … drum, Color drum                    | level (%)                | the remaining life of the imaging unit, when the printer reports it                                          |
+| Tray 1 … 5, Multi-purpose tray, Manual feeder | text                     | Ready, Empty, or Alert with the printer's code                                                               |
+| Tray paper                                    | level (%)                | only on the models that report a paper level                                                                 |
+| Pages printed, Pages copied                   | counter                  | the page counters, on the models that serve them                                                             |
+
+When the printer does not answer, **State** becomes **Unreachable** and **Online** 0; the other
+values keep their last reading.
+
+The **State** comes from the status the printer reports and from its front panel text, in English,
+French, German or Spanish: a jam or an empty tray is recognized on the panel ("Paper Jam",
+"Bourrage", "Papierstau", "Atasco"…) and from the Samsung error codes (`M1-1110`, `M1-5112`).
+
+## Widget
+
+The **Printer** widget shows one printer (the first one added if none is chosen in its settings):
+
+- up to five gauges, the toners first, then the drums, coloured against the threshold;
+- the state, the panel text, the trays, the page counter and the time of the last reading;
+- a **Refresh** button that reads the printer at once.
+
+## Scene triggers
+
+Two triggers, under the **Integrations** category of the scene editor:
+
+- **Supply running low**: a toner or a drum goes down to the threshold of the configuration. Filter
+  on a printer and on the kind of supply (toner, drum). Passes on the printer name, the supply
+  (`Black toner`) and its level.
+- **Paper jam or out of paper**: a printer reports a paper jam or has run out of paper. Filter on a
+  printer and on the problem. Passes on the printer name, the problem in words and the panel text.
+
+Each fires once, when the situation starts. It does not fire again after a restart of the
+integration or of Gladys for a situation already present.
+
+The levels are ordinary Gladys features too: the core trigger **Device state change** works on
+them, for one cartridge.
+
+## Configuration action
+
+**Test a printer**, in the Configuration tab: type an address, and the integration reads the
+printer at once and tells you what it found (model, state, levels), or why it got no answer.
+
+## Scene examples
+
+- **Order toner in time**: trigger _Supply running low_ (kind: toner) → action _Send a message_
+  with the **Printer**, **Supply** and **Level** variables (type `{{` in the message to insert
+  them): "Office printer: Black toner at 10 %".
+- **The printer is stuck**: trigger _Paper jam or out of paper_ → action _Send a message_ with the
+  problem and the panel text, to the person nearest to it.
+- **Printer forgotten on**: trigger _Device state change_ on **Online** at 1, condition _time is
+  after 10 pm_ → a reminder, or switching off the printer's smart plug.
+
+## Troubleshooting
+
+- **No printer in the Discover tab**: type its address in the manual list, then use **Test a
+  printer**. "No SyncThru JSON service" means the printer has no SyncThru JSON page: older models
+  only have HTML pages, not supported.
+- **"No answer"**: check the address, that the printer is on and not in deep sleep, and that it is
+  on the same network as Gladys. Some printers turn their network off in deep sleep.
+- **A printer whose serial number is hidden** (some firmwares show `xxxxxxxx`) is recognized by its
+  MAC address, or by its address: give it a fixed address.
+- **More details**: set the `LOG_LEVEL` environment variable of the integration to `debug`.
+
+## Limits
+
+- **Developed without the hardware**: the values were checked on published answers of the M2070,
+  C430W and C480FW, not on a live printer. The HP models are not verified.
+- The **paper format** of the trays is not shown: SyncThru gives a numeric code whose meaning is
+  not documented.
+- The **paper level** of a tray is read only on the models that report it, and assumed in %.
+- The jam and empty-tray detection relies on the panel text and the Samsung error codes: a panel
+  set to another language than the four above may only show **Warning** or **Error**.
+- Printers with only the old HTML SyncThru pages (no `home.json`) are not supported.
+- Read only: no printing, no setting, no remote reset.
+- The feature names are fixed when the printer is added: changing the language later changes the
+  state texts, not the names.
+
+## Configuration settings
+
+These are the settings Samsung SyncThru asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Samsung printers (and the HP models of the former Samsung range) that answer SSDP on your network are found by the Discover tab. Printers that do not announce themselves can be listed below. The integration only reads the SyncThru web page of the printer: it never prints, never changes a setting, and needs no password. |
+| Printers (manual list) | `string` | No | Optional. IP addresses or hostnames of the printers, separated by commas. An http:\/\/ or https:\/\/ URL works too, with a port if needed. |
+| Language of the names | `select` | No | Language of the feature names (fixed when a printer is added) and of the texts the integration sends: states, scene variables. |
+| Refresh interval (s) | `number` | No | How often each printer is read, in seconds (30 to 3600). One small request each time; only the changes are sent to Gladys. |
+| Low supply threshold (%) | `number` | No | The "Supply running low" scene trigger fires when a toner or a drum goes down to this level. Also colours the widget gauges. |
+
+## How to install Samsung SyncThru in Gladys
+
+1. In Gladys, open **Integrations**: Samsung SyncThru appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-syncthru:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-syncthru](https://github.com/guim31/gladys-syncthru).
+
+Samsung SyncThru requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Samsung SyncThru is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-syncthru) — [source of this documentation](https://github.com/guim31/gladys-syncthru/blob/HEAD/docs/en.md)

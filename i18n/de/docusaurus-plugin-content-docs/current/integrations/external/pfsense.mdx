@@ -1,0 +1,322 @@
+---
+title: "pfSense Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "pfSense"
+description: "pfSense-Firewalls: Anwesenheit deiner Geräte, Zustand, Gateways und Ausfälle, Kindersicherung. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pfsense.png"
+keywords:
+  - "pfsense"
+  - "pfsense smart home"
+  - "gladys pfsense"
+  - "pfsense gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-pfsense instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"pfSense","description":"pfSense-Firewalls: Anwesenheit deiner Geräte, Zustand, Gateways und Ausfälle, Kindersicherung.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-pfsense","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pfsense.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T19:09:57Z"}} />
+
+Verfolge deine [pfSense](https://www.pfsense.org)-Firewall (CE oder Plus) in
+Gladys, über dein lokales Netzwerk: Wisse anhand der Geräte, die pfSense
+sieht, wer zu Hause ist, behalte den Zustand der Firewall und deiner
+Internet-Gateways im Blick, lass dich benachrichtigen, wenn ein Gateway
+ausfällt oder ein unbekanntes Gerät dazukommt, und sperre, wenn du es
+erlaubst, das Internet auf dem Tablet der Kinder aus einer Szene heraus.
+
+> **Ohne die Hardware entwickelt: Rückmeldungen willkommen.** Diese
+> Integration wurde mit den dokumentierten Antworten des REST-API-Pakets von
+> pfSense gebaut und getestet, nicht mit einer echten Firewall. Wenn etwas
+> nicht wie beschrieben funktioniert, sag es im
+> [Gladys-Forum](https://community.gladysassistant.com) oder in den
+> [Issues](https://github.com/guim31/gladys-pfsense/issues).
+
+Diese Integration ist nicht mit Netgate verbunden. pfSense ist eine Marke von
+Electric Sheep Fencing LLC (Netgate).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Eine pfSense-CE- oder pfSense-Plus-Firewall, die von Gladys aus erreichbar
+  ist.
+- Das freie **REST-API-Paket** (`pfSense-pkg-RESTAPI`, API v2, von Jared
+  Hendrickson), darauf installiert. pfSense hat keine eigene REST-API: Dieses
+  Paket fügt eine hinzu. Es ist nicht im Paketmanager von pfSense: Es wird
+  über die Kommandozeile installiert (siehe unten).
+- Ein API-Schlüssel, am besten für einen eigenen Benutzer mit reinen
+  Leserechten.
+
+## Einrichtung
+
+### Das REST-API-Paket installieren
+
+Führe in einer Shell von pfSense (**Diagnostics** → **Command Prompt** oder
+SSH) den Befehl aus, den die
+[Dokumentation des Pakets](https://pfrest.org/INSTALL_AND_CONFIG/) für deine
+Version angibt, zum Beispiel unter pfSense CE:
+
+```
+pkg-static add https://github.com/pfrest/pfSense-pkg-RESTAPI/releases/latest/download/pfSense-2.8.1-pkg-RESTAPI.pkg
+```
+
+Öffne dann **System** → **REST API** und prüfe, dass die API aktiviert ist und
+**API Key** zu den Authentifizierungsmethoden gehört.
+
+pfSense entfernt bei einem Update die Pakete, die nicht von pfSense stammen:
+**Installiere das Paket nach jedem pfSense-Update erneut**, sonst verliert
+Gladys die Firewall.
+
+### Ein Benutzer mit Leserechten und sein API-Schlüssel
+
+Lege einen Benutzer für Gladys an, statt `admin` zu nutzen (**System** →
+**User Manager** → **Add**). Gib ihm nur die Rechte der REST-API-Endpunkte,
+die die Integration liest, Methode GET:
+
+- `/api/v2/status/system`, `/api/v2/status/gateways`,
+  `/api/v2/status/interfaces`: Zustand, Gateways, Raten;
+- `/api/v2/status/dhcp_server/leases`, `/api/v2/diagnostics/arp_table`:
+  Anwesenheit und der Auslöser „Unbekanntes Gerät verbunden“;
+- `/api/v2/system/version`, `/api/v2/system/hostname`,
+  `/api/v2/routing/gateways`, `/api/v2/system/packages`: Version, Name,
+  Schnittstelle jedes Gateways, Paket-Updates;
+- `/api/v2/firewall/rules`: der Zustand der verfolgten Regeln.
+
+Ein fehlendes Recht ist kein Fehler: Die passenden Messwerte werden
+übersprungen, und **Verbindung testen** listet auf, was der Schlüssel nicht
+lesen darf. Die Befehle brauchen zwei weitere: `/api/v2/firewall/rule` Methode
+PATCH und `/api/v2/diagnostics/reboot` Methode POST.
+
+Melde dich dann **als dieser Benutzer** bei pfSense an, öffne **System** →
+**REST API** → **Keys** → **Add** und kopiere den Schlüssel: pfSense zeigt ihn
+nur einmal. Ein Schlüssel hat die Rechte des Benutzers, der ihn erstellt hat.
+
+### Die Konfiguration
+
+Öffne **Integrationen** → **pfSense** → **Konfiguration**:
+
+- **Adresse der Firewall**: die Adresse des webConfigurators, zum Beispiel
+  `https://192.168.1.1`, mit `:Port`, falls er nicht 443 nutzt. Ohne Schema
+  wird HTTPS verwendet.
+- **API-Schlüssel**: der oben erstellte Schlüssel.
+- **Selbstsigniertes Zertifikat akzeptieren**: pfSense liefert seinen
+  webConfigurator mit einem selbstsignierten Zertifikat aus, wenn du kein
+  anderes installiert hast. Für deine eigene Firewall aktivieren.
+- **Aktualisierungsintervall**: 10 Sekunden bis 1 Minute (standardmäßig
+  30 Sekunden).
+- **Zu verfolgende Gateways**: die Namen der Gateways unter **System** →
+  **Routing** (zum Beispiel `WAN_DHCP`), höchstens vier, durch Kommas
+  getrennt. Leer: alle Gateways, die pfSense überwacht, höchstens vier.
+- **Abwesenheitsverzögerung (Minuten)**: siehe Anwesenheitssensoren.
+- **Zu verfolgende Firewall-Regeln** und **Befehle erlauben**: siehe
+  Firewall-Regeln.
+- **Sprache der Namen**: die Sprache der Geräte- und Funktionsnamen.
+
+Klicke dann auf **Verbindung testen**: Der Bericht nennt die Firewall, ihre
+Version, die Gateways und ihren Zustand, die gesehenen Geräte, die verfolgten
+Regeln und was der Schlüssel nicht lesen darf.
+
+## Die Geräte
+
+Öffne den Tab **Entdecken** der Integration und füge hinzu, was du verfolgen
+möchtest.
+
+### Die Firewall
+
+Ein Gerät für die Firewall, benannt nach ihrem Hostnamen (oder ihrer
+Plattform, wenn der Hostname der Standardname ist). Seine Funktionen:
+
+- **CPU-Auslastung**, **Belegter Speicher** und **Belegter Datenträger**, in
+  Prozent;
+- **Temperatur**, wenn pfSense einen Sensor liest (die meisten
+  Netgate-Geräte; nicht in einer virtuellen Maschine);
+- **Betriebszeit**, in Stunden;
+- **pfSense-Version** (zum Beispiel `2.8.1-RELEASE`);
+- **Paket-Update verfügbar**: 1, wenn ein installiertes Paket eine neuere
+  Version hat (stündlich gelesen);
+- für jedes verfolgte Gateway: **Gateway WAN_DHCP online** (1 online,
+  0 ausgefallen), **Latenz WAN_DHCP** in Millisekunden und **Paketverlust
+  WAN_DHCP** in Prozent, gemessen von dpinger, dem Gateway-Monitor von
+  pfSense;
+- für jede WAN-Schnittstelle dieser Gateways: **Download WAN** und **Upload
+  WAN**, in Mbit/s, gemittelt über das Aktualisierungsintervall.
+
+### Anwesenheitssensoren
+
+Der Tab „Entdecken“ listet die Geräte deines Netzwerks, die pfSense sieht
+(seine ARP-Tabelle und seine DHCP-Leases), benannt nach der Beschreibung
+ihrer statischen Zuordnung, sonst nach ihrem Hostnamen. Jedes hinzugefügte
+Gerät wird ein Anwesenheitssensor mit einer Funktion, **Anwesenheit**: 1,
+solange pfSense es sieht, 0, sobald es seit der
+**Abwesenheitsverzögerung (Minuten)** (standardmäßig 5) nicht mehr gesehen
+wurde.
+
+pfSense behält einen Eintrag seiner ARP-Tabelle bis zu 20 Minuten nach dem
+letzten Austausch mit einem Gerät: Ein Weggang erscheint bis zu 20 Minuten,
+plus die Verzögerung, nachdem das Gerät gegangen ist. Ein Handy im
+Ruhezustand bleibt in der Tabelle, solange es seine WLAN-Verbindung hält.
+Wenn die Firewall nicht gelesen werden kann, ändert sich keine Anwesenheit:
+Ein Ausfall schickt nie den ganzen Haushalt weg.
+
+### Firewall-Regeln
+
+Um eine Regel aus Gladys zu steuern, gib ihr in pfSense eine Beschreibung
+(**Firewall** → **Rules** → bearbeiten → **Description**), zum Beispiel
+„Kinder-Tablet sperren“, und trage sie unter **Zu verfolgende
+Firewall-Regeln** ein (höchstens zehn, durch Kommas getrennt).
+**Firewall-Regeln auflisten** zeigt die Regeln mit Beschreibung.
+
+Jede verfolgte Regel ist ein Gerät mit einer Funktion, **Regel aktiviert**: 1,
+wenn die Regel aktiviert ist (teilen sich mehrere Regeln die Beschreibung, 1,
+sobald eine es ist). Diese Funktion ist absichtlich nur lesbar: Eine Regel ist nie ein
+Schalter, den ein Sprachassistent umlegen könnte. Aktivieren oder
+Deaktivieren geht über die Szenenaktionen und das Widget, und nur, wenn
+**Befehle erlauben** aktiviert ist.
+
+## Dashboard
+
+Drei Widgets:
+
+- **pfSense-Firewall**: CPU, Speicher, Temperatur, die Raten des ersten WAN,
+  eine Zeile pro Gateway mit Latenz und Verlust (orange bei Verschlechterung,
+  rot bei Ausfall), die Betriebszeit, die Version und die zu aktualisierenden
+  Pakete. Mit **Befehle erlauben** eine Taste **Neu starten**, mit
+  Bestätigung.
+- **Anwesende Geräte**: die verfolgten Geräte, anwesende zuerst, mit der Zeit
+  der Abwesenheit. Eine Einstellung zeigt nur die anwesenden.
+- **Firewall-Regeln**: die verfolgten Regeln und ihr Zustand. Mit **Befehle
+  erlauben** eine Taste pro Regel (höchstens vier), mit Bestätigung: Das
+  Symbol zeigt den aktuellen Zustand, ein Tippen schaltet um.
+
+## Szenen
+
+### Auslöser
+
+- **Gateway ausgefallen**: pfSense meldet ein Gateway als ausgefallen (keine
+  Antwort oder Verlust oder Latenz über den Schwellen). Filter: der Name des
+  Gateways (leer: beliebig). Variablen: das Gateway und der von pfSense
+  genannte Grund (`down`, `highloss`, `highdelay`, `force_down`).
+- **Gateway wiederhergestellt**: Ein ausgefallenes Gateway ist wieder online.
+  Variablen: das Gateway und die Dauer des Ausfalls in Minuten.
+- **Unbekanntes Gerät verbunden**: Eine noch nie gesehene MAC-Adresse hat ein
+  dynamisches DHCP-Lease von pfSense erhalten. Die erste Abfrage lernt das
+  Netzwerk, wie es ist, ohne auszulösen; die gesehenen Adressen bleiben über
+  Neustarts hinweg gespeichert. Filter: die Schnittstelle, wie pfSense sie
+  nennt (zum Beispiel `GAESTE`). Variablen: die MAC-Adresse, die IP-Adresse,
+  der Hostname und die Schnittstelle.
+
+### Aktionen
+
+Diese brauchen **Befehle erlauben**.
+
+- **Firewall-Regel aktivieren** und **Firewall-Regel deaktivieren**: alle
+  Regeln mit der Beschreibung des gewählten Geräts, dann wendet die Firewall
+  die Änderung an. Ausgabe: ob die Regel jetzt aktiviert ist.
+- **pfSense-Firewall neu starten**: Netzwerk und Internet sind einige
+  Minuten unterbrochen.
+
+### Szenenideen
+
+- Um 21:00 Uhr an Schultagen **Firewall-Regel aktivieren** „Kinder-Tablet
+  sperren“; um 7:00 Uhr wieder deaktivieren.
+- Wenn **Gateway ausgefallen** auslöst, eine Nachricht über das Mobilnetz an
+  dein Handy schicken (Telegram, Gladys Plus), und die Dauer des Ausfalls,
+  wenn **Gateway wiederhergestellt** auslöst.
+- Wenn **Unbekanntes Gerät verbunden** auf der Gäste-Schnittstelle auslöst,
+  den Haushalt mit dem Hostnamen des Geräts benachrichtigen.
+- Wenn alle Handys abwesend sind, die Heizung herunterdrehen.
+
+## Wie oft die Firewall gelesen wird
+
+In jedem Aktualisierungsintervall liest die Integration den Systemzustand,
+den Gateway-Zustand, die Schnittstellen, die DHCP-Leases, die ARP-Tabelle und,
+wenn Regeln verfolgt werden, die Regelliste: sechs kurze HTTPS-Anfragen. Die
+Version, der Hostname und die Gateway-Liste werden alle 10 Minuten gelesen,
+die Paketliste stündlich (pfSense fragt seine Paketserver, mit Cache). Ein
+abgelehnter Schlüssel wird nur alle 5 Minuten erneut probiert: Der
+Anmeldeschutz von pfSense sperrt eine Adresse nach wenigen Fehlversuchen.
+Unveränderte Werte werden nur alle 6 Stunden erneut an Gladys gesendet, ein
+anwesendes Gerät alle 2 Minuten.
+
+## Fehlerbehebung
+
+- **„keine REST-API hier“**: Das Paket ist nicht installiert (oder ein
+  pfSense-Update hat es entfernt), oder die Adresse ist nicht die des
+  webConfigurators. Installiere das Paket erneut.
+- **„Zertifikat abgelehnt“**: Aktiviere **Selbstsigniertes Zertifikat
+  akzeptieren**.
+- **„API-Schlüssel abgelehnt“**: Der Schlüssel wurde widerrufen oder falsch
+  kopiert, oder **API Key** gehört nicht zu den Authentifizierungsmethoden
+  unter **System** → **REST API**. Nach einigen Ablehnungen sperrt pfSense die
+  Adresse von Gladys eine Weile (**System** → **Advanced** → **Login
+  Protection**).
+- **Ein Messwert fehlt**: **Verbindung testen** listet die Endpunkte, die der
+  Schlüssel nicht lesen darf; gib dem Benutzer das Recht.
+- **Ein Regelbefehl wird abgelehnt**: Der Benutzer braucht das PATCH-Recht
+  von `/api/v2/firewall/rule`; der Neustart das POST-Recht von
+  `/api/v2/diagnostics/reboot`.
+- **Ein Gerät bleibt nach dem Gehen anwesend**: pfSense behält den
+  ARP-Eintrag bis zu 20 Minuten.
+- Protokolle: Setze den `LOG_LEVEL` der Integration auf `debug`, um jede
+  Anfrage zu sehen. Der API-Schlüssel wird nie geschrieben.
+
+## Grenzen
+
+- Ohne die Hardware entwickelt, mit den dokumentierten Antworten des
+  REST-API-Pakets v2: Die ersten Nutzer sind die Tester.
+- Das REST-API-Paket ist kein offizielles pfSense-Paket; es muss nach jedem
+  pfSense-Update neu installiert werden. Seine 32-Bit-Versionen (SG-3100)
+  werden von seinem Autor nicht unterstützt.
+- Das Update des Systems („eine neue pfSense-Version ist verfügbar“) ist über
+  die REST-API nicht lesbar, ohne das Update zu starten: Nur die
+  Paket-Updates werden angezeigt.
+- Die Zustände der DHCP-Leases sind Texte, die pfSense übersetzen kann: Mit
+  einem webConfigurator in einer anderen Sprache als Englisch kann der
+  Auslöser „Unbekanntes Gerät verbunden“ stumm bleiben; die Anwesenheit
+  funktioniert weiter über die ARP-Tabelle.
+- Eine Firewall pro Installation der Integration; kein CARP-Paar, keine
+  VPN-Tunnel, kein Verkehr pro Gerät.
+- Die Befehle ändern nichts außer dem Aktivierungszustand der aufgeführten
+  Regeln und starten die Firewall neu. Sonst wird in pfSense nie etwas
+  geändert.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt pfSense in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine pfSense-Firewall | `section` | Nein | pfSense CE oder Plus mit dem freien Paket REST API (pfSense-pkg-RESTAPI, API v2). Erstelle einen API-Schlüssel für einen eigenen Benutzer mit reinen Leserechten. |
+| Adresse der Firewall | `string` | Ja | Die Adresse des webConfigurators, mit :Port, falls er nicht 443 nutzt. HTTPS ohne Angabe eines Schemas. |
+| API-Schlüssel | `secret` | Nein | Erstellt unter System > REST API > Keys, angemeldet als der Benutzer, mit dem Gladys liest. |
+| Selbstsigniertes Zertifikat akzeptieren | `boolean` | Nein | pfSense liefert seinen webConfigurator mit einem selbstsignierten Zertifikat aus, wenn du kein anderes installiert hast. Nur für deine eigene Firewall aktivieren. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft die Firewall gelesen wird. Die Raten sind Mittelwerte über dieses Intervall. |
+| Zu verfolgende Gateways | `string` | Nein | Gateway-Namen von pfSense (System > Routing), durch Kommas getrennt, höchstens vier. Leer: alle überwachten Gateways. |
+| Anwesenheit | `section` | Nein | Füge die zu verfolgenden Geräte im Tab „Entdecken“ hinzu: Jedes wird ein Anwesenheitssensor, anwesend, solange pfSense es in seiner ARP-Tabelle sieht. |
+| Abwesenheitsverzögerung (Minuten) | `number` | Nein | Ein nicht mehr gesehenes Gerät gilt erst nach dieser Zeit als abwesend. pfSense behält einen ARP-Eintrag bereits bis zu 20 Minuten. |
+| Firewall-Regeln und Befehle | `section` | Nein | Standardmäßig nur lesend. Befehle aktivieren oder deaktivieren die unten aufgeführten Regeln oder starten die Firewall neu, aus einer Szene oder einem Widget. Sonst wird nie etwas geändert. |
+| Zu verfolgende Firewall-Regeln | `string` | Nein | Die Beschreibungen der Regeln, durch Kommas getrennt (höchstens zehn). „Firewall-Regeln auflisten“ zeigt sie an. |
+| Befehle erlauben | `boolean` | Nein | Erlaubt Szenen und Widgets, die Regeln oben zu aktivieren oder zu deaktivieren und die Firewall neu zu starten. Der Benutzer des Schlüssels braucht die passenden Rechte. |
+| Sprache der Namen | `select` | Nein | Sprache der Geräte- und Funktionsnamen, beim Hinzufügen eines Geräts festgelegt. |
+
+## So installierst du pfSense in Gladys
+
+1. Öffne in Gladys **Integrationen**: pfSense erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-pfsense:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-pfsense](https://github.com/guim31/gladys-pfsense).
+
+pfSense benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+pfSense ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-pfsense) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-pfsense/blob/HEAD/docs/de.md)

@@ -1,0 +1,203 @@
+---
+title: "Intégration domotique Picnic, gratuite et open source"
+sidebar_label: "Picnic"
+description: "Courses Picnic (NL, DE, BE, FR) : créneau, arrivée, commande, panier. Lecture seule. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-picnic.png"
+keywords:
+  - "picnic"
+  - "domotique picnic"
+  - "gladys picnic"
+  - "picnic gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-picnic instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Picnic","description":"Courses Picnic (NL, DE, BE, FR) : créneau, arrivée, commande, panier. Lecture seule.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-picnic","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-picnic.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T12:11:54Z"}} />
+
+Affiche vos livraisons de courses **Picnic** dans Gladys (Pays-Bas,
+Allemagne, Belgique, France), en lecture seule : le créneau de la prochaine
+livraison, son heure d'arrivée estimée quand Picnic la donne, la date limite
+de commande, l'état de la dernière commande et le panier. Un déclencheur de
+scène part quand la livraison approche.
+
+> **API non officielle, jamais testée avec un vrai compte.** L'intégration
+> parle à l'API de l'application Picnic, que Picnic ne documente pas et peut
+> changer à tout moment. Elle a été écrite à partir de python-picnic-api2 et
+> de l'intégration Home Assistant, et testée seulement avec des réponses
+> inventées. Sans lien avec Picnic.
+
+## Ce que vous obtenez
+
+Un appareil, **Picnic**, avec ces fonctionnalités (toutes en lecture seule) :
+
+| Fonctionnalité                         | Exemple                          | Remarques                                                                |
+| -------------------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
+| Prochaine livraison : début du créneau | `2026-10-18 14:15`               | heure locale donnée par Picnic ; `—` sans livraison prévue               |
+| Prochaine livraison : fin du créneau   | `2026-10-18 16:15`               |                                                                          |
+| Prochaine livraison : arrivée estimée  | `2026-10-18 14:48 (14:40–15:00)` | seulement quand Picnic donne une heure (souvent le jour même), sinon `—` |
+| Commander avant                        | `2026-10-17 23:00`               | voir ci-dessous                                                          |
+| État de la dernière commande           | `À venir`, `Livrée`, `Annulée`   | les autres états tels que Picnic les envoie                              |
+| Panier : articles                      | `3`                              |                                                                          |
+| Panier : total                         | `12.34` €                        |                                                                          |
+
+**Commander avant** est la date limite de la livraison réservée tant qu'elle
+peut encore être modifiée ; une fois passée, celle du créneau choisi dans le
+panier, sinon du premier créneau proposé par le panier.
+
+Gladys n'a pas de fonctionnalité de type date : les heures sont du texte,
+affiché à l'heure locale envoyée par Picnic (le fuseau de votre pays Picnic).
+
+Rien n'est jamais ajouté au panier ni commandé : cette version ne fait que
+lire.
+
+## Mise en place
+
+1. Dans Gladys, installez l'intégration **Picnic** depuis le store.
+2. Saisissez l'**e-mail** et le **mot de passe** de votre compte Picnic (ceux
+   de l'application) et choisissez son **pays**, puis enregistrez.
+3. Si l'état demande un code de vérification, voir ci-dessous.
+4. Ouvrez l'onglet **Découverte** et ajoutez l'appareil **Picnic**.
+
+Le champ du mot de passe est un champ `secret` : Gladys le garde dans sa base
+(en clair, comme toute valeur de configuration, et dans ses sauvegardes), ne
+le réaffiche jamais, et l'intégration ne l'envoie qu'à Picnic, sous la forme
+MD5 qu'envoie l'application Picnic.
+
+### Code de vérification (deux temps)
+
+Pour une nouvelle connexion, Picnic peut demander un code envoyé par SMS ou
+par e-mail. L'intégration n'en demande jamais d'elle-même (pas de SMS sans
+votre clic). Quand l'état indique « Picnic demande un code de
+vérification » :
+
+1. Dans l'écran de configuration, sous **Envoyer le code de vérification**,
+   choisissez **SMS** ou **E-mail** et cliquez sur le bouton. L'intégration
+   se connecte et Picnic envoie le code.
+2. Sous **Vérifier le code**, saisissez le code reçu et cliquez sur le
+   bouton. « Code accepté » veut dire connecté.
+
+La session est ensuite gardée (dans le `/data` de l'intégration) : pas de
+code aux redémarrages suivants. Picnic peut toutefois redemander un code
+plus tard, quand la session expire ou est révoquée (nouvel appareil,
+changement de mot de passe) : l'état l'indique alors, et les deux mêmes
+étapes s'appliquent.
+
+- Un code est demandé au plus une fois par minute (même après un
+  redémarrage).
+- Cliquer sur **Envoyer le code de vérification** plus de 10 minutes après
+  la connexion qui l'a demandé refait d'abord une connexion (une seule),
+  puis demande le code : utilisez le dernier code reçu.
+- Une fois connecté, **Envoyer le code de vérification** répond « déjà
+  connecté » et n'envoie rien.
+- Si Picnic refuse d'envoyer le code, le message donne son code de motif :
+  essayez l'autre canal, ou plus tard. Si le code est refusé, vérifiez-le
+  ou demandez-en un nouveau. Un redémarrage entre les deux étapes ne fait
+  rien perdre.
+
+## Rafraîchissement
+
+- Toutes les **15 minutes** par défaut (5 à 60, _Intervalle de
+  rafraîchissement_). Chaque lecture fait 2 requêtes : le panier et la liste
+  des livraisons.
+- **Jour de livraison** : dès 12 heures avant le créneau, toutes les
+  5 minutes.
+- **Autour de la livraison** : de 45 minutes avant le créneau (ou l'heure
+  estimée) à 30 minutes après, toutes les 2 minutes, plus la position en
+  direct (une troisième requête, pour l'heure d'arrivée).
+
+## Déclencheur de scène « Livraison Picnic en approche »
+
+Part **une fois par livraison**, quand l'arrivée estimée donnée par Picnic
+est à au plus _Délai « livraison en approche »_ minutes (15 par défaut, 5 à
+60). Sans heure estimée de Picnic, il ne part pas. Variables : `minutes`
+(minutes avant l'arrivée), `eta`, `slot_start`, `slot_end` (heures locales
+en texte). Exemple : allumer la lumière de l'entrée et envoyer le message
+« Picnic dans 15 minutes ».
+
+## En cas de problème
+
+- **E-mail ou mot de passe refusé** : l'intégration s'arrête et attend.
+  Vérifiez l'e-mail, le mot de passe et le pays, puis enregistrez (ou
+  cliquez sur _Tester la connexion_). Elle ne se reconnecte jamais d'elle-même
+  après un refus.
+- **Session refusée** : le jeton de session gardé est refusé, l'intégration
+  se reconnecte **une fois** ; refusée à nouveau, elle se met en pause avec
+  un message et réessaie (une connexion à chaque fois) après 1 heure,
+  6 heures, puis toutes les 24 heures. Si un de ces essais est refusé ou
+  demande un code, elle s'arrête comme ci-dessus (elle ne demande jamais de
+  code d'elle-même). _Tester la connexion_ réessaie tout de suite.
+- **Connexion refusée par Picnic (HTTP 400)** : Picnic a sans doute changé
+  son API ; l'intégration s'arrête et demande à être mise à jour.
+- **Trop de requêtes (429)** : une pause de 1 minute à 6 heures (le
+  `Retry-After` de Picnic, 15 minutes sans lui), pour toutes les lectures et
+  tous les boutons, gardée après un redémarrage ou un changement de compte.
+  **HTTP 403** (un blocage) : une heure, pour toutes les lectures et tous les
+  boutons aussi.
+- _Tester la connexion_ lit au plus une fois toutes les 30 secondes (une
+  connexion au plus), sans la position en direct, pour répondre en moins
+  d'une minute.
+- **Picnic indisponible (5xx, réseau)** : nouveaux essais après 2, 5, 10, 15,
+  puis toutes les 30 minutes.
+- Une panne de la position en direct ne cache jamais le panier et les
+  livraisons.
+
+## Limites
+
+- API non officielle : Picnic peut la changer, la bloquer ou demander plus
+  de vérifications.
+- Lecture seule : pas de modification du panier, pas de commande (peut-être
+  plus tard).
+- Un seul compte Picnic par Gladys.
+- Jamais testée avec un vrai compte : merci de signaler ce que vous voyez sur
+  le [dépôt GitHub](https://github.com/LM1LC3N7/gladys-picnic/issues) (sans
+  votre e-mail, mot de passe ni codes).
+
+## Vie privée
+
+L'intégration garde dans `/data/picnic-state.json` (lisible par son seul
+conteneur) : un identifiant d'appareil aléatoire, le jeton de session, le
+compte auquel il appartient sous forme d'empreinte de l'e-mail et du pays,
+votre identifiant utilisateur Picnic (il nomme l'appareil Gladys), la fin
+d'une pause 429, l'heure de la dernière demande de code,
+et les identifiants des livraisons déjà annoncées. Ni l'e-mail ni le mot de
+passe. Rien n'est envoyé ailleurs qu'à Picnic.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Picnic dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre compte Picnic | `section` | Non | Affiche vos livraisons Picnic dans Gladys, en lecture seule : début et fin du créneau de la prochaine livraison, son heure d'arrivée estimée quand Picnic la donne, la date limite de commande, l'état de la dernière commande, le nombre d'articles et le total du panier, et un déclencheur de scène quand la livraison approche. Saisissez l'e-mail, le mot de passe et le pays de l'application Picnic, enregistrez, puis ajoutez l'appareil Picnic depuis l'onglet Découverte. Si Picnic demande un code de vérification, utilisez les deux boutons ci-dessous : envoyer le code, puis le saisir. Lecture toutes les 15 minutes, plus souvent le jour de livraison. API non officielle, jamais testée avec un vrai compte. Sans lien avec Picnic. |
+| E-mail Picnic | `string` | Oui |  |
+| Mot de passe Picnic | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à Picnic (sous la forme MD5 qu'envoie l'application). |
+| Pays du compte | `select` | Oui |  |
+| Intervalle de rafraîchissement (min) | `number` | Non | Minutes entre deux lectures (5 à 60). Le jour de livraison, toutes les 5 minutes, puis toutes les 2 minutes autour de la livraison. |
+| Délai « livraison en approche » (min) | `number` | Non | Le déclencheur de scène part une fois par livraison, ce nombre de minutes avant l'arrivée estimée (5 à 60), quand Picnic la donne. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités de l'appareil ajouté désormais, et aux états des commandes. |
+
+## Comment installer Picnic dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Picnic apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-picnic:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-picnic](https://github.com/LM1LC3N7/gladys-picnic).
+
+Picnic nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Picnic est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-picnic) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-picnic/blob/HEAD/docs/fr.md)

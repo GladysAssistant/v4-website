@@ -1,0 +1,294 @@
+---
+title: "Integración domótica SSH, gratuita y de código abierto"
+sidebar_label: "SSH"
+description: "Vigile sus máquinas Linux por SSH y ejecute desde sus escenas los comandos declarados. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ssh.png"
+keywords:
+  - "ssh"
+  - "domótica ssh"
+  - "gladys ssh"
+  - "ssh gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-ssh instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SSH","description":"Vigile sus máquinas Linux por SSH y ejecute desde sus escenas los comandos declarados.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ssh","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ssh.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T19:08:18Z"}} />
+
+Vigile sus máquinas Linux — un servidor doméstico, un NAS, una Raspberry Pi —
+por SSH y ejecute desde Gladys los comandos que **usted** ha declarado:
+reiniciar un servicio, lanzar una copia de seguridad, leer una temperatura.
+Todo se queda en su red local: sin nube, sin cuenta, nada que instalar en las
+máquinas salvo un servidor SSH, que casi siempre ya tienen.
+
+Probada con un servidor OpenSSH real (imagen Docker
+`linuxserver/openssh-server`), con clave y con contraseña. Los comentarios
+sobre máquinas reales son bienvenidos en las
+[issues](https://github.com/guim31/gladys-ssh/issues).
+
+## Qué obtiene
+
+- **Un dispositivo por máquina**: _Accesible_, _Carga (1 min)_, _Memoria
+  usada_, _Disco usado (/)_ y _Tiempo encendido_, leídos cada 1 a 30 minutos.
+- **Sensores personalizados**: cualquier comando cuya salida sea un número
+  (con unidad) o un texto se convierte en una función del dispositivo: una
+  temperatura de CPU, el estado de un servicio, el número de actualizaciones
+  pendientes…
+- **Comandos declarados**, ejecutados desde una escena o un botón del widget:
+  reiniciar Plex, lanzar una copia de seguridad, apagar una máquina. **Nunca
+  se ejecuta nada más**: las escenas y el widget solo nombran un comando de la
+  configuración.
+- **Tres activadores de escena**: _Un equipo ha dejado de estar accesible_,
+  _Un equipo vuelve a estar accesible_, _Un comando ha fallado_.
+- **Una acción de escena**, _Ejecutar un comando SSH_, cuyo código de salida y
+  salida sirven a los pasos siguientes.
+- **Un widget** del panel por máquina: su estado y sus valores, y hasta cuatro
+  botones de comando.
+
+## Requisitos
+
+- Gladys Assistant **5.1.0** o posterior.
+- Máquinas con un **servidor SSH** (OpenSSH, Dropbear) accesible desde la
+  máquina de Gladys y un shell POSIX. Los valores estándar leen `/proc` y
+  `df`: cualquier Linux, BusyBox incluido (Alpine, OpenWrt, la mayoría de los
+  NAS). Los demás sistemas pueden desactivarlos y usar solo sensores
+  personalizados.
+- Preferiblemente un **usuario dedicado a Gladys** en cada máquina, sin
+  derechos de administrador.
+
+## Configuración
+
+### Ajustes
+
+- **Intervalo de lectura**: con qué frecuencia se lee cada máquina, una
+  conexión SSH por máquina y ciclo (5 minutos por defecto).
+- **Leer carga, memoria, disco y tiempo encendido**: desactívelo para las
+  máquinas sin `/proc`, o para un usuario limitado a un único comando forzado.
+- **Su propia clave privada** (opcional) y su **frase de contraseña**: déjelas
+  vacías para usar la clave de la integración (recomendado). Si no, pegue una
+  clave privada OpenSSH o PEM sin cifrar; los saltos de línea que pierde el
+  formulario se reconstruyen. Las antiguas claves PEM cifradas
+  (`Proc-Type: 4,ENCRYPTED`) no se admiten: conviértalas con
+  `ssh-keygen -p -f clave`.
+- **Idioma de los nombres de las funciones**: francés por defecto; también
+  inglés, alemán y español. Se aplica a los dispositivos creados después.
+
+### Autorizar la integración en una máquina
+
+1. Ejecute **Mostrar la clave pública**. En su primer arranque, la integración
+   generó su propia clave Ed25519, guardada en su volumen privado; la parte
+   privada nunca sale de él.
+2. En la máquina, cree un usuario dedicado y autorice la clave:
+
+   ```sh
+   sudo adduser --disabled-password gladys
+   sudo -u gladys mkdir -p ~gladys/.ssh
+   echo 'no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty ssh-ed25519 AAAA… gladys-ssh' \
+     | sudo tee -a ~gladys/.ssh/authorized_keys
+   sudo chmod 700 ~gladys/.ssh && sudo chmod 600 ~gladys/.ssh/authorized_keys
+   sudo chown -R gladys: ~gladys/.ssh
+   ```
+
+   Las opciones `no-…` prohíben túneles y terminales a esta clave: solo puede
+   ejecutar comandos.
+
+3. ¿Un comando necesita root? Autorice **solo ese comando** con sudo, por
+   ejemplo en `/etc/sudoers.d/gladys` (edítelo con
+   `sudo visudo -f /etc/sudoers.d/gladys`):
+
+   ```
+   gladys ALL=(root) NOPASSWD: /usr/bin/systemctl restart plex
+   ```
+
+   Nunca dé `ALL` al usuario.
+
+### Añadir un equipo
+
+Ejecute **Añadir o modificar un equipo** con un nombre, la dirección IP o el
+nombre de equipo, el puerto (22 si está vacío) y el nombre de usuario. Una
+contraseña puede sustituir a la clave: es visible al escribirla, se guarda en
+el volumen de la integración y nunca se vuelve a mostrar; deje después el
+campo vacío para conservarla.
+
+La integración se conecta enseguida y responde lo que ha pasado. En la primera
+conexión **memoriza la clave del equipo** (su huella, `SHA256:…`): compárela
+con `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` en la máquina. A partir
+de ahí, una máquina que presente otra clave se **rechaza** antes de cualquier
+autenticación. Tras una reinstalación, ejecute **Aceptar una nueva clave del
+equipo** y vuelva a guardar el equipo. Cambiar la dirección o el puerto de un
+equipo también olvida su clave.
+
+Después, cree el dispositivo en la pestaña **Descubrir**. Guardar un equipo
+con el mismo nombre lo actualiza y conserva su dispositivo.
+
+### Declarar comandos
+
+Ejecute **Añadir o modificar un comando** con el equipo, un nombre, el comando
+y su tipo:
+
+- **Acción**: solo se ejecuta desde una escena o un botón del widget. Nunca se
+  ejecuta al guardarla.
+- **Sensor: un número**: se lee en cada ciclo; se toma el primer número de la
+  salida (`48250`, `temp=47,8'C` → 47,8): filtre una salida extensa con `awk`
+  o `cut` (`temp1: +45.0°C` daría 1). Elija su unidad: porcentaje, °C,
+  duraciones, tamaños, velocidad, vatios, voltios o ninguna.
+- **Sensor: un texto**: se lee en cada ciclo; la salida en una línea, 250
+  caracteres como máximo.
+
+Un sensor se prueba una vez al guardarlo, y la respuesta muestra su primer
+valor. Su función aparece en el dispositivo tras **Actualizar** en la pestaña
+Descubrir. **Botón en el widget** añade un botón al widget del equipo. El
+**tiempo máximo** (10 segundos si está vacío, 90 como máximo) detiene un
+comando demasiado largo: entonces cuenta como fallido. Las salidas se limitan
+a 64 KB.
+
+El comando se ejecuta tal cual en el shell del usuario, como haría
+`ssh usuario@equipo 'comando'`. **Mostrar equipos y comandos** lo enumera
+todo; **Quitar un comando** y **Quitar un equipo** hacen limpieza.
+
+Ejemplos de comandos:
+
+| Nombre             | Comando                                                              | Tipo          |
+| ------------------ | -------------------------------------------------------------------- | ------------- |
+| CPU                | `cat /sys/class/thermal/thermal_zone0/temp \| awk '{print $1/1000}'` | número, °C    |
+| Actualizaciones    | `apt list --upgradable 2>/dev/null \| grep -c upgradable`            | número        |
+| Plex               | `systemctl is-active plex`                                           | texto         |
+| Reiniciar Plex     | `sudo systemctl restart plex`                                        | acción, botón |
+| Copia de seguridad | `/home/gladys/backup.sh`                                             | acción        |
+| Apagar             | `sudo /sbin/poweroff`                                                | acción        |
+
+## Dispositivos
+
+| Función                      | Contenido                                                   |
+| ---------------------------- | ----------------------------------------------------------- |
+| Accesible                    | 1 cuando se abre la sesión SSH (dirección, clave, conexión) |
+| Carga (1 min)                | carga media en un minuto                                    |
+| Memoria usada                | memoria ocupada, en % (sin la memoria disponible)           |
+| Disco usado (/)              | espacio ocupado en el sistema de archivos raíz, en %        |
+| Tiempo encendido             | en días                                                     |
+| una por sensor personalizado | su número o su texto                                        |
+
+Una conexión fallida se reintenta una vez, 5 segundos después, antes de
+mostrar la máquina como inaccesible: un paquete perdido no cambia nada. Los
+valores solo se publican cuando cambian, y al menos cada 12 horas. Mientras una
+máquina está inaccesible, sus valores conservan el último.
+
+## Widget del panel
+
+El widget **Equipo SSH** muestra una máquina (la primera si no se elige
+ninguna): su estado — o por qué está inaccesible —, carga, memoria, disco,
+tiempo encendido y sensores personalizados, con hasta cuatro botones para los
+comandos marcados _Botón en el widget_. Un botón ejecuta el comando y muestra
+su resultado (código de salida, primera línea de la salida) en una
+notificación. Una acción pide confirmación antes (Gladys 5.2.0 o
+posterior).
+
+## Activadores de escena
+
+- **Un equipo ha dejado de estar accesible**: sin respuesta o rechazada dos
+  veces seguidas, o enseguida si se rechaza el acceso o cambia la clave. Variables: nombre del equipo, dirección, motivo (`timeout`,
+  `refused`, `unreachable`, `dns`, `auth`, `host_key_changed`, `error`).
+  Filtro: el equipo.
+- **Un equipo vuelve a estar accesible**: variables nombre del equipo,
+  dirección, minutos inaccesible.
+- **Un comando ha fallado**: un comando ejecutado por una escena o el widget
+  ha devuelto un código de error, ha superado su tiempo máximo o no se ha
+  podido ejecutar; un sensor lo activa una vez, hasta que vuelva a funcionar.
+  Variables: nombre del equipo, nombre del comando, código de salida (-1: no
+  ejecutado o detenido), salida. Filtros: el equipo, el nombre del comando.
+
+Estos eventos llevan lo que un estado de función no puede llevar: el motivo,
+la duración, la salida. Un umbral sobre un valor (disco por encima del 90 %…)
+sigue siendo una escena normal sobre la función del dispositivo.
+
+## Acción de escena
+
+**Ejecutar un comando SSH**: elija el equipo e indique el nombre de un comando
+declarado. Salidas: _Correcto_ (1 o 0), _Código de salida_, _Salida_ (1000
+caracteres como máximo), para un paso «Continuar solo si» o un mensaje. Un
+comando fallido no detiene la escena: compruebe _Correcto_. Un equipo o un
+comando desconocidos, sí.
+
+## Ejemplos de escenas
+
+- **Alerta cuando cae el NAS**: activador _Un equipo ha dejado de estar
+  accesible_ (NAS) → enviar un mensaje «NAS inaccesible:
+  \{\{triggerEvent.data.reason\}\}».
+- **Reiniciar un servicio bloqueado**: cada 15 minutos → _Ejecutar un comando
+  SSH_ «Comprobar Plex» (`systemctl is-active plex`, que falla cuando el
+  servicio está parado) → continuar solo si _Correcto_ vale 0 → _Ejecutar un
+  comando SSH_ «Reiniciar Plex» → enviar su salida.
+- **Copia de seguridad nocturna**: a las 3:00 → _Ejecutar un comando SSH_
+  «Copia de seguridad» → enviar el código de salida; activador _Un comando ha
+  fallado_ (Copia de seguridad) para una alerta.
+- **Apagarlo todo al salir**: _Ejecutar un comando SSH_ «Apagar» en el PC
+  multimedia cuando la casa está vacía.
+
+## Solución de problemas
+
+- **«autenticación rechazada»**: la clave pública no está en
+  `~/.ssh/authorized_keys` de ese usuario, o los permisos son demasiado
+  abiertos (`chmod 700 ~/.ssh`, `chmod 600 ~/.ssh/authorized_keys`, propiedad
+  del usuario). El registro del servidor (`journalctl -u ssh`) dice por qué.
+- **«la clave del equipo ha cambiado»**: la máquina se ha reinstalado, u otra
+  máquina ha tomado su dirección. Compruébelo y ejecute **Aceptar una nueva
+  clave del equipo**.
+- **«sin respuesta»**: dirección, puerto, cortafuegos. Los nombres mDNS
+  (`.local`) no se resuelven en la integración: use la dirección IP.
+- **Los valores estándar siguen vacíos**: la máquina no tiene `/proc` ni
+  `df`, o la clave está limitada a un comando forzado (`command=` en
+  `authorized_keys`): desactívelos y use sensores personalizados.
+- **Un sensor numérico sigue vacío**: su comando debe terminar con 0 y
+  mostrar un número. Ejecútelo a mano con `ssh gladys@equipo 'comando'`.
+- Registros: en Gladys, los registros del contenedor de la integración;
+  `LOG_LEVEL=debug` muestra cada ciclo.
+
+## Límites
+
+- Linux y otros sistemas POSIX; sin valores propios de Windows (los sensores
+  personalizados funcionan si el OpenSSH de Windows ejecuta un shell POSIX).
+- Una contraseña por equipo, visible al escribirla: prefiera la clave.
+- 20 equipos, 15 comandos por equipo, 4 botones por widget.
+- Superar el tiempo máximo envía una señal KILL (OpenSSH 7.9 o posterior) y
+  cierra el canal; un servidor más antiguo puede dejar que el comando termine
+  solo.
+- No se pueden pasar parámetros de escena a un comando, a propósito.
+- Sin relación con OpenSSH ni con el proyecto OpenBSD.
+
+## Parámetros de configuración
+
+Estos son los parámetros que SSH te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sus máquinas | `section` | No | 1. «Mostrar la clave pública»: añádala a ~/.ssh/authorized_keys de un usuario dedicado en cada máquina. 2. «Añadir o modificar un equipo» y cree su dispositivo en la pestaña Descubrir. 3. «Añadir o modificar un comando»: solo se ejecutan los comandos declarados. |
+| Intervalo de lectura | `select` | No | Con qué frecuencia se lee cada equipo (una conexión SSH por equipo). |
+| Leer carga, memoria, disco y tiempo encendido | `boolean` | No | Valores estándar de Linux (/proc y df). Desactívelo para máquinas que no los tienen o para un usuario limitado a un comando. |
+| Su propia clave privada (opcional) | `secret` | No | Vacío: la integración usa su propia clave, generada en el primer arranque (recomendado). Si no, pegue una clave privada OpenSSH o PEM. |
+| Frase de contraseña de su clave privada | `secret` | No | Solo si su propia clave privada está cifrada. |
+| Idioma de los nombres de las funciones | `select` | No | Nombres de las funciones de los nuevos dispositivos (Accesible, Carga…) e idioma de los textos del widget y las escenas. |
+
+## Cómo instalar SSH en Gladys
+
+1. En Gladys, abre **Integraciones**: SSH aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-ssh:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-ssh](https://github.com/guim31/gladys-ssh).
+
+SSH requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+SSH es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-ssh) — [fuente de esta documentación](https://github.com/guim31/gladys-ssh/blob/HEAD/docs/es.md)

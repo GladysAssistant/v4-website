@@ -1,0 +1,206 @@
+---
+title: "Envisalink (DSC, Honeywell) Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Envisalink (DSC, Honeywell)"
+description: "DSC PowerSeries and Honeywell Vista alarms, locally through an Envisalink EVL-3 / EVL-4. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-envisalink.png"
+keywords:
+  - "envisalink (dsc, honeywell)"
+  - "envisalink (dsc, honeywell) smart home"
+  - "gladys envisalink (dsc, honeywell)"
+  - "envisalink (dsc, honeywell) gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-envisalink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Envisalink (DSC, Honeywell)","description":"DSC PowerSeries and Honeywell Vista alarms, locally through an Envisalink EVL-3 / EVL-4.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-envisalink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-envisalink.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T21:13:56Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration connects a **DSC PowerSeries** or **Honeywell / Ademco
+Vista** alarm panel fitted with an **Envisalink EVL-3 or EVL-4** module to
+Gladys, locally, through the module's TPI interface (TCP port 4025), without
+the EyezOn cloud. Unofficial, not affiliated with EyezOn, DSC or Honeywell.
+
+> **Never tested on a real module.** This version was written from the
+> EyezOn TPI documentation and the pyenvisalink library, and tested only
+> against a simulated module. Try it first with the panel disarmed, watching
+> the logs, and report what differs in the
+> [GitHub issues](https://github.com/LM1LC3N7/gladys-envisalink/issues). Do
+> not rely on it as your only intrusion or fire alert.
+
+## What you get
+
+- **One device per partition**, "Alarm partition N": the **mode** (disarmed,
+  armed away, armed stay, armed night), **alarm in progress** and **ready to
+  arm**. The mode can be set from the dashboard or a scene.
+- **One device per zone**: open / closed (or motion, smoke, water leak
+  depending on the chosen kind), **alarm**, **tamper**, **fault**.
+- **The panel**: Envisalink connected, mains power, low battery, tamper,
+  system trouble, panic alarm.
+- **Scene triggers**: "Envisalink alarm triggered" (with its kind:
+  intrusion or water leak from the kind of the zone in alarm, fire, medical,
+  panic, duress, or "partition in alarm, cause unknown" when the zone is not
+  configured), "Envisalink partition armed" (with the mode, the user number
+  when known, and whether Gladys asked for it), "Envisalink partition
+  disarmed".
+- **Scene actions**: arm, disarm (if allowed), panic alarm (if allowed).
+
+## Before you start
+
+1. The Envisalink must be on your local network with a fixed address (a DHCP
+   reservation in your router).
+2. Note the **password of the module's local web page** ("user" by default).
+   It is not your EyezOn account password.
+3. **One TPI connection at a time**: if Home Assistant, another Gladys or
+   another program already uses the module, stop it, or both will keep
+   kicking each other out. Sharing the module between programs needs a relay
+   such as envisalink-proxy.
+
+## Configuration
+
+1. **Address of the Envisalink**: its IP (e.g. `192.168.1.40`), optionally
+   with the port (`192.168.1.40:4025`).
+2. **TPI port**: 4025 unless changed.
+3. **Envisalink password**.
+4. **Alarm panel**: leave "Automatic" (DSC and Honeywell are recognised from
+   the module's first message).
+5. **Number of partitions**: 1 in most homes.
+6. **Zones** (optional): the zones to show from the start, with a name and a
+   kind, separated by commas:
+   `1=Front door, 2=Hall:motion, 5=Kitchen:smoke, 6=Laundry:leak, 10-12`.
+   Kinds: `opening` (default), `motion`, `smoke`, `leak`. A zone the panel
+   reports that is not in the list is added by itself, as an opening.
+   Changing the kind of a zone creates a new feature: add it again from the
+   Discovery tab.
+7. Save, then add the devices from the **Discovery** tab.
+
+The **Test the connection** button reconnects at once, asks the panel for its
+full status (DSC) and shows the mode of each partition.
+
+## Safety
+
+- **Arming** is allowed by default ("Allow arming" option).
+- **Disarming is off by default.** Turn on "Allow disarming" only if your
+  Gladys is well protected: anyone who can control your devices will be able
+  to disarm the alarm.
+- **Panic alarms** from Gladys are off by default.
+- **User code**: DSC 4 or 6 digits, Honeywell 4 digits. Needed to disarm,
+  and to arm a Honeywell panel or a DSC panel without "quick arm". A
+  dedicated code is best. It is never written in the logs, nor is the
+  password. Every command (sent or refused) is logged.
+- A DSC panel asking for a code while arming (message 900) only gets it
+  within 20 seconds of a Gladys command, and only for the partition armed.
+
+### Beware of false alarms
+
+- **Night mode arms without entry delay**: opening the door sets the alarm
+  off at once, with no time to type the code. Arm it from a scene only when
+  nobody is due to come in.
+- **If your panel reports to a monitoring station**, an alarm set off by a
+  badly tuned scene, or a panic alarm sent from Gladys, is reported like a
+  real one: warn your monitoring company before testing, or put the panel in
+  test mode.
+
+## Modes
+
+| Gladys mode | DSC                          | Honeywell          |
+| ----------- | ---------------------------- | ------------------ |
+| Armed away  | command 030                  | code + 2 (Away)    |
+| Armed stay  | command 031                  | code + 3 (Stay)    |
+| Armed night | command 032 (no entry delay) | code + 7 (Instant) |
+| Disarmed    | command 040 + code           | code + 1 (Off)     |
+
+To go from one armed mode to another, disarm first.
+
+## Known limits
+
+- Honeywell: the panel reports zones only through the virtual keypad display
+  and a bitfield that is not always sent. A zone shown "FAULT", "CHECK" or
+  "ALARM" on the keypad goes back to normal when the keypad has not shown it
+  for 45 s, or as soon as the partition is "ready" (except the alarm, cleared
+  by the disarm). An "ALARM" shown by a disarmed keypad (alarm memory) is not
+  an alarm.
+- Honeywell, panel armed: the keypad no longer shows the faults. A door left
+  open while arming therefore shows **closed after 45 s**, unless the panel
+  reports it in its zone bitfield (`%01`). Do not rely on the opening states
+  of an armed Honeywell panel.
+- Honeywell: a partition shows **armed from the start of the exit delay**
+  (the keypad icons light at once), while a DSC panel shows it at the end of
+  the delay. The "Partition armed" trigger therefore fires earlier on
+  Honeywell.
+- Honeywell: **the panic alarm is experimental**: it sends the keypad key A
+  (fire), B (medical) or C (police), whose effect depends on the programming
+  of your panel.
+- The state of a zone shows from its first change (or the panel's first full
+  status).
+- The Gladys limits (300 states and 300 events per minute) are respected:
+  only values that change are sent (plus a reminder about every 30 minutes);
+  over 240 states a minute, the zones wait for the next minute while the
+  panel and the partitions keep their share; over 120 scene events a minute,
+  they are dropped and logged, except "Envisalink alarm triggered", never
+  dropped and sent again up to 3 times on an error.
+
+## Troubleshooting
+
+- "Envisalink unreachable": check the address, that the module answers (its
+  local web page), and that no other program is connected to port 4025.
+- "another client may be using the TPI": the connection drops right after
+  the login several times in a row; the integration then waits 5 minutes
+  between two tries. Stop the other program, or use a relay
+  (envisalink-proxy).
+- "refused the password": after three refusals the connection stops so as
+  not to lock the module. Fix the password, then save or click "Test the
+  connection".
+- The link is checked by a keep-alive every minute; with no answer for 3
+  minutes, the integration reconnects (5 s, 10 s, 30 s, 1 min, 2 min, then
+  every 5 min).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Envisalink (DSC, Honeywell) in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Envisalink module | `section` | Nein | For DSC PowerSeries and Honeywell / Ademco Vista alarm panels fitted with an Envisalink EVL-3 or EVL-4 module, on your network, without the EyezOn cloud: the state of each partition (disarmed, armed away, stay or night, in alarm, ready), the zones (open or closed, alarm, tamper, fault), the system troubles (mains, battery, tamper), panic alarms, arming from Gladys and scene triggers. The module accepts one local connection (TPI, TCP port 4025) at a time: stop any other software using it (Home Assistant, another Gladys). Unofficial, not affiliated with EyezOn, DSC or Honeywell. |
+| Address of the Envisalink | `string` | Ja | Its IP address or name on your network (give it a fixed address in your router). |
+| TPI port | `number` | Nein | 4025 unless you changed it. |
+| Envisalink password | `secret` | Ja | The password of the module's local web page ("user" by default), not your EyezOn account. |
+| Alarm panel | `select` | Nein | Found by itself from the first message of the module. Choose it only when the detection fails. |
+| Number of partitions | `number` | Nein | Partitions 1 to N become devices in Gladys (1 for most homes). |
+| Zones | `string` | Nein | Optional: the zones to show from the start, with a name and a kind (opening, motion, smoke, leak), e.g. "1=Front door, 2=Hall:motion, 5=Kitchen:smoke, 10-12". Zones the panel reports are added by themselves as openings. |
+| Safety | `section` | Nein | Anyone who can control the devices in Gladys (dashboard, scenes, the Gladys app) can use the alarm through this integration. Arming is allowed by default. Disarming and panic alarms are off by default: allow them only if your Gladys is well protected. Every command is written in the integration logs; the user code never is. |
+| User code of the alarm | `secret` | Nein | The code you type on the keypad (DSC: 4 or 6 digits, Honeywell: 4 digits). Needed to disarm, and to arm a Honeywell panel or a DSC panel without quick arming. A dedicated user code is best: the panel logs it with each command. |
+| Allow arming from Gladys | `boolean` | Nein |  |
+| Allow disarming from Gladys | `boolean` | Nein | Needs the user code. Disarming also silences an alarm in progress. |
+| Allow panic alarms from Gladys | `boolean` | Nein | The "Envisalink panic alarm" scene action: fire, medical or police, reported to your monitoring station if you have one (a false alarm can bring a patrol). Experimental on Honeywell: the A / B / C keys depend on the panel programming. |
+| Language of the device names | `select` | Nein | Used for the names of the devices, features and modes added from now on. |
+
+## So installierst du Envisalink (DSC, Honeywell) in Gladys
+
+1. Öffne in Gladys **Integrationen**: Envisalink (DSC, Honeywell) erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-envisalink:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-envisalink](https://github.com/LM1LC3N7/gladys-envisalink).
+
+Envisalink (DSC, Honeywell) benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Envisalink (DSC, Honeywell) ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-envisalink) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-envisalink/blob/HEAD/docs/en.md)

@@ -1,0 +1,181 @@
+---
+title: "Synology Surveillance Station smart home integration, free and open source"
+sidebar_label: "Synology Surveillance Station"
+description: "Synology Surveillance Station, locally: camera images, motion, cameras on/off, Home Mode. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-synology-surveillance.png"
+keywords:
+  - "synology surveillance station"
+  - "synology surveillance station smart home"
+  - "gladys synology surveillance station"
+  - "synology surveillance station gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-synology-surveillance instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Synology Surveillance Station","description":"Synology Surveillance Station, locally: camera images, motion, cameras on/off, Home Mode.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-synology-surveillance","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-synology-surveillance.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T02:57:15Z"}} />
+
+Your Synology Surveillance Station cameras in Gladys, locally, through the
+Web API of DSM (no cloud, no QuickConnect):
+
+- each camera becomes a Gladys camera: its image on the dashboard, a fresh
+  snapshot in the live view;
+- its **enabled** state in Surveillance Station (the camera on/off control of
+  Gladys);
+- a **motion** sensor per camera, and the **Motion detected** scene trigger
+  (motion detection or video analytics events);
+- the **Home Mode** of Surveillance Station: read, switched, and the **Home
+  Mode changed** scene trigger.
+
+> **Never tested on a real NAS.** This first version was written from the
+> Surveillance Station Web API guide and from py-synologydsm-api, and tested
+> against a fake NAS only. Please report what works and what does not on the
+> Gladys forum.
+
+Unofficial integration, not affiliated with Synology.
+
+## Before you start: a dedicated account
+
+1. In DSM, **Control Panel → User & Group**, create a user `gladys` with a
+   strong password. It needs no shared folder and no other application.
+2. In **Surveillance Station → Privilege settings** (Privilege profiles),
+   give it a profile:
+   - read only (spectator) is enough for the images, the motion sensors and
+     reading Home Mode;
+   - to enable / disable cameras or switch Home Mode from Gladys, the
+     profile must allow it (manager, or a custom profile with these rights).
+3. **2-step verification**: prefer an account without it (the account is
+   used by a machine). If DSM enforces it for every account, see below.
+
+## Configuration
+
+- **NAS address**: `https://192.168.1.10:5001`. A bare address is read as
+  https on port 5001. Avoid `http://192.168.1.10:5000`: the password and the
+  session would cross your network in clear.
+- **DSM user name / password**: the dedicated account. The password is kept
+  by Gladys in its database, never shown again, sent only to your NAS.
+- **2-step verification code**: only for an account with 2-step
+  verification. Type a fresh 6-digit code of your authenticator app and save
+  at once (a code lasts 30 s). Gladys then keeps the device token DSM gives
+  (in its `/data` volume) and never needs a code again. A code is sent only
+  once; the field is masked like the password.
+- **Accept the self-signed certificate of the NAS**: off by default, the
+  certificate must then come from a known authority (Let's Encrypt…). On:
+  the certificate seen at the first connection is trusted and remembered; a
+  different one later is refused (someone may be impersonating your NAS)
+  until you press **Trust the new certificate**.
+- **Allow reducing the surveillance**: off by default (see Commands).
+- **Motion events read**: every 5 s to 1 min (10 s by default).
+- **Dashboard image refresh**: none, or every 30 s to 10 min.
+
+Then open the **Discovery** tab and create the cameras and the Surveillance
+Station device (Home Mode) you want.
+
+## Commands
+
+- **Enabling a camera** and **leaving Home Mode** add surveillance: always
+  possible.
+- **Disabling a camera** and **turning Home Mode on** reduce the surveillance
+  (fewer recordings, fewer alerts): Gladys refuses both unless you tick
+  **Allow reducing the surveillance**. Keep it off if a scene or another
+  user should not be able to blind your cameras.
+- Commands run one at a time. Just before acting, Gladys reads the current
+  state from the NAS: if it cannot (or the NAS does not say), nothing is
+  sent; if the NAS is already in the asked state, nothing is sent either.
+  When the NAS is too slow to answer within 3.5 s, nothing is sent and
+  Gladys shows a failure (never an action after a failure was shown). If you
+  untick **Allow reducing the surveillance** or change the configuration
+  while a command waits, it is not sent.
+- A failure says whether the command was **not sent** (it could not reach the
+  NAS) or sent **without confirmation** (the state is then read again).
+
+## Motion
+
+Surveillance Station does not push its events to Gladys: Gladys reads the
+recent events at the chosen pace. A motion or video analytics event fires
+**Motion detected** once (with the camera, its name and `motion` or
+`analytics`) and sets the motion sensor of the camera; the sensor goes back
+to "no motion" once the event is over.
+
+In normal running, every new event fires, whatever the clocks say. Only the
+reading that catches up (after a start of the integration, a reconnection to
+Gladys or a NAS outage) is limited to the events that ended (or still run)
+less than 2 minutes ago: the old events of an outage are marked as seen
+without a burst of triggers. Gladys keeps in its `/data` volume the last
+events it processed, so none fires twice after a restart. The 2 minutes are
+measured in NAS time (Gladys reads the clock of the NAS in its answers), but
+keep both clocks synchronized (NTP, in DSM: Control Panel → Regional
+Options → Time) for this catch-up to be exact. Motion
+detection must be enabled on the camera in Surveillance Station (event
+detection settings).
+
+## Connection problems
+
+- **Wrong password, locked or expired account**: Gladys does not try again by
+  itself, because DSM blocks an address after a few failed logins (auto
+  block). Fix the configuration and save it, or press **Test the
+  connection**.
+- **NAS unreachable**: retried after 30 s, then up to every 10 min; the
+  cameras show as unreachable meanwhile.
+- **Lost session** (DSM restarted, session expired): renewed once, never in a
+  loop (at most one login every 30 s).
+- **NAS busy** (HTTP 429): every request pauses for 1 minute to 6 hours, as
+  long as the NAS asks (Retry-After), even across a restart; saving the
+  configuration or pressing **Test the connection** lifts it. **Server error** (HTTP 5xx, DSM
+  restarting or updating): retried like an unreachable NAS.
+
+## Limits
+
+- One NAS per integration. Images are snapshots (no live video stream in
+  Gladys); a snapshot larger than Gladys accepts (150 KB) is asked again in
+  the "low bandwidth" profile, else it is not shown. The dashboard image aims
+  at 60 KB and goes up to 150 KB for a camera whose snapshots never fit.
+- The motion sensor and the trigger lag by up to the chosen pace.
+- Only motion (event reason 2) and video analytics (7) events are motion;
+  other recordings (continuous, manual, alarm input) are ignored. These
+  reason codes are taken from the API guide and are not checked yet.
+- Not tested with Surveillance Station on a Synology VisualStation, CMS
+  recording servers or C2 Surveillance.
+
+## Configuration settings
+
+These are the settings Synology Surveillance Station asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Gladys talks to Surveillance Station on your Synology NAS, on your network, through the Web API of DSM. Each camera of Surveillance Station becomes a Gladys camera (Discovery tab) with its image, its enabled state and a motion sensor; the Home Mode of Surveillance Station becomes a switch. Create a DSM account dedicated to Gladys, without 2-step verification, with access to Surveillance Station only (see the documentation). Unofficial integration, not affiliated with Synology. |
+| NAS address | `string` | Yes | The address of DSM on your network: https:\/\/\<IP>:5001. A bare address is read as https on port 5001. Avoid http:\/\/\<IP>:5000: the password and the session would cross your network in clear. |
+| DSM user name | `string` | Yes |  |
+| DSM password | `secret` | Yes | Kept by Gladys in its database, never shown again, sent only to your NAS. |
+| 2-step verification code | `secret` | No | Only if the account uses 2-step verification: a fresh 6-digit code of your authenticator app, saved at once. Gladys then keeps a device token and never asks again; the code is used once. |
+| Accept the self-signed certificate of the NAS | `boolean` | No | Off: the certificate must come from a known authority. On: the certificate seen at the first connection is trusted and remembered; a different one later is refused until you press "Trust the new certificate". |
+| Commands | `section` | No | Enabling a camera and leaving Home Mode are always possible from Gladys. Disabling a camera or turning Home Mode on reduces the surveillance (fewer recordings, fewer alerts): Gladys refuses both unless you allow them below. The account then needs a Surveillance Station privilege profile that can change cameras and Home Mode. |
+| Allow reducing the surveillance (disable a camera, turn Home Mode on) | `boolean` | No |  |
+| Refresh | `section` | No | Surveillance Station does not push its events to Gladys: Gladys reads the recent events at the pace below (motion sensors and the "Motion detected" trigger), and the cameras and Home Mode every minute. |
+| Motion events read | `select` | Yes |  |
+| Dashboard image refresh | `select` | Yes |  |
+
+## How to install Synology Surveillance Station in Gladys
+
+1. In Gladys, open **Integrations**: Synology Surveillance Station appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-synology-surveillance:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-synology-surveillance](https://github.com/LM1LC3N7/gladys-synology-surveillance).
+
+Synology Surveillance Station requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Synology Surveillance Station is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-synology-surveillance) — [source of this documentation](https://github.com/LM1LC3N7/gladys-synology-surveillance/blob/HEAD/docs/en.md)

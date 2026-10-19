@@ -1,0 +1,201 @@
+---
+title: "Integración domótica Google Tasks, gratuita y de código abierto"
+sidebar_label: "Google Tasks"
+description: "Tus listas de Google Tasks en Gladys: contadores, widgets para añadir y completar, escenas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-tasks.jpg"
+keywords:
+  - "google tasks"
+  - "domótica google tasks"
+  - "gladys google tasks"
+  - "google tasks gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/William-De71/gladys-google-tasks instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Tasks","description":"Tus listas de Google Tasks en Gladys: contadores, widgets para añadir y completar, escenas.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-google-tasks","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-tasks.jpg","type":"device","version":"0.1.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T02:05:20Z"}} />
+
+## Presentación
+
+Esta integración trae tus listas de **Google Tasks** a Gladys: un dispositivo por lista con sus contadores, widgets para ver, añadir y completar tareas desde el panel, y escenas que reaccionan a tus tareas o las modifican.
+
+- **Un dispositivo por lista** («Mis tareas», «Compras»…) con tres contadores: tareas **pendientes**, **atrasadas** y **para hoy**.
+- **Widgets**: las tareas de una lista (vencimiento, retraso, notas, enlace) con los formularios **Añadir** y **Completar**, y un **resumen** de todas las listas.
+- **Escenas**: tarea añadida, completada, que vence o atrasada; añadir, completar, leer las tareas, borrar las completadas.
+- **Nube**: tus tareas viajan entre los servidores de Google y tu Gladys, con tu propio cliente de Google; nada pasa por un servidor de terceros. Google Tasks no envía notificaciones: la integración lee tus listas cada **5 minutos** (ajustable) y justo después de un cambio hecho desde Gladys.
+- **Vencimiento = una fecha**: Google Tasks solo guarda el día (una hora elegida en la aplicación no se puede leer por la API). «Hoy» y «atrasada» siguen la zona horaria de Gladys.
+
+![El widget Google Tasks con su formulario Añadir abierto, y el resumen de las listas (ilustración generada, no es una captura de pantalla)](https://raw.githubusercontent.com/William-De71/gladys-google-tasks/main/docs/assets/widgets.es.png)
+
+## Requisitos
+
+- Gladys **5.2.0** o posterior (formularios de los widgets).
+- Una cuenta de Google (personal o Workspace) que use Google Tasks.
+- Un **proyecto de Google Cloud** gratuito en el que creas **tu propio cliente OAuth**: Google no permite compartir una clave y la integración no incluye ninguna. Cuenta unos diez minutos, una sola vez.
+
+## Configuración
+
+### 1. Proyecto de Google Cloud y API
+
+1. Abre la [consola de Google Cloud](https://console.cloud.google.com/) y crea un proyecto (por ejemplo «Gladys»).
+2. En **API y servicios → Biblioteca**, busca **Google Tasks API** y pulsa **Habilitar** ([enlace directo](https://console.cloud.google.com/apis/library/tasks.googleapis.com)).
+
+### 2. Pantalla de consentimiento (Google Auth Platform)
+
+1. Abre **Google Auth Platform** ([enlace](https://console.cloud.google.com/auth/overview)) y pulsa **Comenzar**: nombre de la aplicación («Gladys»), correo de asistencia, audiencia **Externo**, correo de contacto, acepta la política y pulsa **Crear**.
+2. En **Audiencia**, pulsa **Publicar aplicación** para pasarla a **En producción**. Es importante: una aplicación que se queda **En prueba** recibe autorizaciones que **caducan a los 7 días** (habría que volver a conectarse cada semana), y solo pueden conectarse las cuentas añadidas como usuarios de prueba.
+3. No hace falta pedir la verificación a Google: la aplicación sigue «sin verificar», lo normal para un uso personal. Google solo muestra un aviso al conectarse (ver el paso 4). Una aplicación sin verificar está limitada a 100 usuarios, de sobra para un hogar.
+
+### 3. Cliente OAuth
+
+1. En **Google Auth Platform → Clientes**, pulsa **Crear cliente**.
+2. Tipo de aplicación: **Aplicación web**, nombre: «Gladys».
+3. En **URI de redireccionamiento autorizados**, añade exactamente:
+
+   ```
+   https://my.gladysassistant.com/redirect/oauth
+   ```
+
+   Es la página HTTPS de Gladys que devuelve tu navegador a tu instancia, sea cual sea su dirección (Google rechaza las direcciones `http://` y las direcciones IP como `http://192.168.1.50`). Es la misma para todos; la pantalla de configuración de Gladys también la muestra, con un botón para copiarla. Si accedes a Gladys por HTTPS y activas la opción avanzada «dirección de la instancia» de esa pantalla, declara en su lugar la dirección que muestra.
+
+4. Pulsa **Crear** y copia el **ID de cliente** y el **Secreto del cliente** (empieza por `GOCSPX-`). Copia el secreto enseguida: Google no siempre lo vuelve a mostrar.
+5. Si la consola pide añadir `gladysassistant.com` a los **Dominios autorizados** (Google Auth Platform → Branding), acepta.
+
+### 4. En Gladys
+
+1. Abre la integración **Google Tasks**, pega el **Client ID** y el **Client secret** y **guarda**.
+2. Pulsa **Conectar con Google** y elige tu cuenta.
+3. Google avisa de que **no ha verificado esta aplicación**: es la tuya. Pulsa **Configuración avanzada** y luego **Ir a Gladys (no seguro)**.
+4. **Marca** el permiso de Google Tasks («Crear, editar, organizar y eliminar todas tus tareas») y pulsa **Continuar**. Vuelves a Gladys, conectado.
+5. Ve a **Descubrimiento**, añade las listas que quieras y luego los widgets a un panel.
+
+| Campo                            | Por defecto | Función                                                                                                                    |
+| -------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Client ID                        | —           | El ID de cliente de tu cliente OAuth (termina en `.apps.googleusercontent.com`).                                           |
+| Client secret                    | —           | Su secreto (`GOCSPX-…`), nunca se muestra ni se escribe en los registros.                                                  |
+| Conectar con Google              | —           | El botón de conexión. Solo se pide el permiso de Google Tasks.                                                             |
+| Leer Google Tasks cada (minutos) | 5           | De 1 a 60. Cada lectura cuesta 1 solicitud + 1 por lista; Google permite 50 000 al día por proyecto.                       |
+| Hora del activador «tarea vence» | 8           | Google guarda una fecha sin hora: una tarea que vence hoy lanza sus escenas a esta hora (0 a 23), en la siguiente lectura. |
+| Idioma de los textos             | Automático  | Nombres de las funciones y resúmenes de escenas. Automático: el idioma de tu panel en cuanto se haya mostrado un widget.   |
+
+Los tokens se renuevan automáticamente. Si Google revoca el acceso (aplicación dejada en prueba, acceso retirado en tu cuenta de Google, secreto regenerado, seis meses sin uso), la integración deja de llamar a Google, lo indica en el estado de conexión y basta con volver a pulsar **Conectar con Google**. Tus dispositivos y escenas se conservan.
+
+## Uso
+
+### Dispositivos
+
+Un dispositivo por lista, llamado «Google Tasks: \<nombre de la lista>». Su identificador sigue al de la lista en Google: cambiar el nombre de la lista no rompe nada.
+
+| Función           | Tipo en Gladys    | Valor                                                   |
+| ----------------- | ----------------- | ------------------------------------------------------- |
+| Tareas pendientes | Contador (entero) | Tareas no completadas de la lista, subtareas incluidas. |
+| Tareas atrasadas  | Contador (entero) | Tareas pendientes cuyo vencimiento ya pasó.             |
+| Tareas para hoy   | Contador (entero) | Tareas pendientes que vencen hoy.                       |
+
+Estos contadores son de solo lectura; alimentan los mosaicos, el historial y las condiciones de escena («si hay más de 3 tareas atrasadas…»).
+
+### Widgets
+
+- **Google Tasks**: las tareas de una lista (ajuste **Lista de tareas**; vacío = la primera lista, «Mis tareas»), ordenadas por vencimiento y luego en el orden de la lista, con las insignias **Atrasada**, **Hoy** y **Mañana**; una subtarea empieza por «↳». Toca una tarea para ver sus notas y abrirla en Google Tasks. El ajuste **Mostrar** limita la tarjeta a las tareas **para hoy o atrasadas**. Botones:
+  - **Añadir**: título, vencimiento (sin fecha, hoy, mañana, en una semana u otra fecha) y notas;
+  - **Completar**: elige la tarea en la lista;
+  - **Actualizar**: lee Google Tasks enseguida.
+- **Listas de tareas**: los totales pendientes, atrasadas y para hoy, y una fila por lista.
+
+Los formularios de los widgets necesitan Gladys 5.2.0 o posterior.
+
+### Activadores de escena
+
+Cada activador puede limitarse a una lista. Variables disponibles: nombre de la lista, título, notas, vencimiento (`AAAA-MM-DD`), subtarea, enlace e ID de la tarea.
+
+| Activador                      | Cuándo                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| Google Tasks: tarea añadida    | Aparece una tarea en una lista (móvil, Gmail, Calendar…). No para las añadidas por Gladys. |
+| Google Tasks: tarea completada | Una tarea se marca como completada fuera de Gladys.                                        |
+| Google Tasks: tarea vence hoy  | Una tarea pendiente vence hoy: a la hora ajustada en la configuración.                     |
+| Google Tasks: tarea atrasada   | Una tarea pendiente supera su vencimiento (justo después de medianoche).                   |
+
+Cada evento corresponde a un cambio detectado entre dos lecturas, nunca a un estado repetido. Al arrancar, la primera lectura sirve de referencia: no activa nada.
+
+### Acciones de escena
+
+| Acción                                  | Parámetros                                                            | Resultados                                                               |
+| --------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Google Tasks: añadir una tarea          | Lista, título (se admiten variables), notas, vencimiento              | ID, título, vencimiento, enlace                                          |
+| Google Tasks: completar una tarea       | Lista (vacía = todas), título (se ignoran mayúsculas y acentos)       | Tarea completada (sí/no), título, lista                                  |
+| Google Tasks: leer las tareas           | Lista (vacía = todas), todas / para hoy o atrasadas / hoy / atrasadas | Número, atrasadas, hoy, títulos, resumen, próxima tarea y su vencimiento |
+| Google Tasks: borrar tareas completadas | Lista (vacía = todas)                                                 | —                                                                        |
+
+El vencimiento acepta `AAAA-MM-DD`, `DD/MM/AAAA`, `+3` (en 3 días), hoy y mañana. «Completar» busca primero un título idéntico, luego un título que lo contenga, y no hace nada (resultado «no») si ninguna tarea coincide. Una acción de escena nunca lanza una escena a cambio.
+
+### Ejemplos de escenas
+
+- **Recordatorio matinal**: todos los días a las 7:30 → «Google Tasks: leer las tareas» (para hoy o atrasadas) → si el número es mayor que 0, enviar `{{0.0.summary}}` en un mensaje.
+- **Basura**: el martes a las 19:00 → «Google Tasks: añadir una tarea» «Sacar la basura» para hoy en la lista «Casa»; y cuando esté **completada**, apagar la luz del garaje.
+- **Compras**: cuando se **añade** una tarea a la lista «Compras» → avisar al hogar con `{{triggerEvent.data.title}}`.
+- **Retrasos**: cuando una tarea pasa a **atrasada** → poner en rojo el LED del despacho.
+
+## Solución de problemas
+
+- **«Error 400: redirect_uri_mismatch»**: el URI de redireccionamiento declarado en el cliente OAuth no es idéntico al de Gladys. Comprueba `https://my.gladysassistant.com/redirect/oauth`, sin barra final, en **URI de redireccionamiento autorizados** del cliente **Aplicación web** (no en «Orígenes de JavaScript autorizados»), guarda y espera unos minutos.
+- **«Error 403: access_denied» / la aplicación no ha completado el proceso de verificación**: la aplicación sigue **En prueba** y tu cuenta no es usuario de prueba. Publícala (**Audiencia → Publicar aplicación**) o añade tu cuenta como usuario de prueba.
+- **«Google no ha verificado esta aplicación»**: normal, es tu propia aplicación; **Configuración avanzada → Ir a Gladys (no seguro)**.
+- **«No se concedió el permiso de Google Tasks»**: la casilla de Google Tasks no estaba marcada en la pantalla de consentimiento. Vuelve a conectarte y márcala.
+- **«Google revocó el acceso» cada semana**: la aplicación se quedó **En prueba** (autorizaciones de 7 días). Publícala y vuelve a conectarte.
+- **«La API de Google Tasks no está activada»**: habilita **Google Tasks API** en el proyecto del cliente OAuth, espera unos minutos y pulsa **Probar la conexión**.
+- **«invalid_client»**: Client ID o Client secret erróneo, o secreto regenerado en la consola. Corrígelos, guarda y vuelve a conectarte.
+- **La vuelta desde Google muestra un error en lugar de Gladys**: pulsa «Conectar» una sola vez, deja abierta una única pestaña de autorización y vuelve a empezar.
+- **«Hoy» o «atrasada» desfasados un día**: comprueba la zona horaria de Gladys (Ajustes → Sistema); la acción **Diagnóstico** la escribe en los registros.
+- **Un cambio hecho en el móvil tarda unos minutos en aparecer**: es el intervalo de lectura (5 minutos por defecto). El botón **Actualizar** de los widgets lee enseguida.
+- **Para un informe de error**: pulsa **Diagnóstico** (resumen anonimizado en los registros, sin token ni título de tarea) y adjunta los registros de la integración, la versión de Gladys y la de la integración.
+
+## Limitaciones
+
+- Ninguna notificación de Google: un cambio aparece como muy tarde tras el intervalo de lectura, y un activador «vence» salta en la primera lectura después de la hora ajustada.
+- La hora de una tarea no se puede leer: solo se conoce la fecha de vencimiento.
+- Si la integración está detenida cuando algo cambia (reinicio, actualización), el evento correspondiente no se recupera: la primera lectura tras el arranque sirve de referencia.
+- Una tarea eliminada no activa nada; tampoco una tarea desaparecida en una lectura completa (cada 6 horas), porque la API no permite saber entonces si se completó o se eliminó.
+- No se crean subtareas, ni se mueven, editan o eliminan tareas, ni se gestionan las listas en sí.
+- Las tareas asignadas desde Docs o Chat se cuentan y se muestran, pero Google no permite crearlas por la API.
+- Una sola cuenta de Google por integración.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Google Tasks te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| 1. Tu cliente OAuth de Google Cloud | `section` | No | Google no ofrece una clave compartida: crea un proyecto gratuito en la consola de Google Cloud, activa la API de Google Tasks, configura la pantalla de consentimiento (Externo) y publícala «En producción», y crea un cliente OAuth de tipo «Aplicación web» cuyo URI de redireccionamiento autorizado sea exactamente https:\/\/my.gladysassistant.com/redirect/oauth. La documentación detalla cada paso. |
+| Client ID | `string` | Sí | Termina en .apps.googleusercontent.com. |
+| Client secret | `secret` | Sí | Google lo muestra al crear el cliente (empieza por GOCSPX-). |
+| 2. Conecta tu cuenta de Google | `section` | No | Guarda primero y pulsa el botón. Google avisa de que «no ha verificado esta aplicación»: es tu propia aplicación, pulsa Configuración avanzada y luego Ir a… (no seguro), y marca el permiso de Google Tasks. Vuelve a conectarte si Gladys indica un acceso revocado. |
+| Conectar con Google | `oauth2` | No | Gladys solo pide el permiso de Google Tasks (leer y modificar tus tareas). |
+| 3. Opciones | `section` | No | Google Tasks no envía notificaciones: la integración lee tus listas a intervalos regulares, y justo después de un cambio hecho desde Gladys. |
+| Leer Google Tasks cada (minutos) | `number` | No | Cada lectura cuesta 1 solicitud + 1 por lista (Google permite 50 000 al día por defecto). |
+| Hora del activador «tarea vence» | `number` | No | Google guarda una fecha sin hora: una tarea que vence hoy lanza sus escenas a esta hora (0-23). |
+| Idioma de los textos | `select` | No | Nombres de las funciones y resúmenes de escenas. Automático: el idioma de tu panel, en cuanto se haya mostrado un widget. |
+
+## Cómo instalar Google Tasks en Gladys
+
+1. En Gladys, abre **Integraciones**: Google Tasks aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-google-tasks:0.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-google-tasks](https://github.com/William-De71/gladys-google-tasks).
+
+Google Tasks requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Google Tasks es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [William-De71](https://github.com/William-De71), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-google-tasks) — [fuente de esta documentación](https://github.com/William-De71/gladys-google-tasks/blob/HEAD/docs/es.md)

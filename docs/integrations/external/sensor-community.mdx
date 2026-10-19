@@ -1,0 +1,240 @@
+---
+title: "Sensor.Community smart home integration, free and open source"
+sidebar_label: "Sensor.Community"
+description: "Air quality, noise and weather from Sensor.Community citizen sensors, yours or nearby. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sensor-community.png"
+keywords:
+  - "sensor.community"
+  - "sensor.community smart home"
+  - "gladys sensor.community"
+  - "sensor.community gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-sensor-community instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sensor.Community","description":"Air quality, noise and weather from Sensor.Community citizen sensors, yours or nearby.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-sensor-community","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sensor-community.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T17:06:13Z"}} />
+
+Air quality, noise and weather from the citizen sensors of
+[Sensor.Community](https://sensor.community) (formerly Luftdaten): your own
+airRohr box, or the public sensors around your home.
+
+> Developed without the hardware: feedback welcome. The integration was
+> written and tested against recorded answers of the public API and of the
+> airRohr firmware, not against a real box. Tell us on the Gladys forum how it
+> behaves with yours.
+
+This integration is not affiliated with Sensor.Community.
+
+## What it does
+
+- Reads **public sensors** of the Sensor.Community network by their id, with
+  no account and no key.
+- Reads **your own airRohr box** directly on your network, for live values
+  every minute (optional).
+- Creates **one device per sensor**: PM2.5, PM10, PM1 when measured,
+  temperature, humidity, pressure, noise, CO2, depending on the sensor.
+- Computes the **European Air Quality Index** (EEA) from PM2.5 and PM10, and
+  tells how old the last measurement is: a silent sensor is flagged.
+- Adds an **Air quality** dashboard widget, a scene trigger **Air quality
+  changed** and a scene action **Get the air quality**.
+
+Read only: the integration never changes anything on a sensor.
+
+## Requirements
+
+- Gladys Assistant **5.2.0** or later.
+- Internet access for the public sensors (the Sensor.Community data API).
+- For your own box: an airRohr (or any box running the Sensor.Community
+  firmware) reachable from Gladys, with a **fixed IP address** (DHCP
+  reservation on your router).
+- For the nearby search: the location of your house, set in **Settings →
+  Houses**. The integration asks for access to the house coordinates on the
+  install screen; it only uses them for this search.
+
+## Configuration
+
+### Choose the sensors
+
+1. Open the **Configuration** tab of the integration.
+2. Click **Find sensors near a house**: pick the house (empty: the first
+   house with a location) and a radius (empty: 2 km). The result lists the
+   sensors that sent data in the last 5 minutes, nearest first, with their
+   type, distance and measures, and the ids ready to copy.
+3. Copy the ids you want into **Sensor ids**, separated by commas (20 at
+   most). The id is also the number shown when you click a sensor on the
+   [map](https://maps.sensor.community).
+4. Save: the devices appear in the **Discovery** tab once their first
+   measurement is read. Add them to Gladys.
+
+Tip: a dust sensor (SDS011, SPS30…) and a weather sensor (BME280, DHT22…) of
+the same box have two different ids: add both.
+
+### Your own airRohr box
+
+Enter its IP address in **Address of your airRohr box** (for example
+`192.0.2.20`). Use the IP address: names ending in `.local` do not resolve
+from the integration's container. The box is read every minute through its
+`/data.json` page; no password is needed.
+
+### Other settings
+
+- **Refresh of the public sensors**: every 5, 10, 15 or 30 minutes. The public
+  data moves every 5 minutes and Sensor.Community asks for moderation: 5
+  minutes is the fastest.
+- **Language**: the language of the feature names (set when a device is added)
+  and of the texts sent to scenes. French by default.
+
+The **Check the sensors** button reads every configured sensor and tells
+what each one answers: its type and the age of its measurement, no data, or
+an error.
+
+## Devices
+
+### Public sensor
+
+One device per id, named `Sensor.Community #<id> (<type>)`. Its features
+follow what the sensor measures:
+
+| Feature                  | Unit  | Sensors                         |
+| ------------------------ | ----- | ------------------------------- |
+| PM2.5, PM10              | µg/m³ | SDS011, SPS30, PMS, HPM, NextPM |
+| PM1                      | µg/m³ | SPS30, PMS, NextPM              |
+| Temperature, Humidity    | °C, % | BME280, DHT22, SHT3x, HTU21D    |
+| Pressure                 | hPa   | BME280, BMP280, BMP180          |
+| Sea-level pressure       | hPa   | BME280, BMP280, BMP180          |
+| Noise (LAeq), min, max   | dB    | DNMS                            |
+| CO2                      | ppm   | SCD30                           |
+| Air quality index (EAQI) | 1–6   | every particle sensor           |
+| Measurement age          | min   | every sensor                    |
+
+Each value is the mean of the measurements of the last 5 minutes, like the
+Sensor.Community map. PM1 is shown as a PM2.5-type feature (Gladys has no PM1
+category), named "PM1".
+
+### Your airRohr box
+
+One device named `airRohr <chip id>` (for example `airRohr esp8266-1234567`),
+with every sensor plugged into the box. The name of each feature carries the
+sensor: "Temperature (BME280)", "Temperature (DHT22)".
+
+### Air quality index
+
+The **European Air Quality Index** of the European Environment Agency, from 1
+to 6: good, fair, moderate, poor, very poor, extremely poor. The worst of
+PM2.5 and PM10 sets the level (bands revised in 2024: PM2.5 up to 5, 15, 50,
+90, 140 µg/m³; PM10 up to 15, 45, 120, 195, 270 µg/m³). The EEA computes it
+on validated means of reference stations: on a low-cost sensor and 5
+minutes, it is an indication.
+
+### Measurement age
+
+Minutes since the last measurement of the sensor. Past 15 minutes the
+measurement is **stale**: the integration stops sending its values (Gladys
+keeps showing the last ones with their date), the widget says "Stale" and the
+age keeps growing, so a scene can warn you.
+
+## Widget
+
+Add the **Air quality** widget to a dashboard.
+
+- With a **sensor** chosen in its settings: live tiles (PM2.5, PM10,
+  temperature, humidity), the level of the European index colored by its band
+  (green for good and fair, orange for moderate, red beyond) and the age of the
+  measurement.
+- Without a sensor: one row per sensor measuring particles, with its level.
+
+## Scenes
+
+### Trigger: Air quality changed
+
+Starts the scene when the European index of a sensor reaches another level,
+confirmed by two readings in a row (one puff of smoke does not fire it).
+Filters: the sensor, and the new levels that matter (for example poor, very
+poor, extremely poor). Variables available to the following actions: sensor
+name, level (as a word in the configured language), level 1 to 6, previous
+level, pollutant setting the level, PM2.5 and PM10.
+
+### Action: Get the air quality
+
+Gives the air quality of one sensor, or, without a sensor, the worst of the
+sensors measured in the last 15 minutes. Outputs: a **summary** ready for a
+notification ("Poor · PM2.5 62 µg/m³ · PM10 80 µg/m³ · 3 min ago"), the
+level as a word, its key and number, PM2.5, PM10 and the measurement age.
+
+## Scene examples
+
+- **Close the windows when the air gets bad**: trigger "Air quality changed"
+  with the levels poor, very poor, extremely poor → send a message "Air is
+  \{\{triggerEvent.data.level_label\}\} around \{\{triggerEvent.data.sensor_name\}\}: close the windows".
+- **Morning briefing**: at 7:30 → action "Get the air quality" → send the
+  summary in the morning message.
+- **Silent sensor**: trigger on the "Measurement age" feature above 60 minutes
+  → notify that the sensor (or your box's Wi-Fi) is down.
+- **Ventilation**: when the index of your own box goes back to good or fair,
+  start the controlled mechanical ventilation.
+
+## Troubleshooting
+
+- **No device in the Discovery tab**: a sensor appears once its first
+  measurement is read. Click **Check the sensors**: "no data in the last 5
+  minutes" means the sensor is offline, or the id is wrong (the API answers
+  the same for both). Check the id on the map.
+- **The status says the API does not answer**: the Sensor.Community API is
+  down or unreachable from Gladys; the readings resume on their own.
+- **Your box does not answer**: check its IP address (a fixed one), that it
+  is powered and on the same network as Gladys, and open
+  `http://<its address>/data.json` in a browser.
+- **A box with an old firmware** (before 2020) has no `/metrics` page: its
+  device is then named after its address, and a new address makes a new
+  device. Update the firmware.
+- Logs: open the integration logs from Gladys. Set `LOG_LEVEL=debug` to see
+  every reading.
+
+## Limits
+
+- Data of citizen sensors, not of reference stations: low-cost dust sensors
+  over-read in humid air (fog, rain). Use the values as trends.
+- Public sensors are read every 5 minutes at most, and at most 20 sensors.
+- Only PM2.5 and PM10 feed the European index: the other pollutants of the
+  official index (ozone, NO2, SO2) are not measured by these sensors.
+- PM4 and particle counts (SPS30, IPS-7100) are not shown: Gladys has no
+  category for them.
+- The integration reads; it never configures a box.
+
+## Configuration settings
+
+These are the settings Sensor.Community asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Citizen sensors | `section` | No | Read public Sensor.Community sensors (no account) by their id, the number shown on the map, or your own airRohr box on your network. Not affiliated with Sensor.Community. |
+| Sensor ids | `string` | No | The ids of the public sensors to read, separated by commas (20 at most). The "Find sensors near a house" button below lists those around you. |
+| Address of your airRohr box | `string` | No | Optional: the IP address of your own box on your network, read every minute for live values. Use its IP address: names ending in .local do not resolve from the integration. |
+| Refresh of the public sensors | `select` | No | The public data moves every 5 minutes, and Sensor.Community asks for moderation: 5 minutes is the fastest. |
+| Language | `select` | No | Language of the feature names (set when a device is added) and of the scene texts. |
+
+## How to install Sensor.Community in Gladys
+
+1. In Gladys, open **Integrations**: Sensor.Community appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-sensor-community:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-sensor-community](https://github.com/guim31/gladys-sensor-community).
+
+Sensor.Community requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Sensor.Community is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-sensor-community) — [source of this documentation](https://github.com/guim31/gladys-sensor-community/blob/HEAD/docs/en.md)

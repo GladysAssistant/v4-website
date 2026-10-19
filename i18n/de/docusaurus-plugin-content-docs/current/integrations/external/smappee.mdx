@@ -1,0 +1,194 @@
+---
+title: "Smappee Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Smappee"
+description: "Smappee-Energiemonitore: Verbrauch, Solar, Unterzähler und Steckdosen, lokal oder per Cloud. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png"
+keywords:
+  - "smappee"
+  - "smappee smart home"
+  - "gladys smappee"
+  - "smappee gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-smappee instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Smappee","description":"Smappee-Energiemonitore: Verbrauch, Solar, Unterzähler und Steckdosen, lokal oder per Cloud.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-smappee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T19:12:50Z"}} />
+
+> **Ohne die Hardware entwickelt: Rückmeldungen willkommen.** Diese Integration wurde nach der
+> Smappee-Bibliothek von Home Assistant (pysmappee) und der offiziellen API geschrieben und an
+> simulierten Messgeräten getestet. Wenn mit deinem Smappee etwas nicht stimmt, eröffne bitte ein
+> Issue: https://github.com/guim31/gladys-smappee/issues
+
+## Überblick
+
+Diese Integration bringt deine **Smappee**-Energiemonitore in Gladys: Verbrauch des Hauses,
+Solarproduktion, Netzbezug und Einspeisung, Unterzähler, Smappee Switches und Comfort Plugs. Die
+Integration liest die Messgeräte zuerst im lokalen Netz und über die Smappee-Cloud die, deren Adresse du nicht eingibst.
+
+| Messgerät                         | Gelesen über                                  |
+| --------------------------------- | --------------------------------------------- |
+| Smappee Energy, Solar, Pro/Plus   | lokale Web-API (HTTP), alle 5 bis 60 Sekunden |
+| Smappee Infinity, Genius, Connect | lokaler MQTT-Broker (Port 1883), live         |
+| Jedes Messgerät deines Kontos     | Smappee-Cloud (optional), alle 5 Minuten      |
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1 oder neuer (5.2 für den Energie-Tab).
+- Lokal: die IP-Adresse jedes Messgeräts im Netz von Gladys. Gib ihm im Router eine feste Adresse.
+  Energy, Solar und Pro brauchen das Passwort ihrer lokalen Weboberfläche (`admin`, wenn du es nicht
+  geändert hast).
+- Für die Cloud (optional): eine API-Client-ID und ein Secret, die Smappee auf Anfrage vergibt
+  (frag den Smappee-Support nach „API-Zugang“), sowie Benutzername und Passwort deines
+  Smappee-Kontos.
+
+## Konfiguration
+
+### Lokaler Zugang
+
+Gib unter **Integrationen → Smappee → Konfiguration** die IP-Adressen deiner Messgeräte ein, durch
+Kommas getrennt. Für jede Adresse versucht die Integration die lokale Web-API, dann den MQTT-Broker.
+Das **Passwort der lokalen Weboberfläche** wird nur von Energy, Solar und Pro genutzt; lass es leer
+für das Werkspasswort.
+
+### Cloud-Zugang
+
+Füll die vier Felder des Abschnitts **Smappee-Cloud** aus, um Messgeräte außerhalb deines Netzes zu
+lesen und die in der Cloud bekannten Steckdosen zu steuern. Ein Messgerät mit eingegebener Adresse wird nur lokal gelesen, nie über die Cloud: Entferne seine Adresse, um es über die Cloud zu lesen. Mit drei von vier Feldern bleibt die Cloud aus.
+
+### Optionen
+
+- **Lokales Aktualisierungsintervall**: wie oft die lokalen Messwerte an Gladys gesendet werden
+  (standardmäßig 10 Sekunden). Die Energiezähler werden immer aus jedem Messwert berechnet.
+- **Smappee-Steckdosen und -Schalter steuern**: aus, werden sie nur angezeigt.
+- **Sprache der Gerätenamen**: die Namen der Funktionen beim Hinzufügen eines Geräts.
+
+Öffne dann den Tab **Entdecken** und füge die gewünschten Geräte hinzu.
+
+## Geräte
+
+### Messgerät
+
+Ein Gerät pro Messgerät, benannt nach Modell und Seriennummer (`Smappee Genius 5010000101`):
+
+- **Verbrauch** (W) und **Verbrauchszähler** (kWh): das ganze Haus;
+- mit Solarmodulen: **Solarproduktion** und **Solarproduktionszähler**, **Netzbezug** und
+  **Netzeinspeisung** (W), **Bezugszähler** und **Einspeisezähler** (kWh), berechnet aus Verbrauch minus Produktion. Der **Bezugszähler** ist dann der abgerechnete Zähler, der **Verbrauchszähler** der Hausverbrauch (angezeigt, nicht bepreist);
+- Infinity, Genius und Connect: **Spannung L1** bis **Spannung L3**.
+
+Über ihre lokale API liefern die Messgeräte Leistungen, keine Zähler: Die Integration addiert
+Leistung × Zeit zu den Zählern, gespeichert in ihrem Datenvolume. Eine Lücke von mehr als 3 Minuten
+(Gladys oder Messgerät gestoppt) wird nicht aufgefüllt. Über die Cloud addieren die Zähler die
+5-Minuten-Summen von Smappee. Die Zähler beginnen beim ersten Mal bei 0.
+
+### Unterzähler
+
+Infinity, Genius und Connect: ein Gerät pro in der Smappee-App eingerichtetem Stromkreis
+(CT-Zangen), benannt wie in der App, sonst **Smappee-Unterzähler** und seine Kanalnummer:
+**Leistung**, **Energiezähler** und **Strom**.
+
+### Steckdosen und Schalter
+
+Ein Gerät pro Smappee Switch, Comfort Plug oder Cloud-Ausgangsmodul, mit einer Funktion **Ein/Aus**
+(benannt wie in der App, sonst **Smappee-Steckdose** und ihre Nummer). Eine Comfort Plug (433 MHz)
+meldet ihren Zustand nie: Gladys zeigt den zuletzt gesendeten Befehl.
+
+## Energie-Tab
+
+Der Energie-Tab von Gladys 5.2 bepreist, was das Netz liefert: den **Verbrauchszähler** eines Messgeräts ohne Solarmodule, den **Bezugszähler** eines Messgeräts mit Solarmodulen (sein **Verbrauchszähler**, der den selbst genutzten Solarstrom enthält, wird angezeigt, aber nicht bepreist). Der **Energiezähler** der Unterzähler ist ebenfalls ein Verbrauchszähler, der **Solarproduktionszähler** ein Produktionszähler. Ordne die Unterzähler in den Energie-Einstellungen dem Messgerät unter, damit sie
+nicht doppelt gezählt werden. Die Einspeisung wird angezeigt, nie noch einmal addiert.
+
+## Widget
+
+**Smappee-Energiefluss** zeigt einen Standort (das erste Messgerät oder das in den Einstellungen
+gewählte): **Haus**, und mit Solarmodulen **Solar**, **Bezug** und **Einspeisung**, das Netz als
+Anzeige (**Netz**, Bezug rechts, Einspeisung links) und den **Eigenverbrauch** der Produktion, mit
+dem Zustand des Messgeräts.
+
+## Szenen-Auslöser
+
+- **Ein Smappee geht offline**: Das Messgerät antwortet nicht mehr (3 lokale Lesungen in Folge, eine
+  Minute ohne MQTT-Nachricht oder 30 Minuten ohne neue Cloud-Daten).
+- **Ein Smappee ist wieder online**: Es antwortet wieder.
+
+Beide lassen sich auf ein Messgerät beschränken und liefern seinen Namen als Variable. Für einen
+**hohen Verbrauch** nutze den Standard-Auslöser von Gladys auf einen Gerätewert: „Verbrauch“ des
+Messgeräts über zum Beispiel 6000 W.
+
+## Aktionen
+
+**Nach Smappee-Messgeräten suchen** (Tab Konfiguration): verbindet sich neu mit den Adressen und der
+Cloud und meldet, was wie geantwortet hat und was nicht stimmt (Passwort, Adresse,
+Cloud-Zugangsdaten).
+
+## Szenen-Beispiele
+
+- Wenn der **Verbrauch** des Messgeräts 6000 W übersteigt, den Smappee Switch des Warmwasserspeichers
+  ausschalten und eine Nachricht senden.
+- Wenn die **Netzeinspeisung** 1500 W übersteigt, die Comfort Plug der Poolpumpe einschalten.
+- Wenn **Ein Smappee geht offline**, eine Nachricht senden (Stromausfall, WLAN weg).
+
+## Fehlerbehebung
+
+- **Kein Gerät in Entdecken**: Starte **Nach Smappee-Messgeräten suchen** und lies den Bericht.
+- „hat das Passwort abgelehnt“: Gib das Passwort der lokalen Weboberfläche des Messgeräts ein.
+- „Dort antwortet kein Smappee“: Prüfe die Adresse; ein Infinity, Genius oder Connect muss
+  Verbindungen auf Port 1883 aus dem Netz von Gladys annehmen.
+- „warte auf die Konfiguration des Smappee“: Der MQTT-Broker antwortet, hat seine Konfiguration aber
+  noch nicht gesendet; warte eine Minute und suche erneut.
+- „Zugangsdaten abgelehnt“: Prüfe Client-ID und Secret von Smappee sowie dein Konto.
+- Ausführliche Protokolle: Starte die Integration mit `LOG_LEVEL=debug`.
+
+## Grenzen
+
+- Ohne die Hardware entwickelt: Die Nachrichtenformate stammen aus pysmappee und der offiziellen
+  Dokumentation. Rückmeldungen willkommen.
+- Energy, Solar und Pro liefern über ihre lokale API weder Spannung noch Unterzähler.
+- Die lokalen Zähler berechnet die Integration, kleine Abweichungen zur Smappee-App sind möglich.
+- Die Cloud liefert 5-Minuten-Daten: Leistungen sind 5-Minuten-Mittelwerte, alle 5 Minuten gelesen.
+- Keine automatische Erkennung: Gib die Adressen ein.
+- Nicht mit Smappee verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Smappee in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Smappee-Messgeräte | `section` | Nein | Gib die IP-Adresse jedes Smappee ein: Energy, Solar und Pro werden über ihre lokale Web-API gelesen, Infinity, Genius und Connect über ihren lokalen MQTT-Broker. Gib ihm im Router eine feste Adresse. |
+| IP-Adressen der Smappee-Messgeräte | `string` | Nein | Durch Kommas getrennt. Leer lassen, um nur die Cloud zu nutzen. |
+| Passwort der lokalen Weboberfläche | `secret` | Nein | Nur Energy, Solar und Pro. Leer: das Werkspasswort (admin). |
+| Smappee-Cloud (optional) | `section` | Nein | Für ein Messgerät, das in deinem Netz nicht erreichbar ist, und für die Steckdosen des Cloud-Kontos. Frag den Smappee-Support nach einer API-Client-ID und einem Secret und gib sie mit deinem Smappee-Konto ein. Alle 5 Minuten gelesen. |
+| API-Client-ID | `string` | Nein |  |
+| API-Client-Secret | `secret` | Nein |  |
+| Benutzername des Smappee-Kontos | `string` | Nein |  |
+| Passwort des Smappee-Kontos | `secret` | Nein |  |
+| Optionen | `section` | Nein |  |
+| Lokales Aktualisierungsintervall | `select` | Ja | Wie oft die lokalen Messwerte an Gladys gesendet werden. |
+| Smappee-Steckdosen und -Schalter steuern | `boolean` | Nein | Aus: nur angezeigt, nicht steuerbar. |
+| Sprache der Gerätenamen | `select` | Ja | Wird verwendet, wenn ein Gerät zu Gladys hinzugefügt wird. |
+
+## So installierst du Smappee in Gladys
+
+1. Öffne in Gladys **Integrationen**: Smappee erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-smappee:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-smappee](https://github.com/guim31/gladys-smappee).
+
+Smappee benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Smappee ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-smappee) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-smappee/blob/HEAD/docs/de.md)

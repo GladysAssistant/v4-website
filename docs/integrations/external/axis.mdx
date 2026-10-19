@@ -1,0 +1,284 @@
+---
+title: "Axis smart home integration, free and open source"
+sidebar_label: "Axis"
+description: "Axis cameras, door stations and speakers, locally: images, detections, rings, clips. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-axis.png"
+keywords:
+  - "axis"
+  - "axis smart home"
+  - "gladys axis"
+  - "axis gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-axis instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Axis","description":"Axis cameras, door stations and speakers, locally: images, detections, rings, clips.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-axis","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-axis.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T19:50:24Z"}} />
+
+Brings Axis **network cameras**, **door stations** (network intercoms) and
+**network speakers** into Gladys, **locally**, through their VAPIX API: camera
+images, motion, objects, persons and vehicles seen by AXIS Object Analytics,
+the PIR sensor, sound detection, tampering, day and night, the digital inputs,
+the ring of a door station, the infrared light, the audio clips of the
+speakers, and the outputs (relays) for your scenes. No cloud account, nothing
+leaves your network.
+
+> **Developed without the hardware: feedback welcome.** This integration was
+> written from the public VAPIX documentation, the Home Assistant `axis`
+> integration and the `axis` library by Kane610 (with their real device
+> answers), without an Axis device at hand. If something does not work as
+> described, please open an issue on
+> [github.com/guim31/gladys-axis/issues](https://github.com/guim31/gladys-axis/issues)
+> with the integration logs (`LOG_LEVEL=debug`).
+>
+> This integration is not affiliated with Axis Communications. AXIS is a
+> trademark of Axis AB.
+
+## What you need
+
+- An Axis camera, door station or speaker reachable from Gladys on your
+  network, its web page working (port 80, or 443 in HTTPS).
+- A **local account** of the device. An **operator** account is enough for
+  everything (images, events, infrared light, outputs, clips); a viewer
+  account can only read. The first account of an Axis device is `root`:
+  creating a dedicated `gladys` operator account is better.
+- For the live events: AXIS OS 11 or later uses the WebSocket event stream
+  over the web port; older firmwares use the RTSP metadata stream, so the
+  RTSP port (554 by default) must be reachable too.
+- Gladys **5.1 or later**.
+
+## Set up
+
+### Settings
+
+In Gladys, open the integration, then its **Configuration** tab:
+
+- **Device addresses**: the IP addresses (or names) of your devices,
+  separated by commas, e.g. `192.168.1.90, 192.168.1.91`. Add `:port` if the
+  web page is not on port 80, and `https://` for HTTPS (the self-signed
+  certificate of the device is accepted). Never put the password in the
+  address.
+- **User name** and **Password**: the local account of the devices. The
+  password is sent to the devices only, never to a cloud.
+- **Other device addresses**, **Their user name**, **Their password**:
+  optional, for devices (a door station, for instance) with other credentials.
+- **Camera images**: how often the image of each camera added to Gladys is
+  refreshed (every 5 minutes by default, or only on events). A person
+  detected or a ring always sends a fresh image.
+- **Allow driving the outputs**: off by default. On a door station the
+  outputs (relays) open the door or the gate: they are only driven by the
+  scene action, once this setting is on, and are never a switch.
+- **Language of the names**: the language of the feature names (set when a
+  device is added) and of the texts sent to scenes. French by default.
+
+Then open the **Discovery** tab: each camera (each video source of a
+multi-sensor camera), door station and speaker is listed. Add the ones you
+want.
+
+### Configuration actions
+
+- **Test the connection**: reads every device again and reports, one line
+  per device, its model, its video sources and how its live events arrive
+  (WebSocket or RTSP). After a refused password, it is the way to try again
+  once the password is fixed.
+- **Search the network**: asks Gladys to look for the Axis devices of the
+  network (mDNS `_axis-video._tcp` and UPnP), and lists them: configured, to
+  add (copy its address into **Device addresses**), or found at a new
+  address. Bonjour and UPnP must be on on the devices (they are by default).
+- **Audio clips**: lists the audio clips stored on each device, by number
+  and name, for the **Play an audio clip** scene action.
+- **Show the video stream address**: the RTSP address of a camera, to use
+  with the "RTSP camera" integration of Gladys. The password is replaced by
+  `PASSWORD`: type it yourself.
+
+## The devices
+
+### Cameras
+
+Each video source becomes a device. Its features, each one only when the
+camera has it:
+
+| Feature              | What it shows                                                                 |
+| -------------------- | ----------------------------------------------------------------------------- |
+| **Image**            | The camera image, refreshed as set in **Camera images**                       |
+| **Online**           | The camera answers                                                            |
+| **Motion**           | AXIS Video Motion Detection, the guard profiles, the ONVIF motion rules       |
+| **Object analytics** | An AXIS Object Analytics scenario is triggered                                |
+| **Person**           | An object classified as a person (AXIS Object Analytics)                      |
+| **Vehicle**          | An object classified as a vehicle (AXIS Object Analytics)                     |
+| **PIR sensor**       | The PIR sensor of the camera                                                  |
+| **Sound detection**  | The sound level trigger of the camera                                         |
+| **Tampering**        | The camera was moved, covered or blinded                                      |
+| **Night mode**       | The camera is in night mode (infrared cut filter removed)                     |
+| **Infrared light**   | The infrared illuminator: on or off from Gladys                               |
+| **Input**            | Each digital input, named as on the camera (e.g. `Garden gate`), or "Input 1" |
+
+The detections a camera reports in its events add their feature (one sensor
+per event present): if a feature you expect is missing, trigger the
+detection once, then open **Discovery** again and update the device.
+
+The outputs (relays) of a camera are never a feature: see the **Drive an
+output (relay)** scene action.
+
+### Door stations
+
+An Axis door station (A8105-E, A8207-VE, I8016-LVE, I8116-E…) is a camera
+with a **Doorbell ring** feature: it goes to 1 when someone presses the call
+button, then back to 0 after ten seconds, and fires the **Someone rang the
+door station** trigger with a fresh image. The call button is recognised
+when its input is named so (`Call button`, `Doorbell`, `Appel`…), or as the
+first input of an AXIS I8116-E. Its door relay is an output: see **Drive an
+output (relay)**.
+
+### Network speakers
+
+An Axis network speaker (C1310-E, C1410…) becomes a device with the
+**Online** feature; it plays its audio clips through the **Play an audio
+clip** scene action.
+
+## Dashboard
+
+The **Axis** widget shows the devices online, the persons and rings of the
+last 24 hours, the latest ones with their image, and the state of each
+device. In its settings, choose one device, or leave it empty for all.
+
+The camera images and every feature can also be added to the dashboard with
+the usual Gladys boxes.
+
+## Scenes
+
+### Triggers
+
+- **Person detected by a camera**: a camera saw a person (AXIS Object
+  Analytics or a guard profile). Filter on the camera; the variables give the
+  camera name and the name of the scenario. The camera image is fresh when
+  the scene starts, so "send the camera image" sends the right one. One event
+  per camera every 15 seconds at most.
+- **Someone rang the door station**: the call button was pressed. Filter on
+  the door station; the variable gives its name. The image is fresh too.
+
+The features (**Motion**, **Person**, **Input**…) can also start a scene with
+the usual "a device state changes" trigger.
+
+### Actions
+
+- **Refresh a camera image**: takes a fresh image of a camera for Gladys, to
+  send it in a message right after.
+- **Play an audio clip**: plays a clip stored on an Axis speaker, door
+  station or camera, by its number or its name (empty: the first clip). The
+  **Audio clips** configuration action lists them.
+- **Drive an output (relay)**: a pulse of 1, 3 or 10 seconds, or activate or
+  deactivate an output, numbered from 1 among the outputs of the device. On a
+  door station, this opens the door: it only works once **Allow driving the
+  outputs** is on, and the command is sent once, never repeated.
+
+### Scene ideas
+
+- **Ring at the door**: when someone rang the door station, send the door
+  station image in a message, and play a chime on the speaker of the living
+  room with **Play an audio clip**.
+- **Night watch**: when a person is detected by the driveway camera between
+  midnight and 6 am, turn on the garden lights, play the "Warning" clip on the
+  horn speaker and send the camera image.
+- **Opening the gate for a known arrival**: when your phone arrives home,
+  drive output 1 of the door station with a pulse of 1 second (only after
+  allowing it, and only if you accept the risk of a scene that opens a door).
+
+## Live video
+
+Gladys shows camera images, not a live video stream. For live video, use the
+**Show the video stream address** action and add the RTSP address to the
+"RTSP camera" integration of Gladys.
+
+## Refresh and limits
+
+- The live events arrive as they happen: WebSocket on AXIS OS 11 and later,
+  RTSP metadata stream otherwise, always one connection per device opened by
+  Gladys (nothing to open in your router). A stream lost is reopened (after
+  5 seconds, then up to 5 minutes between tries).
+- The integration reads the inputs and the infrared light every 5 minutes,
+  every minute while an event stream is down. It never waits for Gladys to
+  poll the devices.
+- The images are taken at 640 pixels wide at most, scaled by the camera
+  (Gladys takes images of 150 KB at most), never more often than every 6
+  seconds per camera.
+- A value that does not change is sent again every 6 hours, so Gladys never
+  shows it as old.
+- VAPIX has no quota. Axis devices block an address for a while after
+  repeated wrong passwords: the integration stops at the first refusal and
+  only tries again on a new configuration or with **Test the connection**.
+
+## Troubleshooting
+
+- **"User name or password refused"**: check them on the web page of the
+  device, fix them in the configuration, then use **Test the connection**.
+- **"This account is not allowed to do this"**: use an operator account.
+- **The device does not answer**: check its address, its port, and that
+  Gladys reaches it (same network, no firewall in between).
+- **"Live events are interrupted"**: on an older firmware, check that the
+  RTSP port (554) is reachable and that RTSP is enabled on the device. Inputs
+  and the infrared light are still read every minute.
+- **A detection is missing**: enable it on the camera (AXIS Object
+  Analytics scenario, VMD profile, sound level trigger), trigger it once,
+  then update the device in **Discovery**.
+- **The ring of a door station is not seen**: name the input of the call
+  button `Call button` on the door station, then use **Test the connection**.
+- **Details**: set `LOG_LEVEL=debug` on the integration to see every event
+  and every read in its logs. Passwords never appear there.
+
+## Limits
+
+- Developed without the hardware: the topics, the event streams and the
+  call button rule come from the documentation and from the work of Home
+  Assistant, not from a test on a real device.
+- No live video in Gladys (camera images only), no pan, tilt or zoom.
+- The outputs are a scene action only, by design: never a switch, never
+  available to a voice assistant.
+- The audio clips are played, not uploaded: record them on the device.
+- On a multi-sensor camera, the AXIS Object Analytics features first show on
+  the first video source; the others gain them at their first detection.
+- The devices from the network search are not added by themselves: copy
+  their address into the configuration.
+
+## Configuration settings
+
+These are the settings Axis asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Axis devices | `section` | No | Axis cameras, door stations (intercoms) and network speakers, on your network, through their VAPIX API. Use a local account of the device, ideally a dedicated operator account. Nothing goes through a cloud. The "Search the network" action lists the Axis devices it finds. |
+| Device addresses | `string` | Yes | IP addresses or names, separated by commas, with :port if not 80, https:\/\/ for HTTPS. |
+| User name | `string` | No |  |
+| Password | `secret` | Yes | Sent to the devices only, never to a cloud. Axis devices block an address after repeated wrong passwords: the integration stops at the first refusal. |
+| Devices with other credentials | `section` | No | Optional: a door station or a camera whose user name or password differs from the ones above. |
+| Other device addresses | `string` | No |  |
+| Their user name | `string` | No |  |
+| Their password | `secret` | No |  |
+| Camera images | `select` | No | How often the image of each camera added to Gladys is refreshed. A person or a ring always sends a fresh one. |
+| Allow driving the outputs | `boolean` | No | Lets scenes drive the outputs (relays): on a door station they open the door or the gate. Scene action only, never a switch. Off by default. |
+| Language of the names | `select` | No | Language of the feature names and of the texts sent to scenes. Names are set when a device is added. |
+
+## How to install Axis in Gladys
+
+1. In Gladys, open **Integrations**: Axis appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-axis:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-axis](https://github.com/guim31/gladys-axis).
+
+Axis requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Axis is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-axis) — [source of this documentation](https://github.com/guim31/gladys-axis/blob/HEAD/docs/en.md)

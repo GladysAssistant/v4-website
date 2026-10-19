@@ -1,0 +1,322 @@
+---
+title: "Integración domótica pfSense, gratuita y de código abierto"
+sidebar_label: "pfSense"
+description: "Cortafuegos pfSense: presencia de sus dispositivos, estado, puertas de enlace y cortes. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pfsense.png"
+keywords:
+  - "pfsense"
+  - "domótica pfsense"
+  - "gladys pfsense"
+  - "pfsense gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-pfsense instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"pfSense","description":"Cortafuegos pfSense: presencia de sus dispositivos, estado, puertas de enlace y cortes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-pfsense","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pfsense.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T19:09:57Z"}} />
+
+Siga su cortafuegos [pfSense](https://www.pfsense.org) (CE o Plus) desde
+Gladys, por su red local: sepa quién está en casa gracias a los dispositivos
+que pfSense ve, vigile el estado del cortafuegos y de sus puertas de enlace a
+internet, reciba un aviso cuando una puerta de enlace cae o cuando se conecta
+un dispositivo desconocido y, si lo autoriza, corte internet en la tableta de
+los niños desde una escena.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** Esta
+> integración se ha construido y probado con las respuestas documentadas del
+> paquete REST API de pfSense, no con un cortafuegos real. Si algo no funciona
+> como se describe, dígalo en el
+> [foro de Gladys](https://community.gladysassistant.com) o en las
+> [issues](https://github.com/guim31/gladys-pfsense/issues).
+
+Esta integración no está afiliada a Netgate. pfSense es una marca de Electric
+Sheep Fencing LLC (Netgate).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un cortafuegos pfSense CE o pfSense Plus accesible desde Gladys.
+- El **paquete REST API** libre (`pfSense-pkg-RESTAPI`, API v2, de Jared
+  Hendrickson) instalado en él. pfSense no tiene API REST propia: este paquete
+  añade una. No está en el gestor de paquetes de pfSense: se instala desde la
+  línea de órdenes (vea más abajo).
+- Una clave de API, idealmente para un usuario dedicado con privilegios de
+  solo lectura.
+
+## Puesta en marcha
+
+### Instalar el paquete REST API
+
+En una consola de pfSense (**Diagnostics** → **Command Prompt**, o SSH),
+ejecute la orden indicada en la
+[documentación del paquete](https://pfrest.org/INSTALL_AND_CONFIG/) para su
+versión, por ejemplo en pfSense CE:
+
+```
+pkg-static add https://github.com/pfrest/pfSense-pkg-RESTAPI/releases/latest/download/pfSense-2.8.1-pkg-RESTAPI.pkg
+```
+
+Abra luego **System** → **REST API** y compruebe que la API está activada y
+que **API Key** está entre los métodos de autenticación.
+
+pfSense elimina los paquetes que no son suyos al actualizarse: **vuelva a
+instalar el paquete después de cada actualización de pfSense**, o Gladys
+perderá el cortafuegos.
+
+### Un usuario de solo lectura y su clave de API
+
+Cree un usuario para Gladys en lugar de usar `admin` (**System** → **User
+Manager** → **Add**). Dele solo los privilegios de los puntos de acceso de la
+API REST que la integración lee, método GET:
+
+- `/api/v2/status/system`, `/api/v2/status/gateways`,
+  `/api/v2/status/interfaces`: estado, puertas de enlace, caudal;
+- `/api/v2/status/dhcp_server/leases`, `/api/v2/diagnostics/arp_table`:
+  presencia y el desencadenante «Dispositivo desconocido conectado»;
+- `/api/v2/system/version`, `/api/v2/system/hostname`,
+  `/api/v2/routing/gateways`, `/api/v2/system/packages`: versión, nombre,
+  interfaz de cada puerta de enlace, actualizaciones de paquetes;
+- `/api/v2/firewall/rules`: el estado de las reglas seguidas.
+
+Un privilegio que falta no es un error: las medidas correspondientes se
+omiten, y **Probar la conexión** indica lo que la clave no puede leer. Las
+órdenes necesitan dos más: `/api/v2/firewall/rule` método PATCH y
+`/api/v2/diagnostics/reboot` método POST.
+
+Inicie luego sesión en pfSense **con este usuario**, abra **System** →
+**REST API** → **Keys** → **Add**, y copie la clave: pfSense solo la muestra
+una vez. Una clave tiene los privilegios del usuario que la creó.
+
+### La configuración
+
+Abra **Integraciones** → **pfSense** → **Configuración**:
+
+- **Dirección del cortafuegos**: la dirección del webConfigurator, por
+  ejemplo `https://192.168.1.1`, con `:puerto` si no usa el 443. Sin esquema,
+  se usa HTTPS.
+- **Clave de API**: la clave creada arriba.
+- **Aceptar un certificado autofirmado**: pfSense sirve su webConfigurator
+  con un certificado autofirmado si no ha instalado otro. Márquelo para su
+  propio cortafuegos.
+- **Intervalo de actualización**: de 10 segundos a 1 minuto (30 segundos por
+  defecto).
+- **Puertas de enlace que seguir**: los nombres de las puertas de enlace de
+  **System** → **Routing** (por ejemplo `WAN_DHCP`), cuatro como máximo,
+  separados por comas. Vacío: todas las que pfSense vigila, cuatro como
+  máximo.
+- **Retraso de salida (minutos)**: vea los sensores de presencia.
+- **Reglas de cortafuegos que seguir** y **Permitir órdenes**: vea las reglas
+  de cortafuegos.
+- **Idioma de los nombres**: el idioma de los nombres de dispositivos y
+  funciones.
+
+Pulse luego **Probar la conexión**: el informe nombra el cortafuegos, su
+versión, las puertas de enlace y su estado, los clientes vistos, las reglas
+seguidas y lo que la clave no puede leer.
+
+## Los dispositivos
+
+Abra la pestaña **Descubrir** de la integración y añada lo que quiera seguir.
+
+### El cortafuegos
+
+Un dispositivo para el cortafuegos, con el nombre de su host (o de su
+plataforma cuando el nombre de host es el predeterminado). Sus funciones:
+
+- **Carga del procesador**, **Memoria usada** y **Disco usado**, en
+  porcentaje;
+- **Temperatura**, cuando pfSense lee un sensor (la mayoría de los equipos
+  Netgate; no en una máquina virtual);
+- **Tiempo de funcionamiento**, en horas;
+- **Versión de pfSense** (por ejemplo `2.8.1-RELEASE`);
+- **Actualización de paquete disponible**: 1 cuando un paquete instalado
+  tiene una versión más reciente (leído cada hora);
+- para cada puerta de enlace seguida: **Puerta de enlace WAN_DHCP en línea**
+  (1 en línea, 0 cortada), **Latencia WAN_DHCP** en milisegundos y **Pérdida
+  de paquetes WAN_DHCP** en porcentaje, medidas por dpinger, el monitor de
+  puertas de enlace de pfSense;
+- para cada interfaz WAN de esas puertas de enlace: **Descarga WAN** y
+  **Subida WAN**, en Mbit/s, promediadas en el intervalo de actualización.
+
+### Sensores de presencia
+
+La pestaña Descubrir lista los dispositivos de su red que pfSense ve (su
+tabla ARP y sus concesiones DHCP), con el nombre de la descripción de su
+asignación estática, si no su nombre de host. Cada dispositivo añadido se
+convierte en un sensor de presencia con una función, **Presencia**: 1
+mientras pfSense lo ve, 0 cuando no se ha visto durante el **Retraso de
+salida (minutos)** (5 por defecto).
+
+pfSense conserva una entrada de su tabla ARP hasta 20 minutos después del
+último intercambio con un dispositivo: una salida aparece hasta 20 minutos,
+más el retraso, después de que el dispositivo se haya ido. Un teléfono en
+reposo sigue en la tabla mientras mantenga su conexión Wi-Fi. Cuando el
+cortafuegos no se puede leer, ninguna presencia cambia: un corte nunca manda
+fuera a toda la casa.
+
+### Reglas de cortafuegos
+
+Para controlar una regla desde Gladys, dele una descripción en pfSense
+(**Firewall** → **Rules** → editar → **Description**), por ejemplo «Bloquear
+tableta niños», e introdúzcala en **Reglas de cortafuegos que seguir** (diez
+como máximo, separadas por comas). **Listar las reglas de cortafuegos**
+muestra las reglas que tienen descripción.
+
+Cada regla seguida es un dispositivo con una función, **Regla activada**: 1
+cuando la regla está activada (si varias reglas comparten la descripción, 1
+en cuanto una lo está). Es de solo lectura a propósito: una regla nunca es un
+interruptor que un asistente de voz podría accionar. Activarla o desactivarla
+pasa por las acciones de escena y el widget, y solo cuando **Permitir
+órdenes** está marcado.
+
+## Panel
+
+Tres widgets:
+
+- **Cortafuegos pfSense**: procesador, memoria, temperatura, el caudal del
+  primer WAN, una fila por puerta de enlace con su latencia y su pérdida
+  (naranja cuando se degrada, rojo cuando está cortada), el tiempo de
+  funcionamiento, la versión y los paquetes por actualizar. Con **Permitir
+  órdenes**, un botón **Reiniciar**, con confirmación.
+- **Dispositivos presentes**: los dispositivos seguidos, presentes primero,
+  con el tiempo que cada uno lleva ausente. Un ajuste muestra solo los
+  presentes.
+- **Reglas de cortafuegos**: las reglas seguidas y su estado. Con **Permitir
+  órdenes**, un botón por regla (cuatro como máximo), con confirmación: el
+  icono muestra el estado actual, una pulsación lo cambia.
+
+## Escenas
+
+### Desencadenantes
+
+- **Puerta de enlace cortada**: pfSense marca una puerta de enlace como
+  cortada (sin respuesta, o pérdida o latencia por encima de sus umbrales).
+  Filtro: el nombre de la puerta de enlace (vacío: cualquiera). Variables: la
+  puerta de enlace y el motivo dado por pfSense (`down`, `highloss`,
+  `highdelay`, `force_down`).
+- **Puerta de enlace restablecida**: una puerta de enlace cortada vuelve a
+  estar en línea. Variables: la puerta de enlace y la duración del corte en
+  minutos.
+- **Dispositivo desconocido conectado**: una dirección MAC nunca vista ha
+  obtenido una concesión DHCP dinámica de pfSense. La primera lectura aprende
+  la red tal como está, sin desencadenar; las direcciones vistas se recuerdan
+  entre reinicios. Filtro: la interfaz, tal como pfSense la nombra (por
+  ejemplo `INVITADOS`). Variables: la dirección MAC, la dirección IP, el
+  nombre de host y la interfaz.
+
+### Acciones
+
+Necesitan **Permitir órdenes**.
+
+- **Activar una regla de cortafuegos** y **Desactivar una regla de
+  cortafuegos**: todas las reglas con la descripción del dispositivo elegido;
+  luego el cortafuegos aplica el cambio. Salida: si la regla está ahora
+  activada.
+- **Reiniciar el cortafuegos pfSense**: la red e internet se cortan unos
+  minutos.
+
+### Ideas de escenas
+
+- A las 21:00 los días de colegio, **Activar una regla de cortafuegos**
+  «Bloquear tableta niños»; a las 7:00, desactivarla.
+- Cuando se desencadena **Puerta de enlace cortada**, enviar un mensaje a su
+  teléfono por la red móvil (Telegram, Gladys Plus), y la duración del corte
+  cuando se desencadena **Puerta de enlace restablecida**.
+- Cuando se desencadena **Dispositivo desconocido conectado** en la interfaz
+  de invitados, avisar a la casa con el nombre de host del dispositivo.
+- Cuando todos los teléfonos están ausentes, bajar la calefacción.
+
+## Con qué frecuencia se lee el cortafuegos
+
+En cada intervalo de actualización, la integración lee el estado del sistema,
+el estado de las puertas de enlace, las interfaces, las concesiones DHCP, la
+tabla ARP y, cuando se siguen reglas, la lista de reglas: seis peticiones
+HTTPS cortas. La versión, el nombre de host y la lista de puertas de enlace se
+leen cada 10 minutos, la lista de paquetes cada hora (pfSense consulta sus
+servidores de paquetes, con caché). Una clave rechazada solo se vuelve a
+probar cada 5 minutos: la protección de inicio de sesión de pfSense bloquea
+una dirección tras unos pocos fallos. Los valores sin cambios solo se vuelven
+a enviar a Gladys cada 6 horas, un dispositivo presente cada 2 minutos.
+
+## Solución de problemas
+
+- **«no hay API REST aquí»**: el paquete no está instalado (o una
+  actualización de pfSense lo ha eliminado), o la dirección no es la del
+  webConfigurator. Vuelva a instalar el paquete.
+- **«certificado rechazado»**: marque **Aceptar un certificado autofirmado**.
+- **«clave de API rechazada»**: la clave se ha revocado o se ha copiado mal,
+  o **API Key** no está entre los métodos de autenticación de **System** →
+  **REST API**. Tras unos rechazos, pfSense bloquea la dirección de Gladys un
+  tiempo (**System** → **Advanced** → **Login Protection**).
+- **Falta una medida**: **Probar la conexión** indica los puntos de acceso
+  que la clave no puede leer; añada el privilegio al usuario.
+- **Se rechaza una orden de regla**: el usuario necesita el privilegio PATCH
+  de `/api/v2/firewall/rule`; el reinicio, el privilegio POST de
+  `/api/v2/diagnostics/reboot`.
+- **Un dispositivo sigue presente después de irse**: pfSense conserva la
+  entrada ARP hasta 20 minutos.
+- Registros: ponga el `LOG_LEVEL` de la integración en `debug` para ver cada
+  petición. La clave de API nunca se escribe.
+
+## Límites
+
+- Desarrollada sin el hardware, con las respuestas documentadas del paquete
+  REST API v2: los primeros usuarios son los probadores.
+- El paquete REST API no es un paquete oficial de pfSense; hay que volver a
+  instalarlo después de cada actualización de pfSense. Sus versiones de
+  32 bits (SG-3100) no están soportadas por su autor.
+- La actualización del sistema («hay una nueva versión de pfSense») no se
+  puede leer por la API REST sin iniciar la actualización: solo se muestran
+  las actualizaciones de paquetes.
+- Los estados de las concesiones DHCP son textos que pfSense puede traducir:
+  con un webConfigurator en otro idioma que el inglés, el desencadenante
+  «Dispositivo desconocido conectado» puede quedar mudo; la presencia sigue
+  funcionando por la tabla ARP.
+- Un cortafuegos por instalación de la integración; sin par CARP, sin túneles
+  VPN, sin tráfico por cliente.
+- Las órdenes no cambian nada más que el estado activado de las reglas que ha
+  indicado, y reinician el cortafuegos. Nunca se cambia nada más en pfSense.
+
+## Parámetros de configuración
+
+Estos son los parámetros que pfSense te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su cortafuegos pfSense | `section` | No | pfSense CE o Plus con el paquete libre REST API (pfSense-pkg-RESTAPI, API v2). Cree una clave de API para un usuario dedicado con privilegios de solo lectura. |
+| Dirección del cortafuegos | `string` | Sí | La dirección del webConfigurator, con :puerto si no usa el 443. HTTPS si no se indica esquema. |
+| Clave de API | `secret` | No | Creada en System > REST API > Keys, con la sesión del usuario con el que Gladys lee. |
+| Aceptar un certificado autofirmado | `boolean` | No | pfSense sirve su webConfigurator con un certificado autofirmado si no ha instalado otro. Márquelo solo para su propio cortafuegos. |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee el cortafuegos. Los caudales son medias en este intervalo. |
+| Puertas de enlace que seguir | `string` | No | Nombres de puertas de enlace de pfSense (System > Routing), separados por comas, cuatro como máximo. Vacío: todas las vigiladas. |
+| Presencia | `section` | No | Añada los dispositivos que quiera seguir desde la pestaña Descubrir: cada uno se convierte en un sensor de presencia, presente mientras pfSense lo ve en su tabla ARP. |
+| Retraso de salida (minutos) | `number` | No | Un dispositivo que ya no se ve cuenta como ausente solo tras este retraso. pfSense ya conserva una entrada ARP hasta 20 minutos. |
+| Reglas de cortafuegos y órdenes | `section` | No | Solo lectura por defecto. Las órdenes activan o desactivan las reglas indicadas abajo, o reinician el cortafuegos, desde una escena o un widget. Nunca se cambia nada más. |
+| Reglas de cortafuegos que seguir | `string` | No | Las descripciones de las reglas, separadas por comas (diez como máximo). «Listar las reglas de cortafuegos» las muestra. |
+| Permitir órdenes | `boolean` | No | Permite a las escenas y widgets activar o desactivar las reglas de arriba y reiniciar el cortafuegos. El usuario de la clave necesita los privilegios correspondientes. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de dispositivos y funciones, fijados al añadir un dispositivo. |
+
+## Cómo instalar pfSense en Gladys
+
+1. En Gladys, abre **Integraciones**: pfSense aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-pfsense:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-pfsense](https://github.com/guim31/gladys-pfsense).
+
+pfSense requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+pfSense es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-pfsense) — [fuente de esta documentación](https://github.com/guim31/gladys-pfsense/blob/HEAD/docs/es.md)

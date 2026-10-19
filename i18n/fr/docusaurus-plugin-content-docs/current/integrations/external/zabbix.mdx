@@ -1,0 +1,246 @@
+---
+title: "Intégration domotique Zabbix, gratuite et open source"
+sidebar_label: "Zabbix"
+description: "Vos hôtes et problèmes Zabbix dans Gladys, et des scènes quand un problème naît ou se résout. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zabbix.png"
+keywords:
+  - "zabbix"
+  - "domotique zabbix"
+  - "gladys zabbix"
+  - "zabbix gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-zabbix instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zabbix","description":"Vos hôtes et problèmes Zabbix dans Gladys, et des scènes quand un problème naît ou se résout.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-zabbix","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zabbix.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T09:30:04Z"}} />
+
+Votre supervision [Zabbix](https://www.zabbix.com/) dans Gladys : chaque hôte
+devient un appareil (disponible, problèmes actifs, sévérité la plus haute,
+maintenance), un appareil « Serveur Zabbix » compte les problèmes par
+sévérité, et vos scènes réagissent quand un problème apparaît ou se résout :
+une lumière rouge pour un désastre, un message pour un disque qui lâche. Une
+scène peut aussi acquitter les problèmes d'un hôte, et un widget du tableau de
+bord liste les problèmes en cours.
+
+L'intégration lit l'API de Zabbix sur votre réseau local, avec un jeton d'API.
+Rien ne passe par un cloud.
+
+Testée contre un vrai Zabbix 7.0 LTS et 6.0 LTS (images Docker officielles,
+agent 2 et éléments trappeur) ; Zabbix 5.4 et 6.4 seulement d'après les
+différences documentées de leur API. Vos retours sont les bienvenus :
+[github.com/guim31/gladys-zabbix/issues](https://github.com/guim31/gladys-zabbix/issues).
+
+## Ce qu'il faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Zabbix 5.4 ou plus récent (jetons d'API), 6.0 LTS et 7.0 LTS compris,
+  joignable depuis la machine de Gladys (l'adresse de son interface web).
+- Un utilisateur Zabbix pour Gladys. Un rôle en lecture seule sur les groupes
+  d'hôtes à suivre suffit ; ajoutez le droit d'acquitter les problèmes pour
+  l'action de scène.
+
+## Mise en route
+
+### 1. Créer un jeton d'API
+
+Dans Zabbix, ouvrez **Utilisateurs → Jetons API** (6.4 et plus récent ;
+**Administration → Général → Jetons API** de la 5.4 à la 6.2), cliquez sur
+**Créer un jeton API**, choisissez l'utilisateur, décochez « Définir une date
+d'expiration » ou choisissez une date lointaine, et copiez le jeton : Zabbix
+ne l'affiche qu'une fois.
+
+### 2. Configurer l'intégration
+
+Dans Gladys, ouvrez la configuration de l'intégration :
+
+- **Adresse de Zabbix** : l'adresse avec laquelle vous ouvrez l'interface de
+  Zabbix, par exemple `http://192.168.1.2/zabbix` ou
+  `https://zabbix.example.com`. L'adresse d'une page copiée depuis le
+  navigateur convient aussi.
+- **Jeton d'API** : le jeton de l'étape 1.
+- **Groupes d'hôtes (facultatif)** : noms séparés par des virgules, écrits
+  exactement comme dans Zabbix (majuscules comprises). Vide : tous les hôtes
+  supervisés que le jeton voit.
+- **Clés d'éléments (facultatif)** : jusqu'à 5 clés d'éléments numériques, par
+  exemple `system.cpu.util, vm.memory.utilization, vfs.fs.size[/,pused]`.
+  Chaque hôte qui a l'un de ces éléments reçoit une fonctionnalité avec sa
+  dernière valeur.
+- **Intervalle de rafraîchissement** : de 15 secondes à 5 minutes (30
+  secondes par défaut).
+- **Autoriser l'acquittement depuis les scènes** : décochez pour désactiver
+  l'action d'acquittement.
+- **Accepter les certificats auto-signés** : pour une adresse en `https://`
+  dont le certificat n'est pas reconnu par votre navigateur non plus.
+- **Langue des noms** : langue des noms des fonctionnalités et des résultats
+  de scène.
+
+Enregistrez, puis cliquez sur **Tester la connexion** : la version de Zabbix,
+le nombre d'hôtes et de problèmes actifs s'affichent.
+
+### 3. Ajouter les appareils
+
+Ouvrez l'onglet **Découverte** de l'intégration et ajoutez les hôtes à suivre,
+et l'appareil « Serveur Zabbix » si vous voulez les comptes par sévérité. Les
+déclencheurs de scène valent pour tous les hôtes, ajoutés à Gladys ou non.
+
+## Les appareils
+
+Chaque **hôte** (hôtes supervisés seulement ; les hôtes désactivés sont
+écartés) :
+
+| Fonctionnalité         | Valeur                                                                                       |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| Disponible             | 1 disponible, 0 injoignable (une interface, ou l'agent actif en 7.0+)                        |
+| Problèmes actifs       | nombre de problèmes actifs (hors problèmes supprimés)                                        |
+| Sévérité la plus haute | 0 Non classé, 1 Information, 2 Avertissement, 3 Moyen, 4 Haut, 5 Désastre, -1 aucun problème |
+| En maintenance         | 1 pendant une maintenance Zabbix de l'hôte                                                   |
+| Éléments               | une fonctionnalité par clé d'élément configurée trouvée sur l'hôte, à son nom                |
+
+« Disponible » reste vide pour un hôte sans interface (seulement des éléments
+trappeur), dont Zabbix ne connaît pas la disponibilité.
+
+L'appareil **Serveur Zabbix** :
+
+- Problèmes actifs
+- Problèmes non classés
+- Problèmes information
+- Problèmes avertissement
+- Problèmes moyens
+- Problèmes hauts
+- Problèmes désastre
+
+Les valeurs ne sont envoyées à Gladys que quand elles changent, et toutes les
+6 heures sinon.
+
+## Tableau de bord
+
+Le widget **Problèmes Zabbix** affiche trois tuiles (les problèmes actifs,
+ceux qui ne sont pas encore acquittés, les hôtes injoignables) puis les
+problèmes, les plus graves d'abord : le problème, son hôte (✓ une fois
+acquitté), et une icône et une couleur pour sa sévérité. Dix lignes au plus.
+**Actualiser** relit Zabbix. Dans ses réglages, choisissez des hôtes pour
+n'afficher que les leurs (vide : tous les hôtes).
+
+## Scènes
+
+### Déclencheurs
+
+- **Un problème apparaît** : un nouveau problème sur un hôte. Filtres : hôtes
+  (vide : n'importe lequel), sévérités (vide : n'importe laquelle ; pour
+  « Haut ou plus », choisissez Haut et Désastre). Variables : nom de l'hôte,
+  problème, sévérité, niveau de sévérité (0 à 5), identifiant d'événement
+  Zabbix.
+- **Un problème est résolu** : un problème est résolu ou fermé, avec les mêmes
+  filtres et variables, plus sa durée en minutes.
+- **Zabbix ne répond plus** : l'API ne répond pas deux fois de suite
+  (variables : adresse de Zabbix, erreur).
+
+Les problèmes déjà présents au démarrage de l'intégration ne sont pas
+annoncés. Un problème qui apparaît ou se résout pendant un redémarrage de
+Gladys ou de l'intégration est annoncé une fois à la lecture suivante. Les
+problèmes supprimés par une maintenance sont écartés, comme dans les tableaux
+de bord de Zabbix : ni comptés ni annoncés tant qu'ils sont supprimés, et pas
+pris pour résolus ; un problème apparu pendant la maintenance est annoncé à sa
+fin.
+
+### Actions
+
+- **Acquitter les problèmes d'un hôte** : acquitte dans Zabbix les problèmes
+  actifs de l'hôte, avec un message dans leur historique (vide : « Acquitté
+  depuis Gladys »). Renvoie le nombre de problèmes acquittés. Désactivable par
+  « Autoriser l'acquittement depuis les scènes ».
+- **Lire les problèmes** : compte et liste les problèmes actifs d'un hôte, ou
+  de tous, pour les actions suivantes : nombre, non acquittés, sévérité la plus
+  haute (en toutes lettres et en niveau), et la liste « hôte : problème ».
+
+### Idées de scènes
+
+- **Une lumière rouge pour les problèmes graves** : déclencheur « Un problème
+  apparaît », sévérités Haut et Désastre → la lampe du salon passe au rouge et
+  un message envoie `{{triggerEvent.data.host}} : {{triggerEvent.data.problem}}`.
+- **Retour à la normale** : déclencheur « Un problème est résolu », mêmes
+  filtres → message « Résolu après \{\{triggerEvent.data.duration_minutes\}\}
+  min ».
+- **Bilan du matin** : chaque jour à 8 h, « Lire les problèmes » → envoyer le
+  nombre et la liste quand le nombre dépasse 0.
+- **Vu depuis le canapé** : un bouton du tableau de bord ou une télécommande
+  Zigbee lance « Acquitter les problèmes d'un hôte » sur le NAS.
+
+## Dépannage
+
+- **« Jeton d'API refusé ou expiré »** : vérifiez le jeton dans Utilisateurs
+  → Jetons API (activé, non expiré), et que son utilisateur est activé.
+- **« Zabbix ne répond pas »** : vérifiez l'adresse depuis la machine de
+  Gladys. `localhost` désigne le conteneur de l'intégration lui-même : utilisez
+  l'adresse IP de la machine de Zabbix.
+- **« Pas d'API Zabbix à cette adresse »** : l'adresse ne mène pas à
+  l'interface web ; `api_jsonrpc.php` doit se trouver à côté de ses pages.
+- **« Certificat refusé »** : cochez « Accepter les certificats auto-signés »,
+  ou utilisez l'adresse en `http://` sur le réseau local.
+- **« Aucun groupe d'hôtes de ce nom »** : les noms doivent correspondre
+  exactement à ceux de Zabbix. Le rapport de « Tester la connexion » liste les
+  noms inconnus.
+- **Un hôte manque** : il est désactivé, hors des groupes d'hôtes, ou
+  l'utilisateur du jeton n'a pas le droit de le lire.
+- **L'acquittement est refusé** : le rôle de l'utilisateur doit avoir
+  « Acquitter les problèmes », et un droit de lecture ou d'écriture sur le
+  groupe d'hôtes.
+
+## Limites
+
+- Un seul serveur Zabbix par intégration.
+- Seulement les problèmes des déclencheurs (ni événements internes, ni
+  services). Les problèmes supprimés sont écartés.
+- « Un problème est résolu » se déclenche aussi quand un problème sort du
+  périmètre : hôte retiré des groupes d'hôtes, déclencheur désactivé.
+- Au plus 30 événements de problème par lecture : une panne réseau peut en
+  lever des dizaines d'un coup ; le reste suit aux lectures suivantes.
+- Les fonctionnalités d'éléments ne portent que des nombres ; un pourcentage
+  s'affiche en niveau de 0 à 100, les autres unités sans unité.
+- Aucun quota sur l'API de Zabbix : chaque lecture envoie deux à six
+  requêtes.
+
+Sans lien avec Zabbix SIA. Zabbix est une marque de Zabbix SIA.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Zabbix dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre serveur Zabbix | `section` | Non | Dans Zabbix (5.4+), ouvrez Utilisateurs → Jetons API (Administration → Général avant la 6.4), créez un jeton et collez-le ci-dessous avec l'adresse de Zabbix. Ajoutez ensuite les hôtes à suivre depuis l'onglet Découverte : les déclencheurs de scène valent pour tous les hôtes, ajoutés ou non. |
+| Adresse de Zabbix | `string` | Oui | L'adresse avec laquelle vous ouvrez l'interface de Zabbix ; l'API se trouve à côté. |
+| Jeton d'API | `secret` | Oui | Un utilisateur en lecture seule suffit, avec le droit d'acquitter les problèmes pour l'action de scène. |
+| Groupes d'hôtes (facultatif) | `string` | Non | Noms séparés par des virgules. Vide : tous les hôtes supervisés que le jeton voit. |
+| Clés d'éléments (facultatif) | `string` | Non | Jusqu'à 5 clés d'éléments numériques, séparées par des virgules, ajoutées à chaque hôte qui les a. |
+| Options | `section` | Non |  |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture de Zabbix : quelques requêtes d'API à chaque fois. |
+| Autoriser l'acquittement depuis les scènes | `boolean` | Non | Décochez pour désactiver l'action de scène « Acquitter les problèmes d'un hôte ». |
+| Accepter les certificats auto-signés | `boolean` | Non | Seulement pour une adresse en https:\/\/ dont le certificat n'est pas reconnu par votre navigateur non plus. |
+| Langue des noms | `select` | Non | Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil) et des résultats de scène. |
+
+## Comment installer Zabbix dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Zabbix apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-zabbix:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-zabbix](https://github.com/guim31/gladys-zabbix).
+
+Zabbix nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Zabbix est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-zabbix) — [source de cette documentation](https://github.com/guim31/gladys-zabbix/blob/HEAD/docs/fr.md)

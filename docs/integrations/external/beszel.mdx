@@ -1,0 +1,225 @@
+---
+title: "Beszel smart home integration, free and open source"
+sidebar_label: "Beszel"
+description: "Your Beszel systems in Gladys: online, CPU, memory, disk, temperature and alerts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-beszel.png"
+keywords:
+  - "beszel"
+  - "beszel smart home"
+  - "gladys beszel"
+  - "beszel gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-beszel instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Beszel","description":"Your Beszel systems in Gladys: online, CPU, memory, disk, temperature and alerts.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-beszel","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-beszel.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T15:00:42Z"}} />
+
+[Beszel](https://beszel.dev) is a lightweight server monitoring tool: a small
+agent on each machine reports to a **hub**, which keeps the history, shows the
+dashboard and raises alerts. This integration reads your Beszel hub and brings
+your systems into Gladys: one device per system, with whether it is online, its
+CPU, memory, disk, highest temperature, network traffic, load, uptime, failed
+services and the Beszel alerts triggered. Scenes can react when a system goes
+offline or comes back, and when a Beszel alert is triggered or resolved; a
+dashboard widget shows your systems at a glance. Everything stays on your local
+network.
+
+Tested against a real Beszel 0.21.0 hub and agent (Docker), with a system
+stopped and started again and alerts triggered and resolved. Not yet on every
+installation: feedback welcome on
+[the issues](https://github.com/guim31/gladys-beszel/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A Beszel hub (0.12 or later, 0.21 tested) reachable from the Gladys machine
+  (port 8090 by default), with its agents already added.
+- The email and password of a Beszel user. Best: a user created for Gladys,
+  with the **read-only** role.
+
+The integration only reads: it never changes anything in Beszel nor on your
+machines.
+
+## Getting started
+
+### 1. Create a Beszel user for Gladys
+
+The integration sees exactly what its user sees: the systems shared with it,
+and **its own alerts**.
+
+1. Open the admin panel of PocketBase, at `http://<hub>:8090/_/` (Beszel menu
+   → **Users** in recent versions), and create a user in the `users`
+   collection: an email, a password, the role `readonly`, `verified` ticked.
+2. Share the systems with it: either start the hub with the environment
+   variable `SHARE_ALL_SYSTEMS=true` (every user sees every system), or, in the
+   same admin panel, add the user to the `users` field of each system.
+3. Beszel alerts belong to a user: log into Beszel as this user and set the
+   alerts the scenes should know (bell icon of a system). A read-only user may
+   manage its own alerts.
+
+You can also use your own Beszel account: the integration then sees your
+systems and your alerts.
+
+### 2. Configure the integration
+
+In the **Configuration** tab of the integration:
+
+- **Beszel address**: the address of the hub, as you open it in a browser:
+  `192.168.1.20` (port 8090 added), `nas.lan:8090` or
+  `https://beszel.example.com`.
+- **Email of the Beszel user** and **Password**.
+- **Refresh interval**: 30 seconds by default. The hub itself reads its agents
+  once a minute: a shorter interval brings nothing.
+- **Accept self-signed certificates**: only for an `https://` address whose
+  certificate your browser does not trust either.
+- **Language of the names**: language of the feature names, set when a device
+  is added, and of the texts sent to scenes.
+
+Save, then click **Test the connection**: it says the version of Beszel, how
+many systems are online and how many alerts are triggered.
+
+### 3. Add the systems
+
+Open the **Discover** tab: every system of the user is listed. Add the ones you
+want to follow. The scene triggers work for every system, added or not.
+
+## The devices
+
+Each system is one device, named as in Beszel. Its features:
+
+- **Online**: 1 while Beszel marks the system up, 0 when it marks it down. A
+  paused system sends nothing.
+- **CPU**, **Memory** and **Disk**: the use, in %, of the processor, the
+  memory and the root disk.
+- **Highest temperature**: the temperature Beszel shows on its dashboard (the
+  hottest sensor), in °C, when the system has sensors.
+- **Network traffic**: sent and received together, in Mbit/s.
+- **Load (1 min)**, **Load (5 min)**, **Load (15 min)**: the load averages.
+- **Uptime**: in days.
+- **Failed services**: the systemd services in failure, when the agent watches
+  them.
+- **Triggered alerts**: how many Beszel alerts of the user are triggered on
+  this system.
+
+The values that move all the time (CPU, memory, load, network, temperature)
+are sent to Gladys at most once a minute, the others when they change. While
+a system is down, only **Online** and **Triggered alerts** are updated: the
+last figures stay.
+
+## Dashboard
+
+Add the **Beszel systems** widget to a dashboard:
+
+- with no system chosen in its settings, it shows how many systems are online
+  and offline and how many alerts are triggered, then one line per system, red
+  when it is offline, orange with a triggered alert;
+- with a system chosen, it shows its CPU, memory and disk gauges, its
+  temperature, its triggered alerts, its load and its uptime.
+
+The **Refresh** button reads Beszel again at once.
+
+## Scenes
+
+### Triggers
+
+- **Beszel system offline or back**: Beszel marks a system down (its agent no
+  longer answers) or up again. Filters: the system and the new state
+  (**Offline**, **Back online**). The actions can use the system name and the
+  new state. Beszel decides when a system is down; a paused system fires
+  nothing.
+- **Beszel alert**: a Beszel alert of the user is triggered or resolved.
+  Filters: the system, the alert (**CPU**, **Memory**, **Disk**,
+  **Temperature**, **Status**…) and the new state (**Triggered**,
+  **Resolved**). The actions can use the system name, the alert, the alert
+  with its threshold (`CPU > 80%`), the new state and the threshold.
+
+The thresholds and durations of the alerts are set in Beszel, not in Gladys.
+The states found when the integration starts are its starting point: only the
+changes after that fire a scene, also across a restart of Gladys.
+
+### Actions
+
+- **State of a Beszel system**: reads a system and gives the next actions its
+  figures (online, CPU, memory, disk, temperature, network, load, uptime,
+  triggered alerts) and a ready-made summary, for example
+  `nas: CPU 12%, memory 45%, disk 78%, 48 °C, no alert triggered`.
+- **State of every Beszel system**: counts the systems online and offline and
+  the triggered alerts, with a summary to send, for example
+  `Offline: pi` then `nas: 1 alert(s) triggered (Disk > 90%)`.
+
+### Scene ideas
+
+- **Beszel system offline or back**, state **Offline** → send the message
+  `{{triggerEvent.data.system_name}} is offline`.
+- **Beszel alert**, alert **Temperature**, state **Triggered** → switch on the
+  fan of the server room.
+- Every morning at 8:00 → **State of every Beszel system** → send the summary.
+
+## Troubleshooting
+
+- **"does not answer"**: check the address and the port in a browser; a
+  firewall may block port 8090.
+- **"email or password refused"**: log into Beszel with them to check. A
+  PocketBase superuser (the `/_/` admin account) is not a Beszel user: use an
+  account of the `users` collection.
+- **"Connected, but this Beszel user sees no system"**: share the systems with
+  the user (step 1) or set `SHARE_ALL_SYSTEMS=true`.
+- **No alert ever fires**: the alerts belong to the user the integration logs
+  in with: set them in Beszel as this user.
+- **"no Beszel hub at this address"**: another service answers there (another
+  application, a reverse proxy without Beszel behind it).
+- **No temperature**: the agent reads no sensor (a VM, or an agent in Docker
+  without access to the sensors).
+- More details with the `LOG_LEVEL=debug` environment variable on the
+  integration.
+
+## Limits
+
+- One Beszel hub per installation, 100 systems at most.
+- The summary of each system only: the containers, the extra disks, the GPU
+  and the history of Beszel are not read.
+- Only the alerts of the configured user are seen.
+- Read every 30 seconds to 5 minutes, not in real time: the hub itself
+  refreshes a system once a minute.
+- Not affiliated with Beszel or its authors.
+
+## Configuration settings
+
+These are the settings Beszel asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Beszel hub | `section` | No | Enter the address of your Beszel hub and the email and password of a Beszel user: every system this user sees becomes a device. A read-only user is enough. Then add the systems you want from the Discover tab. |
+| Beszel address | `string` | No | Address of the Beszel hub, the one of its web page (port 8090 by default): 192.168.1.20, nas.lan or https:\/\/beszel.example.com. |
+| Email of the Beszel user | `string` | No | Best: a user created for Gladys, with the read-only role, with whom the systems are shared. |
+| Password | `secret` | No | Kept by Gladys, sent only to the Beszel hub. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often the Beszel hub is read. The hub itself refreshes each system once a minute. |
+| Accept self-signed certificates | `boolean` | No | Only for an https:\/\/ address (Beszel behind a reverse proxy) whose certificate your browser does not trust either. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the scene results and of the connection test. |
+
+## How to install Beszel in Gladys
+
+1. In Gladys, open **Integrations**: Beszel appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-beszel:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-beszel](https://github.com/guim31/gladys-beszel).
+
+Beszel requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Beszel is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-beszel) — [source of this documentation](https://github.com/guim31/gladys-beszel/blob/HEAD/docs/en.md)

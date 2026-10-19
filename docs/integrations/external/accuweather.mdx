@@ -1,0 +1,186 @@
+---
+title: "AccuWeather smart home integration, free and open source"
+sidebar_label: "AccuWeather"
+description: "AccuWeather forecasts, alerts, scene triggers and dashboard widgets for Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-accuweather.png"
+keywords:
+  - "accuweather"
+  - "accuweather smart home"
+  - "gladys accuweather"
+  - "accuweather gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-accuweather instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"AccuWeather","description":"AccuWeather forecasts, alerts, scene triggers and dashboard widgets for Gladys.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-accuweather","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-accuweather.png","type":"weather","version":"0.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T19:35:12Z"}} />
+
+This integration makes [AccuWeather](https://www.accuweather.com) the weather
+provider of Gladys: the Gladys weather widget, the chat assistant and the
+weather alerts use it instead of the built-in OpenWeather service. It also
+adds AccuWeather scene triggers, scene actions and two dashboard widgets
+(Gladys 5.1 or later).
+
+It is a **cloud** integration: it needs Internet access and an AccuWeather
+API key. Nothing runs on your local network.
+
+## Before you start
+
+1. Create a free account on
+   [developer.accuweather.com](https://developer.accuweather.com).
+2. In **My Apps**, add an app (any name) and copy its **API key**.
+3. In Gladys, check that your house has a position: **Settings > Houses**,
+   then place the house on the map. The integration asks to read the
+   position of your houses when you install it: it uses the first house that
+   has one.
+
+## Configuration
+
+Open the **Configuration** tab of the integration:
+
+| Field                         | What it does                                                                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| API key                       | The key of your AccuWeather app. Mandatory.                                                                                                |
+| Language of AccuWeather texts | Language of the alert names and of the weather phrases ("Partly sunny"...). English, French, German or Spanish.                            |
+| Refresh interval (minutes)    | How often AccuWeather is asked, from 30 to 1440 minutes. 120 by default.                                                                   |
+| Hourly forecast (12 hours)    | The next 12 hours. Needed by the "Rain expected" trigger and by the curve of the widget.                                                   |
+| Severe weather alerts         | Official alerts relayed by AccuWeather. Not included in every AccuWeather plan: when your plan refuses them, the integration stops asking. |
+| AccuWeather location key      | Optional. Leave empty to use the position of your house. Fill it in (for example `623` for Paris) to force another AccuWeather location.   |
+
+Save, then click **Test the connection**: it shows the AccuWeather location
+found, the current weather, and how many requests your settings cost per day.
+
+### Your daily quota
+
+AccuWeather counts every request. The oldest free keys allow **50 requests a
+day**; the trial and paid plans allow more. One refresh costs:
+
+- 1 request for the current conditions;
+- 1 for the 12-hour forecast (if turned on);
+- 1 for the alerts (if turned on);
+- 1 for the 5-day forecast, at most every 3 hours.
+
+At 120 minutes (the default) that is about **44 requests a day**. Every
+answer is kept in a cache, also across restarts: opening a dashboard, the
+Gladys weather checks (every 30 minutes) and scenes do not cost extra
+requests. Only **Refresh now** buttons and the `refresh_weather` scene action
+ask AccuWeather at once (at most once every 5 minutes).
+
+When the quota is spent, the integration keeps showing the last weather it
+received (up to 24 hours old) and waits an hour before asking again.
+
+## Configuration screen actions
+
+- **Test the connection** — checks the key and the location, and shows the
+  number of requests made over the last 24 hours.
+- **Refresh the weather now** — asks AccuWeather now.
+
+## Scenes
+
+The integration adds its own cards to the scene editor, in the
+**Integrations** category.
+
+### Triggers
+
+Each trigger fires **once per change**, never at every refresh. The first
+refresh after the installation only records the current situation.
+
+- **AccuWeather: new weather alert** (`weather_alert`) — an official alert was
+  issued for your house. Filter on the severity (minor, moderate, severe,
+  extreme) and on the phenomenon (wind, rain, thunderstorm, snow and ice...).
+  Variables: `{{triggerEvent.data.event}}` (name of the alert), `severity`,
+  `type`, `description`, `starts_at`, `ends_at`, `location`.
+- **AccuWeather: the sky changed** (`condition_changed`) — the current
+  conditions changed, for example from clear to rain. Filter on the new
+  condition. Variables: `condition`, `previous_condition`, `description`,
+  `temperature` (°C), `location`.
+- **AccuWeather: rain expected** (`rain_expected`) — precipitation is
+  forecast within the next 3 hours, where none was at the previous refresh.
+  Needs the hourly forecast. Filter on rain, snow, ice or mixed. Variables:
+  `precipitation_type`, `starts_at`, `hours_until`, `probability`, `location`.
+- **AccuWeather: frost expected** (`frost_expected`) — a forecast day goes
+  down to 0 °C or below. Fires once per day. Variables: `date`,
+  `temperature_min` (°C), `location`.
+
+Gladys also has its own "weather alert" trigger: it works with this
+integration too, and reacts within seconds when AccuWeather publishes or
+ends an alert.
+
+### Actions
+
+- **AccuWeather: read the forecast** (`get_forecast`) — today, tomorrow or the
+  day after. Gives `condition`, `description`, `temperature_min`,
+  `temperature_max`, `precipitation_probability`, `rain_expected`,
+  `wind_speed` and `uv_index` to the next actions. Example: "if
+  `rain_expected` is true, send me a message".
+- **AccuWeather: read the current weather** (`get_current_conditions`) —
+  gives `condition`, `description`, `temperature`, `apparent_temperature`,
+  `humidity`, `wind_speed`, `uv_index` and `is_day`.
+- **AccuWeather: refresh now** (`refresh_weather`) — asks AccuWeather now. Gives
+  `refreshed` and `calls_last_24h`.
+
+Both reading actions use the cache: they cost no request. Choose metric
+(°C, m/s) or US (°F, mph) units in each action.
+
+## Dashboard
+
+Add the widgets from the dashboard editor:
+
+- **AccuWeather now** — temperature, feels-like, humidity, wind, a curve of
+  the next 12 hours, the alerts, the rain to come, and the number of
+  requests used over 24 hours. A **Refresh** button asks AccuWeather now.
+- **AccuWeather 5 days** — the next days with AccuWeather's own words, day
+  and night. Its setting **Days shown** goes from 1 to 5.
+
+## Troubleshooting
+
+- **"AccuWeather refused the API key"** — copy the key again from
+  developer.accuweather.com (My Apps), without spaces, and save.
+- **"The daily AccuWeather quota is spent"** — raise the refresh interval or
+  turn off the hourly forecast or the alerts. The quota comes back within
+  24 hours.
+- **"Set the position of your house"** — your Gladys house has no position:
+  set it in Settings > Houses.
+- **Wrong city** — fill in the AccuWeather location key: search your city on
+  accuweather.com, the key is the number at the end of its address.
+- The integration logs are in the Gladys interface (integration page) or with
+  `docker logs` on the host.
+
+## Configuration settings
+
+These are the settings AccuWeather asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Create a free account on developer.accuweather.com, add an app, and paste its API key below. The weather is fetched for the position of your Gladys house: set it in Settings > Houses. Every refresh costs up to 4 AccuWeather requests: keep the interval at 120 minutes or more on a free key (50 requests a day). |
+| API key | `secret` | Yes | The key of your app on developer.accuweather.com (My Apps). |
+| Language of AccuWeather texts | `select` | No | Language of the alert names and of the weather phrases. |
+| Refresh interval (minutes) | `number` | No | How often AccuWeather is asked, 30 to 1440 minutes. At 120 minutes a day costs about 44 requests. |
+| Hourly forecast (12 hours) | `boolean` | No | Needed by the "Rain expected" trigger and the curve of the widget. One request per refresh. |
+| Severe weather alerts | `boolean` | No | Official alerts relayed by AccuWeather (not in every plan). One request per refresh. |
+| AccuWeather location key (optional) | `string` | No | Leave empty to use the position of your house. Fill it in (e.g. 623 for Paris) to force another AccuWeather location. |
+
+## How to install AccuWeather in Gladys
+
+1. In Gladys, open **Integrations**: AccuWeather appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-accuweather:0.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-accuweather](https://github.com/prohand/gladys-accuweather).
+
+AccuWeather requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+AccuWeather is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-accuweather) — [source of this documentation](https://github.com/prohand/gladys-accuweather/blob/HEAD/docs/en.md)

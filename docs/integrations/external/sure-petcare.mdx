@@ -1,0 +1,178 @@
+---
+title: "Sure Petcare smart home integration, free and open source"
+sidebar_label: "Sure Petcare"
+description: "SureFlap pet doors and cat flaps, SureFeed feeders, Felaqua: pets in or out, lock modes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-surepetcare.png"
+keywords:
+  - "sure petcare"
+  - "sure petcare smart home"
+  - "gladys sure petcare"
+  - "sure petcare gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-surepetcare instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sure Petcare","description":"SureFlap pet doors and cat flaps, SureFeed feeders, Felaqua: pets in or out, lock modes.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-surepetcare","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-surepetcare.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T14:44:45Z"}} />
+
+This integration brings the connected **Sure Petcare** devices into Gladys:
+**SureFlap** cat flaps and pet doors, **SureFeed** feeders and **Felaqua**
+water stations, linked to the Sure Petcare cloud by their hub. It uses the
+account of the Sure Petcare app. Unofficial, not affiliated with Sure Petcare.
+
+> **Development version (0.1).** Built from the community clients of the Sure
+> Petcare API (surepy, used by Home Assistant, ioBroker.sureflap) and tested
+> with simulated answers, not with a real account yet. Feedback is welcome on
+> the GitHub repository.
+
+## What you get
+
+One Gladys device per Sure Petcare device, and one per pet:
+
+| Device                    | In Gladys                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| Hub                       | online (yes/no)                                                                   |
+| Cat flap, pet door        | lock mode (settable), battery %, online                                           |
+| SureFeed feeder (Connect) | weight of each bowl (g), last meal (g) and the pet that ate it, battery %, online |
+| Felaqua                   | water left (mL), water level %, battery %, online                                 |
+| Each pet                  | inside or not, for how many minutes, last meal (g), last drink (mL)               |
+
+- "Inside" is recorded at the time the pet went through the flap (or was set
+  in the app), not at the time of the reading: the history shows the real
+  times in and out. "Time since the last move" counts the minutes since then,
+  handy for a scene like "the cat has been out for more than 6 hours".
+- The last meal and the last drink are dated with the time of the meal. The
+  grams are generic sensors (Gladys has no mass unit), hence the "(g)" in
+  their names.
+- The battery comes from the Sure Petcare app when it gives one, otherwise
+  from the voltage of the four AA cells (1.25 V empty, 1.6 V full, like Home
+  Assistant).
+- The badge of each device shows `cloud`; `unreachable` with an orange dot
+  when the hub reports the device offline, plain `unreachable` when Sure
+  Petcare does not answer.
+
+## Installation
+
+1. Install the integration from the Gladys store.
+2. In the **Configuration** tab, enter the e-mail and password of your Sure
+   Petcare account (the ones of the app), then save.
+3. The status says "Connected to Sure Petcare: 5 devices, 2 pets" and the end
+   date of the session the integration opened.
+4. Open the **Discovery** tab and add the devices and pets you want to follow.
+   Their values arrive as soon as they are added.
+
+The **Test the connection** button reads the account and summarizes what it
+holds and where each pet is.
+
+## Lock mode and curfew
+
+The mode of each flap can be set from Gladys (dashboard, scenes):
+
+| Mode          | Effect                             |
+| ------------- | ---------------------------------- |
+| Unlocked      | pets go in and out freely          |
+| Keep pets in  | pets can come in but not go out    |
+| Keep pets out | pets can go out but not come in    |
+| Locked        | neither in nor out                 |
+| Curfew        | the curfew times of the flap apply |
+
+The curfew uses the times set in the Sure Petcare app: set them there once.
+Choosing another mode turns the curfew off, and going back to curfew turns
+the same times back on. The hub takes a few seconds to apply a mode: Gladys
+shows the mode asked for, and the next reading confirms it.
+
+## Scenes
+
+Three scene triggers, for one pet or for all:
+
+- **Pet went out** and **Pet came in**: variables `pet_name`, `flap_name`
+  (the flap used, empty when the change was made by hand in the app),
+  `by_hand` and `since` (the time, UTC). The filter can target a pet and a
+  flap.
+- **Pet ate**: a feeder saw the pet eat at least 1 g; variables `pet_name`,
+  `feeder_name`, `amount` (grams) and `at`. The filter can target a pet and
+  a feeder.
+
+A reading only sees the last move of each pet: a cat that went out and came
+back between two readings gives one "Pet came in". Changes older than 15
+minutes found at start-up or after an outage fire nothing: they are only
+recorded.
+
+The other values work with the usual "Device state changed" trigger (bowl
+almost empty, water below 20 %, low battery, hub offline…).
+
+## How often it reads
+
+Everything is read in a single request (`me/start`), every 60 seconds by
+default (30 to 600). Home Assistant reads every 3 minutes, the Sure Petcare
+app more often. On errors the integration waits 1, 2, 5, 10 then 15 minutes;
+when Sure Petcare asks to slow down, it waits as long as asked (15 minutes
+otherwise).
+
+## Options
+
+| Option                        | Default | Purpose                                                    |
+| ----------------------------- | ------- | ---------------------------------------------------------- |
+| E-mail, password              | —       | the account of the Sure Petcare app                        |
+| Refresh interval (s)          | 60      | how often the account is read                              |
+| Language of the feature names | French  | names of the features and modes of the devices added later |
+
+## Troubleshooting
+
+- **"Sure Petcare refused the e-mail or password"**: check them in the app,
+  then in the configuration. The integration does not retry by itself
+  (repeated refusals may lock an account): it waits for a change or a click on
+  **Test the connection**.
+- **"Sure Petcare cannot be reached"**: the Sure Petcare cloud or your
+  Internet access is down (service status: https://status.surepetcare.io).
+- **A device is `unreachable` with an orange dot**: the hub no longer sees it
+  (batteries, range). Check it in the app.
+- **The bowl weights stay empty**: your feeder may not give its weights in the
+  answer read yet (older firmware). Open an issue on the GitHub repository.
+- **Repeaters and programmers** are not supported yet.
+
+## Privacy
+
+The e-mail and password are stored by Gladys as a secret (never sent back to
+the browser). The integration only sends them to
+`app-api.production.surehub.io`, the cloud of the Sure Petcare app, to open a
+session; it keeps the session token and a client id in its `/data` folder.
+Sure Petcare, SureFlap, SureFeed and Felaqua are trademarks of their owner;
+this integration is not affiliated with Sure Petcare.
+
+## Configuration settings
+
+These are the settings Sure Petcare asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Sure Petcare account | `section` | No | Brings your Sure Petcare devices into Gladys through the Sure Petcare cloud (the hub is required): whether each pet is inside or outside and since when, the lock mode of the SureFlap pet doors and cat flaps (unlocked, keep in, keep out, locked, curfew), the bowl weights and last meal of the SureFeed feeders, the water left in the Felaqua, batteries and online states, plus scene triggers when a pet goes out, comes in or eats. Enter the e-mail and password of the Sure Petcare app, then add the devices and pets from the Discovery tab. Everything is read once a minute by default. Unofficial, not affiliated with Sure Petcare. |
+| Sure Petcare e-mail | `string` | Yes |  |
+| Sure Petcare password | `secret` | Yes |  |
+| Refresh interval (s) | `number` | No | How often the account is read, in seconds (30 to 600). One request per read. |
+| Language of the feature names | `select` | No | Used for the names of the features and of the lock modes of the devices added from now on. |
+
+## How to install Sure Petcare in Gladys
+
+1. In Gladys, open **Integrations**: Sure Petcare appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-surepetcare:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-surepetcare](https://github.com/LM1LC3N7/gladys-surepetcare).
+
+Sure Petcare requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Sure Petcare is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-surepetcare) — [source of this documentation](https://github.com/LM1LC3N7/gladys-surepetcare/blob/HEAD/docs/en.md)

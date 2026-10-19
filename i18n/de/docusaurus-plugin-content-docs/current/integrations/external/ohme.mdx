@@ -1,0 +1,166 @@
+---
+title: "Ohme Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Ohme"
+description: "Ohme EV chargers (UK, EU) via the Ohme cloud: status, power, energy, battery; optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ohme.png"
+keywords:
+  - "ohme"
+  - "ohme smart home"
+  - "gladys ohme"
+  - "ohme gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ohme instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Ohme","description":"Ohme EV chargers (UK, EU) via the Ohme cloud: status, power, energy, battery; optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ohme","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ohme.png","type":"device","version":"0.1.1","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-10-17T16:50:48Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Shows your **Ohme** EV charger (Home, Home Pro, ePod; United Kingdom and
+Europe) in Gladys, through the Ohme cloud, with the account of the Ohme app.
+
+> **Unofficial API, never tested with a real account nor a real charger.**
+> The integration talks to the API of the Ohme app, like the ohmepy library
+> and the Home Assistant integration. Ohme may change it without notice. Not
+> affiliated with Ohme.
+
+## What you get
+
+One device per account (the first charger of the account) with:
+
+| Feature                | Content                                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| Status                 | Unplugged, Plugged in, Charging, Paused, Finished, Waiting for approval, Charger offline |
+| Connector              | Available, occupied or unavailable (Gladys "charging station" category)                  |
+| Charging state         | Charging, vehicle connected, paused, idle                                                |
+| Power                  | In W                                                                                     |
+| Current                | In A                                                                                     |
+| Voltage                | In V, when Ohme gives it                                                                 |
+| Energy of the session  | In kWh: the energy of the session in progress, then of the last session                  |
+| Vehicle battery        | In %, only when Ohme gives it                                                            |
+| Battery target         | In %, of the session in progress or of the next one                                      |
+| Planned end of charge  | End of the last planned slot, e.g. "2026-10-18 06:30", else "—"                          |
+| Charge mode            | Choice: smart charge, max charge, paused                                                 |
+| Set the battery target | Choice: 10 % to 100 % by 5 %                                                             |
+
+Read **every minute while charging**, every 5 minutes otherwise; the account
+(model, firmware) every 30 minutes.
+
+**Energy**: Ohme gives no cumulative meter, only the energy of the session.
+The integration therefore publishes **no index** nor daily consumption: the
+energy of the session is a plain sensor, outside the Gladys energy
+monitoring (your main meter already counts the charger).
+
+## Setup
+
+1. Install the integration from the Gladys store.
+2. In its configuration, enter the **e-mail** and the **password** of the
+   Ohme app. The password is kept by Gladys in its database, never shown
+   again, sent only to the Ohme sign-in service (Google Firebase, as the app
+   does).
+3. Check the **timezone** (Europe/Paris by default): it is used for the
+   planned end of charge.
+4. Save, then add the charger from the **Discovery** tab.
+
+The **Test the connection** button reads the charger once (at most every 30
+seconds).
+
+## Commands (off by default)
+
+The "Charge mode" and "Set the battery target" features refuse every command
+while **Allow the commands** is off. On:
+
+- **Max charge**: charges now at full power;
+- **Smart charge**: back to Ohme's schedule; from a pause, resumes the charge;
+- **Paused**: pauses the charge. From a pause, choose "Smart charge" first
+  (max charge is refused);
+- **Battery target**: changes the target of the session in progress, or of
+  the next one when nothing is plugged in.
+
+They are choices, never switches: a "turn everything off" does not reach
+them. Google Home, Alexa and HomeKit do not see them, and the Gladys MCP
+server only reads them. A scene can change them, but only through an
+explicit action on that choice, and only when the commands are allowed.
+
+Before each command, the integration reads the charger again (and the rule
+of the next session for a target); a useless command (already in that mode)
+is not sent; a command without a plugged-in vehicle, with the charger
+offline or with the charge waiting for approval is refused. A command that
+cannot leave within 3.5 seconds is refused unsent. Gladys gets an answer
+after 4.3 seconds at most, even before Ohme confirmed: the real state shows
+about 10 seconds later. One command at a time.
+
+## Errors and limits
+
+- **E-mail or password refused**: the integration stops and says so; one new
+  try after 6 h, then every 24 h (not to lock the account). Saving new
+  credentials or the test button try again at once.
+- **Token refused**: renewed once; refused again, a pause then one try after
+  1 h, 6 h, then every 24 h.
+- **429 (too many requests)**: a pause of 1 minute to 6 hours (15 minutes
+  without a hint), for everything (reads, button, commands), kept across a
+  restart. **403** of the main read: one hour; 403 on a command: that command
+  only is refused; 403 on a secondary read: that endpoint is skipped for an
+  hour.
+- **Network, 5xx**: new try after 2, 5, 10, 15, then 30 minutes, never faster
+  than the interval.
+- Stops and pauses are kept in `/data`, for 24 h at most. `/data` also keeps
+  the Ohme session token, in clear, in a file reserved to the container user
+  (0600), so also readable by the administrator of the machine and in the
+  backups of the volume; never the e-mail nor the password.
+- **Charger offline**: the connector turns "unavailable"; power, current,
+  voltage and charging state keep their last value.
+- **One charger**: with several chargers, only the first one is shown (as
+  ohmepy).
+- Charge approval, the schedule (target time), solar mode and the price cap
+  are not supported.
+- The logs never hold the password, the tokens, nor the text of Ohme's answers.
+
+## Credits
+
+Ported from [ohmepy](https://github.com/dan-r/ohmepy) (Daniel Raper, MIT) and
+the [Home Assistant Ohme integration](https://github.com/home-assistant/core/tree/dev/homeassistant/components/ohme)
+(Apache-2.0). Apache-2.0 license.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Ohme in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Ohme account | `section` | Nein | Shows your Ohme charger (Home, Home Pro, ePod) in Gladys through the Ohme cloud: status, power, current, voltage, energy of the session, vehicle battery when Ohme gives it, battery target and planned end of charge. Enter the e-mail and password of the Ohme app, save, then add the charger from the Discovery tab. Read every minute while charging, every 5 minutes otherwise. The charge mode and the battery target can be changed from Gladys only if you allow the commands below. Unofficial API, never tested with a real account. Not affiliated with Ohme. |
+| Ohme e-mail | `string` | Ja |  |
+| Ohme password | `secret` | Ja | Kept by Gladys in its database, never shown again, sent only to the Ohme sign-in service (Google Firebase, as the Ohme app does). |
+| Allow the commands | `boolean` | Nein | Off by default. On: Gladys may change the charge mode (smart, max charge, pause) and the battery target of the session in progress or of the next one. Off: these two features refuse every command. |
+| Gladys timezone | `string` | Nein | Used for the planned end of charge. IANA name, e.g. Europe/London or Europe/Paris. |
+| Language of the feature names | `select` | Nein | Used for the feature names of the device added from now on, for the status texts and for the command errors. |
+
+## So installierst du Ohme in Gladys
+
+1. Öffne in Gladys **Integrationen**: Ohme erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ohme:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-ohme](https://github.com/LM1LC3N7/gladys-ohme).
+
+Ohme benötigt Gladys `>=4.86.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Ohme ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-ohme) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-ohme/blob/HEAD/docs/en.md)

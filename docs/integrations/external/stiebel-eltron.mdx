@@ -1,0 +1,207 @@
+---
+title: "STIEBEL ELTRON smart home integration, free and open source"
+sidebar_label: "STIEBEL ELTRON"
+description: "STIEBEL ELTRON heat pumps via the ISG, local Modbus: temperatures, energy, optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-stiebel-eltron.png"
+keywords:
+  - "stiebel eltron"
+  - "stiebel eltron smart home"
+  - "gladys stiebel eltron"
+  - "stiebel eltron gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-stiebel-eltron instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"STIEBEL ELTRON","description":"STIEBEL ELTRON heat pumps via the ISG, local Modbus: temperatures, energy, optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-stiebel-eltron","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-stiebel-eltron.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T19:25:31Z"}} />
+
+Shows your **STIEBEL ELTRON** heat pump in Gladys through the **ISG**
+(Internet Service Gateway, "ISG web") and its **Modbus TCP** interface: no
+cloud, no account, straight on your network.
+
+> **Never tested with a real ISG.** Not affiliated with STIEBEL ELTRON. It
+> reads the Modbus registers of the ISG as the pystiebeleltron library
+> (used by Home Assistant) does.
+
+> **Security: Modbus has neither password nor encryption.** Any machine on
+> your network can read the ISG and change the settings of the heat pump.
+> Keep the ISG on a **trusted network** (never exposed to the Internet,
+> ideally on a separate network for connected devices).
+
+## Supported controllers
+
+The integration reads the controller identification and picks its
+registers:
+
+- **WPM**: WPM 3, WPM 3i, WPMsystem (WPL, WPF, WPE heat pumps…);
+- **LWZ / LWA**: integral units LWZ 304/404/504, LWZ x04 SOL;
+- **LWZ R290** (THZ with ISG Connect): it serves the WPM registers and is
+  read as a WPM (WPM modes, setpoints and addresses).
+
+Another controller is named in the configuration screen ("Unknown
+controller") and read again every 30 minutes.
+
+## What you get
+
+One device, "STIEBEL ELTRON heat pump". Each feature appears only once the
+ISG gives its value:
+
+| Feature                         | Content                                                               |
+| ------------------------------- | --------------------------------------------------------------------- |
+| Operating mode                  | List (commands allowed only), see below                               |
+| Operating mode (read)           | Text: the real mode, emergency and manual included                    |
+| Heating setpoint (comfort)      | Thermostat, heating circuit 1, in °C (command)                        |
+| Heating setpoint (eco)          | In °C, read only (WPM: eco; LWZ: night)                               |
+| Hot water setpoint (comfort)    | Water heater, in °C (command, capped)                                 |
+| Hot water setpoint (eco)        | In °C, read only (WPM: eco; LWZ: night)                               |
+| Hot water target now            | In °C, the setpoint the controller applies now                        |
+| Temperatures                    | Outside, flow, return, hot water, room (FE7, FEK, FET or LWZ), in °C  |
+| Room humidity                   | In % (FEK remote control, LWZ)                                        |
+| Compressor running              | 0 or 1                                                                |
+| Electric booster running        | 0 or 1 (electric heater, "NHZ")                                       |
+| Fault                           | 0 or 1                                                                |
+| Electricity used, heat produced | In kWh, today and total, heating and hot water; heat from the booster |
+
+Water temperatures, the outside temperature and the setpoints are
+"probes": they do not count as the room temperature in Gladys. Read every
+30 seconds by default (10 s to 10 min, configurable).
+
+### Energy: plain values, not a billed meter
+
+For heating and hot water, the ISG gives a counter of **the day** and a
+**total**. According to the documentation, the total does not include the
+day and moves around midnight; nothing guarantees it never jumps or goes
+back. Gladys would count every rise of an index as billed consumption: the
+values are therefore published as **plain sensors** (the unit is in their
+name), never as an energy index. They do not show in the energy monitoring
+of Gladys.
+
+## Installation
+
+1. Have the **Modbus module** of your ISG enabled (STIEBEL ELTRON support
+   does it, often for free).
+2. Give the ISG a **fixed IP address** in your router.
+3. Install the integration from the Gladys store.
+4. In its configuration, enter the **IP address of the ISG** (port 502 by
+   default; add `:port` when it differs).
+5. Save, then add the heat pump from the **Discovery** tab.
+
+The **Test the connection** button reads the ISG once (at most every 10
+seconds).
+
+## Commands (off by default)
+
+While **Allow the commands** is off, every command is refused. Once on,
+Gladys may change:
+
+- the **operating mode**: WPM: program (automatic), comfort, eco, hot water
+  only, standby; LWZ: automatic, day, setback (night), hot water only,
+  standby;
+- the **heating setpoint (comfort)** of heating circuit 1: 5 to 30 °C (WPM)
+  or 10 to 30 °C (LWZ), to a tenth of a degree;
+- the **hot water setpoint (comfort)**: whole degrees, from 10 °C up to
+  the **ceiling**.
+
+### Hot water ceiling: 55 °C by default
+
+Water at 60 °C scalds in a few seconds. Gladys therefore **never sets the
+hot water above 55 °C** by default. The **Hot water ceiling** setting
+changes it from 40 to 60 °C; going **above 60 °C is never possible**,
+whatever is typed (even though some LWZ accept 65 °C). A setpoint above the
+ceiling is refused unsent, and the ceiling is checked again right before
+sending (a ceiling lowered during a command stops it). The eco setpoint and
+the anti-legionella program of the controller are never changed.
+
+### What Gladys never does
+
+- Select the **emergency mode** (set by the installer when the compressor
+  is out of order) or the **manual mode** of the LWZ (a service mode).
+- **Leave** one of these modes, or an unknown mode: the command is refused,
+  the controller keeps control.
+- Offer a switch: the mode is a **list**, the setpoints are thermostats; a
+  "turn everything off" (Gladys, Google Home, Alexa, HomeKit) does not
+  reach the heat pump. A scene may change the mode or a setpoint, only
+  through an explicit action and when the commands are allowed. Beware:
+  the AI chat of Gladys (MCP) can create and run such a scene.
+
+When the heat pump is in emergency, manual or an unknown mode, the **list
+keeps its last value** (those modes are not in it): look at "Operating mode
+(read)", which always shows the real mode.
+
+### How a command leaves
+
+Before each command, the integration **reads the settings** of the heat
+pump again and decides on that read only; no other request runs between
+that read and the write, and the option (and the ceiling) is checked again
+right before sending. A value already in place is not sent again. A command
+that cannot leave within 3.5 seconds is refused unsent; Gladys gets the
+answer within its 5 seconds. The ISG confirms a write by echoing it; without
+that confirmation (silence, a dropped connection, another answer, a Modbus
+error that does not say the write was rejected), Gladys shows "Command
+sent, without confirmation": check the value, read again 5 and 20 seconds
+later (the ISG takes a few seconds to show it). Only a clear Modbus error
+(function, address or value refused, ISG busy) gives "The ISG refused the
+command". One command at a time, and at least 3 seconds between two writes
+(otherwise "still running").
+
+## Errors and limits
+
+- **ISG unreachable**: "Operating mode (read)" shows "ISG unreachable", the
+  device turns unreachable, the other values keep their last one. Tried
+  again after 30 s, 1, 2, then 5 minutes, never faster than the interval.
+- **Missing registers**: a block the controller does not serve (energy on
+  some models, for example) is not asked again until a restart; a block
+  failing now and then is reported in the configuration screen, the other
+  values are still published.
+- **One ISG** per integration; the device is keyed by the controller
+  family (WPM or LWZ): Modbus gives neither a serial number nor a MAC
+  address.
+- Modbus requests go one at a time; every answer is checked (transaction
+  id, unit, function, size).
+- Not yet: heating circuits 2 to 5, cooling, LWZ ventilation, SG Ready, the
+  individual heat pumps of a WPMsystem.
+- The logs never carry register values.
+
+## Credits
+
+Ported from [pystiebeleltron](https://github.com/ThyMYthOS/python-stiebel-eltron)
+(Martin Fuchs and contributors, MIT, version 0.9.2), the library of Home
+Assistant's STIEBEL ELTRON integration. Apache-2.0 license.
+
+## Configuration settings
+
+These are the settings STIEBEL ELTRON asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your ISG | `section` | No | Shows your STIEBEL ELTRON heat pump (WPM 3, WPM 3i, WPMsystem or LWZ/LWA controller) in Gladys through the Modbus TCP interface of its ISG (Internet Service Gateway), without any cloud: temperatures, setpoints, operating mode, compressor and booster, energy. The Modbus module of the ISG must be enabled (ask STIEBEL ELTRON support). Enter the IP address of the ISG (give it a fixed address in your router), save, then add the heat pump from the Discovery tab. Modbus has no password: keep the ISG on a trusted network. Never tested with a real ISG. Not affiliated with STIEBEL ELTRON. |
+| IP address of the ISG | `string` | Yes | An IPv4 address or a host name (Modbus port 502 unless you add one, for example 192.168.1.70:5020). |
+| Allow the commands | `boolean` | No | Off by default. On: Gladys may change the operating mode, the heating setpoint (comfort, heating circuit 1) and the hot water setpoint (comfort), up to the ceiling below. Off: every command is refused. |
+| Hot water ceiling (°C) | `number` | No | Scalding risk: Gladys never sets the hot water above this temperature. 55 °C by default, from 40 to 60 °C (never more than 60 °C, whatever is typed). |
+| Refresh interval (s) | `number` | No | How often the ISG is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, for the mode texts and for the command errors. |
+
+## How to install STIEBEL ELTRON in Gladys
+
+1. In Gladys, open **Integrations**: STIEBEL ELTRON appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-stiebel-eltron:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-stiebel-eltron](https://github.com/LM1LC3N7/gladys-stiebel-eltron).
+
+STIEBEL ELTRON requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+STIEBEL ELTRON is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-stiebel-eltron) — [source of this documentation](https://github.com/LM1LC3N7/gladys-stiebel-eltron/blob/HEAD/docs/en.md)

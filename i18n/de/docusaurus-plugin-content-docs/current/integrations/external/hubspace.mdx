@@ -1,0 +1,208 @@
+---
+title: "Hubspace Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Hubspace"
+description: "Hubspace (Home Depot) lights, plugs, switches and fans; lock and valve commands off by default. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hubspace.png"
+keywords:
+  - "hubspace"
+  - "hubspace smart home"
+  - "gladys hubspace"
+  - "hubspace gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-hubspace instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Hubspace","description":"Hubspace (Home Depot) lights, plugs, switches and fans; lock and valve commands off by default.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hubspace","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hubspace.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T17:56:49Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Shows and controls in Gladys the devices of your **Hubspace** account (Home
+Depot, Afero cloud): lights, plugs and switches, ceiling fans, bathroom
+exhaust-fan sensors, and the state of locks and water timers.
+
+> **Unofficial API, never tested with a real account.** The integration talks
+> to the API of the Hubspace app, which Hubspace does not document and may
+> change at any time. It was written from the aioafero library (the one of
+> the Home Assistant integration) and tested with made-up answers only. Not
+> affiliated with Hubspace, Home Depot or Afero.
+
+## What you get
+
+One Gladys device per supported Hubspace device:
+
+| Hubspace device           | Gladys features                                                                                                |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Light, dimmer             | On/Off, Brightness, Colour temperature, Colour (as the bulb allows); one set per zone (e.g. `main` and `trim`) |
+| Plug, switch, transformer | On/Off (one per outlet or zone), Power (W) when the device gives it                                            |
+| Ceiling fan               | On/Off, Speed (%), Direction                                                                                   |
+| Exhaust fan               | Motion, Humidity above the threshold (read only)                                                               |
+| Lock                      | Lock state (read only), Lock and Unlock buttons, Battery                                                       |
+| Water timer               | Watering per spigot (1 = open, read only), Open the valve and Close the valve buttons, Battery                 |
+
+The light of a ceiling fan is a device of its own (as in the app). The other
+Hubspace devices (thermostats, air conditioners, dehumidifiers, security
+system) are not shown yet. Garage doors are not handled by aioafero: not
+here either.
+
+### Locks and valves: off by default
+
+- **Locks**: the state is read only, the commands are buttons (never a
+  switch: an "everything off" from Gladys, a voice assistant or a scene
+  cannot reach them). **Lock** is always allowed; **Unlock** is refused while
+  _Allow unlocking the locks from Gladys_ is off (the default).
+- **Water timers**: **Open the valve** and **Close the valve** are refused
+  while _Allow the water valves (timers) from Gladys_ is off (the default);
+  the state is still shown.
+- Before every lock or valve command, the integration reads the state again
+  from Hubspace: nothing is sent when the device is offline, the state is
+  unknown or the lock is moving, and nothing is sent again when the device
+  already is in the wanted state. The decision is made on that read alone: a
+  state it does not carry is unknown.
+
+> **Plugs and switches** are switches for Gladys, so for an "everything off"
+> of a scene or a voice assistant (Google Home, Alexa, HomeKit). Do not expose
+> to a voice assistant, nor put in an "everything off" scene, a plug that
+> powers a pump, a freezer, an aquarium or a medical device.
+
+## Setup
+
+1. In Gladys, install the **Hubspace** integration from the store.
+2. Enter the **e-mail** and **password** of your Hubspace account (the ones
+   of the app), then save: the integration signs in once. If the status says
+   "Not signed in", click **Test the connection**.
+3. If the status says a code was e-mailed, see below.
+4. Open the **Discovery** tab and add the devices.
+
+The password field is a `secret` field: Gladys keeps it in its database (in
+plain text, like every configuration value, and in its backups), never shows
+it again, and the integration sends it only to the Hubspace sign-in page
+(`accounts.hubspaceconnect.com`).
+
+**The password is sent only on an action of yours**: a newly saved e-mail or
+password, a click on _Test the connection_ or on _Send the verification
+code_. Never at a start, a reconnection to Gladys nor during the reads: as
+Hubspace may e-mail a code at every sign-in, you never get a code you did not
+ask for. The rest of the time, the integration renews its session with its
+refresh token; when Hubspace refuses it, it stops ("session expired", even
+after a restart) and waits for your click on _Test the connection_.
+
+### Verification code (by e-mail)
+
+Hubspace may ask for a code sent by e-mail when signing in. Hubspace then
+sends the code at the sign-in, the integration stops and the status says so:
+
+1. Under **Verify the code**, type the code of the last Hubspace e-mail and
+   click the button. "Code accepted" means connected.
+2. No e-mail, or the code is too old (more than 10 minutes)? Click **Send the
+   verification code**: the integration signs in again and Hubspace e-mails a
+   new code (at most once a minute).
+
+The session is then kept (in the integration's `/data`): no code at the next
+restarts. The integration never signs in by itself: a code is sent only
+after you saved or clicked, and the wait for the code is kept across a
+restart.
+
+## Refresh
+
+Every device is read every **60 seconds** by default (30 to 60, _Refresh
+interval_), in **one request**. A command is sent at once; the value
+Hubspace confirms shows at once and is not undone by a read slightly behind
+(15 seconds).
+
+The commands of one device run one after the other. Gladys waits 5 seconds
+for the answer to a command: when Hubspace is too slow, the integration
+refuses the command **before sending it** rather than sending it after the
+failure is shown. A command sent without an answer is reported "sent, without
+confirmation: check the state", and the state is read again a few seconds
+later (likewise after a lock or valve command).
+
+## Troubleshooting
+
+- **E-mail or password refused**: the integration stops and waits, even
+  after a restart. Fix them, then save (or click _Test the connection_). It
+  never signs in again by itself after a refusal.
+- **Session refused**: the session is renewed once; refused again, the
+  integration pauses and tries again after 1 hour, 6 hours, then every
+  24 hours (kept across a restart), never sending the password again.
+  _Test the connection_ tries at once.
+- **Session expired** (refresh token refused) or **not signed in**: a stop
+  until a click on _Test the connection_. A sign-in left without an answer
+  is never sent again by itself.
+- **Unknown sign-in page**: Hubspace asks for a step the integration does
+  not know (accept terms, change the password…): sign in once in the app,
+  then click _Test the connection_.
+- **Too many requests (429)**: a pause of 1 minute to 6 hours (Hubspace's
+  `Retry-After`, 10 minutes without it), for the reads, the commands and the
+  buttons, kept across a restart or a reconnection to Gladys. **HTTP 403**
+  from the sign-in page: one hour.
+- **Hubspace unavailable (5xx, network)**: new tries after 1, 2, 5, 10, then
+  every 15 minutes, never sooner than the interval.
+- A device offline for Hubspace is shown "unreachable" on its card.
+
+## Limits
+
+- Unofficial API: Hubspace may change it, block it or ask for more checks.
+- No live updates (the app's "Conclave" channel): one read every 30 to
+  60 seconds.
+- One Hubspace account per Gladys.
+- No light effects, timers or settings (LEDs, sensitivity, speaker…) in this
+  version.
+- Never tested with a real account: please report what you see on the
+  [GitHub repository](https://github.com/LM1LC3N7/gladys-hubspace/issues)
+  (without your e-mail, password or codes).
+
+## Privacy
+
+The integration keeps in `/data/hubspace-state.json` (readable by its own
+container only): the refresh token only (the short-lived access token stays
+in memory) and the Afero account id, the account they belong to as a hash of
+the e-mail, a sign-in waiting for its code (its cookies and parameters), when
+a code was last requested, the end of a 429 pause and of a 403 pause, and a
+stop (refused credentials, unknown sign-in page, session expired, code
+awaited, session refused and its next try) tied to a salted fingerprint of
+the e-mail and password. Neither the e-mail nor the
+password. Nothing is sent anywhere but to Hubspace and Afero.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Hubspace in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Hubspace account | `section` | Nein | Shows the devices of your Hubspace account (Home Depot, Afero cloud) in Gladys: lights (on/off, brightness, colour temperature, colour), plugs and switches, ceiling fans (on/off, speed, direction), exhaust-fan sensors, and the state of locks and water timers (commands off by default). Enter the e-mail and password of the Hubspace app, save, then add the devices from the Discovery tab. If Hubspace e-mails you a code, type it with the buttons below. Read every 60 seconds. Unofficial API, never tested with a real account. Not affiliated with Hubspace, Home Depot or Afero. |
+| Hubspace e-mail | `string` | Ja |  |
+| Hubspace password | `secret` | Ja | Kept by Gladys in its database, never shown again, sent only to the Hubspace sign-in page (accounts.hubspaceconnect.com). |
+| Refresh interval (s) | `number` | Nein | Seconds between two reads of every device (30 to 60): one request each time. |
+| Allow unlocking the locks from Gladys | `boolean` | Nein | Off by default: the "Unlock" button of a lock is refused. Locking is always allowed. |
+| Allow the water valves (timers) from Gladys | `boolean` | Nein | Off by default: the "Open the valve" and "Close the valve" buttons of a water timer are refused; its state is still shown. |
+| Language of the feature names | `select` | Nein | Used for the feature names of the devices added from now on. |
+
+## So installierst du Hubspace in Gladys
+
+1. Öffne in Gladys **Integrationen**: Hubspace erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-hubspace:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-hubspace](https://github.com/LM1LC3N7/gladys-hubspace).
+
+Hubspace benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Hubspace ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-hubspace) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-hubspace/blob/HEAD/docs/en.md)

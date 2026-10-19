@@ -1,0 +1,189 @@
+---
+title: "Integración domótica Snapcast, gratuita y de código abierto"
+sidebar_label: "Snapcast"
+description: "Audio multiroom con Snapcast: volumen y silencio por habitación, fuentes, grupos, escenas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-snapcast.png"
+keywords:
+  - "snapcast"
+  - "domótica snapcast"
+  - "gladys snapcast"
+  - "snapcast gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-snapcast instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Snapcast","description":"Audio multiroom con Snapcast: volumen y silencio por habitación, fuentes, grupos, escenas.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-snapcast","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-snapcast.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T09:44:26Z"}} />
+
+[Snapcast](https://github.com/badaix/snapcast) reproduce el mismo sonido, sincronizado, en todas las
+habitaciones: un `snapserver` recibe las fuentes (Spotify con librespot, AirPlay, MPD, una radio, un
+pipe…) y las envía a los `snapclient`, uno por habitación. Esta integración lleva el servidor a
+Gladys: el volumen y el silencio de cada habitación, la fuente que suena en cada una, los grupos de
+habitaciones, y escenas cuando un altavoz se desconecta o una fuente empieza a sonar.
+
+No reproduce música por sí misma: la música viene de las fuentes de su servidor Snapcast (MPD,
+Spotify…). Probada con snapserver y snapclient 0.31 en Docker, sin altavoces: sus comentarios son
+bienvenidos.
+
+## Requisitos
+
+- Un servidor Snapcast (snapserver 0.26 o posterior; 0.31 probado) al que Gladys pueda acceder en la
+  red local.
+- Su puerto de control JSON-RPC por TCP, **1705** por defecto, activo (lo está, salvo que la sección
+  `[tcp]` de `snapserver.conf` diga `enabled = false`).
+- Gladys 5.1 o posterior.
+
+## Configuración
+
+1. En Gladys, abra **Integraciones**, busque **Snapcast** e instálela.
+2. **Dirección del servidor**: la dirección IP o el nombre de host del equipo que ejecuta
+   snapserver, por ejemplo `192.168.1.20`. Añada `:puerto`, o rellene **Puerto de control**, si no es
+   el 1705 (no el puerto HTTP 1780 de Snapweb).
+3. **Idioma**: el idioma de los nombres de las funciones y de los textos que crea la integración.
+   Los nombres se fijan al añadir un dispositivo: elíjalo antes de añadir los dispositivos.
+4. Guarde. La integración se conecta y muestra cada cliente y cada fuente en la pestaña
+   **Descubrimiento** de la integración: añada los que desee.
+
+La integración mantiene una conexión abierta con el servidor y sigue cada cambio en directo: un
+volumen cambiado en Snapweb u otra aplicación aparece al instante en Gladys. Vuelve a leer todo el
+estado cada minuto y tras cada reconexión.
+
+## Dispositivos
+
+### Clientes (habitaciones)
+
+Cada snapclient es un dispositivo, con el nombre que usted le dio en Snapweb (o, si no, el nombre de
+su equipo).
+
+| Función                | Qué hace                                                                                     |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| Volumen                | 0 a 100, en ambos sentidos                                                                   |
+| Silencio               | Activado = sonido apagado, en ambos sentidos                                                 |
+| Conectado              | Si el snapclient está conectado al servidor                                                  |
+| Fuente                 | La fuente de la habitación; elegir otra cambia **todo su grupo**                             |
+| Estado de reproducción | Reproduciendo cuando su fuente tiene sonido                                                  |
+| Reproduciendo          | Artista y título cuando la fuente los indica, si no el nombre y el estado de la fuente       |
+| Reproducir, Pausa      | Actúan sobre la fuente de la habitación, cuando un script de control la maneja (ver Fuentes) |
+| Anterior, Siguiente    | Igual                                                                                        |
+
+Un cliente tiene el volumen, la reproducción, la pausa y el estado de reproducción que espera la caja
+**Música** de Gladys: añada la caja a un panel y elija la habitación.
+
+### Fuentes
+
+Cada fuente del servidor también es un dispositivo: su **estado de reproducción** y lo que suena
+(**reproduciendo**). Una fuente manejada por un script de control (librespot, MPD con
+`meta_mpd.py`, AirPlay, Plexamp… vea la documentación de Snapcast) tiene además los botones
+**Reproducir**, **Pausa**, **Anterior** y **Siguiente**. Un simple pipe no los tiene: Snapcast no
+puede pausar lo que no controla.
+
+No hay dispositivo por grupo: Snapcast elimina un grupo vacío y da una identidad nueva a un grupo
+nuevo, lo que dejaría dispositivos huérfanos en Gladys. Los grupos se manejan a través de sus
+clientes (elección de la fuente, acciones más abajo).
+
+## Widget del panel
+
+**Habitaciones Snapcast**:
+
+- sin habitación elegida: cada cliente con lo que suena y su volumen (o «Silenciado», «Sin
+  conexión»), y un botón **Silenciar todo** / **Activar todo**;
+- con una habitación elegida: su estado y su volumen, los botones **Volumen −**, **Volumen +**,
+  **Silenciar** / **Activar**, y **Reproducir** / **Pausa** cuando su fuente se puede controlar, si
+  no **Otra fuente**.
+
+## Disparadores de escena
+
+| Disparador           | Cuándo                                                            | Variables               |
+| -------------------- | ----------------------------------------------------------------- | ----------------------- |
+| Cliente desconectado | Un snapclient abandona el servidor (altavoz apagado, red perdida) | nombre del cliente      |
+| Cliente conectado    | Un snapclient vuelve a unirse al servidor                         | nombre del cliente      |
+| Fuente iniciada      | Llega sonido a una fuente (alguien emite por Spotify…)            | fuente, título, artista |
+| Fuente detenida      | Una fuente deja de sonar (en pausa, ya sin sonido)                | fuente, título, artista |
+
+Cada disparador puede limitarse a un cliente o a una fuente. No se dispara nada por lo que ocurre
+mientras el propio servidor no está accesible.
+
+## Acciones de escena
+
+| Acción                                     | Qué hace                                                                                                   |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Ajustar el volumen de una habitación       | Volumen de un cliente, de 0 a 100                                                                          |
+| Silenciar o activar todas las habitaciones | Todos los clientes del servidor; devuelve cuántos cambiaron                                                |
+| Cambiar la fuente de una habitación        | El grupo del cliente pasa a la fuente elegida                                                              |
+| Controlar una fuente                       | Reproducir, pausa, reproducir/pausa, siguiente, anterior, en una fuente o en lo que escucha una habitación |
+| Agrupar dos habitaciones                   | El primer cliente se une al grupo del segundo, sincronizado                                                |
+| Desagrupar una habitación                  | El cliente forma un grupo propio, misma fuente                                                             |
+
+El volumen, el silencio y la fuente de una habitación también se ajustan con la acción estándar
+«Establecer valor del dispositivo» de Gladys.
+
+## Ejemplos de escenas
+
+- **Noche tranquila**: a las 23 h, «Silenciar o activar todas las habitaciones» → Silenciar. A las
+  7 h, Activar.
+- **Radio de la mañana**: a las 7 h entre semana, «Cambiar la fuente de una habitación» → Cocina,
+  fuente Radio, y luego «Ajustar el volumen de una habitación» → Cocina, 30.
+- **La música le sigue**: con «Fuente iniciada» de Spotify, «Agrupar dos habitaciones» → el Salón se
+  une a la Cocina.
+- **Altavoz desenchufado**: con «Cliente desconectado» del Baño, enviar un mensaje.
+
+## Solución de problemas
+
+- **«El servidor Snapcast no responde»**: compruebe la dirección, que snapserver esté en marcha y que
+  el puerto sea el de control TCP (1705 por defecto), ni el puerto de audio 1704 ni el puerto HTTP 1780. Un cortafuegos debe dejar pasar a Gladys.
+- **Una habitación indica «Sin conexión»**: su snapclient no está conectado al servidor (equipo
+  apagado, dirección de servidor incorrecta en el cliente).
+- **«Esta fuente no se puede controlar»**: la fuente no tiene script de control. Use una fuente que
+  describa su reproductor (librespot, MPD con `meta_mpd.py`…) o controle el reproductor directamente.
+- **Una fuente indica «Inactivo» aunque su reproductor dice que reproduce**: no llega sonido a
+  snapserver; Snapcast indica lo que recibe.
+- Más detalles: ponga el `LOG_LEVEL` de la integración en `debug`.
+
+## Limitaciones
+
+- Un solo servidor Snapcast por integración.
+- Sin autenticación: el puerto de control de snapserver no tiene por defecto. Un servidor que la exija
+  (opción de las versiones recientes) no es compatible.
+- Sin dispositivo por grupo (ver Fuentes); la latencia de un cliente y los nombres se ajustan en
+  Snapweb.
+- La estructura de un dispositivo fuente depende de su script de control: si una fuente pasa a ser
+  controlable más tarde, Gladys propone **Actualizarla** en la pestaña Descubrimiento.
+- Probada con snapserver y snapclient 0.31 en Docker, con una fuente pipe y un reproductor simulado,
+  sin altavoces. Sus comentarios son bienvenidos en el foro.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Snapcast te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conecte su servidor Snapcast | `section` | No | Introduzca la dirección del equipo que ejecuta snapserver. La integración usa su puerto de control JSON-RPC (TCP 1705, activo por defecto) y sigue cada cambio en directo. Cada snapclient se convierte en un dispositivo (una habitación), y cada fuente también. |
+| Dirección del servidor | `string` | Sí | Dirección IP o nombre de host de snapserver. Añada :puerto si su puerto de control no es el 1705. |
+| Puerto de control | `number` | No | Puerto TCP del control JSON-RPC (sección tcp de snapserver.conf). No el puerto HTTP 1780. |
+| Opciones | `section` | No | Idioma de los nombres y textos que crea la integración (los nombres de las funciones se fijan al añadir el dispositivo). |
+| Idioma | `select` | No |  |
+
+## Cómo instalar Snapcast en Gladys
+
+1. En Gladys, abre **Integraciones**: Snapcast aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-snapcast:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-snapcast](https://github.com/guim31/gladys-snapcast).
+
+Snapcast requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Snapcast es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-snapcast) — [fuente de esta documentación](https://github.com/guim31/gladys-snapcast/blob/HEAD/docs/es.md)

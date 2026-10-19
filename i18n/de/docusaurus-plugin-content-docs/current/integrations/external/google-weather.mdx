@@ -1,0 +1,176 @@
+---
+title: "Google Weather Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Google Weather"
+description: "Wetter von Google Maps Platform: Vorhersagen, amtliche Warnungen, Szenen und Widgets. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-weather.jpg"
+keywords:
+  - "google weather"
+  - "google weather smart home"
+  - "gladys google weather"
+  - "google weather gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/William-De71/gladys-google-weather instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Weather","description":"Wetter von Google Maps Platform: Vorhersagen, amtliche Warnungen, Szenen und Widgets.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-google-weather","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-weather.jpg","type":"weather","version":"0.1.0","gladys_version":">=5.1.1","stars":0,"pushed_at":"2026-10-17T07:46:37Z"}} />
+
+## Überblick
+
+Diese Integration macht die offizielle **Weather API der Google Maps Platform** zu einem Wetteranbieter von Gladys. Nach der Installation nutzen die Wetterkarte des Dashboards, der Chat-Assistent („Wie wird das Wetter morgen?“) und der Wetterwarnungs-Auslöser von Gladys sie anstelle des eingebauten OpenWeather-Dienstes.
+
+Sie liefert:
+
+- das **aktuelle Wetter**: Temperatur, gefühlte Temperatur, Luftfeuchtigkeit, Taupunkt, Luftdruck, Wind und Böen, Sichtweite, Bewölkung, UV-Index, Tag oder Nacht, Sonnenauf- und -untergang;
+- die **Vorhersagen**: 24 Stunden und 8 Tage im Wetter von Gladys, bis zu 10 Tage im Widget;
+- die von Google weitergegebenen **amtlichen öffentlichen Warnungen** (MeteoAlarm für den Großteil Europas, der DWD, die NOAA…), im Wetter von Gladys und in zwei Szenen-Auslösern;
+- vier **Szenen-Aktionen** und drei **Dashboard-Widgets**.
+
+Alles läuft über die Server von Google (nur Cloud), mit **deinem eigenen API-Schlüssel**: Google berechnet die Weather API oberhalb eines kostenlosen Monatskontingents, und die Integration ist darauf ausgelegt, deutlich darunter zu bleiben.
+
+> Diese Integration wurde noch nicht mit einem echten API-Schlüssel getestet: Sie folgt der Dokumentation der API genau. Bitte melde jedes Problem.
+
+## Voraussetzungen
+
+- Gladys 5.1.1 oder neuer.
+- Ein Zuhause mit Standort (Einstellungen → Zuhause): Die Warnungen werden für jedes Zuhause mit Standort geprüft.
+- Ein Google-Konto und ein **Google-Cloud-Projekt mit Rechnungskonto**. Google verlangt es für die Weather API, auch im kostenlosen Rahmen.
+
+## Konfiguration
+
+### 1. Google-Cloud-Projekt und Weather API
+
+1. Öffne die [Google-Cloud-Konsole](https://console.cloud.google.com/), lege ein Projekt an (oder wähle eines).
+2. Verknüpfe ein Rechnungskonto (Abrechnung). Ohne Abrechnung wird jede Anfrage abgelehnt (`BILLING_DISABLED`).
+3. Aktiviere die **Weather API** (APIs und Dienste → Bibliothek → „Weather API“).
+
+Google bietet auch einen kostenlosen „Maps Demo Key“ zum Testen ohne Abrechnung an: Er ist nur für Prototypen gedacht.
+
+### 2. API-Schlüssel und Einschränkungen
+
+1. Google Maps Platform → Schlüssel und Anmeldedaten → **Anmeldedaten erstellen → API-Schlüssel**.
+2. Schlüssel bearbeiten: Unter **API-Einschränkungen** „Schlüssel einschränken“ wählen und nur **Weather API** ankreuzen. Ein geleakter Schlüssel kann dann nicht für andere kostenpflichtige APIs genutzt werden.
+3. Unter **Anwendungseinschränkungen** **IP-Adressen** wählen und die öffentliche IP deines Gladys eintragen, falls sie fest ist. Nicht „Websites“ verwenden: Die Anfragen kommen aus dem Container, nicht aus einem Browser.
+4. Optional, aber empfohlen: Unter Google Maps Platform → Kontingente das Tageskontingent der Weather API senken (zum Beispiel 500 pro Tag) als zweites Sicherheitsnetz.
+
+### 3. Kosten und Aktualisierungsintervalle
+
+Google berechnet jede erfolgreiche Anfrage (alle Endpunkte zusammen, SKU „Weather Usage“) über **10.000 kostenlose Anfragen pro Monat** hinaus, danach 0,15 USD je 1.000 (Preise vom 17. Oktober 2026, siehe [Preisseite](https://developers.google.com/maps/documentation/weather/usage-and-billing)). Jedes Produkt wird höchstens einmal pro Intervall gelesen und von Dashboard, Widgets und Szenen geteilt:
+
+| Produkt                      | Standardintervall   | Anfragen / Monat / Zuhause |
+| ---------------------------- | ------------------- | -------------------------- |
+| Aktuelles Wetter             | 30 min              | 1.488                      |
+| Stündliche Vorhersage (24 h) | 60 min              | 744                        |
+| Tagesvorhersage (10 Tage)    | 3 × stündlich = 3 h | 248                        |
+| Warnungen                    | 30 min              | 1.488                      |
+| **Summe (31 Tage)**          |                     | **3.968**                  |
+
+Gladys prüft das Wetter für seinen eigenen Warnungs-Auslöser alle 30 Minuten: Kürzere Intervalle bringen wenig. Jede Dashboard-Sprache ist eine eigene Antwort: Zwei Sprachen verdoppeln die Kosten. Die **Monatliche Anfragegrenze** (standardmäßig 9.000) stoppt nach Erreichen jeden Aufruf an Google bis zum nächsten Monat; die letzten Antworten werden weiter geliefert, und der Verbindungsstatus zeigt es an.
+
+### 4. In Gladys
+
+1. Integrationen → Google Weather → Konfiguration.
+2. Den **API-Schlüssel** einfügen, bei Bedarf die Intervalle anpassen, speichern.
+3. Auf **API-Schlüssel testen** klicken: Es liest das aktuelle Wetter deines ersten Zuhauses (eine Anfrage) und zeigt die Anfragen dieses Monats und die Monatsschätzung.
+
+| Feld                              | Standard | Zweck                                                           |
+| --------------------------------- | -------- | --------------------------------------------------------------- |
+| API-Schlüssel                     | —        | Dein Schlüssel (`AIza…`), als Geheimnis gespeichert             |
+| Aktuelles Wetter alle (Min.)      | 30       | 10 bis 180                                                      |
+| Stündliche Vorhersage alle (Min.) | 60       | 30 bis 360; die Tagesvorhersage wird dreimal seltener gelesen   |
+| Amtliche Warnungen                | an       | Ausschalten, wo Google keine Warnungen veröffentlicht           |
+| Warnungen alle (Min.)             | 30       | 10 bis 180: Verzögerung, bis eine Warnung deine Szenen erreicht |
+| Monatliche Anfragegrenze          | 9.000    | Sicherheitsnetz                                                 |
+
+## Verwendung
+
+### Wetterkarte und Assistent
+
+Nichts zu tun: Die Wetterkarte des Dashboards nutzt diesen Anbieter. Sind mehrere Wetteranbieter installiert, hefte einen in den Einstellungen der Karte an.
+
+### Abdeckung, Deutschland und Europa
+
+Aktuelles Wetter und Vorhersagen decken die meisten Länder ab, darunter Deutschland, Österreich, die Schweiz, Frankreich, Spanien und das übrige Europa. In China, Japan, Südkorea, Vietnam, Iran, Nordkorea, Kuba oder Syrien unter anderem sind sie nicht verfügbar: Die Anfrage schlägt dort fehl, und Gladys nutzt seinen nächsten Wetteranbieter.
+
+Die Warnungen stammen über Google von den amtlichen Diensten: dem DWD für Deutschland, MeteoAlarm für die meisten europäischen Länder (für Frankreich die Vigilance von Météo-France). Kanada, Indien und Russland haben Wetter, aber keine Warnungen: Schalte sie dort aus, um ihre Anfragen zu sparen. Die MeteoAlarm-Farben entsprechen dem Schweregrad: gelb = mäßig, orange = schwer, rot = extrem. Titel und Texte der Warnungen sind in der Sprache des Herausgebers, wenn er die angefragte nicht liefert.
+
+### Widgets
+
+![Generierte Illustration der drei Widgets – Wetterwarnungen, 10-Tage-Vorhersage, nächste Stunden – kein Screenshot](https://raw.githubusercontent.com/William-De71/gladys-google-weather/main/docs/assets/widgets.de.png)
+
+- **Wetterwarnungen**: Zähler nach Schweregrad, dann jede Warnung mit Gebiet, Ende, Verhaltenshinweisen und einem Link zum Herausgeber.
+- **10-Tage-Vorhersage**: 5, 7 oder 10 Tage mit den Google-Symbolen, Höchst- und Tiefstwert, Himmel und Regenrisiko; tippe auf einen Tag für Details zu Tag und Nacht, UV-Index und Sonnenzeiten.
+- **Nächste Stunden**: ein Verlauf der nächsten 12 oder 24 Stunden: Temperatur und gefühlte Temperatur, Regenrisiko oder Wind und Böen.
+
+Jedes Widget hat die Einstellung **Zuhause** (der genaue Name eines Zuhauses, leer für das erste mit Standort).
+
+### Szenen-Auslöser
+
+- **Wetterwarnung ausgegeben**: Eine amtliche Warnung gilt jetzt für ein Zuhause. Filter: Zuhause, Art der Warnung (Gewitter, Wind, Starkregen, Hochwasser, Schnee / Glätte, Kälte, Hitze, Nebel, Küste / Meer, Brand / Dürre, Zyklon / Hurrikan, Tornado, Erdbeben / Vulkan, Luft / Strahlung, Sonstiges), Schweregrad. Variablen: Titel, Art, Schweregrad, Gebiet, Beginn, Ende, Beschreibung, Verhaltenshinweise, Quelle, Zusammenfassung…
+- **Wetterwarnung beendet**: Die Warnung ist abgelaufen oder wurde aufgehoben.
+
+Die erste Prüfung nach einem Start legt den Ausgangsstand fest: Bereits geltende Warnungen lösen nichts aus. Eine mit gleicher Art und gleichem Schweregrad neu ausgegebene Warnung löst nicht erneut aus; ein Wechsel des Schweregrads (gelb zu orange) beendet die alte und gibt die neue aus.
+
+### Szenen-Aktionen
+
+- **Wetterwarnungen abrufen**: Anzahl, schwerste Warnung (Titel, Art, Schweregrad, Ende, Verhaltenshinweise), Zusammenfassung.
+- **Vorhersage eines Tages abrufen**: heute bis in 9 Tagen: Höchst- und Tiefstwert, Himmel, Regenrisiko und -menge, Wind, Böen, UV, Sonnenauf- und -untergang, Zusammenfassung.
+- **Aktuelles Wetter abrufen**: Temperatur, gefühlte Temperatur, Luftfeuchtigkeit, Luftdruck, Wind, UV, Bewölkung, Himmel, Zusammenfassung.
+- **Wird es regnen?**: innerhalb von 3 bis 24 Stunden, ab einem gewählten Risiko: ja oder nein, ab wann, maximales Risiko, Gesamtmenge, Zusammenfassung.
+
+### Szenenbeispiele
+
+- Wenn eine **Wetterwarnung ausgegeben** wird mit der Art „Wind“ und dem Schweregrad „Schwer“ oder „Extrem“ → die Rollläden schließen und `{{triggerEvent.data.summary}}` an dein Handy senden.
+- Jeden Morgen um 7:00 → **Vorhersage eines Tages abrufen** (heute) → ihre Zusammenfassung als Nachricht senden.
+- Jeden Abend um 20:00 → **Wird es regnen?** (12 Stunden, ab 50 %) → wenn kein Regen erwartet wird, die Gartenbewässerung starten.
+
+## Fehlerbehebung
+
+- **„Google hat den API-Schlüssel abgelehnt (API_KEY_INVALID)“**: Der Schlüssel ist falsch oder gelöscht; kopiere ihn erneut aus der Konsole.
+- **SERVICE_DISABLED**: Die Weather API ist im Projekt des Schlüssels nicht aktiviert.
+- **BILLING_DISABLED**: Mit dem Projekt ist kein Rechnungskonto verknüpft.
+- **API_KEY_SERVICE_BLOCKED** oder **API_KEY_IP_ADDRESS_BLOCKED**: Die Einschränkungen des Schlüssels schließen die Weather API oder die IP deines Gladys aus (sie hat sich vielleicht geändert).
+- **Nie eine Warnung**: Prüfe oben die Abdeckung deines Landes; das Warnungs-Widget zeigt an, wenn sie ausgeschaltet sind.
+- **„Monatsbudget erreicht“**: Grenze oder Intervalle erhöhen; der Zähler beginnt am 1. des Monats (UTC) neu. Maßgeblich sind die Zahlen von Google (Google Maps Platform → Messwerte).
+- **Kein Wetter für ein Zuhause**: Es liegt außerhalb der Abdeckung oder hat in Gladys keinen Standort.
+- Logs: Einstellungen → Supervision → Google Weather. Der Schlüssel erscheint dort nie.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Google Weather in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Google-Cloud-API-Schlüssel | `section` | Nein | In der Google-Cloud-Konsole: Projekt anlegen, ein Rechnungskonto verknüpfen (Google verlangt es, auch im kostenlosen Rahmen), die „Weather API“ aktivieren und einen auf die Weather API beschränkten API-Schlüssel erstellen. Daten verlassen dein Netzwerk: Jede Anfrage geht mit den Koordinaten des Zuhauses an Google. |
+| API-Schlüssel | `secret` | Ja | Beginnt mit „AIza“. Beschränke ihn auf die Weather API (API-Einschränkungen) und, bei fester öffentlicher IP, auf diese IP. |
+| Kostenloser Rahmen und Aktualisierung | `section` | Nein | Google berechnet jede erfolgreiche Anfrage über 10.000 pro Monat (alle Endpunkte zusammen). Mit den Standardwerten kostet ein Zuhause etwa 4.000 Anfragen im Monat: aktuell alle 30 min, stündlich alle 60 min, täglich alle 180 min, Warnungen alle 30 min. Die Antworten werden zwischengespeichert und von Dashboard, Widgets und Szenen geteilt. |
+| Aktuelles Wetter alle (Min.) | `number` | Nein | Zwischen 10 und 180. 30 min = 1.488 Anfragen pro Monat und Zuhause. |
+| Stündliche Vorhersage alle (Min.) | `number` | Nein | Zwischen 30 und 360. Die Tagesvorhersage wird dreimal seltener gelesen. 60 min = 992 Anfragen pro Monat und Zuhause, beide zusammen. |
+| Amtliche Warnungen | `boolean` | Nein | Ausschalten, wo Google keine Warnungen veröffentlicht (Kanada, Indien, Russland…): spart deren Anfragen. |
+| Warnungen alle (Min.) | `number` | Nein | Zwischen 10 und 180: Verzögerung, bis eine Warnung deine Szenen erreicht. 30 min = 1.488 Anfragen pro Monat und Zuhause. |
+| Monatliche Anfragegrenze | `number` | Nein | Sicherheitsnetz: Ab dieser Zahl an Anfragen im Monat geht bis zum nächsten Monat kein Aufruf mehr an Google (das zwischengespeicherte Wetter wird geliefert). Standard 9.000, unter den 10.000 kostenlosen. |
+
+## So installierst du Google Weather in Gladys
+
+1. Öffne in Gladys **Integrationen**: Google Weather erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-google-weather:0.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-google-weather](https://github.com/William-De71/gladys-google-weather).
+
+Google Weather benötigt Gladys `>=5.1.1`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Google Weather ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [William-De71](https://github.com/William-De71) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/William-De71/gladys-google-weather) — [Quelle dieser Dokumentation](https://github.com/William-De71/gladys-google-weather/blob/HEAD/docs/de.md)

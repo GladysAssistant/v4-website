@@ -1,0 +1,187 @@
+---
+title: "PS5 Remote Play Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "PS5 Remote Play"
+description: "Switch your PlayStation 5 on or to rest mode and see the game being played. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LuckyS7evin--gladys-ps5-mqtt.png"
+keywords:
+  - "ps5 remote play"
+  - "ps5 remote play smart home"
+  - "gladys ps5 remote play"
+  - "ps5 remote play gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LuckyS7evin/gladys-ps5-mqtt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PS5 Remote Play","description":"Switch your PlayStation 5 on or to rest mode and see the game being played.","owner":"LuckyS7evin","owner_avatar_url":"https://avatars.githubusercontent.com/u/117847731?v=4","repo_url":"https://github.com/LuckyS7evin/gladys-ps5-mqtt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LuckyS7evin--gladys-ps5-mqtt.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T22:43:04Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Control your PlayStation 5 from Gladys: power on, rest mode, console status
+and game being played, with scene triggers and a dashboard widget. The
+integration follows the Home Assistant add-on
+[ps5-mqtt](https://github.com/FunkeyFlo/ps5-mqtt), without MQTT: it talks to
+the console directly with Sony's Remote Play protocol (through
+[playactor](https://github.com/dhleong/playactor)).
+
+PlayStation 4 consoles are supported too (power on, rest mode, running game)
+once the dedicated option is enabled.
+
+## Prepare the console
+
+In the PS5 settings:
+
+1. **System > Remote Play**: turn on **Enable Remote Play**.
+2. **System > Power Saving > Features Available in Rest Mode**: turn on
+   **Stay Connected to the Internet** and **Enable Turning On PS5 from
+   Network**.
+3. The console must be on the same local network as Gladys (or reachable from
+   Gladys, see _Console IP addresses_).
+
+Without these settings, the console does not answer in rest mode or refuses
+the commands (403 error in the logs).
+
+## Add the console
+
+1. Switch the console on (not in rest mode).
+2. Open the **Discovery** tab of the integration: Gladys searches the local
+   network for consoles. Add yours.
+3. If it does not show up (another VLAN, a router filtering broadcasts), type
+   its IP address in **Console IP addresses** (several addresses separated by
+   commas), save and run the discovery again.
+
+Each console becomes a device with three features:
+
+| Feature | Values                                              |
+| ------- | --------------------------------------------------- |
+| Power   | 1 = on, 0 = rest mode or unreachable (controllable) |
+| Status  | `playing`, `idle`, `standby` or `offline`           |
+| Game    | name of the game being played, `-` otherwise        |
+
+The state is read every 10 seconds.
+
+## Pair the console
+
+To switch the console on or put it in rest mode, the integration must be
+paired with the console, like the PS Remote Play app. It is done once, with
+the two actions of the **Configuration** tab:
+
+1. Click **1. Get the PlayStation sign-in link**. Open the link shown, sign in
+   with the PlayStation account used on the console. You land on a blank page
+   (or an error page): **copy its full address** from the address bar of the
+   browser. It starts with
+   `https://remoteplay.dl.playstation.net/remoteplay/redirect?code=`.
+2. On the console, switched on, open **Settings > System > Remote Play > Link
+   Device**: an 8-digit code shows up.
+3. Click **2. Pair a console**, pick the console, paste the copied address and
+   type the PIN. The message under the button confirms the pairing.
+
+The copied address is only valid for a few minutes: if pairing fails, start
+again from step 1 with a new PIN.
+
+If your PlayStation profile asks for a passcode at login, set it in **Profile
+passcode** (digits, or key names separated by spaces, e.g. `up up down down`).
+
+## Game being played (optional)
+
+The PS5 does not say what it runs. The game is read from the presence of your
+PlayStation Network account, with an **NPSSO** token:
+
+1. Sign in on [playstation.com](https://www.playstation.com/).
+2. In the same browser, open [https://ca.account.sony.com/api/v1/ssocookie](https://ca.account.sony.com/api/v1/ssocookie).
+   The page shows `{"npsso":"…"}`: copy the 64-character value.
+3. Paste it in **NPSSO token** and save.
+4. Click **Test the PlayStation Network account** to check it.
+
+The NPSSO token expires after two months, but it is only used for the first
+sign-in: the integration then keeps and refreshes its own tokens (in its
+`/data` volume, readable by it only). If signing in fails, the Configuration
+screen says so: generate a new NPSSO token.
+
+The game is attached to the switched-on console matching the platform of the
+game. When several consoles are on, pick the **Preferred console**. The
+**Game refresh interval** (30 s by default, 10 s minimum) stays within the
+limit of Sony's API (300 requests per 15 minutes).
+
+On a PS4, the running game comes from the console itself, no PSN account
+needed.
+
+## Scenes
+
+- Use the **Power** feature of the console in the "Control a device" actions
+  to switch the console on or put it in rest mode, and in the "Device state
+  change" triggers to react when it is switched on.
+- **Game started** (trigger): a game starts on a console. Optionally filter on
+  the console and the title ID (e.g. `PPSA01521_00`). The following actions
+  can read `{{triggerEvent.data.title_name}}` and
+  `{{triggerEvent.data.title_id}}`.
+- **Game stopped** (trigger): the game is closed, the console is put in rest
+  mode or is no longer reachable.
+
+Example: "when a game starts on the living room PS5, dim the lights and turn
+the soundbar on".
+
+## Dashboard
+
+Add the **PlayStation** widget and pick a console: it shows the live power
+state, the status, the game being played with its cover, and two buttons,
+**Switch on** and **Rest mode**.
+
+## Troubleshooting
+
+- **The console is not in the Discovery tab**: check it is on or in rest mode
+  with **Stay Connected to the Internet**, then type its IP address in the
+  configuration.
+- **"not paired yet"**: pair the console (actions 1 and 2).
+- **403 error**: Remote Play is disabled on the console, or the pairing was
+  removed: pair the console again.
+- **"passcode"**: set the profile passcode.
+- **The status stays `offline`**: the console is fully switched off (not in
+  rest mode) or changed IP address; the integration searches again at most
+  every 5 minutes.
+- The logs of the integration (Gladys Supervision page) detail every
+  error.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt PS5 Remote Play in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Getting started | `section` | Nein | On the console, enable Remote Play, and in the power saving settings keep it connected to the Internet and allow turning it on from the network. Then add the console from the Discovery tab and pair it with the two actions below. |
+| Console IP addresses | `string` | Nein | Optional, comma-separated: consoles the network scan cannot find (another VLAN, broadcasts filtered). |
+| Include PlayStation 4 consoles | `boolean` | Nein | PS4 consoles support power on, rest mode and the running game. |
+| Profile passcode | `secret` | Nein | Only if the PlayStation profile asks for a passcode at login: digits, or key names separated by spaces. |
+| Game being played (optional) | `section` | Nein | The console does not say what it runs: the game comes from the presence of your PlayStation Network account. Sign in on playstation.com, then open the NPSSO link below and copy the 64-character value of "npsso". |
+| NPSSO token | `secret` | Nein | Only used to sign in: the tokens it yields are kept and refreshed by the integration. |
+| Preferred console | `select` | Nein | When several consoles are on, the game is shown on this one. |
+| Game refresh interval (s) | `number` | Nein | How often the PlayStation Network presence is read (10 s minimum, rate-limited by Sony). |
+
+## So installierst du PS5 Remote Play in Gladys
+
+1. Öffne in Gladys **Integrationen**: PS5 Remote Play erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/luckys7evin/gladys-ps5-mqtt:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LuckyS7evin/gladys-ps5-mqtt](https://github.com/LuckyS7evin/gladys-ps5-mqtt).
+
+PS5 Remote Play benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+PS5 Remote Play ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LuckyS7evin](https://github.com/LuckyS7evin) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LuckyS7evin/gladys-ps5-mqtt) — [Quelle dieser Dokumentation](https://github.com/LuckyS7evin/gladys-ps5-mqtt/blob/HEAD/docs/en.md)

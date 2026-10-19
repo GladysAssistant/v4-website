@@ -1,0 +1,305 @@
+---
+title: "Integración domótica Bosch Smart Home, gratuita y de código abierto"
+sidebar_label: "Bosch Smart Home"
+description: "Controlador Bosch Smart Home en local: calefacción, contactos, humo, enchufes, persianas, alarma. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-bosch-shc.png"
+keywords:
+  - "bosch smart home"
+  - "domótica bosch smart home"
+  - "gladys bosch smart home"
+  - "bosch smart home gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-bosch-shc instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Bosch Smart Home","description":"Controlador Bosch Smart Home en local: calefacción, contactos, humo, enchufes, persianas, alarma.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-bosch-shc","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-bosch-shc.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T11:57:09Z"}} />
+
+Conecte su **Bosch Smart Home Controller** (primera o segunda generación) a
+Gladys, por su red local, sin ninguna nube: la calefacción de cada
+habitación (temperatura, consigna, modo), los termostatos de radiador y de
+ambiente, los contactos de puerta y ventana, los detectores de movimiento,
+los detectores de humo, los enchufes, los interruptores, las persianas, los
+detectores de fugas de agua, los interruptores universales y el estado de la
+alarma de intrusión.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** Esta
+> integración se ha construido a partir de la API local pública del
+> controlador y del trabajo de la biblioteca boschshcpy, y se ha probado con
+> un controlador simulado, no con uno real. Si algo no funciona como se
+> describe, indíquelo en el
+> [foro de Gladys](https://community.gladysassistant.com) o en las
+> [issues](https://github.com/guim31/gladys-bosch-shc/issues).
+
+Esta integración no está afiliada a Bosch ni respaldada por Bosch.
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un **Bosch Smart Home Controller** (I o II), instalado con la aplicación
+  Bosch Smart Home, en la misma red local que Gladys.
+- Su **dirección IP**. La aplicación la muestra en _Ajustes_ → _Sistema_ →
+  _Smart Home Controller_; su router también la muestra. Asigne una
+  dirección fija al controlador (reserva DHCP en su router): la integración
+  lo contacta en esa dirección.
+- Su **contraseña del sistema**, elegida al instalar el controlador. Solo se
+  usa una vez, para el emparejamiento.
+- Acceso al controlador, para pulsar su botón durante el emparejamiento.
+
+## Configuración
+
+El controlador solo habla con los clientes que ha emparejado. El
+emparejamiento registra a Gladys como cliente del controlador, con un
+certificado que la integración genera y guarda en su volumen `/data`.
+
+1. En Gladys, abra **Integraciones** → **Bosch Smart Home** →
+   **Configuración**.
+2. Introduzca la **Dirección IP del controlador** (p. ej. `192.168.1.20`) y la
+   **Contraseña del sistema** y **guarde**.
+3. Vaya al controlador y **mantenga pulsado su botón** (en el frontal) hasta
+   que parpadeen sus luces: el controlador queda en modo emparejamiento
+   durante un breve momento.
+4. De vuelta en Gladys, haga clic enseguida en **Emparejar**. Tras unos
+   segundos, el resultado aparece bajo el botón: _Emparejado. N
+   dispositivo(s) encontrado(s)_.
+5. Abra la pestaña **Descubrimiento** y añada los dispositivos que desee.
+
+Una vez emparejado, la contraseña del sistema se borra de la configuración
+de Gladys: ya no se necesita. El emparejamiento aparece en la aplicación
+Bosch (como _oss_Gladys_Assistant_), donde puede eliminarlo en cualquier
+momento.
+
+**Probar la conexión** vuelve a leer el controlador e indica su versión de
+software y cuántos dispositivos son compatibles.
+
+Los demás ajustes:
+
+- **Idioma de los nombres**: el idioma de los nombres de las funciones de
+  los nuevos dispositivos y de los textos que envía la integración (francés
+  por defecto).
+- **Duración de un movimiento**: un detector de movimiento solo indica la
+  hora de cada detección; es el tiempo durante el que su función
+  _Movimiento_ permanece activa (1 minuto por defecto).
+- **Permitir el armado desde Gladys**: desactivado por defecto, vea _Alarma
+  de intrusión_ más abajo.
+- **No comprobar el certificado del controlador**: desactivado. Solo para un
+  controlador cuyo certificado ha caducado porque estuvo sin Internet durante
+  años: la conexión falla entonces con un error de certificado.
+
+## Dispositivos
+
+Cada dispositivo compatible del controlador se convierte en un dispositivo
+de Gladys, con el nombre de la aplicación Bosch. Los estados llegan en
+tiempo real: la integración mantiene abierta una suscripción a los eventos
+del controlador (long polling, como recomienda Bosch) y lo vuelve a leer todo
+cada 15 minutos por seguridad. Un dispositivo que el controlador declara no
+disponible muestra la insignia _inaccesible_.
+
+### Calefacción
+
+Bosch gestiona la calefacción **por habitación**: para cada habitación con
+termostatos de radiador, el controlador tiene una regulación de habitación,
+que se convierte en el dispositivo _Calefacción \<habitación>_:
+
+| Función                    | Qué hace                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Temperatura**            | Temperatura de la habitación medida por el controlador.                                                 |
+| **Consigna**               | Temperatura deseada, de 5 a 30 °C por medios grados. En modo manual se mantiene.                        |
+| **Modo de calefacción**    | _Apagado (verano)_, _Manual_ (consigna fija) o _Programa_ (el programa semanal de la aplicación Bosch). |
+| **Demanda de calefacción** | Si un radiador de la habitación pide calor.                                                             |
+
+En modo _Programa_, una nueva consigna vale hasta el siguiente paso del
+programa, como en la aplicación Bosch. Cuando la habitación está en modo
+eco, una nueva consigna sale del modo eco.
+
+Los **termostatos de radiador** y los **termostatos de ambiente** también
+son dispositivos: **Temperatura**, **Humedad** (termostatos de ambiente que
+la miden) y **Batería baja**.
+
+### Sensores
+
+| Dispositivo                | Funciones                          |
+| -------------------------- | ---------------------------------- |
+| Contacto de puerta/ventana | **Apertura**, **Batería baja**     |
+| Detector de movimiento     | **Movimiento**, **Batería baja**   |
+| Detector de humo           | **Humo**, **Batería baja**         |
+| Detector de fugas de agua  | **Fuga de agua**, **Batería baja** |
+| Interruptor universal      | **Batería baja**                   |
+
+**Humo** se activa cuando el propio detector detecta humo. Cuando es otro
+detector de la casa, todos los detectores suenan, pero solo el de la
+habitación con humo muestra **Humo**: el disparador _Detector de humo en
+alarma_ distingue los dos casos.
+
+### Enchufes, interruptores y persianas
+
+| Dispositivo                                       | Funciones                                                                          |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Enchufe inteligente, enchufe compacto             | **Encendido/Apagado**, **Potencia** (W), **Energía** (kWh)                         |
+| Interruptor de luz, micromódulos de luz y de relé | **Encendido/Apagado** (y Potencia, Energía si se miden)                            |
+| Control de persiana, módulos de persiana y toldo  | **Posición** (0 % cerrada, 100 % abierta), **Abrir/Cerrar** (abrir, cerrar, parar) |
+
+**Energía** es el contador del enchufe: Gladys le añade las funciones de
+consumo y de coste en las pantallas de energía.
+
+### Alarma de intrusión
+
+Cuando el controlador tiene el sistema de alarma de intrusión, el
+dispositivo _Alarma de intrusión_ muestra:
+
+- **Armada**: activa cuando el sistema está armado;
+- **Alarma activada**: activa durante una prealarma o una alarma;
+- **Estado de la alarma**: _Desarmada_, _Armándose_, _Armada_, _Prealarma_,
+  _¡Alarma!_ o _Alarma silenciada_.
+
+La alarma es de **solo lectura** por defecto. Con **Permitir el armado desde
+Gladys**, la acción de escena _Armar la alarma de intrusión_ puede armarla.
+Desarmarla o silenciarla nunca es posible desde Gladys: una escena, un
+asistente de voz o un panel compartido no deben poder desactivar la
+protección de la casa. Use la aplicación Bosch para ello.
+
+## Panel
+
+El widget **Bosch Smart Home** (en la lista de widgets de un panel) resume la
+casa: el estado del controlador y de la alarma de intrusión, cuántas puertas
+y ventanas están abiertas, cuántas pilas están bajas, cuántos dispositivos
+no responden, y luego sus nombres. Es de solo lectura.
+
+Las funciones se colocan en un panel como de costumbre (widget
+_Dispositivos de la habitación_, widget de termostato…).
+
+## Escenas
+
+### Disparadores
+
+**Detector de humo en alarma**: un detector de humo detecta humo, o suena
+porque otro lo detecta. Filtros: el detector, el origen (_Humo detectado por
+este detector_ o _Alarma transmitida desde otro detector_). Información
+transmitida a la escena: _Nombre del detector_, _Habitación_, _Origen_
+(`detected` o `relayed`).
+
+**Interruptor universal pulsado**: una pulsación corta o larga en una tecla
+de un interruptor universal Bosch. Filtros: el interruptor, la tecla
+(superior, inferior y las cuatro del modelo de cuatro teclas), la pulsación
+(_Pulsación corta_, _Pulsación larga_). Información transmitida: _Nombre del
+interruptor_, _Habitación_, _Tecla_, _Pulsación_.
+
+Los demás estados (una ventana abierta, una fuga, la alarma armada) son
+funciones de dispositivo: use el disparador habitual _Estado de un
+dispositivo_ de Gladys.
+
+### Acciones
+
+**Armar la alarma de intrusión**: arma el sistema de alarma del controlador
+con un perfil de protección: _Protección total_, _Protección parcial_ o
+_Protección personalizada_ (tal como se configuró en la aplicación Bosch).
+Solo funciona si **Permitir el armado desde Gladys** está activado; si no,
+la acción falla y la escena continúa.
+
+### Ideas de escenas
+
+- **Incendio**: disparador _Detector de humo en alarma_ → encender todas las
+  luces, abrir las persianas, enviar a todos un mensaje con la _Habitación_
+  del detector (desde el selector de variables).
+- **Botón de la mesilla**: disparador _Interruptor universal pulsado_, tecla
+  inferior, pulsación larga → cerrar todas las persianas y apagar las luces.
+- **Ventana abierta, calefacción apagada**: disparador _Estado de un
+  dispositivo_ sobre la _Apertura_ de la ventana del salón = abierta durante
+  2 minutos → poner el _Modo de calefacción_ de la habitación en _Apagado
+  (verano)_; volver a _Programa_ al cerrarla.
+- **Salir de casa**: cuando la casa queda vacía → _Armar la alarma de
+  intrusión_ (_Protección total_), tras permitir el armado en la
+  configuración.
+
+## Solución de problemas
+
+- _Aún no emparejado_: siga la _Configuración_ anterior; el emparejamiento se
+  guarda en el volumen `/data` de la integración y sobrevive a las
+  actualizaciones.
+- _el controlador no está en modo emparejamiento_: el botón no se pulsó el
+  tiempo suficiente, o el modo emparejamiento terminó antes del clic. Pulse
+  hasta que parpadeen las luces y haga clic en **Emparejar** en los segundos
+  siguientes.
+- _contraseña del sistema rechazada_: compruebe la contraseña en la
+  aplicación Bosch (allí se puede cambiar), escríbala de nuevo, guarde y
+  vuelva a emparejar.
+- _el controlador no responde en esta dirección_: compruebe la dirección IP
+  (puede haber cambiado: asigne una fija al controlador) y que Gladys llega
+  al controlador por los puertos 8443 (emparejamiento) y 8444 (API).
+- _el controlador rechaza a Gladys (vuelva a emparejarlo)_: el
+  emparejamiento se eliminó en la aplicación Bosch, o el controlador se
+  restableció. Vuelva a emparejar.
+- _el certificado del controlador no es un certificado Bosch válido_: otro
+  aparato responde en esta dirección, o el certificado del controlador ha
+  caducado. Compruebe la dirección; si es la correcta, marque **No comprobar
+  el certificado del controlador**.
+- Un dispositivo nuevo de la aplicación Bosch aparece solo en la pestaña
+  **Descubrimiento** en pocos segundos; uno eliminado allí desaparece.
+- Registros detallados: defina la variable de entorno `LOG_LEVEL=debug` de la
+  integración. Los registros nunca contienen la contraseña, la clave ni el
+  certificado.
+
+## Límites
+
+- **Desarrollada sin el hardware**: probada solo con un controlador
+  simulado. Sus comentarios son bienvenidos.
+- Un solo controlador por instancia de Gladys.
+- Dispositivos compatibles: termostatos de radiador I y II, termostatos de
+  ambiente, termostatos de pared, contactos de puerta/ventana I y II,
+  detectores de movimiento I y II, detectores de humo I y II, enchufes
+  inteligentes y compactos, interruptores de luz, micromódulos de luz y de
+  relé, controles de persiana I y II, módulos de persiana y toldo, detectores
+  de fugas de agua, interruptores universales. **No compatibles**
+  (ignorados): Twinguard, cámaras, sirena exterior, reguladores y luces de
+  color, circuitos de calefacción y calderas, simulación de presencia,
+  escenarios y automatizaciones de Bosch.
+- No se ofrecen: la posición de la válvula de los termostatos de radiador,
+  la luminosidad del detector de movimiento II, los preajustes boost y eco,
+  el bloqueo infantil y los demás ajustes de los dispositivos.
+- La alarma de intrusión solo se puede armar (opcional), nunca desarmar ni
+  silenciar.
+- Bosch pide a los clientes locales usar long polling y limitar el número de
+  peticiones: la integración mantiene una sola petición de eventos abierta a
+  la vez (30 s cada una), lo vuelve a leer todo cada 15 minutos (4
+  peticiones) y reenvía a Gladys los valores sin cambios cada 6 horas.
+- La API local de Bosch está reservada a un uso privado y no comercial.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Bosch Smart Home te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Smart Home Controller | `section` | No | Smart Home Controller I o II, en la misma red que Gladys. 1. Introduzca su dirección IP y su contraseña del sistema y guarde. 2. Pulse el botón del controlador hasta que parpadeen las luces. 3. Haga clic en «Emparejar» antes de un minuto. |
+| Dirección IP del controlador | `string` | Sí | Aparece en la aplicación Bosch Smart Home (Ajustes, Sistema, Smart Home Controller) o en su router. Asígnele una dirección fija. |
+| Contraseña del sistema | `secret` | No | La contraseña elegida al instalar el controlador. Se usa una vez, para el emparejamiento, y luego se borra de Gladys. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones de los nuevos dispositivos y de los textos que envía la integración. |
+| Duración de un movimiento | `select` | No | El controlador solo envía la hora de cada detección: tiempo durante el que un detector muestra entonces «movimiento». |
+| Seguridad | `section` | No | La alarma de intrusión es de solo lectura por defecto. Desarmarla o silenciarla nunca es posible desde Gladys. |
+| Permitir el armado desde Gladys | `boolean` | No | Permite que la acción de escena «Armar la alarma de intrusión» arme el sistema de alarma del controlador. |
+| No comprobar el certificado del controlador | `boolean` | No | Solo si la conexión falla por un error de certificado (controlador sin Internet durante años). Menos seguro. |
+
+## Cómo instalar Bosch Smart Home en Gladys
+
+1. En Gladys, abre **Integraciones**: Bosch Smart Home aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-bosch-shc:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-bosch-shc](https://github.com/guim31/gladys-bosch-shc).
+
+Bosch Smart Home requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Bosch Smart Home es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-bosch-shc) — [fuente de esta documentación](https://github.com/guim31/gladys-bosch-shc/blob/HEAD/docs/es.md)

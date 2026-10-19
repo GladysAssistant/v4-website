@@ -1,0 +1,161 @@
+---
+title: "Integración domótica FF-Agent, gratuita y de código abierto"
+sidebar_label: "FF-Agent"
+description: "Receive FF-Agent alarms via Gladys Plus and send acceptance or rejection responses. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/stefanbauer--gladys-ff-agent.jpg"
+keywords:
+  - "ff-agent"
+  - "domótica ff-agent"
+  - "gladys ff-agent"
+  - "ff-agent gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/stefanbauer/gladys-ff-agent instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"FF-Agent","description":"Receive FF-Agent alarms via Gladys Plus and send acceptance or rejection responses.","owner":"stefanbauer","owner_avatar_url":"https://avatars.githubusercontent.com/u/3192662?v=4","repo_url":"https://github.com/stefanbauer/gladys-ff-agent","cover_url":"https://integration-store-storage.gladysassistant.com/covers/stefanbauer--gladys-ff-agent.jpg","type":"provider","version":"1.0.1","gladys_version":">=5.2.1","stars":0,"pushed_at":"2026-10-18T05:54:56Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This external provider integration targets Gladys Assistant 5.2.1 or newer.
+**Accept/reject actions send real HTTP requests to FF-Agent.** HTTP success does not prove FF-Agent recorded the mission
+response; check it there. This does not replace official alarm systems.
+
+Acceptances and rejections require neither Gladys Plus nor an Open API key.
+Plus and its key are only needed for real incoming FF-Agent alarms via webhook.
+Local simulation triggers scenes without Plus or a key.
+
+## Configuration and use
+
+Install the local development image and manifest as described in the repository README.
+Start the integration's local Node process. In Configuration, press **Simulate incident**.
+Add **FF-Agent incident** to a dashboard to see the latest incident and its response
+buttons. Widget buttons require confirmation and send real requests, even for a test
+alarm. **Test scenes can also send real responses.** Configuration and scene actions
+need no additional incident ID and no prior alarm.
+
+Find the reply UUID in **FF-Agent → Personal profile → “Weblinks für Einsatzmeldung”**.
+Example: `https://www.ff-agent.com/app2/missionreplies/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/accept`.
+Copy only your UUID in place of the x characters, between `/missionreplies/` and
+`/accept` or `/reject`, not the full URL or parameters such as `?transport=CAR`.
+The reply UUID stays visible and editable. Acceptance also requires transport
+(CAR/BICYCLE/FEET) and a native Gladys house selection. Rejection only needs the UUID.
+Acceptance actions optionally override transport for that request only; leave the
+field empty to use the configured default. The saved configuration is not changed.
+This applies to scene and configuration actions; widget buttons use the default.
+Coordinates come from the selected Gladys house, requiring
+the declared location permission. Reply actions validate their required settings
+before sending a real request and then check the HTTP response. No separate settings check is needed. Simulation
+does not require these settings. Never share personal reply links.
+
+## Set up the FF-Agent generic webhook
+
+Connect the intended instance to Gladys Plus. Create a key under Plus → Settings →
+Open API and save it in this integration's native **Webhooks** section in Gladys.
+The native **Gladys Plus Webhooks** card shows the current complete URL including
+the key. Paste it into FF-Agent’s **Generic webhook** form: **POST**, **HTTPS**, **JSON**, and body
+**`{}`**. No Basic authentication or additional headers; FF-Agent sets Content-Type.
+Omit `https://` from the URL if FF-Agent's protocol dropdown supplies it separately.
+The URL is secret; never use a personal reply link as the alarm endpoint. After key
+rotation, retrieve the new URL and replace it in FF-Agent.
+
+For privacy, FF-Agent supplies no incident details: only an alarm signal is needed.
+Do not send incident IDs, titles, categories, locations or timestamps. The handler
+ignores the body and processes POST only. Gladys acknowledges immediately using
+`fire_and_forget`, without waiting for scenes. **HTTP 200 is not proof of reception:**
+disconnected/stopped integrations can lose signals. Send a test from FF-Agent and
+check the widget/scene trigger in Gladys before operational use. Every delivered POST
+counts as an alarm; without event IDs, reliable deduplication is impossible.
+Connection and processing each have a five-second timeout according to the FF-Agent
+form. Local authenticated REST simulation uses the same reception path, but does not
+test FF-Agent → Plus delivery. FF-Agent cannot reach this Mac through localhost.
+Do not change the existing production Plus link.
+
+The scene trigger **Incident received** has no filters and exposes only `received_at`,
+generated locally on the Gladys system (UTC/ISO 8601), not supplied by FF-Agent.
+Test alarms use the same minimal data; no simulation flag or incident details are
+passed to scenes. The widget labels tests and shows only the local reception time.
+Both reply scene actions output only `success`: true for HTTP 2xx (also when no
+incident is active), false for invalid settings, HTTP errors or an unconfirmed request.
+Scenes continue after a false result so subsequent steps can evaluate it. This is
+HTTP success, not proof of an operational response. A timeout may occur after FF-Agent
+processed the request, so false must not trigger automatic retries. Configuration
+and widget buttons still display detailed messages/errors. Requests time out after
+five seconds with no automatic retries or redirects.
+
+## Limitations and troubleshooting
+
+Only the latest alarm is held in memory; restarting clears it.
+Docker Desktop and Node 24 are required for the documented local setup. Keep the
+registration container running and use only one active SDK process per selector.
+`npm run dev` synchronizes registration and the integration token automatically. Never commit
+tokens or actual incident data. See the repository README for setup and logs.
+
+## Widget: alarms and replies
+
+“No alarm” means no open alarm received locally, not verification of FF-Agent or
+the alarm connection. An alarm shows a red state, reception time and buttons
+for immediate acceptance/rejection, without a confirmation dialog. Test alarms are clearly marked.
+After a successful HTTP acceptance, “Sent” remains until “End incident” is pressed,
+then idle returns with the last reply and reply time. A successful
+HTTP rejection or explicit no-active-incident response returns idle immediately.
+Errors/timeouts keep alarms open; never retry automatically. New alarms interrupt
+acceptance displays; stale/concurrent clicks cannot dismiss them. Scene/configuration
+actions update the same history. None of this proves an operational mission reply.
+“End incident” only resets the display and sends nothing to FF-Agent.
+The display refreshes normally every ten seconds; browser
+suspension or connection failures may delay the display. Times use your browser's
+local timezone. History records the decision sent; an explicit FF-Agent “no active
+incident” response is shown separately. Only the last
+alarm and successful request remain in memory; a restart clears both.
+
+**Supervision → Start** starts/restarts the Docker container, even when already
+running. It is unnecessary while connected and does not start the local Mac Node
+process; use `npm run dev` for that. **Logs** reads Docker output only: during local
+development see the `npm run dev` terminal; the idle registration container has no
+application logs. With the production image, refresh Logs in Gladys to see them.
+Technical logs are in English and describe alarm/test reception, event publication,
+reply attempts, HTTP status and failures. They never contain UUIDs, coordinates,
+keys, URLs, webhook bodies or raw provider responses. Reception does not prove scene
+execution or an operational reply. UI reply errors follow the selected Gladys language.
+
+## Parámetros de configuración
+
+Estos son los parámetros que FF-Agent te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Real FF-Agent responses | `section` | No | Acceptances and rejections work without Gladys Plus or an Open API key. Plus and its key are only needed for incoming FF-Agent alarms; local simulation also works without them. Responses send real requests, even for test alarms. HTTP success is not proof of a mission response; check FF-Agent if unclear. |
+| Reply UUID | `string` | No | FF-Agent → Personal profile → “Weblinks für Einsatzmeldung”. Example: https:\/\/www.ff-agent.com/app2/missionreplies/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/accept — copy only your UUID in place of the x characters, between /missionreplies/ and /accept (or /reject), not the full URL or its parameters. |
+| Transport | `select` | No | Transport sent with an acceptance. Rejections only use the reply UUID. |
+| Home in Gladys | `select` | No | Coordinates for acceptances. Set the location in this house's settings. |
+| Set up alarms in FF-Agent | `section` | No | Save your Plus Open API key in the Gladys Plus Webhooks card below, then copy its alarm URL into FF-Agent’s “Generic webhook” form. POST · HTTPS · JSON body: \{\}. No Basic authentication or extra headers. Omit https:\/\/ from the URL if the protocol is selected separately. Keep the URL private. Send a test alarm from FF-Agent and check reception in Gladys; HTTP 200 alone is not proof of delivery. |
+
+## Cómo instalar FF-Agent en Gladys
+
+1. En Gladys, abre **Integraciones**: FF-Agent aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/stefanbauer/gladys-ff-agent:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/stefanbauer/gladys-ff-agent](https://github.com/stefanbauer/gladys-ff-agent).
+
+FF-Agent requiere Gladys `>=5.2.1`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+FF-Agent es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [stefanbauer](https://github.com/stefanbauer), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/stefanbauer/gladys-ff-agent) — [fuente de esta documentación](https://github.com/stefanbauer/gladys-ff-agent/blob/HEAD/docs/en.md)

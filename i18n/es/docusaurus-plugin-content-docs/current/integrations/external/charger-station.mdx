@@ -19,7 +19,7 @@ https://github.com/sescandell/gladys-ocpp-integration instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Charger Station","description":"Follow your charging stations in Gladys, live, through the OCPP protocol.","owner":"sescandell","owner_avatar_url":"https://avatars.githubusercontent.com/u/1559970?v=4","repo_url":"https://github.com/sescandell/gladys-ocpp-integration","cover_url":"https://integration-store-storage.gladysassistant.com/covers/sescandell--gladys-ocpp-integration.png","type":"device","version":"1.0.0","gladys_version":">=4.85.0","stars":0,"pushed_at":"2026-08-10T16:41:01Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Charger Station","description":"Follow your charging stations in Gladys, live, through the OCPP protocol.","owner":"sescandell","owner_avatar_url":"https://avatars.githubusercontent.com/u/1559970?v=4","repo_url":"https://github.com/sescandell/gladys-ocpp-integration","cover_url":"https://integration-store-storage.gladysassistant.com/covers/sescandell--gladys-ocpp-integration.png","type":"device","version":"1.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T15:28:23Z"}} />
 
 :::info
 
@@ -27,10 +27,12 @@ La documentación de esta integración la escribe su autor y, por ahora, solo es
 
 :::
 
-**Read-only supervision.** This integration observes any
+**Supervision.** This integration observes any
 number of OCPP 1.6 charge points and shows their state in Gladys
-(connector status, charging state, power, current, voltage, total energy) —
-there is no way to start, stop, or limit a charge from Gladys yet.
+(connector status, charging state, power, current, voltage, total energy).
+There is no way to start, stop, or limit a charge from Gladys yet; the only
+command is the permanent cable lock of Autel charge points (see "Cable lock"
+below).
 
 ## How it works
 
@@ -58,9 +60,9 @@ on the wire, in either mode.
 
 ## Prerequisites
 
-**Gladys 4.85.0 or later.** The charge point state is published using
-Gladys's charging-station device features, which older versions don't know
-about (they would refuse to create the device).
+**Gladys 5.1.0 or later.** The charge point state is published using
+Gladys's charging-station device features, and the dashboard widget relies on
+integration widgets — older versions don't know about either.
 
 Each charge point's vendor app or portal must let you view and change the
 OCPP server URL it connects to. Not every vendor exposes this — if yours
@@ -142,6 +144,70 @@ integration about every change it observes rather than being asked at
 intervals. A charge point that connects for the first time also appears in
 Discovery on its own, without waiting for a refresh.
 
+## Cable lock (Autel)
+
+Autel charge points can keep their cable **permanently locked** in the
+connector (vendor feature, not part of standard OCPP). On those charge points,
+each connector gets a **Cable lock** switch, which you can use in Gladys
+(dashboard, scenes…) and in the widget. It only appears once the charge point
+has confirmed it has the function: shortly after it connects, the relay asks
+it for its list of supported functions (a standard OCPP request, the vendor's
+own cloud does the same).
+
+- The charge point **never reports** this state by itself. The integration
+  learns it from the lock and unlock commands it sees go by — whether sent
+  from Gladys or from the vendor's app (the app's commands travel through the
+  relay once the charge point is attached to its origin cloud, see Setup). The
+  switch therefore shows **no value** until the first command, and the widget
+  offers both "Lock" and "Unlock" until then.
+- A command done with the vendor's app **without** the relay in between
+  (Bluetooth, direct Wi-Fi) cannot be seen: the switch then shows the last
+  command it knew about.
+- The relay forgets the state when it restarts: it shows nothing again until
+  the next command.
+- If a charge point was created before this version, click **Update** on its
+  device card so the switch appears.
+
+## Dashboard widget
+
+Add a **Charge point** box to a dashboard and pick the charge point. A widget
+shows **one connector** (connector 1 by default): for a charge point with
+several connectors, add one widget per connector.
+
+At the top, the widget always says what the connector is doing right now, in
+plain words, with the session duration while charging. The rest is up to the
+widget settings:
+
+| Setting                            | Default                                       | Effect                                                                                                                                                                  |
+| ---------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Connector**                      | 1                                             | The connector shown.                                                                                                                                                    |
+| **Tiles**                          | Power, Session energy, Session duration, Cost | Any of: live power, energy and duration of the current session (or of the last one when idle), cost, max power offered by the charge point, meter total energy.         |
+| **Chart**                          | Automatic                                     | _Automatic_: power curve while charging, energy of the recent sessions otherwise. Or always one of them, or none.                                                       |
+| **Power curve period**             | Last 12 hours                                 | From the last hour to the last week.                                                                                                                                    |
+| **Price per kWh (€)**              | empty                                         | See "Cost" below.                                                                                                                                                       |
+| **Show charge point details**      | yes                                           | Connector status, limit offered by the charge point, error code if any, last message to the relay, vendor and model.                                                    |
+| **Show the charge point controls** | yes                                           | Buttons for what the charge point can be told to do, if anything (see "Cable lock"): the button does the opposite of the known state, both buttons while it is unknown. |
+
+A tile with nothing to show yet (no session, for instance) is hidden. A widget
+has limited room: with both the chart **and** the details, only the first 5
+selected tiles are shown.
+
+### Cost
+
+- **If Gladys's Energy screen is set up** (charge point attached to your
+  electricity meter, contract filled in), the tile shows the **cost of the
+  last 30 minutes**, computed by Gladys with your contract (peak/off-peak
+  hours, Tempo…). Gladys computes these costs in the background: the tile
+  appears after the first run and may lag behind by up to half an hour. If the
+  charge point was created before this version, click **Update** on its
+  device card first.
+- **Otherwise, if you entered a price per kWh**, the tile shows the **session
+  cost** (session energy × that fixed price, no peak/off-peak hours).
+- **Otherwise**, no cost tile.
+
+Recent sessions are kept by the relay in memory: the list starts over when the
+integration restarts.
+
 ## Multiple connectors
 
 A charge point is one device in Gladys, whatever its number of physical
@@ -182,8 +248,9 @@ relay. Keep this in mind on a shared or untrusted network.
   rare overlap in practice (attaching a cloud is usually done once, right
   after first connecting) — if it happens, the affected session's data may
   not reach the origin cloud correctly; the next session is unaffected.
-- **No control from Gladys.** Starting, stopping, or limiting a charge is not
-  possible in this version.
+- **Almost no control from Gladys.** Starting, stopping, or limiting a charge is
+  not possible in this version; the cable lock of Autel charge points is the
+  only command.
 
 ## Troubleshooting
 
@@ -204,11 +271,11 @@ Estos son los parámetros que Charger Station te pide en su pantalla de configur
 ## Cómo instalar Charger Station en Gladys
 
 1. En Gladys, abre **Integraciones**: Charger Station aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/sescandell/gladys-ocpp-integration:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/sescandell/gladys-ocpp-integration:1.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/sescandell/gladys-ocpp-integration](https://github.com/sescandell/gladys-ocpp-integration).
 
-Charger Station requiere Gladys `>=4.85.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+Charger Station requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
 
 ¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
 

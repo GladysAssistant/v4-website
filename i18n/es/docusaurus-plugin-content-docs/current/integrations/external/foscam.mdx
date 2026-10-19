@@ -1,0 +1,283 @@
+---
+title: "Integración domótica Foscam, gratuita y de código abierto"
+sidebar_label: "Foscam"
+description: "Cámaras IP Foscam de su red: imágenes, alarmas de movimiento, PTZ y posiciones. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-foscam.png"
+keywords:
+  - "foscam"
+  - "domótica foscam"
+  - "gladys foscam"
+  - "foscam gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-foscam instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Foscam","description":"Cámaras IP Foscam de su red: imágenes, alarmas de movimiento, PTZ y posiciones.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-foscam","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-foscam.png","type":"device","version":"0.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T20:07:41Z"}} />
+
+Esta integración conecta Gladys con sus **cámaras IP Foscam**, directamente
+en su red local: imágenes de las cámaras, alarmas de movimiento, persona y
+sonido, detección de movimiento activada o no, visión nocturna y, en los
+modelos motorizados, giro / inclinación y posiciones guardadas.
+
+Habla con cada cámara mediante su API HTTP integrada (la "CGI" de Foscam).
+Sin nube Foscam, sin cuenta Foscam, sin conexión a internet: el distintivo
+de transporte de cada cámara indica **local**.
+
+## Cámaras compatibles
+
+Las cámaras Foscam **HD**, que comparten la misma API: FI98xx y FI99xx,
+R2 / R4 / R5, C1 / C2 / C5, G2 / G4, SD2 / SD4, X1 / X2 / X5 y la mayoría de
+los modelos actuales de interior y exterior.
+
+No compatibles:
+
+- los antiguos modelos MJPEG (FI8xxx, puerto 80): su API es otra;
+- los modelos que solo funcionan con la app y la nube de Foscam (algunas
+  cámaras de batería): no responden en la red local.
+
+En caso de duda, el botón **Probar la conexión** le dice en segundos si una
+cámara responde.
+
+## Antes de empezar
+
+1. **Asigne una dirección IP fija a cada cámara**, en su router (reserva
+   DHCP) o en la cámara (_Ajustes → Red → Configuración IP_). La integración
+   identifica cada cámara por su dirección MAC: una nueva dirección no hace
+   perder la cámara, pero hay que volver a escribirla en la configuración.
+2. **Anote el puerto HTTP** de la cámara: _Ajustes → Red → Puerto_, el
+   **puerto HTTP**. De fábrica es **88**.
+3. **Cree un usuario dedicado** en cada cámara (_Ajustes → Sistema → Gestión
+   de cuentas_), con el mismo nombre y contraseña en todas si es posible:
+   - rol **administrador** si quiere activar o desactivar la detección de
+     movimiento y cambiar la visión nocturna desde Gladys;
+   - rol **operador** en otro caso (imágenes, alarmas, PTZ).
+4. **Configure la detección en la cámara**: _Ajustes → Alarma → Detección de
+   movimiento_ (y _Detección de sonido_, _Detección humana_ en los modelos que
+   la tienen). La cámara decide qué es una detección — zonas, sensibilidad,
+   horario; la integración lee sus alarmas.
+
+## Configuración
+
+| Campo                           | Qué poner                                                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Cámaras**                     | La dirección de cada cámara, ver abajo                                                                    |
+| **Usuario**                     | El usuario de las cámaras (`admin` por defecto)                                                           |
+| **Contraseña**                  | Su contraseña                                                                                             |
+| **Actualización de imagen (s)** | Segundos entre dos imágenes enviadas a Gladys, 60 por defecto, mínimo 5. `0` no envía ninguna por sí sola |
+| **Lectura de alarmas (s)**      | Segundos entre dos lecturas de las alarmas de la cámara, 2 por defecto                                    |
+| **Paso PTZ (ms)**               | Cuánto dura un movimiento antes de que la integración lo detenga, 800 por defecto, 5000 como máximo       |
+
+### La lista de cámaras
+
+Escriba las direcciones IP, separadas por comas (o punto y coma, o una por
+línea):
+
+```
+192.168.1.20, 192.168.1.21
+```
+
+Añada `:puerto` si el puerto HTTP no es 88, y `Nombre=` delante para elegir
+el nombre de la cámara en Gladys (si no, se usa el nombre guardado en la
+cámara):
+
+```
+Entrada=192.168.1.20, Jardín=192.168.1.21:8080
+```
+
+Una cámara que necesita **su propio usuario o contraseña**, o cuyas
+capacidades hay que forzar, va en una lista JSON (todo el campo es entonces
+esa lista):
+
+```json
+[
+  { "host": "192.168.1.20", "name": "Entrada" },
+  { "host": "192.168.1.22", "port": 88, "name": "Garaje", "username": "gladys", "password": "…" },
+  { "host": "192.168.1.23", "name": "Salón", "ptz": true, "zoom": true }
+]
+```
+
+| Clave      | Significado                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------- |
+| `host`     | Dirección IP o nombre de host (obligatorio)                                               |
+| `port`     | Puerto HTTP, 88 por defecto                                                               |
+| `name`     | Nombre en Gladys                                                                          |
+| `username` | Usuario de esta cámara, en lugar del de la configuración                                  |
+| `password` | Su contraseña. Prefiera el campo **Contraseña**: este no se oculta en el formulario       |
+| `ptz`      | `true` / `false` para forzar los controles de giro e inclinación (si no, se detectan)     |
+| `zoom`     | `true` para los raros modelos con zoom motorizado: añade Acercar / Alejar a los controles |
+
+Una entrada ilegible (error en la dirección, puerto fuera de rango, la misma
+cámara dos veces) se ignora, y **Probar la conexión** indica cuál y por qué.
+
+## En Gladys
+
+Una cámara aparece en el **Descubrimiento** en cuanto ha respondido una vez.
+Sus funciones (con nombre en inglés al crearse; puede renombrarlas en
+Gladys):
+
+| Función                            | Qué hace                                                                                                        |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Image** (imagen)                 | La imagen de la cámara, renovada cada _Actualización de imagen_ segundos y cada vez que Gladys pide una         |
+| **Enabled in Gladys** (activada)   | Apagada: Gladys deja de mostrar la cámara, y la integración deja de enviar sus imágenes y detecciones           |
+| **Motion** (movimiento)            | 1 mientras la cámara indica movimiento (o una persona), 0 si no                                                 |
+| **Motion detection** (detección)   | La detección de movimiento de la cámara, activada (1) o no (0). Se puede cambiar desde Gladys                   |
+| **Night vision** (visión nocturna) | Los LED infrarrojos, encendidos o apagados. Cambiarla desde Gladys los fuerza; `set_night_vision` vuelve a auto |
+| **Move** (motorizadas)             | Girar izquierda / derecha, inclinar arriba / abajo (y zoom, si se declara)                                      |
+| **Preset** (motorizadas)           | Las posiciones guardadas en la cámara, por nombre                                                               |
+
+**Enabled in Gladys** es un interruptor de privacidad del lado de Gladys: la
+cámara sigue funcionando, grabando en su tarjeta SD y enviando sus propias
+notificaciones.
+
+### Imágenes
+
+Gladys admite imágenes de 150 KB como máximo. Una instantánea Foscam es una
+imagen del flujo principal (a menudo 200 a 400 KB en 1080p): la integración
+la reduce antes de enviarla, conservando la proporción.
+
+Cada detección envía además una imagen reciente al instante: una escena que
+envía la imagen de la cámara en una detección envía la imagen de esa
+detección.
+
+### Cámaras motorizadas
+
+La API Foscam no tiene movimiento "de un paso": un movimiento dura hasta que
+se detiene. La integración detiene por tanto **cada movimiento** tras
+_Paso PTZ_ milisegundos (5 s como máximo), para que una parada perdida nunca
+deje la cámara forzando contra su tope. Alargue el paso para un movimiento
+más amplio.
+
+Las posiciones se leen al descubrir la cámara. Tras añadir o renombrar una
+en la cámara, lance una nueva búsqueda en el **Descubrimiento**: la lista se
+actualiza sin volver a crear la cámara.
+
+## Probar la conexión
+
+El botón **Probar la conexión** de la pantalla de configuración consulta
+cada cámara, ahora mismo. Para cada una obtiene el modelo, el firmware y si
+es motorizada — o el motivo exacto por el que no responde:
+
+| Mensaje                          | Qué hacer                                                                                   |
+| -------------------------------- | ------------------------------------------------------------------------------------------- |
+| nada responde en esta dirección  | Compruebe la dirección IP y el puerto HTTP; la cámara debe estar en la misma red que Gladys |
+| sin respuesta a tiempo           | La cámara está apagada, reiniciándose, o su Wi-Fi es demasiado débil                        |
+| usuario o contraseña incorrectos | Compruébelos en la cámara. Tras varios fallos la cámara bloquea la cuenta unos minutos      |
+| esta cuenta no tiene permiso     | Dé al usuario el rol de administrador u operador                                            |
+| no la API de una cámara Foscam   | Otra cosa responde en ese puerto: compruebe el puerto HTTP                                  |
+
+Tras una contraseña errónea, la integración deja de consultar esa cámara
+durante cinco minutos: insistir bloquearía la cuenta.
+
+## Escenas y panel (Gladys 5.1+)
+
+### Disparadores de escena
+
+- **Detección de cámara** (`detection`): una cámara disparó una alarma.
+  Filtre por cámara y por lo detectado: `motion` (movimiento), `person`
+  (persona), `sound` (sonido), `io` (la entrada de alarma de la cámara). La
+  escena lee `{{triggerEvent.data.kind}}` y
+  `{{triggerEvent.data.camera_name}}`. Un evento por alarma, nunca uno por
+  lectura.
+- **Cámara caída o recuperada** (`camera_connection`): una cámara dejó de
+  responder (tres lecturas seguidas, o una contraseña errónea), o vuelve a
+  responder. La escena lee `{{triggerEvent.data.state}}` (`offline` /
+  `online`), `{{triggerEvent.data.camera_name}}` y
+  `{{triggerEvent.data.reason}}`.
+
+La función **Motion** alimenta también el disparador estándar "estado de un
+dispositivo" de Gladys.
+
+### Acciones de escena
+
+Cada acción devuelve un resultado que las acciones siguientes pueden
+comprobar; una cámara que no puede ejecutarla devuelve `false` en lugar de
+detener la escena.
+
+| Acción                                                      | Campos                                   | Resultado  |
+| ----------------------------------------------------------- | ---------------------------------------- | ---------- |
+| **Tomar una instantánea** (`take_snapshot`)                 | cámara                                   | `captured` |
+| **Mover cámara a una posición** (`goto_preset`)             | cámara, nombre de la posición            | `moved`    |
+| **Activar o desactivar detección** (`set_motion_detection`) | cámara, activada                         | `applied`  |
+| **Ajustar visión nocturna** (`set_night_vision`)            | cámara, automático / encendida / apagada | `applied`  |
+| **Reiniciar una cámara** (`reboot_camera`)                  | cámara                                   | `rebooted` |
+
+`take_snapshot` seguido de la acción de Gladys **Enviar imagen de cámara**
+envía una foto tomada en ese mismo instante. Escenas típicas: activar la
+detección de todas las cámaras cuando la casa está vacía; llevar la cámara a
+su posición "puerta" cuando suena el timbre.
+
+### Widgets
+
+- **Cámara Foscam**: una cámara, elegida en los ajustes del widget: su última
+  imagen, el mosaico de movimiento en directo, conexión, detección, visión
+  nocturna, última detección, y botones para actualizar la imagen y activar o
+  desactivar la detección.
+- **Cámaras Foscam**: todas las cámaras de un vistazo (en línea, sin
+  conexión, en alarma), con un botón que actualiza todas las imágenes.
+
+## Seguridad
+
+- La API Foscam recibe el usuario y la contraseña en la dirección de cada
+  petición, en HTTP simple: cruzan su red local en claro. Use un **usuario
+  dedicado**, no la cuenta principal de la cámara, y mantenga las cámaras en
+  una red de confianza.
+- **No exponga las cámaras a internet** (redirección de puertos, UPnP): la
+  integración no lo necesita. Desactive UPnP y P2P en la cámara si no usa la
+  app de Foscam.
+- Mantenga el firmware de las cámaras al día.
+- Gladys guarda la contraseña en un campo secreto; la integración nunca la
+  escribe en sus registros ni en sus propios archivos.
+
+## Solución de problemas
+
+- **La cámara no aparece en el Descubrimiento**: nunca ha respondido. Lance
+  **Probar la conexión**.
+- **Motion se queda en 0**: la detección de movimiento debe estar activada y
+  configurada en la cámara (zonas, horario). La función **Motion detection**
+  indica si está activada.
+- **"Motion detection" no se puede cambiar**: el usuario necesita el rol de
+  administrador.
+- **La imagen llega tarde**: baje **Actualización de imagen**; Gladys admite
+  como máximo 12 imágenes por minuto y cámara, así que 5 s es el mínimo.
+- **Registros detallados**: están en los registros de la integración
+  (Gladys, Integraciones, Foscam, registros).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Foscam te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | La integración habla directamente con sus cámaras Foscam en su red local, a través de su API HTTP (CGI): sin nube Foscam, sin cuenta, sin internet. Asigne una dirección IP fija a cada cámara en su router y escriba esas direcciones abajo. Cree un usuario dedicado en cada cámara (rol operador) en lugar de usar la cuenta admin. |
+| Cámaras | `string` | Sí | Direcciones IP de sus cámaras, separadas por comas. Añada :puerto si no es 88, y Nombre= delante para nombrar una cámara, p. ej. Entrada=192.168.1.20, Jardín=192.168.1.21:8080. También se acepta un array JSON, para una cámara con sus propias credenciales (vea la documentación). |
+| Usuario | `string` | Sí | Usuario de las cámaras (el mismo en todas, salvo que se indique por cámara en una lista JSON). |
+| Contraseña | `secret` | No | Contraseña de ese usuario. Cuidado: tras varias contraseñas erróneas, una cámara Foscam bloquea la cuenta un tiempo. |
+| Actualización de imagen (s) | `number` | No | Segundos entre dos imágenes enviadas a Gladys (mínimo 5). 0 no envía ninguna: Gladys pide entonces una imagen solo al abrir la cámara. |
+| Lectura de alarmas (s) | `number` | No | Segundos entre dos lecturas de las alarmas de la cámara (movimiento, persona, sonido). 2 basta para verlas todas. |
+| Paso PTZ (ms) | `number` | No | Cámaras motorizadas: cuánto dura un movimiento antes de que la integración lo detenga, en milisegundos (5000 como máximo). |
+
+## Cómo instalar Foscam en Gladys
+
+1. En Gladys, abre **Integraciones**: Foscam aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-foscam:0.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-foscam](https://github.com/prohand/gladys-foscam).
+
+Foscam requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Foscam es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-foscam) — [fuente de esta documentación](https://github.com/prohand/gladys-foscam/blob/HEAD/docs/es.md)

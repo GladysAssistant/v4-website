@@ -1,0 +1,193 @@
+---
+title: "Ambient Weather Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Ambient Weather"
+description: "Unofficial connector: your Ambient Weather stations and public ones nearby. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ambient-weather.png"
+keywords:
+  - "ambient weather"
+  - "ambient weather smart home"
+  - "gladys ambient weather"
+  - "ambient weather gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ambient-weather instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Ambient Weather","description":"Unofficial connector: your Ambient Weather stations and public ones nearby.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ambient-weather","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ambient-weather.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T22:08:39Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial connector, not affiliated with Ambient Weather.** It brings the
+sensors of your [Ambient Weather](https://ambientweather.net) stations into
+Gladys, read through the official Ambient Weather API (REST and realtime).
+Optionally, it also offers the **public stations of the Ambient Weather
+Network** around your houses, without any account.
+
+## What you get
+
+| Device in Gladys          | Sensors                                                                                                                                                                                                                                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Station** (outdoor)     | temperature, humidity, relative and absolute pressure, wind speed, gust, max gust today, wind direction (and their 10-minute averages), rain rate, rain event / today / 24 h / week / month / year / total, UV index, solar radiation, low battery of the outdoor sensor and of the rain gauge |
+| **Station – indoor**      | indoor temperature and humidity, low battery of the console                                                                                                                                                                                                                                    |
+| **Station – sensor 1…10** | temperature and humidity of each extra sensor, low battery                                                                                                                                                                                                                                     |
+| **Station – soil 1…10**   | soil moisture and soil temperature of each soil probe, low battery                                                                                                                                                                                                                             |
+| **Public station**        | the outdoor weather of a public station nearby (no battery, no indoor value)                                                                                                                                                                                                                   |
+
+A station only gets the sensors it reports: nothing is created for a sensor
+you do not own. Each group is its own device, so the indoor console and the
+outdoor array can sit in different rooms. The solar radiation is shown in
+lux (W/m² ÷ 0.0079, the usual daylight approximation): Gladys has no W/m²
+unit. Device and sensor names are in English; rename them at creation if
+you like.
+
+## Setup
+
+1. On [ambientweather.net](https://ambientweather.net/account/keys), open
+   **Account → API Keys** and create:
+   - an **API key** (the key of your account),
+   - an **Application key** (the developer key; a short description such as
+     "Gladys" is enough).
+2. Install the integration from the Gladys catalog (Gladys 5.1 or newer) and
+   accept the access to the **location of your houses** (only used for the
+   public stations, and only when you turn them on).
+3. In the **Configuration** screen, paste both keys and save.
+4. Click **Test Ambient Weather**: the message lists your stations and their
+   last reading.
+5. Open the **Discovery** tab and add the devices you want. Their values
+   arrive as soon as they are created.
+
+Public stations only? Leave both keys empty and turn on **Public stations
+nearby**.
+
+## Configuration
+
+- **API key**, **Application key**: both needed for the stations of your
+  account. They are stored as secrets and never written in the logs.
+- **Units** (metric by default): only the temperatures change, °C (metric)
+  or °F (imperial). Wind is always in km/h, rain totals in mm, the rain rate
+  in mm/h, the rain of the last 24 hours in mm per day and the pressure in
+  hPa: Gladys accepts neither mph for its wind sensors nor inches for its
+  rain sensors (and has no inHg), so imperial stays limited to °F. A device
+  keeps the unit it was created with: after a switch, its values are still
+  sent in that unit; delete and re-create it to change it.
+- **Account read interval** (5 minutes by default, 1 to 60): one request to
+  the API each time.
+- **Realtime updates** (on by default): a connection to the realtime API of
+  Ambient Weather, so every new reading arrives as soon as the station
+  uploads it, between two reads.
+- **Public stations nearby** (off by default), **search radius** (10 km),
+  **public stations offered per house** (3) and their **read interval**
+  (10 minutes, 5 at least).
+
+## How often Ambient Weather is called
+
+- The API allows **1 request per second per API key** (and 3 per second per
+  Application key), and answers "429" beyond. The integration never sends
+  two requests less than 1.1 s apart, whatever triggers them (the periodic
+  read, the Discovery tab, the test button).
+- The account: one request every "account read interval", plus one at
+  startup and at each test. Refused keys: one try every 30 minutes until you
+  change the configuration. A "429": the next read waits the delay Ambient
+  asks for (Retry-After), one minute otherwise.
+- The realtime link: one connection, kept open, reconnected after about 5 s,
+  then 10 s, 20 s… up to 5 minutes (±20 % at random); the delay goes back to
+  5 s once a link held for a minute. A handshake must finish within 30 s;
+  after three failures the other version of the protocol (Engine.IO v3 or
+  v4) is tried.
+- The public stations: one request per located house every "read interval"
+  (100 stations at most), plus one per created public station the search
+  did not return, one at a time.
+
+Only the values that changed are sent to Gladys (plus every unchanged value
+every 30 minutes), and never more than 250 per minute (the rest follows a
+minute later), below the 300 states per minute Gladys accepts. A reading
+more than an hour old (a station offline) is not sent.
+
+## Public stations
+
+The public stations are those the owners chose to share on the Ambient
+Weather Network map. They are searched in a square around each located
+house (Settings → Houses), then filtered: within the radius, outdoor, a
+reading of less than an hour, a temperature, not one of your own stations.
+The nearest ones are offered in the Discovery tab; those you create keep
+their values, read by their address when the search no longer returns them.
+
+The public map service is **not a documented API**: Ambient Weather may
+change it without notice. It is the one the ambientweather.net map uses, and
+the one aioambient and Home Assistant's "Ambient Weather Network"
+integration read.
+
+## Troubleshooting
+
+- **"Ambient Weather refused the keys"**: check both keys on the API Keys
+  page (an Application key is not an API key).
+- **"Ambient Weather asks to slow down (429)"**: another tool uses the same
+  API key at the same time; the next read retries by itself.
+- **A device shows no value**: the station did not upload for more than an
+  hour, or the sensor is not reported by the API.
+- **No public station**: the house needs a location in Gladys, and the
+  network is sparse outside North America: try a larger radius.
+- Logs: the log level is set with the `LOG_LEVEL` variable.
+
+## Privacy
+
+With the public stations off (the default), no location leaves Gladys. On,
+the coordinates of each house, rounded to 2 decimals (about 1 km), are sent
+to Ambient Weather as a search box. The keys travel only to Ambient Weather,
+over HTTPS.
+
+## Credits
+
+Built after the official
+[Ambient Weather API documentation](https://ambientweather.docs.apiary.io/)
+and [aioambient](https://github.com/bachya/aioambient) (MIT, Aaron Bach), the
+Python client Home Assistant uses: endpoints, field names, rate limits,
+realtime protocol, public stations. Ambient Weather is a trademark of its
+owner; this connector is free and unofficial.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Ambient Weather in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Ambient Weather in Gladys | `section` | Nein | Unofficial connector, not affiliated with Ambient Weather. It brings the sensors of your Ambient Weather stations into Gladys (temperature, humidity, pressure, wind and gusts, rain rate and totals, UV, solar radiation, indoor and extra sensors, soil probes, low batteries), read through the official API every few minutes and pushed in realtime in between. Create the two keys on ambientweather.net (Account → API Keys): an API key and an Application key. Optionally, it also offers the public stations of the Ambient Weather Network around your houses, without any account. |
+| API key | `secret` | Nein | The key of your account (Account → API Keys → Create API Key). Leave empty to use only the public stations. |
+| Application key | `secret` | Nein | The developer key of the same page (Create Application Key, a short description is enough). |
+| Units | `select` | Nein | Only the temperatures change: °C (metric) or °F (imperial). Wind is always in km/h, rain in mm (mm/h for the rate, mm per day for the last 24 hours) and pressure in hPa, the units Gladys has. A device keeps the unit it was created with. |
+| Account read interval (minutes) | `number` | Nein | How often the stations of the account are read through the API (one request each time). The realtime pushes come in between. |
+| Realtime updates | `boolean` | Nein | Keeps a connection to the realtime API of Ambient Weather: every new reading of your stations arrives as soon as it is uploaded. |
+| Public stations (Ambient Weather Network) | `section` | Nein | Offers in the Discovery tab the nearest public stations around each located house of Gladys, outdoor values only. The coordinates of the houses, rounded to about 1 km, are sent to Ambient Weather to find them. The public map service is not a documented API: it may change without notice. |
+| Public stations nearby | `boolean` | Nein |  |
+| Search radius (km) | `number` | Nein |  |
+| Public stations offered per house | `number` | Nein |  |
+| Public stations read interval (minutes) | `number` | Nein |  |
+
+## So installierst du Ambient Weather in Gladys
+
+1. Öffne in Gladys **Integrationen**: Ambient Weather erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ambient-weather:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-ambient-weather](https://github.com/LM1LC3N7/gladys-ambient-weather).
+
+Ambient Weather benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Ambient Weather ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-ambient-weather) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-ambient-weather/blob/HEAD/docs/en.md)

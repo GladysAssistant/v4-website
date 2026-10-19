@@ -1,0 +1,250 @@
+---
+title: "Tractive smart home integration, free and open source"
+sidebar_label: "Tractive"
+description: "Tractive GPS trackers for dogs and cats: at home or not, distance, battery, activity, buzzer. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-tractive.png"
+keywords:
+  - "tractive"
+  - "tractive smart home"
+  - "gladys tractive"
+  - "tractive gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-tractive instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tractive","description":"Tractive GPS trackers for dogs and cats: at home or not, distance, battery, activity, buzzer.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-tractive","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-tractive.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T14:20:52Z"}} />
+
+Follow your dog's or your cat's **Tractive GPS tracker** in Gladys: is it at
+home, how far away, battery, activity of the day, and the buzzer and the light
+to find it. Unofficial integration, not affiliated with Tractive.
+
+> **Developed without the hardware: feedback welcome.** The integration is
+> built on the API the Tractive app uses, as the open source aiotractive
+> library and the Home Assistant integration read it, and tested against their
+> recorded answers, not against a real tracker. Please report what works and
+> what does not in the
+> [issues](https://github.com/guim31/gladys-tractive/issues).
+
+## Overview
+
+- **One device per pet** with a Tractive tracker on your account: battery,
+  charging, distance from home, position accuracy, at home or not, tracker
+  online, power saving, activity and rest of the day, daily activity goal.
+- **Commands**: live tracking, buzzer and light (LED), when the tracker and
+  the subscription allow them.
+- **Real time**: battery, positions and switches arrive as they happen, through
+  the event stream the Tractive app listens to.
+- **Scene triggers**: _Pet left home_, _Pet came home_, _Tractive battery low_.
+- **Dashboard widget** _Tractive pet_, with buzzer and light buttons.
+
+The position itself (latitude, longitude) is never stored in Gladys, which has
+no feature for it: Gladys keeps the **distance to your house**, computed by the
+integration.
+
+## Requirements
+
+- Gladys Assistant **5.2.0** or later.
+- A Tractive tracker with an **active subscription**, and the e-mail address and
+  password of the Tractive account it belongs to. An account created with
+  "Sign in with Apple" or Google has no password: set one in the Tractive app
+  first (account settings).
+- For the distance and "at home": a Gladys house **with a location**
+  (Settings → Houses, place the house on the map).
+- Gladys must reach the Internet (`graph.tractive.com`,
+  `aps-api.tractive.com`, `channel.tractive.com`).
+
+## Configuration
+
+1. In Gladys, open **Integrations → Install from GitHub** (or the catalog) and
+   install **Tractive**. The install screen asks to read the location of your
+   houses: it is used to compute the distance.
+2. In **Configuration**, fill in:
+   - **E-mail address** and **Password** of your Tractive account;
+   - **House**: the house the distance is measured from (empty: the first
+     house that has a location);
+   - **Home radius (m)**: inside this distance the pet is at home (100 m by
+     default). It counts as gone once 20 % farther (25 m at least), so GPS
+     jitter at the edge does not make it come and go;
+   - **Low battery threshold (%)**: 15 % by default;
+   - **Refresh interval (min)**: the full refresh (15 min by default, 5 to 60);
+   - **Language of the feature names**: French by default, also used for the
+     command errors.
+3. Save, then use **Test the connection**: it lists the pets found.
+4. Open the **Discovery** tab and add your pets.
+
+The integration keeps a session token in its own `/data` volume, so a restart
+does not log in again. The password stays in the Gladys configuration.
+
+## What each device does
+
+One device per pet, named after the pet. Features depend on the tracker: a
+tracker without a light has no light feature, for example.
+
+| Feature                 | What it shows                                                   |
+| ----------------------- | --------------------------------------------------------------- |
+| **Battery**             | Battery level of the tracker (%)                                |
+| **Charging**            | 1 while the tracker charges (trackers that report it)           |
+| **Distance from home**  | Distance between the last position and the chosen house (m)     |
+| **Position accuracy**   | Uncertainty of the last position, as given by Tractive (m)      |
+| **At home**             | 1 inside the home radius, 0 outside                             |
+| **Tracker online**      | 0 when the tracker stopped reporting or was switched off        |
+| **Power saving**        | 1 while the tracker saves power (asleep on the home Wi-Fi zone) |
+| **Activity today**      | Active minutes since midnight                                   |
+| **Rest today**          | Calm minutes since midnight (trackers with sleep tracking)      |
+| **Daily activity goal** | The goal set in the Tractive app (minutes)                      |
+| **Live tracking**       | Switch: live tracking mode, a position every few seconds        |
+| **Buzzer**              | Switch: the tracker beeps, to find the pet nearby               |
+| **Light (LED)**         | Switch: the tracker's light, to see the pet in the dark         |
+
+### Commands
+
+**Live tracking**, **Buzzer** and **Light (LED)** are sent to the tracker
+through Tractive. The buzzer and the light stop by themselves after a while on
+the tracker; Gladys shows them off as soon as Tractive says so. Live tracking
+drains the battery: turn it off when the pet is found.
+
+A command is refused with a clear message when:
+
+- the tracker sleeps in its **power saving zone** (home Wi-Fi): it does not
+  take commands there;
+- the **subscription** or the tracker model does not allow the function;
+- the integration is not connected to Tractive.
+
+Nothing here opens, unlocks or disarms anything.
+
+## Dashboard widget
+
+Add the **Tractive pet** widget to a dashboard and choose the pet in its
+settings. It shows:
+
+- the distance from home and the battery (live);
+- the activity of the day against the daily goal;
+- at home or not, how old the last position is, and the tracker state (online,
+  offline, power saving);
+- a **buzzer** button and a **light** button (when the tracker has them). A
+  running function shows a check mark: tap again to stop it.
+
+## Scene triggers
+
+| Trigger                  | When                                                                                              | Variables                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------- | -------------------------------- |
+| **Pet left home**        | The pet goes beyond the home radius plus the margin                                               | pet name, distance from home (m) |
+| **Pet came home**        | The pet comes back inside the home radius                                                         | pet name, distance from home (m) |
+| **Tractive battery low** | The battery drops below the threshold, once (again only after 5 points above), not while charging | pet name, battery (%)            |
+
+Each trigger can be limited to one pet (empty: any pet). They add to the
+**At home** and **Battery** features what a device state cannot say: one event
+per real crossing, the pet's name for a message, positions less precise than
+500 m ignored (a cell-tower fix never makes a sleeping cat "leave"), nothing on
+the first value after a restart.
+
+## Connection test
+
+The **Test the connection** button logs in to Tractive with the saved
+configuration and answers with the pets found, whether real-time updates are
+connected, and whether a located house is missing. It is also how to retry
+after Tractive refused the password, once it is fixed.
+
+## Scene examples
+
+- **The dog ran away**: trigger _Pet left home_ for the dog → send a message
+  "\{\{triggerEvent.data.pet_name\}\} left home, \{\{triggerEvent.data.distance\}\} m
+  away" → turn on _Live tracking_.
+- **Welcome home**: trigger _Pet came home_ → turn off _Live tracking_ and
+  send "\{\{triggerEvent.data.pet_name\}\} is home".
+- **Charge the tracker**: trigger _Tractive battery low_ → send a message
+  "Charge \{\{triggerEvent.data.pet_name\}\}'s tracker
+  (\{\{triggerEvent.data.battery\}\} %)".
+- **Night check**: every evening at 10 pm, if _At home_ is 0 → send a message.
+
+## Refresh and API limits
+
+Tractive offers no public API: the integration uses the one of the Tractive
+app, as Home Assistant does, and takes care not to overload it.
+
+- **Real time first**: one long-lived connection to the Tractive event stream
+  carries battery, positions and switches. Lost, it reconnects after 10 s, then
+  up to every 5 minutes while it fails.
+- **Full refresh** every 15 minutes (configurable, 5 to 60): tracker, battery,
+  position and activity of the pets **added to Gladys** only, one request after
+  the other, 2 seconds between two pets. The Gladys scheduler is not relied on:
+  the integration runs its own timer.
+- **One login** per token lifetime: the token is kept in `/data` and renewed
+  an hour before it expires. A refused password is not retried until you change
+  the configuration or press **Test the connection**.
+- A "too many requests" answer (429) is retried after 8 seconds, then up to 60
+  seconds, three times at most.
+- Only changed values are sent to Gladys, plus a reminder every 6 hours of the
+  unchanged ones.
+
+## Troubleshooting
+
+- **"Tractive refused the e-mail address or the password"**: check them in the
+  Tractive app or on my.tractive.com. A Google or Apple account needs a
+  password set in the Tractive app.
+- **No pet in Discovery**: the pet needs a tracker assigned on _your_ account;
+  a tracker shared with you by another account is not listed. Press **Test
+  the connection**.
+- **Distance and "At home" stay empty**: give the house a location
+  (Settings → Houses), or choose a located house in the configuration.
+- **A command fails**: see the message; in the home Wi-Fi zone the tracker
+  sleeps and does not take commands.
+- **Values look old**: the tracker reports less often in power saving; check
+  the tracker in the Tractive app. `LOG_LEVEL=debug` on the integration shows
+  every update in its logs.
+
+## Limitations
+
+- **Developed without the hardware**: tested against recorded API answers
+  only.
+- The API is the Tractive app's, not a public one: Tractive may change it
+  without notice and break the integration until it is updated.
+- No map: Gladys has no feature for a position, only the distance to a house.
+- The switch states (buzzer, light, live tracking) are only known once the
+  real-time stream reports them.
+- The activity is the one of the day, as Tractive counts it.
+- One Tractive account per Gladys.
+- Geofences, the Tractive history and the health alerts of the app are not
+  available.
+
+## Configuration settings
+
+These are the settings Tractive asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Tractive account | `section` | No | The e-mail address and password you use in the Tractive app. A tracker with an active subscription is needed. Unofficial integration, not affiliated with Tractive. |
+| E-mail address | `string` | Yes |  |
+| Password | `secret` | Yes | Kept in the Gladys configuration only; the integration stores a session token in its /data volume, never the password. |
+| Home | `section` | No | The distance and "at home" are computed in Gladys from the location of a Gladys house (Settings, Houses). The position itself is never stored in Gladys. |
+| House | `select` | No | Empty: the first house that has a location. |
+| Home radius (m) | `number` | No | Inside this distance the pet is at home. It counts as gone once 20 % farther (25 m at least), against GPS jitter. |
+| Low battery threshold (%) | `number` | No | Below this level, the "Tractive battery low" scene trigger fires once. |
+| Refresh interval (min) | `number` | No | Positions and battery arrive in real time. This full refresh reads the activity and covers the moments without real time. |
+| Language of the feature names | `select` | No | Used for the devices added from now on, and for the command errors. |
+
+## How to install Tractive in Gladys
+
+1. In Gladys, open **Integrations**: Tractive appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-tractive:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-tractive](https://github.com/guim31/gladys-tractive).
+
+Tractive requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Tractive is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-tractive) — [source of this documentation](https://github.com/guim31/gladys-tractive/blob/HEAD/docs/en.md)

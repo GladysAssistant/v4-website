@@ -1,0 +1,168 @@
+---
+title: "Tautulli Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Tautulli"
+description: "Your Plex server through Tautulli: streams, transcoding, bandwidth, who plays what. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tautulli.png"
+keywords:
+  - "tautulli"
+  - "tautulli smart home"
+  - "gladys tautulli"
+  - "tautulli gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-tautulli instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tautulli","description":"Your Plex server through Tautulli: streams, transcoding, bandwidth, who plays what.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tautulli","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tautulli.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T16:32:06Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Follow your **Plex** server in Gladys through **Tautulli**: streams in
+progress, transcoding, bandwidth, who plays what, and scenes that start when
+a playback starts, pauses, resumes or stops.
+
+> **Unofficial integration**, not affiliated with Tautulli nor Plex. It has
+> **never been tested against a real Tautulli** yet: it was built from the API
+> reference of Tautulli and the pytautulli library. Feedback is welcome.
+
+The integration **only reads**: it never stops a stream nor changes anything
+in Tautulli or Plex.
+
+## What you need
+
+- Tautulli v2 reachable from Gladys (same network), with its API enabled.
+- Its API key: in Tautulli, **Settings → Web Interface → API**, tick
+  **Enable API**, then copy the **API key** (32 characters).
+
+## Setup
+
+1. Install the integration from the store.
+2. **Tautulli address**: `192.168.1.10:8181` (a bare address is read as
+   `http://` on port 8181, Tautulli's own). With `http://` or `https://` and
+   no port, port 80 or 443 is used (Tautulli behind a reverse proxy; a path
+   such as `/tautulli` is kept). Do not paste `?apikey=…`: the key has its own
+   field.
+3. **API key**: paste it. It is kept by Gladys in its database (masked in the
+   interface, not encrypted), never shown again, and sent only to Tautulli.
+4. **Users to follow** (optional): Plex user names, friendly names or user ids,
+   separated by commas (10 at most). Each becomes a device.
+5. Save, then press **Test the connection**.
+6. In the **Discovery** tab, create the devices you want.
+
+## Devices
+
+**Plex (Tautulli)**, one per integration:
+
+| Feature                  | Type               | Meaning                                                |
+| ------------------------ | ------------------ | ------------------------------------------------------ |
+| Streams                  | counter            | streams in progress                                    |
+| Streams transcoding      | counter            | streams Plex transcodes                                |
+| Streams in direct play   | counter            | streams played as they are                             |
+| Streams in direct stream | counter            | streams remuxed (container changed only)               |
+| Bandwidth, LAN, WAN      | data rate, kbit/s  | as Tautulli computes it                                |
+| Plex reachable           | binary (read only) | 1: Tautulli read the activity of Plex; 0: it could not |
+
+**Plex: \<user>**, one per followed user: **Streams** (counter) and **Now
+playing** (text: the title, "(+1)" when several, "—" when nothing plays).
+
+## Scene trigger
+
+**Plex playback started, paused, resumed or stopped**, with two optional
+filters: the event, and a followed user. The variables `event`, `user_name`,
+`title`, `media_type` and `player` can be used in the actions (a message, for
+example).
+
+The activity is read at the chosen pace (30 s by default): a scene starts up
+to one interval after the event, and a pause or a stop shorter than the
+interval may not be seen. Nothing fires for the streams already running when
+the integration starts or when Tautulli comes back after an outage.
+
+## Certificate (https only)
+
+By default an https address needs a certificate from a known authority. For a
+self-signed certificate:
+
+- tick **Accept the self-signed certificate**: the certificate seen at the
+  first connection is remembered; the API key goes to whoever answers that
+  first connection. A different certificate later is refused until you press
+  **Trust the new certificate**;
+- or, safer, type its **SHA-256 fingerprint**:
+  `openssl s_client -connect 192.168.1.10:8181 </dev/null | openssl x509 -noout -fingerprint -sha256`.
+
+## Security and privacy
+
+- The integration sends the key **in the URL** of each request
+  (`?apikey=`): the one method every version of Tautulli accepts (the
+  `X-Api-Key` header exists only since Tautulli 2.18.0; using it is planned).
+  The integration never writes a URL, the key nor a message of Tautulli in its
+  logs, but a **reverse proxy** in front of Tautulli may log the URLs, key
+  included: reach Tautulli directly, or turn off the proxy's access logs for
+  `/api/v2`. Over `http://` the key crosses your network in clear: keep
+  Tautulli on your local network, or use https.
+- The key gives full access to the API of Tautulli (which can also terminate
+  streams): the integration only uses `get_activity` and `get_users`.
+- Titles and user names go to Gladys (devices, scene variables): only for the
+  users you follow on the devices; the trigger carries the name of any user.
+
+## Errors and limits
+
+- **Key refused** (wrong or regenerated): Gladys stops and never retries by
+  itself; paste the current key and save, or press **Test the connection**.
+- **API off**: enable it in Tautulli; Gladys retries (30 s to 10 min).
+- **HTTP 429 or a server error (5xx)**: every request pauses (1 min to 6 h,
+  `Retry-After` honoured), even across a restart; **Test the connection**
+  lifts the pause.
+- Tautulli unreachable: retried after 30 s, doubling up to 10 min, never
+  sooner than the chosen interval.
+- **Plex not read** (Plex stopped or unreachable from Tautulli): "Plex
+  reachable" goes to 0, the other figures keep their last value.
+- The list of the users is read every 10 minutes (2 minutes after a failure);
+  a followed user who plays something is found at once.
+- One Tautulli per integration; 10 followed users at most.
+- Not in this version: terminating a stream, the libraries, the history and
+  the statistics of Tautulli.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Tautulli in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| How it works | `section` | Nein | Gladys reads the activity of your Plex server through the API of Tautulli, with its API key, and only reads: it never stops a stream. The server becomes a Gladys device (Discovery tab): streams in progress, transcoding, direct play, direct stream, bandwidth (total, LAN, WAN) and whether Tautulli reaches Plex. Up to 10 Plex users can be followed, one device each (streams, title playing). Unofficial integration, not affiliated with Tautulli nor Plex. |
+| Tautulli address | `string` | Ja | The address of Tautulli on your network. A bare address (no http:\/\/) is read as http on port 8181, Tautulli's own; with http:\/\/ or https:\/\/ and no port, port 80 or 443 (a reverse proxy, a path is kept). Over http the API key crosses your network in clear: prefer https if Tautulli is reached through another network. |
+| API key | `secret` | Ja | In Tautulli: Settings, Web Interface, API (tick "Enable API"). Kept by Gladys in its database, never shown again, sent only to Tautulli, in the query of each request (the one method every Tautulli version accepts; the X-Api-Key header exists only since 2.18.0); never written in a log of Gladys, but a reverse proxy in front of Tautulli may log URLs. |
+| Certificate (https only) | `section` | Nein | With https, the certificate of Tautulli must come from a known authority by default. For a self-signed one: either tick the box below (the certificate seen at the first connection is remembered: the API key goes to whoever answers that first connection), or type its SHA-256 fingerprint (safer: nothing else is ever accepted, not even the first time). A different certificate later is refused before the API key is sent. |
+| Accept the self-signed certificate | `boolean` | Nein | On: the certificate seen at the first connection is trusted and remembered; a different one later is refused until you press "Trust the new certificate". |
+| Certificate fingerprint (SHA-256, optional) | `string` | Nein | Pins this certificate: Tautulli must present exactly it. The fingerprint is shown by your browser (certificate details) or by openssl (see the documentation). |
+| Users and refresh | `section` | Nein | Gladys reads the activity at the pace below (30 seconds by default). A start, pause or stop shorter than this interval may not be seen by the scene trigger. |
+| Users to follow (optional) | `string` | Nein | Plex user names, friendly names or user ids, separated by commas: one device each (10 at most). Empty: none, only the server device. |
+| Refresh | `select` | Ja |  |
+
+## So installierst du Tautulli in Gladys
+
+1. Öffne in Gladys **Integrationen**: Tautulli erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-tautulli:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-tautulli](https://github.com/LM1LC3N7/gladys-tautulli).
+
+Tautulli benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Tautulli ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-tautulli) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-tautulli/blob/HEAD/docs/en.md)

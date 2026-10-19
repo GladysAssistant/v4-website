@@ -1,0 +1,176 @@
+---
+title: "Intégration domotique Google Weather, gratuite et open source"
+sidebar_label: "Google Weather"
+description: "Météo Google Maps Platform : prévisions, alertes officielles, scènes et widgets. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-weather.jpg"
+keywords:
+  - "google weather"
+  - "domotique google weather"
+  - "gladys google weather"
+  - "google weather gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-google-weather instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Weather","description":"Météo Google Maps Platform : prévisions, alertes officielles, scènes et widgets.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-google-weather","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-weather.jpg","type":"weather","version":"0.1.0","gladys_version":">=5.1.1","stars":0,"pushed_at":"2026-10-17T07:46:37Z"}} />
+
+## Présentation
+
+Cette intégration fait de la **Weather API officielle de Google Maps Platform** un fournisseur météo de Gladys. Une fois installée, la carte météo du tableau de bord, l'assistant de chat (« quel temps fera-t-il demain ? ») et le déclencheur de scène d'alerte météo de Gladys l'utilisent à la place du service OpenWeather intégré.
+
+Elle fournit :
+
+- la **météo actuelle** : température, ressenti, humidité, point de rosée, pression, vent et rafales, visibilité, couverture nuageuse, indice UV, jour ou nuit, lever et coucher du soleil ;
+- les **prévisions** : 24 heures et 8 jours dans la météo de Gladys, jusqu'à 10 jours dans le widget ;
+- les **alertes publiques officielles** relayées par Google (MeteoAlarm pour la majeure partie de l'Europe, le DWD, la NOAA…), dans la météo de Gladys et dans deux déclencheurs de scène ;
+- quatre **actions de scène** et trois **widgets** de tableau de bord.
+
+Tout passe par les serveurs de Google (cloud uniquement), avec **votre propre clé API** : Google facture la Weather API au-delà d'un usage gratuit mensuel, et l'intégration est conçue pour rester largement en dessous.
+
+> Cette intégration n'a pas encore été testée avec une vraie clé API : elle suit la documentation de l'API à la lettre. Merci de signaler tout problème.
+
+## Prérequis
+
+- Gladys 5.1.1 ou plus récent.
+- Une maison localisée (Paramètres → Maisons) : les alertes sont vérifiées pour chaque maison localisée.
+- Un compte Google et un **projet Google Cloud avec un compte de facturation**. Google l'exige pour la Weather API, même dans l'usage gratuit.
+
+## Configuration
+
+### 1. Projet Google Cloud et Weather API
+
+1. Ouvrez la [console Google Cloud](https://console.cloud.google.com/), créez un projet (ou choisissez-en un).
+2. Associez-lui un compte de facturation (Facturation). Sans facturation, toutes les requêtes sont refusées (`BILLING_DISABLED`).
+3. Activez la **Weather API** (API et services → Bibliothèque → « Weather API »).
+
+Google propose aussi une « Maps Demo Key » gratuite pour tester sans facturation : elle est réservée au prototypage.
+
+### 2. Clé API et restrictions
+
+1. Google Maps Platform → Clés et identifiants → **Créer des identifiants → Clé API**.
+2. Modifiez la clé : dans **Restrictions d'API**, choisissez « Restreindre la clé » et cochez uniquement **Weather API**. Une clé qui fuiterait ne pourrait alors pas servir à d'autres API payantes.
+3. Dans **Restrictions relatives aux applications**, choisissez **Adresses IP** et saisissez l'IP publique de votre Gladys si elle est fixe. N'utilisez pas « Sites Web » : les requêtes partent du conteneur, pas d'un navigateur.
+4. Facultatif mais conseillé : dans Google Maps Platform → Quotas, abaissez le quota journalier de la Weather API (par exemple 500 par jour), comme second filet de sécurité.
+
+### 3. Coût et intervalles de rafraîchissement
+
+Google facture chaque requête réussie (tous les endpoints ensemble, SKU « Weather Usage ») au-delà de **10 000 requêtes gratuites par mois**, puis 0,15 USD les 1 000 (tarifs du 17 octobre 2026, à vérifier sur la [page des tarifs](https://developers.google.com/maps/documentation/weather/usage-and-billing)). Chaque produit est lu au plus une fois par intervalle et partagé par le tableau de bord, les widgets et les scènes :
+
+| Produit                      | Intervalle par défaut | Requêtes / mois / maison |
+| ---------------------------- | --------------------- | ------------------------ |
+| Conditions actuelles         | 30 min                | 1 488                    |
+| Prévisions horaires (24 h)   | 60 min                | 744                      |
+| Prévisions journalières (10) | 3 × horaire = 3 h     | 248                      |
+| Alertes                      | 30 min                | 1 488                    |
+| **Total (31 jours)**         |                       | **3 968**                |
+
+Gladys vérifie la météo toutes les 30 minutes pour son propre déclencheur d'alerte : des intervalles plus courts apportent peu. Chaque langue de tableau de bord est une réponse distincte : deux langues doublent le coût. Le **Plafond mensuel de requêtes** (9 000 par défaut) coupe tout appel à Google jusqu'au mois suivant une fois atteint ; les dernières réponses restent servies et le statut de connexion l'indique.
+
+### 4. Dans Gladys
+
+1. Intégrations → Google Weather → Configuration.
+2. Collez la **clé API**, ajustez les intervalles si besoin, enregistrez.
+3. Cliquez sur **Tester la clé API** : elle lit la météo actuelle de votre première maison (une requête) et affiche les requêtes du mois et l'estimation mensuelle.
+
+| Champ                                 | Défaut | Rôle                                                       |
+| ------------------------------------- | ------ | ---------------------------------------------------------- |
+| Clé API                               | —      | Votre clé (`AIza…`), stockée comme secret                  |
+| Conditions actuelles toutes les (min) | 30     | 10 à 180                                                   |
+| Prévisions horaires toutes les (min)  | 60     | 30 à 360 ; les journalières sont lues 3 fois moins souvent |
+| Alertes officielles                   | oui    | À désactiver là où Google ne publie pas d'alertes          |
+| Alertes toutes les (min)              | 30     | 10 à 180 : délai avant qu'une alerte n'atteigne vos scènes |
+| Plafond mensuel de requêtes           | 9 000  | Filet de sécurité                                          |
+
+## Utilisation
+
+### Carte météo et assistant
+
+Rien à faire : la carte météo du tableau de bord utilise ce fournisseur. Si plusieurs fournisseurs météo sont installés, épinglez-en un dans les réglages de la carte.
+
+### Couverture, France et Europe
+
+La météo actuelle et les prévisions couvrent la plupart des pays, dont la France, la Belgique, la Suisse, l'Allemagne, l'Espagne et le reste de l'Europe. Elles ne sont pas disponibles en Chine, au Japon, en Corée du Sud, au Viêt Nam, en Iran, en Corée du Nord, à Cuba ni en Syrie, entre autres : la demande y échoue et Gladys passe à son fournisseur météo suivant.
+
+Les alertes viennent des services officiels via Google : pour la France, la vigilance de Météo-France relayée par MeteoAlarm ; MeteoAlarm pour la plupart des pays européens, le DWD pour l'Allemagne. Le Canada, l'Inde et la Russie ont la météo mais pas d'alertes : désactivez-les là-bas pour économiser leurs requêtes. Les couleurs de vigilance correspondent à la sévérité : jaune = modérée, orange = sévère, rouge = extrême. Les titres et textes d'alerte sont dans la langue de l'émetteur quand il ne fournit pas celle demandée.
+
+### Widgets
+
+![Illustration générée des trois widgets — alertes météo, prévisions 10 jours, prochaines heures — pas une capture d'écran](https://raw.githubusercontent.com/William-De71/gladys-google-weather/main/docs/assets/widgets.fr.png)
+
+- **Alertes météo** : compteurs par sévérité, puis chaque alerte avec sa zone, sa fin, ses consignes et un lien vers l'émetteur.
+- **Prévisions 10 jours** : 5, 7 ou 10 jours avec les icônes de Google, max et min, ciel et risque de pluie ; touchez un jour pour le détail du jour et de la nuit, l'indice UV et les heures du soleil.
+- **Prochaines heures** : une courbe des 12 ou 24 prochaines heures : température et ressenti, risque de pluie, ou vent et rafales.
+
+Chaque widget a un réglage **Maison** (le nom exact d'une maison, vide pour la première maison localisée).
+
+### Déclencheurs de scène
+
+- **Alerte météo émise** : une alerte officielle couvre désormais une maison. Filtres : maison, type d'alerte (orages, vent violent, pluie-inondation, crues, neige-verglas, grand froid, canicule, brouillard, vagues-submersion, feux / sécheresse, cyclone / ouragan, tornade, séisme / volcan, air / radiation, autre), sévérité. Variables : titre, type, sévérité, zone, début, fin, description, consignes, source, résumé…
+- **Fin d'une alerte météo** : l'alerte a expiré ou a été levée.
+
+La première vérification après un démarrage sert de référence : les alertes déjà en cours ne déclenchent rien. Une alerte réémise avec le même type et la même sévérité ne redéclenche pas ; un changement de sévérité (jaune vers orange) termine l'ancienne et émet la nouvelle.
+
+### Actions de scène
+
+- **Obtenir les alertes météo** : nombre, alerte la plus grave (titre, type, sévérité, fin, consignes), résumé.
+- **Obtenir les prévisions d'un jour** : d'aujourd'hui à J+9 : max, min, ciel, risque et cumul de pluie, vent, rafales, UV, lever, coucher, résumé.
+- **Obtenir la météo actuelle** : température, ressenti, humidité, pression, vent, UV, couverture nuageuse, ciel, résumé.
+- **Va-t-il pleuvoir ?** : dans les 3 à 24 heures, à partir d'un risque que vous choisissez : oui ou non, à partir de quand, risque max, cumul, résumé.
+
+### Exemples de scènes
+
+- Quand une **alerte météo est émise** avec le type « Vent violent » et la sévérité « Sévère » ou « Extrême » → fermer les volets et envoyer `{{triggerEvent.data.summary}}` sur votre téléphone.
+- Chaque matin à 7 h → **Obtenir les prévisions d'un jour** (aujourd'hui) → envoyer son résumé par message.
+- Chaque soir à 20 h → **Va-t-il pleuvoir ?** (12 heures, à partir de 50 %) → s'il ne doit pas pleuvoir, lancer l'arrosage du jardin.
+
+## Dépannage
+
+- **« Google a refusé la clé API (API_KEY_INVALID) »** : la clé est fausse ou supprimée ; recopiez-la depuis la console.
+- **SERVICE_DISABLED** : la Weather API n'est pas activée dans le projet de la clé.
+- **BILLING_DISABLED** : aucun compte de facturation n'est associé au projet.
+- **API_KEY_SERVICE_BLOCKED** ou **API_KEY_IP_ADDRESS_BLOCKED** : les restrictions de la clé excluent la Weather API ou l'IP de votre Gladys (elle a peut-être changé).
+- **Jamais d'alerte** : vérifiez la couverture de votre pays ci-dessus ; le widget des alertes indique quand elles sont désactivées.
+- **« Budget mensuel atteint »** : relevez le plafond ou les intervalles ; le compteur repart le 1er du mois (UTC). Les chiffres de Google (Google Maps Platform → Métriques) font foi.
+- **Pas de météo pour une maison** : elle est hors couverture, ou n'est pas localisée dans Gladys.
+- Logs : Paramètres → Supervision → Google Weather. La clé n'y apparaît jamais.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Google Weather dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre clé API Google Cloud | `section` | Non | Dans la console Google Cloud : créez un projet, associez-lui un compte de facturation (Google l’exige, même dans l’usage gratuit), activez la « Weather API », puis créez une clé API restreinte à la Weather API. Les données sortent de votre réseau : chaque requête part chez Google avec les coordonnées de la maison. |
+| Clé API | `secret` | Oui | Commence par « AIza ». Restreignez-la à la Weather API (restrictions d’API) et, si votre IP publique est fixe, à cette IP. |
+| Gratuité et rafraîchissement | `section` | Non | Google facture chaque requête réussie au-delà de 10 000 par mois (tous les endpoints ensemble). Avec les valeurs par défaut, une maison coûte environ 4 000 requêtes par mois : actuel toutes les 30 min, horaire toutes les 60 min, journalier toutes les 180 min, alertes toutes les 30 min. Les réponses sont mises en cache et partagées par le tableau de bord, les widgets et les scènes. |
+| Conditions actuelles toutes les (min) | `number` | Non | Entre 10 et 180. 30 min = 1 488 requêtes par mois et par maison. |
+| Prévisions horaires toutes les (min) | `number` | Non | Entre 30 et 360. Les prévisions journalières sont lues 3 fois moins souvent. 60 min = 992 requêtes par mois et par maison, les deux ensemble. |
+| Alertes officielles | `boolean` | Non | À désactiver là où Google ne publie pas d’alertes (Canada, Inde, Russie…) : cela économise leurs requêtes. |
+| Alertes toutes les (min) | `number` | Non | Entre 10 et 180 : délai avant qu’une alerte n’atteigne vos scènes. 30 min = 1 488 requêtes par mois et par maison. |
+| Plafond mensuel de requêtes | `number` | Non | Filet de sécurité : au-delà de ce nombre de requêtes dans le mois, plus aucun appel ne part chez Google avant le mois suivant (la météo en cache est servie). 9 000 par défaut, sous les 10 000 gratuites. |
+
+## Comment installer Google Weather dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Google Weather apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-google-weather:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-google-weather](https://github.com/William-De71/gladys-google-weather).
+
+Google Weather nécessite Gladys `>=5.1.1`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Google Weather est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-google-weather) — [source de cette documentation](https://github.com/William-De71/gladys-google-weather/blob/HEAD/docs/fr.md)

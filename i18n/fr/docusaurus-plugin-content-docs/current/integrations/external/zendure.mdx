@@ -19,7 +19,7 @@ https://github.com/Terdious/gladys-zendure instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Zendure","description":"Connectez vos batteries solaires Zendure (SolarFlow) à Gladys Assistant via le cloud Zendure.","owner":"Terdious","owner_avatar_url":"https://avatars.githubusercontent.com/u/35010958?v=4","repo_url":"https://github.com/Terdious/gladys-zendure","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-zendure.png","type":"device","version":"1.2.0","gladys_version":">=4.62.0","stars":0,"pushed_at":"2026-07-24T05:35:48Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Zendure","description":"Connectez vos batteries solaires Zendure (SolarFlow) à Gladys Assistant via le cloud Zendure.","owner":"Terdious","owner_avatar_url":"https://avatars.githubusercontent.com/u/35010958?v=4","repo_url":"https://github.com/Terdious/gladys-zendure","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-zendure.png","type":"device","version":"1.8.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T08:45:41Z"}} />
 
 Connectez vos batteries solaires **Zendure SolarFlow / Hyper** à Gladys
 Assistant. L'intégration récupère la télémétrie en lecture seule (niveau de
@@ -28,11 +28,113 @@ depuis le cloud Zendure et — en option — directement depuis le **broker MQTT
 local** de chaque appareil, pour des mises à jour rapides et résilientes
 hors-ligne, avec repli cloud automatique.
 
+Chaque batterie est lue et pilotée via son **API
+locale** (zenSDK) quand elle répond sur votre réseau — comme le fait Home
+Assistant — avec le cloud Zendure en repli automatique.
+
+## Prérequis
+
+- Un **compte Zendure**, avec vos batteries déjà installées et en ligne dans
+  l'application Zendure.
+- Gladys Assistant **5.1 ou plus récent**.
+
 ## Modèles pris en charge
 
 SolarFlow 800, SolarFlow 800 Pro, SolarFlow 1600, SolarFlow 2400,
 SolarFlow 2400 AC, SolarFlow 2400 Pro et Hyper 2000 (expérimental — mapping de
 télémétrie à confirmer par un testeur de la communauté).
+
+**Matériel non testé** : les SolarFlow 800 Plus, SolarFlow 800 Pro 2 et
+SolarFlow 4000 AC+ sont pris en charge à partir des caractéristiques de
+l'intégration Home Assistant officielle (Zendure-HA), sans qu'un appareil réel
+ait encore été vu. Si vous en possédez un, merci de signaler son comportement
+(un rapport **Diagnostic des batteries** est idéal) dans les
+[issues](https://github.com/Terdious/gladys-zendure/issues).
+
+Le nom de modèle renvoyé par le cloud Zendure est reconnu sans tenir compte de
+la casse ni des espaces (`SolarFlow 800 Pro`, `SolarFlow800Pro`), comme le fait
+Zendure-HA.
+
+## Fonctionnalités
+
+Chaque batterie est créée avec dix fonctionnalités en lecture seule (plus celles qui dépendent du modèle, plus bas), dans les
+catégories énergie de Gladys (graphiques énergie, historique, tableaux de
+bord) :
+
+| Fonctionnalité               | Catégorie Gladys                | Unité |
+| ---------------------------- | ------------------------------- | ----- |
+| Niveau de batterie           | Batterie de stockage            | %     |
+| Puissance de charge          | Batterie de stockage            | W     |
+| Puissance de décharge        | Batterie de stockage            | W     |
+| Puissance vers la maison     | Capteur de sortie maison        | W     |
+| Puissance d'entrée solaire   | Capteur de production d'énergie | W     |
+| Énergie chargée              | Batterie de stockage            | kWh   |
+| Énergie déchargée            | Batterie de stockage            | kWh   |
+| Énergie vers la maison       | Capteur de sortie maison        | kWh   |
+| Énergie solaire              | Capteur de production d'énergie | kWh   |
+| Énergie restante en batterie | Batterie de stockage            | kWh   |
+
+Zendure ne remonte que des puissances : les quatre fonctionnalités
+d'**énergie** (kWh) sont calculées par l'intégration, qui cumule chaque
+puissance dans le temps. Ce sont des index cumulés, sauvegardés dans le volume
+de données de l'intégration pour qu'un redémarrage ne les remette pas à zéro ;
+un silence de plus de 5 minutes (batterie hors ligne, broker coupé) est écarté
+plutôt que deviné. Gladys transforme l'index d'**énergie solaire** en
+graphiques de production. L'**énergie restante** est le niveau de batterie
+multiplié par la capacité des packs que la batterie déclare (AB1000, AB2000,
+AB3000, packs intégrés) ; elle reste vide tant que la batterie n'a pas envoyé
+la liste de ses packs.
+
+Depuis la version 1.3.0, le niveau de batterie est celui d'une **batterie de
+stockage**, et non la pile d'un appareil à remplacer : Gladys ne compte plus
+votre batterie domestique dans ses alertes de batterie faible. Une batterie
+créée avec une version précédente garde ses anciennes catégories tant que vous
+n'appliquez pas la nouvelle définition : dans l'onglet **Découverte**, cliquez
+sur **Mettre à jour** sur la batterie (marquée **Déjà ajouté**). Les
+fonctionnalités sont mises à jour sur place : leur historique, les scènes et
+les tableaux de bord sont conservés. Ce même **Mettre à jour** ajoute les
+fonctionnalités d'énergie à une batterie créée avant la version 1.5.0.
+
+### Sortie hors réseau, charge depuis le réseau et températures
+
+Selon le modèle, une batterie reçoit aussi ces fonctionnalités :
+
+| Fonctionnalité                       | Catégorie Gladys                  | Unité | Modèles                                                             |
+| ------------------------------------ | --------------------------------- | ----- | ------------------------------------------------------------------- |
+| Puissance de la sortie hors réseau   | Capteur de sortie maison          | W     | 800 Pro, 800 Pro 2, 1600 AC+, 2400 AC, 2400 AC+, 2400 Pro, 4000 AC+ |
+| Énergie de la sortie hors réseau     | Capteur de sortie maison          | kWh   | les mêmes                                                           |
+| Puissance de charge depuis le réseau | Capteur réseau                    | W     | tous les modèles (charge AC)                                        |
+| Énergie chargée depuis le réseau     | Capteur réseau                    | kWh   | tous les modèles                                                    |
+| Température de l'appareil            | Capteur de température d'appareil | °C    | tous les modèles, si remontée                                       |
+| Température du pack le plus chaud    | Capteur de température d'appareil | °C    | tous les modèles, si remontée                                       |
+
+- **Sortie hors réseau** : la puissance de la prise hors réseau (secours) de la
+  batterie (`gridOffPower`). Une valeur négative signifie que la prise injecte
+  de la puissance (un panneau solaire branché dessus, comme le note
+  Zendure-HA) : elle affiche 0 et n'est pas comptée.
+- **Charge depuis le réseau** : la puissance que la batterie prélève sur le
+  réseau pour se charger (`gridInputPower`), sur tous les modèles capables de
+  charger en AC.
+- Les deux fonctionnalités d'**énergie** sont calculées comme les autres
+  (puissance cumulée dans le temps, sauvegardée dans le volume de données de
+  l'intégration, silences de plus de 5 minutes écartés).
+- **Températures** : la température de l'appareil (`hyperTmp`) et la plus
+  haute température des packs (`maxTemp`), remontées par Zendure en dixièmes
+  de kelvin et converties en °C. Une batterie qui ne les remonte pas les
+  laisse vides ; une valeur impossible (sous −40 °C ou au-dessus de 120 °C)
+  est ignorée.
+
+**Hiérarchie énergie — éviter le double comptage.** La puissance de charge
+depuis le réseau est un **capteur réseau** : si votre logement a déjà un
+compteur principal (Linky, compteur P1 ou Shelly EM...) dans Gladys, la charge
+de la batterie depuis le réseau est déjà incluse dans ce qu'il mesure. Dans les
+réglages énergie de Gladys, placez la batterie **sous le compteur principal**
+(comme enfant), pas à côté, sinon l'énergie qu'elle prélève serait comptée deux
+fois.
+
+Une batterie créée avec une version précédente reçoit ces fonctionnalités avec
+le même **Mettre à jour** de l'onglet **Découverte** : les fonctionnalités
+existantes, leur historique, les scènes et les tableaux de bord sont conservés.
 
 ## Obtenir votre clé cloud Zendure
 
@@ -57,14 +159,55 @@ l'application mobile Zendure :
    la télémétrie est rafraîchie en l'absence de mise à jour temps réel. La
    valeur par défaut (30 s) convient.
 4. (Optionnel) Activez le **MQTT local (zenSDK)** — voir ci-dessous.
-5. **Enregistrez.** Vos batteries apparaissent dans l'onglet **Découverte**,
-   prêtes à être ajoutées.
+5. (Optionnel) Choisissez la langue des **Noms des fonctionnalités** (anglais par
+   défaut) : elle s'applique aux batteries que vous créez ensuite.
+6. Cliquez sur **Enregistrer la configuration**. Vos batteries apparaissent dans
+   l'onglet **Découverte**, prêtes à être ajoutées.
+
+### API locale (zenSDK, activée par défaut)
+
+Les batteries SolarFlow (800, 800 Plus, 800 Pro, 800 Pro 2, 1600 AC+, 2400 AC,
+2400 AC+, 2400 Pro, 4000 AC+
+— tous les modèles pris en charge sauf l'Hyper 2000) exposent une petite **API HTTP sur votre réseau
+local**, appelée zenSDK. C'est ce qu'utilise l'intégration officielle Home
+Assistant pour ces modèles : ni MQTT, ni le cloud. Avec **Utiliser l'API locale
+des batteries** activé (par défaut), l'intégration lit chaque batterie par
+cette API toutes les 5 secondes, et y envoie aussi les commandes des scènes et
+des widgets.
+
+- **Prérequis** : la batterie et l'hôte Gladys sur le **même réseau** (le
+  conteneur doit pouvoir joindre l'adresse IP de la batterie : pas de Wi-Fi
+  invité isolé ni de VLAN entre les deux), et un firmware récent : mettez la
+  batterie à jour depuis l'application Zendure si son API locale ne répond
+  pas. Les étapes propres à un modèle, s'il y en a, sont sur le
+  [wiki Zendure-HA](https://github.com/Zendure/Zendure-HA/wiki) (par ex. sa
+  [page SolarFlow 800](https://github.com/Zendure/Zendure-HA/wiki/SolarFlow-800)).
+- **Adresse** : l'intégration prend l'adresse IP de la batterie dans le cloud
+  Zendure. Quand le cloud n'en donne pas, elle essaie le nom mDNS de la
+  batterie `zendure-<modèle>-<numéro de série>.local`, rarement résolu dans un
+  conteneur Docker : renseignez alors **Adresses de l'API locale** avec des
+  paires `numéro de série=adresse IP`, séparées par des virgules (par ex.
+  `HOA1NAH4N123456=192.168.1.42`). Donner une adresse IP fixe à vos batteries
+  dans votre box aide.
+- **Repli automatique** : une batterie qui manque trois requêtes de suite
+  passe aussitôt sur son broker MQTT local si vous l'avez activé ; elle ne
+  passe sur le cloud Zendure qu'après 90 secondes sans réponse (une coupure
+  Wi-Fi passagère ne prend pas la connexion cloud), et revient dès que son API
+  locale répond à nouveau. Au démarrage, une batterie a les mêmes 90 secondes
+  pour donner sa première réponse. Une batterie
+  qui n'a jamais répondu reste simplement sur le cloud, sans macaron
+  d'alerte.
+- **Le cloud reste au repos** : quand toutes les batteries répondent en local,
+  l'intégration ne se connecte pas du tout au broker cloud Zendure, et Home
+  Assistant (ou une autre application) sur le même compte Zendure garde
+  l'unique connexion cloud du compte.
 
 ### MQTT local (recommandé si vous l'utilisez)
 
 Quand vous activez le MQTT local dans l'application Zendure (mode développeur),
 chaque appareil publie sa télémétrie sur un broker local de votre réseau.
-Activer **MQTT local** dans Gladys fait lire l'intégration depuis ce broker :
+Activer le **MQTT local (zenSDK)** dans Gladys fait lire l'intégration depuis ce
+broker :
 
 - **Plus rapide** : les valeurs locales se mettent à jour toutes les 1 à 3 s au
   lieu d'environ 30 s via le cloud.
@@ -90,6 +233,215 @@ joint** :
 - **Injoignable** (rouge) — le cloud Zendure signale l'appareil hors ligne, ou
   il est muet sur toutes les sources.
 
+Avec l'API locale, **Local** signifie que son API locale ou son broker local
+sert l'appareil. La raison du dégradé indique quelle source locale s'est tue.
+
+## Pilotage depuis les scènes
+
+Gladys n'a pas encore de fonctionnalité de consigne pour une batterie : les
+batteries se pilotent depuis les **scènes** (et depuis le widget du tableau de
+bord). Dans une scène, ajoutez une action de la catégorie **Intégrations**.
+
+| Action                           | Effet                                                       |
+| -------------------------------- | ----------------------------------------------------------- |
+| **Régler la limite de sortie**   | Puissance maximale fournie à la maison (W)                  |
+| **Régler la limite de charge**   | Puissance maximale tirée du réseau, charge AC (W)           |
+| **Régler le mode AC**            | Charge depuis le réseau, ou décharge vers la maison         |
+| **Régler les niveaux de charge** | Cible de charge (70-100 %) et plancher de décharge (0-50 %) |
+
+L'intégration protège la batterie :
+
+- une limite est plafonnée à la puissance nominale de la batterie (par ex.
+  800 W en sortie sur une SolarFlow 800 Pro) ;
+- les limites de puissance sont envoyées en « mode intelligent », gardées en
+  mémoire au lieu d'être écrites dans la flash de la batterie (des changements
+  fréquents l'useraient) ;
+- un même réglage ne peut pas changer plus d'une fois toutes les 3 s (limites
+  de puissance) ou 30 s (mode AC, niveaux de charge) : une scène qui essaie
+  plus tôt échoue en indiquant le délai à attendre ;
+- une valeur déjà appliquée par la batterie n'est pas renvoyée (la sortie
+  d'action **Commande envoyée** vaut alors faux) ;
+- les niveaux de charge sont refusés tant que la batterie n'a pas remonté les
+  siens (leur échelle diffère selon les firmwares).
+
+La commande passe par le broker qui sert actuellement la batterie (local ou
+cloud) ; la nouvelle valeur apparaît avec la remontée suivante de la batterie.
+
+Le déclencheur **Joignabilité d'une batterie** lance une scène quand une
+batterie ne remonte plus rien sur aucune source, ou remonte à nouveau (API locale
+ou MQTT local). Ses variables donnent le nom de la batterie, le nouvel état et la
+source de télémétrie.
+
+## Widgets du tableau de bord
+
+Quatre widgets sont disponibles dans l'éditeur de tableau de bord (Gladys 5.1
+ou plus récent) :
+
+- **Batterie Zendure** : une batterie, choisie dans les réglages du widget. Son
+  niveau et ses quatre puissances suivent la batterie en direct ; en dessous,
+  sa source (locale, cloud, repli, injoignable), l'énergie stockée, les limites
+  de sortie et de charge, le mode AC et les niveaux de charge qu'elle remonte.
+  Les boutons **Limites de puissance** et **Mode et niveaux** ouvrent un
+  formulaire pré-rempli avec les valeurs actuelles : modifiez ce qu'il faut et
+  validez. Les mêmes protections que pour les actions de scène s'appliquent.
+- **Groupe de batteries** : plusieurs batteries cumulées sous le nom de votre
+  choix : niveau moyen (pondéré par la capacité des packs quand elles sont
+  toutes connues), puissances totales, énergie stockée, et une ligne par
+  batterie colorée selon sa source. Laissez la liste des batteries vide pour
+  prendre toutes les batteries du compte.
+- **Installation Zendure** : toute l'installation sur une carte. Choisissez
+  l'**Installation électrique** : _Monophasée_ cumule les batteries choisies
+  (aucune : toutes) ; _Triphasée_ prend les batteries des listes **Batteries de
+  la phase L1**, **L2** et **L3**. La carte affiche les totaux du site (niveau
+  pondéré par la capacité des packs, charge, décharge, solaire, sortie maison,
+  énergie stockée), puis en triphasé une ligne par phase (`⌂` sortie maison,
+  `↑` charge, `↓` décharge, `☀` solaire, en W) et l'**Équilibre des phases** :
+  l'écart entre la sortie maison la plus haute et la plus basse, en orange
+  au-delà de l'**Alerte de déséquilibre** (500 W par défaut). En dessous :
+  énergie stockée sur la capacité connue, temps restant à la puissance
+  actuelle, nombre de batteries par source (locale, cloud, injoignable), et des
+  lignes d'alerte pour les batteries injoignables, les replis cloud, et une
+  batterie mise dans deux phases, dans aucune, ou supprimée. Une batterie
+  injoignable garde son niveau et son énergie stockée, mais ses dernières
+  puissances sont exclues des sommes.
+- **Énergie du jour** : l'énergie de la journée depuis minuit, avec le même
+  choix d'installation et les mêmes listes de phases : chargée, déchargée,
+  solaire et sortie maison (kWh), une ligne par phase en triphasé avec l'écart
+  entre les phases, et un graphique de la sortie maison par 30 minutes (une
+  courbe par phase). La journée commence au minuit du **Fuseau horaire** du
+  widget (un nom IANA, `Europe/Paris` par défaut : Gladys ne donne pas son
+  fuseau à une intégration). Les chiffres viennent des compteurs d'énergie de
+  l'intégration (enregistrés sous `/data` avec un instantané toutes les 30
+  minutes, gardé 26 heures) : ils comptent depuis la première remontée du
+  jour, qu'indique la ligne **Compté depuis** (par exemple après une première
+  installation le matin).
+  Avec un tarif d'électricité dans la configuration, il affiche aussi
+  l'estimation des économies (voir **Économies (estimation)** plus bas).
+
+**Exemple triphasé :** 17 batteries sur L1, L2 et L3. Ajoutez un widget
+**Installation Zendure**, réglez l'**Installation électrique** sur
+_Triphasée_, et cochez dans **Batteries de la phase L1** les six batteries
+raccordées à L1 (par exemple deux 2400 AC, une 2400 Pro, deux 800 Pro et un
+800 sans batterie), dans **L2** les six de L2 et dans **L3** les cinq de L3.
+La carte affiche les totaux du site, une ligne comme `L1 (6) · 60 %` —
+`⌂ 1890 · ↑ 500 · ↓ 1000 · ☀ 1400 W` par phase, et `Équilibre des phases` —
+`Δ 1490 W · L1 la plus haute` en orange au-delà du seuil. Ajoutez un widget
+**Énergie du jour** avec les trois mêmes listes pour les kWh de la journée.
+Une installation monophasée garde le réglage par défaut et laisse les listes
+vides. Le widget **Groupe de batteries** reste disponible pour tout autre
+regroupement.
+
+Chaque widget n'affiche que ce que la batterie possède : un SolarFlow 800
+utilisé sans pack de batterie garde son solaire, sa sortie maison et sa limite
+de sortie (ni niveau, ni chiffres de charge, ni bouton **Mode et niveaux**),
+et un modèle couplé AC (1600 AC+, 2400 AC, 2400 AC+) n'a pas de tuile solaire.
+Pendant une charge ou une décharge, le widget affiche le temps restant jusqu'à
+la cible de charge ou au plancher de décharge, tel que la batterie le remonte
+(ou calculé d'après sa capacité quand elle ne le donne pas). Un groupe exclut
+les batteries sans pack de son niveau moyen et de son énergie stockée, et un
+groupe de tels appareils n'affiche que leurs puissances.
+
+## Économies (estimation)
+
+Avec votre tarif d'électricité, l'intégration **estime** ce que vos
+batteries font économiser, toutes les 30 minutes, par batterie, et le widget
+**Énergie du jour** en fait la somme pour ses batteries (le site, ou chaque
+phase). C'est une **estimation sans compteur réseau**, signalée comme telle
+dans le widget : lisez les limites ci-dessous.
+
+### Renseigner le tarif
+
+Dans l'onglet **Configuration**, section **Économies (estimation, sans
+compteur)** :
+
+- **Tarif d'électricité** : _Aucun_ (par défaut : pas d'estimation), _Base_
+  (un seul prix) ou _Heures pleines / creuses_.
+- **Prix base**, ou **Prix heures pleines** et **Prix heures creuses** : le
+  prix d'un kWh acheté au réseau, toutes taxes comprises (par exemple
+  `0,1952`). Un prix manquant désactive l'estimation.
+- **Heures creuses** : plages `HH:MM-HH:MM` séparées par des virgules, par
+  exemple `22:00-06:00` ou `01:30-07:30,12:30-14:30`. Une plage peut passer
+  minuit ; `24:00` est accepté comme fin. Des heures invalides désactivent
+  l'estimation : les journaux et le diagnostic disent pourquoi (une fois), et
+  le widget affiche _Tarif invalide_.
+- **Je revends mon surplus solaire** et **Prix de revente** : activé,
+  l'énergie solaire stockée dans les batteries est valorisée au prix de
+  revente (ce qu'elle aurait rapporté sur le réseau) ; désactivé, l'énergie
+  solaire stockée est gratuite.
+- **Fuseau horaire du tarif** (nom IANA, `Europe/Paris` par défaut) : les
+  heures creuses, ainsi que les jours, mois et années des économies, le
+  suivent, changements d'heure compris. C'est un réglage de l'intégration et
+  non du widget car les créneaux sont valorisés en arrière-plan, à leur
+  clôture, quand aucun widget n'est ouvert ; le **Fuseau horaire** du widget
+  fixe toujours le minuit de ses chiffres d'énergie.
+
+Dans le widget **Énergie du jour**, **Afficher les économies (estimation)**
+est activé par défaut : il n'affiche quelque chose qu'une fois un tarif
+renseigné.
+
+### Mode de calcul
+
+Pour chaque batterie et chaque créneau de 30 minutes, à partir de ses
+compteurs d'énergie :
+
+- **Prix du créneau** : le prix base, ou le prix heures pleines / creuses à
+  l'heure locale du créneau (un créneau à cheval sur le bord d'une plage est
+  calculé au prorata).
+- **Coût de l'énergie stockée** : une moyenne pondérée par batterie.
+  L'énergie chargée depuis le réseau (le compteur **Énergie chargée
+  depuis le réseau**) coûte le prix du créneau ; le reste de la charge, venu des
+  panneaux solaires, coûte le prix de revente si vous revendez votre surplus,
+  0 sinon. L'énergie stockée est relue depuis le niveau de charge quand les
+  packs sont connus.
+- **Sortie vers la maison** : sans compteur réseau, l'intégration ne peut pas
+  savoir ce qui a été injecté, l'énergie envoyée vers la maison est donc
+  **supposée consommée** par le logement. Sa part venue de la batterie fait
+  économiser _prix du créneau − coût de l'énergie stockée_ (une batterie
+  chargée en heures pleines et déchargée en heures creuses fait perdre) ; sa
+  part venue directement des panneaux fait économiser le prix du créneau ; le
+  reste (le réseau traversant une batterie AC) ne fait rien économiser.
+- **Économies** = décalage batterie + solaire direct (+ revenu de revente,
+  avec le compteur réseau). La ligne **Recharge réseau (payée)** est une
+  information : ce coût est déjà dans le coût de l'énergie stockée.
+
+Le widget affiche **Économie du jour (est.)**, le mois et l'année, le jour
+par phase en triphasé, et le détail du jour (décalage batterie, solaire
+direct, recharge réseau payée, injection). Les totaux du jour, du mois et de
+l'année en cours et précédents sont enregistrés dans `/data/energy.json` avec
+les compteurs d'énergie (un fichier d'une version précédente se charge tel
+quel ; les économies démarrent à la première limite de 30 minutes après la
+mise à jour).
+
+### Limites
+
+- **Aucune connaissance de l'injection** : la sortie vers la maison renvoyée
+  sur le réseau (consommation du logement inférieure à la sortie de la
+  batterie) est comptée comme économisée au prix du créneau. La ligne
+  **Injecté, non valorisé** (ou **Revente** si vous revendez) reste à 0 tant
+  que le compteur réseau ne peut pas être lu.
+- **Batteries AC** (1600 AC+, 2400 AC, 2400 AC+, 4000 AC+) : leur charge AC
+  est comptée comme **recharge réseau** au prix du créneau, même quand elle
+  vient en réalité du surplus solaire d'un autre onduleur : seul le bilan du
+  site (le compteur réseau) permettrait de le savoir.
+- Les pertes des packs, les pertes de conversion et les remontées manquées
+  rendent les chiffres approximatifs ; les économies démarrent quand le tarif
+  est renseigné (rien n'est recalculé en arrière), et un changement de tarif
+  s'applique aux créneaux clos ensuite.
+- La devise est celle de vos prix ; le widget écrit `€`.
+
+### Bientôt disponible
+
+Deux options apparaîtront dans la configuration dès que Gladys les proposera
+aux intégrations (évolutions de Gladys en cours :
+[#3229](https://github.com/GladysAssistant/Gladys/pull/3229) et
+[#3230](https://github.com/GladysAssistant/Gladys/pull/3230)) :
+
+- **Utiliser les prix du suivi d'énergie de Gladys**, au lieu de les saisir
+  ici.
+- **Compteur réseau** (monophasé, ou triphasé L1 / L2 / L3) : pour savoir ce
+  qui est vraiment consommé ou injecté, valoriser la revente et les pertes, et
+  distinguer le surplus solaire de la recharge réseau sur les batteries AC.
+
 ## Un seul consommateur cloud par compte Zendure
 
 Zendure n'autorise **qu'un seul consommateur cloud par compte** à la fois. Si
@@ -99,8 +451,41 @@ télémétrie devient intermittente. Privilégiez le **MQTT local** pour tout se
 consommateur — le broker local n'a pas cette limite. L'intégration avertit une
 fois dans ses journaux quand elle détecte ce phénomène de reprise de connexion.
 
+Avec l'**API locale** activée (par défaut), l'intégration ne se connecte au
+broker cloud Zendure que lorsqu'une batterie en a besoin, et s'en déconnecte
+5 minutes après que la dernière batterie qui en avait besoin est revenue sur une
+source locale : si
+vos batteries répondent en local, Home Assistant et Gladys ne se disputent plus
+la connexion cloud.
+
+## Mettre à jour l'intégration
+
+**Installée depuis le catalogue** (le cas habituel) : Gladys consulte
+régulièrement le store. Quand une nouvelle version sort, l'intégration affiche
+un badge **« Mise à jour disponible »** (également compté à côté de
+**Intégrations** dans le menu), et son onglet **Supervision** indique la version
+proposée, avec un lien vers ses notes de version. Cliquez sur **Mettre à jour** :
+Gladys récupère la nouvelle image **et** applique le nouveau manifest — les
+nouveaux champs de configuration apparaissent d'eux-mêmes, il n'y a rien à
+recoller. Votre configuration et vos appareils sont conservés.
+
+Gladys peut mettre jusqu'à environ une heure et demie à voir une nouvelle
+version (rafraîchissement de l'index du store). **« Forcer la mise à jour »**
+vérifie immédiatement : il lit la dernière version publiée et récupère son
+image.
+
+**Installée en mode développeur** (manifest collé à la main) : **« Forcer la
+mise à jour »** ne fait que récupérer à nouveau l'image du tag installé, et la
+version affichée comme les champs de configuration proviennent du manifest
+collé — recollez le manifest à jour pour récupérer les nouveaux champs.
+
 ## Dépannage
 
+- **Une batterie n'est pas découverte.** Ouvrez l'onglet **Journaux** : une
+  ligne `Unsupported Zendure model skipped: productModel "..."` donne le nom de
+  modèle exact renvoyé par le cloud Zendure. Ouvrez une issue sur
+  [gladys-zendure](https://github.com/Terdious/gladys-zendure/issues) avec ce
+  nom, pour que le modèle soit ajouté.
 - **Un appareil n'affiche aucune valeur (ou est plus lent que les autres) alors
   que les autres fonctionnent.** Vérifiez son macaron de transport. S'il est
   passé en **Cloud (dégradé)** alors que le MQTT local est activé, son firmware
@@ -119,8 +504,59 @@ fois dans ses journaux quand elle détecte ce phénomène de reprise de connexio
   correcte : une clé invalide ou expirée affiche un statut « Le cloud Zendure
   est injoignable ou la clé cloud est invalide » sur l'écran de configuration.
 - **Détail complet.** Définissez `LOG_LEVEL=debug` et lisez les journaux de
-  l'intégration depuis l'interface Gladys (ou `docker logs` sur l'hôte). Chaque
+  l'intégration dans son onglet **Journaux** (ou `docker logs` sur l'hôte). Chaque
   changement de source de télémétrie est journalisé sur une ligne `telemetry:`.
+- **Une batterie reste sur le cloud alors que son API locale devrait
+  fonctionner.** Au démarrage, les journaux listent chaque batterie qui ne
+  répond pas, avec l'adresse essayée et la raison, par ex. `local http: Garage
+(dCLTD95V) not answering at 192.168.1.42 (from the cloud): EHOSTUNREACH`.
+  `ENOTFOUND` sur un nom en `.local` signifie que le mDNS n'est pas résolu dans
+  le conteneur : renseignez son adresse dans **Adresses de l'API locale**.
+  `EHOSTUNREACH`, `ECONNREFUSED` ou `no answer within 2 s` signifient que le
+  conteneur ne joint pas la batterie (autre réseau, VLAN, pare-feu) ou que son
+  firmware n'a pas encore d'API locale. Toutes les 5 minutes, une ligne
+  `telemetry(local http):` résume quelles batteries répondent.
+
+### Diagnostic
+
+Deux boutons en lecture seule, dans l'onglet **Configuration** de
+l'intégration, reconstituent tout le tableau à la demande, sans fouiller les
+journaux. Aucun n'écrit dans une batterie ni ne change son transport.
+
+- **Diagnostic des batteries** : un rapport texte de l'installation — la
+  version de l'intégration, la configuration (jamais la clé cloud), l'API du
+  cloud Zendure, chaque broker (connecté ou non, reconnexions des 5 dernières
+  minutes, broker cloud au repos parce que toutes les batteries sont en local,
+  alertes de prise de session), l'interrogation de l'API locale, puis un bloc
+  par batterie : la source qui la sert et pourquoi, l'âge de ses dernières
+  données sur chaque source, l'adresse de son API locale (des options, du
+  cloud ou mDNS) et son état, les packs, l'entrée solaire, les réglages
+  qu'elle remonte (limites, mode AC, niveaux de charge), le temps restant et
+  les compteurs d'énergie, puis les versions de firmware (appareil, maître,
+  DSP, packs), le signal Wi-Fi (`rssi`, avec une indication sous −75 dBm) et
+  les états de connexion, les codes d'état bruts (chauffage, basse
+  température, calibration et limite de SoC, bypass, HEMS, niveau de défaut)
+  et, par pack, son niveau, la température de sa cellule la plus chaude, sa
+  tension, son courant et son état de santé. Choisissez une batterie dans la liste **Batterie**
+  (les batteries créées dans Gladys) pour ne décrire qu'elle ; pour une
+  batterie non créée dans Gladys, saisissez son nom ou son numéro de série
+  dans le champ en dessous.
+- **Tester l'API locale d'une batterie** : lit une fois `GET
+/properties/report`, tout de suite, à l'adresse utilisée par l'intégration,
+  et affiche le temps de réponse, l'origine de l'adresse et toutes les
+  propriétés renvoyées par la batterie — ou l'erreur exacte avec une piste
+  (`ENOTFOUND` sur un nom en `.local` : renseignez **Adresses de l'API
+  locale** ; `EHOSTUNREACH`, `ECONNREFUSED` ou un délai dépassé : réseau ou
+  firmware).
+
+Par défaut, les numéros de série sont raccourcis (`WOB1…0159`) et les adresses
+locales remplacées par `<local-ip>` : collez le rapport tel quel dans une
+[issue GitHub](https://github.com/Terdious/gladys-zendure/issues), entre deux
+lignes de trois accents graves. **Afficher les numéros de série et adresses
+locales** les affiche en entier, pour vos propres vérifications seulement : ne
+publiez pas cette version. Aucun rapport ne contient jamais la clé cloud ni un
+mot de passe. Les deux rapports sont aussi écrits, masqués, dans les journaux
+de l'intégration.
 
 ## Paramètres de configuration
 
@@ -128,19 +564,32 @@ Voici les paramètres demandés par Zendure dans son écran de configuration dan
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Pour commencer | `section` | Non | Collez ci-dessous votre clé d'autorisation cloud Zendure (générée depuis l'application mobile Zendure). Vos batteries SolarFlow / Hyper apparaissent alors dans l'onglet Découverte. Activez éventuellement le MQTT local pour une télémétrie rapide et résiliente hors-ligne, avec repli cloud automatique. Le pas à pas complet est dans le lien Documentation ci-dessus. |
+| Pour commencer | `section` | Non | Collez ci-dessous votre clé d'autorisation cloud Zendure (générée depuis l'application mobile Zendure). Vos batteries SolarFlow / Hyper apparaissent alors dans l'onglet Découverte. Chaque batterie est ensuite servie par son API locale quand elle répond sur votre réseau (comme le fait Home Assistant), avec repli automatique sur le cloud Zendure ; le MQTT local reste une option pour les anciens firmwares. Le pas à pas complet est dans le lien Documentation ci-dessus. |
 | Clé cloud d'autorisation Zendure | `secret` | Oui | La clé d'autorisation générée depuis l'application mobile Zendure (jeton base64 utilisé pour joindre l'API cloud Zendure). |
 | Intervalle de rafraîchissement (s) | `number` | Non | Fréquence d'interrogation de la télémétrie des appareils, en secondes. |
-| Activer le MQTT local (zenSDK) | `boolean` | Non | Lire la télémétrie via le broker MQTT local de l'appareil quand il est disponible. |
+| Utiliser l'API locale des batteries | `boolean` | Non | Lire et piloter chaque batterie via son API HTTP locale zenSDK sur votre réseau (ce qu'utilise Home Assistant), toutes les quelques secondes. Une batterie qui ne répond pas reste sur le cloud Zendure, automatiquement. |
+| Adresses de l'API locale (facultatif) | `string` | Non | Seulement pour une batterie dont l'API locale n'est pas trouvée (pas d'adresse fournie par le cloud, nom mDNS non résolu) : paires numéro de série=adresse IP, séparées par des virgules. |
+| Activer le MQTT local (zenSDK) | `boolean` | Non | Lire aussi la télémétrie via le broker MQTT local de l'appareil quand il est disponible (anciens firmwares, Hyper 2000), avant le cloud Zendure. |
+| Noms des fonctionnalités | `select` | Non | Langue des noms de fonctionnalités donnés aux batteries nouvellement découvertes. Une batterie déjà créée garde ses noms : renommez ses fonctionnalités dans Gladys si besoin. |
+| Économies (estimation, sans compteur) | `section` | Non | Facultatif. Avec votre tarif d'électricité, l'intégration estime toutes les 30 minutes ce que vos batteries font économiser : l'énergie envoyée vers la maison est supposée consommée par le logement (sans compteur réseau, rien n'indique ce qui est injecté), valorisée au prix du moment, moins le coût de l'énergie stockée (recharge réseau à son prix, recharge solaire au prix de revente ou gratuite). Le widget « Énergie du jour » l'affiche pour aujourd'hui, ce mois et cette année. Détails et limites dans le lien Documentation ci-dessus. |
+| Tarif d'électricité | `select` | Non | Aucun : pas d'estimation des économies. Base : un seul prix. Heures pleines / creuses : deux prix et les heures creuses. |
+| Prix base (par kWh) | `number` | Non | Tarif base : le prix d'un kWh acheté au réseau, toutes taxes comprises (€/kWh). |
+| Prix heures pleines (par kWh) | `number` | Non | Tarif heures pleines / creuses : le prix d'un kWh hors heures creuses, toutes taxes comprises (€/kWh). |
+| Prix heures creuses (par kWh) | `number` | Non | Tarif heures pleines / creuses : le prix d'un kWh pendant les heures creuses, toutes taxes comprises (€/kWh). |
+| Heures creuses | `string` | Non | Plages HH:MM-HH:MM séparées par des virgules, dans le fuseau du tarif ; une plage peut passer minuit. Heures invalides : pas d'estimation (voir les journaux). |
+| Je revends mon surplus solaire | `boolean` | Non | Activé : l'énergie solaire stockée dans les batteries est valorisée au prix de revente (ce qu'elle aurait rapporté), et l'énergie injectée comptera comme revenu dès qu'un compteur réseau pourra être lu. Désactivé : l'énergie solaire stockée est gratuite. |
+| Prix de revente (par kWh) | `number` | Non | Le prix payé pour un kWh de surplus solaire injecté sur le réseau (€/kWh). Utilisé seulement si l'option ci-dessus est activée. |
+| Fuseau horaire du tarif | `string` | Non | Nom IANA, par ex. Europe/Paris (par défaut) : les heures creuses et les jours, mois et années des économies le suivent, changements d'heure compris. |
+| Bientôt disponible | `section` | Non | Deux options apparaîtront ici dès que Gladys les proposera aux intégrations (évolutions de Gladys en cours, liées ci-dessous) : « Utiliser les prix du suivi d'énergie de Gladys », à la place des prix ci-dessus ; et « Compteur réseau (monophasé, ou triphasé L1 / L2 / L3) », pour savoir ce qui est vraiment consommé ou injecté, valoriser la revente et les pertes, et distinguer surplus solaire et recharge réseau sur les batteries AC. D'ici là, les économies sont une estimation. |
 
 ## Comment installer Zendure dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Zendure apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/terdious/gladys-zendure:1.2.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/terdious/gladys-zendure:1.8.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/Terdious/gladys-zendure](https://github.com/Terdious/gladys-zendure).
 
-Zendure nécessite Gladys `>=4.62.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Zendure nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

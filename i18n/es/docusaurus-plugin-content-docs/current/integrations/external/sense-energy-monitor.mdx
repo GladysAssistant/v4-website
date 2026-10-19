@@ -1,0 +1,158 @@
+---
+title: "Integración domótica Sense Energy Monitor, gratuita y de código abierto"
+sidebar_label: "Sense Energy Monitor"
+description: "Unofficial: Sense energy monitor (US/Canada), live power, daily energy and detected devices. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sense.png"
+keywords:
+  - "sense energy monitor"
+  - "domótica sense energy monitor"
+  - "gladys sense energy monitor"
+  - "sense energy monitor gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-sense instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sense Energy Monitor","description":"Unofficial: Sense energy monitor (US/Canada), live power, daily energy and detected devices.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sense","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sense.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T01:40:08Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+**Unofficial connector, not affiliated with Sense Labs.** It brings your
+**Sense** energy monitor (United States and Canada) into Gladys: the power your
+home consumes (and produces, with solar) in real time, the voltage and the
+frequency, the hourly consumption for the Gladys energy monitoring, and, as an option,
+the devices Sense detected. It uses the same cloud API as the Sense app, which
+Sense does not document and may change at any time.
+
+> **Never tested with a real Sense monitor or account.** It was built from the
+> sense-energy library used by Home Assistant and tested against sample
+> answers only. Please report what works and what does not.
+
+## What you get
+
+| Surface                              | Content                                                                                                        |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| One device per **Sense monitor**     | power consumed (W), voltage L1 and L2 (V), frequency (Hz), the 30-minute consumption for the energy monitoring |
+| With **solar**                       | power produced (W), grid power (W, signed: positive when importing, negative when exporting)                   |
+| Option **Devices detected by Sense** | one device per appliance Sense detected: on/off and power (W), read only                                       |
+| Buttons                              | **Test the connection**, **Enter the two-factor code**                                                         |
+
+## Installation
+
+1. Install the integration, enter the **e-mail** and **password** of your Sense
+   account, and save.
+2. **If your account uses two-factor authentication**, the status asks for a
+   code: click **Enter the two-factor code** and type the current 6-digit code
+   of your authenticator app. Done once: the session is then kept and renewed
+   by itself, also after a restart.
+3. Click **Test the connection**: the monitor and the real-time state show.
+4. Open **Discovery** and add the Sense monitor (and the detected devices, if
+   you turned the option on).
+
+## Energy monitoring
+
+The real-time feed gives power, not energy. The integration therefore reads
+Sense's hourly consumption every 15 minutes and publishes each finished hour of
+today and yesterday as two **dated** half hours on the "Consumption (30 min)"
+feature: the energy monitoring gets the right energy in the right half hour,
+and can price it with your contract; the energy of a day is the sum of its half
+hours. Yesterday is read again at every refresh during the first 3 hours of the
+day (monitor time), for its last hours. Only today and yesterday are read: no
+older history is filled in, so a Gladys stopped for more than a day keeps a
+gap. The production, the import and the export have no daily total yet (the
+grid power shows the exchange in real time).
+
+## Detected devices
+
+With the option on, every appliance Sense lists in its app (hidden and merged
+ones left out) becomes a device with its on/off and its power. Sense needs time
+to detect appliances, and its detection can be wrong; the devices are read
+again every 6 hours. These states are optional: when the Gladys state budget is
+reached, they wait for the next minute, never the monitor's.
+
+## Limits
+
+- Sense accounts of the United States and Canada; the first monitor of the
+  account only.
+- Calls: one real-time WebSocket; today's hourly consumption every 15 minutes,
+  yesterday's once a day (at every refresh during the first 3 hours of the
+  day), the detected devices every 6 hours.
+  Published states: the monitor at most every 10 seconds, the power of the
+  detected devices at most every minute.
+- Reconnection of the real-time feed: from 5 seconds up to 5 minutes, with a
+  random part. After a failed sign-in: 5, 15, then every 60 minutes. Refused
+  e-mail or password: every 6 hours. When Sense asks to slow down (429), every
+  call waits the time asked (15 minutes otherwise), between 1 minute and 6
+  hours.
+- Gladys has no frequency unit: the frequency is a plain number.
+- The half hours are those of the monitor's clock hours: a time zone offset by
+  45 minutes (Gladys or monitor) does not fit the 30-minute grid of Gladys, and
+  the energy monitoring then refuses them.
+
+## Troubleshooting
+
+- **"Sense refused the e-mail or the password"**: check them in the Sense app,
+  correct them and save.
+- **"Your Sense account asks for a two-factor code"**: use **Enter the
+  two-factor code**. A refused code: type the current one (it changes every 30
+  seconds).
+- **Real time "connecting…" for long**: the monitor may be offline; the feed
+  reconnects by itself.
+- **No energy in the energy monitoring**: check that the Sense monitor device
+  is created; the hours appear once finished.
+- Logs: set the integration's `LOG_LEVEL` variable.
+
+## Privacy
+
+The password is kept by Gladys in its database, **not encrypted** (in clear in
+the Gladys database and in its backups), never shown again, and only sent to
+`api.sense.com` to sign in. The session tokens (access and refresh) are kept in
+the same place, also not encrypted, in the integration's configuration, outside
+the form. Protect the Gladys backups accordingly.
+Nothing is logged with the e-mail, the password or a token.
+
+## Credits
+
+The API logic is ported from [sense-energy](https://github.com/scottbonline/sense)
+(MIT, © 2018 Scott Belisle), the library of the Home Assistant Sense
+integration.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Sense Energy Monitor te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sense account (United States and Canada) | `section` | No | Unofficial connector, not affiliated with Sense Labs: it uses the same cloud API as the Sense app, which Sense does not document and may change. Enter the e-mail and password of your Sense account. If your account uses two-factor authentication, save, then enter the 6-digit code of your authenticator app with the "Enter the two-factor code" button below: the session is then kept and renewed by itself. |
+| Sense e-mail | `string` | Sí |  |
+| Sense password | `secret` | Sí | Kept by Gladys in its database, never shown again, and only sent to api.sense.com to sign in. The session tokens are kept in the same place. |
+| Devices detected by Sense | `boolean` | No | Also offer one device per appliance Sense detected (on/off and power, read only). |
+
+## Cómo instalar Sense Energy Monitor en Gladys
+
+1. En Gladys, abre **Integraciones**: Sense Energy Monitor aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-sense:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-sense](https://github.com/LM1LC3N7/gladys-sense).
+
+Sense Energy Monitor requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Sense Energy Monitor es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-sense) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-sense/blob/HEAD/docs/en.md)

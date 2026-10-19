@@ -1,0 +1,229 @@
+---
+title: "Traefik Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Traefik"
+description: "Dein Traefik-Reverse-Proxy in Gladys: ausgefallene Dienste, Router-Fehler, Alarme in Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-traefik.png"
+keywords:
+  - "traefik"
+  - "traefik smart home"
+  - "gladys traefik"
+  - "traefik gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-traefik instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Traefik","description":"Dein Traefik-Reverse-Proxy in Gladys: ausgefallene Dienste, Router-Fehler, Alarme in Szenen.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-traefik","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-traefik.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T11:59:58Z"}} />
+
+[Traefik](https://traefik.io/traefik/) ist der Reverse Proxy vor vielen
+selbst gehosteten Diensten: Er leitet `nextcloud.example.com` an den
+Nextcloud-Container weiter, erneuert die Zertifikate und kann prüfen, ob jedes
+Backend noch antwortet. Diese Integration bringt den Zustand von Traefik nach
+Gladys: ein Gerät „Traefik“ mit seiner Version und den Routern, Diensten und
+Middlewares mit Fehler, und ein Gerät pro HTTP-Dienst mit seinen erreichbaren
+Servern. Szenen können reagieren, wenn **irgendein** Dienst ausfällt oder
+zurückkommt, wenn ein Router einen Fehler bekommt oder wenn Traefik selbst
+nicht mehr antwortet; ein Dashboard-Widget zeigt die ausgefallenen Dienste
+zuerst.
+
+Getestet mit einem echten Traefik v3.7 (Docker, File-Provider, zwei Backends
+hinter einem Health Check, absichtlich kaputte Router). Traefik v2 hat
+dieselbe API und sollte funktionieren, ungetestet: Rückmeldungen sind
+willkommen in [den Issues](https://github.com/guim31/gladys-traefik/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Traefik v2 oder v3 mit **aktivierter API**, vom Gladys-Rechner erreichbar:
+  - entweder `api.insecure=true` (statische Konfiguration): Die API antwortet
+    auf dem Entrypoint `traefik`, Port 8080, ohne Passwort. Einfach, nur für
+    das lokale Netz;
+  - oder einer deiner Router zum Dienst `api@internal`, auf deiner Domain,
+    meist hinter einer `basicAuth`-Middleware: Gib Benutzer und Passwort ein.
+- Um zu erkennen, dass ein Dienst **ausgefallen** ist, einen
+  [Health Check](https://doc.traefik.io/traefik/routing/services/#health-check)
+  auf seinem Load Balancer. Ohne ihn meldet Traefik alle Server als UP: Die
+  Integration sieht dann noch einen Dienst mit Fehler oder einen verschwundenen
+  (gestoppter Docker-Container), aber kein Backend, das nicht mehr antwortet.
+
+Die Integration sendet pro Aktualisierungsintervall (standardmäßig eine
+Minute) zwei leichte Anfragen an die Traefik-API, nichts ins Internet.
+
+## Erste Schritte
+
+### 1. Die API von Traefik aktivieren
+
+Mit `api.insecure` ergänzt du die statische Konfiguration (Befehlszeile des
+Containers):
+
+```
+--api.insecure=true
+```
+
+und machst Port 8080 von Gladys aus erreichbar. Über einen Router zeigt die
+[Traefik-Dokumentation](https://doc.traefik.io/traefik/operations/api/) einen
+Router zu `api@internal` mit einer `basicAuth`-Middleware.
+
+### 2. Die Integration konfigurieren
+
+Öffne in Gladys **Integrationen → Traefik → Konfiguration**:
+
+- **Adresse der API**: `http://192.168.1.2:8080` mit `api.insecure`, oder
+  `https://traefik.example.com` über einen Router. Eine aus dem Browser
+  kopierte Dashboard-Adresse geht auch: `/dashboard/…` wird entfernt.
+- **Benutzer (Basic Auth)** und **Passwort (Basic Auth)**: nur wenn der Router
+  der API danach fragt.
+- **Aktualisierungsintervall**: 30 Sekunden bis 5 Minuten.
+- **Sprache der Namen**: Sprache der Funktionsnamen und der Szenen-Ergebnisse.
+
+Speichere, dann **Verbindung testen**: Das Ergebnis zeigt die Version von
+Traefik, die Zahl der HTTP-Dienste und die ausgefallenen.
+
+### 3. Die Geräte anlegen
+
+Öffne den Tab **Entdecken**: Das Gerät „Traefik“ und ein Gerät pro HTTP-Dienst
+(`nextcloud@docker`, `app@file`…) stehen dort. Lege die an, denen du folgen
+willst. Die internen Dienste von Traefik (`api@internal`…) werden ausgelassen.
+
+## Die Geräte
+
+Das Gerät **Traefik**:
+
+| Funktion               | Wert                                                                 |
+| ---------------------- | -------------------------------------------------------------------- |
+| Erreichbar             | ja, wenn die API antwortet, nein nach zwei fehlgeschlagenen Abfragen |
+| Version                | z. B. `3.7.15`                                                       |
+| Router mit Fehler      | HTTP-, TCP- und UDP-Router, die Traefik nicht aufbauen konnte        |
+| Dienste mit Fehler     | Dienste mit Fehler                                                   |
+| Middlewares mit Fehler | Middlewares mit Fehler                                               |
+| Warnungen              | Router, Dienste und Middlewares mit Warnung                          |
+| Ausgefallene Dienste   | HTTP-Dienste ohne erreichbaren Server (oder verschwunden, angelegt)  |
+
+Jeder **HTTP-Dienst**:
+
+| Funktion           | Wert                                             |
+| ------------------ | ------------------------------------------------ |
+| Funktionsfähig     | ja, solange mindestens ein Server erreichbar ist |
+| Erreichbare Server | Server mit UP laut Health Check                  |
+| Server insgesamt   | im Load Balancer eingetragene Server             |
+
+Ein Dienst, der aus Traefik verschwindet (sein Docker-Container gestoppt), gilt
+als ausgefallen: kein Server, nicht funktionsfähig, bis er zurückkommt.
+
+## Dashboard
+
+Füge das Widget **Traefik** zu einem Dashboard hinzu: die ausgefallenen
+Dienste, die Router mit Fehler und die Dienste in Betrieb, dann eine Zeile pro
+Dienst — erst die ausgefallenen, dann die eingeschränkten (ein Teil der Server
+ausgefallen), dann die anderen — mit seinen erreichbaren Servern, und die
+Router mit Fehler samt Meldung. In den Einstellungen lässt es sich auf einige
+Dienste begrenzen (in Gladys angelegte Geräte). **Aktualisieren** liest
+Traefik sofort neu.
+
+## Szenen
+
+### Auslöser
+
+- **Ein Dienst fällt aus**: Ein HTTP-Dienst hat keinen erreichbaren Server mehr
+  oder ist aus Traefik verschwunden (zwei Abfragen in Folge). Auf einige Dienste begrenzbar. Variablen:
+  Name des Dienstes, Provider, erreichbare Server und Server insgesamt, aus
+  Traefik verschwunden.
+- **Ein Dienst läuft wieder**: Ein ausgefallener Dienst hat wieder einen
+  erreichbaren Server. Variablen: dieselben und die Dauer des Ausfalls in
+  Minuten.
+- **Ein Router hat einen Fehler**: Ein Router bekommt einen Fehler (fehlender
+  Dienst oder Middleware, falsche Regel…), einmal pro Router, bis er behoben
+  ist. Variablen: Name des Routers, Provider, Protokoll, Fehlermeldung.
+- **Traefik ist nicht erreichbar**: Die API antwortet nicht mehr, zwei Abfragen
+  in Folge (ein kurzer Neustart von Traefik löst ihn nicht aus). Variable: der
+  Grund.
+
+Alle Dienste lösen aus, ob in Gladys angelegt oder nicht. Router, die beim
+Start der Integration schon einen Fehler haben, werden nicht gemeldet.
+
+### Aktionen
+
+- **Zustand eines Dienstes**: funktionsfähig oder nicht, sein Zustand in Worten
+  (OK, Eingeschränkt, Ausgefallen, Fehlt), erreichbare Server und Server
+  insgesamt und ein fertiger Satz wie „app@docker: Eingeschränkt, 1/2 Server
+  erreichbar.“
+- **Zustand von Traefik**: erreichbar oder nicht, Zahl und Namen der
+  ausgefallenen Dienste und der Router mit Fehler, die Version und ein Satz.
+  Antwortet Traefik nicht, schlägt die Aktion nicht fehl: Das Ergebnis sagt es, und die
+  Szene läuft weiter.
+
+### Szenen-Ideen
+
+- Wenn **Ein Dienst fällt aus**, eine Telegram-Nachricht „\{\{service\}\} ist
+  ausgefallen (\{\{servers_up\}\}/\{\{servers_total\}\} Server)“ senden, und eine
+  weitere bei **Ein Dienst läuft wieder** mit der Dauer des Ausfalls.
+- Jeden Morgen um 8:00 **Zustand von Traefik** und, wenn ein Dienst
+  ausgefallen ist, seinen Satz auf dem Lautsprecher vorlesen.
+- Wenn **Traefik ist nicht erreichbar**, eine Lampe rot schalten: Alle Seiten
+  des Hauses sind auf einmal weg.
+
+## Fehlerbehebung
+
+- **„Traefik antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner aus
+  (`curl http://192.168.1.2:8080/api/version`) und ob der Traefik-Container
+  Port 8080 veröffentlicht.
+- **„keine Traefik-API unter dieser Adresse“**: Die API ist nicht aktiviert,
+  oder die Adresse zeigt auf einen anderen Router als den zu `api@internal`.
+- **„Benutzer oder Passwort abgelehnt“**: Prüfe den Basic-Auth-Benutzer; ein
+  Passwort mit Leerzeichen am Ende wird so übernommen.
+- **„die Adresse leitet um“**: Gib direkt die `https://`-Adresse ein.
+- **„Zertifikat abgelehnt“**: Nutze ein Zertifikat, dem Gladys vertraut (Let's
+  Encrypt), oder die `http://`-Adresse von `api.insecure` im lokalen Netz.
+- **Ein Dienst fällt nie aus**: Füge seinem Load Balancer einen Health Check
+  hinzu.
+- Mehr Details in den Protokollen der Integration (Integrationen → Traefik →
+  Protokolle), mit `LOG_LEVEL=debug` für jede Abfrage.
+
+## Grenzen
+
+- Nur lesend: Die Traefik-API kann die Konfiguration nicht ändern, die
+  Integration hat daher keinen Befehl.
+- Nur HTTP-Dienste werden zu Geräten; TCP- und UDP-Router und -Dienste werden
+  auf dem Traefik-Gerät gezählt.
+- Ohne Health Check meldet Traefik alle Server als UP.
+- Die Prometheus-Metriken (Anfragen, 5xx-Fehler) werden nicht gelesen.
+- Ein Traefik pro Integration.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Traefik in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Traefik-API | `section` | Nein | Aktiviere die Traefik-API: api.insecure=true stellt sie auf Port 8080 bereit, oder ein Router zu api@internal auf deiner Domain, oft hinter Basic Auth. Lege dann die Dienste im Tab „Entdecken“ an. |
+| Adresse der API | `string` | Nein | Die Adresse des Traefik-Dashboards oder der API, ohne /dashboard. |
+| Benutzer (Basic Auth) | `string` | Nein | Nur wenn der Router der API Basic Auth verlangt. Sonst leer lassen. |
+| Passwort (Basic Auth) | `secret` | Nein |  |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Traefik gelesen wird: jedes Mal zwei leichte API-Anfragen. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Anlegen eines Geräts festgelegt) und der Szenen-Ergebnisse. |
+
+## So installierst du Traefik in Gladys
+
+1. Öffne in Gladys **Integrationen**: Traefik erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-traefik:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-traefik](https://github.com/guim31/gladys-traefik).
+
+Traefik benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Traefik ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-traefik) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-traefik/blob/HEAD/docs/de.md)

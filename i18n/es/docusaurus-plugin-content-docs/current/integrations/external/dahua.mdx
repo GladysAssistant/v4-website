@@ -1,0 +1,321 @@
+---
+title: "Integración domótica Dahua, gratuita y de código abierto"
+sidebar_label: "Dahua"
+description: "Cámaras, grabadores y porteros Dahua en local: imágenes, detecciones, timbre y controles. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dahua.png"
+keywords:
+  - "dahua"
+  - "domótica dahua"
+  - "gladys dahua"
+  - "dahua gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-dahua instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Dahua","description":"Cámaras, grabadores y porteros Dahua en local: imágenes, detecciones, timbre y controles.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-dahua","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dahua.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T15:47:42Z"}} />
+
+Integra en Gladys las **cámaras**, **grabadores** (NVR, XVR) y **porteros**
+(VTO) Dahua, **en local**, mediante su API HTTP: imágenes de las cámaras,
+movimiento, reglas de cruce de línea y de intrusión, personas y vehículos,
+alarmas de audio, timbre de los porteros, y los controles de las cámaras que
+los tienen (detección de movimiento, visión nocturna, foco, sirena, máscara de
+privacidad). También funciona con las marcas basadas en Dahua que conservan su
+API, como Amcrest y Lorex. Sin cuenta en la nube, nada sale de su red.
+
+> **Developed without the hardware: feedback welcome.** Esta integración se
+> escribió a partir de la API HTTP pública de Dahua, del trabajo de la
+> integración `dahua` de Home Assistant y de respuestas reales de
+> dispositivos, sin un dispositivo Dahua a mano. Si algo no funciona como se
+> describe, abra una incidencia en
+> [github.com/guim31/gladys-dahua/issues](https://github.com/guim31/gladys-dahua/issues)
+> con los registros de la integración (`LOG_LEVEL=debug`).
+>
+> Esta integración no está afiliada a Dahua. Dahua, Amcrest y Lorex son marcas
+> de sus propietarios.
+
+## Lo que necesita
+
+- Una cámara, un grabador o un portero Dahua (o un modelo de marca blanca con
+  el firmware Dahua) al que Gladys pueda llegar en su red, con su página web
+  en funcionamiento (puerto 80, o 443 en HTTPS).
+- Una **cuenta local** del dispositivo, idealmente de administrador: una
+  cuenta sin los permisos puede leer pero no cambiar los ajustes. En los
+  firmwares recientes, la autenticación debe aceptar **Digest MD5** (el ajuste
+  por defecto).
+- Gladys **5.1 o posterior**.
+
+Las marcas que pasaron a una aplicación solo en la nube (modelos IMOU /
+Lechange sin página web local) no pueden utilizarse.
+
+## Puesta en marcha
+
+### Ajustes
+
+En Gladys, abra la integración y luego su pestaña **Configuración**:
+
+- **Direcciones de los dispositivos**: las direcciones IP (o nombres) de sus
+  dispositivos, separadas por comas, con `:puerto` si no es 80, y `https://`
+  delante para HTTPS. Para un grabador basta su dirección: cada una de sus
+  cámaras se convierte en un dispositivo en Gladys. No ponga nunca una
+  contraseña en una dirección.
+- **Nombre de usuario** y **Contraseña**: la cuenta de estos dispositivos
+  (`admin` por defecto). La contraseña solo se envía a los dispositivos, nunca
+  a una nube.
+- **Direcciones de los otros dispositivos**, **Su nombre de usuario**,
+  **Su contraseña** (opcional): los dispositivos con otras credenciales,
+  normalmente el portero.
+- **Imágenes de las cámaras**: frecuencia de actualización de la imagen de
+  cada cámara añadida a Gladys (cada 5 minutos por defecto, o solo con
+  eventos). Una persona o un timbre siempre envían una nueva.
+- **Controlar las sirenas**: añade un interruptor **Sirena** a las cámaras que
+  la tienen. Desactivado por defecto.
+- **Permitir abrir la puerta**: permite que las escenas abran la puerta o el
+  portón conectado a un portero Dahua. Desactivado por defecto, consulte
+  [Porteros](#porteros).
+- **Idioma de los nombres**: el idioma de los nombres de funciones y de los
+  textos enviados a las escenas (francés por defecto). Los nombres se fijan al
+  añadir un dispositivo a Gladys.
+
+Guarde: el estado bajo el nombre de la integración pasa a conectado, y los
+dispositivos aparecen en la pestaña **Descubrir**. Añada los que desee.
+
+**Una contraseña incorrecta solo se prueba una vez.** Un dispositivo Dahua
+bloquea la cuenta de 5 a 30 minutos tras varias contraseñas rechazadas: al
+primer rechazo, la integración deja de hablar con ese dispositivo (los demás
+siguen) hasta que usted cambie la configuración o pulse **Probar la
+conexión**.
+
+### Acciones de configuración
+
+- **Probar la conexión**: vuelve a leer cada dispositivo y muestra, para cada
+  uno, su modelo, su tipo y su número de canales, o por qué no responde.
+  También vuelve a probar una vez una contraseña rechazada antes.
+- **Mostrar la dirección del flujo de vídeo**: elija una cámara y la dirección
+  RTSP de su flujo de vídeo aparece bajo el botón, lista para la integración
+  «Cámara RTSP» de Gladys (consulte [Vídeo en directo](#vídeo-en-directo)). La
+  contraseña nunca se muestra: sustituya `PASSWORD` usted mismo.
+
+## Los dispositivos
+
+### Cámaras
+
+Un dispositivo por cámara, con las funciones que muestran sus propios
+ajustes:
+
+- **Imagen**: la imagen de la cámara, actualizada al intervalo elegido, con
+  cada persona y cada timbre, y a petición;
+- **En línea**: encendido mientras el dispositivo responde;
+- **Movimiento**: encendido mientras la cámara señala movimiento;
+- **Cruce de línea**, **Intrusión**: encendidos mientras una regla de cruce o
+  de intrusión (IVS) de la cámara está activada — solo si existe una regla
+  habilitada;
+- **Persona**, **Vehículo**: encendidos mientras la detección inteligente ve
+  uno, o 10 segundos cuando una regla de cruce o de intrusión señala una
+  persona o un vehículo;
+- **Alarma de audio**: encendida mientras la cámara señala un ruido repentino.
+  Aparece con la primera alarma de audio: pulse **Actualizar** en la cámara en
+  la pestaña **Descubrir**;
+- **Detección de movimiento**: activa o desactiva la detección de movimiento
+  de la cámara;
+- **Visión nocturna**: la luz infrarroja, **Auto**, **Encendida** o
+  **Apagada**;
+- **Foco**: la luz blanca de las cámaras que la tienen. Encenderlo lo fuerza
+  encendido; apagarlo le devuelve su modo anterior;
+- **Sirena**: hace sonar la sirena de las cámaras que la tienen, solo si
+  **Controlar las sirenas** está marcado. La sirena se detiene sola tras 10 a
+  15 segundos;
+- **Máscara de privacidad**: tapa el objetivo (modo privacidad). Mientras está
+  activa, el temporizador no actualiza la imagen de la cámara.
+
+Una regla habilitada después de añadir el dispositivo aparece tras una
+**Búsqueda** en la pestaña **Descubrir**, y luego **Actualizar**.
+
+### Grabadores
+
+Un grabador no es un dispositivo en Gladys: cada una de sus cámaras Dahua lo
+es, con el nombre que tiene en el grabador, con **Imagen**, **En línea**,
+**Movimiento**, **Detección de movimiento**, y **Persona** y **Vehículo** en
+los canales con detección inteligente. Las cámaras añadidas al grabador por
+ONVIF no se controlan mediante la API de Dahua y se dejan de lado. Un grabador
+tiene un único flujo de eventos para todas sus cámaras.
+
+### Porteros
+
+Un portero Dahua (VTO) es una cámara con **Timbre**: se enciende 10 segundos
+con cada pulsación del botón, y Gladys muestra cuándo sonó por última vez.
+
+**La apertura de la puerta está desactivada por defecto** y nunca es un
+interruptor: ningún botón del panel, ningún asistente de voz puede abrirla por
+error. Una vez marcado **Permitir abrir la puerta**, solo la acción de escena
+**Abrir la puerta de un portero** puede hacerlo, y la orden se envía una vez,
+nunca se repite.
+
+## Panel
+
+El widget **Dahua** muestra de un vistazo:
+
+- las cámaras en línea (3/4) y las personas y timbres de las últimas
+  24 horas;
+- las últimas personas y timbres, los más recientes primero, cada uno con la
+  imagen tomada en el momento;
+- el estado de cada cámara.
+
+En sus ajustes, elija una cámara para mostrar solo esa. Los eventos se
+guardan en memoria: la lista empieza vacía tras reiniciar la integración.
+
+## Escenas
+
+### Disparadores
+
+- **Persona detectada por una cámara**: una cámara vio a una persona.
+  Filtros: la cámara, y lo que la detectó (detección inteligente, regla de
+  cruce de línea, regla de intrusión); si se dejan vacíos, todo coincide. Las
+  acciones pueden usar el nombre de la cámara, lo que detectó a la persona y
+  el nombre de la regla. Un evento por cámara en 15 segundos: una persona
+  vista por dos reglas inicia la escena una vez. Cuando la escena empieza, la
+  imagen de la cámara en Gladys ya es la de la detección.
+- **Alguien llama al portero**: se ha pulsado el botón de un portero. Filtro:
+  el portero. Las acciones pueden usar su nombre. La imagen del portero en
+  Gladys ya es la del timbre.
+
+Los estados de los dispositivos (movimiento, cruce de línea, alarma de
+audio…) también están disponibles para el disparador habitual «estado de un
+dispositivo» de Gladys.
+
+### Acciones
+
+- **Actualizar la imagen de una cámara**: toma una imagen nueva de una cámara
+  para Gladys, para que la acción siguiente («enviar la imagen de una cámara»
+  en un mensaje) envíe lo que la cámara ve ahora.
+- **Abrir la puerta de un portero**: abre la puerta 1 o 2 de un portero.
+  Rechazada mientras **Permitir abrir la puerta** no esté marcado.
+
+### Ideas de escenas
+
+- **Alguien llama**: disparador «Alguien llama al portero», luego «enviar la
+  imagen de una cámara» del portero a su teléfono con el mensaje «Alguien en
+  la puerta».
+- **Persona en la entrada de noche**: disparador «Persona detectada por una
+  cámara» (cámara Entrada), una condición sobre la hora, luego encender las
+  luces del jardín 5 minutos.
+- **Tranquilidad cuando está en casa**: cuando la casa pasa a ocupada,
+  desactivar **Detección de movimiento** en las cámaras interiores; volver a
+  activarla cuando todos se van.
+- **Visión nocturna y lámpara del porche**: cuando se enciende la lámpara del
+  porche, poner **Visión nocturna** de la cámara de entrada en **Apagada** (sin
+  reflejo en el cristal); volver a **Auto** cuando se apaga.
+
+## Vídeo en directo
+
+La función **Imagen** muestra imágenes fijas. Para el vídeo en directo, use la
+integración «Cámara RTSP» de Gladys:
+
+1. Ejecute **Mostrar la dirección del flujo de vídeo** con la cámara.
+2. Añada la cámara en la integración «Cámara RTSP» con esta dirección,
+   sustituyendo `PASSWORD` por la contraseña del dispositivo
+   (`rtsp://admin:PASSWORD@<dirección>:554/cam/realmonitor?channel=1&subtype=0`;
+   `subtype=1` da el flujo secundario, más ligero).
+
+## Actualización y límites de la API
+
+Gladys nunca consulta estos dispositivos: la integración sigue en directo el
+flujo de eventos de cada dispositivo, y vuelve a leer los ajustes cada
+5 minutos (cada minuto mientras un flujo de eventos está cortado). Los valores
+solo se envían a Gladys cuando cambian, y de nuevo cada 6 horas si no.
+
+El servidor web de un dispositivo Dahua es pequeño: la integración envía como
+máximo dos solicitudes a la vez a cada dispositivo, lee tablas enteras (un
+grabador cuesta las mismas pocas solicitudes que una cámara) y espera una
+respuesta 20 segundos como máximo. Imágenes: como máximo una cada 6 segundos
+por cámara (Gladys acepta 12 por minuto). Cada solicitud aparece en el
+registro del dispositivo: una actualización cada 5 minutos lo mantiene
+legible.
+
+## Solución de problemas
+
+- **«El dispositivo no responde»**: compruebe la dirección, que el
+  dispositivo esté encendido y que Gladys pueda alcanzarlo (misma red,
+  cortafuegos).
+- **«Contraseña rechazada»**: corrija el nombre de usuario o la contraseña de
+  ese dispositivo, guarde y pulse **Probar la conexión**. Si el dispositivo
+  bloqueó la cuenta, espere a que la desbloquee (de 5 a 30 minutos) o
+  reinícielo.
+- **«No hay API HTTP Dahua en esta dirección»**: la dirección no es la del
+  dispositivo, o la API CGI está desactivada en él (en los firmwares
+  recientes: Red, Puerto, o Seguridad, «CGI»).
+- **«Esta cuenta no tiene ese permiso»**: utilice una cuenta de
+  administrador.
+- **«El dispositivo rechazó el ajuste»**: este modelo o este canal no lo
+  admite; la función se queda como estaba.
+- **«los eventos en directo están cortados»**: los estados siguen, cada
+  minuto; personas y timbres esperan a que vuelva el flujo. Se reconecta solo.
+- **Falta una regla, una luz o una máscara**: actívela en el dispositivo,
+  luego **Búsqueda** en la pestaña **Descubrir** y **Actualizar** el
+  dispositivo.
+- **Sin imagen**: la integración reduce imágenes de hasta 4K; un JPEG
+  progresivo mayor que 1080p no puede reducirse en la memoria del contenedor.
+  Los registros lo dicen una vez.
+- Para más detalle, ponga `LOG_LEVEL=debug` en la integración y lea sus
+  registros. Nunca contienen una contraseña.
+
+## Límites
+
+- Desarrollada sin el hardware: probada con respuestas reales de la API y un
+  dispositivo simulado, no con dispositivos reales.
+- El timbre del portero se lee en el flujo de eventos HTTP (`BackKeyLight`,
+  `PhoneCallDetect`). Algunos porteros solo lo señalan por su otro protocolo
+  (DHIP, puerto 5000), aún no utilizado: díganos si un timbre no aparece.
+- Las sirenas se reconocen en los modelos que se sabe que tienen una y en las
+  cámaras que anuncian un altavoz; la sirena de las cámaras detrás de un
+  grabador no se controla.
+- Sin control PTZ, sin control de la grabación ni de la alarma, sin audio
+  bidireccional.
+- Cámaras multisensor: solo se usa su primer canal.
+- La lista de eventos del widget empieza vacía en cada reinicio.
+- Las imágenes se reducen a 960 píxeles de ancho como máximo (el límite de
+  Gladys es de 150 KB por imagen).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Dahua te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sus dispositivos Dahua | `section` | No | Cámaras, grabadores (NVR, XVR) y porteros (VTO) de Dahua y de las marcas que derivan de ella (Amcrest, Lorex…), en su red, mediante su API HTTP. Utilice una cuenta local del dispositivo, idealmente de administrador. Nada pasa por una nube. |
+| Direcciones de los dispositivos | `string` | Sí | Direcciones IP o nombres, separados por comas, con :puerto si no es 80, https:\/\/ para HTTPS. Para un grabador basta su dirección: cada cámara se convierte en un dispositivo. |
+| Nombre de usuario | `string` | No |  |
+| Contraseña | `secret` | Sí | Solo se envía a los dispositivos, nunca a una nube. Un dispositivo bloquea la cuenta tras varios errores: la integración se detiene al primer rechazo. |
+| Dispositivos con otras credenciales | `section` | No | Opcional: un portero o una cámara cuyo nombre de usuario o contraseña difiere de los anteriores. |
+| Direcciones de los otros dispositivos | `string` | No |  |
+| Su nombre de usuario | `string` | No |  |
+| Su contraseña | `secret` | No |  |
+| Imágenes de las cámaras | `select` | No | Frecuencia de actualización de la imagen de las cámaras añadidas. Una persona o un timbre siempre envían una nueva. |
+| Controlar las sirenas | `boolean` | No | Añade un interruptor de sirena a las cámaras que la tienen. Desactivado por defecto: una sirena activada por error despierta al vecindario. |
+| Permitir abrir la puerta | `boolean` | No | Permite que las escenas abran la puerta o el portón de un portero Dahua (solo acción de escena, nunca un interruptor). Desactivado por defecto. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de funciones y de los textos enviados a las escenas. Se fijan al añadir un dispositivo. |
+
+## Cómo instalar Dahua en Gladys
+
+1. En Gladys, abre **Integraciones**: Dahua aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-dahua:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-dahua](https://github.com/guim31/gladys-dahua).
+
+Dahua requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Dahua es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-dahua) — [fuente de esta documentación](https://github.com/guim31/gladys-dahua/blob/HEAD/docs/es.md)

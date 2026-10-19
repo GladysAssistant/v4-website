@@ -1,0 +1,294 @@
+---
+title: "Integración domótica Axis, gratuita y de código abierto"
+sidebar_label: "Axis"
+description: "Cámaras, porteros y altavoces Axis en local: imágenes, detecciones, timbre y clips. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-axis.png"
+keywords:
+  - "axis"
+  - "domótica axis"
+  - "gladys axis"
+  - "axis gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-axis instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Axis","description":"Cámaras, porteros y altavoces Axis en local: imágenes, detecciones, timbre y clips.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-axis","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-axis.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T19:50:24Z"}} />
+
+Integra en Gladys las **cámaras de red**, los **porteros** (intercomunicadores
+de red) y los **altavoces de red** Axis, **en local**, mediante su API VAPIX:
+imágenes de las cámaras, movimiento, objetos, personas y vehículos vistos por
+AXIS Object Analytics, el sensor PIR, la detección de sonido, el sabotaje, el
+día y la noche, las entradas digitales, el timbre de los porteros, la luz
+infrarroja, los clips de audio de los altavoces y las salidas (relés) para
+sus escenas. Sin cuenta en la nube, nada sale de su red.
+
+> **Developed without the hardware: feedback welcome.** Esta integración se
+> escribió a partir de la documentación pública de VAPIX, la integración
+> `axis` de Home Assistant y la biblioteca `axis` de Kane610 (con sus
+> respuestas reales de dispositivos), sin un dispositivo Axis a mano. Si algo
+> no funciona como se describe, abra una incidencia en
+> [github.com/guim31/gladys-axis/issues](https://github.com/guim31/gladys-axis/issues)
+> con los registros de la integración (`LOG_LEVEL=debug`).
+>
+> Esta integración no está afiliada a Axis Communications. AXIS es una marca
+> de Axis AB.
+
+## Lo que necesita
+
+- Una cámara, un portero o un altavoz Axis accesible desde Gladys en su red,
+  con su página web operativa (puerto 80, o 443 en HTTPS).
+- Una **cuenta local** del dispositivo. Una cuenta de **operador** basta
+  para todo (imágenes, eventos, luz infrarroja, salidas, clips); una cuenta de
+  observador solo puede leer. La primera cuenta de un dispositivo Axis es
+  `root`: es mejor crear una cuenta de operador dedicada `gladys`.
+- Para los eventos en directo: AXIS OS 11 o posterior usa el flujo de eventos
+  WebSocket por el puerto web; los firmwares anteriores usan el flujo de
+  metadatos RTSP, por lo que el puerto RTSP (554 por defecto) también debe ser
+  accesible.
+- Gladys **5.1 o posterior**.
+
+## Puesta en marcha
+
+### Ajustes
+
+En Gladys, abra la integración y luego su pestaña **Configuración**:
+
+- **Direcciones de los dispositivos**: las direcciones IP (o nombres) de sus
+  dispositivos, separadas por comas, p. ej. `192.168.1.90, 192.168.1.91`.
+  Añada `:puerto` si la página web no está en el puerto 80, y `https://` para
+  HTTPS (se acepta el certificado autofirmado del dispositivo). Nunca ponga la
+  contraseña en la dirección.
+- **Nombre de usuario** y **Contraseña**: la cuenta local de los
+  dispositivos. La contraseña solo se envía a los dispositivos, nunca a una
+  nube.
+- **Direcciones de los otros dispositivos**, **Su nombre de usuario**, **Su contraseña**: opcionales, para dispositivos (un portero, por ejemplo) con
+  otras credenciales.
+- **Imágenes de las cámaras**: frecuencia de actualización de la imagen de
+  cada cámara añadida a Gladys (cada 5 minutos por defecto, o solo con
+  eventos). Una persona detectada o un timbre siempre envían una imagen nueva.
+- **Permitir controlar las salidas**: desactivado por defecto. En un portero,
+  las salidas (relés) abren la puerta o el portón: solo las controla la acción
+  de escena, una vez activado este ajuste, y nunca son un interruptor.
+- **Idioma de los nombres**: el idioma de los nombres de funciones (fijados
+  al añadir un dispositivo) y de los textos enviados a las escenas. Francés
+  por defecto.
+
+Abra después la pestaña **Descubrimiento**: aparece cada cámara (cada fuente
+de vídeo de una cámara multisensor), portero y altavoz. Añada los que desee.
+
+### Acciones de configuración
+
+- **Probar la conexión**: vuelve a leer todos los dispositivos e indica, una
+  línea por dispositivo, su modelo, sus fuentes de vídeo y cómo llegan sus
+  eventos (WebSocket o RTSP). Tras una contraseña rechazada, es la forma de
+  volver a intentarlo una vez corregida.
+- **Buscar en la red**: pide a Gladys que busque los dispositivos Axis de la
+  red (mDNS `_axis-video._tcp` y UPnP) y los lista: configurado, para añadir
+  (copie su dirección en **Direcciones de los dispositivos**) o encontrado en
+  una dirección nueva. Bonjour y UPnP deben estar activos en los dispositivos
+  (lo están por defecto).
+- **Clips de audio**: lista los clips de audio de cada dispositivo, por
+  número y nombre, para la acción de escena **Reproducir un clip de audio**.
+- **Mostrar la dirección del flujo de vídeo**: la dirección RTSP de una
+  cámara, para la integración «Cámara RTSP» de Gladys. La contraseña se
+  sustituye por `PASSWORD`: escríbala usted mismo.
+
+## Los dispositivos
+
+### Cámaras
+
+Cada fuente de vídeo se convierte en un dispositivo. Sus funciones, cada una
+solo si la cámara la tiene:
+
+| Función                 | Lo que muestra                                                                         |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| **Imagen**              | La imagen de la cámara, actualizada según **Imágenes de las cámaras**                  |
+| **En línea**            | La cámara responde                                                                     |
+| **Movimiento**          | AXIS Video Motion Detection, los perfiles de vigilancia, las reglas ONVIF              |
+| **Análisis de objetos** | Se ha activado un escenario de AXIS Object Analytics                                   |
+| **Persona**             | Un objeto clasificado como persona (AXIS Object Analytics)                             |
+| **Vehículo**            | Un objeto clasificado como vehículo (AXIS Object Analytics)                            |
+| **Sensor PIR**          | El sensor PIR de la cámara                                                             |
+| **Detección de sonido** | El activador de nivel de sonido de la cámara                                           |
+| **Sabotaje**            | La cámara se ha movido, tapado o deslumbrado                                           |
+| **Modo noche**          | La cámara está en modo noche (filtro de infrarrojos retirado)                          |
+| **Luz infrarroja**      | El iluminador infrarrojo: encendido o apagado desde Gladys                             |
+| **Entrada**             | Cada entrada digital, con su nombre en la cámara (p. ej. `Garden gate`), o «Entrada 1» |
+
+Las detecciones que una cámara señala en sus eventos añaden su función (un
+sensor por evento presente): si falta una función, active la detección una
+vez, luego vuelva a abrir **Descubrimiento** y actualice el dispositivo.
+
+Las salidas (relés) de una cámara nunca son una función: vea la acción de
+escena **Controlar una salida (relé)**.
+
+### Porteros
+
+Un portero Axis (A8105-E, A8207-VE, I8016-LVE, I8116-E…) es una cámara con una
+función **Timbre**: pasa a 1 cuando alguien pulsa el botón de llamada, vuelve a
+0 diez segundos después y activa **Alguien llama al portero** con una imagen
+nueva. El botón de llamada se reconoce cuando su entrada se llama así
+(`Call button`, `Doorbell`, `Llamada`…), o como primera entrada de un AXIS
+I8116-E. Su relé de puerta es una salida: vea **Controlar una salida (relé)**.
+
+### Altavoces de red
+
+Un altavoz de red Axis (C1310-E, C1410…) se convierte en un dispositivo con la
+función **En línea**; reproduce sus clips de audio mediante la acción de escena
+**Reproducir un clip de audio**.
+
+## Panel
+
+El widget **Axis** muestra los dispositivos en línea, las personas y timbres
+de las últimas 24 horas, los más recientes con su imagen, y el estado de cada
+dispositivo. En sus ajustes, elija un dispositivo, o déjelo vacío para todos.
+
+Las imágenes de las cámaras y cada función también se añaden al panel con las
+cajas habituales de Gladys.
+
+## Escenas
+
+### Activadores
+
+- **Persona detectada por una cámara**: una cámara vio a una persona (AXIS
+  Object Analytics o un perfil de vigilancia). Filtro por cámara; las
+  variables dan el nombre de la cámara y el del escenario. La imagen de la
+  cámara está al día al empezar la escena, así que «enviar la imagen de la
+  cámara» envía la correcta. Como máximo un evento por cámara cada 15
+  segundos.
+- **Alguien llama al portero**: se pulsó el botón de llamada. Filtro por
+  portero; la variable da su nombre. La imagen también está al día.
+
+Las funciones (**Movimiento**, **Persona**, **Entrada**…) también pueden
+iniciar una escena con el activador habitual «cambio de estado de un
+dispositivo».
+
+### Acciones
+
+- **Actualizar la imagen de una cámara**: toma una imagen nueva de una cámara
+  para Gladys, para enviarla después en un mensaje.
+- **Reproducir un clip de audio**: reproduce un clip guardado en un altavoz,
+  portero o cámara Axis, por su número o su nombre (vacío: el primer clip). La
+  acción de configuración **Clips de audio** los lista.
+- **Controlar una salida (relé)**: un impulso de 1, 3 o 10 segundos, o
+  activar o desactivar una salida, numerada desde 1 entre las salidas del
+  dispositivo. En un portero, esto abre la puerta: solo funciona una vez
+  activado **Permitir controlar las salidas**, y la orden se envía una vez,
+  nunca se repite.
+
+### Ideas de escenas
+
+- **Llaman a la puerta**: cuando alguien llama al portero, enviar la imagen
+  del portero en un mensaje y reproducir un carillón en el altavoz del salón
+  con **Reproducir un clip de audio**.
+- **Vigilancia nocturna**: cuando la cámara de la entrada detecta a una
+  persona entre medianoche y las 6, encender las luces del jardín, reproducir
+  el clip «Aviso» en el altavoz de bocina y enviar la imagen de la cámara.
+- **Abrir el portón a una llegada conocida**: cuando su teléfono llega a
+  casa, controlar la salida 1 del portero con un impulso de 1 segundo (solo
+  tras autorizarlo, y si acepta el riesgo de una escena que abre una puerta).
+
+## Vídeo en directo
+
+Gladys muestra imágenes de cámara, no un flujo de vídeo en directo. Para el
+vídeo en directo, use la acción **Mostrar la dirección del flujo de vídeo** y
+añada la dirección RTSP a la integración «Cámara RTSP» de Gladys.
+
+## Actualización y límites
+
+- Los eventos llegan en directo: WebSocket con AXIS OS 11 y posteriores, flujo
+  de metadatos RTSP en otro caso, siempre una conexión por dispositivo abierta
+  por Gladys (nada que abrir en su router). Un flujo perdido se vuelve a abrir
+  (tras 5 segundos, luego hasta 5 minutos entre intentos).
+- La integración lee las entradas y la luz infrarroja cada 5 minutos, cada
+  minuto mientras un flujo de eventos está cortado. Nunca espera a que Gladys
+  consulte los dispositivos.
+- Las imágenes se toman a 640 píxeles de ancho como máximo, reducidas por la
+  cámara (Gladys acepta imágenes de 150 KB como máximo), nunca más de una cada
+  6 segundos por cámara.
+- Un valor que no cambia se reenvía cada 6 horas, para que Gladys nunca lo
+  muestre como antiguo.
+- VAPIX no tiene cuota. Los dispositivos Axis bloquean una dirección durante
+  un tiempo tras contraseñas erróneas repetidas: la integración se detiene al
+  primer rechazo y solo vuelve a intentarlo con una nueva configuración o con
+  **Probar la conexión**.
+
+## Solución de problemas
+
+- **«Nombre de usuario o contraseña rechazados»**: compruébelos en la página
+  web del dispositivo, corríjalos en la configuración y luego use **Probar la
+  conexión**.
+- **«Esta cuenta no tiene ese permiso»**: utilice una cuenta de operador.
+- **El dispositivo no responde**: compruebe su dirección, su puerto y que
+  Gladys lo alcance (misma red, sin cortafuegos entre ambos).
+- **«Los eventos en directo están cortados»**: con un firmware antiguo,
+  compruebe que el puerto RTSP (554) es accesible y que RTSP está activado en
+  el dispositivo. Las entradas y la luz infrarroja se siguen leyendo cada
+  minuto.
+- **Falta una detección**: actívela en la cámara (escenario de AXIS Object
+  Analytics, perfil VMD, activador de nivel de sonido), actívela una vez y
+  luego actualice el dispositivo en **Descubrimiento**.
+- **No se ve el timbre de un portero**: llame `Call button` a la entrada del
+  botón de llamada en el portero y luego use **Probar la conexión**.
+- **Detalles**: configure `LOG_LEVEL=debug` en la integración para ver cada
+  evento y cada lectura en sus registros. Las contraseñas nunca aparecen.
+
+## Límites
+
+- Desarrollada sin el hardware: los temas de eventos, los flujos y la regla
+  del botón de llamada proceden de la documentación y del trabajo de Home
+  Assistant, no de una prueba con un dispositivo real.
+- Sin vídeo en directo en Gladys (solo imágenes), sin giro, inclinación ni
+  zoom.
+- Las salidas son solo una acción de escena, a propósito: nunca un
+  interruptor, nunca accesibles para un asistente de voz.
+- Los clips de audio se reproducen, no se suben: grábelos en el dispositivo.
+- En una cámara multisensor, las funciones de AXIS Object Analytics aparecen
+  primero en la primera fuente de vídeo; las demás las obtienen con su primera
+  detección.
+- Los dispositivos encontrados por la búsqueda en la red no se añaden solos:
+  copie su dirección en la configuración.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Axis te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sus dispositivos Axis | `section` | No | Cámaras, porteros (intercomunicadores) y altavoces de red Axis, en su red, mediante su API VAPIX. Utilice una cuenta local del dispositivo, idealmente una cuenta de operador dedicada. Nada pasa por una nube. La acción «Buscar en la red» lista los dispositivos Axis encontrados. |
+| Direcciones de los dispositivos | `string` | Sí | Direcciones IP o nombres, separados por comas, con :puerto si no es 80, https:\/\/ para HTTPS. |
+| Nombre de usuario | `string` | No |  |
+| Contraseña | `secret` | Sí | Solo se envía a los dispositivos, nunca a una nube. Los dispositivos Axis bloquean una dirección tras errores repetidos: la integración se detiene al primer rechazo. |
+| Dispositivos con otras credenciales | `section` | No | Opcional: un portero o una cámara cuyo nombre de usuario o contraseña difiere de los anteriores. |
+| Direcciones de los otros dispositivos | `string` | No |  |
+| Su nombre de usuario | `string` | No |  |
+| Su contraseña | `secret` | No |  |
+| Imágenes de las cámaras | `select` | No | Frecuencia de actualización de la imagen de las cámaras añadidas. Una persona o un timbre siempre envían una nueva. |
+| Permitir controlar las salidas | `boolean` | No | Permite que las escenas controlen las salidas (relés): en un portero abren la puerta o el portón. Solo acción de escena, nunca un interruptor. Desactivado por defecto. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de funciones y de los textos enviados a las escenas. Se fijan al añadir un dispositivo. |
+
+## Cómo instalar Axis en Gladys
+
+1. En Gladys, abre **Integraciones**: Axis aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-axis:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-axis](https://github.com/guim31/gladys-axis).
+
+Axis requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Axis es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-axis) — [fuente de esta documentación](https://github.com/guim31/gladys-axis/blob/HEAD/docs/es.md)

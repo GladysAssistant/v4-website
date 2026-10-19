@@ -1,0 +1,170 @@
+---
+title: "Zaptec Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Zaptec"
+description: "Zaptec-Ladestationen in Gladys: Status, Leistung, Energie, Steuerung der Ladung. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zaptec.png"
+keywords:
+  - "zaptec"
+  - "zaptec smart home"
+  - "gladys zaptec"
+  - "zaptec gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-zaptec instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zaptec","description":"Zaptec-Ladestationen in Gladys: Status, Leistung, Energie, Steuerung der Ladung.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-zaptec","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zaptec.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T07:26:12Z"}} />
+
+## Überblick
+
+Diese Integration bringt deine **Zaptec-Ladestationen** (Zaptec Go, Go 2 und Pro) über die **offizielle Cloud-API von Zaptec** (`api.zaptec.com`) in Gladys, mit dem Konto der Zaptec-App und des Zaptec Portals.
+
+- Jede Ladestation wird ein Gladys-Gerät: Anschlussstatus, Ladezustand, detaillierter Status, Leistung, Strom pro Phase, Energie der Ladung, Gesamtenergie und ein Ladeschalter (Pause / Fortsetzen).
+- Jede Installation, auf die du Rechte hast (Eigentümer oder Service), wird ein Gerät mit ihrem **verfügbaren Strom**, der Grenze, die sich ihre Ladestationen teilen, einstellbar aus Gladys wie in der App.
+- Die Gesamtenergie einer Ladestation ist ein Zählerstand: Das Energie-Monitoring von Gladys 5.2 macht daraus alle 30 Minuten einen Verbrauch.
+- Ein Dashboard-Widget, zwei Szenen-Auslöser und eine Szenen-Aktion ergänzen das Ganze.
+
+Diese Integration ist nicht mit Zaptec verbunden und wurde ohne die Hardware entwickelt: Rückmeldungen sind im [GitHub-Repository](https://github.com/guim31/gladys-zaptec/issues) willkommen.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1.0 oder neuer (5.2 für das Energie-Monitoring der Gesamtenergie).
+- Ein Zaptec-Konto (das der Zaptec-App oder des [Zaptec Portals](https://portal.zaptec.com)) mit Zugriff auf die Ladestationen.
+- Zum Pausieren, Fortsetzen oder Beenden einer Ladung: die Rechte **Eigentümer** oder **Service** auf die Ladestation. Zum Ändern des verfügbaren Stroms: dieselben Rechte auf die Installation, Zaptec Sense (automatisches Lastmanagement) und Stand-alone-Modus ausgeschaltet.
+- Die Ladestationen mit dem Internet verbunden (WLAN, 4G oder Ethernet), und Gladys auch: Alles läuft über die Zaptec-Cloud.
+
+## Konfiguration
+
+1. Öffne in Gladys **Integrationen**, installiere **Zaptec** und öffne dann die Konfiguration.
+2. Gib die **E-Mail-Adresse** und das **Passwort** des Zaptec-Kontos ein.
+3. Wähle die **Sprache der Gerätetexte**: die Namen der Funktionen (beim Hinzufügen eines Geräts festgelegt) und den detaillierten Status der Ladestationen. Standardmäßig Französisch.
+4. Wähle das **Aktualisierungsintervall**: 1, 2 (Standard) oder 5 Minuten.
+5. Speichere und drücke dann **Verbindung testen**: Die Meldung listet die Ladestationen und die Installationen auf, deren Strom du einstellen kannst.
+6. Öffne den Reiter **Erkennung** und füge die gewünschten Geräte hinzu.
+
+So spricht die Integration mit Zaptec:
+
+- Die Integration meldet sich mit dem Passwort an (OAuth2, „password grant“) und behält das Zugriffstoken (etwa einen Tag gültig) in ihrem privaten Volume `/data`. Das Passwort bleibt in der Gladys-Konfiguration und wird nie in die Logs geschrieben.
+- Die **Fair-Use-Richtlinie der Zaptec-API** begrenzt ein Konto auf 10 Anfragen pro Sekunde und bittet, die API nicht aggressiv abzufragen; sie verbietet Dritten auch die internen Endpunkte der Zaptec-App. Die Integration nutzt nur dokumentierte Endpunkte, liest den Zustand jeder hinzugefügten Ladestation einmal pro Intervall (1 bis 5 Minuten), die Installation alle zehn Minuten und nichts für nicht hinzugefügte Geräte. Bei HTTP 429 pausiert sie so lange, wie Zaptec verlangt (sonst 5 Minuten).
+- Lehnt Zaptec die Zugangsdaten ab, versucht es die Integration erst wieder, wenn du die Konfiguration erneut speicherst, damit das Konto nicht durch wiederholte Versuche gesperrt wird.
+
+## Geräte
+
+### Ladestation
+
+| Funktion           | Typ in Gladys              | Inhalt                                                                                  |
+| ------------------ | -------------------------- | --------------------------------------------------------------------------------------- |
+| Anschluss          | Ladestation, Anschluss     | Verfügbar (kein Fahrzeug), belegt (Fahrzeug angesteckt), nicht verfügbar (offline)      |
+| Ladezustand        | Ladestation, Laden         | Lädt, Fahrzeug verbunden, vom Fahrzeug pausiert, von der Ladestation pausiert, inaktiv  |
+| Zaptec-Status      | Text                       | Kein Fahrzeug, Fahrzeug angesteckt (wartet), lädt, Laden pausiert, Laden abgeschlossen… |
+| Ladeleistung       | Leistung (W)               | An das Fahrzeug abgegebene Leistung                                                     |
+| Strom L1, L2, L3   | Strom (A)                  | Strom jeder Phase                                                                       |
+| Energie der Ladung | Hinzugefügte Energie (kWh) | Energie der laufenden oder der letzten Ladung                                           |
+| Gesamtenergie      | Zählerstand (kWh)          | Signierter Zähler der Ladestation (von ihr etwa einmal pro Stunde gesendet)             |
+| Laden              | Ladeschalter, Steuerung    | Aus: Ladung pausieren. Ein: eine von Gladys oder der App pausierte Ladung fortsetzen    |
+
+Die Ladestation trägt außerdem ein **Cloud**-Abzeichen, das zu **nicht erreichbar** wechselt, wenn sie offline ist: Der Anschluss zeigt dann „nicht verfügbar“ und der Status „Offline“.
+
+**Laden pausiert** ist eine Pause, die von Gladys oder der Zaptec-App gesendet wurde (das Kabel bleibt eingesteckt, die Ladestation kann es entriegeln). **Laden abgeschlossen** bedeutet, dass das Fahrzeug von selbst aufgehört hat (Akku voll, eigener Zeitplan): Zaptec kann es nicht fortsetzen, zieh den Stecker und steck ihn wieder ein.
+
+### Installation
+
+| Funktion                 | Typ in Gladys            | Inhalt                                                                                  |
+| ------------------------ | ------------------------ | --------------------------------------------------------------------------------------- |
+| Verfügbarer Strom        | Sollstrom (A), Steuerung | Strom, den alle Ladestationen der Installation zusammen ziehen dürfen, auf allen Phasen |
+| Maximum der Installation | Strom (A)                | Die Absicherung der Installation, obere Grenze der Einstellung oben                     |
+
+Die Installation erscheint nur, wenn das Konto sie lesen darf (Eigentümer oder Service). Zaptec empfiehlt, den verfügbaren Strom höchstens alle 15 Minuten zu ändern: Viele Fahrzeuge mögen häufige Änderungen nicht. 0 A stoppt alle Ladestationen der Installation.
+
+## Widget
+
+Das Widget **Zaptec-Ladestation** zeigt eine Ladestation: Ladeleistung und Energie der Ladung als Live-Kacheln, den Zaptec-Status und die Verbindung sowie die passenden Schaltflächen:
+
+- beim Laden: **Pause** und **Beenden**;
+- von Gladys oder der App pausiert: **Fortsetzen** und **Beenden**;
+- Fahrzeug angesteckt, wartend oder Laden abgeschlossen: **Beenden**;
+- kein Fahrzeug oder Ladestation offline: keine Schaltfläche.
+
+**Beenden** fragt nach einer Bestätigung: Es stoppt die Ladung und entzieht der Sitzung die Freigabe. Wähle die Ladestation in den Einstellungen des Widgets.
+
+## Szenen-Auslöser und -Aktion
+
+### Auslöser
+
+- **Fahrzeug angesteckt**: Ein Fahrzeug wurde an eine freie Ladestation angesteckt. Variable: der Name der Ladestation.
+- **Laden abgeschlossen**: Das Fahrzeug nimmt von selbst keinen Strom mehr auf (Akku voll oder eigene Grenze) und steckt noch. Eine von Gladys oder der App gesendete Pause löst ihn nicht aus. Variablen: der Name der Ladestation, die Energie der Ladung in kWh.
+
+Beide werden bei jeder Messung erkannt, also innerhalb eines Aktualisierungsintervalls. Eine Ladestation, die mit bereits angestecktem Fahrzeug wieder online kommt, löst **Fahrzeug angesteckt** nicht aus. Jeder Auslöser lässt sich auf eine Ladestation beschränken. Es gibt sie, weil der Szeneneditor keine Liste für die Zustände einer Ladestation anbietet.
+
+### Aktion
+
+**Zaptec-Ladung steuern** pausiert oder setzt die Ladung einer Ladestation fort, oder beendet die Sitzung. Als Ausgabe liefert sie den gesendeten Zaptec-Befehl (`stop_charging_final`, `resume_charging` oder `deauthorize_and_stop`). Zaptec akzeptiert eine Pause nur beim Laden und ein Fortsetzen nur nach einer Pause: Sonst schlägt die Aktion mit einer Meldung fehl, die den Grund nennt.
+
+Die steuerbaren Funktionen (Laden, verfügbarer Strom) lassen sich auch mit der Standardaktion **Gerät steuern** von Gladys setzen.
+
+## Szenenbeispiele
+
+- **Laden im Nachttarif**: Auslöser **Fahrzeug angesteckt** → 2 Minuten warten → wenn die Uhrzeit zwischen 7:00 und 22:00 liegt, **Zaptec-Ladung steuern** „Pausieren“; jeden Tag um 22:00 „Fortsetzen“.
+- **Erinnerung**: an Werktagen um 21:00, wenn der **Anschluss** der Ladestation „verfügbar“ ist (kein Fahrzeug), die Nachricht „Das Auto ist nicht angesteckt“ senden.
+- **Willkommen zu Hause**: Auslöser **Fahrzeug angesteckt** → das Garagenlicht für 5 Minuten einschalten.
+- **Ende der Ladung**: Auslöser **Laden abgeschlossen** → „Ladung fertig: `{{triggerEvent.data.session_energy}}` kWh an `{{triggerEvent.data.charger_name}}`“ senden.
+- **Lastabwurf**: wenn die Leistung des Hauses über 9000 W steigt (von einer anderen Integration gemessen), den **verfügbaren Strom** der Installation auf 10 A setzen; wieder unter 6000 W, auf 25 A.
+
+## Fehlerbehebung
+
+- **„Zaptec hat die E-Mail-Adresse und das Passwort abgelehnt“**: Prüfe sie im Zaptec Portal und speichere die Konfiguration erneut (die Integration versucht es vorher nicht noch einmal).
+- **„Die Zaptec-Cloud ist nicht erreichbar“**: Gladys hat keinen Internetzugang, oder die Zaptec-Cloud ist gestört. Die Integration versucht es bei jedem Intervall erneut und meldet, wenn es wieder geht.
+- **Eine Ladestation bleibt „nicht verfügbar“**: Die Ladestation selbst ist für Zaptec offline. Prüfe sie in der Zaptec-App.
+- **Kein Installationsgerät**: Das Konto hat weder Eigentümer- noch Service-Rechte auf die Installation. Die Ladestationen funktionieren trotzdem.
+- **„Dem Zaptec-Konto fehlen die Rechte“**: Ein Befehl oder der verfügbare Strom braucht Eigentümer- oder Service-Rechte; frag den Eigentümer der Installation im Zaptec Portal danach.
+- **„Nur eine pausierte Ladung geht weiter“**: Zaptec setzt nur eine per Befehl pausierte Ladung fort. Eine vom Fahrzeug, von seinem Zeitplan oder durch 0 A beendete Ladung lässt sich nicht von der Ladestation fortsetzen.
+- **Die Ladung startet beim Anstecken nicht**: Mit verlangter Freigabe (RFID oder App) gib sie in der Zaptec-App frei; Gladys kann das nicht (siehe Einschränkungen).
+- **Zu viele Anfragen**: Andere Werkzeuge nutzen gleichzeitig dasselbe Zaptec-Konto. Wähle ein längeres Intervall.
+- **Die Gesamtenergie bewegt sich nicht**: Die Ladestation signiert ihren Zähler etwa einmal pro Stunde; die Energie der Ladung steigt während des Ladens.
+- **Detaillierte Logs**: Setze in den Container-Einstellungen `LOG_LEVEL=debug`. Eine normale Messung schreibt auf der Standardstufe nichts.
+
+## Einschränkungen
+
+- Ohne die Hardware entwickelt: Die Antworten der Zaptec-API stammen aus den Open-Source-Clients (Home Assistant), nicht von einer echten Ladestation. Rückmeldungen sind willkommen.
+- Nur Cloud: keine lokale Verbindung zur Ladestation, ohne Internet funktioniert nichts.
+- Kein Echtzeit-Datenstrom: Der Zustand wird alle 1, 2 oder 5 Minuten gelesen, und noch einmal 10 Sekunden nach einem Befehl. Der Echtzeitkanal von Zaptec (Service Bus) wird nicht genutzt.
+- **Kein „Laden freigeben“**: Die Zaptec-App nutzt dafür einen internen Endpunkt, und die Fair-Use-Richtlinie von Zaptec verbietet Dritten interne Endpunkte. Gib die Ladung in der Zaptec-App oder per RFID frei, oder schalte die Freigabe für die Installation aus.
+- Kein Fehlerzustand: Die Zaptec-API liefert keinen Störungsmodus, den ein Dritter zuverlässig lesen kann.
+- Nicht unterstützt: Maximalstrom der Ladestation, Phasenumschaltung, Ladezeitpläne, Zaptec Sense, Kabelverriegelung, Neustart und Firmware-Update. Das Entriegeln des Kabels wird bewusst nicht angeboten.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Zaptec in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Zaptec-Konto | `section` | Nein | Verwende das Konto der Zaptec-App oder des Zaptec Portals. Gladys liest deine Ladestationen über die offizielle Cloud-API von Zaptec. Nicht mit Zaptec verbunden. |
+| E-Mail-Adresse | `string` | Ja | Die Anmeldung der Zaptec-App und des Zaptec Portals. |
+| Passwort | `secret` | Ja |  |
+| Sprache der Gerätetexte | `select` | Nein | Namen der Funktionen (beim Hinzufügen eines Geräts festgelegt) und detaillierter Status der Ladestationen. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft die Zaptec-Cloud gelesen wird. Zaptec verlangt eine faire Nutzung seiner API: eine bis fünf Minuten. |
+
+## So installierst du Zaptec in Gladys
+
+1. Öffne in Gladys **Integrationen**: Zaptec erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-zaptec:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-zaptec](https://github.com/guim31/gladys-zaptec).
+
+Zaptec benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Zaptec ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-zaptec) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-zaptec/blob/HEAD/docs/de.md)

@@ -1,0 +1,259 @@
+---
+title: "Redfish (iDRAC, iLO) smart home integration, free and open source"
+sidebar_label: "Redfish (iDRAC, iLO)"
+description: "Servers via their BMC (iDRAC, iLO, XClarity…): power, health, watts, temperatures, fans. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-redfish.png"
+keywords:
+  - "redfish (idrac, ilo)"
+  - "redfish (idrac, ilo) smart home"
+  - "gladys redfish (idrac, ilo)"
+  - "redfish (idrac, ilo) gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-redfish instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Redfish (iDRAC, iLO)","description":"Servers via their BMC (iDRAC, iLO, XClarity…): power, health, watts, temperatures, fans.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-redfish","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-redfish.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T12:41:29Z"}} />
+
+Rack and tower servers have a management controller (BMC) that keeps
+watching them, even when they are off: Dell iDRAC, HPE iLO, Lenovo XClarity,
+Supermicro, OpenBMC… All of them speak **Redfish**, the standard API of the
+DMTF. This integration reads it: one device per server with its power state,
+health, power draw, temperatures, fans and power supplies. Scenes can react
+when the health degrades, a critical entry appears in the event log, or a
+server is powered on or off, and a dashboard widget sums your servers up.
+Power control (on, clean shutdown, restart) is available, **off by default**.
+Everything stays on your local network.
+
+**Developed without the hardware: feedback welcome.** Tested against the
+official DMTF Redfish mockup server (Docker): sessions, the readings of the
+legacy and of the newer Redfish resources, the event logs, the reset action.
+The vendor differences (iLO 4, iDRAC) come from their documented schemas.
+Tell us how it goes on your server in
+[the issues](https://github.com/guim31/gladys-redfish/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A server whose controller has Redfish enabled: iDRAC 8 (firmware 2.40 or
+  later) or iDRAC 9, iLO 4 (2.30 or later), iLO 5 or iLO 6, Lenovo XClarity
+  Controller, a recent Supermicro BMC, OpenBMC.
+- The controller reachable from the Gladys machine in HTTPS (port 443).
+- An account on the controller. A read-only one is enough; power control
+  needs an account allowed to do it (Operator on an iDRAC, "Virtual Power and
+  Reset" on an iLO).
+- Up to three controllers per installation of the integration.
+
+## Getting started
+
+### 1. Prepare the controller
+
+- Check that you can open the web interface of the controller from a browser
+  (`https://<controller address>`).
+- Redfish is on by default on recent firmware. On an iDRAC 8, check it under
+  _iDRAC Settings → Services → Redfish_.
+- Create a dedicated account if you can, read-only unless you want power
+  control.
+
+### 2. Configure the integration
+
+In the **Configuration** tab of the integration:
+
+- **Controller address**: `192.168.1.30`, `idrac.lan` or
+  `https://idrac.lan`. HTTPS is used when no `http://` is given.
+- **User name** and **Password** of the controller account.
+- **Name** (optional): shown in the device name, the widget and the
+  messages. By default, the host name the controller gives, otherwise the
+  server model.
+- Up to two more controllers in the next sections.
+- **Refresh interval**: 30 seconds to 5 minutes (1 minute by default). The
+  event logs are read every 5 minutes.
+- **Accept self-signed certificates**: most controllers ship with a
+  self-signed certificate. If your browser warns about it too, tick this
+  option. The connection stays encrypted, but the identity of the controller
+  is no longer checked: only do it on your local network.
+- **Allow power control**: see [Power control](#power-control). Off by
+  default.
+- **Language of the names**: language of the feature names (set when the
+  server is added), of the health texts and of the scene results.
+
+Then click **Test the connection**: one line per controller, with the servers
+found and the authentication used.
+
+### 3. Add the server
+
+The server appears in the **Discover** tab of the integration: add it. Only
+the servers added receive values; the widget and the scene triggers work for
+every server, added or not.
+
+## The device
+
+One device per server (usually one per controller; a chassis with several
+nodes gives one per node). Only the features the controller reports are
+proposed:
+
+| Feature                | Value                                                       |
+| ---------------------- | ----------------------------------------------------------- |
+| Power                  | On or off. A switch when power control is allowed           |
+| Health                 | OK, Warning or Critical: the health the controller rolls up |
+| Power draw             | Watts drawn by the server                                   |
+| Intake temperature     | Air entering the server, in °C                              |
+| Processor temperature  | The hottest processor, in °C                                |
+| Fans (rpm) / Fans (%)  | The mean speed of the fans, in the unit of the controller   |
+| Failing power supplies | 0 when all is well                                          |
+
+The device also shows the Redfish Id, serial number and BIOS version in its
+parameters. When the controller does not answer, the device shows the
+"unreachable" badge and the status under the integration name says why.
+
+## Dashboard
+
+The **Servers (Redfish)** widget has two modes:
+
+- **without a server chosen**: one line per server, on or off, health and
+  power draw, in orange or red when something is wrong;
+- **with a server chosen**: its power draw, intake and processor
+  temperatures as tiles, then its power, health, fans and power supplies.
+  When power control is allowed, the **Shut down** and **Restart** buttons
+  (server on) or **Power on** (server off) appear, each asking for a
+  confirmation.
+
+**Refresh** reads the controllers again.
+
+## Scenes
+
+### Triggers
+
+- **Server health degraded**: the health goes from OK to Warning or
+  Critical, or from Warning to Critical. Variables: server, health.
+- **New critical log entry**: a new Critical entry in the event log (SEL on
+  an iDRAC, IEL and IML on an iLO, EventLog on OpenBMC). Read every
+  5 minutes; at most three per read. Variables: server, message, date.
+- **Server powered on** and **Server powered off**: whatever the cause
+  (button, controller, power cut). Variable: server.
+
+Each trigger can be limited to one server. The first read after the
+installation only records the states: nothing is announced for an entry or a
+health that was already there.
+
+### Actions
+
+- **State of a server**: reads a server and gives the next actions its
+  name, whether the controller answers, power, health, power draw,
+  temperatures, fan speed, failing power supplies, and a summary ready to
+  send ("web483: on, health OK, 344 W, intake 25 °C…").
+- **Power command**: power on, clean shutdown, restart or forced restart
+  (reset) of a server. Needs **Allow power control**.
+
+### Scene ideas
+
+- When the health of the NAS server degrades, send its state on Telegram
+  with **State of a server**.
+- At 1 a.m., if nobody is home, **Power command** "Clean shutdown" on the
+  lab server; at 7 a.m., "Power on".
+- When a **New critical log entry** appears, notify with its message.
+
+## Power control
+
+Off by default. Once **Allow power control** is ticked, click **Update** on
+the server in the Discover tab: the **Power** feature becomes a switch.
+
+- Switching on sends `On` (or a short press of the power button when the
+  controller offers no `On`).
+- Switching off sends a **clean shutdown** (`GracefulShutdown`, or a short
+  press on an iLO 4: the operating system shuts down cleanly). **Never a
+  forced power off**: a switch flipped by mistake, a voice assistant or a
+  scene must not cut a server.
+- **Restart** (widget, scene) is a graceful restart, when the controller
+  offers it. The forced restart (reset) is only in the **Power command**
+  scene action, chosen explicitly.
+
+The server takes a while to change state: it is read again 15 seconds after
+the command, then at the usual interval.
+
+## Troubleshooting
+
+- **"certificate refused"**: tick **Accept self-signed certificates**, or
+  install a certificate on the controller that Gladys trusts.
+- **"user name or password refused"**: check the account in the web
+  interface of the controller. Some controllers lock an account after a few
+  failures.
+- **"does not answer"**: check the address and that port 443 of the
+  controller is reachable from the Gladys machine (another VLAN?).
+- **"no Redfish service at this address"**: Redfish is off, or the address
+  is not the one of the controller (iDRAC 7 and older have no Redfish).
+- **A missing feature**: the controller does not report it (some fans or
+  power supplies are only visible when the server is on).
+- **A command refused**: the account lacks the right, or the controller does
+  not offer it (an iLO 4 has no graceful restart).
+
+## Limits
+
+- Developed without the hardware: the vendor differences are handled from
+  their schemas and the official mockups, not from real servers yet.
+- One chassis per server: the first linked to the system. Blade enclosures
+  and multi-chassis systems only show that one.
+- The event log is read in pages: on a very long log, an entry between the
+  first and the last page can be missed.
+- The controller is a small chip: a refresh interval below 1 minute adds
+  load on it, and some firmware logs every session.
+- IPMI-only controllers (no Redfish) are not supported.
+
+## Credits
+
+The test fixtures come from the public mockups of the
+[DMTF Redfish Mockup Server](https://github.com/DMTF/Redfish-Mockup-Server)
+(BSD 3-Clause). Redfish is a trademark of the DMTF. This integration is not
+affiliated with Dell, HPE, Lenovo, Supermicro or the DMTF.
+
+## Configuration settings
+
+These are the settings Redfish (iDRAC, iLO) asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your servers | `section` | No | Follow rack and tower servers through their management controller (BMC) and the standard Redfish API: Dell iDRAC 8 and 9, HPE iLO 4 to 6, Lenovo XClarity, Supermicro, OpenBMC. Enter the controller address and an account, then add the server from the Discover tab. |
+| Controller address | `string` | No | Address of the iDRAC, iLO, XClarity or other BMC web interface: 192.168.1.30, idrac.lan or https:\/\/idrac.lan. HTTPS by default. |
+| User name | `string` | No | A controller account; a read-only one is enough unless you allow power control. |
+| Password | `secret` | No |  |
+| Name (optional) | `string` | No | Shown in the device name, the widget and the messages. By default, the host name or model the controller gives. |
+| Second controller (optional) | `section` | No | Another server, with its own controller address and account. |
+| Second controller address | `string` | No |  |
+| Second user name | `string` | No |  |
+| Second password | `secret` | No |  |
+| Second name (optional) | `string` | No |  |
+| Third controller (optional) | `section` | No | Another server, with its own controller address and account. |
+| Third controller address | `string` | No |  |
+| Third user name | `string` | No |  |
+| Third password | `secret` | No |  |
+| Third name (optional) | `string` | No |  |
+| Options | `section` | No | Only the servers added to Gladys receive values; the scene triggers and the widget work for every server. |
+| Refresh interval | `select` | No | How often every controller is read. The event logs are read every 5 minutes. |
+| Accept self-signed certificates | `boolean` | No | Most controllers ship with a self-signed certificate: tick this if your browser warns about it too. The connection stays encrypted, but the controller is no longer authenticated. |
+| Allow power control | `boolean` | No | Power on, clean shutdown and restart from Gladys (switch, widget, scenes). Never a forced power off. The account needs the right to do it. Then click Update on the server in the Discover tab. |
+| Language of the names | `select` | No | Language of the feature names (set when a server is added), of the health texts, scene results and connection test. |
+
+## How to install Redfish (iDRAC, iLO) in Gladys
+
+1. In Gladys, open **Integrations**: Redfish (iDRAC, iLO) appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-redfish:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-redfish](https://github.com/guim31/gladys-redfish).
+
+Redfish (iDRAC, iLO) requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Redfish (iDRAC, iLO) is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-redfish) — [source of this documentation](https://github.com/guim31/gladys-redfish/blob/HEAD/docs/en.md)

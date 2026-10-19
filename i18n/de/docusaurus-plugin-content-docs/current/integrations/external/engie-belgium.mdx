@@ -1,0 +1,181 @@
+---
+title: "ENGIE Belgium Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "ENGIE Belgium"
+description: "Unofficial: ENGIE Belgium contract prices, daily consumption, balance. Read only. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-engie-belgium.png"
+keywords:
+  - "engie belgium"
+  - "engie belgium smart home"
+  - "gladys engie belgium"
+  - "engie belgium gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-engie-belgium instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ENGIE Belgium","description":"Unofficial: ENGIE Belgium contract prices, daily consumption, balance. Read only.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-engie-belgium","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-engie-belgium.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T16:50:01Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial** integration, not affiliated with ENGIE. It uses the unofficial
+API of the ENGIE Smart app (the one of the aioengiebelgium library and of the
+Home Assistant integration `hass-engie-be`). **It was never tested with a real
+account**: the ENGIE answers were rebuilt from those projects. Please report
+any problem on GitHub.
+
+## What it does
+
+Read only, every 6 hours (ENGIE updates its data at most once a day):
+
+- **The electricity prices of your contract** (€/kWh, VAT included): single
+  rate, day and night rates with a dual-rate meter, the injection rate if you
+  have one.
+- **The gas price** (€/kWh, VAT included).
+- **The daily electricity consumption**, sent, dated, to the Gladys **energy
+  monitoring** (Gladys 5.2 or later), with ENGIE's delay (usually two days or
+  more). The consumption and the injection of the last published day are also
+  shown as plain sensors.
+- **The gas consumption** of the last published day, as a **plain sensor**: the
+  gas never enters the energy monitoring (Gladys would bill it at the
+  electricity tariff).
+- **Account**: the open amount to pay and its next due date, the amount and the
+  date of the next advance invoice.
+
+Nothing is ever changed on your ENGIE account.
+
+## Before you start
+
+- Gladys 5.2.0 or later.
+- A residential ENGIE Belgium account with two-step verification (ENGIE sends
+  a code by SMS or e-mail at each sign-in).
+- **Strongly advised: an ENGIE user dedicated to Gladys.** Otherwise, each
+  sign-in with the same user on engie.be or in the ENGIE Smart app may end the
+  session of Gladys and ask for a new code (as seen by the Home Assistant
+  integration). You can create another user from
+  your ENGIE space (access management) and give it access to your customer
+  number.
+- The daily consumption needs a digital meter.
+
+## Setup
+
+1. Install the integration from the Gladys store.
+2. In its configuration, enter the ENGIE **e-mail** and **password**, choose
+   where the electricity consumption goes (see below), then **save**.
+3. Press **Send the verification code** and choose SMS or e-mail: the
+   integration signs in and ENGIE sends you a code.
+4. Within 10 minutes, type the code in **Verify the code**.
+5. The first read happens at once. Add the devices from the **Discover** tab:
+   one per meter (electricity, gas) and one per contract.
+
+The session is then kept: no code at the next restarts. If ENGIE ends it, the
+integration status says so: do steps 3 and 4 again.
+
+**Test the connection** reads the account once with the kept session, without
+a code.
+
+## Fluvius and the electricity consumption
+
+If the **Fluvius** integration (or another meter integration) already sends
+your electricity consumption to the energy monitoring, **do not use both for
+the same consumption**: it would be counted twice. Then choose **Sensor only**
+in "Daily electricity consumption" **before** creating the ENGIE electricity
+device: it gets no consumption feature for the energy monitoring, only the
+sensor of the last published day. Changing this later needs the device deleted
+and created again.
+
+## The devices
+
+| Device                   | Features                                                                                                                                                 |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ENGIE electricity (EAN…) | Price, day price, night price, injection price (€/kWh); daily consumption (energy monitoring); consumption and injection of the last published day (kWh) |
+| ENGIE gas (EAN…)         | Gas price (€/kWh); consumption of the last published day (kWh)                                                                                           |
+| ENGIE account (…)        | Open amount (€), next due date, advance invoice amount (€), next advance invoice                                                                         |
+
+The prices present depend on your contract when the device is created (a
+dynamic contract has no fixed price: no price feature). The prices are
+sensors: the integration does not declare an energy contract in Gladys; enter
+your contract in the energy monitoring if you want the cost.
+
+## Privacy and security
+
+- The password is kept by Gladys in its database (**not encrypted**), never
+  shown again, and only sent to ENGIE (account.engie.be), when you press "Send
+  the verification code".
+- The **session token** (refresh token) is kept in `/data` of the container (a
+  file only the container user can read), with a hash of the e-mail, never the
+  e-mail nor the password. It changes at each renewal.
+- No e-mail, password, code, token or text sent back by ENGIE is written to the
+  logs.
+
+## Pace and errors
+
+- One read every 6 hours; a renewal of the session (no data read) every hour to
+  keep it alive.
+- ENGIE asks to slow down (429): every call (reads, buttons) waits for the
+  delay asked, between 1 minute and 6 hours, even after a restart.
+- A secondary data (consumption, balance, advance, contracts) that fails keeps
+  its previous value; the other data are read anyway, except after a 429,
+  which pauses everything.
+- A passing error (network, ENGIE unavailable): new try in 15 min, then
+  30 min, 1 h, 2 h, 4 h (never beyond 6 h).
+- Any other error: new try at the next read (within 6 hours), or with **Test
+  the connection**.
+- A fresh token refused: new try in 6 h, then 12 h, then every 24 h.
+
+## Limits
+
+- Unofficial API: ENGIE may change it at any time.
+- Never tested with a real account.
+- The consumption comes with ENGIE's delay; a day ENGIE marks incomplete is
+  sent later, once complete, or as it is when older than 3 days (it will not
+  change any more).
+- Several electricity (or gas) meters on one contract: the consumption, given
+  per contract, is not split (only the prices are read).
+- Time zone: Europe/Brussels for the days; set Gladys to the same clock
+  (Brussels, Paris, Amsterdam).
+
+## Credits
+
+Logic ported from [aioengiebelgium](https://github.com/DaanVervacke/aioengiebelgium)
+and [hass-engie-be](https://github.com/DaanVervacke/hass-engie-be), by Daan
+Vervacke (MIT license, see `THIRD_PARTY_NOTICES.md`).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt ENGIE Belgium in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| ENGIE Belgium account (residential) | `section` | Nein | Unofficial connector, not affiliated with ENGIE, never tested with a real account. It signs in to your ENGIE Belgium account like the ENGIE Smart app and reads, every 6 hours: the electricity prices of your contract (day and night with a dual-rate meter, injection) and the gas price, the daily electricity consumption (sent to the Gladys energy monitoring), the gas consumption of the last published day, the open amount and the advance invoices. Read only. ENGIE asks for a verification code at each sign-in: enter the e-mail and password, save, then use the two buttons below (send the code, then type it in). The session is then kept. A separate ENGIE user for this connector is advised: signing in elsewhere with the same user may end its session. If Fluvius (or another meter integration) already sends this electricity consumption to Gladys, choose "Sensor only" below so it is not counted twice. |
+| ENGIE e-mail | `string` | Ja |  |
+| ENGIE password | `secret` | Ja | Kept by Gladys in its database (not encrypted), never shown again, only sent to ENGIE (account.engie.be), when you press "Send the verification code". |
+| Daily electricity consumption | `select` | Nein | Energy monitoring: sent, dated, to the Gladys energy monitoring. Sensor only: only the last published day, as a plain sensor; choose it when Fluvius or another meter integration already sends this consumption (it would be counted twice). Chosen before creating the electricity device. The gas never goes to the energy monitoring. |
+
+## So installierst du ENGIE Belgium in Gladys
+
+1. Öffne in Gladys **Integrationen**: ENGIE Belgium erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-engie-belgium:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-engie-belgium](https://github.com/LM1LC3N7/gladys-engie-belgium).
+
+ENGIE Belgium benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+ENGIE Belgium ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-engie-belgium) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-engie-belgium/blob/HEAD/docs/en.md)

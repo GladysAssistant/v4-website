@@ -1,0 +1,250 @@
+---
+title: "powerfox Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "powerfox"
+description: "powerfox poweropti-Leseköpfe an Strom-, Gas-, Wasser- und Wärmezählern, über die Cloud. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-powerfox.png"
+keywords:
+  - "powerfox"
+  - "powerfox smart home"
+  - "gladys powerfox"
+  - "powerfox gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-powerfox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"powerfox","description":"powerfox poweropti-Leseköpfe an Strom-, Gas-, Wasser- und Wärmezählern, über die Cloud.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-powerfox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-powerfox.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T22:24:29Z"}} />
+
+## Überblick
+
+Diese Integration bringt die **powerfox poweropti**-Leseköpfe in Gladys. Ein poweropti ist ein optischer
+Lesekopf, der auf die LED oder das Display eines Zählers (Strom, Gas, Wasser oder Wärme) gesetzt wird, in
+Deutschland und Österreich weit verbreitet. Die Integration liest die **Cloud-API von powerfox** mit deinem
+powerfox-Konto, wie die Home-Assistant-Integration `powerfox`, und legt ein Gladys-Gerät pro Lesekopf an:
+
+- **Stromzähler**: die Momentanleistung (mit Vorzeichen, wenn der Zähler auch einspeist: positiv bei Bezug aus
+  dem Netz, negativ bei Einspeisung), der **Bezugszählerstand** und der **Einspeisezählerstand** in kWh, die
+  das Energie-Tracking von Gladys speisen;
+- **Wasserzähler**: der Kalt- und/oder Warmwasserzählerstand in m³;
+- **Wärmezähler**: die Wärmemenge (kWh) und das Heizwasservolumen (m³);
+- **Gaszähler**: das heute und in dieser Stunde verbrauchte Gas (m³) und seine heutigen Kosten (€);
+- für jeden Lesekopf außer Gas: ein Hinweis **Messwert veraltet**, wenn powerfox meldet, dass die letzte
+  Messung alt ist.
+
+Dazu kommen ein **Dashboard-Widget** (Leistung und Energie des Tages) und eine **Szenenaktion** (die Summen
+des Tages, mit einem fertigen Satz für eine Nachricht). Die Integration ist **nur lesend** und ändert nie
+etwas an deinen Zählern oder in deinem powerfox-Konto.
+
+> **Ohne die Hardware entwickelt**: Diese Integration wurde anhand der freien Bibliothek `python-powerfox`
+> und der echten API-Antworten aus deren Tests geschrieben, ohne poweropti und ohne powerfox-Konto.
+> Rückmeldungen sind im Gladys-Forum oder in den GitHub-Issues willkommen.
+>
+> Diese Integration steht in keiner Verbindung zur powerfox GmbH.
+
+## Voraussetzungen
+
+- Gladys Assistant **5.1.0** oder neuer (5.2 empfohlen für das Energie-Tracking).
+- Ein in der **powerfox-App** eingerichteter poweropti und die E-Mail-Adresse und das Passwort dieses
+  powerfox-Kontos.
+- Internetzugang für Gladys: Die Messwerte kommen aus der powerfox-Cloud (`backend.powerfox.energy`).
+
+## Konfiguration
+
+1. Öffne in Gladys **Integrationen**, suche **powerfox** (oder nutze **Von GitHub installieren** mit
+   `https://github.com/guim31/gladys-powerfox`) und installiere sie.
+2. Gib in der **Konfiguration** der Integration Folgendes ein:
+   - **E-Mail-Adresse** und **Passwort**: die der powerfox-App;
+   - **Aktualisierungsintervall**: wie oft jeder Lesekopf gelesen wird, von 10 Sekunden bis 5 Minuten
+     (standardmäßig 1 Minute, siehe [API-Kontingente](#api-kontingente));
+   - **Sprache der Namen und Meldungen**: die Sprache der Namen neuer Geräte und des Satzes der Szenenaktion
+     (standardmäßig Französisch).
+3. Klicke auf **Verbindung testen**: Die Meldung listet die Leseköpfe deines Kontos auf.
+4. Öffne den Reiter **Entdecken** und füge die gewünschten Leseköpfe zu Gladys hinzu. Nur hinzugefügte
+   Leseköpfe werden gelesen.
+
+Das Passwort wird in der Gladys-Konfiguration der Integration gespeichert; es erscheint nie in den
+Protokollen.
+
+## Geräte
+
+Jeder Lesekopf wird ein Gerät, benannt wie in der powerfox-App (oder nach seinem Zählertyp und dem Ende
+seiner Kennung, wenn er keinen Namen hat).
+
+### Stromzähler
+
+| Funktion             | Gladys-Typ                            | Einheit | Hinweise                                             |
+| -------------------- | ------------------------------------- | ------- | ---------------------------------------------------- |
+| Leistung             | Netzleistung (Bezug +, Einspeisung −) | W       | bei einem Zweirichtungszähler; sonst „Leistung“, ≥ 0 |
+| Bezugszählerstand    | Energie-Sensor, Index                 | kWh     | Gladys leitet den 30-Minuten-Verbrauch und Kosten ab |
+| Einspeisezählerstand | Energieproduktionssensor, Index       | kWh     | nur bei einem Zweirichtungszähler („Prosumer“)       |
+| Messwert veraltet    | Eingang (0 = aktuell, 1 = veraltet)   |         | das Flag `Outdated` von powerfox                     |
+
+**Energie-Tracking (Gladys 5.2)**: Der Bezugszählerstand ist ein kumulierter Energieindex. Wenn du das Gerät
+hinzufügst, legt Gladys selbst die Funktionen **Verbrauch 30 Minuten** und **Kosten** an und hängt ihn an den
+Hauptstromzähler der Energieeinstellungen. Der Einspeisezählerstand speist das Produktions-Tracking (und den
+Einspeiseertrag). In der Integration ist nichts einzustellen.
+
+Zeigt der Zähler nur die Hoch- und Niedertarif-Register, ist der Bezugszählerstand ihre Summe. Ein Stand von 0
+oder unter dem vorherigen (ein Lesefehler) wird nie veröffentlicht: Gladys würde ihn als riesigen Verbrauch
+zählen.
+
+### Wasserzähler
+
+| Funktion          | Gladys-Typ                          | Einheit |
+| ----------------- | ----------------------------------- | ------- |
+| Kaltwasser        | Volumensensor                       | m³      |
+| Warmwasser        | Volumensensor                       | m³      |
+| Messwert veraltet | Eingang (0 = aktuell, 1 = veraltet) |         |
+
+Ein Kaltwasserzähler hat nur den Kaltwasserstand, ein Warmwasserzähler nur den Warmwasserstand, ein
+kombinierter Zähler beide.
+
+### Wärmezähler
+
+| Funktion          | Gladys-Typ                          | Einheit |
+| ----------------- | ----------------------------------- | ------- |
+| Wärmemenge        | Zähler                              | kWh     |
+| Heizwasservolumen | Volumensensor                       | m³      |
+| Messwert veraltet | Eingang (0 = aktuell, 1 = veraltet) |         |
+
+Die Wärmemenge wird absichtlich als Zähler veröffentlicht, nicht als Energieindex: Gladys würde einen
+Energieindex an den Hauptstromzähler hängen und Wärme als Strom zählen.
+
+### Gaszähler
+
+| Funktion         | Gladys-Typ    | Einheit |
+| ---------------- | ------------- | ------- |
+| Gas heute        | Volumensensor | m³      |
+| Gas diese Stunde | Volumensensor | m³      |
+| Gaskosten heute  | Währung       | €       |
+
+Die powerfox-API liefert keinen Gaszählerstand, nur den Stundenbericht des Tages: Diese Werte beginnen um
+Mitternacht (Zeitzone von Gladys) wieder bei 0. Ein Gaszähler wird höchstens alle 5 Minuten gelesen.
+
+## Widget
+
+Widget **powerfox**: Füge im Dashboard ein Widget hinzu, wähle **powerfox** und in seinen Einstellungen einen
+Zähler.
+
+- Strom: die Live-Leistung, die heute **bezogene** und **eingespeiste** Energie (Zweirichtungszähler), die
+  Uhrzeit der letzten Messung und ob sie aktuell ist;
+- Gas: das Gas des Tages, der Stunde und seine Kosten;
+- Wasser und Wärme: die Zählerstände, die Uhrzeit der letzten Messung.
+
+Die Tagessummen kommen aus dem powerfox-Bericht, höchstens alle 5 Minuten gelesen; das Widget aktualisiert sich
+alle 2 Minuten, die Leistungskachel folgt jeder Messung.
+
+## Szenenaktion
+
+**powerfox: Energie des Tages** (bei den Aktionen „Integrationen“ im Szeneneditor), für einen Strom- oder
+Gaszähler. Die Aktion liest den Tagesbericht und gibt ihn an die nächsten Schritte der Szene weiter:
+
+| Ergebnis                        | Zähler |
+| ------------------------------- | ------ |
+| Heute bezogener Strom (kWh)     | Strom  |
+| Heute eingespeister Strom (kWh) | Strom  |
+| Aktuelle Leistung (W)           | Strom  |
+| Heute verbrauchtes Gas (m³)     | Gas    |
+| Gaskosten heute (€)             | Gas    |
+| Zusammenfassung                 | beide  |
+
+Die Zusammenfassung lautet „Heute: 12,4 kWh bezogen, 3,1 kWh eingespeist.“ in der Sprache der Konfiguration.
+Ein Wasser- oder Wärmezähler oder ein nicht lesbarer Bericht lässt die Aktion fehlschlagen (die Szene läuft
+weiter, das Ergebnis ist leer). Es gibt keinen Szenenauslöser: Leistung, Zählerstände und der Hinweis
+„Messwert veraltet“ sind Gerätezustände, die Geräteauslöser von Gladys decken sie ab.
+
+## Szenenbeispiele
+
+- **Abendnachricht**: Auslöser „Jeden Tag um 21:00“ → Aktion **powerfox: Energie des Tages** auf dem
+  Stromzähler → „Nachricht senden“ mit der Zusammenfassung.
+- **Überschuss nutzen**: Auslöser auf dem Stromzähler, „Leistung“ unter −1500 W (Einspeisung) → die Steckdose
+  der Spülmaschine einschalten.
+- **Lesekopf stumm**: Auslöser auf dem Zähler, „Messwert veraltet“ gleich 1 → Nachricht „Der poweropti sendet
+  nicht mehr, prüfe Batterien oder WLAN“.
+- **Teurer Tag**: jeden Tag um 22:00 → **powerfox: Energie des Tages** auf dem Gaszähler → „Nur fortfahren
+  wenn“ die Gaskosten über 10 liegen → Nachricht senden.
+
+## API-Kontingente
+
+powerfox veröffentlicht kein Anfragekontingent für seine API. Die Home-Assistant-Integration liest jeden
+Lesekopf alle 10 Sekunden; Nutzer haben Ablehnungen mit `HTTP 429` bei sehr häufigen Anfragen gemeldet. Diese
+Integration bleibt deutlich darunter:
+
+- eine Anfrage pro hinzugefügtem Lesekopf und Aktualisierungsintervall (standardmäßig 1 Minute, mindestens
+  10 Sekunden);
+- ein Gaszähler höchstens alle 5 Minuten; der Tagesbericht für Widget und Szenenaktion höchstens alle
+  5 Minuten pro Lesekopf (1 Minute für eine Szene);
+- die Liste der Leseköpfe beim Start, alle 6 Stunden und auf Wunsch (Reiter Entdecken, Verbindung testen);
+- nach einem `HTTP 429` **gar keine Anfrage** während der von powerfox verlangten Zeit (`Retry-After`) oder
+  während einer Pause, die sich bei jeder Ablehnung verdoppelt, bis 30 Minuten;
+- nach einem abgelehnten Passwort (`HTTP 401`) keine Anfrage mehr, bis die Konfiguration erneut gespeichert
+  wird: Wiederholungen könnten das Konto sperren.
+
+Die Integration liest nur die Daten deines eigenen Kontos, mit deinen Zugangsdaten, wie die powerfox-App.
+
+## Fehlerbehebung
+
+- **„powerfox lehnt die E-Mail-Adresse oder das Passwort ab“**: Prüfe sie in der powerfox-App, gib sie erneut
+  ein und speichere.
+- **„powerfox bittet um weniger Anfragen“**: Wähle ein längeres Intervall; die Abfragen laufen nach der Pause
+  von selbst wieder an.
+- **„Die powerfox-Cloud antwortet nicht“**: Die Integration versucht es bei jedem Intervall erneut; prüfe den
+  Internetzugang von Gladys.
+- **Ein Lesekopf bleibt ohne Werte** und die Protokolle melden „the data transfer is denied in the powerfox
+  app“: Erlaube die Datenübertragung dieses Lesekopfs in den Datenschutzeinstellungen der powerfox-App.
+- **„Messwert veraltet“ auf 1**: powerfox hat keine aktuelle Messung vom poweropti (Batterien, WLAN, Lesekopf
+  auf dem Zähler verrutscht); die Integration meldet es nur.
+- **Nichts im Reiter Entdecken**: Klicke auf **Verbindung testen**; ein Lesekopf unbekannten Typs wird
+  ignoriert und in den Protokollen der Integration genannt (Reiter **Überwachung**).
+
+Die Protokolle der Integration zeigen nur Start, Verbindung, Probleme und deren Ende. Jede Messung erscheint
+auf der Debug-Ebene (`LOG_LEVEL=debug`).
+
+## Grenzen
+
+- **Nur Cloud**: Die Integration nutzt die Cloud-API von powerfox, nicht die lokale Schnittstelle mancher
+  Leseköpfe.
+- **Nur lesend**: Nichts lässt sich aus Gladys steuern.
+- Die **Hoch- und Niedertarif**-Register werden nicht als eigene Funktionen veröffentlicht.
+- **Gas**zähler haben keinen Zählerstand, nur die Summen des Tages und der Stunde; die Deltas des Wärmezählers
+  werden nicht veröffentlicht.
+- Kosten werden in **Euro** angezeigt, der Währung von powerfox.
+- **Ohne die Hardware entwickelt**: Die Werte wurden nur an den veröffentlichten API-Antworten geprüft.
+  Rückmeldungen sind willkommen.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt powerfox in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein powerfox-Konto | `section` | Nein | Die E-Mail-Adresse und das Passwort der powerfox-App. Die Messwerte kommen aus der powerfox-Cloud: Die Leseköpfe müssen zuerst in der App eingerichtet sein. |
+| E-Mail-Adresse | `string` | Ja |  |
+| Passwort | `secret` | Ja |  |
+| Aktualisierungsintervall | `select` | Nein | Eine Anfrage pro Lesekopf und Intervall. Gaszähler werden höchstens alle 5 Minuten gelesen. |
+| Sprache der Namen und Meldungen | `select` | Nein | Namen der neuen Geräte und Texte der Szenenaktion. |
+
+## So installierst du powerfox in Gladys
+
+1. Öffne in Gladys **Integrationen**: powerfox erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-powerfox:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-powerfox](https://github.com/guim31/gladys-powerfox).
+
+powerfox benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+powerfox ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-powerfox) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-powerfox/blob/HEAD/docs/de.md)

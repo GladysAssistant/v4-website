@@ -1,0 +1,188 @@
+---
+title: "Integración domótica OVHcloud SMS, gratuita y de código abierto"
+sidebar_label: "OVHcloud SMS"
+description: "Notificaciones de Gladys por SMS con OVHcloud, a cualquier operador, con escenas y widgets. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-ovhcloud-sms.jpg"
+keywords:
+  - "ovhcloud sms"
+  - "domótica ovhcloud sms"
+  - "gladys ovhcloud sms"
+  - "ovhcloud sms gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/William-De71/gladys-ovhcloud-sms instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OVHcloud SMS","description":"Notificaciones de Gladys por SMS con OVHcloud, a cualquier operador, con escenas y widgets.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-ovhcloud-sms","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-ovhcloud-sms.jpg","type":"communication","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T06:29:21Z"}} />
+
+## Presentación
+
+Esta integración envía las notificaciones de Gladys por SMS mediante la
+[API SMS de OVHcloud](https://www.ovhcloud.com/es-es/sms/), a cualquier número
+de móvil y cualquier operador. Cada usuario de Gladys introduce su propio
+número; el administrador introduce una sola vez las claves de la API de
+OVHcloud para la casa.
+
+También aporta:
+
+- tres **disparadores de escena**: SMS no enviado, SMS recibido, pocos
+  créditos;
+- dos **acciones de escena**: enviar un SMS a cualquier número (incluso a
+  alguien que no es usuario de Gladys), leer la cuenta SMS;
+- dos **widgets de panel**: la cuenta SMS y los SMS recibidos.
+
+![Los dos widgets de la integración: la cuenta SMS con sus créditos y los últimos SMS recibidos (ilustración generada, no una captura de pantalla)](https://raw.githubusercontent.com/William-De71/gladys-ovhcloud-sms/main/docs/assets/widgets.es.png)
+
+Transporte: **nube**. Los textos y los números de teléfono pasan por la API
+de OVHcloud (`eu.api.ovh.com` o `ca.api.ovh.com`) y después por los
+operadores móviles.
+
+## Requisitos previos
+
+- Gladys Assistant **5.1.0** o posterior.
+- Una cuenta de OVHcloud con una **cuenta SMS** (un pack de SMS, contratado
+  en el área de cliente, apartado Telecom → SMS) y créditos. Cada SMS consume
+  créditos, más para un texto largo o un número extranjero.
+- Opcional: un **remitente** creado y validado en el área de cliente (un
+  nombre como `GLADYS` o un número virtual). Sin él, los SMS salen de un
+  número corto al que los destinatarios pueden responder.
+- Opcional, para recibir SMS: un **número virtual**, o las respuestas al
+  número corto.
+
+## Configuración
+
+1. En Gladys, abra **Integraciones → OVHcloud SMS → Configuración**.
+2. Elija la **región de la API** de su cuenta de OVHcloud (Europa o Canadá).
+3. Pulse **Crear las claves** de su región. Inicie sesión en OVHcloud: los
+   permisos que necesita la integración ya están rellenados (`GET /sms`,
+   `GET /sms/*`, `POST /sms/*/jobs`). Dé un nombre y una descripción a la
+   aplicación, elija la validez **Unlimited** y cree las claves.
+4. Copie la **clave de aplicación**, el **secreto de aplicación** y la
+   **clave de consumidor** en la configuración y guarde.
+5. Pulse **Probar la conexión**: muestra la cuenta SMS, sus créditos, sus
+   remitentes y el que se usa. **Enviar un SMS de prueba** comprueba toda la
+   cadena.
+6. Cada usuario abre el bloque **Mi cuenta** de la misma pantalla e
+   introduce su **número de móvil**.
+
+| Campo                        | Uso                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------ |
+| Región de la API             | Europa (ovh.com, ovhcloud.com) o Canadá (ovh.ca)                                           |
+| Clave de aplicación          | En la página de creación de claves                                                         |
+| Secreto de aplicación        | En la página de creación de claves, guardado cifrado                                       |
+| Clave de consumidor          | En la página de creación de claves, guardada cifrada                                       |
+| Cuenta SMS                   | Opcional: `sms-xx12345-1`, solo si la cuenta de OVHcloud tiene varias                      |
+| Remitente                    | Opcional: un remitente activo; vacío = el primero activo o el número corto                 |
+| Prefijo del país por defecto | Se añade a los números sin prefijo (`33` por defecto: 06… pasa a ser +336…)                |
+| Aviso de pocos créditos      | Por debajo de este número de créditos, «Pocos créditos» se activa una vez (20 por defecto) |
+| Leer los SMS recibidos       | Lee los SMS recibidos cada 30 segundos, para «SMS recibido» y el widget                    |
+
+La integración nunca añade la mención «STOP» que OVHcloud añade a los SMS
+publicitarios: las notificaciones de una casa no son publicidad.
+
+## Uso
+
+### Notificaciones
+
+Toda notificación de Gladys dirigida a un usuario que ha introducido un número
+sale por SMS: alarmas, acciones de escena «Enviar un mensaje», respuestas de
+Gladys. Una imagen adjunta a un mensaje se descarta (un SMS solo lleva texto).
+
+### Disparadores de escena
+
+| Disparador     | Cuándo se activa                                                                                              | Variables                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| SMS no enviado | Con el primer fallo de una notificación, y de nuevo solo después de que un SMS haya pasado (nunca en bucle)   | causa, código HTTP, error, número enmascarado |
+| SMS recibido   | Con cada SMS nuevo de la cuenta, filtrado por remitente y primera palabra («Leer los SMS recibidos» activado) | remitente, texto, primera palabra, fecha      |
+| Pocos créditos | Los créditos han bajado del umbral; de nuevo solo después de una recarga por encima                           | créditos restantes, umbral, cuenta SMS        |
+
+**No use nunca «SMS recibido» para abrir una puerta o desactivar una
+alarma**: cualquiera puede enviar un SMS con un número falsificado.
+
+### Acciones de escena
+
+- **Enviar un SMS a un número**: uno o varios números separados por comas y
+  un texto (se admiten variables de escena). Devuelve los SMS enviados, los
+  números rechazados, los créditos usados y restantes.
+- **Leer la cuenta SMS**: devuelve los créditos restantes, los SMS enviados y
+  recibidos este mes y la cuenta SMS.
+
+### Ejemplos de escenas
+
+- _Cuando salta la alarma_ → enviar un SMS al vecino: «Alarma en casa,
+  ¿puedes echar un vistazo?».
+- _Cuando quedan pocos créditos_ → enviar un mensaje al administrador: «Solo
+  quedan \{\{triggerEvent.data.credits_left\}\} créditos SMS».
+- _Cuando se recibe un SMS que empieza por ESTADO desde mi número_ → leer las
+  temperaturas y responder con «Enviar un SMS a un número» a
+  `{{triggerEvent.data.sender}}`.
+
+### Widgets de panel
+
+- **SMS de OVHcloud**: créditos restantes (naranja cerca del umbral, rojo por
+  debajo), estado de la API, SMS enviados y recibidos este mes, remitente,
+  umbral y último fallo.
+- **SMS recibidos**: los últimos SMS recibidos; toque uno para leerlo entero.
+
+## Solución de problemas
+
+- **«OVHcloud rechaza las claves»**: compruebe la región, la clave y el
+  secreto de aplicación, y que la clave de consumidor se validó (la página de
+  creación debe terminar con éxito) y no ha caducado ni se ha revocado.
+- **«A la clave de consumidor le faltan permisos»**: cree una clave nueva con
+  el enlace de la configuración, que rellena los tres permisos.
+- **«Ninguna cuenta SMS utilizable»**: contrate un pack de SMS, o introduzca
+  el nombre de servicio si su cuenta de OVHcloud tiene varias cuentas SMS
+  (las muestra «Probar la conexión»).
+- **«Remitente rechazado»**: el remitente de la configuración aún no está
+  activo (pendiente de validación): vacíe el campo para usar la elección
+  automática.
+- **No llega ningún SMS**: la recepción necesita un número virtual o las
+  respuestas al número corto; compruebe que «Leer los SMS recibidos» está
+  activado.
+- **Registros**: Integraciones → OVHcloud SMS → pestaña Supervisión. Los
+  números aparecen enmascarados; las claves nunca aparecen.
+
+## Parámetros de configuración
+
+Estos son los parámetros que OVHcloud SMS te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Claves de la API de OVHcloud | `section` | No | Necesita una cuenta SMS en OVHcloud (un pack de SMS, contratado en el área de cliente, apartado Telecom → SMS). Abra abajo la página de creación de claves de su región e inicie sesión: los permisos que necesita la integración ya están rellenados (GET /sms, GET /sms/*, POST /sms/*/jobs). Dé un nombre y una descripción a la aplicación, elija la validez «Unlimited» y copie aquí la clave de aplicación, el secreto de aplicación y la clave de consumidor. |
+| Región de la API | `select` | Sí | Donde se creó su cuenta de OVHcloud: Europa (ovh.com, ovhcloud.com) o Canadá (ovh.ca). |
+| Clave de aplicación | `string` | Sí | «Application key» en la página de creación de claves. |
+| Secreto de aplicación | `secret` | Sí | «Application secret». Se guarda cifrado y no se vuelve a mostrar. |
+| Clave de consumidor | `secret` | Sí | «Consumer key». Se guarda cifrada y no se vuelve a mostrar. |
+| Cuenta SMS y remitente | `section` | No | Deje ambos campos vacíos para usar la única cuenta SMS de su cuenta de OVHcloud y su primer remitente activo. Sin remitente activo, los SMS salen de un número corto al que los destinatarios pueden responder. Un remitente con nombre (por ejemplo GLADYS) debe crearse y validarse antes en el área de cliente. El botón «Probar la conexión» de abajo muestra las cuentas y remitentes encontrados. |
+| Cuenta SMS | `string` | No | Opcional. Su nombre de servicio, sms-xx12345-1, solo necesario si su cuenta de OVHcloud tiene varias. |
+| Remitente | `string` | No | Opcional. Un remitente activo de la cuenta SMS: un nombre (GLADYS) o un número virtual (+33…). |
+| Prefijo del país por defecto | `string` | No | Se añade a los números escritos sin prefijo (06 12 34 56 78 pasa a ser +33 6 12 34 56 78). Solo cifras: 34 España, 33 Francia, 32 Bélgica, 1 Canadá. |
+| Créditos y recepción | `section` | No | Los créditos se leen cada 15 minutos y después de cada SMS. La recepción lee cada 30 segundos los SMS recibidos en la cuenta, para el disparador de escena «SMS recibido» y el panel: necesita un número virtual, o SMS enviados con el número corto para respuestas. |
+| Aviso de pocos créditos | `number` | No | Por debajo de este número de créditos, el disparador de escena «Pocos créditos» se activa una vez. |
+| Leer los SMS recibidos | `boolean` | No | Activa «SMS recibido» por cada SMS nuevo de la cuenta. Cualquiera puede enviar un SMS con un número falsificado: no lo use nunca para abrir una puerta o desactivar una alarma. |
+
+## Cómo instalar OVHcloud SMS en Gladys
+
+1. En Gladys, abre **Integraciones**: OVHcloud SMS aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-ovhcloud-sms:0.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-ovhcloud-sms](https://github.com/William-De71/gladys-ovhcloud-sms).
+
+OVHcloud SMS requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+OVHcloud SMS es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [William-De71](https://github.com/William-De71), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-ovhcloud-sms) — [fuente de esta documentación](https://github.com/William-De71/gladys-ovhcloud-sms/blob/HEAD/docs/es.md)

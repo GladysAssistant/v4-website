@@ -1,0 +1,160 @@
+---
+title: "SWDE Water Consumption smart home integration, free and open source"
+sidebar_label: "SWDE Water Consumption"
+description: "Track SWDE water-meter readings, daily consumption and leak alerts in Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SWDE.jpg"
+keywords:
+  - "swde water consumption"
+  - "swde water consumption smart home"
+  - "gladys swde water consumption"
+  - "swde water consumption gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/gboulvin/Gladys-SWDE instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SWDE Water Consumption","description":"Track SWDE water-meter readings, daily consumption and leak alerts in Gladys.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-SWDE","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SWDE.jpg","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T10:46:34Z"}} />
+
+This external integration publishes the **meter index**, **period consumption** and **daily average** of a water meter served by SWDE (Société wallonne des eaux). Every indicator is kept in Gladys history, shown on a dedicated dashboard widget, and can start your scenes: a new reading, or a daily consumption above your alert threshold (leak, tap left open).
+
+> The official SWDE customer portal provides consumption history after sign-in, but SWDE does not document a public automation API. This integration never receives an SWDE password and never drives the web portal. [1]
+
+| Gladys indicator   | Unit  | Meaning                                                    |
+| ------------------ | ----- | ---------------------------------------------------------- |
+| Meter index        | m³    | Cumulative reading from the water meter.                   |
+| Period consumption | m³    | Water volume consumed during the reference period.         |
+| Daily average      | L/day | Calculated from period consumption and its number of days. |
+
+Gladys 5.1.0 or later is required.
+
+## Installation and meter discovery
+
+Install the integration from the Gladys catalog and open its **Configuration** tab. Choose a stable local identifier for the meter, such as the final digits of its serial number, and give it a readable name. Do not enter an SWDE customer number: the integration does not need it. The identifier is part of the device identity in Gladys: changing it later creates a new device.
+
+Save the configuration, open the integration **Discovery** tab, and add the proposed meter. Its three read-only sensors are then available in Gladys dashboards and state history.
+
+## Manual readings for a household account
+
+Choose **Manual meter readings** when you read the meter directly or consult the SWDE customer portal. Enter the cumulative index in m³, the consumption for your reference period, and the number of days in that period. Save the configuration after each new reading: Gladys publishes the values and recalculates the daily average.
+
+For a household account, this is the most dependable method because it does not depend on an undocumented private interface. SWDE confirms that consumption history is available through the customer portal. [1]
+
+## Authorised JSON data source
+
+Choose **Authorised JSON endpoint** only if you have an explicit, documented or contracted interface, such as an easyCONSO service, an approved SWDE export, or your own data gateway. Enter the endpoint URL and, if required, a bearer token. The token is stored in a protected Gladys secret field and is sent in the `Authorization: Bearer …` header.
+
+The endpoint must answer a `GET` request with a JSON object, either directly or wrapped in a `data` property. It must include `total_m3` and/or `period_m3`; `period_days` is optional but needed for the daily average. Camel-case alternatives (`totalM3`, `periodM3`, `periodDays`) and `index_m3` / `consumption_m3` are accepted as well.
+
+```json
+{
+  "total_m3": 245.7,
+  "period_m3": 9.0,
+  "period_days": 30,
+  "reading_at": "2026-08-22T09:00:00Z"
+}
+```
+
+| Field         | Required                      | Validation                                   |
+| ------------- | ----------------------------- | -------------------------------------------- |
+| `total_m3`    | No, if `period_m3` is present | Number greater than or equal to zero.        |
+| `period_m3`   | No, if `total_m3` is present  | Number greater than or equal to zero.        |
+| `period_days` | No                            | Positive number; used for the daily average. |
+| `reading_at`  | No                            | Informational ISO 8601 timestamp.            |
+
+## Local or cloud connection
+
+The integration declares both channels. The meter shows a badge in Gladys:
+
+| Badge           | When                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| **Local**       | Manual readings, or an endpoint on your network (private IP, `localhost`, `.local`, `.lan`). |
+| **Cloud**       | An endpoint on the Internet (easyCONSO, third-party service…).                               |
+| **Unreachable** | The last read of the data source failed.                                                     |
+
+The channel follows the configured source: the “Prefer the local connection” switch shown by Gladys has nothing to choose between for a single water meter.
+
+## Refresh interval
+
+Gladys polls the meter every minute and the integration reads the source at the configured interval (one hour by default, 5 minutes to 24 hours). Water readings rarely need minute-by-minute polling. Unchanged values are not republished, except every 6 hours so the meter stays recently dated.
+
+## Dashboard widget
+
+Add the **SWDE water consumption** widget to a dashboard. It shows:
+
+- three live tiles: index, period consumption, daily average (orange above the alert threshold);
+- a chart of the daily average over the last month, 3 months (default) or year — the **Chart period** setting of the widget;
+- the data source, its state, the time of the last read and the alert state;
+- a **Refresh** button that reads the source immediately.
+
+## Scenes
+
+### Triggers
+
+| Trigger                     | Fires when                                                                                      | Variables                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **New water-meter reading** | The meter index changed since the previous read (the first read after a start is the baseline). | `total_m3`, `delta_m3`, `period_m3`, `daily_average_liters` |
+| **High water consumption**  | The daily average goes above the **Daily alert threshold** (once per crossing).                 | `daily_average_liters`, `threshold_liters`                  |
+
+Both triggers can be filtered on the meter. Set the threshold in the **Alerts and refresh** section of the configuration; `0` disables the alert. Example: send yourself a message “Water: \{\{triggerEvent.data.daily_average_liters\}\} L/day, possible leak!”.
+
+### Action
+
+**Read the water meter** reads the source immediately and returns `total_m3`, `period_m3`, `daily_average_liters` and `above_threshold` (true/false) to the following actions of the scene. It never fires a trigger itself, so a scene cannot loop.
+
+## Testing and troubleshooting
+
+Use **Test the data source** before adding the meter or after changing an endpoint. The result confirms the recognised values without exposing a token. On failure, check that Gladys can reach the endpoint, the token is valid, and the response follows the schema above. The Configuration screen shows the connection status; finally, consult the integration logs (`LOG_LEVEL=debug` for more detail).
+
+SWDE’s easyCONSO solution is separate from the general customer portal. It promotes automatic index readings and real-time consumption monitoring for smart meters under a specific service arrangement. [2]
+
+## References
+
+[1] [SWDE — View my consumption history](https://www.swde.be/fr/voir-mon-historique-de-consommation)
+
+[2] [SWDE easyCONSO — Optimise water-consumption management](https://swde.easyconso.be/)
+
+## Configuration settings
+
+These are the settings SWDE Water Consumption asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| SWDE consumption data | `section` | No | The official SWDE customer portal provides consumption history after sign-in but does not document a public API. This integration never receives your SWDE password: enter readings manually or use an authorised JSON endpoint (local or cloud). |
+| Data source | `select` | Yes |  |
+| Meter identifier | `string` | Yes | A stable local identifier, for example the last digits of the meter serial number. Do not enter a customer number. Changing it creates a new device. |
+| Meter name | `string` | Yes |  |
+| Authorised JSON endpoint | `section` | No | Complete these fields only when the API source is selected. The endpoint must return a JSON object with total_m3 and/or period_m3; period_days is optional. A LAN address is shown as a local connection, an Internet address as a cloud one. |
+| JSON endpoint URL | `string` | No |  |
+| API bearer token | `secret` | No | Optional. It is stored in Gladys as a protected secret and sent as a Bearer token. |
+| Manual readings | `section` | No | Use the values from your meter or SWDE history. Save after each new reading to add it to the Gladys dashboard history. |
+| Meter index (m³) | `number` | No |  |
+| Consumption for the period (m³) | `number` | No |  |
+| Period length (days) | `number` | No |  |
+| Alerts and refresh | `section` | No | The “High water consumption” scene trigger fires when the daily average goes above the threshold. Use it to detect a leak or a tap left open. |
+| Daily alert threshold (L/day) | `number` | No | 0 disables the alert. |
+| Refresh interval (s) | `number` | No | How often the data source is read, in seconds (5 minutes to 24 hours). A moderate interval limits unnecessary requests. |
+
+## How to install SWDE Water Consumption in Gladys
+
+1. In Gladys, open **Integrations**: SWDE Water Consumption appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/gboulvin/gladys-swde:0.2.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/gboulvin/Gladys-SWDE](https://github.com/gboulvin/Gladys-SWDE).
+
+SWDE Water Consumption requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+SWDE Water Consumption is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [gboulvin](https://github.com/gboulvin), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/gboulvin/Gladys-SWDE) — [source of this documentation](https://github.com/gboulvin/Gladys-SWDE/blob/HEAD/docs/en.md)

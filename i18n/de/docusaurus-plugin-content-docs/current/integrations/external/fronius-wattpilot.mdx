@@ -1,0 +1,222 @@
+---
+title: "Fronius Wattpilot Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Fronius Wattpilot"
+description: "Fronius Wattpilot Wallboxen im lokalen Netz: Ladezustand, Leistung, Energie, Strom und Modi. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wattpilot.png"
+keywords:
+  - "fronius wattpilot"
+  - "fronius wattpilot smart home"
+  - "gladys fronius wattpilot"
+  - "fronius wattpilot gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-wattpilot instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Fronius Wattpilot","description":"Fronius Wattpilot Wallboxen im lokalen Netz: Ladezustand, Leistung, Energie, Strom und Modi.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-wattpilot","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wattpilot.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T17:32:59Z"}} />
+
+Verfolge und steuere deine **Fronius Wattpilot** Wallbox (Wattpilot Home und
+Go, 11 und 22 kW; Wattpilot Flex im Test) aus Gladys, **in deinem lokalen
+Netzwerk**: Gladys spricht mit dem WebSocket der Ladestation, so wie die
+Fronius Solar.wattpilot App zu Hause. Keine Cloud, kein Fronius-Konto.
+
+> **Ohne die Hardware entwickelt: Rückmeldungen willkommen.** Diese Integration
+> wurde nach dem Protokoll geschrieben, wie es andere Open-Source-Projekte
+> dokumentieren und umsetzen (die `wattpilot`-Bibliothek von joscha82, die Home
+> Assistant Integration von mk-maddin), und gegen eine simulierte Ladestation
+> getestet, ohne einen Wattpilot zur Hand. Wenn etwas falsch aussieht, eröffne
+> ein Issue im GitHub-Repository mit den Protokollen der Integration.
+
+Diese Integration steht in keiner Verbindung zur Fronius International GmbH.
+
+## Voraussetzungen
+
+- Ein Fronius Wattpilot (Home oder Go, 11 oder 22 kW), mit deinem WLAN
+  verbunden. Der Wattpilot Flex wird theoretisch unterstützt (seine
+  Passwortprüfung ist anders), ist aber ungetestet.
+- Das **Passwort der Ladestation**: das, das du bei der Einrichtung in der
+  Solar.wattpilot App gewählt hast (die App fragt es zum Verbinden ab).
+- Eine **feste IP-Adresse** für die Ladestation, in deinem Router eingestellt
+  (DHCP-Reservierung): Die Integration erreicht sie über ihre Adresse.
+- Gladys und die Ladestation im selben Netzwerk (Port 80 der Ladestation von
+  Gladys aus erreichbar).
+- Gladys 5.2.0 oder neuer.
+
+## Konfiguration
+
+1. Installiere die Integration über **Integrationen → Von GitHub installieren**
+   (oder den Store) und öffne den Reiter **Konfiguration**.
+2. **IP-Adresse der Ladestation**: zum Beispiel `192.0.2.10`.
+3. **Passwort der Ladestation**: das Passwort der Solar.wattpilot App. Es
+   bleibt in Gladys (geheimes Feld) und geht nur als Hash an die Ladestation.
+4. **Aktualisierungsintervall**: wie oft die Messwerte (Leistung, Strom,
+   Energie) an Gladys gehen, standardmäßig 15 Sekunden.
+5. **Sprache der Funktionsnamen**: Namen der Funktionen neuer Geräte und
+   Sprache der Fehlertexte (standardmäßig Französisch).
+6. Speichere: Die Ladestation erscheint im Reiter **Erkennung**. Füge sie
+   hinzu.
+7. Die Schaltfläche **Verbindung testen** sagt, ob die Ladestation verbunden
+   ist (Name, Seriennummer, Firmware) oder warum nicht.
+
+## Aktualisierung und Netzwerknutzung
+
+Die Integration hält **eine WebSocket-Verbindung** zur Ladestation offen, die
+ihre Änderungen von selbst sendet: Nichts wird abgefragt. Die Ladestation
+sendet ihre Messwerte beim Laden mehrmals pro Sekunde; die Integration gibt
+sie im gewählten Intervall an Gladys weiter, und **sofort**, wenn sich etwas
+ändert, worauf du einwirkst (Autozustand, Modus, Strom, Erzwingen, Fehler).
+Nur geänderte Werte werden gesendet, dazu alle 6 Stunden alle Werte, damit ein
+stabiler Wert nie „Kein aktueller Wert“ zeigt. Gladys fragt das Gerät
+zusätzlich als Rückfallebene ab; die Integration überspringt dann ein Senden,
+das sie gerade erledigt hat.
+
+Bricht die Verbindung ab, verbindet die Integration nach 5 s, 10 s, 30 s und
+dann jede Minute neu. Ein abgelehntes Passwort wird nur alle 10 Minuten erneut
+versucht. Eine Ladestation, die eine Minute lang schweigt, bekommt einen Ping,
+und die Verbindung wird neu aufgebaut, wenn sie nicht antwortet.
+
+## Das Gerät Ladestation
+
+| Funktion               | Was sie zeigt                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Anschluss              | Verfügbar (kein Auto), Belegt (Auto angesteckt), Nicht verfügbar (offline), Fehler                                        |
+| Ladezustand            | Lädt, Fahrzeug verbunden (wartet), Angehalten (Fahrzeug): Laden beendet, Angehalten (Ladestation): nicht erlaubt, Inaktiv |
+| Auto angesteckt        | 1, wenn ein Auto angesteckt ist                                                                                           |
+| Ladeleistung           | Gesamtleistung, W                                                                                                         |
+| Leistung L1, L2, L3    | Leistung pro Phase, W                                                                                                     |
+| Stromstärke L1, L2, L3 | Strom pro Phase, A                                                                                                        |
+| Energie der Sitzung    | Energie seit dem Anstecken des Autos, kWh                                                                                 |
+| Gesamtenergie          | Der Zähler der Ladestation, kWh: Die Energieüberwachung von Gladys berechnet daraus Verbrauch und Kosten                  |
+| Ladestrom              | **Befehl**: der dem Auto angebotene Strom, von 6 A bis 16 A (11 kW) oder 32 A (22 kW)                                     |
+| Lademodus              | **Befehl**: Standard, Eco, Next Trip — die Modi der Solar.wattpilot App                                                   |
+| Laden erzwingen        | **Befehl**: Nach Modus, Erzwungenes Laden, Erzwungener Stopp                                                              |
+| Temperatur             | Der heißeste Sensor der Ladestation, °C                                                                                   |
+| Fehler                 | Der Fehler des Wattpilot in Worten („Keiner“, wenn alles gut ist)                                                         |
+| Online                 | 1, solange die Ladestation verbunden ist                                                                                  |
+
+Der **Lademodus** wechselt nur zwischen den Modi; ihre Einstellungen
+(Solarüberschuss und Preisgrenze von Eco, Abfahrtszeit und Energie von Next
+Trip) bleiben in der Solar.wattpilot App und in Solar.web: Diese Integration
+dupliziert das Solarladen nicht. **Erzwungenes Laden** lädt, egal was der
+Modus entscheidet; **Nach Modus** gibt ihm die Entscheidung zurück.
+
+Der Strom kann nicht über der in der App eingestellten Grenze („maximaler
+Strom“) liegen: Die Integration lehnt ihn mit einer Meldung ab, statt ihn zu
+senden.
+
+## Widget
+
+Füge das Widget **Fronius Wattpilot** einem Dashboard hinzu und wähle die
+Ladestation. Es zeigt die Leistung live, die Energie der Sitzung und den
+Ladestrom, den Zustand (Bereit, Lädt, Wartet, Laden beendet, Fehler), den
+Modus, ein aktives Erzwingen und gegebenenfalls den Fehler. Vier Tasten:
+**Laden** (erzwungenes Laden), **Stoppen** (erzwungener Stopp), **Auto** (nach
+Modus) und **Einstellungen…**, das ein Formular für Strom und Lademodus öffnet.
+Das aktive Erzwingen trägt ein Häkchen-Symbol.
+
+## Szenen-Auslöser
+
+**Wattpilot Laden beendet**: Das Auto zieht nach dem Laden keinen Strom mehr
+(es ist voll oder hat das im Auto oder in der App eingestellte Limit
+erreicht). Wähle optional die Ladestation. Die folgenden Aktionen können
+`energy_kwh` (Energie der Sitzung) und `charger` (ihren Namen) verwenden. Er
+löst einmal pro Ladevorgang aus, nie beim Start.
+
+„Auto angesteckt“ braucht keinen Auslöser: Verwende die Funktion **Auto
+angesteckt** (wechselt auf 1) in einem Auslöser „Gerätewert“.
+
+## Szenen-Aktionen
+
+- **Wattpilot Lademodus einstellen**: Standard, Eco oder Next Trip.
+- **Wattpilot Laden erzwingen oder stoppen**: erzwungenes Laden, erzwungener
+  Stopp oder nach Modus.
+
+Der Ladestrom braucht keine eigene Aktion: Er ist eine Funktion und wird mit
+der üblichen Aktion „Gerät steuern“ von Gladys eingestellt.
+
+## Szenen-Beispiele
+
+- **Tagsüber Sonne, nachts voll**: um 8:00 „Wattpilot Lademodus einstellen“
+  auf Eco; um 22:00 auf Standard.
+- **Sag mir, wenn das Auto voll ist**: Auslöser „Wattpilot Laden beendet“,
+  dann eine Nachricht „Laden beendet: \{\{triggerEvent.data.energy_kwh\}\} kWh“.
+- **Die Hauptsicherung schützen**: Wenn die Leistung des Hauses einen
+  Schwellwert überschreitet, den Ladestrom auf 6 A stellen; wenn sie sinkt,
+  zurück auf 16 A.
+- **Morgen früh los**: über eine Taste im Dashboard „Wattpilot Laden erzwingen
+  oder stoppen“ auf Erzwungenes Laden; um 7:00 zurück auf Nach Modus.
+
+## Fehlerbehebung
+
+- **„Keine Antwort“**: Prüfe die Adresse, ob die Ladestation im WLAN ist und
+  ob Gladys und die Ladestation im selben Netzwerk sind.
+- **„Es antwortet etwas, aber kein Wattpilot“**: Die Adresse gehört einem
+  anderen Gerät (Router, Wechselrichter…).
+- **„Die Ladestation lehnt das Passwort ab“**: Gib das Passwort der
+  Solar.wattpilot App erneut ein (auf Groß- und Kleinschreibung achten). Nach
+  einer Ablehnung versucht es die Integration nur alle 10 Minuten erneut:
+  Drücke **Verbindung testen**, um es sofort zu versuchen.
+- **„Verbunden, aber die Ladestation hat ihren Status nicht rechtzeitig
+  gesendet“**: Starte die Ladestation neu und drücke dann **Verbindung
+  testen**.
+- **Ein Befehl scheitert mit „Die Ladestation hat die Anfrage abgelehnt“**:
+  Der Wert liegt außerhalb dessen, was die Ladestation gerade annimmt.
+- Die Protokolle der Integration sagen den Rest: Setze `LOG_LEVEL=debug` für
+  die Details jeder Änderung.
+
+## Grenzen
+
+- Eine Ladestation pro Gladys. Zwei Wattpilots: Eröffne ein Issue.
+- Die Funktionsnamen und der maximale Strom werden beim Hinzufügen des Geräts
+  festgelegt (eine Regel von Gladys): Um die Sprache zu ändern, lösche das
+  Gerät und füge es erneut hinzu.
+- Kein Zugriff auf RFID-Karten, Zeitpläne, Solar- und Preiseinstellungen,
+  Phasenumschaltung oder Kabelverriegelung: Das alles bleibt in der
+  Solar.wattpilot App. Die Kabelverriegelung wird absichtlich nicht
+  angeboten.
+- Gladys hält eine Verbindung zur Ladestation offen, neben der App und
+  vielleicht einer anderen Hausautomations-Box. Wie viele Verbindungen
+  gleichzeitig angenommen werden, ist nicht dokumentiert: Wenn sich die App
+  nicht mehr verbinden kann, während Gladys verbunden ist, melde es in einem
+  Issue.
+- Wattpilot Flex: Seine Passwortprüfung (bcrypt) folgt der Home Assistant
+  Integration, ohne Test an einem echten Flex.
+- Nur gegen eine simulierte Ladestation und veröffentlichte
+  Protokollbeschreibungen getestet (siehe Hinweis oben).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Fronius Wattpilot in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Bevor du anfängst | `section` | Nein | Gladys spricht direkt im lokalen Netzwerk mit dem Wattpilot, wie die Fronius Solar.wattpilot App zu Hause. Gib der Ladestation in deinem Router eine feste IP-Adresse und trage sie unten ein, mit dem Passwort der Ladestation: dem, das du bei der Installation in der App gewählt hast. |
+| IP-Adresse der Ladestation | `string` | Nein |  |
+| Passwort der Ladestation | `secret` | Nein | Das in der Solar.wattpilot App festgelegte Passwort. Es bleibt in Gladys und verlässt dein Netzwerk nicht. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft die Messwerte an Gladys gehen. Eine Änderung von Zustand, Modus oder Strom wird sofort gesendet. |
+| Sprache der Funktionsnamen | `select` | Nein | Namen der Funktionen neuer Geräte und Sprache der Fehlertexte. |
+
+## So installierst du Fronius Wattpilot in Gladys
+
+1. Öffne in Gladys **Integrationen**: Fronius Wattpilot erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-wattpilot:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-wattpilot](https://github.com/guim31/gladys-wattpilot).
+
+Fronius Wattpilot benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Fronius Wattpilot ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-wattpilot) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-wattpilot/blob/HEAD/docs/de.md)

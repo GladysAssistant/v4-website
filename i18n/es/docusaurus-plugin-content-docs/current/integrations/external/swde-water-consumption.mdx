@@ -1,0 +1,160 @@
+---
+title: "Integración domótica SWDE Water Consumption, gratuita y de código abierto"
+sidebar_label: "SWDE Water Consumption"
+description: "Siga el índice, el consumo diario y las alertas de su contador de agua SWDE. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SWDE.jpg"
+keywords:
+  - "swde water consumption"
+  - "domótica swde water consumption"
+  - "gladys swde water consumption"
+  - "swde water consumption gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/gboulvin/Gladys-SWDE instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SWDE Water Consumption","description":"Siga el índice, el consumo diario y las alertas de su contador de agua SWDE.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-SWDE","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SWDE.jpg","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T10:46:34Z"}} />
+
+Esta integración externa publica en Gladys el **índice del contador**, el **consumo del periodo** y la **media diaria** de un contador de agua de la SWDE (Société wallonne des eaux). Cada indicador se guarda en el historial de Gladys, se muestra en un widget de panel dedicado y puede iniciar sus escenas: una nueva lectura, o un consumo diario por encima de su umbral de alerta (fuga, grifo abierto).
+
+> El portal oficial de clientes de SWDE muestra el historial de consumo tras iniciar sesión, pero la SWDE no documenta ninguna API pública de automatización. Por ello, esta integración nunca recibe una contraseña SWDE y no controla el portal web. [1]
+
+| Indicador de Gladys | Unidad | Significado                                                     |
+| ------------------- | ------ | --------------------------------------------------------------- |
+| Índice del contador | m³     | Lectura acumulada del contador de agua.                         |
+| Consumo del periodo | m³     | Volumen de agua consumido en el periodo de referencia.          |
+| Media diaria        | L/día  | Calculada a partir del consumo del periodo y su número de días. |
+
+Se requiere Gladys 5.1.0 o posterior.
+
+## Instalación y detección del contador
+
+Instale la integración desde el catálogo de Gladys y abra su pestaña **Configuración**. Elija un identificador local estable para el contador, por ejemplo los últimos dígitos de su número de serie, y un nombre legible. No introduzca un número de cliente SWDE: la integración no lo necesita. El identificador forma parte de la identidad del dispositivo en Gladys: cambiarlo después crea un dispositivo nuevo.
+
+Guarde la configuración, abra la pestaña **Detección** de la integración y añada el contador propuesto. Sus tres sensores de solo lectura estarán disponibles en los paneles y en el historial de estados de Gladys.
+
+## Lecturas manuales para un cliente particular
+
+Elija **Lecturas manuales del contador** cuando lea el contador directamente o consulte el portal de clientes de SWDE. Introduzca el índice acumulado en m³, el consumo de su periodo de referencia y el número de días de ese periodo. Guarde la configuración tras cada nueva lectura: Gladys publica los valores y vuelve a calcular la media diaria.
+
+Para un cliente particular es el método más fiable, ya que no depende de ninguna interfaz privada no documentada. La SWDE confirma que el historial de consumo está disponible en el portal de clientes. [1]
+
+## Fuente de datos JSON autorizada
+
+Elija **Punto de acceso JSON autorizado** solo si dispone de una interfaz documentada o contratada, como un servicio easyCONSO, una exportación SWDE aprobada o su propia pasarela. Introduzca la URL del punto de acceso y, si es necesario, un token Bearer. El token se guarda en un campo secreto protegido de Gladys y se envía en la cabecera `Authorization: Bearer …`.
+
+El punto de acceso debe responder a una petición `GET` con un objeto JSON, directo o dentro de una propiedad `data`. Debe incluir `total_m3` y/o `period_m3`; `period_days` es opcional pero necesario para la media diaria. También se aceptan las variantes camelCase (`totalM3`, `periodM3`, `periodDays`) e `index_m3` / `consumption_m3`.
+
+```json
+{
+  "total_m3": 245.7,
+  "period_m3": 9.0,
+  "period_days": 30,
+  "reading_at": "2026-08-22T09:00:00Z"
+}
+```
+
+| Campo         | Obligatorio                      | Validación                            |
+| ------------- | -------------------------------- | ------------------------------------- |
+| `total_m3`    | No, si `period_m3` está presente | Número mayor o igual que cero.        |
+| `period_m3`   | No, si `total_m3` está presente  | Número mayor o igual que cero.        |
+| `period_days` | No                               | Número positivo, usado para la media. |
+| `reading_at`  | No                               | Marca de tiempo ISO 8601 informativa. |
+
+## Conexión local o en la nube
+
+La integración declara ambos canales. El contador muestra una insignia en Gladys:
+
+| Insignia        | Cuándo                                                                                         |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| **Local**       | Lecturas manuales, o un punto de acceso en su red (IP privada, `localhost`, `.local`, `.lan`). |
+| **Nube**        | Un punto de acceso en Internet (easyCONSO, servicio de terceros…).                             |
+| **Inaccesible** | La última lectura de la fuente de datos ha fallado.                                            |
+
+El canal sigue la fuente configurada: el interruptor «Preferir la conexión local» que muestra Gladys no tiene nada que elegir para un único contador de agua.
+
+## Intervalo de actualización
+
+Gladys consulta el contador cada minuto y la integración lee la fuente en el intervalo configurado (una hora por defecto, de 5 minutos a 24 horas). Los valores sin cambios no se vuelven a publicar, salvo cada 6 horas para que el contador siga con fecha reciente.
+
+## Widget del panel
+
+Añada el widget **Consumo de agua SWDE** a un panel. Muestra:
+
+- tres mosaicos en directo: índice, consumo del periodo, media diaria (en naranja por encima del umbral de alerta);
+- un gráfico de la media diaria del último mes, los últimos 3 meses (por defecto) o el último año — ajuste **Periodo del gráfico** del widget;
+- la fuente de datos, su estado, la hora de la última lectura y el estado de la alerta;
+- un botón **Actualizar** que lee la fuente de inmediato.
+
+## Escenas
+
+### Disparadores
+
+| Disparador                             | Se activa cuando                                                                                           | Variables                                                   |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Nueva lectura del contador de agua** | El índice ha cambiado desde la lectura anterior (la primera lectura tras un arranque sirve de referencia). | `total_m3`, `delta_m3`, `period_m3`, `daily_average_liters` |
+| **Consumo de agua elevado**            | La media diaria supera el **Umbral de alerta diario** (una vez por cruce).                                 | `daily_average_liters`, `threshold_liters`                  |
+
+Ambos disparadores pueden filtrarse por contador. Defina el umbral en la sección **Alertas y actualización** de la configuración; `0` desactiva la alerta. Ejemplo: envíese el mensaje «Agua: \{\{triggerEvent.data.daily_average_liters\}\} L/día, ¡posible fuga!».
+
+### Acción
+
+**Leer el contador de agua** lee la fuente de inmediato y devuelve `total_m3`, `period_m3`, `daily_average_liters` y `above_threshold` (verdadero/falso) a las acciones siguientes de la escena. Nunca activa un disparador por sí misma, así que una escena no puede entrar en bucle.
+
+## Prueba y solución de problemas
+
+Use **Probar la fuente de datos** antes de añadir el contador o tras cambiar un punto de acceso. El resultado confirma los valores reconocidos sin mostrar el token. Si falla, compruebe que Gladys puede acceder al punto de acceso, que el token es válido y que la respuesta sigue el formato anterior. La pantalla de configuración muestra el estado de la conexión; por último, consulte los registros de la integración (`LOG_LEVEL=debug` para más detalle).
+
+La solución easyCONSO de la SWDE es independiente del portal general de clientes. Ofrece lecturas automáticas del índice y seguimiento del consumo en tiempo real para contadores inteligentes, en el marco de un servicio específico. [2]
+
+## Referencias
+
+[1] [SWDE — Voir mon historique de consommation](https://www.swde.be/fr/voir-mon-historique-de-consommation)
+
+[2] [SWDE easyCONSO — Optimisez la gestion de vos consommations d’eau](https://swde.easyconso.be/)
+
+## Parámetros de configuración
+
+Estos son los parámetros que SWDE Water Consumption te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Datos de consumo SWDE | `section` | No | El portal oficial de clientes de SWDE muestra el historial de consumo tras iniciar sesión, pero no documenta ninguna API pública. Esta integración nunca recibe su contraseña SWDE: introduzca las lecturas manualmente o use un punto de acceso JSON autorizado (local o en la nube). |
+| Fuente de datos | `select` | Sí |  |
+| Identificador del contador | `string` | Sí | Un identificador local estable, por ejemplo los últimos dígitos del número de serie del contador. No introduzca un número de cliente. Cambiarlo crea un dispositivo nuevo. |
+| Nombre del contador | `string` | Sí |  |
+| Punto de acceso JSON autorizado | `section` | No | Rellene estos campos solo si ha elegido la fuente API. El punto de acceso debe devolver un objeto JSON con total_m3 y/o period_m3; period_days es opcional. Una dirección de la red local se muestra como conexión local y una de Internet como conexión en la nube. |
+| URL del punto de acceso JSON | `string` | No |  |
+| Token Bearer de la API | `secret` | No | Opcional. Se guarda en Gladys como secreto protegido y se envía como token Bearer. |
+| Lecturas manuales | `section` | No | Use los valores de su contador o del historial SWDE. Guarde tras cada nueva lectura para añadirla al historial del panel de Gladys. |
+| Índice del contador (m³) | `number` | No |  |
+| Consumo del periodo (m³) | `number` | No |  |
+| Duración del periodo (días) | `number` | No |  |
+| Alertas y actualización | `section` | No | El disparador de escena «Consumo de agua elevado» se activa cuando la media diaria supera el umbral. Úselo para detectar una fuga o un grifo abierto. |
+| Umbral de alerta diario (L/día) | `number` | No | 0 desactiva la alerta. |
+| Intervalo de actualización (s) | `number` | No | Frecuencia de lectura de la fuente, en segundos (de 5 minutos a 24 horas). Un intervalo moderado evita peticiones innecesarias. |
+
+## Cómo instalar SWDE Water Consumption en Gladys
+
+1. En Gladys, abre **Integraciones**: SWDE Water Consumption aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/gboulvin/gladys-swde:0.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/gboulvin/Gladys-SWDE](https://github.com/gboulvin/Gladys-SWDE).
+
+SWDE Water Consumption requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+SWDE Water Consumption es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [gboulvin](https://github.com/gboulvin), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/gboulvin/Gladys-SWDE) — [fuente de esta documentación](https://github.com/gboulvin/Gladys-SWDE/blob/HEAD/docs/es.md)

@@ -1,0 +1,157 @@
+---
+title: "deCONZ / Phoscon smart home integration, free and open source"
+sidebar_label: "deCONZ / Phoscon"
+description: "The Zigbee devices of a deCONZ gateway (ConBee, RaspBee): lights, plugs, covers, sensors, remotes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deconz.png"
+keywords:
+  - "deconz / phoscon"
+  - "deconz / phoscon smart home"
+  - "gladys deconz / phoscon"
+  - "deconz / phoscon gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-deconz instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"deCONZ / Phoscon","description":"The Zigbee devices of a deCONZ gateway (ConBee, RaspBee): lights, plugs, covers, sensors, remotes.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-deconz","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deconz.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T14:44:06Z"}} />
+
+You have a **ConBee** stick or a **RaspBee** board with **deCONZ** and the
+**Phoscon** app, and you do not want to pair everything again in Zigbee2MQTT?
+This integration connects Gladys to your gateway as it is: your lights, plugs,
+covers, thermostats, sensors and remotes appear in the **Discovery** tab of
+Gladys, their changes arrive live and your commands go to the gateway.
+Everything stays on your local network.
+
+Unofficial integration, not affiliated with dresden elektronik (the maker of
+deCONZ, Phoscon, ConBee and RaspBee).
+
+> **Development version (0.1).** Developed and tested against faithful copies
+> of the deCONZ API answers, not yet against a real gateway. Feedback is welcome
+> on the GitHub repository.
+
+## What you get
+
+| In deCONZ                                      | In Gladys                                                                |
+| ---------------------------------------------- | ------------------------------------------------------------------------ |
+| Lights (color, color temperature, dimmable)    | light: on/off, brightness, color temperature (mireds), color             |
+| Plugs, relays, "On/Off light"                  | switch (and power, voltage, current, energy when the plug measures them) |
+| Covers (`Window covering device`)              | shutter: open, close, stop, position (100 % = open)                      |
+| `ZHAThermostat` (radiator valves)              | thermostat: temperature, setpoint, mode (off, heat, auto), activity      |
+| `ZHATemperature`, `ZHAHumidity`, `ZHAPressure` | temperature (°C), humidity (%), pressure (hPa) sensors                   |
+| `ZHAOpenClose`, `ZHAPresence`                  | opening sensor, motion sensor                                            |
+| `ZHAWater`, `ZHAFire`, `ZHACarbonMonoxide`     | water leak, smoke, carbon monoxide detectors                             |
+| `ZHALightLevel`                                | illuminance (lux)                                                        |
+| `ZHAPower`, `ZHAConsumption`                   | power (W), voltage (V), current (A), energy (kWh, an index for a meter)  |
+| `ZHAVibration`, `ZHAMoisture`, `ZHAAirQuality` | vibration and tilt, soil moisture, VOC (ppb)                             |
+| `ZHABattery` and the battery of every sensor   | battery (%) of the device                                                |
+| `ZHASwitch` (remotes, wall switches)           | button, and the **deCONZ remote button** scene trigger                   |
+
+deCONZ often splits one device into several "resources" (a Xiaomi sensor =
+temperature + humidity + pressure): the integration groups them into **one
+Gladys device** by their Zigbee address, with one battery. It is named after
+its light, or its main sensor, in Phoscon.
+
+Whether each device is reachable shows on its connection badge.
+
+## Setup
+
+1. deCONZ runs and the Phoscon app opens in your browser (for example
+   `http://192.168.1.20`).
+2. In the configuration of the integration, type the **gateway address**: the
+   IP address of the machine running deCONZ, as seen from the Gladys machine
+   (not `localhost`: the integration runs in its own container). Leave it
+   empty, or press **Find the gateway**, for Gladys to look for it on the
+   network (SSDP).
+3. The **port** is the one of the Phoscon app: 80 by default, otherwise the one
+   in its address (e.g. 8080 for deCONZ in Docker). Save.
+4. **API key**: in Phoscon, open **Settings → Gateway → Advanced** and press
+   **Authenticate app**. Within 60 seconds, press the **Get an API key** button
+   of the integration: the key is saved and the connection starts. (A key
+   created elsewhere can also be pasted in the "API key" field.)
+5. Open **Discovery** and add your devices. The **Test the connection** button
+   sums up what the gateway holds.
+
+The live events go through the deCONZ **WebSocket**, on the port it announces
+(often 443 on a Raspberry Pi, 8081 in Docker): that port must be reachable
+from the Gladys machine too.
+
+## Remotes and wall switches
+
+Every press of a remote fires the **deCONZ remote button** scene trigger, which
+you can filter by device, **button number** and **gesture**: click
+(`short_release`), press, hold, release after a hold, double, triple or
+quadruple click, shake, drop, tilt, rotation. The `button`, `event`, `code`
+and `gesture` variables are available to the actions of the scene.
+
+deCONZ codes each press `button × 1000 + gesture`: `1002` = button 1, click;
+`2001` = button 2, held; `4003` = button 4, released after a hold. On a Hue
+dimmer, for example, 1 = on, 2 = brighter, 3 = dimmer, 4 = off. To learn the
+number of a button, press it and look at the `button` variable (or the logs of
+the integration).
+
+The **Aqara cube** gives its side (`button`) and its gesture: flipped 90° or
+180°, pushed, double tap, shaken, dropped, turned (the angle × 100 is in
+`code`). The **Hue Tap** gives its buttons 1 to 4.
+
+The device also has a **Button** feature taking the value of the last gesture
+(without the button number): handy for a one-button remote; for several
+buttons, prefer the scene trigger.
+
+## Good to know
+
+- The deCONZ **groups** and **scenes** are not taken over yet, nor the locks,
+  sirens and fans: they are left out (see the logs).
+- A thermostat accepts the modes it knows: a mode the valve refuses returns the
+  deCONZ error.
+- The ids of the devices in Gladys come from the Zigbee address: they do not
+  change when deCONZ renumbers its resources.
+- The gateway must serve HTTP on your local network (the default).
+
+## Troubleshooting
+
+- **"The deCONZ gateway is unreachable"**: check the address and the port (the
+  Phoscon ones), and that deCONZ runs.
+- **"The gateway refused the API key"**: the key was deleted in Phoscon
+  (Settings → Gateway → Advanced, list of apps): do step 4 again.
+- **No live changes, or "the event connection is lost"**: the deCONZ WebSocket
+  port is not reachable from Gladys (firewall, port not published by the deCONZ
+  container).
+- **Find the gateway finds nothing**: some setups (Docker, VLANs) do not answer
+  SSDP; type the address by hand.
+
+## Configuration settings
+
+These are the settings deCONZ / Phoscon asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your deCONZ gateway, as it is | `section` | No | For the ConBee and RaspBee users who keep deCONZ and the Phoscon app: no migration to Zigbee2MQTT, no pairing again. This integration reads the lights, plugs, covers, thermostats, sensors and remotes of your gateway through its local API, follows their changes live and sends your commands. Type the address of the gateway as seen from the Gladys machine (its LAN IP address, the one of the Phoscon app), or press "Find the gateway". Unofficial, not affiliated with dresden elektronik. |
+| Gateway address | `string` | No | The IP address or host name of the machine running deCONZ (the address of the Phoscon app). Empty: the integration looks for it on the network. |
+| Port of the Phoscon app | `number` | No | 80 by default; the port in the Phoscon address otherwise (e.g. 8080 for deCONZ in Docker). |
+| API key | `section` | No | deCONZ only gives an API key to an app the gateway was unlocked for: 1. Save the address above. 2. In Phoscon, open Settings → Gateway → Advanced and press "Authenticate app". 3. Within 60 seconds, press "Get an API key" below: the key is saved here, the devices appear in Discovery. |
+| API key | `secret` | No | Filled by the "Get an API key" button. A key created elsewhere can be pasted too. |
+
+## How to install deCONZ / Phoscon in Gladys
+
+1. In Gladys, open **Integrations**: deCONZ / Phoscon appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-deconz:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-deconz](https://github.com/LM1LC3N7/gladys-deconz).
+
+deCONZ / Phoscon requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+deCONZ / Phoscon is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-deconz) — [source of this documentation](https://github.com/LM1LC3N7/gladys-deconz/blob/HEAD/docs/en.md)

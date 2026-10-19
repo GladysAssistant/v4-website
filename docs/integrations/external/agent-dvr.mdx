@@ -1,0 +1,185 @@
+---
+title: "Agent DVR smart home integration, free and open source"
+sidebar_label: "Agent DVR"
+description: "Agent DVR cameras: images, motion, alerts, recording, arm and disarm, from your own server. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-agentdvr.png"
+keywords:
+  - "agent dvr"
+  - "agent dvr smart home"
+  - "gladys agent dvr"
+  - "agent dvr gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-agentdvr instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Agent DVR","description":"Agent DVR cameras: images, motion, alerts, recording, arm and disarm, from your own server.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-agentdvr","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-agentdvr.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T15:01:08Z"}} />
+
+Brings the cameras of an [Agent DVR](https://www.ispyconnect.com/) server (iSpyConnect, free for local
+use) into Gladys: their image, the motion detected, the recording going on, whether they are switched
+on, and whether the system is armed. Agent DVR's motion and alerts start scenes, with the image of the
+moment, which a scene can send you. Scenes can also arm or disarm Agent DVR, start a recording and
+switch cameras on or off.
+
+Tested against a real Agent DVR server in Docker (7.0) with simulated network cameras, not yet on an
+installation in service with real cameras: feedback welcome on
+[GitHub](https://github.com/guim31/gladys-agentdvr/issues) or on the Gladys forum.
+
+## What you need
+
+- Gladys 5.1 or later.
+- Agent DVR installed on a computer of the local network (Windows, Linux, macOS, Docker), reachable
+  from Gladys on its web port (8090 by default). No iSpyConnect account nor subscription: everything
+  goes through the local API of Agent DVR.
+- The cameras already added in Agent DVR.
+
+## Installation
+
+1. In Gladys, open **Integrations**, find **Agent DVR** and install it.
+2. In its **Configuration** tab, fill in:
+   - **Agent DVR address**: the address of the computer running Agent DVR, e.g. `192.168.1.20`.
+     Without a port, 8090 is used; add `:port` if it was changed, or `https://` behind a reverse
+     proxy.
+   - **User name** and **Password**: only if Agent DVR asks for a login on its API on your network
+     (sent as HTTP Basic). Usually, leave them empty.
+   - **Motion check**: how often motion, recording, the armed state and new alerts are read (2, 5, 10
+     or 30 seconds, 5 by default).
+   - **Image refresh**: how often each camera image is sent to Gladys (from 10 seconds to 15 minutes,
+     1 minute by default). Motion or an alert also sends one at once.
+   - **Language of the names**: the language of the feature names given when a camera is added.
+3. Save, then open the **Discovery** tab: one device per camera, and an **Agent DVR** device for the
+   server. Add the ones you want.
+4. **Check the connection** shows what the integration reads: the Agent DVR version, whether it is
+   armed, each camera, whether it receives images and records.
+
+## The Gladys devices
+
+Each Agent DVR camera becomes a Gladys camera, named as in Agent DVR, with:
+
+| Feature       | What it is                                                                   |
+| ------------- | ---------------------------------------------------------------------------- |
+| **Image**     | The camera image, sent at the chosen pace and at once on motion or an alert. |
+| **Motion**    | 1 while Agent DVR detects motion on the camera, else 0.                      |
+| **Recording** | 1 during a recording. A switch: starts or stops a recording.                 |
+| **Camera on** | 1 when the camera is switched on in Agent DVR, 0 when it is switched off.    |
+
+The **Agent DVR** device stands for the server:
+
+| Feature               | What it is                                     |
+| --------------------- | ---------------------------------------------- |
+| **Armed**             | 1 when Agent DVR is armed (alerts on), else 0. |
+| **Cameras recording** | How many cameras are recording right now.      |
+
+**Armed** and **Camera on** are read only, on purpose: disarming or switching a surveillance camera
+off is a deliberate choice, made by a scene action or the widget, never a switch a voice assistant
+would flip by mistake. A camera switched on that sends no more images to Agent DVR shows as
+unreachable in Gladys.
+
+## Dashboard widget
+
+**Agent DVR camera** shows the image of a camera, motion, recording and the armed state, and three
+buttons: **Record** (or **Stop recording**; **Switch the camera on** when it is off), **Disarm** (or
+**Arm**) and **New image**.
+
+## Scenes
+
+### Triggers
+
+- **Agent DVR: motion detected**: a camera starts detecting motion, armed or not. Filter: the camera
+  (empty = all). Variable: the camera name. The image of the moment is sent to Gladys first.
+- **Agent DVR: alert**: Agent DVR raises an alert. It only does when **armed**, for a camera whose
+  alerts are on: motion, AI object detection, a command… Filter: the camera. Variables: the camera
+  name and the alert message (e.g. `Alert`). The image of the moment is sent first.
+- **Agent DVR: camera offline**: a camera switched on sends no more images to Agent DVR for 30
+  seconds, or Agent DVR itself stops answering. Not fired for a camera switched off.
+
+### Actions
+
+- **Agent DVR: arm or disarm**: arms the system (the cameras with alerts on raise alerts) or disarms
+  it.
+- **Agent DVR: record**: **Start** starts a recording on a camera, **Stop** stops it. Refused on a
+  camera switched off.
+- **Agent DVR: switch a camera on or off**: switches one camera on or off, or all of those added in
+  Gladys when the camera is left empty. Output: how many cameras changed.
+
+The core's **Send a camera image** action sends the last image of a camera: right after **Agent DVR:
+motion detected** or **Agent DVR: alert**, it is the image of that moment.
+
+### Scene ideas
+
+- **Leaving home**: when everyone is gone, **Agent DVR: arm or disarm** on Arm, and **Agent DVR:
+  switch a camera on or off** on Switch on for all; when someone is back, Disarm, and Switch off the
+  indoor cameras.
+- **Intrusion**: **Agent DVR: alert** on the "Garden" camera → **Send a camera image** of that camera
+  to your phone.
+- **Door opened at night**: an opening sensor opens → **Agent DVR: record**, Start, on the entrance
+  camera; Stop two minutes later.
+- **Camera lost**: **Agent DVR: camera offline** → send a message with the camera name.
+
+## Troubleshooting
+
+- **"Agent DVR does not answer at this address"**: open `http://<address>:8090` in a browser. Check
+  the port (Server settings in Agent DVR) and that no firewall blocks Gladys.
+- **"Something answers, but not like Agent DVR"**: the address or the port leads to another service.
+  Enter the address of Agent DVR, without a page path.
+- **"Agent DVR refuses the user name or password"**: check them, or leave them empty if Agent DVR
+  asks for nothing on the local network.
+- **No "alert" trigger**: Agent DVR must be armed, and alerts on for the camera (in its settings,
+  Alerts tab). **Agent DVR: motion detected** does not depend on arming.
+- **A camera stays unreachable**: Agent DVR receives no images from it. Check it in Agent DVR.
+- **More details**: the integration logs (Integrations → Agent DVR → Logs); set `LOG_LEVEL` to
+  `debug` to see each request.
+
+## Limits
+
+- No live video: Gladys shows images, sent at the chosen pace (Gladys keeps 12 images a minute per
+  camera at most). The live stream is watched in Agent DVR.
+- Motion is read every few seconds (the motion check): a very short motion between two readings may
+  go unseen. Alerts, on the other hand, are all read.
+- Agent DVR has no push state API usable without configuration: the integration polls it. With a
+  2-second interval and many cameras, that is many small requests.
+- Agent DVR microphones, PTZ, profiles and past recordings are not covered.
+- One Agent DVR server per integration.
+- Tested with Agent DVR 7.0 in Docker and simulated cameras, without a real installation: feedback
+  welcome.
+
+This integration is not affiliated with iSpyConnect nor Agent DVR.
+
+## Configuration settings
+
+These are the settings Agent DVR asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Agent DVR server | `section` | No | Agent DVR by iSpyConnect, free for local use. Enter the address of the computer running it (port 8090 by default). Then open the Discovery tab: one device per camera, and one for the server. |
+| Agent DVR address | `string` | Yes | Without a port, 8090 is used. Add https:\/\/ for a reverse proxy. |
+| User name | `string` | No | Only if Agent DVR asks for a login on your network. Usually empty. |
+| Password | `secret` | No |  |
+| Motion check | `select` | No | How often motion, recording, the armed state and new alerts are read. |
+| Image refresh | `select` | No | How often each camera image is sent to Gladys. An alarm or a new event also sends one at once. |
+| Language of the names | `select` | No | Names given to the features when a camera is added (Motion, Recording…). |
+
+## How to install Agent DVR in Gladys
+
+1. In Gladys, open **Integrations**: Agent DVR appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-agentdvr:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-agentdvr](https://github.com/guim31/gladys-agentdvr).
+
+Agent DVR requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Agent DVR is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-agentdvr) — [source of this documentation](https://github.com/guim31/gladys-agentdvr/blob/HEAD/docs/en.md)

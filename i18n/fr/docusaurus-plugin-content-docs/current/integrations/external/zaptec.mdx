@@ -1,0 +1,170 @@
+---
+title: "Intégration domotique Zaptec, gratuite et open source"
+sidebar_label: "Zaptec"
+description: "Bornes de recharge Zaptec dans Gladys : état, puissance, énergie, pilotage de la charge. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zaptec.png"
+keywords:
+  - "zaptec"
+  - "domotique zaptec"
+  - "gladys zaptec"
+  - "zaptec gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-zaptec instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zaptec","description":"Bornes de recharge Zaptec dans Gladys : état, puissance, énergie, pilotage de la charge.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-zaptec","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zaptec.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T07:26:12Z"}} />
+
+## Présentation
+
+Cette intégration amène vos **bornes de recharge Zaptec** (Zaptec Go, Go 2 et Pro) dans Gladys, par l'**API cloud officielle de Zaptec** (`api.zaptec.com`), avec le compte de l'appli Zaptec et du Zaptec Portal.
+
+- Chaque borne devient un appareil Gladys : statut du connecteur, état de la charge, statut détaillé, puissance, intensité par phase, énergie de la session, énergie totale, et un interrupteur de charge (pause / reprise).
+- Chaque installation sur laquelle vous avez les droits (propriétaire ou service) devient un appareil avec son **courant disponible**, la limite partagée par ses bornes, réglable depuis Gladys comme dans l'appli.
+- L'énergie totale d'une borne est un index de compteur : le suivi d'énergie de Gladys 5.2 en tire une consommation toutes les 30 minutes.
+- Un widget de tableau de bord, deux déclencheurs et une action de scène complètent l'ensemble.
+
+Cette intégration est sans lien avec Zaptec. Elle a été développée sans le matériel : vos retours sont les bienvenus sur le [dépôt GitHub](https://github.com/guim31/gladys-zaptec/issues).
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent (5.2 pour le suivi d'énergie de l'énergie totale).
+- Un compte Zaptec (celui de l'appli Zaptec ou du [Zaptec Portal](https://portal.zaptec.com)) ayant accès aux bornes.
+- Pour mettre en pause, reprendre ou terminer une charge : les droits **propriétaire** ou **service** sur la borne. Pour changer le courant disponible : les mêmes droits sur l'installation, Zaptec Sense (gestion automatique de la puissance) et le mode autonome désactivés.
+- Les bornes connectées à Internet (Wi-Fi, 4G ou Ethernet), et Gladys aussi : tout passe par le cloud Zaptec.
+
+## Configuration
+
+1. Dans Gladys, ouvrez **Intégrations**, installez **Zaptec**, puis ouvrez sa configuration.
+2. Renseignez l'**adresse e-mail** et le **mot de passe** du compte Zaptec.
+3. Choisissez la **langue des textes des appareils** : les noms des fonctionnalités (fixés à l'ajout d'un appareil) et le statut détaillé des bornes. Français par défaut.
+4. Choisissez l'**intervalle de rafraîchissement** : 1, 2 (par défaut) ou 5 minutes.
+5. Enregistrez, puis appuyez sur **Tester la connexion** : le message liste les bornes et les installations dont vous pouvez régler le courant.
+6. Ouvrez l'onglet **Découverte** et ajoutez les appareils voulus.
+
+Comment l'intégration parle à Zaptec :
+
+- Elle se connecte avec le mot de passe (OAuth2, « password grant »), puis garde le jeton d'accès (valable un jour environ) dans son volume privé `/data`. Le mot de passe reste dans la configuration de Gladys et n'est jamais écrit dans les journaux.
+- La **politique d'usage raisonnable de l'API Zaptec** plafonne un compte à 10 requêtes par seconde et demande de ne pas interroger l'API de façon agressive ; elle interdit aussi aux tiers les points d'accès internes de l'appli Zaptec. L'intégration n'utilise que des points d'accès documentés, lit l'état de chaque borne ajoutée une fois par intervalle (1 à 5 minutes), l'installation toutes les dix minutes, et rien pour les appareils non ajoutés. Sur un HTTP 429, elle se met en pause le temps demandé par Zaptec (5 minutes sinon).
+- Si Zaptec refuse les identifiants, l'intégration cesse d'essayer jusqu'au prochain enregistrement de la configuration, pour que le compte ne soit pas bloqué par des tentatives répétées.
+
+## Appareils
+
+### Borne
+
+| Fonctionnalité        | Type dans Gladys              | Contenu                                                                                          |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| Connecteur            | Borne de recharge, connecteur | Disponible (aucun véhicule), occupé (véhicule branché), indisponible (hors ligne)                |
+| État de la charge     | Borne de recharge, charge     | En charge, véhicule connecté, en pause par le véhicule, en pause par la borne, inactif           |
+| Statut Zaptec         | Texte                         | Aucun véhicule, véhicule branché (en attente), en charge, charge en pause, charge terminée…      |
+| Puissance de charge   | Puissance (W)                 | Puissance fournie au véhicule                                                                    |
+| Intensité L1, L2, L3  | Intensité (A)                 | Intensité de chaque phase                                                                        |
+| Énergie de la session | Énergie ajoutée (kWh)         | Énergie de la session en cours, ou de la dernière                                                |
+| Énergie totale        | Index (kWh)                   | Compteur signé de la borne (envoyé par la borne environ une fois par heure)                      |
+| Charge                | Commutateur charge, commande  | Éteint : met la charge en pause. Allumé : reprend une charge mise en pause par Gladys ou l'appli |
+
+La borne porte aussi un badge **cloud**, qui passe à **injoignable** quand elle est hors ligne : le connecteur indique alors « indisponible » et le statut « Hors ligne ».
+
+**Charge en pause** est une pause envoyée depuis Gladys ou l'appli Zaptec (le câble reste branché, la borne peut le déverrouiller). **Charge terminée** signifie que le véhicule s'est arrêté de lui-même (batterie pleine, sa propre programmation) : Zaptec ne peut pas la reprendre, il faut débrancher et rebrancher.
+
+### Installation
+
+| Fonctionnalité            | Type dans Gladys                    | Contenu                                                                              |
+| ------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------ |
+| Courant disponible        | Intensité de consigne (A), commande | Courant que toutes les bornes de l'installation peuvent tirer, sur toutes les phases |
+| Maximum de l'installation | Intensité (A)                       | Le calibre de l'installation (son disjoncteur), borne haute du réglage ci-dessus     |
+
+L'installation n'apparaît que si le compte peut la lire (propriétaire ou service). Zaptec recommande de ne pas changer le courant disponible plus d'une fois toutes les 15 minutes : beaucoup de véhicules supportent mal les changements fréquents. Régler 0 A arrête toutes les bornes de l'installation.
+
+## Widget
+
+Le widget **Borne Zaptec** montre une borne : puissance de charge et énergie de la session en tuiles en direct, le statut Zaptec et la connexion, et les boutons adaptés à la situation :
+
+- en charge : **Pause** et **Terminer** ;
+- en pause depuis Gladys ou l'appli : **Reprendre** et **Terminer** ;
+- véhicule branché, en attente ou charge terminée : **Terminer** ;
+- aucun véhicule ou borne hors ligne : aucun bouton.
+
+**Terminer** demande une confirmation : il arrête la charge et retire l'autorisation de la session. Choisissez la borne dans les réglages du widget.
+
+## Déclencheurs et action de scène
+
+### Déclencheurs
+
+- **Véhicule branché** : un véhicule a été branché sur une borne qui n'en avait pas. Variable : le nom de la borne.
+- **Charge terminée** : le véhicule a cessé de lui-même de prendre du courant (batterie pleine ou sa propre limite) et reste branché. Une pause envoyée depuis Gladys ou l'appli ne le déclenche pas. Variables : le nom de la borne, l'énergie de la session en kWh.
+
+Les deux sont détectés à chaque relevé, donc en un intervalle de rafraîchissement. Une borne qui revient en ligne avec un véhicule déjà branché ne déclenche pas **Véhicule branché**. Chaque déclencheur peut être limité à une borne. Ils existent parce que l'éditeur de scènes ne propose pas de liste pour les états d'une borne de recharge.
+
+### Action
+
+**Piloter une charge Zaptec** met en pause ou reprend la charge d'une borne, ou termine la session. Sa sortie est la commande Zaptec envoyée (`stop_charging_final`, `resume_charging` ou `deauthorize_and_stop`). Zaptec n'accepte une pause que pendant la charge, et une reprise qu'après une pause : sinon l'action échoue avec un message qui dit pourquoi.
+
+Les fonctionnalités pilotables (charge, courant disponible) se règlent aussi par l'action standard **Contrôler un appareil** de Gladys.
+
+## Exemples de scènes
+
+- **Charge en heures creuses** : déclencheur **Véhicule branché** → attendre 2 minutes → si l'heure est entre 7 h et 22 h, **Piloter une charge Zaptec** « Mettre en pause » ; chaque jour à 22 h, « Reprendre ».
+- **Rappel** : chaque soir de semaine à 21 h, si le **Connecteur** de la borne est « disponible » (aucun véhicule), envoyer le message « La voiture n'est pas branchée ».
+- **Retour à la maison** : déclencheur **Véhicule branché** → allumer la lumière du garage pendant 5 minutes.
+- **Fin de charge** : déclencheur **Charge terminée** → envoyer « Charge terminée : `{{triggerEvent.data.session_energy}}` kWh sur `{{triggerEvent.data.charger_name}}` ».
+- **Délestage** : quand la puissance de la maison dépasse 9000 W (mesurée par une autre intégration), régler le **Courant disponible** de l'installation à 10 A ; revenue sous 6000 W, le remettre à 25 A.
+
+## Dépannage
+
+- **« Zaptec a refusé l'adresse e-mail et le mot de passe »** : vérifiez-les sur le Zaptec Portal, puis enregistrez de nouveau la configuration (l'intégration ne réessaie pas avant).
+- **« Impossible de joindre le cloud Zaptec »** : Gladys n'a pas accès à Internet, ou le cloud Zaptec est en panne. L'intégration réessaie à chaque intervalle et signale le retour.
+- **Une borne reste « indisponible »** : la borne elle-même est hors ligne pour Zaptec. Vérifiez-la dans l'appli Zaptec.
+- **Pas d'appareil installation** : le compte n'a ni les droits propriétaire ni les droits service sur l'installation. Les bornes fonctionnent quand même.
+- **« Le compte Zaptec n'a pas les droits »** : une commande ou le courant disponible demande les droits propriétaire ou service ; demandez-les au propriétaire de l'installation dans le Zaptec Portal.
+- **« Seule une charge en pause peut reprendre »** : Zaptec ne reprend qu'une charge mise en pause par une commande. Une charge arrêtée par le véhicule, par sa programmation ou par 0 A disponible ne reprend pas depuis la borne.
+- **La charge ne démarre pas au branchement** : avec une autorisation exigée (badge RFID ou appli), autorisez-la dans l'appli Zaptec ; Gladys ne le peut pas (voir Limites).
+- **Trop de requêtes** : d'autres outils utilisent le même compte Zaptec en même temps. Choisissez un intervalle plus long.
+- **L'énergie totale ne bouge pas** : la borne signe son compteur environ une fois par heure ; l'énergie de la session, elle, avance pendant la charge.
+- **Journaux détaillés** : dans les réglages du conteneur, mettez `LOG_LEVEL=debug`. Un relevé normal n'écrit rien au niveau par défaut.
+
+## Limites
+
+- Développée sans le matériel : les réponses de l'API Zaptec viennent des clients libres (Home Assistant), pas d'une vraie borne. Vos retours sont les bienvenus.
+- Cloud uniquement : pas de connexion locale à la borne, rien ne fonctionne sans Internet.
+- Pas de flux en temps réel : l'état est lu toutes les 1, 2 ou 5 minutes, et une fois de plus 10 secondes après une commande. Le canal temps réel de Zaptec (Service Bus) n'est pas utilisé.
+- **Pas d'« autoriser la charge »** : l'appli Zaptec passe par un point d'accès interne, et la politique d'usage de Zaptec interdit les points d'accès internes aux tiers. Autorisez depuis l'appli Zaptec, par badge RFID, ou désactivez l'autorisation de l'installation.
+- Pas d'état d'erreur : l'API Zaptec ne donne pas de mode de panne qu'un tiers puisse lire de façon fiable.
+- Non gérés : courant maximal de la borne, changement de phases, programmation de la charge, Zaptec Sense, verrouillage du câble, redémarrage et mise à jour du micrologiciel. Le déverrouillage du câble n'est volontairement pas proposé.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Zaptec dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Compte Zaptec | `section` | Non | Utilisez le compte de l'appli Zaptec ou du Zaptec Portal. Gladys lit vos bornes via l'API cloud officielle de Zaptec. Sans lien avec Zaptec. |
+| Adresse e-mail | `string` | Oui | L'identifiant de l'appli Zaptec et du Zaptec Portal. |
+| Mot de passe | `secret` | Oui |  |
+| Langue des textes des appareils | `select` | Non | Noms des fonctionnalités (fixés à l'ajout d'un appareil) et statut détaillé des bornes. |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture du cloud Zaptec. Zaptec demande un usage raisonnable de son API : une à cinq minutes. |
+
+## Comment installer Zaptec dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Zaptec apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-zaptec:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-zaptec](https://github.com/guim31/gladys-zaptec).
+
+Zaptec nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Zaptec est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-zaptec) — [source de cette documentation](https://github.com/guim31/gladys-zaptec/blob/HEAD/docs/fr.md)

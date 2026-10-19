@@ -1,0 +1,211 @@
+---
+title: "Schlage smart home integration, free and open source"
+sidebar_label: "Schlage"
+description: "Schlage Wi-Fi locks (Encode, Encode Plus, Lever…) via the Schlage cloud: state, battery, door. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-schlage.png"
+keywords:
+  - "schlage"
+  - "schlage smart home"
+  - "gladys schlage"
+  - "schlage gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-schlage instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Schlage","description":"Schlage Wi-Fi locks (Encode, Encode Plus, Lever…) via the Schlage cloud: state, battery, door.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-schlage","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-schlage.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T17:52:58Z"}} />
+
+Unofficial integration, not affiliated with Schlage or Allegion. It brings
+the Wi-Fi locks of a **Schlage Home** account into Gladys (**Schlage Encode**,
+**Encode Plus** and **Encode Lever**, and, as pyschlage lists them, the Wi-Fi
+models of the **Arrive**, **Sense Pro** and **Selene** families, Schlage and
+Gainsborough), through the Schlage cloud (the one the
+Schlage Home app uses, accounts of the United States and Canada).
+
+> **Warning: unofficial API. This integration has
+> never been tested with a real account nor a real lock.** It was written from the pyschlage library
+> (the one of the Home Assistant integration) and tested against a fake
+> Schlage cloud only. Schlage may change its API at any time. Feedback is
+> welcome.
+
+## What you get
+
+For each lock:
+
+| Feature                  | Detail                                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------------- |
+| Lock                     | Command: 1 locks, 0 unlocks (when allowed). Shows 1 locked, 0 unlocked.                         |
+| Lock state               | 0 unlocked, 1 locked, 2 a command in progress, 3 jammed.                                        |
+| Jammed                   | 1 when the lock reports a jam (bolt or motor), 0 otherwise.                                     |
+| Battery                  | In %.                                                                                           |
+| Door                     | Opening sensor (0 open, 1 closed), only on locks with a door position sensor that reports it.   |
+| Last action              | Text, for example "Unlocked with the keypad (Jean)": how, and by whom when Schlage gives it.    |
+| Lock and leave (1-Touch) | 1 when the one-touch locking setting of the lock is on (read only), on the models that have it. |
+
+"By whom" is the name of the access code (keypad), or the name of the Schlage
+Home user (app, Apple Home); never an e-mail, never a code.
+
+Scene triggers:
+
+- **Schlage lock unlocked**: when a read shows unlocked a lock that was locked
+  at the previous read. Variables: `lock` (its name), `method` (`keypad`,
+  `app`, `apple_home`, `manual` for the thumbturn, `one_touch`, `other`) and
+  `by` (code name or user, empty when unknown). An unlock from Gladys counts
+  too (usually `app`).
+- **Schlage lock jammed**: when a read shows jammed a lock that was not.
+
+The locks are read every minute: a lock unlocked and locked again between two
+reads is not seen, and a trigger arrives up to a minute late.
+
+The badge of each lock shows "cloud", "unreachable" (with an orange dot) when
+Schlage reports the lock offline (its Wi-Fi), and "unreachable" for all when
+the Schlage cloud does not answer or the account is stopped. An offline lock
+keeps its last values.
+
+Other models (Schlage Sense behind its Wi-Fi adapter, unknown types) show
+read only: no command is sent to them.
+
+## Setup
+
+1. Your locks must work in the **Schlage Home** app, over Wi-Fi.
+2. In Gladys, install the Schlage integration and enter the **e-mail** and the
+   **password** of your Schlage Home account. Save.
+3. If Schlage asks for a **verification code** (the status says so): click
+   **Send the verification code**, then type the code you received in
+   **Verify the code**, within 3 minutes. A code that has just arrived after
+   saving can be typed at once.
+4. Add the locks from the **Discovery** tab.
+
+## Safety
+
+- **Locking is always possible.**
+- **Unlocking** is off by default: turn on **Allow unlocking the locks from
+  Gladys** to allow it. Then a scene, a dashboard or a voice assistant
+  connected to Gladys can open your door.
+- Before each command, the integration **reads the lock again** in the
+  Schlage cloud. The command is refused when that read fails, when Schlage
+  reports the lock offline, jammed, or in an unknown state.
+- The commands of one lock run **one at a time**.
+- A command that cannot be sent within **3.5 seconds** of its arrival is
+  refused: Gladys shows a failure after 5 seconds, and nothing must move after
+  that failure.
+- After a command, any new command of the same lock is refused ("still in
+  progress") until a later read shows the expected state (or a jam), for 45
+  seconds at most; the lock shows "a command in progress" meanwhile. The
+  answer of the command itself does not count: it may show the requested
+  state before the bolt moved.
+- When Schlage does not answer a command in time, Gladys shows a failure, but
+  the lock may still move: check its state.
+- Commands are refused while the account is stopped (refused password, code
+  awaited) and during a pause asked by Schlage.
+
+## Password, tokens and privacy
+
+- The password is **kept by Gladys in its database, never shown again, and
+  used only to sign in to Schlage**. The sign-in is AWS Cognito SRP (as the
+  Schlage Home app does): the password itself never travels, only a proof.
+- The sign-in gives tokens: the access token (about an hour) is renewed with
+  the refresh token, without the password, so the integration does not sign
+  in again at each read. Both tokens are kept in the `/data` volume of the
+  integration so that a restart neither signs in again nor asks for a new
+  code. On the Gladys host, that volume is the folder
+  `<Gladys base folder>/external-integrations/<selector>`: readable by root
+  and by the uid 1000 (the user of the container), **not in the Gladys
+  backups**, deleted when the integration is uninstalled. **The refresh
+  token gives control of the locks** (unlocking included) for as long as it
+  is valid, without the password: protect that host as you protect your
+  keys. The e-mail and the password are never written there; changing the
+  e-mail, or emptying the e-mail or the password, drops the tokens.
+- Nothing appears in the logs: no password, token, code, e-mail, nor the
+  internal keys (CAT/SAT) and MAC addresses the Schlage answers contain.
+- Everything goes over HTTPS to `cognito-idp.us-west-2.amazonaws.com` (the
+  sign-in) and `api.allegion.yonomi.cloud` (the locks).
+
+## Refresh
+
+The locks are read every 60 seconds by default (60 to 900), one request for
+the whole account, plus a few reads during the 45 seconds after a command.
+
+## Errors
+
+- **Password refused** (or account not confirmed, password reset asked): the
+  integration stops; one new try after 1 h, 6 h, then every 24 h, or at once
+  when you save the configuration or click **Test the connection**.
+- **Verification code**: the integration never asks for a new code by itself
+  (each sign-in would send one); it waits for the buttons. Once the code is
+  accepted, the session is kept. An account that asked for a code once is
+  remembered: when its refresh token expires or is refused, the integration
+  does not sign in again by itself, it stops and waits for the buttons.
+- **New password required**: choose it in the Schlage Home app, then enter it
+  here.
+- **Session refused right after a new sign-in**: new try after 1 h, 6 h, then
+  every 24 h.
+- **Schlage asks to slow down** (429, or too many sign-ins): a pause of at
+  least 1 minute (Retry-After when given, at most 6 h), for every path
+  (reads, commands, buttons), kept across restarts.
+- **HTTP 403**: a 30-minute pause.
+- **Schlage unreachable**: tried again after 1, 2, 5, 10 then every 15
+  minutes, never faster than the refresh interval.
+
+## Limits
+
+- Accounts of the United States and Canada only (the only Schlage cloud).
+- Never tested with a real account: the shape of the answers comes from
+  pyschlage.
+- A sign-in step other than the code (SMS, e-mail or authenticator app) is
+  not handled: the status says which one.
+- The locks are polled: no live events (the push channel of Schlage allows
+  one consumer per account, the Schlage Home app being one).
+- Access codes, auto-lock, beeper and alarm settings are not handled.
+
+## Credits
+
+- [pyschlage](https://github.com/dknowles2/pyschlage) by David Knowles
+  (Apache-2.0): the cloud API, the sign-in and the meaning of the lock states
+  are ported to JavaScript.
+- [pycognito](https://github.com/pvizeli/pycognito) (Apache-2.0): the SRP
+  computation.
+- The Schlage integration of [Home Assistant](https://github.com/home-assistant/core)
+  (Apache-2.0).
+- See `THIRD_PARTY_NOTICES.md`.
+
+Schlage is a trademark of Allegion; this project is not affiliated with
+Schlage or Allegion.
+
+## Configuration settings
+
+These are the settings Schlage asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Schlage account | `section` | No | Brings the Wi-Fi locks of your Schlage Home account (US, Canada) into Gladys: Encode, Encode Plus, Encode Lever, and the Wi-Fi models of the Arrive, Sense Pro and Selene families. For each: locked or not, jam, battery, door (when the lock has a sensor), last action and by whom, and scene triggers on unlocking and on a jam. Read every minute through the Schlage cloud. Enter the e-mail and the password of the Schlage Home app, save, then add the locks from the Discovery tab. If Schlage asks for a verification code, use the two buttons below. Locking from Gladys is always allowed; unlocking stays off until you allow it below. Unofficial API, never tested with a real account. Not affiliated with Schlage or Allegion. |
+| Schlage e-mail | `string` | Yes |  |
+| Schlage password | `secret` | Yes | Kept by Gladys in its database, never shown again, used only to sign in to Schlage (AWS Cognito SRP: the password itself is never sent). |
+| Allow unlocking the locks from Gladys | `boolean` | No | Off by default: Gladys can lock, never unlock. On, a scene, a dashboard or a voice assistant connected to Gladys can open your door. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of the locks (60 to 900). |
+| Language of the feature names | `select` | No | Used for the feature names of the locks added from now on, and for the last action. |
+
+## How to install Schlage in Gladys
+
+1. In Gladys, open **Integrations**: Schlage appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-schlage:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-schlage](https://github.com/LM1LC3N7/gladys-schlage).
+
+Schlage requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Schlage is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-schlage) — [source of this documentation](https://github.com/LM1LC3N7/gladys-schlage/blob/HEAD/docs/en.md)

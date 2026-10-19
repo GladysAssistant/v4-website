@@ -1,0 +1,301 @@
+---
+title: "IP Webcam smart home integration, free and open source"
+sidebar_label: "IP Webcam"
+description: "An old Android phone as a camera and sensors with the IP Webcam app, locally. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ip-webcam.png"
+keywords:
+  - "ip webcam"
+  - "ip webcam smart home"
+  - "gladys ip webcam"
+  - "ip webcam gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-ip-webcam instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"IP Webcam","description":"An old Android phone as a camera and sensors with the IP Webcam app, locally.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ip-webcam","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ip-webcam.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T20:19:39Z"}} />
+
+Turns an **old Android phone** into a **camera and a set of sensors** for
+Gladys, with the free **IP Webcam** app (by Pavel Khlebovich), **locally**,
+through the app's own web server: camera images, the app's motion detection,
+sound level, light, battery (level, charging, temperature), proximity and
+pressure when the phone has them, and the controls of the app (torch, focus,
+night vision, video recording, orientation, image quality). No cloud account,
+nothing leaves your network.
+
+> **Developed without the hardware: feedback welcome.** This integration was
+> written from the work of the Home Assistant `android_ip_webcam` integration,
+> its library `pydroid-ipcam` and the real answers of a phone they keep in
+> their tests, without a phone running IP Webcam at hand. If something does not
+> work as described, please open an issue on
+> [github.com/guim31/gladys-ip-webcam/issues](https://github.com/guim31/gladys-ip-webcam/issues)
+> with the integration logs (`LOG_LEVEL=debug`).
+>
+> This integration is not affiliated with the IP Webcam app nor with its
+> author. Android is a trademark of Google LLC.
+
+## What you need
+
+- An Android phone with the **IP Webcam** app, on the same network as Gladys,
+  plugged into a charger (the app runs day and night).
+- A **fixed address** for the phone: reserve it in your router (DHCP
+  reservation). The app gives no serial number: the address and port **are**
+  the identity of the phone in Gladys, and a new address makes a new device.
+- Gladys **5.1 or later**.
+
+## Set up
+
+### In the app
+
+1. Install IP Webcam from Google Play and open it.
+2. Optional but recommended: **Local broadcasting → Login/password**, to
+   protect the phone's web page (anyone on your network can see the camera
+   otherwise).
+3. For the sensors: **Data logging → Enable data logging** (battery, light,
+   sound, proximity, pressure). Without it, the phone only has its camera and
+   its controls in Gladys.
+4. For the motion: **Motion detection** on (the integration can also turn it on
+   from a scene).
+5. At the bottom of the main screen: **Start server**. The app shows the
+   address to type, e.g. `http://192.168.1.50:8080`.
+6. Keep the app running: disable the battery optimisation of IP Webcam in
+   Android, so the system never stops it.
+
+### Settings
+
+In Gladys, **Integrations → IP Webcam → Configuration**:
+
+- **Phone addresses**: the IP address of each phone, separated by commas, with
+  `:port` when a phone uses another port than the one below. `https://` in
+  front for one phone in HTTPS.
+- **Port**: the port of the app, `8080` unless you changed it.
+- **HTTPS**: only if you turned on HTTPS in the app. Its self-signed
+  certificate is accepted.
+- **User name** and **Password**: the login of the app, if you set one. Both,
+  or neither. The same for every phone. The password is only sent to the
+  phones, never shown nor logged.
+- **Sensor refresh**: how often each phone is read, every 10 s by default (as
+  Home Assistant does). Faster sees a short motion sooner, for a little more
+  battery and Wi-Fi.
+- **Camera image refresh**: how often the dashboard image is renewed, every
+  minute by default. A motion always takes a fresh image. "Only on motion or
+  request" keeps the phone quiet.
+- **Allow scenes to turn motion detection off**: off by default. Turning the
+  detection off disarms the phone; see [Actions](#actions).
+- **Language of the feature names**: Gladys does not tell an integration your
+  language; the names of the features follow this choice (French by default).
+
+Then **Integrations → IP Webcam → Discover**: one device per phone, to add with
+**Add to Gladys**.
+
+### Configuration actions
+
+- **Test the connection**: reads every phone again and says, for each one,
+  whether IP Webcam answers, how many sensors it logs and how many settings it
+  offers, or why it does not answer.
+- **Video stream address**: the RTSP address of a phone, to put in the "RTSP
+  camera" integration of Gladys for live video (see [Live video](#live-video)).
+  The password is replaced by `PASSWORD`: type yours in its place.
+
+## The device
+
+One device per phone, named after its address (rename it in Gladys). Each
+feature appears only when the phone offers it.
+
+### Camera image
+
+- **Image**: the current frame of the phone (`/shot.jpg`), resized when needed
+  to fit Gladys (150 KB at most). Taken at the interval of the configuration,
+  at each motion, when Gladys asks for one, and by the scene action.
+
+### Sensors
+
+The sensors need **Data logging** in the app. Gladys shows a feature only when
+the app sends its sensor.
+
+- **Online**: On while the phone answers.
+- **Battery**: level, in %.
+- **Charging**: whether the phone charges (only when the app reports it).
+- **Battery temperature**: in °C. Keep an eye on it: a phone plugged in day and
+  night above 45 °C ages its battery fast (the widget warns).
+- **Light level**: in lux, from the light sensor of the phone.
+- **Sound level**: the loudest level heard since the last read, on the app's
+  own scale (not calibrated decibels: about 180 in a quiet room on the phone of
+  the Home Assistant tests). Watch the values of your phone in a quiet and a
+  noisy moment before choosing a threshold.
+- **Motion**: the motion detection of the app (On = motion). A short motion
+  between two reads is still seen: the motion goes On, then Off a few seconds
+  later.
+- **Proximity**: in cm, from the proximity sensor next to the earpiece. Many
+  phones only report "near" (0) or "far" (5 or 8).
+- **Pressure**: in hPa, on phones with a barometer.
+- **Motion detection**: whether the motion detection of the app is on. **Read
+  only**: turning it off disarms the phone, so it is never a switch (see the
+  scene action [Phone motion detection](#actions)).
+
+### Controls
+
+- **Torch**: the flash LED of the phone.
+- **Focus lock**: On focuses once and holds the focus; Off goes back to the
+  continuous focus. The app does not report it: Gladys shows the last command.
+- **Night vision**: the night vision of the app (brighter, noisier image).
+- **Video recording**: starts or stops a recording on the phone (the file stays
+  on the phone, in the folder chosen in the app).
+- **Orientation**, four options:
+  - Landscape
+  - Landscape, upside down
+  - Portrait
+  - Portrait, upside down
+- **Image quality**: the JPEG quality of the app, from 30 to 100 %. The phone
+  may hold another value (49 by default): Gladys shows the nearest one.
+
+## Dashboard
+
+- The **camera** box of Gladys shows the image of the phone.
+- The **IP Webcam phones** widget (Gladys 5.1 or later):
+  - without a setting, every phone at a glance: phones online, then one line
+    per phone with its battery and its temperature, orange when the battery is
+    above 45 °C or below 20 % without charging, red when the phone does not
+    answer;
+  - with a phone chosen in its settings: its last image, its battery and
+    temperature (live), whether it charges, its motion detection and its
+    recording, and three buttons: **Image** (a fresh one), **Torch** and
+    **Record** / **Stop recording**.
+
+## Scenes
+
+### Triggers
+
+The integration declares no trigger of its own: the states of the device
+already trigger the scenes of Gladys.
+
+- A motion: trigger **Device state** on **Motion**, equal to 1. The fresh image
+  of the phone is published **before** the motion state, so a "send camera
+  image" right after sends what the phone saw.
+- A noise: trigger **Device state** on **Sound level**, above your threshold.
+  The level is the loudest since the last read, so a short noise between two
+  reads still crosses it.
+- The charger unplugged: **Charging** equal to 0. The phone lost: **Online**
+  equal to 0.
+
+### Actions
+
+- **Take a phone camera image**: a fresh image of the phone, sent to Gladys,
+  for a "send camera image" that follows.
+- **Record a video on the phone**: records for the chosen duration (1 to 60
+  minutes), then stops, even if the integration restarts meanwhile. An optional
+  **File name tag** names the file. A recording already started by hand is left
+  alone (output "Recording started by this action": false), and never stopped
+  by the timer.
+- **Stop the phone recording**: stops a recording.
+- **Phone motion detection**: turns the motion detection of the app on or off.
+  Turning it on is always allowed. Turning it **off** disarms the phone: it is
+  refused unless **Allow scenes to turn motion detection off** is checked in the
+  configuration, and it is never a switch of the device (no dashboard toggle,
+  no voice assistant can disarm it by mistake).
+
+### Scene ideas
+
+- **Someone in the garage at night**: Motion = 1 between 23:00 and 6:00 →
+  Record a video on the phone (5 min) → send the camera image to your phone.
+- **The baby cries**: Sound level above your threshold → send a message with
+  the camera image.
+- **Leaving home**: when the last person leaves → Phone motion detection On;
+  back home → Off (if allowed in the configuration).
+- **The old phone is cooking**: Battery temperature above 45 → send a message
+  "unplug the garage phone".
+
+## Live video
+
+The integration brings images, not video. For live video, use the "RTSP
+camera" integration of Gladys with the address given by **Video stream
+address** (H.264, `rtsp://user:PASSWORD@<address>:8080/h264_aac.sdp`). It is
+the RTSP server of the app: video formats depend on the phone.
+
+## Refresh and limits
+
+- Each phone is read at the **Sensor refresh** interval: two small JSON answers
+  (`/status.json`, `/sensors.json`) on your network, no quota, no account. At
+  most two requests at a time per phone: the app also serves its viewers.
+- Images: at the **Camera image refresh** interval, at each motion, and on
+  request; never more than one every 5 seconds per phone (the Gladys limit is
+  12 a minute).
+- Gladys does not poll the device: the integration reads the phones on its own
+  timer. Only the values that change are sent to Gladys, and the unchanged ones
+  again every 6 hours, so the dashboard never says "no recent value".
+
+## Troubleshooting
+
+- **"The phone does not answer"**: the server of the app is stopped (Android
+  killed it: disable the battery optimisation of IP Webcam), the phone changed
+  address (reserve it in the router), or the port is wrong. Open
+  `http://<address>:8080` in a browser on the same network.
+- **"User name or password refused"**: the login set in the app (Local
+  broadcasting → Login/password) differs from the configuration.
+- **"Something answers at this address, but not IP Webcam"**: another device or
+  another port.
+- **No sensor**: turn on **Data logging** in the app, then **Test the
+  connection** and **Discover** again: the new features appear with "Update".
+- **No motion**: turn on **Motion detection** in the app (or with the scene
+  action). Its sensitivity is set in the app.
+- **A new device after a change of address**: the address is the identity of
+  the phone. Reserve it in the router, delete the old device.
+- Logs: **Integrations → IP Webcam → Logs**. `LOG_LEVEL=debug` shows every read.
+
+## Limits
+
+- Developed without a phone running IP Webcam: the answers were taken from the
+  tests of Home Assistant. **Charging** relies on a `battery_charging` sensor
+  that the Home Assistant tests do not show; **Video recording** reads the
+  state of the recording from the video status of the app, whose values while
+  recording are not documented. Both are to be confirmed on a real phone.
+- The identity of a phone is its address and port: the app gives no serial
+  number.
+- The sound level is the app's relative scale, not decibels.
+- **Focus lock** is not reported by the app: Gladys shows the last command.
+- No live video through this integration (see [Live video](#live-video)); no
+  audio.
+- IP Webcam Pro features (cloud, Ivideon) are not used. Only Android: the iOS
+  apps with a similar name are not IP Webcam.
+
+## Configuration settings
+
+These are the settings IP Webcam asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your phones | `section` | No | Install the free IP Webcam app (Pavel Khlebovich) on an Android phone, start its server, and type the address it shows. Turn on "Data logging" in the app for the sensors. Nothing goes through a cloud. This integration is not affiliated with the IP Webcam app. |
+| Phone addresses | `string` | Yes | IP addresses, separated by commas, with :port if not the one below. Give each phone a fixed address in your router: a new address makes a new device. |
+| Port | `number` | No | The port of the app, 8080 unless changed in its settings. |
+| HTTPS | `boolean` | No | Only if HTTPS is turned on in the app (its self-signed certificate is accepted). |
+| User name | `string` | No | Only if a login is set in the app (Local broadcasting → Login/password). |
+| Password | `secret` | No | Sent to the phones only, never to a cloud. |
+| Sensor refresh | `select` | No | How often each phone is read. Faster sees short motions sooner, at a small cost in battery. |
+| Camera image refresh | `select` | No | How often the image of the dashboard is renewed. A motion always takes a fresh one. |
+| Allow scenes to turn motion detection off | `boolean` | No | Off by default: turning the detection off disarms the phone. Turning it on is always allowed. |
+| Language of the feature names | `select` | No | Gladys does not tell an integration your language: the names of the features follow this choice. |
+
+## How to install IP Webcam in Gladys
+
+1. In Gladys, open **Integrations**: IP Webcam appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ip-webcam:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-ip-webcam](https://github.com/guim31/gladys-ip-webcam).
+
+IP Webcam requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+IP Webcam is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-ip-webcam) — [source of this documentation](https://github.com/guim31/gladys-ip-webcam/blob/HEAD/docs/en.md)

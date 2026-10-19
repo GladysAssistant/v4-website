@@ -1,0 +1,214 @@
+---
+title: "Integración domótica UniFi Access, gratuita y de código abierto"
+sidebar_label: "UniFi Access"
+description: "Puertas UniFi Access: cerradura, sensor, timbre, accesos permitidos o denegados y alarmas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unifi-access.png"
+keywords:
+  - "unifi access"
+  - "domótica unifi access"
+  - "gladys unifi access"
+  - "unifi access gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-unifi-access instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"UniFi Access","description":"Puertas UniFi Access: cerradura, sensor, timbre, accesos permitidos o denegados y alarmas.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-unifi-access","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unifi-access.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T08:23:42Z"}} />
+
+Integra en Gladys las puertas de **UniFi Access** (el control de acceso de Ubiquiti: lectores G2
+y G3, Intercom, UA Hub, UA Hub Door Mini, UA Ultra), en su red local: el estado de cada cerradura
+y de cada puerta, el timbre, quién entró y cómo, las alarmas de puerta. Sin relación con
+Ubiquiti.
+
+**Desarrollada sin el hardware: sus comentarios son bienvenidos.** La integración se escribió a
+partir de la API oficial, la integración de Home Assistant y capturas reales publicadas por otros
+proyectos, pero nunca se ha ejecutado en una instalación real de UniFi Access. Díganos qué
+funciona y qué no en [GitHub](https://github.com/guim31/gladys-unifi-access/issues).
+
+## Presentación
+
+- Un dispositivo Gladys por puerta de UniFi Access, solo lectura: nada en el panel puede abrir
+  una puerta.
+- Tiempo real: la integración mantiene una conexión abierta con el WebSocket de notificaciones de
+  UniFi Access y vuelve a leerlo todo cada 5 minutos (cada minuto si el WebSocket está cortado).
+- Disparadores de escena: timbre, acceso permitido, acceso denegado, alarma de puerta, puerta sin
+  conexión y de vuelta.
+- Acciones de escena: mantener una puerta bloqueada, devolverla a su horario normal y — solo si
+  usted lo activa — desbloquear una puerta.
+- Un widget de panel: las puertas y los últimos accesos.
+
+## Requisitos previos
+
+- UniFi Access en una consola UniFi OS (UDM, UCG, UNVR, Cloud Key Gen2+…), lo bastante reciente
+  para ofrecer la API de desarrollador (Settings, General, Advanced, API Token).
+- Gladys 5.1 o posterior, en la misma red que la consola (puerto 12445 accesible).
+- Un token de API: en UniFi Access, **Settings → General → Advanced → API Token → Create**. Dele
+  los permisos **Space** (puertas) y **Device**, en lectura y escritura si quiere las acciones de
+  escena. Cópielo: solo se muestra una vez.
+
+## Configuración
+
+En Gladys: **Integraciones → UniFi Access → Configuración**.
+
+| Campo                                | Qué introducir                                                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Dirección de la consola              | Dirección IP o nombre de la consola, p. ej. `192.168.1.1`. La API responde en el puerto 12445: añada `:puerto` solo si es otro. |
+| Token de API                         | El token creado arriba. Se queda en Gladys y nunca se escribe en los registros.                                                 |
+| Aceptar el certificado autofirmado   | Las consolas UniFi sirven un certificado autofirmado en el puerto 12445: márquelo salvo que haya instalado uno reconocido.      |
+| Permitir el desbloqueo desde escenas | **Desactivado por defecto.** Lea «Acciones de escena» más abajo antes de activarlo.                                             |
+| Idioma de los nombres de funciones   | Nombres de las funciones al añadir una puerta y textos de los estados y eventos de escena (francés por defecto).                |
+
+Luego **Probar la conexión**: lee la consola al momento e indica cuántas puertas y dispositivos ha
+encontrado y si las notificaciones en tiempo real están conectadas. Las puertas aparecen después
+en la pestaña **Descubrimiento**: añada las que quiera.
+
+## Dispositivos
+
+Cada puerta de UniFi Access se convierte en un dispositivo, con el nombre de la puerta. Todas sus
+funciones son de solo lectura; algunas solo existen si el hardware las tiene.
+
+| Función               | Tipo Gladys        | Valores                                                                                                         |
+| --------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Cerradura             | cerradura / estado | bloqueada o desbloqueada                                                                                        |
+| Posición de la puerta | sensor de apertura | abierta o cerrada — solo en una puerta con el sensor de posición (DPS) cableado                                 |
+| Timbre                | timbre / llamada   | suena unos segundos en cada llamada — en una puerta con lector Pro, interfono o entrada de timbre del hub       |
+| Regla de bloqueo      | texto              | Normal, Siempre bloqueada, Siempre desbloqueada, Desbloqueada un tiempo hasta las 18:30, Desbloqueo programado… |
+| Último acceso         | texto              | p. ej. `Alice Martin · Tarjeta NFC · Entrada`, `Denegado · Desconocido · Código PIN`                            |
+
+La insignia del dispositivo indica si su puerta está conectada (su concentrador responde a UniFi
+Access) y se vuelve naranja cuando las notificaciones en tiempo real están cortadas.
+
+Una puerta que suena por primera vez sin tener la función de timbre recibe una: use **Actualizar**
+en la pestaña Descubrimiento para añadirla al dispositivo.
+
+## Widget
+
+**Puertas UniFi Access**: una línea por puerta (bloqueada o no, abierta o cerrada, alarma, sin
+conexión) y los últimos accesos (quién, cómo, permitido o denegado). Elija una puerta en la
+configuración del widget para mostrar solo esa: el widget ofrece entonces dos botones, que piden
+cada uno una confirmación:
+
+- **Siempre bloquear**: la puerta permanece bloqueada sea cual sea su horario (marcado con ✓
+  mientras está activo);
+- **Horario normal**: termina la regla temporal. Salir de «siempre bloqueada» puede desbloquear la
+  puerta: este botón solo aparece entonces con el desbloqueo remoto activado.
+
+Nunca hay un botón de desbloqueo.
+
+## Disparadores de escena
+
+| Disparador                | Cuándo                                                     | Filtros                 | Variables                                                                                                              |
+| ------------------------- | ---------------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Timbre pulsado            | alguien ha llamado a un lector o un interfono              | puerta                  | nombre de la puerta, dispositivo del timbre                                                                            |
+| Acceso permitido          | se ha abierto una puerta con tarjeta, código, rostro, app… | puerta, método, usuario | nombre de la puerta, nombre del usuario, método (`nfc`, `pin`, `face`…), método en palabras, sentido (`entry`, `exit`) |
+| Acceso denegado           | se ha rechazado una tarjeta, un código o un rostro         | puerta, método          | las mismas                                                                                                             |
+| Alarma de puerta          | puerta forzada o abierta demasiado tiempo                  | puerta, alarma          | nombre de la puerta, alarma (`forced_open`, `held_open`, `other`), alarma en palabras, tipo enviado por UniFi Access   |
+| Puerta sin conexión       | el concentrador de una puerta ya no responde               | puerta                  | nombre de la puerta                                                                                                    |
+| Puerta conectada de nuevo | el concentrador de una puerta responde de nuevo            | puerta                  | nombre de la puerta, minutos sin conexión                                                                              |
+
+UniFi Access informa de cada acceso dos veces (un «insight» y una línea de registro, con pocos
+milisegundos de diferencia): la integración solo dispara una vez.
+
+## Acciones de escena
+
+| Acción                                  | Efecto                                                                                                                                 |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Mantener una puerta bloqueada           | La puerta permanece bloqueada sea cual sea su horario. Siempre permitido.                                                              |
+| Devolver una puerta a su horario normal | Termina «siempre bloqueada» o «siempre desbloqueada». Salir de «siempre bloqueada» requiere el desbloqueo remoto activado.             |
+| Desbloquear una puerta                  | Un desbloqueo remoto; la puerta se vuelve a bloquear sola tras su tiempo habitual. Rechazado si el desbloqueo remoto no está activado. |
+
+> **Atención — desbloqueo remoto.** Está desactivado por defecto. Una vez activado, cualquier
+> escena que use «Desbloquear una puerta» abre la puerta al ejecutarse: un disparador erróneo, un
+> panel compartido o una cuenta de Gladys comprometida significan entonces una puerta abierta.
+> Nunca existe como interruptor, orden de voz ni botón del panel. Cada desbloqueo aparece firmado
+> «Gladys» en el registro del sistema de UniFi Access.
+
+## Ejemplos de escenas
+
+- **Alguien en la puerta**: disparador «Timbre pulsado» en la puerta de entrada → enviar el
+  mensaje «Llaman a \{\{triggerEvent.data.door_name\}\}» y mostrar la cámara de la entrada.
+- **Los niños han llegado**: disparador «Acceso permitido» con el usuario «Léa» → enviar «Léa ha
+  llegado (\{\{triggerEvent.data.method_label\}\})».
+- **Salir de casa**: cuando la alarma está armada → «Mantener una puerta bloqueada» en cada
+  puerta.
+- **Intrusión**: disparador «Alarma de puerta» con la alarma «Puerta forzada» → sirena y
+  notificación.
+- **Tarjeta rechazada**: disparador «Acceso denegado» → notificación con
+  \{\{triggerEvent.data.door_name\}\} y \{\{triggerEvent.data.method_label\}\}.
+
+## Actualización y límites de la API
+
+- Tiempo real mediante el WebSocket de notificaciones de UniFi Access (una conexión saliente del
+  contenedor al puerto 12445), reabierta tras 1 s, 2 s, 4 s… hasta 1 minuto cuando se corta.
+- Una lectura completa (puertas, dispositivos, una regla de bloqueo por puerta) cada 5 minutos,
+  cada minuto mientras el WebSocket está cortado; un estado sin cambios se reenvía a Gladys cada
+  6 horas.
+- La API local no publica ninguna cuota; la integración se queda muy por debajo de lo que una
+  consola rechazaría (unas pocas solicitudes por minuto como mucho). Si la consola responde
+  «demasiadas solicitudes», la integración lo indica y simplemente vuelve a intentarlo en la
+  siguiente lectura.
+
+## Solución de problemas
+
+| Mensaje                                                       | Qué hacer                                                                                                       |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| La consola no responde                                        | Compruebe la dirección y que Gladys alcanza el puerto 12445 de la consola (cortafuegos, VLAN).                  |
+| Certificado no reconocido                                     | Marque «Aceptar el certificado autofirmado».                                                                    |
+| Token de API rechazado                                        | El token se ha borrado o copiado mal: cree uno nuevo en UniFi Access y péguelo de nuevo.                        |
+| Al token de API le falta un permiso                           | Edite el token en UniFi Access: dele los permisos Space y Device.                                               |
+| Esta versión de UniFi Access no tiene la API de desarrollador | Actualice UniFi Access.                                                                                         |
+| Notificaciones en tiempo real no disponibles                  | Las puertas se siguen leyendo cada minuto; compruebe que nada entre Gladys y la consola bloquea los WebSockets. |
+
+Para más detalles, configure `LOG_LEVEL=debug` en la integración: cada notificación y cada
+lectura aparecen en los registros (nunca el token).
+
+## Limitaciones
+
+- Desarrollada sin el hardware: el vocabulario de las alarmas (solo se ha visto `force_unlock` en
+  capturas), de los métodos de acceso y de algunos interfonos puede variar en su instalación. Los
+  valores brutos se conservan en las variables de los disparadores.
+- Sin gestión de visitantes, usuarios, códigos PIN ni tarjetas NFC; sin control de evacuación ni
+  de confinamiento.
+- Atender el timbre (descolgar, abrir desde el interfono) sigue en las apps de UniFi.
+- El historial del widget empieza al arrancar la integración (se conservan los 20 últimos
+  accesos).
+- Sin relación con Ubiquiti. UniFi y UniFi Access son marcas de Ubiquiti Inc.
+
+## Parámetros de configuración
+
+Estos son los parámetros que UniFi Access te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su consola UniFi | `section` | No | UniFi Access en una consola UniFi OS (UDM, UCG, UNVR, Cloud Key…). En UniFi Access, cree un token de API: Settings, General, Advanced, API Token, con los permisos Space y Device. |
+| Dirección de la consola | `string` | Sí | Dirección IP o nombre de la consola. La API responde en el puerto 12445: añada :puerto solo si es otro. |
+| Token de API | `secret` | Sí | Creado en UniFi Access, se muestra una sola vez. Guardado en Gladys, nunca en los registros. |
+| Aceptar el certificado autofirmado | `boolean` | No | Las consolas UniFi sirven un certificado autofirmado en el puerto 12445: márquelo salvo que haya instalado uno reconocido. |
+| Desbloqueo remoto | `section` | No | Desactivado por defecto. Activado, permite la acción de escena «Desbloquear una puerta» y salir de «siempre bloqueada», nunca un interruptor ni un botón. Una escena errónea abre entonces su puerta: actívelo con conocimiento de causa. |
+| Permitir el desbloqueo desde escenas | `boolean` | No | Cada desbloqueo aparece firmado «Gladys» en el registro del sistema de UniFi Access. |
+| Idioma de los nombres de funciones | `select` | No | Nombres de las funciones al añadir una puerta y textos de los estados y eventos de escena. |
+
+## Cómo instalar UniFi Access en Gladys
+
+1. En Gladys, abre **Integraciones**: UniFi Access aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-unifi-access:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-unifi-access](https://github.com/guim31/gladys-unifi-access).
+
+UniFi Access requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+UniFi Access es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-unifi-access) — [fuente de esta documentación](https://github.com/guim31/gladys-unifi-access/blob/HEAD/docs/es.md)

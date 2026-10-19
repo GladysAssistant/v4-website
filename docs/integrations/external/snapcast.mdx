@@ -1,0 +1,185 @@
+---
+title: "Snapcast smart home integration, free and open source"
+sidebar_label: "Snapcast"
+description: "Multiroom audio with Snapcast: volume and mute per room, streams, groups, scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-snapcast.png"
+keywords:
+  - "snapcast"
+  - "snapcast smart home"
+  - "gladys snapcast"
+  - "snapcast gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-snapcast instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Snapcast","description":"Multiroom audio with Snapcast: volume and mute per room, streams, groups, scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-snapcast","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-snapcast.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T09:44:26Z"}} />
+
+[Snapcast](https://github.com/badaix/snapcast) plays the same audio in sync in every room: a
+`snapserver` receives the streams (Spotify through librespot, AirPlay, MPD, a radio, a pipe...) and
+sends them to `snapclient`s, one per room. This integration brings the server into Gladys: the volume
+and mute of each room, which stream each room plays, the groups of rooms, and scenes when a speaker
+goes offline or a stream starts.
+
+It does not play music itself: the music comes from the sources of your Snapcast server (MPD,
+Spotify...). Tested against snapserver and snapclient 0.31 in Docker, without speakers: feedback
+welcome.
+
+## Requirements
+
+- A Snapcast server (snapserver 0.26 or later; 0.31 tested) that Gladys can reach on the local
+  network.
+- Its JSON-RPC control port over TCP, **1705** by default, enabled (it is, unless the `[tcp]`
+  section of `snapserver.conf` says `enabled = false`).
+- Gladys 5.1 or later.
+
+## Configuration
+
+1. In Gladys, open **Integrations**, find **Snapcast** and install it.
+2. **Server address**: the IP address or host name of the machine that runs snapserver, for
+   example `192.168.1.20`. Add `:port`, or fill in **Control port**, if it is not 1705 (not the
+   HTTP port 1780 of Snapweb).
+3. **Language**: the language of the feature names and of the texts the integration creates. Feature
+   names are set when a device is added: choose it before adding the devices.
+4. Save. The integration connects, then shows each client and each stream in the **Discovery** tab
+   of the integration: add the ones you want.
+
+The integration keeps one connection open to the server and follows every change live: a volume
+changed in Snapweb or another app shows up in Gladys at once. It reads the whole state again every
+minute and after each reconnection.
+
+## Devices
+
+### Clients (rooms)
+
+Each snapclient is a device, named after the name you gave it in Snapweb (or else its host name).
+
+| Feature        | What it does                                                                  |
+| -------------- | ----------------------------------------------------------------------------- |
+| Volume         | 0 to 100, in both directions                                                  |
+| Mute           | On = sound off, in both directions                                            |
+| Connected      | Whether the snapclient is connected to the server                             |
+| Stream         | The stream the room plays; choosing another one switches **its whole group**  |
+| Playback state | Playing when its stream has audio                                             |
+| Now playing    | Artist and title when the stream reports them, else the stream name and state |
+| Play, Pause    | Act on the stream of the room, when a control script drives it (see Streams)  |
+| Previous, Next | Same                                                                          |
+
+A client has the volume, play, pause and playback state of the Gladys **Music** box: add the box to a
+dashboard and choose the room.
+
+### Streams
+
+Each stream of the server is a device too: its **playback state** and what it plays (**now
+playing**). A stream driven by a control script (librespot, MPD through `meta_mpd.py`, AirPlay,
+Plexamp... see the Snapcast documentation) also has **Play**, **Pause**, **Previous** and **Next**
+buttons. A plain pipe has no buttons: Snapcast cannot pause what it does not control.
+
+There is no device per group: Snapcast deletes a group when it is emptied and gives a new one a new
+identity, which would leave orphan devices in Gladys. Groups are handled through their clients
+(stream choice, actions below).
+
+## Dashboard widget
+
+**Snapcast rooms**:
+
+- without a room chosen: every client with what it plays and its volume (or "Muted", "Offline"),
+  and a **Mute all** / **Unmute all** button;
+- with a room chosen: its state and volume, the buttons **Volume −**, **Volume +**, **Mute** /
+  **Unmute**, and **Play** / **Pause** when its stream can be controlled, else **Next stream**.
+
+## Scene triggers
+
+| Trigger             | When                                                         | Variables             |
+| ------------------- | ------------------------------------------------------------ | --------------------- |
+| Client disconnected | A snapclient leaves the server (speaker off, network lost)   | client name           |
+| Client connected    | A snapclient joins the server again                          | client name           |
+| Stream started      | Audio starts flowing on a stream (someone casts to Spotify…) | stream, title, artist |
+| Stream stopped      | A stream stops playing (paused, no more audio)               | stream, title, artist |
+
+Each trigger can be limited to one client or one stream. Nothing fires for what happens while the
+server itself is unreachable.
+
+## Scene actions
+
+| Action                        | What it does                                                                 |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| Set the volume of a room      | Volume of a client, 0 to 100                                                 |
+| Mute or unmute every room     | Every client of the server; returns how many changed                         |
+| Play another stream in a room | The client's group switches to the chosen stream                             |
+| Control a stream              | Play, pause, play/pause, next, previous, on a stream or on what a room hears |
+| Group two rooms               | The first client joins the group of the second, in sync                      |
+| Ungroup a room                | The client gets a group of its own, same stream                              |
+
+The volume, the mute and the stream of a room can also be set with the standard "Set device value"
+action of Gladys.
+
+## Scene examples
+
+- **Quiet night**: at 11 pm, "Mute or unmute every room" → Mute. At 7 am, Unmute.
+- **Morning radio**: at 7 am on weekdays, "Play another stream in a room" → Kitchen, stream Radio,
+  then "Set the volume of a room" → Kitchen, 30.
+- **Music follows you**: when "Stream started" on Spotify, "Group two rooms" → Living room joins
+  Kitchen.
+- **Speaker unplugged**: when "Client disconnected" on Bathroom, send a message.
+
+## Troubleshooting
+
+- **"The Snapcast server does not answer"**: check the address, that snapserver runs, and that the
+  port is the TCP control port (1705 by default), not the stream port 1704 nor the HTTP port 1780.
+  A firewall must let Gladys reach it.
+- **A room shows "Offline"**: its snapclient is not connected to the server (machine off, wrong
+  server address on the client).
+- **"This stream cannot be controlled"**: the stream has no control script. Use a source that
+  reports its player (librespot, MPD with `meta_mpd.py`…) or control the player itself.
+- **A stream shows "Idle" while its player says playing**: no audio reaches snapserver; Snapcast
+  reports what it receives.
+- More detail: set the `LOG_LEVEL` of the integration to `debug`.
+
+## Limits
+
+- One Snapcast server per integration.
+- No authentication: snapserver's control port has none by default. A server that requires one
+  (optional in recent versions) is not supported.
+- No device per group (see Streams); the latency of a client and the names are changed in Snapweb.
+- The structure of a stream device depends on its control script: if a stream becomes controllable
+  later, Gladys offers to **Update** it in the Discovery tab.
+- Tested against snapserver and snapclient 0.31 in Docker, with a pipe stream and a scripted player,
+  without speakers. Feedback welcome on the forum.
+
+## Configuration settings
+
+These are the settings Snapcast asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect your Snapcast server | `section` | No | Type the address of the machine that runs snapserver. The integration uses its JSON-RPC control port (TCP 1705, on by default) and follows every change live. Each snapclient becomes a device (a room), each stream too. |
+| Server address | `string` | Yes | IP address or host name of snapserver. Add :port if its control port is not 1705. |
+| Control port | `number` | No | TCP port of the JSON-RPC control (tcp section of snapserver.conf). Not the HTTP port 1780. |
+| Options | `section` | No | Language of the names and texts the integration creates (feature names are set when a device is added). |
+| Language | `select` | No |  |
+
+## How to install Snapcast in Gladys
+
+1. In Gladys, open **Integrations**: Snapcast appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-snapcast:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-snapcast](https://github.com/guim31/gladys-snapcast).
+
+Snapcast requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Snapcast is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-snapcast) — [source of this documentation](https://github.com/guim31/gladys-snapcast/blob/HEAD/docs/en.md)

@@ -1,0 +1,212 @@
+---
+title: "Fronius Wattpilot smart home integration, free and open source"
+sidebar_label: "Fronius Wattpilot"
+description: "Fronius Wattpilot EV chargers on the local network: charge state, power, energy, current and modes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wattpilot.png"
+keywords:
+  - "fronius wattpilot"
+  - "fronius wattpilot smart home"
+  - "gladys fronius wattpilot"
+  - "fronius wattpilot gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-wattpilot instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Fronius Wattpilot","description":"Fronius Wattpilot EV chargers on the local network: charge state, power, energy, current and modes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-wattpilot","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wattpilot.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T17:32:59Z"}} />
+
+Follow and drive your **Fronius Wattpilot** EV charger (Wattpilot Home and
+Go, 11 and 22 kW; Wattpilot Flex in test) from Gladys, **on your local
+network**: Gladys talks to the charger's WebSocket, as the Fronius
+Solar.wattpilot app does at home. No cloud, no Fronius account.
+
+> **Developed without the hardware: feedback welcome.** This integration was
+> written from the protocol as documented and implemented by other open-source
+> projects (the `wattpilot` library of joscha82, the Home Assistant integration
+> of mk-maddin), and tested against a fake charger, without a Wattpilot at hand.
+> If something looks wrong, open an issue on the GitHub repository with the
+> integration logs.
+
+This integration is not affiliated with Fronius International GmbH.
+
+## Requirements
+
+- A Fronius Wattpilot (Home or Go, 11 or 22 kW) connected to your Wi-Fi.
+  The Wattpilot Flex is supported in theory (its password check differs) but
+  untested.
+- The **password of the charger**: the one you chose in the Solar.wattpilot
+  app when you set the charger up (the app asks for it to connect).
+- A **fixed IP address** for the charger, set in your router (DHCP
+  reservation): the integration reaches it by its address.
+- Gladys and the charger on the same network (port 80 of the charger
+  reachable from Gladys).
+- Gladys 5.2.0 or later.
+
+## Configuration
+
+1. Install the integration from **Integrations → Install from GitHub** (or the
+   store), then open its **Configuration** tab.
+2. **Charger IP address**: for example `192.0.2.10`.
+3. **Charger password**: the password of the Solar.wattpilot app. It stays in
+   Gladys (a secret field) and is never sent anywhere but to the charger, as a
+   hash.
+4. **Refresh interval**: how often the measures (power, current, energy) go
+   to Gladys, 15 seconds by default.
+5. **Language of the feature names**: names given to the features of new
+   devices and language of the error texts (French by default).
+6. Save: the charger appears in the **Discovery** tab. Add it.
+7. The **Test the connection** button says whether the charger is connected
+   (name, serial number, firmware) or why not.
+
+## Refresh and network use
+
+The integration keeps **one WebSocket connection** open to the charger, which
+pushes its changes by itself: nothing is polled. The charger sends its
+measures several times a second while charging; the integration forwards them
+to Gladys at the refresh interval, and **at once** when something you act on
+changes (car state, mode, current, override, error). Only the values that
+changed are sent, plus every value again every 6 hours so a stable one never
+shows "no recent value". Gladys also polls the device as a fallback; the
+integration then skips a publication it has just made.
+
+When the connection drops, the integration reconnects after 5 s, 10 s, 30 s,
+then every minute. A refused password is retried every 10 minutes only. A
+charger silent for a minute is pinged, and the connection is opened again if
+it does not answer.
+
+## The charger device
+
+| Feature            | What it shows                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Connector          | Available (no car), Occupied (car plugged in), Unavailable (offline), Faulted (error)                         |
+| Charging state     | Charging, Vehicle connected (waiting), Paused (vehicle): charge complete, Paused (charger): not allowed, Idle |
+| Car plugged in     | 1 when a car is plugged in                                                                                    |
+| Charging power     | Total power, W                                                                                                |
+| Power L1, L2, L3   | Power per phase, W                                                                                            |
+| Current L1, L2, L3 | Current per phase, A                                                                                          |
+| Session energy     | Energy since the car was plugged in, kWh                                                                      |
+| Total energy       | The charger's meter, kWh: Gladys' energy monitoring computes the consumption and its cost from it             |
+| Charging current   | **Command**: the current offered to the car, from 6 A to 16 A (11 kW) or 32 A (22 kW)                         |
+| Charging mode      | **Command**: Default, Eco, Next Trip — the modes of the Solar.wattpilot app                                   |
+| Charge override    | **Command**: Follow the mode, Forced charge, Forced stop                                                      |
+| Temperature        | The hottest sensor of the charger, °C                                                                         |
+| Error              | The Wattpilot error in words ("None" when all is well)                                                        |
+| Online             | 1 while the charger is connected                                                                              |
+
+The **charging mode** only switches between the modes; their settings (solar
+surplus and price limit of Eco, departure time and energy of Next Trip) stay
+in the Solar.wattpilot app and Solar.web: this integration does not duplicate
+solar charging. **Forced charge** charges whatever the mode decides; **Follow
+the mode** gives the decision back to it.
+
+The current cannot go above the limit set in the app ("maximum current"): the
+integration refuses it with a message rather than sending it.
+
+## Widget
+
+Add the **Fronius Wattpilot** widget to a dashboard and pick the charger. It
+shows the live power, the session energy and the charging current, the state
+(Ready, Charging, Waiting, Charge complete, Error), the mode, an override in
+force and the error if any. Four buttons: **Charge** (forced charge), **Stop**
+(forced stop), **Auto** (follow the mode) and **Settings…**, which opens a
+form to set the current and the charging mode. The override in force carries a
+check icon.
+
+## Scene trigger
+
+**Wattpilot charge finished**: the car stopped drawing after a charge (it is
+full, or reached the limit set in the car or the app). Optionally pick the
+charger. The following actions can use `energy_kwh` (energy of the session)
+and `charger` (its name). It fires once per charge, never at startup.
+
+"Car plugged in" needs no trigger: use the **Car plugged in** feature (changes
+to 1) in a "device value" trigger.
+
+## Scene actions
+
+- **Set the Wattpilot charging mode**: Default, Eco or Next Trip.
+- **Force or stop the Wattpilot charge**: forced charge, forced stop, or
+  follow the mode.
+
+The charging current needs no action of its own: it is a feature, set with
+Gladys' usual "control a device" action.
+
+## Scene examples
+
+- **Solar during the day, full at night**: at 08:00, "Set the Wattpilot
+  charging mode" to Eco; at 22:00, to Default.
+- **Tell me when the car is full**: trigger "Wattpilot charge finished", then
+  send a message "Charge finished: \{\{triggerEvent.data.energy_kwh\}\} kWh".
+- **Protect the main breaker**: when the house power goes over a threshold,
+  set the charging current to 6 A; when it goes down, back to 16 A.
+- **Leaving early tomorrow**: from a button on the dashboard, "Force or stop
+  the Wattpilot charge" to Forced charge; at 07:00, back to Follow the mode.
+
+## Troubleshooting
+
+- **"No answer"**: check the address, that the charger is on the Wi-Fi, and
+  that Gladys and the charger are on the same network.
+- **"Something answers, but not a Wattpilot"**: the address is another device
+  (the router, the inverter...).
+- **"The charger refused the password"**: enter the password of the
+  Solar.wattpilot app again (mind the case). After a refusal, the integration
+  only retries every 10 minutes: press **Test the connection** to retry now.
+- **"Connected, but the charger did not send its status in time"**: restart
+  the charger, then press **Test the connection**.
+- **A command fails with "the charger refused the request"**: the value is
+  outside what the charger accepts right now.
+- The integration logs say the rest: set `LOG_LEVEL=debug` for the detail of
+  every change.
+
+## Limits
+
+- One charger per Gladys. Two Wattpilots: open an issue.
+- The feature names and the maximum current are fixed when the device is added
+  (a Gladys rule): to change the language, delete the device and add it again.
+- No access to the RFID cards, the schedules, the solar and price settings, the
+  phase switching or the cable lock: they stay in the Solar.wattpilot app. The
+  cable lock is deliberately not exposed.
+- Gladys keeps a connection open to the charger, next to the app and maybe
+  another home automation box. How many the charger accepts at once is not
+  documented: if the app cannot connect while Gladys is, say so in an issue.
+- Wattpilot Flex: its password check (bcrypt) follows the Home Assistant
+  integration, untested on a real Flex.
+- Tested against a fake charger and published protocol descriptions only (see
+  the note at the top).
+
+## Configuration settings
+
+These are the settings Fronius Wattpilot asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Before you start | `section` | No | Gladys talks to the Wattpilot directly on your local network, like the Fronius Solar.wattpilot app does at home. Give the charger a fixed IP address in your router, then enter it below with the password of the charger: the one you chose in the app when you installed it. |
+| Charger IP address | `string` | No |  |
+| Charger password | `secret` | No | The password set in the Solar.wattpilot app. It stays in Gladys and never leaves your network. |
+| Refresh interval | `select` | No | How often the measures go to Gladys. A change of state, mode or current is sent at once. |
+| Language of the feature names | `select` | No | Names given to the features of new devices, and language of the error texts. |
+
+## How to install Fronius Wattpilot in Gladys
+
+1. In Gladys, open **Integrations**: Fronius Wattpilot appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-wattpilot:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-wattpilot](https://github.com/guim31/gladys-wattpilot).
+
+Fronius Wattpilot requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Fronius Wattpilot is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-wattpilot) — [source of this documentation](https://github.com/guim31/gladys-wattpilot/blob/HEAD/docs/en.md)

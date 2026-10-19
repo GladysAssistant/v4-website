@@ -1,0 +1,159 @@
+---
+title: "OpenSprinkler smart home integration, free and open source"
+sidebar_label: "OpenSprinkler"
+description: "OpenSprinkler watering: stations, programs, rain delay and sensors, on your local network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-opensprinkler.png"
+keywords:
+  - "opensprinkler"
+  - "opensprinkler smart home"
+  - "gladys opensprinkler"
+  - "opensprinkler gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-opensprinkler instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenSprinkler","description":"OpenSprinkler watering: stations, programs, rain delay and sensors, on your local network.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-opensprinkler","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-opensprinkler.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T19:02:30Z"}} />
+
+Control your **OpenSprinkler** or **OpenSprinkler Pi** irrigation controller from Gladys, on your local network: see which stations water and for how long, water a bed now, start a program, hold the schedule with a rain delay, read the rain, soil and flow sensors.
+
+> **Developed without the hardware: feedback welcome.** This integration was written against the OpenSprinkler API documentation and answers recorded on the official firmware (Demo build), not on a physical controller. Please report what works and what does not on [GitHub](https://github.com/guim31/gladys-opensprinkler/issues).
+
+This integration is not affiliated with OpenSprinkler or OpenThings Inc.
+
+## Requirements
+
+- An OpenSprinkler (2.x, 3.x, 4.x) or OpenSprinkler Pi controller with a **2.x firmware** (2.1.9 or later recommended, tested against 2.2.1(6)).
+- The controller and Gladys on the same local network. The integration talks to the controller directly (no cloud, no OpenThings Cloud account).
+- The **device password** of the controller: the one you type in the OpenSprinkler app (factory default: `opendoor`).
+- Gladys **5.2.0** or later (the widget buttons open forms).
+
+## Configuration
+
+In Gladys, go to **Integrations → OpenSprinkler → Configuration**:
+
+- **Address**: the IP address or name of the controller, e.g. `192.168.1.20`. Add `:port` if the web server does not listen on port 80 (an OpenSprinkler Pi often listens on `:8080`). Give the controller a fixed IP address in your router.
+- **Device password**: the password of the OpenSprinkler app. It is sent to the controller as its MD5 hash, as the official app does, and never written in the logs.
+- **Name** (optional): the name of the device in Gladys; empty, the device name set on the controller is used.
+- Up to **three controllers** (second and third sections).
+- **Refresh interval**: 30 seconds or 1 minute. The controller is also read right after every command.
+- **Watering time of a station switch**: how long a station waters when you turn its switch on in Gladys (10 minutes by default). The controller stops it by itself at the end.
+- **Unit of the flow pulse rate**: liters or US gallons, the unit of the volume per pulse you set in the OpenSprinkler options (only used with a flow sensor).
+- **Language of the feature names**: the names given to the features when the device is added, and the texts of the scene events.
+
+Then use **Test the connection**: it reads every controller and reports its firmware, its stations and programs. Finally, open the **Discovery** tab and add the controller to Gladys.
+
+## Devices and features
+
+One device per controller, identified by its MAC address: changing its IP address or its slot in the configuration keeps the device and its history.
+
+| Feature                                         | Type             | What it does                                                                                                                                                                                                  |
+| ----------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Controller enabled                              | switch           | Enables or disables the controller operation (no program runs while it is off).                                                                                                                               |
+| One switch per station, named after the station | switch           | On while the station waters. Turning it on waters the station for the configured time; turning it off stops it.                                                                                               |
+| Program: …                                      | switch           | On while the program is enabled. Turning it off disables the program (it no longer runs on its schedule).                                                                                                     |
+| Watering level                                  | level (%)        | The watering percentage applied to the programs (0 to 250 %), set by the weather adjustment or by hand.                                                                                                       |
+| Rain delay                                      | duration (hours) | The hours left before the programs run again, 0 without a rain delay.                                                                                                                                         |
+| Rain sensor                                     | rain sensor      | Only with a rain sensor on a sensor input: 1 when rain is detected.                                                                                                                                           |
+| Soil sensor (wet)                               | input            | Only with a soil sensor: 1 when the soil is wet.                                                                                                                                                              |
+| Water flow                                      | flow (m³/h)      | Only with a flow sensor: the current flow.                                                                                                                                                                    |
+| Water meter                                     | volume (liters)  | Only with a flow sensor: the water used since the device was added. The controller counts the pulses since it was powered on; the integration adds them up across its reboots and keeps the total in `/data`. |
+
+The names are fixed when the device is added. A station renamed, a program added or a sensor plugged in later: the Discovery tab offers **Update** for the device.
+
+Master stations (pump, master valve) appear like the others and show when they run, but they cannot be started alone: the controller opens them with the stations they serve.
+
+## Dashboard widget
+
+Add the **OpenSprinkler** widget to a dashboard (choose the controller in its settings, or leave it empty for the first one). It shows:
+
+- the **Watering level**, the **Rain delay** and the **Water flow** (with a flow sensor) as tiles;
+- the controller state (Idle, Watering, Paused, Disabled, rain delay), the rain sensor when it detects rain, and each station watering with its time left or waiting in the queue;
+- four buttons: **Water…** (choose a station and a duration), **Program…** (choose a program, with or without the watering level), **Stop all** (asks for confirmation), and **Rain delay…** (a number of hours), which becomes **Cancel rain delay** while a rain delay runs.
+
+## Scene triggers
+
+- **OpenSprinkler station finished**: a station stopped watering. Filters: the controller, and what started it (a manual run, a program schedule, or a program started by hand / a run-once program). Variables: the station number and name, the watering time in minutes, what started it, the controller name.
+- **OpenSprinkler unreachable**: the controller stopped answering on the network (two readings in a row). Variables: the controller name and the reason.
+
+## Scene actions
+
+- **Water an OpenSprinkler station**: open one station (number 1 = the first) for a number of minutes (1 to 1080), queued behind the stations already watering.
+- **Stop OpenSprinkler watering**: stop every station watering or waiting.
+- **Start an OpenSprinkler program**: start a program now (number 1 = the first), with or without the watering level. What is watering stops and the program takes over.
+- **Set the OpenSprinkler rain delay**: hold the programs for a number of hours (0 to 720; 0 cancels the delay).
+
+## Scene examples
+
+- **Rain on the way**: when your weather integration raises a rain alert, **Set the OpenSprinkler rain delay** to 24 hours.
+- **Water the vegetable garden from the wall tablet**: the **Water…** button of the widget, or a scene started by a button that runs **Water an OpenSprinkler station** for 15 minutes.
+- **Watering report**: on **OpenSprinkler station finished**, send a message "\{\{triggerEvent.data.station_name\}\} watered \{\{triggerEvent.data.duration_minutes\}\} min".
+- **Kids in the garden**: when a presence is detected in the garden, **Stop OpenSprinkler watering**.
+- **Controller offline**: on **OpenSprinkler unreachable**, send a notification.
+
+## Troubleshooting
+
+- **"does not answer"**: check the address and the port (open `http://<address>` in a browser: the OpenSprinkler page must show). The integration runs in a Docker container: the controller must be reachable from the Gladys server.
+- **"password refused"**: type the password of the OpenSprinkler app again (case-sensitive). The factory default is `opendoor`.
+- **"no OpenSprinkler at this address"**: something answers at this address, but not the OpenSprinkler API (another device, a web page).
+- **A station switch turns itself back off**: the controller refused the run. A station already watering or waiting, a master station or a disabled controller cannot be started; the error message says which.
+- **More details**: set the `LOG_LEVEL` environment variable to `debug` in the integration settings; the logs then show every reading. They never contain the password.
+
+## Limits
+
+- **Reading frequency and controller load**: the controller (an ESP8266 on the OpenSprinkler 2.3 / 3.x) serves one request at a time. The integration reads it every 30 seconds or every minute with a single `/ja` request (five requests on firmwares older than 2.1.6, sent one after the other), plus one reading after each command. No cloud service is used, so there is no quota; please do not lower the interval below 30 seconds.
+- Stations and programs are identified by their **number** on the controller, the only identifier the API gives: deleting or reordering programs in the OpenSprinkler app shifts the program switches (the names stay those of the creation until **Update**).
+- A program started by hand runs as a "run-once" program on the controller: its switch only shows whether it is enabled, and the "station finished" trigger reports it as started by hand.
+- The **station finished** trigger reads the last completed run of the controller at each reading: when two stations finish between two readings, only the last one is reported.
+- The water meter starts at 0 when the device is added, and misses the water used while the integration is stopped across a controller reboot.
+- Expanded sensors (analog sensors of firmware 2.2.1), special stations and program editing are not handled: use the OpenSprinkler app.
+- The integration talks HTTP to the controller, as the official app does on the local network; the password hash travels unencrypted on the LAN.
+
+## Configuration settings
+
+These are the settings OpenSprinkler asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your OpenSprinkler | `section` | No | OpenSprinkler or OpenSprinkler Pi with firmware 2.x, on your local network. Up to three controllers. |
+| Address | `string` | Yes | IP address or name of the controller, with :port if not 80 (OpenSprinkler Pi: often :8080). |
+| Device password | `secret` | No | The password of the OpenSprinkler app (factory default: opendoor). Sent to the controller as its MD5 hash. |
+| Name | `string` | No | Name of the device in Gladys. Empty: the device name set on the controller. |
+| Second OpenSprinkler (optional) | `section` | No | Same fields, for another controller of your network. |
+| Address | `string` | No | IP address or name of the controller, with :port if not 80 (OpenSprinkler Pi: often :8080). |
+| Device password | `secret` | No | The password of the OpenSprinkler app (factory default: opendoor). Sent to the controller as its MD5 hash. |
+| Name | `string` | No | Name of the device in Gladys. Empty: the device name set on the controller. |
+| Third OpenSprinkler (optional) | `section` | No | Same fields, for another controller of your network. |
+| Address | `string` | No | IP address or name of the controller, with :port if not 80 (OpenSprinkler Pi: often :8080). |
+| Device password | `secret` | No | The password of the OpenSprinkler app (factory default: opendoor). Sent to the controller as its MD5 hash. |
+| Name | `string` | No | Name of the device in Gladys. Empty: the device name set on the controller. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often the controllers are read. They are read again right after each command. |
+| Watering time of a station switch | `select` | No | Turning a station on in Gladys waters it for this long, then the controller stops it. |
+| Unit of the flow pulse rate | `select` | No | Only with a flow sensor: the unit of the volume per pulse set in the OpenSprinkler options. |
+| Language of the feature names | `select` | No | Names given to the features when a device is added, and texts of the scene events. |
+
+## How to install OpenSprinkler in Gladys
+
+1. In Gladys, open **Integrations**: OpenSprinkler appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-opensprinkler:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-opensprinkler](https://github.com/guim31/gladys-opensprinkler).
+
+OpenSprinkler requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+OpenSprinkler is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-opensprinkler) — [source of this documentation](https://github.com/guim31/gladys-opensprinkler/blob/HEAD/docs/en.md)

@@ -1,0 +1,207 @@
+---
+title: "Intégration domotique Risco, gratuite et open source"
+sidebar_label: "Risco"
+description: "Alarmes Risco LightSYS, Agility et WiComm, en local sur votre réseau. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-risco.png"
+keywords:
+  - "risco"
+  - "domotique risco"
+  - "gladys risco"
+  - "risco gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-risco instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Risco","description":"Alarmes Risco LightSYS, Agility et WiComm, en local sur votre réseau.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-risco","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-risco.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T00:41:27Z"}} />
+
+Cette intégration relie une centrale d'alarme **Risco** à Gladys Assistant,
+**en local** sur votre réseau (TCP), sans passer par le cloud Risco.
+
+> **Jamais testé sur une vraie centrale.** Le protocole vient de la
+> bibliothèque [pyrisco](https://github.com/OnFreund/pyrisco) (celle de
+> l'intégration Risco de Home Assistant), portée en JavaScript et vérifiée
+> seulement contre une centrale simulée. Faites vos premiers essais en
+> présence, centrale désarmée, et signalez ce qui ne va pas.
+>
+> Intégration non officielle, sans lien avec Risco Group.
+
+## Centrales prises en charge
+
+Les types que pyrisco connaît : Agility 4 (RW032), Agility (RW132), WiComm
+(RW232), WiCommPro (RW332), LightSYS (RP432), LightSYS+ (RP432MP), LightSYS
+Air (RW432MPV), ProSYS Plus / GT Plus (RP512). La centrale doit avoir un
+module réseau (IP) joignable depuis Gladys.
+
+## Ce que vous obtenez
+
+- **Centrale Risco** : connectée ou non, alimentation secteur, batterie
+  faible, autoprotection du boîtier.
+- **Une partition par appareil** (nom repris de la centrale) :
+  - **État** en lecture seule : désarmée, armée (totale), armée (partielle),
+    armée (groupe) ;
+  - **Alarme en cours** et **Prête à armer** ;
+  - trois **boutons** : armement total, armement partiel, désarmer.
+- **Une zone par appareil** (nom repris de la centrale) : ouverte ou fermée
+  (ou mouvement, fumée, fuite selon le type choisi), alarme, contournée, pile
+  faible, et deux **boutons** : contourner, rétablir.
+- **Déclencheurs de scène** : alarme déclenchée (avec la zone si la centrale
+  la donne), partition armée (mode, demandé par Gladys ou non), partition
+  désarmée.
+- **Actions de scène** : armer (total ou partiel), désarmer.
+
+Aucune commande n'est un interrupteur : un « éteins tout » d'un assistant
+vocal, de HomeKit ou d'une scène ne peut pas désarmer l'alarme. Les états
+sont en lecture seule, les commandes sont des boutons.
+
+## Configuration
+
+1. **Adresse de la centrale** : l'adresse IP de son module réseau. Donnez-lui
+   une adresse fixe dans votre box.
+2. **Port** : 1000, sauf changement par votre installateur.
+3. **Code d'accès de la centrale** : le code d'accès à distance (5678 par
+   défaut), pas un code utilisateur du clavier. C'est un champ secret : il est
+   gardé par Gladys dans sa base, jamais réaffiché dans l'interface, et envoyé
+   seulement à la centrale. Il n'apparaît jamais dans les journaux. Voir
+   aussi « Le code d'accès » plus bas.
+4. **Type des zones** (facultatif), par exemple :
+   `2:motion, 5:smoke, 7-9:motion`. Types : `opening` (ouverture, par
+   défaut), `motion` (mouvement), `smoke` (fumée), `leak` (fuite d'eau).
+   Changer le type d'une zone déjà créée dans Gladys ajoute une nouvelle
+   fonction et garde l'ancienne (et son historique) : supprimez l'ancienne à
+   la main si vous n'en voulez plus.
+5. **Sécurité** : voir plus bas.
+6. **Langue des noms** : français ou anglais.
+
+Le bouton **Tester la connexion** se connecte tout de suite si aucune
+connexion n'est en cours, sinon il attend celle en cours (avec « découverte en
+cours (zone x/n) » si elle dure), et indique le modèle, l'état des partitions
+et le nombre de zones.
+
+La première connexion lit toutes les zones possibles de la centrale (50 pour
+une LightSYS, 512 pour une LightSYS+) : cela peut prendre de quelques
+secondes à une minute. Les appareils apparaissent ensuite dans l'onglet
+Découverte. **Chaque reconnexion relit toutes les zones de la même façon, et
+les commandes sont refusées pendant ce temps** (« rien n'a été envoyé »).
+
+## Le code d'accès
+
+- **Le code d'accès suffit, seul, à désarmer** : la centrale ne demande aucun
+  code utilisateur pour les commandes reçues par le réseau.
+- Il circule sur votre réseau local seulement **brouillé, pas protégé** : le
+  brouillage se défait avec l'identifiant que la centrale donne à qui le
+  demande. Tout appareil de votre réseau qui écoute le trafic peut donc le
+  lire.
+- **Avec le code par défaut 5678, n'importe quel appareil de votre réseau
+  peut piloter la centrale**, désarmement compris, sans Gladys. Faites
+  changer ce code par votre installateur.
+- Protégez votre réseau (Wi-Fi invité séparé pour les appareils dont vous
+  n'êtes pas sûr).
+
+## Sécurité
+
+- **Armer** est permis par défaut (option « Autoriser l'armement depuis
+  Gladys »).
+- **Désarmer est désactivé par défaut.** Une fois l'option cochée, **tout
+  utilisateur de Gladys, toute scène et l'application mobile Gladys peuvent
+  désarmer, sans aucun code**. Ne l'autorisez que si votre Gladys est bien
+  protégé (comptes, accès à distance). Désarmer coupe aussi une alarme en
+  cours.
+- **Contourner une zone est désactivé par défaut** : une zone contournée ne
+  déclenche plus l'alarme.
+- Les options sont relues juste avant chaque envoi : une option décochée
+  pendant qu'une commande attend son tour bloque cette commande.
+- Avant chaque commande, l'intégration **relit l'état sur la centrale** et
+  décide sur cet état, jamais sur ce qu'elle a en mémoire. Les commandes
+  passent une par une.
+- Une commande qui ne peut pas partir dans les temps (centrale lente, état
+  illisible) est refusée avec « rien n'a été envoyé ». Une commande partie
+  sans réponse claire de la centrale (pas de réponse, réponse inattendue ou
+  ambiguë) est annoncée « envoyée, sans confirmation » et l'état est relu
+  deux secondes plus tard : elle n'est jamais annoncée « non envoyée ». Seule
+  une réponse d'erreur de la centrale (N.., B..) est annoncée « refusée ».
+- Le contournement est une bascule sur la centrale : après un envoi (accepté
+  ou sans confirmation), la zone n'accepte pas d'autre contournement tant que
+  la centrale n'a pas montré le résultat (30 s au plus).
+- Chaque commande, envoyée ou refusée, est écrite dans les journaux de
+  l'intégration.
+
+## Connexion et code refusé
+
+- La centrale n'accepte **qu'une connexion locale à la fois** : arrêtez tout
+  autre logiciel qui s'y connecte (Home Assistant, un pont Risco). Si la
+  centrale ferme la connexion juste après chaque ouverture, l'intégration le
+  signale et espace ses essais (5 minutes).
+- Sur une coupure, les nouveaux essais sont espacés : 10 s, 30 s, 1 min,
+  2 min, puis toutes les 5 minutes. Deux connexions sont toujours séparées
+  d'au moins 6 secondes (le temps que la centrale se réinitialise).
+- **Si la centrale refuse le code d'accès, ou coupe la connexion pendant la
+  vérification du code (deux fois de suite), l'intégration s'arrête** et ne
+  réessaie pas toute seule, même après un redémarrage (un code faux essayé en
+  boucle pourrait bloquer la centrale). Corrigez le code puis enregistrez, ou
+  cliquez sur « Tester la connexion ». Le fichier `/data/risco-state.json`
+  garde seulement l'adresse concernée, jamais le code.
+
+## Limites connues
+
+- Jamais testé sur une vraie centrale (voir plus haut) ; les lettres d'état
+  lues sont celles que pyrisco documente.
+- Local seulement : le cloud Risco n'est pas pris en charge dans cette
+  version. Selon la configuration de votre centrale, la connexion au cloud
+  Risco et la connexion locale peuvent se gêner (non vérifié).
+- L'armement par groupe (A à D) est affiché, pas commandé.
+- Une alarme déjà en cours au démarrage de l'intégration ne déclenche pas de
+  scène (seuls les changements vus le font).
+- Les noms de zones sont lus en UTF-8 ; d'autres encodages de la centrale
+  peuvent donner des caractères remplacés.
+
+## Confidentialité
+
+Tout reste sur votre réseau : l'intégration ne parle qu'à la centrale.
+
+## Licence
+
+Apache-2.0. Logique de protocole portée de pyrisco (MIT, On Freund) : voir
+`THIRD_PARTY_NOTICES.md`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Risco dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre centrale Risco | `section` | Non | Pour les centrales d'alarme Risco LightSYS, LightSYS+, Agility, WiComm et ProSYS Plus équipées d'un module réseau (IP), sur votre réseau, sans le cloud Risco : l'état de chaque partition (désarmée, armée totale ou partielle, en alarme, prête), les zones (ouvertes ou fermées, contournées, alarme, pile), les défauts de la centrale (secteur, batterie, autoprotection), des boutons d'armement et de désarmement, des déclencheurs de scène. La centrale n'accepte qu'une connexion locale à la fois : arrêtez tout autre logiciel qui l'utilise (Home Assistant, un pont Risco). Jamais testé sur une vraie centrale. Non officiel, sans lien avec Risco Group. |
+| Adresse de la centrale | `string` | Oui | L’adresse IP de son module réseau (donnez-lui une adresse fixe dans votre box). |
+| Port | `number` | Non | Sauf changement par votre installateur : 1000. |
+| Code d’accès de la centrale | `secret` | Oui | Le code d’accès à distance de la centrale (5678 sauf si votre installateur l’a changé), pas un code utilisateur du clavier. À lui seul, il permet à n’importe quel appareil de votre réseau de piloter la centrale, désarmement compris : avec 5678, faites-le changer par votre installateur. Il circule sur votre réseau seulement brouillé, pas protégé. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la centrale. |
+| Type des zones | `string` | Non | Facultatif : comment les zones apparaissent dans Gladys, par ex. « 2:motion, 5:smoke, 7-9:motion » (opening ouverture, motion mouvement, smoke fumée, leak fuite). Une zone absente de la liste est une ouverture. Les noms viennent de la centrale. |
+| Sécurité | `section` | Non | Toute personne pouvant piloter les appareils dans Gladys (tableau de bord, scènes, application Gladys) peut agir sur l'alarme par cette intégration. L'armement est permis par défaut. Le désarmement et le contournement des zones sont désactivés par défaut : ne les autorisez que si votre Gladys est bien protégé. Chaque commande est écrite dans les journaux de l'intégration, jamais le code d'accès. |
+| Autoriser l'armement depuis Gladys | `boolean` | Non |  |
+| Autoriser le désarmement depuis Gladys | `boolean` | Non | Une fois cochée, tout utilisateur de Gladys, toute scène et l’application mobile Gladys peuvent désarmer, sans aucun code : la centrale ne demande pas de code utilisateur, le code d’accès suffit. Désarmer coupe aussi une alarme en cours. |
+| Autoriser le contournement des zones depuis Gladys | `boolean` | Non | Une zone contournée ne déclenche plus l'alarme. |
+| Langue des noms | `select` | Non | Sert aux noms des appareils et fonctionnalités ajoutés désormais, et à l'état des partitions. |
+
+## Comment installer Risco dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Risco apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-risco:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-risco](https://github.com/LM1LC3N7/gladys-risco).
+
+Risco nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Risco est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-risco) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-risco/blob/HEAD/docs/fr.md)

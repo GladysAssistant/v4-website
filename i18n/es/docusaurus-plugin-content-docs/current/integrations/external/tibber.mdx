@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-tibber instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Tibber","description":"Unofficial connector: Tibber prices, cheap hours, consumption, Pulse live power and contracts.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tibber","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tibber.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-14T20:14:32Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Tibber","description":"Unofficial connector: Tibber prices, cheap hours, consumption, Pulse live power and contracts.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tibber","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tibber.png","type":"device","version":"0.1.4","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T17:06:21Z"}} />
 
 :::info
 
@@ -32,6 +32,8 @@ account into Gladys: the hourly electricity prices of your home (today and
 tomorrow), Tibber's price level, your consumption, and, with a Tibber Pulse
 or Watty, the live power. Tibber is a trademark of Tibber AS. Available
 where Tibber sells electricity: Norway, Sweden, Germany and the Netherlands.
+
+Never tested with a real Tibber account or a real Pulse yet.
 
 ## What you get
 
@@ -90,15 +92,44 @@ in the monthly subscription. Gladys then asks the integration to price
 every half hour from your own Tibber price history (energy price, VAT
 included); the costs appear next to the consumption like any contract. The
 **consumption** of the device is the hourly consumption Tibber reports,
-split in two equal halves, published with about one hour of delay.
+split in two equal halves, published with about one hour of delay. It is the
+only data of the device the energy monitoring counts: yesterday's and
+today's consumption are plain sensors (in kWh) for display and scenes, never
+added a second time.
 
 If you own a Pulse, Gladys also shows the live power and today's cost
 straight from Tibber.
 
+Gladys 5.2.0 or newer is required.
+
+### Devices created with version 0.1.1
+
+Version 0.1.1 published yesterday's and today's consumption in features of
+the "daily consumption" type (`yesterday_consumption`, `today_consumption`).
+The costs and charts of the energy monitoring never used them (they read the
+30-minute consumption), but these daily kWh could be added to the 30-minute
+consumption in the weekly digest and in the answers of the Gladys MCP
+server.
+
+Gladys does not touch a created device until you click **Update**: until
+then, the two old features stay, with their history, but receive nothing
+any more. To move to the new sensors, open **Discovery**, then the Tibber
+device (badge **Already added**), and click **Update**. Gladys then adds
+`yesterday_kwh` and `today_kwh`, removes the two old features, and keeps the
+device, the history of every other feature (30-minute consumption and its
+cost, prices, costs) and the link with your energy contract. A scene or a
+dashboard chart set on one of the two old features must be pointed at
+`yesterday_kwh` or `today_kwh`.
+
 ## Troubleshooting
 
 - **"Tibber refused the access token"**: the token was revoked or mistyped;
-  create a new one on developer.tibber.com.
+  create a new one on developer.tibber.com. A refused token is not sent
+  again, even after a restart, until you save the configuration (saving tries
+  once more, even with the same token).
+- **"Tibber asked to slow down (429)"**: no call at all until the time shown
+  (Tibber's Retry-After, between 1 minute and 6 hours, kept across a
+  restart); the last values stay, then everything resumes by itself.
 - **"No home with an active subscription"**: the account has no running
   Tibber contract yet.
 - **No live power**: the home needs a Tibber Pulse or Watty with real-time
@@ -110,9 +141,12 @@ straight from Tibber.
 
 ## Privacy
 
-The token is stored encrypted by Gladys and only sent to Tibber's servers
-(`api.tibber.com`, `websocket-api.tibber.com`). Your address is only used to
-name the device when the home has no nickname.
+The token is kept by Gladys in its database (in clear, like every secret
+field, its backups included), never shown again, and only sent to Tibber's
+servers (`api.tibber.com`, `websocket-api.tibber.com`). Your address is only used to
+name the device when the home has no nickname. The `/data` volume of the
+integration holds only a random key, a keyed hash (HMAC) of a refused token
+(never the token) and the end of a 429 pause.
 
 ## Parámetros de configuración
 
@@ -121,14 +155,14 @@ Estos son los parámetros que Tibber te pide en su pantalla de configuración en
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
 | Tibber account | `section` | No | Unofficial connector, not affiliated with Tibber. Create a personal access token on developer.tibber.com (Settings → Access token) and paste it below: the integration discovers your homes, reads the hourly prices (today and tomorrow), your consumption, and, with a Tibber Pulse or Watty, the live power. It also offers a Tibber contract template for the Gladys energy monitoring. Tibber is a trademark of Tibber AS. |
-| Access token | `secret` | Sí | Stored encrypted by Gladys and only sent to api.tibber.com. |
+| Access token | `secret` | Sí | Kept by Gladys in its database, never shown again, only sent to Tibber. |
 | Cheap hours per day | `number` | No | The N cheapest hours of the day make the "cheap period" (sensor, triggers, widget). |
 | Live power from a Tibber Pulse / Watty | `boolean` | No | Keeps a websocket open to Tibber for the homes with real-time consumption enabled. |
 
 ## Cómo instalar Tibber en Gladys
 
 1. En Gladys, abre **Integraciones**: Tibber aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-tibber:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-tibber:0.1.4`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-tibber](https://github.com/LM1LC3N7/gladys-tibber).
 

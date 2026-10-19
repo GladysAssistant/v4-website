@@ -1,0 +1,220 @@
+---
+title: "Intégration domotique NetBird, gratuite et open source"
+sidebar_label: "NetBird"
+description: "Les pairs de votre réseau NetBird : connecté, dernière vue, IP, version, expiration. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-netbird.png"
+keywords:
+  - "netbird"
+  - "domotique netbird"
+  - "gladys netbird"
+  - "netbird gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-netbird instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NetBird","description":"Les pairs de votre réseau NetBird : connecté, dernière vue, IP, version, expiration.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-netbird","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-netbird.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T17:39:13Z"}} />
+
+Les pairs de votre réseau [NetBird](https://netbird.io) dans Gladys, par
+l'API REST de son serveur de gestion (NetBird Cloud ou votre propre
+serveur) :
+
+- chaque pair devient un appareil Gladys : **connecté**, **dernière vue**,
+  **IP NetBird**, **version du client**, **connexion expirée** et
+  **expiration de la connexion** (la date de fin de sa session de
+  connexion) ;
+- le réseau devient un appareil avec ses **pairs connectés** et ses
+  **pairs** au total ;
+- trois déclencheurs de scène : **Pair connecté**, **Pair déconnecté** et
+  **Connexion d'un pair expirée**.
+
+Lecture seule : Gladys ne change jamais rien dans NetBird (aucun pair
+supprimé, aucune règle ni aucun groupe modifié).
+
+> **Cette intégration n'a jamais été testée avec un vrai compte NetBird.**
+> Cette première version a été écrite d'après la référence publique de l'API
+> NetBird (docs.netbird.io/api) et testée seulement contre un faux NetBird.
+> Dites sur le forum Gladys ce qui marche et ce qui ne marche pas.
+
+Intégration non officielle, sans lien avec NetBird.
+
+## Avant de commencer : un jeton qui ne fait que lire
+
+1. Dans le tableau de bord NetBird, ouvrez **Team → Service Users** et créez
+   un utilisateur de service `gladys` au rôle **Auditor** : il lit tous les
+   pairs et ne change rien (un utilisateur de service n'est pas une
+   personne : son jeton ne cesse pas de marcher quand quelqu'un part). Si le
+   rôle Auditor n'est pas proposé, prenez le rôle **User** : un utilisateur
+   de service lit tous les pairs et les réglages du compte quel que soit son
+   rôle, et au rôle User il ne peut rien changer. Jamais Admin : Gladys ne
+   fait que lire, le jeton n'a besoin d'aucun droit de modification.
+2. Ouvrez l'utilisateur, **Create Token**, nommez-le `gladys`, choisissez une
+   expiration et copiez le jeton (il commence par `nbp_`) : NetBird ne
+   l'affiche qu'une fois.
+3. **Pas le jeton personnel d'un utilisateur ordinaire au rôle User** : un
+   tel jeton ne liste que les pairs enregistrés par cet utilisateur, et
+   aucun quand le compte restreint le tableau de bord des utilisateurs
+   ordinaires (« Restrict dashboard for regular users »). Quand
+   l'intégration peut le savoir, l'état de connexion le signale. Un
+   utilisateur de service n'a pas cette limite.
+4. Les dates d'expiration des pairs (expiration de la connexion) viennent
+   des réglages du compte : un jeton qui ne peut pas les lire laisse ces
+   dates vides, le reste marche.
+
+## Configuration
+
+- **Serveur de gestion** : vide pour NetBird Cloud (son API est
+  `https://api.netbird.io` ; l'adresse du tableau de bord `app.netbird.io`
+  est lue ainsi). Auto-hébergé : l'adresse https de votre
+  serveur, celle du tableau de bord (`https://netbird.example.org` ; un port
+  et un chemin sont gardés, un `/api` final est retiré). `http://` est
+  refusé : le jeton traverserait le réseau en clair.
+- **Jeton d'accès personnel** : gardé par Gladys dans sa base, jamais
+  réaffiché, envoyé seulement au serveur de gestion NetBird, dans l'en-tête
+  `Authorization: Token …` (jamais dans une adresse, jamais dans un journal,
+  jamais dans le volume `/data`). Collez le jeton seul : une espace ou un
+  caractère invisible copié avec lui est refusé avec un message clair.
+- **Empreinte du certificat** (facultatif, auto-hébergé seulement) : par
+  défaut le certificat du serveur doit venir d'une autorité reconnue
+  (NetBird Cloud, Let's Encrypt). Un serveur avec son propre certificat :
+  saisissez son empreinte SHA-256 ; ce certificat, et aucun autre, est alors
+  accepté, vérifié avant l'envoi du jeton. Après un renouvellement,
+  saisissez la nouvelle. Pour la lire : votre navigateur (cadenas,
+  certificat, empreinte SHA-256) ou
+  `openssl s_client -connect netbird.example.org:443 </dev/null | openssl x509 -noout -fingerprint -sha256`.
+- **Groupes** (facultatif) : noms ou identifiants de groupes NetBird,
+  séparés par des virgules. Seuls leurs pairs deviennent des appareils et
+  sont comptés. Vide : tous les pairs que voit le jeton.
+- **Rafraîchissement** : toutes les minutes (par défaut) à toutes les 10
+  minutes. Une requête par lecture (les pairs), plus les réglages du compte
+  une fois par heure, et l'utilisateur du jeton (`/api/users/current`) au
+  démarrage et à chaque nouvel essai après une erreur. Un utilisateur de
+  service y reçoit un 403 : c'est attendu et ignoré.
+
+Ouvrez ensuite l'onglet **Découverte** et créez les pairs et le réseau à
+suivre. Seuls les appareils créés reçoivent leurs états.
+
+## Ce que montre chaque fonction
+
+- **Connecté** (1 / 0) : ce que NetBird dit du pair en ce moment. Rien n'est
+  publié tant que NetBird ne le dit pas.
+- **Dernière vue** : la dernière connexion du pair au serveur de gestion
+  (ou son dernier changement d'état là-bas), sous la forme
+  `2026-10-17 08:00 UTC` (en UTC, le fuseau de NetBird). Elle peut ne pas
+  bouger tant que le pair reste connecté.
+- **IP NetBird** : l'adresse du pair dans le réseau NetBird (`100.x.y.z`).
+  Son adresse publique n'est jamais lue dans Gladys.
+- **Version du client** : la version du client NetBird du pair. L'API ne dit
+  pas si une mise à jour existe : pas de fonction « mise à jour disponible »
+  dans cette version.
+- **Connexion expirée** (1 / 0) : la session de connexion du pair a expiré ;
+  quelqu'un doit s'y reconnecter (`netbird up`). Seuls les pairs ajoutés par
+  une connexion SSO expirent ; ceux ajoutés par une clé d'installation
+  jamais.
+- **Expiration de la connexion** : la date de fin de session (dernière
+  connexion plus l'expiration du compte), `—` quand elle n'expire jamais,
+  rien tant qu'elle ne peut pas être connue (un jeton qui ne peut pas lire
+  les réglages du compte).
+- **Pairs connectés / Pairs** (appareil réseau) : les comptes des pairs du
+  filtre de groupes (tous, sans filtre), y compris ceux au-delà des 500 qui
+  deviennent des appareils.
+- Gladys accepte 300 états par minute d'une intégration : celle-ci en envoie
+  250 au plus, les comptes d'abord, puis connecté, puis connexion expirée,
+  puis les textes (à tour de rôle). Avec beaucoup de pairs créés d'un coup,
+  les premières valeurs arrivent en quelques minutes.
+
+## Déclencheurs de scène
+
+- **Pair connecté** : un pair déconnecté est de nouveau connecté.
+- **Pair déconnecté** : un pair connecté est déconnecté.
+- **Connexion d'un pair expirée** : la session de connexion d'un pair vient
+  d'expirer.
+
+Chacun porte le pair (filtre : un pair, ou tous), son nom et son IP NetBird.
+Ils partent à la lecture qui suit le changement (jusqu'à l'intervalle de
+rafraîchissement plus tard), une fois par changement. Jamais à la première
+lecture après un démarrage de l'intégration, ni à la première lecture après
+une panne (quand NetBird n'a pas pu être lu, les changements entre-temps
+sont inconnus). Un nouveau pair ne déclenche rien. 30 événements au plus par
+lecture.
+
+## Problèmes de connexion
+
+- **Jeton refusé** (HTTP 401, ou 403 répondu par l'API NetBird elle-même,
+  sur la liste des pairs : faux, expiré, révoqué, ou sans le droit de lister
+  les pairs) : Gladys s'arrête et ne réessaie pas seul, même après un
+  redémarrage ou quand Gladys se reconnecte. Créez un nouveau jeton (un
+  utilisateur de service au rôle Auditor), collez-le et enregistrez la
+  configuration : seul l'enregistrement réessaie. Une page 403 qui ne vient
+  pas de l'API (un proxy ou un pare-feu devant elle) est réessayée
+  normalement. Un refus sur l'utilisateur du jeton (`/api/users/current`,
+  toujours 403 pour un utilisateur de service) n'arrête jamais rien.
+- **NetBird surchargé** (HTTP 429) ou **erreur serveur** (HTTP 5xx) : toutes
+  les requêtes sont suspendues, tant que NetBird le demande (Retry-After)
+  entre 1 minute et 6 heures, jamais moins que l'intervalle de
+  rafraîchissement. La pause est gardée dans `/data` : un redémarrage, une
+  reconnexion de Gladys ou une configuration enregistrée attendent aussi.
+- **NetBird injoignable** (réseau, délai, certificat) : nouvel essai après
+  l'intervalle de rafraîchissement (une minute au moins), puis le délai
+  double jusqu'à 30 minutes ; les appareils apparaissent injoignables
+  entre-temps. L'intégration n'abandonne jamais.
+- **Certificat refusé ou changé** : rien n'est envoyé. Installez un
+  certificat d'une autorité reconnue, ou saisissez (de nouveau) l'empreinte
+  du serveur.
+- **Tester la connexion** relit les pairs et indique combien sont
+  connectés ; il ne réessaie jamais un jeton refusé et n'abrège jamais une
+  pause.
+
+## Limites
+
+- Un compte NetBird par intégration ; 500 pairs au plus deviennent des
+  appareils (resserrez le filtre de groupes au-delà ; les comptes les
+  incluent tous).
+- Un pair supprimé dans NetBird puis réenregistré reçoit un nouvel
+  identifiant NetBird : il devient un nouvel appareil (l'ancien reste sans
+  valeurs).
+- L'appareil réseau est unique par intégration (`network:main`) : diriger
+  l'intégration vers un autre compte garde le même appareil.
+- Lecture seule dans cette version : aucune commande (supprimer un pair,
+  changer une règle).
+- Pas testée avec NetBird Cloud ni avec un serveur auto-hébergé, ni avec les
+  différents rôles de NetBird : voir TODO.md dans le dépôt.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par NetBird dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fonctionnement | `section` | Non | Gladys lit votre réseau NetBird par l'API REST de son serveur de gestion (NetBird Cloud ou votre propre serveur), avec un jeton d'accès personnel. Chaque pair devient un appareil Gladys (onglet Découverte) : connecté, dernière vue, IP NetBird, version du client, connexion expirée et date d'expiration ; le réseau devient un appareil avec ses pairs connectés et au total. Lecture seule : Gladys ne change jamais rien dans NetBird. Utilisez le jeton d'un utilisateur de service au rôle Auditor (il lit tous les pairs et ne change rien ; à défaut le rôle User, jamais Admin) : le jeton personnel d'un utilisateur ordinaire au rôle User ne liste que ses pairs, souvent aucun (voir la documentation). Intégration non officielle, sans lien avec NetBird. |
+| Serveur de gestion (vide : NetBird Cloud) | `string` | Non | Laissez vide pour NetBird Cloud (son API est https:\/\/api.netbird.io ; l'adresse du tableau de bord app.netbird.io est lue ainsi). Auto-hébergé : l'adresse https de votre serveur, celle du tableau de bord (ex. https:\/\/netbird.example.org), sans /api. http:\/\/ est refusé : le jeton traverserait le réseau en clair. |
+| Jeton d'accès personnel | `secret` | Oui | Dans le tableau de bord NetBird : Team, Service Users (ou Users), l'utilisateur, Create Token. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement au serveur de gestion NetBird, dans l'en-tête Authorization. |
+| Certificat | `section` | Non | Par défaut le certificat du serveur de gestion doit venir d'une autorité reconnue (NetBird Cloud, Let's Encrypt). Un serveur auto-hébergé avec son propre certificat : saisissez son empreinte SHA-256 ci-dessous. Ce certificat, et aucun autre, est alors accepté, vérifié avant l'envoi du jeton. Laissez vide pour NetBird Cloud. |
+| Empreinte du certificat (SHA-256, facultatif) | `string` | Non | Épingle ce certificat : le serveur doit présenter exactement celui-ci, même après un renouvellement (saisissez alors le nouveau). Affichée par votre navigateur (détails du certificat) ou par openssl (voir la documentation). |
+| Groupes (facultatif) | `string` | Non | Noms ou identifiants des groupes NetBird à suivre, séparés par des virgules : seuls leurs pairs deviennent des appareils et sont comptés. Vide : tous les pairs que voit le jeton. |
+| Rafraîchissement | `select` | Oui | Fréquence de lecture des pairs (une requête à chaque fois). Les déclencheurs de scène démarrent jusqu'à ce délai après le changement. |
+
+## Comment installer NetBird dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : NetBird apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-netbird:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-netbird](https://github.com/LM1LC3N7/gladys-netbird).
+
+NetBird nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+NetBird est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-netbird) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-netbird/blob/HEAD/docs/fr.md)

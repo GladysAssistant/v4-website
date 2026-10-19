@@ -1,0 +1,170 @@
+---
+title: "Integración domótica Zaptec, gratuita y de código abierto"
+sidebar_label: "Zaptec"
+description: "Cargadores Zaptec en Gladys: estado, potencia, energía y control de la carga. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zaptec.png"
+keywords:
+  - "zaptec"
+  - "domótica zaptec"
+  - "gladys zaptec"
+  - "zaptec gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-zaptec instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zaptec","description":"Cargadores Zaptec en Gladys: estado, potencia, energía y control de la carga.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-zaptec","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zaptec.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T07:26:12Z"}} />
+
+## Presentación
+
+Esta integración lleva sus **cargadores de vehículos eléctricos Zaptec** (Zaptec Go, Go 2 y Pro) a Gladys, a través de la **API en la nube oficial de Zaptec** (`api.zaptec.com`), con la cuenta de la aplicación Zaptec y del Zaptec Portal.
+
+- Cada cargador se convierte en un dispositivo de Gladys: estado del conector, estado de la carga, estado detallado, potencia, intensidad por fase, energía de la sesión, energía total y un interruptor de carga (pausa / reanudación).
+- Cada instalación sobre la que usted tiene permisos (propietario o servicio) se convierte en un dispositivo con su **corriente disponible**, el límite que comparten sus cargadores, ajustable desde Gladys como en la aplicación.
+- La energía total de un cargador es un índice de contador: el seguimiento de energía de Gladys 5.2 lo convierte en un consumo cada 30 minutos.
+- Un widget del panel, dos desencadenantes y una acción de escena lo completan.
+
+Esta integración no tiene relación con Zaptec. Se ha desarrollado sin el hardware: sus comentarios son bienvenidos en el [repositorio de GitHub](https://github.com/guim31/gladys-zaptec/issues).
+
+## Requisitos
+
+- Gladys Assistant 5.1.0 o posterior (5.2 para el seguimiento de energía de la energía total).
+- Una cuenta Zaptec (la de la aplicación Zaptec o del [Zaptec Portal](https://portal.zaptec.com)) con acceso a los cargadores.
+- Para pausar, reanudar o finalizar una carga: los permisos de **propietario** o de **servicio** sobre el cargador. Para cambiar la corriente disponible: los mismos permisos sobre la instalación, con Zaptec Sense (gestión automática de potencia) y el modo autónomo desactivados.
+- Los cargadores conectados a Internet (Wi-Fi, 4G o Ethernet), y Gladys también: todo pasa por la nube Zaptec.
+
+## Configuración
+
+1. En Gladys, abra **Integraciones**, instale **Zaptec** y abra su configuración.
+2. Introduzca la **dirección de correo electrónico** y la **contraseña** de la cuenta Zaptec.
+3. Elija el **idioma de los textos**: los nombres de las funciones (fijados al añadir un dispositivo) y el estado detallado de los cargadores. Francés por defecto.
+4. Elija el **intervalo de actualización**: 1, 2 (por defecto) o 5 minutos.
+5. Guarde y pulse **Probar la conexión**: el mensaje enumera los cargadores y las instalaciones cuya corriente puede ajustar.
+6. Abra la pestaña **Descubrimiento** y añada los dispositivos que desee.
+
+Cómo habla la integración con Zaptec:
+
+- Se conecta con la contraseña (OAuth2, «password grant») y guarda el token de acceso (válido un día aproximadamente) en su volumen privado `/data`. La contraseña permanece en la configuración de Gladys y nunca se escribe en los registros.
+- La **política de uso razonable de la API de Zaptec** limita una cuenta a 10 solicitudes por segundo y pide no consultar la API de forma agresiva; también prohíbe a terceros los puntos de acceso internos de la aplicación Zaptec. La integración solo usa puntos de acceso documentados, lee el estado de cada cargador añadido una vez por intervalo (de 1 a 5 minutos), la instalación cada diez minutos, y nada de los dispositivos no añadidos. Ante un HTTP 429, se pausa el tiempo que pida Zaptec (5 minutos si no lo indica).
+- Si Zaptec rechaza las credenciales, la integración deja de intentarlo hasta que vuelva a guardar la configuración, para que la cuenta no se bloquee por intentos repetidos.
+
+## Dispositivos
+
+### Cargador
+
+| Función               | Tipo en Gladys                | Contenido                                                                                  |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------------------------------ |
+| Conector              | Estación de carga, conector   | Disponible (sin vehículo), ocupado (vehículo conectado), no disponible (sin conexión)      |
+| Estado de la carga    | Estación de carga, carga      | Cargando, vehículo conectado, en pausa por el vehículo, en pausa por el cargador, inactivo |
+| Estado Zaptec         | Texto                         | Sin vehículo, vehículo conectado (en espera), cargando, carga en pausa, carga terminada…   |
+| Potencia de carga     | Potencia (W)                  | Potencia entregada al vehículo                                                             |
+| Intensidad L1, L2, L3 | Intensidad (A)                | Intensidad de cada fase                                                                    |
+| Energía de la sesión  | Energía añadida (kWh)         | Energía de la sesión en curso, o de la última                                              |
+| Energía total         | Índice (kWh)                  | Contador firmado del cargador (enviado por el cargador aproximadamente una vez por hora)   |
+| Carga                 | Interruptor de carga, control | Apagado: pausa la carga. Encendido: reanuda una carga pausada desde Gladys o la aplicación |
+
+El cargador también lleva una insignia **cloud**, que pasa a **inaccesible** cuando está sin conexión: el conector indica entonces «no disponible» y el estado «Sin conexión».
+
+**Carga en pausa** es una pausa enviada desde Gladys o la aplicación Zaptec (el cable sigue conectado, el cargador puede desbloquearlo). **Carga terminada** significa que el vehículo se detuvo por sí mismo (batería llena, su propia programación): Zaptec no puede reanudarla, desconecte y vuelva a conectar.
+
+### Instalación
+
+| Función                  | Tipo en Gladys                      | Contenido                                                                                    |
+| ------------------------ | ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| Corriente disponible     | Intensidad de consigna (A), control | Corriente que pueden tomar juntos todos los cargadores de la instalación, en todas las fases |
+| Máximo de la instalación | Intensidad (A)                      | El calibre de la instalación (su interruptor), límite superior del ajuste anterior           |
+
+La instalación solo aparece si la cuenta puede leerla (propietario o servicio). Zaptec recomienda no cambiar la corriente disponible más de una vez cada 15 minutos: muchos vehículos toleran mal los cambios frecuentes. Ajustar 0 A detiene todos los cargadores de la instalación.
+
+## Widget
+
+El widget **Cargador Zaptec** muestra un cargador: potencia de carga y energía de la sesión como mosaicos en directo, el estado Zaptec y la conexión, y los botones adecuados a la situación:
+
+- cargando: **Pausa** y **Finalizar**;
+- en pausa desde Gladys o la aplicación: **Reanudar** y **Finalizar**;
+- vehículo conectado, en espera o carga terminada: **Finalizar**;
+- sin vehículo o cargador sin conexión: ningún botón.
+
+**Finalizar** pide una confirmación: detiene la carga y retira la autorización de la sesión. Elija el cargador en los ajustes del widget.
+
+## Desencadenantes y acción de escena
+
+### Desencadenantes
+
+- **Vehículo conectado**: se ha conectado un vehículo a un cargador que no tenía ninguno. Variable: el nombre del cargador.
+- **Carga terminada**: el vehículo ha dejado de tomar corriente por sí mismo (batería llena o su propio límite) y sigue conectado. Una pausa enviada desde Gladys o la aplicación no lo activa. Variables: el nombre del cargador, la energía de la sesión en kWh.
+
+Ambos se detectan en cada lectura, es decir, en un intervalo de actualización. Un cargador que vuelve a estar en línea con un vehículo ya conectado no activa **Vehículo conectado**. Cada desencadenante puede limitarse a un cargador. Existen porque el editor de escenas no ofrece una lista para los estados de una estación de carga.
+
+### Acción
+
+**Controlar una carga Zaptec** pausa o reanuda la carga de un cargador, o finaliza la sesión. Su salida es la orden Zaptec enviada (`stop_charging_final`, `resume_charging` o `deauthorize_and_stop`). Zaptec solo acepta una pausa durante la carga y una reanudación después de una pausa: en los demás casos la acción falla con un mensaje que indica el motivo.
+
+Las funciones controlables (carga, corriente disponible) también se ajustan con la acción estándar **Controlar un dispositivo** de Gladys.
+
+## Ejemplos de escenas
+
+- **Carga en horas valle**: desencadenante **Vehículo conectado** → esperar 2 minutos → si la hora está entre las 7:00 y las 22:00, **Controlar una carga Zaptec** «Pausar»; cada día a las 22:00, «Reanudar».
+- **Recordatorio**: cada día laborable a las 21:00, si el **Conector** del cargador está «disponible» (sin vehículo), enviar el mensaje «El coche no está conectado».
+- **Bienvenida a casa**: desencadenante **Vehículo conectado** → encender la luz del garaje durante 5 minutos.
+- **Fin de carga**: desencadenante **Carga terminada** → enviar «Carga terminada: `{{triggerEvent.data.session_energy}}` kWh en `{{triggerEvent.data.charger_name}}`».
+- **Deslastre**: cuando la potencia de la casa supere los 9000 W (medida por otra integración), ajustar la **Corriente disponible** de la instalación a 10 A; por debajo de 6000 W, volver a 25 A.
+
+## Solución de problemas
+
+- **«Zaptec ha rechazado la dirección de correo electrónico y la contraseña»**: compruébelas en el Zaptec Portal y vuelva a guardar la configuración (la integración no lo reintenta antes).
+- **«No se puede acceder a la nube Zaptec»**: Gladys no tiene acceso a Internet o la nube Zaptec está caída. La integración lo reintenta en cada intervalo e indica cuándo vuelve a funcionar.
+- **Un cargador sigue «no disponible»**: el propio cargador está sin conexión para Zaptec. Compruébelo en la aplicación Zaptec.
+- **No hay dispositivo de instalación**: la cuenta no tiene permisos de propietario ni de servicio sobre la instalación. Los cargadores funcionan igualmente.
+- **«La cuenta Zaptec no tiene permisos»**: una orden o la corriente disponible requieren permisos de propietario o de servicio; pídalos al propietario de la instalación en el Zaptec Portal.
+- **«Solo se reanuda una carga en pausa»**: Zaptec solo reanuda una carga pausada por una orden. Una carga detenida por el vehículo, por su programación o por 0 A disponibles no se reanuda desde el cargador.
+- **La carga no empieza al conectar**: si se exige autorización (RFID o aplicación), autorícela en la aplicación Zaptec; Gladys no puede hacerlo (ver Limitaciones).
+- **Demasiadas solicitudes**: otras herramientas usan la misma cuenta Zaptec a la vez. Elija un intervalo más largo.
+- **La energía total no cambia**: el cargador firma su contador aproximadamente una vez por hora; la energía de la sesión avanza durante la carga.
+- **Registros detallados**: en los ajustes del contenedor, ponga `LOG_LEVEL=debug`. Una lectura normal no escribe nada en el nivel por defecto.
+
+## Limitaciones
+
+- Desarrollada sin el hardware: las respuestas de la API de Zaptec proceden de los clientes de código abierto (Home Assistant), no de un cargador real. Sus comentarios son bienvenidos.
+- Solo nube: sin conexión local al cargador, nada funciona sin Internet.
+- Sin flujo en tiempo real: el estado se lee cada 1, 2 o 5 minutos, y una vez más 10 segundos después de una orden. El canal en tiempo real de Zaptec (Service Bus) no se utiliza.
+- **Sin «autorizar la carga»**: la aplicación Zaptec usa un punto de acceso interno, y la política de uso de Zaptec prohíbe a terceros los puntos de acceso internos. Autorice desde la aplicación Zaptec, con RFID, o desactive la autorización de la instalación.
+- Sin estado de error: la API de Zaptec no ofrece un modo de avería que un tercero pueda leer de forma fiable.
+- No gestionado: corriente máxima del cargador, cambio de fases, programación de la carga, Zaptec Sense, bloqueo del cable, reinicio y actualización del firmware. El desbloqueo del cable no se ofrece deliberadamente.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Zaptec te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Cuenta Zaptec | `section` | No | Utilice la cuenta de la aplicación Zaptec o del Zaptec Portal. Gladys lee sus cargadores a través de la API en la nube oficial de Zaptec. Sin relación con Zaptec. |
+| Correo electrónico | `string` | Sí | El usuario de la aplicación Zaptec y del Zaptec Portal. |
+| Contraseña | `secret` | Sí |  |
+| Idioma de los textos | `select` | No | Nombres de las funciones (fijados al añadir un dispositivo) y estado detallado de los cargadores. |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de la nube Zaptec. Zaptec pide un uso razonable de su API: de uno a cinco minutos. |
+
+## Cómo instalar Zaptec en Gladys
+
+1. En Gladys, abre **Integraciones**: Zaptec aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-zaptec:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-zaptec](https://github.com/guim31/gladys-zaptec).
+
+Zaptec requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Zaptec es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-zaptec) — [fuente de esta documentación](https://github.com/guim31/gladys-zaptec/blob/HEAD/docs/es.md)

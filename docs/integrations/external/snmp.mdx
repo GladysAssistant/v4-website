@@ -19,7 +19,7 @@ https://github.com/prohand/gladys-snmp instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"SNMP","description":"Monitor switches, routers, NAS and UPS over SNMP: status, traffic, CPU, battery.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-snmp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-snmp.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T21:41:32Z"}} />
+<ExternalIntegrationHeader integration={{"name":"SNMP","description":"Monitor switches, routers, NAS and UPS over SNMP: status, traffic, CPU, battery.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-snmp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-snmp.png","type":"device","version":"1.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T22:12:41Z"}} />
 
 This integration reads your network equipment over **SNMP** — switches,
 routers, Wi-Fi access points, NAS, servers, UPS, PDUs, printers — and turns
@@ -44,6 +44,36 @@ Common places to find it: Synology _Control Panel → Terminal & SNMP_, QNAP
 _Network & File Services → SNMP_, UniFi _Settings → System → SNMP_,
 MikroTik _IP → SNMP_, a Linux server `snmpd` (`/etc/snmp/snmpd.conf`), an
 Eaton or APC network card _Network → SNMP_.
+
+## Automatic discovery
+
+The simplest way: let Gladys find your devices.
+
+1. In **Configuration**, enter your **community** (_SNMP access_ section) if
+   it is not `public`, and save.
+2. Open the **Discovery** tab and click **Scan**.
+3. Gladys broadcasts an SNMP request (a read of `sysName`) on your local
+   network, UDP port 161. Every device that answers shows up, with its SNMP
+   name.
+4. Click **Create** for the ones you want to follow.
+
+Profiles are picked for you: `host` if the device has HOST-RESOURCES (CPU,
+memory, disks), `ups` if it has UPS-MIB. Interfaces and custom OIDs are
+still declared in the list (see below).
+
+Good to know:
+
+- The scan uses SNMP v2c (v1 if you chose v1) and the community of the
+  configuration. It is broadcast to the whole local network: in v1/v2c it
+  travels in clear text anyway.
+- Only port 161 and the local network of the Gladys server are covered. A
+  device that speaks **only SNMP v3**, uses another port or sits behind a
+  router is declared by hand, in the list below.
+- Some devices ignore broadcast requests: add them by hand too.
+- Discovered devices do not need to be in the list: Gladys keeps them. Delete
+  the device in Gladys to stop following it.
+- The scan needs a Gladys with network discovery ("active" scan): on an older
+  version it finds nothing and the log says so.
 
 ## Configuration
 
@@ -241,6 +271,10 @@ battery…).
 
 ## Troubleshooting
 
+- **The scan finds nothing** — check the community and the version in _SNMP
+  access_, and that the device is on the same local network as the Gladys
+  server. A device that ignores broadcast, or speaks only SNMP v3, is
+  declared by hand.
 - **A device stays unreachable** — check that SNMP is on, the community (or
   the v3 user and keys) is right, and that the device accepts requests from
   the address of your Gladys server. Turn **Detailed logs** on and run **Test
@@ -259,8 +293,8 @@ These are the settings SNMP asks for in its configuration screen in Gladys.
 
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
-| Getting started | `section` | No | Gladys reads your equipment over SNMP on your local network (UDP 161): switches, routers, Wi-Fi access points, NAS, servers, UPS, printers. Enable SNMP on each device (v2c with a read-only community is the simplest), then list the devices below. Each one becomes a Gladys device: reachable, response time and uptime, plus the profiles you pick (interfaces, host, ups) and your own OIDs. |
-| SNMP agents | `string` | No | The devices to read, separated by commas: host[:port];name;profiles — e.g. 192.168.1.10;NAS;host, 192.168.1.20;UPS;ups. Profiles: interfaces, host, ups (join several with +). For interfaces, custom OIDs or per-device credentials, paste a JSON list instead: see the documentation. |
+| Getting started | `section` | No | Gladys reads your equipment over SNMP on your local network (UDP 161): switches, routers, Wi-Fi access points, NAS, servers, UPS, printers. Enable SNMP on each device (v2c with a read-only community is the simplest), then click Scan in the Discovery tab, or list the devices below. Each one becomes a Gladys device: reachable, response time and uptime, plus the profiles you pick (interfaces, host, ups) and your own OIDs. |
+| SNMP agents | `string` | No | Devices found by the scan need not be listed. Others, separated by commas: host[:port];name;profiles — e.g. 192.168.1.10;NAS;host, 192.168.1.20;UPS;ups. Profiles: interfaces, host, ups (join several with +). For interfaces, custom OIDs or per-device credentials, paste a JSON list instead: see the documentation. |
 | SNMP access | `section` | No | Used by every agent that does not say otherwise in the JSON list. |
 | SNMP version | `select` | No |  |
 | Community (v1 / v2c) | `secret` | No | The read community of your devices. Left empty: public. Use a read-only community: Gladys only writes the OIDs you mark as writable. |
@@ -279,7 +313,7 @@ These are the settings SNMP asks for in its configuration screen in Gladys.
 ## How to install SNMP in Gladys
 
 1. In Gladys, open **Integrations**: SNMP appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-snmp:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-snmp:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-snmp](https://github.com/prohand/gladys-snmp).
 

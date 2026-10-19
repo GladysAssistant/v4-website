@@ -1,0 +1,223 @@
+---
+title: "Integración domótica Portainer, gratuita y de código abierto"
+sidebar_label: "Portainer"
+description: "Your Docker containers through Portainer: running, health, CPU, memory, start/stop. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-portainer.png"
+keywords:
+  - "portainer"
+  - "domótica portainer"
+  - "gladys portainer"
+  - "portainer gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-portainer instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Portainer","description":"Your Docker containers through Portainer: running, health, CPU, memory, start/stop.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-portainer","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-portainer.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T17:02:14Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Your Docker containers in Gladys, through the REST API of Portainer (CE or
+BE 2.x) on your network:
+
+- each container becomes a Gladys device: **running** and **healthy** (its
+  Docker healthcheck), **CPU (%)**, **memory** (MB), and **start**, **stop**
+  and **restart** buttons;
+- each Portainer environment becomes a device with its **containers running**
+  and **containers stopped**;
+- the **Container stopped or unhealthy** scene trigger.
+
+> **This integration has never been tested against a real Portainer.** This
+> first version was written from the Portainer API reference, the Docker
+> Engine API and tomaae/homeassistant-portainer, and tested against a fake
+> Portainer only. Please report what works and what does not on the Gladys
+> forum.
+
+Unofficial integration, not affiliated with Portainer.io.
+
+## Before you start: a dedicated user and its token
+
+1. In Portainer, **Administration → User-related → Users**, create a user
+   `gladys` (Portainer BE: give it the **Read-only user** role on the
+   environments Gladys should only watch, **Operator** where it may start and
+   stop containers; Portainer CE: add it to a team that has access to these
+   environments).
+2. Log in as this user, open **My account → Access tokens → Add access
+   token**, name it `gladys` and copy the token (it starts with `ptr_`):
+   Portainer shows it only once.
+3. An administrator token works too, but gives Gladys much more than it needs.
+
+## Configuration
+
+- **Portainer address**: `https://192.168.1.10:9443`. A bare address (without
+  `https://`) is read as https on port 9443, Portainer's own. With `https://`
+  and no port, the port is 443 (80 for `http://`), like in a browser: that is
+  the case of Portainer behind a reverse proxy, whose path is kept
+  (`https://example.org/portainer`). Avoid `http://192.168.1.10:9000`: the
+  token would cross your network in clear.
+- **Access token**: kept by Gladys in its database, never shown again, sent
+  only to Portainer, in the `X-API-Key` header (never in an address, never in
+  a log, never in the `/data` volume). Paste the token alone: a space or an
+  invisible character copied with it is refused with a clear message.
+- **Certificate** (https only; with an `http://` address these options are
+  refused): by default the certificate of Portainer must come from a known
+  authority (Let's Encrypt…). Portainer generates a self-signed one on port
+  9443; two ways to accept it:
+  - **Accept the self-signed certificate**: trust on first use. A certificate
+    valid for the host (known authority) is accepted without a pin.
+    Otherwise the certificate seen at the first connection is trusted and
+    remembered (in the `/data` volume of the integration): **the token goes
+    to whoever answers this first connection**, and again to whoever answers
+    the first connection after **Trust the new certificate**. After that, a
+    different certificate is refused before the token is sent.
+  - **Certificate fingerprint**: safer, the only way to close the first-use
+    window: nothing else is ever accepted, not even the first time, not even
+    a certificate from a known authority. In your browser, open Portainer,
+    click the padlock, show the certificate and copy its SHA-256 fingerprint;
+    or run
+    `openssl s_client -connect 192.168.1.10:9443 </dev/null | openssl x509 -noout -fingerprint -sha256`.
+- **Environments**: names or ids, separated by commas; empty, every Docker
+  environment the token sees. Edge and Kubernetes environments are left out.
+- **Allow starting, stopping and restarting containers**: off by default (see
+  Commands).
+- **CPU and memory**: every minute (default) to every 10 minutes, or not read.
+
+Then open the **Discovery** tab and create the containers and environments
+you want to follow. Only the created containers get their CPU and memory
+read.
+
+## Commands
+
+- Off by default: Gladys only reads. Once **Allow starting, stopping and
+  restarting containers** is ticked, the **Start**, **Stop** and **Restart**
+  buttons act on the container.
+- **Running** is a reading, never a switch: Gladys hands every switch to the
+  voice assistants (Google Home, Alexa, HomeKit), to MCP and to the "turn
+  off" scene actions, so "turn everything off" would stop your containers.
+  Use the buttons, from the dashboard or a scene.
+- **Never** stopped nor restarted from Gladys, even when allowed:
+  - Gladys and its integrations: a label of the Gladys core
+    (`io.gladysassistant.…`), an image `gladysassistant/…` or a repository
+    named `gladys…`, or a container whose name starts with `gladys`;
+  - Portainer and its agent: images `portainer/portainer-ce`, `-ee`,
+    `portainer/agent`, or a name starting with `portainer`;
+  - any container connected to the Docker socket (`docker.sock`): it manages
+    the others (the Gladys core, a socket proxy, Watchtower…);
+  - the container of this integration itself.
+    Starting them stays possible.
+- **Not recognized, so not protected**: the other containers your house
+  needs, such as the reverse proxy in front of Portainer or Gladys (Traefik,
+  Nginx Proxy Manager, Caddy), your DNS (Pi-hole, AdGuard Home) or the MQTT
+  broker Gladys uses (Mosquitto). Stopping one of them can cut Gladys from
+  Portainer, or your whole network: leave the commands off, or give the token
+  user no right on these containers (Portainer BE roles).
+- Commands on one container run one at a time; two containers never wait for
+  each other (a scene that stops web then db stops both). Just before acting,
+  Gladys reads the container from Docker: if it cannot, nothing is sent; if
+  the container is already running (start) or stopped (stop), nothing is sent
+  either. When the command cannot be checked within 3.5 s, nothing is sent
+  and Gladys shows a failure (never an action after a failure was shown).
+- Docker answers a stop once the container stopped (10 s of grace by
+  default). Gladys does not wait that long: it answers "done" at most 4.3 s
+  after your command, once the command was sent, and the running state
+  follows as soon as Docker is done. A stop or restart asked from Gladys never
+  fires the **Container stopped or unhealthy** trigger. Another command on the
+  same container is refused while Docker is still at work.
+- The containers are recognized by their **name** (and environment), not by
+  their Docker id: a container recreated by an image update or by
+  `docker compose up` keeps its Gladys device, its history and its scenes.
+
+## Refresh and limits
+
+- The containers (running, health) of every environment are read every 30
+  seconds: the running state, the health sensor, the counts and the trigger
+  lag by up to 30 seconds.
+- The CPU and memory figures cost Docker about a second per container: they
+  are read only for the created containers that run, 25 per round at most (3
+  at a time; beyond 25, in turn), at the chosen pace. A stopped container
+  shows 0. Gladys accepts 300 states per minute from an integration: the CPU
+  and memory figures that changed are sent only while this integration has
+  sent fewer than 250 in the last minute (the others wait for the next
+  round); the running, health and count states are always sent.
+- **CPU (%)** is the figure of `docker stats`: 100 means one CPU fully busy
+  (400 on four busy CPUs). Gladys has no CPU category: the feature has no
+  unit. **Memory** is in MB (10^6 bytes; `docker stats` shows MiB, about 5 %
+  less), page cache excluded.
+- **Healthy** is published only for a container that has a Docker
+  healthcheck (1 healthy, 0 unhealthy; nothing while it is starting).
+- The trigger fires when a running container stops (exited or dead) without
+  Gladys asking, or when its healthcheck turns unhealthy, once per change,
+  with the container, its name, its environment and the problem (`stopped` or
+  `unhealthy`). The first reading after a start of the integration fires
+  nothing. A container that is removed (not stopped) does not fire.
+
+## Connection problems
+
+- **Token refused** (HTTP 401: wrong, revoked or expired): Gladys does not
+  try again by itself, even after a restart. Create a new token, paste it and
+  save, or press **Test the connection**.
+- **Portainer unreachable**: retried after 30 s, then up to every 10 min; the
+  devices show as unreachable meanwhile. An environment that does not answer
+  (agent down) only marks its own containers unreachable.
+- **Portainer busy** (HTTP 429, met by any request: reading, Discovery,
+  command): every request pauses for 1 minute to 6 hours, as long as
+  Portainer asks (Retry-After), even across a restart; saving the
+  configuration or pressing **Test the connection** lifts it.
+- **Certificate changed**: nothing is sent; if you renewed it, press **Trust
+  the new certificate** (or type the new fingerprint).
+
+## Limits
+
+- One Portainer per integration, 20 environments and 500 containers at most.
+- Docker environments (socket, API or Portainer agent) only: Edge agents
+  (their tunnel opens on demand) and Kubernetes are left out.
+- Swarm service tasks get a new name at every update: each one becomes a new
+  device.
+- Not tested with Portainer BE role rules, nor with Podman.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Portainer te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Gladys reads your Docker containers through the REST API of Portainer (CE or BE 2.x), with an access token. Each container becomes a Gladys device (Discovery tab): running, healthy (healthcheck), CPU and memory, start, stop and restart buttons; each Portainer environment becomes a device with its containers running and stopped. Create the token with a dedicated Portainer user that sees only the environments Gladys needs (see the documentation). Unofficial integration, not affiliated with Portainer.io. |
+| Portainer address | `string` | Sí | The address of Portainer on your network: https:\/\/\<IP>:9443. A bare address (no https:\/\/) is read as https on port 9443; with https:\/\/ and no port, port 443 (a reverse proxy, a path is kept). Avoid http:\/\/\<IP>:9000: the token would cross your network in clear. |
+| Access token | `secret` | Sí | In Portainer: My account, Access tokens, Add access token. Kept by Gladys in its database, never shown again, sent only to Portainer, in the X-API-Key header. |
+| Certificate | `section` | No | By default the certificate of Portainer must come from a known authority. Portainer generates a self-signed one: either tick the box below (the certificate seen at the first connection is remembered: the token goes to whoever answers that first connection), or type its SHA-256 fingerprint (safer: nothing else is ever accepted, not even the first time). After the first connection, a different certificate is refused before the token is sent. Https only. |
+| Accept the self-signed certificate | `boolean` | No | On: the certificate seen at the first connection is trusted and remembered; a different one later is refused until you press "Trust the new certificate". |
+| Certificate fingerprint (SHA-256, optional) | `string` | No | Pins this certificate: Portainer must present exactly it. The fingerprint is shown by your browser (certificate details) or by openssl (see the documentation). |
+| Environments (optional) | `string` | No | Names or ids of the Portainer environments to follow, separated by commas. Empty: every Docker environment the token sees (Edge and Kubernetes environments are left out). |
+| Commands | `section` | No | By default Gladys only reads: the Start, Stop and Restart buttons are refused unless you allow them below (the running state is never a switch: no voice assistant nor "turn everything off" can stop a container). Even then, Gladys never stops nor restarts Gladys itself, its integrations, Portainer, its agent, nor a container connected to the Docker socket. Other vital containers (reverse proxy, DNS, MQTT broker) are not recognized: see the documentation. The user of the token needs the right to operate the containers. |
+| Allow starting, stopping and restarting containers | `boolean` | No |  |
+| Refresh | `section` | No | Gladys reads the containers (running, health) every 30 seconds. The CPU and memory figures cost more to Docker: they are read at the pace below, only for the containers created in Gladys that run, 25 per round at most. |
+| CPU and memory | `select` | Sí |  |
+
+## Cómo instalar Portainer en Gladys
+
+1. En Gladys, abre **Integraciones**: Portainer aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-portainer:0.1.2`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-portainer](https://github.com/LM1LC3N7/gladys-portainer).
+
+Portainer requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Portainer es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-portainer) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-portainer/blob/HEAD/docs/en.md)

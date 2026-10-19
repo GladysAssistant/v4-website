@@ -1,0 +1,170 @@
+---
+title: "Intégration domotique Easee, gratuite et open source"
+sidebar_label: "Easee"
+description: "Bornes de recharge Easee et Equalizer dans Gladys : état, puissance, énergie, pilotage. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-easee.png"
+keywords:
+  - "easee"
+  - "domotique easee"
+  - "gladys easee"
+  - "easee gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-easee instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Easee","description":"Bornes de recharge Easee et Equalizer dans Gladys : état, puissance, énergie, pilotage.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-easee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-easee.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T10:18:13Z"}} />
+
+## Présentation
+
+Cette intégration amène vos **bornes de recharge Easee** (Easee Home, Easee Charge, Charge Lite, Charge Max, Charge Up, Charge Core, Charge Pro, Easee One) et votre **Easee Equalizer** dans Gladys, par l'API cloud officielle d'Easee, celle qu'utilise l'appli Easee.
+
+- Chaque borne devient un appareil Gladys : statut du connecteur, état de la charge, puissance, intensité par phase, énergie de la session, énergie totale, limite de courant, et les commandes de charge.
+- L'Equalizer devient un appareil qui mesure le logement : import et export réseau, intensité par phase, énergie importée et exportée.
+- L'énergie totale d'une borne est un index de compteur : le suivi d'énergie de Gladys en tire une consommation toutes les 30 minutes.
+- Un widget de tableau de bord, deux déclencheurs et une action de scène complètent le tout.
+
+La recharge « intelligente » (solaire) reste dans l'appli Easee, ou dans evcc, que Gladys gère déjà : cette intégration ne la duplique pas.
+
+Cette intégration n'est pas affiliée à Easee. Elle a été développée sans le matériel : vos retours sont les bienvenus sur le [dépôt GitHub](https://github.com/guim31/gladys-easee/issues).
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent (5.2 pour le suivi d'énergie de l'énergie totale).
+- Un compte Easee (celui de l'appli Easee) propriétaire des bornes ou y ayant accès.
+- Les bornes installées dans l'appli Easee et connectées à Internet (Wi-Fi ou 4G).
+- Gladys doit avoir accès à Internet : tout passe par le cloud Easee (`api.easee.com`).
+
+## Configuration
+
+1. Dans Gladys, ouvrez **Intégrations**, installez **Easee**, puis ouvrez sa configuration.
+2. Renseignez l'**adresse e-mail ou le numéro de téléphone** et le **mot de passe** du compte Easee. Un numéro de téléphone commence par l'indicatif, ex. `+33612345678`.
+3. Choisissez la **langue des textes des appareils** : les noms des fonctionnalités (fixés à l'ajout d'un appareil) et le statut détaillé des bornes. Français par défaut.
+4. Choisissez l'**intervalle de rafraîchissement** : 1 minute (par défaut), 2 ou 5 minutes.
+5. Enregistrez, puis appuyez sur **Tester la connexion** : le message liste les bornes et les Equalizer trouvés.
+6. Ouvrez l'onglet **Découverte** et ajoutez les appareils voulus.
+
+Comment l'intégration dialogue avec Easee :
+
+- Elle se connecte une fois, puis garde le jeton d'accès et son jeton de rafraîchissement dans son volume privé `/data`. Le mot de passe reste dans la configuration de Gladys et n'apparaît jamais dans les journaux.
+- Easee limite le nombre de requêtes d'un compte (HTTP 429 au-delà). L'intégration lit l'état de chaque appareil ajouté une fois par intervalle, les réglages de chaque borne toutes les dix minutes, et rien pour les appareils que vous n'avez pas ajoutés. Sur un 429, elle s'arrête le temps demandé par Easee (5 minutes sinon).
+- Si Easee refuse les identifiants, l'intégration cesse d'essayer jusqu'à ce que vous enregistriez de nouveau la configuration : le compte n'est pas bloqué par des tentatives répétées.
+
+## Appareils
+
+### Borne
+
+| Fonctionnalité        | Type dans Gladys                     | Contenu                                                                                                  |
+| --------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Connecteur            | Borne de recharge, connecteur        | Disponible (aucun véhicule), occupé (véhicule branché), indisponible (hors ligne), en défaut             |
+| État de la charge     | Borne de recharge, état de la charge | En charge, véhicule connecté, en pause (véhicule), en pause (borne), inactif                             |
+| Statut Easee          | Texte                                | Le statut détaillé d'Easee : en attente de démarrage, charge terminée, en attente d'autorisation...      |
+| Puissance de charge   | Puissance (W)                        | Puissance fournie au véhicule                                                                            |
+| Intensité L1, L2, L3  | Intensité (A)                        | Intensité de chaque phase                                                                                |
+| Énergie de la session | Énergie ajoutée (kWh)                | Énergie de la session en cours, ou de la dernière                                                        |
+| Énergie totale        | Index (kWh)                          | Compteur d'énergie de la borne depuis son installation (mis à jour par Easee environ une fois par heure) |
+| Limite de courant     | Intensité de consigne (A), commande  | Limite dynamique de la borne : 0 (aucun courant) ou de 6 A au maximum de la borne                        |
+| Charge autorisée      | Commutateur de charge, commande      | Allumé : démarre ou reprend la charge. Éteint : la met en pause. Il faut un véhicule branché             |
+| Borne activée         | Commutateur, commande                | Active ou désactive la borne dans ses réglages                                                           |
+
+La borne porte aussi un badge **cloud**, qui passe à **injoignable** quand la borne est hors ligne.
+
+La limite de courant est la limite _dynamique_ d'Easee, faite pour changer souvent (délestage). Elle ne touche pas au courant maximal réglé par l'installateur.
+
+### Equalizer
+
+| Fonctionnalité       | Type dans Gladys               | Contenu                                         |
+| -------------------- | ------------------------------ | ----------------------------------------------- |
+| Import réseau        | Réseau, puissance importée (W) | Puissance prise au réseau par le logement       |
+| Export réseau        | Réseau, puissance exportée (W) | Puissance envoyée au réseau (panneaux solaires) |
+| Intensité L1, L2, L3 | Intensité (A)                  | Intensité de chaque phase du logement           |
+| Énergie importée     | Réseau, index d'import (kWh)   | Compteur d'import de l'Equalizer                |
+| Énergie exportée     | Réseau, index d'export (kWh)   | Compteur d'export de l'Equalizer                |
+
+## Widget
+
+Le widget **Borne Easee** montre une borne : puissance de charge, énergie de la session et limite de courant en tuiles en direct, le statut Easee et la connexion, et les boutons adaptés à la situation :
+
+- pendant la charge : **Pause** et **Arrêter** ;
+- véhicule branché, sans charge : **Démarrer** (ou **Reprendre**) et **Arrêter** ;
+- aucun véhicule ou borne hors ligne : aucun bouton.
+
+**Arrêter** demande une confirmation : il termine la session (avec une autorisation requise, il faut autoriser de nouveau le véhicule). Choisissez la borne dans les réglages du widget.
+
+## Déclencheurs et action de scène
+
+### Déclencheurs
+
+- **Véhicule branché** : un véhicule a été branché sur une borne qui n'en avait pas. Variable : le nom de la borne.
+- **Charge terminée** : le véhicule a cessé de lui-même de prendre du courant (batterie pleine ou sa propre limite) et reste branché. Variables : le nom de la borne, l'énergie de la session en kWh.
+
+Les deux sont détectés à chaque lecture, donc en un intervalle de rafraîchissement au plus. Une borne qui revient en ligne avec un véhicule déjà branché ne déclenche pas **Véhicule branché**. Chaque déclencheur peut être limité à une borne.
+
+### Action
+
+**Piloter une charge Easee** démarre (ou reprend), met en pause ou arrête la charge d'une borne. Sa sortie est la commande Easee envoyée (`resume_charging`, `start_charging`, `pause_charging`, `stop_charging`). L'action échoue quand aucun véhicule n'est branché.
+
+Les fonctionnalités pilotables (limite de courant, charge autorisée, borne activée) se règlent aussi par l'action standard **Contrôler un appareil** de Gladys.
+
+## Exemples de scènes
+
+- **Charge en heures creuses** : à 22 h en semaine, **Piloter une charge Easee** avec « Démarrer ou reprendre » ; à 6 h, « Mettre en pause ».
+- **Rappel** : chaque soir de semaine à 21 h, si le **Connecteur** de la borne est « disponible » (aucun véhicule), envoyer le message « La voiture n'est pas branchée ».
+- **Retour à la maison** : déclencheur **Véhicule branché** → allumer la lumière du garage 5 minutes.
+- **Fin de charge** : déclencheur **Charge terminée** → envoyer « Charge finie : `{{triggerEvent.data.session_energy}}` kWh sur `{{triggerEvent.data.charger_name}}` ».
+- **Délestage** : quand l'**Import réseau** de l'Equalizer dépasse 9000 W, régler la **Limite de courant** à 6 A ; revenu sous 6000 W, la remettre à 16 A.
+
+## Dépannage
+
+- **« Easee a refusé l'adresse e-mail (ou le numéro de téléphone) et le mot de passe »** : vérifiez-les dans l'appli Easee, puis enregistrez de nouveau la configuration (l'intégration ne réessaie pas avant).
+- **« Impossible de joindre le cloud Easee »** : Gladys n'a pas accès à Internet, ou le cloud Easee est en panne. L'intégration réessaie à chaque intervalle et signale le retour.
+- **Une borne reste « indisponible »** : la borne elle-même est hors ligne pour Easee (Wi-Fi ou 4G). Vérifiez-la dans l'appli Easee.
+- **« Aucun véhicule branché »** sur une commande : démarrer, mettre en pause et arrêter demandent un véhicule branché.
+- **Trop de requêtes** : d'autres outils utilisent le même compte Easee en même temps. Choisissez un intervalle plus long.
+- **L'énergie totale ne bouge pas** : Easee la met à jour environ une fois par heure ; l'énergie de la session, elle, avance pendant la charge.
+- **Journaux détaillés** : dans les réglages du conteneur, mettez `LOG_LEVEL=debug`. Une lecture normale n'écrit rien au niveau par défaut.
+
+## Limites
+
+- Développée sans le matériel : les réponses de l'API Easee viennent des clients open source (pyeasee, Home Assistant), pas d'une vraie borne. Vos retours sont les bienvenus.
+- Cloud seulement : aucune connexion locale à la borne, rien ne marche sans Internet.
+- Pas de flux temps réel : l'état est lu toutes les 1, 2 ou 5 minutes, et une fois de plus 10 secondes après une commande.
+- L'intensité par phase lit les bornes d'un réseau TN (la plupart de l'Europe). Sur un réseau IT (Norvège), les phases peuvent être décalées.
+- Non géré : recharge intelligente et solaire, plannings de charge, autorisation par badge RFID, verrouillage du câble, mode de phase, réglages d'équilibrage de l'Equalizer. Le déverrouillage du câble n'est volontairement pas proposé.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Easee dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Compte Easee | `section` | Non | Utilisez le compte de l'appli Easee (adresse e-mail ou numéro de téléphone). Gladys lit vos bornes et votre Equalizer via le cloud Easee chaque minute. Sans lien avec Easee. |
+| E-mail ou téléphone | `string` | Oui | L'identifiant de l'appli Easee. Un numéro de téléphone commence par l'indicatif, ex. +33. |
+| Mot de passe | `secret` | Oui |  |
+| Langue des textes des appareils | `select` | Non | Noms des fonctionnalités (fixés à l'ajout d'un appareil) et statut détaillé des bornes. |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture du cloud Easee. Easee limite le nombre de requêtes : gardez une minute ou plus. |
+
+## Comment installer Easee dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Easee apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-easee:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-easee](https://github.com/guim31/gladys-easee).
+
+Easee nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Easee est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-easee) — [source de cette documentation](https://github.com/guim31/gladys-easee/blob/HEAD/docs/fr.md)

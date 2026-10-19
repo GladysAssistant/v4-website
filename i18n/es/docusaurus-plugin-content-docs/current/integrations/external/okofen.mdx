@@ -1,0 +1,185 @@
+---
+title: "Integración domótica ÖkoFEN, gratuita y de código abierto"
+sidebar_label: "ÖkoFEN"
+description: "ÖkoFEN pellet boilers and heat pumps, read only via their local JSON interface. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-oekofen.png"
+keywords:
+  - "ökofen"
+  - "domótica ökofen"
+  - "gladys ökofen"
+  - "ökofen gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-oekofen instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ÖkoFEN","description":"ÖkoFEN pellet boilers and heat pumps, read only via their local JSON interface.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-oekofen","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-oekofen.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T19:22:10Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration, not affiliated with ÖkoFEN. It brings an **ÖkoFEN**
+pellet boiler (Pellematic, Pellematic Compact, Smart…) or an ÖkoFEN heat pump
+into Gladys, through the **local JSON interface** of its Touch display,
+**read only**.
+
+> **Warning: never tested with a real boiler.** This integration was written
+> from the Home Assistant integration oekofen-pellematic-compact and tested
+> against a fake boiler only. Feedback is welcome.
+
+## What you get
+
+One Gladys device per component the boiler reports:
+
+| Device                      | Features                                                                                                                                                                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ÖkoFEN installation         | Outdoor temperature, mode of the installation, alarm (0/1), active alarms, last message.                                                                                                                                                    |
+| ÖkoFEN boiler 1             | Status (the boiler's text), fault (0/1), boiler temperature and setpoint, combustion chamber temperature, modulation (%), estimated power (kW), pellet store, hopper, pellets used today and yesterday (kg), burner starts and hours, mode. |
+| ÖkoFEN heating circuit 1…   | Flow temperature and setpoint, room temperature and setpoint (when the circuit has a sensor), pump (0/1), mode (Off, Auto, Comfort, Setback), status.                                                                                       |
+| ÖkoFEN hot water 1…         | Water temperature (top and bottom), setpoint, pump, mode (Off, Auto, On forced), status.                                                                                                                                                    |
+| ÖkoFEN buffer tank 1…       | Top and middle temperatures, top setpoint, pump (%), status.                                                                                                                                                                                |
+| ÖkoFEN solar collector 1…   | Collector and store temperatures, pump (%), mode, status (when present).                                                                                                                                                                    |
+| ÖkoFEN solar yield meter 1… | Flow and return temperatures, power (kW), yield today and total (kWh) (when present).                                                                                                                                                       |
+| ÖkoFEN heat pump 1…         | Flow, setpoint, return, source inlet and outlet temperatures, COP, mode, status (when present).                                                                                                                                             |
+
+A feature only appears when the boiler sends its value. Temperatures are
+probes (kept out of the room average). kg, kW, kWh and % have no unit in
+Gladys (the core does not offer them for those categories): the unit is in
+the name. The estimated power is the nominal power × the modulation, only
+when the boiler gives its nominal power (often with the `json.properties`
+file). Solar energy is **not** sent to the Gladys energy dashboard (it would
+count it as electricity).
+
+Scene trigger **ÖkoFEN boiler alarm**: when a read shows a message of the
+boiler never seen before, a boiler newly in fault, or more errors than the
+previous read. Variables: `message` and `code` (empty when unknown). The
+messages already seen are kept (200 at most, in `/data`): a message that
+comes back does not fire again, and a slow or failed read never makes a new
+message go unnoticed. Never at the very first read (it learns the messages
+present).
+
+The badge of each device shows "local", or "unreachable" when the boiler
+does not answer or refuses the password (with an orange dot when that
+component is missing from the last answer).
+
+## Installation
+
+1. On the Touch display of the boiler: **General settings → Network settings
+   (IP Config)**, scroll down and **turn on the JSON interface**. Do not turn
+   on the compatibility mode. The display shows a URL like
+   `http://<ip>:<port>/<password>/all`.
+2. In Gladys, install the ÖkoFEN integration and enter the **IP address**,
+   the **port** (4321 by default) and the **password** of that URL, each in
+   its own field. Do not paste the whole URL in the address field: it holds
+   the password (the integration refuses it).
+3. Save, then add the devices from the **Discovery** tab.
+
+Give the boiler a fixed IP address (a reserved DHCP lease): the address is no
+part of the device ids, but it must stay reachable.
+
+## Read only
+
+This first version **controls nothing**: no lighting, no turning off, no mode
+change, no setpoint. A boiler is a flame appliance, and the JSON interface is
+only protected by a short password sent in clear on the local network: v1
+only reads. Every feature is read only; a command from Gladys (scene,
+dashboard, voice assistant) is refused and nothing is sent.
+
+## Password and privacy
+
+- The password is **kept by Gladys in its database, never shown again, and
+  sent only to the boiler**, in the URL of each read: that is the format of
+  the device. That URL never appears in the logs nor in the status messages.
+- The `/data` volume of the integration only keeps the current pause (429, or
+  the wait after errors), a stop on a refused password and the alarm messages
+  already seen, with a hash of the address and the port. Never the password,
+  nor a hash of it.
+- Everything stays on your local network, over HTTP (the boiler has no HTTPS):
+  anyone listening on that network can read the password, as with the app.
+
+## Refresh
+
+The boiler answers slowly and refuses reads too close together: it is read
+**every 60 seconds** by default (60 to 3600), one request at a time, never two
+less than 3 seconds apart. The **Test the connection** button and Discovery
+only read when the interval (30 seconds at least) has passed since the last
+attempt, successful or not, and no pause holds; otherwise the button shows
+the status and the time left.
+
+The firmware is detected by itself (`all?`, then `all??` for some old
+models); the **Firmware** field forces one or the other. UTF-8, Latin-1
+(ISO-8859-1) and mixed answers are read.
+
+## Errors
+
+- **Password refused** (or JSON interface off): the reads stop; a new try
+  after 10 min, 1 h, then every 6 h, or at once when you change the address
+  or the password. **Test the connection** also tries again, once the
+  interval has passed since the last attempt. Only a successful read lifts
+  the stop, and it is kept across restarts.
+- **The boiler asks to wait** (401 "Wait at least 2500ms") or does not
+  answer: a new try after 1, 2, 5, 10 then every 15 minutes, never faster
+  than the interval. That wait is kept across restarts.
+- **HTTP 429**: a pause of at least 1 minute (Retry-After when given, 6 h at
+  most), for every path, kept across restarts.
+- An answer too large (over 256 KB) or that is not JSON is refused.
+
+## Limits
+
+- Never tested with a real boiler: the field names come from the reference
+  integration and its sample answers.
+- The status texts are the boiler's own, in the language of its display.
+- The time of the messages is the boiler's, without a time zone.
+- No command (see the TODO file of the repository for a v2).
+
+## Credits
+
+- [oekofen-pellematic-compact](https://github.com/dominikamann/oekofen-pellematic-compact)
+  by Dominik Amann (Apache-2.0): the JSON interface, the charsets, the
+  reading of the values and of the messages are ported to JavaScript.
+- See `THIRD_PARTY_NOTICES.md`.
+
+ÖkoFEN and Pellematic are trademarks of ÖkoFEN; this project is not
+affiliated with ÖkoFEN.
+
+## Parámetros de configuración
+
+Estos son los parámetros que ÖkoFEN te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your ÖkoFEN boiler | `section` | No | Brings an ÖkoFEN pellet boiler (Pellematic) or heat pump into Gladys, read only: boiler state, temperatures, modulation, pellets, alarms, heating circuits, hot water, buffer tank and solar when present, and a scene trigger on a new alarm. Read every minute on your local network. Turn on the JSON interface on the Touch display (General settings, Network settings): it shows the address, the port and the password. Nothing can be changed on the boiler from Gladys. Never tested with a real boiler. Not affiliated with ÖkoFEN. |
+| IP address of the boiler | `string` | Sí | The address shown by the JSON interface on the Touch display, without the rest of the URL (the password goes in the field below). |
+| Port of the JSON interface | `number` | No | Shown on the Touch display with the address (4321 by default). |
+| Password of the JSON interface | `secret` | Sí | The password shown in the URL of the JSON interface. Kept by Gladys in its database, never shown again, sent only to the boiler (in the URL of each read, as the boiler requires). |
+| Firmware | `select` | No | Automatic: tries the modern address (all?) then the one of some old firmware (all??). Change it only if the automatic choice fails. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of the boiler (60 to 3600). The boiler answers slowly and refuses reads too close together. |
+| Language of the names | `select` | No | Used for the names of the devices and features added from now on, the modes and the messages. The boiler's own state texts stay in the language of its display. |
+
+## Cómo instalar ÖkoFEN en Gladys
+
+1. En Gladys, abre **Integraciones**: ÖkoFEN aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-oekofen:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-oekofen](https://github.com/LM1LC3N7/gladys-oekofen).
+
+ÖkoFEN requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+ÖkoFEN es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-oekofen) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-oekofen/blob/HEAD/docs/en.md)

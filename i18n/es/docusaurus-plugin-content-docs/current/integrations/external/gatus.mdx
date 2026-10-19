@@ -1,0 +1,221 @@
+---
+title: "Integración domótica Gatus, gratuita y de código abierto"
+sidebar_label: "Gatus"
+description: "Sus endpoints de Gatus en Gladys: estado, tiempo de respuesta, disponibilidad y escenas si uno cae. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-gatus.png"
+keywords:
+  - "gatus"
+  - "domótica gatus"
+  - "gladys gatus"
+  - "gatus gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-gatus instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Gatus","description":"Sus endpoints de Gatus en Gladys: estado, tiempo de respuesta, disponibilidad y escenas si uno cae.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-gatus","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-gatus.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T12:41:15Z"}} />
+
+[Gatus](https://github.com/TwiN/gatus) vigila sus servicios (sitios web, API,
+DNS, puertos, certificados) y los muestra en una página de estado. Esta
+integración trae sus endpoints a Gladys: cada uno se convierte en un
+dispositivo con su estado, tiempo de respuesta y disponibilidad, las escenas
+reaccionan cuando uno cae o vuelve, y un widget del panel los muestra por
+grupo.
+
+Gladys lee Gatus: no comprueba sus servicios por sí misma. Todo se queda en
+su red (sin nube).
+
+Probada con un Gatus real en Docker (versión del 16 de octubre de 2026):
+endpoints en línea, con fallos y detenidos, grupos, un endpoint externo,
+inicio de sesión básico. Sus comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-gatus/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un Gatus accesible desde Gladys, normalmente en el puerto 8080.
+- Si Gatus pide iniciar sesión: el usuario y la contraseña de su sección
+  `security.basic`. Un Gatus protegido por OIDC no es compatible.
+- Para enviar resultados desde Gladys (opcional): un endpoint externo en
+  Gatus y su token.
+
+## Primeros pasos
+
+### 1. Encontrar la dirección de Gatus
+
+Es la dirección de su página de estado, por ejemplo
+`http://192.168.1.2:8080`. Una dirección copiada del navegador también sirve
+(`…/endpoints/core_api`): la integración solo conserva su comienzo.
+
+### 2. Configurar la integración
+
+En Gladys, abra la integración y rellene:
+
+- **Dirección de Gatus**.
+- **Usuario** y **Contraseña**: solo si Gatus pide iniciar sesión. La
+  contraseña en claro, no el hash bcrypt de la configuración de Gatus.
+- **Token de los endpoints externos**: solo para la acción «Enviar un
+  resultado a Gatus».
+- **Intervalo de actualización**: de 30 segundos a 5 minutos (1 minuto por
+  defecto). Una petición cada vez, más dos peticiones por endpoint para las
+  disponibilidades cada 5 minutos.
+- **Fallos antes de la caída**: cuántos fallos seguidos de Gatus marcan un
+  endpoint como caído (2 por defecto). 1 reacciona al primer fallo, como lo
+  muestra la página de Gatus; más evita falsas alarmas en un servicio que
+  falla un instante. Elija un intervalo de actualización cercano al de sus
+  endpoints de Gatus, para no perder ningún resultado.
+- **Idioma de los nombres**: idioma de los nombres de las funciones y de los
+  resultados de escena (francés por defecto).
+
+Después haga clic en **Probar la conexión**: la integración lee Gatus y
+cuenta los endpoints.
+
+### 3. Añadir los endpoints
+
+Abra la pestaña **Descubrir** de la integración: un dispositivo por endpoint
+de Gatus, y un dispositivo «Gatus» para toda la instancia. Añada los que
+desee seguir. Los disparadores de escena y el widget funcionan para todos los
+endpoints, añadidos o no.
+
+Un endpoint renombrado o movido a otro grupo en Gatus recibe una clave nueva,
+por lo tanto un dispositivo nuevo: elimine el antiguo.
+
+## Los dispositivos
+
+Cada endpoint:
+
+- **En línea**: sí cuando la última comprobación de Gatus tuvo éxito, no
+  cuando está caído (vea «Fallos antes de la caída»). Indicador verde o rojo,
+  una condición Sí/No en las escenas.
+- **Tiempo de respuesta**: la duración de la última comprobación correcta, en
+  milisegundos. Enviado como mucho cada 5 minutos, de inmediato cuando cambia
+  el estado.
+- **Disponibilidad 24 h** y **Disponibilidad 7 días**: la proporción de
+  comprobaciones correctas, calculada por Gatus, en porcentaje.
+
+El dispositivo «Gatus»:
+
+- **Endpoints caídos** y **Endpoints en total**.
+
+## Panel
+
+El widget **Gatus** muestra tres mosaicos (endpoints caídos, en línea,
+disponibilidad media en 24 horas) y una lista: hasta diez endpoints, una fila
+por endpoint, los caídos primero, con su grupo, tiempo de respuesta y
+disponibilidad; por encima, una fila por grupo de Gatus («Caídos: 1 / 8»). En
+sus ajustes, elija un grupo, o endpoints añadidos a Gladys. El botón
+**Actualizar** lee Gatus de inmediato.
+
+## Escenas
+
+### Disparadores
+
+- **Un endpoint cae**: un endpoint falla sus comprobaciones, tantas veces
+  seguidas como se configuró. Variables: nombre del endpoint, grupo, lo que
+  falló (las condiciones fallidas, o el error).
+- **Un endpoint se restablece**: un endpoint caído vuelve a pasar su
+  comprobación. Variables: nombre del endpoint, grupo, duración de la caída en
+  minutos.
+
+Ambos pueden limitarse a algunos endpoints. No se envía ningún evento en la
+primera lectura: solo cambios reales. Un endpoint que cayó mientras Gladys se
+reiniciaba se anuncia igualmente, una vez.
+
+### Acciones
+
+- **Estado de un endpoint**: en línea o no, estado en palabras, tiempo de
+  respuesta, disponibilidad en 24 horas, lo que falló, y una frase lista como
+  «NAS: Caído, 97,5 % en 24 h. [STATUS] (502) == 200».
+- **Contar los endpoints caídos**: cuántos están caídos y en total, en Gatus
+  o en un grupo, y los nombres de los caídos.
+- **Enviar un resultado a Gatus**: comunica un éxito o un fallo (con su
+  mensaje) a un endpoint externo de Gatus, indicado por su clave
+  (`grupo_nombre`, como en la dirección de su página de Gatus) o por su
+  nombre. Gatus guarda el historial y envía sus propias alertas. El endpoint
+  externo se declara en la configuración de Gatus:
+
+```yaml
+external-endpoints:
+  - name: nightly-job
+    group: backups
+    token: 'un-token-largo-y-aleatorio'
+```
+
+Ponga el mismo token en la configuración de la integración (varios endpoints
+externos pueden compartirlo).
+
+### Ideas de escenas
+
+- **Un endpoint cae** → enviar un mensaje con el nombre del endpoint y lo que
+  falló.
+- Cada noche, **Contar los endpoints caídos** → si hay más de cero, un
+  mensaje con los nombres.
+- Al final de una escena de Gladys que hace una copia de seguridad o una
+  comprobación propia, **Enviar un resultado a Gatus**: Gatus la muestra como
+  cualquier otro servicio, y avisa cuando deja de ejecutarse.
+
+## Solución de problemas
+
+- **«Gatus no responde»**: compruebe la dirección y el puerto desde la
+  máquina de Gladys, y que ningún cortafuegos lo bloquee.
+- **«Gatus pide iniciar sesión»**: indique el usuario y la contraseña de la
+  sección `security.basic`. Con OIDC, la API no se puede leer.
+- **«La dirección redirige»**: introduzca directamente la dirección
+  `https://`.
+- **«Certificado rechazado»**: un certificado autofirmado no se acepta; use
+  la dirección `http://` en su red.
+- **Un endpoint se queda sin valor**: todavía no tiene resultado (un endpoint
+  nuevo, o un endpoint externo que nunca ha recibido ninguno).
+- **«Ningún endpoint externo con esta clave»**: la clave es `grupo_nombre`,
+  en minúsculas, espacios y puntos cambiados por guiones; un endpoint solo
+  aparece en Gatus tras su primer resultado.
+
+## Límites
+
+- Gladys lee Gatus al intervalo elegido: una caída más corta que él, o que
+  el umbral, puede pasar desapercibida.
+- Las disponibilidades vienen de Gatus, que las cuenta por hora.
+- Las suites, los anuncios y los incidentes de Gatus no se leen.
+- Un Gatus protegido por OIDC no es compatible.
+- Sin relación con Gatus ni con su autor.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Gatus te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Gatus | `section` | No | Introduzca la dirección de su Gatus (la de su página de estado). Después añada los endpoints que desea seguir desde la pestaña Descubrir: Gladys lee Gatus, no comprueba sus servicios por sí misma. |
+| Dirección de Gatus | `string` | Sí | Dirección y puerto de la interfaz web de Gatus (8080 por defecto). |
+| Usuario (opcional) | `string` | No | Solo si Gatus está protegido con un inicio de sesión básico (security.basic). |
+| Contraseña (opcional) | `secret` | No | La contraseña de este usuario, en claro (no su hash bcrypt). |
+| Token de los endpoints externos (opcional) | `secret` | No | El token de sus external-endpoints de Gatus, para la acción de escena que envía un resultado. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Gatus: una petición cada vez, más las disponibilidades cada 5 minutos. |
+| Fallos antes de la caída | `select` | No | Cuántos fallos seguidos de Gatus marcan un endpoint como caído: más evita falsas alarmas, a costa de un aviso más tardío. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo) y de los resultados de escena. |
+
+## Cómo instalar Gatus en Gladys
+
+1. En Gladys, abre **Integraciones**: Gatus aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-gatus:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-gatus](https://github.com/guim31/gladys-gatus).
+
+Gatus requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Gatus es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-gatus) — [fuente de esta documentación](https://github.com/guim31/gladys-gatus/blob/HEAD/docs/es.md)

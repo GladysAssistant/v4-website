@@ -1,0 +1,179 @@
+---
+title: "Homebox smart home integration, free and open source"
+sidebar_label: "Homebox"
+description: "Your Homebox home inventory: items, total value, warranties ending and maintenance due. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-homebox.png"
+keywords:
+  - "homebox"
+  - "homebox smart home"
+  - "gladys homebox"
+  - "homebox gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-homebox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Homebox","description":"Your Homebox home inventory: items, total value, warranties ending and maintenance due.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-homebox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-homebox.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T11:58:39Z"}} />
+
+Follow your home inventory in Gladys through
+[Homebox](https://github.com/sysadminsmedia/homebox), the self-hosted
+inventory and organization system: how many items you own, what they are
+worth, the warranties ending soon and the maintenance to do. Everything stays
+on your local network: Gladys talks directly to Homebox, and only reads it.
+
+Tested against real Homebox servers, 0.26.2 and 0.21.0 (the official Docker
+image). Feedback welcome on the Gladys forum.
+
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- A Homebox server reachable from the Gladys machine, on port 7745 by
+  default, or through a reverse proxy.
+- On Homebox 0.26 or later: an API key (Homebox → your profile → API keys).
+  On an older Homebox: the e-mail and password of a Homebox user. The
+  integration sees the inventory (the "group") of that user.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **Homebox address**, enter the IP address of the server, for example
+   `192.168.1.50`: the integration then uses port 7745. Add a port if yours
+   differs (`192.168.1.50:3100`). Behind a reverse proxy, enter the full
+   address (`https://example.org/homebox`).
+3. Paste an **API key**, or fill in **E-mail** and **Password**. An API key
+   wins when both are filled in.
+4. **Warranty ending within (days)**: a warranty counts as ending soon this
+   many days before its end date (30 by default).
+5. **Upcoming maintenance within (days)**: how far ahead a scheduled
+   maintenance counts as upcoming (7 by default).
+6. **One device per location** (off by default) adds a device for each
+   top-level location of Homebox.
+7. **Read Homebox every**: 5, 15 (default), 30 or 60 minutes.
+8. **Language of names and messages** sets the feature names (fixed when the
+   device is added), the texts and the dates of the scene variables. French by
+   default.
+9. Save, then use **Test the connection**: it shows the Homebox version and
+   the number of items and locations.
+10. In the **Discovery** tab, add the devices you want to follow.
+
+## Devices
+
+**Homebox** (one device for your inventory):
+
+| Feature                  | Value                                                          |
+| ------------------------ | -------------------------------------------------------------- |
+| Items                    | number of items, archived ones left out                        |
+| Locations                | number of locations                                            |
+| Total value              | purchase price × quantity of every item, in the group currency |
+| Warranties expiring soon | items whose warranty ends within the configured window         |
+| Overdue maintenance      | scheduled maintenance whose date has passed                    |
+| Upcoming maintenance     | scheduled maintenance within the configured window             |
+| Next maintenance         | name, item and date of the next maintenance, or "None"         |
+| Next warranty end        | item and date of the next warranty ending soon, or "None"      |
+
+Gladys has a unit for the euro, the dollar and the pound sterling; another
+currency appears in the feature name, for example "Total value (CHF)".
+Lifetime warranties never end; warranties already over are not counted.
+
+**A location** (option): **Items** (number of items stored there,
+sub-locations included) and **Value**. Only the top-level locations get a
+device.
+
+## Dashboard widget
+
+**Home inventory**: four tiles (items, value, warranties, maintenance due) and
+the list of what comes next, the soonest first: overdue maintenance (red),
+upcoming maintenance, warranties ending. Read only.
+
+## Scene triggers
+
+- **Warranty ending soon**: the warranty of an item enters the configured
+  window. Once per item and end date. Variables: item, location, end date,
+  days left.
+- **Maintenance due**: a scheduled maintenance reaches its date without being
+  completed. Once per maintenance. Variables: maintenance, item, scheduled
+  date, days late.
+
+The first read after the installation is silent: what is already pending is
+shown on the device, not announced. The triggers fire at the first read after
+the change (after midnight, within the configured interval).
+
+## Scene actions
+
+**Find an item in Homebox**: give a name (`AA batteries`); the action reads
+Homebox and returns **Found**, **Matching items**, **Item**, **Location** (the
+full path, `Garage / Shelf`) and **Quantity**. The exact name wins, then the
+names containing it; archived items are left out.
+
+## Scene examples
+
+- **Maintenance reminder**: trigger "Maintenance due" → send a message
+  "Time for \{\{triggerEvent.data.maintenance\}\} on \{\{triggerEvent.data.item\}\}".
+- **Warranty**: trigger "Warranty ending soon" → message "The warranty of
+  \{\{triggerEvent.data.item\}\} ends on \{\{triggerEvent.data.expires\}\}".
+- **Stock check**: every Sunday at 10:00 → "Find an item in Homebox"
+  (`AA batteries`) → continue only if the quantity is below 4 → message "Only
+  a few AA batteries left (stored in …)".
+
+## Troubleshooting
+
+- **"Access refused"**: check the API key (it may have expired, or been
+  deleted in Homebox), or the e-mail and password. API keys exist from Homebox
+  0.26 only: on an older version, use the e-mail and password.
+- **"Homebox does not answer"**: check the address and the port from the
+  Gladys machine. The container uses a bridge network: `localhost` is the
+  container itself, enter the IP address of the server instead.
+- **"This address does not answer like Homebox"**: a proxy login page answers
+  instead of Homebox. Enter the address of Homebox itself, or let the proxy
+  through for the Gladys machine.
+- To see more in the logs of the integration, set `LOG_LEVEL=debug`.
+
+## Limits
+
+- Read only: the integration never changes your inventory.
+- Each read is about five requests (the CSV export of the whole inventory
+  included): keep a long interval on a very large inventory.
+- One Homebox group, the one of the API key or user.
+- Not affiliated with the Homebox project.
+
+## Configuration settings
+
+These are the settings Homebox asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect Homebox | `section` | No | Enter the address of your Homebox server (port 7745 by default). On Homebox 0.26 or later, create an API key in your Homebox profile and paste it below. On an older Homebox, enter the e-mail and password of a Homebox user instead. The integration only reads your inventory. |
+| Homebox address | `string` | Yes |  |
+| API key (Homebox 0.26+) | `secret` | No | Profile → API keys in Homebox. Leave empty to use the e-mail and password. |
+| E-mail (without API key) | `string` | No |  |
+| Password (without API key) | `secret` | No |  |
+| Warranty ending within (days) | `number` | No | A warranty counts as ending soon this many days before its end date. |
+| Upcoming maintenance within (days) | `number` | No |  |
+| One device per location | `boolean` | No | Number of items and value of each top-level location, sub-locations included. |
+| Read Homebox every | `select` | No |  |
+| Language of names and messages | `select` | No | Feature names are set when a device is added to Gladys. |
+
+## How to install Homebox in Gladys
+
+1. In Gladys, open **Integrations**: Homebox appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-homebox:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-homebox](https://github.com/guim31/gladys-homebox).
+
+Homebox requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Homebox is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-homebox) — [source of this documentation](https://github.com/guim31/gladys-homebox/blob/HEAD/docs/en.md)

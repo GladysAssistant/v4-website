@@ -1,0 +1,158 @@
+---
+title: "TechnoVE smart home integration, free and open source"
+sidebar_label: "TechnoVE"
+description: "TechnoVE EV chargers over the local API: status, power, energy, current; optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-technove.png"
+keywords:
+  - "technove"
+  - "technove smart home"
+  - "gladys technove"
+  - "technove gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-technove instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TechnoVE","description":"TechnoVE EV chargers over the local API: status, power, energy, current; optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-technove","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-technove.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T04:23:30Z"}} />
+
+Shows your **TechnoVE** EV charging station (Quebec-made i-Series,
+s-Series) in Gladys through its **local API**: no cloud, no account,
+straight on your network.
+
+> **Unofficial API, never tested with a real station.**
+> Not affiliated with TechnoVE. The integration talks to the local API of the station like the
+> python-technove library (used by Home Assistant). TechnoVE may change it
+> without notice.
+
+## What you get
+
+One device per station with:
+
+| Feature                  | Content                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------- |
+| Status                   | Unplugged, Plugged in waiting, Charging, faults, outside the activation period, high tariff |
+| Connector                | Available, occupied, faulted or unavailable (Gladys "charging station" category)            |
+| Charging state           | Charging, vehicle connected, paused (charging not allowed), idle                            |
+| Power (estimated)        | In W: current × output voltage (the station gives no power)                                 |
+| Current                  | In A                                                                                        |
+| Input and output voltage | In V                                                                                        |
+| Energy of the session    | In kWh, a plain sensor                                                                      |
+| Maximum current          | In A, the current setting of the station                                                    |
+| Charging allowed         | Yes / no                                                                                    |
+| Automatic charging       | Yes / no (set in the TechnoVE app)                                                          |
+| Load sharing             | Yes / no, and "load sharing conflict": read only                                            |
+| Start charging           | Button (commands allowed only)                                                              |
+| Stop charging            | Button (commands allowed only)                                                              |
+| Set the maximum current  | List from 8 A to the rating of the station (commands allowed only)                          |
+
+Read every 30 seconds by default (10 s to 10 min, configurable).
+
+**Energy**: the energy of the session is a **plain sensor**, never an index:
+it does not enter the Energy tab of Gladys (the station is already counted by
+your main meter). No daily consumption is published.
+
+## Installation
+
+1. Give the station a **fixed IP address** in your router.
+2. Install the integration from the Gladys store.
+3. In its configuration, enter the **IP address of the station** (several
+   stations in load sharing: separated by commas, four at most).
+4. Save, then add the station from the **Discovery** tab.
+
+The **Test the connection** button reads each station once (at most every
+10 seconds). The local API has no password: any machine of your network can
+read it, Gladys included.
+
+## Commands (off by default)
+
+"Start charging", "Stop charging" and "Set the maximum current" refuse
+every command while **Allow the commands** is off. On:
+
+- **Start** allows the charge (the vehicle charges as soon as it asks);
+  refused when the station reports a fault or an unknown state;
+- **Stop** forbids the charge;
+- **Maximum current**: from 8 A to the rating the station reports
+  (`maxStationCurrent`), in whole amperes.
+
+Start and stop are refused while **automatic charging** is on (a setting of
+the TechnoVE app); the maximum current is refused in **load sharing** (the
+sharing sets it).
+
+They are **buttons** and a **list**, never switches: a "turn everything
+off" (from Gladys, Google Home, Alexa or HomeKit) never reaches them. A
+scene can trigger them, only through an explicit action, and only when the
+commands are allowed. Note that the AI chat of Gladys (MCP) can create and
+run such a scene: while the commands are allowed, it can start or stop the
+charge.
+
+Before each command, the integration **reads the station again** and decides
+on that read only; the option is checked again right before sending. A
+command with nothing to do (already so) is not sent. A command that cannot
+leave within 3.5 seconds is refused unsent. When the station does not
+confirm (silence, a 5xx error), Gladys shows "Command sent, without
+confirmation": check the state, read again 5 then 20 seconds later. One
+command at a time per station: another one is refused at once, except a
+**stop**, never blocked: it waits for the command in flight only as long as
+its own deadline allows, then goes; it is sent once more when that command
+ends, and a start not sent yet gives way to it.
+
+## Errors and limits
+
+- **Station unreachable**: only the connector ("unavailable") and the
+  status ("Station unreachable") change; the power, the current, the
+  charging state and the other values keep their last value (a "charging"
+  may stay shown: check the status). A station removed from the
+  configuration, or that never answered since the start, shows the same on
+  its device, and the configuration screen names it. New try after 30 s,
+  1, 2, then 5 minutes, never faster than the interval.
+- **429 (too many requests)**, unlikely on a local station: a pause of 1
+  minute to 6 hours for everything (reads, button, commands), never shorter
+  than the refresh interval, kept in `/data` across a restart.
+- The **power is estimated** (current × voltage, power factor assumed to be
+  1): the station does not give it.
+- Neither the schedule (off-peak / high tariff), nor the automatic charge,
+  nor the maximum charge percentage can be changed from Gladys.
+- The logs never hold the text of the station's answers.
+
+## Credits
+
+Port of [python-technove](https://github.com/Moustachauve/pytechnove)
+(Christophe Gagnier, MIT, version 2.1.3), whose request code is based on
+python-wled (Franck Nijhof, MIT). Apache-2.0 license.
+
+## Configuration settings
+
+These are the settings TechnoVE asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your TechnoVE station | `section` | No | Shows your TechnoVE charging station in Gladys through its local API, without any cloud: status (unplugged, plugged in and waiting, charging, faults), power (estimated), current, voltages, energy of the session, maximum current and load sharing. Enter the IP address of the station (give it a fixed address in your router), save, then add it from the Discovery tab. Starting, stopping and the maximum current can be changed from Gladys only if you allow the commands below. Unofficial API, never tested with a real station. Not affiliated with TechnoVE. |
+| IP address of the station | `string` | Yes | An IPv4 address or a host name. Several stations (load sharing): separate them with commas, four at most. |
+| Allow the commands | `boolean` | No | Off by default. On: Gladys may start and stop the charge and set the maximum current (8 A to the rating of the station). Off: these three features refuse every command. |
+| Refresh interval (s) | `number` | No | How often each station is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## How to install TechnoVE in Gladys
+
+1. In Gladys, open **Integrations**: TechnoVE appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-technove:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-technove](https://github.com/LM1LC3N7/gladys-technove).
+
+TechnoVE requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+TechnoVE is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-technove) — [source of this documentation](https://github.com/LM1LC3N7/gladys-technove/blob/HEAD/docs/en.md)

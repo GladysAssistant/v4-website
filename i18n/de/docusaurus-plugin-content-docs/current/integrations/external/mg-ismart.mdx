@@ -1,0 +1,228 @@
+---
+title: "MG iSMART Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "MG iSMART"
+description: "MG cars (MG4, ZS EV…) via the SAIC iSMART cloud, Europe: battery, range, charge, locks, doors. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mg-ismart.png"
+keywords:
+  - "mg ismart"
+  - "mg ismart smart home"
+  - "gladys mg ismart"
+  - "mg ismart gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-mg-ismart instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"MG iSMART","description":"MG cars (MG4, ZS EV…) via the SAIC iSMART cloud, Europe: battery, range, charge, locks, doors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-mg-ismart","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mg-ismart.png","type":"device","version":"0.1.1","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-10-18T00:31:00Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Shows your **MG** cars (MG4, ZS EV, MG5, Marvel R, MG4 XPower…) in Gladys,
+through the **SAIC iSMART** cloud (Europe), with the account of the MG iSMART
+app.
+
+> **Unofficial API, never tested with a real account nor a real car.** The
+> integration talks to the gateway of the MG iSMART app, as the
+> saic-ismart-client-ng library does. SAIC may change it without notice. Not
+> affiliated with MG or SAIC Motor.
+
+## Before you start: a second account
+
+**SAIC allows one session per account.** When the integration signs in, the
+MG app on your phone is signed out, and the other way round. The simplest:
+create a **second account** (another e-mail) in the MG iSMART app, share the
+car with it from your main account, and give that second account to Gladys.
+
+If you use the same account, the integration signs in again **once per
+24 hours at most** when its session is taken. Taken again, it pauses: a new
+try 6 h later at the earliest, then every 24 h, and never less than 24 h
+after its last sign-in (the "Test the connection" button counts too). So it
+never signs the app out in a loop. **Renewing the token** when it expires is
+a sign-in too: it signs the app out when it uses the same account.
+
+## What you get
+
+One device per car of the account, with:
+
+| Feature                | Content                                                                    |
+| ---------------------- | -------------------------------------------------------------------------- |
+| Battery                | State of charge in %                                                       |
+| Range                  | In km                                                                      |
+| Charge status          | Unplugged, Plugged in not charging, Charging, Complete, Scheduled, Fault…  |
+| Charging / Plugged in  | Yes or no                                                                  |
+| Charging power         | In kW while the car charges (0 otherwise)                                  |
+| Odometer               | In km                                                                      |
+| Locks                  | Locked or unlocked (read only)                                             |
+| Doors (4) and boot     | Open or closed                                                             |
+| Latitude, longitude    | Position of the car, without history                                       |
+| Cabin temperature      | In °C                                                                      |
+| Climate (running)      | Yes or no, and its mode: off, fan only, on, front defrost                  |
+| Last report of the car | Date and time of the last report sent by the car                           |
+| Last command           | The outcome of the last command or refresh                                 |
+| Buttons                | Refresh now, Lock, Unlock, Open the boot, climate and charge (start, stop) |
+
+**Energy**: the gateway gives no reliable cumulative meter. The integration
+publishes **no index** and no consumption: the charging power is a plain
+sensor.
+
+**Position**: published as two numbers, without history in Gladys, never
+written in the logs nor in `/data`.
+
+## The 12 V battery: spaced reads
+
+**Each read wakes the car up**, which then draws on its 12 V battery. Waking
+a parked car too often can drain that battery until the car no longer
+starts. So:
+
+- one read per car **every 3 hours** by default (60 minutes to 24 hours),
+  **every 30 minutes while charging** only when the car really charges
+  (plugged in, power above 0), and for 12 hours at most: then back to the
+  normal interval;
+- a car that does not answer (30 seconds of waiting) is read again after the
+  interval, then twice later after each silence (up to once a day): never in
+  a loop. Meanwhile, the buttons of that car accept **one click per hour**
+  (refresh or a command), which counts in the wake-up budget;
+- an error is never read again sooner than the interval;
+- **each button press wakes the car up**: "Refresh now" reads it, and each
+  command reads it before acting. Presses are limited per car: **2 minutes
+  apart at least, 6 per hour at most**; beyond, the press is refused at once
+  with a message;
+- the vehicle list (which does not wake the car) is read at start, then
+  every 24 hours;
+- the time of the next read is kept in `/data`: a restart does not wake the
+  car before its time.
+
+## Installation
+
+1. Install the integration from the Gladys store.
+2. In its configuration, enter the **e-mail** and the **password** of the MG
+   iSMART account (preferably the second one). The password is kept by
+   Gladys in its database, never shown again, sent only to the MG iSMART
+   gateway of SAIC, as its SHA-1 digest like the app does.
+3. Adjust the **interval**, the **timezone** (Europe/Paris by default) and the
+   **language** of the names if needed.
+4. Save, then add the cars from the **Discovery** tab.
+
+The **Test the connection** button signs in if needed and reads the vehicle
+list, **without waking the cars** (at most every 30 seconds). It also tries
+again at once after a stop.
+
+## Commands (all off by default)
+
+Each command is a **button**, never a switch: a "turn everything off",
+Google Home, Alexa, HomeKit or a "switch" scene action never reach them. A
+scene can press a button, only through an explicit action on that button,
+and only if its option is on.
+
+| Button                   | Option to turn on           |
+| ------------------------ | --------------------------- |
+| Lock                     | Allow locking               |
+| Unlock                   | Allow unlocking             |
+| Open the boot            | Allow opening the boot      |
+| Start / stop the climate | Allow the climate commands  |
+| Start / stop charging    | Allow the charging commands |
+
+Unlocking and opening the boot work remotely, for anyone who can press the
+button in Gladys: leave these options off unless you need them.
+
+How a command goes:
+
+1. Gladys gets the answer "accepted" at once (the gateway often takes more
+   than 10 seconds, and Gladys waits 5 seconds only); "Last command" shows
+   "reading the car first…".
+2. The integration **reads the car again** (which wakes it) and decides on
+   that fresh state only, never on memory: a useless command (already
+   locked, climate already on…) is not sent; an unknown state, a report more
+   than 10 minutes old ("stale state"), a car that does not answer, a car not
+   plugged in (for charging) refuse the command without sending it. An
+   undated state is never read as "already done": the command is sent.
+3. The option is checked again right before sending; the command is sent
+   **once**, never sent again after a failure.
+4. "Last command" gives the outcome: sent and confirmed by MG (for lock,
+   unlock and climate, only when the state sent back matches), sent with the
+   state not confirmed, sent with a failure reported by the car, sent but not
+   confirmed (the gateway took it then stopped answering: check before trying
+   again), refused by MG (before taking it), or not sent with the reason. The
+   car is read again about 90 seconds later.
+
+After a restart during a command, "Last command" says it was interrupted:
+check the state of the car.
+
+One command at a time per car. The integration never sends a code (SMS,
+e-mail): it signs in with the e-mail and the password only.
+
+## Errors and limits
+
+- **E-mail or password refused**: a stop, one new try after 6 h, then every
+  24 h. Saving new credentials or the test button try again at once.
+- **Session taken by the app**: see "a second account" above.
+- **429 (too many requests)**: a pause of 1 minute to 6 hours (15 minutes
+  without a hint), for everything (reads, buttons, commands), kept across a
+  restart.
+- **Network, 5xx**: a new try after the interval, never sooner.
+- `/data` keeps the MG session token, in clear, in a file readable by the
+  container user only (0600), so also by the administrator of the machine and
+  in the backups of the volume; never the e-mail, the password, the VIN nor
+  the position. This token gives access to the car: it goes away when the
+  integration is removed.
+- Only European cars (the `gateway-mg-eu` gateway) and the e-mail sign-in
+  are supported (not the phone number yet).
+- Not supported yet: target temperature, heated seats and steering wheel,
+  windows, sunroof, find my car, charge target, scheduled charging, charging
+  port lock, alarms.
+- The logs never hold the password, the token, the VIN, the position, nor
+  the text of the gateway's answers.
+- The id of each car in Gladys is **pseudonymised**: a truncated SHA-256 of
+  the VIN. It is not anonymous: anyone who knows the VIN can compute it.
+
+## Credits
+
+Ported from [saic-ismart-client-ng](https://github.com/SAIC-iSmart-API/saic-python-client-ng)
+(SAIC-iSmart-API, MIT, version 0.10.0). Apache-2.0 license.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt MG iSMART in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your MG iSMART account | `section` | Nein | Shows your MG cars (MG4, ZS EV, MG5, Marvel R…) in Gladys through the SAIC iSMART cloud (Europe): battery, range, charge, odometer, locks, doors and boot, position, cabin temperature, climate. Enter the e-mail and password of the MG iSMART app, preferably of a second account the car is shared with: SAIC allows one session per account, signing in here signs the app out. Each read wakes the car up: one read every 3 hours by default, every 30 minutes while charging. The commands (lock, unlock, boot, climate, charge) are buttons, each one off by default. Unofficial API, never tested with a real account nor a real car. Not affiliated with MG or SAIC. |
+| MG iSMART e-mail | `string` | Ja |  |
+| MG iSMART password | `secret` | Ja | Kept by Gladys in its database, never shown again, sent only to the MG iSMART gateway of SAIC (as its SHA-1 digest, like the app does). |
+| Read interval (minutes) | `number` | Nein | Minutes between two reads of each car (60 to 1440). Each read wakes the car up and draws on its 12 V battery: keep it long. While charging, a read every 30 minutes at most. |
+| Allow locking | `boolean` | Nein | Off by default. On: the "Lock" button locks the car (after reading it: nothing is sent when it is already locked). |
+| Allow unlocking | `boolean` | Nein | Off by default, and better left off. On: the "Unlock" button unlocks the doors of the car, from anywhere, by anyone who can press it in Gladys (a scene included). |
+| Allow opening the boot | `boolean` | Nein | Off by default, and better left off. On: the "Open the boot" button unlocks the boot. |
+| Allow the climate commands | `boolean` | Nein | Off by default. On: the two climate buttons start and stop the climate of the car (it draws on the traction battery). |
+| Allow the charging commands | `boolean` | Nein | Off by default. On: the two charging buttons start and stop the charge of a plugged-in car. |
+| Gladys timezone | `string` | Nein | Used for the time of the last report and of the command results. IANA name, e.g. Europe/Paris. |
+| Language of the feature names | `select` | Nein | Used for the feature names of the cars added from now on, for the status texts and for the command results. |
+
+## So installierst du MG iSMART in Gladys
+
+1. Öffne in Gladys **Integrationen**: MG iSMART erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-mg-ismart:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-mg-ismart](https://github.com/LM1LC3N7/gladys-mg-ismart).
+
+MG iSMART benötigt Gladys `>=4.86.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+MG iSMART ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-mg-ismart) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-mg-ismart/blob/HEAD/docs/en.md)

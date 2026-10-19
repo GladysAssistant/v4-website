@@ -1,0 +1,223 @@
+---
+title: "Flo by Moen Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Flo by Moen"
+description: "Unofficial: Flo by Moen water shutoff and leak sensors, flow, pressure, alerts, Home/Away. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-flo.png"
+keywords:
+  - "flo by moen"
+  - "flo by moen smart home"
+  - "gladys flo by moen"
+  - "flo by moen gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-flo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Flo by Moen","description":"Unofficial: Flo by Moen water shutoff and leak sensors, flow, pressure, alerts, Home/Away.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-flo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-flo.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T01:43:37Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration brings the **Flo by Moen Smart Water Shutoff** and the **Flo
+Water Sensors** into Gladys, through the Flo cloud the Moen Smartwater app
+(formerly Flo) uses, with the e-mail and password of your account. These
+products are sold in the United States and Canada. Unofficial, not affiliated
+with Moen or Fortune Brands.
+
+> **Development version (0.1).** Written from the Python library `aioflo`
+> (the one of the Home Assistant Flo integration). The integration has **never
+> been tested on a real device or a real account**: only against simulated
+> answers. Feedback is welcome on the GitHub repository.
+
+## What you get
+
+| Flo device                  | In Gladys                                                                                                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Smart Water Shutoff (valve) | valve open/closed and away mode (settable, see "Safety"), mode (text: home, away, sleep), flow m³/h, pressure psi, water temperature °C, today's use in litres, leak alert, pending alerts (text) |
+| Water Sensor (leak sensor)  | water leak, temperature °C, humidity %, battery %                                                                                                                                                 |
+
+Other Flo devices (bridge…) are skipped: the **Test the connection** button
+counts them.
+
+Units: the flow is converted from gallons per minute to m³/h, the use from
+gallons to litres, temperatures from °F to °C (Gladys shows them as you
+prefer). The pressure stays in psi. A shutoff without a water temperature
+probe sends a placeholder (225 °F): it is ignored.
+
+## Installation
+
+1. Install the integration from the Gladys store.
+2. In the **Configuration** tab, enter the e-mail and password of your Flo or
+   Moen Smartwater account, then save. The status reads "Connected to Flo: 2
+   devices."
+3. Open the **Discovery** tab and add the devices you want. Their values
+   arrive as soon as they are added.
+
+**Sign-in**: "Automatic" (default) tries the historical Flo sign-in, then the
+Moen one (newer Moen Smartwater accounts) when Flo refuses or no longer
+answers there. Once Flo refused, only Moen is tried until the configuration
+changes. You can force either.
+
+## Safety: commands off by default
+
+These commands are refused until you allow them in the configuration:
+
+| Option                            | Default | Off: Gladys…               |
+| --------------------------------- | ------- | -------------------------- |
+| Allow closing the valve           | no      | never shuts the water off  |
+| Allow opening the valve           | no      | never turns the water on   |
+| Allow changing the Home/Away mode | no      | never changes the Flo mode |
+
+To shut the water off from a scene when a leak is detected, turn on "Allow
+closing the valve". Even allowed, a valve command:
+
+- runs **one at a time** for a device (two "close" at once are never sent
+  together);
+- reads the device from Flo **just before acting**: if that read fails, the
+  device is offline, or the valve is moving the other way or in an unknown
+  state, the command is **refused**; the state kept in memory never decides;
+- sends nothing when the valve is already where asked, or already moving
+  there;
+- is **refused rather than sent late** when it could not leave in time (3.5
+  seconds after the request from the dashboard, 25 seconds for a scene
+  action): Gladys would already have shown a failure;
+- reads the device again 15 seconds and 60 seconds later (even after a
+  failure), to show the real position.
+
+**Warning: as soon as a valve option is on, the valve is a Gladys switch like
+any other.** A voice assistant, a "turn everything off" command or a scene
+acting on every switch can then shut (or open) the water. Check your scenes
+and assistants before turning these options on.
+
+**Home / Away mode** (the "Away mode" switch or a scene action): off by
+default. **Switching to Home disarms the automatic shutoff Flo applies in
+Away**: turn the option on knowingly. **Sleep** needs a duration: it is shown,
+but set in the Moen app. A mode Flo has locked is refused.
+
+## Scenes
+
+Triggers:
+
+- **Flo: leak detected**: a Water Sensor detects water, or Flo raises a new
+  **critical or warning** leak alert (water detected, drip, failed health
+  test); filtered by severity;
+- **Flo: abnormal flow**: a new critical or warning fast flow, long flow or
+  high use alert;
+- **Flo: new alert**: any new alert, filtered by severity and family.
+
+A trigger fires once per new alert, at the refresh that finds it (an alert
+still pending does not fire again). What the integration saw last is kept in
+`/data`: an alert raised during a restart fires at the next start. The alerts
+of a device never seen before do not fire (nothing says they are new).
+
+The family of an alert (leak, flow, other) comes from its name in the Flo
+alarm catalog, read once a day, matched against a list of known names. **When
+the catalog is unavailable** (or an alert is not in it), the alert is
+"other": only "new alert" fires, and, by caution, an unknown critical alert
+turns "Leak alert" on. The "Pending alerts" feature always lists every alert.
+
+**Recommended to shut the water off**: besides "leak detected", make a scene
+on the **"device state changed"** trigger of the **Water leak** feature of the
+Water Sensor (or **Leak alert** of the shutoff) going to 1. That state is read
+again at every refresh, even if a scene event was missed.
+
+Actions: **Flo: set Home or Away** (one home or all) and **Flo: open or close
+the valve**, behind the options above.
+
+## Usage limits
+
+- Flo publishes no API limit. The integration reads the account and each
+  device every 2 minutes by default (1 to 60), today's use every 15 minutes
+  and the alarm catalog once a day: Home Assistant's pace (1 minute) or
+  slower.
+- When Flo answers "too many requests" (429), the integration pauses for the
+  time asked (1 minute to 1 hour, 5 minutes when not given). After a network
+  error or a Flo outage it tries again after 1, 2, 5, 10 then 15 minutes.
+- A refused e-mail or password is never retried by itself: the integration
+  waits for a change or a click on **Test the connection**.
+- Values arrive at the refresh pace, not in real time.
+- Gladys accepts 300 states a minute: only the values that change are sent
+  (and every value at least every 30 minutes).
+
+## Options
+
+| Option                            | Default   | Role                                       |
+| --------------------------------- | --------- | ------------------------------------------ |
+| E-mail, password                  | —         | your Flo / Moen Smartwater account         |
+| Allow closing the valve           | no        | see "Safety"                               |
+| Allow opening the valve           | no        | see "Safety"                               |
+| Allow changing the Home/Away mode | no        | see "Safety"                               |
+| Sign-in                           | Automatic | Flo then Moen, or either one               |
+| Refresh interval (min)            | 2         | how often the devices are read             |
+| Language of the feature names     | French    | names of the features of the devices added |
+
+## Troubleshooting
+
+- **"Flo refused the e-mail or the password"**: check them in the Moen
+  Smartwater app. Try the "Moen" sign-in if your account was made in the Moen
+  app.
+- **"Flo cannot be reached"**: a Flo outage or your connection; the
+  integration tries again by itself.
+- **`unreachable` badge with an orange dot**: Flo reports the device offline
+  (Wi-Fi, sensor batteries).
+- **"The state of the Flo valve could not be confirmed"**: the valve was
+  offline, moving or unreadable when the command came; try again later.
+- **"The command waited too long for its turn"**: Flo answered slowly; try
+  again.
+
+## Privacy
+
+The e-mail and password are **kept by Gladys in its database** (and so in its
+backups); the password is never shown again in the interface. They are only
+sent to the Flo sign-in (`api.meetflo.com`) and the Moen one (Amazon Cognito,
+`execute-api.us-east-2.amazonaws.com`), over HTTPS. The token stays in memory
+and never reaches a log. The only file written to `/data` (`flo-seen.json`)
+holds the alert counts and the "water detected" state of each device, no
+secret.
+
+Flo by Moen and Moen are trademarks of Moen Incorporated (Fortune Brands); this
+integration is not affiliated with Moen.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Flo by Moen in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Flo by Moen account | `section` | Nein | Brings the Flo by Moen Smart Water Shutoff (flow, pressure, water temperature, today's use, valve, Home/Away mode, alerts) and the Flo Water Sensors (leak, temperature, humidity, battery) into Gladys, through the Flo cloud the Moen Smartwater app uses (US and Canada products). Enter the e-mail and password of your Flo or Moen account. Scene triggers fire on new leak and abnormal flow alerts. Opening or closing the valve and changing the mode stay off until you allow them below. Unofficial, not affiliated with Moen or Fortune Brands; never tested on a real device yet. |
+| E-mail of the Flo account | `string` | Ja |  |
+| Password | `secret` | Ja | Kept by Gladys in its database, never shown again, sent only to Flo/Moen (HTTPS). |
+| Allow closing the valve from Gladys | `boolean` | Nein | Off by default. Turn it on to shut the water off from a scene when a leak is detected. |
+| Allow opening the valve from Gladys | `boolean` | Nein | Off by default: reopening the water after a leak should be done on site. |
+| Allow changing the Home/Away mode from Gladys | `boolean` | Nein | Off by default. Warning: Home disarms the automatic shutoff Flo applies in Away. |
+| Sign-in | `select` | Nein | Automatic tries the Flo sign-in, then the Moen one (the newer Moen Smartwater accounts). |
+| Refresh interval (min) | `number` | Nein | How often every device is read, in minutes (1 to 60). Today's use is read every 15 minutes. |
+| Language of the feature names | `select` | Nein | Used for the names of the features of the devices added from now on. |
+
+## So installierst du Flo by Moen in Gladys
+
+1. Öffne in Gladys **Integrationen**: Flo by Moen erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-flo:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-flo](https://github.com/LM1LC3N7/gladys-flo).
+
+Flo by Moen benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Flo by Moen ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-flo) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-flo/blob/HEAD/docs/en.md)

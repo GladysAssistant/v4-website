@@ -1,0 +1,208 @@
+---
+title: "KitchenOwl smart home integration, free and open source"
+sidebar_label: "KitchenOwl"
+description: "KitchenOwl shopping lists and meal plan: items to buy, today's meals, add or check off items. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kitchenowl.png"
+keywords:
+  - "kitchenowl"
+  - "kitchenowl smart home"
+  - "gladys kitchenowl"
+  - "kitchenowl gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-kitchenowl instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"KitchenOwl","description":"KitchenOwl shopping lists and meal plan: items to buy, today's meals, add or check off items.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-kitchenowl","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kitchenowl.png","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-18T13:41:12Z"}} />
+
+Bring the shopping lists and the meal plan of your
+[KitchenOwl](https://kitchenowl.org) into Gladys: how many items are left to
+buy, what is cooked today and tomorrow. Add an item from the dashboard or
+from a scene ("the milk is finished"), check one off with a tap, and let a
+scene react when somebody puts something on the list.
+
+> **Feedback welcome.** This integration was tested against a real
+> KitchenOwl server (Docker image `tombursch/kitchenowl`, October 2026), not
+> yet in everyday use with a real Gladys. If something does not work as
+> described, please say so on the
+> [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-kitchenowl/issues).
+
+## What you need
+
+- Gladys Assistant 5.2.0 or later (the forms of the widget buttons).
+- A **self-hosted KitchenOwl**, reachable from Gladys (the Docker image
+  listens on port 8080).
+- A **long-lived token** of a KitchenOwl user. In KitchenOwl: your
+  **profile** → **Sessions** → **Long-lived tokens** → add one, name it
+  `Gladys`, and copy the token: KitchenOwl shows it only once.
+
+The integration sees the households of this user, and adds or checks off
+items **as this user**. The hosted service `app.kitchenowl.org` offers the
+same API, but was not tested.
+
+## Set up
+
+1. In Gladys, **Integrations** → install **KitchenOwl**.
+2. In **Configuration**, enter the **address** of KitchenOwl
+   (`http://192.168.1.20:8080`, `https://owl.example.org`…; the address
+   copied from the browser works too) and the **long-lived token**.
+3. Options:
+   - **Accept self-signed certificates**: only for an `https://` address
+     whose certificate is self-signed, on your own server.
+   - **Refresh interval**: how often KitchenOwl is read, 30 seconds to 5
+     minutes (1 minute by default). Midnight is always followed on time.
+   - **Language of the feature names**: the names given to the features when
+     a device is added, and the texts sent to scenes (French by default).
+4. Save, then click **Test the connection**: it reports the households, the
+   lists and the number of items to buy.
+5. Open the **Discover** tab and add the devices you want.
+
+## Devices
+
+**One device per shopping list** (`KitchenOwl Default`, `KitchenOwl
+Bricolage`…), with one feature:
+
+| Feature      | Value                            |
+| ------------ | -------------------------------- |
+| Items to buy | the number of items on the list. |
+
+**One device per household** (`KitchenOwl <household>`), for the meal plan:
+
+| Feature          | Value                                                              |
+| ---------------- | ------------------------------------------------------------------ |
+| Today's meals    | the recipes planned today, separated by commas, or Nothing planned |
+| Tomorrow's meals | the same for tomorrow                                              |
+
+"Today" is the day in the time zone of Gladys. The recipes planned without a
+day ("some day") are not shown. With several households, the list devices
+carry the household name too.
+
+The values are sent only when they change (and every 12 hours otherwise). The
+device badge shows **Unreachable** when KitchenOwl does not answer.
+
+## Dashboard
+
+The **Shopping list** widget shows a list: the number of items, the items
+with their description (nine, then a "More items" row), and four buttons:
+
+- **Add** opens a form (item, description): the item is put on the list,
+  never twice.
+- **Check off** opens a form listing the items: the chosen one is checked off.
+- The first two items have their own button, to check them off in one tap.
+
+In the widget settings, choose a list device, or a household device for its
+default list. Empty: the default list of the first household. The widget
+works even before any device is added to Gladys.
+
+## Scenes
+
+### Triggers
+
+**Item added to a KitchenOwl list**: an item was put on a shopping list, in
+KitchenOwl or from Gladys. The items already on the lists when the
+integration starts do not count, and the integration remembers what it has
+seen across restarts (an item added while it was stopped fires at the next
+start). An item checked off then put back counts again. Twenty events per
+list and per reading at most (a recipe that adds thirty ingredients).
+
+- Filters: **Shopping list** (a list device; a household device never
+  matches; empty: any), **Item name** (exact name, empty:
+  any).
+- Variables: `item`, `description`, `list_name`, `added_by` (the KitchenOwl
+  name of the member) and `from_gladys` (true when the item was added by a
+  scene or the widget: lets a scene ignore its own additions).
+
+### Actions
+
+**Add to a KitchenOwl list**: puts an item on a list. Fields: **Item**
+(required), **Description** (a quantity, optional), **Shopping list** (a list
+device, or a household device for its default list; empty: the default list
+of the first household). An item already on the list (case and accents
+ignored) is not added twice: its description is replaced by the new one, if
+given. Outputs: `item`, `list_name`, `already_on_list`.
+
+**Check off a KitchenOwl item**: checks an item off a list, by name (case and
+accents ignored). Not on the list: nothing happens, and the output `removed`
+is false. Outputs: `item`, `list_name`, `removed`.
+
+The fields accept scene variables (`{{triggerEvent.data.item}}`…).
+
+### Scene ideas
+
+- A button by the coffee machine → **Add to a KitchenOwl list**, item
+  `Coffee`: the last capsule is never forgotten again.
+- **Item added to a KitchenOwl list**, list `Hardware` → send a message to
+  whoever goes to the DIY store: "\{\{triggerEvent.data.item\}\} added by
+  \{\{triggerEvent.data.added_by\}\}".
+- Every day at 17:00 → read **Today's meals** of the household device and
+  send it: dinner is known before leaving work.
+- **Items to buy** above 15 → a reminder that it is time to go shopping.
+
+## Troubleshooting
+
+- **"token refused"**: the long-lived token was revoked or mistyped. Create a
+  new one in KitchenOwl and paste it again (a pasted "Bearer " prefix is
+  removed).
+- **"no KitchenOwl API at this address"**: something answers, but not
+  KitchenOwl. Check the port (8080 for the Docker image) and, behind a reverse
+  proxy, the path prefix.
+- **"KitchenOwl does not answer"**: wrong address, KitchenOwl stopped, or a
+  firewall between Gladys and KitchenOwl.
+- **"certificate refused"**: tick **Accept self-signed certificates**.
+- **"The token user belongs to no KitchenOwl household"**: create a household
+  in KitchenOwl, or use a token of a member.
+- **A new list does not show up**: click **Search** in the Discover tab, or
+  wait for the next reading.
+- Details are in the integration logs (`LOG_LEVEL=debug` for every reading).
+
+## Limits
+
+- The integration reads KitchenOwl on a timer (30 s to 5 min): an item added
+  in KitchenOwl reaches Gladys within that delay. It does not use the
+  real-time channel of KitchenOwl.
+- The meal plan is read, not edited; expenses and recipes are not used.
+- A widget select lists the first 50 items of the list.
+- The feature names are given when a device is added: changing the language
+  afterwards does not rename them.
+- Tested against a real KitchenOwl server in Docker, not yet with a real
+  Gladys: feedback welcome.
+
+## Configuration settings
+
+These are the settings KitchenOwl asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your KitchenOwl | `section` | No | A self-hosted KitchenOwl. In KitchenOwl, create a long-lived token: Profile, Sessions, Long-lived tokens. Items are added as the user of the token. |
+| Address | `string` | Yes | Address of KitchenOwl, with https:\/\/ for HTTPS and :port if not the default (8080 for the Docker image). |
+| Long-lived token | `secret` | Yes | Created in KitchenOwl: Profile, Sessions, Long-lived tokens. Shown once only. |
+| Options | `section` | No |  |
+| Accept self-signed certificates | `boolean` | No | For an https:\/\/ address whose certificate is self-signed. Tick only for your own server. |
+| Refresh interval | `select` | No | How often KitchenOwl is read. Midnight is always followed on time. |
+| Language of the feature names | `select` | No | Names given to the features when a device is added, and texts sent to scenes. |
+
+## How to install KitchenOwl in Gladys
+
+1. In Gladys, open **Integrations**: KitchenOwl appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-kitchenowl:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-kitchenowl](https://github.com/guim31/gladys-kitchenowl).
+
+KitchenOwl requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+KitchenOwl is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-kitchenowl) — [source of this documentation](https://github.com/guim31/gladys-kitchenowl/blob/HEAD/docs/en.md)

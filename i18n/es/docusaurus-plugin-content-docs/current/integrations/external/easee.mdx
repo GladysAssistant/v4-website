@@ -1,0 +1,170 @@
+---
+title: "Integración domótica Easee, gratuita y de código abierto"
+sidebar_label: "Easee"
+description: "Cargadores Easee y Equalizer en Gladys: estado, potencia, energía y control de carga. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-easee.png"
+keywords:
+  - "easee"
+  - "domótica easee"
+  - "gladys easee"
+  - "easee gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-easee instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Easee","description":"Cargadores Easee y Equalizer en Gladys: estado, potencia, energía y control de carga.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-easee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-easee.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T10:18:13Z"}} />
+
+## Presentación
+
+Esta integración lleva sus **cargadores Easee** (Easee Home, Easee Charge, Charge Lite, Charge Max, Charge Up, Charge Core, Charge Pro, Easee One) y su **Easee Equalizer** a Gladys, a través de la API en la nube oficial de Easee, la misma que utiliza la aplicación Easee.
+
+- Cada cargador se convierte en un dispositivo de Gladys: estado del conector, estado de la carga, potencia, intensidad por fase, energía de la sesión, energía total, límite de corriente y los controles de carga.
+- El Equalizer se convierte en un dispositivo que mide la vivienda: importación y exportación de red, intensidad por fase, energía importada y exportada.
+- La energía total de un cargador es un índice de contador: el seguimiento de energía de Gladys calcula con él un consumo cada 30 minutos.
+- Un widget del panel, dos desencadenantes y una acción de escena lo completan.
+
+La carga inteligente (solar) sigue en la aplicación Easee, o en evcc, que Gladys ya admite: esta integración no la duplica.
+
+Esta integración no está afiliada a Easee. Se ha desarrollado sin el hardware: sus comentarios son bienvenidos en el [repositorio de GitHub](https://github.com/guim31/gladys-easee/issues).
+
+## Requisitos
+
+- Gladys Assistant 5.1.0 o posterior (5.2 para el seguimiento de energía de la energía total).
+- Una cuenta Easee (la de la aplicación Easee) propietaria de los cargadores o con acceso a ellos.
+- Los cargadores configurados en la aplicación Easee y conectados a Internet (Wi-Fi o 4G).
+- Gladys necesita acceso a Internet: todo pasa por la nube Easee (`api.easee.com`).
+
+## Configuración
+
+1. En Gladys, abra **Integraciones**, instale **Easee** y abra su configuración.
+2. Introduzca la **dirección de correo electrónico o el número de teléfono** y la **contraseña** de la cuenta Easee. Un número de teléfono empieza por el prefijo del país, p. ej. `+34612345678`.
+3. Elija el **idioma de los textos**: los nombres de las funciones (fijados al añadir un dispositivo) y el estado detallado de los cargadores. Francés por defecto.
+4. Elija el **intervalo de actualización**: 1 minuto (por defecto), 2 o 5 minutos.
+5. Guarde y pulse **Probar la conexión**: el mensaje indica los cargadores y Equalizer encontrados.
+6. Abra la pestaña **Descubrimiento** y añada los dispositivos que desee.
+
+Cómo se comunica la integración con Easee:
+
+- Inicia sesión una vez y guarda el token de acceso y su token de actualización en su volumen privado `/data`. La contraseña se queda en la configuración de Gladys y nunca aparece en los registros.
+- Easee limita el número de solicitudes de una cuenta (HTTP 429 por encima). La integración lee el estado de cada dispositivo añadido una vez por intervalo, los ajustes de cada cargador cada diez minutos y nada de los dispositivos que no haya añadido. Ante un 429, se detiene el tiempo que pide Easee (5 minutos si no lo indica).
+- Si Easee rechaza las credenciales, la integración deja de intentarlo hasta que vuelva a guardar la configuración: la cuenta no se bloquea por intentos repetidos.
+
+## Dispositivos
+
+### Cargador
+
+| Función               | Tipo en Gladys                        | Contenido                                                                                            |
+| --------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Conector              | Estación de carga, conector           | Disponible (sin vehículo), ocupado (vehículo conectado), no disponible (sin conexión), averiado      |
+| Estado de la carga    | Estación de carga, estado de la carga | Cargando, vehículo conectado, en pausa (vehículo), en pausa (cargador), inactivo                     |
+| Estado Easee          | Texto                                 | El estado detallado de Easee: esperando el inicio, carga terminada, esperando autorización...        |
+| Potencia de carga     | Potencia (W)                          | Potencia entregada al vehículo                                                                       |
+| Intensidad L1, L2, L3 | Intensidad (A)                        | Intensidad de cada fase                                                                              |
+| Energía de la sesión  | Energía añadida (kWh)                 | Energía de la sesión en curso, o de la última                                                        |
+| Energía total         | Índice (kWh)                          | Contador de energía del cargador desde su instalación (Easee lo actualiza aproximadamente cada hora) |
+| Límite de corriente   | Intensidad de consigna (A), control   | Límite dinámico del cargador: 0 (sin corriente) o de 6 A al máximo del cargador                      |
+| Carga autorizada      | Interruptor de carga, control         | Encendido: inicia o reanuda la carga. Apagado: la pausa. Requiere un vehículo conectado              |
+| Cargador activado     | Interruptor, control                  | Activa o desactiva el cargador en sus ajustes                                                        |
+
+El cargador muestra además una insignia **nube**, que pasa a **inaccesible** cuando el cargador está sin conexión.
+
+El límite de corriente es el límite _dinámico_ de Easee, pensado para cambiar a menudo (gestión de carga). No modifica la corriente máxima ajustada por el instalador.
+
+### Equalizer
+
+| Función               | Tipo en Gladys                   | Contenido                                   |
+| --------------------- | -------------------------------- | ------------------------------------------- |
+| Importación de red    | Red, potencia importada (W)      | Potencia tomada de la red por la vivienda   |
+| Exportación a red     | Red, potencia exportada (W)      | Potencia enviada a la red (paneles solares) |
+| Intensidad L1, L2, L3 | Intensidad (A)                   | Intensidad de cada fase de la vivienda      |
+| Energía importada     | Red, índice de importación (kWh) | Contador de importación del Equalizer       |
+| Energía exportada     | Red, índice de exportación (kWh) | Contador de exportación del Equalizer       |
+
+## Widget
+
+El widget **Cargador Easee** muestra un cargador: potencia de carga, energía de la sesión y límite de corriente en mosaicos en directo, el estado Easee y la conexión, y los botones adecuados a la situación:
+
+- durante la carga: **Pausa** y **Detener**;
+- vehículo conectado, sin carga: **Iniciar** (o **Reanudar**) y **Detener**;
+- sin vehículo o cargador sin conexión: ningún botón.
+
+**Detener** pide una confirmación: finaliza la sesión (con autorización obligatoria, hay que volver a autorizar el vehículo). Elija el cargador en los ajustes del widget.
+
+## Desencadenantes y acción de escena
+
+### Desencadenantes
+
+- **Vehículo conectado**: se ha conectado un vehículo a un cargador que no tenía ninguno. Variable: el nombre del cargador.
+- **Carga terminada**: el vehículo ha dejado de tomar corriente por sí mismo (batería llena o su propio límite) y sigue conectado. Variables: el nombre del cargador, la energía de la sesión en kWh.
+
+Ambos se detectan en cada lectura, es decir, en un intervalo de actualización como máximo. Un cargador que vuelve a estar en línea con un vehículo ya conectado no activa **Vehículo conectado**. Cada desencadenante puede limitarse a un cargador.
+
+### Acción
+
+**Controlar una carga Easee** inicia (o reanuda), pausa o detiene la carga de un cargador. Su salida es la orden Easee enviada (`resume_charging`, `start_charging`, `pause_charging`, `stop_charging`). La acción falla cuando no hay ningún vehículo conectado.
+
+Las funciones controlables (límite de corriente, carga autorizada, cargador activado) también se ajustan con la acción estándar **Controlar un dispositivo** de Gladys.
+
+## Ejemplos de escenas
+
+- **Carga en horas valle**: a las 22:00 entre semana, **Controlar una carga Easee** con «Iniciar o reanudar»; a las 6:00, «Pausar».
+- **Recordatorio**: entre semana a las 21:00, si el **Conector** del cargador está «disponible» (sin vehículo), enviar el mensaje «El coche no está conectado».
+- **Llegada a casa**: desencadenante **Vehículo conectado** → encender la luz del garaje durante 5 minutos.
+- **Fin de carga**: desencadenante **Carga terminada** → enviar «Carga terminada: `{{triggerEvent.data.session_energy}}` kWh en `{{triggerEvent.data.charger_name}}`».
+- **Deslastre**: cuando la **Importación de red** del Equalizer supere 9000 W, ajustar el **Límite de corriente** a 6 A; por debajo de 6000 W, volver a 16 A.
+
+## Solución de problemas
+
+- **«Easee ha rechazado la dirección de correo electrónico (o el número de teléfono) y la contraseña»**: compruébelos en la aplicación Easee y vuelva a guardar la configuración (la integración no lo reintenta antes).
+- **«No se puede acceder a la nube Easee»**: Gladys no tiene acceso a Internet o la nube Easee está caída. La integración lo reintenta en cada intervalo e indica cuándo vuelve a funcionar.
+- **Un cargador sigue «no disponible»**: el propio cargador está sin conexión para Easee (Wi-Fi o 4G). Compruébelo en la aplicación Easee.
+- **«Ningún vehículo conectado»** en una orden: iniciar, pausar y detener requieren un vehículo conectado.
+- **Demasiadas solicitudes**: otras herramientas utilizan la misma cuenta Easee al mismo tiempo. Elija un intervalo más largo.
+- **La energía total no cambia**: Easee la actualiza aproximadamente cada hora; la energía de la sesión sí avanza durante la carga.
+- **Registros detallados**: en los ajustes del contenedor, ponga `LOG_LEVEL=debug`. Una lectura normal no escribe nada en el nivel por defecto.
+
+## Limitaciones
+
+- Desarrollada sin el hardware: las respuestas de la API Easee proceden de los clientes de código abierto (pyeasee, Home Assistant), no de un cargador real. Sus comentarios son bienvenidos.
+- Solo nube: sin conexión local al cargador, nada funciona sin Internet.
+- Sin flujo en tiempo real: el estado se lee cada 1, 2 o 5 minutos, y una vez más 10 segundos después de una orden.
+- La intensidad por fase lee los bornes de una red TN (la mayor parte de Europa). En una red IT (Noruega), las fases pueden estar desplazadas.
+- No admitido: carga inteligente y solar, planificaciones de carga, autorización por tarjeta RFID, bloqueo del cable, modo de fases, ajustes de equilibrado del Equalizer. El desbloqueo del cable no se ofrece de forma deliberada.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Easee te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Cuenta Easee | `section` | No | Utilice la cuenta de la aplicación Easee (correo electrónico o número de teléfono). Gladys lee sus cargadores y su Equalizer a través de la nube Easee cada minuto. Sin relación con Easee. |
+| Correo o teléfono | `string` | Sí | El usuario de la aplicación Easee. Un número de teléfono empieza por el prefijo, p. ej. +34. |
+| Contraseña | `secret` | Sí |  |
+| Idioma de los textos | `select` | No | Nombres de las funciones (fijados al añadir un dispositivo) y estado detallado de los cargadores. |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de la nube Easee. Easee limita el número de solicitudes: mantenga un minuto o más. |
+
+## Cómo instalar Easee en Gladys
+
+1. En Gladys, abre **Integraciones**: Easee aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-easee:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-easee](https://github.com/guim31/gladys-easee).
+
+Easee requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Easee es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-easee) — [fuente de esta documentación](https://github.com/guim31/gladys-easee/blob/HEAD/docs/es.md)
