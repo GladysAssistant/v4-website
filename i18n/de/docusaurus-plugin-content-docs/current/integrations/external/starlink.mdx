@@ -1,0 +1,213 @@
+---
+title: "Starlink Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Starlink"
+description: "Deine Starlink-Antenne in Gladys: Status, Latenz, Durchsatz, Hindernisse, Warnungen. Lokal. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-starlink.png"
+keywords:
+  - "starlink"
+  - "starlink smart home"
+  - "gladys starlink"
+  - "starlink gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-starlink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Starlink","description":"Deine Starlink-Antenne in Gladys: Status, Latenz, Durchsatz, Hindernisse, Warnungen. Lokal.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-starlink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-starlink.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T15:24:40Z"}} />
+
+Deine Starlink-Antenne in Gladys: Status, Latenz, Paketverlust, Durchsatz, Hindernisse, Warnungen und
+Schneeschmelzmodus, gelesen in deinem lokalen Netzwerk wie in der Starlink-App. Szenen-Auslöser melden,
+wenn die Verbindung abbricht und zurückkommt, und ein Widget zeigt die Antenne auf einen Blick.
+
+> **Ohne die Hardware entwickelt: Rückmeldungen sind willkommen.** Die Integration wurde anhand des von
+> der Community veröffentlichten Protokolls geschrieben und mit aufgezeichneten Antworten einer Antenne
+> getestet, nicht mit einer echten Antenne. Sag im Gladys-Forum oder in den GitHub-Issues, was
+> funktioniert und was nicht.
+>
+> Diese Integration ist weder mit SpaceX oder Starlink verbunden noch von ihnen unterstützt.
+
+## Überblick
+
+- **Ein Gerät pro Antenne**, benannt nach ihrer Hardware (z. B. „Starlink rev3“), erkannt an der
+  Seriennummer der Antenne: Es übersteht einen Adresswechsel.
+- **Nur lokal**: Die Antenne antwortet unter `192.168.100.1:9200` (gRPC, das Protokoll der Starlink-App),
+  ohne Konto, Passwort oder Cloud.
+- **Über das Aktualisierungsintervall gemittelte Werte**: Latenz, Paketverlust und Durchsatz stammen aus
+  dem sekundengenauen Verlauf der Antenne, nicht aus einem einzelnen Messwert.
+- **Aktualisiert sich selbst**: Die Integration liest die Antenne mit einem eigenen Timer; sie hängt nicht
+  davon ab, dass Gladys das Gerät abfragt.
+- **Standardmäßig sicher**: Neustarten oder Verstauen unterbricht das Internet, deshalb bleiben diese
+  Befehle gesperrt, bis du sie erlaubst.
+
+## Voraussetzungen
+
+- Gladys Assistant **5.1.0** oder neuer (Szenen-Auslöser, Szenen-Aktionen und Widgets).
+- Eine eingeschaltete Starlink-Antenne (Standard, Gen 2 „rechteckig“, Gen 3, Mini…).
+- **Gladys muss `192.168.100.1` erreichen**. Die Integration läuft in einem eigenen Container in einem
+  Docker-Bridge-Netzwerk: Der Verkehr der Integration geht über den Gladys-Rechner hinaus, sie erreicht die Antenne also
+  genau dann, wenn der Gladys-Rechner sie erreicht.
+  - Mit dem **Starlink-Router** klappt das sofort: Der Router leitet `192.168.100.1` an die Antenne weiter.
+  - Mit **deinem eigenen Router** und dem Starlink-Router im **Bypass-Modus** (oder einem
+    Starlink-Ethernet-Adapter an deinem Router) erreichen die meisten Router die Adresse der Antenne
+    direkt. Falls nicht, lege auf deinem Router eine statische Route zu `192.168.100.1/32` über seine
+    WAN-Schnittstelle (Internet) an.
+  - Prüfe vom Gladys-Rechner aus: `ping 192.168.100.1` muss antworten. Die Taste **Verbindung zur Antenne
+    testen** in der Konfiguration bestätigt, dass die Integration sie sieht.
+
+## Konfiguration
+
+Öffne **Integrationen → Starlink → Konfiguration**:
+
+| Feld                                            | Standard        | Bedeutung                                                                                                          |
+| ----------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Adresse der Antenne                             | `192.168.100.1` | IP-Adresse der Antenne, optional mit Port (standardmäßig `9200`).                                                  |
+| Aktualisierungsintervall                        | 30 Sekunden     | 10, 15, 30 s oder 1 min. Die Werte werden über dieses Intervall gemittelt.                                         |
+| Sprache der Gerätetexte                         | Français        | Namen der Funktionen (beim Hinzufügen festgelegt) und Statustext.                                                  |
+| Befehle erlauben, die das Internet unterbrechen | aus             | Neustarten, Verstauen und Ausrichten sind gesperrt, bis du es aktivierst. Der Schneeschmelzmodus braucht es nicht. |
+
+Öffne dann **Integrationen → Starlink → Entdecken** und füge die Antenne zu Gladys hinzu. Die Tasten der
+Konfiguration:
+
+- `test_connection` — **Verbindung zur Antenne testen**: zeigt, was geantwortet hat (Hardware, Software,
+  Status).
+- `reboot_dish` — **Antenne neu starten**: Das Internet ist nach ein paar Minuten zurück.
+- `stow_dish` — **Antenne verstauen**: Die Antenne klappt sich flach (vor einem Sturm, zum Transport). Kein
+  Internet bis zum Ausrichten.
+- `unstow_dish` — **Antenne ausrichten**: Die Antenne richtet sich wieder zum Himmel aus und verbindet sich neu.
+
+## Das Antennengerät
+
+| Funktion                 | Typ (Gladys)       | Bedeutung                                                                                    |
+| ------------------------ | ------------------ | -------------------------------------------------------------------------------------------- |
+| Starlink online          | binär              | 1, wenn die Antenne mit den Satelliten verbunden ist, sonst 0 (auch wenn nicht erreichbar).  |
+| Status                   | Text               | Verbunden, Satellitensuche, Verdeckt, Verstaut, Ruhemodus, Nicht erreichbar…                 |
+| Latenz                   | Dauer (ms)         | Mittlere Ping-Zeit zum Starlink-Netz im Intervall (komplett verlorene Sekunden ausgenommen). |
+| Paketverlust             | Prozent            | Anteil der verlorenen Pings im Intervall.                                                    |
+| Download / Upload        | Datenrate (Mbit/s) | Mittlerer Verkehr durch die Antenne im Intervall — deine Nutzung, kein Speedtest.            |
+| Verdeckter Himmel        | Prozent            | Anteil des Himmels, den die Antenne als verdeckt erkannt hat (Bäume, Gebäude).               |
+| Gerade verdeckt          | binär              | 1, solange zum Zeitpunkt der Messung etwas die Antenne verdeckt.                             |
+| Betriebszeit             | Dauer (h)          | Zeit seit dem letzten Neustart der Antenne.                                                  |
+| Leistungsaufnahme        | Leistung (W)       | Mittlerer Stromverbrauch im Intervall (bei Antennen, die ihn melden).                        |
+| Heizung (Schneeschmelze) | binär              | 1, solange die Antenne heizt, um Schnee zu schmelzen.                                        |
+| Thermische Drosselung    | binär              | 1, solange sich die Antenne wegen Hitze drosselt.                                            |
+| Überhitzungsabschaltung  | binär              | 1, wenn die Antenne wegen Überhitzung abgeschaltet hat.                                      |
+| Update ausstehend        | binär              | 1, wenn ein Software-Update auf einen Neustart wartet.                                       |
+| Schneeschmelzmodus       | Auswahl            | Automatisch, Immer an, Aus — in Gladys änderbar.                                             |
+| Softwareversion          | Text               | Die Firmware der Antenne.                                                                    |
+
+Nur geänderte Werte werden an Gladys gesendet; ein gleichbleibender Wert wird alle 6 Stunden erneut
+gesendet, damit das Dashboard nie „Kein aktueller Wert“ anzeigt.
+
+### Schneeschmelzmodus
+
+**Automatisch** heizt, wenn die Antenne Schnee erkennt, **Immer an** heizt schon vor Schneefall (mehr
+Verbrauch), **Aus** heizt nie (spart Strom, aber Schnee kann die Verbindung unterbrechen). Wähle ihn am
+Gerät oder mit der Szenen-Aktion `set_snow_melt_mode`.
+
+## Widget
+
+Das Widget `dish_status` (**Starlink**) zeigt die Latenz, Download und Upload, den verdeckten Himmel, dann
+den Status (grün wenn verbunden, orange bei einem Ausfall, rot wenn nicht erreichbar), die aktiven Warnungen
+mit Namen, den Schneeschmelzmodus und die Betriebszeit. Sobald die Antenne zu Gladys hinzugefügt ist, folgen
+die Kacheln ihren Funktionen live. Die optionale Einstellung wählt die Antenne.
+
+## Szenen-Auslöser
+
+- `connection_lost` — **Starlink-Verbindung unterbrochen**: Die Antenne ist ein ganzes
+  Aktualisierungsintervall offline (zwei Messungen in Folge) oder antwortet gar nicht mehr (Ursache
+  `unreachable`: Stromausfall, Kabel). Kurze Aussetzer werden ignoriert. Filtere nach der **Ursache**
+  (verdeckt, Satellitensuche, verstaut, Ruhemodus, Antenne antwortet nicht…). Variablen: der Ursachencode
+  und der Statustext.
+- `connection_restored` — **Starlink-Verbindung wiederhergestellt**: Die Antenne ist nach einer gemeldeten
+  Unterbrechung zurück. Variablen: die Dauer des Ausfalls in Sekunden und die Ursache.
+- `obstruction_detected` — **Himmel der Starlink-Antenne verdeckt**: Etwas beginnt, die Antenne zu
+  verdecken, höchstens alle 10 Minuten. Variable: der verdeckte Anteil des Himmels (%).
+
+Ein Ausfall, der beim Start von Gladys schon läuft, wird nicht gemeldet (Gladys weiß nicht, wann er
+begonnen hat).
+
+## Szenen-Aktionen
+
+- `reboot_dish` — **Starlink-Antenne neu starten**.
+- `stow_dish` — **Starlink-Antenne verstauen**.
+- `unstow_dish` — **Starlink-Antenne ausrichten**.
+- `set_snow_melt_mode` — **Starlink-Schneeschmelze einstellen** (automatisch, immer an, aus).
+
+Die ersten drei unterbrechen das Internet: Bis **Befehle erlauben, die das Internet unterbrechen** aktiviert ist, schlagen sie fehl (und die Szene protokolliert es). Denk daran, dass Gladys Plus, der Fernzugriff und
+Cloud-Benachrichtigungen über denselben Internetzugang laufen.
+
+## Szenen-Beispiele
+
+- **Warnen, wenn Starlink ausfällt**: Auslöser `connection_lost` mit der Ursache „Antenne antwortet nicht
+  (Strom, Kabel)“ → eine Nachricht über einen lokalen Kanal senden (oder eine Benachrichtigung später, wenn
+  die Verbindung zurück ist).
+- **Ausfälle protokollieren**: Auslöser `connection_restored` → die Nachricht „Starlink nach
+  `outage_seconds` s zurück“ senden.
+- **Schnee ist angesagt**: Wetterbedingung „Schnee“ am Abend → `set_snow_melt_mode` „Immer an“; am
+  nächsten Morgen → „Automatisch“.
+- **Watchdog**: Auslöser `connection_lost`, Ursache „Keine Antwort aus dem Netz“ → 10 Minuten warten →
+  `reboot_dish` (mit erlaubten Befehlen).
+
+## Fehlerbehebung
+
+- **„Die Antenne antwortet nicht“**: vom Gladys-Rechner aus `ping 192.168.100.1`. Keine Antwort: siehe
+  Voraussetzungen (Bypass-Modus, statische Route). Eine Antwort, aber weiterhin Fehler: Prüfe Adresse und
+  Port (`9200`) in der Konfiguration.
+- **Kein Gerät unter Entdecken**: Die Antenne muss einmal geantwortet haben; nutze **Verbindung zur Antenne
+  testen**.
+- **Die Werte ändern sich nie**: Prüfe, ob die Antenne zu Gladys hinzugefügt wurde; sieh dir dann die
+  Protokolle mit `LOG_LEVEL=debug` an (jede Messung wird auf Debug-Ebene geschrieben).
+- **Die Leistungsaufnahme bleibt leer**: Manche Antennen oder Firmware-Versionen melden sie nicht.
+- **Funktionsnamen in der falschen Sprache**: Die Namen werden beim Hinzufügen festgelegt; ändere die Sprache,
+  lösche das Gerät und füge es neu hinzu (sein Verlauf geht verloren).
+
+## Grenzen
+
+- Die API der Antenne ist **nicht offiziell**: SpaceX kann sie mit einem Firmware-Update ändern. Die
+  Integration ignoriert, was sie nicht kennt, und arbeitet mit dem weiter, was sie noch findet.
+- **Eine Antenne** pro Installation (die Adresse der Konfiguration). Der Starlink-WLAN-Router wird nicht
+  gelesen.
+- Download und Upload sind der **Verkehr** durch die Antenne, nicht die Kapazität der Verbindung.
+- Keine Hinderniskarte, keine GPS-Position, kein Zeitplan für den Ruhemodus (das macht die Starlink-App).
+- Das kürzeste Aktualisierungsintervall beträgt 10 Sekunden: Ein Ausfall, der kürzer als ein Intervall
+  ist, bleibt eventuell unbemerkt.
+- Zwei kleine Anfragen pro Intervall (Status ≈ 1 KB, Verlauf ≈ 25 KB), nur im lokalen Netzwerk: kein
+  Kontingent, kein Internetverkehr.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Starlink in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Starlink-Antenne | `section` | Nein | Die Integration liest die Antenne in deinem Netzwerk, wie die Starlink-App: kein Konto, keine Cloud. Gladys muss die Adresse der Antenne erreichen (standardmäßig 192.168.100.1): Mit dem Starlink-Router klappt das sofort, mit deinem eigenen Router im Bypass-Modus siehe die Dokumentation. |
+| Adresse der Antenne | `string` | Nein | IP-Adresse der Antenne, optional mit Port (standardmäßig 9200). Lass 192.168.100.1 stehen, außer du hast das Netzwerk geändert. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft die Antenne gelesen wird. Latenz, Paketverlust und Durchsatz werden über dieses Intervall gemittelt. |
+| Sprache der Gerätetexte | `select` | Nein | Namen der Funktionen (beim Hinzufügen der Antenne zu Gladys festgelegt) und Statustext. |
+| Befehle, die das Internet unterbrechen | `section` | Nein | Neustarten oder Verstauen der Antenne unterbricht den Internetzugang für Minuten, auch Gladys Plus und den Fernzugriff. Bis du sie hier erlaubst, bleiben sie gesperrt. |
+| Befehle erlauben, die das Internet unterbrechen | `boolean` | Nein |  |
+
+## So installierst du Starlink in Gladys
+
+1. Öffne in Gladys **Integrationen**: Starlink erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-starlink:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-starlink](https://github.com/guim31/gladys-starlink).
+
+Starlink benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Starlink ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-starlink) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-starlink/blob/HEAD/docs/de.md)

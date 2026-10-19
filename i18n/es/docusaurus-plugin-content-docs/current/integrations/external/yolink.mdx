@@ -1,0 +1,249 @@
+---
+title: "Integración domótica YoLink, gratuita y de código abierto"
+sidebar_label: "YoLink"
+description: "YoLink sensors, plugs, valves, locks, sirens and garage doors through the official API. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yolink.png"
+keywords:
+  - "yolink"
+  - "domótica yolink"
+  - "gladys yolink"
+  - "yolink gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-yolink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"YoLink","description":"YoLink sensors, plugs, valves, locks, sirens and garage doors through the official API.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-yolink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yolink.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T12:51:44Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This integration brings the **YoLink** devices (YoSmart) of a YoLink hub into
+Gladys, through the **official YoLink Open API v2**: the same account as the
+YoLink app, no hack. Unofficial, not affiliated with YoSmart.
+
+> **Development version (0.1).** Written from the official documentation
+> (doc.yosmart.com) and YoSmart's official Python library `yolink-api`,
+> tested with simulated answers, not yet with real devices. Feedback is
+> welcome on the GitHub repository.
+
+## What you get
+
+One Gladys device per supported YoLink device:
+
+| YoLink device                                          | In Gladys                                                        |
+| ------------------------------------------------------ | ---------------------------------------------------------------- |
+| Door sensor (DoorSensor)                               | open/closed, battery %                                           |
+| Motion sensor (MotionSensor)                           | motion, battery %                                                |
+| Leak sensor (LeakSensor)                               | water leak, battery %                                            |
+| Temperature & humidity sensor (THSensor)               | temperature °C, humidity % (not on probe-less models), battery % |
+| Vibration sensor (VibrationSensor)                     | vibration, battery %                                             |
+| Plug, switch (Outlet, Switch)                          | on/off (settable), power W (Energy plugs)                        |
+| Power strip (MultiOutlet)                              | each socket on/off (settable)                                    |
+| Water valve (Manipulator, LeakStop, FlowSmart Control) | valve open/closed (settable), battery %                          |
+| Lock (Lock M1, Lock M2)                                | locked (settable), battery %                                     |
+| Siren (Siren)                                          | siren on/off (settable), battery %                               |
+| Garage door (GarageDoor, Finger)                       | cover command open/close, state from its door sensor             |
+
+Hubs, remotes, thermostats, sprinklers and other types are not supported yet:
+the **Test the connection** button tells how many devices are skipped.
+
+## Installation
+
+1. In the YoLink app: **Account** > **Advanced Settings** > **Personal Access
+   Credentials**, then **+** to make one. Note its **UAID** and **secret key**.
+2. Install the integration from the Gladys store.
+3. In the **Configuration** tab, enter the UAID and the secret key, then save.
+   The status reads "Connected to YoLink: 12 devices. Live events on."
+4. Open the **Discovery** tab and add the devices you want. Their values
+   arrive as soon as they are added.
+
+## Safety: commands off by default
+
+These commands are refused until you allow them in the configuration:
+
+| Option                         | Default | Off: Gladys…                             |
+| ------------------------------ | ------- | ---------------------------------------- |
+| Allow unlocking the locks      | no      | can lock, never unlock                   |
+| Allow opening the garage doors | no      | can close a door its sensor reports open |
+| Allow opening the water valves | no      | never opens a valve                      |
+| Allow closing the water valves | no      | never closes a valve                     |
+| Allow stopping the sirens      | yes     | can start a siren, never stop it         |
+
+A refused command shows a message pointing to the option. To shut the water
+off from a scene on a leak, turn on "Allow closing the water valves". A siren
+whose stopping is off stops by itself after the alarm duration set in the
+YoLink app.
+
+A YoLink garage door appears in Gladys as a **cover command** (like a
+shutter: open, close), never as a switch, so a scene that turns everything on
+or off never reaches it. The YoLink controller itself only knows "toggle":
+
+- **stop** is refused: the controller cannot stop the door, and a toggle sent
+  instead could reverse it;
+- just before toggling, the integration reads the paired door sensor again;
+  when there is none, or it is offline or gives no state, the command is
+  refused (a toggle could do the opposite);
+- Gladys waits 5 seconds for the answer of a command: a garage command that is
+  not ready to be sent 3.5 seconds after it arrived (slow sensor, another
+  command of that garage in progress) is refused and nothing is sent;
+- the commands of one garage run one at a time; after a toggle, any new
+  command of that garage is refused with a "command ignored" message for 60
+  seconds or until the sensor reports a state other than the one before the
+  toggle (an offline sensor does not end it): a second "close" sent while the
+  door moves would open it again;
+- **limit**: a door already moving by other means (remote, wall button, the
+  YoLink app) may be reversed by a "close" from Gladys, because the YoLink API
+  cannot tell that it moves: the sensor only says "open" or "closed";
+- **limit**: a sensor that is wrong (badly placed, magnet out of line, state
+  stuck) makes the toggle do the opposite of the command, a "close" that
+  **opens** the door included, even with opening turned off. This cannot be
+  detected: the cloud only returns the last state the sensor reported. Check
+  that the sensor follows the door before automating.
+
+## How the values arrive
+
+- **Live** ("Live events" option, on by default): the integration subscribes
+  to the MQTT events of your YoLink home. A door opening, a motion or a leak
+  arrive within a second or two. Every alert is recorded, even two alerts in a
+  row. Read "Privacy" before leaving it on.
+- **Full refresh**: at start, then every 30 minutes (10 to 1440), the
+  integration reads the device list and the state of each device again over
+  HTTPS (one request per device, half a second apart). Without the live
+  events, this is the only source of the values.
+- The devices of the European zone ("-EC" models) are read on YoLink's EU
+  cloud, the others on the US cloud, as the app does.
+- YS6801 power strip: channel 0 is the USB ports, channels 1 to 4 are sockets
+  1 to 4.
+
+## Usage limits
+
+- YoLink allows one access credential 5 open MQTT connections and 10 new
+  connections per 5 minutes: the integration uses one per cloud (two at most)
+  and never opens more than 8 per 5 minutes. Do not share one credential
+  between several programs (Home Assistant, Gladys…): make one per program.
+- When YoLink answers "limits reached", the integration pauses for 15
+  minutes, during which neither Discovery nor the test button reads YoLink; on
+  a network error it retries after 1, 2, 5, 10 then 15 minutes.
+- Gladys accepts 300 states per minute: beyond, the values wait for the next
+  minute.
+
+## Options
+
+| Option                          | Default | Role                                           |
+| ------------------------------- | ------- | ---------------------------------------------- |
+| UAID, secret key                | —       | the access credential made in the YoLink app   |
+| Allow unlocking, garage, valves | no      | see "Safety"                                   |
+| Allow stopping the sirens       | yes     | see "Safety"                                   |
+| Live events (unencrypted MQTT)  | yes     | see "Privacy"                                  |
+| Full refresh interval (min)     | 30      | how often everything is read again             |
+| Language of the feature names   | French  | feature names of the devices added from now on |
+
+## Troubleshooting
+
+- **"YoLink refused the UAID or the secret key"**: check them (the credential
+  may have been deleted in the app). The integration waits for a change or a
+  click on **Test the connection**.
+- **`cloud` badge with an orange dot "Live events paused"**: the MQTT
+  connection dropped, the integration reconnects (30 s, then up to 5 min).
+  The values arrive at the next refresh at the latest.
+- **`unreachable` badge with an orange dot**: YoLink reports the device
+  offline (batteries, hub range).
+- **"The LeakStop did not answer"**: in its power-saving (class A) mode it
+  only listens from time to time; try again, or change its mode in the YoLink
+  app.
+- **A device is missing**: its type is not supported yet; open an issue on
+  the GitHub repository with its model. The FlowSmart Meter (YS5007), which
+  has no valve, is skipped.
+
+## Privacy
+
+The UAID and the secret key are kept by Gladys in its database (the key is
+masked in the interface, never shown again; Gladys does not encrypt it, so it
+is in its backups too). The key is only sent to
+`api.yosmart.com/open/yolink/token` (HTTPS) to get an access token, which stays
+in memory (nothing is written to `/data`). Every other HTTP request (device
+list, states, commands) goes to YoLink over HTTPS.
+
+### Live events: what travels in clear
+
+The "Live events" option is **on by default**. It is the only part of the
+integration that is **not encrypted**: YoLink's MQTT broker only offers plain
+TCP on port 8003 (port 8004 is WebSocket, without TLS too; a TLS connection is
+refused on both).
+
+- **Between what and what**: the machine running Gladys (the integration's
+  container) and YoLink's MQTT broker, `mqtt.api.yosmart.com:8003` (US cloud)
+  and, if you have European devices, `api-eu.yosmart.com:8003` (EU cloud),
+  through your local network, your internet provider and the internet.
+- **What travels in clear**:
+  - the **access token** (sent as the MQTT user name at each connection). It
+    is valid about 2 hours: whoever reads it can, during that time, **command
+    every YoLink device of yours, unlocking the locks and opening the garage
+    included**, whatever the Gladys options;
+  - your YoLink **home id** (in the topic) and the **id of each device**;
+  - **every event of your devices**: doors opening and closing, motions,
+    leaks, temperatures and humidity, lock, valve, siren and plug states,
+    batteries, the answers to commands. They tell when someone is at home.
+- **Forged events**: without TLS, someone on that path can also inject fake
+  events (a door opening, a leak, a motion) that Gladys takes as real, and so
+  trigger your scenes.
+- **No encrypted alternative**: YoSmart offers no TLS port (only 8003 TCP and
+  8004 WebSocket, both in clear); turning the option off is the only way to
+  avoid it.
+- **What never goes there**: the UAID and the secret key, and the commands
+  (always sent over HTTPS).
+- **To turn it off**: in Gladys, **Integrations** > **YoLink** >
+  **Configuration**, untick "Live events (unencrypted MQTT)" and save. The
+  MQTT connections close at once and none is opened again; the values then
+  arrive only at each full refresh, over HTTPS (lower "Full refresh interval"
+  to 10 minutes for fresher values). The status then reads "Live events off".
+
+YoLink is a trademark of YoSmart; this integration is not affiliated with
+YoSmart.
+
+## Parámetros de configuración
+
+Estos son los parámetros que YoLink te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your YoLink account | `section` | No | Brings your YoLink devices into Gladys through the official YoLink Open API v2 (a YoLink hub is required): door, motion, water leak, temperature and humidity, and vibration sensors, plugs, switches and power strips, water valves, locks, sirens and garage doors, with their batteries. Changes arrive live (MQTT), and everything is read again every 30 minutes. In the YoLink app, open Account > Advanced Settings > Personal Access Credentials, add one, and copy its UAID and secret key here. Unlocking, opening the garage door and opening or closing a water valve stay off until you allow them below. Unofficial, not affiliated with YoSmart. |
+| UAID | `string` | Sí |  |
+| Secret key | `secret` | Sí |  |
+| Allow unlocking the locks from Gladys | `boolean` | No | Off by default: Gladys can lock, never unlock. |
+| Allow opening the garage doors from Gladys | `boolean` | No | Off by default: Gladys never sends an opening; it can close a door its sensor reports open. The controller can only toggle: if the sensor is wrong, or if the door is already closing by other means, a "close" can stop it or open it again (see the guide). |
+| Allow opening the water valves from Gladys | `boolean` | No | Off by default: Gladys never opens a valve. |
+| Allow closing the water valves from Gladys | `boolean` | No | Off by default: turn it on to cut the water from a scene (on a leak, for example). |
+| Allow stopping the sirens from Gladys | `boolean` | No | On by default. Off: Gladys can start a siren, never stop it (it stops after its own alarm duration). |
+| Live events (unencrypted MQTT) | `boolean` | No | On by default. YoLink's MQTT (port 8003) has no encryption: between this Gladys and YoLink's broker (mqtt.api.yosmart.com, api-eu.yosmart.com for EU devices), the access token and every event of your devices (doors, motions, leaks, temperatures, lock and valve states, batteries) travel in clear over your network and the internet. Whoever reads the token can command every YoLink device (unlocking and the garage included) for about 2 hours. The secret key and the commands always go over HTTPS. Untick and save to turn it off: the values then arrive only at each full refresh, over HTTPS. |
+| Full refresh interval (min) | `number` | No | How often the device list and every state are read again, in minutes (10 to 1440). Live events arrive in between. |
+| Language of the feature names | `select` | No | Used for the names of the features of the devices added from now on. |
+
+## Cómo instalar YoLink en Gladys
+
+1. En Gladys, abre **Integraciones**: YoLink aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-yolink:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-yolink](https://github.com/LM1LC3N7/gladys-yolink).
+
+YoLink requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+YoLink es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-yolink) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-yolink/blob/HEAD/docs/en.md)

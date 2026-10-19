@@ -1,0 +1,177 @@
+---
+title: "Integración domótica Flume, gratuita y de código abierto"
+sidebar_label: "Flume"
+description: "Consumo, caudal y alertas de fuga de su monitor de agua inteligente Flume. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-flume.png"
+keywords:
+  - "flume"
+  - "domótica flume"
+  - "gladys flume"
+  - "flume gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-flume instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Flume","description":"Consumo, caudal y alertas de fuga de su monitor de agua inteligente Flume.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-flume","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-flume.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T20:06:00Z"}} />
+
+Esta integración conecta Gladys con un monitor de agua inteligente **Flume**: el
+sensor fijado en su contador de agua y el puente que lo retransmite a la nube de
+Flume. Gladys recibe su consumo de agua, el caudal del momento, las alertas de fuga y
+el estado de las pilas del sensor, y puede usarlos en escenas y en el panel.
+
+## Antes de empezar
+
+- Su sensor y su puente Flume deben estar instalados y funcionando en la **app
+  Flume**.
+- Flume **no tiene API local**: todo pasa por la nube de Flume. Gladys necesita
+  acceso a internet, y las lecturas llegan con el retraso de la nube de Flume (más o
+  menos un minuto).
+
+### Obtener su cliente API
+
+Cada cuenta de Flume puede crear un cliente API personal. Es lo que permite a Gladys
+hablar con la nube de Flume en su nombre.
+
+1. Inicie sesión en [portal.flumewater.com](https://portal.flumewater.com) con su
+   cuenta de Flume.
+2. Abra **Settings** y luego **API Access**.
+3. Genere un cliente si aún no hay ninguno, y copie su **Client ID** y su **Client
+   Secret**.
+
+## Configuración
+
+En Gladys, abra **Integraciones**, luego **Flume**, luego la pestaña **Configuración**.
+
+| Campo                            | Qué poner                                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Correo de Flume                  | El correo con el que inicia sesión en la app Flume.                                               |
+| Contraseña de Flume              | La contraseña de esa cuenta. Solo se envía a Flume.                                               |
+| Client ID                        | El Client ID de su cliente API.                                                                   |
+| Client secret                    | El Client Secret del mismo cliente API.                                                           |
+| Intervalo de actualización (s)   | Frecuencia de lectura del consumo, de 60 a 3600 segundos. Por defecto: 120.                       |
+| Umbral de agua corriendo (L/min) | Litros del último minuto a partir de los cuales el agua se considera corriendo. Por defecto: 0,5. |
+
+Guarde y haga clic en **Probar la conexión**: la respuesta lista cada sensor con su
+consumo del día, su estado de fuga y su conexión.
+
+### ¿Por qué no actualizar cada segundo?
+
+Flume permite unas **120 peticiones por hora** y por cuenta. Cada actualización cuesta
+una petición por sensor; la lista de dispositivos y las alertas se leen además cada 5
+minutos. Con los 120 segundos por defecto, una casa con un sensor usa unas 54
+peticiones por hora. Si Flume responde que se ha alcanzado el límite, la integración se
+detiene por sí misma 10 minutos y lo indica en la pantalla de configuración.
+
+## Dispositivos
+
+Abra la pestaña **Descubrir** de la integración: cada sensor Flume aparece allí, con el
+nombre de su ubicación en Flume. Añádalo a Gladys. Tiene:
+
+| Función                  | Unidad | Significado                                                                   |
+| ------------------------ | ------ | ----------------------------------------------------------------------------- |
+| Water flow (last minute) | L      | Litros usados durante el último minuto completo, es decir L/min.              |
+| Water used today         | L      | Desde medianoche, en la zona horaria del contador.                            |
+| Water used this month    | L      | Desde el día 1 del mes.                                                       |
+| Leak                     | 0/1    | 1 mientras una alerta de fuga de Flume no esté leída.                         |
+| Low battery              | 0/1    | 1 cuando Flume indica pilas bajas, o una alerta de pilas bajas no está leída. |
+
+Los nombres de las funciones se proponen en inglés: cámbielos a su gusto en Gladys.
+Todos los volúmenes están en **litros**.
+
+La **insignia** del dispositivo indica `cloud` cuando todo funciona, y `unreachable`
+(inaccesible) cuando el sensor, su puente o la nube de Flume están desconectados.
+
+### Cómo vuelve la fuga a 0
+
+Flume mantiene una alerta mientras está **sin leer**. Ábrala en la app Flume (o
+márquela como leída): en la siguiente comprobación, como máximo 5 minutos después, la
+función Leak vuelve a 0.
+
+## Escenas
+
+### Disparadores
+
+- **Se emite una alerta de Flume**: una nueva alerta de Flume — fuga, caudal alto,
+  pilas bajas, puente desconectado u otra. Filtre por sensor y por tipo de alerta. Las
+  acciones siguientes pueden leer `alert`, `title` y `message`. Una alerta que ya
+  existía al arrancar la integración no lo vuelve a disparar.
+- **El agua empieza o deja de correr**: los litros del último minuto han cruzado el
+  umbral de agua corriendo de la configuración. Filtre por sensor y por empieza / deja
+  de; las acciones siguientes pueden leer `state` y `liters`.
+
+Para un umbral sobre un valor (más de 500 L hoy, por ejemplo), use el disparador
+estándar de Gladys sobre las funciones del dispositivo: son sensores normales.
+
+### Acciones
+
+- **Leer el consumo de agua de Flume**: lee en Flume los litros usados en un periodo
+  (última hora, hoy, últimas 24 horas, esta semana, este mes). Salidas: `liters` y
+  `cubic_meters`.
+- **Actualizar Flume ahora**: lee Flume de inmediato sin esperar a la próxima
+  actualización. Salidas: `leak`, `water_running`, `liters_last_minute`,
+  `liters_today` — para un sensor, o para todos cuando no se elige ninguno.
+
+Ejemplo: «Todos los días a las 22:00, leer el consumo del día y enviarme un mensaje si
+supera los 800 litros.»
+
+## Widget del panel
+
+Añada el widget **Agua Flume** a un panel. Muestra el último minuto, el día y el mes
+en mosaicos en directo, el caudal de las últimas 24 horas, el estado de fuga, del agua,
+de las pilas y de la conexión, la última alerta y un botón **Actualizar**. Elija un
+sensor en sus ajustes, o déjelo vacío para el primer sensor de la cuenta.
+
+## Solución de problemas
+
+- **«Flume rechazó el inicio de sesión»**: compruebe el correo y la contraseña en la app
+  Flume, y luego el Client ID y el Client Secret en portal.flumewater.com. Una
+  contraseña cambiada en la app Flume también debe cambiarse aquí.
+- **Ningún sensor en la pestaña Descubrir**: haga clic en **Probar la conexión**. Si
+  responde «ningún sensor en esta cuenta», termine la instalación en la app Flume.
+- **Insignia inaccesible**: la app Flume muestra el mismo estado; compruebe el puente
+  (alimentación, Wi-Fi) y las pilas del sensor.
+- **Valores con uno o dos minutos de retraso**: es el retraso de la propia nube de
+  Flume.
+
+Los registros de la integración (Gladys, **Integraciones**, Flume, registros) nunca
+contienen su contraseña, su client secret ni sus tokens.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Flume te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Flume solo responde a través de su nube: la integración necesita su cuenta de Flume y el cliente API personal de esa cuenta. Cree el cliente en portal.flumewater.com (Settings, API Access) y copie abajo su client ID y su client secret. |
+| Correo de Flume | `string` | Sí | El correo con el que inicia sesión en la app Flume. |
+| Contraseña de Flume | `secret` | Sí | La contraseña de esa cuenta de Flume. Solo se envía a Flume. |
+| Client ID | `string` | Sí | Client ID de su cliente API (portal.flumewater.com, Settings, API Access). |
+| Client secret | `secret` | Sí | Client secret del mismo cliente API. |
+| Intervalo de actualización (s) | `number` | No | Frecuencia de lectura del consumo, en segundos (60 a 3600). Flume permite unas 120 peticiones por hora: cada actualización cuesta una petición por sensor, más la lista de dispositivos y las alertas cada 5 minutos. |
+| Umbral de agua corriendo (L/min) | `number` | No | Litros usados en el último minuto a partir de los cuales el agua se considera corriendo, para el disparador «El agua empieza o deja de correr». 0 cuenta cualquier gota. |
+
+## Cómo instalar Flume en Gladys
+
+1. En Gladys, abre **Integraciones**: Flume aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-flume:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-flume](https://github.com/prohand/gladys-flume).
+
+Flume requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Flume es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-flume) — [fuente de esta documentación](https://github.com/prohand/gladys-flume/blob/HEAD/docs/es.md)

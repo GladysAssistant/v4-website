@@ -1,0 +1,193 @@
+---
+title: "Intégration domotique Google Sheets, gratuite et open source"
+sidebar_label: "Google Sheets"
+description: "Google Sheets dans Gladys : journaliser depuis les scènes, surveiller cellules et lignes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-sheets.jpg"
+keywords:
+  - "google sheets"
+  - "domotique google sheets"
+  - "gladys google sheets"
+  - "google sheets gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-google-sheets instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Sheets","description":"Google Sheets dans Gladys : journaliser depuis les scènes, surveiller cellules et lignes.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-google-sheets","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-sheets.jpg","type":"device","version":"0.1.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-18T16:11:43Z"}} />
+
+## Présentation
+
+Cette intégration relie Gladys à vos classeurs **Google Sheets**, dans les deux sens : vos scènes y écrivent (journal de températures, relevés de compteur, arrivées et départs) et y lisent, et Gladys réagit à ce qui y change (une réponse à un formulaire Google Forms, un état saisi sur le téléphone).
+
+- **Actions de scène** : **ajouter une ligne** (avec la date et l’heure si vous le souhaitez), **écrire des cellules**, **lire des cellules** (pour réutiliser une valeur de la feuille dans un message ou une condition) et **effacer des cellules**, sur tout classeur que votre compte Google peut modifier.
+- **Surveillances** : vous déclarez, depuis l’écran de configuration, une **cellule** ou les **nouvelles lignes** d’un onglet. Chaque surveillance est un **appareil** : la valeur de la cellule (nombre, texte, température, montant, index d’énergie) ou le nombre de lignes, pour les tuiles du tableau de bord, l’historique et les conditions de scène.
+- **Déclencheurs de scène** : **cellule modifiée** (avec un filtre sur la nouvelle valeur, par exemple « Fait ») et **ligne ajoutée** (chaque réponse Google Forms, chaque ligne saisie à la main).
+- **Widget** : les dernières lignes d’un onglet surveillé, avec un formulaire **Ajouter une ligne** dont les champs portent les noms de l’en-tête de la feuille.
+- **Cloud** : vos données circulent entre les serveurs de Google et votre Gladys, avec votre propre client Google et la seule autorisation « feuilles de calcul » (aucun accès au reste de votre Drive). Google Sheets n’envoie aucune notification : les surveillances sont relues toutes les **2 minutes** (réglable).
+
+![Le widget « Lignes de classeur » avec son formulaire « Ajouter une ligne » ouvert, et un journal de températures (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-google-sheets/main/docs/assets/widgets.fr.png)
+
+## Prérequis
+
+- Gladys **5.2.0** ou plus récent (formulaires de widget).
+- Un compte Google (personnel ou Workspace) et les classeurs à utiliser : les vôtres, ou partagés avec vous en modification (la lecture seule suffit pour les surveillances et « lire des cellules »).
+- Un **projet Google Cloud** gratuit dans lequel vous créez **votre propre client OAuth** : Google n’autorise pas le partage d’une clé, et l’intégration n’en embarque aucune. Comptez une dizaine de minutes, une seule fois.
+
+## Configuration
+
+### 1. Projet Google Cloud et API
+
+1. Ouvrez la [console Google Cloud](https://console.cloud.google.com/) et créez un projet (par exemple « Gladys »).
+2. Dans **API et services → Bibliothèque**, cherchez **Google Sheets API** et cliquez sur **Activer** ([lien direct](https://console.cloud.google.com/apis/library/sheets.googleapis.com)). L’API Drive n’est pas nécessaire.
+
+### 2. Écran de consentement (Google Auth Platform)
+
+1. Ouvrez **Google Auth Platform** ([lien](https://console.cloud.google.com/auth/overview)) et cliquez sur **Commencer** : nom de l’application (« Gladys »), adresse e-mail d’assistance, audience **Externe**, adresse de contact, acceptez le règlement, puis **Créer**.
+2. Dans **Audience**, cliquez sur **Publier l’application** pour la passer **En production**. C’est important : une application laissée **en test** reçoit des autorisations qui **expirent au bout de 7 jours** (il faudrait se reconnecter chaque semaine), et seuls les comptes ajoutés comme utilisateurs test peuvent se connecter.
+3. Inutile de demander la validation à Google : l’application reste « non validée », ce qui est normal pour un usage personnel. L’autorisation « feuilles de calcul » est dite sensible : Google affiche simplement un avertissement à la connexion (voir l’étape 4). Une application non validée est limitée à 100 utilisateurs, largement assez pour un foyer.
+
+### 3. Client OAuth
+
+1. Dans **Google Auth Platform → Clients**, cliquez sur **Créer un client**.
+2. Type d’application : **Application Web**, nom : « Gladys ».
+3. Dans **URI de redirection autorisés**, ajoutez exactement :
+
+   ```
+   https://my.gladysassistant.com/redirect/oauth
+   ```
+
+   C’est la page HTTPS de Gladys qui renvoie votre navigateur vers votre instance, quelle que soit son adresse (Google refuse les adresses en `http://` et les adresses IP comme `http://192.168.1.50`). Elle est la même pour tout le monde ; l’écran de configuration de Gladys l’affiche aussi, avec un bouton de copie. Si vous accédez à Gladys en HTTPS et activez l’option avancée « adresse de l’instance » de cet écran, déclarez plutôt l’adresse qu’il affiche.
+
+4. Cliquez sur **Créer**, puis copiez le **Client ID** et le **Client secret** (il commence par `GOCSPX-`). Copiez le secret tout de suite : Google ne le réaffiche pas toujours.
+5. Si la console demande d’ajouter `gladysassistant.com` aux **domaines autorisés** (Google Auth Platform → Branding), acceptez.
+
+### 4. Dans Gladys
+
+1. Ouvrez l’intégration **Google Sheets**, collez le **Client ID**, le **Client secret** et, si vous le souhaitez, l’URL de votre classeur principal dans **Classeur par défaut**, puis **enregistrez**.
+2. Cliquez sur **Se connecter avec Google** et choisissez votre compte.
+3. Google prévient qu’il **n’a pas validé cette application** : c’est la vôtre. Cliquez sur **Paramètres avancés**, puis **Accéder à Gladys (non sécurisé)**.
+4. **Cochez** l’autorisation Google Sheets (« Consulter, modifier, créer et supprimer toutes vos feuilles de calcul Google Sheets »), puis **Continuer**. Vous revenez dans Gladys, connecté.
+5. Pour surveiller une cellule ou un onglet, utilisez les boutons **Surveiller une cellule** et **Surveiller les nouvelles lignes** (ci-dessous), puis ajoutez les appareils dans la **découverte** et le widget à un tableau de bord.
+
+| Champ                                         | Défaut      | Rôle                                                                                                                                                  |
+| --------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Client ID                                     | —           | Le Client ID de votre client OAuth (se termine par `.apps.googleusercontent.com`).                                                                    |
+| Client secret                                 | —           | Son secret (`GOCSPX-…`), jamais affiché ni écrit dans les journaux.                                                                                   |
+| Se connecter avec Google                      | —           | Le bouton de connexion. Seule l’autorisation Google Sheets est demandée.                                                                              |
+| Classeur par défaut                           | —           | L’URL d’un classeur (telle qu’affichée dans le navigateur) ou son identifiant : utilisé par les actions, surveillances et widget sans autre classeur. |
+| Relire les surveillances toutes les (minutes) | 2           | De 1 à 60. Chaque lecture coûte 2 ou 3 requêtes par classeur surveillé ; Google en autorise 60 par minute et par compte, sans plafond quotidien.      |
+| Langue des textes                             | Automatique | Noms des fonctionnalités et messages des boutons. Automatique : la langue de votre tableau de bord dès qu’un widget a été affiché.                    |
+
+**Boutons de configuration** (aucun JSON à saisir) :
+
+- **Surveiller une cellule** : classeur (vide = celui par défaut ; une URL collée donne aussi l’onglet grâce à son `gid`), onglet (son nom ; vide = l’onglet de l’URL ou le premier), cellule (`B2`, ou `Feuille1!B2`), affichage dans Gladys (nombre, texte, température en °C, montant en euros ou en dollars, index de compteur d’énergie en kWh : ce choix n’est plus modifiable ensuite) et un nom.
+- **Surveiller les nouvelles lignes** : classeur, onglet, colonnes (`A:Z` par défaut), première ligne d’en-tête ou non, et un nom.
+- **Supprimer une surveillance** (par son numéro `#2`, son nom ou son identifiant), **Lister les surveillances** (avec leur dernière valeur ou la raison pour laquelle elles sont illisibles), **Tester la connexion**, **Diagnostic**, **Se déconnecter de Google**.
+
+Une surveillance suit son onglet quand il est renommé (Gladys garde son identifiant, le `gid`, pas son nom). Les jetons sont renouvelés automatiquement. Si Google révoque l’accès (application restée en test, accès retiré depuis votre compte Google, secret régénéré, six mois sans utilisation), l’intégration cesse d’appeler Google, l’indique dans l’état de connexion, et il suffit de cliquer à nouveau sur **Se connecter avec Google**. Vos surveillances, appareils et scènes sont conservés.
+
+## Utilisation
+
+### Appareils
+
+Un appareil par surveillance, nommé comme vous l’avez choisi, avec une seule fonctionnalité en lecture seule :
+
+| Surveillance     | Fonctionnalité | Affichée comme                                                                                                                               |
+| ---------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Une cellule      | Valeur         | Un nombre (capteur générique), un texte, une température (°C), un montant (€ ou $) ou un index d’énergie (kWh, compté dans la consommation). |
+| Nouvelles lignes | Lignes         | Le nombre de lignes de données de l’onglet (en-tête exclu) : un compteur.                                                                    |
+
+Une surveillance numérique prend la **valeur réelle** de la cellule : `0.5` pour une cellule affichée « 50 % », `1234.5` pour « 1 234,50 € ». Une cellule qui ne contient pas de nombre ne publie rien. Utilisez ces appareils dans les conditions de scène (« quand le stock saisi dans la feuille passe sous 5 »), les tuiles et les graphiques du tableau de bord. La feuille reste l’endroit où on les modifie : les appareils sont en lecture seule.
+
+### Widgets
+
+**Lignes de classeur** : les dernières lignes (1 à 8) d’une surveillance de nouvelles lignes, la plus récente en premier. La première colonne sert de titre, les autres de sous-titre ; un appui affiche chaque colonne avec le nom de son en-tête. Réglages : la surveillance, le nombre de lignes, et le bouton **Ajouter une ligne** : sur les 4 premières colonnes, ou avec la **date et l’heure en première colonne** et les 4 suivantes (comme un formulaire Google). S’y ajoutent **Ouvrir la feuille** et **Actualiser**. Le widget ne coûte aucune requête : il affiche la dernière lecture.
+
+### Déclencheurs de scène
+
+- **Google Sheets : cellule modifiée** : une cellule surveillée a changé de valeur. Filtres : la surveillance, et **Seulement quand elle devient** (la nouvelle valeur exactement comme affichée, par exemple `Fait`). Variables : `value`, `previous_value`, `number`, `previous_number`, `is_number`, `cell`, `watch_name`, `sheet_name`, `spreadsheet_name`.
+- **Google Sheets : ligne ajoutée** : une nouvelle ligne est apparue sous un onglet surveillé. Filtre : la surveillance. Variables : `row` (son numéro), `values` (toutes les valeurs séparées par `|`), `column_1` à `column_10` (à partir de la première colonne surveillée), `first_column`, `watch_name`, `sheet_name`, `spreadsheet_name`.
+
+La première lecture après un démarrage sert de référence (aucun événement), et les changements faits par Gladys elle-même (actions de scène, formulaire du widget) ne lancent jamais de scène, même à travers une formule. Si des lignes sont supprimées ou triées au-dessus de la dernière ligne connue, l’onglet est relu en entier comme nouvelle référence, sans événement.
+
+### Actions de scène
+
+- **Google Sheets : ajouter une ligne** : valeurs séparées par `|` (variables de scène acceptées : `{{...}}`), **date et heure en première colonne** en option (fuseau horaire de Gladys). La ligne se place sous le tableau de l’onglet. Sorties : `row`, `updated_range`.
+- **Google Sheets : écrire des cellules** : à partir d’une cellule (`B2`) vers la droite, ou dans une ligne de cellules (`B2:D2`). Sorties : `updated_range`, `updated_cells`.
+- **Google Sheets : lire des cellules** : une cellule ou une plage. Sorties : `value` (la première cellule telle qu’affichée), `number` et `is_number` (sa valeur réelle), `values` (chaque ligne sur sa propre ligne, cellules séparées par `|`), `cell_count`, `row_count`.
+- **Google Sheets : effacer des cellules** : vide une plage (`A2:D`), la mise en forme est conservée. Sortie : `cleared_range`.
+
+Chaque action prend un **classeur** (vide = celui par défaut) et un **onglet** (vide = le premier ; `Feuille1!B2` dans la plage fonctionne aussi). **Valeurs** : « Comme saisies » (par défaut) laisse Google interpréter nombres, dates et formules comme si vous les tapiez dans la feuille ; « Texte brut » enregistre le texte tel quel, jamais comme une formule (à utiliser pour un texte venu de l’extérieur, un message par exemple).
+
+### Exemples de scènes
+
+- **Journal de températures** : toutes les heures → **ajouter une ligne** dans l’onglet « Températures » avec la date et l’heure et les deux températures lues plus tôt dans la scène, en variables de scène séparées par `|` ; faites vos graphiques dans Google Sheets.
+- **Demandes de la famille par Google Forms** : un formulaire relié à une feuille, une surveillance de nouvelles lignes sur l’onglet des réponses → quand une **ligne est ajoutée** → envoyer au foyer `{{triggerEvent.data.column_2}} demande : {{triggerEvent.data.column_3}}`.
+- **Réglages dans une feuille** : un onglet « Réglages » dont la cellule B2 contient la consigne « vacances » → avant de chauffer, **lire des cellules** `Réglages!B2` et utiliser `number` ; ou surveiller B2 pour qu’un changement saisi sur le téléphone lance la scène aussitôt.
+- **Tâche écrite par Gladys, cochée par la famille** : quand le lave-linge a fini → **écrire des cellules** `Corvées!B5` = `À faire` ; une surveillance de B5 avec **Seulement quand elle devient** `Fait` éteint le voyant de rappel.
+
+## Dépannage
+
+- **« Erreur 400 : redirect_uri_mismatch »** : l’URI de redirection déclarée dans le client OAuth n’est pas identique à celle de Gladys. Vérifiez `https://my.gladysassistant.com/redirect/oauth`, sans barre oblique finale, dans les **URI de redirection autorisés** du client **Application Web** (pas dans « Origines JavaScript autorisées »), enregistrez et patientez quelques minutes.
+- **« Erreur 403 : access_denied » / l’application n’a pas terminé la procédure de validation** : l’application est encore **en test** et votre compte n’est pas utilisateur test. Publiez-la (**Audience → Publier l’application**) ou ajoutez votre compte comme utilisateur test.
+- **« Google n’a pas validé cette application »** : normal, c’est votre propre application ; **Paramètres avancés → Accéder à Gladys (non sécurisé)**.
+- **« L’autorisation Google Sheets n’a pas été accordée »** : la case n’a pas été cochée sur l’écran de consentement. Reconnectez-vous et cochez-la.
+- **« Google a révoqué l’accès » chaque semaine** : l’application est restée **en test** (autorisations de 7 jours). Publiez-la, puis reconnectez-vous.
+- **« L’API Google Sheets n’est pas activée »** : activez **Google Sheets API** dans le projet du client OAuth, patientez quelques minutes, puis **Tester la connexion**.
+- **« Google refuse ce classeur »** : URL erronée, classeur supprimé, ou non partagé avec le compte Google connecté. Ouvrez-le dans un navigateur avec ce compte. Un lien « Publier sur le Web » (`/d/e/2PACX-…`) n’est pas utilisable : copiez l’URL de la barre d’adresse pendant l’édition.
+- **« Aucun onglet … »** : vérifiez l’orthographe du nom de l’onglet (la casse est ignorée s’il est unique) ou laissez le champ vide.
+- **« Quota Google Sheets atteint »** : plus de 60 requêtes en une minute (actions de scène fréquentes, nombreux classeurs surveillés, autres outils sur le même client OAuth). L’intégration patiente et réessaie d’elle-même ; espacez vos scènes ou relisez moins souvent.
+- **Une surveillance numérique n’affiche rien** : la cellule contient un texte ou une date (Google renvoie les dates en texte). Choisissez « Texte », ou placez le nombre dans sa propre cellule.
+- **Un changement saisi sur le téléphone met quelques minutes à apparaître** : c’est l’intervalle de lecture (2 minutes par défaut). Le bouton **Actualiser** du widget relit tout de suite.
+- **Pour un rapport de bug** : cliquez sur **Diagnostic** (résumé anonymisé dans les journaux, sans jeton, valeur de cellule ni nom de feuille), puis joignez les journaux de l’intégration, la version de Gladys et celle de l’intégration.
+
+## Limites
+
+- Aucune notification de Google : un changement apparaît au plus tard après l’intervalle de lecture ; une cellule qui change deux fois entre deux lectures ne lance qu’un événement.
+- Les nouvelles lignes sont celles ajoutées **sous** la dernière : une ligne insérée au milieu, ou des lignes supprimées en même temps que d’autres sont ajoutées, ne sont pas signalées (l’onglet devient une nouvelle référence).
+- Un changement saisi par quelqu’un dans les secondes qui suivent une écriture de Gladys dans le même classeur peut être pris pour une conséquence de Gladys et ne rien lancer.
+- Si l’intégration est arrêtée au moment d’un changement (redémarrage, mise à jour), l’événement correspondant n’est pas rattrapé.
+- « Écrire des cellules » écrit une seule ligne ; pas de mise en forme, pas de création de classeur ni d’onglet, aucun accès aux autres fichiers Drive.
+- 50 surveillances au maximum, 52 colonnes par surveillance de nouvelles lignes, 10 colonnes en variables de scène individuelles (les autres sont dans `values`).
+- Un seul compte Google par intégration. Jamais testée avec un vrai compte Google à sa sortie : les retours sont bienvenus.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Google Sheets dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| 1. Votre client OAuth Google Cloud | `section` | Non | Google ne fournit pas de clé partagée : créez un projet gratuit dans la console Google Cloud, activez l’API Google Sheets, configurez l’écran de consentement (Externe) et publiez-le « En production », puis créez un client OAuth de type « Application Web » dont l’URI de redirection autorisée est exactement https:\/\/my.gladysassistant.com/redirect/oauth. La documentation détaille chaque étape. |
+| Client ID | `string` | Oui | Se termine par .apps.googleusercontent.com. |
+| Client secret | `secret` | Oui | Affiché par Google à la création du client (il commence par GOCSPX-). |
+| 2. Connectez votre compte Google | `section` | Non | Enregistrez d’abord, puis cliquez sur le bouton. Google prévient qu’il « n’a pas validé cette application » : c’est votre propre application, cliquez sur Paramètres avancés puis Accéder à… (non sécurisé), et cochez l’autorisation Google Sheets. Reconnectez-vous si Gladys signale un accès révoqué. |
+| Se connecter avec Google | `oauth2` | Non | Gladys ne demande que l’autorisation Google Sheets (lire et modifier vos feuilles de calcul), jamais Drive. |
+| 3. Options | `section` | Non | Google Sheets n’envoie aucune notification : les cellules et lignes surveillées sont relues à intervalle régulier. Déclarez-les avec les boutons ci-dessous (« Surveiller une cellule », « Surveiller les nouvelles lignes »), puis créez leurs appareils dans la découverte. |
+| Classeur par défaut | `string` | Non | L’URL du classeur telle qu’affichée dans votre navigateur (ou son identifiant) : utilisée par les actions de scène, les surveillances et le widget qui n’en indiquent pas d’autre. |
+| Relire les surveillances toutes les (minutes) | `number` | Non | Chaque lecture coûte 2 ou 3 requêtes par classeur surveillé ; Google en autorise 60 par minute et par compte, sans limite quotidienne. |
+| Langue des textes | `select` | Non | Noms des fonctionnalités et messages des boutons de configuration. Automatique : la langue de votre tableau de bord, dès qu’un widget a été affiché. |
+
+## Comment installer Google Sheets dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Google Sheets apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-google-sheets:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-google-sheets](https://github.com/William-De71/gladys-google-sheets).
+
+Google Sheets nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Google Sheets est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-google-sheets) — [source de cette documentation](https://github.com/William-De71/gladys-google-sheets/blob/HEAD/docs/fr.md)

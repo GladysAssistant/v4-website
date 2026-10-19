@@ -1,0 +1,170 @@
+---
+title: "Duco smart home integration, free and open source"
+sidebar_label: "Duco"
+description: "Duco ventilation over the local API: state, flow, CO2, humidity, temperatures; optional mode. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-duco.png"
+keywords:
+  - "duco"
+  - "duco smart home"
+  - "gladys duco"
+  - "duco gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-duco instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Duco","description":"Duco ventilation over the local API: state, flow, CO2, humidity, temperatures; optional mode.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-duco","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-duco.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T17:09:50Z"}} />
+
+Shows your **Duco** ventilation (DucoBox Energy, Focus, Silent Connect…
+fitted with the **Connectivity Board**) in Gladys through its **local API**:
+no cloud, no account, straight on your network.
+
+> **Never tested with a real Duco box.** Not affiliated with Duco. It talks
+> to the local API of the box as the python-duco-connectivity library (used
+> by Home Assistant) does.
+
+> **Security: the local API of the box has no password and no encryption.**
+> Any machine on your network can read it and change the ventilation. Keep
+> the box on a **trusted network** (never exposed to the Internet, ideally on
+> a separate network for connected devices).
+
+## What you get
+
+One device per **node** of the box: the box itself, zone valves, room
+controls and sensors. Depending on what the node measures:
+
+| Feature                 | Content                                                                       |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| Ventilation mode        | List: automatic, manual 1/2/3, permanent 1/2/3, away… (commands allowed only) |
+| Ventilation state       | Text: the current state ("Automatic", "Manual 2"…)                            |
+| Ventilation mode (read) | Text: automatic, manual, overruled, external…                                 |
+| Flow                    | In %, the flow level the box or the valve aims at                             |
+| Time remaining          | In seconds, for a timed (manual) state                                        |
+| CO2                     | In ppm (CO2 sensors)                                                          |
+| Humidity                | In % (humidity sensors)                                                       |
+| Temperature             | In °C, when the node gives one                                                |
+| Air temperatures        | Outdoor, supply, extract, exhaust, in °C (heat recovery boxes only)           |
+| Filter change in        | In days (heat recovery boxes only)                                            |
+
+The ventilation mode exists on the box and the valves only (as in Home
+Assistant), and only with the states the node advertises. The node names
+are those given in the Duco app.
+
+Read every 30 seconds by default (10 s to 10 min, configurable). Names and
+accepted states are read again every hour.
+
+## Installation
+
+1. Give the box a **fixed IP address** in your router.
+2. Install the integration from the Gladys store.
+3. In its configuration, enter the **IP address of the Duco box**.
+4. Save, then add the nodes from the **Discovery** tab.
+
+The **Test the connection** button reads the box once (at most every 10
+seconds). The Connectivity Board with Public API 2.1 or later is needed; the
+older Communication Board is not supported (the configuration screen says
+so).
+
+## Command (off by default)
+
+The **ventilation mode** refuses every command while **Allow the commands**
+is off. On, Gladys may pick one of the states the node accepts: automatic,
+manual 1/2/3 (timed, single, double or triple time), permanent 1/2/3, away…
+
+It is a **list**, never a switch: a "turn everything off" (from Gladys,
+Google Home, Alexa or HomeKit) never touches it. A scene can change it, but
+only through an explicit action, and only while the commands are allowed.
+Beware: the AI chat of Gladys (MCP) can create and run such a scene.
+
+The **flow** is read only. HomeKit may show it as a fan, but any command
+sent to the flow (on, off, speed) is refused: only the ventilation mode can
+be commanded.
+
+Good to know about the states:
+
+- **Away** and **Permanent 1/2/3** last until the next change. There is
+  **no "off" state**: the ventilation cannot be switched off from Gladys.
+- **Manual** is timed (single, double or triple time). **Picking the timed
+  state already running again does not restart its timer**: nothing is
+  sent, to spare the write budget of the box. To restart it, pick another
+  state, then come back.
+- When the node is in a state the list does not offer (an unknown state, or
+  one the node does not advertise), the list **keeps its last value**: look
+  at "Ventilation state", which always shows the real state.
+- A state offered once stays in the list, even when the node no longer
+  advertises it; it is then refused unsent.
+
+Before each command the integration **reads the node again** and decides on
+that read only; no other request runs between that read and the sending,
+and the option is checked again right before sending. A state already active
+is not sent again (the box counts its writes). A command that cannot leave
+within 3.5 seconds is refused unsent, also when it waits behind a slow read
+(a slow box may therefore refuse); Gladys gets the answer within its 5
+seconds. If the box does not confirm (silence, a 5xx error), Gladys shows
+"Command sent, without confirmation": check the state, read again 5 then 20
+seconds later. One command at a time.
+
+## Errors and limits
+
+- **Box unreachable**: "Ventilation state" shows "Box unreachable", the
+  devices turn unreachable, the other values keep their last value. New try
+  after 30 s, 1, 2 then 5 minutes, never faster than the interval.
+- **Node removed** from the box: its device stays, marked unreachable, with
+  "Node no longer reported by the box"; the configuration screen names it.
+- **429 (too many requests)**, for example when the box used up its write
+  budget: pause of 1 minute to 6 hours for everything (reads, button,
+  commands), never shorter than the interval, kept in `/data` across a
+  restart. During the pause, "Ventilation state" shows "Paused (HTTP 429)".
+- **Air temperatures and filter**: when their read fails, new try 5 minutes
+  later, then every hour; after three error answers in a row (4xx or an
+  unreadable answer), they are not read again until the integration
+  restarts. The nodes are never blocked.
+- Requests to the box go one at a time; the integration never reads the
+  parts of the API that hold the Wi-Fi key.
+- Not yet: zones, node identification, bypass temperature target, Wi-Fi
+  signal, air quality indexes.
+- The logs never contain the text of the box's answers.
+
+## Credits
+
+Port of
+[python-duco-connectivity](https://github.com/ronaldvdmeer/python-duco-connectivity)
+(Ronald van der Meer, MIT, version 0.18.0), the library of Home Assistant's
+Duco integration. Apache-2.0 license.
+
+## Configuration settings
+
+These are the settings Duco asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Duco box | `section` | No | Shows your Duco ventilation (DucoBox with the Connectivity Board) in Gladys through its local API, without any cloud: one device per node (the box, valves, room controls and sensors) with its ventilation state, flow, CO2, humidity and temperature when the node has them. Enter the IP address of the box (give it a fixed address in your router), save, then add the nodes from the Discovery tab. The ventilation mode can be changed from Gladys only if you allow the commands below. The local API has no password: keep the box on a trusted network. Never tested with a real Duco box. Not affiliated with Duco. |
+| IP address of the Duco box | `string` | Yes | An IPv4 address or a host name (port 80 unless you add one, for example 192.168.1.60:8080). |
+| Allow the commands | `boolean` | No | Off by default. On: Gladys may change the ventilation mode of a node (automatic, manual 1/2/3, permanent, away...). Off: the ventilation mode refuses every command. |
+| Refresh interval (s) | `number` | No | How often the box is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the names of the devices and features added from now on, for the state texts and for the command errors. |
+
+## How to install Duco in Gladys
+
+1. In Gladys, open **Integrations**: Duco appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-duco:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-duco](https://github.com/LM1LC3N7/gladys-duco).
+
+Duco requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Duco is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-duco) — [source of this documentation](https://github.com/LM1LC3N7/gladys-duco/blob/HEAD/docs/en.md)

@@ -1,0 +1,271 @@
+---
+title: "APsystems EZ1 & ECU smart home integration, free and open source"
+sidebar_label: "APsystems EZ1 & ECU"
+description: "Unofficial connector: APsystems EZ1 micro-inverters and ECU gateways, live solar production. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-apsystems.png"
+keywords:
+  - "apsystems ez1 & ecu"
+  - "apsystems ez1 & ecu smart home"
+  - "gladys apsystems ez1 & ecu"
+  - "apsystems ez1 & ecu gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-apsystems instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"APsystems EZ1 & ECU","description":"Unofficial connector: APsystems EZ1 micro-inverters and ECU gateways, live solar production.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-apsystems","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-apsystems.png","type":"device","version":"0.1.3","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T18:13:40Z"}} />
+
+**Unofficial connector, not affiliated with APsystems.** It reads your
+APsystems EZ1 micro-inverters (balcony solar: EZ1-M, and the other EZ1
+models that offer the local API) on your local network, through the local
+API the inverter opens itself, and the micro-inverters behind an **ECU
+gateway** (ECU-B, ECU-R, ECU-C: DS3, DS3-L, QS1, YC600, YC1000, QT2…)
+through the ECU's local port 8899 (see [ECU gateways](#ecu-gateways-ecu-b-ecu-r-ecu-c)):
+no cloud, no account, nothing leaves your home. APsystems is a trademark of
+Altenergy Power System Inc.
+
+## What you get
+
+| Surface                                     | Content                                                                                                                                                                                                                                                          |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| One device per inverter                     | **production power** (W, total and per panel), **energy today** (kWh), **lifetime energy** (kWh, a production meter index for the Gladys energy monitoring, with its 30-minute production), **power limit** (W, settable), **on/off**, **reachable**, **alarms** |
+| Scene triggers                              | **solar production started** (the morning), **solar production stopped** (the evening), **solar inverter alarm** (off grid, output fault, DC short circuit on a panel)                                                                                           |
+| Scene actions                               | **set the solar power limit** of an inverter, **read the solar production** (power, energy of the day and lifetime, of one inverter or all of them)                                                                                                              |
+| Dashboard widget                            | **Solar production**: power now, energy of the day and lifetime, per panel, the limit and the state of one inverter, or the totals of all of them                                                                                                                |
+| One device per ECU                          | **production power** (W), **energy today** (kWh), **lifetime energy** (kWh, production index), **inverters online**, **reachable**; read-only                                                                                                                    |
+| One device per micro-inverter behind an ECU | **online**, **production power** (W, total and per panel), **AC voltage** (V, per phase on a three-phase model), **grid frequency** (Hz), **temperature** (°C); read-only                                                                                        |
+
+## Setup
+
+1. **Enable the local API** on each inverter, once: in the **AP EasyPower**
+   app, connect to the inverter (Bluetooth, "Direct connection"), open
+   **Settings → Local mode**, enable it and choose **Continuous**. The app
+   shows the inverter's IP address.
+2. In your router, give each inverter a **fixed address** (DHCP
+   reservation): the integration finds the inverters by address.
+3. In Gladys, type the addresses in **Inverter addresses**, separated by
+   commas: `192.168.1.50, 192.168.1.51`. The port is 8050; add `:port`
+   only if yours differs.
+4. Save, then click **Test the inverters**: each address answers with its
+   model, serial number, firmware and current power. **Do it by day**: an
+   EZ1 sleeps at night.
+5. Open **Discovery** and add the inverters. Put the **Solar production**
+   widget on a dashboard: pick an inverter, or leave it empty for the
+   totals of all of them.
+
+Each inverter is read every 30 seconds (option **Refresh interval**, 10 s
+minimum: the EZ1 answers slowly); its alarms and on/off every 5 minutes, its
+information and power limit every hour.
+
+## The night
+
+An EZ1 is powered by its panels: without sun it switches off, Wi-Fi
+included. That is normal and **not an error**: after three readings without
+an answer, the inverter is shown **sleeping (night)**, its power reads 0 W,
+its energy counters keep their value, and it is only tried every 5 minutes
+until it wakes up. The connection status stays green.
+
+The status turns red only when an inverter disappears **while producing**
+(at least 50 W at its last answer), or stays silent for a whole day: then
+check its Wi-Fi, its address, and that local mode is still on.
+
+**Energy today** is the inverter's own counter since it woke up this
+morning; it keeps the evening's value through the night and restarts at
+sunrise. A restart of the inverter during the day (a very dark cloud) is
+added up, not lost.
+
+## Energy monitoring
+
+The **lifetime energy** feature is a production index: Gladys turns it into
+a 30-minute production (the "Lifetime energy (30-minute production)"
+feature, which Gladys fills itself) for its energy screens. Gladys counts
+every rise of an index in full, so the integration guards it (EZ1 and ECU
+alike):
+
+- a 0 (or a value missing) is never published;
+- a rise is published when the inverters could have produced it: at most
+  1.5 times the maximum power of an EZ1 (2 kW per inverter behind an ECU)
+  since the last value published, over two intervals at least, plus a small
+  margin;
+- a fall, or a larger jump, is **held back**: never accepted by repetition
+  nor by time. The connection status (it stays green) and the **Test the
+  inverters** button show it, with both values. If it is real (a counter
+  reset, an inverter replaced), press **Accept the lifetime energy** (it accepts every value held
+  back at once): the next reading close to the value shown (within what
+  the inverters could have produced since) is taken; any other reading is
+  held again. A jump taken is counted once as production; a fall counts
+  nothing. The acceptance is not kept across a restart of the
+  integration: press again after one. A value back to normal (it was a
+  glitch) ends the hold by itself;
+- the last value published and what is held are kept in
+  `/data/state.json`, so a restart changes nothing.
+
+## Power limit and on/off
+
+- **Power limit**: caps the output, within the bounds the inverter reports
+  (30 to 800 W on an EZ1-M). The integration never writes it on its own,
+  and does not rewrite a value the inverter already has. Whether the
+  inverter keeps it in its memory is not documented by APsystems: a scene
+  that changes it every few seconds is not a good idea, once every few
+  minutes is plenty.
+- **On/off**: stops or restarts the production; the local API keeps
+  answering while the inverter is off. Some firmware (the ones ending in
+  `_b`, for battery systems) have no on/off: the feature is then not
+  offered.
+
+## ECU gateways (ECU-B, ECU-R, ECU-C)
+
+**Never tested with a real ECU.** This part was built from the Home
+Assistant integration of HAEdwin (APsystems ECU Reader 2.15.0) and its
+source by ksheumaker, both Apache-2.0 (see `THIRD_PARTY_NOTICES.md`), without
+an ECU at hand. If you have one, your feedback on the forum is very welcome.
+
+Micro-inverters such as the DS3, DS3-L, QS1, YC600 or YC1000 talk to an
+**ECU** gateway over Zigbee; the ECU uploads to the EMA cloud and answers on
+your local network, on **TCP port 8899**. The integration asks it there:
+nothing goes through EMA.
+
+1. **Put the ECU on your local network, with local access.** The ECU-B and
+   the ECU-R of the 2160 series connect over **Wi-Fi only**; the ECU-R "Pro"
+   (2162 series, its ECU id starts with 2162) and the ECU-C connect over
+   **Wi-Fi or Ethernet** (cable). For Wi-Fi: install **EMA Manager**, press
+   and hold the ECU button until its own Wi-Fi starts, join that Wi-Fi
+   (default password `88888888`), launch EMA Manager and choose the
+   **Local** connection, then connect the ECU to your home Wi-Fi (the same
+   network as Gladys). Port 8899 then answers on your network.
+2. In your router, give the ECU a **fixed address** (DHCP reservation).
+3. In Gladys, type it in **ECU gateway addresses** (`192.168.1.60`; port
+   8899, add `:port` only if yours differs). Several ECUs: separate them
+   with commas.
+4. Save, click **Test the inverters**, then open **Discovery**: one device
+   for the ECU and one per micro-inverter it knows (their external id is the
+   inverter's own id, so they stay the same if the ECU is replaced).
+
+**The pace.** An ECU is known to hang when asked too often. It is read
+every **ECU refresh interval** (300 s by default, and never less, the pace
+the Home Assistant integration recommends), one connection at a time for
+all your ECUs, with a 5-second pause between two queries; a reading is two
+queries (the ECU, then its inverters). After a failure, the next attempt
+waits 5 minutes, then 10, then 20, up to 30 minutes: never sooner than the
+interval, even when the link to Gladys drops and comes back or the
+integration restarts (the pace is kept in `/data/state.json`). The test
+button never asks an ECU before its next reading is due: it reports the
+last one. After three failed readings in a row the status turns
+red: an ECU that hangs usually comes back after unplugging it for a
+minute.
+
+**The night.** The ECU is powered by the grid and keeps answering; its
+micro-inverters go offline with the sun. That is the **sleeping (night)**
+state, never an error: the ECU's power reads 0 W, each micro-inverter is
+offline with 0 W, the rest keeps its last value. A micro-inverter the ECU
+no longer lists, or has not reported for two intervals, is shown offline
+at 0 W too.
+
+**The figures** are the ECU's own: its current power, its energy of the day,
+its lifetime energy, the number of inverters online; per micro-inverter,
+what the ECU gives (online, the power of each panel, the AC voltage, the
+grid frequency, the temperature while online). An inverter of a type the
+reference does not know only gets **online**, and the inverters listed after
+it are not read (a guess would invent inverters). The ECU's **lifetime
+energy** is the production index of the Gladys energy monitoring, guarded
+as described in [Energy monitoring](#energy-monitoring) (some ECU firmware
+answer 0 now and then; 80 inverters are assumed when the ECU does not say
+how many it has). The micro-inverters have no energy counter: the ECU
+counts the energy, once. Micro-inverters created without their ECU are
+counted on their own in the widget and the "read the solar production"
+action.
+
+**Read-only.** No on/off nor power limit through the ECU in this version;
+the "set the solar power limit" action is for EZ1s only. The scene triggers
+"solar production started/stopped" also fire for an ECU (its total
+power), and the widget and the "read the solar production" action count
+it.
+
+## Scenes
+
+- **Solar production started**: an inverter produced 10 W or more for a
+  minute. Variables: the power and the energy of the day so far.
+- **Solar production stopped**: under 5 W for 15 minutes, or asleep.
+  Variable: `{{triggerEvent.data.energy_today}}`, the energy of the day (a
+  good moment for a "today's production" message).
+- **Solar inverter alarm**: an alarm went up: **off grid** (check the AC
+  connection), **output fault** (the AC connection too), **DC short
+  circuit** (check the panel connector of that input,
+  `{{triggerEvent.data.input}}`). The first reading after start-up or after
+  the night does not fire: the inverter checks the grid each morning.
+
+In each trigger, pick an inverter or leave it empty for any of them. The
+variables always hold the inverter's name, `{{triggerEvent.data.name}}`,
+and its serial number, `{{triggerEvent.data.serial}}`.
+
+- The action **set the solar power limit** takes an inverter and a value in
+  W, and gives `limit`, the limit applied.
+- The action **read the solar production** takes an inverter, or none for
+  all of them, and gives `power` (W), `energy_today` and `energy_total`
+  (kWh), `producing`, `sleeping` and `inverters` (how many were counted),
+  for a message or a condition. It uses the last readings; only an inverter
+  not read yet since the start is read first.
+
+The following actions of the scene find these outputs in their variable
+list (written `{{<step>.<action>.<key>}}`, for instance `{{0.0.power}}` when
+the read action is the first of the scene).
+
+## Troubleshooting
+
+- **No answer by day**: check the address (a fixed one), that local mode is
+  on and set to "Continuous", and that Gladys can reach the inverter's
+  network (the integration runs in a container on the Gladys host).
+- **"…does not answer: it sleeps without sun"** on a command: the inverter
+  is asleep; try again once it produces.
+- **No on/off feature**: the firmware has none (see above).
+- **The lifetime energy does not move any more**: a fall or a jump is
+  held back (the status says so, with both values): press **Accept the
+  lifetime energy** if it is real.
+- **ECU not answering**: check its address, that it is on your network
+  (`nc -v <ECU address> 8899` from a computer, then type
+  `APS1100160001END`: it answers a line starting with `APS11`), and unplug
+  it for a minute if it hangs.
+- Logs: the integration's log level is set with the `LOG_LEVEL` variable.
+
+## Privacy
+
+Everything stays on your local network: the integration only talks to the
+addresses you typed, over HTTP on port 8050 (EZ1) and TCP on port 8899
+(ECU).
+
+## Configuration settings
+
+These are the settings APsystems EZ1 & ECU asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your APsystems micro-inverters in Gladys | `section` | No | Unofficial connector, not affiliated with APsystems. It reads your EZ1 micro-inverters (balcony solar) on your local network, through the local API each inverter opens once "Local mode" is enabled in the AP EasyPower app (choose "Continuous"): no cloud, no account. One device per inverter: production power (total and per panel), energy of the day, lifetime energy for the Gladys energy monitoring, power limit, on/off and alarms. Scene triggers when production starts or stops and on an alarm, scene actions to set the power limit and read the production, a dashboard widget. At night an EZ1 sleeps (no sun, no Wi-Fi): that is normal, not an error. Micro-inverters behind an ECU gateway (ECU-B, ECU-R, ECU-C: DS3, QS1, YC600, YC1000...) are read through the ECU's local port 8899, read-only: one device per ECU (power, energy of the day, lifetime energy, inverters online) and one per micro-inverter (online, power per panel, voltage, frequency, temperature). Never tested with a real ECU. |
+| Inverter addresses | `string` | No | The IP address of each EZ1, separated by commas (port 8050 by default, add :port otherwise). Give each inverter a fixed address in your router (DHCP reservation). Then open Discovery. |
+| Refresh interval (s) | `number` | No | How often the production is read. The EZ1 is slow to answer: 30 s is a good pace, 10 s the minimum. At night a sleeping inverter is tried every 5 minutes only. |
+| ECU gateway addresses | `string` | No | For micro-inverters behind an APsystems ECU gateway (ECU-B, ECU-R, ECU-C): the IP address of each ECU, separated by commas (port 8899 by default). Give it a fixed address in your router. Leave empty if you only have EZ1s. |
+| ECU refresh interval (s) | `number` | No | How often each ECU is read. An ECU hangs when it is asked too often: 300 s (5 minutes) is the minimum, the pace recommended by the Home Assistant integration. After a failure the next attempt waits longer. |
+
+## How to install APsystems EZ1 & ECU in Gladys
+
+1. In Gladys, open **Integrations**: APsystems EZ1 & ECU appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-apsystems:0.1.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-apsystems](https://github.com/LM1LC3N7/gladys-apsystems).
+
+APsystems EZ1 & ECU requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+APsystems EZ1 & ECU is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-apsystems) — [source of this documentation](https://github.com/LM1LC3N7/gladys-apsystems/blob/HEAD/docs/en.md)

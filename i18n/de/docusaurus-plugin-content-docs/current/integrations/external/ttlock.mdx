@@ -1,0 +1,188 @@
+---
+title: "TTLock Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "TTLock"
+description: "TTLock-Schlösser über die Cloud: Status, Batterie, letzter Zugang, Abschließen, Auslöser. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ttlock.png"
+keywords:
+  - "ttlock"
+  - "ttlock smart home"
+  - "gladys ttlock"
+  - "ttlock gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-ttlock instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TTLock","description":"TTLock-Schlösser über die Cloud: Status, Batterie, letzter Zugang, Abschließen, Auslöser.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ttlock","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ttlock.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T23:36:40Z"}} />
+
+Bringt deine **TTLock-Schlösser** in Gladys, über die offizielle Cloud-API der TTLock Open Platform: Türschlösser, Vorhängeschlösser und Schlüsselboxen der vielen Marken, die auf TTLock aufbauen (das Schloss wird in der TTLock-App eingerichtet), erreicht über ein TTLock-Gateway (G2, G3...) oder ihr eigenes WLAN.
+
+> **Ohne die Hardware entwickelt: Rückmeldungen sind willkommen.** Diese Integration wurde nach der Dokumentation der TTLock-API und den von der Home-Assistant-Integration veröffentlichten Antworten geschrieben, ohne echtes Schloss oder Konto. Sag im Gladys-Forum oder in einem GitHub-Issue, was funktioniert und was nicht.
+
+Diese Integration steht in keiner Verbindung zu TTLock, Sciener oder einer Schlossmarke.
+
+## Überblick
+
+- Ein Gladys-Gerät pro Schloss deines TTLock-Kontos, mit seinem **Status** (abgeschlossen / aufgeschlossen), seiner **Batterie**, ob sein **Gateway online** ist, und seinem **letzten Zugang** (wer, wie, wann).
+- Eine Taste **Abschließen**. Abschließen ist immer ungefährlich: Es ist der einzige Befehl, den ein Gerät anbietet.
+- **Das Aufschließen ist standardmäßig aus** und wird nie als Schalter, Dashboard-Taste oder Sprachbefehl angeboten. Erlaubst du es ausdrücklich, gibt es es nur als Szenenaktion. Dasselbe gilt für den Durchgangsmodus.
+- Zwei Szenenauslöser: **Schloss aufgeschlossen** (mit der Art: Code, Karte, Fingerabdruck, App...) und **Batterie schwach**.
+- Ein Dashboard-Widget: Status, Batterie, Gateway, letzter Zugang und eine Taste **Abschließen**.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Deine Schlösser in der **TTLock-App** hinzugefügt, mit dem Konto, das sie verwaltet (der „Admin“ des Schlosses, nicht eine Person, die einen eKey erhalten hat).
+- Um den Status zu lesen und aus Gladys abzuschließen: ein **TTLock-Gateway** (G2, G3, G4...), das mit dem Schloss gekoppelt ist, oder ein **WLAN-Schloss**. Ein reines Bluetooth-Schloss ohne Gateway zeigt nur seine Batterie und seine letzten Zugänge, so wie die App sie synchronisiert.
+- Eine kostenlose **Entwickleranwendung** auf der TTLock Open Platform:
+  1. Lege ein Konto auf [euopen.ttlock.com](https://euopen.ttlock.com/manager) an (China: cnopen.ttlock.com). Dieses Entwicklerkonto ist **nicht** dein Konto der TTLock-App.
+  2. Lege eine Anwendung an. TTLock kann einige Tage brauchen, um sie freizugeben.
+  3. Notiere ihre **Client-ID** und ihr **Client-Secret**.
+
+## Konfiguration
+
+Öffne in Gladys **Integrationen → TTLock → Konfiguration** und gib ein:
+
+| Feld                                  | Was eintragen                                                                                              |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| TTLock-Cloud                          | „Europa und Welt“ für eine auf euopen.ttlock.com angelegte Anwendung, „China“ für cnopen.                  |
+| Client-ID / Client-Secret             | Die Werte deiner Entwickleranwendung.                                                                      |
+| Konto / Passwort der TTLock-App       | Die E-Mail-Adresse oder Telefonnummer und das Passwort, **mit denen du dich in der TTLock-App anmeldest**. |
+| Aktualisierungsintervall              | 5, 10, 15 oder 30 Minuten (siehe [API-Aufrufe und Kontingent](#api-aufrufe-und-kontingent)).               |
+| Batterie schwach unter                | Der Stand, unter dem der Auslöser „Batterie schwach“ auslöst.                                              |
+| Sprache der Gerätetexte               | Sprache der Funktionsnamen (beim Hinzufügen festgelegt) und des Textes zum letzten Zugang.                 |
+| Aufschließen durch Szenen erlauben    | Standardmäßig aus. Lies zuerst [Sicherheit](#sicherheit).                                                  |
+| Durchgangsmodus durch Szenen erlauben | Standardmäßig aus.                                                                                         |
+
+Klicke auf **Verbindung testen**: Die Meldung nennt die Zahl der Schlösser und Gateways und eine Schätzung der API-Aufrufe pro Tag. Öffne dann den Tab **Erkennung** und füge deine Schlösser hinzu.
+
+Das Passwort geht als MD5-Hash an TTLock, wie es die TTLock-App macht. Das von TTLock zurückgegebene Zugriffstoken (90 Tage gültig, automatisch erneuert) liegt im privaten Volume der Integration, `/data`.
+
+## Geräte
+
+Jedes Schloss des Kontos wird ein Gerät, benannt wie in der TTLock-App.
+
+| Funktion       | Typ                   | Was sie zeigt                                                                                               |
+| -------------- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Schlossstatus  | Schlossstatus (lesen) | Abgeschlossen oder aufgeschlossen, wie das Schloss über sein Gateway oder WLAN antwortet.                   |
+| Abschließen    | Taster                | Schließt die Tür ab. Nur für ein Schloss mit Gateway oder WLAN.                                             |
+| Batterie       | Batterie (%)          | Der Batteriestand des Schlosses.                                                                            |
+| Gateway online | Ja / Nein             | Ein Gateway in Reichweite des Schlosses ist mit TTLock verbunden. Nur für ein Schloss mit Gateway.          |
+| Letzter Zugang | Text                  | Das letzte Aufschließen: wie, wer (App-Konto oder Name des Codes, der Karte oder des Fingerabdrucks), wann. |
+
+Der Schlossstatus ist nie ein Schalter: Ein Schalter könnte die Tür mit einem Tippen öffnen, aus einer Szene, die „alles ausschaltet“, oder über einen Sprachassistenten.
+
+So werden die Werte aktualisiert: Jede Aktualisierung liest die neuen Einträge des Schlosses (Zugänge) und den Status der Gateways. Der Status wird beim Schloss selbst über sein Gateway abgefragt: beim Start, nach einem Befehl, sobald ein neuer Zugang oder ein Abschließen erscheint, und sonst alle 30 Minuten. Die Abfrage weckt das Schloss, das kostet Batterie und API-Aufrufe.
+
+## Widget
+
+**TTLock-Schloss**: Wähle in den Einstellungen des Widgets ein Schloss aus. Es zeigt Batterie, Status, Gateway, letzten Zugang und eine Taste **Abschließen**. Eine Taste zum Aufschließen gibt es nicht. Bei einem Schloss ohne Gateway und ohne WLAN ersetzt ein Satz die Taste.
+
+## Szenenauslöser
+
+**Schloss aufgeschlossen**: Jemand hat ein Schloss aufgeschlossen. Filter: das Schloss (leer: beliebig) und die Art (leer: beliebig). An die Szene übergebene Informationen: der Name des Schlosses, wer (das App-Konto oder der Name des Codes, der Karte oder des Fingerabdrucks) und wie.
+
+- Er löst bei der Aktualisierung aus, die den Zugang sieht: bis zu einem Aktualisierungsintervall nach dem Öffnen der Tür.
+- Ein Zugang, den das Gateway verspätet hochlädt (mehr als 15 Minuten danach), aktualisiert den letzten Zugang, löst aber nichts aus: Das ist Geschichte, keine Neuigkeit.
+- Fehlgeschlagene Versuche lösen nichts aus.
+
+**Batterie schwach**: Die Batterie eines Schlosses ist unter den eingestellten Stand gefallen. Er löst einmal aus und erst wieder, wenn der Stand 5 Punkte über die Schwelle gestiegen ist (neue Batterien). Übergebene Informationen: der Name des Schlosses und der Batteriestand.
+
+## Szenenaktionen
+
+- **TTLock-Schloss abschließen**: schließt ab und liest dann den Status. Ergebnis: „Laut Schloss abgeschlossen“ (ja / nein).
+- **TTLock-Schloss aufschließen**: abgelehnt, solange „Aufschließen durch Szenen erlauben“ aus ist. Ergebnis: „Laut Schloss aufgeschlossen“.
+- **TTLock-Durchgangsmodus**: abgelehnt, solange „Durchgangsmodus durch Szenen erlauben“ aus ist. An: Einmal geöffnet, bleibt das Schloss den ganzen Tag, jeden Tag offen, bis der Durchgangsmodus ausgeschaltet wird; es öffnet sich nicht von selbst. Aus: Das Schloss schließt wieder normal ab.
+
+## Sicherheit
+
+Aufschließen und Durchgangsmodus öffnen deine Tür für jeden, der davorsteht. Deshalb sind sie standardmäßig aus und existieren nur als Szenenaktionen, nie als Schalter, Widget-Taste, Sprachbefehl oder HomeKit- / Google-Home- / Alexa-Gerät.
+
+Bevor du sie erlaubst:
+
+- Denk an jeden Auslöser der Szene: eine falsch erkannte Anwesenheit, ein zu Hause vergessenes Handy, eine Szene, die irgendwer im Haus vom Dashboard startet.
+- Gladys-Benutzer können Szenen bearbeiten: Dann kann jeder von ihnen die Tür öffnen.
+- Für Besuch ist ein zeitlich begrenzter Code oder ein eKey aus der TTLock-App besser.
+
+## Szenenbeispiele
+
+- **Wer ist heimgekommen**: Auslöser „Schloss aufgeschlossen“, Art = Fingerabdruck oder Code → Nachricht „\{\{Name des Schlosses\}\}: \{\{wer\}\} (\{\{wie\}\})“ senden.
+- **Für die Nacht abschließen**: jeden Tag um 23:00, wenn der Status der Haustür „aufgeschlossen“ ist → Aktion „TTLock-Schloss abschließen“.
+- **Batterien wechseln**: Auslöser „Batterie schwach“ → Nachricht „Wechsle die Batterien von \{\{Name des Schlosses\}\} (\{\{Batterie\}\} %)“ senden.
+- **Haus verlassen**: Wenn die letzte Person geht → „TTLock-Schloss abschließen“ an jeder Tür, dann eine Nachricht senden, wenn „Laut Schloss abgeschlossen“ nein ist.
+
+## API-Aufrufe und Kontingent
+
+TTLock kann ein lokales Gladys nicht benachrichtigen: Seine Callback-URL muss aus dem Internet erreichbar sein. Die Integration fragt deshalb die TTLock-Cloud ab. TTLock begrenzt die API-Aufrufe einer Entwickleranwendung (Fehler 30006, „exceeds the restrictions of API call number“); das Limit selbst ist nicht veröffentlicht.
+
+Was eine Aktualisierung kostet:
+
+- bei jeder Aktualisierung: 1 Aufruf für die Gateways des Kontos, 1 Aufruf pro Schloss (seine Einträge);
+- alle 30 Minuten und nach jedem Zugang: 1 Aufruf pro Schloss mit Gateway oder WLAN (sein Status);
+- jede Stunde: 1 Aufruf für die Schlossliste, 1 pro Schloss mit Gateway (seine Gateways).
+
+Ein Schloss mit Gateway, alle 5 Minuten: etwa 670 Aufrufe pro Tag, 20.000 pro Monat. Alle 15 Minuten: etwa 290 pro Tag. **Verbindung testen** nennt die Schätzung für deine Schlösser. Ist das Limit erreicht, sagt es der Konfigurationsbildschirm: Wähle ein längeres Intervall.
+
+Nur die in Gladys hinzugefügten Schlösser werden aktualisiert.
+
+## Fehlerbehebung
+
+- **„TTLock lehnt die Anmeldung ab“**: Prüfe Client-ID und Secret (Seite der Anwendung auf der Open Platform) und dass das Konto das der **TTLock-App** ist, nicht das Entwicklerkonto. Die Region muss die der Anwendung sein.
+- **Kein Schloss im Tab Erkennung**: Das Konto muss Administrator der Schlösser sein. Per eKey mit dir geteilte Schlösser listet TTLock nicht.
+- **Der Status bleibt unbekannt**: Das Schloss braucht ein Gateway (oder WLAN), und das Gateway muss online sein. Sieh dir „Gateway online“ an.
+- **„Aufruflimit der TTLock-API erreicht“**: Wähle ein längeres Aktualisierungsintervall oder entferne unnötige Schlösser aus Gladys.
+- **Der letzte Zugang kommt verspätet**: Zugänge erreichen die Cloud über das Gateway, dann Gladys bei der nächsten Aktualisierung.
+- Ausführliche Logs: Setze die Umgebungsvariable `LOG_LEVEL` der Integration auf `debug`. Tokens, Passwörter und Codes werden nie geschrieben.
+
+## Grenzen
+
+- Ohne die Hardware und ohne TTLock-Konto entwickelt: Die Antworten der API stammen aus ihrer Dokumentation.
+- Keine Ereignisse in Echtzeit: Die Verzögerung ist das Aktualisierungsintervall. Der Callback von TTLock braucht eine öffentliche URL.
+- Ein TTLock-Konto pro Gladys. Nur die Schlösser, die das Konto verwaltet.
+- Keine Verwaltung von Türsensor, Codes, Karten oder Fingerabdrücken: Nutze die TTLock-App.
+- Höchstens 50 Einträge pro Schloss werden bei jeder Aktualisierung gelesen: Bei einem sehr viel genutzten Schloss und langem Intervall können Zugänge fehlen.
+- Die Funktionsnamen werden beim Hinzufügen des Geräts festgelegt: Eine spätere Sprachänderung benennt nur neue Geräte.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt TTLock in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Lege auf der TTLock Open Platform eine kostenlose Anwendung an (registrieren, dann Anwendung anlegen; die Freigabe kann einige Tage dauern): So erhältst du eine Client-ID und ein Secret. Gib danach das Konto der TTLock-App ein, dem die Schlösser gehören, nicht das Entwicklerkonto. Die Schlösser werden über ein Gateway (G2, G3...) oder ihr eigenes WLAN erreicht. |
+| TTLock-Cloud | `select` | Ja | Wo die Anwendung angelegt wurde: euopen.ttlock.com (Europa und Rest der Welt) oder cnopen.ttlock.com (China). |
+| Client-ID | `string` | Ja | Steht auf der Seite der Anwendung in der TTLock Open Platform. |
+| Client-Secret | `secret` | Ja |  |
+| Konto der TTLock-App | `string` | Ja | Die E-Mail-Adresse oder Telefonnummer, mit der du dich in der TTLock-App anmeldest. Nimm das Konto, das die Schlösser verwaltet. |
+| Passwort der TTLock-App | `secret` | Ja |  |
+| Aktualisierungsintervall | `select` | Ja | TTLock kann Gladys nicht benachrichtigen: Jede Aktualisierung kostet API-Aufrufe. Der Status wird alle 30 Minuten beim Schloss abgefragt, oder sobald ein neuer Zugang erscheint. |
+| Batterie schwach unter | `select` | Ja | Stand, unter dem der Auslöser „Batterie schwach“ einmal pro Batterie auslöst. |
+| Sprache der Gerätetexte | `select` | Ja | Namen der Funktionen (beim Hinzufügen festgelegt), letzter Zugang und Texte der Auslöser. |
+| Öffnen aus Gladys | `section` | Nein | Standardmäßig aus. Einmal erlaubt, gibt es Aufschließen und Durchgangsmodus nur als Szenenaktionen, nie als Schalter, Dashboard-Taste oder Sprachbefehl. Eine Szene, die die Tür öffnet, öffnet sie für jeden davor: Lies zuerst die Dokumentation. |
+| Aufschließen durch Szenen erlauben | `boolean` | Nein |  |
+| Durchgangsmodus durch Szenen erlauben | `boolean` | Nein |  |
+
+## So installierst du TTLock in Gladys
+
+1. Öffne in Gladys **Integrationen**: TTLock erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-ttlock:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-ttlock](https://github.com/guim31/gladys-ttlock).
+
+TTLock benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+TTLock ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-ttlock) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-ttlock/blob/HEAD/docs/de.md)

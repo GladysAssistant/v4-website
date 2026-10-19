@@ -1,0 +1,241 @@
+---
+title: "Integración domótica Netdata, gratuita y de código abierto"
+sidebar_label: "Netdata"
+description: "Sus nodos Netdata en Gladys: procesador, memoria, disco, red, temperatura y alarmas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netdata.png"
+keywords:
+  - "netdata"
+  - "domótica netdata"
+  - "gladys netdata"
+  - "netdata gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-netdata instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Netdata","description":"Sus nodos Netdata en Gladys: procesador, memoria, disco, red, temperatura y alarmas.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-netdata","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netdata.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T08:40:13Z"}} />
+
+[Netdata](https://www.netdata.cloud/) es un agente de supervisión en tiempo
+real para Linux, FreeBSD, macOS y Windows, muy extendido en los homelabs. Esta
+integración lee los agentes Netdata de sus **otros equipos** — un NAS, un
+servidor doméstico, una Raspberry Pi — y los lleva a Gladys: un dispositivo por
+nodo Netdata, con su procesador, su memoria, su carga, su disco principal, su
+red, su temperatura, su tiempo en marcha y el número de alarmas Netdata
+activas. Indíquele un **padre Netdata** y aparecerán todos los nodos que le
+envían sus datos. Las escenas pueden reaccionar cuando se activa o se resuelve
+una alarma Netdata, o cuando un nodo deja de responder, y un widget del panel
+muestra sus nodos y sus alarmas. Todo se queda en su red local: Netdata Cloud
+no es necesario.
+
+Probada con un padre Netdata v2.12.1 real y su hijo (Docker), con alarmas de
+prueba activadas y resueltas. Aún no en todas las instalaciones: sus
+comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-netdata/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un agente Netdata (v1.31 o posterior, se recomienda la v2) en cada equipo que
+  quiera seguir, o un padre Netdata al que envían sus datos, accesible desde el
+  equipo de Gladys (puerto 19999 por defecto).
+- Hasta tres agentes por instalación de la integración, y 30 nodos por agente.
+
+La integración solo lee: no cambia nada en sus equipos ni en la configuración
+de Netdata.
+
+## Primeros pasos
+
+### 1. Comprobar que Netdata responde
+
+Desde un navegador de su red, abra `http://<equipo>:19999`: debe aparecer el
+panel de Netdata. Si no, puede que Netdata solo escuche en `localhost`: ponga
+`bind to = *` en la sección `[web]` de `netdata.conf` y reinícielo.
+
+Con varios equipos, lo más sencillo es un
+[padre Netdata](https://learn.netdata.cloud/docs/observability-centralization-points/metrics-centralization-points/configuration):
+los demás agentes le envían sus datos, y la integración los lee todos a través
+de él, con una sola dirección.
+
+### 2. Configurar la integración
+
+En Gladys, abra **Integraciones → Netdata → Configuración**:
+
+- **Dirección de Netdata**: la dirección del agente o del padre, por ejemplo
+  `192.168.1.20`, `nas.lan` o `http://nas.lan:19999` (también vale la dirección
+  copiada del navegador).
+- **Token Bearer (opcional)**: solo si el agente o su proxy inverso pide una
+  cabecera `Authorization: Bearer`. Déjelo vacío para un agente local normal.
+- **Dirección del segundo** y **del tercer Netdata**: otros agentes, no hacen
+  falta para los hijos de un padre.
+- **Gráficos adicionales (opcional)**: identificadores de gráficos Netdata,
+  separados por comas, por ejemplo `system.io, mem.swap`. Cada dimensión de
+  estos gráficos se convierte en una función adicional de los nodos que los
+  tienen. El identificador figura bajo el título de cada gráfico en el panel de
+  Netdata. Cinco gráficos como máximo.
+- **Intervalo de actualización**: 30 segundos por defecto.
+- **Aceptar certificados autofirmados**: solo para una dirección `https://`
+  cuyo certificado tampoco reconoce su navegador.
+- **Idioma de los nombres**: el idioma de los nombres de las funciones, fijados
+  al añadir un dispositivo, y de los resultados de escena.
+
+Guarde y use **Probar la conexión**: una línea por agente, con la versión de
+Netdata, el número de nodos y de alarmas activas.
+
+### 3. Añadir los nodos
+
+Abra la pestaña **Descubrir**: cada nodo Netdata aparece en ella. Añada los que
+quiera seguir. Los disparadores de escena funcionan para todos los nodos,
+añadidos o no.
+
+## Los dispositivos
+
+Cada nodo es un dispositivo, con el nombre de su equipo. Sus funciones:
+
+- **En línea**: 1 mientras el nodo responde, 0 en cuanto deja de hacerlo.
+- **Procesador**: el uso del procesador, en %.
+- **Memoria**: la memoria usada por los programas, en % (sin caché ni búferes,
+  como la cuenta `free`).
+- **Carga (1 min)**, **Carga (5 min)**, **Carga (15 min)**: las cargas medias.
+- **Disco principal usado** (%) y **Disco principal libre** (GB): el sistema de
+  archivos raíz, si no el más grande.
+- **Recepción** y **Envío**: el tráfico de las interfaces físicas, en Mbit/s.
+- **Temperatura más alta**: el sensor de temperatura más caliente, en °C,
+  cuando el nodo tiene sensores.
+- **Tiempo en marcha**: en días.
+- **Alarmas de advertencia** y **Alarmas críticas**: cuántas alarmas Netdata
+  están activas ahora.
+- Una función por dimensión de los **gráficos adicionales**, con el nombre del
+  gráfico y de la dimensión, y la unidad que da Netdata.
+
+Los valores que cambian en cada lectura (procesador, memoria, carga, red,
+temperatura) se envían a Gladys como mucho una vez por minuto, los demás cuando
+cambian.
+
+## Panel
+
+Añada el widget **Nodos Netdata** a un panel:
+
+- sin nodo elegido en sus ajustes, muestra cuántos nodos están en línea y
+  cuántas alarmas activas hay, y luego una línea por nodo, en rojo si tiene una
+  alarma crítica o no responde, en naranja con una advertencia;
+- con un nodo elegido, muestra sus indicadores de procesador, memoria y disco,
+  su temperatura, la lista de sus alarmas activas con sus valores, su carga y
+  su tiempo en marcha.
+
+El botón **Actualizar** vuelve a leer Netdata al instante.
+
+## Escenas
+
+### Disparadores
+
+- **Alarma Netdata**: una alarma Netdata pasa a advertencia o crítica, o vuelve
+  a la normalidad. Filtros: el nodo, el nuevo estado (**Advertencia**,
+  **Crítica**, **Normal**) y el nombre de la alarma (por ejemplo `ram_in_use` o
+  `disk_space_usage`, visible en el panel de Netdata); vacíos, aceptan todo.
+  Las acciones pueden usar el nodo, la alarma, su gráfico, el nuevo estado, el
+  valor (con y sin unidad) y la descripción de la alarma. El valor no siempre
+  se conoce cuando una alarma vuelve a la normalidad (cuando Netdata se ha
+  reiniciado o ha recargado sus alarmas, por ejemplo).
+- **Nodo inaccesible**: un nodo ya no responde, o ya no envía sus datos a su
+  padre, dos lecturas seguidas. Las acciones pueden usar el nombre del nodo y
+  el motivo.
+
+Las alarmas son las del propio Netdata: sus umbrales se ajustan en Netdata
+(`edit-config health.d/…`), no en Gladys. Las alarmas activas al iniciar la
+integración son su punto de partida: solo los cambios posteriores disparan una
+escena, también tras un reinicio de Gladys.
+
+### Acciones
+
+- **Estado de un nodo Netdata**: lee un nodo y da a las acciones siguientes sus
+  cifras (procesador, memoria, carga, disco, red, temperatura, tiempo en
+  marcha, alarmas) y un resumen listo para enviar, por ejemplo
+  `nas: procesador 12 %, memoria 45 %, disco 78 % (310 GB libres), 48 °C, ninguna alarma activa`.
+- **Alarmas Netdata activas**: enumera las alarmas activas ahora, en un nodo o
+  en todos, con su número y un resumen para enviar, por ejemplo
+  `nas: ram_in_use (Advertencia, 91.2%)`.
+
+### Ideas de escenas
+
+- **Alarma Netdata**, estado **Crítica** → enviar el mensaje
+  `{{triggerEvent.data.node_name}}: {{triggerEvent.data.alarm_name}} ({{triggerEvent.data.value_text}})`.
+- Cada mañana a las 8:00 → **Alarmas Netdata activas** → si el número es mayor
+  que 0, enviar el resumen.
+- **Nodo inaccesible** en el NAS → encender una luz en rojo y enviar un
+  mensaje.
+
+## Solución de problemas
+
+- **«no responde»**: compruebe la dirección y el puerto en un navegador, y que
+  Netdata escucha en la red (`bind to = *`). Puede que un cortafuegos bloquee
+  el puerto 19999.
+- **«el agente pide un token»** / **«token rechazado»**: el agente o el proxy
+  inverso delante de él protege la API: introduzca el token Bearer correcto.
+- **«no hay ningún agente Netdata en esta dirección»**: otro servicio responde
+  en esa dirección (una página de inicio de sesión, un proxy inverso sin
+  Netdata detrás).
+- **Un nodo «ya no envía sus datos a su padre Netdata»**: el hijo está apagado,
+  o su envío al padre se ha detenido: consulte los registros de su agente
+  Netdata.
+- **Sin temperatura**: el nodo no tiene ningún sensor que Netdata lea (una VM,
+  un contenedor sin acceso a `/sys`).
+- **Netdata en Docker solo muestra su contenedor**: inícielo con los montajes
+  de las instrucciones oficiales (`/proc`, `/sys`, `/etc/os-release`…); si no,
+  supervisa su propio contenedor.
+- Más detalles con la variable de entorno `LOG_LEVEL=debug` en la integración.
+
+## Límites
+
+- Netdata Cloud y sus espacios no se leen: solo los agentes y padres locales.
+- 30 nodos por agente como máximo, tres agentes como máximo.
+- La integración lee el último valor de cada gráfico en cada actualización: no
+  importa el historial de Netdata.
+- Solo las alarmas Netdata disparan escenas: un umbral propio es una condición
+  de escena sobre una función.
+- Sin relación con Netdata Inc.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Netdata te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sus agentes Netdata | `section` | No | Introduzca la dirección de un agente Netdata, o mejor de un padre Netdata: cada nodo que le envía sus datos se convierte en un dispositivo. Añada luego los nodos que quiera desde la pestaña Descubrir. Netdata Cloud no es necesario. |
+| Dirección de Netdata | `string` | No | Dirección de un agente o padre Netdata (puerto 19999 por defecto): 192.168.1.20, nas.lan o http:\/\/nas.lan:19999. |
+| Token Bearer (opcional) | `secret` | No | Solo si el agente o su proxy inverso pide una cabecera Authorization: Bearer. Si no, déjelo vacío. |
+| Segundo agente Netdata (opcional) | `section` | No | Otro agente, con su propia dirección. Un padre Netdata ya da todos sus hijos. |
+| Dirección del segundo Netdata | `string` | No |  |
+| Segundo token Bearer (opcional) | `secret` | No |  |
+| Tercer agente Netdata (opcional) | `section` | No | Otro agente, con su propia dirección. Un padre Netdata ya da todos sus hijos. |
+| Dirección del tercer Netdata | `string` | No |  |
+| Tercer token Bearer (opcional) | `secret` | No |  |
+| Opciones | `section` | No | Solo los nodos añadidos a Gladys reciben valores; los disparadores de escena funcionan para todos los nodos. |
+| Gráficos adicionales (opcional) | `string` | No | Identificadores de gráficos Netdata, separados por comas (5 como máximo): cada dimensión se convierte en una función de los nodos que tienen ese gráfico. El identificador figura bajo el título del gráfico en el panel de Netdata. |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee cada agente Netdata. |
+| Aceptar certificados autofirmados | `boolean` | No | Solo para una dirección https:\/\/ (Netdata detrás de un proxy inverso) cuyo certificado tampoco reconoce su navegador. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los resultados de escena y de la prueba de conexión. |
+
+## Cómo instalar Netdata en Gladys
+
+1. En Gladys, abre **Integraciones**: Netdata aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-netdata:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-netdata](https://github.com/guim31/gladys-netdata).
+
+Netdata requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Netdata es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-netdata) — [fuente de esta documentación](https://github.com/guim31/gladys-netdata/blob/HEAD/docs/es.md)

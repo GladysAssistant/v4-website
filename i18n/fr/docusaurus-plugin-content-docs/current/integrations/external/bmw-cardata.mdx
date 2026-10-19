@@ -1,0 +1,138 @@
+---
+title: "Intégration domotique BMW CarData, gratuite et open source"
+sidebar_label: "BMW CarData"
+description: "Voitures BMW et MINI : batterie, autonomie, charge, portes, position, scènes (CarData). Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-bmw-cardata.jpg"
+keywords:
+  - "bmw cardata"
+  - "domotique bmw cardata"
+  - "gladys bmw cardata"
+  - "bmw cardata gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-bmw-cardata instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"BMW CarData","description":"Voitures BMW et MINI : batterie, autonomie, charge, portes, position, scènes (CarData).","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-bmw-cardata","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-bmw-cardata.jpg","type":"device","version":"0.1.0","gladys_version":">=5.1.1","stars":0,"pushed_at":"2026-10-17T18:36:08Z"}} />
+
+## Présentation
+
+Cette intégration amène vos **voitures BMW et MINI** dans Gladys grâce à **BMW CarData**, l’accès officiel de BMW aux données de votre propre voiture (Europe) : batterie et autonomie, carburant, charge, kilométrage, verrouillage, portes, vitres, pneus, position et distance du domicile.
+
+- **Lecture seule** : CarData envoie des données, il n’accepte **aucune commande**. Impossible de verrouiller, déverrouiller, lancer la climatisation ou une charge depuis Gladys (BMW n’ouvre aucune commande à distance aux particuliers via CarData).
+- **Temps réel** : l’intégration écoute le **flux** CarData (MQTT) : un changement transmis par la voiture arrive dans Gladys en quelques secondes, sans rien coûter.
+- **API REST** : elle complète ce que le flux n’envoie pas (état de verrouillage des portes, modèle de la voiture, données quand le flux est coupé). BMW autorise **50 appels par jour pour tout le compte**, remis à zéro à 00:00 UTC ; l’intégration les compte et en garde 5 pour vos demandes.
+- **Cloud** : les données de la voiture viennent des serveurs de BMW vers Gladys ; elles ne partent nulle part ailleurs.
+
+![Les deux widgets de l’intégration : la voiture et le compte CarData (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-bmw-cardata/main/docs/assets/widgets.fr.png)
+
+## Prérequis
+
+- Gladys **5.1.1** ou plus récent.
+- Une voiture avec un contrat ConnectedDrive / MINI Connected actif, dans un marché pris en charge (Europe), ajoutée à votre compte MyBMW, dont **vous êtes l’utilisateur principal** (CarData ne sert aucune donnée à un utilisateur secondaire).
+- Un **identifiant client CarData** : dans le portail web MyBMW (ou MINI), ouvrez votre voiture → **BMW CarData** → **Create CarData client**, puis cochez **les deux** abonnements, **CarData API** et **CarData Stream**. Un identifiant sans abonnement donne des jetons qui ne fonctionnent pas.
+- Le **flux de données configuré** : sur la même page, **Configure data stream**, cochez les données voulues (batterie, portes, vitres, position, pneus…) et enregistrez. BMW ne diffuse que ce qui y est coché.
+- Une seule **connexion au flux par compte BMW** : si un autre outil (Home Assistant, MQTT Explorer…) utilise déjà le flux CarData du compte, ils se déconnecteront l’un l’autre.
+
+## Configuration
+
+1. Saisissez l’**identifiant client CarData** et enregistrez.
+2. Cliquez sur **Connecter** : une page BMW s’ouvre. Connectez-vous, vérifiez que le code est celui affiché dans l’état de connexion de l’intégration, et validez-le. Gladys récupère la connexion tout seul en quelques secondes.
+3. Allez dans **Découverte**, ajoutez votre voiture.
+4. Si vous le souhaitez, ajoutez les widgets **Voiture BMW** et **BMW CarData** à un tableau de bord.
+
+| Champ                           | Par défaut                                         | Rôle                                                                                                             |
+| ------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Identifiant client CarData      | —                                                  | L’identifiant du client CarData créé dans le portail.                                                            |
+| Compte BMW                      | —                                                  | Le bouton Connecter (connexion BMW par code d’appareil).                                                         |
+| Hôte / port du flux             | `customer.streaming-cardata.bmwgroup.com` / `9000` | Tels qu’affichés par le portail à côté des identifiants du flux.                                                 |
+| Lecture API toutes les (heures) | 4                                                  | Lecture REST automatique de chaque voiture ; 0 = seulement à la demande. 4 h = 6 appels par jour et par voiture. |
+| Rayon du domicile (m)           | 200                                                | Autour des maisons de Gladys (avec coordonnées) : la voiture est au domicile en deçà.                            |
+| Langue des textes               | Automatique                                        | Noms des fonctionnalités et résumés des scènes.                                                                  |
+
+La connexion reste valable tant que Gladys tourne : les jetons sont renouvelés toutes les heures. Si Gladys reste éteint **plus de deux semaines**, ou si vous supprimez le client dans le portail, cliquez à nouveau sur Connecter (un déclencheur de scène vous prévient).
+
+## Utilisation
+
+### Appareils
+
+Un appareil par voiture, nommé d’après son modèle (par exemple « BMW iX1 xDrive30 »). Une fonctionnalité apparaît dès que la voiture a transmis sa valeur : relancez une recherche après un premier trajet ou une première charge s’il en manque une. Toutes les fonctionnalités sont en lecture seule.
+
+Batterie, autonomie électrique, autonomie totale, niveau et quantité de carburant, câble de charge branché, en charge, état de la charge, puissance de charge, objectif de charge, temps de charge restant, kilométrage, verrouillée, portes, coffre, capot, vitres, toit ouvrant, en mouvement, préclimatisation, les quatre pressions des pneus (bar) et la distance du domicile.
+
+### Widgets du tableau de bord
+
+- **Voiture BMW** : la photo que BMW fournit pour la voiture (récupérée une fois, 1 appel API), batterie ou carburant, autonomie, verrouillage, ouvrants, charge, position, pneus, batterie 12 V, kilométrage, l’âge des données, un bouton **Carte** et un bouton **Lire maintenant** (1 appel API).
+- **BMW CarData** : les appels API du jour sur 50, le flux, son dernier message, les voitures et la durée de validité restante de la connexion.
+
+### Scènes
+
+Déclencheurs (chacun peut être limité à une voiture) :
+
+- **Verrouillée ou déverrouillée**, **verrouillée mais ouverte** (une porte, le coffre, le capot, une vitre ou le toit ouvrant) ;
+- **État de charge modifié** (en charge, en pause, terminée, erreur…), **câble branché ou débranché** ;
+- **Départ ou arrêt**, **arrivée ou départ du domicile** ;
+- **Connexion à renouveler**.
+
+Action : **Lire l’état** d’une voiture (batterie, autonomie, carburant, charge, verrouillage, ouvrants, domicile, kilométrage, un résumé), éventuellement après une lecture par l’API.
+
+Exemples :
+
+- Quand la voiture est verrouillée mais ouverte → m’envoyer un message avec `{{triggerEvent.data.openings}}`.
+- Quand la charge est terminée → notifier « La voiture est chargée : `{{triggerEvent.data.battery_level}}` % ».
+- Quand la voiture arrive au domicile à la nuit tombée → allumer l’éclairage de l’allée.
+
+### Transport
+
+Cloud : les voitures portent le badge cloud. Tant que le flux est coupé, le badge affiche un point orange (mode dégradé) : les valeurs ne viennent alors que de l’API, à plusieurs heures d’intervalle.
+
+## Dépannage
+
+- **« access_denied » à la validation du code** : un problème connu côté BMW. Réessayez dans une fenêtre de navigation privée, ouvrez le portail vous-même et tapez le code à la main. Si cela persiste, supprimez le client CarData dans le portail, créez-en un nouveau avec les deux abonnements, saisissez le nouvel identifiant et reconnectez-vous.
+- **Connecté mais aucune valeur ne bouge** : vérifiez la sélection des données du flux dans le portail, puis verrouillez et déverrouillez la voiture pour qu’elle transmette. Une voiture endormie n’envoie rien.
+- **« Une autre application prend le flux »** : arrêtez l’autre client CarData du compte (une seule connexion au flux par compte).
+- **« Les 50 appels API du jour sont épuisés »** : tous les outils du compte les partagent ; le flux continue, nouveaux appels à 00:00 UTC. Réduisez la fréquence de lecture API si besoin.
+- **Journaux** : cliquez sur **Diagnostic** dans la configuration de l’intégration, puis ouvrez Paramètres → Supervision : un résumé anonymisé (flux, connexion, quota, données reçues par voiture, sans jeton ni VIN complet) y est écrit. Joignez-le à un ticket sur [GitHub](https://github.com/William-De71/gladys-bmw-cardata/issues) avec vos versions de Gladys et de l’intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par BMW CarData dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Client BMW CarData | `section` | Non | Dans le portail web MyBMW (ou MINI), ouvrez votre voiture → BMW CarData. Cliquez sur « Create CarData client », cochez LES DEUX abonnements « CarData API » et « CarData Stream », puis copiez l’identifiant client ici et enregistrez. Europe uniquement ; vous devez être l’utilisateur principal de la voiture. |
+| Identifiant client CarData | `string` | Oui | L’identifiant affiché par le portail après « Create CarData client » (un UUID). |
+| Connexion | `section` | Non | Enregistrez d’abord, puis cliquez sur Connecter : une page BMW s’ouvre. Connectez-vous, vérifiez que le code est celui affiché dans l’état de connexion de Gladys, et validez. Si BMW répond « access denied », réessayez dans une fenêtre privée en tapant le code à la main. |
+| Compte BMW | `account_link` | Non |  |
+| Flux (temps réel) | `section` | Non | Dans le portail, cliquez sur « Configure data stream » et cochez les données voulues (batterie, portes, position…) : BMW ne diffuse que ce qui y est coché. L’hôte et le port ci-dessous sont ceux affichés par le portail ; les valeurs par défaut conviennent à la plupart des comptes. Une seule connexion au flux par compte BMW : arrêtez tout autre outil CarData. |
+| Hôte du flux | `string` | Non |  |
+| Port du flux | `number` | Non |  |
+| Options | `section` | Non | BMW autorise 50 appels API par jour pour tout le compte (remise à zéro à 00:00 UTC). Le flux n’en coûte aucun. L’API complète ce que le flux n’envoie pas (verrouillage des portes, données quand le flux est coupé). |
+| Lecture API toutes les (heures) | `number` | Non | 0 = seulement à la demande. 4 h = 6 appels par jour et par voiture. |
+| Rayon du domicile (m) | `number` | Non | Autour des maisons de Gladys : la voiture est au domicile en deçà de cette distance. |
+| Langue des textes | `select` | Non | Noms des fonctionnalités et résumés des scènes. Automatique : la langue de votre tableau de bord, dès qu’un widget a été affiché. |
+
+## Comment installer BMW CarData dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : BMW CarData apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-bmw-cardata:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-bmw-cardata](https://github.com/William-De71/gladys-bmw-cardata).
+
+BMW CarData nécessite Gladys `>=5.1.1`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+BMW CarData est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-bmw-cardata) — [source de cette documentation](https://github.com/William-De71/gladys-bmw-cardata/blob/HEAD/docs/fr.md)

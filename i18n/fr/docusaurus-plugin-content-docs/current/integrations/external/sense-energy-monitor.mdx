@@ -1,0 +1,159 @@
+---
+title: "Intégration domotique Sense Energy Monitor, gratuite et open source"
+sidebar_label: "Sense Energy Monitor"
+description: "Non officiel : moniteur Sense (USA/Canada), puissance en direct, énergie du jour, appareils. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sense.png"
+keywords:
+  - "sense energy monitor"
+  - "domotique sense energy monitor"
+  - "gladys sense energy monitor"
+  - "sense energy monitor gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-sense instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sense Energy Monitor","description":"Non officiel : moniteur Sense (USA/Canada), puissance en direct, énergie du jour, appareils.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sense","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sense.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T01:40:08Z"}} />
+
+**Connecteur non officiel, sans lien avec Sense Labs.** Il amène votre
+moniteur d'énergie **Sense** (États-Unis et Canada) dans Gladys : la puissance
+consommée par la maison (et produite, avec du solaire) en temps réel, la
+tension et la fréquence, la consommation horaire pour le suivi énergétique de Gladys
+et, en option, les appareils détectés par Sense. Il utilise la même API cloud
+que l'application Sense, que Sense ne documente pas et peut changer à tout
+moment.
+
+> **Jamais testé avec un vrai moniteur ni un vrai compte Sense.** Il a été
+> écrit à partir de la bibliothèque sense-energy utilisée par Home Assistant et
+> testé uniquement sur des réponses d'exemple. Merci de signaler ce qui marche
+> et ce qui ne marche pas.
+
+## Ce que vous obtenez
+
+| Surface                                 | Contenu                                                                                                              |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Un appareil par **moniteur Sense**      | puissance consommée (W), tension L1 et L2 (V), fréquence (Hz), consommation par demi-heure pour le suivi énergétique |
+| Avec du **solaire**                     | puissance produite (W), puissance réseau (W, signée : positive en import, négative en injection)                     |
+| Option **Appareils détectés par Sense** | un appareil par équipement détecté par Sense : marche/arrêt et puissance (W), en lecture seule                       |
+| Boutons                                 | **Tester la connexion**, **Saisir le code de double authentification**                                               |
+
+## Installation
+
+1. Installez l'intégration, saisissez l'**e-mail** et le **mot de passe** de
+   votre compte Sense, puis enregistrez.
+2. **Si votre compte utilise la double authentification**, le statut demande
+   un code : cliquez sur **Saisir le code de double authentification** et tapez
+   le code à 6 chiffres actuel de votre application d'authentification. Une
+   seule fois : la session est ensuite gardée et renouvelée toute seule, même
+   après un redémarrage.
+3. Cliquez sur **Tester la connexion** : le moniteur et l'état du temps réel
+   s'affichent.
+4. Ouvrez **Découverte** et ajoutez le moniteur Sense (et les appareils
+   détectés, si vous avez activé l'option).
+
+## Suivi énergétique
+
+Le flux temps réel donne une puissance, pas une énergie. L'intégration lit donc
+la consommation horaire de Sense toutes les 15 minutes et publie chaque heure
+terminée d'aujourd'hui et d'hier en deux demi-heures **datées** sur la
+fonctionnalité « Consommation (30 min) » : le suivi énergétique reçoit la bonne
+énergie dans la bonne demi-heure et peut la tarifer avec votre contrat ;
+l'énergie d'un jour est la somme de ses demi-heures. Hier est relu à chaque
+rafraîchissement pendant les 3 premières heures du jour (heure du moniteur),
+pour ses dernières heures. Seuls aujourd'hui et hier sont lus : aucun
+historique plus ancien n'est rattrapé, un Gladys arrêté plus d'un jour garde
+un trou. La production, l'import et l'injection n'ont pas encore de total
+journalier (la puissance réseau montre l'échange en temps réel).
+
+## Appareils détectés
+
+Avec l'option, chaque équipement que Sense liste dans son application (hors
+équipements masqués ou fusionnés) devient un appareil avec sa marche/arrêt et
+sa puissance. Sense met du temps à détecter les équipements et peut se
+tromper ; la liste est relue toutes les 6 heures. Ces états sont facultatifs :
+quand le budget d'états de Gladys est atteint, ils attendent la minute
+suivante, jamais ceux du moniteur.
+
+## Limites
+
+- Comptes Sense des États-Unis et du Canada ; seul le premier moniteur du
+  compte est lu.
+- Appels : une seule connexion temps réel (WebSocket) ; la consommation horaire
+  du jour toutes les 15 minutes, celle d'hier une fois par jour (à chaque
+  rafraîchissement pendant les 3 premières heures du jour), les appareils détectés toutes les 6 heures. États publiés : le moniteur au
+  plus toutes les 10 secondes, la puissance des appareils détectés au plus
+  toutes les minutes.
+- Reconnexion du temps réel : de 5 secondes jusqu'à 5 minutes, avec une part
+  aléatoire. Après un échec de connexion : 5, 15, puis toutes les 60 minutes.
+  E-mail ou mot de passe refusés : toutes les 6 heures. Quand Sense demande de
+  ralentir (429), tous les appels attendent le délai demandé (15 minutes
+  sinon), entre 1 minute et 6 heures.
+- Gladys n'a pas d'unité de fréquence : la fréquence est un simple nombre.
+- Les demi-heures suivent les heures pleines du moniteur : un fuseau décalé de
+  45 minutes (Gladys ou moniteur) ne tombe pas sur la grille de 30 minutes de
+  Gladys, et le suivi énergétique les refuse alors.
+
+## Dépannage
+
+- **« Sense a refusé l'e-mail ou le mot de passe »** : vérifiez-les dans
+  l'application Sense, corrigez-les et enregistrez.
+- **« Votre compte Sense demande un code de double authentification »** :
+  utilisez **Saisir le code de double authentification**. Code refusé : tapez
+  le code actuel (il change toutes les 30 secondes).
+- **Temps réel « connexion en cours… » longtemps** : le moniteur est peut-être
+  hors ligne ; le flux se reconnecte tout seul.
+- **Pas d'énergie dans le suivi énergétique** : vérifiez que l'appareil du
+  moniteur Sense est créé ; les heures apparaissent une fois terminées.
+- Logs : réglez la variable `LOG_LEVEL` de l'intégration.
+
+## Confidentialité
+
+Le mot de passe est gardé par Gladys dans sa base, **non chiffré** (en clair
+dans la base de Gladys et dans ses sauvegardes), jamais réaffiché, et envoyé
+seulement à `api.sense.com` pour se connecter. Les jetons de session (accès et
+renouvellement) sont gardés au même endroit, non chiffrés eux aussi, dans la
+configuration de l'intégration, hors du formulaire. Protégez les sauvegardes de
+Gladys en conséquence. Rien n'est journalisé avec
+l'e-mail, le mot de passe ou un jeton.
+
+## Crédits
+
+La logique de l'API est portée depuis
+[sense-energy](https://github.com/scottbonline/sense) (MIT, © 2018 Scott
+Belisle), la bibliothèque de l'intégration Sense de Home Assistant.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Sense Energy Monitor dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Compte Sense (États-Unis et Canada) | `section` | Non | Connecteur non officiel, sans lien avec Sense Labs : il utilise la même API cloud que l'application Sense, que Sense ne documente pas et peut changer. Saisissez l'e-mail et le mot de passe de votre compte Sense. Si votre compte utilise la double authentification, enregistrez, puis saisissez le code à 6 chiffres de votre application d'authentification avec le bouton « Saisir le code de double authentification » ci-dessous : la session est ensuite gardée et renouvelée toute seule. |
+| E-mail Sense | `string` | Oui |  |
+| Mot de passe Sense | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, et envoyé seulement à api.sense.com pour se connecter. Les jetons de session sont gardés au même endroit. |
+| Appareils détectés par Sense | `boolean` | Non | Propose aussi un appareil par équipement détecté par Sense (marche/arrêt et puissance, lecture seule). |
+
+## Comment installer Sense Energy Monitor dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Sense Energy Monitor apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-sense:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-sense](https://github.com/LM1LC3N7/gladys-sense).
+
+Sense Energy Monitor nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Sense Energy Monitor est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-sense) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-sense/blob/HEAD/docs/fr.md)

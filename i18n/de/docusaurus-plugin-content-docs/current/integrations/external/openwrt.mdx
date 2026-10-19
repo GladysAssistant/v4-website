@@ -1,0 +1,310 @@
+---
+title: "OpenWrt Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "OpenWrt"
+description: "OpenWrt-Router: Anwesenheit deiner Geräte, Router-Zustand, WAN-Raten und Ausfälle, Gäste-WLAN. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-openwrt.png"
+keywords:
+  - "openwrt"
+  - "openwrt smart home"
+  - "gladys openwrt"
+  - "openwrt gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-openwrt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenWrt","description":"OpenWrt-Router: Anwesenheit deiner Geräte, Router-Zustand, WAN-Raten und Ausfälle, Gäste-WLAN.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-openwrt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-openwrt.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T16:59:16Z"}} />
+
+Verfolge deinen [OpenWrt](https://openwrt.org)-Router oder Access Point in
+Gladys, über dein lokales Netzwerk: wer zu Hause ist (die mit dem WLAN
+verbundenen Handys), den Zustand des Routers, den Status und die Raten der
+Internetverbindung, das Gäste-WLAN. Keine Cloud, kein Konto.
+
+Die Integration spricht mit dem Router wie LuCI, die Weboberfläche von
+OpenWrt: über **ubus über HTTP** (`/ubus`, rpcd-Sitzungen). Ein Router ohne
+`/ubus`, aber mit der LuCI-RPC-API (luci-mod-rpc), liefert trotzdem die
+Anwesenheit und die Betriebszeit.
+
+> **Ohne die Hardware entwickelt: Feedback willkommen.** Die Integration ist
+> gegen die Antworten von OpenWrt gebaut und getestet, die aus seinem Quellcode
+> gelesen wurden (procd, netifd, hostapd, rpcd), nicht gegen einen echten
+> Router. Sag uns in den
+> [Issues](https://github.com/guim31/gladys-openwrt/issues), was funktioniert
+> und was nicht.
+
+Dieses Projekt ist nicht mit dem OpenWrt-Projekt verbunden. OpenWrt ist eine
+Marke ihres Inhabers.
+
+## Was du brauchst
+
+- Gladys Assistant **5.1.0** oder neuer.
+- Einen Router oder Access Point mit **OpenWrt 18.06 oder neuer**, mit `rpcd`
+  und `uhttpd-mod-ubus`. Beide kommen mit LuCI, jedes Standard-Image hat sie.
+  Prüfe auf dem Router: `ls /usr/lib/uhttpd_ubus.so` muss die Datei zeigen.
+  Sonst: `opkg install rpcd uhttpd-mod-ubus` (`apk add` unter OpenWrt 25),
+  dann `/etc/init.d/uhttpd restart`.
+- Einen rpcd-Benutzer für Gladys (unten). `root` geht auch, aber ein eigener
+  Benutzer, der nur lesen darf, ist sicherer.
+
+## Einrichtung
+
+### Der rpcd-Benutzer und seine ACL
+
+1. Verbinde dich per SSH mit dem Router und lege die Datei
+   `/usr/share/rpcd/acl.d/gladys.json` an. Der Teil `read` ist das, was die
+   Integration liest; der Teil `write` dient nur den Befehlen (Gäste-WLAN,
+   Neustart):
+
+   ```json
+   {
+     "gladys": {
+       "description": "Gladys Assistant",
+       "read": {
+         "ubus": {
+           "system": ["board", "info"],
+           "network.interface": ["dump"],
+           "network.device": ["status"],
+           "network.wireless": ["status"],
+           "hostapd.*": ["get_clients"],
+           "iwinfo": ["assoclist"],
+           "luci-rpc": ["getDHCPLeases"],
+           "file": ["read"],
+           "uci": ["get"]
+         },
+         "file": { "/tmp/dhcp.leases": ["read"] },
+         "uci": ["wireless"]
+       },
+       "write": {
+         "ubus": { "system": ["reboot"], "uci": ["set", "commit"] },
+         "uci": ["wireless"]
+       }
+     }
+   }
+   ```
+
+2. Lege den Login mit einem eigenen Passwort an (`uhttpd -m` macht daraus einen
+   Hash, es wird nicht im Klartext gespeichert):
+
+   ```sh
+   uci add rpcd login
+   uci set rpcd.@login[-1].username='gladys'
+   uci set rpcd.@login[-1].password="$(uhttpd -m 'waehle-ein-langes-passwort')"
+   uci add_list rpcd.@login[-1].read='gladys'
+   uci commit rpcd
+   /etc/init.d/rpcd restart
+   ```
+
+3. Nur wenn du die Befehle willst: Gib dem Login auch den Schreibteil, mit
+   `list write 'gladys'` in seinem Abschnitt von `/etc/config/rpcd`, dann
+   `/etc/init.d/rpcd restart`.
+
+Gut zu wissen: `network.wireless status` und `uci get wireless` können diesem
+Benutzer die WLAN-Schlüssel zeigen. Die Integration liest nur die Namen, die
+SSIDs und die Option `disabled` des Gäste-WLANs, speichert keinen Schlüssel und
+schreibt nie einen in ihre Protokolle. Die Zeilen `uci` und `file` sind
+optional: Ohne sie werden das Gäste-WLAN und die Leases eines alten Routers
+ohne `luci-rpc` nicht gelesen.
+
+### Die Konfiguration
+
+Öffne in Gladys die Integration, dann **Konfiguration**:
+
+- **Adresse des Routers**: die IP-Adresse des Routers (standardmäßig
+  `192.168.1.1`), mit `:Port`, wenn sein Webserver einen anderen Port nutzt.
+- **HTTPS verwenden**: verschlüsselt das Passwort in deinem Netzwerk, wenn
+  `luci-ssl` installiert ist. Ein Router, der HTTP auf HTTPS umleitet, wird
+  ohnehin befolgt.
+- **Selbstsigniertes Zertifikat akzeptieren**: OpenWrt erzeugt beim ersten
+  Start ein eigenes Zertifikat; aktiviere es für deinen eigenen Router.
+- **Benutzername** und **Passwort**: der oben angelegte rpcd-Login.
+- **Schnittstelle**: lass _Automatisch_ (ubus, und LuCI RPC nur, wenn der
+  Router kein `/ubus` hat).
+- **Aktualisierungsintervall**: 10 s bis 1 min (standardmäßig 30 s).
+- **WAN-Schnittstellen**: leer nimmt die Integration `wan` und die
+  Schnittstellen mit der Standardroute. Sonst die Namen aus _Netzwerk →
+  Schnittstellen_ (`wan, wwan`), höchstens vier.
+- **Abwesenheitsverzögerung (Minuten)** und **DHCP-Lease als anwesend
+  zählen**: siehe die Anwesenheitssensoren unten.
+- **Gäste-WLAN-Netz**: der Name des `wifi-iface`-Abschnitts des Gästenetzes
+  (`guest`, `wifinet2`…). **WLAN-Netze auflisten** zeigt sie an.
+- **Befehle erlauben**: standardmäßig aus (siehe die Aktionen).
+- **Sprache der Namen**: Sprache der Geräte- und Funktionsnamen.
+
+Speichere, dann klicke auf **Verbindung testen**: Der Bericht sagt, welche
+Schnittstelle geantwortet hat, welche WAN-Schnittstellen und Funkmodule
+gefunden wurden, welche Clients gesehen wurden und was die ACL nicht erlaubt.
+
+## Die Geräte
+
+Öffne den Tab **Entdecken**: Der Router und die Netzwerk-Clients, die er
+sieht, werden aufgelistet. Füge die hinzu, die du willst.
+
+### Der Router
+
+- **Systemlast (1 min)**: die mittlere Last in Prozent eines Prozessorkerns
+  (ein Router mit 4 voll ausgelasteten Kernen zeigt 400 %).
+- **Belegter Speicher**, in Prozent.
+- **Betriebszeit**, in Stunden.
+- **OpenWrt-Version** (`23.05.5`).
+- **WLAN-Clients** pro Funkmodul (`WLAN-Clients 2.4 GHz`, `5 GHz`…): die
+  verbundenen und autorisierten Stationen.
+- **Gäste-WLAN aktiviert**, wenn ein Gästenetz gewählt ist.
+- Für jede WAN-Schnittstelle: **Download**- und **Upload**-Rate (Mbit/s, der
+  Mittelwert über das Aktualisierungsintervall) und **WAN-Verbindung** (1,
+  wenn aktiv).
+
+Nichts an diesen Geräten ist ein Schalter: Ein Sprachassistent kann das
+Gäste-WLAN nicht versehentlich ausschalten oder den Router neu starten.
+
+### Anwesenheitssensoren
+
+Jeder hinzugefügte Client wird ein **Anwesenheit**-Sensor: anwesend, solange
+er (autorisiert) mit dem WLAN des Routers verbunden ist, abwesend, wenn er
+während der **Abwesenheitsverzögerung** (standardmäßig 5 Minuten) nicht
+gesehen wurde: Ein schlafendes Handy verlässt das WLAN für ein paar Minuten.
+
+- Ein nicht lesbarer Router ändert niemanden: Ein Ausfall schickt nie den
+  ganzen Haushalt weg.
+- Kabelgebundene Geräte sind nicht im WLAN: Aktiviere für sie **DHCP-Lease als
+  anwesend zählen**, mit dem Wissen, dass ein Lease bis zu seinem Ablauf gilt
+  (standardmäßig 12 h).
+- Handys nutzen pro WLAN-Netz eine private (zufällige) MAC-Adresse: Verfolge
+  die Adresse, die das Handy in deinem Netz nutzt, und halte sie in seinen
+  WLAN-Einstellungen fest.
+
+## Dashboard
+
+- **OpenWrt-Router**: Last, Speicher, die Raten des ersten WAN, die
+  WLAN-Clients, der Status jeder WAN-Verbindung, jedes Funkmoduls und des
+  Gäste-WLANs, die Betriebszeit und die Version. Mit erlaubten Befehlen: ein
+  Knopf **Gäste-WLAN** (sein Symbol zeigt den aktuellen Zustand) und ein Knopf
+  **Neu starten**, beide mit Bestätigung.
+- **Geräte zu Hause**: die verfolgten Geräte, anwesende zuerst, mit der Zeit
+  seit dem Weggehen; eine Einstellung zeigt nur die anwesenden.
+
+## Szenen
+
+### Auslöser
+
+- **Unbekanntes Gerät verbunden**: Eine nie gesehene MAC-Adresse hat sich mit
+  dem WLAN verbunden oder ein DHCP-Lease erhalten. Die erste Abfrage lernt das
+  Netz, wie es ist; die gesehenen Adressen werden in `/data` gespeichert.
+  Filter: **Gesehen über** (WLAN oder DHCP-Lease) und **WLAN-Netz (SSID)**.
+  Variablen: MAC-Adresse, IP-Adresse, Hostname, SSID, WLAN-Schnittstelle.
+- **WAN-Verbindung getrennt**: Eine WAN-Schnittstelle ist ausgefallen. Filter:
+  **WAN-Schnittstelle (z. B. wan)**.
+- **WAN-Verbindung wiederhergestellt**: Die Schnittstelle ist wieder aktiv; die Variable
+  _Dauer des Ausfalls (Minuten)_ gibt die Länge des Ausfalls an.
+
+### Aktionen
+
+Die Aktionen tun nichts, solange **Befehle erlauben** nicht aktiviert ist, und
+der Router lehnt sie ab, wenn die ACL keinen Schreibteil hat.
+
+- **Gäste-WLAN einschalten** und **Gäste-WLAN ausschalten**: ändern die Option
+  `disabled` des gewählten Abschnitts und übernehmen sie; OpenWrt lädt das WLAN
+  neu (die anderen Netze flackern ein paar Sekunden). Die Ausgabe sagt, ob das
+  Gäste-WLAN aktiviert ist.
+- **OpenWrt-Router neu starten**: Das Netzwerk ist ein bis drei Minuten weg.
+
+### Szenen-Ideen
+
+- Gäste kommen: samstags um 18 Uhr **Gäste-WLAN einschalten**; um 1 Uhr
+  **Gäste-WLAN ausschalten**.
+- Niemand zu Hause: Wenn die Anwesenheitssensoren der Handys alle abwesend
+  sind, schärfe die Alarmanlage und senke die Heizung.
+- **Unbekanntes Gerät verbunden** in deinem Haupt-WLAN: Schick dir eine
+  Nachricht mit der MAC-Adresse und dem Hostnamen.
+- **WAN-Verbindung wiederhergestellt** nach mehr als 10 Minuten: Schick dir
+  die Dauer des Ausfalls.
+
+## Wie oft der Router abgefragt wird
+
+In jedem Aktualisierungsintervall ruft die Integration `system info`,
+`network.interface dump`, `network.device status`, `network.wireless status`,
+das `get_clients` jedes Access Points (oder `iwinfo assoclist`) und die
+DHCP-Leases ab: etwa zehn kleine Anfragen, nur lesend, in deinem lokalen
+Netzwerk. Gladys fragt diese Geräte nicht ab: Der Timer gehört der
+Integration. Nur geänderte Werte werden an Gladys gesendet, mit einer
+Wiederholung alle sechs Stunden.
+
+## Fehlerbehebung
+
+- **„weder ubus noch LuCI RPC hier“**: Installiere `uhttpd-mod-ubus` (siehe
+  oben) oder prüfe Adresse und Port.
+- **„Benutzername oder Passwort von rpcd abgelehnt“**: Prüfe den Login in
+  `/etc/config/rpcd` und starte rpcd neu. Nach einer Ablehnung wartet die
+  Integration fünf Minuten: Klicke auf **Verbindung testen**, um es sofort
+  erneut zu versuchen.
+- **„von der rpcd-ACL des Benutzers abgelehnt“**: Die ACL-Datei fehlt oder
+  nennt den Login nicht (`list read 'gladys'`); der Bericht listet, was nicht
+  lesbar ist.
+- **„Zertifikat abgelehnt“**: Aktiviere **Selbstsigniertes Zertifikat
+  akzeptieren**.
+- **Kein WLAN-Client**: Die Access Points brauchen `hostapd.*` in der ACL; bei
+  einem hostapd ohne ubus muss `rpcd-mod-iwinfo` installiert sein.
+- Protokolle: Setze `LOG_LEVEL=debug` auf dem Container für die Details jeder
+  Abfrage (nie ein Passwort oder ein WLAN-Schlüssel).
+
+## Grenzen
+
+- Ein Router pro Integration: Die Clients anderer Access Points werden in
+  deren WLAN nicht gesehen (die DHCP-Lease-Option sieht sie trotzdem).
+- Die WAN-Verbindung ist der Zustand der Schnittstelle: Ein Ausfall hinter
+  einer aktiven Verbindung (beim Anbieter) wird nicht gesehen. Die Raten sind
+  Mittelwerte über das Intervall.
+- Das Gäste-WLAN ist ein `wifi-iface`-Abschnitt, in der Konfiguration benannt;
+  ein deaktiviertes Netz wird von OpenWrt nicht aufgelistet (gib seinen Namen
+  ein).
+- LuCI-RPC-Ausweichlösung: Anwesenheit über die Nachbartabelle (ungenauer als
+  das WLAN), Betriebszeit und Neustart; kein Auslöser für unbekannte Geräte.
+- Ohne die Hardware entwickelt: Das Übernehmen des Gäste-WLANs, der Neustart
+  und die LuCI-RPC-Ausweichlösung sind nicht an einem echten Router getestet.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt OpenWrt in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein OpenWrt-Router | `section` | Nein | OpenWrt 18.06 oder neuer, mit rpcd und uhttpd-mod-ubus (mit LuCI installiert). Lege einen eigenen rpcd-Benutzer mit der ACL aus der Doku an: Nur-Lesen reicht für Anwesenheit und Messwerte. |
+| Adresse des Routers | `string` | Ja | IP-Adresse oder Name des Routers, mit :Port, wenn sein Webserver nicht den Standardport nutzt. |
+| HTTPS verwenden | `boolean` | Nein | Verschlüsselt das Passwort in deinem Netzwerk. OpenWrt bietet HTTPS an, wenn luci-ssl installiert ist. Eine Weiterleitung auf HTTPS wird ohnehin befolgt. |
+| Selbstsigniertes Zertifikat akzeptieren | `boolean` | Nein | OpenWrt erzeugt beim ersten Start ein selbstsigniertes Zertifikat. Aktiviere es nur für deinen eigenen Router. |
+| Benutzername | `string` | Ja | Ein Login aus /etc/config/rpcd, am besten ein eigener Nur-Lese-Benutzer (siehe Doku). |
+| Passwort | `secret` | Nein |  |
+| Schnittstelle | `select` | Nein | Automatisch nutzt ubus (/ubus) und weicht nur dann auf die LuCI-RPC-API (luci-mod-rpc) aus, wenn der Router kein /ubus hat. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft der Router abgefragt wird. Die Raten sind Mittelwerte über dieses Intervall. |
+| WAN-Schnittstellen | `string` | Nein | Namen aus Netzwerk → Schnittstellen, durch Kommas getrennt, höchstens vier. Leer: wan und die Schnittstellen mit der Standardroute. |
+| Anwesenheit | `section` | Nein | Füge die zu verfolgenden Geräte im Tab „Entdecken“ hinzu: Jedes wird ein Anwesenheitssensor, anwesend, solange es mit dem WLAN des Routers verbunden ist. |
+| Abwesenheitsverzögerung (Minuten) | `number` | Nein | Ein nicht mehr gesehenes Gerät gilt erst nach dieser Verzögerung als abwesend: Ein schlafendes Handy verlässt das WLAN für ein paar Minuten. |
+| DHCP-Lease als anwesend zählen | `boolean` | Nein | Ein Lease gilt bis zu seinem Ablauf (standardmäßig 12 h), lange nachdem das Gerät weg ist: Aktiviere es nur für kabelgebundene Geräte, die sonst nichts sieht. |
+| Gäste-WLAN und Befehle | `section` | Nein | Standardmäßig nur lesen. Befehle schalten das Gäste-WLAN ein oder aus und starten den Router neu, aus einer Szene oder einem Widget. Sonst wird nie etwas geändert. |
+| Gäste-WLAN-Netz | `string` | Nein | Der Name seines wifi-iface-Abschnitts in /etc/config/wireless. „WLAN-Netze auflisten“ zeigt sie an. Leer: kein Gäste-WLAN. |
+| Befehle erlauben | `boolean` | Nein | Erlaubt Szenen und Widgets, das Gäste-WLAN ein- oder auszuschalten und den Router neu zu starten. Die rpcd-ACL braucht den Schreibteil aus der Doku. |
+| Sprache der Namen | `select` | Nein | Sprache der Geräte- und Funktionsnamen, festgelegt, wenn ein Gerät zu Gladys hinzugefügt wird. |
+
+## So installierst du OpenWrt in Gladys
+
+1. Öffne in Gladys **Integrationen**: OpenWrt erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-openwrt:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-openwrt](https://github.com/guim31/gladys-openwrt).
+
+OpenWrt benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+OpenWrt ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-openwrt) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-openwrt/blob/HEAD/docs/de.md)

@@ -1,0 +1,214 @@
+---
+title: "DoorBird smart home integration, free and open source"
+sidebar_label: "DoorBird"
+description: "DoorBird door stations, locally: image, rings, motion, infrared light, door opening in scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-doorbird.png"
+keywords:
+  - "doorbird"
+  - "doorbird smart home"
+  - "gladys doorbird"
+  - "doorbird gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-doorbird instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"DoorBird","description":"DoorBird door stations, locally: image, rings, motion, infrared light, door opening in scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-doorbird","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-doorbird.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T07:20:16Z"}} />
+
+Brings your **DoorBird** video door stations (D10x, D11x, D21x, D2101V…) into Gladys, **locally**, through
+their official LAN API: the camera image, the doorbell rings, the motion sensor, the infrared light, and — only
+if you allow it — opening the door from a scene. Nothing goes through a cloud.
+
+> Developed without the hardware: feedback welcome. Tell what works and what does not on
+> [GitHub](https://github.com/guim31/gladys-doorbird/issues).
+>
+> This integration is not affiliated with Bird Home Automation (DoorBird).
+
+## Prerequisites
+
+- Gladys 5.1.0 or later.
+- A DoorBird door station on the same network as Gladys, with a fixed address (set it in your router).
+- The DoorBird App, with the administrator credentials of the station (on the "Digital Passport" delivered
+  with it), to create a user for Gladys.
+
+## Create a dedicated DoorBird user
+
+Gladys must not use the administrator account. In the DoorBird App: **Settings → Administration**, log in
+with the administrator credentials, then **User** → **+**. The App gives the new user a name like
+`abcdef0001` and a password: write both down. Give it only what Gladys needs:
+
+- **Watch always** (live view at any time): the image of the camera at any time and the infrared light.
+  Without it, the DoorBird only opens its image for 5 minutes after a ring.
+- The **relays** the door opening may use, and only if you will allow it in Gladys (see below).
+- Nothing else: Gladys needs neither "API-Operator", nor the history, nor the favorites.
+
+Check also that the **motion sensor** is enabled on the DoorBird (Administration → Motion sensor), otherwise
+no motion is reported. The names of the permissions may differ slightly with the version and the language of
+the App.
+
+## Configuration
+
+In Gladys: **Integrations → DoorBird → Configuration**.
+
+- **DoorBird address**: the IP address of the door station, e.g. `192.168.1.50` (with `:port` if not 80,
+  `https://` for HTTPS).
+- **DoorBird user** and **Password**: the user created above. The password is only sent to the DoorBird.
+  After a refused password, the integration stops asking (it never insists) until you fix it or press "Test
+  the connection".
+- **Second DoorBird** (optional): **Its address**, **Its user** and **Its password**, for a gate or a back
+  door.
+- **DoorBird image**: how often the image of each DoorBird is refreshed (only on events, every minute, 5
+  minutes — the default —, 15 minutes or every hour). A ring or a motion always takes a fresh one.
+- **Allow opening the door**: off by default. See "Open the door (DoorBird relay)" below.
+- **Language of the names**: language of the feature names (French by default) and of the texts sent to
+  scenes. The names are set when you add the device: change the language before adding it.
+
+Then open the **Discover** tab and add the DoorBird to Gladys.
+
+## The DoorBird device
+
+One device per DoorBird, named after its model (for example "DoorBird D2101V"), with these features:
+
+| Feature            | Type          | What it does                                                                      |
+| ------------------ | ------------- | --------------------------------------------------------------------------------- |
+| **Image**          | camera        | The camera image, refreshed at the chosen interval, at each ring and each motion. |
+| **Online**         | input         | 1 while the DoorBird answers, 0 when it is unreachable.                           |
+| **Doorbell ring**  | doorbell      | 1 when someone rings, back to 0 ten seconds later.                                |
+| **Motion**         | motion sensor | 1 while the motion sensor of the DoorBird reports motion.                         |
+| **Infrared light** | light         | Switches the infrared light on. It goes off by itself after about 3 minutes.      |
+
+The infrared light cannot be switched off on command: the DoorBird does not offer it, and the integration says
+so rather than pretending. The door is **never** a feature of the device: no switch, no voice assistant, no
+dashboard button can open it.
+
+## Dashboard widget
+
+The **DoorBird** widget shows, for every DoorBird or the one chosen in its settings ("DoorBird (empty:
+all)"):
+
+- the number of rings and of motions over the last 24 hours;
+- the last rings and motions, newest first, each with the image taken at that moment;
+- whether each DoorBird is online;
+- with a single DoorBird added to Gladys, an **Infrared light** button.
+
+The list is kept in memory: it starts empty when the integration restarts.
+
+## Scene triggers
+
+- **Someone rang the DoorBird**: a ring. Filter: the DoorBird (empty: any). Variable: **DoorBird name**.
+- **Motion in front of the DoorBird**: the start of a motion. Filter: the DoorBird. Variable: **DoorBird
+  name**.
+
+The image of the DoorBird is refreshed before the trigger fires: a "send the camera image" action in the same
+scene sends the visitor. One trigger per DoorBird every 15 seconds at most (a long press, a person lingering
+in front of the camera count once).
+
+## Scene actions
+
+- **Refresh the DoorBird image**: takes a fresh image now, to send it in a message right after.
+- **Open the door (DoorBird relay)**: energizes a **Relay** of the DoorBird (door strike, gate): `1` or `2`
+  for the relays of the DoorBird, `abcdef@1` for a relay of a paired door controller ("Test the connection"
+  lists them). It only works once **Allow opening the door** is checked. Only a relay the DoorBird lists is
+  accepted, and the command is sent once, never retried.
+
+> **Warning.** A scene that opens a door opens it for whoever stands there. Never bind it to a trigger anyone
+> outside can cause (a ring, a motion): use it with a condition only you control (a confirmation, your
+> presence at home). Give the Gladys user only the relays it needs.
+
+## Configuration actions
+
+- **Test the connection**: reads each DoorBird again and reports its model, firmware and relays, and whether
+  its user may take an image. It also resumes a DoorBird stopped after a refused password.
+- **Show the video stream address**: the RTSP address of a DoorBird
+  (`rtsp://user:PASSWORD@address:554/mpeg/media.amp`), to add the live video to the "RTSP camera" integration
+  of Gladys. Replace `PASSWORD` yourself: the integration never shows it.
+
+## Scene examples
+
+- **Someone rings → photo on the phone**: trigger "Someone rang the DoorBird", action "send a message with the
+  camera image" (the DoorBird image).
+- **Motion at night → porch light**: trigger "Motion in front of the DoorBird", condition "after sunset",
+  action "turn on the porch light for 5 minutes".
+- **Motion while away → alert**: trigger "Motion in front of the DoorBird", condition "nobody at home",
+  actions "Refresh the DoorBird image" then "send a message with the camera image".
+
+## How it works
+
+- **Events**: the integration keeps one connection open to the event stream of the DoorBird
+  (`monitor.cgi`): rings and motions arrive within a second. The DoorBird repeats its state about every 20
+  seconds; a connection silent for a minute is reopened.
+- **Why not the DoorBird favorites**: a DoorBird can also call an HTTP address on each event, but the
+  sandbox of Gladys accepts no incoming connection. The event stream is an outgoing connection, the reliable
+  way here. The cloud history of the DoorBird is not used.
+- **Load on the DoorBird** (its LAN API has no published quota, the integration stays light): the event
+  connection, `info.cgi` every 5 minutes (every minute while the event stream is down), an image at the chosen
+  interval and at each event (12 images a minute per DoorBird at most, the Gladys limit), two requests at once
+  at most. States are sent to Gladys only when they change, and every 6 hours otherwise.
+
+## Troubleshooting
+
+- **"User name or password refused"**: check the user (not the administrator) and its password, then press
+  **Test the connection**. The integration stops after a single refusal and never insists.
+- **"This DoorBird user lacks the permission"**: give the user "Watch always" (image, infrared light) or the
+  relay (door) in the DoorBird App.
+- **No image between rings**: same cause, "Watch always" is missing.
+- **No motion**: enable the motion sensor of the DoorBird, and check its detection area.
+- **"No DoorBird LAN API at this address"**: wrong address, or a device without the LAN API.
+- **Details**: the logs of the integration (Integrations → DoorBird) say when a DoorBird is lost and back.
+  For everything else, set `LOG_LEVEL=debug`.
+
+## Limitations
+
+- Developed without the hardware: the answers were taken from the published code of DoorBirdPy, Home
+  Assistant, Homebridge and openHAB. Feedback welcome.
+- **RFID badges and keypad codes are not reported**: the event stream of the LAN API only carries the
+  doorbell and the motion sensor; the other events need the DoorBird favorites (an incoming connection,
+  impossible in the sandbox).
+- The live video is not in this integration: use the RTSP address in the "RTSP camera" integration.
+- No two-way audio, no SIP, no DoorBird history (cloud).
+- Two DoorBirds at most. An I/O door controller (A1081) is reached through the relays of its paired DoorBird.
+- The infrared light cannot be switched off on command; its 3 minutes are the DoorBird's.
+- A ring or a motion that happens while the integration is stopped is not caught up.
+
+## Configuration settings
+
+These are the settings DoorBird asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your DoorBird | `section` | No | DoorBird video door stations on your network, through their official LAN API. Create a dedicated user in the DoorBird App, with only the permissions it needs (see the documentation). Nothing goes through a cloud. |
+| DoorBird address | `string` | Yes | IP address or name of the door station, with :port if not 80, https:\/\/ for HTTPS. Give it a fixed address in your router. |
+| DoorBird user | `string` | Yes | A user created in the DoorBird App (Administration, User), not the administrator. |
+| Password | `secret` | Yes | Sent to the DoorBird only, never to a cloud. After a refused password, the integration stops asking until you fix it. |
+| Second DoorBird | `section` | No | Optional: a second door station (a gate, a back door), with its own user. |
+| Its address | `string` | No |  |
+| Its user | `string` | No |  |
+| Its password | `secret` | No |  |
+| DoorBird image | `select` | No | How often the image of each DoorBird added to Gladys is refreshed. A ring or a motion always sends a fresh one. |
+| Allow opening the door | `boolean` | No | Lets scenes energize a relay of the DoorBird (door strike, gate): scene action only, never a switch. Off by default. |
+| Language of the names | `select` | No | Language of the feature names and of the texts sent to scenes. Names are set when a device is added. |
+
+## How to install DoorBird in Gladys
+
+1. In Gladys, open **Integrations**: DoorBird appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-doorbird:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-doorbird](https://github.com/guim31/gladys-doorbird).
+
+DoorBird requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+DoorBird is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-doorbird) — [source of this documentation](https://github.com/guim31/gladys-doorbird/blob/HEAD/docs/en.md)

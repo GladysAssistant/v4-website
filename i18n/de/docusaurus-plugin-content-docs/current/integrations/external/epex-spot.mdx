@@ -1,0 +1,178 @@
+---
+title: "EPEX Spot Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "EPEX Spot"
+description: "Day-Ahead-Strompreise (EPEX Spot) und dynamische Tarife in Gladys. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-EPEX-Spot.png"
+keywords:
+  - "epex spot"
+  - "epex spot smart home"
+  - "gladys epex spot"
+  - "epex spot gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/gboulvin/Gladys-EPEX-Spot instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EPEX Spot","description":"Day-Ahead-Strompreise (EPEX Spot) und dynamische Tarife in Gladys.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-EPEX-Spot","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-EPEX-Spot.png","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-16T20:41:18Z"}} />
+
+Diese Integration bringt die **Day-Ahead-Strompreise** Ihrer Gebotszone nach
+Gladys: das Ergebnis der täglichen Auktion des gekoppelten europäischen
+Marktes (EPEX Spot), **viertelstündlich**. Damit verfolgen Sie den Strompreis,
+starten Ihre Geräte in den günstigsten Stunden und berechnen die echten Kosten
+eines **dynamischen Stromtarifs** (am Spotpreis indexierte Angebote).
+
+Die Preise stammen aus der kostenlosen öffentlichen API von
+[energy-charts.info](https://www.energy-charts.info) (Fraunhofer ISE): kein
+Konto, kein API-Schlüssel. Die Integration benötigt Internetzugang
+(Kennzeichnung **Cloud**).
+
+## Unterstützte Zonen
+
+Frankreich, Deutschland / Luxemburg, Belgien, Niederlande, Österreich,
+Schweiz, Spanien, Polen, Dänemark West (DK1) und Finnland. Die Preise sind in
+Euro. Die Schweiz veröffentlicht Stundenpreise: jede Stunde wird auf ihre vier
+Viertelstunden verteilt.
+
+## Konfiguration
+
+1. Öffnen Sie den Reiter **Konfiguration** der Integration.
+2. Wählen Sie Ihre **Gebotszone** (die Ihres Zählers).
+3. Passen Sie bei Bedarf an:
+   - das **Download-Intervall** (standardmäßig 60 Minuten, 15 bis 360). Die
+     Preise für morgen erscheinen gegen 13 Uhr MEZ: bis dahin versucht es die
+     Integration selbstständig alle 15 Minuten;
+   - den **angezeigten Aufschlag** (€/kWh) und die **angezeigte MwSt.** (%),
+     damit Gerät und Widgets einen Preis nahe Ihrer Rechnung zeigen (Marge
+     des Anbieters, Netzentgelte). Sie ändern nur die Anzeige;
+   - die **Preiseinheit in Widgets**: €/kWh oder €/MWh.
+4. Speichern Sie und klicken Sie auf **Preis-API testen**: die Meldung zeigt
+   die Zahl der empfangenen Viertelstunden und den aktuellen Preis.
+5. Fügen Sie im Reiter **Erkennung** das Gerät **EPEX Spot DE-LU** (oder das
+   Ihrer Zone) hinzu.
+
+## Das Gerät
+
+| Funktion                        | Inhalt                                  |
+| ------------------------------- | --------------------------------------- |
+| Current price (€/kWh)           | Preis der laufenden Viertelstunde       |
+| Next quarter-hour price (€/kWh) | Preis der nächsten Viertelstunde        |
+| Today minimum / average / max   | Statistik des Tages                     |
+| Tomorrow average (€/kWh)        | Durchschnitt für morgen, sobald bekannt |
+
+Die angezeigten Preise enthalten Aufschlag und MwSt. der Konfiguration. Sie
+können **negativ** sein, wenn die erneuerbare Erzeugung die Nachfrage
+übersteigt.
+
+## Dynamischer Stromtarif (ab Gladys 5.2)
+
+Die Integration speist den **Spot-Kalender** Ihrer Zone (`spot-de`,
+`spot-at`…) mit dem reinen Preis jeder Viertelstunde und bietet je Zone eine
+**Vertragsvorlage** im Assistenten für Energieverträge von Gladys an:
+**EPEX Spot dynamisch – Deutschland / Luxemburg** usw.
+
+Für jede Viertelstunde berechnet die Vorlage:
+
+```
+Energie = Spotpreis × Faktor + Marge
+Gesamt  = (Energie + Netzentgelte) × kWh + monatliche Grundgebühr, inkl. MwSt.
+```
+
+Tragen Sie die Werte Ihres Angebots ein (Faktor, Marge, Netzentgelte und
+Abgaben, Grundgebühr, MwSt.). Der **Ersatzpreis** gilt für ein Intervall ohne
+veröffentlichten Spotpreis. Gladys berechnet dann die Kosten Ihres Zählers wie
+bei jedem Vertrag, und die Gladys-Szenen „Vertragspreis geändert“ /
+„aktueller Preis“ funktionieren ebenfalls.
+
+Ein Kalender gehört der zuerst installierten Integration, die ihn deklariert:
+speist bereits eine andere Integration `spot-de`, meldet Gladys dies im
+Konfigurationsbildschirm.
+
+## Szenen
+
+**Auslöser:**
+
+- **Spotpreisniveau geändert** — zur Viertelstunde wechselt der Preis in
+  eine andere Stufe des Tages: _negativ_, _sehr günstig_, _günstig_,
+  _normal_, _teuer_, _sehr teuer_ (Lage des Preises zwischen Minimum und
+  Maximum des Tages). Filtern Sie nach den gewünschten Stufen; Variablen:
+  `level`, `previous_level`, `price`.
+- **Günstigste Stunden begonnen** — das günstigste zusammenhängende
+  Zeitfenster des Tages (1, 2, 3, 4 oder 6 Std.) beginnt jetzt: Geschirrspüler
+  starten, Auto laden oder Warmwasser bereiten. Variablen: `average_price`,
+  `ends_at`.
+- **Preise für morgen veröffentlicht** — einmal täglich, gegen 13 Uhr MEZ.
+  Variablen: `min_price`, `max_price`, `average_price`, `cheapest_hour`,
+  `negative_prices`. Ideal für eine Benachrichtigung.
+
+**Aktionen:**
+
+- **Spotpreis abrufen** — Ausgaben `price`, `spot_price`, `level`,
+  `next_price`, `found`.
+- **Günstigste Stunden finden** — Dauer (Stunden) und Zeitraum (nächste 24
+  Stunden, Rest des Tages, morgen); Ausgaben `start_time`, `end_time`,
+  `starts_at`, `minutes_until_start`, `average_price`, `starts_now`, `found`.
+- **Ist es eine günstige Stunde?** — gibt an, ob jetzt zu den N günstigsten
+  Stunden des Tages gehört (`is_cheap`, `rank`).
+- **Spotpreise laden** — erzwingt einen Download.
+
+Beispiel: „Jeden Tag um 22 Uhr die 3 günstigsten Stunden von morgen finden und
+mir dann schreiben: _Auto laden von \{\{start_time\}\} bis \{\{end_time\}\}_“.
+
+## Widgets
+
+- **Spotpreis** — aktueller Preis (nach Stufe eingefärbt), nächster Preis,
+  Minimum und Maximum des Tages, Kurve für heute und morgen mit
+  „Jetzt“-Markierung, Stufe, Durchschnitt, bestes 2-Stunden-Fenster.
+- **Günstigste Stunden** — die besten 1-, 2-, 3- und 4-Stunden-Fenster der
+  nächsten 24 Stunden und eine Schaltfläche **Aktualisieren**.
+
+## Fehlerbehebung
+
+- **Kein Preis**: klicken Sie auf **Preis-API testen**. „Nicht erreichbar“
+  weist auf ein Netzwerkproblem von Gladys hin; „Rate-Limit“ bedeutet zu
+  viele Aufrufe der API, die Integration wartet 20 Minuten.
+- **Keine Preise für morgen**: sie erscheinen gegen 13 Uhr MEZ, bei einer
+  Marktstörung manchmal später.
+- Die bekannten Preise werden im Volume `/data` gespeichert: ein Neustart
+  verliert sie nicht.
+
+Datenquelle: Bundesnetzagentur | SMARD.de / energy-charts.info, Lizenz CC BY
+4.0 (OMIE für Spanien, private Nutzung).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt EPEX Spot in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Day-Ahead-Strompreise | `section` | Nein | Die Integration lädt die Day-Ahead-Preise Ihrer Gebotszone (EPEX-Spot-Auktion, gekoppelter europäischer Markt) über die kostenlose API von energy-charts.info: kein Konto, kein API-Schlüssel. Die Preise für morgen erscheinen gegen 13 Uhr MEZ. Sie speist den Spot-Kalender von Gladys, sodass Sie im Assistenten für Energieverträge einen dynamischen Stromvertrag aus den angebotenen Vorlagen anlegen können. |
+| Gebotszone | `select` | Ja | Das Marktgebiet Ihres Stromzählers. |
+| Download-Intervall (Minuten) | `number` | Nein | Wie oft die Preise geladen werden (15 bis 360 Minuten). Solange die Preise für morgen fehlen, versucht es die Integration alle 15 Minuten. |
+| Angezeigter Aufschlag (€/kWh) | `number` | Nein | Wird zu den vom Gerät und den Widgets angezeigten Preisen addiert (Marge, Netzentgelte). Vertragskosten nutzen die Vertragsvorlage. |
+| Angezeigte MwSt. (%) | `number` | Nein | Auf die angezeigten Preise angewendet (0 = netto). |
+| Preiseinheit in Widgets | `select` | Nein |  |
+
+## So installierst du EPEX Spot in Gladys
+
+1. Öffne in Gladys **Integrationen**: EPEX Spot erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/gboulvin/gladys-epex-spot:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/gboulvin/Gladys-EPEX-Spot](https://github.com/gboulvin/Gladys-EPEX-Spot).
+
+EPEX Spot benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+EPEX Spot ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [gboulvin](https://github.com/gboulvin) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/gboulvin/Gladys-EPEX-Spot) — [Quelle dieser Dokumentation](https://github.com/gboulvin/Gladys-EPEX-Spot/blob/HEAD/docs/de.md)

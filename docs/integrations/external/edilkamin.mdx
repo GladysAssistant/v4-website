@@ -1,0 +1,210 @@
+---
+title: "Edilkamin smart home integration, free and open source"
+sidebar_label: "Edilkamin"
+description: "Edilkamin \"The Mind\" pellet stoves via the Edilkamin cloud: state, temperature, alarms. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-edilkamin.png"
+keywords:
+  - "edilkamin"
+  - "edilkamin smart home"
+  - "gladys edilkamin"
+  - "edilkamin gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-edilkamin instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Edilkamin","description":"Edilkamin \"The Mind\" pellet stoves via the Edilkamin cloud: state, temperature, alarms.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-edilkamin","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-edilkamin.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T00:30:55Z"}} />
+
+Unofficial integration, not affiliated with Edilkamin. It brings into Gladys
+the **Edilkamin** pellet stoves linked to the **The Mind** app (the "The Mind"
+Wi-Fi module), through the Edilkamin cloud, the one the app uses.
+
+> **Warning: unofficial API, this integration has never been tested with a
+> real stove or account.** It was written from the edilkamin.py library and
+> tested against a fake Edilkamin cloud only. Edilkamin may change its API at
+> any time. Feedback is welcome.
+
+## What you get
+
+For each stove:
+
+| Feature            | Detail                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------- |
+| Lit (on)           | Read only: 1 on (or lighting), 0 off.                                                             |
+| Light the stove    | Button. Off by default (see Safety).                                                              |
+| Turn the stove off | Button. Always allowed.                                                                           |
+| Room temperature   | In °C, the probe of the stove.                                                                    |
+| Setpoint           | In °C, 12 to 30 by steps of 0.5. Changed only if you allow it.                                    |
+| Power level        | A choice, P1 to P5 (manual power). Changed only if you allow it.                                  |
+| Fan 1 to 3         | The level of each fan (read only), as many as the stove has.                                      |
+| Pellets low        | 1 when the pellet tank is in reserve.                                                             |
+| Last alarm         | A text, e.g. "Alarm 7 (2026-10-17 21:04 UTC)", when the document of the stove holds an alarm log. |
+
+Scene trigger **Edilkamin stove alarm**: when a read shows more alarms in the
+log of the stove than the previous read. Variables: `stove` (the name of the
+stove) and `code` (the alarm code, empty when unknown). Never on the first
+read after a start.
+
+The cloud gives the pellet level only as "in reserve"; the autonomy it
+reports is not published yet (its unit is to check on a real stove).
+
+The badge of each stove shows "cloud", "unreachable" (with an orange dot)
+when that stove cannot be read (MAC address unknown or not in the account),
+and "unreachable" for all when the cloud does not answer or the account is
+stopped.
+
+## Installation
+
+1. Your stoves must work in the **The Mind** app.
+2. Note the **MAC address** of each stove: The Mind app shows it, so does the
+   label of the Wi-Fi module. The Edilkamin cloud gives no list of the stoves
+   of an account: it has to be typed.
+3. In Gladys, install the Edilkamin integration, enter the **user name**
+   (e-mail) and the **password** of The Mind app, and the MAC addresses
+   separated by commas (`A8:03:2A:12:34:56, A8:03:2A:65:43:21`). Save.
+4. Add the stoves from the **Discovery** tab.
+
+## Safety
+
+A pellet stove is a flame appliance:
+
+- **Turning off is always allowed**, without an option, and always sent (on
+  a stove already off, it changes nothing). It never waits behind another
+  command of the same stove, but for a lighting already on its way, so it
+  lands after it. It is also sent during a pause asked by Edilkamin, and
+  renews an expired session by itself within its deadline.
+- A lighting waiting or in progress is **cancelled** when a turn off arrives
+  meanwhile ("turn off asked meanwhile").
+- **Lighting** is off by default: turn on **Allow lighting the stoves from
+  Gladys** to allow it. A scene or a dashboard can then light a flame in your
+  home while nobody is there: check the stove, its glass and its surroundings
+  first.
+- **There is no switch**: the "Lit" state is read only, and lighting and
+  turning off are buttons. An "everything on" or "everything off" of a scene
+  never touches the stove, and voice assistants can neither light it nor turn
+  it off. HomeKit shows the setpoint as a thermostat stuck on "Heat"; Google
+  Home and Alexa do not expose the setpoint.
+- **The setpoint and the power level** are off by default (**Allow changing
+  the setpoint and the power level from Gladys**). They never send the
+  lighting order; on a stove already running but on standby (flame out), a
+  higher setpoint makes it start again, as in the app.
+- Before lighting, the setpoint and the power level, the integration **reads
+  the stove again** from the cloud: the command is refused when that read
+  fails or lacks the value. Turning off reads nothing: it has nothing to
+  decide.
+- The commands of one stove run **one at a time** (but turning off).
+- A command that cannot be sent within **3.5 seconds** of its arrival is
+  refused: Gladys shows a failure after 5 seconds, and nothing must happen
+  after that failure.
+- After a power command, a new lighting is refused ("still in progress")
+  until a read shows the expected state, 60 seconds at most.
+- If Edilkamin does not answer a command in time, Gladys shows a failure, but
+  the command may have gone through: check the state of the stove.
+
+## Password, tokens and privacy
+
+- The password is **kept by Gladys in its database, never shown again, and
+  sent only to Edilkamin**, to its AWS Cognito sign-in service to be exact, as
+  an SRP proof: the password itself never travels.
+- The sign-in gives tokens: the token (about one hour) is renewed with the
+  refresh token, without the password; the integration does not sign in again
+  at each read. The tokens are kept in the `/data` volume of the integration
+  so a restart does not sign in again. On the Gladys host, that volume is the
+  folder `<Gladys base folder>/external-integrations/<selector>`: readable by
+  root and uid 1000 (the user of the container), **not in the Gladys
+  backups**, deleted when the integration is uninstalled. **The refresh token
+  gives control of the stoves** while it is valid, without the password:
+  protect that host. The user name and the password are never written there;
+  another user name drops the tokens.
+- Nothing reaches the logs: no password, token, user name, nor whole MAC
+  address (only its last 4 characters).
+- Everything goes over HTTPS to `cognito-idp.eu-central-1.amazonaws.com` (the
+  sign-in) and `the-mind-api.edilkamin.com` (the stoves).
+
+## Refresh
+
+The stoves are read every 60 seconds by default (60 to 900), one request per
+stove, plus three reads within the minute after a command.
+
+## Errors
+
+- **Password refused** (or account not confirmed, reset required): the
+  integration stops; one new try after 1 h, 6 h, then every 24 h, or at once
+  when you save the configuration or click **Test the connection**.
+- **Verification code, or any other sign-in step** (but a new password): not
+  handled. The integration stops and never signs in again by itself (each
+  sign-in could send a code); click **Test the connection**, or change the
+  user name or the password.
+- **Session refused right after a new sign-in**: new try after 1 h, 6 h, then
+  every 24 h.
+- **Edilkamin asks to slow down** (429, or too many sign-ins): a pause of at
+  least 1 minute (Retry-After when given, 6 h at most), for every path but
+  turning off, kept across restarts.
+- **HTTP 403 on every stove**: a 30-minute pause (with one stove only, check
+  its MAC address). A 403, a 404, a 5xx or a timeout on one stove only marks
+  that stove ("unreachable" badge); the others are still read.
+- **Edilkamin unreachable** (no stove answered): new try after 1, 2, 5, 10, then every 15 minutes,
+  never faster than the refresh interval.
+
+## Limits
+
+- Never tested with a real stove: the shape of the answers comes from
+  edilkamin.py; the alarm log, the setpoint range and the fan levels are to
+  check.
+- The MAC addresses have to be typed (10 stoves at most): the Bluetooth
+  discovery of edilkamin.py is not possible in the container.
+- The chrono, relax, standby, Airkare modes and the easy timer are not
+  handled.
+- The old ("legacy") Edilkamin API is not used.
+
+## Credits
+
+- [edilkamin.py](https://github.com/AndreMiras/edilkamin.py) by Andre Miras
+  (MIT): the cloud API, the sign-in and the stove document are ported to
+  JavaScript.
+- [pycognito](https://github.com/pvizeli/pycognito) (Apache-2.0): the SRP
+  computation.
+- See `THIRD_PARTY_NOTICES.md`.
+
+Edilkamin and The Mind are trademarks of Edilkamin; this project is not
+affiliated with Edilkamin.
+
+## Configuration settings
+
+These are the settings Edilkamin asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Edilkamin account | `section` | No | Brings the Edilkamin pellet stoves of your "The Mind" account into Gladys: on or off, room temperature, setpoint, power level, fans, pellets in reserve, last alarm, and a scene trigger on a new alarm. Read every minute through the Edilkamin cloud. Enter the user name and the password of The Mind app and the MAC address of each stove, save, then add the stoves from the Discovery tab. Turning a stove off from Gladys is always allowed; lighting it, and changing its setpoint or power level, stay off until you allow them below. Unofficial API, never tested with a real stove or account. Not affiliated with Edilkamin. |
+| Edilkamin user name (e-mail) | `string` | Yes | The one you sign in to The Mind app with. |
+| Edilkamin password | `secret` | Yes | Kept by Gladys in its database, never shown again, used only to sign in to Edilkamin (AWS Cognito SRP: the password itself is never sent). |
+| MAC addresses of the stoves | `string` | Yes | The MAC address of the Wi-Fi module of each stove, as The Mind app shows it, separated by commas (10 stoves at most). The cloud gives no list of the stoves of an account. |
+| Allow lighting the stoves from Gladys | `boolean` | No | Off by default: Gladys can turn a stove off, never light it. On, the "Light the stove" button, a scene or a dashboard can light a flame in your home while nobody is there: check the stove, its glass and its surroundings first. |
+| Allow changing the setpoint and the power level from Gladys | `boolean` | No | Off by default: the setpoint and the power level are shown, not changed. They never send the lighting order; on a stove already running but on standby (flame out), a higher setpoint makes it start again, as in the app. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of the stoves (60 to 900). |
+| Language of the feature names | `select` | No | Used for the feature names of the stoves added from now on, and for the last alarm. |
+
+## How to install Edilkamin in Gladys
+
+1. In Gladys, open **Integrations**: Edilkamin appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-edilkamin:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-edilkamin](https://github.com/LM1LC3N7/gladys-edilkamin).
+
+Edilkamin requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Edilkamin is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-edilkamin) — [source of this documentation](https://github.com/LM1LC3N7/gladys-edilkamin/blob/HEAD/docs/en.md)

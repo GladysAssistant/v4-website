@@ -1,0 +1,228 @@
+---
+title: "Integración domótica Emoncms, gratuita y de código abierto"
+sidebar_label: "Emoncms"
+description: "Sus feeds de Emoncms en Gladys (emonPi, emonTx, emonHP): potencia, energía, temperaturas… Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-emoncms.png"
+keywords:
+  - "emoncms"
+  - "domótica emoncms"
+  - "gladys emoncms"
+  - "emoncms gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-emoncms instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Emoncms","description":"Sus feeds de Emoncms en Gladys (emonPi, emonTx, emonHP): potencia, energía, temperaturas…","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-emoncms","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-emoncms.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T09:35:16Z"}} />
+
+[Emoncms](https://emoncms.org/) es el software libre de seguimiento energético
+de [OpenEnergyMonitor](https://openenergymonitor.org/): registra los feeds de
+un emonPi, un emonTx, un monitor de bomba de calor emonHP o de cualquier
+sensor que le envíe datos, en un servidor local o en emoncms.org. Esta
+integración trae esos feeds a Gladys: un dispositivo por etiqueta de feed (en
+la práctica uno por nodo: `emonpi`, `emontx4`, `heatpump`…), una funcionalidad
+por feed, con el tipo de Gladys adecuado para su unidad. Los feeds de energía
+acumulada (kWh) pueden servir a la pestaña de energía de Gladys. Una escena
+puede reaccionar cuando un feed deja de actualizarse, enviar valores de Gladys a
+Emoncms, y un widget del panel muestra qué feeds siguen activos.
+
+Probada con un servidor Emoncms 11.9.10 real (Docker), con entradas enviadas por
+su API y transformadas en feeds de potencia, energía, tensión, temperatura y
+caudal. Desarrollada sin el hardware (sin emonPi ni emonTx a mano): sus
+comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-emoncms/issues). emoncms.org usa la
+misma API pero no se ha probado (sin cuenta).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un servidor Emoncms accesible desde la máquina de Gladys: un emonPi o un
+  emonBase en su red, su propio servidor, o una cuenta en emoncms.org.
+- La **clave API de lectura** de la cuenta de Emoncms (página **My Account** de
+  Emoncms). La **clave API de escritura** solo si quiere enviar valores de
+  Gladys a Emoncms.
+
+La integración solo lee, salvo si usa la acción de escena «Enviar un valor a
+Emoncms»: entonces solo escribe en las entradas que usted indique.
+
+## Primeros pasos
+
+### 1. Encontrar la dirección y las claves
+
+Abra Emoncms en un navegador y anote la dirección: `http://192.168.1.20`,
+`http://emonpi.local/emoncms` (algunos servidores sirven Emoncms bajo
+`/emoncms`), o `https://emoncms.org`. Puede pegar la dirección de cualquier
+página de Emoncms: la integración conserva la raíz. Abra luego **My Account**:
+las claves API de lectura y de escritura tienen 32 caracteres.
+
+### 2. Configurar la integración
+
+En Gladys, abra la página de configuración de la integración:
+
+- **Dirección de Emoncms**: la dirección anotada.
+- **Clave API de lectura**: suficiente para leer todos los feeds.
+- **Clave API de escritura (opcional)**: solo para la acción de escena que
+  envía valores.
+- **Feeds que seguir**: los números de los feeds que se traen a Gladys (columna
+  Id de la página Feeds), separados por comas. Vacío: todos los feeds.
+- **Intervalo de actualización**: de 5 segundos a 5 minutos, 10 segundos por
+  defecto. Cada actualización es una sola petición para todos los feeds.
+- **Feed detenido tras**: un feed sin valor nuevo durante este tiempo se
+  considera detenido (15 minutos por defecto, «Nunca» desactiva la
+  comprobación).
+- **Idioma de los mensajes**: idioma de las variables de escena y de los
+  errores.
+
+Pulse luego **Probar la conexión**: la integración lee Emoncms e indica el
+número de feeds, de dispositivos para añadir, de feeds detenidos, y si la clave
+de escritura funciona.
+
+### 3. Añadir los dispositivos
+
+Abra la pestaña **Descubrir** de la integración: hay un dispositivo por
+etiqueta de feed (los feeds sin etiqueta se agrupan en un dispositivo llamado
+«Emoncms»). Añada los que quiera. Un feed nuevo muestra el dispositivo como
+modificado: pulse **Actualizar** para añadirlo. Un feed renombrado conserva su
+primer nombre en Gladys (los nombres se fijan al crearlos).
+
+## Los dispositivos
+
+Cada feed se convierte en una funcionalidad con el nombre del feed, tipada según
+su unidad:
+
+| Unidad de Emoncms        | En Gladys                                                    |
+| ------------------------ | ------------------------------------------------------------ |
+| W, kW                    | Potencia (con signo: una potencia negativa es una inyección) |
+| kWh, Wh, MWh             | Índice de energía, usado por la pestaña de energía de Gladys |
+| V, A, mA                 | Tensión, corriente                                           |
+| °C, °F, K                | Temperatura                                                  |
+| L, m³                    | Volumen                                                      |
+| L/min, L/h, m³/h         | Caudal de agua, en m³/h (12,5 L/min = 0,75 m³/h)             |
+| hPa, mbar, Pa, kPa, bar  | Presión                                                      |
+| lux                      | Luminosidad                                                  |
+| pulses                   | Contador                                                     |
+| VA, kVA, var, %, ppm, dB | Sensor genérico, con su unidad                               |
+| ninguna, Hz, kWh/d, otra | Sensor genérico, la unidad en su nombre                      |
+
+Solo los feeds de energía acumulada (kWh, Wh, MWh) se convierten en un índice de
+energía: un feed kWh producido por el proceso «Power to kWh» de Emoncms lo es.
+Un feed «kWh/d» sigue siendo un sensor genérico.
+
+Los valores se envían a Gladys cuando cambian. El último valor de un feed
+**detenido** no se vuelve a enviar como si fuera reciente: su historial en
+Gladys termina donde se detuvo el feed. Con **Feed detenido tras** en «Nunca», esta comprobación
+no existe: el último valor de un feed muerto se reenvía cada 6 horas. La insignia del dispositivo indica
+«local» (o «nube» para emoncms.org), e «inaccesible» mientras Emoncms no
+responde.
+
+## Panel
+
+El widget **Feeds de Emoncms** tiene un ajuste, **Dispositivo (vacío: resumen)**:
+
+- vacío, muestra el número de feeds activos y detenidos, y luego una fila por
+  dispositivo, naranja cuando uno de sus feeds se ha detenido;
+- con un dispositivo, muestra sus seis primeros feeds en mosaicos en directo, y
+  luego los feeds detenidos con el tiempo desde su último valor.
+
+## Escenas
+
+### Disparadores
+
+**Feed de Emoncms detenido o de vuelta**: un feed no recibió valores nuevos
+durante el plazo ajustado en **Feed detenido tras**, o vuelve a actualizarse.
+Filtros: el dispositivo, y el cambio (Detenido, Activo de nuevo). Variables: el
+feed, su número, el dispositivo (etiqueta), el estado, los minutos desde el
+último valor y el último valor. Nada se dispara al iniciar la integración, solo
+con un cambio visto mientras funciona.
+
+### Acciones
+
+**Enviar un valor a Emoncms**: envía un número a una entrada de Emoncms, como
+lo haría un emonTx, con la clave de escritura. Campos: **Nodo** (`gladys` por
+defecto), **Nombre de la entrada**, **Valor**. El valor puede ser una variable
+de escena, por ejemplo un valor leído justo antes por la acción «Obtener valor
+del dispositivo». En Emoncms, la entrada aparece en la página Inputs: regístrela
+en un feed para conservar su historial. Salida: **Enviado**.
+
+### Ideas de escenas
+
+- **emonTx averiado**: disparador «Feed de Emoncms detenido o de vuelta»,
+  cambio «Detenido», dispositivo `emontx` → enviar el mensaje «Emoncms:
+  \{\{feed_name\}\} detenido desde hace \{\{minutes\}\} min».
+- **Guardar un sensor Zigbee en Emoncms**: disparador sobre la temperatura de un
+  sensor de Gladys, acción «Obtener valor del dispositivo», y luego «Enviar un
+  valor a Emoncms» con el nodo `gladys`, la entrada `salon` y el valor leído.
+- **Potencia de la bomba de calor**: con el feed de potencia de la bomba de
+  calor añadido, una escena puede apagar un calentador de agua cuando la
+  potencia supera un umbral (un disparador de dispositivo de Gladys, nada propio
+  de la integración).
+
+## Solución de problemas
+
+- **«Emoncms no responde»**: compruebe la dirección en un navegador desde una
+  máquina de la misma red que Gladys. Un emonPi puede estar en
+  `http://emonpi.local`, pero el contenedor de la integración no resuelve los
+  nombres `.local`: use preferiblemente la dirección IP.
+- **«No hay API de Emoncms en esta dirección»**: la dirección abre otra página
+  web. Añada o quite la subruta `/emoncms`.
+- **«Clave API rechazada por Emoncms»**: copie de nuevo la clave API de lectura
+  desde My Account. Una clave de escritura también lee, pero no es necesaria.
+- **Un feed aparece detenido aunque se actualiza**: los relojes de Gladys y del
+  servidor Emoncms difieren, o el feed se registra con menos frecuencia que el
+  plazo. Aumente **Feed detenido tras**.
+- **Falta un feed nuevo**: compruebe **Feeds que seguir** y luego **actualice**
+  el dispositivo en la pestaña Descubrir.
+
+## Límites
+
+- Una cuenta de Emoncms por instalación de la integración.
+- Los números y etiquetas de los feeds identifican las funcionalidades: un feed
+  movido a otra etiqueta se convierte en una funcionalidad nueva de otro
+  dispositivo, sin el historial anterior.
+- Las entradas de Emoncms no se leen: solo los feeds. El historial que ya está
+  en Emoncms no se importa en Gladys.
+- Gladys no puede enviar automáticamente los estados de sus dispositivos a
+  Emoncms: una escena con la acción «Enviar un valor a Emoncms» lo hace, un
+  valor cada vez.
+- emoncms.org: misma API, no probado; respete sus normas de uso (una
+  actualización cada 10 segundos o más lenta es suficiente).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Emoncms te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor Emoncms | `section` | No | Un emonPi, un emonBase, su propio servidor o emoncms.org. Las claves API están en la página My Account de Emoncms. Cada etiqueta de feed (emonpi, emontx…) se convierte en un dispositivo: añada los que quiera desde la pestaña Descubrir. |
+| Dirección de Emoncms | `string` | Sí | La dirección en la que abre Emoncms, con su subruta si la hay (/emoncms en algunos servidores). |
+| Clave API de lectura | `secret` | Sí | Suficiente para leer los feeds. 32 caracteres, en la página My Account. |
+| Clave API de escritura (opcional) | `secret` | No | Solo para la acción de escena que envía valores de Gladys a Emoncms. Si no, déjela vacía. |
+| Feeds que seguir | `string` | No | Números de feed separados por comas (columna Id de la página Feeds). Vacío: todos los feeds. |
+| Intervalo de actualización | `select` | No | Una petición por actualización para todos los feeds. Emoncms guarda cada 10 segundos. |
+| Feed detenido tras | `select` | No | Un feed sin valor nuevo durante este tiempo se considera detenido: su último valor ya no se envía a Gladys y se activa el disparador de escena. |
+| Idioma de los mensajes | `select` | No | Idioma de las variables de escena y de los errores (Gladys no comunica el suyo a una integración). |
+
+## Cómo instalar Emoncms en Gladys
+
+1. En Gladys, abre **Integraciones**: Emoncms aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-emoncms:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-emoncms](https://github.com/guim31/gladys-emoncms).
+
+Emoncms requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Emoncms es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-emoncms) — [fuente de esta documentación](https://github.com/guim31/gladys-emoncms/blob/HEAD/docs/es.md)

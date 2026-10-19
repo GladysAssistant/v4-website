@@ -1,0 +1,221 @@
+---
+title: "Traefik smart home integration, free and open source"
+sidebar_label: "Traefik"
+description: "Your Traefik reverse proxy in Gladys: services up or down, routers in error, alerts in scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-traefik.png"
+keywords:
+  - "traefik"
+  - "traefik smart home"
+  - "gladys traefik"
+  - "traefik gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-traefik instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Traefik","description":"Your Traefik reverse proxy in Gladys: services up or down, routers in error, alerts in scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-traefik","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-traefik.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T11:59:58Z"}} />
+
+[Traefik](https://traefik.io/traefik/) is the reverse proxy in front of many
+self-hosted services: it routes `nextcloud.example.com` to the Nextcloud
+container, renews the certificates, and can check that each backend still
+answers. This integration brings the state of Traefik into Gladys: a "Traefik"
+device with its version and the routers, services and middlewares in error,
+and one device per HTTP service with its servers up. Scenes can react when
+**any** service goes down or comes back, when a router turns to error, or when
+Traefik itself no longer answers; a dashboard widget lists the services down
+first.
+
+Tested against a real Traefik v3.7 (Docker, file provider, two backends behind
+a health check, broken routers on purpose). Traefik v2 has the same API and
+should work, untested: feedback welcome on
+[the issues](https://github.com/guim31/gladys-traefik/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Traefik v2 or v3 with its **API enabled**, reachable from the Gladys machine:
+  - either `api.insecure=true` (static configuration): the API answers on the
+    `traefik` entry point, port 8080, without password. Simple, for a local
+    network only;
+  - or a router of yours to the `api@internal` service, on your domain,
+    usually behind a `basicAuth` middleware: enter its user and password.
+- To know whether a service is **down**, a
+  [health check](https://doc.traefik.io/traefik/routing/services/#health-check)
+  on its load balancer. Without one, Traefik reports every server UP: the
+  integration still sees a service in error or gone (a Docker container
+  stopped), not a backend that stopped answering.
+
+The integration sends two light requests per refresh interval (one minute by
+default) to the API of Traefik, nothing to the internet.
+
+## Getting started
+
+### 1. Enable the API of Traefik
+
+With `api.insecure`, add to the static configuration (command line of the
+container):
+
+```
+--api.insecure=true
+```
+
+and make port 8080 reachable from Gladys. Through a router, the
+[Traefik documentation](https://doc.traefik.io/traefik/operations/api/) shows
+a router to `api@internal` with a `basicAuth` middleware.
+
+### 2. Configure the integration
+
+In Gladys, open **Integrations → Traefik → Configuration**:
+
+- **API address**: `http://192.168.1.2:8080` with `api.insecure`, or
+  `https://traefik.example.com` through a router. A dashboard address copied
+  from the browser works too: `/dashboard/…` is removed.
+- **User (basic auth)** and **Password (basic auth)**: only when the router of
+  the API asks for them.
+- **Refresh interval**: 30 seconds to 5 minutes.
+- **Language of the names**: language of the feature names and of the scene
+  results.
+
+Save, then **Test the connection**: the result shows the version of Traefik,
+the number of HTTP services, and the ones down.
+
+### 3. Add the devices
+
+Open the **Discover** tab: the "Traefik" device and one device per HTTP
+service (`nextcloud@docker`, `app@file`…) are listed. Add the ones you want to
+follow. The internal services of Traefik (`api@internal`…) are left out.
+
+## The devices
+
+The **Traefik** device:
+
+| Feature              | Value                                                     |
+| -------------------- | --------------------------------------------------------- |
+| Reachable            | yes when the API answers, no after two failed reads       |
+| Version              | e.g. `3.7.15`                                             |
+| Routers in error     | HTTP, TCP and UDP routers Traefik could not build         |
+| Services in error    | services in error                                         |
+| Middlewares in error | middlewares in error                                      |
+| Warnings             | routers, services and middlewares with a warning          |
+| Services down        | HTTP services without any server up (or gone, once added) |
+
+Each **HTTP service**:
+
+| Feature          | Value                                    |
+| ---------------- | ---------------------------------------- |
+| Healthy          | yes as long as at least one server is up |
+| Servers up       | servers UP according to the health check |
+| Servers in total | servers declared in the load balancer    |
+
+A service that disappears from Traefik (its Docker container stopped) counts
+as down: no server, not healthy, until it comes back.
+
+## Dashboard
+
+Add the **Traefik** widget to a dashboard: the services down, the routers in
+error and the services working, then one row per service — down first, then
+degraded (some servers down), then the others — with its servers up, and the
+routers in error with their message. Its settings can limit it to some
+services (devices added to Gladys). **Refresh** reads Traefik at once.
+
+## Scenes
+
+### Triggers
+
+- **A service goes down**: an HTTP service no longer has any server up, or is
+  gone from Traefik (two reads in a row). Optionally limited to some services. Variables: service
+  name, provider, servers up and in total, gone from Traefik.
+- **A service is back up**: a service that was down has a server up again.
+  Variables: the same, and the length of the outage in minutes.
+- **A router is in error**: a router turns to error (missing service or
+  middleware, bad rule…), once per router until it is fixed. Variables: router
+  name, provider, protocol, error message.
+- **Traefik is unreachable**: the API no longer answers, two reads in a row (a
+  quick restart of Traefik does not fire it). Variable: the reason.
+
+Every service fires the triggers, added to Gladys or not. The routers already
+in error when the integration starts are not announced.
+
+### Actions
+
+- **State of a service**: healthy or not, its state in words (OK, Degraded,
+  Down, Missing), servers up and in total, and a ready-made sentence such as
+  "app@docker: Degraded, 1/2 server(s) up."
+- **State of Traefik**: reachable or not, the number and names of the services
+  down and of the routers in error, the version, and a sentence. When Traefik
+  does not answer, the action does not fail: it says so, and the scene goes on.
+
+### Scene ideas
+
+- When **A service goes down**, send a Telegram message "\{\{service\}\} is down
+  (\{\{servers_up\}\}/\{\{servers_total\}\} servers)", and another one on **A service
+  is back up** with the length of the outage.
+- Every morning at 8:00, **State of Traefik** and, if a service is down, read
+  its sentence on the speaker.
+- When **Traefik is unreachable**, switch a light red: every site of the house
+  is down at once.
+
+## Troubleshooting
+
+- **"Traefik does not answer"**: check the address and the port from the Gladys
+  machine (`curl http://192.168.1.2:8080/api/version`), and that port 8080 is
+  published by the Traefik container.
+- **"no Traefik API at this address"**: the API is not enabled, or the address
+  points to a router that is not the one to `api@internal`.
+- **"user or password refused"**: check the basic auth user; a password with a
+  trailing space is kept as typed.
+- **"the address redirects"**: enter the `https://` address directly.
+- **"certificate refused"**: use a certificate Gladys trusts (Let's Encrypt),
+  or the `http://` address of `api.insecure` on the local network.
+- **A service never goes down**: add a health check to its load balancer.
+- More details in the logs of the integration (Integrations → Traefik → Logs),
+  with `LOG_LEVEL=debug` for every read.
+
+## Limits
+
+- Read-only: the Traefik API cannot change the configuration, so the
+  integration has no command.
+- HTTP services only as devices; TCP and UDP routers and services are counted
+  on the Traefik device.
+- Without a health check, Traefik reports every server UP.
+- The Prometheus metrics (requests, 5xx errors) are not read.
+- One Traefik per integration.
+
+## Configuration settings
+
+These are the settings Traefik asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Traefik API | `section` | No | Enable the Traefik API: api.insecure=true serves it on port 8080, or a router to api@internal serves it on your domain, often behind basic auth. Then add the services to follow from the Discover tab. |
+| API address | `string` | No | The address of the Traefik dashboard or API, without /dashboard. |
+| User (basic auth) | `string` | No | Only when the router of the API asks for a basic auth. Leave empty otherwise. |
+| Password (basic auth) | `secret` | No |  |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Traefik is read: two light API requests each time. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added) and of the scene results. |
+
+## How to install Traefik in Gladys
+
+1. In Gladys, open **Integrations**: Traefik appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-traefik:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-traefik](https://github.com/guim31/gladys-traefik).
+
+Traefik requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Traefik is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-traefik) — [source of this documentation](https://github.com/guim31/gladys-traefik/blob/HEAD/docs/en.md)

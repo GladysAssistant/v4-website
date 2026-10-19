@@ -1,7 +1,7 @@
 ---
 title: "Integración domótica Calendrier Tempo EDF, gratuita y de código abierto"
 sidebar_label: "Calendrier Tempo EDF"
-description: "EDF Tempo colors, forecasts up to 15 days, days left, widget and scene triggers. Free, open source, installable in one click."
+description: "EDF Tempo colors, kWh prices, forecasts up to 15 days, days left, widget and scene triggers. Free, open source, installable in one click."
 image: "https://integration-store-storage.gladysassistant.com/covers/thomasissa-png--gladys-calendrier-tempo.png"
 keywords:
   - "calendrier tempo edf"
@@ -19,7 +19,7 @@ https://github.com/thomasissa-png/gladys-calendrier-tempo instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Calendrier Tempo EDF","description":"EDF Tempo colors, forecasts up to 15 days, days left, widget and scene triggers.","owner":"thomasissa-png","owner_avatar_url":"https://avatars.githubusercontent.com/u/242767877?v=4","repo_url":"https://github.com/thomasissa-png/gladys-calendrier-tempo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/thomasissa-png--gladys-calendrier-tempo.png","type":"device","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T16:24:11Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Calendrier Tempo EDF","description":"EDF Tempo colors, kWh prices, forecasts up to 15 days, days left, widget and scene triggers.","owner":"thomasissa-png","owner_avatar_url":"https://avatars.githubusercontent.com/u/242767877?v=4","repo_url":"https://github.com/thomasissa-png/gladys-calendrier-tempo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/thomasissa-png--gladys-calendrier-tempo.png","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T15:55:55Z"}} />
 
 :::info
 
@@ -46,18 +46,24 @@ Data comes from the [free public API of calendrier-tempo.fr](https://www.calendr
 
 Feature names are in French. Colors are `bleu` (blue), `blanc` (white) and `rouge` (red).
 
-| Feature                        | Value                                                             |
-| ------------------------------ | ----------------------------------------------------------------- |
-| Aujourd'hui (officielle)       | today's official color                                            |
-| Couleur actuelle               | the color that applies right now: the previous day's until 6:00   |
-| Période tarifaire              | `hp` (peak hours, 6:00 to 22:00) or `hc` (off-peak)               |
-| Demain (officielle)            | `inconnue` (unknown) until EDF announces it, around 11:00         |
-| Prévision J+2 to J+5           | forecast color, the most reliable range                           |
-| Jours rouges sur 15 jours      | red days, official or forecast, from today to D+15                |
-| Prochain jour rouge / blanc    | date of the next red or white day (YYYY-MM-DD), or `aucun` (none) |
-| Jours rouges / blancs restants | red and white days left in the season                             |
+| Feature                        | Value                                                              |
+| ------------------------------ | ------------------------------------------------------------------ |
+| Aujourd'hui (officielle)       | today's official color                                             |
+| Couleur actuelle               | the color that applies right now: the previous day's until 6:00    |
+| Période tarifaire              | `hp` (peak hours, 6:00 to 22:00) or `hc` (off-peak)                |
+| Prix actuel du kWh             | current price per kWh in euros incl. VAT (previous day until 6:00) |
+| Prix HP / HC du jour           | peak and off-peak price per kWh of the current Tempo day           |
+| Demain (officielle)            | `inconnue` (unknown) until EDF announces it, around 11:00          |
+| Prévision J+2 to J+5           | forecast color, the most reliable range                            |
+| Jours rouges sur 15 jours      | red days, official or forecast, from today to D+15                 |
+| Prochain jour rouge / blanc    | date of the next red or white day (YYYY-MM-DD), or `aucun` (none)  |
+| Jours rouges / blancs restants | red and white days left in the season                              |
 
 To drive heating, use **Couleur actuelle**: a Tempo day runs from 6:00 to 6:00.
+
+Prices come from the grid published by the calendrier-tempo.fr API, never from a tariff written in the integration: when a response lacks it, the last grid read is used with no time limit (it only changes on its effective date), until a new one is read. The price stays unknown only if no grid was ever read or if the day's color is unknown. Gladys shows prices with 3 significant digits ("0.165 €"); the value usable in scenes is exact (0.1654).
+
+The **Tempo forecasts** widget shows today, tomorrow, days left, the current price ("€0.1654/kWh (peak, blue)"), the chance of a red day over 15 days (0 to 100 %) and the next days. When none of the next 15 days can be red (1 November to 31 March only, never on weekends or French public holidays), the chart gives way to "No red day possible before 1 November.". Chart ticks show without "%" (Gladys rendering); on a phone, the Gladys floating bar may hide the last rows of the widget: scroll the page.
 
 ## Configuration
 
@@ -80,7 +86,8 @@ Only the color published by EDF is official. From D+2 to D+5 the forecast is in 
 ## Troubleshooting
 
 - **No device in Gladys**: create it from the Discovery tab; the integration never creates it by itself.
-- **"Disconnected" status** on the Configuration screen: calendrier-tempo.fr is not answering. The integration retries 5 minutes later, then every 30 minutes. Official colors already read stay displayed for their date, even after a restart; forecasts and days left are kept for 24 hours at most.
+- **"Disconnected" status** on the Configuration screen: calendrier-tempo.fr is not answering. The integration retries 5 minutes later, then every 30 minutes. Official colors already read stay displayed for their date, even after a restart; forecasts and days left are kept for 24 hours at most. Prices keep their last value (Gladys has no unknown state for a currency value): in a scene on a price, add the condition "Couleur actuelle is not `inconnue`".
+- **No kWh price**: the API has not published its price grid yet, or the color of the current Tempo day is unknown. After updating to 0.2.0, update the device from the Discovery tab to get the three price features.
 - **Tomorrow's color is `inconnue` in the morning**: expected, EDF announces it around 11:00. The integration reads the API again at 11:35 (Paris time).
 
 Contact: jean-pierre@calendrier-tempo.fr. Free, independent service with no availability guarantee. Not affiliated with EDF or RTE.
@@ -97,7 +104,7 @@ Estos son los parámetros que Calendrier Tempo EDF te pide en su pantalla de con
 ## Cómo instalar Calendrier Tempo EDF en Gladys
 
 1. En Gladys, abre **Integraciones**: Calendrier Tempo EDF aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/thomasissa-png/gladys-calendrier-tempo:0.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/thomasissa-png/gladys-calendrier-tempo:0.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/thomasissa-png/gladys-calendrier-tempo](https://github.com/thomasissa-png/gladys-calendrier-tempo).
 

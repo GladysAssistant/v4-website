@@ -1,0 +1,186 @@
+---
+title: "Kostal Plenticore smart home integration, free and open source"
+sidebar_label: "Kostal Plenticore"
+description: "Kostal Plenticore and PIKO IQ inverters on the local network: solar, house, grid and battery. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kostal.png"
+keywords:
+  - "kostal plenticore"
+  - "kostal plenticore smart home"
+  - "gladys kostal plenticore"
+  - "kostal plenticore gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-kostal instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Kostal Plenticore","description":"Kostal Plenticore and PIKO IQ inverters on the local network: solar, house, grid and battery.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-kostal","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kostal.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T07:23:57Z"}} />
+
+## Overview
+
+This integration reads your **Kostal PLENTICORE plus, PLENTICORE BI or PIKO IQ / PIKO MP** inverter on your local network, through the REST API its own web interface uses. No Kostal cloud, no Modbus register to configure: you give the address of the inverter and the plant owner password, and Gladys gets one device with the real data of the inverter.
+
+- solar production, total and per PV string;
+- house consumption and the exchange with the grid (import and export);
+- the battery, when there is one: state of charge, charging and discharging power, cycles;
+- the energy counters of the day and since commissioning, ready for the Gladys energy tracking;
+- the inverter state and its alarms, with the alarm text the inverter gives;
+- a dashboard widget, scene triggers (alarm, battery full, battery empty) and, if you allow them, two scene actions on the battery settings.
+
+Developed without the hardware: it relies on the API as the Home Assistant integration and the pykoplenti library use it, and was tested against a simulated inverter. Feedback welcome, on the forum or in a GitHub issue.
+
+This integration is not affiliated with KOSTAL Solar Electric. Kostal, PLENTICORE and PIKO are trademarks of their owners.
+
+## Prerequisites
+
+- Gladys 5.1 or later (the energy tracking of the counters works best with Gladys 5.2).
+- A Kostal PLENTICORE plus, PLENTICORE BI, PIKO IQ or PIKO MP inverter, connected to your network by cable or Wi-Fi, with a fixed IP address (a DHCP reservation in your router is enough).
+- The **plant owner** password (in German "Anlagenbetreiber"): the one you use to log in to the inverter's web interface, at `http://<address of the inverter>`. If you never set it, the installer or the Kostal Solar app can help you. The installer service code is not needed.
+- Gladys and the inverter on the same network: the integration talks to the inverter directly.
+
+## Configuration
+
+1. Install the integration from the store (or Integrations → Install from GitHub with the address of the repository).
+2. In the **Configuration** tab:
+   - **IP address**: the address of the inverter, for example `192.0.2.20`. A host name works too.
+   - **Plant owner password**: stored in the Gladys configuration only, never written to the logs.
+   - **Refresh interval**: 10, 15 (default), 30 or 60 seconds. Each refresh is one request to the inverter.
+   - **Language of the device texts**: names of the device and its features, inverter state, alarm texts (French by default). The names are fixed when you add the device.
+   - **Battery full at / Battery empty at**: the levels that fire the battery scene triggers.
+   - **Allow battery settings**: off by default, see "Scene actions".
+3. Click **Test the connection**: the integration logs in and says what it found (model, PV strings, battery, firmware, battery settings).
+4. Open the **Discovery** tab and add the inverter. Its states arrive at once.
+
+## The device
+
+One device per inverter, named after its model (for example "Kostal PLENTICORE plus 10"). A feature only exists when the inverter measures it: no battery features without a battery, no per-string features with a single string.
+
+| Feature                             | Meaning                                                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Solar production                    | DC power of all the PV strings, in W                                                                                           |
+| PV string 1, 2, 3                   | Power of each string (two strings or more)                                                                                     |
+| House consumption                   | What the house consumes, in W                                                                                                  |
+| Grid (import +, export −)           | Exchange with the grid: positive when the house draws from the grid, negative when the inverter feeds in                       |
+| Inverter AC output                  | What the inverter delivers on its AC side, in W                                                                                |
+| Battery level                       | State of charge, in %                                                                                                          |
+| Battery charging / discharging      | Power into and out of the battery, in W                                                                                        |
+| Battery cycles                      | Full cycles counted by the inverter                                                                                            |
+| Production today                    | Energy produced since midnight, in kWh                                                                                         |
+| Total production                    | Energy produced since commissioning, in kWh                                                                                    |
+| House from the grid (total)         | Energy the house took from the grid, in kWh                                                                                    |
+| Grid export (total)                 | Energy fed into the grid, in kWh (computed like Home Assistant: production minus the house consumption served by the inverter) |
+| Energy charged / discharged (total) | Battery counters, in kWh                                                                                                       |
+| Inverter state                      | Feeding in, Standby, Throttled, Overheating…                                                                                   |
+| Active alarms                       | Number of active errors                                                                                                        |
+| Latest alarm                        | Text of the latest active alarm, as the inverter words it, or "No alarm"                                                       |
+
+All the features are read-only: nothing on the dashboard can change the inverter.
+
+## Energy tracking
+
+"House from the grid (total)" is an energy index: Gladys derives a 30-minute consumption and its cost from it, like for a meter, and attaches it to your main electric meter if you have one. It is the only consumption index of the device, so the energy you produce yourself is never counted as bought.
+
+The production counters ("Total production", "Grid export (total)") and the battery counters are kept with their history and shown in the charts. Gladys 5.2 does not yet turn the production index of an external integration into a half-hourly production: that will come with the core.
+
+## Dashboard widget
+
+Add the **Kostal** widget to a dashboard. It shows:
+
+- tiles for solar production, house, grid, battery and today's production, live;
+- the production and consumption curve of the last 24 hours;
+- a status list: grid import or export, battery charging or discharging, inverter state, alarms, autarky and self-consumption of the day, house consumption of the day, the battery settings (when allowed), the time of the last reading.
+
+The widget costs no request to the inverter: it shows the last reading.
+
+## Scene triggers
+
+- **Kostal inverter alarm**: a new alarm appeared on the inverter. Variables: the alarm code, its text (in the language of the configuration) and its category. The same code fires at most once every 10 minutes.
+- **Kostal battery full**: the charge level reached the "Battery full at" level. It fires again only after the level went down 5 points.
+- **Kostal battery empty**: the charge level fell to the "Battery empty at" level. It fires again only after the level went up 5 points.
+
+Nothing fires on the first reading after a start: a restart never replays an old alarm.
+
+For a threshold on a power (export above 2,000 W for 10 minutes), use the standard "device state" trigger of Gladys on the "Grid" feature: it has the threshold and the duration.
+
+## Scene actions
+
+Both actions are **off by default**: enable "Allow battery settings" in the configuration first. They only work when the inverter lets the plant owner change the setting (the connection test tells you), and each change writes one line in the logs.
+
+- **Set the Kostal battery reserve**: the minimum state of charge the battery keeps, from 5 to 100 %, in steps of 5 %. The scene receives the value applied.
+- **Kostal smart battery control**: switches Kostal's smart battery control on or off. Switching it on turns the time control off, as the inverter's own interface does.
+
+A wrong value changes how your battery is used: check it in the inverter's web interface afterwards.
+
+## Scene examples
+
+- **Keep a reserve before a storm**: when a weather alert arrives, run "Set the Kostal battery reserve" to 50 %; set it back to 10 % the next day.
+- **Use the surplus**: trigger "device state" on "Grid (import +, export −)" below −2,000 W for 10 minutes → switch on the water heater; switch it off when the value goes above 0.
+- **Be told of a fault**: trigger "Kostal inverter alarm" → send a message "Inverter alarm \{\{triggerEvent.data.code\}\}: \{\{triggerEvent.data.description\}\}".
+- **Battery full at noon**: trigger "Kostal battery full" → start the dishwasher or the car charge.
+
+## Requests to the inverter
+
+- One request per refresh (10 to 60 seconds, your choice), with a session kept between requests: one login at start, again only if the inverter restarted.
+- Every 30 minutes, four light requests read what the inverter is (a firmware update, a battery added).
+- The alarm texts are read only while an alarm is active; the battery settings every 5 minutes, and only when allowed.
+- Nothing is read while the device is not added to Gladys, except for the widget.
+- A refused password is not retried for 15 minutes (or until you save the configuration): the inverter locks the account after several failed logins.
+- The integration logs out when it stops: the inverter keeps only a few sessions.
+
+## Troubleshooting
+
+- **"The inverter does not answer"**: check the address (open `http://<address>` in a browser on the same network), that the inverter is on the network, and that Gladys can reach it.
+- **"The inverter refused the password"**: enter the plant owner password of the web interface (not the installer service code, not the password of the Kostal Solar portal). Save the configuration to try again at once.
+- **"The inverter locked the plant owner account"**: wait for it to unlock (its web interface tells you), then save the configuration again.
+- **A feature is missing**: the inverter does not list the measurement (no battery, a single string, an older firmware). Run "Test the connection", then "Update" in the Discovery tab after a firmware update.
+- **Grid or battery signs look reversed**: tell us on the forum with your model and firmware: this was checked on documentation only.
+- **More details**: set the `LOG_LEVEL` environment variable of the integration to `debug`. The logs never contain the password nor the session.
+
+## Limits
+
+- Developed without the hardware: the signs (grid, battery), the exact list of measurements of each model and the writable settings come from the documentation and the Home Assistant integration, not from a test on a real inverter.
+- Plant owner access only: the settings that need the installer service code (and the master key) are not supported.
+- One inverter per installation of the integration.
+- The grid export counter is computed (production minus the house consumption served by the inverter), as Home Assistant does.
+- No half-hourly production in the energy tracking until the Gladys core supports it for external integrations.
+- PIKO IQ / MP and PLENTICORE BI are expected to answer like the PLENTICORE plus (same platform); a missing measurement simply means a missing feature.
+
+## Configuration settings
+
+These are the settings Kostal Plenticore asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect your Kostal inverter | `section` | No | Enter the IP address of the inverter (shown in your router or on the inverter display) and the plant owner password you use to log in to its web interface. Gladys reads the inverter on your local network, without the Kostal cloud. Then open the Discovery tab. |
+| IP address | `string` | Yes | Of the inverter. A host name works too. |
+| Plant owner password | `secret` | Yes | The password of the plant owner account of the inverter's web interface. The installer service code is not needed. |
+| Refresh interval | `select` | No | How often the inverter is read: one request each time. |
+| Language of the device texts | `select` | No | Names given to the new device and its features, the inverter state and the alarm texts. |
+| Battery full at (%) | `number` | No | Charge level that fires the "Battery full" scene trigger. |
+| Battery empty at (%) | `number` | No | Charge level that fires the "Battery empty" scene trigger: usually the minimum state of charge set on the inverter. |
+| Battery settings (advanced) | `section` | No | Off by default. When allowed, two scene actions can change the minimum state of charge and switch the smart battery control, if the inverter lets the plant owner do it. A wrong value changes how your battery is used: check it in the inverter's web interface afterwards. |
+| Allow battery settings | `boolean` | No | Lets the scene actions write to the inverter. |
+
+## How to install Kostal Plenticore in Gladys
+
+1. In Gladys, open **Integrations**: Kostal Plenticore appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-kostal:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-kostal](https://github.com/guim31/gladys-kostal).
+
+Kostal Plenticore requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Kostal Plenticore is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-kostal) — [source of this documentation](https://github.com/guim31/gladys-kostal/blob/HEAD/docs/en.md)

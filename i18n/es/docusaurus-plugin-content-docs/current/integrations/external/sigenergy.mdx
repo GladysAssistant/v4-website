@@ -1,0 +1,297 @@
+---
+title: "Integración domótica Sigenergy, gratuita y de código abierto"
+sidebar_label: "Sigenergy"
+description: "Sigenergy SigenStor por Modbus TCP local: solar, casa, red, batería y seguimiento de energía. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sigenergy.png"
+keywords:
+  - "sigenergy"
+  - "domótica sigenergy"
+  - "gladys sigenergy"
+  - "sigenergy gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-sigenergy instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sigenergy","description":"Sigenergy SigenStor por Modbus TCP local: solar, casa, red, batería y seguimiento de energía.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-sigenergy","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sigenergy.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T08:25:22Z"}} />
+
+Lee una instalación **Sigenergy** — SigenStor, Sigen Hybrid y sus baterías — en
+la red local, por **Modbus TCP**, con los registros que Sigenergy publica en su
+«Sigenergy Modbus Protocol» (V2.9). Sin nube, sin cuenta, sin declarar los
+registros uno a uno: solar, casa, red y batería aparecen en Gladys como
+dispositivos, con los índices acumulados del seguimiento de energía.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** La
+> integración sigue el documento oficial del protocolo y se prueba con una
+> instalación Sigenergy simulada a partir de él, no con una real. Indique lo
+> que funciona y lo que no en las
+> [issues](https://github.com/guim31/gladys-sigenergy/issues), con el resultado
+> del botón **Probar la conexión**.
+
+Esta integración no está afiliada a Sigenergy Technology Co., Ltd.
+Sigenergy, SigenStor y mySigen son marcas de sus propietarios.
+
+## Qué hace
+
+- **Un dispositivo para la instalación** (la «plant» del protocolo): potencia
+  solar, consumo de la casa, intercambio con la red (importación y
+  exportación), nivel de batería, potencia de carga y de descarga, energía
+  disponible, salud de la batería, los índices acumulados (producción solar,
+  consumo de la casa, importación y exportación de la red, energía cargada y
+  descargada), el modo de funcionamiento, el estado, el funcionamiento fuera de
+  red y las alarmas.
+- **Un dispositivo por inversor**: su potencia, la potencia solar, la batería,
+  las tensiones y corrientes de las fases, la tensión y la corriente de cada
+  cadena FV, sus temperaturas, su estado y sus alarmas.
+- **Control de la batería, desactivado por defecto**: modo de la batería
+  (automático, carga o descarga forzada, en espera) y límites de potencia de
+  carga y descarga.
+- **Un widget del panel**: solar, casa, red y batería de un vistazo.
+- **Disparadores de escena** (una nueva alarma, la instalación deja de
+  responder o vuelve a responder) y **acciones de escena** (ajustar el modo de
+  la batería, ajustar los límites).
+
+## Requisitos
+
+- Gladys Assistant 5.1 o posterior (5.2 para el seguimiento de energía).
+- Una instalación Sigenergy en la misma red que Gladys, con una dirección IP
+  fija (una reserva DHCP en su router).
+- **Modbus TCP activado** en la instalación (vea más abajo). La integración
+  habla Modbus TCP en el puerto 502; Modbus sobre RS-485 no es compatible.
+
+### Activar Modbus TCP
+
+Modbus TCP está desactivado en una instalación nueva. En la app **mySigen**,
+abra su instalación, luego sus ajustes, y busque la opción **servidor Modbus
+TCP** (en los ajustes de comunicación); actívela y **guarde**. En muchas
+cuentas este menú solo lo ve el instalador: pídale que lo active. Los nombres
+de los menús dependen de la versión de la app.
+
+### Encontrar los identificadores
+
+Cada dispositivo de una instalación Sigenergy tiene una dirección Modbus, su
+**identificador** (unit id), configurada en la app mySigen:
+
+- la **instalación** (el sistema entero) responde siempre en **247**;
+- cada **inversor** tiene el suyo, de 1 a 246: **1** en la mayoría de las
+  instalaciones con un inversor. Un **cargador AC** suele usar el 1, y el
+  inversor tiene entonces otro (2, por ejemplo).
+
+¿No está seguro? Introduzca la dirección de la instalación, guarde y pulse
+**Probar la conexión**: si ningún inversor configurado responde, los busca en
+los identificadores 1 a 16.
+
+## Configuración
+
+| Campo                             | Descripción                                                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Idioma                            | Idioma de los nombres de funciones (francés por defecto). Gladys conserva los nombres dados al añadir un dispositivo. |
+| Dirección de la instalación       | Dirección IP o nombre de host del SigenStor, o del inversor que aloja el servidor Modbus TCP.                         |
+| Puerto Modbus TCP                 | 502, salvo si su instalador lo ha cambiado.                                                                           |
+| Identificadores de los inversores | El identificador de cada inversor, separados por comas (1 por defecto, 8 como máximo).                                |
+| Identificador de la instalación   | 247 en el protocolo: no lo cambie.                                                                                    |
+| Intervalo de actualización        | De 10 s a 5 min (15 s por defecto). Solo se envían los valores que cambian.                                           |
+| Permitir el control de la batería | Desactivado por defecto. Vea [Control de la batería](#control-de-la-batería).                                         |
+
+Guarde y añada los dispositivos desde la pestaña **Descubrimiento** de la
+integración.
+
+## Dispositivos
+
+### La instalación
+
+| Función                                                     | Unidad     | Notas                                                                                          |
+| ----------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
+| Potencia solar                                              | W          | Nunca negativa.                                                                                |
+| Consumo de la casa                                          | W          | El registro «potencia total de las cargas», o calculado en los firmwares antiguos.             |
+| Intercambio con la red                                      | W          | Positivo al importar, negativo al exportar.                                                    |
+| Importación de la red, Exportación a la red                 | W          | El mismo intercambio en dos valores positivos.                                                 |
+| Nivel de batería                                            | %          | Solo instalaciones con batería.                                                                |
+| Potencia de carga, de descarga de la batería                | W          |                                                                                                |
+| Energía disponible en la batería                            | kWh        | Lo que la batería aún puede entregar.                                                          |
+| Salud de la batería                                         | %          | Estado de salud, cuando el firmware lo da.                                                     |
+| Producción solar (total)                                    | kWh        | Índice acumulado.                                                                              |
+| Consumo de la casa (total)                                  | kWh        | Índice acumulado, usado por el seguimiento de energía.                                         |
+| Importación de la red (total), Exportación a la red (total) | kWh        | Índices acumulados.                                                                            |
+| Energía cargada (total), descargada (total)                 | kWh        | Índices acumulados.                                                                            |
+| Modo de funcionamiento                                      | texto      | Autoconsumo máximo, modo IA, franjas horarias, inyección total, control remoto, personalizado. |
+| Estado de la instalación                                    | texto      | En espera, en funcionamiento, avería, apagado, anomalía ambiental.                             |
+| Fuera de red (respaldo)                                     | 0/1        | 1 cuando la instalación funciona sin la red.                                                   |
+| Alarma, Alarmas activas                                     | 0/1, texto | Cada bit de alarma del protocolo, traducido («Batería: sobretemperatura»).                     |
+
+Una función cuyo registro el firmware no implementa se omite.
+
+### Cada inversor
+
+Potencia del inversor, potencia solar, nivel de batería, potencia de carga y
+de descarga y temperatura de la batería (con batería), temperatura del
+inversor, tensión y corriente de red (L1, L2, L3 en un inversor trifásico),
+tensión y corriente de cada cadena FV, estado del inversor y sus alarmas. El
+dispositivo lleva el nombre del modelo que indica el inversor («SigenStor EC
+6.0 SP»).
+
+## Seguimiento de energía
+
+Con Gladys 5.2, el índice **Consumo de la casa (total)** alimenta el
+seguimiento de energía: Gladys deduce el consumo de cada media hora, y su
+coste cuando hay un contrato definido. Los demás índices (red, batería, solar)
+se publican en sus propias categorías y no se cuentan como consumidores. El
+coste calculado sobre el consumo de la casa incluye la energía solar que usted
+mismo consume: si su contador eléctrico ya está en Gladys, manténgalo como
+contador principal.
+
+## Control de la batería
+
+Desactivado por defecto: la integración solo lee. Una vez activado **Permitir
+el control de la batería**, el dispositivo de la instalación recibe tres
+listas (pulse **Actualizar** en la pestaña Descubrimiento):
+
+- **Control de la batería**: _Automático (modo de la app)_ devuelve el control
+  al modo elegido en la app mySigen; _Autoconsumo máximo_, _Carga forzada (red
+  primero)_, _Carga forzada (solar primero)_, _Descarga forzada (solar
+  primero)_, _Descarga forzada (batería primero)_ y _En espera (batería en
+  reposo)_ fuerzan el EMS remoto de la instalación.
+- **Límite de potencia de carga** y **Límite de potencia de descarga**: de 0 a
+  100 % de la potencia nominal, en pasos de 10 %. Un límite ajustado en otro
+  lugar se muestra en el paso más cercano.
+
+Solo se escriben los registros que el protocolo documenta como escribibles:
+activación del EMS remoto (40029), modo del EMS remoto (40031), límite máximo
+de carga (40032) y de descarga (40034). Nunca el arranque/parada, el código de
+red ni los registros de consigna de potencia. Un modo forzado sigue activo
+hasta volver a automático, aunque Gladys se detenga: úselo con conocimiento de
+causa. Estas funciones no son interruptores: los asistentes de voz no pueden
+controlarlas.
+
+## Acciones
+
+**Probar la conexión** lee una vez la instalación y los inversores
+configurados e indica qué responde: modo, estado, potencias solar y de red,
+nivel de batería, modelo, número de serie (los cuatro últimos caracteres) y
+firmware de cada inversor, y si los registros de control se pueden leer. Si
+ningún inversor configurado responde, busca inversores en los identificadores
+1 a 16.
+
+## Widget del panel
+
+**Energía Sigenergy** muestra cuatro mosaicos en directo (solar, casa, red,
+nivel de batería) y una lista de estado: hacia dónde va la batería y con qué
+potencia, el modo de funcionamiento, las alarmas y el enlace cuando la
+instalación no responde. Con el control permitido, tres botones (con
+confirmación) ponen la batería en automático, en carga forzada desde la red o
+en descarga forzada; el modo actual lleva una marca.
+
+## Disparadores de escena
+
+- **Se activa una alarma Sigenergy**: aparece una nueva alarma. Variables: el
+  nombre del dispositivo, la o las alarmas nuevas y todas las alarmas activas,
+  en texto — listas para una notificación. Una alarma ya activa al iniciar la
+  integración no lo dispara.
+- **La instalación Sigenergy deja de responder**: dos lecturas seguidas han
+  fallado. Variable: el error.
+- **La instalación Sigenergy vuelve a responder**.
+
+El nivel de batería, las potencias y el estado fuera de red son funciones del
+dispositivo: use para ellos el disparador habitual «valor de un dispositivo».
+
+## Acciones de escena
+
+- **Ajustar el modo de la batería Sigenergy**: uno de los modos anteriores.
+  Salida: el modo aplicado.
+- **Ajustar los límites de la batería Sigenergy**: límite de carga y/o de
+  descarga en vatios, de 0 a la potencia nominal; un campo vacío queda sin
+  cambios.
+
+Ambas requieren el control permitido en la configuración y fallan si no.
+
+## Ejemplos de escenas
+
+- **Carga en horas valle**: a las 22:00, _Ajustar el modo de la batería
+  Sigenergy_ en _Carga forzada (red primero)_ con _Ajustar los límites de la
+  batería Sigenergy_ a 3000 W; a las 6:00, vuelta a _Automático (modo de la
+  app)_.
+- **Aprovechar el excedente**: cuando _Intercambio con la red_ baja de −2000 W,
+  encender el termo; apagarlo cuando vuelve a superar 0.
+- **Corte de luz**: cuando _Fuera de red (respaldo)_ pasa a 1, enviar un
+  mensaje y apagar los grandes consumidores.
+- **Alarma**: con _Se activa una alarma Sigenergy_, enviar el texto de la
+  alarma (\{\{triggerEvent.data.alarm\}\}) a su teléfono.
+
+## Actualización y reglas del protocolo
+
+La integración lee la instalación por sí misma, con el intervalo elegido,
+independientemente del sondeo del núcleo de Gladys. Un ciclo envía unas quince
+peticiones, una tras otra (el protocolo pide esperar cada respuesta, 1 s como
+máximo, antes de la siguiente), y nunca lee un rango que el protocolo marca
+como reservado. Gladys acepta 300 estados por minuto: solo se envían los
+valores que cambian, y cada valor se reenvía al menos cada 6 horas. Un índice
+acumulado nunca se envía más bajo que antes (un error de lectura contaría todo
+el índice como consumido en 30 minutos).
+
+## Solución de problemas
+
+- **«no responde»**: compruebe la dirección, que Modbus TCP está activado y
+  guardado en la app mySigen y que nada bloquea el puerto 502. Algunos
+  firmwares solo aceptan un cliente Modbus TCP: detenga los demás (Home
+  Assistant, un gestor de energía).
+- **«Ningún inversor responde en el identificador»**: la instalación responde
+  pero los identificadores de los inversores son incorrectos. Pulse **Probar la
+  conexión** para encontrarlos.
+- **Falta una función**: su firmware no implementa su registro. Actualícelo,
+  pulse **Escanear** en la pestaña Descubrimiento y **Actualice** el
+  dispositivo.
+- **Más detalles**: ponga `LOG_LEVEL=debug` en la integración para ver cada
+  lectura.
+
+## Límites
+
+- Desarrollada sin el hardware: los valores siguen el documento del
+  protocolo, no una instalación real.
+- Una instalación Sigenergy por integración, hasta 8 inversores.
+- Los cargadores AC y DC, las cargas inteligentes y los dispositivos PSS y PID
+  del protocolo aún no se leen.
+- Solo Modbus TCP (puerto 502, la instalación como servidor); ni RS-485, ni el
+  modo «cliente TCP» de las instalaciones 4G.
+- Las órdenes de la batería se limitan al modo y a los dos límites; sin
+  programación horaria ni consigna de potencia.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Sigenergy te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Para empezar | `section` | No | La integración lee su instalación Sigenergy en la red local, por Modbus TCP (puerto 502). Primero hay que activar Modbus TCP: en la app mySigen (o a través de su instalador), active el servidor Modbus TCP de la instalación y anote su dirección IP y la dirección Modbus (identificador) de cada inversor. Guarde y añada los dispositivos desde la pestaña Descubrimiento. |
+| Idioma de los nombres de funciones | `select` | No | Gladys conserva los nombres dados al añadir un dispositivo. |
+| Dirección de la instalación | `string` | Sí | Dirección IP o nombre de host del SigenStor (o del inversor que aloja el servidor Modbus TCP). Asígnele una IP fija en su router. |
+| Puerto Modbus TCP | `number` | No | 502, salvo si su instalador lo ha cambiado. |
+| Identificadores de los inversores | `string` | No | La dirección Modbus de cada inversor, tal como está configurada en la app mySigen, separadas por comas (1 por defecto; un cargador AC suele usar el 1 y el inversor entonces el 2). Como máximo 8. |
+| Identificador de la instalación | `number` | No | 247 en el protocolo Sigenergy: no lo cambie salvo que se lo indiquen. |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de la instalación. Solo se envían a Gladys los valores que cambian. |
+| Control de la batería | `section` | No | Desactivado por defecto: la integración entonces solo lee. Una vez permitido, Gladys puede cambiar el modo de la batería (automático, carga o descarga forzada) y fijar sus límites de potencia de carga y descarga, desde los dispositivos, el widget y las escenas. Estas órdenes prevalecen sobre el modo elegido en la app mySigen hasta volver a automático: úselas con conocimiento de causa. |
+| Permitir el control de la batería | `boolean` | No | Añade las funciones de control al dispositivo de la instalación (pulse Actualizar en la pestaña Descubrimiento). |
+
+## Cómo instalar Sigenergy en Gladys
+
+1. En Gladys, abre **Integraciones**: Sigenergy aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-sigenergy:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-sigenergy](https://github.com/guim31/gladys-sigenergy).
+
+Sigenergy requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Sigenergy es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-sigenergy) — [fuente de esta documentación](https://github.com/guim31/gladys-sigenergy/blob/HEAD/docs/es.md)

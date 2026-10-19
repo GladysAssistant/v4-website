@@ -1,0 +1,281 @@
+---
+title: "Intégration domotique rtl_433 (433/868 MHz), gratuite et open source"
+sidebar_label: "rtl_433 (433/868 MHz)"
+description: "Stations météo, sondes, compteurs et télécommandes 433/868 MHz, via rtl_433 et une clé SDR. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rtl433.png"
+keywords:
+  - "rtl_433 (433/868 mhz)"
+  - "domotique rtl_433 (433/868 mhz)"
+  - "gladys rtl_433 (433/868 mhz)"
+  - "rtl_433 (433/868 mhz) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-rtl433 instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"rtl_433 (433/868 MHz)","description":"Stations météo, sondes, compteurs et télécommandes 433/868 MHz, via rtl_433 et une clé SDR.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-rtl433","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rtl433.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T14:44:37Z"}} />
+
+[rtl_433](https://github.com/merbanan/rtl_433) transforme une **clé SDR à
+25 €** (puce RTL2832U) en récepteur radio pour des centaines d'appareils
+433 MHz et 868 MHz : stations météo, thermomètres et hygromètres, sondes de
+sol, compteurs d'énergie (OWL), contacts de porte, détecteurs de mouvement et
+de fumée, télécommandes, capteurs de pression des pneus… Cette intégration lit
+ce que rtl_433 entend et propose chaque capteur dans l'onglet **Découverte**
+de Gladys. Sans lien avec le projet rtl_433.
+
+> **Version de développement (0.1).** Testée contre le vrai rtl_433 (25.12)
+> rejouant des enregistrements radio de sa suite de tests, avec un vrai broker
+> Mosquitto, mais pas encore avec une vraie clé SDR. Vos retours sont les
+> bienvenus sur le dépôt GitHub.
+
+## Principe
+
+La clé SDR **ne se branche pas sur Gladys** : les intégrations n'ont pas accès
+à l'USB. rtl_433 tourne **à côté de la clé**, dans son propre conteneur Docker
+(sur la machine Gladys ou sur un Raspberry Pi mieux placé dans la maison), et
+publie ce qu'il entend sur votre **broker MQTT**. L'intégration lit ce broker.
+
+```
+capteurs radio ))) clé SDR -> rtl_433 -> broker MQTT -> intégration -> Gladys
+```
+
+Sans broker, l'intégration peut aussi lire directement le serveur HTTP de
+rtl_433 (voir plus bas).
+
+## Ce que vous obtenez
+
+| Champ rtl_433                                    | Dans Gladys                                                      |
+| ------------------------------------------------ | ---------------------------------------------------------------- |
+| `temperature_C`, `temperature_F`                 | température (convertie en °C)                                    |
+| `temperature_1_C`, `temperature_2_C`…            | une température par sonde (thermomètres de cuisson, piscine…)    |
+| `humidity`                                       | humidité (%)                                                     |
+| `battery_ok`                                     | batterie (%) : 100 % = OK, 0 % = faible pour les capteurs OK/LOW |
+| `wind_avg_*`, `wind_max_*`, `wind_dir_deg`       | vent moyen et rafales (km/h), direction (°)                      |
+| `rain_mm`, `rain_in`, `rain_rate_*`              | pluie cumulée (mm) et intensité (mm/h)                           |
+| `pressure_hPa`                                   | pression atmosphérique (hPa)                                     |
+| `light_lux`, `uvi`                               | luminosité (lux), indice UV                                      |
+| `power_W`, `energy_kWh`, `current`               | puissance (W), index d'énergie (kWh, OWL CM180/CM160), courant   |
+| `moisture`                                       | humidité du sol (%)                                              |
+| `state` open/closed, `contact_open`, `opened`    | ouverture (porte, fenêtre)                                       |
+| `motion`                                         | mouvement                                                        |
+| `detect_wet`, `water`                            | fuite d'eau                                                      |
+| `tamper`                                         | sabotage (boîtier ouvert)                                        |
+| détecteurs de fumée (Smoke-GS558…)               | fumée                                                            |
+| `button`, `cmd`, `code`, `state` ON/OFF + `unit` | un bouton par touche, et le déclencheur de scène                 |
+| `pressure_kPa`, `pressure_PSI` d'un capteur TPMS | pression du pneu (bar), sur option                               |
+
+Un capteur = un modèle + un identifiant (+ un canal). Une station qui envoie
+plusieurs types de messages (vent, puis pluie) forme un seul appareil, qui
+réunit tout ce qu'elle mesure.
+
+## 1. Le matériel
+
+- Une clé **RTL-SDR** (RTL2832U + R820T2/R860), par exemple RTL-SDR Blog V3 ou
+  V4, Nooelec NESDR : environ 25 €. L'antenne fournie suffit souvent ; une
+  antenne 433 MHz (17 cm) placée en hauteur porte plus loin.
+- Sous Linux, empêchez le pilote TNT de s'emparer de la clé, puis
+  rebranchez-la :
+
+```bash
+echo 'blacklist dvb_usb_rtl28xxu' | sudo tee /etc/modprobe.d/blacklist-rtl.conf
+```
+
+## 2. Lancer rtl_433
+
+Avec l'image Docker [hertzg/rtl_433](https://hub.docker.com/r/hertzg/rtl_433)
+(amd64, arm64, armv7 : PC, NAS, Raspberry Pi), sur la machine où la clé est
+branchée. Remplacez l'adresse du broker, l'utilisateur et le mot de passe :
+
+```bash
+docker run -d --name rtl_433 --restart unless-stopped \
+  --device /dev/bus/usb \
+  hertzg/rtl_433:latest \
+  -M level \
+  -F "mqtt://192.168.1.10:1883,user=UTILISATEUR,pass=MOTDEPASSE,retain=0,events=rtl_433[/model][/id]"
+```
+
+Ou avec Docker Compose :
+
+```yaml
+services:
+  rtl_433:
+    image: hertzg/rtl_433:latest
+    container_name: rtl_433
+    restart: unless-stopped
+    devices:
+      - /dev/bus/usb
+    command:
+      - -M
+      - level
+      - -F
+      - mqtt://192.168.1.10:1883,user=UTILISATEUR,pass=MOTDEPASSE,retain=0,events=rtl_433[/model][/id]
+```
+
+- Le broker peut être celui de l'intégration MQTT de Gladys (port 1883,
+  l'utilisateur et le mot de passe de sa configuration) ou le vôtre
+  (Mosquitto…). Sans utilisateur, retirez `user=…,pass=…`.
+- `-M level` ajoute la force du signal de chaque message : elle aide à
+  reconnaître vos capteurs (voir plus bas).
+- **868 MHz** (certaines stations Bresser, Fine Offset, capteurs européens) :
+  ajoutez `-f 868.3M -s 1024k`. Pour écouter les deux bandes, le plus simple
+  est une clé par bande (deux conteneurs, chacun avec `-d :<numéro de série>`) ;
+  une seule clé peut alterner avec `-f 433.92M -f 868.3M -H 60`, au prix des
+  messages émis pendant qu'elle écoute l'autre bande.
+- Vérifiez que rtl_433 entend quelque chose : `docker logs -f rtl_433`.
+
+## 3. Configurer l'intégration
+
+1. **Adresse du broker MQTT** : vue depuis la machine Gladys, son adresse IP
+   sur le réseau local, pas `localhost` (l'intégration tourne dans son propre
+   conteneur). Exemples : `mqtt://192.168.1.10:1883`, `mqtts://broker.lan:8883`.
+2. **Utilisateur** et **mot de passe** du broker, s'il en demande.
+3. **Topic MQTT de rtl_433** : gardez `rtl_433/#`, qui couvre la commande
+   ci-dessus comme les topics par défaut de rtl_433 (`rtl_433/<hôte>/events`).
+4. Cliquez sur **Tester la connexion** : l'intégration attend le premier
+   message de rtl_433 (jusqu'à 20 s) et indique le capteur entendu.
+
+## 4. Ajouter VOS capteurs
+
+Ouvrez l'onglet **Découverte** : chaque capteur entendu y apparaît, nommé
+d'après son modèle, son identifiant et son canal (`Nexus-TH 201 ch3`). La liste
+s'enrichit au fil des minutes (les capteurs émettent toutes les 30 à 60 s ; une
+télécommande, quand on appuie dessus).
+
+**Les capteurs des voisins sont entendus aussi.** Pour reconnaître les vôtres,
+cliquez sur **Lister les capteurs entendus** dans la configuration : les
+derniers capteurs entendus s'affichent avec leurs valeurs, le nombre de
+messages et la force du signal. Le signal le plus fort (dB le plus proche de 0)
+est en général le capteur le plus proche. Astuce : réchauffez une sonde dans
+votre main, ou appuyez sur la télécommande, puis relancez la liste.
+
+N'ajoutez que vos capteurs : les autres ne coûtent rien (rien n'est envoyé à
+Gladys pour un appareil non ajouté) et quittent la liste après 24 h de silence.
+
+**Capteurs de pression des pneus (TPMS)** : chaque voiture qui passe est
+entendue, ils sont donc ignorés par défaut. Activez l'option pour suivre les
+pneus de votre voiture (ils émettent en roulant, par exemple en rentrant au
+garage).
+
+**Changement de piles** : beaucoup de capteurs bon marché tirent un nouvel
+identifiant à chaque changement de piles. Le capteur réapparaît alors comme un
+nouvel appareil dans la Découverte : ajoutez-le et supprimez l'ancien.
+
+## Scènes
+
+- Les **télécommandes** ont un bouton par touche (« Button 1 », « Button 192 »…),
+  utilisable dans le déclencheur « Changement d'état d'un appareil » : appui
+  (clic), ou marche/arrêt pour les télécommandes ON/OFF (Nexa, KlikAanKlikUit,
+  Waveman…). Chaque appui est envoyé, même deux fois de suite le même ; les
+  répétitions de la trame radio d'un même appui (1,5 s) ne comptent qu'une fois.
+- Le déclencheur **Télécommande ou bouton 433 MHz** reçoit chaque appui d'une
+  télécommande ajoutée, filtrable par télécommande, par code (`1`, `192`…) et
+  par action (appui, marche, arrêt), avec le modèle et le message reçu en
+  variables.
+- Les détecteurs de **mouvement** et de **fumée** n'envoient que « détecté » :
+  ils repassent à 0 tout seuls 60 s après le dernier message.
+- Les contacts de porte envoient ouvert **et** fermé : leur état suit la porte.
+
+## Options
+
+| Option                          | Par défaut  | Rôle                                                                                  |
+| ------------------------------- | ----------- | ------------------------------------------------------------------------------------- |
+| Topic MQTT de rtl_433           | `rtl_433/#` | à changer seulement si rtl_433 publie ailleurs                                        |
+| Vérifier le certificat TLS      | oui         | à désactiver pour un broker au certificat auto-signé de votre réseau                  |
+| Proposer les capteurs TPMS      | non         | voir plus haut                                                                        |
+| Intervalle minimum d'un capteur | 30 s        | un compteur qui émet toutes les 6 s n'est enregistré qu'à ce rythme (dernière valeur) |
+
+Les ouvertures, mouvements, alarmes et télécommandes ne sont jamais retardés.
+Gladys accepte 300 états par minute et par intégration : l'intégration ne
+renvoie que les valeurs qui changent, et répartit le reste.
+
+## Sans broker MQTT : le serveur HTTP de rtl_433
+
+rtl_433 peut servir lui-même ses messages en HTTP. Lancez-le avec :
+
+```bash
+docker run -d --name rtl_433 --restart unless-stopped \
+  --device /dev/bus/usb -p 8433:8433 \
+  hertzg/rtl_433:latest -M level -F http:0.0.0.0:8433
+```
+
+et saisissez `http://<adresse IP de cette machine>:8433` comme adresse dans la
+configuration. Les champs utilisateur, mot de passe et topic ne servent pas.
+
+## Fonctionnement
+
+- Les messages lus sont les objets JSON qui ont un `model` (le format
+  `events` de rtl_433) ; les topics `devices` (une valeur par topic) et
+  `states` sont ignorés. L'état `availability` de rtl_433 s'affiche dans le
+  statut de l'intégration : un rtl_433 arrêté (son « dernier message »
+  `offline`) se voit, tant qu'aucun autre message n'arrive.
+- Un appareil est identifié par `modèle:id<identifiant>:ch<canal>`, pour
+  toujours. Ses fonctionnalités sont celles que ses messages ont portées.
+- La liste de la Découverte est publiée 2 s après un nouveau capteur, au plus
+  toutes les 30 s ; 500 capteurs au plus sont gardés en mémoire.
+- Le badge d'un appareil ajouté passe à « injoignable » quand le broker est
+  coupé, ou quand un capteur qui mesure régulièrement (température, vent,
+  énergie…) n'a rien envoyé depuis une heure : piles à plat, hors de portée.
+  Les télécommandes et les contacts, qui n'émettent qu'à l'usage, restent
+  « local ».
+- Les valeurs aberrantes (humidité de 255 %, -3276 °C…) sont ignorées.
+
+## Dépannage
+
+- **« Aucun événement rtl_433 »** au test : regardez `docker logs rtl_433`.
+  `usb_claim_interface error -6` : le pilote TNT tient la clé (voir le
+  matériel). Rien d'entendu : vérifiez la fréquence (`-f`) et l'antenne.
+- **« Le broker MQTT est injoignable »** : vérifiez l'adresse IP et le port, et
+  que le broker accepte les connexions du réseau local (`listener 1883` dans
+  Mosquitto 2).
+- **« a refusé la connexion »** : utilisateur ou mot de passe incorrect, ou
+  ACL qui interdit la lecture de `rtl_433/#`.
+- **Un capteur est entendu mais n'apparaît pas** : « Lister les capteurs
+  entendus » indique « rien de pris en charge pour l'instant » quand aucun de
+  ses champs n'est encore reconnu. Ouvrez une issue avec son message JSON
+  (`docker logs rtl_433`).
+
+## Confidentialité
+
+Tout reste sur votre réseau : l'intégration ne parle qu'à votre broker MQTT (ou
+à rtl_433). Le mot de passe est stocké comme secret par Gladys et n'apparaît
+jamais dans les logs.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par rtl_433 (433/868 MHz) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos capteurs 433/868 MHz, grâce à rtl_433 | `section` | Non | rtl_433 transforme une clé SDR à 25 € (RTL2832U) en récepteur pour des centaines d'appareils radio : stations météo, thermomètres, sondes de sol, compteurs d'énergie (OWL), contacts de porte, détecteurs de mouvement, télécommandes, capteurs de pneus... La clé ne se branche pas sur Gladys : rtl_433 tourne à côté (la commande Docker est dans le guide) et publie ce qu'il entend sur votre broker MQTT. Cette intégration le lit et propose chaque capteur entendu dans l'onglet Découverte. Les capteurs des voisins sont entendus aussi : n'ajoutez que les vôtres, le bouton « Lister les capteurs entendus » montre leurs valeurs et leur signal. Saisissez l'adresse du broker vue depuis la machine Gladys : son adresse IP sur le réseau local, pas localhost. Sans lien avec le projet rtl_433. |
+| Adresse du broker MQTT (ou de rtl_433) | `string` | Oui | mqtt:\/\/hôte:1883 ou mqtts:\/\/hôte:8883 : le broker sur lequel rtl_433 publie (-F mqtt:\/\/...). Une adresse IP seule vaut mqtt:\/\/ sur le port 1883. Sans broker : le serveur HTTP de rtl_433 lui-même, http:\/\/hôte:8433 (-F http:0.0.0.0:8433). |
+| Utilisateur | `string` | Non |  |
+| Mot de passe | `secret` | Non |  |
+| Topic MQTT de rtl_433 | `string` | Non | Là où rtl_433 publie ses événements. rtl_433/# couvre ses topics par défaut (rtl_433/\<hôte>/events) et events=rtl_433[/model][/id]. Inutile avec le serveur HTTP. |
+| Vérifier le certificat TLS du broker (mqtts, wss) | `boolean` | Non | À désactiver seulement pour un broker au certificat auto-signé sur votre réseau local. |
+| Proposer les capteurs de pression des pneus (TPMS) | `boolean` | Non | Chaque voiture qui passe est entendue : laissez désactivé, sauf pour suivre les pneus de votre voiture (ils émettent en roulant). |
+| Intervalle minimum entre deux mesures d'un capteur (s) | `number` | Non | Un compteur d'énergie émet toutes les 6 s : Gladys garde sa dernière mesure à ce rythme. Contacts, mouvements, alarmes et télécommandes ne sont jamais retardés. |
+
+## Comment installer rtl_433 (433/868 MHz) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : rtl_433 (433/868 MHz) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-rtl433:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-rtl433](https://github.com/LM1LC3N7/gladys-rtl433).
+
+rtl_433 (433/868 MHz) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+rtl_433 (433/868 MHz) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-rtl433) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-rtl433/blob/HEAD/docs/fr.md)

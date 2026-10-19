@@ -1,0 +1,212 @@
+---
+title: "PlayStation Network smart home integration, free and open source"
+sidebar_label: "PlayStation Network"
+description: "Follow PlayStation Network presence, games, play time, trophies and PS4/PS5 consoles. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-playstationnetwork.png"
+keywords:
+  - "playstation network"
+  - "playstation network smart home"
+  - "gladys playstation network"
+  - "playstation network gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-playstationnetwork instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PlayStation Network","description":"Follow PlayStation Network presence, games, play time, trophies and PS4/PS5 consoles.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-playstationnetwork","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-playstationnetwork.png","type":"device","version":"0.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T18:20:23Z"}} />
+
+Follow in Gladys who is playing on PlayStation, which game, for how long today, the trophies
+of your account, and whether your PS4 or PS5 is on, in rest mode or off.
+
+> Unofficial integration, not affiliated with Sony. Sony offers no public API: the integration
+> reads the same data as the PlayStation App.
+
+## Before you start
+
+You need:
+
+- a PlayStation Network account (the one whose games and trophies you want to follow);
+- a computer with a web browser, to get the **NPSSO token** once;
+- for the consoles (optional): a PS4 or PS5 on the same network as Gladys.
+
+## Get your NPSSO token
+
+The NPSSO is a 64-character code that proves you are signed in to your Sony account. The
+integration uses it to sign in like the PlayStation App does.
+
+1. In your browser, go to [playstation.com](https://www.playstation.com/) and **sign in** with
+   your PlayStation Network account.
+2. In the **same browser**, open
+   [https://ca.account.sony.com/api/v1/ssocookie](https://ca.account.sony.com/api/v1/ssocookie).
+3. The page shows something like `{"npsso":"Ab12...xyz"}`. Copy the 64-character value
+   between the quotes (copying the whole line also works: the integration finds the value).
+
+If the page shows an error, you are not signed in: go back to step 1.
+
+> **Keep this token secret.** Whoever holds it can use your account. Gladys stores it in a
+> secret field and the integration never writes it to disk nor to the logs. If you think it
+> leaked, sign out of all devices from your PlayStation account settings, then get a new one.
+
+The token lasts about **two months**. When it expires, the Configuration screen of the
+integration says so: get a new one the same way and paste it.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. Paste the token in **NPSSO token**.
+3. **Friends to follow** (optional): their online IDs, separated by commas, 10 at most. Their
+   privacy settings must let you see their online status.
+4. **Console IP address** (optional): only if "Find my consoles" does not find your console
+   (see below).
+5. **Refresh interval**: how often the PlayStation Network is read, 120 seconds by default
+   (60 minimum: Sony limits the number of requests).
+6. **Time zone**: "Played today" restarts from zero at midnight in this time zone
+   (`Europe/Paris` by default).
+7. Save, then click **Test the connection**: it shows your online ID, your status, your
+   trophies and the status of each friend.
+8. Open the **Discovery** tab and add the devices you want.
+
+## The devices
+
+### Your PSN account
+
+| Feature         | Value                                                |
+| --------------- | ---------------------------------------------------- |
+| Online          | 1 when online on a console, 0 otherwise              |
+| In game         | 1 when a game is running                             |
+| Current game    | the name of the game, `-` when none                  |
+| Platform        | PS5, PS4…                                            |
+| Current session | minutes since the current game started               |
+| Played today    | minutes of play since midnight                       |
+| Trophy level    | your trophy level                                    |
+| Trophies        | number of platinum, gold, silver and bronze trophies |
+
+The trophies are read every 15 minutes, and at the end of each game.
+
+### Friends
+
+Each followed friend is a device with the same features as your account, except the trophies.
+
+### Consoles
+
+Each console found is a device with one **Power** feature: 1 when on, 0 in rest mode or off.
+
+## Consoles on the local network
+
+A PS4 or PS5 tells on the local network whether it is on or in rest mode. For that:
+
+- **PS5**: Settings → System → Power Saving → Features Available in Rest Mode → turn on
+  **Stay Connected to the Internet** and **Enable Turning On PS5 from Network**;
+- **PS4**: Settings → Power Save Settings → Set Features Available in Rest Mode → turn on
+  **Stay Connected to the Internet** and **Enable Turning On PS4 from Network**.
+
+Then click **Find my consoles** in the configuration: Gladys sends the PlayStation discovery
+request on your network and lists what answered. Open the **Discovery** tab to add the console.
+
+If nothing answers (another network, a router that filters broadcast), give your console a
+fixed IP address in your router, type it in **Console IP address**, and click **Find my
+consoles** again.
+
+### Local or cloud
+
+Gladys shows a **local** or **cloud** badge on the console:
+
+- **local**: the state comes from the console itself, on your network;
+- **cloud**: the state comes from your PSN presence (online on the same platform = on).
+
+The **Prefer the local connection** toggle of the configuration chooses which one comes first.
+When the preferred one says nothing, the other one is used and the badge shows an orange dot
+with the reason. Without the local network, rest mode and off cannot be told apart, and a
+console used by another account is seen as off.
+
+The integration cannot turn a console on or control it: it only reads its state.
+
+## Scenes
+
+### Triggers
+
+- **A game started**: your account or a followed friend started a game. Variables: online ID,
+  game, title ID, platform.
+- **A game stopped**: the game ended or another one replaced it. Same variables, plus the
+  **session length** in minutes.
+- **A trophy was earned**: your account earned new trophies. Filter by grade (platinum, gold,
+  silver, bronze). Variables: grade, number of new trophies, total of this grade, trophy level.
+
+The device features also work with the standard Gladys triggers. Examples:
+
+- _when "Played today" of my son's account goes above 120, send me a message_;
+- _when "Power" of the PS5 goes to 1 after 10 pm, turn off the living room lights_.
+
+### Actions
+
+- **Get a player's status**: reads the PlayStation Network now and returns online, in game,
+  game, platform, current session and played today, for the following actions of the scene
+  (e.g. a condition "only if in game").
+- **Get a console's state**: on, rest mode (`standby`) or off, read now.
+
+## Dashboard widget
+
+Add the **PlayStation Network** widget to a dashboard. It shows:
+
+- played today and the current session, and for your account the trophy level and the
+  platinum count;
+- who plays what, with the game icons (or the icon of your game when you follow no friend);
+- your status, platform and game, and the state of the consoles;
+- a **Refresh** button.
+
+In the widget settings, **Player** chooses whose card it is (your account by default).
+
+## Troubleshooting
+
+- **"The NPSSO token expired or is wrong"**: get a new one (see above). It also happens after
+  changing your password or signing out of all devices.
+- **"Too many requests to the PlayStation Network"**: raise the refresh interval.
+- **A friend is "hidden"**: their privacy settings do not let you see their online status, or
+  you are no longer friends.
+- **A friend has "no account with this name"**: check the online ID (letters, digits, `-` and
+  `_`, 3 to 16 characters).
+- **The console is not found**: check the power saving settings above, and that it is plugged
+  in (fully off, it never answers).
+- **Played today seems low**: the time is counted between two refreshes. When Gladys or the
+  PlayStation Network were unreachable for a long time, at most twice the refresh interval is
+  counted for the gap.
+
+## Configuration settings
+
+These are the settings PlayStation Network asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Sony offers no public API: the integration signs in like the PlayStation App, with an NPSSO token. 1) Sign in on playstation.com with your account. 2) In the same browser, open the "Get my NPSSO" link below. 3) Copy the 64-character value of "npsso" (or the whole page) and paste it below. The token is a key to your account: keep it secret. It lasts about two months; the integration tells you when it must be renewed. |
+| NPSSO token | `secret` | Yes | The 64-character value shown by the "Get my NPSSO" page. |
+| Friends to follow | `string` | No | Online IDs separated by commas, 10 at most. Each one becomes a device with its presence and current game (their privacy settings must allow it). |
+| Consoles on the local network | `section` | No | A PS4 or PS5 tells on the local network whether it is on or in rest mode, if "Stay connected to the internet" is on in its power saving settings (PS5: also "Enable turning on PS5 from network"). Use "Find my consoles" below, or type the console's IP address if the search does not find it. Without the local network, the console state follows your PSN presence. |
+| Console IP address (optional) | `string` | No |  |
+| Advanced | `section` | No |  |
+| Refresh interval (s) | `number` | No | How often the PlayStation Network is read, in seconds (one minute minimum: Sony limits the number of requests). |
+| Time zone | `string` | No | "Played today" restarts from zero at midnight in this time zone. |
+
+## How to install PlayStation Network in Gladys
+
+1. In Gladys, open **Integrations**: PlayStation Network appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-playstationnetwork:0.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-playstationnetwork](https://github.com/prohand/gladys-playstationnetwork).
+
+PlayStation Network requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+PlayStation Network is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-playstationnetwork) — [source of this documentation](https://github.com/prohand/gladys-playstationnetwork/blob/HEAD/docs/en.md)

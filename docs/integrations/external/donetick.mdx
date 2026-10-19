@@ -1,0 +1,204 @@
+---
+title: "Donetick smart home integration, free and open source"
+sidebar_label: "Donetick"
+description: "Donetick household chores: today's and overdue chores, done from the dashboard or a scene. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-donetick.png"
+keywords:
+  - "donetick"
+  - "donetick smart home"
+  - "gladys donetick"
+  - "donetick gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-donetick instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Donetick","description":"Donetick household chores: today's and overdue chores, done from the dashboard or a scene.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-donetick","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-donetick.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T11:57:49Z"}} />
+
+Bring the household chores of your [Donetick](https://donetick.com) into
+Gladys: what is left to do today, what is overdue, who does what. A tap on the
+dashboard marks a chore done, a scene reminds whoever is late, and another one
+reacts when the bins are taken out.
+
+> **Feedback welcome.** This integration was tested against a real Donetick
+> server (Docker image `donetick/donetick`, October 2026), not yet in
+> everyday use. If something does not work as described, please say so on the
+> [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-donetick/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A **self-hosted Donetick**, reachable from Gladys (the Docker image listens
+  on port 2021).
+- An **access token** of a Donetick user. In Donetick: **Settings** → **Access
+  tokens** → **Generate new token**, give it a name (`Gladys`), and copy the
+  token, which starts with `dt_`: Donetick shows it only once.
+
+The integration sees the chores this user can see (the whole circle, except
+the private chores of the other members), and marks chores done **as this
+user**. Pick a user who is admin or manager of the circle if the scene action or the
+widget must complete chores assigned to somebody else.
+
+## Set up
+
+1. In Gladys, **Integrations** → install **Donetick**.
+2. In the **Configuration** screen, fill in:
+   - **Address**: the address of Donetick, for example
+     `http://192.168.1.20:2021`, or `https://chores.example.org` behind a
+     reverse proxy (a path prefix such as `/donetick` is kept);
+   - **Access token**: the `dt_…` token.
+3. Options:
+   - **One device per member** (on by default): besides the household device,
+     one device per member of the circle, for the chores assigned to them;
+   - **Accept self-signed certificates**: for an `https://` address with a
+     self-signed certificate, on your own server only;
+   - **Refresh interval**: 1 to 10 minutes (2 by default). Due times and
+     midnight are always followed on time, whatever the interval;
+   - **Language of the feature names**: the names given to the features when
+     a device is added (French by default), and the texts sent to scenes.
+4. Save, then **Test the connection**: it reads Donetick and gives the number
+   of active chores and members.
+5. In the **Discovery** tab, add the devices you want.
+
+## Devices
+
+**Donetick** (the household) and, with the option, **Donetick _member_** for
+each member of the circle. Each one has four features:
+
+| Feature              | What it says                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| `Chores to do today` | active chores due before midnight, overdue ones included: what is left by tonight    |
+| `Overdue chores`     | active chores whose due time has passed                                              |
+| `Chores done today`  | completions recorded today (skipped chores do not count)                             |
+| `Next chore`         | the name of the chore with the earliest due time, overdue first; `None` when nothing |
+
+On a member device, the counters only take the chores **assigned** to the
+member, and `Chores done today` the chores **they** completed. Chores without
+a due date are in none of the counters. "Today" is the day in the time zone of
+Gladys.
+
+## Dashboard
+
+The **Today's chores** widget shows two tiles (to do today, overdue), the list
+of the chores of the day, overdue first, with their time and who they are
+assigned to, and a button for each of the four most urgent: a tap marks the
+chore done. Choose a member device in the widget settings to see only their
+chores; leave it empty for the whole household. When nothing is left, the
+widget says so and gives the next chore.
+
+The counters can also go on the dashboard as any device feature.
+
+## Scenes
+
+### Triggers
+
+- **Donetick chore overdue**: a chore passed its due time without being done,
+  once per due date (a chore that is still late tomorrow does not fire again;
+  its next occurrence will). Filters: the assigned member (a member device),
+  the chore name. Information passed on to the actions: the chore, its number,
+  who it is assigned to, the due date.
+- **Donetick chore done**: a chore was marked done, in Donetick or from
+  Gladys. Filters: who did it (a member device), the chore name. Information:
+  the chore, its number, who did it, whether it was done on time, and whether
+  it was marked done from Gladys (a scene that marks chores done can skip its
+  own completions with it, and never loop).
+
+What is already overdue or done when the integration first starts is known,
+not news: nothing fires for it. A restart does not announce a chore twice, and
+a chore that turned overdue while the integration was stopped is announced
+when it starts again.
+
+### Actions
+
+- **Mark a Donetick chore done**: marks a chore done now, as the user of the
+  access token. Give the chore **name** as written in Donetick (case and
+  accents ignored) or its **number** (`#12`, the number in the address of the chore
+  page in Donetick). The field accepts scene variables. Results for the next steps:
+  the chore, its number, whether it waits for approval, its next due date. A
+  chore that requires approval is sent for approval, as in Donetick.
+
+### Scene ideas
+
+- At 8 pm, if `Chores to do today` of a member is above 0, send them a message.
+- An NFC tag or a button by the bins runs **Mark a Donetick chore done** with
+  `Take out the bins`.
+- **Donetick chore overdue** with the member filter: tell that member on
+  Telegram, with the chore in the message.
+- **Donetick chore done** on `Water the plants`: switch the garden tap off.
+
+## Troubleshooting
+
+- **"Donetick does not answer"**: check the address and the port from the
+  Gladys machine (`http://<address>:2021` opens Donetick in a browser).
+- **"API token refused"**: the token was deleted or mistyped. Create a new one
+  in Donetick (Settings → Access tokens).
+- **"No Donetick API at this address"**: the address answers, but not with the
+  Donetick API: check the port, or the path prefix behind a reverse proxy.
+- **"The address redirects"**: enter the `https://` address.
+- **"The token user is not assigned to this chore"**: Donetick only lets the
+  assignees (or an admin or manager of the circle) complete a chore. Use the token of an
+  admin, or assign the chore to the token user.
+- **"Not yet in its completion window"**: the chore has a completion window in
+  Donetick and cannot be done this early.
+- **A chore is missing**: archived and private chores of other members are not
+  visible to the token user.
+- Logs: `LOG_LEVEL=debug` on the container shows every reading.
+
+## Limits
+
+- Donetick is read every 1 to 10 minutes (and at each due time and at
+  midnight): a chore done in Donetick shows up in Gladys within that delay.
+- The integration only reads chores and marks them done: it does not create,
+  edit, skip or assign chores.
+- Tested with the self-hosted Donetick of October 2026. The donetick.com cloud
+  should accept the same token on its API address, but this was not tested.
+- Gladys keeps no Donetick data beyond `/data/donetick-state.json` (the
+  chores already announced to scenes).
+- Donetick has its own request limit (300 per minute by default): the
+  integration makes two or three requests per reading.
+- A chore waiting for approval shows _Awaiting approval_ in the widget,
+  without button. A widget button refuses a chore already done meanwhile.
+- A one-off chore done while the integration is stopped is announced by its
+  number (`#12`), its name being gone from Donetick's list.
+- Not affiliated with Donetick.
+
+## Configuration settings
+
+These are the settings Donetick asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Donetick | `section` | No | A self-hosted Donetick. In Donetick, create an access token: Settings, Access tokens. Chores are completed as the user of the token. |
+| Address | `string` | Yes | Address of Donetick, with https:\/\/ for HTTPS and :port if not the default (2021 for the Docker image). |
+| Access token | `secret` | Yes | Created in Donetick: Settings, Access tokens. It starts with dt_. |
+| Options | `section` | No |  |
+| One device per member | `boolean` | No | Besides the household device, one device per member of the circle, for the chores assigned to them. |
+| Accept self-signed certificates | `boolean` | No | For an https:\/\/ address whose certificate is self-signed. Tick only for your own server. |
+| Refresh interval | `select` | No | How often Donetick is read. Due times and midnight are always followed on time. |
+| Language of the feature names | `select` | No | Names given to the features when a device is added, and texts sent to scenes. |
+
+## How to install Donetick in Gladys
+
+1. In Gladys, open **Integrations**: Donetick appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-donetick:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-donetick](https://github.com/guim31/gladys-donetick).
+
+Donetick requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Donetick is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-donetick) — [source of this documentation](https://github.com/guim31/gladys-donetick/blob/HEAD/docs/en.md)

@@ -19,13 +19,14 @@ https://github.com/sescandell/gladys-ocpp-integration instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Charger Station","description":"Suivez vos bornes de recharge dans Gladys, en direct, grâce au protocole OCPP.","owner":"sescandell","owner_avatar_url":"https://avatars.githubusercontent.com/u/1559970?v=4","repo_url":"https://github.com/sescandell/gladys-ocpp-integration","cover_url":"https://integration-store-storage.gladysassistant.com/covers/sescandell--gladys-ocpp-integration.png","type":"device","version":"1.0.0","gladys_version":">=4.85.0","stars":0,"pushed_at":"2026-08-10T16:41:01Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Charger Station","description":"Suivez vos bornes de recharge dans Gladys, en direct, grâce au protocole OCPP.","owner":"sescandell","owner_avatar_url":"https://avatars.githubusercontent.com/u/1559970?v=4","repo_url":"https://github.com/sescandell/gladys-ocpp-integration","cover_url":"https://integration-store-storage.gladysassistant.com/covers/sescandell--gladys-ocpp-integration.png","type":"device","version":"1.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T15:28:23Z"}} />
 
-**Supervision en lecture seule.** Cette intégration observe un
+**Supervision.** Cette intégration observe un
 nombre quelconque de bornes de recharge OCPP 1.6 et affiche leur état dans
 Gladys (statut du connecteur, état de charge, puissance, courant, tension,
-énergie totale) — il n'est pas encore possible de démarrer, arrêter ou
-limiter une charge depuis Gladys.
+énergie totale). Il n'est pas encore possible de démarrer, arrêter ou
+limiter une charge depuis Gladys ; la seule commande est le verrouillage
+permanent du câble des bornes Autel (voir « Verrouillage du câble » plus bas).
 
 ## Fonctionnement
 
@@ -54,9 +55,10 @@ n'invente ni ne retient jamais rien sur le fil, dans aucun des deux modes.
 
 ## Prérequis
 
-**Gladys 4.85.0 ou ultérieur.** L'état des bornes est publié via les
-fonctionnalités « borne de recharge » de Gladys, que les versions
-antérieures ne connaissent pas (elles refuseraient de créer l'appareil).
+**Gladys 5.1.0 ou ultérieur.** L'état des bornes est publié via les
+fonctionnalités « borne de recharge » de Gladys, et le widget de tableau de
+bord s'appuie sur les widgets d'intégration : les versions antérieures ne
+connaissent ni l'un ni l'autre.
 
 L'application ou le portail de chaque borne doit permettre de consulter et
 de modifier l'URL du serveur OCPP auquel elle se connecte. Tous les
@@ -143,6 +145,72 @@ interrogé à intervalles réguliers. Une borne qui se connecte pour la premièr
 fois apparaît elle aussi toute seule dans Découverte, sans attendre un
 rafraîchissement.
 
+## Verrouillage du câble (Autel)
+
+Les bornes Autel peuvent garder leur câble **verrouillé en permanence** dans le
+connecteur (fonction du constructeur, hors OCPP standard). Sur ces bornes,
+chaque connecteur reçoit un interrupteur **Verrouillage du câble**, utilisable
+dans Gladys (tableau de bord, scènes…) et dans le widget. Il n'apparaît qu'une
+fois que la borne a confirmé disposer de la fonction : peu après sa connexion,
+le relais lui demande sa liste de fonctions prises en charge (une requête OCPP
+standard, le cloud du constructeur fait la même).
+
+- La borne **ne signale jamais** cet état d'elle-même. L'intégration l'apprend
+  en voyant passer les commandes de verrouillage et de déverrouillage — qu'elles
+  viennent de Gladys ou de l'application du constructeur (celles de
+  l'application transitent par le relais une fois la borne associée à son cloud
+  d'origine, voir Installation). L'interrupteur n'affiche donc **aucune valeur**
+  avant la première commande, et le widget propose « Verrouiller » et
+  « Déverrouiller » en attendant.
+- Une commande faite avec l'application du constructeur **sans** passer par le
+  relais (Bluetooth, Wi-Fi direct) est invisible : l'interrupteur garde alors la
+  dernière commande qu'il connaissait.
+- Le relais oublie cet état quand il redémarre : plus de valeur jusqu'à la
+  commande suivante.
+- Si la borne a été créée avant cette version, cliquez sur **Mettre à jour**
+  sur sa fiche appareil pour faire apparaître l'interrupteur.
+
+## Widget de tableau de bord
+
+Ajoutez une boîte **Borne de recharge** à un tableau de bord et choisissez la
+borne. Un widget affiche **un connecteur** (le 1 par défaut) : pour une borne
+à plusieurs connecteurs, ajoutez un widget par connecteur.
+
+En haut, le widget dit toujours ce que fait le connecteur en ce moment, en
+clair, avec la durée de la session pendant une charge. Le reste se règle dans
+les réglages du widget :
+
+| Réglage                                | Par défaut                                    | Effet                                                                                                                                                                                 |
+| -------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Connecteur**                         | 1                                             | Le connecteur affiché.                                                                                                                                                                |
+| **Tuiles**                             | Puissance, Énergie, Durée de la session, Coût | Au choix parmi : puissance en direct, énergie et durée de la session en cours (ou de la dernière hors charge), coût, puissance max offerte par la borne, énergie totale du compteur.  |
+| **Graphique**                          | Automatique                                   | _Automatique_ : courbe de puissance pendant une charge, énergie des sessions récentes sinon. Ou toujours l'un des deux, ou aucun.                                                     |
+| **Période de la courbe**               | 12 dernières heures                           | De la dernière heure à la dernière semaine.                                                                                                                                           |
+| **Prix du kWh (€)**                    | vide                                          | Voir « Coût » ci-dessous.                                                                                                                                                             |
+| **Afficher les détails de la borne**   | oui                                           | Statut du connecteur, limite offerte par la borne, code d'erreur s'il y en a un, dernier échange avec le relais, fabricant et modèle.                                                 |
+| **Afficher les commandes de la borne** | oui                                           | Des boutons pour ce qu'on peut demander à la borne, s'il y en a (voir « Verrouillage du câble ») : le bouton fait l'inverse de l'état connu, les deux boutons tant qu'il est inconnu. |
+
+Une tuile qui n'a encore rien à afficher (pas de session, par exemple) est
+masquée. Un widget a une place limitée : avec le graphique **et** les détails,
+seules les 5 premières tuiles cochées sont affichées.
+
+### Coût
+
+- **Si l'écran Énergie de Gladys est configuré** (borne rattachée à votre
+  compteur électrique, contrat renseigné), la tuile affiche le **coût de la
+  dernière demi-heure**, calculé par Gladys avec votre contrat (heures
+  pleines / creuses, Tempo…). Gladys calcule ces coûts en tâche de fond : la
+  tuile apparaît après le premier calcul et peut avoir jusqu'à une demi-heure
+  de retard. Si la borne a été créée avant cette version, cliquez d'abord sur
+  **Mettre à jour** sur sa fiche appareil.
+- **Sinon, si vous avez saisi un prix du kWh**, la tuile affiche le **coût de
+  la session** (énergie de la session × ce prix fixe, sans heures pleines /
+  creuses).
+- **Sinon**, pas de tuile coût.
+
+Les sessions récentes sont conservées en mémoire par le relais : la liste
+repart de zéro au redémarrage de l'intégration.
+
 ## Connecteurs multiples
 
 Une borne est un seul appareil dans Gladys, quel que soit son nombre de
@@ -188,8 +256,9 @@ via le relais. Gardez cela à l'esprit sur un réseau partagé ou non fiable.
   connexion) — si cela arrive, les données de cette session peuvent ne pas
   remonter correctement au cloud d'origine ; la session suivante n'est pas
   affectée.
-- **Aucun pilotage depuis Gladys.** Démarrer, arrêter ou limiter une charge
-  n'est pas possible dans cette version.
+- **Presque aucun pilotage depuis Gladys.** Démarrer, arrêter ou limiter une
+  charge n'est pas possible dans cette version ; le verrouillage du câble des
+  bornes Autel est la seule commande.
 
 ## Dépannage
 
@@ -210,11 +279,11 @@ Voici les paramètres demandés par Charger Station dans son écran de configura
 ## Comment installer Charger Station dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Charger Station apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/sescandell/gladys-ocpp-integration:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/sescandell/gladys-ocpp-integration:1.2.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/sescandell/gladys-ocpp-integration](https://github.com/sescandell/gladys-ocpp-integration).
 
-Charger Station nécessite Gladys `>=4.85.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Charger Station nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

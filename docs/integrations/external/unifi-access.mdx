@@ -1,0 +1,202 @@
+---
+title: "UniFi Access smart home integration, free and open source"
+sidebar_label: "UniFi Access"
+description: "UniFi Access doors: lock, door sensor, doorbell, granted or denied accesses and door alarms. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unifi-access.png"
+keywords:
+  - "unifi access"
+  - "unifi access smart home"
+  - "gladys unifi access"
+  - "unifi access gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-unifi-access instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"UniFi Access","description":"UniFi Access doors: lock, door sensor, doorbell, granted or denied accesses and door alarms.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-unifi-access","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unifi-access.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T08:23:42Z"}} />
+
+Brings the doors of **UniFi Access** (Ubiquiti's access control: G2 and G3 readers, Intercom, UA
+Hub, UA Hub Door Mini, UA Ultra) into Gladys, on your local network: the state of each lock and
+door, the doorbell, who came in and how, the door alarms. Not affiliated with Ubiquiti.
+
+**Developed without the hardware: feedback welcome.** The integration was written from the
+official API, the Home Assistant integration and real captures published by other projects, but
+never run against a real UniFi Access installation. Tell us what works and what does not on
+[GitHub](https://github.com/guim31/gladys-unifi-access/issues).
+
+## Presentation
+
+- One Gladys device per UniFi Access door, read-only: nothing on the dashboard can open a door.
+- Real time: the integration keeps a connection open to the notification WebSocket of UniFi
+  Access, and reads everything again every 5 minutes (every minute if the WebSocket is down).
+- Scene triggers: doorbell, access granted, access denied, door alarm, door offline and back.
+- Scene actions: keep a door locked, return it to its normal schedule, and — only if you enable it
+  — unlock a door.
+- A dashboard widget: the doors and the last accesses.
+
+## Prerequisites
+
+- UniFi Access running on a UniFi OS console (UDM, UCG, UNVR, Cloud Key Gen2+…), recent enough to
+  offer the developer API (Settings, General, Advanced, API Token).
+- Gladys 5.1 or later, on the same network as the console (port 12445 reachable).
+- An API token: in UniFi Access, **Settings → General → Advanced → API Token → Create**. Give it
+  the **Space** (doors) and **Device** permissions, in read and write if you want the scene
+  actions. Copy it: it is shown once.
+
+## Configuration
+
+In Gladys: **Integrations → UniFi Access → Configuration**.
+
+| Field                              | What to enter                                                                                                                |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Console address                    | IP address or name of the console, e.g. `192.168.1.1`. The API answers on port 12445: add `:port` only if yours differs.     |
+| API token                          | The token created above. It stays in Gladys and is never written in the logs.                                                |
+| Accept the self-signed certificate | UniFi consoles serve a self-signed certificate on port 12445: tick it unless you installed a certificate your system trusts. |
+| Allow remote unlock from scenes    | **Off by default.** See "Scene actions" below before enabling it.                                                            |
+| Language of the feature names      | Names of the features when a door is added, and texts of the states and scene events (French by default).                    |
+
+Then **Test the connection**: it reads the console now and says how many doors and devices it
+found, and whether the real-time notifications are connected. The doors then appear in the
+**Discovery** tab: add the ones you want.
+
+## Devices
+
+Each door of UniFi Access becomes one device, named like the door. Its features are all
+read-only; some only exist if the hardware has them.
+
+| Feature       | Gladys type     | Values                                                                                                  |
+| ------------- | --------------- | ------------------------------------------------------------------------------------------------------- |
+| Lock          | lock / state    | locked or unlocked                                                                                      |
+| Door position | opening sensor  | open or closed — only on a door whose position sensor (DPS) is wired                                    |
+| Doorbell      | doorbell / ring | rings for a few seconds at each ring — on a door with a reader Pro, an intercom or a hub doorbell input |
+| Lock rule     | text            | Normal, Always locked, Always unlocked, Unlocked for a while until 18:30, Unlock schedule…              |
+| Last access   | text            | e.g. `Alice Martin · NFC card · Entry`, `Denied · Unknown · PIN code`                                   |
+
+The badge of the device says whether its door is online (its hub answers UniFi Access), and turns
+orange when the real-time notifications are down.
+
+A door that rings for the first time while it had no doorbell feature gets one: use **Update** in
+the Discovery tab to add it to the device.
+
+## Widget
+
+**UniFi Access doors**: one line per door (locked or unlocked, open or closed, alarm, offline) and
+the last accesses (who, how, granted or denied). Choose a door in the widget settings to show only
+that one: the widget then offers two buttons, each asking for confirmation:
+
+- **Always locked**: the door stays locked whatever its schedule (shown with a ✓ while active);
+- **Normal schedule**: ends the temporary rule. Ending "always locked" can unlock the door, so this
+  button only appears for it when the remote unlock is enabled.
+
+There is never an unlock button.
+
+## Scene triggers
+
+| Trigger          | When                                                     | Filters                 | Variables                                                                                          |
+| ---------------- | -------------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------- |
+| Doorbell rang    | someone rang at a reader or an intercom                  | door                    | door name, doorbell device                                                                         |
+| Access granted   | a door was opened with a badge, a code, a face, the app… | door, method, user name | door name, user name, method (`nfc`, `pin`, `face`…), method in words, direction (`entry`, `exit`) |
+| Access denied    | a badge, a code or a face was refused                    | door, method            | same                                                                                               |
+| Door alarm       | door forced open or held open too long                   | door, alarm             | door name, alarm (`forced_open`, `held_open`, `other`), alarm in words, type sent by UniFi Access  |
+| Door offline     | the hub of a door stopped answering                      | door                    | door name                                                                                          |
+| Door back online | the hub of a door answers again                          | door                    | door name, minutes offline                                                                         |
+
+UniFi Access reports each access twice (an "insight" and a log line, a few milliseconds apart):
+the integration fires the trigger once.
+
+## Scene actions
+
+| Action                               | Effect                                                                                                            |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Keep a door locked                   | The door stays locked whatever its schedule. Always allowed.                                                      |
+| Return a door to its normal schedule | Ends "always locked" or "always unlocked". Ending "always locked" requires the remote unlock to be enabled.       |
+| Unlock a door                        | One remote unlock; the door relocks by itself after its usual delay. Refused unless the remote unlock is enabled. |
+
+> **Warning — remote unlock.** It is off by default. Once enabled, any scene using "Unlock a
+> door" opens the door when it runs: a wrong trigger, a shared dashboard, a compromised Gladys
+> account then means an open door. It never exists as a switch, a voice command or a dashboard
+> button. Each unlock is signed "Gladys" in the UniFi Access system log.
+
+## Scene examples
+
+- **Someone at the door**: trigger "Doorbell rang" on the front door → send a message "Someone is
+  ringing at \{\{triggerEvent.data.door_name\}\}", and show the camera of the entrance.
+- **The children are home**: trigger "Access granted" with user "Léa" → send "Léa came home
+  (\{\{triggerEvent.data.method_label\}\})".
+- **Leaving the house**: when the alarm system is armed → "Keep a door locked" on every door.
+- **Break-in**: trigger "Door alarm" with alarm "Door forced open" → siren and notification.
+- **A badge refused three times**: trigger "Access denied" → notification with
+  \{\{triggerEvent.data.door_name\}\} and \{\{triggerEvent.data.method_label\}\}.
+
+## Refresh and limits of the API
+
+- Real time through the notification WebSocket of UniFi Access (one outgoing connection from
+  the container to port 12445), reopened after 1 s, 2 s, 4 s… up to 1 minute when it drops.
+- A complete read (doors, devices, one lock rule per door) every 5 minutes, every minute while
+  the WebSocket is down; an unchanged state is sent again to Gladys every 6 hours.
+- The local API publishes no quota; the integration stays far below anything a console would
+  refuse (a few requests per minute at most). If the console answers "too many requests", the
+  integration says so and simply tries again at the next read.
+
+## Troubleshooting
+
+| Message                                           | What to do                                                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| The console does not answer                       | Check the address, and that Gladys reaches port 12445 of the console (firewall, VLAN).                      |
+| Certificate not trusted                           | Tick "Accept the self-signed certificate".                                                                  |
+| API token refused                                 | The token was deleted or mistyped: create a new one in UniFi Access and paste it again.                     |
+| The API token lacks a permission                  | Edit the token in UniFi Access: give it the Space and Device permissions.                                   |
+| This UniFi Access version lacks the developer API | Update UniFi Access.                                                                                        |
+| Real-time notifications unavailable               | The doors are still read every minute; check that nothing between Gladys and the console blocks WebSockets. |
+
+For more details, set `LOG_LEVEL=debug` on the integration: every notification and every read
+appears in the logs (never the token).
+
+## Limitations
+
+- Developed without the hardware: the vocabulary of the alarms (only `force_unlock` has been seen
+  in captures), of the access methods and of some intercoms may differ on your installation.
+  The raw values are kept in the trigger variables.
+- No visitor, user, PIN or NFC card management; no evacuation or lockdown control.
+- The doorbell answers (pick up, open from the intercom) stay in the UniFi apps.
+- The history of the widget starts when the integration starts (the 20 last accesses are kept).
+- Not affiliated with Ubiquiti. UniFi and UniFi Access are trademarks of Ubiquiti Inc.
+
+## Configuration settings
+
+These are the settings UniFi Access asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your UniFi console | `section` | No | UniFi Access on a UniFi OS console (UDM, UCG, UNVR, Cloud Key…). In UniFi Access, create an API token: Settings, General, Advanced, API Token, with the Space and Device permissions. |
+| Console address | `string` | Yes | IP address or name of the console. The API answers on port 12445: add :port only if yours differs. |
+| API token | `secret` | Yes | Created in UniFi Access, shown once. Kept in Gladys, never written in the logs. |
+| Accept the self-signed certificate | `boolean` | No | UniFi consoles serve a self-signed certificate on port 12445: tick it unless you installed a trusted one. |
+| Remote unlock | `section` | No | Off by default. Enabled, it allows the scene action "Unlock a door" and ending "always locked" — never a switch nor a dashboard button. A scene that misfires then opens your door: enable it knowingly. |
+| Allow remote unlock from scenes | `boolean` | No | Each unlock is signed "Gladys" in the UniFi Access system log. |
+| Language of the feature names | `select` | No | Names given to the features when a door is added, and texts of the states and scene events. |
+
+## How to install UniFi Access in Gladys
+
+1. In Gladys, open **Integrations**: UniFi Access appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-unifi-access:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-unifi-access](https://github.com/guim31/gladys-unifi-access).
+
+UniFi Access requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+UniFi Access is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-unifi-access) — [source of this documentation](https://github.com/guim31/gladys-unifi-access/blob/HEAD/docs/en.md)

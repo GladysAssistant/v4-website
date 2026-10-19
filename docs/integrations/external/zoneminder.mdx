@@ -1,0 +1,183 @@
+---
+title: "ZoneMinder smart home integration, free and open source"
+sidebar_label: "ZoneMinder"
+description: "ZoneMinder monitors: images, alarms, events, modes and forced alarms, from your own server. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zoneminder.png"
+keywords:
+  - "zoneminder"
+  - "zoneminder smart home"
+  - "gladys zoneminder"
+  - "zoneminder gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-zoneminder instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ZoneMinder","description":"ZoneMinder monitors: images, alarms, events, modes and forced alarms, from your own server.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-zoneminder","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zoneminder.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T09:05:05Z"}} />
+
+Brings the monitors of a [ZoneMinder](https://zoneminder.com/) server into Gladys: their image, whether
+they are in alarm, their mode (Monitor, Modect, Record, Mocord, Nodect), whether they capture, and the
+number of events of the day. A new event fires a scene trigger with its cause and score, and the image
+of the moment, so a scene can send it to you. Scenes can also switch every monitor to Modect when you
+leave, and start a forced alarm.
+
+Tested against real ZoneMinder servers in Docker (1.36.4 and 1.38.6) with simulated network cameras,
+not yet on a long-running installation: feedback welcome on
+[GitHub](https://github.com/guim31/gladys-zoneminder/issues) or on the Gladys forum.
+
+## What you need
+
+- Gladys 5.1 or later.
+- A ZoneMinder server reachable from Gladys on the local network, version 1.36 or later. 1.36 and
+  1.37+ are both supported: from 1.37 on, the mode is made of the
+  "Analysing" and "Recording" settings, and the integration reads and writes those.
+- The API turned on: **Options → System → OPT_USE_API** (on by default).
+- If ZoneMinder asks for a login (**OPT_USE_AUTH**), an account with **API Enabled** ticked in
+  **Options → Users**. Reading needs "Monitors: View" and "Events: View"; changing the mode needs
+  "Monitors: Edit".
+
+## Set up
+
+1. In Gladys, open **Integrations**, find **ZoneMinder** and install it.
+2. In its **Configuration** tab, fill in:
+   - **ZoneMinder address**: the address of the ZoneMinder web page, e.g. `http://192.168.1.20/zm`.
+     Without a path, `/zm` and then `/` are tried (some Docker images serve ZoneMinder at the root).
+     Write `https://` or a port when needed.
+   - **User name** (`admin` by default) and **Password**. Leave the user name empty if ZoneMinder has
+     no login.
+   - **Alarm check**: how often the alarm state and the new events of the monitors added in Gladys
+     are read (2, 5, 10 or 30 seconds, 5 by default).
+   - **Image refresh**: how often each camera image is sent to Gladys (10 seconds to 15 minutes, 1
+     minute by default). An alarm or a new event also sends one at once.
+   - **Language of the names**: the language of the feature names given when a camera is added.
+3. Save, then open the **Discovery** tab: one device per monitor. Add the ones you want.
+4. Use **Check the connection** to see what the integration reads: the ZoneMinder version, each
+   monitor, whether it receives images and its mode.
+
+## The Gladys devices
+
+Each monitor becomes a Gladys camera, named like the monitor, with:
+
+| Feature          | What it is                                                                         |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| **Image**        | The image of the camera, sent at the chosen pace and at once on an alarm or event. |
+| **Alarm**        | 1 while ZoneMinder says the monitor is in alarm (motion, forced alarm), else 0.    |
+| **Mode**         | Monitor, Modect, Record, Mocord or Nodect. It can be changed from the dashboard.   |
+| **Capture on**   | 1 when the monitor is enabled and captures, 0 when it is turned off in ZoneMinder. |
+| **Events today** | Events started since midnight on this monitor.                                     |
+
+The **Mode** is a list, on purpose: a deliberate choice, never a switch a voice assistant could turn
+off by mistake. **Capture on** is read only: turning a surveillance camera off stays a decision made in
+ZoneMinder. A monitor that receives no images from its camera shows as unreachable in Gladys (checked
+every minute).
+
+## Dashboard widget
+
+**ZoneMinder camera** shows the image of a camera, whether it is in alarm, its mode, the events of the
+day, and two buttons: **Start an alarm** (or **Cancel the alarm** while one runs; only for a monitor in
+Modect, Mocord or Nodect) and **New image**.
+
+## Scenes
+
+### Triggers
+
+- **ZoneMinder: new event**: ZoneMinder starts recording an event. Filters: the camera (empty = every
+  camera) and the **Kind of event**: Motion, Forced alarm, Continuous recording (the segments of
+  Record and Mocord), Signal lost, Linked monitor, Other. Variables: camera name, kind, cause (as
+  ZoneMinder writes it, e.g. `Motion: All`), score (the highest score when the event is seen; it may
+  still grow) and event number. The image of the moment is sent to Gladys first.
+- **ZoneMinder: camera offline**: a monitor stops receiving images from its camera, or ZoneMinder
+  itself stops answering. Not fired for a monitor turned off in ZoneMinder.
+
+### Actions
+
+- **ZoneMinder: change the mode**: sets the mode of one camera, or of every camera when the camera is
+  left empty. Every camera means those added in Gladys and capturing. Only the monitors whose mode changes are written (each restarts for a few seconds).
+  Output: the number of cameras changed.
+- **ZoneMinder: forced alarm**: **Start** makes ZoneMinder record an event (cause "Forced Web") until
+  **Cancel**. Only for a monitor in Modect, Mocord or Nodect.
+- **ZoneMinder: read a camera**: reads a camera now. Outputs: receives images, in alarm, capture on,
+  mode (`monitor`, `modect`…) and events today, for the conditions of the next actions.
+
+The core's **Send a camera image** action sends the last image of a camera: right after **ZoneMinder:
+new event**, it is the image of that event.
+
+### Scene ideas
+
+- **Alarm armed**: when everybody has left, **ZoneMinder: change the mode** to Modect for every
+  camera; back to Monitor when someone comes home.
+- **Intrusion**: **ZoneMinder: new event**, kind Motion, camera "Garden", while the alarm is armed →
+  **Send a camera image** of that camera to your phone.
+- **Door opened at night**: a door sensor opens → **ZoneMinder: forced alarm**, Start, on the hall
+  camera; Cancel two minutes later.
+- **Camera lost**: **ZoneMinder: camera offline** → send a message with the camera name.
+
+## Troubleshooting
+
+- **"ZoneMinder refuses the user name or password"**: check them on the ZoneMinder login page.
+- **"This ZoneMinder user may not use the API"**: tick **API Enabled** for this user in **Options →
+  Users**.
+- **"ZoneMinder answers, but not as expected"**: the address may lack its path. Try
+  `http://<address>/zm`, or the address you use in a browser, without `index.php`.
+- **"Insufficient privileges" when changing a mode**: the account needs "Monitors: Edit".
+- **A forced alarm is refused**: the monitor does not analyse its images (Monitor or Record). Put it
+  in Modect, Mocord or Nodect first.
+- **A camera stays unreachable**: ZoneMinder receives no images from it (its status is not
+  "Connected" in the ZoneMinder console). Check the camera in ZoneMinder.
+- **More detail**: the logs of the integration (Integrations → ZoneMinder → Logs); set `LOG_LEVEL` to
+  `debug` for every request.
+
+## Limits
+
+- No live video: Gladys shows images, sent at the chosen pace (Gladys keeps 12 images a minute per
+  camera at most). Watch the live stream in ZoneMinder.
+- Alarms and events are read every few seconds (the alarm check): a very short alarm between two
+  checks shows as an event, not as an alarm state.
+- **Events today** counts from midnight, in the time zone of ZoneMinder: Gladys and ZoneMinder should
+  share it.
+- One ZoneMinder server per integration. With several ZoneMinder servers (multi-server), the images of
+  a monitor are asked to the address of the configuration.
+- The mode "None" (no capture) and turning a monitor off are not offered: do it in ZoneMinder.
+- On ZoneMinder 1.37+, Nodect means no analysis: a forced alarm there needs a monitor that analyses (Modect, Mocord). A monitor turned off in ZoneMinder keeps its mode.
+- Developed without a long-running ZoneMinder installation: feedback welcome.
+
+This integration is not affiliated with the ZoneMinder project.
+
+## Configuration settings
+
+These are the settings ZoneMinder asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your ZoneMinder server | `section` | No | ZoneMinder 1.36 or later, with "OPT_USE_API" on. Enter the address of its web page and an account with "API Enabled" (Options → Users). Then open the Discovery tab: one device per monitor. |
+| ZoneMinder address | `string` | Yes | Without a path, /zm then / are tried. Add https:\/\/ or a port if needed. |
+| User name | `string` | No | Leave empty if ZoneMinder has no login (OPT_USE_AUTH off). Changing modes needs "Monitors: Edit". |
+| Password | `secret` | No |  |
+| Alarm check | `select` | No | How often the alarm state and new events of the monitors added in Gladys are read. |
+| Image refresh | `select` | No | How often each camera image is sent to Gladys. An alarm or a new event also sends one at once. |
+| Language of the names | `select` | No | Names given to the features when a camera is added (Alarm, Mode…). |
+
+## How to install ZoneMinder in Gladys
+
+1. In Gladys, open **Integrations**: ZoneMinder appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-zoneminder:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-zoneminder](https://github.com/guim31/gladys-zoneminder).
+
+ZoneMinder requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+ZoneMinder is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-zoneminder) — [source of this documentation](https://github.com/guim31/gladys-zoneminder/blob/HEAD/docs/en.md)

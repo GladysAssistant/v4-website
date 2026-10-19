@@ -1,0 +1,247 @@
+---
+title: "Integración domótica FoxESS, gratuita y de código abierto"
+sidebar_label: "FoxESS"
+description: "Inversores y baterías FoxESS vía FoxESS Cloud: solar, casa, red y batería. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-foxess.png"
+keywords:
+  - "foxess"
+  - "domótica foxess"
+  - "gladys foxess"
+  - "foxess gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-foxess instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"FoxESS","description":"Inversores y baterías FoxESS vía FoxESS Cloud: solar, casa, red y batería.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-foxess","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-foxess.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T14:18:58Z"}} />
+
+Los inversores y baterías FoxESS (series H1, H3, KH, AIO, T y F…) en Gladys, a través de la **Open
+API oficial de FoxESS Cloud**: producción solar, consumo de la casa, importación y exportación de
+red, carga de la batería, estado y fallos del inversor, en su panel y en sus escenas.
+
+Esta integración se ha desarrollado sin el hardware, a partir de la documentación de la Open API y
+de los proyectos de código abierto que la usan: sus comentarios son bienvenidos. No está afiliada a
+FoxESS.
+
+## Lo que obtiene
+
+- **Un dispositivo por inversor** de su cuenta de FoxESS Cloud, leído cada 5 minutos por defecto.
+- Los **flujos de energía**: potencia solar (total y por cadena FV), consumo de la casa,
+  importación y exportación de red, carga y descarga de la batería.
+- Los **contadores**: producción de hoy, producción acumulada (el índice que lee el seguimiento de
+  energía de Gladys), índices de importación y exportación, índices de carga y descarga de la
+  batería.
+- La **batería**: nivel de carga y temperatura.
+- El **inversor**: estado (conectado a la red, fuera de red, fallo…), alarma actual, en línea o no,
+  temperatura.
+- Un **widget de panel** con los flujos de un inversor, su batería y su modo de trabajo.
+- Un **disparador de escena** cuando el inversor informa de un nuevo fallo.
+- Un **control** opcional (desactivado por defecto): modo de trabajo y carga mínima de la batería,
+  desde las escenas y el widget.
+
+## Requisitos previos
+
+- Gladys Assistant **5.1.0** o posterior.
+- Una cuenta de **FoxESS Cloud** (foxesscloud.com) donde aparezca su inversor: la misma cuenta que
+  la app FoxESS.
+- Una **clave de API** de esa cuenta: en foxesscloud.com, abra su perfil (arriba a la derecha),
+  **User Profile**, **API Management** y luego **Generate API key**. Copie la clave larga que
+  aparece.
+- El servidor Gladys necesita internet y un reloj en hora (las solicitudes se firman con la hora:
+  un reloj desfasado más de un minuto es rechazado).
+
+## Configuración
+
+Instale la integración (**Integraciones → Instalar desde GitHub**, o desde la tienda) y luego
+rellene su configuración:
+
+| Campo                              | Qué poner                                                                                                                                                     |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clave de API                       | La clave generada en API Management.                                                                                                                          |
+| Números de serie de los inversores | Vacío para mostrar todos los inversores de la cuenta, si no los números de serie que conservar, separados por comas (FoxESS Cloud, **Device**, **Inverter**). |
+| Intervalo de actualización         | De 5 minutos (por defecto) a 1 hora. FoxESS Cloud actualiza sus valores aproximadamente cada 5 minutos: leer más rápido solo gastaría la cuota.               |
+| Número de cadenas FV               | 0 (por defecto): una función por cadena que informa el inversor. Algunos modelos informan 4 o 6 cadenas con 2 conectadas: ponga 2 para conservar la 1 y la 2. |
+| Idioma de los nombres de funciones | El idioma de los nombres de funciones cuando se añade un inversor (Gladys los conserva después), y de los textos de estado.                                   |
+| Permitir el control del inversor   | Desactivado por defecto. Vea [Acciones de escena](#acciones-de-escena).                                                                                       |
+
+**Probar la conexión** muestra los inversores de la cuenta y, cuando la nube lo da, el número de
+llamadas de API restantes hoy. Abra luego la pestaña **Descubrimiento** y añada sus inversores.
+
+## El dispositivo inversor
+
+| Función                       | Tipo en Gladys                    | Unidad | Notas                                                         |
+| ----------------------------- | --------------------------------- | ------ | ------------------------------------------------------------- |
+| Potencia solar                | Potencia de producción            | W      | Todas las cadenas FV juntas.                                  |
+| Cadena FV                     | Potencia de producción            | W      | Una por cadena: «Cadena FV 1», «Cadena FV 2»…                 |
+| Producción de hoy             | Producción diaria                 | kWh    | Vuelve a 0 a medianoche (hora de la instalación).             |
+| Producción acumulada          | Índice de producción              | kWh    | Contador de por vida, para el seguimiento de energía.         |
+| Consumo de la casa            | Potencia                          | W      | Lo que consume la casa, sea cual sea la fuente.               |
+| Importación de la red         | Potencia de importación de la red | W      |                                                               |
+| Exportación a la red          | Potencia de exportación de la red | W      |                                                               |
+| Índice de importación         | Índice de importación de la red   | kWh    | Contador de por vida del medidor de red del inversor.         |
+| Índice de exportación         | Índice de exportación de la red   | kWh    |                                                               |
+| Nivel de batería              | Nivel de batería                  | %      | Solo inversores con batería, como las cinco siguientes.       |
+| Carga de la batería           | Potencia de carga                 | W      |                                                               |
+| Descarga de la batería        | Potencia de descarga              | W      |                                                               |
+| Índice de carga de batería    | Índice de carga                   | kWh    |                                                               |
+| Índice de descarga de batería | Índice de descarga                | kWh    |                                                               |
+| Temperatura de la batería     | Temperatura                       | °C     |                                                               |
+| Temperatura del inversor      | Temperatura                       | °C     |                                                               |
+| Estado del inversor           | Texto                             |        | En línea, Conectado a la red, Fuera de red (respaldo), Fallo… |
+| Alarma del inversor           | Texto                             |        | El fallo que informa FoxESS, «Ninguna» si no hay.             |
+| En línea                      | Estado de la entrada              |        | 1 cuando el inversor se comunica con FoxESS Cloud.            |
+
+Un inversor que FoxESS Cloud da **sin conexión** (de noche para un inversor sin batería, o cuando
+su dongle Wi-Fi está apagado) solo actualiza su estado y «En línea»: la nube serviría si no sus
+últimos valores como si fueran actuales.
+
+La producción acumulada es un **índice de producción** para el seguimiento de energía de Gladys; su
+historial se conserva. Que Gladys calcule a partir de él una producción cada 30 minutos depende de
+su versión: la 5.2.1 lo hace automáticamente solo para los índices de consumo.
+
+## Widget del panel
+
+**Solar FoxESS** muestra, para el inversor elegido en sus ajustes (el primero añadido si no se
+elige ninguno):
+
+- mosaicos para la potencia solar, el consumo de la casa, el nivel de batería, la importación y la
+  exportación, la producción de hoy — en directo, siguen los estados;
+- el estado del inversor, su alarma actual, lo que hace la batería (cargando, descargando, en
+  reposo), su carga mínima, el modo de trabajo y la hora de la última lectura;
+- con el control permitido y una batería: tres botones **Autoconsumo**, **Exportación
+  prioritaria** y **Respaldo**, cada uno con una confirmación. El modo actual lleva una marca. Con
+  los botones caben cuatro mosaicos: la exportación y la producción de hoy pasan a filas de estado.
+
+## Disparador de escena
+
+**Fallo del inversor** se dispara cuando el inversor informa de un fallo que no estaba en la
+lectura anterior (un nuevo fallo, u otro que lo sustituye). Filtre por un inversor o déjelo vacío
+para todos. La variable **Fallo** contiene la descripción de FoxESS (por ejemplo «Grid Lost
+Fault»). Un fallo ya presente al arrancar la integración no lo dispara, ni un fallo que desaparece:
+la función «Alarma del inversor» vuelve entonces a «Ninguna».
+
+## Acciones de escena
+
+Las dos acciones se **rechazan mientras «Permitir el control del inversor» esté desactivado**, el
+valor por defecto: una escena que cambia el uso de la batería nunca debe ejecutarse por accidente.
+Actívelo en la configuración para usarlas. Necesitan un inversor con batería.
+
+- **Cambiar el modo de trabajo del inversor**: Autoconsumo (la batería cubre primero la casa),
+  Exportación prioritaria (la energía solar va primero a la red) o Respaldo (la batería se mantiene
+  llena para un corte). Salida: el modo aplicado.
+- **Cambiar la carga mínima de la batería**: la carga que conserva la batería sin red y con red, de
+  10 a 100 %, la de red no inferior a la otra. Salidas: los dos valores aplicados.
+
+Estos ajustes pasan por la Open API oficial (`setting/set` con la clave `WorkMode`, y
+`battery/soc/set`). Cuando hay una **programación** (franjas horarias) activa en la app FoxESS, el
+inversor los rechaza: la acción falla con «hay una programación activa en la app FoxESS». Las
+franjas de carga y descarga forzadas del programador de FoxESS no se ofrecen.
+
+## Ejemplos de escenas
+
+- **Aviso de fallo**: disparador «Fallo del inversor», acción «Enviar un mensaje»: «FoxESS:
+  \{\{triggerEvent.data.fault\}\}».
+- **Tormenta anunciada**: cuando el tiempo prevé una tormenta, «Cambiar el modo de trabajo del
+  inversor» a Respaldo; a la mañana siguiente, de vuelta a Autoconsumo.
+- **Aprovechar el excedente**: cuando «Exportación a la red» se mantiene por encima de 2.000 W
+  durante 15 minutos y el «Nivel de batería» supera el 90 %, encender el calentador de agua.
+
+## Cuota de la API
+
+FoxESS Cloud permite **1.440 llamadas a la Open API al día** (una por minuto de media) y rechaza
+las ráfagas. La integración espacia sus llamadas al menos un segundo y lee, en cada ciclo:
+
+- los valores en tiempo real de todos los inversores añadidos, en una sola llamada;
+- como mucho cada 15 minutos: la lista de inversores (en línea, en alarma, sin conexión) y la
+  producción de hoy de cada inversor;
+- cada hora, para un inversor con batería: su carga mínima y su modo de trabajo.
+
+Llamadas al día para **un** inversor con batería:
+
+| Intervalo de actualización | Llamadas al día |
+| -------------------------- | --------------- |
+| 5 minutos                  | 528             |
+| 10 minutos                 | 384             |
+| 15 minutos                 | 336             |
+| 30 minutos                 | 192             |
+| 1 hora                     | 120             |
+
+Sin batería, 48 menos. Cada inversor adicional añade 96 llamadas (su producción), más 48 con
+batería. La cuota se comparte con todas las demás herramientas que usan la misma clave de API (Home
+Assistant, un script…): dé a cada una su propia clave, o ralentice la actualización. Cuando la nube
+rechaza una llamada por cuota o ráfaga, las lecturas se detienen 30 minutos y la pantalla de
+configuración lo indica.
+
+## Solución de problemas
+
+- **«FoxESS Cloud rechaza la clave de API»**: la clave no es válida, o se ha borrado o regenerado. Genere una nueva
+  en API Management y péguela de nuevo. Tras un rechazo, las lecturas se detienen una hora, o hasta
+  que cambie la configuración.
+- **«FoxESS Cloud rechaza la firma de las solicitudes»**: el reloj del servidor Gladys tiene un
+  desfase de más de un minuto. Póngalo en hora (NTP).
+- **«Límite de llamadas de FoxESS Cloud alcanzado»**: otra herramienta usa la misma clave, o la
+  actualización es demasiado rápida. Vea [Cuota de la API](#cuota-de-la-api).
+- **«Número(s) de serie que no están en esta cuenta»**: compare los números de la configuración con
+  FoxESS Cloud, **Device**, **Inverter**, o deje el campo vacío.
+- **Ninguna cadena FV**, o demasiadas: las cadenas vienen de lo que informa el inversor; ajuste
+  «Número de cadenas FV» y luego «Actualice» el inversor en la pestaña Descubrimiento.
+- **«Sin valor reciente»** en un valor estable: los valores que no cambian se envían de nuevo cada
+  6 horas, lo que basta; un inversor sin conexión conserva sus últimos valores.
+- Más detalles: ponga `LOG_LEVEL=debug` en la integración y lea sus registros. La clave de API
+  nunca aparece en ellos.
+
+## Limitaciones
+
+- **Solo nube**: sin acceso local (Modbus). Para un enlace local existe `foxess_modbus` para Home
+  Assistant; no forma parte de esta integración.
+- **Sin tiempo real**: FoxESS Cloud se actualiza cada 5 minutos aproximadamente, una lectura puede
+  tener esa antigüedad.
+- **Desarrollada sin el hardware**: las respuestas de la API vienen de su documentación y de los
+  proyectos que la usan. Pueden faltar campos con otro nombre en algunos modelos: avísenos.
+- La **carga mínima** y el **modo de trabajo** se leen una vez por hora: un cambio hecho en la app
+  FoxESS aparece en el widget en menos de una hora.
+- Las **franjas de carga o descarga forzadas** y el **programador** de la app FoxESS no se
+  ofrecen; tampoco el límite de exportación ni la calefacción de la batería.
+- El índice de consumo de la casa no se publica (solo su potencia): valorado por el seguimiento de
+  energía, contaría la energía solar autoconsumida como comprada a la red.
+- No afiliada a FoxESS. FoxESS es una marca de su propietario.
+
+## Parámetros de configuración
+
+Estos son los parámetros que FoxESS te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su cuenta de FoxESS Cloud | `section` | No | En foxesscloud.com, abra su perfil (arriba a la derecha), User Profile, API Management y luego Generate API key. FoxESS Cloud permite 1.440 llamadas de API al día por inversor: mantenga una actualización de 5 minutos o más. |
+| Clave de API | `secret` | Sí | La clave generada en API Management de su perfil de FoxESS Cloud. |
+| Números de serie de los inversores | `string` | No | Vacío: todos los inversores de la cuenta. Si no, los números de serie que mostrar, separados por comas (Device, Inverter en FoxESS Cloud). |
+| Intervalo de actualización | `select` | No | FoxESS Cloud actualiza sus valores aproximadamente cada 5 minutos. |
+| Número de cadenas FV | `number` | No | 0: todas las cadenas que informa el inversor. Si no, solo las cadenas 1 a este número tienen una función. |
+| Idioma de los nombres de funciones | `select` | No | Se usa cuando se añade un inversor a Gladys y para los textos de estado. |
+| Control del inversor | `section` | No | Desactivado por defecto. Activado, las escenas y el widget del panel pueden cambiar el modo de trabajo y la carga mínima de la batería. Un ajuste incorrecto puede dejar la batería vacía durante un corte. |
+| Permitir el control del inversor | `boolean` | No |  |
+
+## Cómo instalar FoxESS en Gladys
+
+1. En Gladys, abre **Integraciones**: FoxESS aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-foxess:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-foxess](https://github.com/guim31/gladys-foxess).
+
+FoxESS requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+FoxESS es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-foxess) — [fuente de esta documentación](https://github.com/guim31/gladys-foxess/blob/HEAD/docs/es.md)

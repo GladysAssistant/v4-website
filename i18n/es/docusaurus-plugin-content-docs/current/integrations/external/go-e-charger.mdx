@@ -1,0 +1,206 @@
+---
+title: "Integración domótica go-e Charger, gratuita y de código abierto"
+sidebar_label: "go-e Charger"
+description: "Cargadores go-e por la API local: estado de carga, potencia, energía, corriente y modos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-goecharger.png"
+keywords:
+  - "go-e charger"
+  - "domótica go-e charger"
+  - "gladys go-e charger"
+  - "go-e charger gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-goecharger instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"go-e Charger","description":"Cargadores go-e por la API local: estado de carga, potencia, energía, corriente y modos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-goecharger","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-goecharger.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T14:17:36Z"}} />
+
+Siga y controle sus **cargadores go-e Charger** (go-eCharger V3 y V4: HOME+ y
+HOMEfix V3, Gemini, Gemini flex) desde Gladys, mediante su **API HTTP v2 local**:
+sin nube. La API en la nube de go-e sigue siendo una opción para un cargador que
+Gladys no puede alcanzar en la red local.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** Esta
+> integración se ha escrito a partir de la documentación de la API de go-e y de
+> respuestas reales publicadas por otros proyectos, sin un cargador a mano. Si
+> algo le parece incorrecto, abra una issue en el repositorio de GitHub con los
+> registros de la integración.
+
+Esta integración no está afiliada a go-e GmbH.
+
+## Requisitos
+
+- Un cargador go-e Charger cuyo firmware conozca la API HTTP v2 (V3 y
+  posteriores, firmware 051.4 o más reciente). Un antiguo go-e Charger V2 (solo
+  API v1) no es compatible.
+- La **API HTTP v2 local activada** en la app go-e:
+  - app antigua: **Internet → Ajustes avanzados → Acceso a la API /api/status y
+    /api/set**, y guardar;
+  - app nueva: **Ajustes → Conexión → Ajustes de la API → Permitir la API HTTP
+    v2 local**.
+- Una **dirección IP fija** para el cargador, configurada en su router
+  (reserva DHCP): la integración lo alcanza por su dirección.
+- Gladys 5.2.0 o más reciente.
+
+Cuando la API v2 está desactivada, el cargador responde pero rechaza las
+solicitudes: la pantalla de configuración indica entonces «la API HTTP v2 local
+está desactivada» y dónde activarla.
+
+## Configuración
+
+1. Instale la integración desde **Integraciones → Instalar desde GitHub** (o la
+   tienda) y abra su pestaña **Configuración**.
+2. **Direcciones IP de los cargadores**: la dirección de cada cargador,
+   separadas por comas (por ejemplo `192.0.2.10, 192.0.2.11`).
+3. **Intervalo de actualización**: frecuencia de lectura de los cargadores (15
+   segundos por defecto).
+4. **Idioma de los nombres de las funciones**: nombres de las funciones de los
+   dispositivos nuevos e idioma de los textos de error (francés por defecto).
+5. Guarde: aparece un dispositivo por cargador en la pestaña **Descubrimiento**.
+   Añádalo.
+6. El botón **Probar la conexión** lee cada cargador e indica, para cada uno,
+   si responde (nombre, número de serie, firmware) o por qué no.
+
+Opcional, **nube go-e**: solo para un cargador que Gladys no puede alcanzar en
+local. Active la API en la nube en la app go-e (Internet → Ajustes avanzados) e
+introduzca el **número de serie** del cargador y el **token de API** que muestra
+la app. Los datos pasan entonces por los servidores de go-e.
+
+## Actualización y uso de la API
+
+La integración lee ella misma cada cargador, al intervalo elegido, con una
+solicitud filtrada (`/api/status?filter=…`, 16 claves): go-e desaconseja leer el
+estado completo y más de una solicitud por segundo. Gladys también consulta los
+dispositivos como respaldo; la integración omite entonces un cargador que acaba
+de leer. Solo se envían a Gladys los valores que cambian, y todos los valores
+cada 6 horas para que un valor estable nunca muestre «Sin valor reciente».
+
+La nube go-e no tiene una cuota documentada; se aplica el mismo ritmo.
+
+## El dispositivo cargador
+
+| Función              | Lo que muestra                                                                                                               |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Conector             | Disponible (sin coche), Ocupado (coche enchufado), No disponible (sin conexión), En avería (error)                           |
+| Estado de la carga   | Cargando, Vehículo conectado (en espera), En pausa (vehículo): carga terminada, En pausa (cargador): no autorizada, Inactivo |
+| Coche enchufado      | 1 cuando hay un coche enchufado                                                                                              |
+| Potencia de carga    | Potencia total, W                                                                                                            |
+| Potencia L1, L2, L3  | Potencia por fase, W                                                                                                         |
+| Corriente L1, L2, L3 | Corriente por fase, A                                                                                                        |
+| Energía de la sesión | Energía desde que se enchufó el coche, kWh                                                                                   |
+| Energía total        | El contador del cargador, kWh: el seguimiento de energía de Gladys calcula a partir de él el consumo y su coste              |
+| Corriente de carga   | **Comando**: la corriente ofrecida al coche, de 6 A a 16 A (11 kW) o 32 A (22 kW)                                            |
+| Modo de carga        | **Comando**: Automático (app), Carga forzada, Parada forzada                                                                 |
+| Fases                | **Comando**, solo en los cargadores que pueden conmutar: Automático, Monofásico, Trifásico                                   |
+| Temperatura          | El sensor más caliente del cargador, °C                                                                                      |
+| Error                | El error de go-e en palabras («Ninguno» cuando todo va bien)                                                                 |
+| En línea             | 1 mientras el cargador responde                                                                                              |
+
+«Automático (app)» es el modo neutro de go-e: el cargador sigue lo que decide la
+app (horario, modo solar «eco», precios aWATTar). La carga solar se queda en la
+app go-e o en evcc: esta integración no la duplica.
+
+## Widget
+
+Añada el widget **go-e Charger** a un panel y elija un cargador. Muestra en
+directo la potencia, la energía de la sesión y la corriente de carga, el estado
+en palabras de go-e (Lista, Cargando, Esperando el coche, Carga terminada,
+Error), el modo, las fases y el error si lo hay. Cuatro botones: **Cargar**
+(carga forzada), **Detener** (parada forzada), **Auto** (vuelta al modo de la
+app) y **Corriente…**, que abre un formulario para ajustar la corriente. El modo
+actual lleva una marca.
+
+## Disparador de escena
+
+**Carga go-e terminada**: el coche ha dejado de consumir tras una carga (está
+lleno o ha alcanzado el límite fijado en el coche o en la app). Elija
+opcionalmente el cargador. Las acciones siguientes pueden usar `energy_kwh`
+(energía de la sesión) y `charger` (su nombre). Se dispara una vez por carga,
+nunca al arrancar.
+
+«Coche enchufado» no necesita disparador: use la función **Coche enchufado**
+(pasa a 1) en un disparador «valor de un dispositivo».
+
+## Acción de escena
+
+**Ajustar el modo de carga go-e**: carga forzada, parada forzada o vuelta al
+modo automático de la app. La corriente de carga no necesita acción propia: es
+una función, que se ajusta con la acción habitual de Gladys «controlar un
+dispositivo».
+
+## Ejemplos de escenas
+
+- **Cargar en horas valle**: a las 22:00, «Ajustar el modo de carga go-e» en
+  Carga forzada; a las 06:00, vuelta a Automático (app).
+- **Avisar cuando el coche esté lleno**: disparador «Carga go-e terminada», y
+  luego enviar el mensaje «Carga terminada: \{\{triggerEvent.data.energy_kwh\}\}
+  kWh».
+- **Proteger el interruptor general**: cuando la potencia de la casa supere un
+  umbral, ajustar la corriente de carga a 6 A; cuando baje, volver a 16 A.
+
+## Solución de problemas
+
+- **«Sin respuesta»**: compruebe la dirección, que el cargador esté en el Wi-Fi
+  y que Gladys y el cargador estén en la misma red.
+- **«La API HTTP v2 local está desactivada»**: actívela en la app go-e (ver
+  Requisitos), guarde y pulse **Probar la conexión**.
+- **Nube: «la nube go-e rechaza el token»**: compruebe el número de serie (6
+  cifras) y el token; generar un token nuevo en la app invalida el anterior.
+- **Un comando falla con «el cargador ha rechazado la solicitud»**: la corriente
+  probablemente supera el máximo configurado en la app go-e.
+- Los registros de la integración dicen el resto: configure `LOG_LEVEL=debug`
+  para el detalle de cada lectura.
+
+## Limitaciones
+
+- Un cargador por dirección; el acceso a la nube sirve a un solo cargador.
+- Los nombres de las funciones y la corriente máxima se fijan al añadir el
+  dispositivo (una regla de Gladys): para cambiar de idioma, elimine el
+  dispositivo y vuelva a añadirlo.
+- El firmware del cargador debe ser 051.4 o más reciente (lecturas filtradas).
+- Sin acceso a las tarjetas RFID, los horarios, el bloqueo del cable ni los
+  ajustes solares: se quedan en la app go-e. El bloqueo del cable no se expone a
+  propósito.
+- La API v2 local no tiene contraseña: cualquier persona en su red puede usarla,
+  como con la app go-e.
+- Probada solo contra un cargador simulado y respuestas publicadas (ver la nota
+  al principio).
+
+## Parámetros de configuración
+
+Estos son los parámetros que go-e Charger te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Antes de empezar | `section` | No | En la app go-e, active la API HTTP v2 local (Internet → Ajustes avanzados, o Conexión → Ajustes de la API en la app nueva). Asigne una dirección IP fija al cargador en su router e introdúzcala abajo. |
+| Direcciones IP de los cargadores | `string` | No | Una o varias direcciones, separadas por comas. |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de los cargadores. go-e desaconseja más de una lectura por segundo. |
+| Idioma de los nombres de las funciones | `select` | No | Nombres de las funciones de los dispositivos nuevos e idioma de los textos de error. |
+| Opcional: nube go-e | `section` | No | Solo para un cargador que Gladys no puede alcanzar en la red local. Active la API en la nube en la app go-e (Internet → Ajustes avanzados): muestra el token de API. Los datos pasan entonces por los servidores de go-e. |
+| Número de serie | `string` | No |  |
+| Token de la API en la nube | `secret` | No |  |
+
+## Cómo instalar go-e Charger en Gladys
+
+1. En Gladys, abre **Integraciones**: go-e Charger aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-goecharger:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-goecharger](https://github.com/guim31/gladys-goecharger).
+
+go-e Charger requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+go-e Charger es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-goecharger) — [fuente de esta documentación](https://github.com/guim31/gladys-goecharger/blob/HEAD/docs/es.md)

@@ -1,0 +1,198 @@
+---
+title: "Integración domótica NIBE myUplink, gratuita y de código abierto"
+sidebar_label: "NIBE myUplink"
+description: "Bombas de calor NIBE vía myUplink: temperaturas, compresor, agua caliente, curva, alarmas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-nibe.png"
+keywords:
+  - "nibe myuplink"
+  - "domótica nibe myuplink"
+  - "gladys nibe myuplink"
+  - "nibe myuplink gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-nibe instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NIBE myUplink","description":"Bombas de calor NIBE vía myUplink: temperaturas, compresor, agua caliente, curva, alarmas.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-nibe","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-nibe.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T17:31:17Z"}} />
+
+Integra sus **bombas de calor NIBE** en Gladys a través de **myUplink**, la nube de NIBE: temperaturas
+(exterior, impulsión y retorno, agua caliente, interior), compresor, modo de funcionamiento, desplazamiento
+de la curva de calefacción, modo y refuerzo de agua caliente, calor producido y alarmas activas. Las bombas
+de calor del grupo vendidas con otras marcas en la misma plataforma (CTC, Contura…) también aparecen, con lo
+que permiten sus puntos de datos.
+
+> **Desarrollada sin el equipo: sus comentarios son bienvenidos.** La integración se escribió y probó con
+> respuestas reales de myUplink publicadas por otros proyectos, no con una bomba de calor. Si falta algo o
+> un valor es incorrecto en su caso, abra una issue en GitHub.
+>
+> Esta integración no está afiliada a NIBE ni a myUplink.
+
+## Requisitos
+
+- Una bomba de calor conectada a **myUplink** (la ve en la aplicación myUplink).
+- La **cuenta myUplink** a la que pertenece (correo electrónico y contraseña de la aplicación).
+- Gladys **5.1** o posterior.
+- Para **cambiar** un ajuste desde Gladys (desplazamiento de la curva, modo de agua caliente, refuerzo):
+  la suscripción de pago myUplink **Premium Manage** para esa bomba de calor, contratada en la aplicación
+  myUplink. La lectura funciona sin ella.
+
+## Configuración
+
+Gladys se comunica con myUplink mediante una «aplicación» que usted crea gratis en el sitio para
+desarrolladores de myUplink.
+
+1. Abra [dev.myuplink.com](https://dev.myuplink.com) e inicie sesión **con la cuenta de su bomba de calor**
+   (la misma que en la aplicación myUplink). Acepte las condiciones de uso de la API si se le piden.
+2. Abra **Applications** y luego **Create new application**.
+3. Rellene el formulario:
+   - **Name**: `Gladys` (a su elección);
+   - **Description**: `Gladys Assistant`;
+   - **Callback URL**: el formulario la exige pero esta integración nunca la usa; introduzca una dirección
+     https como `https://localhost/`.
+4. Guarde. La página de la aplicación muestra un **Identifier** (el ID de cliente) y un **Secret**.
+5. En Gladys, abra **Integraciones → NIBE myUplink → Configuración** y pegue el **Identifier** en **ID de
+   cliente** y el **Secret** en **Secreto de cliente**. Elija el idioma de los nombres, deje 5 minutos de
+   intervalo y guarde.
+6. Pulse **Probar la conexión**: Gladys indica cuántas bombas de calor encontró y si la suscripción
+   Premium Manage está activa.
+7. Abra la pestaña **Descubrir** y añada su bomba de calor.
+
+El ID de cliente y el secreto se quedan en la configuración de Gladys. El token de acceso que myUplink da a
+cambio se guarda en el volumen `/data` de la integración y se renueva aproximadamente cada hora; ninguno de
+los dos se escribe nunca en los registros.
+
+## Dispositivos
+
+Un dispositivo por bomba de calor, con el nombre del producto y del sistema myUplink, por ejemplo
+«F730 CU 3x400V (Casa)». La integración busca los valores siguientes entre los cientos de puntos que publica
+myUplink, y solo crea una función si la bomba de calor la tiene:
+
+| Función                            | Tipo en Gladys                 | Notas                                                                 |
+| ---------------------------------- | ------------------------------ | --------------------------------------------------------------------- |
+| Temperatura exterior               | Temperatura                    | Sonda BT1                                                             |
+| Temperatura de impulsión           | Temperatura                    | BT2, o la impulsión externa en un SMO                                 |
+| Temperatura de retorno             | Temperatura                    | BT3, o el retorno externo                                             |
+| Temperatura ACS (arriba)           | Temperatura                    | BT7                                                                   |
+| Temperatura ACS (carga)            | Temperatura                    | BT6                                                                   |
+| Temperatura interior               | Temperatura                    | Sonda de ambiente BT50, si está instalada                             |
+| Frecuencia del compresor           | Texto, p. ej. «57 Hz»          | Gladys no tiene unidad hercio                                         |
+| Compresor                          | Texto                          | Apagado, arrancando, en marcha, parándose                             |
+| Modo de funcionamiento             | Texto                          | Para qué trabaja la bomba: calefacción, agua caliente, refrigeración… |
+| Desplazamiento de la curva         | Selección −10 … +10            | Mando, si myUplink permite escribirlo                                 |
+| Modo de agua caliente              | Selección                      | Económico, normal, confort, control inteligente (según modelo)        |
+| Refuerzo de agua caliente          | Encendido/apagado, o selección | «Temporary lux»; una selección de duraciones en algunos modelos       |
+| Calor producido, calefacción (kWh) | Contador                       | Contador de calor, si la bomba tiene uno                              |
+| Calor producido, ACS (kWh)         | Contador                       | Contador de calor, si la bomba tiene uno                              |
+| Alarmas activas                    | Contador                       | Número de alarmas activas en myUplink                                 |
+| Alarma                             | Texto                          | Número y título de la última alarma, o «Sin alarma»                   |
+
+Un ajuste solo se ofrece como mando si myUplink lo marca como **modificable** en su bomba de calor; si no,
+queda en solo lectura. El desplazamiento de la curva es a propósito una selección y no un termostato: no es
+una temperatura, y un asistente de voz al que se le pidan «21 grados» nunca debe alcanzarlo.
+
+El calor producido es un contador, no un contador de energía: Gladys contaría un índice de energía como
+electricidad tomada de su contador principal, cuando se trata de calor entregado a la casa.
+
+La ficha del dispositivo lleva una insignia **nube**, o **inaccesible** cuando la bomba de calor ya no está
+conectada a myUplink (sus últimos valores se quedan entonces como estaban).
+
+## Widget
+
+El widget **Bomba de calor** resume una bomba en el panel: mosaicos en directo para las temperaturas
+exterior, de impulsión, de agua caliente e interior, una lista de estado (conexión myUplink, modo de
+funcionamiento, compresor, desplazamiento de la curva, modo de agua caliente, refuerzo, alarmas) y, si la
+bomba acepta mandos, botones para iniciar o cancelar el refuerzo de agua caliente y desplazar la curva un
+paso. Elija la bomba de calor en los ajustes del widget.
+
+## Disparador y acciones de escena
+
+- **Alarma de la bomba de calor** (disparador): se activa cuando una bomba señala una **nueva** alarma en
+  myUplink, una vez por alarma. Puede limitarlo a una bomba de calor. Variables: número, título,
+  descripción y gravedad de la alarma, en el idioma de la integración. Las alarmas ya activas al instalar,
+  o ya señaladas antes de un reinicio, no se vuelven a disparar.
+- **Acciones**: los mandos son funciones del dispositivo, así que una escena los cambia con la acción
+  estándar **Controlar un dispositivo** (refuerzo encendido, desplazamiento a −2, modo de agua caliente…).
+  No hace falta ninguna acción adicional.
+- El botón **Probar la conexión** de la pestaña Configuración comprueba el ID de cliente y el secreto,
+  cuenta las bombas de calor y lee la suscripción Premium Manage.
+
+## Ejemplos de escenas
+
+- **Recibir aviso de una avería**: disparador «Alarma de la bomba de calor» → acción «Enviar un mensaje»:
+  `Alarma bomba {{triggerEvent.data.alarm_number}}: {{triggerEvent.data.header}}`.
+- **Agua caliente cuando la electricidad es barata**: a la 1:30 en días de tarifa valle → controlar el
+  dispositivo «Refuerzo de agua caliente» = encendido.
+- **Fuera el fin de semana**: cuando la casa está vacía → «Desplazamiento de la curva» = −2; cuando alguien
+  vuelve → 0.
+- **Vigilancia de heladas**: cuando la «Temperatura exterior» baja de −15 °C → enviar un mensaje.
+
+## Solución de problemas
+
+- **«myUplink rechaza el ID de cliente o el secreto»**: vuelva a copiarlos desde dev.myuplink.com, sin
+  espacios; compruebe que la aplicación sigue existiendo.
+- **«Ninguna bomba de calor en esta cuenta myUplink»**: la aplicación se creó con otra cuenta distinta de
+  la de la bomba. Vuelva a crearla con la sesión iniciada en la cuenta de la aplicación myUplink.
+- **«Cambiar un ajuste requiere la suscripción Premium Manage»**: la lectura funciona, la escritura pide la
+  suscripción de pago para esta bomba de calor. Una vez suscrito, vuelva a intentarlo: la integración lo
+  comprueba de nuevo.
+- **«Cuota de myUplink alcanzada»**: otro programa usa la misma aplicación (Home Assistant, un script…).
+  Dele su propia aplicación, o aumente el intervalo de actualización.
+- **Valores que no cambian**: la propia bomba envía sus datos a myUplink cada pocos minutos; compruebe en la
+  aplicación myUplink que está «conectada».
+- **Falta una función**: su modelo nombra sus puntos de otra manera. Reinicie la integración con
+  `LOG_LEVEL=debug`: los registros listan los roles encontrados. Abra una issue con el modelo y esa línea.
+
+## Límites
+
+- **Solo nube**: sin acceso local; sin Internet, no se lee ni se escribe nada.
+- **Cuota y condiciones**: myUplink limita el número de peticiones (25 por minuto y por aplicación en el
+  momento de escribir esto) y ofrece su API para uso personal según las condiciones de dev.myuplink.com.
+  Cada actualización cuesta 1 petición más 1 por bomba de calor añadida a Gladys (más 1 cuando hay una
+  alarma activa); la integración respeta las cabeceras de cuota y espera cuando se le indica. Cada 5
+  minutos por defecto, 1 minuto como mínimo.
+- **Retraso**: un cambio hecho en Gladys llega a la bomba de calor en uno o dos minutos; la lectura
+  siguiente lo confirma.
+- **La escritura** requiere la suscripción Premium Manage.
+- **Puntos**: solo los valores indicados arriba, encontrados por su número de registro NIBE, por la
+  categoría «smart home» de myUplink o por su nombre en inglés. Los identificadores de la serie F y de los
+  módulos interiores (VVM, SMO) son conocidos; en la serie S y las demás marcas, la integración se basa en
+  los nombres, lo que no pudo comprobarse con un equipo real.
+- La **electricidad consumida** por la bomba de calor no se lee: no se pudo identificar con certeza ningún
+  punto de myUplink para ella.
+
+## Parámetros de configuración
+
+Estos son los parámetros que NIBE myUplink te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conectar su cuenta myUplink | `section` | No | Inicie sesión en dev.myuplink.com con la cuenta de su bomba de calor, cree una aplicación (gratuita) y copie aquí su ID de cliente y su secreto. Cambiar un ajuste desde Gladys requiere además la suscripción myUplink Premium Manage. La documentación explica cada paso. |
+| ID de cliente | `string` | Sí | El «Identifier» de su aplicación en dev.myuplink.com. |
+| Secreto de cliente | `secret` | Sí | El «Secret» de la misma aplicación. Guardado por Gladys, nunca escrito en los registros. |
+| Intervalo de actualización (minutos) | `number` | No | Frecuencia de lectura de myUplink. 5 minutos bastan para una bomba de calor y ahorran cuota. |
+| Idioma de nombres y textos | `select` | No | Nombres de las funciones (fijos una vez añadido el dispositivo), alarmas, mensajes. |
+
+## Cómo instalar NIBE myUplink en Gladys
+
+1. En Gladys, abre **Integraciones**: NIBE myUplink aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-nibe:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-nibe](https://github.com/guim31/gladys-nibe).
+
+NIBE myUplink requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+NIBE myUplink es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-nibe) — [fuente de esta documentación](https://github.com/guim31/gladys-nibe/blob/HEAD/docs/es.md)

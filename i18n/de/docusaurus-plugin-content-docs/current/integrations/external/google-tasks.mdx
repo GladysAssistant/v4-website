@@ -1,0 +1,201 @@
+---
+title: "Google Tasks Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Google Tasks"
+description: "Deine Google-Tasks-Listen in Gladys: Zähler, Widgets zum Hinzufügen und Erledigen, Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-tasks.jpg"
+keywords:
+  - "google tasks"
+  - "google tasks smart home"
+  - "gladys google tasks"
+  - "google tasks gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/William-De71/gladys-google-tasks instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Tasks","description":"Deine Google-Tasks-Listen in Gladys: Zähler, Widgets zum Hinzufügen und Erledigen, Szenen.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-google-tasks","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-tasks.jpg","type":"device","version":"0.1.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T02:05:20Z"}} />
+
+## Überblick
+
+Diese Integration bringt deine **Google-Tasks**-Listen in Gladys: ein Gerät pro Liste mit seinen Zählern, Widgets zum Ansehen, Hinzufügen und Erledigen von Aufgaben im Dashboard und Szenen, die auf deine Aufgaben reagieren oder sie ändern.
+
+- **Ein Gerät pro Liste** („Meine Aufgaben“, „Einkaufen“…) mit drei Zählern: **offene**, **überfällige** und **heute fällige** Aufgaben.
+- **Widgets**: die Aufgaben einer Liste (Fälligkeit, überfällig, Notizen, Link) mit den Formularen **Hinzufügen** und **Erledigen**, und eine **Übersicht** aller Listen.
+- **Szenen**: Aufgabe hinzugefügt, erledigt, fällig oder überfällig; Aufgaben hinzufügen, erledigen, lesen, erledigte löschen.
+- **Cloud**: Deine Aufgaben werden zwischen den Servern von Google und deinem Gladys übertragen, mit deinem eigenen Google-Client; nichts läuft über einen Drittserver. Google Tasks sendet keine Benachrichtigungen: Die Integration liest deine Listen alle **5 Minuten** (einstellbar) und direkt nach einer Änderung aus Gladys.
+- **Fälligkeit = ein Datum**: Google Tasks speichert nur den Tag (eine in der App gewählte Uhrzeit ist über die API nicht lesbar). „Heute“ und „überfällig“ richten sich nach der Zeitzone von Gladys.
+
+![Das Google-Tasks-Widget mit geöffnetem Formular Hinzufügen und die Übersicht der Listen (generierte Illustration, kein Screenshot)](https://raw.githubusercontent.com/William-De71/gladys-google-tasks/main/docs/assets/widgets.de.png)
+
+## Voraussetzungen
+
+- Gladys **5.2.0** oder neuer (Formulare der Widgets).
+- Ein Google-Konto (privat oder Workspace), das Google Tasks nutzt.
+- Ein kostenloses **Google-Cloud-Projekt**, in dem du **deinen eigenen OAuth-Client** anlegst: Google erlaubt kein Teilen eines Schlüssels, und die Integration enthält keinen. Rechne mit etwa zehn Minuten, einmalig.
+
+## Konfiguration
+
+### 1. Google-Cloud-Projekt und API
+
+1. Öffne die [Google-Cloud-Konsole](https://console.cloud.google.com/) und lege ein Projekt an (zum Beispiel „Gladys“).
+2. Suche unter **APIs & Dienste → Bibliothek** nach **Google Tasks API** und klicke auf **Aktivieren** ([direkter Link](https://console.cloud.google.com/apis/library/tasks.googleapis.com)).
+
+### 2. Zustimmungsbildschirm (Google Auth Platform)
+
+1. Öffne **Google Auth Platform** ([Link](https://console.cloud.google.com/auth/overview)) und klicke auf **Jetzt starten**: App-Name („Gladys“), Support-E-Mail, Zielgruppe **Extern**, Kontakt-E-Mail, Richtlinie akzeptieren, dann **Erstellen**.
+2. Klicke unter **Zielgruppe** auf **App veröffentlichen**, um sie **In Produktion** zu setzen. Das ist wichtig: Eine im **Test** belassene App erhält Berechtigungen, die **nach 7 Tagen ablaufen** (du müsstest dich jede Woche neu verbinden), und nur die als Testnutzer eingetragenen Konten können sich verbinden.
+3. Eine Überprüfung durch Google ist nicht nötig: Die App bleibt „nicht überprüft“, was für die private Nutzung normal ist. Google zeigt beim Verbinden lediglich eine Warnung an (siehe Schritt 4). Eine nicht überprüfte App ist auf 100 Nutzer begrenzt, mehr als genug für einen Haushalt.
+
+### 3. OAuth-Client
+
+1. Klicke unter **Google Auth Platform → Clients** auf **Client erstellen**.
+2. Anwendungstyp: **Webanwendung**, Name: „Gladys“.
+3. Füge unter **Autorisierte Weiterleitungs-URIs** genau diese hinzu:
+
+   ```
+   https://my.gladysassistant.com/redirect/oauth
+   ```
+
+   Das ist die HTTPS-Seite von Gladys, die deinen Browser zu deiner Instanz zurückschickt, egal unter welcher Adresse sie läuft (Google lehnt `http://`-Adressen und IP-Adressen wie `http://192.168.1.50` ab). Sie ist für alle gleich; der Konfigurationsbildschirm von Gladys zeigt sie ebenfalls an, mit einer Schaltfläche zum Kopieren. Wenn du Gladys über HTTPS erreichst und dort die erweiterte Option „Adresse der Instanz“ aktivierst, trage stattdessen die angezeigte Adresse ein.
+
+4. Klicke auf **Erstellen** und kopiere dann die **Client-ID** und den **Clientschlüssel** (beginnt mit `GOCSPX-`). Kopiere den Schlüssel sofort: Google zeigt ihn nicht immer erneut an.
+5. Falls die Konsole verlangt, `gladysassistant.com` zu den **Autorisierten Domains** hinzuzufügen (Google Auth Platform → Branding), stimme zu.
+
+### 4. In Gladys
+
+1. Öffne die Integration **Google Tasks**, füge **Client-ID** und **Clientschlüssel** ein und **speichere**.
+2. Klicke auf **Mit Google verbinden** und wähle dein Konto.
+3. Google warnt, dass es **diese App nicht überprüft hat**: Es ist deine eigene. Klicke auf **Erweitert** und dann auf **Weiter zu Gladys (unsicher)**.
+4. **Setze das Häkchen** bei der Google-Tasks-Berechtigung („Alle Aufgaben erstellen, bearbeiten, organisieren und löschen“) und klicke auf **Weiter**. Du bist zurück in Gladys, verbunden.
+5. Gehe zur **Geräteerkennung**, füge die gewünschten Listen hinzu und lege die Widgets auf einem Dashboard an.
+
+| Feld                                   | Standard    | Zweck                                                                                                                                          |
+| -------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Client-ID                              | —           | Die Client-ID deines OAuth-Clients (endet auf `.apps.googleusercontent.com`).                                                                  |
+| Clientschlüssel                        | —           | Sein Schlüssel (`GOCSPX-…`), wird nie angezeigt oder protokolliert.                                                                            |
+| Mit Google verbinden                   | —           | Die Verbindungsschaltfläche. Nur die Google-Tasks-Berechtigung wird angefragt.                                                                 |
+| Google Tasks lesen alle (Minuten)      | 5           | Von 1 bis 60. Jede Abfrage kostet 1 Anfrage + 1 pro Liste; Google erlaubt 50.000 pro Tag und Projekt.                                          |
+| Uhrzeit des Auslösers „Aufgabe fällig“ | 8           | Google speichert ein Datum ohne Uhrzeit: Eine heute fällige Aufgabe startet ihre Szenen zu dieser Stunde (0 bis 23), bei der nächsten Abfrage. |
+| Sprache der Texte                      | Automatisch | Namen der Funktionen und Szenenzusammenfassungen. Automatisch: die Sprache deines Dashboards, sobald ein Widget angezeigt wurde.               |
+
+Die Token werden automatisch erneuert. Widerruft Google den Zugriff (App im Test belassen, Zugriff im Google-Konto entfernt, Schlüssel neu erzeugt, sechs Monate ohne Nutzung), fragt die Integration Google nicht mehr an, meldet dies im Verbindungsstatus, und du klickst einfach erneut auf **Mit Google verbinden**. Deine Geräte und Szenen bleiben erhalten.
+
+## Verwendung
+
+### Geräte
+
+Ein Gerät pro Liste, benannt „Google Tasks: \<Listenname>“. Seine Kennung folgt der der Liste bei Google: Das Umbenennen der Liste macht nichts kaputt.
+
+| Funktion               | Gladys-Typ        | Wert                                                         |
+| ---------------------- | ----------------- | ------------------------------------------------------------ |
+| Offene Aufgaben        | Zähler (Ganzzahl) | Nicht erledigte Aufgaben der Liste, Unteraufgaben inklusive. |
+| Überfällige Aufgaben   | Zähler (Ganzzahl) | Offene Aufgaben, deren Fälligkeit vorbei ist.                |
+| Heute fällige Aufgaben | Zähler (Ganzzahl) | Offene Aufgaben, die heute fällig sind.                      |
+
+Diese Zähler sind schreibgeschützt; sie speisen Kacheln, Verlauf und Szenenbedingungen („wenn mehr als 3 Aufgaben überfällig sind…“).
+
+### Widgets
+
+- **Google Tasks**: die Aufgaben einer Liste (Einstellung **Aufgabenliste**; leer = die erste Liste, „Meine Aufgaben“), nach Fälligkeit und dann in der Reihenfolge der Liste sortiert, mit den Badges **Überfällig**, **Heute** und **Morgen**; eine Unteraufgabe beginnt mit „↳“. Tippe auf eine Aufgabe, um ihre Notizen zu sehen und sie in Google Tasks zu öffnen. Die Einstellung **Anzeigen** beschränkt die Karte auf die Aufgaben, die **heute fällig oder überfällig** sind. Schaltflächen:
+  - **Hinzufügen**: Titel, Fälligkeit (kein Datum, heute, morgen, in einer Woche oder anderes Datum) und Notizen;
+  - **Erledigen**: Wähle die Aufgabe in der Liste;
+  - **Aktualisieren**: liest Google Tasks sofort.
+- **Aufgabenlisten**: die Summen offen, überfällig und heute fällig, und eine Zeile pro Liste.
+
+Die Formulare der Widgets benötigen Gladys 5.2.0 oder neuer.
+
+### Szenenauslöser
+
+Jeder Auslöser kann auf eine Liste beschränkt werden. Verfügbare Variablen: Name der Liste, Titel, Notizen, Fälligkeit (`JJJJ-MM-TT`), Unteraufgabe, Link und ID der Aufgabe.
+
+| Auslöser                           | Wann                                                                                                |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Google Tasks: Aufgabe hinzugefügt  | Eine Aufgabe erscheint in einer Liste (Handy, Gmail, Kalender…). Nicht für von Gladys hinzugefügte. |
+| Google Tasks: Aufgabe erledigt     | Eine Aufgabe wird außerhalb von Gladys als erledigt markiert.                                       |
+| Google Tasks: Aufgabe heute fällig | Eine offene Aufgabe ist heute fällig: zu der in der Konfiguration eingestellten Stunde.             |
+| Google Tasks: Aufgabe überfällig   | Eine offene Aufgabe überschreitet ihr Fälligkeitsdatum (kurz nach Mitternacht).                     |
+
+Jedes Ereignis entspricht einer zwischen zwei Abfragen festgestellten Änderung, nie einem wiederholten Zustand. Beim Start dient die erste Abfrage als Referenz: Sie löst nichts aus.
+
+### Szenenaktionen
+
+| Aktion                                   | Parameter                                                                     | Ergebnisse                                                                             |
+| ---------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Google Tasks: Aufgabe hinzufügen         | Liste, Titel (Variablen erlaubt), Notizen, Fälligkeit                         | ID, Titel, Fälligkeit, Link                                                            |
+| Google Tasks: Aufgabe erledigen          | Liste (leer = alle), Titel (Groß-/Kleinschreibung und Akzente egal)           | Aufgabe erledigt (ja/nein), Titel, Liste                                               |
+| Google Tasks: Aufgaben lesen             | Liste (leer = alle), alle / heute fällig oder überfällig / heute / überfällig | Anzahl, überfällig, heute, Titel, Zusammenfassung, nächste Aufgabe und ihre Fälligkeit |
+| Google Tasks: erledigte Aufgaben löschen | Liste (leer = alle)                                                           | —                                                                                      |
+
+Die Fälligkeit akzeptiert `JJJJ-MM-TT`, `TT/MM/JJJJ`, `+3` (in 3 Tagen), heute und morgen. „Erledigen“ sucht zuerst einen identischen Titel, dann einen Titel, der ihn enthält, und tut nichts (Ergebnis „nein“), wenn keine Aufgabe passt. Eine Szenenaktion startet nie im Gegenzug eine Szene.
+
+### Szenenbeispiele
+
+- **Morgenerinnerung**: jeden Tag um 7:30 → „Google Tasks: Aufgaben lesen“ (heute fällig oder überfällig) → wenn die Anzahl größer als 0 ist, `{{0.0.summary}}` als Nachricht senden.
+- **Mülltonnen**: dienstags um 19 Uhr → „Google Tasks: Aufgabe hinzufügen“ „Mülltonnen rausstellen“ für heute in der Liste „Haus“; und wenn sie **erledigt** ist, das Garagenlicht ausschalten.
+- **Einkaufen**: wenn eine Aufgabe zur Liste „Einkaufen“ **hinzugefügt** wird → den Haushalt mit `{{triggerEvent.data.title}}` benachrichtigen.
+- **Verspätungen**: wenn eine Aufgabe **überfällig** wird → die Büro-LED rot schalten.
+
+## Fehlerbehebung
+
+- **„Fehler 400: redirect_uri_mismatch“**: Die im OAuth-Client eingetragene Weiterleitungs-URI stimmt nicht mit der von Gladys überein. Prüfe `https://my.gladysassistant.com/redirect/oauth`, ohne abschließenden Schrägstrich, unter **Autorisierte Weiterleitungs-URIs** des Clients **Webanwendung** (nicht unter „Autorisierte JavaScript-Quellen“), speichere und warte ein paar Minuten.
+- **„Fehler 403: access_denied“ / die App hat die Überprüfung nicht abgeschlossen**: Die App ist noch im **Test** und dein Konto ist kein Testnutzer. Veröffentliche sie (**Zielgruppe → App veröffentlichen**) oder trage dein Konto als Testnutzer ein.
+- **„Google hat diese App nicht überprüft“**: normal, es ist deine eigene App; **Erweitert → Weiter zu Gladys (unsicher)**.
+- **„Die Google-Tasks-Berechtigung wurde nicht erteilt“**: Das Häkchen bei Google Tasks war auf dem Zustimmungsbildschirm nicht gesetzt. Verbinde dich erneut und setze es.
+- **„Google hat den Zugriff widerrufen“ jede Woche**: Die App ist im **Test** geblieben (7-Tage-Berechtigungen). Veröffentliche sie und verbinde dich erneut.
+- **„Die Google Tasks API ist nicht aktiviert“**: Aktiviere die **Google Tasks API** im Projekt des OAuth-Clients, warte ein paar Minuten und klicke dann auf **Verbindung testen**.
+- **„invalid_client“**: falsche Client-ID oder falscher Clientschlüssel, oder Schlüssel in der Konsole neu erzeugt. Korrigiere sie, speichere und verbinde dich erneut.
+- **Die Rückkehr von Google zeigt einen Fehler statt Gladys**: Klicke nur einmal auf „Verbinden“, lass nur einen Autorisierungs-Tab offen und beginne von vorn.
+- **„Heute“ oder „überfällig“ um einen Tag verschoben**: Prüfe die Zeitzone von Gladys (Einstellungen → System); die Aktion **Diagnose** schreibt sie in die Protokolle.
+- **Eine Änderung auf dem Handy erscheint erst nach ein paar Minuten**: Das ist das Abfrageintervall (standardmäßig 5 Minuten). Die Schaltfläche **Aktualisieren** der Widgets liest sofort.
+- **Für einen Fehlerbericht**: Klicke auf **Diagnose** (anonymisierte Zusammenfassung in den Protokollen, ohne Token und Aufgabentitel) und hänge die Protokolle der Integration, die Gladys-Version und die Version der Integration an.
+
+## Einschränkungen
+
+- Keine Benachrichtigung von Google: Eine Änderung erscheint spätestens nach dem Abfrageintervall, und ein Auslöser „fällig“ feuert bei der ersten Abfrage nach der eingestellten Stunde.
+- Die Uhrzeit einer Aufgabe ist nicht lesbar: Nur das Fälligkeitsdatum ist bekannt.
+- Ist die Integration bei einer Änderung gestoppt (Neustart, Update), wird das entsprechende Ereignis nicht nachgeholt: Die erste Abfrage nach dem Start dient als Referenz.
+- Eine gelöschte Aufgabe löst nichts aus; ebenso wenig eine Aufgabe, die bei einer vollständigen Abfrage (alle 6 Stunden) verschwunden ist, da die API dann nicht sagt, ob sie erledigt oder gelöscht wurde.
+- Kein Anlegen von Unteraufgaben, kein Verschieben, Bearbeiten oder Löschen einer Aufgabe, keine Verwaltung der Listen selbst.
+- Aus Docs oder Chat zugewiesene Aufgaben werden gezählt und angezeigt, aber Google erlaubt nicht, sie über die API anzulegen.
+- Ein Google-Konto pro Integration.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Google Tasks in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| 1. Dein Google-Cloud-OAuth-Client | `section` | Nein | Google stellt keinen gemeinsamen Schlüssel bereit: Lege in der Google-Cloud-Konsole ein kostenloses Projekt an, aktiviere die Google Tasks API, richte den Zustimmungsbildschirm (Extern) ein und veröffentliche ihn „In Produktion“. Erstelle dann einen OAuth-Client vom Typ „Webanwendung“ mit genau dieser autorisierten Weiterleitungs-URI: https:\/\/my.gladysassistant.com/redirect/oauth. Die Dokumentation beschreibt jeden Schritt. |
+| Client-ID | `string` | Ja | Endet auf .apps.googleusercontent.com. |
+| Clientschlüssel | `secret` | Ja | Wird von Google beim Erstellen des Clients angezeigt (beginnt mit GOCSPX-). |
+| 2. Verbinde dein Google-Konto | `section` | Nein | Zuerst speichern, dann auf die Schaltfläche klicken. Google warnt, dass es „diese App nicht überprüft hat“: Es ist deine eigene App. Klicke auf Erweitert, dann auf „Weiter zu … (unsicher)“ und setze das Häkchen bei der Google-Tasks-Berechtigung. Verbinde dich erneut, wenn Gladys einen widerrufenen Zugriff meldet. |
+| Mit Google verbinden | `oauth2` | Nein | Gladys fragt nur die Google-Tasks-Berechtigung an (Aufgaben lesen und ändern). |
+| 3. Optionen | `section` | Nein | Google Tasks sendet keine Benachrichtigungen: Die Integration liest deine Listen in regelmäßigen Abständen und direkt nach einer Änderung aus Gladys. |
+| Google Tasks lesen alle (Minuten) | `number` | Nein | Jede Abfrage kostet 1 Anfrage + 1 pro Liste (Google erlaubt standardmäßig 50.000 pro Tag). |
+| Uhrzeit des Auslösers „Aufgabe fällig“ | `number` | Nein | Google speichert ein Datum ohne Uhrzeit: Eine heute fällige Aufgabe startet ihre Szenen zu dieser Stunde (0-23). |
+| Sprache der Texte | `select` | Nein | Namen der Funktionen und Szenenzusammenfassungen. Automatisch: die Sprache deines Dashboards, sobald ein Widget angezeigt wurde. |
+
+## So installierst du Google Tasks in Gladys
+
+1. Öffne in Gladys **Integrationen**: Google Tasks erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-google-tasks:0.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-google-tasks](https://github.com/William-De71/gladys-google-tasks).
+
+Google Tasks benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Google Tasks ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [William-De71](https://github.com/William-De71) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/William-De71/gladys-google-tasks) — [Quelle dieser Dokumentation](https://github.com/William-De71/gladys-google-tasks/blob/HEAD/docs/de.md)

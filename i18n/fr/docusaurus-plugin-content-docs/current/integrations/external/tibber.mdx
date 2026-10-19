@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-tibber instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Tibber","description":"Connecteur non officiel : prix Tibber, heures creuses, consommation, puissance Pulse et contrats.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tibber","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tibber.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-14T20:14:32Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Tibber","description":"Connecteur non officiel : prix Tibber, heures creuses, consommation, puissance Pulse et contrats.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tibber","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tibber.png","type":"device","version":"0.1.4","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T17:06:21Z"}} />
 
 **Connecteur non officiel, sans lien avec Tibber.** Il amène votre compte
 Tibber dans Gladys : les prix horaires de l'électricité de votre maison
@@ -27,6 +27,8 @@ Tibber dans Gladys : les prix horaires de l'électricité de votre maison
 avec un Tibber Pulse ou Watty, la puissance en direct. Tibber est une marque
 de Tibber AS. Disponible là où Tibber vend de l'électricité : Norvège, Suède,
 Allemagne et Pays-Bas.
+
+Jamais testé avec un vrai compte Tibber ni un vrai Pulse pour l'instant.
 
 ## Ce que vous obtenez
 
@@ -89,15 +91,45 @@ l'intégration de tarifer chaque demi-heure depuis votre propre historique de
 prix Tibber (prix de l'énergie, TVA incluse) ; les coûts apparaissent à côté
 de la consommation comme pour tout contrat. La **consommation** de
 l'appareil est la consommation horaire rapportée par Tibber, répartie en
-deux demi-heures égales, publiée avec environ une heure de retard.
+deux demi-heures égales, publiée avec environ une heure de retard. C'est la
+seule donnée de l'appareil que le suivi énergétique compte : la consommation
+d'hier et celle du jour sont de simples capteurs (en kWh) pour l'affichage et
+les scènes, jamais additionnés une seconde fois.
 
 Avec un Pulse, Gladys affiche aussi la puissance en direct et le coût du
 jour directement depuis Tibber.
 
+Gladys 5.2.0 ou plus récent est requis.
+
+### Appareils créés avec la version 0.1.1
+
+La version 0.1.1 publiait la consommation d'hier et celle du jour dans des
+fonctions de type « consommation journalière » (`yesterday_consumption`,
+`today_consumption`). Les coûts et les graphiques du suivi énergétique n'en
+ont jamais tenu compte (ils lisent la consommation par demi-heure), mais ces
+kWh journaliers pouvaient s'ajouter à la consommation par demi-heure dans le
+résumé hebdomadaire et dans les réponses du serveur MCP de Gladys.
+
+Gladys ne touche pas un appareil créé tant que vous ne cliquez pas **Mettre
+à jour** : d'ici là, les deux anciennes fonctions restent, avec leur
+historique, mais ne reçoivent plus rien. Pour passer aux nouveaux capteurs,
+ouvrez **Découverte**, puis l'appareil Tibber (badge **Déjà ajouté**), et
+cliquez **Mettre à jour**. Gladys ajoute alors `yesterday_kwh` et
+`today_kwh`, retire les deux anciennes fonctions, et garde l'appareil,
+l'historique de toutes les autres fonctions (consommation par demi-heure et
+son coût, prix, coûts) et le lien avec votre contrat d'énergie. Une scène ou
+un graphique de tableau de bord posé sur l'une des deux anciennes fonctions
+est à repointer vers `yesterday_kwh` ou `today_kwh`.
+
 ## Dépannage
 
 - **« Tibber a refusé le jeton »** : le jeton a été révoqué ou mal copié ;
-  créez-en un nouveau sur developer.tibber.com.
+  créez-en un nouveau sur developer.tibber.com. Un jeton refusé n'est plus
+  envoyé, même après un redémarrage, tant que la configuration n'est pas
+  enregistrée (l'enregistrer fait un nouvel essai, même avec le même jeton).
+- **« Tibber a demandé de ralentir (429) »** : aucun appel avant l'heure
+  indiquée (le Retry-After de Tibber, entre 1 minute et 6 heures, gardé après
+  un redémarrage) ; les dernières valeurs restent, puis tout reprend seul.
 - **« Aucune maison avec un abonnement actif »** : le compte n'a pas encore
   de contrat Tibber en cours.
 - **Pas de puissance en direct** : la maison doit avoir un Tibber Pulse ou
@@ -111,9 +143,12 @@ jour directement depuis Tibber.
 
 ## Confidentialité
 
-Le jeton est stocké chiffré par Gladys et envoyé uniquement aux serveurs de
-Tibber (`api.tibber.com`, `websocket-api.tibber.com`). Votre adresse ne sert
-qu'à nommer l'appareil quand la maison n'a pas de surnom.
+Le jeton est gardé par Gladys dans sa base (en clair, comme tout champ secret,
+y compris dans ses sauvegardes), jamais réaffiché, et envoyé seulement aux
+serveurs de Tibber (`api.tibber.com`, `websocket-api.tibber.com`). Votre adresse ne sert
+qu'à nommer l'appareil quand la maison n'a pas de surnom. Le volume `/data` de
+l'intégration ne contient qu'une clé aléatoire, une empreinte (HMAC) d'un jeton
+refusé (jamais le jeton) et la fin d'une pause 429.
 
 ## Paramètres de configuration
 
@@ -122,14 +157,14 @@ Voici les paramètres demandés par Tibber dans son écran de configuration dans
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
 | Compte Tibber | `section` | Non | Connecteur non officiel, sans lien avec Tibber. Créez un jeton d'accès personnel sur developer.tibber.com (Settings → Access token) et collez-le ci-dessous : l'intégration découvre vos maisons, lit les prix horaires (aujourd'hui et demain), votre consommation et, avec un Tibber Pulse ou Watty, la puissance en direct. Elle fournit aussi un modèle de contrat Tibber pour le suivi énergétique de Gladys. Tibber est une marque de Tibber AS. |
-| Jeton d'accès | `secret` | Oui | Stocké chiffré par Gladys et envoyé uniquement à api.tibber.com. |
+| Jeton d'accès | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à Tibber. |
 | Heures creuses par jour | `number` | Non | Les N heures les moins chères de la journée forment la « période creuse » (capteur, déclencheurs, widget). |
 | Puissance en direct d'un Tibber Pulse / Watty | `boolean` | Non | Garde une connexion websocket ouverte vers Tibber pour les maisons dont la consommation en temps réel est activée. |
 
 ## Comment installer Tibber dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Tibber apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tibber:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tibber:0.1.4`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-tibber](https://github.com/LM1LC3N7/gladys-tibber).
 

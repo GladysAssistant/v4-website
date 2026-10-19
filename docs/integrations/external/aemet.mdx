@@ -1,0 +1,195 @@
+---
+title: "AEMET smart home integration, free and open source"
+sidebar_label: "AEMET"
+description: "Official weather for Spain (AEMET): forecasts, nearby station, Meteoalerta warnings by town. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-aemet.png"
+keywords:
+  - "aemet"
+  - "aemet smart home"
+  - "gladys aemet"
+  - "aemet gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-aemet instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"AEMET","description":"Official weather for Spain (AEMET): forecasts, nearby station, Meteoalerta warnings by town.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-aemet","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-aemet.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T23:28:58Z"}} />
+
+The official weather of **Spain** in Gladys, from **AEMET OpenData**, the open data service of the Spanish
+State Meteorological Agency: the forecast of the current hour, today's extremes, the **Meteoalerta warnings**
+(yellow, orange, red) and the observation of the nearest weather station, for the mainland, the Balearic and
+Canary Islands, Ceuta and Melilla. Made for holiday homes and cross-border residents.
+
+This integration is not affiliated with AEMET. It was developed without an AEMET account at hand, against
+real published answers of the API: feedback welcome.
+
+## Overview
+
+- **One device per town** (up to five), read only.
+- **Forecast of the current hour**: temperature, feels-like, humidity, wind, gusts, wind direction, chance of
+  rain, rain expected this hour, sky (translated).
+- **Today**: UV index (daily maximum), minimum and maximum temperatures.
+- **Warnings**: level in force now, highest level ahead, and a text listing them.
+- **Station**: temperature, humidity, pressure, rain over the last hour and wind measured at the nearest AEMET
+  station (40 km at most).
+- A **dashboard widget** and a **scene trigger** "New AEMET warning".
+
+## Requirements
+
+- Gladys **5.2.0** or later (the "Find the nearest town" action picks a Gladys house).
+- A free **AEMET OpenData API key**.
+- Internet access from Gladys: the integration only talks to `opendata.aemet.es`.
+
+## Configuration
+
+### API key
+
+Open [the AEMET OpenData key request](https://opendata.aemet.es/centrodedescargas/altaUsuario), enter your
+email address and solve the captcha. AEMET sends a confirmation link, then the key itself by email a moment
+later: a long text starting with `eyJ`. Paste it into the **API key** field.
+
+### Towns
+
+The **Towns** field takes the five-digit **INE codes** of the towns, separated by commas (`28079` for Madrid,
+`07040` for Palma). The code is in the address of the town page on aemet.es (`…/madrid-id28079`): that address
+can be pasted as is. Five towns at most.
+
+To skip the search, the **Find the nearest town** action takes a Gladys house (its position is set in Gladys
+settings) and adds the nearest Spanish town to the field. Reload the page to see it, then add the device from
+the **Discovery** tab.
+
+The **Test the connection** action checks the key and names each town and its station.
+
+### Language
+
+The **Language** field sets the language of the feature names (frozen when the device is added: delete and
+add the device again to rename them), of the sky states, of the warnings and of the scene texts. French by
+default. The widget follows the language of each user.
+
+## The town device
+
+Each town gives a device **AEMET \<town>**, with these features.
+
+### Forecast
+
+| Feature                                                         | Unit      |
+| --------------------------------------------------------------- | --------- |
+| Temperature (forecast), feels like                              | °C        |
+| Humidity (forecast)                                             | %         |
+| Wind, wind gusts (forecast)                                     | km/h      |
+| Wind direction (where it comes from, 0 = north; none when calm) | °         |
+| Chance of rain (the 6-hour window of the current hour)          | %         |
+| Rain this hour (forecast)                                       | mm        |
+| Sky (text, e.g. "Overcast with snow")                           |           |
+| UV index (today's max), minimum today, maximum today            | index, °C |
+
+The forecast is the one AEMET publishes for the town, hour by hour: the values change every hour, even between
+two readings.
+
+### Warnings
+
+| Feature               | Values                                                            |
+| --------------------- | ----------------------------------------------------------------- |
+| Warning level now     | 0 none, 1 yellow, 2 orange, 3 red: the warnings in force          |
+| Highest warning ahead | same scale, warnings in force and announced ones                  |
+| Warnings              | text, e.g. "Red: Snow; Orange: Low temperatures (from Mon 00:00)" |
+
+A town gets the warnings of its Meteoalerta zone (the `zona_comarcal` AEMET gives the town).
+
+### Station observation
+
+Temperature, humidity, pressure (sea level when the station computes it), rain over the last hour and mean
+wind of the nearest station, within 40 km. A reading older than three hours is not published.
+
+## Refresh and quota
+
+AEMET limits the requests of each key, and each reading takes two requests (AEMET answers with the address of
+the data, downloaded next). The integration reads, for each town added to Gladys:
+
+- the forecasts every **30 minutes**;
+- the station every **30 minutes** (one reading per hour at AEMET);
+- the warnings every **10 minutes**, once per region for all its towns.
+
+That is about 24 requests an hour per town. After a failure, the next attempt waits 5 minutes, 15 after a
+quota refusal. Only the values that changed are sent to Gladys, and every value at least every 6 hours. The
+integration refreshes by itself: it does not depend on the polling of Gladys.
+
+## Dashboard widget
+
+**AEMET forecast**: pick the town in the settings. It shows the temperature, chance of rain, wind and UV live,
+the next five days (sky, min / max, chance of rain) and the warnings, in the user's language. No buttons.
+
+## Scene trigger: new AEMET warning
+
+Fires once per warning, as soon as AEMET publishes it, even days ahead, and again when AEMET raises its level.
+The warnings already in force when the integration starts, or when a town is added, are not announced.
+
+Filters (all optional): **town**, **level** (yellow, orange, red), **phenomenon** (rain, snow, wind,
+thunderstorms, high and low temperatures, coastal events, fog, dust, avalanches, rissaga, thaw, other).
+
+Information passed on to the scene: town, level (`yellow`, `orange`, `red`), summary (level, phenomenon and
+period in the configured language), AEMET headline (Spanish), start and end (ISO), already in force.
+
+## Scene examples
+
+- **Warn me of an orange or red warning at the holiday home**: trigger "New AEMET warning", town = the house,
+  level = orange, red; action "Send a message" with the summary.
+- **Close the shutters before a wind storm**: trigger "New AEMET warning", phenomenon = wind, level = orange,
+  red; then close the shutters.
+- **Frost alert**: trigger on the "Minimum today" feature below 0 °C, send a message in the evening.
+
+## Troubleshooting
+
+- **"AEMET refused the API key"**: check the key (one line, no space); request a new one if needed.
+- **"AEMET limits the requests of this key"**: the key is shared with another tool, or too many towns: the
+  readings resume on their own.
+- **No device in Discovery**: run **Test the connection**; a wrong code is named there.
+- **No station values**: no AEMET station within 40 km, or its readings are late.
+- **Logs**: the integration only writes errors and its lifecycle; set `LOG_LEVEL=debug` to see every reading.
+  The key is never logged.
+
+## Limits
+
+- Spain only (AEMET's coverage).
+- Coastal warnings concern coastal zones, distinct from the land zone of a town: they may not reach a seaside
+  town.
+- The nearest station is chosen automatically and may not represent a town in the mountains.
+- The feature names are frozen when the device is added.
+- Developed without an AEMET account: the warning files were built after the CAP format AEMET documents.
+  Feedback welcome.
+
+## Configuration settings
+
+These are the settings AEMET asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| AEMET OpenData API key | `section` | No | The AEMET key is free: enter your email address on the AEMET OpenData page below, open the link you receive, and the key arrives by email a moment later. The integration reads AEMET every 30 minutes (warnings: every 10 minutes) to stay within the quota of the key. Not affiliated with AEMET. |
+| API key | `secret` | Yes |  |
+| Towns (INE codes) | `string` | No | Five-digit INE codes, separated by commas: one device per town, five at most. The action "Find the nearest town" fills it from a Gladys house. |
+| Language of the device texts | `select` | No | Feature names (set when the device is added), sky states, warnings and scene texts. |
+
+## How to install AEMET in Gladys
+
+1. In Gladys, open **Integrations**: AEMET appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-aemet:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-aemet](https://github.com/guim31/gladys-aemet).
+
+AEMET requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+AEMET is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-aemet) — [source of this documentation](https://github.com/guim31/gladys-aemet/blob/HEAD/docs/en.md)

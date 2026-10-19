@@ -1,0 +1,336 @@
+---
+title: "Gaz de Bordeaux smart home integration, free and open source"
+sidebar_label: "Gaz de Bordeaux"
+description: "Gas and electricity consumption and costs from your Gaz de Bordeaux customer account. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-gazdebordeaux.png"
+keywords:
+  - "gaz de bordeaux"
+  - "gaz de bordeaux smart home"
+  - "gladys gaz de bordeaux"
+  - "gaz de bordeaux gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-gazdebordeaux instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Gaz de Bordeaux","description":"Gas and electricity consumption and costs from your Gaz de Bordeaux customer account.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-gazdebordeaux","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-gazdebordeaux.png","type":"device","version":"1.0.10","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-15T14:16:17Z"}} />
+
+This integration connects Gladys to your **Gaz de Bordeaux customer account**
+([life.gazdebordeaux.fr](https://life.gazdebordeaux.fr)). It reads your **gas**
+and **electricity** consumption there, and its cost, to show them in Gladys,
+chart them and start scenes.
+
+It works over the Internet (**cloud** badge): nothing to install at home, no
+module on the meter.
+
+## Before you start
+
+- You need an account on [life.gazdebordeaux.fr](https://life.gazdebordeaux.fr)
+  that shows your consumption. Sign in once from a browser to check.
+- Gaz de Bordeaux publishes the consumption of a day **one or two days later**
+  (the time it takes the Gazpar or Linky meter to report it). Gladys therefore
+  always shows the **latest day read**, not today.
+- Gladys 5.2 or later is required.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. Fill in the **email** and **password** of your customer account.
+3. Adjust if needed:
+   - **Refresh interval (hours)**: how often the customer account is read,
+     every 6 hours by default (1 to 24). Readings only change once a day: there
+     is no point going lower.
+   - **Days of history to import**: past days sent to Gladys when a device is
+     created, 30 by default (up to 90), so the charts do not start empty.
+   - **Gas / electricity alert threshold (kWh/day)**: above it, the "High daily
+     consumption" trigger fires. 0 turns it off.
+4. Save. The **Test the connection** button checks the email and password and
+   lists the contracts found.
+5. Open the **Discovery** tab: one device is offered **per contract**
+   ("Gaz de Bordeaux – Gaz", "Gaz de Bordeaux – Électricité"). Add the ones
+   you want to follow.
+
+The password is a secret field: it is never written to the logs.
+
+## What you get
+
+Each "contract" device carries read-only sensors:
+
+| Feature                     | Unit | Contract    | Value                               |
+| --------------------------- | ---- | ----------- | ----------------------------------- |
+| Consumption of the day read | kWh  | all         | one value per day, dated by its day |
+| Cost of the day read        | €    | all         | one value per day, dated by its day |
+| Gas volume of the day read  | m³   | gas         | one value per day, dated by its day |
+| Month consumption           | kWh  | all         | since the 1st of the month          |
+| Month cost                  | €    | all         | since the 1st of the month          |
+| Year consumption            | kWh  | all         | year total given by Gaz de Bordeaux |
+| Year cost                   | €    | all         | year total given by Gaz de Bordeaux |
+| Daily consumption           | kWh  | electricity | sent to the Gladys Energy module    |
+
+Daily values are **dated by the day they describe**, not by the time of the
+read: the chart shows Monday's consumption on Monday, even when it arrived on
+Wednesday.
+
+When a device is created, the last days (see **Days of history to import**)
+are imported. They are never sent twice, even after a restart.
+
+### The connection badge
+
+- **Cloud**: the last read succeeded.
+- **Cloud with an orange dot**: the customer account answers, but the latest
+  reading is more than 4 days old. The meter may have stopped reporting:
+  check it on the Gaz de Bordeaux website.
+- **Unreachable**: the last read failed (see "Troubleshooting").
+
+## Actions
+
+- **Test the connection**: signs in with the email and password entered and
+  lists the contracts found.
+- **Refresh now**: reads the customer account right away and gives the latest
+  day read.
+- **My contract prices**: shows the current prices of your contracts, as
+  espaceclient.gazdebordeaux.fr gives them (see "Energy contracts").
+
+## Scenes
+
+The integration adds its cards to the scene editor, under **Integrations**.
+
+### Triggers
+
+- **New daily reading**: Gaz de Bordeaux published a new day. Optionally
+  filter on a contract or an energy. The following actions can read
+  `{{triggerEvent.data.date}}`, `{{triggerEvent.data.kwh}}`,
+  `{{triggerEvent.data.cost}}` and `{{triggerEvent.data.volume}}` (gas).
+- **High daily consumption**: the new day goes above the alert threshold set
+  in the configuration. Variables: `date`, `kwh`, `threshold`.
+- **Customer account unreachable**: reading failed after it had worked. Filter
+  on the reason (sign-in refused, request blocked, network, unexpected answer,
+  no contract). Variables: `reason`, `message`.
+- **Contract prices changed**: a current price of espaceclient.gazdebordeaux.fr
+  changed (kWh, peak/off-peak or subscription, incl. VAT). Filter on the
+  energy if you like. Variables: `offer`, `kwh_price`, `peak_price`,
+  `off_peak_price`, `subscription`, and the previous value of each
+  (`previous_kwh_price`…). The prices are read at every refresh and compared
+  as the website gives them: no false alarm from rounding. The alert comes
+  when the website shows the new price.
+
+A day, or a price change, is announced once, even after a restart. On the very
+first read nothing is announced: only the following changes are.
+
+Example: **Contract prices changed** then **Send a message** "New Gaz de
+Bordeaux price: \{\{triggerEvent.data.kwh_price\}\} €/kWh (was
+\{\{triggerEvent.data.previous_kwh_price\}\}), subscription
+\{\{triggerEvent.data.subscription\}\} €/month". Then create a new Gladys energy
+contract (see "When your prices change").
+
+### Actions
+
+- **Refresh the Gaz de Bordeaux readings**: reads the customer account right
+  away. Outputs: `success` and `contracts` (number of contracts read).
+- **Get a Gaz de Bordeaux consumption**: pick a contract and a period (last day
+  read, this month, this year). Outputs: `kwh`, `cost`, `volume`, `date` and
+  `available` (false when there is no data). Handy for a "Yesterday: 42 kWh,
+  €5.10" message.
+
+Example: every morning at 8:00, **Get a consumption** (last day read), then
+**Send a message** "Gas on \{\{date\}\}: \{\{kwh\}\} kWh, €\{\{cost\}\}".
+
+## Dashboard
+
+Add the **Gaz de Bordeaux consumption** widget to a dashboard. It shows:
+
+- the consumption and cost of the latest day read and of the month;
+- a bar chart of the last 30 days;
+- the energy, the latest day read, the gas volume, the current price (read on
+  espaceclient), the year total, the time of the last read and the connection
+  state;
+- a **Refresh** button.
+
+In the widget settings, pick the contract to show; left empty, it is the
+first one.
+
+## Energy contracts (electricity)
+
+The integration adds contract templates to the Gladys contract wizard
+(**Energy** → the meter contract), so Gladys computes the cost of your
+electricity at the Gaz de Bordeaux prices. One template per offer and option:
+
+| Offer               | Prices                                                             | Templates           |
+| ------------------- | ------------------------------------------------------------------ | ------------------- |
+| NovaFixe Élec       | locked for 3 years at subscription, 10% below the regulated tariff | Base, Peak/Off-peak |
+| NovaFixe Bonus Élec | like NovaFixe, plus €100 off the first year                        | Base, Peak/Off-peak |
+| NovaFlex Élec       | indexed on the regulated tariff (TRV), kWh excl. taxes 5% below it | Base, Peak/Off-peak |
+
+**Your offer is not in the list?** (for example **Ecodigo Elec**, or an older
+offer no longer sold): pick the **My contract** template below, it works for
+every offer. Your offer is written in your customer account, line "Votre
+tarif".
+
+### The simplest: the "My contract" templates
+
+The **Gaz de Bordeaux – My contract – Base** and **– Peak/Off-peak**
+templates take **your own prices**, for every offer (Ecodigo, NovaFixe,
+NovaFlex…). They are the ones of your customer account
+(**espaceclient.gazdebordeaux.fr**, line "Votre prix actuel"), given by the
+**My contract prices** button:
+
+1. Click **My contract prices** (**Configuration** tab of the integration).
+2. In Gladys, **Energy** → the contract of the Gaz de Bordeaux electricity
+   meter, pick the **My contract** template of your option (Base or
+   Peak/Off-peak).
+3. Type the prices the button gave: kWh price (Peak/Off-peak: peak and
+   off-peak prices, and the off-peak hours) and subscription per month.
+
+The prices are in the contract, as with the other templates: the wizard and
+the JSON of the contract show them. Gladys gives an integration no way to fill
+the wizard in, so they are typed once. When they change, the **Contract
+prices changed** scene trigger tells you: create a new contract (see "When
+your prices change").
+
+### Your prices: the "My contract prices" button
+
+A fixed-price offer keeps **the price of its subscription date**, an indexed
+offer (Ecodigo Elec) moves with taxes and market: your price is not
+necessarily the one of today's grid. The **My contract prices** button
+(**Configuration** tab) reads your current prices on
+**espaceclient.gazdebordeaux.fr** (same email and password), line "Votre prix
+actuel" of the page of your contract, and gives them as they are, without any
+computation. Example:
+
+> Electricity, OFFRE ECODIGO ELEC 100% ÉLECTRICITÉ VERTE (BASE, 6 kVA):
+> 0.160164 €/kWh, subscription 15.87 €/month.
+
+These prices include VAT and taxes (CTA in the subscription, excise in the
+kWh), like the contracts Gladys offers. Copy them into the Gladys contract wizard
+(**My contract** template, or the one of your offer). Type them with a
+decimal **point** (15.87), as the button writes them: a pasted comma can be
+dropped by the field (15,87 becomes 1587, a subscription of about 51 € a day on
+the energy chart). If that happened, correct the price in the contract: that
+is a typo, not a price change.
+
+For an electricity contract, the button also gives these prices as a Gladys
+tariff (JSON), ready to paste where Gladys asks for the tariff of a contract.
+It is the tariff a **My contract** contract
+gets. Peak/Off-peak adds an off-peak rule with your
+hours (when espaceclient gives them).
+
+```json
+{
+  "tariff_version": 1,
+  "components": [
+    { "key": "energy", "kind": "consumption", "rules": [], "fallback": { "price": 0.160164 } },
+    { "key": "subscription", "kind": "fixed", "amount": 15.87, "per": "month" }
+  ]
+}
+```
+
+When the customer account cannot be read, the button says so: copy the prices
+from the page of your contract on espaceclient.gazdebordeaux.fr.
+
+### When your prices change
+
+Leave the **end date** of your Gladys contract
+empty while your prices do not change. They may change along the way: a new grid (NovaFlex, Ecodigo Elec, end
+of a fixed-price period), or a tax (excise, VAT) that changes the price incl.
+VAT. Gaz de Bordeaux tells you, and so does the **Contract prices changed** scene trigger; the **My contract prices** button then gives the new prices.
+
+1. On the current contract, set the **end date** to the day before the change.
+2. Create a **new contract** starting on the day of the change, with the new
+   prices.
+
+The past days keep their old prices that way. Do not edit the prices of the
+existing contract: Gladys would reprice the whole history since the start of
+the contract.
+
+### The default prices: the official grids
+
+The values offered by default are those of the **official Gaz de Bordeaux
+price grids** (incl. VAT, here the 1 October 2026 ones). They are downloaded
+every month from gazdebordeaux.fr: when a price changes, a new version of the
+integration offers the new prices to the contracts created afterwards. A
+contract already created keeps its prices: see **When your prices change**.
+
+| Power  | Subscription / month | NovaFixe: Base kWh | NovaFixe: peak / off-peak | NovaFlex: Base kWh | NovaFlex: peak / off-peak |
+| ------ | -------------------- | ------------------ | ------------------------- | ------------------ | ------------------------- |
+| 3 kVA  | 12.13                | 0.18373            | –                         | 0.19190            | –                         |
+| 6 kVA  | 15.87                | 0.18373            | 0.19648 / 0.14669         | 0.19190            | 0.20536 / 0.15280         |
+| 9 kVA  | 19.88                | 0.18233            | 0.19648 / 0.14669         | 0.19042            | 0.20536 / 0.15280         |
+| 12 kVA | 23.76                | 0.18233            | 0.19648 / 0.14669         | 0.19042            | 0.20536 / 0.15280         |
+| 15 kVA | 27.40                | 0.18233            | 0.19648 / 0.14669         | 0.19042            | 0.20536 / 0.15280         |
+| 18 kVA | 31.14                | –                  | 0.19648 / 0.14669         | –                  | 0.20536 / 0.15280         |
+| 24 kVA | 39.13                | –                  | 0.19648 / 0.14669         | –                  | 0.20536 / 0.15280         |
+| 30 kVA | 46.46                | –                  | 0.19648 / 0.14669         | –                  | 0.20536 / 0.15280         |
+| 36 kVA | 53.88                | –                  | 0.19648 / 0.14669         | –                  | 0.20536 / 0.15280         |
+
+The subscription is the same for the three offers. NovaFixe Bonus Élec has the
+NovaFixe Élec prices.
+
+### Good to know
+
+- **Base** works with the daily consumption this integration sends to the
+  Energy module.
+- **Peak/Off-peak** needs a **half-hourly** consumption (a Linky meter read
+  every 30 minutes by another integration). With the daily consumption only,
+  Gladys cannot tell which kWh were off-peak: do not use this template then
+- **Gas is not covered**: Gladys energy contracts are for electricity only. The
+  gas cost stays the one given by Gaz de Bordeaux ("Cost of the day read",
+  "Month cost"… features).
+
+## Troubleshooting
+
+The status message of the **Configuration** tab says what is wrong:
+
+- **Sign-in refused**: the email or password is wrong. Use the ones of
+  [life.gazdebordeaux.fr](https://life.gazdebordeaux.fr) and check you can
+  sign in from a browser.
+- **The website blocked the request**: the Gaz de Bordeaux website sometimes
+  filters automated requests. The integration retries at the next refresh; if
+  it lasts, open an issue on the GitHub repository.
+- **Unreachable**: Gladys has no Internet access, or the website is down.
+- **No contract**: the account has no visible gas or electricity contract.
+
+The integration logs (Gladys → Integrations → Gaz de Bordeaux → logs) give the
+details. They never contain the password nor the session token.
+
+This integration is not published by Gaz de Bordeaux: it reads the same data
+as your customer account. If the website changes, it may stop working until
+an update.
+
+## Configuration settings
+
+These are the settings Gaz de Bordeaux asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Enter the email and password of your Gaz de Bordeaux customer account (the ones of the life.gazdebordeaux.fr website). The integration reads your consumption from it a few times a day: Gaz de Bordeaux publishes each day's reading one or two days later. One device is offered per contract (gas, electricity). |
+| Email | `string` | Yes | The email you sign in to your Gaz de Bordeaux customer account with. |
+| Password | `secret` | Yes |  |
+| Refresh interval (hours) | `number` | No | How often the customer account is read. The readings change once a day: every 6 hours is plenty. |
+| Days of history to import | `number` | No | Daily readings imported into Gladys when a device is created, so its charts do not start empty. |
+| Gas alert threshold (kWh/day) | `number` | No | The "High daily consumption" scene trigger fires when a day of gas goes above it. 0 turns it off. |
+| Electricity alert threshold (kWh/day) | `number` | No | The "High daily consumption" scene trigger fires when a day of electricity goes above it. 0 turns it off. |
+
+## How to install Gaz de Bordeaux in Gladys
+
+1. In Gladys, open **Integrations**: Gaz de Bordeaux appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-gazdebordeaux:1.0.10`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-gazdebordeaux](https://github.com/prohand/gladys-gazdebordeaux).
+
+Gaz de Bordeaux requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Gaz de Bordeaux is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-gazdebordeaux) — [source of this documentation](https://github.com/prohand/gladys-gazdebordeaux/blob/HEAD/docs/en.md)

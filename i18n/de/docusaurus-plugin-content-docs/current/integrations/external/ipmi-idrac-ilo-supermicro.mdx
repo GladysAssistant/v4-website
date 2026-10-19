@@ -1,0 +1,303 @@
+---
+title: "IPMI (iDRAC, iLO, Supermicro) Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "IPMI (iDRAC, iLO, Supermicro)"
+description: "Server über IPMI (iDRAC, iLO, Supermicro …): Betrieb, Zustand, Watt, Temperaturen, Lüfter, SEL. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ipmi.png"
+keywords:
+  - "ipmi (idrac, ilo, supermicro)"
+  - "ipmi (idrac, ilo, supermicro) smart home"
+  - "gladys ipmi (idrac, ilo, supermicro)"
+  - "ipmi (idrac, ilo, supermicro) gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-ipmi instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"IPMI (iDRAC, iLO, Supermicro)","description":"Server über IPMI (iDRAC, iLO, Supermicro …): Betrieb, Zustand, Watt, Temperaturen, Lüfter, SEL.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ipmi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ipmi.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T08:15:18Z"}} />
+
+Rack- und Tower-Server haben einen Management-Controller (BMC), der sie
+ständig überwacht, auch ausgeschaltet: Dell iDRAC, HP iLO, Supermicro,
+ASRock Rack, Lenovo IMM, Fujitsu iRMC … Fast alle sprechen **IPMI über
+LAN**, das Protokoll der älteren und der Einstiegsmodelle, die in Homelabs
+so verbreitet sind (Dell R710, R720, HP DL380 G7, Supermicro X9, X10). Diese
+Integration liest es: ein Gerät pro Server mit Betriebszustand, Zustand,
+Leistungsaufnahme, Temperaturen und Lüftern. Szenen können reagieren, wenn
+ein Sensor einen Grenzwert verlässt, ein neuer Eintrag im
+Systemereignisprotokoll (SEL) erscheint oder ein Server ein- oder
+ausgeschaltet wird, und ein Widget fasst deine Server auf dem Dashboard
+zusammen. Die Stromsteuerung (Einschalten, sanftes Herunterfahren) ist
+möglich, **standardmäßig aus**. Alles bleibt in deinem lokalen Netzwerk.
+
+Für einen neueren Controller (iDRAC 8 und 9, iLO 4 bis 6) liefert die
+[Redfish-Integration](https://github.com/guim31/gladys-redfish) dasselbe
+Gerät mit einer reichhaltigeren API; diese hier ist für Controller, die nur
+IPMI sprechen, oder wenn du IPMI bevorzugst.
+
+**Ohne die Hardware entwickelt: Rückmeldungen willkommen.** Getestet gegen
+den BMC-Simulator von OpenIPMI (`ipmi_sim`, Docker) mit dem echten
+`ipmitool`: Sitzungen, Sensoren und Grenzwerte, Betriebszustand,
+Ereignisprotokoll, Befehle, falsches Passwort, fehlende Berechtigung,
+nicht erreichbarer BMC. Die Sensornamen der Hersteller stammen aus deren
+Dokumentation. Erzähl uns in
+[den Issues](https://github.com/guim31/gladys-ipmi/issues), wie es auf
+deinem Server läuft.
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Einen Server, dessen BMC **IPMI über LAN** aktiviert hat: Dell iDRAC 6
+  bis 9, HP iLO 2 bis 5, Supermicro, ASRock Rack, Lenovo IMM, Fujitsu iRMC,
+  die meisten anderen.
+- Den BMC vom Gladys-Rechner aus über UDP-Port 623 erreichbar.
+- Ein IPMI-Konto auf dem BMC. Die Berechtigung **User** reicht zum Lesen;
+  die Stromsteuerung braucht **Operator** (oder Administrator).
+- Bis zu drei BMCs pro Installation der Integration.
+
+## Erste Schritte
+
+### 1. Den BMC vorbereiten
+
+- **Aktiviere IPMI über LAN**: Auf vielen BMCs standardmäßig aus. Auf
+  einem iDRAC: _iDRAC-Einstellungen → Netzwerk → IPMI-Einstellungen → IPMI
+  über LAN aktivieren_. Auf einem iLO: _Administration → Access Settings →
+  IPMI/DCMI over LAN_. Bei Supermicro und ASRock Rack ist es an.
+- Leg wenn möglich ein eigenes Konto an, mit der Berechtigung User, solange
+  du die Stromsteuerung nicht willst. Sein Passwort darf höchstens
+  20 Zeichen haben (16 bei IPMI 1.5).
+- Wenn du `ipmitool` zur Hand hast, prüf es von einem anderen Rechner aus:
+  `ipmitool -I lanplus -H <Adresse> -U <Benutzer> -P <Passwort> chassis status`.
+
+### 2. Die Integration konfigurieren
+
+Im Tab **Konfiguration** der Integration:
+
+- **BMC-Adresse**: `192.168.1.30` oder `idrac.lan`, mit `:Port`, falls
+  nicht 623 (`idrac.lan:6230`). Eine IPv6-Adresse geht auch.
+- **Benutzername** und **Passwort** des IPMI-Kontos.
+- **Name** (optional): Wird im Gerätenamen, im Widget und in den
+  Nachrichten angezeigt. Standardmäßig der Produktname, den der BMC meldet
+  (`PowerEdge R720`), sonst seine Adresse.
+- Bis zu zwei weitere BMCs in den nächsten Abschnitten.
+- **IPMI-Schnittstelle**: IPMI 2.0 (`lanplus`, verschlüsselt),
+  standardmäßig, für jeden BMC seit etwa 2008. IPMI 1.5 (`lan`) nur für
+  einen älteren BMC, der IPMI 2.0 ablehnt.
+- **Aktualisierungsintervall**: 30 Sekunden bis 5 Minuten (standardmäßig
+  1 Minute).
+- **Stromsteuerung erlauben**: siehe [Stromsteuerung](#stromsteuerung).
+  Standardmäßig aus.
+- **Sprache der Namen**: Sprache der Funktionsnamen (beim Hinzufügen des
+  Servers festgelegt), der Zustandstexte und der Szenen-Ergebnisse.
+
+Klicke dann auf **Verbindung testen**: eine Zeile pro BMC, mit dem
+gefundenen Server, der Zahl der Sensoren und ob er die DCMI-Leistungsmessung
+anbietet.
+
+### 3. Den Server hinzufügen
+
+Der Server erscheint im Tab **Entdecken** der Integration: Füge ihn hinzu.
+Nur die hinzugefügten Server erhalten Werte; das Widget und die
+Szenen-Auslöser funktionieren für alle Server, hinzugefügt oder nicht.
+
+## Das Gerät
+
+Ein Gerät pro BMC. Nur die Funktionen, die der BMC liefert, werden
+vorgeschlagen:
+
+| Funktion                          | Wert                                                             |
+| --------------------------------- | ---------------------------------------------------------------- |
+| Stromversorgung                   | An oder aus. Immer schreibgeschützt (siehe Stromsteuerung)       |
+| Zustand                           | OK, Warnung oder Kritisch: Gehäusefehler und Sensoren            |
+| Leistungsaufnahme                 | Aufgenommene Watt (DCMI-Messung oder ein Watt-Sensor)            |
+| Zulufttemperatur                  | Die Luft, die in den Server strömt, in °C                        |
+| Prozessortemperatur               | Der heißeste Prozessor, in °C                                    |
+| Höchste Temperatur                | Der heißeste aller Temperatursensoren, in °C                     |
+| Lüfter (U/min) / Lüfter (%)       | Die mittlere Drehzahl der Lüfter, in der Einheit des BMC         |
+| Sensoren außerhalb der Grenzwerte | Wie viele Sensoren einen Grenzwert überschritten haben; 0 ist OK |
+
+Das Gerät zeigt in seinen Parametern auch die Seriennummer und die
+BMC-Firmware. Antwortet der BMC nicht, trägt das Gerät das Abzeichen
+„nicht erreichbar“, und der Status unter dem Integrationsnamen sagt warum.
+
+Ein Sensor ist **außerhalb der Grenzwerte**, wenn der BMC meldet, dass er
+einen seiner Grenzwerte überschritten hat (nicht kritisch: Warnung;
+kritisch oder nicht behebbar: Kritisch), oder wenn ein Zustandssensor einen
+Ausfall meldet („Failure detected“, „AC lost“, „Redundancy Lost“ …). Die
+Grenzwerte sind die des BMC: Die Integration fügt keine hinzu.
+
+## Dashboard
+
+Das Widget **Server (IPMI)** hat zwei Modi:
+
+- **ohne gewählten Server**: eine Zeile pro Server, an oder aus, Zustand
+  und Leistungsaufnahme, orange oder rot bei Problemen;
+- **mit einem gewählten Server**: Leistungsaufnahme, Zuluft- und höchste
+  Temperatur als Kacheln, dann Stromversorgung, Zustand, Lüfter und die
+  Sensoren außerhalb der Grenzwerte. Ist die Stromsteuerung erlaubt,
+  erscheint die Taste **Herunterfahren** (Server an) oder **Einschalten**
+  (Server aus), jeweils mit Bestätigung.
+
+**Aktualisieren** liest die BMCs neu.
+
+## Szenen
+
+### Auslöser
+
+- **Sensor außerhalb des Grenzwerts**: Ein Sensor überschreitet einen
+  Grenzwert oder meldet einen Ausfall, oder wechselt von Warnung zu
+  Kritisch. Er lässt sich auf einen Server und einen Schweregrad (Warnung
+  oder Kritisch) beschränken. Variablen: Server, Sensor, Messwert,
+  Schweregrad. Höchstens fünf pro Server und Lesevorgang; ein Sensor, der um seinen Grenzwert pendelt, wird erst nach 30 Minuten erneut gemeldet, außer er verschlechtert sich.
+- **Neuer Eintrag im Systemereignisprotokoll**: ein neuer Eintrag im SEL
+  eines Servers (Grenzwert überschritten, Netzteil ausgefallen,
+  Speicherfehler, Gehäuse geöffnet …). Bei jedem Lesen geprüft, höchstens
+  einmal pro Minute; höchstens drei pro Lesevorgang. Variablen: Server,
+  Meldung, Datum.
+- **Server eingeschaltet** und **Server ausgeschaltet**: egal wodurch
+  (Taste, BMC, Stromausfall). Variable: Server.
+
+Jeder Auslöser lässt sich auf einen Server beschränken. Der erste
+Lesevorgang nach der Installation speichert nur die Zustände: Für einen
+Sensor oder Eintrag, der schon da war, wird nichts gemeldet.
+
+### Aktionen
+
+- **Zustand eines Servers**: liest einen Server und gibt den nächsten
+  Aktionen seinen Namen, ob der BMC antwortet, Stromversorgung, Zustand,
+  Leistungsaufnahme, Temperaturen, Lüfterdrehzahl, die Sensoren außerhalb
+  der Grenzwerte und eine fertige Zusammenfassung („r720: an, Zustand OK,
+  172 W, Zuluft 23 °C …“).
+- **Strombefehl**: Einschalten, sanftes Herunterfahren (ACPI),
+  erzwungener Neustart (Reset) oder Aus- und Einschalten eines Servers.
+  Braucht **Stromsteuerung erlauben**.
+
+### Szenen-Ideen
+
+- Wenn ein **Sensor außerhalb des Grenzwerts** mit Schweregrad Kritisch
+  auslöst, schick den Sensor und seinen Messwert per Telegram.
+- Um 1 Uhr, wenn niemand zu Hause ist, **Strombefehl** „Sanft
+  herunterfahren (ACPI)“ für den Lab-Server; um 7 Uhr „Einschalten“.
+- Wenn ein **Neuer Eintrag im Systemereignisprotokoll** auf dem NAS-Server
+  erscheint, benachrichtige mit seiner Meldung.
+
+## Stromsteuerung
+
+Standardmäßig aus. Sobald **Stromsteuerung erlauben** aktiviert ist, zeigt
+das Widget die Taste **Herunterfahren** (Server an) oder **Einschalten**
+(Server aus), jeweils mit Bestätigung, und die Szenen-Aktion
+**Strombefehl** wird angenommen.
+
+**Die Funktion Stromversorgung bleibt schreibgeschützt**, auch mit erlaubter
+Stromsteuerung: Ein Sprachassistent („alles aus“) darf nie einen Server
+herunterfahren.
+
+- **Einschalten** sendet `chassis power on`.
+- **Herunterfahren** sendet ein **sanftes Herunterfahren**
+  (`chassis power soft`: Der BMC drückt kurz die Einschalttaste, das
+  Betriebssystem fährt sauber herunter, sofern es ACPI unterstützt). **Nie
+  ein hartes Ausschalten**.
+- Der erzwungene Neustart (`chassis power reset`) und das Aus- und
+  Einschalten (`chassis power cycle`) gibt es nur in der Szenen-Aktion
+  **Strombefehl**, ausdrücklich gewählt, und nicht bei einem
+  ausgeschalteten Server.
+
+Der Betriebszustand wird direkt vor jedem Befehl neu gelesen: Nichts wird
+gesendet, wenn der Server schon im gewünschten Zustand ist. Der Server wird
+15 Sekunden nach dem Befehl neu gelesen, danach im üblichen Intervall.
+
+## Fehlerbehebung
+
+- **„antwortet nicht“**: Prüf die Adresse, ob IPMI über LAN im BMC
+  aktiviert ist und ob UDP-Port 623 vom Gladys-Rechner erreichbar ist
+  (anderes VLAN, Firewall?). Ein BMC hinter NAT braucht eine
+  Portweiterleitung.
+- **„Benutzername oder Passwort abgelehnt“**: Prüf das Konto in der
+  Weboberfläche des BMC und ob es für IPMI freigegeben ist. Manche BMCs
+  sperren ein Konto nach einigen Fehlversuchen.
+- **„dem Konto fehlt die Berechtigung“**: Gib dem Konto auf dem LAN-Kanal
+  mindestens die Berechtigung User (Operator für die Stromsteuerung).
+- **Nichts mit IPMI 2.0 auf einem alten BMC**: Probier die
+  **IPMI-Schnittstelle** „IPMI 1.5 (lan)“.
+- **Eine Funktion fehlt**: Der BMC liefert sie nicht (kein Zuluftsensor,
+  weder DCMI noch Watt-Sensor, Prozessorsensoren nur bei eingeschaltetem
+  Server lesbar).
+- **Ein Befehl abgelehnt**: Dem Konto fehlt die Berechtigung Operator.
+
+## Grenzen
+
+- Ohne die Hardware entwickelt: getestet gegen den OpenIPMI-Simulator, die
+  Sensornamen der Hersteller stammen aus Dokumentation, noch nicht von
+  echten Servern.
+- Sensornamen sind frei von jedem Hersteller gewählt: Zuluft- und
+  Prozessortemperatur werden über ihre IPMI-Entität gefunden, dann über
+  ihren Namen. Ein Server, der sie anders nennt, zeigt sie nur in der
+  höchsten Temperatur.
+- Das SEL wird über seine letzten 20 Einträge gelesen, wenn es sich
+  geändert hat; ein langes SEL zu durchlaufen dauert auf manchen BMCs
+  einige Sekunden.
+- Kein sanfter Neustart: IPMI hat keinen. Fahr sanft herunter und schalte
+  dann ein.
+- IPMI 2.0 sendet das Passwort gehasht, nie im Klartext, aber das Protokoll
+  ist alt: Halte die BMCs in einem eigenen Netz.
+
+## Danksagung
+
+Die Integration steuert [ipmitool](https://github.com/ipmitool/ipmitool)
+(BSD 3-Clause), das in ihrem Image installiert ist. Die Tests spielen
+Ausgaben ab, die mit dem Simulator von
+[OpenIPMI](https://github.com/cminyard/openipmi) aufgenommen wurden
+(LGPL/GPL, nur für Tests genutzt, nicht verteilt). IPMI ist eine
+Spezifikation von Intel, HP, NEC und Dell. Diese Integration ist nicht mit
+Dell, HP, HPE, Supermicro, ASRock Rack, Lenovo, Fujitsu oder Intel
+verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt IPMI (iDRAC, iLO, Supermicro) in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Server | `section` | Nein | Überwache deine Server über ihren Management-Controller (BMC) und IPMI über LAN: Dell iDRAC 6 bis 9, HP iLO 2 bis 5, Supermicro, ASRock Rack, Lenovo IMM, Fujitsu iRMC. Aktiviere IPMI über LAN im BMC, gib seine Adresse und ein Konto ein und füge den Server im Tab „Entdecken“ hinzu. |
+| BMC-Adresse | `string` | Nein | IP-Adresse oder Hostname des iDRAC, iLO oder eines anderen BMC, mit :Port, falls nicht 623: 192.168.1.30, idrac.lan oder idrac.lan:6230. |
+| Benutzername | `string` | Nein | Ein IPMI-Konto des BMC: Die Berechtigung User reicht, Operator, um die Stromsteuerung zu erlauben. |
+| Passwort | `secret` | Nein |  |
+| Name (optional) | `string` | Nein | Wird im Gerätenamen, im Widget und in den Nachrichten angezeigt. Standardmäßig der Produktname, den der BMC meldet, oder seine Adresse. |
+| Zweiter BMC (optional) | `section` | Nein | Ein weiterer Server mit eigener BMC-Adresse und eigenem Konto. |
+| Adresse des zweiten BMC | `string` | Nein |  |
+| Zweiter Benutzername | `string` | Nein |  |
+| Zweites Passwort | `secret` | Nein |  |
+| Zweiter Name (optional) | `string` | Nein |  |
+| Dritter BMC (optional) | `section` | Nein | Ein weiterer Server mit eigener BMC-Adresse und eigenem Konto. |
+| Adresse des dritten BMC | `string` | Nein |  |
+| Dritter Benutzername | `string` | Nein |  |
+| Drittes Passwort | `secret` | Nein |  |
+| Dritter Name (optional) | `string` | Nein |  |
+| Optionen | `section` | Nein | Nur die zu Gladys hinzugefügten Server erhalten Werte; die Szenen-Auslöser und das Widget funktionieren für alle Server. |
+| IPMI-Schnittstelle | `select` | Nein | IPMI 2.0 (lanplus, verschlüsselt) für jeden BMC seit etwa 2008. IPMI 1.5 (lan) nur für einen älteren BMC, der es ablehnt. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft jeder BMC gelesen wird: Betriebszustand, Sensoren und das Ereignisprotokoll (SEL), wenn es sich geändert hat. |
+| Stromsteuerung erlauben | `boolean` | Nein | Einschalten und sanftes Herunterfahren (ACPI, das System fährt sauber herunter) per Widget und Szenen; erzwungener Neustart und Aus-/Einschalten nur per Szene. Nie hartes Ausschalten, nie per Schalter oder Sprachassistent. Konto mit Berechtigung Operator. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Hinzufügen eines Servers festgelegt), der Zustandstexte, der Szenen-Ergebnisse und des Verbindungstests. |
+
+## So installierst du IPMI (iDRAC, iLO, Supermicro) in Gladys
+
+1. Öffne in Gladys **Integrationen**: IPMI (iDRAC, iLO, Supermicro) erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-ipmi:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-ipmi](https://github.com/guim31/gladys-ipmi).
+
+IPMI (iDRAC, iLO, Supermicro) benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+IPMI (iDRAC, iLO, Supermicro) ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-ipmi) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-ipmi/blob/HEAD/docs/de.md)

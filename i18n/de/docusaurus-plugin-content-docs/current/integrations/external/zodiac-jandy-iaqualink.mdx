@@ -1,0 +1,175 @@
+---
+title: "Zodiac / Jandy iAquaLink Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Zodiac / Jandy iAquaLink"
+description: "Zodiac / Jandy iAquaLink pools: temperatures, pumps, heating, lights, eXO chlorinators. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iaqualink.png"
+keywords:
+  - "zodiac / jandy iaqualink"
+  - "zodiac / jandy iaqualink smart home"
+  - "gladys zodiac / jandy iaqualink"
+  - "zodiac / jandy iaqualink gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-iaqualink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zodiac / Jandy iAquaLink","description":"Zodiac / Jandy iAquaLink pools: temperatures, pumps, heating, lights, eXO chlorinators.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-iaqualink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iaqualink.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T11:40:19Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Brings your iAquaLink pool systems into Gladys, through the iAquaLink cloud
+(the one of the iAquaLink mobile app):
+
+- **Jandy iAquaLink panels** (iQ20, AquaLink RS with an iAquaLink module):
+  pool, spa and air temperatures, pool and spa pumps, pool, spa and solar
+  heaters, pool and spa set points, lights (on/off, brightness of dimmable
+  lights), auxiliary outputs, and pH, ORP and salinity when the panel reports
+  them;
+- **Zodiac eXO iQ chlorinators**: water temperature, pH, ORP, their set
+  points, chlorine production level, chlorine production on/off, boost, low
+  mode, filter pump, auxiliary outputs, heating (on/off and set point) when a
+  heating module is present, and a status text (error code, low salt).
+
+> This integration has **never been tested on a real iAquaLink account or
+> system yet**: it is a port of the
+> [iaqualink-py](https://github.com/flz/iaqualink-py) library used by Home
+> Assistant, checked against sample answers only. Feedback is welcome on the
+> [Gladys forum](https://community.gladysassistant.com/t/10385).
+>
+> Unofficial: not affiliated with Zodiac, Jandy or Fluidra.
+
+## Set up
+
+1. In Gladys, open **Integrations**, install **Zodiac / Jandy iAquaLink**.
+2. In its configuration, enter the **email** and **password** of your
+   iAquaLink account (the ones you use in the iAquaLink app). The password is
+   a secret field: Gladys never shows it again, and the integration sends it
+   only to the iAquaLink sign-in service.
+3. The status shows **Connected to iAquaLink** and the number of pool systems.
+   Open the **Discovery** tab and add your systems.
+
+The **Test the connection** button signs in and reads the account at once (at
+most every 30 seconds), and gives a short summary.
+
+## Options
+
+| Option                           | Default | What it does                                                                                                        |
+| -------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
+| Allow commands from Gladys       | off     | The pool is only read until you tick it. Then: pumps, heaters, set points, lights and the eXO switches.             |
+| Also allow the auxiliary outputs | off     | The plain auxiliaries and valve actuators of the panel, and the aux outputs of the eXO. Needs the option above too. |
+| Show the unnamed auxiliaries     | off     | Auxiliaries still named "Aux 3", "Aux V12" or "Extra Aux" on the panel are left out unless this box is ticked.      |
+| Refresh interval (seconds)       | 60      | How often the pool is read: 30 seconds at the fastest.                                                              |
+| Language                         | French  | Names of the features of the systems added from now on, and the status text.                                        |
+
+An auxiliary output can drive anything wired to it: a cleaner, a water
+feature, but also a **valve** (spa spillover, solar...), and the iAquaLink
+valve actuators (SJVA) are auxiliaries too. That is why they have their own
+option, off by default: tick it only if commanding them from Gladys is safe
+for your installation.
+
+## Limits of use
+
+- iAquaLink publishes no API nor quota: the integration uses the endpoints
+  of the iAquaLink app, like Home Assistant. It reads every system at the
+  refresh interval (two requests for a panel, one for an eXO), the list of
+  systems every 30 minutes, and never sends more than 20 requests a minute,
+  commands included.
+- After an error it waits 1, 2, 5, 10 then 15 minutes; when iAquaLink asks to
+  slow down (HTTP 429) it pauses for the time asked (15 minutes otherwise),
+  commands included.
+- A refused email or password is not tried again for 6 hours, or at once
+  after you change it (or with the Test button), so the account is not locked.
+- The session (IdToken) is renewed before it expires; a refused refresh token
+  leads to one new sign-in, never more than one every 5 minutes. A sign-in
+  without any answer (internet box still starting after a power cut...)
+  follows the normal pauses of 1 to 15 minutes. After three sign-ins in a row
+  that the service answers badly (5xx error, unreadable answer), the next try
+  waits 1 hour, or a change of the email or the password, or the "Test the
+  connection" button.
+
+## How commands work
+
+The pumps, heaters and plain auxiliaries of an iAquaLink panel only know a
+**toggle** command. So, for each command, the integration:
+
+1. reads the state of the panel again, right before (within 4 seconds:
+   Gladys waits 5 seconds for the answer; a slower read sends nothing);
+2. refuses when the panel is offline, or when the state of the equipment
+   cannot be read;
+3. sends nothing when the equipment is already in the asked state;
+4. otherwise toggles once. For the next 60 seconds, unless the panel already
+   reports the change, the equipment is expected in its new state: asking it
+   again succeeds without sending anything, asking the old state is refused
+   (a second toggle would undo the first one).
+
+Commands of one system run one at a time. Dimmable and colour lights, set
+points and every eXO command take an absolute value instead. Set points must
+stay between 1 and 40 °C (34 and 104 °F); a panel paired with a heat pump
+receives them through the heat pump command, like in the iAquaLink app.
+
+A colour light turned on starts on its first colour (the effects are not
+handled yet).
+
+## Not supported yet
+
+- Robot cleaners (i2d, Vortex, Cyclobat), standalone Zodiac heat pumps and
+  iQPump: they are counted as "not supported yet" in the status.
+- OneTouch scenes, the variable-speed pumps of a panel, IntelliCenter light
+  zones, colour effects, the controls of a heat pump paired with a panel.
+
+## Privacy
+
+The email and password stay in the Gladys configuration. The integration
+keeps only, in its `/data` volume, the features and auxiliaries already seen
+and the temperature unit of each system, so the Discovery tab stays the same
+after a restart. No token or password is ever written to disk or to the logs.
+
+## Licence and credits
+
+Apache License 2.0. The iAquaLink logic is ported from
+[flz/iaqualink-py](https://github.com/flz/iaqualink-py) (BSD-3-Clause, see
+`THIRD_PARTY_NOTICES.md`).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Zodiac / Jandy iAquaLink in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your iAquaLink pool | `section` | Nein | Brings your iAquaLink pool systems into Gladys through the iAquaLink cloud: Jandy iAquaLink panels (pool, spa and air temperatures, pumps, heaters and set points, lights, auxiliaries) and Zodiac eXO iQ chlorinators (chlorine production, boost, pH, ORP, water temperature, status). Enter the email and password of your iAquaLink app account, then add your systems from the Discovery tab. Commands stay off until you allow them below. The cloud is read every minute by default (30 seconds at the fastest), with longer pauses after errors. Unofficial, not affiliated with Zodiac, Jandy or Fluidra; never tested on a real system yet. |
+| iAquaLink email | `string` | Ja | The email you sign in to the iAquaLink app with. |
+| iAquaLink password | `secret` | Ja | Kept by Gladys, sent only to the iAquaLink sign-in service, never shown again nor logged. |
+| Allow commands from Gladys | `boolean` | Nein | Off by default: the pool is only read. Once ticked: pumps, heaters, set points, lights and the switches of the eXO chlorinator. Each command reads the state again just before it is sent. |
+| Also allow the auxiliary outputs | `boolean` | Nein | The plain auxiliaries of the panel, its valve actuators and the aux outputs of the eXO can drive anything, a valve included: they stay read-only unless this box (and the one above) is ticked. |
+| Show the unnamed auxiliaries | `boolean` | Nein | Auxiliaries still named "Aux 3", "Aux V12" or "Extra Aux" on the panel are usually unused: they are left out unless this box is ticked. |
+| Refresh interval (seconds) | `number` | Nein | How often the pool is read: 30 seconds at the fastest, to stay gentle with the iAquaLink cloud. |
+| Language of the feature names | `select` | Nein | Used for the names of the features of the systems added from now on, and for the status text. |
+
+## So installierst du Zodiac / Jandy iAquaLink in Gladys
+
+1. Öffne in Gladys **Integrationen**: Zodiac / Jandy iAquaLink erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-iaqualink:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-iaqualink](https://github.com/LM1LC3N7/gladys-iaqualink).
+
+Zodiac / Jandy iAquaLink benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Zodiac / Jandy iAquaLink ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-iaqualink) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-iaqualink/blob/HEAD/docs/en.md)

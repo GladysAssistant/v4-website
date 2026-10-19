@@ -1,0 +1,163 @@
+---
+title: "Intégration domotique Fail2Ban, gratuite et open source"
+sidebar_label: "Fail2Ban"
+description: "Fail2Ban via SSH : jails, IP bannies, bannir et débannir depuis scènes et widgets. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-fail2ban.jpg"
+keywords:
+  - "fail2ban"
+  - "domotique fail2ban"
+  - "gladys fail2ban"
+  - "fail2ban gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-fail2ban instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Fail2Ban","description":"Fail2Ban via SSH : jails, IP bannies, bannir et débannir depuis scènes et widgets.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-fail2ban","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-fail2ban.jpg","type":"device","version":"0.1.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-18T00:18:51Z"}} />
+
+## Présentation
+
+[Fail2Ban](https://github.com/fail2ban/fail2ban) surveille les journaux d’un serveur et bannit les adresses qui essaient trop de mots de passe. Cette intégration l’amène dans Gladys : les IP bannies et les échecs de chaque jail en appareils, un déclencheur de scène quand une IP est bannie ou débannie ou quand Fail2Ban ne répond plus, des actions de scène pour bannir, débannir ou vérifier une adresse, et deux widgets de tableau de bord avec des boutons Bannir et Débannir.
+
+Fail2Ban ne répond que sur la machine qu’il protège (un socket Unix). L’intégration se connecte donc à cette machine en **SSH** et y lance `fail2ban-client`, comme vous le feriez dans un terminal. Elle fonctionne avec Fail2Ban 0.10 à 1.1, installé en paquet ou dans Docker, sur la machine de Gladys ou sur toute autre machine joignable en SSH.
+
+## Prérequis
+
+- Gladys Assistant **5.2.0** ou plus récent (les boutons de widget à formulaire). Les instances plus anciennes ne peuvent pas installer l’intégration.
+- Une machine qui fait tourner Fail2Ban avec un serveur SSH, et son adresse sur votre réseau.
+- Un utilisateur SSH autorisé à lancer `fail2ban-client` sans mot de passe (voir ci-dessous).
+
+### Préparer le serveur
+
+Lancez ces commandes sur le serveur Fail2Ban, en root (Debian, Ubuntu, Raspberry Pi OS ; adaptez le chemin de `fail2ban-client` avec `command -v fail2ban-client`) :
+
+```bash
+## 1. Un utilisateur dédié, sans mot de passe à lui
+adduser --disabled-password --gecos "" gladys
+
+## 2. L’autoriser à lancer fail2ban-client, et rien d’autre, en root
+echo 'gladys ALL=(root) NOPASSWD: /usr/bin/fail2ban-client' > /etc/sudoers.d/gladys-fail2ban
+chmod 440 /etc/sudoers.d/gladys-fail2ban
+
+## 3. Préparer son authorized_keys
+install -d -m 700 -o gladys -g gladys /home/gladys/.ssh
+```
+
+Ensuite, dans Gladys, remplissez la configuration (ci-dessous), enregistrez, et cliquez sur **Afficher la clé publique**. Ajoutez la ligne obtenue à `/home/gladys/.ssh/authorized_keys` (propriétaire `gladys`, droits 600). Elle commence par `restrict`, qui interdit à cette clé les redirections de port et les terminaux. Cliquez enfin sur **Tester la connexion**.
+
+- **Fail2Ban dans Docker** (par exemple `crazymax/fail2ban`) : mettez la commande `docker exec fail2ban fail2ban-client`. L’utilisateur SSH doit alors avoir le droit de lancer cette commande (sudoers, ou le groupe `docker`, qui revient à être root).
+- **Connexion en root** : mettez la commande `fail2ban-client`.
+- **Mot de passe plutôt que clé** : choisissez l’authentification **Mot de passe**. Une clé est plus sûre.
+
+## Configuration
+
+| Champ                    | Ce qu’il faut saisir                                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Adresse du serveur       | Son adresse IP ou son nom d’hôte sur votre réseau : `192.168.1.10`. Pas `localhost`, qui est le conteneur de l’intégration.     |
+| Port SSH                 | 22, sauf si votre serveur SSH écoute ailleurs.                                                                                  |
+| Utilisateur SSH          | L’utilisateur préparé plus haut : `gladys`.                                                                                     |
+| Authentification         | **Clé de l’intégration** (recommandé) ou **Mot de passe**.                                                                      |
+| Mot de passe SSH         | Uniquement avec l’authentification par mot de passe. Stocké en secret, jamais réaffiché ni journalisé.                          |
+| Commande fail2ban-client | `sudo -n fail2ban-client` par défaut. L’intégration ajoute elle-même les arguments, protégés.                                   |
+| Clé d’hôte               | Facultatif : l’empreinte SHA256 du serveur (`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`). Vide : la première est gardée. |
+| Jails à suivre           | `sshd, recidive` pour ne proposer que ces jails en appareils. Vide : toutes les jails.                                          |
+| Intervalle de lecture    | Toutes les 30 secondes, minutes, 2 minutes ou 5 minutes.                                                                        |
+| Langue des textes        | Noms des appareils et textes transmis aux scènes. Automatique : la langue du dernier widget affiché.                            |
+
+L’écran de configuration propose aussi quatre boutons : **Tester la connexion**, **Afficher la clé publique**, **Oublier la clé d’hôte** (après une réinstallation du serveur : la connexion suivante fait confiance à la nouvelle clé) et **Diagnostic** (l’état de l’intégration dans ses journaux, sans aucun secret).
+
+## Utilisation
+
+### Appareils
+
+Ouvrez l’onglet **Découverte** de l’intégration et créez les appareils voulus :
+
+- **Fail2Ban \<serveur>** : IP bannies (toutes les jails), échecs en cours, bannissements depuis le démarrage de Fail2Ban, jails actives.
+- **Fail2Ban jail \<nom>**, une par jail : IP bannies, échecs en cours, bannissements et échecs depuis le démarrage de Fail2Ban, dernière IP bannie.
+
+Les compteurs gardent leur historique : un graphique des IP bannies de `sshd` sur une semaine montre les vagues d’attaques. Les compteurs « depuis le démarrage » repartent de zéro quand Fail2Ban redémarre.
+
+### Widgets du tableau de bord
+
+![Le widget Fail2Ban avec quatre jails et ses boutons, et le widget Bannissements Fail2Ban avec six adresses bannies (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-fail2ban/main/docs/assets/widgets.fr.png)
+
+- **Fail2Ban** : les IP bannies, les échecs, le total des bannissements, une ligne par jail (rouge avec des bannies, orange avec des échecs), et les boutons **Bannir une IP** (adresse et jail), **Débannir** (adresse, une jail ou toutes) et **Actualiser**.
+- **Bannissements Fail2Ban** : les derniers bannissements, du plus récent au plus ancien, avec leur jail, depuis quand, et ce qu’il reste du bannissement (ou « définitif »). Un appui affiche le détail. **Débannir** propose les adresses listées. Réglages : une seule jail, nombre de bannissements affichés (1 à 8).
+
+### Scènes
+
+Déclencheurs :
+
+- **Fail2Ban : IP bannie** : une IP entre dans la liste des bannies d’une jail. Filtres : jail, adresse (la vôtre, pour être prévenu tout de suite). Variables : `ip`, `jail`, `banned_count`, `total_banned`, `ban_seconds`, `permanent`, `until`, `server`.
+- **Fail2Ban : IP débannie** : son bannissement a expiré ou quelqu’un l’a levé. Filtres : jail, adresse.
+- **Fail2Ban : serveur injoignable** : Fail2Ban ne répond plus. Filtre : raison (serveur injoignable, Fail2Ban arrêté, connexion SSH refusée, clé d’hôte changée, droits refusés, autre). Un serveur qui ne répond pas est déclaré injoignable à la deuxième lecture ratée d’affilée : un redémarrage ne déclenche pas d’alerte.
+- **Fail2Ban : serveur de retour** : il répond de nouveau.
+
+Actions : **bannir une IP** (une adresse ou un réseau comme `192.0.2.0/24`, dans une jail), **débannir une IP** (d’une jail ou de toutes), **vérifier une IP** (bannie ou non, et dans quelles jails), **lire un résumé** (compteurs et phrase toute faite).
+
+Exemples :
+
+- Quand **une IP est bannie dans `recidive`** → envoyer `{{triggerEvent.data.ip}} bannie jusqu’à {{triggerEvent.data.until}}` sur votre téléphone.
+- Quand **l’IP bannie est votre propre adresse publique** → la **débannir** aussitôt et vous envoyer un message.
+- Chaque lundi à 8 h → **lire un résumé** et envoyer la sortie `summary` par message.
+
+Les bannissements et débannissements faits par Gladys (actions de scène et boutons des widgets) ne déclenchent rien : une scène ne peut pas boucler sur sa propre action. Un bannissement plus court que l’intervalle de lecture peut passer entre deux lectures : pas de déclencheur dans ce cas.
+
+### Transport
+
+Local (`"transports": ["local"]`) : l’intégration se connecte directement au serveur que vous indiquez, rien ne passe par un cloud. Si ce serveur est hors de chez vous (un VPS), la connexion SSH traverse internet, chiffrée. Seules les commandes de `fail2ban-client` sont lancées sur le serveur ; la clé privée de l’intégration reste dans son volume `/data`.
+
+## Dépannage
+
+- **Connexion SSH impossible** : vérifiez l’adresse (celle de la machine sur le réseau local, ni `localhost` ni `127.0.0.1`) et le port, et que le serveur accepte le SSH depuis la machine de Gladys.
+- **SSH a refusé l’utilisateur** : la clé publique manque dans `authorized_keys`, ou le fichier a de mauvais droits (`chmod 600`, propriétaire l’utilisateur). Regardez `/var/log/auth.log` sur le serveur.
+- **sudo demande un mot de passe** : la règle sudoers manque, ou vise un autre chemin (`command -v fail2ban-client`). Testez sur le serveur : `sudo -u gladys sudo -n fail2ban-client ping`.
+- **Permission denied to socket** : `fail2ban-client` tourne sans root : gardez `sudo -n` dans la commande.
+- **La clé d’hôte a changé** : normal après une réinstallation : cliquez sur **Oublier la clé d’hôte**. Sinon, cherchez pourquoi avant d’aller plus loin.
+- **Heures décalées d’une ou deux heures** : l’intégration lit les heures de Fail2Ban dans le fuseau de Gladys, et se corrige au premier bannissement qu’elle voit arriver.
+- **Toujours bloqué** : cliquez sur **Diagnostic**, puis ouvrez un ticket sur [GitHub](https://github.com/William-De71/gladys-fail2ban/issues) avec les versions de Gladys, de l’intégration et de Fail2Ban, et les lignes « Fail2Ban diagnostic » des journaux (ajoutez `DEBUG=gladys-integration-sdk` en mode développeur).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Fail2Ban dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Serveur Fail2Ban | `section` | Non | Fail2Ban ne répond que sur la machine qu’il protège. L’intégration s’y connecte en SSH et y lance fail2ban-client. Indiquez l’adresse de cette machine sur le réseau local (pas localhost : c’est le conteneur de l’intégration, même si Fail2Ban tourne sur la machine de Gladys) et un utilisateur autorisé à lancer fail2ban-client. |
+| Adresse du serveur | `string` | Oui | Adresse IP ou nom d’hôte de la machine qui exécute Fail2Ban. |
+| Port SSH | `number` | Non |  |
+| Utilisateur SSH | `string` | Oui | Un utilisateur dédié, autorisé à lancer fail2ban-client et rien d’autre, est préférable (voir la documentation). |
+| Authentification | `select` | Non |  |
+| Mot de passe SSH | `secret` | Non | Uniquement avec l’authentification « Mot de passe ». |
+| Clé et droits | `section` | Non | Avec la clé de l’intégration, enregistrez ce formulaire, cliquez sur « Afficher la clé publique » plus bas et ajoutez la ligne obtenue au fichier ~/.ssh/authorized_keys de l’utilisateur SSH. fail2ban-client demande les droits root : autorisez-le sans mot de passe avec une règle sudoers comme « gladys ALL=(root) NOPASSWD: /usr/bin/fail2ban-client ». Pour Fail2Ban dans Docker, utilisez la commande « docker exec fail2ban fail2ban-client ». |
+| Commande fail2ban-client | `string` | Non | Comment appeler fail2ban-client sur le serveur. L’intégration ajoute et protège ses arguments. |
+| Clé d’hôte | `string` | Non | Empreinte SHA256 de la clé SSH du serveur (ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub). Vide : la clé vue à la première connexion est approuvée et mémorisée. |
+| Options | `section` | Non | Les jails proposées comme appareils, et la fréquence de lecture de Fail2Ban. Un bannissement plus court que l’intervalle peut échapper aux scènes. |
+| Jails à suivre | `string` | Non | Noms de jails séparés par des virgules. Vide : toutes les jails du serveur. |
+| Intervalle de lecture | `select` | Non |  |
+| Langue des textes | `select` | Non | Noms des appareils et textes transmis aux scènes. Automatique : la langue du dernier widget affiché. |
+
+## Comment installer Fail2Ban dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Fail2Ban apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-fail2ban:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-fail2ban](https://github.com/William-De71/gladys-fail2ban).
+
+Fail2Ban nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Fail2Ban est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-fail2ban) — [source de cette documentation](https://github.com/William-De71/gladys-fail2ban/blob/HEAD/docs/fr.md)

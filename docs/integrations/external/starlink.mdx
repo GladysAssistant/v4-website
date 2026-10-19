@@ -1,0 +1,204 @@
+---
+title: "Starlink smart home integration, free and open source"
+sidebar_label: "Starlink"
+description: "Your Starlink dish in Gladys: state, latency, throughput, obstruction, alerts. Local, no account. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-starlink.png"
+keywords:
+  - "starlink"
+  - "starlink smart home"
+  - "gladys starlink"
+  - "starlink gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-starlink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Starlink","description":"Your Starlink dish in Gladys: state, latency, throughput, obstruction, alerts. Local, no account.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-starlink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-starlink.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T15:24:40Z"}} />
+
+Your Starlink dish in Gladys: its state, latency, packet loss, throughput, obstruction, alerts and snow
+melt mode, read on your local network like the Starlink app does. Scene triggers tell when the
+connection drops and comes back, and a dashboard widget shows the dish at a glance.
+
+> **Developed without the hardware: feedback welcome.** The integration was written from the protocol
+> published by the community and tested against recorded dish answers, not against a real dish. Please
+> report what works and what does not on the Gladys forum or in the GitHub issues.
+>
+> This integration is not affiliated with, endorsed by or supported by SpaceX or Starlink.
+
+## Overview
+
+- **One device per dish**, named after its hardware (e.g. "Starlink rev3"), identified by the dish's own
+  serial: it survives an address change.
+- **Local only**: the dish answers on `192.168.100.1:9200` (gRPC, the protocol of the Starlink app), without
+  account, password or cloud.
+- **Measures averaged over the refresh interval**: latency, packet loss and throughput come from the
+  second-by-second history of the dish, not from a single sample.
+- **Self-refreshing**: the integration reads the dish on its own timer; it does not depend on Gladys polling
+  the device.
+- **Safe by default**: rebooting or stowing the dish cuts the Internet, so these commands stay refused until
+  you allow them.
+
+## Prerequisites
+
+- Gladys Assistant **5.1.0** or later (scene triggers, scene actions and widgets).
+- A Starlink dish (standard, Gen 2 "rectangular", Gen 3, Mini…) powered on.
+- **Gladys must reach `192.168.100.1`**. The integration runs in its own container on a Docker bridge
+  network: its traffic goes out through the Gladys host, so it reaches the dish exactly when the Gladys host
+  does.
+  - With the **Starlink router**, it works as is: the router forwards `192.168.100.1` to the dish.
+  - With **your own router** and the Starlink router in **bypass mode** (or a Starlink Ethernet adapter
+    plugged into your router), most routers reach the dish address directly. If not, add on your router a
+    static route to `192.168.100.1/32` through its WAN (Internet) interface.
+  - Check from the Gladys host: `ping 192.168.100.1` must answer. The **Test the connection to the dish**
+    button of the configuration confirms the integration sees it.
+
+## Configuration
+
+Open **Integrations → Starlink → Configuration**:
+
+| Field                                    | Default         | Role                                                                                         |
+| ---------------------------------------- | --------------- | -------------------------------------------------------------------------------------------- |
+| Dish address                             | `192.168.100.1` | IP address of the dish, optionally with the port (`9200` by default).                        |
+| Refresh interval                         | 30 seconds      | 10, 15, 30 s or 1 min. The measures are averaged over this interval.                         |
+| Language of the device texts             | Français        | Feature names (set when the dish is added) and the state text.                               |
+| Allow the commands that cut the Internet | off             | Reboot, stow and deploy are refused until you enable it. The snow melt mode needs no opt-in. |
+
+Then open **Integrations → Starlink → Discover** and add the dish to Gladys. The buttons of the
+configuration screen:
+
+- `test_connection` — **Test the connection to the dish**: says what answered (hardware, software, state).
+- `reboot_dish` — **Reboot the dish**: the Internet comes back after a few minutes.
+- `stow_dish` — **Stow the dish**: it folds flat (before a storm, to move it). No Internet until deployed.
+- `unstow_dish` — **Deploy the dish**: it turns back to the sky and reconnects.
+
+## The dish device
+
+| Feature              | Type (Gladys) | Meaning                                                                                 |
+| -------------------- | ------------- | --------------------------------------------------------------------------------------- |
+| Starlink online      | binary        | 1 when the dish is connected to the satellites, 0 otherwise (and when unreachable).     |
+| State                | text          | Connected, Searching for satellites, Obstructed, Stowed, Sleeping, Unreachable…         |
+| Latency              | duration (ms) | Mean ping time to the Starlink network over the interval (seconds fully lost excluded). |
+| Packet loss          | percentage    | Share of lost pings over the interval.                                                  |
+| Download / Upload    | rate (Mbit/s) | Mean traffic going through the dish over the interval — what you use, not a speed test. |
+| Obstructed sky       | percentage    | Share of the sky the dish found obstructed (trees, buildings).                          |
+| Obstructed right now | binary        | 1 while something blocks the dish at the moment of the reading.                         |
+| Uptime               | duration (h)  | Time since the last reboot of the dish.                                                 |
+| Power draw           | power (W)     | Mean power consumption over the interval (dishes that report it).                       |
+| Heating (snow melt)  | binary        | 1 while the dish heats to melt snow.                                                    |
+| Thermal throttling   | binary        | 1 while the dish limits itself because it is too hot.                                   |
+| Overheating shutdown | binary        | 1 when the dish stopped because of overheating.                                         |
+| Update pending       | binary        | 1 when a software update waits for a reboot.                                            |
+| Snow melt mode       | selection     | Automatic, Always on, Off — can be changed from Gladys.                                 |
+| Software version     | text          | The firmware of the dish.                                                               |
+
+Only the values that change are sent to Gladys; an unchanged value is sent again every 6 hours so the
+dashboard never says "no recent value".
+
+### Snow melt mode
+
+**Automatic** heats when the dish detects snow, **Always on** heats before a snowfall (more power),
+**Off** never heats (saves power, but snow may cut the connection). Choose it from the device or with the
+`set_snow_melt_mode` scene action.
+
+## Widget
+
+The `dish_status` widget (**Starlink**) shows the latency, the download and upload throughput, the
+obstructed sky, then the state (green when connected, orange during an outage, red when unreachable), the
+active alerts by name, the snow melt mode and the uptime. Once the dish is added to Gladys the tiles follow
+its features live. Its optional setting picks the dish.
+
+## Scene triggers
+
+- `connection_lost` — **Starlink connection lost**: the dish has been offline for a whole refresh interval
+  (two readings in a row), or stopped answering at all (cause `unreachable`: power cut, cable). Short drops
+  are ignored. Filter on the **Cause** (obstructed, searching, stowed, sleeping, unreachable…). Variables:
+  the cause code and the state text.
+- `connection_restored` — **Starlink connection restored**: the dish is back after a reported loss.
+  Variables: the outage duration in seconds and the cause.
+- `obstruction_detected` — **Starlink sky obstructed**: something started blocking the dish, at most once
+  every 10 minutes. Variable: the obstructed share of the sky (%).
+
+An outage already under way when Gladys starts is not reported (Gladys cannot tell when it started).
+
+## Scene actions
+
+- `reboot_dish` — **Reboot the Starlink dish**.
+- `stow_dish` — **Stow the Starlink dish**.
+- `unstow_dish` — **Deploy the Starlink dish**.
+- `set_snow_melt_mode` — **Set the Starlink snow melt mode** (automatic, always on, off).
+
+The first three cut the Internet: they fail (and the scene logs it) until **Allow the commands that cut the
+Internet** is enabled. Keep in mind that Gladys Plus, remote access and cloud notifications go through that
+same Internet access.
+
+## Scene examples
+
+- **Warn when Starlink drops**: trigger `connection_lost` with the cause "Dish not answering (power,
+  cable)" → send a message on a local channel (or a notification later, when the connection is back).
+- **Log the outages**: trigger `connection_restored` → send the message "Starlink back after
+  `outage_seconds` s".
+- **Snow is forecast**: weather condition "snow" in the evening → `set_snow_melt_mode` "Always on"; the next
+  morning → "Automatic".
+- **Watchdog**: trigger `connection_lost`, cause "No network answer" → wait 10 minutes → `reboot_dish` (with
+  the commands allowed).
+
+## Troubleshooting
+
+- **"The dish does not answer"**: from the Gladys host, `ping 192.168.100.1`. No answer: see the
+  prerequisites (bypass mode, static route). An answer but still failing: check the address and the port
+  (`9200`) in the configuration.
+- **No device in Discover**: the dish must have answered once; use **Test the connection to the dish**.
+- **Values never change**: check that the dish was added to Gladys; then look at the logs with
+  `LOG_LEVEL=debug` (each reading is logged at debug level).
+- **Power draw stays empty**: some dishes or firmware do not report it.
+- **Feature names in the wrong language**: they are fixed when the dish is added; change the language, then
+  delete and re-add the device (its history is lost).
+
+## Limits
+
+- The dish API is **unofficial**: SpaceX can change it with a firmware update. The integration ignores what
+  it does not know and keeps working with what it still finds.
+- **One dish** per installation (the address of the configuration). The Starlink Wi-Fi router is not read.
+- Download and upload are the **traffic** going through the dish, not the capacity of the link.
+- No obstruction map, no GPS position, no sleep schedule (the Starlink app does it).
+- The fastest refresh interval is 10 seconds: an outage shorter than one interval may not show.
+- Two small requests per interval (status ≈ 1 KB, history ≈ 25 KB), on the local network only: no quota,
+  no Internet traffic.
+
+## Configuration settings
+
+These are the settings Starlink asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Starlink dish | `section` | No | The integration reads the dish on your network, like the Starlink app does: no account, no cloud. Gladys must reach the dish address (192.168.100.1 by default): with the Starlink router it works as is; with your own router in bypass mode, see the documentation. |
+| Dish address | `string` | No | IP address of the dish, optionally followed by the port (9200 by default). Leave 192.168.100.1 unless you changed the network. |
+| Refresh interval | `select` | No | How often the dish is read. Latency, packet loss and throughput are averaged over this interval. |
+| Language of the device texts | `select` | No | Feature names (set when the dish is added to Gladys) and the state text. |
+| Commands that cut the Internet | `section` | No | Rebooting or stowing the dish cuts the Internet access for minutes, Gladys Plus and remote access included. They stay refused until you allow them here. |
+| Allow the commands that cut the Internet | `boolean` | No |  |
+
+## How to install Starlink in Gladys
+
+1. In Gladys, open **Integrations**: Starlink appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-starlink:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-starlink](https://github.com/guim31/gladys-starlink).
+
+Starlink requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Starlink is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-starlink) — [source of this documentation](https://github.com/guim31/gladys-starlink/blob/HEAD/docs/en.md)

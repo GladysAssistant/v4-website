@@ -1,0 +1,240 @@
+---
+title: "Intégration domotique Bosch Indego, gratuite et open source"
+sidebar_label: "Bosch Indego"
+description: "Connecteur non officiel : tondeuses Bosch Indego, état, batterie, alertes, tonte, pause, retour. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-indego.png"
+keywords:
+  - "bosch indego"
+  - "domotique bosch indego"
+  - "gladys bosch indego"
+  - "bosch indego gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-bosch-indego instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Bosch Indego","description":"Connecteur non officiel : tondeuses Bosch Indego, état, batterie, alertes, tonte, pause, retour.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bosch-indego","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-indego.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T03:06:11Z"}} />
+
+Connecteur non officiel, sans lien avec Bosch. Indego et Bosch sont des
+marques de leur propriétaire.
+
+Cette intégration lit vos tondeuses robots **Bosch Indego** par le cloud
+Bosch, avec le compte Bosch SingleKey ID de l'application Bosch Indego, et
+permet à Gladys de les faire tondre, de les mettre en pause et de les
+renvoyer à leur station.
+
+> **Jamais testée sur un vrai compte ni une vraie tondeuse pour l'instant.**
+> Elle suit ce que font l'intégration Home Assistant (sander1988/Indego) et
+> sa bibliothèque (sander1988/pyIndego), et n'a été testée que sur des
+> réponses d'exemple. Si quelque chose semble faux, ouvrez un ticket avec
+> les logs de l'intégration.
+
+## Ce que vous obtenez
+
+Un appareil par tondeuse du compte :
+
+| Fonction                    | Ce qu'elle montre                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------ |
+| État                        | En marche, en pause, retour à la station, en charge, à la station, erreur, arrêtée   |
+| Tondre / pause              | Choix : _Tondre_ lance la tonte, _Pause_ arrête la tondeuse là où elle est           |
+| Retour à la station         | Bouton : renvoie la tondeuse à sa station                                            |
+| Batterie                    | Niveau en %                                                                          |
+| Activité                    | L'état détaillé, en texte (« Tonte, relocalisation », « Bloquée sur la pelouse »...) |
+| Code d'état                 | Le code d'état brut de Bosch (pour les scènes et le dépannage)                       |
+| Progression de la tonte (%) | La part de la pelouse tondue pendant la tonte en cours                               |
+| Prochaine tonte             | La prochaine tonte prévue par SmartMowing, à l'heure du jardin, ou « Aucune prévue » |
+| Alertes non lues            | Nombre d'alertes non lues du cloud Bosch pour cette tondeuse                         |
+| Dernière alerte             | Titre et message de l'alerte la plus récente                                         |
+| En ligne                    | 0 quand le cloud signale la tondeuse hors ligne                                      |
+
+Un déclencheur de scène, **Alerte Indego**, se déclenche une fois pour chaque
+nouvelle alerte non lue (bloquée, soulevée, rappel de lame...), avec la
+tondeuse, le code d'erreur, le titre, le message et le niveau en variables.
+Les alertes déjà présentes au démarrage de l'intégration ne le déclenchent
+jamais.
+
+## Se connecter
+
+Bosch SingleKey ID ne renvoie la connexion qu'à l'application Bosch Indego
+(une adresse qui commence par `com.bosch.indegoconnect://`), qu'aucun
+navigateur ne sait ouvrir. L'intégration se connecte donc en deux temps,
+sans extension de navigateur :
+
+Faites-le sur un ordinateur (Chrome, Edge, Firefox, Safari avec son menu
+Développement activé) :
+
+1. Dans l'onglet **Configuration**, cliquez sur **Connecter** à côté de
+   « Compte Bosch SingleKey ID » : Gladys ouvre la page de connexion Bosch
+   **dans un nouvel onglet**. (L'action **Démarrer la connexion** en bas
+   affiche le même genre d'adresse en texte, à ouvrir vous-même.)
+2. **Dans ce nouvel onglet, avant de saisir votre e-mail**, ouvrez les
+   outils de développement : **F12** (**Cmd+Option+I** sur Mac), onglet
+   **Console**, et cochez **Conserver le journal** (Firefox : **Journaux
+   persistants**, dans les réglages de la console), pour que la ligne
+   survive à la fin de la connexion.
+3. Connectez-vous avec votre Bosch SingleKey ID (l'e-mail et le mot de passe
+   de l'application Indego). À la fin, la page s'arrête et la console affiche
+   une ligne comme :
+   `Failed to launch 'com.bosch.indegoconnect://login?state=…&code=…' because the scheme does not have a registered handler.`
+   La console raccourcit les adresses longues : faites un **clic droit sur
+   l'adresse** et choisissez **Copier l'adresse du lien**. Un texte qui
+   contient « … » est tronqué et refusé.
+   Si la console n'affiche rien (souvent le cas sous Firefox), ouvrez plutôt
+   l'onglet **Réseau** (avec **Conserver le journal** / **Journaux
+   persistants**), cliquez sur la dernière requête nommée `authresp` et
+   copiez la valeur de son en-tête de réponse **Location**.
+4. Collez cette adresse dans l'action **Terminer la connexion**, puis
+   cliquez dessus, **dans les 15 minutes** (le code expire vite et ne sert
+   qu'une fois).
+
+L'action répond aussitôt « Connecté. Les tondeuses sont en cours de
+lecture » ; l'état de la connexion suit, et les tondeuses apparaissent dans
+l'onglet **Découverte** d'ici une minute : ajoutez-les.
+
+### Ce qui est gardé, et où
+
+L'intégration ne voit jamais votre mot de passe : c'est la page de Bosch qui
+le reçoit. Après la connexion, Gladys garde un **jeton de renouvellement**
+(et le jeton d'accès, de courte durée) dans sa base de données, **en clair**
+comme toute valeur de configuration d'une intégration (et donc dans ses
+sauvegardes) : il n'est jamais réaffiché dans l'interface et n'est envoyé
+qu'à Bosch. Toute personne qui peut lire la base de Gladys ou une sauvegarde
+peut s'en servir pour accéder à votre compte Indego : protégez-les en
+conséquence. Pour le révoquer, changez le mot de passe de votre Bosch
+SingleKey ID ou fermez la session depuis votre compte Bosch.
+
+Le jeton est renouvelé tout seul, 5 minutes avant son expiration. Si Bosch
+refuse le renouvellement (mot de passe changé, session révoquée, inutilisée
+trop longtemps), l'intégration cesse d'appeler Bosch et l'état de la
+connexion vous demande de vous reconnecter : reprenez à l'étape 1.
+
+La durée d'une session dépend de Bosch (Azure AD B2C, non documentée pour
+Indego). Avec les réglages B2C habituels, le jeton de renouvellement se
+prolonge tant qu'il sert, jusqu'à environ **90 jours** : attendez-vous à
+devoir vous reconnecter vers cette échéance.
+
+## Réglages
+
+- **Intervalle de relecture pendant la tonte** (5 min par défaut, de 2 à 60) : à quel rythme l'état et la progression de la tonte sont relus quand
+  la tondeuse est hors de sa station (et tout le temps quand l'état en direct
+  est coupé).
+- **État en direct (longue interrogation)** (activé par défaut) : le cloud
+  Bosch garde une requête par tondeuse et répond dès que l'état change, ou au
+  bout de 4 minutes environ. Coupez-le si votre réseau interrompt les
+  requêtes longues : l'état est alors relu à l'intervalle ci-dessus.
+- **Langue** des noms des fonctions (fixés à l'ajout de la tondeuse) et des
+  textes (activité, prochaine tonte, dernière alerte).
+
+## Usage du cloud Bosch
+
+Le cloud Bosch ne documente aucune limite. L'intégration reste en dessous de
+ce que fait l'intégration Home Assistant :
+
+- la longue interrogation : une requête en attente par tondeuse, jamais deux
+  en moins de 30 secondes ;
+- l'état toutes les 5 minutes (réglage) quand la tondeuse est sortie, pour la
+  progression ;
+- la batterie toutes les 10 minutes quand la tondeuse est sortie ou en
+  charge, toutes les 6 heures sinon ;
+- alertes et prochaine tonte toutes les 10 minutes ; la liste des tondeuses
+  toutes les 12 heures et à chaque recherche dans Découverte ;
+- autour d'une commande : l'état relu juste avant, puis 10 s et 45 s après.
+
+En cas d'erreur, elle attend 30 s, 1, 2, 5, 10 puis 15 minutes entre les
+essais. Un HTTP 429 (trop de requêtes) met en pause **tous** les appels,
+commandes comprises, le temps que Bosch demande (de 1 minute à 6 heures ;
+5 minutes s'il ne le précise pas).
+
+## Commandes
+
+Le choix **Tondre / pause** et le bouton **Retour à la station** envoient
+les commandes `mow`, `pause` et `returnToDock` du cloud Bosch. Pour chaque
+commande, l'intégration :
+
+- n'exécute qu'une commande à la fois par tondeuse ;
+- relit l'état de la tondeuse juste avant, et n'envoie **pas** la commande
+  si l'état ne peut pas être lu ou si la tondeuse est hors ligne ;
+- envoie toujours un arrêt (pause, retour à la station), même quand le cloud
+  montre déjà la tondeuse arrêtée : son état peut être en retard. Seul un
+  démarrage alors que la tondeuse tond déjà est écarté, et jamais dans les
+  90 secondes qui suivent une autre commande que la tondeuse n'a pas encore
+  visiblement suivie ;
+- refuse la commande, avant d'envoyer quoi que ce soit, quand le cloud est
+  trop lent pour répondre en 3,5 secondes (Gladys abandonne au bout de
+  5 secondes) : Gladys affiche alors une erreur et rien n'a été envoyé ;
+  réessayez ;
+- une fois envoyée, ne coupe jamais la requête : si Bosch ne répond pas à
+  temps, Gladys affiche « commande envoyée, sans confirmation dans les
+  temps » ;
+- relit l'état 10 et 45 secondes après.
+
+## Actions de l'écran de configuration
+
+- **Démarrer la connexion** : affiche une adresse de connexion (voir plus
+  haut).
+- **Terminer la connexion** : reçoit l'adresse collée.
+- **Tester Indego** : lit les tondeuses du compte et affiche l'état et la
+  batterie de chacune.
+
+## Dépannage
+
+- _« Cette adresse ne correspond à aucune connexion démarrée dans les 15
+  dernières minutes »_ : cliquez à nouveau sur **Démarrer la connexion** (ou
+  Connecter) et utilisez la nouvelle adresse ; chaque adresse ne sert qu'une
+  fois.
+- _« Bosch a refusé la connexion (invalid_grant …) »_ : le code a expiré ou a
+  déjà servi : recommencez.
+- _« Cette adresse a été tronquée par la console »_ : copiez-la par un clic
+  droit, **Copier l'adresse du lien**, ou depuis l'onglet Réseau (voir
+  l'étape 3).
+- _« Bosch est injoignable »_ : recollez la même adresse dans les minutes
+  qui suivent.
+- _« La passerelle du cloud Indego refuse les appels »_ (HTTP 403) : la
+  passerelle Azure devant l'API bloque certaines requêtes ; l'intégration
+  réessaie toute seule.
+- Les logs ne contiennent jamais de jeton, de code ni de mot de passe.
+
+## Crédits
+
+L'API, la connexion, les codes d'état et l'échelle de batterie viennent de
+[sander1988/pyIndego](https://github.com/sander1988/pyIndego) (MIT) et de
+[sander1988/Indego](https://github.com/sander1988/Indego) (Apache-2.0),
+l'intégration Home Assistant. Voir `THIRD_PARTY_NOTICES.md`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Bosch Indego dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Les tondeuses Bosch Indego dans Gladys | `section` | Non | Connecteur non officiel, sans lien avec Bosch. Il lit vos tondeuses robots Bosch Indego par le cloud Bosch, avec le compte Bosch SingleKey ID de l'application Indego : un appareil par tondeuse (état, batterie, activité, progression de la tonte, prochaine tonte, alertes non lues, dernière alerte, en ligne), un choix tondre / pause et un bouton de retour à la station, et un déclencheur de scène sur les nouvelles alertes. Jamais testé pour l'instant sur un vrai compte ni une vraie tondeuse. Indego et Bosch sont des marques de leur propriétaire. |
+| Se connecter, en deux temps | `section` | Non | Sur un ordinateur : 1. Cliquez sur Connecter ci-dessous : Gladys ouvre la page Bosch dans un nouvel onglet. 2. Dans cet onglet, avant de saisir votre e-mail, ouvrez les outils de développement (F12, Cmd+Option+I sur Mac), onglet Console, et cochez « Conserver le journal ». 3. Connectez-vous : la console affiche « Failed to launch 'com.bosch.indegoconnect:\/\/login?…' ». Clic droit sur cette adresse, « Copier l'adresse du lien » (une ligne copiée qui finit par … est tronquée). Sinon : onglet Réseau, requête « authresp », en-tête Location (Firefox aussi). 4. Collez-la dans « Terminer la connexion » en bas, dans les 15 minutes. Gladys garde un jeton de renouvellement dans sa base, en clair comme toute valeur de configuration : jamais réaffiché, envoyé seulement à Bosch. Une reconnexion peut être nécessaire au bout d'environ 90 jours. |
+| Compte Bosch SingleKey ID | `account_link` | Non | Ouvre la page de connexion Bosch (étape 1 ci-dessus). Terminez ensuite avec l'action « Terminer la connexion ». |
+| Intervalle de relecture pendant la tonte (minutes) | `number` | Non | L'état (et la progression de la tonte) est relu à ce rythme quand la tondeuse est hors de sa station, et tout le temps quand l'état en direct est coupé. Batterie, alertes et prochaine tonte sont relues toutes les 10 minutes au plus. |
+| État en direct (longue interrogation) | `boolean` | Non | Le cloud Bosch garde une requête par tondeuse et répond dès que l'état change (ou au bout de 4 minutes environ). Coupez-la si votre réseau interrompt les requêtes longues. |
+| Langue des noms et des textes | `select` | Non |  |
+
+## Comment installer Bosch Indego dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Bosch Indego apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-bosch-indego:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-bosch-indego](https://github.com/LM1LC3N7/gladys-bosch-indego).
+
+Bosch Indego nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Bosch Indego est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-bosch-indego) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-bosch-indego/blob/HEAD/docs/fr.md)

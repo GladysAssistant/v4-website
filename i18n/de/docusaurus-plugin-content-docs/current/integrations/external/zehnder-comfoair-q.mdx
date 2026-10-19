@@ -1,0 +1,248 @@
+---
+title: "Zehnder ComfoAir Q Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Zehnder ComfoAir Q"
+description: "Zehnder ComfoAir Q ventilation (Q350, Q450, Q600) over the local ComfoConnect LAN C. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zehnder-comfoair.png"
+keywords:
+  - "zehnder comfoair q"
+  - "zehnder comfoair q smart home"
+  - "gladys zehnder comfoair q"
+  - "zehnder comfoair q gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-zehnder-comfoair instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zehnder ComfoAir Q","description":"Zehnder ComfoAir Q ventilation (Q350, Q450, Q600) over the local ComfoConnect LAN C.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-zehnder-comfoair","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zehnder-comfoair.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T19:27:27Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration connects a **Zehnder ComfoAir Q** heat recovery
+ventilation unit (Q350, Q450, Q600) to Gladys Assistant, **locally** on your
+network, through the **ComfoConnect LAN C** box wired to the unit.
+
+> **Never tested with a real ventilation unit.** The protocol comes from the
+> [aiocomfoconnect](https://github.com/michaelarnauts/aiocomfoconnect)
+> library (the one of Home Assistant's ComfoConnect integration), ported to
+> JavaScript and checked only against a simulated LAN C. Make your first
+> tries while at home and report what goes wrong.
+>
+> Unofficial integration, not affiliated with Zehnder.
+
+## What you need
+
+- A ComfoAir Q unit with a **ComfoConnect LAN C** on your network, reachable
+  from the Gladys machine (port **56747**: UDP to ask for its identifier, TCP
+  for the session).
+- A **fixed IP address** for the LAN C (set in your router).
+- The **PIN** of the LAN C: **0000** out of the box, unless you changed it.
+
+A ComfoConnect PRO probably speaks the same protocol (aiocomfoconnect
+supports it), but nothing was checked here.
+
+## What you get
+
+One "ventilation" device in the Discovery tab, named after the model the
+unit gives (e.g. "ComfoAir Q450 B R RF ST Quality"), with:
+
+- **Ventilation speed**: 0 (away), 1 (low), 2 (medium), 3 (high); a select,
+  which can be changed if you allow it (see below).
+- **Mode (auto or manual)**: a select, which can be changed if you allow it.
+- **Operating mode** (text): automatic, manual, temporary manual, boost,
+  away.
+- **Temperatures** of the outdoor, extract, supply and exhaust air (°C).
+- **Humidities** of these four airs (%).
+- **Supply and exhaust flows** (m³/h; Gladys has no air flow unit: the unit
+  is in the name).
+- **Bypass**: its opening (%) and its setting (automatic, forced open or
+  closed).
+- **Days before the filter change**.
+
+The values come when the unit sends them (the LAN C pushes every change),
+without polling.
+
+There is **no switch**: an "everything off" (Google Home, Alexa, the MCP,
+HomeKit, a scene on the switches) can never stop the ventilation.
+
+## Configuration
+
+1. **IP address of the LAN C** (an IPv4 address, not a name).
+2. **PIN of the LAN C**: 4 digits, sent to the LAN C **at each registration
+   attempt** (one per action of yours at most: first start, new address or
+   PIN, "Test the connection" after a stop). Empty: 0000. It is a secret
+   field: kept by Gladys in its
+   database, never shown again in the interface, sent only to the LAN C,
+   never written in the logs, never copied to `/data`.
+3. **Allow changing the speed and the mode from Gladys**: off by default.
+4. **Also allow speed 0 (away)**: off by default (see below).
+5. **Language of the names**: French or English.
+
+The **Test the connection** button connects at once when no session is open
+and tells how it went. It also lifts a stop (PIN refused, LAN C full,
+registration removed or unanswered): one new try follows.
+
+The **List the apps registered on the LAN C** button (open session) shows
+the name and identifier of every registered app; the one of Gladys is marked
+"(this integration)".
+
+## Registration and session
+
+- The LAN C only accepts **a small number of registered apps** (each phone
+  with the Zehnder app, Home Assistant, Gladys...). Gladys registers **only
+  once**, under the name "Gladys", with an identifier created at the first
+  start and kept in `/data/comfoair-state.json`. If that file cannot be
+  written, Gladys **does not register** (every restart would take a new
+  place) and the status says so.
+- **PIN refused**: the registration stops and is **never retried in a
+  loop**, even after a restart. Fix the PIN and save (one new try), or click
+  "Test the connection".
+- **LAN C full**: stopped the same way, until you free a place (see below)
+  and click "Test the connection".
+- **Registration without a clear answer** (an error code, no answer, a cut
+  connection, a restart during the try): the attempt is noted in `/data`
+  before it is sent; it is **never repeated by itself** (the PIN would be
+  sent again). The status gives the code; "Test the connection", a new
+  address or a new PIN allow one new try.
+- If `/data/comfoair-state.json` exists but cannot be read, it is never
+  replaced (it keeps the identifier of Gladys): nothing starts and the status
+  says so. Repair or delete it (Gladys then takes a new place), then restart
+  the integration.
+- **Registration removed** (by another app): Gladys does not register again
+  by itself; "Test the connection" allows one new registration.
+- The LAN C opens **one session at a time**. Gladys **never takes** the
+  session of another app: while the Zehnder app is connected, Gladys waits
+  and asks again (1 min, 2 min, then every 5 minutes). If the Zehnder app
+  takes the session of Gladys over, Gladys asks again 5 minutes later.
+  Meanwhile the values are not updated and the device is shown unreachable.
+- When the integration stops, Gladys closes its session, so that the Zehnder
+  app can take it at once.
+
+## Freeing a place on the LAN C
+
+Removing a registration needs **an app already registered** on the LAN C:
+when it is full, Gladys (not registered yet) can neither list nor remove.
+Gladys itself removes no app in this version. The identifiers (32
+characters) are keys: the LAN C recognises an app by its identifier alone,
+without the PIN; do not share them.
+
+1. **Find the identifier to remove**: when Gladys has a session, the **List
+   the apps registered on the LAN C** button shows the name and identifier
+   of each one (the one of Gladys is marked "(this integration)", its
+   identifier is also in `/data/comfoair-state.json`).
+2. **Remove it from an app already registered**, for example the command
+   line tool of aiocomfoconnect on a computer of your network, with the
+   identifier of an app **already registered** (the one this computer once
+   registered under, or the one of Gladys read in
+   `/data/comfoair-state.json`):
+   `python -m aiocomfoconnect deregister <identifier to remove> --host <address of the LAN C> --uuid <identifier of an app already registered>`.
+   The tool **takes the session** of the LAN C: the Zehnder app or Gladys is
+   cut meanwhile; Gladys comes back by itself within 5 minutes.
+3. The Zehnder app may allow removing a device (not checked). Otherwise, as
+   a last resort, a reset of the LAN C (see its manual) sets the PIN back to
+   0000 and probably clears the registrations (not checked).
+4. **Removing the integration from Gladys does not free its place** on the
+   LAN C: remove its identifier as above.
+
+While Gladys holds the session, the Zehnder app will offer to take it:
+accept, Gladys asks for the session again 5 minutes later.
+
+## Commands and the away speed
+
+- Changing the speed or the mode is **off by default**. Once allowed,
+  **every Gladys user, every scene and the Gladys app can change them**.
+- **Speed 0 ("away")** brings the ventilation down to its **minimum**: it
+  **almost stops** the air renewal. Left so while the house is occupied, the
+  humidity rises (condensation, mould) and the air gets loaded (CO₂, smells,
+  pollutants). It therefore needs **its own option**, off by default, and is
+  meant for an absence only. Remember to set a normal speed when you are
+  back (with a scene, for example).
+- "Automatic" lets the unit follow its schedule and sensors (and cancels a
+  speed chosen by hand); "Manual" keeps the chosen speed. The messages sent
+  are exactly those of aiocomfoconnect; their precise effect in each mode was
+  not checked on a real unit.
+- Before each command, the integration **reads the speed or the mode from
+  the unit** and decides on that reading, never on what it has in memory:
+  already at the value, nothing is sent; not readable, nothing is sent. The
+  options are read again right before sending: switched off during the
+  reading, the command stops ("nothing was sent").
+- A command is sent within 3.5 s of the request, or refused with "nothing
+  was sent". The answer of the unit is awaited until 4.5 s; without it, the
+  command is reported "sent, without confirmation" and the state is read
+  again two seconds later: it is never reported "not sent". A command the
+  unit refuses says so.
+- One command at a time. Every command is written in the integration logs.
+
+## Connection
+
+- Gladys asks the LAN C for its identifier over UDP at its address; without
+  an answer, it uses the one learnt before.
+- After a cut, the new tries are spaced: 10 s, 30 s, 1 min, 2 min, then every
+  5 minutes.
+- Every 30 s, Gladys checks the session (a time request); without an answer
+  within 10 s, the session is cut and opened again.
+- Right after the session opens, the LAN C sends zeros for every value: they
+  are ignored for 5 s, as aiocomfoconnect does.
+
+## Known limits
+
+- Never tested with a real ventilation unit (see above).
+- The LAN C protocol travels in clear text: a device of your network can
+  read what goes through. The PIN goes over the network at each registration
+  attempt (one per action of yours at most).
+- The device is identified by the serial number of the unit: another unit
+  gives a new device.
+- Not supported yet: the alarms and errors of the unit, the timed boost, the
+  bypass and the temperature profiles as commands, the ComfoCool and the
+  ComfoClime, the power consumption.
+
+## Privacy
+
+Everything stays on your network: the integration only talks to the LAN C.
+
+## Licence
+
+Apache-2.0. Protocol logic ported from aiocomfoconnect (Michaël Arnauts,
+MIT): see `THIRD_PARTY_NOTICES.md`.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Zehnder ComfoAir Q in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your ComfoConnect LAN C | `section` | Nein | For a Zehnder ComfoAir Q (Q350, Q450, Q600) with a ComfoConnect LAN C on your network. Gladys reads the speed, the mode, the temperatures and humidities of the four airs, the flows, the bypass and the days left before the filter change. Gladys registers once on the LAN C (it accepts a few apps only) and never takes the session of the Zehnder app: while that app is connected, Gladys waits. Never tested with a real ventilation unit. Unofficial, not affiliated with Zehnder. |
+| IP address of the LAN C | `string` | Ja | Give the LAN C a fixed address in your router. Gladys asks it for its identifier (UDP port 56747), then connects (TCP port 56747). |
+| PIN of the LAN C | `secret` | Nein | 4 digits, used to register Gladys on the LAN C: sent at each registration attempt (one per action of yours at most). Empty: 0000, the PIN out of the box. Kept by Gladys in its database, never shown again, sent only to the LAN C, never written in the logs. |
+| Commands | `section` | Nein | Changing the speed or the mode from Gladys is off by default. Once allowed, every Gladys user, every scene and the Gladys app can change them. Speed 0 (away) almost stops the ventilation (humidity, air quality): it needs its own option. The unit is read before each command; every command is written in the integration logs. |
+| Allow changing the speed and the mode from Gladys | `boolean` | Nein |  |
+| Also allow speed 0 (away: the ventilation almost stops) | `boolean` | Nein |  |
+| Language of the names | `select` | Nein | Used for the names of the features added from now on, and for the texts (mode, bypass). |
+
+## So installierst du Zehnder ComfoAir Q in Gladys
+
+1. Öffne in Gladys **Integrationen**: Zehnder ComfoAir Q erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-zehnder-comfoair:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-zehnder-comfoair](https://github.com/LM1LC3N7/gladys-zehnder-comfoair).
+
+Zehnder ComfoAir Q benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Zehnder ComfoAir Q ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-zehnder-comfoair) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-zehnder-comfoair/blob/HEAD/docs/en.md)

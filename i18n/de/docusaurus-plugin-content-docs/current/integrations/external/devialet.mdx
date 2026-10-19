@@ -1,0 +1,182 @@
+---
+title: "Devialet Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Devialet"
+description: "Devialet Phantom speakers on the local network: volume, mute, source, playback, title. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-devialet.png"
+keywords:
+  - "devialet"
+  - "devialet smart home"
+  - "gladys devialet"
+  - "devialet gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-devialet instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Devialet","description":"Devialet Phantom speakers on the local network: volume, mute, source, playback, title.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-devialet","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-devialet.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T03:21:32Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Control your **Devialet Phantom** speakers from Gladys, on your local network,
+without any cloud: volume, mute, source, play, pause, next, previous, the
+title playing, and standby. The integration uses the IP control API the
+speakers expose on your network (plain HTTP), the one the Home Assistant
+Devialet integration uses.
+
+> **Unofficial integration, not affiliated with Devialet.** This first
+> milestone was written and tested against a simulated speaker only: it has
+> **never been tested with a real speaker**. Your feedback is welcome.
+
+## Prepare the speakers
+
+1. Set the speakers up with the Devialet app as usual (Wi-Fi or Ethernet).
+2. Give each speaker a **fixed IP address** in your router (reserved DHCP
+   lease). The address is shown in the Devialet app, or in your router's list
+   of devices.
+3. Gladys must reach the speakers on the network (same network, port 80).
+
+## Add a speaker
+
+- **By its address** (recommended): type the IP address in "IP addresses of
+  the speakers" (several addresses separated by commas) and save. For a
+  **stereo pair**, one address is enough: both speakers form one system; if
+  both are typed, only one device is shown.
+- **By the search** (optional): use **Find the speakers**. Gladys browses the
+  network (mDNS, service `_devialet-http._tcp`) for the integration. A speaker
+  in standby, or a network that blocks multicast, may not answer: type the
+  address then. The search is never needed for the rest to work.
+
+The speaker appears in the integration's **Discovery** tab: create it.
+
+## What you get
+
+One Gladys device per Devialet **system** (one Phantom, or a stereo pair):
+
+| Feature     | Detail                                                                   |
+| ----------- | ------------------------------------------------------------------------ |
+| Power       | Read only: 1 the speaker answers, 0 standby, off or unreachable          |
+| Standby     | Button: puts the system in standby                                       |
+| Volume      | 0 to 100, read and set (whole numbers only)                              |
+| Mute        | Button: each press reads the mute from the speaker and sets the opposite |
+| Play, Pause | Buttons                                                                  |
+| Next, Prev. | Buttons                                                                  |
+| Playback    | Read only: 1 playing, 0 paused                                           |
+| Source      | Dropdown, read and set: the sources this speaker has shown (AirPlay, …)  |
+| Now playing | Text: "Artist - Title", or "—" when nothing plays                        |
+
+Volume and standby act on the **system**. Playback, mute and source act on the
+**group**: when several systems play together (grouped in the Devialet app),
+a command through any of them applies to the whole group.
+
+The "Source" dropdown lists the sources the speaker announces (Spotify
+Connect, AirPlay, Bluetooth, UPnP, Roon Ready, optical…). On a stereo pair,
+the optical input of each speaker is shown with its side ("Optical left",
+"Optical right"). A source seen once stays in the list; selecting one that is
+not available at that moment is refused and nothing is sent.
+
+## Standby, and turning on
+
+The IP control API **cannot wake a speaker up**: there is no "power on"
+command. That is why power is a read-only state and standby a button, not a
+switch: a "turn everything on" would have nothing to send. A speaker wakes up
+by itself when something plays to it (AirPlay, Spotify Connect…), or from the
+Devialet app or its touch surface.
+
+A speaker in standby does not answer the network: it shows as **0** (standby,
+off or unreachable), the integration status names it, and it is asked again
+less and less often: after the refresh interval, then twice as long each time,
+5 minutes at most. As soon as it answers, it is read at the normal interval
+again. A speaker that accepts the connection and then says nothing is
+**unknown**: nothing is published, Gladys keeps the last known state.
+
+Pressing **Standby** on a speaker that does not answer does nothing and is not
+an error (it already is in standby, or off the network).
+
+## A speaker that changed address
+
+Each speaker is known by its serial number, not by its address. When another
+speaker answers at the address of a created one (the router gave it to
+another device), the integration never sends anything there: the speaker
+shows **0**, the status says "address unknown", and a search runs by itself
+every 10 minutes until it is found again. You can also use **Find the
+speakers**, or type its new address. A fixed address in the router avoids it.
+
+## Commands
+
+Every command is answered to Gladys within 5 seconds. Commands to one speaker
+are sent one at a time; a command that cannot start in time is dropped, never
+sent late. A volume that is not a whole number from 0 to 100 (empty, 12.5,
+text…) is refused before anything is sent. When a command may have reached
+the speaker but was not confirmed in time, Gladys shows "sent, without
+confirmation" and the state is read again two seconds later; "nothing sent"
+is only said when no command request left.
+
+## Settings
+
+- **Refresh interval**: how often volume, mute, source and title are read, 5
+  to 300 seconds (10 by default).
+- **Check the speakers**: asks every known speaker now and says which ones
+  answer, with their volume.
+
+## Privacy and security
+
+The integration only talks to the speakers, on your local network, in plain
+HTTP (the speakers offer nothing else). It keeps a list of the known speakers
+(serial number, address, name, sources) in its data folder (`/data`). There is
+no account and no password. The answers of the speakers are read with a size
+limit (64 KB), and only the expected fields are kept.
+
+## Limits
+
+- Local network only; the API is the one of the Devialet firmware, which may
+  change.
+- No "power on" (see above), no equalizer or night mode, no notification
+  playback in this first version.
+- Never tested with a real speaker so far.
+
+## Credits
+
+Logic ported to JavaScript from
+[devialet](https://github.com/fwestenberg/devialet) by fwestenberg (MIT
+license), the library behind the Home Assistant Devialet integration. Devialet
+and Phantom are trademarks of Devialet, used only to name the compatible
+products.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Devialet in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Devialet speakers, on your local network | `section` | Nein | Volume, mute, source, play, pause, next, previous, title and standby of each Devialet system (one Phantom, or a stereo pair), through the IP control API of the speakers (plain HTTP on your network), without any cloud. Give each speaker a fixed IP address in your router and type it below; "Find the speakers" can also look for them (optional). The speakers then appear in the Discovery tab. A speaker in standby does not answer: it shows as off, and is asked again at spaced intervals. The API cannot wake a speaker up. Never tested with a real speaker. Unofficial integration, not affiliated with Devialet. |
+| IP addresses of the speakers | `string` | Nein | Separated by commas, for example 192.168.1.30, 192.168.1.31. For a stereo pair, one address is enough. Speakers found by the search are kept without being typed here. |
+| Refresh interval (s) | `number` | Nein | How often volume, mute, source and title are read, in seconds. A speaker that does not answer is asked less and less often (5 minutes at most). |
+
+## So installierst du Devialet in Gladys
+
+1. Öffne in Gladys **Integrationen**: Devialet erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-devialet:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-devialet](https://github.com/LM1LC3N7/gladys-devialet).
+
+Devialet benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Devialet ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-devialet) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-devialet/blob/HEAD/docs/en.md)

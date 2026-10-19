@@ -1,0 +1,206 @@
+---
+title: "devolo Home Network smart home integration, free and open source"
+sidebar_label: "devolo Home Network"
+description: "PLC rates, Wi-Fi, guest Wi-Fi, LEDs, firmware and Wi-Fi presence of your devolo adapters. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-devolo.png"
+keywords:
+  - "devolo home network"
+  - "devolo home network smart home"
+  - "gladys devolo home network"
+  - "devolo home network gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-devolo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"devolo Home Network","description":"PLC rates, Wi-Fi, guest Wi-Fi, LEDs, firmware and Wi-Fi presence of your devolo adapters.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-devolo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-devolo.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T15:49:11Z"}} />
+
+Follow and control your **devolo powerline (PLC) adapters** from Gladys: devolo Magic, dLAN and
+WiFi Repeater. The integration talks to the adapters on your local network, through the same API
+as the devolo Home Network app: no cloud, no account.
+
+> **Developed without the hardware: feedback welcome.** The protocol comes from the open-source
+> devolo library and the Home Assistant integration, and the tests run against a simulated
+> network. If something does not work with your adapters, open an issue on the GitHub repository.
+
+This integration is not affiliated with devolo.
+
+## Overview
+
+- **One device per adapter**: online or not, the PLC rate to every other adapter of the network,
+  the number of Wi-Fi devices connected to it, its firmware version and whether devolo offers a
+  newer one.
+- **Commands**: guest Wi-Fi on/off, LEDs on/off, "Identify" (the adapter blinks), and "Restart"
+  if you allow it in the configuration.
+- **Presence**: the Wi-Fi devices you choose (phones…) become presence sensors: home while they are
+  connected to a devolo adapter.
+- **Dashboard widget**: the state of the PLC network at a glance.
+- **Scenes**: a trigger when a device never seen before joins the Wi-Fi, and actions to turn the
+  guest Wi-Fi on (for a while) or off.
+
+## Requirements
+
+- Gladys Assistant **5.1.0** or later.
+- devolo adapters with the devolo Home Network API: devolo Magic 1 and 2 (LAN and WiFi), dLAN
+  1200+/550+ WiFi and the devolo WiFi Repeaters. Very old dLAN adapters without this API cannot
+  be read, but they still appear as peers of the others (with their rates).
+- The adapters on the same local network as Gladys. If they are on another network (VLAN,
+  subnet), type their addresses in the configuration.
+- The **device password** if you set one in the devolo Home Network app (Settings of the
+  adapter). Without one, leave the field empty.
+
+## Configuration
+
+1. In Gladys, open **Integrations → devolo Home Network → Configuration**.
+2. Fill in the fields if needed:
+   - **Adapter addresses (optional)**: only for the adapters the network search does not find,
+     separated by commas (e.g. `192.168.1.20, 192.168.1.21`). Give them a fixed address in your
+     router: the integration also finds them again after a change of address.
+   - **Device password**: the one of the devolo Home Network app, the same for every adapter.
+     Some firmwares expect it hashed: the integration tries both.
+   - **Refresh interval**: how often the LEDs, the guest Wi-Fi and the Wi-Fi devices are read
+     (30 seconds by default). The PLC rates are read every 5 minutes, the firmware check every
+     6 hours.
+   - **Away after**: how long a Wi-Fi device may be missing before it is shown away (3 minutes by
+     default).
+   - **Allow restarting the adapters**: off by default. When on, a "Restart" button is added to
+     the adapters (update them in the Discover tab).
+   - **Language of the feature names**: French by default.
+3. Click **Search the adapters**: the integration lists what it found and whether each adapter
+   answers.
+4. In the **Discover** tab, add the adapters, and the Wi-Fi devices you want to follow.
+
+Traffic and quotas: everything stays on your local network, devolo sets no quota on this API.
+The integration sends a few small requests per adapter at each refresh, one at a time, as Home
+Assistant does. Only the firmware check makes the adapter contact devolo's update server, every
+6 hours.
+
+## Devices
+
+### devolo adapter
+
+| Feature                   | Type             | What it says                                               |
+| ------------------------- | ---------------- | ---------------------------------------------------------- |
+| Online                    | sensor           | 1 when the adapter answers, 0 after two missed reads       |
+| PLC rate to … / from …    | rate, Mbit/s     | PHY rate of the powerline link to and from another adapter |
+| Wi-Fi devices             | counter          | devices connected to its Wi-Fi (main and guest)            |
+| Guest Wi-Fi               | switch           | turns the guest Wi-Fi on or off                            |
+| LEDs                      | switch           | turns the LEDs of the adapter on or off                    |
+| Firmware                  | text             | installed firmware version                                 |
+| Firmware update available | sensor           | 1 when devolo offers a newer firmware                      |
+| Identify (blink)          | button           | the adapter blinks for a while                             |
+| Restart                   | button, optional | restarts the adapter (only when allowed)                   |
+
+The features follow what each adapter announces: a Magic 2 LAN has no Wi-Fi features, a Wi-Fi
+repeater has no PLC rates. The rates exist for the adapters of the PLC network known when you add
+the device; when an adapter joins the network later, the Discover tab offers to update the device.
+The update itself is not installed from Gladys: use the devolo Home Network app.
+
+### Wi-Fi device
+
+| Feature  | Type           | What it says                                        |
+| -------- | -------------- | --------------------------------------------------- |
+| Presence | presence (0/1) | 1 while the device is connected to a devolo adapter |
+
+The adapters only give the MAC address of a Wi-Fi device: the Discover tab names it
+"Wi-Fi device 00:00:5E:…". Rename it after adding it. A phone using a random ("private") Wi-Fi
+address must use its real address on your network for presence to work.
+
+## Widget
+
+**devolo PLC network**: how many adapters are online, how many Wi-Fi devices they serve, the
+slowest PLC link to the adapter plugged into the router (the one that limits the internet speed of
+a room), then one row per adapter: its rates to the router adapter (green from 100 Mbit/s, orange
+from 30 Mbit/s, red below), "Plugged into the router", or "Offline". A pending firmware update is
+noted on the row. A button turns the guest Wi-Fi of every adapter on or off. No MAC address and no
+password are shown: the dashboard can be shown to visitors.
+
+## Scene trigger
+
+**New Wi-Fi device**: a device never seen before connects to the Wi-Fi of a devolo adapter. The
+devices connected when an adapter is read for the first time are learned silently, and the list is
+kept across restarts. Optional filter: main or guest Wi-Fi. Variables: `mac`, `adapter`, `network`
+(`main` or `guest`), `band` (`2.4 GHz` or `5 GHz`).
+
+## Scene actions
+
+- **Turn on the guest Wi-Fi**: on one adapter or on every adapter with Wi-Fi, optionally for a
+  number of minutes (at most 1440): the adapter turns it off by itself afterwards. Outputs: `ssid`
+  (name of the guest Wi-Fi) and `password`, to send them in a message.
+- **Turn off the guest Wi-Fi**: on one adapter or on every adapter with Wi-Fi.
+
+## Scene examples
+
+- **Guests coming**: when you press a button, turn on the guest Wi-Fi for 240 minutes and send
+  "Wi-Fi \{\{ssid\}\}, password \{\{password\}\}" to the family chat.
+- **Unknown device**: on "New Wi-Fi device" on the main Wi-Fi, send a notification with the MAC
+  address and the adapter.
+- **Nobody home**: when the presence of every phone goes to 0, turn the LEDs of the adapters off
+  and the guest Wi-Fi off; turn the LEDs on again when someone comes home.
+- **Weak link**: when the "PLC rate to …" of the office adapter stays under 50 Mbit/s, send a
+  notification (a plug strip or a charger may disturb the line).
+
+## Troubleshooting
+
+- **"No devolo adapter found"**: check that the adapters are on the same network as Gladys, run
+  "Search the adapters" again, or type their addresses in the configuration.
+- **"refused the password"**: type the device password of the devolo Home Network app; leave it
+  empty if none is set. The status says which adapter refuses it.
+- **An adapter "does not answer"**: it is unplugged, or in standby, or got a new address. The
+  integration searches the network again after a few missed reads.
+- **No rate for an adapter**: the PLC rates come every 5 minutes; the Wi-Fi-only repeaters have
+  none.
+- **A Wi-Fi device stays away**: it may be connected to your box's Wi-Fi rather than to a devolo
+  adapter, or use a random Wi-Fi address.
+- Logs: **Integrations → devolo Home Network → Logs**. Set `LOG_LEVEL=debug` for every read.
+
+## Limits
+
+- Presence only sees the devices connected to a **devolo** Wi-Fi, not to your box or another
+  access point.
+- When no Wi-Fi adapter answers, presence stays as it was.
+- The guest Wi-Fi name and password are those set in the devolo Home Network app; they cannot be
+  changed from Gladys.
+- Firmware updates, pairing, WPS and the Wi-Fi settings are left to the devolo Home Network app.
+- devolo Home Control gateways are not supported (they are not network adapters).
+- The rates are PHY rates as the adapters report them, not the real throughput.
+- Developed without the hardware: the behaviour with real adapters has not been checked yet.
+
+## Configuration settings
+
+These are the settings devolo Home Network asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your devolo adapters | `section` | No | The adapters (Magic, dLAN, WiFi Repeater) are found on the network by Gladys: run "Search the adapters", then add them in the Discover tab. Enter their addresses only if they sit on another network, and the device password only if you set one in the devolo Home Network app. |
+| Adapter addresses (optional) | `string` | No | Only for adapters the network search does not find. Several addresses: separate them with commas. |
+| Device password | `secret` | No | The one set in the devolo Home Network app, the same for every adapter. Empty: no password. |
+| Refresh interval | `select` | No | How often LEDs, guest Wi-Fi and Wi-Fi devices are read. PLC rates: every 5 minutes. |
+| Away after | `select` | No | Time a Wi-Fi device may be missing before it is shown away. Phones asleep on Wi-Fi drop off for a few minutes. |
+| Allow restarting the adapters | `boolean` | No | Adds a "Restart" button to the adapters. A restart cuts the network for about a minute. |
+| Language of the feature names | `select` | No | Names given to the features of new devices, and language of the messages. |
+
+## How to install devolo Home Network in Gladys
+
+1. In Gladys, open **Integrations**: devolo Home Network appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-devolo:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-devolo](https://github.com/guim31/gladys-devolo).
+
+devolo Home Network requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+devolo Home Network is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-devolo) — [source of this documentation](https://github.com/guim31/gladys-devolo/blob/HEAD/docs/en.md)

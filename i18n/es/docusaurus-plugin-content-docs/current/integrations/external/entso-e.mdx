@@ -1,0 +1,188 @@
+---
+title: "Integración domótica ENTSO-E, gratuita y de código abierto"
+sidebar_label: "ENTSO-E"
+description: "Unofficial connector: ENTSO-E day-ahead electricity prices for Europe, per kWh. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-entsoe.png"
+keywords:
+  - "entso-e"
+  - "domótica entso-e"
+  - "gladys entso-e"
+  - "entso-e gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-entsoe instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ENTSO-E","description":"Unofficial connector: ENTSO-E day-ahead electricity prices for Europe, per kWh.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-entsoe","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-entsoe.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T17:02:17Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+**Unofficial connector, not affiliated with ENTSO-E.** It reads the
+day-ahead electricity prices of one European bidding zone on the
+[ENTSO-E Transparency Platform](https://transparency.entsoe.eu/), the
+public data platform of the European transmission system operators, with a
+free personal security token.
+
+> **Never tested with a real token.** This first version was built and
+> tested against recorded-shape answers only (no ENTSO-E account was
+> available). Please report what you see in the forum thread or in a GitHub
+> issue.
+
+## What you get
+
+One device, **ENTSO-E \<zone>**, with these sensors (prices in EUR/kWh):
+
+| Sensor                             | Content                                                                           |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| Current price                      | the price of the current period (15 or 60 minutes)                                |
+| Next period price                  | the price of the period that follows                                              |
+| Today's lowest / highest / average | over the periods of your local day (the average weighs each period by its length) |
+| Today's cheapest period (start)    | `HH:MM` local time of the cheapest period of today                                |
+| Tomorrow's lowest price            | once tomorrow is published (usually 12:45–13:30 Brussels time)                    |
+| Tomorrow's cheapest period (start) | `HH:MM`, or `--:--` while tomorrow is not published                               |
+| Rank of the current period         | 0 = the cheapest period of the day, 95 the dearest (99 on the autumn DST day)     |
+
+The rank is handy in scenes: "if the rank is below 16" means "during the 16
+cheapest quarter hours of the day" (four hours). Equal prices share a rank
+(the rank counts the strictly cheaper periods), so more than 16 periods can
+be "below 16" on a day with ties.
+
+**Tomorrow's lowest price keeps its previous value** until tomorrow's prices
+are published (a number cannot be "unknown" in Gladys): rely on
+"Tomorrow's cheapest period", which shows `--:--` meanwhile. In a timezone
+west of Brussels (Lisbon, London, Canaries), the last local hour of a day
+belongs to the next market day: tomorrow's figures cover the hours already
+published.
+
+**Prices are wholesale prices.** Your supplier adds its margin, the grid
+fees and the taxes. Two options bring them closer to your bill: **fixed
+fees** (EUR/kWh, added to the spot price) and **VAT** (%, applied to the
+sum): price = (spot ÷ 1000 + fees) × (1 + VAT ÷ 100). A negative spot price
+stays negative unless the fees exceed it.
+
+## Get a free security token
+
+1. Create an account on the
+   [Transparency Platform](https://transparency.entsoe.eu/) (**Login** →
+   **Register**), and confirm your e-mail address.
+2. Send an e-mail to **transparency@entsoe.eu** with the subject
+   **"Restful API access"** and, in the body, the e-mail address of your
+   account. ENTSO-E enables API access by hand, usually within a few working
+   days.
+3. Once it is enabled, log in, open **My Account Settings**, and under
+   **Web API Security Token** click **Generate a new token**. Copy the token
+   (it looks like `1d9cd4bd-f8aa-476c-8cc1-3442dc91506d`).
+
+The token is personal and free; ENTSO-E allows 400 requests a minute, this
+integration makes a few a day.
+
+## Installation
+
+1. Install the integration, paste the token in **ENTSO-E security token**,
+   pick your **bidding zone** (France by default), and save.
+2. Press **Read the prices now**: the current price and today's average are
+   shown under the button.
+3. Open **Discovery** and add the device **ENTSO-E \<zone>**.
+
+**About the token:** Gladys keeps it in its database (in clear, masked in
+the interface, and in its backups), never shows it again, and the
+integration only sends it to ENTSO-E (`web-api.tp.entsoe.eu`). The platform
+wants it in the address of the request, so the integration never logs an
+address.
+
+## Options
+
+| Option          | Default      | Use                                                                                                                                                           |
+| --------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bidding zone    | FR           | 40 zones (France, Belgium, Germany/Luxembourg, Italy, Nordics, …). Changing it creates a new device; delete the old one.                                      |
+| VAT (%)         | 0            | 0 to 50                                                                                                                                                       |
+| Fixed fees      | 0 EUR/kWh    | 0 to 1                                                                                                                                                        |
+| Gladys timezone | Europe/Paris | the timezone of your Gladys (Settings → System), as an IANA name. It sets where a day starts and the times shown. An unknown name falls back to Europe/Paris. |
+
+## When prices are read
+
+- At start: today and tomorrow (one request).
+- Tomorrow is asked from **13:00 Brussels time** (the auction clears at
+  noon), then again after 10, 20, 30 and every 60 minutes until it is
+  published. The next reading is at 13:00 the day after.
+- In between, the sensors move every quarter hour from the prices in
+  memory, **without any network call**. At midnight, tomorrow becomes today.
+- A reconnection to Gladys (the container keeps running) keeps the prices,
+  the 429 pause, a refused token and the waiting time after an error, and
+  does not read again when today and tomorrow are known. A restart of the
+  container starts afresh: it reads once.
+- Saving the configuration reads at once, even with the same token after a
+  refusal (one request).
+
+## Errors
+
+| Situation                         | What happens                                                                                                                                                                                       |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Token refused (401)               | readings **stop** and the status says so; the last prices stay shown. Fix the token (or wait for ENTSO-E to enable your API access), then save the configuration or press **Read the prices now**. |
+| Too many requests (429)           | every reading, the button included, waits for the delay ENTSO-E gives (one minute to six hours; ten minutes when none is given).                                                                   |
+| ENTSO-E down (5xx), network error | new attempt after 5, 15, 30, then every 60 minutes; the last prices stay shown.                                                                                                                    |
+| No price for the zone             | the status says so; asked again every hour.                                                                                                                                                        |
+
+## How the data is read
+
+The integration asks the A44 document (day-ahead prices, contract type A01).
+Since 1 October 2025 the European day-ahead market uses **15-minute**
+periods; older or other answers in **60-minute** periods are read as well.
+In a "variable sized blocks" curve (A03), a period missing in the answer
+repeats the price before it (the ENTSO-E rule); in other curves a missing
+period stays without price. The 23- and 25-hour days of the clock changes
+are handled. The answer is read with a bounded, linear parser and refused
+beyond 256 KB.
+
+## Limits
+
+- One zone per installation of the integration.
+- No scene trigger, widget or energy contract in this version.
+- Prices in EUR/MWh only: a zone ENTSO-E would price otherwise is reported
+  in the status ("not priced in EUR/MWh") and asked again every six hours.
+- Never tested with a real ENTSO-E token (see the top of this page).
+
+The parsing logic is ported from
+[JaccoR/hass-entso-e](https://github.com/JaccoR/hass-entso-e) (Apache-2.0).
+
+## Parámetros de configuración
+
+Estos son los parámetros que ENTSO-E te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| ENTSO-E day-ahead prices | `section` | No | Unofficial connector, not affiliated with ENTSO-E. It reads the day-ahead prices of one European bidding zone on the ENTSO-E Transparency Platform with your free security token: one device with the current and next price per kWh, the lowest, highest and average price of the day, the cheapest period of today and tomorrow, and the rank of the current period. Wholesale prices: your supplier adds its margin, the grid fees and the taxes; the VAT and fixed fees below are added for you. |
+| ENTSO-E security token | `secret` | Sí | Kept by Gladys in its database (in clear, masked in the interface), never shown again, and only sent to ENTSO-E. |
+| Bidding zone | `select` | Sí | The day-ahead market zone of your meter. Changing it creates a new device. |
+| VAT (%) | `number` | No | Added to every price: (spot + fixed fees) × (1 + VAT). 0 keeps the wholesale price. |
+| Fixed fees (EUR/kWh) | `number` | No | Added to the spot price of every kWh before VAT (supplier margin, grid fees, taxes). |
+| Gladys timezone | `string` | No | The timezone of your Gladys (Settings → System): it sets the days and the times shown. IANA name, e.g. Europe/Brussels. |
+
+## Cómo instalar ENTSO-E en Gladys
+
+1. En Gladys, abre **Integraciones**: ENTSO-E aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-entsoe:0.1.2`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-entsoe](https://github.com/LM1LC3N7/gladys-entsoe).
+
+ENTSO-E requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+ENTSO-E es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-entsoe) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-entsoe/blob/HEAD/docs/en.md)

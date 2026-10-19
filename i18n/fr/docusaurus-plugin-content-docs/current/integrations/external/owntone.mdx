@@ -1,0 +1,177 @@
+---
+title: "Intégration domotique OwnTone, gratuite et open source"
+sidebar_label: "OwnTone"
+description: "Serveur musical OwnTone : lecteur, sorties AirPlay et Chromecast, playlists, volume par pièce. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-owntone.png"
+keywords:
+  - "owntone"
+  - "domotique owntone"
+  - "gladys owntone"
+  - "owntone gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-owntone instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OwnTone","description":"Serveur musical OwnTone : lecteur, sorties AirPlay et Chromecast, playlists, volume par pièce.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-owntone","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-owntone.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T10:21:29Z"}} />
+
+Cette intégration pilote un serveur [OwnTone](https://owntone.github.io/owntone-server/) (ex
+forked-daapd) depuis Gladys : le lecteur (lecture, pause, suivant, volume, ce qui joue) et chaque
+sortie, enceintes AirPlay et Chromecast ou sortie audio locale, que vous allumez, éteignez et dont
+vous réglez le volume pièce par pièce. Elle parle à OwnTone sur le réseau local, par son API JSON, et
+suit chaque changement en direct par son WebSocket. Pas de cloud, pas de compte.
+
+> **Testée contre un vrai OwnTone 29.3 en Docker, sans enceinte AirPlay ni Chromecast : vos retours
+> sont les bienvenus.** Lecture, volumes, sélection des sorties, notifications et redémarrage
+> d'OwnTone ont été vérifiés en vrai, sur ses sorties locale et fifo.
+
+## Prérequis
+
+- Gladys Assistant 5.1 ou plus récent.
+- Un serveur OwnTone (version 28 ou plus récente) joignable depuis Gladys sur le port de son
+  interface web, 3689 par défaut, et sur son port WebSocket (`websocket_port` dans `owntone.conf`,
+  3688 par défaut).
+- Gladys dans les `trusted_networks` d'`owntone.conf`, ou l'`admin_password` d'OwnTone saisi dans la
+  configuration.
+
+## Configuration
+
+1. **Adresse du serveur** : l'adresse IP ou le nom d'hôte de la machine qui fait tourner OwnTone,
+   comme pour son interface web. Ajoutez `:port` s'il n'est pas 3689 (`http://192.168.1.20:3689` est
+   accepté aussi).
+2. **Port** : 3689, sauf si vous avez changé `port` dans la section `library` d'`owntone.conf`.
+3. **Mot de passe admin (facultatif)** : seulement si Gladys est hors des `trusted_networks`
+   d'OwnTone. Par défaut, OwnTone fait confiance au réseau local et ne demande pas de mot de passe.
+4. **Langue** : la langue des noms de fonctionnalités et des textes écrits par l'intégration. Les
+   noms des fonctionnalités sont fixés à l'ajout de l'appareil.
+
+Ouvrez ensuite l'onglet **Découverte** et ajoutez le lecteur et les sorties voulues.
+
+## Appareils
+
+### Lecteur
+
+Le lecteur d'OwnTone, un par serveur :
+
+- **Volume** (0 à 100) : le volume général. OwnTone y ajuste chaque sortie sélectionnée.
+- **État de lecture** : en lecture ou non.
+- **Lecture**, **Pause**, **Précédent**, **Suivant** : des boutons.
+- **En cours** : titre et artiste, avec l'état quand la lecture est en pause ou arrêtée.
+
+Ces fonctionnalités sont de la catégorie **Musique** de Gladys : la boîte **Musique** du tableau de
+bord pilote le lecteur.
+
+### Sorties
+
+Un appareil par sortie d'OwnTone : enceinte AirPlay ou Chromecast, sortie audio locale (ALSA,
+PulseAudio), fifo.
+
+- **Sélectionnée** : allumée, OwnTone joue sur cette sortie ; éteinte, non. Allumer une enceinte
+  pendant la lecture l'ajoute aussitôt au groupe.
+- **Volume** (0 à 100) : le volume de cette sortie.
+
+Une sortie qui quitte OwnTone (enceinte éteinte, hors du réseau) apparaît non sélectionnée et garde
+son appareil dans Gladys ; elle revient d'elle-même.
+
+## Widget du tableau de bord
+
+**OwnTone** : ce qui joue (titre, artiste, album), l'état et le volume du lecteur, les sorties avec
+leur volume (ou « Éteinte »), et quatre boutons : lecture ou pause, suivant, volume moins, volume
+plus (de 5 en 5).
+
+## Déclencheurs de scène
+
+- **Lecture démarrée** : OwnTone se met à jouer. Variables : titre, artiste, album.
+- **Lecture arrêtée** : OwnTone cesse de jouer, en pause ou arrêté, depuis 5 secondes au moins
+  (OwnTone indique « pause » un instant à chaque changement de titre). Filtre : en pause, arrêtée, ou
+  les deux. Variables : titre, artiste, album.
+- **Sortie disparue** : une sortie quitte OwnTone. Filtre : une sortie, ou toutes. Variable : le nom
+  de la sortie.
+- **Sortie apparue** : une sortie arrive (ou revient) dans OwnTone. Filtre : une sortie, ou toutes.
+  Variable : le nom de la sortie.
+
+## Actions de scène
+
+- **Lancer une playlist** : remplace la file d'attente par une playlist OwnTone et la lance. Saisissez
+  son nom (sans tenir compte des majuscules ni des accents ; une partie du nom suffit quand une seule
+  playlist correspond) ou une URI (`library:playlist:8`, `spotify:playlist:…`, l'adresse d'une radio
+  internet). Avec jusqu'à trois sorties choisies, elles seules jouent ; sans sortie, les sorties
+  restent inchangées. Sortie : le nom de la playlist lancée.
+- **Régler le volume** : d'une sortie (une pièce), ou du lecteur (toutes les sorties sélectionnées
+  suivent).
+- **Tout couper** : arrête la lecture ; ou l'arrête et éteint toutes les sorties, ce qui libère les
+  enceintes AirPlay pour d'autres applis.
+
+## Exemples de scènes
+
+- **Réveil en musique** : à 7 h en semaine, « Lancer une playlist » `Réveil` sur l'enceinte de la
+  chambre, puis « Régler le volume » de cette sortie à 25.
+- **Départ de la maison** : quand la maison se vide, « Tout couper » en éteignant toutes les sorties.
+- **La lumière suit la musique** : sur « Lecture démarrée » après le coucher du soleil, tamiser le
+  salon ; sur « Lecture arrêtée », rallumer.
+
+## Dépannage
+
+- **« Le serveur OwnTone ne répond pas »** : vérifiez l'adresse et le port, puis que l'interface web
+  s'ouvre depuis un autre appareil du réseau.
+- **« OwnTone refuse le mot de passe »** : saisissez l'`admin_password` d'`owntone.conf`. OwnTone
+  l'exige pour toute adresse hors de ses `trusted_networks`.
+- **« OwnTone refuse Gladys »** : OwnTone n'a pas d'`admin_password` et ne fait pas confiance au
+  réseau de Gladys : définissez-en un, ou ajoutez ce réseau aux `trusted_networks`.
+- **Les états n'arrivent que toutes les 5 secondes** : le port WebSocket d'OwnTone (3688) n'est pas
+  joignable, ou `websocket_port` vaut 0. L'intégration lit alors OwnTone toutes les 5 secondes. Les
+  journaux le signalent à la connexion.
+- **« OwnTone n'a pas pu utiliser cette sortie »** : l'enceinte est éteinte, occupée par une autre
+  source, ou demande un mot de passe ou un code d'appairage : appairez-la une fois depuis l'interface
+  web d'OwnTone.
+- **« La file d'attente d'OwnTone est vide »** : Lecture a besoin de quelque chose dans la file :
+  lancez d'abord une playlist.
+
+## Limites
+
+- Un serveur OwnTone par intégration, saisi à la main (le bac à sable de Gladys n'a pas de mDNS à
+  lui).
+- Pas d'appairage des enceintes AirPlay qui demandent un code, ni de mot de passe de sortie : faites-le
+  une fois dans l'interface web d'OwnTone.
+- Une playlist se choisit par son nom ou son URI : pas de navigation dans la bibliothèque, les albums
+  ou les artistes.
+- Développée sans enceinte AirPlay ni Chromecast : leur comportement vient de l'API d'OwnTone, pas
+  d'un essai avec le matériel. Vos retours sont les bienvenus.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par OwnTone dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connecter votre serveur OwnTone | `section` | Non | Saisissez l'adresse de la machine qui fait tourner OwnTone (ex forked-daapd), comme pour son interface web. L'intégration utilise son API JSON (port 3689) et suit chaque changement en direct par son WebSocket (port 3688 par défaut). Le lecteur devient un appareil, chaque sortie (enceinte AirPlay ou Chromecast, sortie audio locale) aussi. |
+| Adresse du serveur | `string` | Oui | Adresse IP ou nom d'hôte d'OwnTone. Ajoutez :port si son interface web n'est pas sur le port 3689. |
+| Port | `number` | Non | Port de l'interface web et de l'API JSON (port de la section library d'owntone.conf). |
+| Mot de passe admin (facultatif) | `secret` | Non | Seulement si Gladys est hors des trusted_networks d'owntone.conf : son admin_password. |
+| Options | `section` | Non | Langue des noms et textes créés par l'intégration (les noms des fonctionnalités sont fixés à l'ajout de l'appareil). |
+| Langue | `select` | Non |  |
+
+## Comment installer OwnTone dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : OwnTone apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-owntone:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-owntone](https://github.com/guim31/gladys-owntone).
+
+OwnTone nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+OwnTone est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-owntone) — [source de cette documentation](https://github.com/guim31/gladys-owntone/blob/HEAD/docs/fr.md)

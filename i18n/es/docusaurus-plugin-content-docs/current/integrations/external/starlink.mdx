@@ -1,0 +1,210 @@
+---
+title: "Integración domótica Starlink, gratuita y de código abierto"
+sidebar_label: "Starlink"
+description: "Su antena Starlink en Gladys: estado, latencia, caudal, obstrucción, alertas. En local. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-starlink.png"
+keywords:
+  - "starlink"
+  - "domótica starlink"
+  - "gladys starlink"
+  - "starlink gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-starlink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Starlink","description":"Su antena Starlink en Gladys: estado, latencia, caudal, obstrucción, alertas. En local.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-starlink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-starlink.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T15:24:40Z"}} />
+
+Su antena Starlink en Gladys: estado, latencia, pérdida de paquetes, caudal, obstrucción, alertas y modo de
+deshielo, leídos en su red local como lo hace la aplicación Starlink. Los disparadores de escena avisan
+cuando la conexión se corta y cuando vuelve, y un widget muestra la antena de un vistazo.
+
+> **Desarrollada sin el hardware: sus comentarios son bienvenidos.** La integración se escribió a partir
+> del protocolo publicado por la comunidad y se probó con respuestas grabadas de una antena, no con una
+> antena real. Indique lo que funciona y lo que no en el foro de Gladys o en las issues de GitHub.
+>
+> Esta integración no está afiliada, respaldada ni soportada por SpaceX o Starlink.
+
+## Presentación
+
+- **Un dispositivo por antena**, con el nombre de su hardware (p. ej. «Starlink rev3»), identificado por el
+  número de serie de la antena: sobrevive a un cambio de dirección.
+- **Solo en local**: la antena responde en `192.168.100.1:9200` (gRPC, el protocolo de la aplicación
+  Starlink), sin cuenta, sin contraseña, sin nube.
+- **Medidas promediadas en el intervalo de actualización**: latencia, pérdida de paquetes y caudal provienen
+  del historial segundo a segundo de la antena, no de una muestra aislada.
+- **Actualización autónoma**: la integración lee la antena con su propio temporizador; no depende de que
+  Gladys consulte el dispositivo.
+- **Segura por defecto**: reiniciar o plegar la antena corta Internet, por eso estos comandos quedan
+  rechazados mientras no los autorice.
+
+## Requisitos previos
+
+- Gladys Assistant **5.1.0** o posterior (disparadores, acciones de escena y widgets).
+- Una antena Starlink (estándar, Gen 2 «rectangular», Gen 3, Mini…) encendida.
+- **Gladys debe alcanzar `192.168.100.1`**. La integración se ejecuta en su propio contenedor, en una red
+  Docker en modo puente: su tráfico sale por la máquina de Gladys, así que alcanza la antena exactamente
+  cuando la máquina de Gladys la alcanza.
+  - Con el **router Starlink** funciona tal cual: el router transmite `192.168.100.1` a la antena.
+  - Con **su propio router** y el router Starlink en **modo bypass** (o un adaptador Ethernet Starlink
+    conectado a su router), la mayoría de los routers alcanzan directamente la dirección de la antena. Si
+    no, añada en su router una ruta estática hacia `192.168.100.1/32` por su interfaz WAN (Internet).
+  - Compruebe desde la máquina de Gladys: `ping 192.168.100.1` debe responder. El botón **Probar la
+    conexión con la antena** de la configuración confirma que la integración la ve.
+
+## Configuración
+
+Abra **Integraciones → Starlink → Configuración**:
+
+| Campo                                     | Por defecto     | Función                                                                                              |
+| ----------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
+| Dirección de la antena                    | `192.168.100.1` | Dirección IP de la antena, opcionalmente seguida del puerto (`9200` por defecto).                    |
+| Intervalo de actualización                | 30 segundos     | 10, 15, 30 s o 1 min. Las medidas se promedian en este intervalo.                                    |
+| Idioma de los textos del dispositivo      | Français        | Nombres de las funciones (fijados al añadir la antena) y texto del estado.                           |
+| Permitir los comandos que cortan Internet | desactivado     | Reiniciar, plegar y desplegar se rechazan mientras no se active. El modo de deshielo no lo necesita. |
+
+Abra luego **Integraciones → Starlink → Descubrir** y añada la antena a Gladys. Los botones de la
+pantalla de configuración:
+
+- `test_connection` — **Probar la conexión con la antena**: indica qué respondió (hardware, software,
+  estado).
+- `reboot_dish` — **Reiniciar la antena**: Internet vuelve al cabo de unos minutos.
+- `stow_dish` — **Plegar la antena**: se pone en horizontal (antes de una tormenta, para moverla). Sin
+  Internet hasta desplegarla.
+- `unstow_dish` — **Desplegar la antena**: vuelve a orientarse al cielo y se reconecta.
+
+## El dispositivo antena
+
+| Función                        | Tipo (Gladys)   | Significado                                                                                          |
+| ------------------------------ | --------------- | ---------------------------------------------------------------------------------------------------- |
+| Starlink en línea              | binario         | 1 cuando la antena está conectada a los satélites, 0 si no (y cuando está inaccesible).              |
+| Estado                         | texto           | Conectada, Buscando satélites, Obstruida, Plegada, En reposo, Inaccesible…                           |
+| Latencia                       | duración (ms)   | Tiempo medio de ping hacia la red Starlink en el intervalo (segundos totalmente perdidos excluidos). |
+| Pérdida de paquetes            | porcentaje      | Proporción de pings perdidos en el intervalo.                                                        |
+| Descarga / Subida              | caudal (Mbit/s) | Tráfico medio que pasa por la antena en el intervalo — su uso, no un test de velocidad.              |
+| Cielo obstruido                | porcentaje      | Proporción del cielo que la antena detectó obstruida (árboles, edificios).                           |
+| Obstruida ahora                | binario         | 1 mientras algo tapa la antena en el momento de la lectura.                                          |
+| Tiempo de actividad            | duración (h)    | Tiempo desde el último reinicio de la antena.                                                        |
+| Consumo                        | potencia (W)    | Consumo medio en el intervalo (antenas que lo publican).                                             |
+| Calefacción (deshielo)         | binario         | 1 mientras la antena calienta para derretir la nieve.                                                |
+| Limitación térmica             | binario         | 1 mientras la antena se limita por exceso de calor.                                                  |
+| Apagado por sobrecalentamiento | binario         | 1 cuando la antena se detuvo por sobrecalentamiento.                                                 |
+| Actualización pendiente        | binario         | 1 cuando una actualización del software espera un reinicio.                                          |
+| Modo de deshielo               | selección       | Automático, Siempre activado, Desactivado — modificable desde Gladys.                                |
+| Versión del software           | texto           | El firmware de la antena.                                                                            |
+
+Solo se envían a Gladys los valores que cambian; un valor estable se reenvía cada 6 horas para que el panel
+nunca muestre «Sin valor reciente».
+
+### Modo de deshielo
+
+**Automático** calienta cuando la antena detecta nieve, **Siempre activado** calienta antes de una nevada
+(más consumo), **Desactivado** nunca calienta (ahorra energía, pero la nieve puede cortar la conexión).
+Elíjalo desde el dispositivo o con la acción de escena `set_snow_melt_mode`.
+
+## Widget
+
+El widget `dish_status` (**Starlink**) muestra la latencia, la descarga y la subida, el cielo obstruido,
+luego el estado (verde cuando está conectada, naranja durante un corte, rojo cuando está inaccesible), las
+alertas activas por su nombre, el modo de deshielo y el tiempo de actividad. Una vez añadida la antena a
+Gladys, las casillas siguen sus funciones en directo. Su ajuste opcional elige la antena.
+
+## Disparadores de escena
+
+- `connection_lost` — **Conexión Starlink perdida**: la antena lleva desconectada todo un intervalo de
+  actualización (dos lecturas seguidas), o ya no responde en absoluto (causa `unreachable`: corte de
+  corriente, cable). Los cortes breves se ignoran. Filtre por la **Causa** (obstruida, buscando satélites,
+  plegada, en reposo, antena sin respuesta…). Variables: el código de la causa y el texto del estado.
+- `connection_restored` — **Conexión Starlink restablecida**: la antena vuelve tras un corte señalado.
+  Variables: la duración del corte en segundos y la causa.
+- `obstruction_detected` — **Cielo de la antena Starlink obstruido**: algo empieza a tapar la antena, como
+  mucho una vez cada 10 minutos. Variable: la proporción del cielo obstruida (%).
+
+Un corte que ya está en curso cuando Gladys arranca no se señala (Gladys no puede saber cuándo empezó).
+
+## Acciones de escena
+
+- `reboot_dish` — **Reiniciar la antena Starlink**.
+- `stow_dish` — **Plegar la antena Starlink**.
+- `unstow_dish` — **Desplegar la antena Starlink**.
+- `set_snow_melt_mode` — **Ajustar el deshielo de Starlink** (automático, siempre activado, desactivado).
+
+Las tres primeras cortan Internet: fallan (y la escena lo registra) mientras **Permitir los comandos que
+cortan Internet** no esté activado. Tenga en cuenta que Gladys Plus, el acceso remoto y las notificaciones
+por la nube pasan por ese mismo acceso a Internet.
+
+## Ejemplos de escenas
+
+- **Avisar cuando Starlink cae**: disparador `connection_lost` con la causa «Antena sin respuesta
+  (corriente, cable)» → enviar un mensaje por un canal local (o una notificación más tarde, cuando vuelva
+  la conexión).
+- **Registrar los cortes**: disparador `connection_restored` → enviar el mensaje «Starlink de vuelta tras
+  `outage_seconds` s».
+- **Se anuncia nieve**: condición meteorológica «nieve» por la tarde → `set_snow_melt_mode` «Siempre
+  activado»; a la mañana siguiente → «Automático».
+- **Vigilante**: disparador `connection_lost`, causa «Sin respuesta de la red» → esperar 10 minutos →
+  `reboot_dish` (con los comandos permitidos).
+
+## Solución de problemas
+
+- **«La antena no responde»**: desde la máquina de Gladys, `ping 192.168.100.1`. Sin respuesta: consulte los
+  requisitos previos (modo bypass, ruta estática). Responde pero sigue fallando: compruebe la dirección y el
+  puerto (`9200`) en la configuración.
+- **Ningún dispositivo en Descubrir**: la antena debe haber respondido una vez; utilice **Probar la
+  conexión con la antena**.
+- **Los valores nunca cambian**: compruebe que la antena se añadió a Gladys; después consulte los registros
+  con `LOG_LEVEL=debug` (cada lectura se escribe en el nivel debug).
+- **El consumo queda vacío**: algunas antenas o versiones del firmware no lo publican.
+- **Nombres de las funciones en el idioma equivocado**: se fijan al añadir la antena; cambie el idioma,
+  luego elimine y vuelva a añadir el dispositivo (su historial se pierde).
+
+## Limitaciones
+
+- La API de la antena **no es oficial**: SpaceX puede cambiarla con una actualización del firmware. La
+  integración ignora lo que no conoce y sigue funcionando con lo que todavía encuentra.
+- **Una antena** por instalación (la dirección de la configuración). El router Wi-Fi Starlink no se lee.
+- La descarga y la subida son el **tráfico** que pasa por la antena, no la capacidad del enlace.
+- Sin mapa de obstrucciones, sin posición GPS, sin programación del reposo (lo hace la aplicación
+  Starlink).
+- El intervalo de actualización más corto es de 10 segundos: un corte más breve que un intervalo puede pasar
+  desapercibido.
+- Dos pequeñas peticiones por intervalo (estado ≈ 1 KB, historial ≈ 25 KB), solo en la red local: sin cuota,
+  sin tráfico de Internet.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Starlink te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Antena Starlink | `section` | No | La integración lee la antena en su red, como la aplicación Starlink: sin cuenta ni nube. Gladys debe alcanzar la dirección de la antena (192.168.100.1 por defecto): con el router Starlink funciona tal cual; con su propio router en modo bypass, consulte la documentación. |
+| Dirección de la antena | `string` | No | Dirección IP de la antena, opcionalmente seguida del puerto (9200 por defecto). Deje 192.168.100.1 salvo si cambió la red. |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de la antena. Latencia, pérdida de paquetes y caudal se promedian en este intervalo. |
+| Idioma de los textos del dispositivo | `select` | No | Nombres de las funciones (fijados al añadir la antena a Gladys) y texto del estado. |
+| Comandos que cortan Internet | `section` | No | Reiniciar o plegar la antena corta el acceso a Internet durante minutos, Gladys Plus y acceso remoto incluidos. Quedan rechazados mientras no los autorice aquí. |
+| Permitir los comandos que cortan Internet | `boolean` | No |  |
+
+## Cómo instalar Starlink en Gladys
+
+1. En Gladys, abre **Integraciones**: Starlink aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-starlink:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-starlink](https://github.com/guim31/gladys-starlink).
+
+Starlink requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Starlink es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-starlink) — [fuente de esta documentación](https://github.com/guim31/gladys-starlink/blob/HEAD/docs/es.md)

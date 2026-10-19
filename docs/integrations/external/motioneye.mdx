@@ -1,0 +1,172 @@
+---
+title: "motionEye smart home integration, free and open source"
+sidebar_label: "motionEye"
+description: "motionEye cameras: images, motion detected, detection and recording switches, snapshots. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-motioneye.png"
+keywords:
+  - "motioneye"
+  - "motioneye smart home"
+  - "gladys motioneye"
+  - "motioneye gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-motioneye instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"motionEye","description":"motionEye cameras: images, motion detected, detection and recording switches, snapshots.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-motioneye","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-motioneye.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T19:08:46Z"}} />
+
+Brings the cameras of a [motionEye](https://github.com/motioneye-project/motioneye) server
+(motionEye on a Raspberry Pi, a NAS or in Docker, motionEyeOS) into Gladys: their image, the motion
+they see right now, and the motionEye switches for motion detection, still images and movie
+recording. Motion fires a scene trigger with a fresh image, so a scene can send it to you.
+
+Tested against real motionEye servers in Docker (0.42 and 0.45 in development) with a simulated
+network camera, not yet on a Raspberry Pi running motionEyeOS: feedback welcome on
+[GitHub](https://github.com/guim31/gladys-motioneye/issues) or on the Gladys forum.
+
+## What you need
+
+- Gladys 5.1 or later.
+- A motionEye server reachable from Gladys on the local network, version 0.42 or later. Its web
+  page is usually at `http://<address>:8765`.
+- The **administrator** account of motionEye (user `admin` by default, the one that opens the
+  settings). The surveillance user only sees the images: it cannot change a switch.
+- One motionEye server per integration. Cameras of other motionEye servers can be added to that one
+  as "Remote motionEye camera", and then come into Gladys with it.
+
+## Set up
+
+1. In Gladys, open **Integrations**, find **motionEye** and install it.
+2. In its **Configuration** tab, fill in:
+   - **motionEye address**: the address of the motionEye page, e.g. `192.168.1.20:8765`. Port 8765
+     is used when none is given; write `https://` or a path (`http://nas.lan:80/motioneye`) for a
+     reverse proxy.
+   - **Administrator user name** (`admin` by default) and **Password**.
+   - **Motion check**: how often each camera added in Gladys is read (2, 5, 10 or 30 seconds, 5
+     by default). It is the delay before motion is seen.
+   - **Image refresh**: how often each image is sent to Gladys (10 seconds to 15 minutes, 1
+     minute by default). Motion also sends one at once.
+   - **Language of the names**: the language of the feature names (French by default), given when
+     a camera is added.
+3. Save, then open the **Discovery** tab: one device per motionEye camera. Add the ones you want.
+4. The **Check the connection** button of the Configuration tab lists the cameras motionEye has,
+   whether they answer and whether motion detection is on.
+
+## The Gladys devices
+
+Each motionEye camera becomes a Gladys camera named as in motionEye, with:
+
+| Feature          | What it is                                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Image            | The camera image, for the camera box of the dashboard and the "Send a camera image" scene action.                      |
+| Motion           | Motion seen right now by motionEye (detected / nothing), when motion detection is on.                                  |
+| Motion detection | Switch: motion detection of the camera in motionEye.                                                                   |
+| Still images     | Switch: the still images of the camera in motionEye (taken in the mode chosen in motionEye: on motion, at intervals…). |
+| Movie recording  | Switch: the movies of the camera in motionEye (recorded in the mode chosen in motionEye: on motion, continuous…).      |
+
+The switches follow the motionEye page: a change made there reaches Gladys within a minute. A
+camera that stops answering shows as unreachable on its device card.
+
+**Changing a switch restarts the motionEye cameras for a few seconds** (motionEye restarts its
+`motion` process after every change of settings): the images pause during that time.
+
+## Dashboard widget
+
+**motionEye camera** (widget settings: the camera) shows the image with its time, whether motion
+is seen, whether motion detection and movie recording are on, and two buttons: one turns motion
+detection on or off, the other makes motionEye save a picture and brings back the new view.
+
+## Scenes
+
+### Triggers
+
+- **motionEye: motion detected**: a camera starts seeing motion (motion detection on in
+  motionEye). Choose a camera, or leave empty for every camera. Its image is sent to Gladys at
+  once: a "Send a camera image" action right after it sends the moment of the detection. The camera
+  name is passed on to the actions.
+- **motionEye: camera offline**: a camera stops answering (motionEye has no image from it any
+  more, or motionEye itself is down), after three failed readings in a row. Same camera choice.
+
+### Actions
+
+- **motionEye: motion detection**: turns motion detection on or off, for one camera, or for every
+  camera at once when the camera is left empty (one single restart of motionEye). Returns the
+  number of cameras changed.
+- **motionEye: take a picture**: motionEye saves a picture with its media files, and Gladys gets
+  the new image (for "Send a camera image").
+- **motionEye: read a camera**: reads a camera now. Returns whether it answers (online), sees
+  motion, and whether motion detection, still images and movie recording are on, for a condition
+  of the next steps.
+
+### Scene ideas
+
+- **Alarm armed**: when the house alarm is armed, "motionEye: motion detection" On, for every
+  camera; Off when it is disarmed.
+- **Motion at the entrance**: trigger "motionEye: motion detected" on the entrance camera, then
+  "Send a camera image" of that camera to your phone.
+- **Camera lost**: trigger "motionEye: camera offline", then a message "\{camera name\} no longer
+  answers".
+
+## Troubleshooting
+
+- **"motionEye refuses the user name or password"**: enter the administrator account (the one
+  that opens the motionEye settings), not the surveillance user.
+- **"motionEye does not answer at this address"**: open the address in a browser from the Gladys
+  network; check the port (8765 by default) and that motionEye listens on the network, not only on
+  `localhost`.
+- **A camera is unreachable**: motionEye has no image from it either; check it in the motionEye
+  page.
+- **"Motion" never moves**: motion detection must be on (switch **Motion detection**), and
+  motionEye must detect the motion itself (threshold, mask… in its settings).
+- **Logs**: the integration logs only its life (start, server or camera lost and back, actions);
+  set `LOG_LEVEL=debug` on the integration to see every reading.
+
+## Limits
+
+- Motion is read every few seconds (the **Motion check** setting): a motion shorter than that, and
+  shorter than the motionEye event, may be missed. motionEye cannot notify Gladys directly: its
+  web hooks would need a port of the integration open on the network.
+- One motionEye server per integration (others as remote cameras, see above).
+- "Simple MJPEG" cameras of motionEye are left out: motionEye only relays their stream, with no
+  motion detection or settings.
+- The image of Gladys is not a live stream: it refreshes at the chosen pace, and at once on motion.
+- The pictures and movies stay in motionEye; Gladys only shows the last image.
+
+## Configuration settings
+
+These are the settings motionEye asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your motionEye server | `section` | No | Enter the address of the motionEye web page and its administrator account (the "admin" user of motionEye, not the surveillance user). Then open the Discovery tab: one device per camera. |
+| motionEye address | `string` | Yes | Port 8765 when none is given. Add https:\/\/ or a path for a reverse proxy. |
+| Administrator user name | `string` | No |  |
+| Password | `secret` | No |  |
+| Motion check | `select` | No | How often each camera added in Gladys is read: the delay before motion is seen. |
+| Image refresh | `select` | No | How often each camera image is sent to Gladys. Motion also sends a new one at once. |
+| Language of the names | `select` | No | Names given to the features when a camera is added (Motion, Motion detection…). |
+
+## How to install motionEye in Gladys
+
+1. In Gladys, open **Integrations**: motionEye appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-motioneye:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-motioneye](https://github.com/guim31/gladys-motioneye).
+
+motionEye requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+motionEye is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-motioneye) — [source of this documentation](https://github.com/guim31/gladys-motioneye/blob/HEAD/docs/en.md)

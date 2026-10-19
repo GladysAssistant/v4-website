@@ -1,0 +1,248 @@
+---
+title: "Integración domótica powerfox, gratuita y de código abierto"
+sidebar_label: "powerfox"
+description: "Lectores powerfox poweropti de contadores de electricidad, gas, agua y calor, vía la nube. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-powerfox.png"
+keywords:
+  - "powerfox"
+  - "domótica powerfox"
+  - "gladys powerfox"
+  - "powerfox gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-powerfox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"powerfox","description":"Lectores powerfox poweropti de contadores de electricidad, gas, agua y calor, vía la nube.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-powerfox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-powerfox.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T22:24:29Z"}} />
+
+## Presentación
+
+Esta integración trae a Gladys los lectores **powerfox poweropti**. Un poweropti es un lector óptico que se
+coloca sobre el LED o la pantalla de un contador (electricidad, gas, agua o calor), muy extendido en Alemania
+y Austria. La integración lee la **API en la nube de powerfox** con su cuenta powerfox, como la integración
+`powerfox` de Home Assistant, y crea un dispositivo Gladys por lector:
+
+- **contador eléctrico**: la potencia instantánea (con signo cuando el contador también vierte: positiva
+  cuando usted consume de la red, negativa cuando vierte), el **índice de consumo** y el **índice de
+  vertido**, en kWh, que alimentan el seguimiento de energía de Gladys;
+- **contador de agua**: el índice de agua fría y/o caliente, en m³;
+- **contador de calor**: la energía térmica (kWh) y el volumen de agua de calefacción (m³);
+- **contador de gas**: el gas consumido hoy y en esta hora (m³), y su coste de hoy (€);
+- para cada lector salvo el de gas: un indicador de **medición desactualizada**, activado cuando powerfox
+  indica que la última medición es antigua.
+
+También ofrece un **widget del panel** (potencia y energía del día) y una **acción de escena** (los totales
+del día, con una frase lista para un mensaje). La integración es **de solo lectura**: nunca modifica nada en
+sus contadores ni en su cuenta powerfox.
+
+> **Desarrollada sin el hardware**: esta integración se escribió a partir de la biblioteca libre
+> `python-powerfox` y de las respuestas reales de la API publicadas en sus pruebas, sin poweropti ni cuenta
+> powerfox. Sus comentarios son bienvenidos en el foro de Gladys o en las issues de GitHub.
+>
+> Esta integración no está afiliada a powerfox GmbH.
+
+## Requisitos
+
+- Gladys Assistant **5.1.0** o posterior (5.2 recomendado para el seguimiento de energía).
+- Un lector poweropti configurado en la **aplicación powerfox**, y el correo electrónico y la contraseña de
+  esa cuenta powerfox.
+- Acceso a Internet desde Gladys: las lecturas vienen de la nube powerfox (`backend.powerfox.energy`).
+
+## Configuración
+
+1. En Gladys, abra **Integraciones**, busque **powerfox** (o use **Instalar desde GitHub** con
+   `https://github.com/guim31/gladys-powerfox`) e instálela.
+2. En la **Configuración** de la integración, introduzca:
+   - **Correo electrónico** y **Contraseña**: los de la aplicación powerfox;
+   - **Intervalo de actualización**: cada cuánto se lee cada lector, de 10 segundos a 5 minutos (1 minuto por
+     defecto, vea [Cuotas de la API](#cuotas-de-la-api));
+   - **Idioma de los nombres y mensajes**: el idioma de los nombres de los nuevos dispositivos y de la frase
+     que devuelve la acción de escena (francés por defecto).
+3. Pulse **Probar la conexión**: el mensaje enumera los lectores de su cuenta.
+4. Abra la pestaña **Descubrir** y añada a Gladys los lectores que desee. Solo se leen los lectores añadidos.
+
+La contraseña se guarda en la configuración Gladys de la integración; nunca aparece en los registros.
+
+## Dispositivos
+
+Cada lector se convierte en un dispositivo, con el nombre de la aplicación powerfox (o el de su tipo de
+contador y el final de su identificador cuando no tiene nombre).
+
+### Contador eléctrico
+
+| Función                 | Tipo Gladys                                       | Unidad | Notas                                                |
+| ----------------------- | ------------------------------------------------- | ------ | ---------------------------------------------------- |
+| Potencia                | Potencia de la red (importación +, exportación −) | W      | en un contador bidireccional; si no, «Potencia», ≥ 0 |
+| Índice de consumo       | Sensor de energía, índice                         | kWh    | Gladys deduce el consumo de 30 minutos y su coste    |
+| Índice de vertido       | Sensor de producción de energía, índice           | kWh    | solo en un contador bidireccional («Prosumer»)       |
+| Medición desactualizada | Entrada (0 = actualizada, 1 = desactualizada)     |        | el indicador `Outdated` de powerfox                  |
+
+**Seguimiento de energía (Gladys 5.2)**: el índice de consumo es un índice de energía acumulado. Cuando usted
+añade el dispositivo, Gladys crea por sí misma sus funciones de **consumo de 30 minutos** y de **coste**, y lo
+vincula al contador eléctrico principal de los ajustes de energía. El índice de vertido alimenta el
+seguimiento de producción (y los ingresos del vertido). No hay nada que configurar en la integración.
+
+Cuando el contador solo muestra los registros de tarifa alta y baja, el índice de consumo es su suma. Un total
+en 0, o más bajo que el anterior (un error de lectura), nunca se publica: Gladys lo contaría como un consumo
+enorme.
+
+### Contador de agua
+
+| Función                 | Tipo Gladys                                   | Unidad |
+| ----------------------- | --------------------------------------------- | ------ |
+| Agua fría               | Sensor de volumen                             | m³     |
+| Agua caliente           | Sensor de volumen                             | m³     |
+| Medición desactualizada | Entrada (0 = actualizada, 1 = desactualizada) |        |
+
+Un contador de agua fría solo tiene el índice de agua fría, uno de agua caliente solo el de agua caliente, un
+contador combinado ambos.
+
+### Contador de calor
+
+| Función                 | Tipo Gladys                                   | Unidad |
+| ----------------------- | --------------------------------------------- | ------ |
+| Energía térmica         | Contador                                      | kWh    |
+| Volumen de calefacción  | Sensor de volumen                             | m³     |
+| Medición desactualizada | Entrada (0 = actualizada, 1 = desactualizada) |        |
+
+La energía térmica se publica como contador, y no como índice de energía, a propósito: Gladys vincularía un
+índice de energía al contador eléctrico principal y contaría el calor como electricidad.
+
+### Contador de gas
+
+| Función           | Tipo Gladys       | Unidad |
+| ----------------- | ----------------- | ------ |
+| Gas hoy           | Sensor de volumen | m³     |
+| Gas esta hora     | Sensor de volumen | m³     |
+| Coste del gas hoy | Moneda            | €      |
+
+La API de powerfox no da índice de gas, solo el informe horario del día: estos valores vuelven a 0 a
+medianoche (zona horaria de Gladys). Un contador de gas se lee cada 5 minutos como máximo.
+
+## Widget
+
+Widget **powerfox**: en el panel, añada un widget, elija **powerfox** y seleccione un contador en su
+configuración.
+
+- electricidad: la potencia en directo, la energía **consumida** y **vertida hoy** (contador bidireccional),
+  la hora de la última medición y si está actualizada;
+- gas: el gas del día, de la hora y su coste;
+- agua y calor: los índices, la hora de la última medición.
+
+Los totales del día vienen del informe de powerfox, leído cada 5 minutos como máximo; el widget se actualiza
+cada 2 minutos, la casilla de potencia sigue cada medición.
+
+## Acción de escena
+
+**powerfox: energía del día** (en las acciones «Integraciones» del editor de escenas), para un contador
+eléctrico o de gas. Lee el informe del día y lo pasa a los siguientes pasos de la escena:
+
+| Resultado                        | Contador     |
+| -------------------------------- | ------------ |
+| Electricidad consumida hoy (kWh) | electricidad |
+| Electricidad vertida hoy (kWh)   | electricidad |
+| Potencia actual (W)              | electricidad |
+| Gas consumido hoy (m³)           | gas          |
+| Coste del gas hoy (€)            | gas          |
+| Frase de resumen                 | ambos        |
+
+La frase de resumen dice «Hoy: 12,4 kWh consumidos, 3,1 kWh vertidos.» en el idioma de la configuración. Un
+contador de agua o de calor, o un informe ilegible, hace fallar la acción (la escena continúa, el resultado
+queda vacío). No hay desencadenante de escena: la potencia, los índices y el indicador de medición
+desactualizada son estados del dispositivo, los desencadenantes de dispositivo de Gladys los cubren.
+
+## Ejemplos de escenas
+
+- **Mensaje de la noche**: desencadenante «Todos los días a las 21:00» → acción **powerfox: energía del día**
+  en el contador eléctrico → «Enviar un mensaje» con la frase de resumen.
+- **Aprovechar el excedente**: desencadenante en el contador eléctrico, «Potencia» por debajo de −1500 W
+  (vertido) → encender el enchufe del lavavajillas.
+- **Lector mudo**: desencadenante en el contador, «Medición desactualizada» igual a 1 → enviar el mensaje «El
+  poweropti ya no transmite, compruebe sus pilas o su Wi-Fi».
+- **Día caro**: todos los días a las 22:00 → **powerfox: energía del día** en el contador de gas →
+  «Continuar solo si» el coste del gas supera 10 → enviar un mensaje.
+
+## Cuotas de la API
+
+powerfox no publica una cuota de solicitudes para su API. La integración de Home Assistant lee cada lector
+cada 10 segundos; algunos usuarios han señalado rechazos `HTTP 429` al consultar muy a menudo. Esta
+integración se queda muy por debajo:
+
+- una solicitud por lector añadido y por intervalo de actualización (1 minuto por defecto, 10 segundos como
+  mínimo);
+- un contador de gas cada 5 minutos como máximo; el informe del día del widget y de la acción de escena cada
+  5 minutos como máximo por lector (1 minuto para una escena);
+- la lista de lectores al arrancar, cada 6 horas y a petición (pestaña Descubrir, Probar la conexión);
+- tras un `HTTP 429`, **ninguna solicitud** durante el plazo que pide powerfox (`Retry-After`), o durante una
+  pausa que se duplica en cada rechazo, hasta 30 minutos;
+- tras una contraseña rechazada (`HTTP 401`), ninguna solicitud hasta que se vuelva a guardar la
+  configuración: insistir podría bloquear la cuenta.
+
+La integración solo lee los datos de su propia cuenta, con sus credenciales, como la aplicación powerfox.
+
+## Solución de problemas
+
+- **«powerfox rechaza el correo electrónico o la contraseña»**: compruébelos en la aplicación powerfox,
+  introdúzcalos de nuevo y guarde.
+- **«powerfox pide reducir el ritmo»**: elija un intervalo más largo; las lecturas se reanudan solas tras la
+  pausa.
+- **«La nube de powerfox no responde»**: la integración lo intenta de nuevo en cada intervalo; compruebe el
+  acceso a Internet de Gladys.
+- **Un lector se queda sin valores** y los registros dicen «the data transfer is denied in the powerfox app»:
+  autorice la transferencia de datos de ese lector en los ajustes de privacidad de la aplicación powerfox.
+- **«Medición desactualizada» en 1**: powerfox no tiene una medición reciente del poweropti (pilas, Wi-Fi,
+  lector desplazado en el contador); la integración solo lo indica.
+- **Nada en la pestaña Descubrir**: pulse **Probar la conexión**; un lector de tipo desconocido se ignora y se
+  nombra en los registros de la integración (pestaña **Supervisión**).
+
+Los registros de la integración solo muestran el arranque, la conexión, los problemas y su final. Cada
+medición aparece en el nivel de depuración (`LOG_LEVEL=debug`).
+
+## Límites
+
+- **Solo en la nube**: la integración usa la API en la nube de powerfox, no la interfaz local de algunos
+  lectores.
+- **Solo lectura**: nada se puede controlar desde Gladys.
+- Los registros de **tarifa alta y baja** no se publican como funciones aparte.
+- Los contadores de **gas** no tienen índice, solo los totales del día y de la hora; los incrementos del
+  contador de calor no se publican.
+- Los costes se muestran en **euros**, la moneda de powerfox.
+- **Desarrollada sin el hardware**: los valores solo se han comprobado con las respuestas publicadas de la
+  API. Sus comentarios son bienvenidos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que powerfox te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su cuenta powerfox | `section` | No | El correo electrónico y la contraseña de la aplicación powerfox. Las lecturas vienen de la nube powerfox: los lectores deben estar configurados antes en la aplicación. |
+| Correo electrónico | `string` | Sí |  |
+| Contraseña | `secret` | Sí |  |
+| Intervalo de actualización | `select` | No | Una solicitud por lector y por intervalo. Los contadores de gas se leen cada 5 minutos como máximo. |
+| Idioma de los nombres y mensajes | `select` | No | Nombres de los nuevos dispositivos y textos de la acción de escena. |
+
+## Cómo instalar powerfox en Gladys
+
+1. En Gladys, abre **Integraciones**: powerfox aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-powerfox:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-powerfox](https://github.com/guim31/gladys-powerfox).
+
+powerfox requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+powerfox es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-powerfox) — [fuente de esta documentación](https://github.com/guim31/gladys-powerfox/blob/HEAD/docs/es.md)

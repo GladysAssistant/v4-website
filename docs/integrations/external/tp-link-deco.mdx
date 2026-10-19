@@ -1,0 +1,205 @@
+---
+title: "TP-Link Deco smart home integration, free and open source"
+sidebar_label: "TP-Link Deco"
+description: "TP-Link Deco mesh Wi-Fi: who is home, Deco status, guest Wi-Fi and restarts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-deco.png"
+keywords:
+  - "tp-link deco"
+  - "tp-link deco smart home"
+  - "gladys tp-link deco"
+  - "tp-link deco gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-deco instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TP-Link Deco","description":"TP-Link Deco mesh Wi-Fi: who is home, Deco status, guest Wi-Fi and restarts.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-deco","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-deco.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T09:09:03Z"}} />
+
+Brings your **TP-Link Deco** mesh Wi-Fi into Gladys: who is home (phones on the Wi-Fi), the state of
+each Deco of the mesh, and two commands for your scenes: the guest Wi-Fi and the restart of a Deco.
+Everything stays on your local network: the integration talks to the main Deco directly, never to the
+TP-Link cloud.
+
+Not affiliated with TP-Link. **Developed without the hardware: feedback welcome** — the integration is
+tested against a fake Deco that speaks the real encrypted protocol, built from published answers of
+real Decos, not against a real one yet.
+
+## Overview
+
+- **Presence**: every phone, laptop or device connected to the mesh can become a presence sensor, with
+  a departure delay so a phone in sleep mode does not "leave" every few minutes.
+- **One device per Deco**: online, Internet, connected clients, guest clients, role (main Deco or
+  satellite), firmware version and, for a satellite, the link rate of its connection to the mesh.
+- **Scene triggers**: an unknown device connects to the network, a Deco goes offline.
+- **Commands** (off by default): turn the guest Wi-Fi on or off, restart a Deco.
+- **Dashboard widget**: clients, guests, the state of each Deco and who is home, at a glance.
+
+Models: the Deco range that the Deco app manages and that has a local web page (X20, X50, X55, X60,
+X68, M4, M5, M9 Plus, BE65, BE85…). Gladys 5.1 or later.
+
+## Prerequisites
+
+- A Deco mesh set up with the **Deco app**, and the **IP address of the main Deco** — the one plugged
+  into your Internet box. The Deco app shows it: **Network → the main Deco → IP address** (often
+  `192.168.68.1` in router mode). In access-point mode, it is the address your box gave it.
+- The **password of the TP-Link ID that owns the network** in the Deco app: the local web API of the
+  Deco only accepts the **owner** account, with the username `admin`, not a manager account.
+- The Deco allows **one administrator session at a time**. The integration logs in for each read and
+  logs out at once, but while it reads, a login elsewhere ends one of the two sessions. TP-Link
+  recommends a second TP-Link ID, added as a **manager** in the Deco app, for your own use of the app.
+
+## Configuration
+
+In Gladys, **Integrations → Install from GitHub** with the address of this repository, then
+**Integrations → TP-Link Deco → Configuration**:
+
+| Field                                  | What to enter                                                                        |
+| -------------------------------------- | ------------------------------------------------------------------------------------ |
+| Address of the main Deco               | Its IP address, e.g. `192.168.68.1`. Add `https://` only if http does not answer.    |
+| Deco app password                      | The password of the owner TP-Link ID. Never shown, never logged.                     |
+| Offer the network clients in Discovery | On by default: the clients online appear in the Discovery tab.                       |
+| Departure delay (minutes)              | 5 by default: how long a client must be gone before it is reported away (0 to 120).  |
+| Refresh interval                       | 1 minute by default; 30 seconds, 2 or 5 minutes. Each read is one login on the Deco. |
+| Allow guest Wi-Fi control              | Off by default. Adds the guest Wi-Fi switch to the main Deco.                        |
+| Allow restarts                         | Off by default. Allows the "Restart a Deco" action and scene action.                 |
+| Language of the feature names          | French by default; English, German or Spanish. Names are set when a device is added. |
+
+Then run **Test the connection** (Configuration screen): it logs in, counts the Decos and the clients,
+and logs out. The Deco counts wrong passwords and locks the login after several of them: a refused
+password pauses the reads until you fix it, so the integration never locks your account.
+
+How often the Deco is read: at the chosen interval, by the integration itself (Gladys 5.2 does not
+poll external devices reliably). One read is one session: the keys, the login, the list of the Decos,
+one client list per Deco, the guest network when its control is allowed, and the logout — about ten
+small requests. The Deco has no published quota; every 1 minute is the pace the Home Assistant
+integration uses (30 seconds there). Opening a dashboard never reads the Deco.
+
+## Devices
+
+Go to **Integrations → TP-Link Deco → Discovery** and add what you want to follow.
+
+**A Deco** (one device per Deco of the mesh):
+
+| Feature           | Value                                                                             |
+| ----------------- | --------------------------------------------------------------------------------- |
+| Online            | 1 when the Deco is part of the mesh, 0 when it dropped out.                       |
+| Internet          | 1 when the Deco reaches the Internet.                                             |
+| Connected clients | The clients connected through this Deco (Wi-Fi and wired).                        |
+| Guest clients     | Those of them on the guest network.                                               |
+| Role              | Main Deco or Satellite.                                                           |
+| Firmware version  | As the Deco reports it, e.g. `1.8.0 Build 25102213 Rel. 43970`.                   |
+| Link rate         | Satellites only: the rate of the link to the mesh, in Mbit/s (Wi-Fi or Ethernet). |
+| Guest Wi-Fi       | Main Deco only, once "Allow guest Wi-Fi control" is on: a switch, on or off.      |
+
+**A network client** (a phone, a computer…): one **Presence** feature, 1 when the client is connected
+to the mesh (or left less than the departure delay ago), 0 otherwise. A client added to Gladys stays in
+the Discovery list when it is away.
+
+After turning on "Allow guest Wi-Fi control", open the Discovery tab and click **Update** on the main
+Deco: the switch is added to it.
+
+## Widget
+
+Add the **Deco network** widget to a dashboard. It shows three tiles (clients connected, guests, Decos
+online), the clients you added to Gladys with **Home** or **Away**, and the state of each Deco: its
+number of clients, **No Internet** or **Offline**. It is built from the latest read of the Deco and
+costs it nothing.
+
+## Scene triggers
+
+| Trigger                  | When                                                                             | Variables                                                           |
+| ------------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Unknown device connected | A device never seen on the mesh joins it. Filters: connection, guest network.    | name, MAC address, IP address, connection, Wi-Fi band, connected to |
+| Deco offline             | A Deco drops out of the mesh: unplugged, out of reach, restarting. Filter: Deco. | Deco name, model                                                    |
+
+The first read only learns the devices already there: installing the integration or restarting it fires
+nothing. The devices seen are kept in `/data` (MAC addresses only).
+
+## Commands
+
+Both are **off by default**: turn on their option in the configuration first.
+
+- **Guest Wi-Fi**: the switch of the main Deco turns the guest network on or off on every band that has
+  one. The guest network must exist (create it in the Deco app). Use it from a scene like any switch.
+- **Restart a Deco**: an action of the Configuration screen and a scene action, never a switch. The
+  area of that Deco loses the Wi-Fi for a few minutes; restarting the main Deco cuts the whole network,
+  Gladys included if it reaches the Deco through it.
+
+## Scene examples
+
+- **Welcome**: when "Presence" of a phone goes to 1 after 18:00, turn on the hall light.
+- **Intruder on the network**: on "Unknown device connected" with guest network "No", send a message
+  with the name and MAC address of the device.
+- **Guests**: every Saturday at 14:00 turn the guest Wi-Fi on, at 23:00 off.
+- **Weekly restart**: every Monday at 4:00, "Restart a Deco" on a satellite that tends to slow down.
+
+## Troubleshooting
+
+- **"Password refused"**: check the password of the **owner** TP-Link ID (not a manager). The reads
+  are paused: fix the password, or run "Test the connection".
+- **"Login refused"**: the Deco locks the login for a while after wrong passwords. Wait a few minutes.
+- **"The session was taken over by another login"**: someone logged in on the web page of the Deco
+  during a read. The next read logs in again; close the web page when you are done with it.
+- **The Deco app logs you out**: the owner account of the app and the integration share the same
+  administrator. Use a manager account in the app, as TP-Link recommends.
+- **"No answer"**: check the IP address of the main Deco (Deco app) and that Gladys reaches it. Some
+  firmwares only answer on `https://`: the integration follows that redirect by itself.
+- **"Does not answer like the main Deco"**: the address is not the main Deco, or the firmware uses an
+  older login (Deco S7, some old firmwares) that the integration does not support.
+- Logs: **Integrations → TP-Link Deco → Logs**; set `LOG_LEVEL=debug` for every read.
+
+## Limits
+
+- **Developed without the hardware**: the protocol follows the Home Assistant integration
+  `tplink_deco`; report any difference with your model.
+- The Deco allows **one administrator session**: the integration and the web page of the Deco
+  interrupt each other while one of them reads.
+- The firmwares with the older encrypted login (HTTP 401 on the keys, Deco S7) are not supported.
+- The loss of the main Deco itself shows as "Main Deco unreachable" on the integration, not as a
+  "Deco offline" trigger: the satellites are only seen through it.
+- Presence depends on the phone staying on the Wi-Fi: phones that randomize their MAC address need a
+  fixed (private address off) address for this network.
+- No cloud: the Deco must be reachable on the local network; the TP-Link cloud is never used.
+
+## Configuration settings
+
+These are the settings TP-Link Deco asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Main Deco | `section` | No | The Deco connected to your Internet box. Its local web API allows one administrator session at a time: the integration logs out after each read, and a login on the web page of the Deco interrupts the integration. |
+| Address of the main Deco | `string` | Yes | Its IP address on your network, shown in the Deco app (Network > the main Deco). Add https:\/\/ only if http does not answer. |
+| Deco app password | `secret` | Yes | The password of the TP-Link ID that owns the network in the Deco app (the owner, not a manager). The Deco locks the login after several wrong passwords. |
+| Presence and refresh | `section` | No | The clients online appear in the Discovery tab: add the phones to follow, each becomes a presence sensor. |
+| Offer the network clients in Discovery | `boolean` | No |  |
+| Departure delay (minutes) | `number` | No | How long a client must be gone before it is reported away (phones in sleep leave the Wi-Fi for a while). |
+| Refresh interval | `select` | No | Each read is one login on the Deco. Every 30 seconds suits a fast presence; every 2 or 5 minutes spares the Deco. |
+| Commands (off by default) | `section` | No | Restarting a Deco cuts the Wi-Fi of its area for a few minutes, the main Deco the whole network: turn on only what your scenes need. The guest Wi-Fi switch appears on the main Deco once allowed (Discovery > Update). |
+| Allow guest Wi-Fi control | `boolean` | No |  |
+| Allow restarts | `boolean` | No |  |
+| Language of the feature names | `select` | No | Also used for the messages of the integration. Names are set when a device is added. |
+
+## How to install TP-Link Deco in Gladys
+
+1. In Gladys, open **Integrations**: TP-Link Deco appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-deco:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-deco](https://github.com/guim31/gladys-deco).
+
+TP-Link Deco requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+TP-Link Deco is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-deco) — [source of this documentation](https://github.com/guim31/gladys-deco/blob/HEAD/docs/en.md)

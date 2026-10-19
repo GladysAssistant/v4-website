@@ -1,0 +1,203 @@
+---
+title: "Invoxia Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Invoxia"
+description: "Position, battery and silence of your Invoxia GPS trackers (bike, car, pets), read only. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-invoxia.png"
+keywords:
+  - "invoxia"
+  - "invoxia smart home"
+  - "gladys invoxia"
+  - "invoxia gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-invoxia instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Invoxia","description":"Position, battery and silence of your Invoxia GPS trackers (bike, car, pets), read only.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-invoxia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-invoxia.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T00:20:45Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Your [Invoxia](https://www.invoxia.com/) GPS trackers (bike, car, pets,
+luggage...) in Gladys, through the cloud of Invoxia, with the account of the
+Invoxia app.
+
+- each tracker becomes a Gladys device: **latitude**, **longitude**,
+  **accuracy** (m), **battery** (%), **moving** (when the tracker gives it),
+  **last seen** and **silent**;
+- a scene trigger **Tracker silent**: no news from the tracker for 1 hour to
+  48 hours (chosen in the scene): flat battery, tracker removed, no network.
+
+Read only, by polling: Gladys reads the cloud of Invoxia at a regular
+interval and never changes anything at Invoxia (mode, alerts and zones stay
+in the app).
+
+> **This integration has never been tested with a real Invoxia tracker nor a
+> real account.** This first version was written from the
+> [gps-tracker](https://gitlab.com/ezlo.picori/gps_tracker) library (MIT),
+> ported to JavaScript, and tested against a fake Invoxia API only. Tell the
+> Gladys forum what works and what does not.
+
+Unofficial integration, not affiliated with Invoxia.
+
+## An access to use gently
+
+Invoxia offers no API to its consumer customers (it is kept for its
+professional offer). Like gps-tracker, this integration uses the API of the
+Invoxia app with your credentials. According to the author of gps-tracker,
+the terms of use of Invoxia do not forbid it outright, but do not encourage
+it either, and Invoxia could act on an account that abuses it. The integration therefore keeps the requests to the bare
+minimum: 5 minutes at least between two readings, and the location of a
+tracker is read again only when its status changed.
+
+## Configuration
+
+- **E-mail address** and **Password**: those of your Invoxia account (the
+  Invoxia app). The password is kept by Gladys in its database, never shown
+  again, never written to a log, and sent only to the Invoxia API
+  (`https://labs.invoxia.io`, over https, certificate checked). The e-mail
+  address is never written to a log either.
+- **Refresh**: every 5 minutes to every hour (5 minutes by default). One
+  request per reading, plus one per tracker whose position changed. The
+  trackers themselves report only every few minutes to every few hours
+  (depending on their mode, to save their battery): reading more often
+  would bring nothing.
+- **Silent after**: 1 hour to 48 hours (24 hours by default): the delay
+  without news after which the **Silent** feature turns on.
+
+Then open the **Discovery** tab and create the trackers to follow. Only the
+created trackers receive their values.
+
+## What each feature shows
+
+- **Latitude / Longitude**: the last known position, in degrees, rounded to
+  6 decimals. Both always go together. The newer of the last location of
+  the tracker and of the position given by its status. No history by
+  default (privacy; you can turn it on in the device).
+- **Accuracy** (m): the accuracy of the last location, as Invoxia gives it.
+  No history by default.
+- **Battery** (%): the battery of the tracker.
+- **Moving** (1 / 0): read from the `stationary` field of the status of the
+  tracker (0: moving, above 0: still, -1: unknown). **Reading to be
+  confirmed** on a real tracker. The feature appears in Discovery only once
+  the value was seen for this tracker (then update the created device to
+  add it).
+- **Last seen**: the last news from the tracker (its last event or its last
+  position), as `2026-10-18 08:00 UTC` (UTC: the integration does not know
+  the time zone of Gladys).
+- **Silent** (1 / 0): no news for the delay of the configuration.
+- A value Invoxia does not give is not published. Gladys accepts 300 states
+  per minute from an integration: this one sends 250 at most.
+
+## Scene trigger: Tracker silent
+
+Choose the tracker (or any) and the delay (**required**: 1 hour to 48
+hours). The scene starts when the tracker gave no news for this delay, at
+the next reading. Only the trackers created in Gladys fire. **Once per
+silence**: newer news (even old) arms again only the delays longer than
+its age. Never for a delay
+already reached when the integration starts (no event at the first
+reading), nor for a tracker seen for the first time, nor at a reading where
+the clock of Gladys jumped. 30 events at most per reading. Variables: name
+of the tracker, silent for (minutes), last seen.
+
+## Connection problems
+
+- **Credentials refused** (HTTP 401 or 403 of the Invoxia API on the list
+  of trackers, or two 401 in a row on the positions; a single 401 on a
+  position only makes that tracker wait): a wrong password tried again and again may lock the
+  account. Gladys therefore stops for **1 hour**, then **6 hours**, then
+  **24 hours** after each new refusal, never in a loop. The stop is kept in
+  `/data`: a restart, a reconnection of Gladys and the test button wait
+  too. An attempt still in flight when the integration stops counts as a
+  refusal. Saving the configuration with the same credentials makes **one**
+  attempt at once per series of refusals; other credentials are tried at
+  once. A reading that works forgets the refusals.
+- **Invoxia overloaded** (HTTP 429, on any request) or **server error**
+  (HTTP 5xx on the list of trackers): every request is paused, for the time
+  Invoxia asks (Retry-After) between 1 minute and 6 hours, never less than
+  the refresh. The pause is kept in `/data`, even when the answer arrives
+  during a reconnection of Gladys. When it happens on the reading of a
+  position, the status of the trackers (battery, last seen) is published
+  first.
+- **The position of one tracker fails** (HTTP 5xx, timeout): only that
+  tracker waits (2, 4, 8, then 16 readings at most, or until its status
+  changes); the other trackers keep their position and the integration
+  stays connected. When several trackers fail in the same reading, the
+  whole reading fails (a pause for a 5xx, a retry otherwise). A position
+  refused (HTTP 403, 404, unreadable answer: a tracker without a
+  subscription?) is left as it was until the status of the tracker changes.
+- **Access refused by something else than the API** (a 403 page of a
+  firewall or a proxy), **unexpected answer**, **Invoxia unreachable**
+  (network, 30 s timeout, certificate): retried after the refresh, then the
+  delay doubles up to 1 hour, even after a restart of the integration (the
+  wait is kept in `/data`). The integration never gives up.
+- **A date more than a day in the future** (a tracker with a wrong clock)
+  is ignored: only the other dates count for "last seen" and "silent".
+- **Test the connection** reads again and says how many trackers answer; it
+  never shortens a stop nor a pause.
+
+## Privacy
+
+No position, no tracker name or id, neither the e-mail address nor the
+password is ever written to a log or to the `/data` volume of the
+integration (it keeps there only a short digest of the credentials, 4
+characters, used only to see that they changed, with the end of a stop, of
+a pause or of a wait). The integration keeps the positions in memory only;
+Gladys keeps the last position of each tracker in its database (and its
+backups), and the whole history only if you turn it on. The external id of
+a device is a non-secret digest of the Invoxia id of the tracker (never the
+id itself nor the serial number).
+
+## Limits
+
+- **Gladys does not move a Gladys user on its map from a tracker**: an
+  integration cannot publish the position of a user today (as for
+  PhoneTrack). A request is open on Gladys:
+  [https://github.com/GladysAssistant/Gladys/issues/3224](https://github.com/GladysAssistant/Gladys/issues/3224). Until then, the
+  zones of Gladys do not react to the trackers.
+- One account per integration, 20 trackers at most (the trackers created in
+  Gladys first).
+- Nothing is commanded: neither the mode of the tracker, nor the "lost"
+  mode, nor the alerts.
+- Never tested with a real tracker: see TODO.md in the repository.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Invoxia in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| How it works | `section` | Nein | Gladys reads your Invoxia GPS trackers through the cloud of Invoxia, with the account of the Invoxia app. Each tracker becomes a Gladys device (Discovery tab): latitude, longitude, accuracy, battery, moving (when the tracker gives it), last seen and silent. Read only: Gladys never changes anything in Invoxia. Gladys does not move the position of a Gladys user on its map yet (see the documentation). Invoxia does not offer this access to its customers: it is the one of its app, used gently (5 minutes between two readings at least). Never tested with a real tracker. Unofficial integration, not affiliated with Invoxia. |
+| E-mail address | `string` | Ja | The e-mail address of your Invoxia account (the one of the Invoxia app). Never logged. |
+| Password | `secret` | Ja | The password of your Invoxia account. Kept by Gladys in its database, never shown again, never logged, sent only to the Invoxia API. |
+| Refresh | `select` | Ja | How often Gladys reads the trackers (one request, plus one per tracker whose position changed). The trackers themselves report only every few minutes to every few hours, to save their battery. |
+| Silent after | `select` | Ja | A tracker that gave no news for this long is shown silent (feature Silent). The scene trigger has its own choice. |
+
+## So installierst du Invoxia in Gladys
+
+1. Öffne in Gladys **Integrationen**: Invoxia erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-invoxia:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-invoxia](https://github.com/LM1LC3N7/gladys-invoxia).
+
+Invoxia benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Invoxia ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-invoxia) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-invoxia/blob/HEAD/docs/en.md)

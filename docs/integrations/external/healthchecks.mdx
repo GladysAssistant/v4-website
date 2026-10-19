@@ -1,0 +1,207 @@
+---
+title: "Healthchecks smart home integration, free and open source"
+sidebar_label: "Healthchecks"
+description: "Your cron jobs and backups watched by Healthchecks, in Gladys: react when one stops. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-healthchecks.png"
+keywords:
+  - "healthchecks"
+  - "healthchecks smart home"
+  - "gladys healthchecks"
+  - "healthchecks gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-healthchecks instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Healthchecks","description":"Your cron jobs and backups watched by Healthchecks, in Gladys: react when one stops.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-healthchecks","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-healthchecks.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T08:33:07Z"}} />
+
+[Healthchecks](https://healthchecks.io/) watches your scheduled jobs: a cron
+task, a backup, a certificate renewal or any script "pings" a URL when it runs,
+and Healthchecks raises the alarm when the ping does not come. This integration
+brings the checks of a Healthchecks project into Gladys, whether you use
+healthchecks.io or your own server: each check becomes a device with its state,
+its last ping and the next one expected. Scenes can react when **any** check
+goes down, is late or comes back, a dashboard widget lists the checks down
+first, and scenes can pause, resume or ping a check.
+
+Tested against a real self-hosted Healthchecks v4.4 (Docker); not yet on
+healthchecks.io itself: feedback welcome on
+[the issues](https://github.com/guim31/gladys-healthchecks/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A Healthchecks project: on [healthchecks.io](https://healthchecks.io/) (free
+  plan included) or on your own Healthchecks server, reachable from the Gladys
+  machine.
+- An API key of the project. The **read-only** key is enough to follow the
+  checks; the **full** key also allows pause, resume and "Send a ping".
+
+The integration reads one request per refresh interval (one minute by default):
+far below what healthchecks.io accepts.
+
+## Getting started
+
+### 1. Create an API key
+
+In Healthchecks, open your project, then **Settings** → **API Access** →
+**Create API Keys**. Two keys appear: the full one ("API key") and the
+read-only one. Copy the one you want: Healthchecks shows it again later, but
+keep it private.
+
+### 2. Configure the integration
+
+In Gladys, open **Integrations → Healthchecks → Configuration**:
+
+- **Healthchecks address**: `https://healthchecks.io` (default), or the address
+  of your server, the one of its `SITE_ROOT` setting (for example
+  `http://192.168.1.2:8000`).
+- **API key**: the key copied above.
+- **Refresh interval**: from 30 seconds to 5 minutes.
+- **Language of the names**: language of the feature names, of the states and
+  of the scene results (French by default).
+
+Save, then click **Test the connection**: the result gives the number of
+checks, the ones down or late, and says when the key is read-only.
+
+### 3. Add the checks
+
+Open the **Discover** tab: a "Healthchecks" device sums up the project, and
+each check is proposed with its name. Add the ones you want to see in Gladys.
+The scene triggers work for every check, added or not.
+
+## The devices
+
+Each check becomes a device with:
+
+- **State**: On time, Late, Down, Running, Paused or New, as a text.
+- **Working**: No (red) when the check is down, Yes (green) otherwise (on
+  time, late, running, new or paused). Handy as a scene condition.
+- **Last ping**: day/month and time of the last ping.
+- **Next ping expected**: when the check turns late without a new ping; "-"
+  when nothing is expected (down, paused or new check).
+- **Pings received**: the counter of Healthchecks.
+- **Last run duration**: in seconds, between the "start" and the "success"
+  signals, for the checks that send a start signal (`/start`).
+
+The **Healthchecks** device of the project counts the **Checks down**, the
+**Checks late** and the **Checks in total**.
+
+Last ping, next ping, pings and duration are sent at most every 5 minutes per
+check (at once when the state changes), to stay within the limits of Gladys.
+
+## Dashboard
+
+The **Healthchecks** widget shows three tiles (down, late, on time), then one
+row per check: down first, then late, then running, new, paused and on time,
+with the state and the last ping. Ten rows at most; the rest is counted. In the
+widget settings, choose some checks to show only them (devices added to
+Gladys). The **Refresh** button reads Healthchecks again.
+
+## Scenes
+
+### Triggers
+
+- **A check goes down**: no ping before the end of its grace time, or a
+  failure signal (`/fail`). Variables: check name, tags, last ping.
+- **A check is back up**: a check that was down receives a ping again.
+  Variables: the same, plus the outage length in minutes.
+- **A check is late**: the expected ping did not come and the grace time
+  starts: still time to act before the check goes down.
+
+Each trigger can be limited to some checks (empty: any). The state is kept in
+the `/data` volume: a check that went down while Gladys or the integration
+restarted is announced once at the next read. Nothing is announced at the
+first read, nor for a check paused, resumed or running.
+
+### Actions
+
+- **State of a check**: gives `down` (yes/no), the `state` in words, the
+  `name`, the `last_ping` and a ready-made `sentence`, for example
+  "Nightly backup: Down, last ping 14/10 03:12.".
+- **Count the checks down**: down, late, in total, and the names of the checks
+  down.
+- **Pause a check** and **Resume a check**: for a planned maintenance (full API
+  key). A resumed check waits for its next ping.
+- **Send a ping**: sends the success signal of a check (full API key), so a
+  Gladys scene reports by itself that it ran.
+
+### Scene ideas
+
+- When **A check goes down**, limited to the backup checks in its Checks
+  field, send a Telegram message "The backup did not run, last ping
+  \{\{last_ping\}\}".
+- Every morning at 8:00, **Count the checks down** and, if there is at least
+  one, read the names on the speaker.
+- In a nightly Gladys scene (watering, heating schedule…), end with **Send a
+  ping** to a dedicated check: Healthchecks warns you if Gladys itself stopped
+  running it.
+- Before switching the NAS off for maintenance, **Pause a check** of the
+  backup, and **Resume a check** when it is back.
+
+## Troubleshooting
+
+- **API key refused**: copy the key again from Settings → API Access of the
+  right project; each project has its own keys.
+- **No Healthchecks at this address**: check the address; for your own server
+  it is the one of `SITE_ROOT`, with a sub-path if it has one.
+- **The address redirects**: enter the final address, usually in `https://`.
+  The integration does not follow redirects, so that the key is never sent
+  elsewhere.
+- **Certificate refused**: a self-signed certificate is not accepted; use the
+  `http://` address on the local network, or a trusted certificate.
+- **This needs the full API key**: pause, resume and ping need the full key,
+  not the read-only one.
+- **Send a ping fails on a self-hosted server**: the ping URL is built by
+  Healthchecks from its `PING_ENDPOINT` (or `SITE_ROOT`) setting; Gladys must
+  be able to reach that address.
+
+## Limits
+
+- One project per configuration (one API key = one project).
+- The integration reads Healthchecks: a check is not created or edited from
+  Gladys.
+- A short outage between two reads can go unseen in the device states;
+  Healthchecks keeps the full history.
+- "Running" (a start signal without its end) does not change the state used by
+  the triggers.
+- Developed without access to a healthchecks.io account: tested against the
+  self-hosted server (same API). Feedback welcome.
+
+## Configuration settings
+
+These are the settings Healthchecks asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Healthchecks project | `section` | No | In Healthchecks, open the project Settings → API Access, create an API key and paste it below. The full key also allows pause, resume and ping; the read-only key only reads. Then add the checks to follow from the Discover tab. |
+| Healthchecks address | `string` | No | https:\/\/healthchecks.io, or the address of your own server (its SITE_ROOT). |
+| API key | `secret` | No | The key of one project. Read-only is enough to follow the checks. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Healthchecks is read: one API request each time. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the states and of the scene results. |
+
+## How to install Healthchecks in Gladys
+
+1. In Gladys, open **Integrations**: Healthchecks appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-healthchecks:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-healthchecks](https://github.com/guim31/gladys-healthchecks).
+
+Healthchecks requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Healthchecks is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-healthchecks) — [source of this documentation](https://github.com/guim31/gladys-healthchecks/blob/HEAD/docs/en.md)

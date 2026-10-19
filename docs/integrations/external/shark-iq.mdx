@@ -1,0 +1,197 @@
+---
+title: "Shark IQ smart home integration, free and open source"
+sidebar_label: "Shark IQ"
+description: "Shark robot vacuums via the Shark cloud: state, battery, suction power, start, dock. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sharkiq.png"
+keywords:
+  - "shark iq"
+  - "shark iq smart home"
+  - "gladys shark iq"
+  - "shark iq gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-sharkiq instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Shark IQ","description":"Shark robot vacuums via the Shark cloud: state, battery, suction power, start, dock.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sharkiq","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sharkiq.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T03:34:09Z"}} />
+
+Unofficial integration, not affiliated with SharkNinja. It brings the **Shark
+robot vacuums** of the **SharkClean** app into Gladys, through the Shark cloud
+(the SharkNinja sign-in service and Ayla Networks), the one the app uses.
+
+> **Warning: unofficial API, this integration has never been tested with a
+> real robot or account.** It was written from the sharkiq library and tested
+> against a fake Shark cloud only. SharkNinja may change its API at any time.
+> Feedback is welcome.
+
+## What you get
+
+For each robot of the account:
+
+| Feature            | Details                                                                   |
+| ------------------ | ------------------------------------------------------------------------- |
+| State              | Read only: cleaning, paused, returning, charging, docked, stopped, error. |
+| Battery            | In %.                                                                     |
+| Suction power      | A list: Eco, Normal, Max.                                                 |
+| Error              | A text, for example "Brushroll stuck (4)" or "No error".                  |
+| Start cleaning     | Button.                                                                   |
+| Pause              | Button.                                                                   |
+| Stop               | Button.                                                                   |
+| Return to the dock | Button.                                                                   |
+| Locate (beep)      | Button: the robot beeps.                                                  |
+
+The badge of each robot shows "cloud", or "unreachable" (with an orange dot)
+when the cloud says the robot is offline or it cannot be read.
+
+## Installation
+
+1. Your robots must work in the **SharkClean** app.
+2. In Gladys, install the Shark IQ integration, choose the **region** of the
+   account (Europe, or North America), enter the **e-mail** and the
+   **password** of the SharkClean app, and save.
+3. Add the robots from the **Discovery** tab.
+
+## Signing in: never without your click
+
+The SharkNinja sign-in service blocks an account after a few refused attempts,
+and may ask for a verification (a code, a check against robots). So the
+integration sends **the password only when you ask**:
+
+- once when you save the e-mail and the password (or at the first start with
+  them);
+- then only when you click **Sign in to Shark**.
+
+The sign-in allowance is used up, and saved to `/data`, **before** the
+password leaves: when `/data` cannot be written, nothing is sent. Only a
+failure proved to come before the password left (unknown host name, no
+connection) is tried again, twice at most.
+
+A refused password, a verification asked, a blocked account, an
+**interrupted** sign-in (no answer, a server error or "too many requests" from
+SharkNinja after the password was sent), an **unfinished** sign-in (password
+accepted, but the next step failed), an unreadable `/data` or an expired
+session stop the integration, and the stop is kept across restarts: it never
+tries the password again by itself. After an accepted password, only the
+Ayla exchange (without the password) is tried again, three times at most,
+spaced. Fix what the status says (in the SharkClean app if needed), then
+click **Sign in to Shark**. **Test the connection** reads the robots with the
+current session and never uses the password.
+
+Meanwhile, the session (about 24 hours) is renewed by a timer, 10 minutes
+before it ends (at half its life for a short session), with the refresh
+token: without the password, and never twice within a minute.
+
+## Password, tokens and privacy
+
+- The password is **kept by Gladys in its database, never shown again, and
+  sent only to the SharkNinja sign-in service** (Auth0), in the cases above.
+- The Ayla tokens are kept in the `/data` volume of the integration so that a
+  restart does not sign in again. On the Gladys host, this volume is the
+  folder `<Gladys base folder>/external-integrations/<selector>`: readable by
+  root and uid 1000 (the container user), not in the Gladys backups, removed
+  when the integration is uninstalled. **The refresh token gives control of
+  the robots** while it is valid: protect this host. The e-mail and the
+  password are never written there.
+- Nothing reaches the logs: no password, token, e-mail, nor whole serial
+  number (its last 4 characters only).
+- Everything goes over HTTPS to `logineu.sharkninja.com` (or
+  `login.sharkninja.com`), then `user-field-eu.aylanetworks.com` and
+  `ads-eu.aylanetworks.com` (or `user-sharkue1` and `ads-sharkue1` in North
+  America).
+
+## Commands
+
+- **No switch**: the state is read only and the commands are buttons. An
+  "everything on" or "everything off" of a scene or a voice assistant never
+  starts nor stops a robot.
+- Start, Pause, Return to the dock and the suction power **read the robot
+  again** in the cloud right before acting: the command is refused when that
+  read fails or lacks the mode of the robot. "Already done" sends nothing (a
+  start on a cleaning robot, a pause on a docked one), unless another order
+  just left (within a minute): the cloud may still show the state from
+  before.
+- Stop and Locate decide nothing: they leave without a read.
+- The commands of one robot run one at a time. Stop never waits behind them,
+  only behind a start already on its way, so it lands after it. A waiting
+  start is cancelled when a stop, a pause or a return to the dock arrives
+  meanwhile.
+- A command that cannot leave within **3.5 seconds** of its arrival is
+  refused: Gladys shows a failure after 5 seconds, and nothing leaves after
+  that failure.
+- When Shark does not confirm a command that left, Gladys shows "sent,
+  without a confirmation": check the state of the robot, read again in the
+  next seconds.
+
+## Refresh and errors
+
+- The robots are read every 60 seconds by default (30 to 900), one request
+  per robot, plus the account list every 10 minutes and three reads in the
+  minute after a command.
+- **Shark asks to slow down** (HTTP 429): a pause of at least 1 minute
+  (Retry-After when given, 6 h at most), for every path, commands included,
+  kept across restarts.
+- **Server error** (5xx): a pause of 1, 2, 5, 10 then 15 minutes, never
+  shorter than the interval, kept across restarts.
+- **Network**: new try after 1, 2, 5, 10 then every 15 minutes.
+- An unreadable robot (404, error) marks only itself; the others are read.
+
+## Limits
+
+- Never tested with a real robot or account: the property names, their values
+  and the sign-in come from sharkiq 1.5.1.
+- **European accounts**: the sign-in is the direct Auth0 "password grant"
+  (e-mail and password in one request). The Auth0 bot detection
+  (`requires_verification`, CAPTCHA) may refuse it, with no way around it: the
+  integration then stops ("verification"). sharkiq left this flow in the
+  United States for that reason.
+- The North American sign-in goes through an Auth0 consent page read
+  automatically: if SharkNinja changes it, the sign-in fails (a stop, no new
+  try).
+- No room cleaning, no map, no mopping for now.
+
+## Credits
+
+- [sharkiq](https://github.com/sharkiqlibs/sharkiq) 1.5.1 (MIT): the sign-in,
+  the Ayla API, the properties and the commands are ported to JavaScript. See
+  `THIRD_PARTY_NOTICES.md`.
+
+Shark, Shark IQ and SharkClean are trademarks of SharkNinja; this project is
+not affiliated with SharkNinja.
+
+## Configuration settings
+
+These are the settings Shark IQ asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Shark account | `section` | No | Brings the Shark robot vacuums of your SharkClean account into Gladys: state (cleaning, paused, returning, charging, error), battery, suction power, error, and the Start, Pause, Stop, Return to the dock and Locate buttons. Read every minute through the Shark cloud (SharkNinja and Ayla Networks). Enter the e-mail and the password of the SharkClean app, choose the region of the account, save, then add the robots from the Discovery tab. The password is sent once after you save, then only when you click "Sign in to Shark": a failed sign-in never sends it again by itself. In Europe the sign-in is the direct Auth0 password grant, which the SharkNinja bot detection may refuse. Unofficial API, never tested with a real robot or account. Not affiliated with SharkNinja. |
+| Region of the Shark account | `select` | No | Europe for an account created in Europe or the United Kingdom; North America otherwise. |
+| Shark e-mail | `string` | Yes | The one you sign in to the SharkClean app with. |
+| Shark password | `secret` | Yes | Kept by Gladys in its database, never shown again, sent only to the SharkNinja sign-in service (Auth0): once after you save, then only when you click "Sign in to Shark". A sign-in that fails (refused, interrupted, unfinished) never sends it again by itself. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of the robots (30 to 900). |
+| Language of the feature names | `select` | No | Used for the feature names of the robots added from now on, and for the error texts. |
+
+## How to install Shark IQ in Gladys
+
+1. In Gladys, open **Integrations**: Shark IQ appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-sharkiq:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-sharkiq](https://github.com/LM1LC3N7/gladys-sharkiq).
+
+Shark IQ requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Shark IQ is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-sharkiq) — [source of this documentation](https://github.com/LM1LC3N7/gladys-sharkiq/blob/HEAD/docs/en.md)

@@ -1,0 +1,295 @@
+---
+title: "Bosch Smart Home Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Bosch Smart Home"
+description: "Bosch Smart Home Controller lokal: Heizung, Kontakte, Rauch, Steckdosen, Rollläden, Alarm. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-bosch-shc.png"
+keywords:
+  - "bosch smart home"
+  - "bosch smart home smart home"
+  - "gladys bosch smart home"
+  - "bosch smart home gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-bosch-shc instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Bosch Smart Home","description":"Bosch Smart Home Controller lokal: Heizung, Kontakte, Rauch, Steckdosen, Rollläden, Alarm.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-bosch-shc","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-bosch-shc.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T11:57:09Z"}} />
+
+Verbinde deinen **Bosch Smart Home Controller** (erste oder zweite
+Generation) mit Gladys, über dein lokales Netzwerk, ganz ohne Cloud: die
+Heizung jedes Raums (Temperatur, Solltemperatur, Modus), die Heizkörper- und
+Raumthermostate, die Tür-/Fensterkontakte, die Bewegungsmelder, die
+Rauchmelder, die Steckdosen, die Schalter, die Rollläden, die
+Wassermelder, die Universalschalter und den Zustand des Einbruchalarms.
+
+> **Ohne die Hardware entwickelt: Rückmeldungen willkommen.** Diese
+> Integration wurde anhand der öffentlichen lokalen API des Controllers und
+> der Arbeit der Bibliothek boschshcpy gebaut und gegen einen simulierten
+> Controller getestet, nicht gegen einen echten. Wenn etwas nicht wie
+> beschrieben funktioniert, sag es im
+> [Gladys-Forum](https://community.gladysassistant.com) oder in den
+> [Issues](https://github.com/guim31/gladys-bosch-shc/issues).
+
+Diese Integration ist weder mit Bosch verbunden noch von Bosch unterstützt.
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Einen **Bosch Smart Home Controller** (I oder II), eingerichtet mit der
+  Bosch Smart Home App, im selben lokalen Netzwerk wie Gladys.
+- Seine **IP-Adresse**. Die App zeigt sie unter _Einstellungen_ → _System_ →
+  _Smart Home Controller_; dein Router zeigt sie auch. Gib dem Controller eine
+  feste Adresse (DHCP-Reservierung im Router): Die Integration erreicht ihn
+  unter dieser Adresse.
+- Sein **Systempasswort**, das bei der Einrichtung des Controllers gewählt
+  wurde. Es wird nur einmal gebraucht, für die Kopplung.
+- Zugang zum Controller, um während der Kopplung seine Taste zu drücken.
+
+## Einrichtung
+
+Der Controller spricht nur mit Clients, die er gekoppelt hat. Die Kopplung
+registriert Gladys als Client des Controllers, mit einem Zertifikat, das die
+Integration erzeugt und in ihrem Volume `/data` aufbewahrt.
+
+1. Öffne in Gladys **Integrationen** → **Bosch Smart Home** →
+   **Konfiguration**.
+2. Gib die **IP-Adresse des Controllers** (z. B. `192.168.1.20`) und das
+   **Systempasswort** ein und **speichere**.
+3. Geh zum Controller und **halte seine Taste** (vorne) gedrückt, bis die
+   LEDs blinken: Der Controller ist jetzt für kurze Zeit im Kopplungsmodus.
+4. Klicke zurück in Gladys sofort auf **Koppeln**. Nach einigen Sekunden
+   erscheint das Ergebnis unter der Taste: _Gekoppelt. N Gerät(e) gefunden_.
+5. Öffne den Tab **Entdecken** und füge die gewünschten Geräte hinzu.
+
+Nach der Kopplung wird das Systempasswort aus der Konfiguration von Gladys
+gelöscht: Es wird nicht mehr gebraucht. Die Kopplung erscheint in der Bosch
+App (als _oss_Gladys_Assistant_), wo du sie jederzeit entfernen kannst.
+
+**Verbindung testen** liest den Controller erneut und nennt seine
+Softwareversion und die Zahl der unterstützten Geräte.
+
+Die weiteren Einstellungen:
+
+- **Sprache der Namen**: die Sprache der Funktionsnamen neuer Geräte und der
+  Texte, die die Integration sendet (standardmäßig Französisch).
+- **Dauer einer Bewegung**: Ein Bewegungsmelder meldet nur den Zeitpunkt
+  jeder Erkennung; so lange bleibt seine Funktion _Bewegung_ danach aktiv
+  (standardmäßig 1 Minute).
+- **Scharfschalten aus Gladys erlauben**: standardmäßig aus, siehe
+  _Einbruchalarm_ unten.
+- **Zertifikat des Controllers nicht prüfen**: aus. Nur für einen Controller,
+  dessen Zertifikat abgelaufen ist, weil er jahrelang offline war: Die
+  Verbindung scheitert dann mit einem Zertifikatsfehler.
+
+## Geräte
+
+Jedes unterstützte Gerät des Controllers wird ein Gladys-Gerät, benannt wie
+in der Bosch App. Die Zustände kommen in Echtzeit: Die Integration hält ein
+Ereignis-Abonnement auf dem Controller offen (Long Polling, wie von Bosch
+empfohlen) und liest zur Sicherheit alle 15 Minuten alles neu. Ein Gerät,
+das der Controller als nicht verfügbar meldet, zeigt das Abzeichen _nicht
+erreichbar_.
+
+### Heizung
+
+Bosch regelt die Heizung **pro Raum**: Für jeden Raum mit
+Heizkörperthermostaten hat der Controller eine Raumklimaregelung, die zum
+Gerät _Heizung \<Raum>_ wird:
+
+| Funktion           | Was sie tut                                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------ |
+| **Temperatur**     | Vom Controller gemessene Raumtemperatur.                                                         |
+| **Solltemperatur** | Gewünschte Temperatur, 5 bis 30 °C in halben Grad. Im manuellen Modus bleibt sie bestehen.       |
+| **Heizmodus**      | _Aus (Sommer)_, _Manuell_ (feste Solltemperatur) oder _Zeitplan_ (Wochenprogramm der Bosch App). |
+| **Heizbedarf**     | Ob ein Heizkörper des Raums Wärme anfordert.                                                     |
+
+Im Modus _Zeitplan_ gilt eine neue Solltemperatur bis zum nächsten Schritt
+des Programms, wie in der Bosch App. Ist der Raum im Eco-Modus, beendet eine
+neue Solltemperatur den Eco-Modus.
+
+Die **Heizkörperthermostate** und die **Raumthermostate** sind ebenfalls
+Geräte: **Temperatur**, **Luftfeuchtigkeit** (Raumthermostate, die sie
+messen) und **Niedriger Batteriestand**.
+
+### Sensoren
+
+| Gerät               | Funktionen                                  |
+| ------------------- | ------------------------------------------- |
+| Tür-/Fensterkontakt | **Öffnung**, **Niedriger Batteriestand**    |
+| Bewegungsmelder     | **Bewegung**, **Niedriger Batteriestand**   |
+| Rauchmelder         | **Rauch**, **Niedriger Batteriestand**      |
+| Wassermelder        | **Wasserleck**, **Niedriger Batteriestand** |
+| Universalschalter   | **Niedriger Batteriestand**                 |
+
+**Rauch** ist aktiv, wenn der Melder selbst Rauch erkennt. Erkennt ein
+anderer Melder des Hauses Rauch, ertönen alle Melder, aber nur der im
+verrauchten Raum zeigt **Rauch**: Der Auslöser _Rauchmelder im Alarm_
+unterscheidet beide Fälle.
+
+### Steckdosen, Schalter und Rollläden
+
+| Gerät                                             | Funktionen                                                                            |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Zwischenstecker, Zwischenstecker kompakt          | **Ein/Aus**, **Leistung** (W), **Energie** (kWh)                                      |
+| Lichtschalter, Licht- und Relais-Unterputzmodule  | **Ein/Aus** (und Leistung, Energie, falls gemessen)                                   |
+| Rollladensteuerung, Rollladen- und Markisenmodule | **Position** (0 % zu, 100 % offen), **Öffnen/Schließen** (öffnen, schließen, stoppen) |
+
+**Energie** ist der Zähler der Steckdose: Gladys ergänzt ihn in den
+Energie-Ansichten um Verbrauch und Kosten.
+
+### Einbruchalarm
+
+Hat der Controller das Einbruchmeldesystem, zeigt das Gerät _Einbruchalarm_:
+
+- **Scharf geschaltet**: aktiv, wenn das System scharf ist;
+- **Alarm ausgelöst**: aktiv während eines Voralarms oder Alarms;
+- **Alarmstatus**: _Unscharf_, _Wird scharf geschaltet_, _Scharf_,
+  _Voralarm_, _Alarm!_ oder _Alarm stumm_.
+
+Der Alarm ist standardmäßig **nur lesbar**. Mit **Scharfschalten aus Gladys
+erlauben** kann die Szenenaktion _Einbruchalarm scharf schalten_ ihn scharf
+schalten. Unscharf schalten und stummschalten geht aus Gladys nie: Eine
+Szene, ein Sprachassistent oder ein geteiltes Dashboard darf den Schutz des
+Hauses nicht abschalten können. Nutze dafür die Bosch App.
+
+## Dashboard
+
+Das Widget **Bosch Smart Home** (in der Widget-Liste eines Dashboards) fasst
+das Haus zusammen: den Zustand des Controllers und des Einbruchalarms, wie
+viele Türen und Fenster offen sind, wie viele Batterien schwach sind, wie
+viele Geräte nicht antworten, danach die Namen. Es ist nur lesbar.
+
+Die Funktionen selbst kommen wie gewohnt auf ein Dashboard (Widget _Geräte
+im Raum_, Thermostat-Widget…).
+
+## Szenen
+
+### Auslöser
+
+**Rauchmelder im Alarm**: Ein Rauchmelder erkennt Rauch oder löst aus, weil
+ein anderer Rauch erkennt. Filter: der Melder, der Ursprung (_Rauch von
+diesem Melder erkannt_ oder _Alarm von einem anderen Melder weitergeleitet_).
+An die Szene übergebene Informationen: _Name des Melders_, _Raum_,
+_Ursprung_ (`detected` oder `relayed`).
+
+**Universalschalter gedrückt**: ein kurzer oder langer Druck auf eine Taste
+eines Bosch-Universalschalters. Filter: der Schalter, die Taste (oben,
+unten und die vier des Modells mit vier Tasten), der Druck (_Kurzer Druck_,
+_Langer Druck_). Übergebene Informationen: _Name des Schalters_, _Raum_,
+_Taste_, _Druck_.
+
+Die anderen Zustände (ein offenes Fenster, ein Leck, der scharfe Alarm) sind
+Gerätefunktionen: Nutze den üblichen Auslöser _Gerätezustand_ von Gladys.
+
+### Aktionen
+
+**Einbruchalarm scharf schalten**: schaltet das Alarmsystem des Controllers
+mit einem Schutzprofil scharf: _Vollschutz_, _Teilschutz_ oder
+_Individueller Schutz_ (wie in der Bosch App eingerichtet). Das geht nur,
+wenn **Scharfschalten aus Gladys erlauben** aktiv ist; sonst scheitert die
+Aktion und die Szene läuft weiter.
+
+### Szenen-Ideen
+
+- **Brand**: Auslöser _Rauchmelder im Alarm_ → alle Lichter einschalten, die
+  Rollläden öffnen, allen eine Nachricht mit dem _Raum_ des Melders senden
+  (aus der Variablenauswahl).
+- **Taste am Bett**: Auslöser _Universalschalter gedrückt_, untere Taste,
+  langer Druck → alle Rollläden schließen und die Lichter ausschalten.
+- **Fenster offen, Heizung aus**: Auslöser _Gerätezustand_ auf _Öffnung_ des
+  Wohnzimmerfensters = offen seit 2 Minuten → den _Heizmodus_ des Raums auf
+  _Aus (Sommer)_ stellen; nach dem Schließen zurück auf _Zeitplan_.
+- **Haus verlassen**: Wenn das Haus leer wird → _Einbruchalarm scharf
+  schalten_ (_Vollschutz_), nachdem du das Scharfschalten in der
+  Konfiguration erlaubt hast.
+
+## Fehlerbehebung
+
+- _Noch nicht gekoppelt_: Folge der _Einrichtung_ oben; die Kopplung bleibt
+  im Volume `/data` der Integration und übersteht Updates.
+- _der Controller ist nicht im Kopplungsmodus_: Die Taste wurde nicht lange
+  genug gedrückt, oder der Kopplungsmodus endete vor dem Klick. Halte sie,
+  bis die LEDs blinken, und klicke dann innerhalb weniger Sekunden auf
+  **Koppeln**.
+- _Systempasswort abgelehnt_: Prüfe das Passwort in der Bosch App (dort lässt
+  es sich ändern), gib es erneut ein, speichere und kopple erneut.
+- _der Controller antwortet unter dieser Adresse nicht_: Prüfe die
+  IP-Adresse (sie kann sich geändert haben: Gib dem Controller eine feste)
+  und dass Gladys den Controller auf den Ports 8443 (Kopplung) und 8444 (API)
+  erreicht.
+- _der Controller lehnt Gladys ab (kopple ihn erneut)_: Die Kopplung wurde in
+  der Bosch App entfernt oder der Controller zurückgesetzt. Kopple erneut.
+- _das Zertifikat des Controllers ist kein gültiges Bosch-Zertifikat_: Ein
+  anderes Gerät antwortet unter dieser Adresse, oder das Zertifikat des
+  Controllers ist abgelaufen. Prüfe die Adresse; stimmt sie, aktiviere
+  **Zertifikat des Controllers nicht prüfen**.
+- Ein neues Gerät der Bosch App erscheint von selbst innerhalb von Sekunden
+  im Tab **Entdecken**; ein dort entferntes Gerät verschwindet.
+- Ausführliche Protokolle: Setze die Umgebungsvariable `LOG_LEVEL=debug` der
+  Integration. Die Protokolle enthalten nie das Passwort, den Schlüssel oder
+  das Zertifikat.
+
+## Grenzen
+
+- **Ohne die Hardware entwickelt**: nur gegen einen simulierten Controller
+  getestet. Rückmeldungen willkommen.
+- Ein Controller pro Gladys-Instanz.
+- Unterstützte Geräte: Heizkörperthermostate I und II, Raumthermostate,
+  Wandthermostate, Tür-/Fensterkontakte I und II, Bewegungsmelder I und II,
+  Rauchmelder I und II, Zwischenstecker und Zwischenstecker kompakt,
+  Lichtschalter, Licht- und Relais-Unterputzmodule, Rollladensteuerungen I
+  und II, Rollladen- und Markisenmodule, Wassermelder, Universalschalter.
+  **Nicht unterstützt** (ignoriert): Twinguard, Kameras, Außensirene, Dimmer
+  und farbige Lampen, Heizkreise und Heizkessel, Anwesenheitssimulation,
+  Bosch-Szenarien und -Automationen.
+- Nicht angeboten: die Ventilstellung der Heizkörperthermostate, die
+  Helligkeit des Bewegungsmelders II, die Voreinstellungen Boost und Eco, die
+  Kindersicherung und die übrigen Einstellungen der Geräte.
+- Der Einbruchalarm kann nur scharf geschaltet werden (optional), nie
+  unscharf geschaltet oder stummgeschaltet.
+- Bosch bittet lokale Clients, Long Polling zu nutzen und wenige Anfragen zu
+  stellen: Die Integration hält immer nur eine Ereignis-Anfrage offen (je
+  30 s), liest alle 15 Minuten alles neu (4 Anfragen) und sendet
+  unveränderte Werte alle 6 Stunden erneut an Gladys.
+- Die lokale API von Bosch ist für die private, nicht kommerzielle Nutzung
+  bestimmt.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Bosch Smart Home in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Smart Home Controller | `section` | Nein | Smart Home Controller I oder II, im selben Netzwerk wie Gladys. 1. Gib seine IP-Adresse und sein Systempasswort ein und speichere. 2. Halte die Taste des Controllers, bis die LEDs blinken. 3. Klicke innerhalb einer Minute auf „Koppeln“. |
+| IP-Adresse des Controllers | `string` | Ja | Steht in der Bosch Smart Home App (Einstellungen, System, Smart Home Controller) oder in deinem Router. Gib ihm eine feste Adresse. |
+| Systempasswort | `secret` | Nein | Das Passwort, das bei der Einrichtung des Controllers gewählt wurde. Wird einmal zum Koppeln genutzt und dann aus Gladys gelöscht. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen neuer Geräte und der Texte, die die Integration sendet. |
+| Dauer einer Bewegung | `select` | Nein | Der Controller meldet nur den Zeitpunkt jeder Erkennung: So lange zeigt ein Bewegungsmelder danach „Bewegung“ an. |
+| Sicherheit | `section` | Nein | Der Einbruchalarm ist standardmäßig nur lesbar. Unscharf schalten oder stummschalten geht aus Gladys nie. |
+| Scharfschalten aus Gladys erlauben | `boolean` | Nein | Erlaubt der Szenenaktion „Einbruchalarm scharf schalten“, das Alarmsystem des Controllers scharf zu schalten. |
+| Zertifikat des Controllers nicht prüfen | `boolean` | Nein | Nur wenn die Verbindung mit einem Zertifikatsfehler scheitert (Controller jahrelang offline). Weniger sicher. |
+
+## So installierst du Bosch Smart Home in Gladys
+
+1. Öffne in Gladys **Integrationen**: Bosch Smart Home erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-bosch-shc:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-bosch-shc](https://github.com/guim31/gladys-bosch-shc).
+
+Bosch Smart Home benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Bosch Smart Home ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-bosch-shc) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-bosch-shc/blob/HEAD/docs/de.md)

@@ -1,0 +1,231 @@
+---
+title: "Integración domótica Bosch Indego, gratuita y de código abierto"
+sidebar_label: "Bosch Indego"
+description: "Unofficial connector: Bosch Indego mowers, state, battery, progress, alerts, mow, pause, dock. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-indego.png"
+keywords:
+  - "bosch indego"
+  - "domótica bosch indego"
+  - "gladys bosch indego"
+  - "bosch indego gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-bosch-indego instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Bosch Indego","description":"Unofficial connector: Bosch Indego mowers, state, battery, progress, alerts, mow, pause, dock.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bosch-indego","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-indego.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T03:06:11Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial connector, not affiliated with Bosch. Indego and Bosch are
+trademarks of their owner.
+
+This integration reads your **Bosch Indego** robotic mowers through the Bosch
+cloud, with the Bosch SingleKey ID account of the Bosch Indego app, and lets
+Gladys start, pause and send them back to their station.
+
+> **Never tested on a real account or mower yet.** It follows what the Home
+> Assistant integration (sander1988/Indego) and its library
+> (sander1988/pyIndego) do, and was tested against sample answers only. If
+> something looks wrong, open an issue with the integration logs.
+
+## What you get
+
+One device per mower of the account:
+
+| Feature             | What it shows                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| State               | Running, paused, returning to dock, charging, docked, error, stopped                 |
+| Mow / pause         | Select: _Mow_ starts mowing, _Pause_ stops the mower where it is                     |
+| Back to the station | Button: sends the mower back to its station                                          |
+| Battery             | Level in %                                                                           |
+| Activity            | The detailed state, as text ("Mowing, relocalising", "Stuck on the lawn"...)         |
+| State code          | The raw Bosch state code (for scenes and troubleshooting)                            |
+| Mowing progress (%) | How much of the lawn was mowed in the current run                                    |
+| Next mowing         | The next mowing planned by SmartMowing, in the time of the garden, or "None planned" |
+| Unread alerts       | Number of unread alerts of the Bosch cloud for this mower                            |
+| Last alert          | Headline and message of the newest alert                                             |
+| Online              | 0 when the cloud reports the mower offline                                           |
+
+A scene trigger, **Indego alert**, fires once for every new unread alert
+(stuck, lifted, blade reminder...), with the mower, the error code, the
+headline, the message and the level as variables. The alerts already there
+when the integration starts never fire.
+
+## Signing in
+
+Bosch SingleKey ID only sends the sign-in back to the Bosch Indego app (an
+address starting with `com.bosch.indegoconnect://`), which no browser can
+open. The integration therefore signs in in two steps, without any browser
+extension:
+
+Do it on a computer (Chrome, Edge, Firefox, Safari with its developer menu
+turned on):
+
+1. In the **Configuration** tab, click **Connect** next to "Bosch SingleKey
+   ID account": Gladys opens the Bosch sign-in page **in a new tab**. (The
+   **Start the sign-in** action at the bottom shows the same kind of address
+   as text, to open yourself.)
+2. **In that new tab, before typing your e-mail**, open the developer tools:
+   **F12** (**Cmd+Option+I** on a Mac), **Console** tab, and tick
+   **Preserve log** (Firefox: **Persist Logs**, in the settings of the
+   console), so the line survives the end of the sign-in.
+3. Sign in with your Bosch SingleKey ID (the e-mail and password of the
+   Indego app). At the end the page stops, and the console shows a line
+   like:
+   `Failed to launch 'com.bosch.indegoconnect://login?state=…&code=…' because the scheme does not have a registered handler.`
+   The console shortens long addresses: **right-click the address** and
+   choose **Copy link address**. A text that contains "…" is cut short and
+   refused.
+   If the console shows nothing (Firefox often does not), open the
+   **Network** tab instead (with **Preserve log** / **Persist Logs**),
+   click the last request named `authresp`, and copy the value of its
+   **Location** response header.
+4. Paste that address into the **Finish the sign-in** action, then click it,
+   **within 15 minutes** (the code expires quickly and serves once).
+
+The action answers at once "Signed in. The mowers are being read"; the
+connection status follows, and the mowers show up in the **Discovery** tab
+within a minute: add them.
+
+### What is kept, and where
+
+The integration never sees your password: Bosch's page takes it. After the
+sign-in, Gladys keeps a **renewal token** (and the short-lived access token)
+in its database, **in clear** like every configuration value of an
+integration (and so in its backups): it is never shown again in the
+interface and is sent only to Bosch. Anyone who can read the Gladys database
+or a backup can use it to reach your Indego account: protect them
+accordingly. To revoke it, change your Bosch SingleKey ID password or end the
+session from your Bosch account.
+
+The token is renewed by itself, 5 minutes before it expires. If Bosch refuses
+the renewal (password changed, session revoked, unused for too long), the
+integration stops calling Bosch and the connection status asks you to sign in
+again: start over at step 1.
+
+How long a session lasts is Bosch's choice (Azure AD B2C, not documented for
+Indego). With the usual B2C settings the renewal token keeps sliding while it
+is used, up to about **90 days**: expect to sign in again around then.
+
+## Settings
+
+- **Refresh interval while mowing** (5 min by default, 2 to 60): how often
+  the state and the mowing progress are read while the mower is out of its
+  station (and all the time when the live state is off).
+- **Live state (long poll)** (on by default): the Bosch cloud holds one
+  request per mower and answers as soon as the state changes, or after about
+  4 minutes. Turn it off if your network cuts long requests: the state is
+  then read at the interval above.
+- **Language** of the feature names (set when the mower is added) and of the
+  texts (activity, next mowing, last alert).
+
+## Use of the Bosch cloud
+
+The Bosch cloud documents no limit. The integration stays below what the Home
+Assistant integration does:
+
+- the long poll: one pending request per mower, never two within 30 seconds;
+- the state every 5 minutes (setting) while the mower is out, for the
+  progress;
+- the battery every 10 minutes while the mower is out or charging, every 6
+  hours otherwise;
+- alerts and next mowing every 10 minutes; the mower list every 12 hours and
+  on a Discovery scan;
+- around a command: the state read right before, then 10 s and 45 s after.
+
+On errors it waits 30 s, 1, 2, 5, 10 then 15 minutes between tries. An HTTP
+429 (too many requests) pauses **every** call, commands included, for the
+time Bosch asks (1 minute to 6 hours; 5 minutes when it does not say).
+
+## Commands
+
+The **Mow / pause** select and the **Back to the station** button send the
+`mow`, `pause` and `returnToDock` commands of the Bosch cloud. For each
+command the integration:
+
+- runs one command at a time per mower;
+- reads the state of the mower right before, and does **not** send the
+  command when the state cannot be read or the mower is offline;
+- always sends a stop (pause, back to the station), even when the cloud
+  already shows the mower stopped: its state can lag. Only a start while
+  the mower already mows is skipped, and never within 90 seconds of another
+  command that the mower has not visibly followed yet;
+- refuses the command, before sending anything, when the cloud is too slow
+  to answer within 3.5 seconds (Gladys gives up after 5 seconds): Gladys
+  then shows an error and nothing was sent; try again;
+- once sent, never cuts the request: when Bosch does not answer in time,
+  Gladys shows "command sent, but not confirmed in time";
+- reads the state back 10 and 45 seconds later.
+
+## Actions of the Configuration screen
+
+- **Start the sign-in**: shows a sign-in address (see above).
+- **Finish the sign-in**: takes the pasted address.
+- **Test Indego**: reads the mowers of the account and shows the state and
+  battery of each.
+
+## Troubleshooting
+
+- _"This address does not belong to a sign-in started in the last 15
+  minutes"_: click **Start the sign-in** (or Connect) again and use the new
+  address; each address serves once.
+- _"Bosch refused the sign-in (invalid_grant …)"_: the code expired or was
+  already used: start over.
+- _"This address was cut short by the console"_: copy it with a right-click,
+  **Copy link address**, or from the Network tab (see step 3).
+- _"Bosch could not be reached"_: paste the same address again within a few
+  minutes.
+- _"The Indego cloud gateway refuses the calls"_ (HTTP 403): the Azure
+  gateway in front of the API blocks some requests; the integration tries
+  again by itself.
+- The logs never contain a token, a code or a password.
+
+## Credits
+
+The API, the sign-in, the state codes and the battery scale come from
+[sander1988/pyIndego](https://github.com/sander1988/pyIndego) (MIT) and
+[sander1988/Indego](https://github.com/sander1988/Indego) (Apache-2.0), the
+Home Assistant integration. See `THIRD_PARTY_NOTICES.md`.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Bosch Indego te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Bosch Indego in Gladys | `section` | No | Unofficial connector, not affiliated with Bosch. It reads your Bosch Indego robotic mowers through the Bosch cloud, with the Bosch SingleKey ID account of the Indego app: one device per mower (state, battery, activity, mowing progress, next mowing, unread alerts, last alert, online), a mow / pause select and a back-to-the-station button, and a scene trigger on new alerts. Never tested yet on a real account or mower. Indego and Bosch are trademarks of their owner. |
+| Signing in, in two steps | `section` | No | On a computer: 1. Click Connect below: Gladys opens the Bosch page in a new tab. 2. In that tab, before typing your e-mail, open the developer tools (F12, Cmd+Option+I on a Mac), Console tab, and tick "Preserve log". 3. Sign in: the console shows "Failed to launch 'com.bosch.indegoconnect:\/\/login?…'". Right-click that address, "Copy link address" (a copied line ending in … is cut short). Otherwise: Network tab, request "authresp", Location header (Firefox too). 4. Paste it into "Finish the sign-in" at the bottom, within 15 minutes. Gladys keeps a renewal token in its database, in clear like every configuration value: never shown again, sent only to Bosch. A new sign-in may be needed after about 90 days. |
+| Bosch SingleKey ID account | `account_link` | No | Opens the Bosch sign-in page (step 1 above). Then finish with the "Finish the sign-in" action. |
+| Refresh interval while mowing (minutes) | `number` | No | The state (and the mowing progress) is read at this pace while the mower is out of its station, and at all times when the live state is off. Battery, alerts and next mowing are read every 10 minutes at most. |
+| Live state (long poll) | `boolean` | No | The Bosch cloud holds one request per mower and answers as soon as the state changes (or after about 4 minutes). Turn it off if your network cuts long requests. |
+| Language of the names and texts | `select` | No |  |
+
+## Cómo instalar Bosch Indego en Gladys
+
+1. En Gladys, abre **Integraciones**: Bosch Indego aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-bosch-indego:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-bosch-indego](https://github.com/LM1LC3N7/gladys-bosch-indego).
+
+Bosch Indego requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Bosch Indego es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-bosch-indego) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-bosch-indego/blob/HEAD/docs/en.md)

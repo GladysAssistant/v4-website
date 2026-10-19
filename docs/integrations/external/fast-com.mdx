@@ -1,0 +1,142 @@
+---
+title: "Fast.com smart home integration, free and open source"
+sidebar_label: "Fast.com"
+description: "Your internet speed measured by Fast.com (Netflix) on a schedule: download, upload, latency. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-fast-com.jpg"
+keywords:
+  - "fast.com"
+  - "fast.com smart home"
+  - "gladys fast.com"
+  - "fast.com gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/William-De71/gladys-fast-com instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Fast.com","description":"Your internet speed measured by Fast.com (Netflix) on a schedule: download, upload, latency.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-fast-com","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-fast-com.jpg","type":"device","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T02:46:46Z"}} />
+
+## Overview
+
+This integration measures your internet connection with **Fast.com**, the speed test of Netflix, on a schedule or on demand: download and upload speed, latency at rest, jitter and latency under load. The values are kept in the history of a **Fast.com** device, shown by a dashboard widget, and usable in scenes (test completed, test failed, connection restored, and an action to run a test).
+
+No account and no key: like the fast.com page, the integration asks Fast.com for the Netflix servers closest to your line, then downloads and uploads data and times the answers. Fast.com offers no public API, so the integration follows what its web page does; Netflix may change it, and an update of the integration would then be needed.
+
+Compared with the **Speedtest.net** integration of the store (Ookla servers), Fast.com measures towards the Netflix servers your provider uses to stream video, often inside its own network, and also gives the latency under load. Both can be installed side by side.
+
+Transport: **cloud**. The test traffic goes between your line and the Netflix servers on the Internet, which see your public IP address (as with the fast.com page). The integration neither stores nor logs that address.
+
+## Requirements
+
+- Gladys 5.1.0 or later.
+- An internet connection. A test moves a lot of data on a fast line: 1.2 to 1.4 GB at 1 Gbit/s in our measurements (both directions), proportionally less on a slower line. On a capped or 4G connection, choose a long interval or disable the upload.
+- Gladys measures through **its own network link**: if it runs on Wi-Fi, or on a 100 Mbit/s network port, that is what limits the result.
+
+## Configuration
+
+Nothing is mandatory: the default values work.
+
+| Field                          | Default       | Values                                                              |
+| ------------------------------ | ------------- | ------------------------------------------------------------------- |
+| Automatic test                 | Every 3 hours | Every 30 min, 1, 2, 3, 6 or 12 hours, once a day, or Disabled       |
+| Maximum duration per direction | 15 seconds    | 10, 15, 20 or 30 s: each direction stops earlier once stable        |
+| Measure the upload too         | On            | Off: download and latency only, about half the data                 |
+| Language of the feature names  | Automatic     | The language of your dashboard, or English, French, German, Spanish |
+
+Buttons of the configuration screen:
+
+- **Run a test now**: runs a test (15 to 40 seconds) and shows its result.
+- **Diagnostic**: writes the state of the integration (settings, last test, failure in progress, memory) to its logs, without IP address. Gladys passes no debug variable to the container: use this button before reporting a problem, then copy the lines from Settings → Supervision.
+
+The first automatic test runs about a minute after the start; a restart of Gladys or of the integration does not run an extra test (the next one is planned from the last one).
+
+## Usage
+
+### Device
+
+Open **Integrations → Fast.com → Discovery** and add the **Fast.com** device. Its five values are kept in history:
+
+| Feature            | Unit   | What it is                                                               |
+| ------------------ | ------ | ------------------------------------------------------------------------ |
+| Download speed     | Mbit/s | Speed over the last seconds of the download, after the ramp-up           |
+| Upload speed       | Mbit/s | Same for the upload (nothing published when the upload is not measured)  |
+| Latency (idle)     | ms     | Median of 12 HTTP round trips on the closest server, the line being idle |
+| Jitter             | ms     | Mean difference between two consecutive round trips                      |
+| Latency under load | ms     | Same round trips while the download fills the line (bufferbloat)         |
+
+A threshold is a **condition** on these values in a scene ("download speed below 100 Mbit/s"), not a trigger.
+
+### Widget
+
+![The Internet speed widget twice: with the speed history, and with the latency history (generated illustration, not a screenshot)](https://raw.githubusercontent.com/William-De71/gladys-fast-com/main/docs/assets/widgets.en.png)
+
+The **Internet speed** widget shows the provider and the age of the last test, the download, upload and latency tiles, a chart, the latency under load, the jitter, the Netflix server, the data used, the time of the next test, and a **Run a test** button (the result appears at the end, without waiting in front of a spinner). Settings: the chart (download and upload, latency and jitter, or none) and its period (24 hours to 3 months). The chart reads the history of the device: add the device first.
+
+### Scene triggers
+
+- **Fast.com: test completed**: after each successful test, with every value as a variable (`{{triggerEvent.data.download_mbps}}`, `upload_mbps`, `latency_ms`, `jitter_ms`, `loaded_latency_ms`, `isp`, `server_city`, `data_used_mb`, `cpu_limited`…). Filter: started by the schedule or by a person.
+- **Fast.com: test failed**: Internet unreachable (`offline`), Fast.com refusing the test (`service`) or nothing transferred (`measurement`), with the failures in a row. Filters: reason, started by.
+- **Fast.com: connection restored**: Fast.com answers again after failed tests (checked every 5 minutes during the outage, a few kilobytes each time), with `outage_minutes`.
+
+### Scene action
+
+**Fast.com: run a speed test** (with or without upload) waits for the result (120 s at most) and gives its values to the next actions: download, upload, latency, jitter, latency under load, provider, server city, data used, processor limit and a summary (`↓ 923.6 Mbit/s · ↑ 717.6 Mbit/s · 10.5 ms`). It never starts a Fast.com trigger, and joins a test already running instead of starting a second one.
+
+### Scene examples
+
+- **Restart the router**: trigger "test failed" with the reason "Internet unreachable" → turn the router smart plug off, wait 30 seconds, turn it on.
+- **Outage report**: trigger "connection restored" → send a message "Internet back after \{\{triggerEvent.data.outage_minutes\}\} min".
+- **Evening check**: every day at 9 pm → run a speed test → if the download speed is below 100 Mbit/s, send "Slow line: \{\{…summary\}\}".
+
+## Troubleshooting
+
+- **The speed is lower than expected**: another device was downloading or watching a video during the test (the line is shared); Gladys is on Wi-Fi or on a 100 Mbit/s port; or the processor limited the test (see below). Compare with fast.com in a browser on a cabled computer at the same time.
+- **"Limited by the processor"**: the integration has 0.5 CPU, and its event loop was late during the test: the speeds may be under-estimated, and the latency under load is left out rather than wrong. It happens on small boards on very fast lines (above a few hundred Mbit/s on a Raspberry Pi 4, which has no AES instructions). Reduce the load of the machine, or keep the result as a lower bound.
+- **"Fast.com refused the test"**: Netflix changed its page or its token. The integration reads the token again on every refusal and checks every 5 minutes; if it lasts, update the integration and report it.
+- **"Internet or Fast.com unreachable" while Internet works**: a DNS filter, an ad-blocker (Pi-hole, AdGuard) or a firewall may block `fast.com`, `api.fast.com` or `*.oca.nflxvideo.net`: allow them.
+- **No chart in the widget**: add the Fast.com device from Discovery; the history starts with the next test.
+- **The values differ from the fast.com page**: by a few percent, as the stop rule and the averaging are not identical; the trend over time is what matters.
+
+## Limitations
+
+- Unofficial: Fast.com has no public API; the integration reproduces its web client and depends on it.
+- The server is chosen by Fast.com; IPv4 or IPv6 cannot be forced.
+- One test at a time; a test lasts 15 to 40 seconds, 110 seconds at most.
+- The upload is counted as the data leaves the integration for the network: exact once the transfer is steady (4.9 Mbit/s measured on a line limited to 5 Mbit/s), which the stop rule waits for.
+- Measured in real conditions on a 1 Gbit/s link from an x86 computer, also limited to 0.5 CPU and 256 MB like in Gladys. Not measured on a Raspberry Pi nor above 1 Gbit/s.
+
+## Configuration settings
+
+These are the settings Fast.com asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it measures | `section` | No | No account and no key: like the fast.com page, the integration downloads then uploads data from the Netflix servers closest to your line, and times their answers. A test lasts 15 to 40 seconds and moves a lot of data on a fast line (about 1.3 GB at 1 Gbit/s): keep the interval reasonable on a capped or 4G connection. Other devices using the line during a test lower the result. |
+| Automatic test | `select` | No | How often a test runs on its own. "Disabled": only from the widget, a scene or the button below. |
+| Maximum duration per direction | `select` | No | Download, then upload: each one stops as soon as the speed is stable, at this duration at most. Shorter uses less data, longer is steadier on unstable lines. |
+| Measure the upload too | `boolean` | No | Off: download and latency only, about half the data. |
+| Language of the feature names | `select` | No | Names given to the device features when you add it. Automatic: the language of your dashboard, once the widget has been displayed. |
+
+## How to install Fast.com in Gladys
+
+1. In Gladys, open **Integrations**: Fast.com appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-fast-com:0.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-fast-com](https://github.com/William-De71/gladys-fast-com).
+
+Fast.com requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Fast.com is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [William-De71](https://github.com/William-De71), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/William-De71/gladys-fast-com) — [source of this documentation](https://github.com/William-De71/gladys-fast-com/blob/HEAD/docs/en.md)

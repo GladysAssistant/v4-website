@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-integration-unifi instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"UniFi Network","description":"Integración de Ubiquiti UniFi para UCG, UDM, switches, APs y detección de presencia en la red.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-integration-unifi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-integration-unifi.png","type":"device","version":"1.7.1","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-10-13T15:12:17Z"}} />
+<ExternalIntegrationHeader integration={{"name":"UniFi Network","description":"Integración de Ubiquiti UniFi para UCG, UDM, switches, APs y detección de presencia en la red.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-integration-unifi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-integration-unifi.png","type":"device","version":"1.8.4","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-10-19T05:41:44Z"}} />
 
 :::info
 
@@ -35,6 +35,7 @@ Connect your **Ubiquiti UniFi OS** console (UCG Fiber, Dream Machine UDM/UDM-SE,
 - **Internet Access Control**: Switch button to block or unblock internet access for any connected client device.
 - **Switch PoE Port Control**: Turn PoE power ON/OFF on switch ports (useful for power cycling IP cameras or Access Points).
 - **Wi-Fi SSID Control**: Enable or disable Wi-Fi networks (e.g., Guest Wi-Fi) from Gladys dashboards or scenes.
+- **WireGuard VPN server**: the state of the gateway's WireGuard server (UCG, UDM…), the number of connected VPN clients, and the "VPN client connected" / "VPN client disconnected" scene triggers (remote presence). Turning it off from Gladys stays disabled until you tick **Allow the VPN server control** in the configuration; then update the device from the Discovery tab so its switch becomes controllable.
 - **WAN & Gateway Health Metrics**: Real-time Upload/Download throughput (Mbps) and Gateway online status.
 
 ---
@@ -63,7 +64,7 @@ The integration connects directly to your local UniFi console using a **local ad
 
 ## Dashboard widgets
 
-Since Gladys 5.1, the integration offers three widgets in the dashboard editor. They read the integration's last poll (every 30 seconds) and never query the console on their own. No widget shows a MAC or an IP address (the address fragments a nameless client gets in its Gladys name are removed): a dashboard can be public.
+Since Gladys 5.1, the integration offers four widgets in the dashboard editor. They read the integration's last poll (every 30 seconds) and never query the console on their own. No widget shows a MAC or an IP address (the address fragments a nameless client gets in its Gladys name are removed): a dashboard can be public.
 
 - **Network**: the network at a glance. Two tiles, "Download" and "Upload", and a chart follow the gateway's WAN throughput features, live; the "Clients" (active clients) and "Devices" (UniFi hardware online / total) tiles come from the last poll; the status list gives the Internet state (the console's WAN subsystem), the Wi-Fi, wired and guest clients, and the hardware offline.
   - Settings: **Gateway** (the gateway added to Gladys; empty = the first known gateway) and **Chart period** (last hour, last day, last week).
@@ -74,6 +75,15 @@ Since Gladys 5.1, the integration offers three widgets in the dashboard editor. 
 - **Wi-Fi**: one Wi-Fi network (SSID): its state, its connected clients, whether it is a guest network, its band and security when the console gives them, and two buttons, **Enable** / **Disable**. The use case: the guest Wi-Fi, opened for the time of a visit from a wall tablet.
   - Setting: **Wi-Fi network** (the SSID added to Gladys; empty = the first known SSID).
   - Limits: the buttons go through the SSID's "Wi-Fi state" feature, so the SSID must be **added to Gladys** from the Discovery tab. The client count is the Wi-Fi clients whose SSID is this one at the last poll.
+- **WireGuard VPN**: the gateway's WireGuard server: its state, the number of connected clients, and one row per client (its name and the data exchanged, ↓ received · ↑ sent, when the console gives them). The **Enable** / **Disable** buttons only show when **Allow the VPN server control** is ticked in the configuration (a remote access cut by mistake is hard to restore).
+  - Setting: **VPN server** (a "VPN WireGuard" device; empty = the first known one). If the device chosen is not a VPN server (the gateway, for example), the widget says so.
+  - The **connected clients** are the WireGuard clients of the server: phones, computers, or another UniFi gateway connected as a WireGuard client. If the count stays at 0 while a client is connected, run the **VPN diagnostic** action and paste its result on the forum: it only holds field names, counts and HTTP codes.
+  - Each "VPN WireGuard" device is a WireGuard server **of your gateway** (one entry of Settings → VPN → VPN Server): with one server per remote site, there is one device per site, and its connected clients are that site.
+  - Limits: the connected clients come from the active VPN connections of the console, named after the clients declared on the server (checked on a UDR7 whose clients are two remote UniFi gateways).
+
+## Scene triggers
+
+- **VPN client connected** / **VPN client disconnected**: a client joins or leaves the gateway's WireGuard server (seen at the next poll, every 30 seconds; nothing when the integration starts). Filter: one VPN server, or any. Variables: client name, VPN server name.
 
 ## Parámetros de configuración
 
@@ -92,6 +102,7 @@ Estos son los parámetros que UniFi Network te pide en su pantalla de configurac
 | Retardo de ausencia (s) | `number` | No | Tiempo de inactividad antes de marcar un dispositivo como ausente (evita falsos cambios en reposo). |
 | Detección y filtrado de dispositivos | `section` | No | Configure qué dispositivos se detectan y se envían a Gladys. |
 | Detectar la infraestructura (consola, APs, switches) | `boolean` | No |  |
+| Permitir el control del servidor VPN | `boolean` | No | Desactivado: el servidor WireGuard solo se muestra y no puede apagarse desde Gladys (un acceso remoto cortado por error es difícil de restablecer). |
 | Detectar los clientes de la red | `boolean` | No |  |
 | Solo clientes conectados (ignorar los clientes antiguos) | `boolean` | No | Importar solo los clientes conectados ahora, para no importar cientos de dispositivos antiguos desconectados. |
 | Tipo de conexión de los clientes | `select` | No |  |
@@ -100,7 +111,7 @@ Estos son los parámetros que UniFi Network te pide en su pantalla de configurac
 ## Cómo instalar UniFi Network en Gladys
 
 1. En Gladys, abre **Integraciones**: UniFi Network aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-integration-unifi:1.7.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-integration-unifi:1.8.4`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-integration-unifi](https://github.com/guim31/gladys-integration-unifi).
 

@@ -1,0 +1,170 @@
+---
+title: "Easee Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Easee"
+description: "Easee-Ladestationen und Equalizer in Gladys: Status, Leistung, Energie, Steuerung. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-easee.png"
+keywords:
+  - "easee"
+  - "easee smart home"
+  - "gladys easee"
+  - "easee gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-easee instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Easee","description":"Easee-Ladestationen und Equalizer in Gladys: Status, Leistung, Energie, Steuerung.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-easee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-easee.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T10:18:13Z"}} />
+
+## Überblick
+
+Diese Integration bringt deine **Easee-Ladestationen** (Easee Home, Easee Charge, Charge Lite, Charge Max, Charge Up, Charge Core, Charge Pro, Easee One) und deinen **Easee Equalizer** in Gladys, über die offizielle Cloud-API von Easee, die auch die Easee-App nutzt.
+
+- Jede Ladestation wird ein Gladys-Gerät: Anschlussstatus, Ladezustand, Leistung, Strom pro Phase, Energie der Ladung, Gesamtenergie, Stromgrenze und die Ladesteuerung.
+- Der Equalizer wird ein Gerät, das das Haus misst: Netzbezug und Netzeinspeisung, Strom pro Phase, bezogene und eingespeiste Energie.
+- Die Gesamtenergie einer Ladestation ist ein Zählerstand: Die Energieüberwachung von Gladys berechnet daraus alle 30 Minuten einen Verbrauch.
+- Ein Dashboard-Widget, zwei Szenen-Auslöser und eine Szenen-Aktion ergänzen das Ganze.
+
+Das intelligente (Solar-)Laden bleibt in der Easee-App oder in evcc, das Gladys bereits unterstützt: Diese Integration bildet es nicht nach.
+
+Diese Integration ist nicht mit Easee verbunden und wurde ohne die Hardware entwickelt: Rückmeldungen sind im [GitHub-Repository](https://github.com/guim31/gladys-easee/issues) willkommen.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1.0 oder neuer (5.2 für die Energieüberwachung der Gesamtenergie).
+- Ein Easee-Konto (das der Easee-App), dem die Ladestationen gehören oder das Zugriff darauf hat.
+- Die Ladestationen in der Easee-App eingerichtet und mit dem Internet verbunden (WLAN oder 4G).
+- Gladys braucht Internetzugang: Alles läuft über die Easee-Cloud (`api.easee.com`).
+
+## Konfiguration
+
+1. Öffne in Gladys **Integrationen**, installiere **Easee** und öffne dann die Konfiguration.
+2. Gib die **E-Mail-Adresse oder Telefonnummer** und das **Passwort** des Easee-Kontos ein. Eine Telefonnummer beginnt mit der Ländervorwahl, z. B. `+4915112345678`.
+3. Wähle die **Sprache der Gerätetexte**: die Namen der Funktionen (beim Hinzufügen eines Geräts festgelegt) und den detaillierten Status der Ladestationen. Standard ist Französisch.
+4. Wähle das **Aktualisierungsintervall**: 1 Minute (Standard), 2 oder 5 Minuten.
+5. Speichere und drücke dann **Verbindung testen**: Die Meldung nennt die gefundenen Ladestationen und Equalizer.
+6. Öffne den Reiter **Entdecken** und füge die gewünschten Geräte hinzu.
+
+Wie die Integration mit Easee spricht:
+
+- Die Integration meldet sich einmal an und behält das Zugriffstoken und sein Aktualisierungstoken in ihrem privaten Volume `/data`. Das Passwort bleibt in der Gladys-Konfiguration und steht nie in den Logs.
+- Easee begrenzt die Anzahl der Anfragen eines Kontos (darüber HTTP 429). Die Integration liest den Zustand jedes hinzugefügten Geräts einmal pro Intervall, die Einstellungen jeder Ladestation alle zehn Minuten und nichts für Geräte, die du nicht hinzugefügt hast. Bei einem 429 pausiert sie so lange, wie Easee verlangt (sonst 5 Minuten).
+- Lehnt Easee die Zugangsdaten ab, versucht es die Integration nicht weiter, bis du die Konfiguration erneut speicherst: So wird das Konto nicht durch wiederholte Versuche gesperrt.
+
+## Geräte
+
+### Ladestation
+
+| Funktion              | Typ in Gladys                | Inhalt                                                                                              |
+| --------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| Anschluss             | Ladestation, Anschlussstatus | Verfügbar (kein Fahrzeug), belegt (Fahrzeug angesteckt), nicht verfügbar (offline), gestört         |
+| Ladezustand           | Ladestation, Ladezustand     | Lädt, Fahrzeug verbunden, pausiert (Fahrzeug), pausiert (Ladestation), inaktiv                      |
+| Easee-Status          | Text                         | Der detaillierte Easee-Status: wartet auf Start, Laden abgeschlossen, wartet auf Freigabe...        |
+| Ladeleistung          | Leistung (W)                 | An das Fahrzeug abgegebene Leistung                                                                 |
+| Strom L1, L2, L3      | Strom (A)                    | Strom jeder Phase                                                                                   |
+| Energie der Ladung    | Hinzugefügte Energie (kWh)   | Energie der laufenden oder der letzten Ladung                                                       |
+| Gesamtenergie         | Zählerstand (kWh)            | Energiezähler der Ladestation seit der Installation (von Easee etwa einmal pro Stunde aktualisiert) |
+| Stromgrenze           | Sollstrom (A), Steuerung     | Dynamische Grenze der Ladestation: 0 (kein Strom) oder 6 A bis zum Maximum der Ladestation          |
+| Laden erlaubt         | Ladeschalter, Steuerung      | Ein: startet oder setzt die Ladung fort. Aus: pausiert sie. Ein Fahrzeug muss angesteckt sein       |
+| Ladestation aktiviert | Schalter, Steuerung          | Aktiviert oder deaktiviert die Ladestation in ihren Einstellungen                                   |
+
+Die Ladestation trägt außerdem ein **Cloud**-Abzeichen, das auf **nicht erreichbar** wechselt, wenn die Ladestation offline ist.
+
+Die Stromgrenze ist die _dynamische_ Grenze von Easee, gedacht für häufige Änderungen (Lastmanagement). Den vom Installateur eingestellten Maximalstrom berührt sie nicht.
+
+### Equalizer
+
+| Funktion             | Typ in Gladys               | Inhalt                                       |
+| -------------------- | --------------------------- | -------------------------------------------- |
+| Netzbezug            | Netz, Bezugsleistung (W)    | Vom Haus aus dem Netz bezogene Leistung      |
+| Netzeinspeisung      | Netz, Einspeiseleistung (W) | Ins Netz eingespeiste Leistung (Solaranlage) |
+| Strom L1, L2, L3     | Strom (A)                   | Strom jeder Phase des Hauses                 |
+| Bezogene Energie     | Netz, Bezugszähler (kWh)    | Bezugszähler des Equalizers                  |
+| Eingespeiste Energie | Netz, Einspeisezähler (kWh) | Einspeisezähler des Equalizers               |
+
+## Widget
+
+Das Widget **Easee-Ladestation** zeigt eine Ladestation: Ladeleistung, Energie der Ladung und Stromgrenze als Live-Kacheln, den Easee-Status und die Verbindung sowie die Tasten, die zur Lage passen:
+
+- beim Laden: **Pause** und **Stoppen**;
+- Fahrzeug angesteckt, ohne Ladung: **Starten** (oder **Fortsetzen**) und **Stoppen**;
+- kein Fahrzeug oder Ladestation offline: keine Taste.
+
+**Stoppen** fragt nach einer Bestätigung: Es beendet die Sitzung (mit erforderlicher Freigabe muss das Fahrzeug erneut freigegeben werden). Wähle die Ladestation in den Einstellungen des Widgets.
+
+## Szenen-Auslöser und -Aktion
+
+### Auslöser
+
+- **Fahrzeug angesteckt**: Ein Fahrzeug wurde an eine Ladestation angesteckt, an der keines hing. Variable: der Name der Ladestation.
+- **Laden abgeschlossen**: Das Fahrzeug nimmt von selbst keinen Strom mehr auf (Akku voll oder eigene Grenze) und steckt noch. Variablen: der Name der Ladestation, die Energie der Ladung in kWh.
+
+Beide werden bei jeder Messung erkannt, also innerhalb eines Aktualisierungsintervalls. Eine Ladestation, die mit bereits angestecktem Fahrzeug wieder online kommt, löst **Fahrzeug angesteckt** nicht aus. Jeder Auslöser lässt sich auf eine Ladestation beschränken.
+
+### Aktion
+
+**Easee-Ladung steuern** startet (oder setzt fort), pausiert oder stoppt die Ladung einer Ladestation. Als Ausgabe liefert die Aktion den gesendeten Easee-Befehl (`resume_charging`, `start_charging`, `pause_charging`, `stop_charging`). Die Aktion schlägt fehl, wenn kein Fahrzeug angesteckt ist.
+
+Die steuerbaren Funktionen (Stromgrenze, Laden erlaubt, Ladestation aktiviert) lassen sich auch mit der Standard-Aktion **Gerät steuern** von Gladys setzen.
+
+## Szenenbeispiele
+
+- **Laden zum Niedertarif**: werktags um 22:00 **Easee-Ladung steuern** mit „Starten oder fortsetzen“; um 6:00 „Pausieren“.
+- **Erinnerung**: werktags um 21:00, wenn der **Anschluss** der Ladestation „verfügbar“ ist (kein Fahrzeug), die Nachricht „Das Auto ist nicht angesteckt“ senden.
+- **Heimkehr**: Auslöser **Fahrzeug angesteckt** → das Garagenlicht für 5 Minuten einschalten.
+- **Ende der Ladung**: Auslöser **Laden abgeschlossen** → „Ladung fertig: `{{triggerEvent.data.session_energy}}` kWh an `{{triggerEvent.data.charger_name}}`“ senden.
+- **Lastabwurf**: Wenn der **Netzbezug** des Equalizers 9000 W übersteigt, die **Stromgrenze** auf 6 A setzen; unter 6000 W wieder auf 16 A.
+
+## Fehlerbehebung
+
+- **„Easee hat die E-Mail-Adresse (oder Telefonnummer) und das Passwort abgelehnt“**: Prüfe sie in der Easee-App und speichere die Konfiguration erneut (vorher versucht es die Integration nicht wieder).
+- **„Die Easee-Cloud ist nicht erreichbar“**: Gladys hat keinen Internetzugang oder die Easee-Cloud ist gestört. Die Integration versucht es bei jedem Intervall erneut und meldet die Rückkehr.
+- **Eine Ladestation bleibt „nicht verfügbar“**: Die Ladestation selbst ist für Easee offline (WLAN oder 4G). Prüfe sie in der Easee-App.
+- **„Kein Fahrzeug verbunden“** bei einem Befehl: Starten, Pausieren und Stoppen brauchen ein angestecktes Fahrzeug.
+- **Zu viele Anfragen**: Andere Programme nutzen gleichzeitig dasselbe Easee-Konto. Wähle ein längeres Intervall.
+- **Die Gesamtenergie bewegt sich nicht**: Easee aktualisiert sie etwa einmal pro Stunde; die Energie der Ladung steigt während des Ladens.
+- **Ausführliche Logs**: Setze in den Container-Einstellungen `LOG_LEVEL=debug`. Eine normale Messung schreibt auf der Standardstufe nichts.
+
+## Einschränkungen
+
+- Ohne die Hardware entwickelt: Die Antworten der Easee-API stammen aus den Open-Source-Clients (pyeasee, Home Assistant), nicht von einer echten Ladestation. Rückmeldungen sind willkommen.
+- Nur Cloud: keine lokale Verbindung zur Ladestation, ohne Internet funktioniert nichts.
+- Kein Echtzeit-Stream: Der Zustand wird alle 1, 2 oder 5 Minuten gelesen und 10 Sekunden nach einem Befehl noch einmal.
+- Der Strom pro Phase liest die Klemmen eines TN-Netzes (der größte Teil Europas). In einem IT-Netz (Norwegen) können die Phasen verschoben sein.
+- Nicht unterstützt: intelligentes und Solar-Laden, Ladepläne, RFID-Freigabe, Kabelverriegelung, Phasenmodus, Lastausgleichs-Einstellungen des Equalizers. Das Entriegeln des Kabels wird bewusst nicht angeboten.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Easee in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Easee-Konto | `section` | Nein | Verwende das Konto der Easee-App (E-Mail-Adresse oder Telefonnummer). Gladys liest deine Ladestationen und deinen Equalizer jede Minute über die Easee-Cloud. Nicht mit Easee verbunden. |
+| E-Mail oder Telefonnummer | `string` | Ja | Die Anmeldung der Easee-App. Eine Telefonnummer beginnt mit der Ländervorwahl, z. B. +49. |
+| Passwort | `secret` | Ja |  |
+| Sprache der Gerätetexte | `select` | Nein | Namen der Funktionen (beim Hinzufügen eines Geräts festgelegt) und detaillierter Status der Ladestationen. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft die Easee-Cloud gelesen wird. Easee begrenzt die Anzahl der Anfragen: Bleib bei einer Minute oder mehr. |
+
+## So installierst du Easee in Gladys
+
+1. Öffne in Gladys **Integrationen**: Easee erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-easee:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-easee](https://github.com/guim31/gladys-easee).
+
+Easee benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Easee ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-easee) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-easee/blob/HEAD/docs/de.md)

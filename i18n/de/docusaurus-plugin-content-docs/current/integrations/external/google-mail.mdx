@@ -1,0 +1,191 @@
+---
+title: "Google Mail Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Google Mail"
+description: "Gmail in Gladys: Benachrichtigungen per E-Mail, Abwesenheitsnotiz, Szenen, Widgets. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-mail.jpg"
+keywords:
+  - "google mail"
+  - "google mail smart home"
+  - "gladys google mail"
+  - "google mail gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/William-De71/gladys-google-mail instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Mail","description":"Gmail in Gladys: Benachrichtigungen per E-Mail, Abwesenheitsnotiz, Szenen, Widgets.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-google-mail","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-mail.jpg","type":"communication","version":"0.1.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-17T07:14:38Z"}} />
+
+## Überblick
+
+Diese Integration verbindet ein **Gmail**-Konto über die **offizielle Gmail API** und OAuth 2.0 mit Gladys: kein App-Passwort, und jede Berechtigung ist gewählt und widerrufbar.
+
+- **Benachrichtigungen per E-Mail**: Jeder Benutzer gibt unter „Mein Konto“ die Adresse ein, die seine Gladys-Benachrichtigungen erhält; sie werden vom verbundenen Gmail-Konto gesendet (mit dem Kamerabild, wenn die Benachrichtigung eines enthält).
+- **Abwesenheitsnotiz**: aus einer Szene (Betreff, Nachricht, optionale Daten, nur Kontakte) oder einem Widget ein- und ausschalten.
+- **Auslöser „Neue E-Mail empfangen“**, filterbar nach Absenderadresse, Gmail-Label und Kategorie (Allgemein, Werbung…), mit Absender, Betreff, Auszug und Labels als Variablen.
+- **Szenenaktionen**: E-Mail senden (Empfänger, Cc, Bcc, Text oder einfaches HTML), ungelesene E-Mails lesen, als gelesen markieren, Label hinzufügen, archivieren.
+- **Widgets**: die ungelesenen E-Mails des Posteingangs oder eines Labels und der Status der Abwesenheitsnotiz mit ihren Schaltflächen.
+- **Cloud**: Die Daten laufen zwischen den Google-Servern und deinem Gladys, mit deinem eigenen Google-Client; nichts geht über einen Drittserver.
+
+**Unterschied zu den SMTP- und IMAP-Integrationen im Store**: „SMTP“ sendet Benachrichtigungen über einen beliebigen Mailserver (für Gmail mit App-Passwort), ohne Auslöser, Widget oder Abwesenheitsnotiz; „IMAP Mail“ liest bis zu drei Postfächer mit App-Passwort. Google Mail ist nur für Gmail, aber ohne App-Passwort, mit auf das Nötige beschränkten Berechtigungen (der Inhalt der E-Mails wird nie gelesen), mit Abwesenheitsnotiz, Gmail-Labels und -Kategorien sowie Senden, Lesen und Organisieren in einer einzigen Integration.
+
+![Das Widget der ungelesenen E-Mails und das der Abwesenheitsnotiz mit geöffnetem Formular Einschalten (generierte Illustration, kein Screenshot)](https://raw.githubusercontent.com/William-De71/gladys-google-mail/main/docs/assets/widgets.de.png)
+
+## Voraussetzungen
+
+- Gladys **5.2.0** oder neuer (Widget-Formulare).
+- Ein Gmail-Konto (privat oder Google Workspace, wenn der Administrator Drittanbieter-Apps erlaubt).
+- Ein kostenloses **Google-Cloud-Projekt**, in dem du **deinen eigenen OAuth-Client** erstellst: Google erlaubt kein Teilen eines Schlüssels, und die Integration enthält keinen. Etwa zehn Minuten, einmalig.
+
+## Konfiguration
+
+### 1. Google-Cloud-Projekt und API
+
+1. Öffne die [Google-Cloud-Konsole](https://console.cloud.google.com/) und lege ein Projekt an (zum Beispiel „Gladys“).
+2. Suche unter **APIs & Dienste → Bibliothek** nach **Gmail API** und klicke auf **Aktivieren** ([Direktlink](https://console.cloud.google.com/apis/library/gmail.googleapis.com)).
+
+### 2. Zustimmungsbildschirm (Google Auth Platform)
+
+1. Öffne **Google Auth Platform** ([Link](https://console.cloud.google.com/auth/overview)) und klicke auf **Jetzt starten**: App-Name („Gladys“), Support-E-Mail, Zielgruppe **Extern**, Kontaktadresse, Bedingungen akzeptieren, dann **Erstellen**.
+2. Klicke unter **Zielgruppe** auf **App veröffentlichen**, um sie **In Produktion** zu setzen. Das ist unerlässlich: Eine **im Test** belassene App erhält Berechtigungen, die **nach 7 Tagen ablaufen**, und nur Testnutzer können sich anmelden.
+3. Beantrage keine Überprüfung durch Google: Die App bleibt „nicht überprüft“, was für die private Nutzung passt (höchstens 100 Nutzer). Google zeigt beim Verbinden eine Warnung (Schritt 4). Die Gmail-Leseberechtigungen gelten als **eingeschränkt**: Für eine öffentliche App würde Google eine Sicherheitsprüfung verlangen; für deine eigene, nicht überprüfte App zeigt es nur eine deutlichere Warnung.
+
+### 3. OAuth-Client
+
+1. Klicke unter **Google Auth Platform → Clients** auf **Client erstellen**.
+2. Anwendungstyp: **Webanwendung**, Name: „Gladys“.
+3. Füge unter **Autorisierte Weiterleitungs-URIs** genau Folgendes hinzu:
+
+   ```
+   https://my.gladysassistant.com/redirect/oauth
+   ```
+
+   Das ist die HTTPS-Seite von Gladys, die deinen Browser zu deiner Instanz zurückschickt, unabhängig von ihrer Adresse (Google lehnt `http://`-Adressen und IP-Adressen ab). Wenn du Gladys über HTTPS erreichst und die erweiterte Option „Instanzadresse“ im Konfigurationsbildschirm aktivierst, trage stattdessen die dort angezeigte Adresse ein.
+
+4. Klicke auf **Erstellen** und kopiere die **Client-ID** und den **Clientschlüssel** (er beginnt mit `GOCSPX-`).
+
+### 4. In Gladys
+
+1. Öffne die Integration **Google Mail**, füge **Client-ID** und **Clientschlüssel** ein, wähle **Was Gladys darf** und **speichere**.
+2. Klicke auf **Mit Google verbinden** und wähle dein Konto.
+3. Google warnt, dass es **diese App nicht überprüft hat**: Es ist deine. Klicke auf **Erweitert** und dann auf **Weiter zu Gladys (unsicher)**.
+4. **Setze bei allen angebotenen Gmail-Berechtigungen ein Häkchen** und klicke auf **Weiter**. Du bist zurück in Gladys, verbunden.
+5. Jeder Benutzer, der seine Benachrichtigungen per E-Mail möchte, gibt seine Adresse im Block **Mein Konto** der Integrationsseite ein.
+
+| Feld                               | Standard | Funktion                                                                                           |
+| ---------------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| Client-ID                          | —        | Die Client-ID deines OAuth-Clients (endet auf `.apps.googleusercontent.com`).                      |
+| Clientschlüssel                    | —        | Sein Geheimnis (`GOCSPX-…`), nie angezeigt und nie protokolliert.                                  |
+| Was Gladys darf                    | Lesen    | Die Zugriffsstufe (Tabelle unten). Nach einer Änderung neu verbinden.                              |
+| Mit Google verbinden               | —        | Die Verbindungsschaltfläche.                                                                       |
+| Neue E-Mails suchen alle (Minuten) | 2        | 1 bis 60. Jede Prüfung kostet 3 Gmail-Kontingenteinheiten plus 20 pro neuer E-Mail.                |
+| Betreff der Benachrichtigungen     | Gladys   | Der Betreff der als Benachrichtigung gesendeten E-Mails.                                           |
+| Mein Konto → E-Mail-Adresse        | —        | Für jeden Benutzer: die Adresse, die seine Benachrichtigungen erhält (leer: nichts wird gesendet). |
+
+### Zugriffsstufen und Berechtigungen
+
+Die Integration fragt nur die Berechtigungen der gewählten Stufe an, die engsten, die Gmail anbietet:
+
+| Stufe                                 | Google-Berechtigungen                                                | Was funktioniert                                                                  |
+| ------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Nur Senden und Abwesenheitsnotiz      | `gmail.send`, `gmail.settings.basic`                                 | Benachrichtigungen, Aktion „E-Mail senden“, Abwesenheitsnotiz (Szenen und Widget) |
+| + Absender, Betreffe und Labels lesen | dieselben + `gmail.metadata` (eingeschränkt)                         | + Auslöser „neue E-Mail“, ungelesene E-Mails (Aktion und Widget), ohne Auszug     |
+| + lesen und organisieren              | `gmail.send`, `gmail.settings.basic`, `gmail.modify` (eingeschränkt) | + Auszug der E-Mails, als gelesen markieren, Label hinzufügen, archivieren        |
+
+`gmail.metadata` gibt nur Zugriff auf Kopfzeilen und Labels, nie auf den Inhalt der E-Mails. `gmail.modify` erlaubt das Lesen von E-Mails und das Ändern ihrer Labels; die Integration nutzt es nur für den Auszug (`snippet`) und die Labels und löscht nie etwas. Token und Lesecursor liegen in `/data` (dem Volume der Integration), nie in den Protokollen.
+
+## Verwendung
+
+### Benachrichtigungen per E-Mail
+
+Die Integration ist ein reiner Sendekanal: Wenn Gladys einem Benutzer eine Nachricht sendet (Szenenaktion „Nachricht senden“, Alarme…), geht sie per E-Mail an die unter **Mein Konto** eingetragene Adresse, mit dem konfigurierten Betreff. Ein der Benachrichtigung beigefügtes Bild (Kamera-Schnappschuss) wird als Anhang hinzugefügt. Gladys liest keine Antworten: Eine Antwort auf die E-Mail steuert das Haus nicht.
+
+### Widgets
+
+- **Ungelesene E-Mails**: die Anzahl ungelesener E-Mails im Posteingang (oder im in den Widget-Einstellungen gewählten Label, nach Namen), die fünf neuesten (Absender, Betreff, Datum, Auszug, Link zu Gmail), die Schaltflächen **Als gelesen markieren** (Stufe „lesen und organisieren“), **Aktualisieren** und **Gmail öffnen**.
+- **Abwesenheitsnotiz**: Status (aktiv, geplant, beendet, aus), Betreff, Daten, Empfänger, mit **Einschalten** (Formular: Betreff, Nachricht, Dauer in Tagen, nur Kontakte) und **Ausschalten**.
+
+### Szenenauslöser
+
+**Gmail: neue E-Mail empfangen** wird für jede E-Mail ausgelöst, die im Posteingang oder in einem Label ankommt (ein Gmail-Filter kann den Posteingang überspringen), standardmäßig alle 2 Minuten geprüft. Entwürfe, gesendete E-Mails, Spam, Papierkorb und von Gladys selbst gesendete E-Mails lösen ihn nie aus.
+
+- Filter: **Absenderadresse** (genau, kleingeschrieben), **Gmail-Label** (der genaue Name des ersten Labels der E-Mail oder `INBOX` für eine E-Mail ohne Label), **Kategorie** (Allgemein, Soziale Netzwerke, Werbung, Benachrichtigungen, Foren).
+- Variablen: Name und Adresse des Absenders, vollständiger Absender, Empfänger, Betreff, Auszug (Stufe „lesen und organisieren“), Label, alle Labels, Kategorie, wichtig, Empfangsdatum, IDs der E-Mail und der Konversation, ungelesene E-Mails im Posteingang.
+
+### Szenenaktionen
+
+- **E-Mail senden**: Empfänger (durch Kommas getrennt), Cc, Bcc, Betreff, Nachricht, Text oder einfaches HTML. Ausgaben: IDs der E-Mail und der Konversation.
+- **Abwesenheitsnotiz einschalten**: Betreff, Nachricht, optionaler Beginn und optionales Ende (`JJJJ-MM-TT`, `TT/MM/JJJJ`, mit optionaler Uhrzeit `HH:MM`, oder `+3` für in 3 Tagen; Zeitzone von Gladys; ein Ende ohne Uhrzeit endet um 23:59), nur Kontakte. Ausgaben: Beginn und Ende (ISO 8601).
+- **Abwesenheitsnotiz ausschalten**: Betreff und Nachricht bleiben erhalten.
+- **Ungelesene E-Mails lesen**: im Posteingang oder in einem Label. Ausgaben: Anzahl, Absender, Betreff und ID der neuesten.
+- **Gelesen, Label, archivieren**: für die ID einer E-Mail (die Variable des Auslösers) als gelesen markieren, ein vorhandenes Label hinzufügen, aus dem Posteingang entfernen.
+
+Diese Aktionen lösen nie den Auslöser „neue E-Mail“ aus, auch nicht eine an deine eigene Adresse gesendete E-Mail.
+
+### Szenenbeispiele
+
+- Wenn eine E-Mail von `rechnung@anbieter.de` kommt → Benachrichtigung „Neue Rechnung: \{\{Betreff\}\}“ senden und das Label „Rechnungen“ hinzufügen.
+- Wenn der Hausmodus auf „Urlaub“ wechselt → Abwesenheitsnotiz bis `+14` einschalten; bei der Rückkehr → ausschalten.
+- Wenn der Alarm auslöst → eine E-Mail an die ganze Familie senden, mit einer Nachricht in einfachem HTML.
+
+## Fehlerbehebung
+
+- **„Fehler 400: redirect_uri_mismatch“**: Die Weiterleitungs-URI des OAuth-Clients stimmt nicht mit der von Gladys überein. Prüfe `https://my.gladysassistant.com/redirect/oauth`, ohne abschließenden Schrägstrich, unter **Autorisierte Weiterleitungs-URIs** eines Clients vom Typ **Webanwendung**.
+- **„Fehler 403: access_denied“**: Die App ist noch **im Test** und dein Konto ist kein Testnutzer. Veröffentliche sie (**Zielgruppe → App veröffentlichen**).
+- **„Google hat diese App nicht überprüft“**: normal, es ist deine eigene App; **Erweitert → Weiter zu Gladys (unsicher)**.
+- **„Google hat nicht alle Berechtigungen erteilt“**: Ein Häkchen fehlte auf dem Zustimmungsbildschirm, oder die Zugriffsstufe wurde seit der Verbindung geändert. Verbinde dich erneut und setze alle Häkchen.
+- **„Google hat den Zugriff widerrufen“ jede Woche**: Die App ist **im Test** geblieben (7 Tage). Veröffentliche sie und verbinde dich erneut.
+- **„Die Gmail API ist nicht aktiviert“**: Aktiviere die **Gmail API** im Projekt des OAuth-Clients, warte ein paar Minuten und klicke auf **Verbindung testen**.
+- **Google-Workspace-Konto**: Der Administrator kann nicht überprüfte Apps oder eingeschränkte Berechtigungen sperren; bitte ihn, deinen OAuth-Client zuzulassen.
+- **Eine neue E-Mail startet ihre Szene erst nach ein paar Minuten**: Das ist das Prüfintervall (standardmäßig 2 Minuten).
+- **Für einen Fehlerbericht**: Klicke auf **Diagnose** (anonymisierte Zusammenfassung in den Protokollen, ohne Token, Adresse oder E-Mail-Inhalt) und füge die Protokolle der Integration, die Gladys-Version und die Version der Integration bei.
+
+## Einschränkungen
+
+- **Nie mit einem echten Google-Konto getestet**: Der Code folgt der Dokumentation der Gmail API und Tests gegen ein nachgebildetes Google; Rückmeldungen sind willkommen.
+- Keine Push-Benachrichtigung von Gmail (sie läuft über Google Cloud Pub/Sub, für einen Heimserver unerreichbar): Eine neue E-Mail wird spätestens nach dem Prüfintervall erkannt. Ist die Integration länger als etwa eine Woche gestoppt, kann Gmail den alten Cursor ablehnen: Die dazwischen empfangenen E-Mails lösen nichts aus.
+- Höchstens 20 neue E-Mails pro Prüfung: Darüber hinaus (großer Import) lösen die ältesten nichts aus.
+- Der Filter „Label“ vergleicht das erste Label der E-Mail; für eine E-Mail mit mehreren nutze die Variable „alle Labels“ in einer Bedingung.
+- Der Inhalt der E-Mails wird nie gelesen; keine Anhänge beim Senden aus einer Szene (nur das Bild einer Benachrichtigung wird angehängt); keine Entwürfe und kein Löschen.
+- Gladys empfängt keine Nachrichten per E-Mail (reiner Sendekanal): Eine E-Mail kann das Haus nicht steuern, außer über deine eigenen Szenen mit dem Auslöser.
+- Ein Google-Konto pro Integration.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Google Mail in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| 1. Dein Google-Cloud-OAuth-Client | `section` | Nein | Google stellt keinen gemeinsamen Schlüssel bereit: Lege in der Google-Cloud-Konsole ein kostenloses Projekt an, aktiviere die Gmail API, richte den Zustimmungsbildschirm (Extern) ein und veröffentliche ihn „In Produktion“ (sonst läuft der Zugriff nach 7 Tagen ab). Erstelle dann einen OAuth-Client vom Typ „Webanwendung“ mit genau dieser autorisierten Weiterleitungs-URI: https:\/\/my.gladysassistant.com/redirect/oauth. Die Dokumentation beschreibt jeden Schritt. |
+| Client-ID | `string` | Ja | Endet auf .apps.googleusercontent.com. |
+| Clientschlüssel | `secret` | Ja | Wird von Google beim Erstellen des Clients angezeigt (beginnt mit GOCSPX-). |
+| Was Gladys darf | `select` | Nein | Bestimmt die beim Verbinden angefragten Berechtigungen: Nach einer Änderung neu verbinden. Das Lesen des Postfachs (Auslöser, ungelesene E-Mails) erfordert eine „eingeschränkte“ Gmail-Berechtigung: Google zeigt für deine eigene, nicht überprüfte App eine deutlichere Warnung. |
+| 2. Verbinde dein Google-Konto | `section` | Nein | Zuerst speichern, dann auf die Schaltfläche klicken. Google warnt, dass es „diese App nicht überprüft hat“: Es ist deine eigene App. Klicke auf Erweitert, dann auf „Weiter zu … (unsicher)“ und setze bei allen Gmail-Berechtigungen ein Häkchen. Verbinde dich erneut, wenn Gladys einen widerrufenen Zugriff meldet. |
+| Mit Google verbinden | `oauth2` | Nein | Gladys liest nie den Inhalt deiner E-Mails und löscht nie etwas. |
+| 3. Optionen | `section` | Nein | Jeder Benutzer gibt im Block „Mein Konto“ unten die Adresse ein, die seine Gladys-Benachrichtigungen erhält. Mit Lesezugriff liest die Integration den Verlauf des Postfachs in regelmäßigen Abständen (Gmail sendet nichts an einen Heimserver). |
+| Neue E-Mails suchen alle (Minuten) | `number` | Nein | Jede Prüfung kostet 3 Gmail-Kontingenteinheiten plus 20 pro neuer E-Mail: weit unter den Grenzen eines privaten Projekts. |
+| Betreff der Benachrichtigungen | `string` | Nein | Der Betreff der E-Mails, die Gladys als Benachrichtigungen sendet. |
+
+## So installierst du Google Mail in Gladys
+
+1. Öffne in Gladys **Integrationen**: Google Mail erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-google-mail:0.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-google-mail](https://github.com/William-De71/gladys-google-mail).
+
+Google Mail benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Google Mail ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [William-De71](https://github.com/William-De71) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/William-De71/gladys-google-mail) — [Quelle dieser Dokumentation](https://github.com/William-De71/gladys-google-mail/blob/HEAD/docs/de.md)

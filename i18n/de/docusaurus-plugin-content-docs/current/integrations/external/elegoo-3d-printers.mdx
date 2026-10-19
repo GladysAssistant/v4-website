@@ -1,0 +1,175 @@
+---
+title: "Elegoo 3D printers Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Elegoo 3D printers"
+description: "Elegoo SDCP 3D printers (Saturn, Mars, Centauri Carbon): print state and temperatures, locally. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-elegoo.png"
+keywords:
+  - "elegoo 3d printers"
+  - "elegoo 3d printers smart home"
+  - "gladys elegoo 3d printers"
+  - "elegoo 3d printers gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-elegoo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Elegoo 3D printers","description":"Elegoo SDCP 3D printers (Saturn, Mars, Centauri Carbon): print state and temperatures, locally.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-elegoo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-elegoo.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T12:31:33Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Follow your Elegoo 3D printers in Gladys, on your local network, without the
+Elegoo cloud: print state, progress, layers, time elapsed and remaining, file
+name, temperatures and fans, scene triggers when a print finishes, fails or is
+paused, and, if you allow it, pause / resume / stop from a scene.
+
+Unofficial integration, not affiliated with Elegoo.
+
+> **Never tested on a real printer.** This first version has never been
+> tested on a real printer: it follows Elegoo's public SDCP protocol and the
+> Home Assistant integration `elegoo-homeassistant`, and was checked against
+> simulated printers only. Feedback is welcome on the Gladys forum.
+
+## Compatible printers
+
+The Elegoo printers that speak **SDCP V3** over a local WebSocket (port 3030):
+
+- resin: Saturn 4 Ultra, Saturn 4 Ultra 16K, Mars 5 Ultra (and the other SDCP
+  V3 Saturn / Mars models);
+- FDM: Centauri Carbon.
+
+Not supported: the Saturn 3 Ultra and the other printers that speak SDCP V1
+over MQTT (the integration recognises them and says so in its status), the
+Centauri Carbon 2 (another protocol), and the printers without network.
+
+## Setup
+
+1. Give each printer a **fixed IP address** in your router (DHCP reservation).
+   The address is shown on the printer screen, in the network settings.
+2. In Gladys, open the Elegoo integration, type the addresses in **IP
+   addresses of the printers** (separated by commas), and save. This is the
+   reliable way: the integration runs in a container that does not hear the
+   network broadcasts.
+3. Or click **Find the printers**: Gladys sends the SDCP discovery message
+   (UDP port 3000) on your network and lists the printers that answer. If it
+   finds nothing, type the addresses.
+4. The printers appear in the **Discovery** tab once they sent their state:
+   add them.
+
+A printer accepts only a few connections at once (Elegoo app, slicer, Home
+Assistant...): if it does not answer, close one of them.
+
+## What Gladys shows
+
+| Feature                      | Notes                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------- |
+| Print state                  | Idle, Preparing, Printing, Pausing, Paused, Stopping, Stopped, Completed, Error, Busy |
+| Machine state                | What the printer does (printing, file transfer, self-test, leveling...)               |
+| Progress (%)                 | Reported by the printer, or computed from the layers                                  |
+| Current layer, total layers  |                                                                                       |
+| Time elapsed, time remaining | In minutes                                                                            |
+| File                         | The file being printed (the last one when idle)                                       |
+| Error, error code            | 0 and "None" when all is well                                                         |
+| Temperatures                 | FDM: nozzle, bed, enclosure; resin: UV LEDs, and the vat if the printer has a sensor  |
+| Fans                         | FDM: model, auxiliary and enclosure fans (%)                                          |
+
+Each printer only gets the temperatures and fans it reports. Temperatures and
+fans are sent at most once a minute; the other values as soon as they change.
+The printers send their changes by themselves, and Gladys also asks for their
+state every **Refresh interval** (30 s by default).
+
+The **Language of the names and states** applies to the feature names of the
+printers added afterwards and to the texts (print state, error).
+
+## Scenes
+
+Triggers, each with the printer to watch:
+
+- **Elegoo print finished**: a print seen in progress ends completed (once per
+  print). Variable: `file`.
+- **Elegoo print error**: an error status, a print error, or an error message
+  of the printer. Variables: `file`, `error`, `error_code`.
+- **Elegoo print paused**: the print goes into pause, whoever paused it.
+  Variable: `file`.
+
+Only changes seen while Gladys is connected count: a print that finished while
+the printer or Gladys was off fires nothing.
+
+## Print control (off by default)
+
+The **Control an Elegoo print** scene action pauses, resumes or stops the
+current print. It is refused until you tick **Allow pause, resume and stop
+from Gladys**: anyone who can edit the scenes of your Gladys could then stop a
+print.
+
+Safety rules:
+
+- Gladys **never starts a print** and **never moves the axes**: those commands
+  do not exist in the integration.
+- Before each command, the printer is asked for its state. Without a fresh
+  answer, nothing is sent. The command is also refused if it does not fit:
+  pause only while printing, resume only while paused, stop only during a
+  print.
+- One command at a time per printer. A command the printer does not confirm
+  within 5 seconds is reported as such: check the printer, it may have been
+  applied.
+
+## Troubleshooting
+
+- **"No answer yet from ..."**: the printer is off, the address is wrong, or
+  all its connections are taken. Check that you can reach it from the Gladys
+  machine. The integration tries again by itself, waiting a little longer each
+  time (up to 5 minutes).
+- **The search finds nothing**: type the addresses; the discovery depends on
+  the network between Gladys and the printers.
+- **A printer changed address**: replace the old address with the new one in
+  the configuration; the printer is recognised by its board id, its device
+  and history are kept.
+- To forget a printer, remove its address and delete its device.
+
+## Privacy
+
+Everything stays on your local network: Gladys talks to the printers directly
+(WebSocket on port 3030, UDP on port 3000). Nothing is sent to Elegoo or to
+anyone else.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Elegoo 3D printers in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Elegoo printers, on your local network | `section` | Nein | For the Elegoo printers that speak SDCP V3 on the local network: resin (Saturn 4 Ultra and 16K, Mars 5 Ultra; not the Saturn 3 Ultra, SDCP V1) and FDM (Centauri Carbon). Gladys reads the print state, progress, layers, times, file name, temperatures and fans through the WebSocket of each printer (port 3030), without the Elegoo cloud. Give each printer a fixed IP address in your router and type it below: it is the reliable way. "Find the printers" may also find them. A printer accepts only a few connections at once (Elegoo app, slicer...). Never tested on a real printer yet. Unofficial, not affiliated with Elegoo. |
+| IP addresses of the printers | `string` | Nein | Separated by commas, for example 192.168.1.50, 192.168.1.51. Shown on the printer screen (network settings). |
+| Refresh interval (s) | `number` | Nein | The printers send their changes by themselves; Gladys also asks for their state this often, in seconds. |
+| Language of the names and states | `select` | Nein | Used for the feature names of the printers added from now on, and for the texts (print state, error). |
+| Print control | `section` | Nein | The "Control an Elegoo print" scene action can pause, resume or stop the current print. It is off by default: anyone who can edit the scenes of your Gladys could then stop a print. Gladys never starts a print and never moves the axes. Before each command the printer is asked for its state, and the command is refused if that state is unknown or does not fit (no pause unless it prints, no resume unless paused). |
+| Allow pause, resume and stop from Gladys | `boolean` | Nein |  |
+
+## So installierst du Elegoo 3D printers in Gladys
+
+1. Öffne in Gladys **Integrationen**: Elegoo 3D printers erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-elegoo:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-elegoo](https://github.com/LM1LC3N7/gladys-elegoo).
+
+Elegoo 3D printers benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Elegoo 3D printers ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-elegoo) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-elegoo/blob/HEAD/docs/en.md)

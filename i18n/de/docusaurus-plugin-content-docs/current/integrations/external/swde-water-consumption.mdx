@@ -1,0 +1,160 @@
+---
+title: "SWDE Water Consumption Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "SWDE Water Consumption"
+description: "SWDE-Wasserzählerstand, Tagesverbrauch und Verbrauchsalarme in Gladys verfolgen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SWDE.jpg"
+keywords:
+  - "swde water consumption"
+  - "swde water consumption smart home"
+  - "gladys swde water consumption"
+  - "swde water consumption gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/gboulvin/Gladys-SWDE instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SWDE Water Consumption","description":"SWDE-Wasserzählerstand, Tagesverbrauch und Verbrauchsalarme in Gladys verfolgen.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-SWDE","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SWDE.jpg","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T10:46:34Z"}} />
+
+Diese externe Integration veröffentlicht in Gladys den **Zählerstand**, den **Verbrauch im Zeitraum** und das **Tagesmittel** eines Wasserzählers der SWDE (Société wallonne des eaux). Jeder Wert wird im Gladys-Verlauf gespeichert, in einem eigenen Dashboard-Widget angezeigt und kann Ihre Szenen auslösen: eine neue Ablesung oder ein Tagesverbrauch über Ihrer Alarmschwelle (Leck, offener Wasserhahn).
+
+> Das offizielle SWDE-Kundenportal zeigt den Verbrauchsverlauf nach der Anmeldung, die SWDE dokumentiert aber keine öffentliche Automatisierungs-API. Diese Integration erhält daher nie ein SWDE-Passwort und steuert nicht das Webportal. [1]
+
+| Gladys-Wert        | Einheit | Bedeutung                                                      |
+| ------------------ | ------- | -------------------------------------------------------------- |
+| Zählerstand        | m³      | Kumulierter Stand des Wasserzählers.                           |
+| Verbrauch Zeitraum | m³      | Im Referenzzeitraum verbrauchtes Wasservolumen.                |
+| Tagesmittel        | L/Tag   | Berechnet aus dem Verbrauch des Zeitraums und seiner Tagezahl. |
+
+Gladys 5.1.0 oder neuer ist erforderlich.
+
+## Installation und Erkennung des Zählers
+
+Installieren Sie die Integration aus dem Gladys-Katalog und öffnen Sie den Reiter **Konfiguration**. Wählen Sie eine stabile lokale Kennung für den Zähler, z. B. die letzten Ziffern der Zählernummer, und einen lesbaren Namen. Geben Sie keine SWDE-Kundennummer ein: Die Integration benötigt sie nicht. Die Kennung ist Teil der Geräteidentität in Gladys: Eine spätere Änderung erzeugt ein neues Gerät.
+
+Speichern Sie die Konfiguration, öffnen Sie den Reiter **Erkennung** und fügen Sie den vorgeschlagenen Zähler hinzu. Seine drei schreibgeschützten Sensoren stehen dann in den Dashboards und im Zustandsverlauf von Gladys zur Verfügung.
+
+## Manuelle Ablesung für einen Privatkunden
+
+Wählen Sie **Manuelle Zählerablesung**, wenn Sie den Zähler direkt ablesen oder das SWDE-Kundenportal nutzen. Geben Sie den Zählerstand in m³, den Verbrauch Ihres Referenzzeitraums und dessen Anzahl Tage ein. Speichern Sie die Konfiguration nach jeder neuen Ablesung: Gladys veröffentlicht die Werte und berechnet das Tagesmittel neu.
+
+Für Privatkunden ist dies die zuverlässigste Methode, da sie von keiner undokumentierten privaten Schnittstelle abhängt. Die SWDE bestätigt, dass der Verbrauchsverlauf im Kundenportal verfügbar ist. [1]
+
+## Autorisierte JSON-Datenquelle
+
+Wählen Sie **Autorisierter JSON-Endpunkt** nur, wenn Sie über eine ausdrücklich dokumentierte oder vertraglich vereinbarte Schnittstelle verfügen, etwa einen easyCONSO-Dienst, einen genehmigten SWDE-Export oder Ihr eigenes Gateway. Geben Sie die URL des Endpunkts und bei Bedarf ein Bearer-Token ein. Das Token wird in einem geschützten Gladys-Geheimfeld gespeichert und im Header `Authorization: Bearer …` gesendet.
+
+Der Endpunkt muss eine `GET`-Anfrage mit einem JSON-Objekt beantworten, direkt oder in einer Eigenschaft `data`. Es muss `total_m3` und/oder `period_m3` enthalten; `period_days` ist optional, aber für das Tagesmittel nötig. Die CamelCase-Varianten (`totalM3`, `periodM3`, `periodDays`) sowie `index_m3` / `consumption_m3` werden ebenfalls akzeptiert.
+
+```json
+{
+  "total_m3": 245.7,
+  "period_m3": 9.0,
+  "period_days": 30,
+  "reading_at": "2026-08-22T09:00:00Z"
+}
+```
+
+| Feld          | Pflicht                          | Prüfung                                     |
+| ------------- | -------------------------------- | ------------------------------------------- |
+| `total_m3`    | Nein, wenn `period_m3` vorhanden | Zahl größer oder gleich null.               |
+| `period_m3`   | Nein, wenn `total_m3` vorhanden  | Zahl größer oder gleich null.               |
+| `period_days` | Nein                             | Positive Zahl, für das Tagesmittel genutzt. |
+| `reading_at`  | Nein                             | Informativer ISO-8601-Zeitstempel.          |
+
+## Lokale oder Cloud-Verbindung
+
+Die Integration deklariert beide Kanäle. Der Zähler zeigt in Gladys ein Abzeichen:
+
+| Abzeichen            | Wann                                                                                           |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| **Lokal**            | Manuelle Ablesung oder ein Endpunkt in Ihrem Netz (private IP, `localhost`, `.local`, `.lan`). |
+| **Cloud**            | Ein Endpunkt im Internet (easyCONSO, Drittanbieter…).                                          |
+| **Nicht erreichbar** | Der letzte Abruf der Datenquelle ist fehlgeschlagen.                                           |
+
+Der Kanal folgt der konfigurierten Quelle: Der von Gladys angezeigte Schalter „Lokale Verbindung bevorzugen“ hat bei einem einzelnen Wasserzähler keine Wahl zu treffen.
+
+## Aktualisierungsintervall
+
+Gladys fragt den Zähler jede Minute ab, die Integration liest die Quelle im konfigurierten Intervall (standardmäßig eine Stunde, 5 Minuten bis 24 Stunden). Unveränderte Werte werden nicht erneut veröffentlicht, außer alle 6 Stunden, damit der Zähler aktuell datiert bleibt.
+
+## Dashboard-Widget
+
+Fügen Sie das Widget **SWDE-Wasserverbrauch** einem Dashboard hinzu. Es zeigt:
+
+- drei Live-Kacheln: Zählerstand, Verbrauch im Zeitraum, Tagesmittel (orange über der Alarmschwelle);
+- ein Diagramm des Tagesmittels über den letzten Monat, die letzten 3 Monate (Standard) oder das letzte Jahr — Einstellung **Diagrammzeitraum** des Widgets;
+- die Datenquelle, ihren Zustand, die Zeit des letzten Abrufs und den Alarmzustand;
+- eine Schaltfläche **Aktualisieren**, die die Quelle sofort liest.
+
+## Szenen
+
+### Auslöser
+
+| Auslöser                    | Wird ausgelöst, wenn                                                                                       | Variablen                                                   |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Neuer Wasserzählerstand** | Der Zählerstand hat sich seit dem letzten Abruf geändert (der erste Abruf nach einem Start ist die Basis). | `total_m3`, `delta_m3`, `period_m3`, `daily_average_liters` |
+| **Hoher Wasserverbrauch**   | Das Tagesmittel übersteigt die **Tagesalarm-Schwelle** (einmal pro Überschreitung).                        | `daily_average_liters`, `threshold_liters`                  |
+
+Beide Auslöser lassen sich nach Zähler filtern. Legen Sie die Schwelle im Abschnitt **Alarme und Aktualisierung** der Konfiguration fest; `0` deaktiviert den Alarm. Beispiel: Senden Sie sich die Nachricht „Wasser: \{\{triggerEvent.data.daily_average_liters\}\} L/Tag, mögliches Leck!“.
+
+### Aktion
+
+**Wasserzähler lesen** liest die Quelle sofort und gibt `total_m3`, `period_m3`, `daily_average_liters` und `above_threshold` (wahr/falsch) an die folgenden Aktionen der Szene weiter. Sie löst selbst nie einen Auslöser aus, eine Szene kann also keine Schleife bilden.
+
+## Test und Fehlerbehebung
+
+Verwenden Sie **Datenquelle testen**, bevor Sie den Zähler hinzufügen oder nachdem Sie einen Endpunkt geändert haben. Das Ergebnis bestätigt die erkannten Werte, ohne das Token preiszugeben. Prüfen Sie bei einem Fehler, ob Gladys den Endpunkt erreicht, ob das Token gültig ist und ob die Antwort dem obigen Schema entspricht. Der Konfigurationsbildschirm zeigt den Verbindungsstatus; prüfen Sie zuletzt die Protokolle der Integration (`LOG_LEVEL=debug` für mehr Details).
+
+Die easyCONSO-Lösung der SWDE ist vom allgemeinen Kundenportal getrennt. Sie bietet automatische Zählerablesungen und Echtzeit-Verbrauchsüberwachung für intelligente Zähler im Rahmen eines eigenen Dienstes. [2]
+
+## Quellen
+
+[1] [SWDE — Voir mon historique de consommation](https://www.swde.be/fr/voir-mon-historique-de-consommation)
+
+[2] [SWDE easyCONSO — Optimisez la gestion de vos consommations d’eau](https://swde.easyconso.be/)
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt SWDE Water Consumption in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| SWDE-Verbrauchsdaten | `section` | Nein | Das offizielle SWDE-Kundenportal zeigt den Verbrauchsverlauf nach der Anmeldung, dokumentiert aber keine öffentliche API. Diese Integration erhält nie Ihr SWDE-Passwort: Geben Sie Zählerstände manuell ein oder nutzen Sie einen autorisierten JSON-Endpunkt (lokal oder Cloud). |
+| Datenquelle | `select` | Ja |  |
+| Zählerkennung | `string` | Ja | Eine stabile lokale Kennung, z. B. die letzten Ziffern der Zählernummer. Geben Sie keine Kundennummer ein. Eine Änderung erzeugt ein neues Gerät. |
+| Zählername | `string` | Ja |  |
+| Autorisierter JSON-Endpunkt | `section` | Nein | Füllen Sie diese Felder nur aus, wenn die API-Quelle gewählt ist. Der Endpunkt muss ein JSON-Objekt mit total_m3 und/oder period_m3 liefern; period_days ist optional. Eine LAN-Adresse wird als lokale, eine Internetadresse als Cloud-Verbindung angezeigt. |
+| URL des JSON-Endpunkts | `string` | Nein |  |
+| API-Bearer-Token | `secret` | Nein | Optional. Wird in Gladys als geschütztes Geheimnis gespeichert und als Bearer-Token gesendet. |
+| Manuelle Ablesungen | `section` | Nein | Verwenden Sie die Werte Ihres Zählers oder des SWDE-Verlaufs. Speichern Sie nach jeder neuen Ablesung, um sie dem Gladys-Verlauf hinzuzufügen. |
+| Zählerstand (m³) | `number` | Nein |  |
+| Verbrauch im Zeitraum (m³) | `number` | Nein |  |
+| Dauer des Zeitraums (Tage) | `number` | Nein |  |
+| Alarme und Aktualisierung | `section` | Nein | Der Szenenauslöser „Hoher Wasserverbrauch“ wird ausgelöst, wenn das Tagesmittel den Schwellenwert übersteigt. Nutzen Sie ihn, um ein Leck oder einen offenen Hahn zu erkennen. |
+| Tagesalarm-Schwelle (L/Tag) | `number` | Nein | 0 deaktiviert den Alarm. |
+| Aktualisierungsintervall (s) | `number` | Nein | Wie oft die Datenquelle gelesen wird, in Sekunden (5 Minuten bis 24 Stunden). Ein moderates Intervall vermeidet unnötige Anfragen. |
+
+## So installierst du SWDE Water Consumption in Gladys
+
+1. Öffne in Gladys **Integrationen**: SWDE Water Consumption erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/gboulvin/gladys-swde:0.2.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/gboulvin/Gladys-SWDE](https://github.com/gboulvin/Gladys-SWDE).
+
+SWDE Water Consumption benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+SWDE Water Consumption ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [gboulvin](https://github.com/gboulvin) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/gboulvin/Gladys-SWDE) — [Quelle dieser Dokumentation](https://github.com/gboulvin/Gladys-SWDE/blob/HEAD/docs/de.md)

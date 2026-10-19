@@ -1,0 +1,180 @@
+---
+title: "Intégration domotique SolarEdge (Modbus), gratuite et open source"
+sidebar_label: "SolarEdge (Modbus)"
+description: "Onduleurs, compteurs et batteries SolarEdge en local via Modbus TCP, sans cloud. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SolarEdge-ModBus.png"
+keywords:
+  - "solaredge (modbus)"
+  - "domotique solaredge (modbus)"
+  - "gladys solaredge (modbus)"
+  - "solaredge (modbus) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/gboulvin/Gladys-SolarEdge-ModBus instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SolarEdge (Modbus)","description":"Onduleurs, compteurs et batteries SolarEdge en local via Modbus TCP, sans cloud.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-SolarEdge-ModBus","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-SolarEdge-ModBus.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-15T20:02:35Z"}} />
+
+Cette intégration relie Gladys à votre installation SolarEdge **en local**, via
+Modbus TCP : pas de compte SolarEdge, pas de cloud, pas de clé d'API, et une
+mesure toutes les quelques secondes au lieu de tous les quarts d'heure.
+
+## Ce que vous obtenez
+
+L'intégration détecte tout ce qui répond derrière votre onduleur :
+
+| Appareil                     | Fonctionnalités                                                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Onduleur** (chacun)        | Production solaire (W), production totale (kWh), tension AC, courant AC, température du dissipateur, état                                  |
+| **Compteur réseau**          | Puissance réseau (W, soutirage > 0, injection \< 0), index de soutirage (kWh), index d'injection (kWh), consommation de la maison (W)       |
+| **Compteur de consommation** | Consommation de la maison (W), index de consommation (kWh)                                                                                 |
+| **Batterie** (StorEdge)      | Niveau de charge (%), puissance de charge, de décharge (W), énergie chargée / déchargée (kWh), énergie disponible (kWh), température, état |
+
+La consommation de la maison est calculée à partir de la production des
+onduleurs et des échanges avec le réseau. Les index alimentent le tableau de
+bord énergie de Gladys.
+
+## Avant de commencer : activer Modbus TCP
+
+1. Ouvrez l'application **SetApp** à côté de l'onduleur (ou le menu LCD des
+   anciens onduleurs) : **Mise en service → Communication du site → Modbus TCP →
+   Activer**.
+2. Notez le **port** : 1502 par défaut sur les onduleurs SetApp, souvent 502 sur
+   les plus anciens.
+3. Donnez une **adresse IP fixe** à l'onduleur sur votre box (réservation DHCP).
+4. Modbus TCP fonctionne par le port **Ethernet** de l'onduleur. En Wi-Fi, cela
+   dépend du modèle et du firmware.
+
+> L'onduleur n'accepte **qu'un seul client Modbus TCP à la fois**. Si un autre
+> système (Home Assistant, un gestionnaire d'énergie…) le lit déjà en Modbus,
+> arrêtez-le, sinon ils se déconnecteront mutuellement.
+
+## Configuration
+
+| Champ                               | Description                                                                                                                                 |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adresse IP de l'onduleur            | L'adresse de l'onduleur (l'onduleur maître s'il y en a plusieurs).                                                                          |
+| Port Modbus TCP                     | 1502 par défaut.                                                                                                                            |
+| Identifiants Modbus (unit id)       | `1` pour un seul onduleur. Installations maître/esclave : l'identifiant de chaque onduleur, séparés par des virgules (ex. `1,2`).           |
+| Intervalle de rafraîchissement      | Secondes entre deux lectures (5 à 300, 10 par défaut). Les grosses installations sont automatiquement ralenties.                            |
+| Seuil de surplus solaire            | Injection réseau (W) au-delà de laquelle le déclencheur _Surplus solaire_ se déclenche (500 W par défaut).                                  |
+| Inverser le sens du compteur réseau | À activer si Gladys affiche un soutirage quand vous injectez.                                                                               |
+| Autoriser le pilotage de l'onduleur | Désactivé par défaut : l'intégration ne fait que lire. À activer pour que scènes et widgets limitent la production ou pilotent la batterie. |
+
+Enregistrez, puis cliquez sur **Tester la connexion** : l'intégration liste ce
+qu'elle a trouvé et les appareils apparaissent dans l'onglet **Découverte**,
+prêts à être ajoutés.
+
+## Scènes
+
+### Déclencheurs
+
+- **État de l'onduleur modifié** — en production, bridé, en veille (nuit),
+  défaut… Filtrez sur l'onduleur et le nouvel état. Variables : `status`,
+  `previous_status`, `power`.
+- **Surplus solaire** — l'injection réseau dépasse le seuil (`started`) ou
+  redescend sous sa moitié (`ended`). Idéal pour lancer un chauffe-eau, une
+  pompe de piscine ou la recharge d'un véhicule. Variables : `state`,
+  `export_power`.
+- **État de la batterie modifié** — en charge, en décharge, au repos, défaut…
+  Variables : `status`, `previous_status`, `level`.
+- **Connexion à l'onduleur perdue ou rétablie** — après 3 lectures échouées de
+  suite. Variables : `state`, `message`.
+
+Le déclencheur standard « état d'un appareil » de Gladys fonctionne aussi sur
+chaque fonctionnalité (ex. _niveau de batterie au-dessus de 90 %_, _production
+au-dessus de 2000 W_).
+
+### Actions
+
+- **Lire l'installation solaire** — renvoie la production, la consommation, la
+  puissance réseau, le niveau de batterie, la production du jour et l'état de
+  l'onduleur aux actions suivantes (conditions, textes de notification…).
+- **Limiter la production solaire** — limite de puissance active en % de la
+  puissance nominale, par exemple pendant des prix négatifs. 100 lève la limite.
+  _La limite reste enregistrée dans l'onduleur jusqu'à ce qu'elle soit changée._
+- **Changer le mode de la batterie** — maximiser l'autoconsommation, selon les
+  horaires, secours uniquement, pilotage distant.
+- **Charger ou décharger la batterie** — une commande à distance (charger depuis
+  le solaire et le réseau, décharger pour couvrir la maison, maintenir…) pendant
+  une durée donnée, avec une limite de puissance optionnelle. Ensuite,
+  l'onduleur revient à son mode par défaut.
+- **Régler la réserve de secours** — part de la batterie gardée pour les
+  coupures de courant.
+
+Les actions de pilotage nécessitent **Autoriser le pilotage de l'onduleur**
+dans la configuration. Sinon, elles renvoient `applied = false` sans toucher à
+l'onduleur. Les commandes batterie nécessitent un onduleur StorEdge ; la charge
+depuis le réseau peut aussi demander que votre installateur ait autorisé la
+charge AC.
+
+## Tableau de bord
+
+- **Production solaire** — production, consommation, échange réseau et niveau de
+  batterie en direct, un graphique de production (période réglable), la
+  production du jour, l'état de l'onduleur et votre taux d'autonomie.
+- **Batterie solaire** — niveau de charge, puissance de charge et de décharge,
+  énergie disponible, état, santé, mode et réserve de secours. Si le pilotage est
+  autorisé, deux boutons passent la batterie en autoconsommation ou en secours
+  uniquement.
+
+## Boutons de l'écran de configuration
+
+- **Tester la connexion** — détecte l'installation et met à jour les appareils.
+- **Lever la limite de production** — remet chaque onduleur à 100 %.
+
+## Dépannage
+
+- **« Impossible de joindre… »** : vérifiez l'adresse IP et le port, que Modbus
+  TCP est activé et qu'aucun autre client Modbus n'est connecté.
+- **Exception 11 / pas de réponse sur un unit id** : l'identifiant est faux. Un
+  onduleur seul utilise `1`.
+- **Puissance réseau de mauvais signe** : activez _Inverser le sens du compteur
+  réseau_.
+- **La production du jour** part de la première lecture de la journée (heure
+  locale de l'intégration) et survit aux redémarrages.
+- La nuit, la plupart des onduleurs répondent en mode _veille_ ; certains ne
+  répondent plus : les appareils restent dans Gladys et reviennent au lever du
+  soleil.
+- Logs : ouvrez les logs de l'intégration dans Gladys. `LOG_LEVEL=debug` donne
+  le détail complet.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par SolarEdge (Modbus) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Activez Modbus TCP sur l'onduleur | `section` | Non | Dans l'application SetApp (ou le menu LCD des anciens onduleurs) : Mise en service > Communication du site > Modbus TCP > Activer. Notez le port (1502 par défaut) et donnez une adresse IP fixe à l'onduleur sur votre box. L'onduleur n'accepte qu'un seul client Modbus à la fois. |
+| Adresse IP de l'onduleur | `string` | Oui | Adresse IP ou nom d'hôte de l'onduleur (l'onduleur maître s'il y en a plusieurs). |
+| Port Modbus TCP | `number` | Oui | 1502 sur les onduleurs SetApp, souvent 502 sur les plus anciens. |
+| Identifiants Modbus (unit id) | `string` | Non | 1 pour un seul onduleur. Installations maître/esclave : les identifiants de chaque onduleur, séparés par des virgules (ex. 1,2). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Secondes entre deux lectures de toute l'installation (5 à 300). |
+| Seuil de surplus solaire (W) | `number` | Non | Injection réseau au-delà de laquelle le déclencheur de scène « Surplus solaire » se déclenche. Il se termine sous la moitié. |
+| Inverser le sens du compteur réseau | `boolean` | Non | À activer si Gladys affiche un soutirage quand vous injectez (compteur installé à l'envers). |
+| Autoriser le pilotage de l'onduleur | `boolean` | Non | Permet aux scènes et widgets d'écrire dans l'onduleur : limite de production, mode et commandes batterie. Désactivé : lecture seule. |
+
+## Comment installer SolarEdge (Modbus) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : SolarEdge (Modbus) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/gboulvin/gladys-solaredge-modbus:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/gboulvin/Gladys-SolarEdge-ModBus](https://github.com/gboulvin/Gladys-SolarEdge-ModBus).
+
+SolarEdge (Modbus) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+SolarEdge (Modbus) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [gboulvin](https://github.com/gboulvin), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/gboulvin/Gladys-SolarEdge-ModBus) — [source de cette documentation](https://github.com/gboulvin/Gladys-SolarEdge-ModBus/blob/HEAD/docs/fr.md)
