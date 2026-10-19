@@ -407,6 +407,14 @@ const oneLine = (value) =>
 const yaml = (value) =>
   `"${oneLine(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 
+// Escape `<`, `{` and `}` so MDX reads them as text. Authors sometimes escape
+// them already (`\<locality\>`): adding a second backslash would escape the
+// backslash instead, and leave a bare `<` that fails the build.
+const escapeJsx = (value) =>
+  value.replace(/(\\*)([<{}])/g, (match, backslashes, character) =>
+    backslashes.length % 2 === 1 ? match : `${backslashes}\\${character}`
+  );
+
 // Manifest values are written by the integration author too, so they get the
 // same treatment as the documentation below: a configuration description
 // containing `{{gladys_host}}` would otherwise reach the MDX compiler as a JSX
@@ -414,9 +422,7 @@ const yaml = (value) =>
 // example one such as `http://user:password@…` is not a valid URL, which fails
 // the build too: escaping its slashes keeps it as plain text.
 const text = (value) =>
-  oneLine(value)
-    .replace(/[<{}]/g, (character) => `\\${character}`)
-    .replace(/:\/\//g, ":\\/\\/");
+  escapeJsx(oneLine(value)).replace(/:\/\//g, ":\\/\\/");
 
 const cell = (value) => text(value).replace(/\|/g, "\\|");
 
@@ -447,7 +453,7 @@ const escapeForMdx = (markdown) => {
         .map((part, index) =>
           index % 2 === 1
             ? part
-            : part.replace(/[<{}]/g, (character) => `\\${character}`)
+            : escapeJsx(part)
         )
         .join("");
     })
