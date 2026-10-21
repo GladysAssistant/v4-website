@@ -75,7 +75,7 @@ Vous pouvez suivre les instructions du mail ou consulter la vidéo ci-dessous :
 Actuellement, les appareils suivants sont pris en charge par l'intégration :
 
 - **Lampes** (On/Off, Couleur, Température de couleur et Luminosité)
-- **Prises** (On/Off, Variateur)
+- **Interrupteurs** (On/Off, Variateur)
 - **Volets roulants et rideaux** (Ouverture/Fermeture et Position), si l'appareil dispose d'une fonctionnalité de position
 - **Capteurs de température et d'humidité** (lecture seule, depuis Gladys 5.0)
 
