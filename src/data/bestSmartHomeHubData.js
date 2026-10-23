@@ -274,8 +274,8 @@ const bestSmartHomeHubContent = {
     cta: {
       title: "Une box domotique qui vous appartient",
       text: "Gladys est gratuite, open source et s'installe en une commande Docker. Ou prenez le kit de démarrage, prêt à l'emploi.",
-      primary: { label: "Le kit de démarrage", href: "/starter-kit/" },
-      secondary: { label: "Installer Gladys", href: "/docs/" },
+      primary: { label: "Installer Gladys", href: "/docs/" },
+      secondary: { label: "Le kit de démarrage", href: "/starter-kit/" },
     },
   },
 
