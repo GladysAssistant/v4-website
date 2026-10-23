@@ -29,7 +29,7 @@ Gladys Plus needs to be fully configured before you can use the Google Home inte
 
 We recommended you follow the step you received by email to configure Gladys Plus.
 
-At the end, you should be able to connect to [plus.gladysassistant.com](https://plus.gladysassistant.com) without any issue. 
+At the end, you should be able to connect to [plus.gladysassistant.com](https://plus.gladysassistant.com) without any issue.
 
 Once you have successfully logged in to Gladys plus, you can configure Google Home!
 
@@ -65,9 +65,11 @@ You should now see your devices in Google Home.
 
 ## Compatible devices
 
-For now, only:
+The following devices are currently supported:
 
-- Lights (On/Off / Color / Brightness)
-- Switch (On/Off)
+- Lights (On/Off / Color / Color temperature / Brightness)
+- Switch (On/Off / Dimmer)
+- Rolling shutters & curtains (Open/Close / Position), if the device has a position feature
+- Temperature & humidity sensors (read only), since Gladys 5.0
 
-Additionnal compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).
+Additional compatibilities will be added on request. Don't hesitate to send us your feature requests on [the forum](https://community.gladysassistant.com/).

@@ -63,9 +63,10 @@ Alexa sucht jetzt nach all deinen Geräten auf Gladys-Seite.
 
 ## Kompatible Geräte
 
-Aktuell nur:
+Aktuell werden folgende Geräte unterstützt:
 
 - Lampen (Ein/Aus / Farbe / Helligkeit)
 - Schalter (Ein/Aus)
+- Rollläden & Vorhänge (Öffnen/Schließen / Position), seit Gladys 4.81
 
 Weitere Gerätetypen werden auf Anfrage ergänzt. Schick uns deine Feature-Wünsche gerne über [das Forum](https://community.gladysassistant.com/).

@@ -63,9 +63,10 @@ Ahora Alexa buscará todos tus dispositivos en Gladys.
 
 ## Dispositivos compatibles
 
-Por ahora, solo:
+Actualmente se admiten los siguientes dispositivos:
 
 - Luces (encendido/apagado / color / brillo)
 - Interruptores (encendido/apagado)
+- Persianas y cortinas (abrir/cerrar / posición), desde Gladys 4.81
 
 Se añadirán más compatibilidades bajo petición. No dudes en enviarnos tus sugerencias de funciones en [el foro](https://community.gladysassistant.com/).
