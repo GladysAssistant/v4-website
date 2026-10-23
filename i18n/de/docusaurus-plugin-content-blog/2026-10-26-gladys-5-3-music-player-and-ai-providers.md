@@ -54,7 +54,9 @@ Seit einigen Monaten unterhält sich der Assistent von Gladys mit dir, steuert d
 
 Mit 5.3 wird daraus **eine Wahl**. Eine externe Integration des neuen Typs **„KI-Anbieter“** kann dem Assistenten anstelle von Gladys Plus antworten: Claude, Mistral, OpenAI, DeepSeek oder **ein Modell, das auf deinem eigenen Rechner läuft**, mit Ollama. Du wählst ihn auf der Seite „Künstliche Intelligenz“ der Integrationen aus, und der ganze Assistent folgt: der Chat, die Aktion „Frage die KI“ in Szenen und der Wochenrückblick deines Zuhauses.
 
-![Die Wahl des KI-Anbieters und der Stimme auf der Seite „Künstliche Intelligenz“](../../../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-de.webp)
+![Die Wahl des KI-Anbieters und der Stimme auf der Seite „Künstliche Intelligenz“ (Beispiel-Integrationen)](../../../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-de.webp)
+
+Damit klar ist, was heute erscheint: 5.3 bringt die Typen „KI-Anbieter“ und „Sprachsynthese“, und die Anbieter selbst kommen in den Katalog, sobald die Community sie veröffentlicht. Der Screenshot oben zeigt Beispiel-Integrationen. Und die Ollama-Integration, die schon im Store ist, ist etwas anderes: Mit ihr kann eine Szene einem lokalen Modell eine Frage stellen, sie ist kein KI-Anbieter für den Assistenten.
 
 Was ich an der Funktionsweise spannend finde: **Der ganze Assistent läuft weiterhin in deinem Gladys**. Die Werkzeuge, der Kontext deines Zuhauses, der Gesprächsverlauf, die Aktionen auf deinen Geräten: Das alles bleibt lokal. Das Einzige, was zum Anbieter geht, ist eine Standardanfrage, die jede KI auf dem Markt versteht, und ihre Antwort kommt zu Gladys zurück, das sie prüft, bevor es handelt. Eine KI-Integration ist also ein schlanker Adapter, der jeden beliebigen Anbieter anbinden kann.
 
@@ -72,7 +74,7 @@ Dieselbe Idee für die Sprachsynthese. Wenn eine Szene bisher auf einem Lautspre
 
 Eine Integration des neuen Typs **„Sprachsynthese“** kann diese Stimme jetzt erzeugen, lokal mit einer Engine wie Piper oder mit dem Cloud-Dienst deiner Wahl. Du wählst sie auf derselben Seite aus, und **die Ansagen der Szenen** auf deinen Lautsprechern laufen über sie. Das Audio wird in deinem Netzwerk erzeugt und bleibt ein paar Minuten im Speicher, die Zeit, die der Lautsprecher braucht, um es abzuholen.
 
-Eine Einschränkung gibt es vorerst: Die Antworten des Sprachassistenten im Browser laufen weiterhin über Gladys Plus. Das Mikrofon eines Browsers verlangt HTTPS, und ein Browser weigert sich, in einer HTTPS-Seite einen Ton abzuspielen, der per HTTP aus deinem lokalen Netzwerk kommt.
+Eine Einschränkung gibt es vorerst: Mit einer lokalen Stimme kommen die Antworten des Sprachassistenten im Browser nur als Text. Das Mikrofon eines Browsers verlangt HTTPS, und ein Browser weigert sich, in einer HTTPS-Seite einen Ton abzuspielen, der per HTTP aus deinem lokalen Netzwerk kommt. Gladys wechselt nie hinter deinem Rücken zu Gladys Plus: Wenn der Assistent im Browser sprechen soll, behalte Gladys Plus als Stimme.
 
 ## Ein Katalog für tausend Integrationen
 

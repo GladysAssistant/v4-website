@@ -54,7 +54,9 @@ Depuis quelques mois, l'assistant de Gladys discute avec vous, pilote votre mais
 
 Dans la 5.3, cela devient **un choix**. Une intégration externe du nouveau type **« Fournisseur d'IA »** peut répondre à l'assistant à la place de Gladys Plus : Claude, Mistral, OpenAI, DeepSeek, ou **un modèle qui tourne sur votre propre machine** avec Ollama. Vous le choisissez sur la page Intelligence Artificielle des intégrations, et tout l'assistant suit : la discussion, l'action « Demander à l'IA » des scènes, et le bilan hebdomadaire de la maison.
 
-![Le choix du fournisseur d'IA et de la voix, sur la page Intelligence Artificielle](../../../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-fr.webp)
+![Le choix du fournisseur d'IA et de la voix, sur la page Intelligence Artificielle (intégrations d'exemple)](../../../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-fr.webp)
+
+Pour être clair sur ce qui sort aujourd'hui : la 5.3 apporte les types « Fournisseur d'IA » et « Synthèse vocale », et les fournisseurs eux-mêmes arriveront dans le catalogue au fil de leur publication par la communauté. La capture ci-dessus utilise des intégrations d'exemple. Et l'intégration Ollama déjà présente dans le store, c'est autre chose : elle permet à une scène de poser une question à un modèle local, ce n'est pas un fournisseur d'IA pour l'assistant.
 
 Ce que je trouve intéressant dans le fonctionnement : **tout l'assistant tourne toujours dans votre Gladys**. Les outils, le contexte de votre maison, l'historique de la conversation, les actions sur vos appareils : tout cela reste local. La seule chose qui part chez le fournisseur, c'est une requête standard, celle que toutes les IA du marché comprennent, et sa réponse revient à Gladys, qui la vérifie avant d'agir. Une intégration d'IA est donc un simple adaptateur, capable de brancher n'importe quel fournisseur.
 
@@ -72,7 +74,7 @@ Même idée pour la synthèse vocale. Jusqu'ici, quand une scène annonçait « 
 
 Une intégration du nouveau type **« Synthèse vocale »** peut maintenant générer cette voix, en local avec un moteur comme Piper, ou avec le service cloud de votre choix. Vous la choisissez sur la même page, et **les annonces des scènes** sur vos enceintes passent par elle. L'audio est généré sur votre réseau et reste en mémoire quelques minutes, le temps que l'enceinte vienne le chercher.
 
-Une limite, pour l'instant : les réponses de l'assistant vocal dans le navigateur continuent de passer par Gladys Plus. Le micro d'un navigateur exige le HTTPS, et un navigateur refuse de jouer, dans une page en HTTPS, un son servi en HTTP sur votre réseau local.
+Une limite, pour l'instant : avec une voix locale, les réponses de l'assistant vocal dans le navigateur sont uniquement écrites. Le micro d'un navigateur exige le HTTPS, et un navigateur refuse de jouer, dans une page en HTTPS, un son servi en HTTP sur votre réseau local. Gladys ne bascule jamais sur Gladys Plus dans votre dos : si vous voulez que l'assistant parle dans le navigateur, gardez Gladys Plus comme voix.
 
 ## Un catalogue taillé pour un millier d'intégrations
 

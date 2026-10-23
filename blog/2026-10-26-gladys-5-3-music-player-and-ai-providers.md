@@ -54,7 +54,9 @@ For a few months now, the assistant of Gladys talks with you, controls your home
 
 In 5.3, it becomes **a choice**. An external integration of the new **"AI provider"** type can answer the assistant in place of Gladys Plus: Claude, Mistral, OpenAI, DeepSeek, or **a model running on your own machine** through Ollama. You choose it on the Artificial Intelligence page of the integrations, and the whole assistant follows: the chat, the "Ask AI" action of scenes, and the weekly home report.
 
-![The choice of the AI provider and of the voice, on the Artificial Intelligence page](../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-en.webp)
+![The choice of the AI provider and of the voice, on the Artificial Intelligence page (example integrations)](../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-en.webp)
+
+To be clear about what ships today: 5.3 brings the AI and text-to-speech provider types, and the providers themselves will arrive in the catalog as the community publishes them. The screenshot above uses example integrations. And the Ollama integration already in the store is something else: it lets a scene ask a question to a local model, it is not an AI provider for the assistant.
 
 What I find interesting about the way it works: **the whole assistant still runs in your Gladys**. The tools, the context of your home, the conversation history, the actions on your devices: all of this stays local. The only thing that goes to the provider is a standard request, the one every AI on the market understands, and its answer comes back to Gladys, which checks it before acting. An AI integration is therefore a thin adapter, which can plug in any provider.
 
@@ -72,7 +74,7 @@ Same idea for text-to-speech. Until now, when a scene announced "the washing mac
 
 An integration of the new **"Text-to-speech"** type can now generate that voice, locally with an engine like Piper, or with the cloud service of your choice. You choose it on the same page, and **scene announcements** on your speakers go through it. The audio is generated on your network and stays in memory for a few minutes, the time for the speaker to fetch it.
 
-One limitation, for now: the replies of the voice assistant in the browser keep using Gladys Plus. The microphone of a browser requires HTTPS, and a browser refuses to play, inside an HTTPS page, a sound served over HTTP on your local network.
+One limitation, for now: with a local voice, the replies of the voice assistant in the browser are text only. The microphone of a browser requires HTTPS, and a browser refuses to play, inside an HTTPS page, a sound served over HTTP on your local network. Gladys never switches to Gladys Plus behind your back: if you want the assistant to speak in the browser, keep Gladys Plus as the voice.
 
 ## A catalog built for a thousand integrations
 

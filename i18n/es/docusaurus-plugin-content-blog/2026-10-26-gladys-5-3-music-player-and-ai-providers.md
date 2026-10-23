@@ -54,7 +54,9 @@ Desde hace unos meses, el asistente de Gladys conversa contigo, controla tu casa
 
 En la 5.3 pasa a ser **una elección**. Una integración externa del nuevo tipo **«Proveedor de IA»** puede responder al asistente en lugar de Gladys Plus: Claude, Mistral, OpenAI, DeepSeek o **un modelo que funciona en tu propia máquina** con Ollama. Lo eliges en la página Inteligencia artificial de las integraciones, y todo el asistente lo sigue: el chat, la acción «Preguntar a la IA» de las escenas y el resumen semanal de la casa.
 
-![La elección del proveedor de IA y de la voz, en la página Inteligencia artificial](../../../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-es.webp)
+![La elección del proveedor de IA y de la voz, en la página Inteligencia artificial (integraciones de ejemplo)](../../../static/img/articles/gladys-assistant-5-3/05-ai-tts-provider-es.webp)
+
+Para que quede claro lo que sale hoy: la 5.3 trae los tipos «Proveedor de IA» y «Síntesis de voz», y los proveedores llegarán al catálogo a medida que la comunidad los publique. La captura de arriba usa integraciones de ejemplo. Y la integración Ollama que ya está en la tienda es otra cosa: permite a una escena hacer una pregunta a un modelo local, no es un proveedor de IA para el asistente.
 
 Lo que me parece interesante de cómo funciona: **todo el asistente sigue funcionando en tu Gladys**. Las herramientas, el contexto de tu casa, el historial de la conversación, las acciones sobre tus dispositivos: todo eso se queda en local. Lo único que va al proveedor es una petición estándar, la que entienden todas las IA del mercado, y su respuesta vuelve a Gladys, que la comprueba antes de actuar. Una integración de IA es, por tanto, un simple adaptador, capaz de conectar cualquier proveedor.
 
@@ -72,7 +74,7 @@ La misma idea para la síntesis de voz. Hasta ahora, cuando una escena anunciaba
 
 Una integración del nuevo tipo **«Síntesis de voz»** ya puede generar esa voz, en local con un motor como Piper, o con el servicio en la nube que elijas. La eliges en la misma página, y **los anuncios de las escenas** en tus altavoces pasan por ella. El audio se genera en tu red y se queda en memoria unos minutos, el tiempo que tarda el altavoz en ir a buscarlo.
 
-Una limitación, por ahora: las respuestas del asistente de voz en el navegador siguen pasando por Gladys Plus. El micrófono de un navegador exige HTTPS, y un navegador se niega a reproducir, dentro de una página en HTTPS, un sonido servido por HTTP en tu red local.
+Una limitación, por ahora: con una voz local, las respuestas del asistente de voz en el navegador son solo texto. El micrófono de un navegador exige HTTPS, y un navegador se niega a reproducir, dentro de una página en HTTPS, un sonido servido por HTTP en tu red local. Gladys nunca cambia a Gladys Plus a tus espaldas: si quieres que el asistente hable en el navegador, mantén Gladys Plus como voz.
 
 ## Un catálogo pensado para mil integraciones
 
