@@ -1,0 +1,147 @@
+---
+title: "free@home Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "free@home"
+description: "Lokale free@home-Lichter, Schaltausgänge und Rollos steuern; Taster für Szenen nutzen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/stefanbauer--gladys-freeathome.png"
+keywords:
+  - "free@home"
+  - "free@home smart home"
+  - "gladys free@home"
+  - "free@home gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/stefanbauer/gladys-freeathome instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"free@home","description":"Lokale free@home-Lichter, Schaltausgänge und Rollos steuern; Taster für Szenen nutzen.","owner":"stefanbauer","owner_avatar_url":"https://avatars.githubusercontent.com/u/3192662?v=4","repo_url":"https://github.com/stefanbauer/gladys-freeathome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/stefanbauer--gladys-freeathome.png","type":"device","version":"1.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-20T14:16:21Z"}} />
+
+Diese eigenständige Integration nutzt ausschließlich die lokale REST- und
+WebSocket-API von ABB/Busch-Jaeger, ohne XMPP oder Cloud-Verbindung. Implementiert
+sind Schaltausgänge für Licht und andere Verbraucher, dimmbare Lichter, Rollos
+und Jalousien sowie Wand-/Paneltaster als Auslöser für Gladys-Szenen.
+
+## Einrichtung
+
+Die Integration läuft in einem eigenen **Linux-Docker-Container unter Gladys**.
+Gladys übernimmt Start, Neustart, Protokolle und Integrationstoken. Nutzer brauchen
+weder macOS noch Node.js auf ihrem Rechner, ein Quellcodeverzeichnis oder `.env`.
+Version `1.1.0` und ein öffentliches AMD64/ARM64-Image sind veröffentlicht.
+In Gladys über die GitHub-Repository-URL installieren:
+`https://github.com/stefanbauer/gladys-freeathome`. Die Store-Erkennung ist aktiviert;
+die Sichtbarkeit hängt vom nächsten erfolgreichen Indexlauf und dem lokalen Cache ab.
+Lokale Builds stehen separat in der [Entwicklungsanleitung](https://github.com/stefanbauer/gladys-freeathome/blob/HEAD/development.md).
+
+Benötigt werden Gladys ab 5.1.0 mit Docker, ein kompatibler System Access Point mit aktivierter
+lokaler API, seine Adresse einschließlich `http://` oder `https://`, der
+API-Benutzername aus free@home next und dessen Passwort. Beide Zugangsdaten sind
+in Gladys unter „Konfiguration“ einzugeben, als Geheimnisfelder. Sie sind vom eigenen Gladys-Integrationstoken getrennt.
+Keine Zugangsdaten im Chat oder in Screenshots teilen.
+
+Nach dem Speichern der Konfiguration erscheint der Verbindungsstatus. Der
+Verbindungstest liest nur die REST-Konfiguration; erst der laufende Status
+bestätigt auch die WebSocket-Verbindung. In „Entdeckung“ werden unterstützte
+Kanäle angeboten. Die gewünschten Kanäle selbst anlegen und Räumen zuweisen.
+Ein physischer Mehrfachaktor kann mehrere Einträge haben. Die Integration legt
+keine Geräte automatisch an und löscht keine vorhandenen Geräte.
+
+Gleich benannte Kanäle desselben Geräts erhalten in der Entdeckung die API-
+Kanalkennung als Zusatz, etwa `Doppeltaster [ch0000]` und `[ch0003]`. Das bedeutet
+nicht oben/unten: Die REST-API liefert diese physische Zuordnung nicht; eine
+Wippe kann mehrere Aktionen auf einem Kanal senden. Bereits angelegte Geräte
+behalten ihre Namen und lassen sich bei Bedarf in Gladys umbenennen.
+
+## Steuerung und Taster
+
+**Seit `1.1.0`:** Tastaktoren (`FID_TRIGGER`,
+`0x0045`) erhalten eine eigene steuerbare Funktion **Press** (`button/push`).
+In der Entdeckung den Aktorkanal anlegen; ein gleich benannter Text-Sensorkanal
+bleibt schreibgeschützt. Im Dashboard den Tasterknopf betätigen oder in einer Szene den
+Gerätewert **1** setzen. Jeder Aufruf sendet genau einen Auslösebefehl; die
+Impulsdauer bleibt in free@home eingestellt. Kein zusätzlicher AUS-Befehl und
+kein Software-Timer; Kontakt- oder Torzustände werden nicht daraus abgeleitet.
+Die free@home-Funktion nicht umstellen und bestehende Sensoren/Szenen nicht
+löschen. Nach dem Update in Gladys neu entdecken und den Aktorkanal anlegen.
+Befehle sind simuliert getestet; die Entdeckung wurde am echten Controller
+geprüft, das physische Tor aber nicht betätigt.
+
+Rolloposition und Lamellenöffnung sind **0 % geschlossen, 100 % offen**. Die
+Lamellenregelung erscheint nur bei passenden Datenpunkten, als eigener Regler
+in Prozent, nicht als kalibrierter Winkel in Grad. Auf/Ab/Stopp verwendet die
+Aktorrückmeldung. Stopp liest vorher den Bewegungszustand: Im Stillstand wird
+kein Schritt ausgelöst, bei unbekanntem Zustand kein Stopp gesendet. Zwischen
+Abfrage und Befehl kann der Aktor allerdings selbst stoppen; ABB bietet hierfür
+keine atomare Operation. Positionsrückmeldungen kommen teils erst nach Fahrtende.
+0 % Helligkeit schaltet über den separaten Ausschalt-Datenpunkt aus.
+
+Für Taster zuerst den Kanal anlegen, dann im Szeneneditor **Integrationen →
+free@home → Tasteraktion** wählen. Das Tastergerät ist Pflicht, die Aktion kann
+für „beliebig“ leer bleiben. Verfügbar sind je nach Taster Ein/Aus,
+Heller/Dunkler/Dimmen stoppen sowie Auf/Ab/Stopp-Schritt auf oder ab.
+Zwei identische aktuelle Telegramme lösen zwei Ereignisse aus. Die Anzeige der
+letzten Aktion ist dagegen ein Zustand und kein zuverlässiger Tastendruck-Trigger.
+Tastertelegramme sind keine allgemeine Rohdaten-API für Drücken/Loslassen oder
+Doppelklicks. Snapshots und Initialsynchronisation lösen keine Szenen aus;
+während einer Unterbrechung gehen Ereignisse verloren und werden nicht nachgeholt.
+
+## Sicherheit und Entwicklungsstand
+
+HTTP Basic verschlüsselt nicht: HTTPS mit vertrauenswürdigem Zertifikat
+bevorzugen; private Zertifizierungsstellen über `NODE_EXTRA_CA_CERTS` einbinden.
+TLS-Prüfung nicht abschalten und die Controller-API nie ins Internet freigeben.
+Befehle werden nach Fehlern oder Wiederverbindung niemals automatisch wiederholt.
+Ein fehlendes ACK bedeutet nicht sicher, dass ein Befehl nicht ausgeführt wurde.
+
+Zusätzlich zu simulierten Tests wurden mit ausdrücklicher Freigabe an Firmware
+3.5.3 Licht An/Aus, Rollopositionierung, Auf/Stopp, wiederholte identische
+Taster-Szenenereignisse und Neustart/Wiederverbindung geprüft. Ein weiterer manueller
+Test bestätigte Dimmen auf 31 % und 73 % samt Rückmeldung und Ausschalten bei 0 %.
+Lamellen, die andere Tasterseite und der separate Abwärtsbefehl sind noch nicht an echter
+Hardware geprüft. Gruppen, virtuelle Geräte, free@home-Szenen und weitere
+Sensor-/Heizungsfunktionen gehören nicht zu diesem Umfang. Für `1.0.0` wurden
+anonyme Image-Downloads, vollständige Validierung und die GitHub-URL-Installation
+mit Controller-Verbindung, Entdeckung und Neustart erfolgreich geprüft.
+Geräteverhalten und Grenzen der Hardwareprüfung sind gegenüber `0.1.0` unverändert.
+
+## Betrieb und Updates
+
+Start/Stopp, Neustart, Logs und Updates erfolgen über Gladys. Der Gladys-/Docker-
+Host muss laufen; der Entwicklerrechner wird nicht benötigt. Für Updates die
+Updatefunktion verwenden, nicht deinstallieren: Eine Deinstallation in Gladys
+löscht auch Registrierung, Konfiguration und Geräte. Der Container erhält seine
+Konfiguration aus Gladys, enthält keine persönlichen Zugangsdaten und benötigt
+keine lokalen persistenten Dateien.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt free@home in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Controller-Adresse | `string` | Ja |  |
+| Lokaler API-Benutzername | `secret` | Ja |  |
+| Lokales API-Passwort | `secret` | Ja |  |
+
+## So installierst du free@home in Gladys
+
+1. Öffne in Gladys **Integrationen**: free@home erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/stefanbauer/gladys-freeathome:1.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/stefanbauer/gladys-freeathome](https://github.com/stefanbauer/gladys-freeathome).
+
+free@home benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+free@home ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [stefanbauer](https://github.com/stefanbauer) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/stefanbauer/gladys-freeathome) — [Quelle dieser Dokumentation](https://github.com/stefanbauer/gladys-freeathome/blob/HEAD/docs/de.md)

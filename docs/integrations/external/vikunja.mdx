@@ -1,0 +1,217 @@
+---
+title: "Vikunja smart home integration, free and open source"
+sidebar_label: "Vikunja"
+description: "Vikunja tasks: today's and overdue, reminders, done or created from a scene or the dashboard. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-vikunja.png"
+keywords:
+  - "vikunja"
+  - "vikunja smart home"
+  - "gladys vikunja"
+  - "vikunja gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-vikunja instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Vikunja","description":"Vikunja tasks: today's and overdue, reminders, done or created from a scene or the dashboard.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-vikunja","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-vikunja.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:22:22Z"}} />
+
+Bring the tasks of your [Vikunja](https://vikunja.io) into Gladys: what is
+left to do today, what is overdue, the next task of each project. A scene
+reacts when a task falls due or a reminder rings, another one adds "buy bread"
+from a button, a tap on the dashboard ticks a task off, and Gladys can read
+out the tasks of the day every morning.
+
+> **Feedback welcome.** This integration was tested against a real Vikunja
+> server (Docker image `vikunja/vikunja` v2.7.0, October 2026), not yet in
+> everyday use. If something does not work as described, please say so on the
+> [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-vikunja/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A **self-hosted Vikunja** (0.22 or later), reachable from Gladys (the Docker
+  image listens on port 3456).
+- An **API token** of a Vikunja user. In Vikunja: **Settings** → **API
+  Tokens** → **Create a token**, give it a name (`Gladys`), an expiry date,
+  and these permissions:
+  - **Projects**: `read_all`;
+  - **Tasks**: `read_all`, `read_one`, `update` (to mark tasks done) and
+    `create` (to create tasks).
+
+  Copy the token, which starts with `tk_`: Vikunja shows it only once. A token
+  without `update` or `create` still works for the counters, the widget and
+  the triggers; only the matching action is refused.
+
+The integration sees the projects and tasks this user can see (their own
+and the shared ones), and acts **as this user**.
+
+## Set up
+
+1. In Gladys, **Integrations** → install **Vikunja**.
+2. In the **Configuration** screen, fill in:
+   - **Address**: the address of Vikunja, for example
+     `http://192.168.1.20:3456`, or `https://tasks.example.org` behind a
+     reverse proxy (a path prefix such as `/vikunja` is kept);
+   - **API token**: the `tk_…` token.
+3. Options:
+   - **Followed projects**: names or numbers separated by commas (`Home, 3`).
+     Empty: every project. Archived projects are never followed;
+   - **Accept self-signed certificates**: for an `https://` address with a
+     self-signed certificate, on your own server only;
+   - **Refresh interval**: 1 to 10 minutes (5 by default). Due times,
+     reminders and midnight are always followed on time, whatever the
+     interval;
+   - **Language of the feature names**: the names given to the features when
+     a device is added (French by default), and the texts sent to scenes.
+4. Save, then **Test the connection**: it reads Vikunja and gives its version,
+   the number of open tasks and of followed projects.
+5. In the **Discovery** tab, add the devices you want.
+
+## Devices
+
+**Vikunja** (every followed project together) and **Vikunja _project_** for
+each followed project. Each one has four features:
+
+| Feature             | What it says                                                                     |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `Open tasks`        | tasks not done, with or without a due date                                       |
+| `Tasks to do today` | open tasks due before midnight, overdue ones included: what is left by tonight   |
+| `Overdue tasks`     | open tasks whose due time has passed                                             |
+| `Next task`         | the title of the open task with the earliest due time still ahead; `None` if not |
+
+"Today" is the day in the time zone of Gladys. A sub-project is a project of
+its own: its tasks are not counted in its parent.
+
+## Dashboard
+
+The **Today's tasks** widget shows two tiles (to do today, overdue), the list
+of the tasks of the day, overdue first, with their time (in orange when the
+priority is high) and their project, and a button for each of the four most
+urgent: a tap marks the task done. Choose a project device in the widget
+settings to see only its tasks; leave it empty for every followed project.
+When nothing is left, the widget says so and gives the next task.
+
+The counters can also go on the dashboard as any device feature.
+
+## Scenes
+
+### Triggers
+
+- **Vikunja task due**: an open task reached its due time.
+- **Vikunja task reminder**: a reminder of an open task rang (a fixed date, or
+  one relative to the due date: Vikunja computes it).
+- **Vikunja task overdue**: at midnight, a task due that day is still not
+  done. Once per task and due date.
+
+Filters, for the three: the project (a project device: the **Vikunja**
+device filters nothing, leave the field empty for every project), the task
+title.
+Information passed on to the actions: the task, its number, its project, its
+priority (0 to 5), its due date; and the reminder time for a reminder.
+
+A task done before its due time fires nothing. A due date moved by hand to a
+moment before the previous reading fires nothing either: only the moments
+that pass while the integration runs count. A restart does not fire anything twice; a moment
+that passed while the integration was stopped fires when it starts again, if
+it is less than an hour old.
+
+### Actions
+
+- **Mark a Vikunja task done**: give the exact **title** (case and accents
+  ignored) or the **number** of the task (`#12`, the number in the address of
+  the task in Vikunja). Any open task the token sees, followed project or not.
+  A repeating task moves to its next due date, as in Vikunja. Results: the
+  task, its number, its project, the next due date of a repeating task.
+- **Create a Vikunja task**: a title, and the project by name or number
+  (empty: the first project of the list in Vikunja, usually Inbox). Results:
+  the task, its number, its project.
+- **Read today's Vikunja tasks**: the tasks of the day as a sentence
+  (`4 task(s) to do today: …. 2 overdue.`), for every followed project or one
+  of them. Results: the sentence, the number of tasks to do today, of overdue
+  tasks. Send the sentence in a message, or have Gladys say it.
+
+The fields accept scene variables: `{{triggerEvent.data.task_id}}` marks done
+the task that triggered the scene.
+
+### Scene ideas
+
+- At 7:30, **Read today's Vikunja tasks**, then send the sentence on Telegram.
+- **Vikunja task reminder** on the `Shopping` project: flash the hallway light.
+- A button by the door runs **Create a Vikunja task** with `Buy bread` in
+  `Shopping`.
+- An NFC tag on the bins runs **Mark a Vikunja task done** with
+  `Take out the bins`.
+
+## Troubleshooting
+
+- **"Vikunja does not answer"**: check the address and the port from the
+  Gladys machine (`http://<address>:3456` opens Vikunja in a browser).
+- **"API token refused or missing a permission"**: the token expired, was
+  deleted or mistyped, or lacks a permission of the list above. Vikunja
+  answers the same way in every case: create a new token with every
+  permission listed.
+- **"No Vikunja API at this address"**: the address answers, but not with the
+  Vikunja API: check the port, or the path prefix behind a reverse proxy.
+- **"The address redirects"**: enter the `https://` address.
+- **A project is missing**: archived projects are not followed; a name typed
+  in **Followed projects** that matches no project is ignored, and **Test the
+  connection** lists it.
+- **"Several open tasks have this title"**: give the number (`#12`) instead.
+- Logs: `LOG_LEVEL=debug` on the container shows every reading.
+
+## Limits
+
+- Vikunja is read every 1 to 10 minutes (and at each due time, reminder and
+  at midnight): a task done in Vikunja shows up in Gladys within that delay.
+  Vikunja webhooks are not used.
+- Two requests per reading (projects, open tasks), plus one per extra page of
+  50 tasks. Up to 20 pages of open tasks are read.
+- The integration marks tasks done and creates tasks; it does not edit,
+  delete, move or assign them.
+- Tested with Vikunja v2.7.0. Versions 0.22 to 0.24 should work (the task
+  list there is `/tasks/all`, used when `/tasks` does not exist), but they were
+  not tested.
+- Gladys keeps no Vikunja data beyond `/data/vikunja-state.json` (the time of
+  the last reading, so that no event fires twice).
+- Not affiliated with Vikunja.
+
+## Configuration settings
+
+These are the settings Vikunja asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Vikunja | `section` | No | A self-hosted Vikunja (0.22 or later). In Vikunja, create an API token: Settings, API Tokens, with the permissions listed in the documentation. |
+| Address | `string` | Yes | Address of Vikunja, with https:\/\/ for HTTPS and :port if not the default (3456 for the Docker image). |
+| API token | `secret` | Yes | Created in Vikunja: Settings, API Tokens. It starts with tk_. |
+| Options | `section` | No |  |
+| Followed projects | `string` | No | Names or numbers separated by commas. Empty: every project. One device per followed project. |
+| Accept self-signed certificates | `boolean` | No | For an https:\/\/ address whose certificate is self-signed. Tick only for your own server. |
+| Refresh interval | `select` | No | How often Vikunja is read. Due times, reminders and midnight are always followed on time. |
+| Language of the feature names | `select` | No | Names given to the features when a device is added, and texts sent to scenes. |
+
+## How to install Vikunja in Gladys
+
+1. In Gladys, open **Integrations**: Vikunja appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-vikunja:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-vikunja](https://github.com/guim31/gladys-vikunja).
+
+Vikunja requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Vikunja is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-vikunja) — [source of this documentation](https://github.com/guim31/gladys-vikunja/blob/HEAD/docs/en.md)

@@ -1,0 +1,241 @@
+---
+title: "Backrest Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Backrest"
+description: "Deine Backrest-Pläne in Gladys: ihr Zustand und ein Alarm, wenn eine Sicherung fehlschlägt. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-backrest.png"
+keywords:
+  - "backrest"
+  - "backrest smart home"
+  - "gladys backrest"
+  - "backrest gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-backrest instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Backrest","description":"Deine Backrest-Pläne in Gladys: ihr Zustand und ein Alarm, wenn eine Sicherung fehlschlägt.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-backrest","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-backrest.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:27:19Z"}} />
+
+[Backrest](https://github.com/garethgeorge/backrest) ist eine Weboberfläche
+und ein Planer für [restic](https://restic.net/)-Sicherungen. Diese
+Integration bringt die Pläne und Repositorys einer Backrest-Instanz nach
+Gladys: Jeder Plan wird ein Gerät mit seinem Zustand, seiner letzten
+erfolgreichen Sicherung, den hinzugefügten Daten und den Fehlern seiner
+letzten Sicherung; jedes Repository zeigt seine Größe und seine Snapshots.
+Szenen können reagieren, wenn **irgendeine** Sicherung gelingt, fehlschlägt
+oder überfällig ist (zu lange kein Erfolg), ein Dashboard-Widget listet die
+fehlgeschlagenen Pläne zuerst, und eine Szene kann eine Sicherung starten.
+
+Getestet mit einem echten Backrest 1.14 (Docker-Image `garethgeorge/backrest`,
+lokales restic-Repository): eine Sicherung, die gelingt, eine, deren Ordner
+fehlt, eine mit einer unlesbaren Datei, eine aus der Integration gestartete
+Sicherung, mit und ohne Anmeldung. Noch nicht mit einem echten Gladys
+getestet: Rückmeldungen sind willkommen in
+[den Issues](https://github.com/guim31/gladys-backrest/issues).
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Backrest 1.x (getestet mit 1.14.1), seine Weboberfläche vom Gladys-Rechner
+  aus erreichbar (standardmäßig Port 9898).
+- Wenn seine Anmeldung aktiv ist: ein Benutzername und sein Passwort (Backrest
+  **Settings → Users**). Ein eigener Benutzer ist besser als deiner.
+
+Die Integration liest Backrest standardmäßig alle 5 Minuten (alle 30 Sekunden
+während einer Sicherung): eine leichte Anfrage pro Plan, dazu einmal pro
+Stunde der Verlauf jedes Repositorys. Nichts verlässt dein Netzwerk.
+
+## Erste Schritte
+
+### 1. Die Adresse von Backrest prüfen
+
+Öffne Backrest im Browser und notiere seine Adresse, zum Beispiel
+`http://192.168.1.2:9898`. Standardmäßig lauscht Backrest nur auf seinem
+eigenen Rechner (`127.0.0.1:9898`): Damit Gladys es erreicht, starte es mit
+`BACKREST_PORT=0.0.0.0:9898` (im Docker-Image schon so).
+
+### 2. Die Integration konfigurieren
+
+In Gladys, **Integrationen → Backrest → Konfiguration**:
+
+- **Backrest-Adresse**: die oben notierte Adresse. Eine reine Adresse
+  (`192.168.1.2`) nutzt Port 9898; eine aus dem Browser kopierte Adresse geht
+  auch.
+- **Benutzername** und **Passwort**: ein Benutzer von Backrest. Lass beide
+  leer, wenn seine Anmeldung deaktiviert ist.
+- **Aktualisierungsintervall**: 1, 5 (Standard) oder 15 Minuten.
+- **Überfällig nach**: wann ein Plan ohne Erfolg überfällig wird.
+  _Automatisch_ (Standard) folgt dem Zeitplan jedes Plans: seiner Periode
+  („alle 24 Stunden“) oder dem längsten Abstand seines Cron-Ausdrucks, plus
+  ein Viertel davon (mindestens eine Stunde), also 30 Stunden für einen
+  täglichen Plan, 90 Stunden für einen Plan nur an Werktagen. Ein Plan ohne
+  Zeitplan ist dann nie überfällig. Oder eine feste Zeit, von 12 Stunden bis zu
+  einer Woche, für alle Pläne.
+- **Starten von Sicherungen erlauben**: lässt die Szenenaktion „Sicherung
+  starten“ arbeiten. Schalte es ab, wenn niemand aus Gladys eine Sicherung
+  starten soll.
+- **Sprache der Namen**: Sprache der Funktionsnamen, der Zustände und der
+  Szenen-Ergebnisse.
+
+**Verbindung testen** liest Backrest und fasst zusammen: die Zahl der Pläne
+und Repositorys, fehlgeschlagen und überfällig.
+
+### 3. Die Pläne hinzufügen
+
+Lege im Tab **Entdecken** die Pläne und Repositorys an, denen du folgen
+willst, und das Gerät „Backrest“ für die Instanz. Die Szenen-Auslöser
+funktionieren für alle Pläne, angelegt oder nicht.
+
+## Die Geräte
+
+Jeder Plan:
+
+| Funktion                              | Wert                                                                   |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| Zustand                               | OK, Mit Warnungen, Fehlgeschlagen, Überfällig, Läuft oder Nie gelaufen |
+| Letzte erfolgreiche Sicherung         | Tag/Monat Stunden:Minuten, „-“ wenn keine                              |
+| Stunden seit letztem Erfolg           | in Stunden                                                             |
+| Dauer der letzten Sicherung           | in Sekunden                                                            |
+| Von der letzten Sicherung hinzugefügt | neue Daten im Repository, in MB                                        |
+| Snapshots                             | behaltene Snapshots dieses Plans im Repository                         |
+| Fehler der letzten Sicherung          | 1, wenn sie fehlgeschlagen ist, sonst 0                                |
+| Warnungen der letzten Sicherung       | Zahl der Dateien, die sie nicht lesen konnte                           |
+| Läuft                                 | 1, während dieser Plan sichert                                         |
+| Nächste geplante Sicherung            | Tag/Monat Stunden:Minuten, „-“ ohne Zeitplan                           |
+
+Jedes Repository:
+
+- **Repository-Größe**: in MB, aus dem letzten „stats“-Vorgang von Backrest
+  (nach einem Prune, höchstens einmal am Tag; **Stats** auf der
+  Repository-Seite von Backrest startet einen);
+- **Snapshots**: die Snapshots, die es enthält.
+
+Das Gerät „Backrest“, für die Instanz:
+
+- **Sicherung läuft**: 1 oder 0;
+- **Fortschritt**: in %;
+- **Aktueller Plan**: sein Name, „-“ wenn keiner;
+- **Fehlgeschlagene Pläne** und **Überfällige Pläne**: wie viele.
+
+Eine Sicherung „gelingt“, wenn restic einen Snapshot anlegt, mit oder ohne
+Warnungen (unlesbare Dateien). Die Sicherung „schlägt fehl“, wenn kein Snapshot
+entsteht (Ordner fehlt, Repository nicht erreichbar oder gesperrt…). Der
+Zustand zeigt zuerst, was Aufmerksamkeit braucht: Ein fehlgeschlagener Plan
+zeigt „Fehlgeschlagen“, auch wenn er zugleich überfällig ist. Probeläufe (dry
+run) werden ignoriert.
+
+## Dashboard
+
+Das Widget **Backrest** zeigt die Zahl der fehlgeschlagenen, überfälligen und
+OK-Pläne, dann eine Zeile pro Plan: zuerst fehlgeschlagene, dann überfällige,
+laufende, mit Warnungen, nie gelaufene, OK, mit dem letzten Erfolg (oder dem
+Fortschritt der laufenden Sicherung). Standardmäßig alle Pläne, oder die in
+seinen Einstellungen gewählten. Die Schaltfläche **Aktualisieren** liest
+Backrest neu.
+
+## Szenen
+
+### Auslöser
+
+- **Eine Sicherung gelingt**: Eine Sicherung endet mit einem Snapshot, mit oder
+  ohne Warnungen. Informationen: Plan, Dauer (Minuten), Warnungen,
+  hinzugefügte Daten, Snapshots.
+- **Eine Sicherung schlägt fehl**: Eine Sicherung endet ohne Snapshot. Der
+  Filter **Ergebnis** wählt Fehler, Warnungen oder beides (leer).
+  Informationen: Plan, der Fehler (oder die erste nicht gelesene Datei),
+  Fehler, Warnungen.
+- **Ein Plan ist überfällig**: Ein Plan war länger als die Zeit „Überfällig
+  nach“ nicht erfolgreich. Einmal pro Überschreitung, erneut nach einem neuen
+  Erfolg. Informationen: Plan, Stunden seit letztem Erfolg, letzter Erfolg.
+
+Jeder Auslöser lässt sich auf bestimmte Pläne beschränken (leer: alle).
+
+### Aktionen
+
+- **Zustand eines Plans**: liest den Zustand eines Plans für die nächsten
+  Aktionen: fehlgeschlagen, überfällig, der Zustand in Worten, der Name, der
+  letzte Erfolg, Stunden seit letztem Erfolg (-1, wenn keiner), und ein
+  fertiger Satz („photos: Fehlgeschlagen, letzter Erfolg 18.10. 02:05.“).
+- **Sicherung starten**: startet jetzt eine Sicherung des Plans (Backrest
+  reiht sie hinter der laufenden Aufgabe ein). Ein Fehler in den ersten
+  Sekunden (Ordner fehlt, Plan gelöscht) ist der Fehler der Aktion; danach
+  sagen die Auslöser, wie sie geendet hat. Abgelehnt, wenn „Starten von
+  Sicherungen erlauben“ abgeschaltet ist.
+
+### Szenen-Ideen
+
+- **Eine Sicherung schlägt fehl** → eine Nachricht mit dem Plan und seinem
+  Fehler senden, aus den Informationen des Auslösers.
+- **Ein Plan ist überfällig** → mit dem Plan und den Stunden seit seinem
+  letzten Erfolg benachrichtigen: Der Rechner mit den Fotos war seit Tagen
+  nicht an.
+- Jeden Sonntag um 10:00 → **Zustand eines Plans** → den Satz senden; oder die
+  Dokumente sichern, wenn du das Haus verlässt, mit **Sicherung starten**.
+
+## Fehlerbehebung
+
+- **„Backrest antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner
+  aus, und dass Backrest im Netzwerk lauscht (`BACKREST_PORT=0.0.0.0:9898`).
+- **„Benutzername oder Passwort fehlt oder von Backrest abgelehnt“**: Seine
+  Anmeldung ist aktiv: Gib Namen und Passwort eines Backrest-Benutzers ein.
+- **„kein Backrest unter dieser Adresse“**: Die Adresse zeigt auf etwas
+  anderes.
+- **„Zertifikat abgelehnt“**: ein selbstsigniertes Zertifikat auf einem
+  Reverse-Proxy; nutze die `http://`-Adresse in deinem Netzwerk.
+- **Repository-Größe leer**: Backrest hat sie noch nicht berechnet; starte
+  **Stats** auf der Repository-Seite von Backrest.
+- **Ein Plan wird nie überfällig**: Bei _Automatisch_ kann ein Plan ohne
+  Zeitplan nicht überfällig sein; wähle eine feste Zeit. Ein Plan, der noch nie
+  erfolgreich war, ist auch nicht überfällig: Er zeigt Fehlgeschlagen oder Nie
+  gelaufen.
+- Für mehr Details setze die Variable `LOG_LEVEL` der Integration auf `debug`.
+
+## Grenzen
+
+- Eine Backrest-Instanz pro Integration; die Pläne anderer, mit ihr
+  synchronisierter Instanzen werden nicht gezeigt.
+- Backrest behält seine Vorgänge etwa 30 Tage: Ein älterer letzter Erfolg ist
+  der, den sich die Integration gemerkt hat.
+- Die Integration stellt nichts wieder her, bereinigt und ändert nichts. Überwacht werden nur die Pläne; eine Sicherung startet sie nur, wenn erlaubt.
+- Nicht mit Backrest oder restic verbunden. Melde ein Problem oder eine Idee in
+  [den Issues](https://github.com/guim31/gladys-backrest/issues).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Backrest in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Backrest | `section` | Nein | Backrest, die Weboberfläche von restic. Gib seine Adresse ein und, wenn seine Anmeldung aktiv ist, Benutzername und Passwort. Lege dann die Pläne und Repositorys im Tab „Entdecken“ an. |
+| Backrest-Adresse | `string` | Ja | Die Adresse der Weboberfläche, standardmäßig Port 9898. |
+| Benutzername | `string` | Nein | Ein Benutzer von Backrest (Einstellungen → Benutzer). Leer, wenn seine Anmeldung deaktiviert ist. |
+| Passwort | `secret` | Nein | Das Passwort dieses Benutzers. Leer, wenn die Anmeldung von Backrest deaktiviert ist. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Backrest gelesen wird. Alle 30 Sekunden während einer Sicherung. |
+| Überfällig nach | `select` | Nein | Ein Plan ohne erfolgreiche Sicherung seit dieser Zeit ist überfällig. Automatisch: der längste Abstand seines Zeitplans plus ein Puffer; ein Plan ohne Zeitplan ist dann nie überfällig. |
+| Starten von Sicherungen erlauben | `boolean` | Nein | Erlaubt der Szenenaktion „Sicherung starten“, einen Plan in Backrest auszuführen. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Anlegen eines Geräts festgelegt), der Zustände und der Szenen-Ergebnisse. |
+
+## So installierst du Backrest in Gladys
+
+1. Öffne in Gladys **Integrationen**: Backrest erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-backrest:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-backrest](https://github.com/guim31/gladys-backrest).
+
+Backrest benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Backrest ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-backrest) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-backrest/blob/HEAD/docs/de.md)

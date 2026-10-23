@@ -1,0 +1,174 @@
+---
+title: "Intégration domotique PurpleAir, gratuite et open source"
+sidebar_label: "PurpleAir"
+description: "Connecteur non officiel : vos capteurs de qualité de l'air PurpleAir, local ou cloud. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-purpleair.png"
+keywords:
+  - "purpleair"
+  - "domotique purpleair"
+  - "gladys purpleair"
+  - "purpleair gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-purpleair instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PurpleAir","description":"Connecteur non officiel : vos capteurs de qualité de l'air PurpleAir, local ou cloud.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-purpleair","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-purpleair.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:11:31Z"}} />
+
+Connecteur non officiel, sans lien avec PurpleAir, Inc. Il amène dans Gladys
+les mesures de vos capteurs de qualité de l'air
+[PurpleAir](https://www2.purpleair.com/), en lecture seule : rien n'est
+jamais modifié sur un capteur.
+
+> Cette intégration n'a jamais été testée avec un vrai capteur PurpleAir ni
+> une vraie clé API pour l'instant. Vos retours sont les bienvenus sur le
+> forum de Gladys.
+
+## Ce que vous obtenez
+
+Pour chaque capteur, un appareil dans l'onglet Découverte avec :
+
+| Fonction                     | Catégorie                   | Unité |
+| ---------------------------- | --------------------------- | ----- |
+| PM2.5                        | Capteur PM2.5               | µg/m³ |
+| PM10                         | Capteur PM10                | µg/m³ |
+| AQI (US EPA, PM2.5)          | Capteur de qualité de l'air | AQI   |
+| Température (capteur)        | Capteur de température      | °C    |
+| Humidité (capteur)           | Capteur d'humidité          | %     |
+| Pression (capteurs avec BME) | Capteur de pression         | hPa   |
+
+- PM2.5 et PM10 : la moyenne des deux lasers (canaux A et B) quand le
+  capteur en a deux ; la correction `ATM` en extérieur, `CF=1` en intérieur,
+  comme le fait l'API PurpleAir.
+- AQI : l'indice américain de l'EPA calculé à partir des PM2.5 du moment,
+  avec les seuils de la révision de 2024 (indicatif : l'indice officiel
+  utilise des moyennes sur 24 heures).
+- La température et l'humidité sont mesurées **dans le capteur** : la
+  température y est de quelques degrés au-dessus de l'air extérieur,
+  l'humidité de quelques points en dessous. Elles sont publiées telles
+  quelles, sans correction.
+- Contrôle A/B : quand les deux lasers sont en désaccord (un écart de
+  5 µg/m³ ou plus ET de 70 % ou plus de leur moyenne, le contrôle qualité
+  de l'EPA pour les PurpleAir), un laser est sans doute en panne : les
+  particules (et l'AQI) de cette lecture ne sont pas publiées, le statut et
+  le bouton de test affichent « canaux A/B en désaccord » ; la température,
+  l'humidité et la pression le restent. En mode cloud, le champ
+  `channel_flags` de PurpleAir fait de même (un canal déclassé suffit).
+- Les PM1 sont affichées par le bouton de test mais pas publiées : Gladys
+  n'a pas encore de catégorie PM1.
+
+## Mode local (conseillé, gratuit)
+
+Chaque capteur PurpleAir sert ses mesures sur votre réseau
+(`http://<adresse du capteur>/json`). Sans compte, sans clé, sans coût.
+
+1. Donnez au capteur une adresse IP fixe dans votre box (réservation DHCP).
+2. Saisissez cette adresse dans « Adresse du capteur (local) » (jusqu'à trois
+   capteurs).
+3. Gardez l'intervalle par défaut de 2 minutes (le capteur fait ses
+   moyennes sur 2 minutes), ou choisissez jusqu'à 60.
+
+L'intégration reconnaît un capteur à son adresse MAC : si la box donne son
+adresse à un autre capteur, celui-ci devient un nouvel appareil et le premier
+ne reçoit aucune de ses valeurs.
+
+## Mode cloud (facultatif, payant)
+
+Pour un capteur hors de votre réseau (le capteur d'un voisin sur la carte,
+un capteur dans une autre maison). L'API officielle PurpleAir fait payer des
+**points** à chaque appel, achetés à PurpleAir.
+
+1. Créez une clé API sur [develop.purpleair.com](https://develop.purpleair.com/)
+   (une clé de **LECTURE**) et saisissez-la dans « Clé API (lecture) ».
+2. Trouvez l'index du capteur sur la [carte PurpleAir](https://map.purpleair.com/) :
+   cliquez sur le capteur, le nombre après `select=` dans le lien est son
+   index.
+3. Pour un capteur privé, saisissez aussi sa clé de lecture.
+4. L'intervalle est de **60 minutes par défaut** (10 minutes au minimum) :
+   chaque appel coûte des points pour chaque champ demandé. Seuls les
+   champs utilisés sont demandés (dernière remontée, état des canaux, PM1,
+   PM2.5, PM10, température, humidité, pression ; le nom et le modèle
+   seulement au premier appel, ils ne changent pas). Retirer par erreur un
+   capteur ou la clé puis les remettre ne provoque pas d'appel anticipé.
+
+La clé API est gardée par Gladys dans sa base, jamais réaffichée, et envoyée
+seulement à l'API PurpleAir (`api.purpleair.com`) dans un en-tête, jamais
+dans un lien ni dans les journaux. La clé de lecture d'un capteur privé est
+gardée de la même façon ; l'API la demande dans le lien de la requête, qui
+n'est jamais journalisé.
+
+## Rythme et erreurs
+
+- Rien ne lit un capteur (ni n'appelle l'API) plus tôt que son intervalle :
+  ni le bouton de test, ni l'onglet Découverte, ni une reconnexion, ni une
+  configuration enregistrée, ni un redémarrage du conteneur. L'heure de la
+  dernière requête est gardée dans `/data` (écrite au plus une fois par
+  minute).
+- Un capteur ou l'API qui répond 429 ou 5xx : une pause (Retry-After, sinon
+  5 minutes qui doublent, de 1 minute à 6 heures), gardée après un
+  redémarrage ; le bouton de test l'attend aussi.
+- Une clé API refusée, ou un compte sans points : plus d'appel au cloud
+  pendant 6 heures (ou jusqu'au changement de clé) ; le bouton de test
+  réessaie une fois l'intervalle écoulé. Les capteurs locaux continuent.
+- Un index de capteur inconnu ou un capteur privé refusé : plus d'appel pour
+  ce capteur pendant 6 heures (ou jusqu'au changement de sa clé de lecture).
+- Un capteur cloud dont PurpleAir n'a pas de nouvelles depuis une heure ne
+  publie rien (« hors ligne »).
+
+## Bouton de test
+
+« Tester les capteurs » lit chaque capteur dont l'intervalle est écoulé et
+affiche les dernières valeurs (PM1 comprises) et l'heure de la prochaine
+lecture possible.
+
+## Remerciements
+
+Le client cloud suit [aiopurpleair](https://github.com/bachya/aiopurpleair)
+(MIT, Aaron Bach), la bibliothèque qu'utilise Home Assistant : endpoint,
+en-tête de la clé, codes d'erreur. Voir `THIRD_PARTY_NOTICES.md`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par PurpleAir dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| PurpleAir dans Gladys | `section` | Non | Connecteur non officiel, sans lien avec PurpleAir, Inc. Il lit vos capteurs PurpleAir : PM2.5, PM10, l'indice AQI américain calculé à partir des PM2.5, et la température, l'humidité et la pression mesurées dans le capteur. Lecture seule : rien n'est jamais modifié sur le capteur. Le mode local est conseillé : gratuit, sans compte, saisissez l'adresse IP du capteur sur votre réseau (une adresse fixe dans votre box est préférable). Le mode cloud passe par l'API officielle, dont les appels coûtent des points (crédits payants) : il est lu toutes les heures par défaut. Jamais testé avec un vrai capteur pour l'instant. |
+| Adresse du capteur (local) | `string` | Non | Son adresse IPv4 (ou son nom d'hôte) sur votre réseau : l'intégration lit sa page http:\/\/\<adresse>/json. Gratuit, sans compte. |
+| Adresse du deuxième capteur (local) | `string` | Non |  |
+| Adresse du troisième capteur (local) | `string` | Non |  |
+| Intervalle de lecture en local (minutes) | `number` | Non | Une requête par capteur à chaque fois ; le capteur fait ses moyennes sur 2 minutes. Rien ne le lit plus tôt, ni le bouton de test ni un redémarrage. |
+| Mode cloud (facultatif, payant) | `section` | Non | Pour un capteur que vous ne pouvez pas joindre sur votre réseau. Créez une clé API (clé de LECTURE) sur develop.purpleair.com : chaque appel coûte des points, achetés à PurpleAir. L'index du capteur est le nombre affiché sur la carte PurpleAir (« select= » dans son lien). Un capteur privé demande aussi sa clé de lecture. |
+| Clé API (lecture) | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée ; envoyée seulement à l'API PurpleAir (api.purpleair.com), dans un en-tête, jamais dans un lien ni dans les journaux. |
+| Index du capteur (cloud) | `string` | Non |  |
+| Clé de lecture d'un capteur privé (facultatif) | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée ; envoyée seulement à l'API PurpleAir. |
+| Index du deuxième capteur (cloud) | `string` | Non |  |
+| Deuxième capteur : clé de lecture (facultatif) | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée ; envoyée seulement à l'API PurpleAir. |
+| Index du troisième capteur (cloud) | `string` | Non |  |
+| Troisième capteur : clé de lecture (facultatif) | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée ; envoyée seulement à l'API PurpleAir. |
+| Intervalle de lecture par le cloud (minutes) | `number` | Non | Un appel à l'API par capteur à chaque fois, chacun coûtant des points : 60 minutes par défaut, 10 au minimum. Rien n'appelle l'API plus tôt, ni le bouton de test ni un redémarrage. |
+
+## Comment installer PurpleAir dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : PurpleAir apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-purpleair:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-purpleair](https://github.com/LM1LC3N7/gladys-purpleair).
+
+PurpleAir nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+PurpleAir est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-purpleair) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-purpleair/blob/HEAD/docs/fr.md)

@@ -1,0 +1,168 @@
+---
+title: "RDW Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "RDW"
+description: "Deine niederländischen Fahrzeuge im Blick: APK, WAM-Versicherung und Rückrufe der RDW. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-rdw.png"
+keywords:
+  - "rdw"
+  - "rdw smart home"
+  - "gladys rdw"
+  - "rdw gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/prohand/gladys-rdw instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"RDW","description":"Deine niederländischen Fahrzeuge im Blick: APK, WAM-Versicherung und Rückrufe der RDW.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-rdw","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-rdw.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T09:20:53Z"}} />
+
+Behalte deine niederländischen Fahrzeuge in Gladys im Blick: **APK** (die
+regelmäßige Hauptuntersuchung), **WAM-Versicherung** und **offene Rückrufe**,
+gelesen aus dem öffentlichen Register der RDW, der niederländischen
+Fahrzeugbehörde.
+
+## Was du brauchst
+
+- Gladys **5.1 oder neuer**.
+- Die **Kennzeichen** deiner Fahrzeuge (niederländische Kennzeichen).
+- Sonst nichts: Das RDW-Register ist offene Daten, ohne Konto und ohne Schlüssel.
+
+## Konfiguration
+
+Öffne **Integrationen → RDW → Konfiguration**.
+
+| Feld                      | Was eintragen                                                                                                                           |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Kennzeichen               | Deine Kennzeichen, durch Kommas getrennt: `AB-123-C, 12-XYZ-3`. Bindestriche, Leerzeichen und Kleinschreibung spielen keine Rolle.      |
+| APK-Erinnerung (Tage)     | Wie viele Tage vor Ablauf der APK das Fahrzeug als fällig gilt (Standard 30).                                                           |
+| Registerabfrage (Stunden) | Stunden zwischen zwei Abfragen des Registers (Standard 6). Es ändert sich höchstens einmal am Tag.                                      |
+| App-Token (optional)      | Ein kostenloses Token von [opendata.rdw.nl](https://opendata.rdw.nl/), das die Anfragebegrenzung aufhebt. Für wenige Fahrzeuge unnötig. |
+
+Speichere und klicke dann auf **Verbindung testen**: Die Meldung sagt, wie
+viele Fahrzeuge das Register gefunden hat, welche Kennzeichen es nicht kennt
+und was kein Kennzeichen war.
+
+**Kennzeichen abfragen** prüft ein beliebiges Kennzeichen, ohne es zu
+verfolgen — vor dem Hinzufügen oder für ein Auto, das du kaufen möchtest.
+
+## Geräte
+
+Öffne **Entdecken**: Jedes Kennzeichen wird als Gerät angeboten, benannt nach
+dem Register (`Volkswagen Golf (AB-123-C)`). Füge die gewünschten hinzu. Jedes
+hat:
+
+| Funktion         | Wert                                                                      |
+| ---------------- | ------------------------------------------------------------------------- |
+| Tage bis APK     | Tage bis zum Ablauf der APK. `0` am letzten Tag, negativ nach Ablauf.     |
+| APK-Ablaufdatum  | Der letzte gültige Tag der APK, `JJJJ-MM-TT`.                             |
+| Versichert (WAM) | `1`, wenn das Register eine WAM-Haftpflichtversicherung kennt, sonst `0`. |
+| Offener Rückruf  | `1`, wenn ein Herstellerrückruf noch durchzuführen ist, sonst `0`.        |
+
+Ein Wert, den das Register nicht liefert (zum Beispiel ein Moped ohne APK),
+bleibt leer: Er wird nie erfunden.
+
+Das Abzeichen jedes Geräts zeigt den Stand der Daten: **Cloud**, wenn das
+Register geantwortet hat, **nicht erreichbar**, wenn nicht (die zuletzt
+gelesenen Werte bleiben erhalten), und ein **orangefarbener Punkt**, wenn das
+Register das Kennzeichen nicht kennt (prüfe es mit **Kennzeichen abfragen**).
+
+## Szenen und Dashboard (Gladys 5.1)
+
+### Auslöser
+
+| Auslöser                       | Wann er auslöst                                                                                                       | Variablen                              |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **APK fällig oder abgelaufen** | Die APK tritt in den Erinnerungszeitraum ein („bald fällig“), dann erneut bei Ablauf. Einmal pro APK-Datum und Stufe. | plate, vehicle, expiry_date, days_left |
+| **Rückruf eröffnet**           | Das Register zeigt einen Rückruf, der vorher nicht da war.                                                            | plate, vehicle                         |
+| **Versicherung beendet**       | Das Register zeigt keine WAM-Versicherung mehr für ein Fahrzeug, das eine hatte.                                      | plate, vehicle                         |
+
+Jeder Auslöser lässt sich auf ein Fahrzeug beschränken, der APK-Auslöser auch
+auf eine Stufe (bald fällig, abgelaufen). In den folgenden Aktionen liest du
+die Details mit `{{triggerEvent.data.plate}}`, `{{triggerEvent.data.days_left}}`…
+
+Die Auslöser feuern **einmal pro Änderung**, nicht bei jeder Abfrage, und ein
+Update oder Neustart löst sie nicht erneut aus. Ein Fahrzeug, das beim
+Hinzufügen schon fällig ist, löst die APK-Erinnerung sofort aus; Rückruf- und
+Versicherungsauslöser warten auf eine Änderung.
+
+### Aktionen
+
+| Aktion                      | Was sie tut                               | Ausgaben                                                                                  |
+| --------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Fahrzeuge aktualisieren** | Liest das Register jetzt.                 | success, vehicles, alerts                                                                 |
+| **Fahrzeug lesen**          | Gibt der Szene die Daten eines Fahrzeugs. | found, plate, vehicle, apk_stage, apk_expiry, apk_days_left, insured, open_recall, alerts |
+
+`apk_stage` ist `ok`, `due_soon`, `expired` oder `unknown`. `alerts` zählt, was
+Beachtung erfordert (APK fällig oder abgelaufen, nicht versichert, offener
+Rückruf).
+
+### Widget
+
+Füge das Widget **RDW-Fahrzeuge** zu einem Dashboard hinzu: eine Karte pro
+Fahrzeug, mit APK-Datum und einem Abzeichen mit dem Dringendsten zuerst (APK
+abgelaufen, unversichert, Rückruf offen, APK bald fällig). Einstellungen:
+
+- **Nur ein Fahrzeug**: zeigt dieses Fahrzeug, mit den Tagen bis zur APK als
+  Live-Kachel;
+- **Nur, was Beachtung erfordert**: blendet Fahrzeuge ohne Befund aus.
+
+Die Schaltfläche **Aktualisieren** liest das Register sofort.
+
+### Beispiel
+
+„An die APK erinnern“: Auslöser **APK fällig oder abgelaufen** (Stufe: bald
+fällig) → Aktion **Nachricht senden**: `APK von \{\{triggerEvent.data.vehicle\}\}
+(\{\{triggerEvent.data.plate\}\}) in \{\{triggerEvent.data.days_left\}\} Tagen.`
+
+## Fehlerbehebung
+
+- **„Dieses Kennzeichen ist nicht im RDW-Register“**: Prüfe das Kennzeichen mit
+  **Kennzeichen abfragen**. Nur niederländische Kennzeichen stehen im Register;
+  ein exportiertes oder verschrottetes Fahrzeug kann daraus verschwinden.
+- **„Das RDW-Register antwortet nicht“**: Das Portal ist gestört oder begrenzt
+  deine Adresse. Die zuvor gelesenen Werte bleiben erhalten; die nächste
+  Abfrage versucht es erneut. Füge ein App-Token hinzu, wenn das oft passiert.
+- Das Register wird einmal am Tag aktualisiert: Eine neue Versicherung oder
+  eine bestandene APK kann einen Tag brauchen, bis sie erscheint.
+
+## Datenschutz
+
+Die Kennzeichen werden nur an `opendata.rdw.nl` gesendet. Die Integration
+speichert den zuletzt gesehenen Zustand jedes Fahrzeugs in ihrem eigenen
+Speicher, um jeden Auslöser nur einmal zu feuern.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt RDW in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Gib die Kennzeichen der zu verfolgenden Fahrzeuge ein. Die Daten stammen aus dem öffentlichen Register der RDW, der niederländischen Fahrzeugbehörde: kein Konto, kein Schlüssel. |
+| Kennzeichen | `string` | Ja | Niederländische Kennzeichen, durch Kommas getrennt. Bindestriche und Leerzeichen sind optional. |
+| APK-Erinnerung (Tage) | `number` | Nein | Wie viele Tage vor Ablauf der APK das Fahrzeug als fällig gilt und der Erinnerungsauslöser feuert. |
+| Registerabfrage (Stunden) | `number` | Nein | Stunden zwischen zwei Abfragen des RDW-Registers, das sich höchstens einmal am Tag ändert. |
+| App-Token (optional) | `secret` | Nein | Kostenloses Token von opendata.rdw.nl, das die Anfragebegrenzung aufhebt. Für wenige Fahrzeuge unnötig. |
+
+## So installierst du RDW in Gladys
+
+1. Öffne in Gladys **Integrationen**: RDW erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-rdw:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-rdw](https://github.com/prohand/gladys-rdw).
+
+RDW benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+RDW ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [prohand](https://github.com/prohand) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-rdw) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-rdw/blob/HEAD/docs/de.md)

@@ -1,0 +1,222 @@
+---
+title: "NetAlertX smart home integration, free and open source"
+sidebar_label: "NetAlertX"
+description: "Who is on your network: presence of each device, and an alert when an unknown one connects. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netalertx.png"
+keywords:
+  - "netalertx"
+  - "netalertx smart home"
+  - "gladys netalertx"
+  - "netalertx gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-netalertx instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NetAlertX","description":"Who is on your network: presence of each device, and an alert when an unknown one connects.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-netalertx","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netalertx.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T07:13:32Z"}} />
+
+Know who is on your network from Gladys. [NetAlertX](https://github.com/netalertx/NetAlertX)
+(formerly Pi.Alert) scans your network and keeps the list of every device it has seen. This
+integration brings that list into Gladys: the presence of the phones, computers and other devices
+you choose to follow, counters for the whole network, and above all a **scene trigger when an
+unknown device connects**.
+
+Typical uses: be notified on your phone when a device nobody knows joins the Wi-Fi, mark someone
+at home when their phone is on the network, get an alert when the NAS or a camera drops off the
+network, see at a glance on the dashboard which new devices still need to be acknowledged.
+
+> **Tested against a real NetAlertX (26.10.0, in Docker), not yet on a real home installation:
+> feedback welcome.** The integration was checked against the real NetAlertX API (devices joining,
+> leaving, a new device, "mark as known"), but not yet with a real Gladys and a real home network.
+> Tell us on the Gladys forum how it behaves for you.
+
+## What you get
+
+- A **NetAlertX network** device, the summary of the whole network:
+
+  | Feature             | Type in Gladys    | Shows                                                        |
+  | ------------------- | ----------------- | ------------------------------------------------------------ |
+  | **Devices online**  | counter (integer) | devices present at the last NetAlertX scan                   |
+  | **Devices offline** | counter (integer) | devices missing from the last scan                           |
+  | **New devices**     | counter (integer) | devices NetAlertX flags as new (not acknowledged yet)        |
+  | **Down alerts**     | counter (integer) | offline devices whose **Alert Down** is enabled in NetAlertX |
+
+- **One device per network device you choose to follow** (every device of NetAlertX is proposed
+  in the Discover tab, archived ones excepted):
+
+  | Feature        | Type in Gladys           | Shows                                                      |
+  | -------------- | ------------------------ | ---------------------------------------------------------- |
+  | **Presence**   | presence sensor (yes/no) | "Presence detected" while NetAlertX sees it on the network |
+  | **IP address** | text                     | its last IP address                                        |
+  | **Last seen**  | text                     | the last time NetAlertX saw it, in the time zone of Gladys |
+
+- A dashboard widget, **Network watch**: devices online, new devices and devices down, with a
+  **Known** button for the new ones.
+- Four scene triggers (**A new device joins the network**, **A device leaves the network**, **A
+  device is back on the network**, **A watched device is down**) and one scene action, **Mark a
+  device as known (NetAlertX)**.
+
+## Requirements
+
+- Gladys Assistant **5.1.0** or later (widgets, scene triggers and actions).
+- A running **NetAlertX** that Gladys can reach on the local network. The integration reads its
+  API (the "GraphQL" backend, port **20212** by default, setting `GRAPHQL_PORT`), not the web
+  interface (port 20211). NetAlertX 26.x was tested; any version with the API token and the
+  GraphQL API (2024 and later) should work.
+- The **API token** of NetAlertX: in its web interface, **Settings → General → API token**
+  (setting `API_TOKEN`, it starts with `t_`).
+- Nothing else: no cloud, no account. NetAlertX does the scanning, the integration only reads its
+  results.
+
+## Configuration
+
+### Settings
+
+1. Install the integration (**Integrations → Install from GitHub**, address
+   `https://github.com/guim31/gladys-netalertx`), then open its **Configuration** tab.
+2. **API address**: the IP address or name of the NetAlertX server, e.g. `192.168.1.10`. Without a
+   port, `20212` is used; add `:port` if you changed `GRAPHQL_PORT`, and use `https://` if the API
+   sits behind a reverse proxy.
+3. **API token**: paste the `API_TOKEN` of NetAlertX.
+4. **Read interval**: how often the integration reads the device list (1 minute by default).
+   NetAlertX itself scans every 5 minutes by default (`ARPSCAN_RUN_SCHD`): reading more often only
+   catches a scan sooner.
+5. **Language of the names**: language of the names given to new devices and their features, of
+   the messages and of the dates (French by default).
+6. Save. The connection status turns green, and the devices appear in the **Discover** tab.
+
+### Configuration actions
+
+- **Test the connection**: reads NetAlertX once and says how many devices it knows, how many are
+  online and how many are new.
+- **Mark every new device as known**: right after installing NetAlertX, every device is "new".
+  This clears the flag on all of them at once, so only the devices that join later count as new
+  (in the counter, the widget and the trigger).
+
+### Choosing the devices
+
+In the **Discover** tab, add the **NetAlertX network** device for the counters, and the devices
+you want to follow one by one (phones, computers, servers, cameras…). The others stay in NetAlertX:
+the triggers work for every device of NetAlertX, created in Gladys or not.
+
+## Devices
+
+- **Presence** follows the "present in the last scan" of NetAlertX: it changes at the scan that
+  sees the device leave or come back, with no delay added by the integration. While the device is
+  present, "present" is published again at every NetAlertX scan, so the **Check user presence**
+  scene action of Gladys sees the device as recently seen (see the scene examples).
+- **IP address** and **Last seen** are texts, updated when they change. The date comes from
+  NetAlertX and is shown in the time zone of Gladys.
+- The names are the ones NetAlertX shows (set them in NetAlertX before adding the device: the name
+  is frozen at creation in Gladys). A device without a name shows its vendor and the end of its
+  MAC address, or its MAC address.
+- The four counters of **NetAlertX network** are kept in history: a chart shows how many devices
+  were online over the day.
+
+## Dashboard widget
+
+**Network watch** shows three tiles (devices online, new devices, devices down), then the list of
+the new devices (with their IP address, or "offline") and of the devices down, ten rows at most.
+Each of the first four new devices gets a **Known** button, which marks it as known in NetAlertX.
+When there is nothing to report, a short line says so.
+
+## Scene triggers
+
+| Trigger                             | Fires when                                                         | Filter              | Information passed on                    |
+| ----------------------------------- | ------------------------------------------------------------------ | ------------------- | ---------------------------------------- |
+| **A new device joins the network**  | NetAlertX sees a device for the first time, flagged new            | none                | name, MAC address, vendor, IP address    |
+| **A device leaves the network**     | a device seen at the previous scan is missing from the last one    | device (empty: any) | name, MAC address, IP address            |
+| **A device is back on the network** | a device missing from the previous scan is seen again              | device (empty: any) | name, MAC address, IP address            |
+| **A watched device is down**        | a device whose **Alert Down** is enabled in NetAlertX goes offline | device (empty: any) | name, MAC address, IP address, last seen |
+
+The very first read after the installation only records the network: no trigger fires for the
+devices already there. The integration remembers the last list it read (under `/data`), so a
+restart neither announces every device again nor misses what changed while it was stopped. At most 20 events are sent per read, the next ones at the following reads; an event Gladys could not take (while it restarts) is sent again at the next read.
+
+## Scene actions
+
+- **Mark a device as known (NetAlertX)**: clears the "new" flag of a device in NetAlertX, as
+  unticking **New Device** on its device page does. The **MAC address** field accepts scene variables: after the **A new
+  device joins the network** trigger, insert its **MAC address**. It returns **Done (1 = yes)**;
+  on an unknown device or NetAlertX unreachable, the action fails and the scene continues.
+
+## Scene examples
+
+- **Unknown device on the Wi-Fi**: trigger **A new device joins the network** → action **Send a
+  message**: "New device on the network: \{name\} (\{vendor\}, \{ip\})". Add **Mark a device as known**
+  with the MAC address at the end if you only want to be told once per device (it is otherwise
+  told once anyway: the trigger only fires at its first appearance).
+- **Someone is home**: trigger "a device changes state" on the **Presence** of their phone (equal
+  to 1) → action **User seen at home**. A second scene, run every 10 minutes, does **Check user
+  presence** with their phone and 15 minutes: Gladys marks them away once NetAlertX no longer
+  sees it.
+- **The NAS is down**: enable **Alert Down** on the NAS in NetAlertX, then trigger **A watched
+  device is down** (device: the NAS) → send a message "The NAS left the network (last seen
+  \{last seen\})".
+
+## Troubleshooting
+
+- **"NetAlertX refused the API token"**: copy the token again from **Settings → General → API
+  token**. If you generate a new token in NetAlertX, update it here.
+- **"This address does not answer like the NetAlertX API"**: the address points to the web
+  interface (20211) or to another service. Use the API port, 20212 by default (`GRAPHQL_PORT`).
+- **"NetAlertX does not answer"**: check that Gladys can reach the NetAlertX server and its port
+  (firewall, Docker port published). With NetAlertX in Docker on the host network, the API listens
+  on the host address.
+- **A phone shows offline while at home**: phones asleep on Wi-Fi do not always answer the ARP
+  scan, and recent phones use a private (random) MAC address per network. Turn the private
+  address off for your home Wi-Fi, and see the "sleeping devices" settings of NetAlertX.
+- **Every device is "new"**: that is how NetAlertX starts. Run **Mark every new device as known**
+  once.
+- **Logs**: the integration only writes the important events (NetAlertX lost and back, devices
+  leaving, coming back, new devices). Set `LOG_LEVEL=debug` on the container to see every read.
+
+## Limits
+
+- The integration reads NetAlertX; it does not scan anything itself. Presence is only as fresh as
+  the NetAlertX scans (every 5 minutes by default).
+- **Last seen** assumes the dates of NetAlertX are in UTC, as in NetAlertX 26.x. Older versions
+  stored local time: the hour may then be shifted.
+- A device with "Alert Down" that NetAlertX lets sleep ("Can sleep") still fires **A watched
+  device is down** when it drops off: the integration does not read the sleep window.
+- Up to 500 devices are proposed in the Discover tab. Archived devices are ignored.
+- The device filter of the triggers lists the devices created in Gladys; leave it empty to react
+  to any device of NetAlertX.
+- Not affiliated with NetAlertX.
+
+## Configuration settings
+
+These are the settings NetAlertX asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your NetAlertX | `section` | No | NetAlertX scans your network and keeps the list of its devices. In NetAlertX, copy the API token from Settings → General (API token). The integration reads the API, on port 20212 by default (GRAPHQL_PORT), not the web interface on 20211. |
+| API address | `string` | Yes | IP address or name of the NetAlertX server, with :port if the API is not on 20212, and https:\/\/ behind a reverse proxy. |
+| API token | `secret` | Yes | The API_TOKEN setting of NetAlertX (starts with t_). |
+| Read interval | `select` | No | How often the device list of NetAlertX is read. NetAlertX itself scans every 5 minutes by default. |
+| Language of the names | `select` | No | Names given to new devices and their features (Presence, IP address…), and language of the messages and dates. |
+
+## How to install NetAlertX in Gladys
+
+1. In Gladys, open **Integrations**: NetAlertX appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-netalertx:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-netalertx](https://github.com/guim31/gladys-netalertx).
+
+NetAlertX requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+NetAlertX is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-netalertx) — [source of this documentation](https://github.com/guim31/gladys-netalertx/blob/HEAD/docs/en.md)

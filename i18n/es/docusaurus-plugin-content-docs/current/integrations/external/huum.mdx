@@ -1,0 +1,175 @@
+---
+title: "Integración domótica Huum, gratuita y de código abierto"
+sidebar_label: "Huum"
+description: "Huum sauna heaters (UKU Wi-Fi) via the Huum cloud: temperature, door, heating; on/off. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-huum.png"
+keywords:
+  - "huum"
+  - "domótica huum"
+  - "gladys huum"
+  - "huum gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-huum instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Huum","description":"Huum sauna heaters (UKU Wi-Fi) via the Huum cloud: temperature, door, heating; on/off.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-huum","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-huum.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T20:50:38Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This integration shows a **Huum sauna heater with its UKU Wi-Fi controller**
+in Gladys, through the Huum cloud (the account of the Huum app). **Never
+tested with a real device.** Not affiliated with Huum.
+
+> **Safety.** A sauna gets very hot. Never start heating from afar without
+> making sure nobody is inside and nothing lies on the stove. Turning on from
+> Gladys is **off by default** and refused while the door is open; turning off
+> always works.
+
+## What you get
+
+A sauna in the Discovery tab, with:
+
+- **Heating** (yes/no, read only) and the **status** as text ("Heating",
+  "Online, not heating", "Offline", "In use by another user (locked)",
+  "Emergency stop"), the status code, controller online;
+- **door** (opening sensor: open/closed);
+- measured **temperature** and **setpoint**;
+- **heating time left** (minutes), from the end of the session planned by
+  Huum;
+- the **light** (read only), when your sauna reports one;
+- two buttons: **Turn on (heat)** and **Turn off**.
+
+No switch: an "everything on" from Google Home, Alexa, HomeKit, MCP or a scene
+can never start the sauna.
+
+## Setup
+
+1. In Gladys, open the Huum integration and enter the **e-mail address** and
+   the **password** of your Huum account (those of the app).
+2. Save, then add the sauna from the **Discovery** tab.
+3. To start heating from Gladys, turn on **Allow heating from Gladys**, and
+   set the **setpoint of the "Turn on" button** (80 °C by default) and the
+   **highest setpoint** (90 °C by default, 110 °C at most, the limit of the
+   controller).
+
+The password is kept by Gladys in its database, never shown again, sent only
+to the Huum cloud (sauna.huum.eu, over HTTPS, HTTP Basic authentication). It
+is never written to the logs nor to `/data`.
+
+The sauna is read every 60 s (60 s to 1 h), **never more often**, even after
+a restart of the integration, a reconnection to Gladys, the "Test the
+connection" button or a Discovery scan.
+
+The device belongs to the Huum **account**: the API gives the sauna no id of
+its own (one account, one sauna). Another e-mail address therefore makes a new
+device; the old one is shown unreachable.
+
+## The commands
+
+- **Turn off** always works: even with heating from Gladys off, during a
+  pause asked by Huum, after refused credentials, or right after a restart,
+  before the first read. It is always sent (never "already off"), cancels a
+  heating command not sent yet, and is sent again after a heating command
+  still on its way. It is confirmed only when Huum's answer shows the sauna
+  "online, not heating" or in "emergency stop"; otherwise (no answer, an
+  error, offline, locked, unknown, still heating): "Sent, without
+  confirmation", and for two minutes every read that sees the sauna heating
+  sends it again (twice at most). This may also turn off a heating started
+  from the Huum app within those two minutes: that is intended.
+- **Turn on (heat)** and the **setpoint** are refused while "Allow heating
+  from Gladys" is off. On, they read the sauna first (never the state in
+  memory) and refuse when the door is open or unknown, when the sauna cannot
+  heat (offline, locked by another account, emergency stop, unknown status),
+  when a turn off is in flight or not confirmed yet, or when the command
+  cannot leave within 3.5 s. The option and the turn off are checked again at
+  the very moment the command is written: turning the option off or pressing
+  Turn off while it connects cancels it. One at a time, never sent twice.
+- **Turn on** asks for the setpoint of the "Turn on" button, never above the
+  highest setpoint. Already heating: nothing is sent.
+- **The setpoint** is only changed while heating (Huum takes a new setpoint as
+  a new start). A whole number from 40 °C to the highest setpoint. It is
+  refused when the end of the session is unknown or less than 2 min away (it
+  would start heating again), and for 2 min after a turn off. If Huum starts a
+  new session anyway, the log says so ("new session, until HH:MM UTC").
+- Turn on and the setpoint are confirmed only when Huum's answer shows the
+  sauna heating at the temperature asked. Otherwise: "Sent, without
+  confirmation", and the integration reads the sauna again 10 s and 40 s
+  later.
+
+## When something goes wrong
+
+- **Credentials refused** (HTTP 401 or 403): the integration stops and
+  **never** tries them again by itself (no loop). Fix them and save, or, if
+  they are right, use "Test the connection": the button makes one read, and
+  the stop is lifted only if it succeeds. The stop survives a restart; only a
+  salted fingerprint of the refused credentials is kept in `/data`, erased at
+  the first success.
+- **429** (Huum asks to slow down): a pause of 1 min to 6 h (Retry-After),
+  kept in `/data`. **5xx**: a pause kept in `/data`. Network error: new tries
+  after 1, 2, 5 then 15 min, never faster than the interval.
+- A heating command refused by Huum (401, 403) never stops the reads.
+
+## Limits
+
+- The API is not publicly documented (Huum gave it to the authors of the
+  pyhuum library). It may change.
+- No light command yet (a toggle: to do with a guard), no humidity (steamer),
+  no session timer.
+- One sauna per account.
+
+## Data
+
+`/data/huum-state.json` holds only: the end of a pause, the stop on refused
+credentials (with the salted fingerprint of those credentials), the time of
+the last read, and the summary of the last good read ("Heating, 72 °C", with
+a salted fingerprint of the account): after a restart the integration shows
+connected until the first read (2 h at most). Neither the e-mail address nor
+the password.
+
+Based on the huum Python library (MIT, frwickst/pyhuum), ported to
+JavaScript: see `THIRD_PARTY_NOTICES.md`.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Huum te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Huum sauna | `section` | No | Shows a Huum sauna heater with its UKU Wi-Fi controller in Gladys through the Huum cloud (the account of the Huum app): status, heating, door, temperature, setpoint, heating time left. Turning off always works; heating from Gladys (turning on and changing the setpoint) is off until you allow it below, and is refused while the door is open. Enter the e-mail address and the password of your Huum account, save, then add the sauna from the Discovery tab. A sauna heats to a high temperature: never heat it from afar without making sure nobody is inside and nothing lies on the stove. Never tested with a real device. Not affiliated with Huum. |
+| E-mail address of the Huum account | `string` | Sí | The one you sign in to the Huum app with. |
+| Password of the Huum account | `secret` | Sí | Kept by Gladys in its database, never shown again, sent only to the Huum cloud (sauna.huum.eu, over HTTPS, HTTP Basic authentication). Refused credentials stop the integration: it never tries them again by itself. |
+| Allow heating from Gladys | `boolean` | No | Off by default. On: the "Turn on (heat)" button and the setpoint may start or change heating, only when a fresh read shows the door closed. Off: they refuse every request. Turning off always works. |
+| Setpoint of the "Turn on" button (°C) | `number` | No | The temperature asked when heating is turned on from Gladys, never above the highest setpoint below. |
+| Highest setpoint (°C) | `number` | No | Gladys never asks for more (90 °C by default; 110 °C, the limit of the controller, at most). |
+| Refresh interval (s) | `number` | No | How often the Huum cloud is read, in seconds (never more often, even after a restart). |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## Cómo instalar Huum en Gladys
+
+1. En Gladys, abre **Integraciones**: Huum aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-huum:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-huum](https://github.com/LM1LC3N7/gladys-huum).
+
+Huum requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Huum es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-huum) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-huum/blob/HEAD/docs/en.md)

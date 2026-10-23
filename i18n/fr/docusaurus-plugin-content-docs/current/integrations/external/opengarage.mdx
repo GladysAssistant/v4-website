@@ -1,0 +1,174 @@
+---
+title: "Intégration domotique OpenGarage, gratuite et open source"
+sidebar_label: "OpenGarage"
+description: "Contrôleurs OpenGarage, en local : porte de garage, distance, voiture, signal Wi-Fi. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-opengarage.png"
+keywords:
+  - "opengarage"
+  - "domotique opengarage"
+  - "gladys opengarage"
+  - "opengarage gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-opengarage instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenGarage","description":"Contrôleurs OpenGarage, en local : porte de garage, distance, voiture, signal Wi-Fi.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-opengarage","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-opengarage.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T03:05:32Z"}} />
+
+Cette intégration affiche vos contrôleurs OpenGarage dans Gladys et commande
+votre porte de garage par leur API HTTP locale, sur votre réseau, sans le
+cloud OpenGarage.
+
+**Jamais testé avec un vrai appareil** : l'intégration suit l'API du
+micrologiciel et la bibliothèque open-garage (celle de Home Assistant), mais
+personne ne l'a encore essayée sur un contrôleur réel. Vos retours sont les
+bienvenus.
+
+Intégration non officielle, sans lien avec OpenGarage.
+
+## Dans Gladys
+
+| Fonctionnalité         | Détail                                                   |
+| ---------------------- | -------------------------------------------------------- |
+| Porte de garage        | ouverte / fermée (capteur d'ouverture, lecture seule)    |
+| Ouvrir / Fermer        | deux boutons, jamais un interrupteur                     |
+| Capteur de distance    | en cm                                                    |
+| Voiture dans le garage | présente / absente (inconnue quand la porte est ouverte) |
+| Signal Wi-Fi           | de 0 à 5                                                 |
+| Température, humidité  | seulement si un capteur est monté sur le contrôleur      |
+
+## Installation
+
+1. Donnez à chaque contrôleur une adresse IP fixe dans votre box.
+2. Dans les réglages du contrôleur, changez la clé de l'appareil
+   (« opendoor » par défaut).
+3. Dans Gladys, installez l'intégration OpenGarage depuis le store.
+4. Saisissez les adresses IP des contrôleurs (séparées par des virgules) et
+   la clé de l'appareil (la même pour tous les contrôleurs).
+5. Ajoutez les appareils depuis l'onglet Découverte.
+
+La lecture de l'état ne demande pas la clé ; ouvrir et fermer, si. La clé
+est gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à vos
+contrôleurs (en clair sur votre réseau local : ils n'ont pas de https). Elle
+n'apparaît jamais dans les journaux, les statuts, les erreurs ni dans `/data`.
+
+« Vérifier les contrôleurs » affiche ce que chaque adresse a répondu ; il ne
+relit jamais un contrôleur plus vite que l'intervalle de rafraîchissement.
+
+## Sécurité des commandes
+
+Le relais d'un OpenGarage est une **bascule** : la même impulsion ouvre une
+porte fermée, ferme une porte ouverte, et arrête ou inverse une porte en
+mouvement. Gladys en tient compte :
+
+- La porte n'est jamais un interrupteur : un « éteins tout » d'un assistant
+  vocal ou d'une scène ne peut pas l'atteindre. Elle a deux boutons, Ouvrir
+  et Fermer.
+- **Ouvrir et Fermer sont désactivés par défaut** : activez « Autoriser les
+  impulsions de la porte de garage (ouvrir et fermer) ». Fermer est la même
+  impulsion qu'ouvrir : sur une porte qui a bougé depuis sa lecture (fermée
+  entre-temps à la télécommande), « Fermer » l'ouvrirait. Tant que
+  l'autorisation est désactivée, les portes sont seulement lues, et une scène
+  ou un assistant vocal « ferme le garage » est refusé (rien n'est envoyé).
+  L'autorisation est vérifiée à l'arrivée de la commande, après la lecture et
+  juste avant l'envoi.
+- Avant chaque impulsion, Gladys relit la porte et vérifie l'adresse MAC du
+  contrôleur (une box qui redonne l'adresse IP à un autre contrôleur ne fait
+  jamais bouger la mauvaise porte). « Ouvrir » n'est envoyé qu'à une porte
+  lue fermée, « Fermer » qu'à une porte lue ouverte. Déjà dans l'état voulu :
+  rien n'est envoyé. En mouvement, arrêtée à mi-course ou inconnue : refusé.
+- Sans Security+, la porte vient du capteur de distance : une distance de 0
+  (capteur sans réponse) ou de plus de 500 cm, ou absente, fige l'état de la
+  porte dans le contrôleur. Gladys la tient alors pour inconnue et refuse
+  les deux boutons.
+- Micrologiciel 1.0.7 ou plus récent : Gladys envoie `close=1` ou `open=1`,
+  et le contrôleur revérifie la porte sur son propre capteur à la réception
+  (il ne ferme qu'une porte qu'il lit ouverte, n'ouvre qu'une porte qu'il lit
+  fermée). Plus ancien : l'impulsion à bascule (`click=1`), avec les mêmes
+  règles ; entre la lecture et l'impulsion, jusqu'à 3,5 secondes peuvent
+  s'écouler, et si la porte bouge pendant ce temps l'impulsion peut l'arrêter
+  ou l'inverser.
+- Une commande à la fois par contrôleur ; « Fermer » annule dès son arrivée
+  une ouverture qui n'est pas encore partie. Quand le contrôleur demande
+  d'attendre, ou après une clé refusée, les deux boutons sont refusés.
+- Après une impulsion, la suivante est refusée tant qu'une lecture faite
+  après l'impulsion ne montre pas la porte là où elle a été envoyée, et au
+  moins 15 secondes après (45 secondes au plus), même après un redémarrage :
+  une seconde impulsion l'arrêterait ou l'inverserait. Le capteur de
+  distance voit l'état attendu un peu avant la fin de course (à la fermeture,
+  le panneau quitte le capteur à mi-course ; à l'ouverture, il l'atteint
+  avant la butée) : une impulsion juste après la levée de la garde peut
+  encore arrêter une porte qui finit sa course. Utilisez le bouton mural ou
+  la télécommande pour l'arrêter.
+- Une commande qui ne peut pas partir en 3,5 secondes est refusée sans être
+  envoyée ; une commande partie sans réponse est annoncée « envoyée, sans
+  confirmation », et la porte est relue dans les secondes qui suivent. Le
+  succès d'une commande veut dire que le contrôleur l'a reçue (il répond
+  avant d'agir) : la porte met ensuite 10 à 30 secondes à bouger, jusqu'à
+  40 secondes si l'alarme du contrôleur (5 ou 10 secondes de bips avant le
+  relais) est activée.
+- La fermeture automatique du contrôleur (après un délai ou à une heure)
+  donne la même impulsion : une fermeture de Gladys juste après peut arrêter
+  ou inverser la porte. Ne doublez pas la fermeture automatique du
+  contrôleur par une scène Gladys à la même heure.
+
+## Pannes
+
+- Clé refusée par un contrôleur : les impulsions vers ce contrôleur sont
+  refusées sans être envoyées pendant 15 min, puis 1 h, 6 h et 24 h ;
+  enregistrer une autre clé réessaie aussitôt. Les lectures continuent.
+- Un contrôleur qui demande d'attendre (HTTP 429 ou 5xx) est mis en pause
+  d'une minute à six heures, même après un redémarrage.
+- Un contrôleur qui ne répond pas est relu après 30 s, 1, 2 puis 5 min,
+  jamais plus vite que l'intervalle de rafraîchissement. Une réponse sans
+  adresse MAC lisible compte comme un échec, jamais comme un autre contrôleur.
+- Après un redémarrage, Gladys attend un intervalle entier avant de relire ;
+  entre-temps le statut reprend le résultat de la dernière lecture.
+
+## Limites
+
+- Pas de recherche automatique : saisissez les adresses.
+- Une seule clé pour tous les contrôleurs.
+- Le mode « capteur 2 seul » ne se lit pas dans `/jc` : sans capteur de
+  distance valide ni Security+, la porte est inconnue et les boutons refusés.
+- Pas de lumière ni de verrou Security+ (micrologiciel 1.2.x), pas de
+  compteur d'ouvertures, pas de cloud OpenGarage ni de MQTT.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par OpenGarage dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos contrôleurs OpenGarage, sur votre réseau local | `section` | Non | L'état de la porte, le capteur de distance, la détection de voiture, le signal Wi-Fi (et la température et l'humidité quand un capteur est monté) de chaque contrôleur OpenGarage, par son API HTTP locale, sans le cloud OpenGarage. Donnez à chaque contrôleur une adresse IP fixe dans votre box, saisissez les adresses ci-dessous, puis ajoutez-les depuis l'onglet Découverte. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec OpenGarage. |
+| Adresses IP des contrôleurs | `string` | Non | Séparées par des virgules, par exemple 192.168.1.50, 192.168.1.51 (ajoutez :port s'il n'est pas 80). |
+| Clé de l'appareil | `secret` | Non | La clé de l'appareil réglée dans le contrôleur (« opendoor » tant que vous ne la changez pas : changez-la). La même pour tous les contrôleurs. Seulement nécessaire pour ouvrir et fermer. Ce champ est gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à vos contrôleurs OpenGarage (en clair sur votre réseau local : ils n'ont pas de https). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de chaque contrôleur, en secondes. Jamais plus souvent, même après un redémarrage. |
+| Ouverture et fermeture | `section` | Non | La porte a deux boutons, jamais un interrupteur. Le relais d'un OpenGarage est une bascule : la même impulsion ouvre une porte fermée, ferme une porte ouverte, et arrête ou inverse une porte en mouvement ; fermer peut donc ouvrir une porte qui a bougé depuis sa lecture. Les deux boutons sont donc refusés tant que vous n'autorisez pas les impulsions ci-dessous. Gladys lit la porte juste avant chaque impulsion : « Ouvrir » seulement vers une porte lue fermée, « Fermer » seulement vers une porte lue ouverte ; en mouvement, arrêtée ou inconnue : refusé. Depuis le micrologiciel 1.0.7, le contrôleur revérifie sur son propre capteur (open=1 / close=1). Après une impulsion, la suivante attend que la porte soit lue là où elle a été envoyée, 15 s au moins et 45 s au plus après. Sans l'autorisation, une scène ou un assistant vocal « ferme le garage » est refusé aussi. |
+| Autoriser les impulsions de la porte de garage (ouvrir et fermer) | `boolean` | Non | Désactivé par défaut : les portes sont seulement lues. Activé : le tableau de bord, les scènes et les assistants vocaux peuvent ouvrir ET fermer la porte de garage (la même impulsion). |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités ajoutées désormais, et aux erreurs des commandes. |
+
+## Comment installer OpenGarage dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : OpenGarage apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-opengarage:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-opengarage](https://github.com/LM1LC3N7/gladys-opengarage).
+
+OpenGarage nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+OpenGarage est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-opengarage) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-opengarage/blob/HEAD/docs/fr.md)

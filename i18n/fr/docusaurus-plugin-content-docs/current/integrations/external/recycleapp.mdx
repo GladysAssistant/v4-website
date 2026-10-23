@@ -1,0 +1,161 @@
+---
+title: "Intégration domotique RecycleApp, gratuite et open source"
+sidebar_label: "RecycleApp"
+description: "Calendrier des collectes de déchets en Belgique (RecycleApp) : rappels, scènes et widget. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-recycleapp.png"
+keywords:
+  - "recycleapp"
+  - "domotique recycleapp"
+  - "gladys recycleapp"
+  - "recycleapp gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-recycleapp instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"RecycleApp","description":"Calendrier des collectes de déchets en Belgique (RecycleApp) : rappels, scènes et widget.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-recycleapp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-recycleapp.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T09:29:58Z"}} />
+
+Cette intégration lit le calendrier des collectes de déchets que
+[RecycleApp](https://www.recycleapp.be) (Fost Plus) publie pour une adresse en
+Belgique, et le rend utilisable dans Gladys : appareils, scènes et widget du
+tableau de bord.
+
+Pas de compte, pas de clé : l'intégration interroge la même API publique que le
+site recycleapp.be. Elle a seulement besoin d'Internet (badge **cloud**).
+
+## Installation
+
+1. Installez **RecycleApp** depuis le catalogue des intégrations de Gladys
+   (Gladys 5.1 ou plus récent).
+2. Dans **Configuration**, renseignez :
+   - **Code postal** : par exemple `5000` ;
+   - **Rue** : le nom de la rue en français, en néerlandais ou en allemand, comme
+     RecycleApp l'écrit (majuscules et accents sans importance) ;
+   - **Numéro** : votre numéro de maison.
+3. Appuyez sur **Tester la connexion** : la réponse donne l'adresse trouvée, les
+   types de déchets et la prochaine collecte.
+4. Dans l'onglet **Découverte**, ajoutez les appareils qui vous intéressent.
+
+Vous ne trouvez pas votre rue ? Utilisez **Chercher ma rue** : tapez une partie
+du nom (par exemple `fer`), la réponse liste les rues que RecycleApp connaît
+dans votre code postal. Recopiez le bon nom dans le champ **Rue**.
+
+> Certaines communes (Bruxelles-Capitale notamment) ne publient pas leur
+> calendrier sur RecycleApp. Si **Tester la connexion** ne trouve aucune
+> collecte, vérifiez sur recycleapp.be que votre adresse y a un calendrier.
+
+## Réglages
+
+| Réglage                                  | Par défaut | Rôle                                                                                    |
+| ---------------------------------------- | ---------- | --------------------------------------------------------------------------------------- |
+| Langue des types de déchets              | Français   | Langue des noms d'appareils, de leurs états et des variables de scène (fr, nl, de, en). |
+| Heure du rappel (la veille)              | 19:00      | Heure belge du déclencheur « Collecte des déchets demain ».                             |
+| Heure du déclencheur du jour de collecte | 07:00      | Heure belge du déclencheur « Collecte des déchets aujourd'hui ».                        |
+| Jours lus à l'avance                     | 60         | Jusqu'où le calendrier est lu (7 à 365 jours).                                          |
+| Intervalle de rafraîchissement (h)       | 12         | Heures entre deux lectures de RecycleApp (1 à 48).                                      |
+
+Les heures s'écrivent `19:00`, `19h00` ou `7:00`.
+
+## Appareils
+
+- **Prochaine collecte des déchets** (résumé) :
+  - _Jours avant la collecte_ : 0 = aujourd'hui, 1 = demain… ;
+  - _Jour de collecte_ : par exemple « vendredi 23 octobre » ;
+  - _Déchets collectés_ : par exemple « PMC et Papiers-cartons ».
+- **Collecte PMC**, **Collecte Papiers-cartons**… (un par type de déchet) :
+  - _Jours avant la collecte_ ;
+  - _Jour de collecte_.
+
+Un type de déchet sans collecte dans la période lue (par exemple les sapins de
+Noël en été) affiche **-1** et « Aucune collecte prévue ».
+
+Les valeurs changent à minuit (heure belge). Si RecycleApp ne répond plus, le
+dernier calendrier lu reste utilisé : le badge cloud passe en mode dégradé
+(point orange) et indique la date de la dernière lecture.
+
+## Scènes
+
+### Déclencheurs
+
+| Déclencheur                           | Quand                                                      | Variables                    |
+| ------------------------------------- | ---------------------------------------------------------- | ---------------------------- |
+| Collecte des déchets demain           | La veille, à l'heure du rappel, une fois pour tout le jour | `fractions`, `count`, `date` |
+| Un type de déchet est collecté demain | La veille, à l'heure du rappel, pour le type choisi        | `fraction`, `date`           |
+| Collecte des déchets aujourd'hui      | Le matin, à l'heure choisie, une fois pour tout le jour    | `fractions`, `count`, `date` |
+
+Exemple : « Collecte des déchets demain » → envoyer un message
+`Demain : {{triggerEvent.data.fractions}}, pensez à sortir les poubelles !`
+
+Chaque déclencheur ne part qu'une fois par jour, même après un redémarrage. Si
+Gladys ou l'intégration redémarre après l'heure prévue, le déclencheur part
+quand même, jusqu'à 4 heures plus tard.
+
+### Actions
+
+- **Obtenir la prochaine collecte** : pour un type de déchet (ou tous si le champ
+  est vide), renvoie `found`, `days` (-1 si aucune), `date` (AAAA-MM-JJ) et
+  `fractions`. Les actions et conditions suivantes peuvent les utiliser.
+- **Relire le calendrier des collectes** : interroge RecycleApp tout de suite et
+  renvoie `collections`, `next_date` et `next_fractions`.
+
+## Widget du tableau de bord
+
+Le widget **Collectes des déchets** affiche la prochaine collecte, la liste des
+suivantes avec leur logo RecycleApp et le nombre de jours restants, l'adresse et
+la date de la dernière lecture. Le bouton **Actualiser** relit le calendrier.
+Réglage : nombre de collectes affichées (1 à 8). Les types de déchets sont
+nommés dans la langue de chaque utilisateur quand RecycleApp la propose.
+
+## Dépannage
+
+- **« RecycleApp ne connaît pas le code postal »** : vérifiez le code postal.
+- **« Aucune rue … »** ou **« Plusieurs rues correspondent »** : utilisez
+  **Chercher ma rue** et recopiez le nom exact.
+- **Aucune collecte** : vérifiez le numéro, ou que votre commune publie son
+  calendrier sur RecycleApp.
+- **« Impossible de lire RecycleApp »** : RecycleApp ou Internet ne répond pas.
+  L'intégration réessaie toutes les 15 minutes et garde le dernier calendrier.
+
+Le calendrier lu et les déclencheurs déjà envoyés sont gardés dans `/data`, le
+seul dossier où le conteneur peut écrire.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par RecycleApp dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | L'intégration lit le calendrier des collectes que RecycleApp (Fost Plus) publie pour une adresse en Belgique : pas de compte, pas de clé. Tapez votre adresse comme sur recycleapp.be, puis appuyez sur « Tester la connexion ». Un appareil par type de déchet, plus la prochaine collecte, apparaissent dans l'onglet Découverte. |
+| Code postal | `string` | Oui |  |
+| Rue | `string` | Oui | Le nom de la rue en français, en néerlandais ou en allemand, comme RecycleApp l'écrit. Un doute ? « Chercher ma rue » liste les rues de votre code postal. |
+| Numéro | `string` | Oui |  |
+| Langue des types de déchets | `select` | Non | La langue dans laquelle les types de déchets sont nommés : noms et états des appareils, variables des scènes. Le widget du tableau de bord suit la langue de chaque utilisateur. |
+| Heure du rappel (la veille) | `string` | Non | Quand le déclencheur de scène « Collecte demain » se déclenche, heure belge, HH:MM. |
+| Heure du déclencheur du jour de collecte | `string` | Non | Quand le déclencheur de scène « Collecte aujourd'hui » se déclenche, heure belge, HH:MM. |
+| Jours lus à l'avance | `number` | Non | Jusqu'où le calendrier est lu, en jours. Un type de déchet sans collecte dans cette période affiche -1. |
+| Intervalle de rafraîchissement (h) | `number` | Non | Heures entre deux lectures de RecycleApp. Un calendrier change quelques fois par an : 12 heures suffisent largement. |
+
+## Comment installer RecycleApp dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : RecycleApp apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-recycleapp:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-recycleapp](https://github.com/prohand/gladys-recycleapp).
+
+RecycleApp nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+RecycleApp est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-recycleapp) — [source de cette documentation](https://github.com/prohand/gladys-recycleapp/blob/HEAD/docs/fr.md)

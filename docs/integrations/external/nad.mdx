@@ -1,0 +1,168 @@
+---
+title: "NAD smart home integration, free and open source"
+sidebar_label: "NAD"
+description: "NAD amplifiers and receivers, local over telnet: power, volume, mute, source. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nad.png"
+keywords:
+  - "nad"
+  - "nad smart home"
+  - "gladys nad"
+  - "nad gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-nad instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NAD","description":"NAD amplifiers and receivers, local over telnet: power, volume, mute, source.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-nad","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nad.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:18:24Z"}} />
+
+Control your **NAD** amplifiers and receivers that have a network control
+port (T 758, T 778, T 787, C 338, C 368, C 658, M10…) from Gladys, locally,
+without any cloud: power on, standby, volume (capped), mute and source.
+
+> **Important.** This integration has never been tested with a real device:
+> it was written from the `nad_receiver` library (the one Home Assistant
+> uses) and tested against a fake device only. Your feedback is welcome.
+> Unofficial integration, not affiliated with NAD Electronics.
+
+## Setup
+
+1. Connect the device to your network and give it a **fixed IP address** in
+   your router (reserved DHCP lease).
+2. On the device, enable the **network standby** (or "IP control" / "network
+   control", depending on the model), so it still answers in standby and can
+   be woken up.
+3. In Gladys, install the **NAD** integration, then open its configuration.
+4. Type the IP addresses, separated by commas (for example
+   `192.168.1.50, 192.168.1.51`). The control port is 23 (telnet); for
+   another one, add it: `192.168.1.50:53`.
+5. Choose the **volume cap** in dB (-20 dB by default) and, if you want, the
+   lowest volume (-80 dB by default).
+6. The devices appear in the **Discovery** tab: create them.
+
+The integration keeps one connection open with each device: changes made on
+the device or its remote show in Gladys right away. The states are also read
+again every minute.
+
+Only the network port is supported: the **RS-232 serial port** is not (a
+Gladys integration runs in a container without serial port access).
+
+## What you get
+
+| Feature  | Gladys type                | Note                                               |
+| -------- | -------------------------- | -------------------------------------------------- |
+| Power    | binary state (read only)   | 1 on, 0 in standby or unreachable                  |
+| Power on | button                     | `Main.Power=On`                                    |
+| Standby  | button                     | `Main.Power=Off`                                   |
+| Volume   | music / volume (0 to 100)  | 0 % = lowest volume, 100 % = the cap               |
+| Mute     | button (television / mute) | each press reads the state, then sets the opposite |
+| Source   | dropdown                   | the inputs of the device; the list only grows      |
+
+On purpose, no **switch**: an "everything off" or "everything on" from a
+voice assistant or a scene neither wakes nor cuts your amplifier.
+
+## Volume cap
+
+NAD devices count their volume in dB (for example -35 dB). In Gladys, the
+volume goes from 0 to 100 %: 0 % is the lowest volume of the configuration
+(-80 dB by default), 100 % is the **cap** (-20 dB by default). Gladys
+(dashboard, scene, voice assistant) can never set a volume above the cap. The
+cap is read again just before sending: a new value saved applies at once.
+
+The volume set on the device itself (knob, remote) is not changed by the
+integration (above the cap, Gladys shows 100 %), except in the two cases
+where Gladys would make it heard:
+
+- **Unmute**: when the volume of the device is above the cap, it is set to
+  the cap first, then the mute is removed. When the volume cannot be read,
+  nothing is sent; when the device does not confirm the lower volume, the
+  mute is kept.
+- **Power on**: after the wake-up, the volume is read again and set to the
+  cap when above it, until the device confirms a volume at or under the cap.
+  When the device is slow to wake up, the integration checks again a few
+  times for about 15 seconds, and lowers a volume the device reports above
+  the cap during that time; after that the volume is not corrected.
+
+A command counts as done only when the device answers the value asked.
+
+## Sources
+
+The inputs are numbers (1, 2, 3…). Their names are read from the device when
+it tells them (`Source1.Name`…); otherwise, type them in the configuration,
+for example `1=CD, 2=Tuner, 3=TV`. An input the device switches to is added
+to the list.
+
+## Commands
+
+Every command is answered within 4 seconds (Gladys waits 5 seconds). A
+command that left for the device without confirmation is reported "sent,
+without confirmation"; the line written by the device then shows what it
+did. A command that could not leave is reported "nothing sent": so is any
+command, Standby included, to a device that is not connected. **Standby**
+goes before every command waiting, and cancels a Power on still waiting.
+
+## Reconnection
+
+A device that does not answer (off, network standby disabled, unplugged)
+shows its power at 0 and is named in the integration status. The integration
+connects again after 10 s, then at intervals doubled after each failure, up
+to 5 minutes. Two polls in a row without an answer close the connection,
+then the same spaced reconnection applies.
+
+## Configuration button
+
+- **Check the devices**: the connection, power, volume (in dB), mute and
+  source of each device, and the volume range in force.
+
+## Data and privacy
+
+The integration asks for no account and no password: the NAD control port
+has none. It keeps in `/data/nad.json` the list of the known devices
+(address, model, sources). Nothing leaves your local network.
+
+## Known limits
+
+- One zone (the main one); no tuner, speakers A/B, dimmer, sleep or listening
+  mode.
+- Some models (for example the C 356BEE) cannot report or set an absolute
+  volume, only step it: the volume stays unknown there.
+- The binary protocol of the D 7050 / D 3045 (port 50001) is not supported.
+- Home Assistant uses port 53 by default for this protocol, `nad_receiver`
+  port 23: if your device does not answer on 23, try `:53`.
+- Never tested with a real device: the real answers may differ.
+
+## Configuration settings
+
+These are the settings NAD asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your NAD devices, on your local network | `section` | No | Power on, standby, volume, mute and source of each NAD amplifier or receiver with a network control port (telnet, port 23: T 758, T 778, T 787, C 338, C 368, C 658, M10...), without any cloud. The RS-232 serial port is not supported. Give each device a fixed IP address in your router and type it below; the devices then appear in the Discovery tab. 100 % in Gladys is the volume cap below, never exceeded. Enable the network standby of the device so it can be woken up. Never tested with a real device. Unofficial integration, not affiliated with NAD Electronics. |
+| IP addresses of the devices | `string` | No | Separated by commas, for example 192.168.1.50, 192.168.1.51. Port 23 by default; add :port for another one. |
+| Volume cap (dB) | `number` | No | The loudest volume Gladys may set, in dB as shown by the device (from -80 to 0, -20 by default): it is 100 % in Gladys. A scene, a voice assistant or the dashboard can never go above it. The volume set on the device itself (knob, remote) is not changed. |
+| Lowest volume (dB) | `number` | No | The volume of 0 % in Gladys, in dB (from -99 to -21, -80 by default; at least 10 dB under the cap). |
+| Source names (optional) | `string` | No | For the models that do not tell the names of their inputs: number=name, separated by commas, for example 1=CD, 2=Tuner, 3=TV. |
+
+## How to install NAD in Gladys
+
+1. In Gladys, open **Integrations**: NAD appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-nad:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-nad](https://github.com/LM1LC3N7/gladys-nad).
+
+NAD requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+NAD is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-nad) — [source of this documentation](https://github.com/LM1LC3N7/gladys-nad/blob/HEAD/docs/en.md)

@@ -1,0 +1,154 @@
+---
+title: "Intégration domotique WattWächter Plus, gratuite et open source"
+sidebar_label: "WattWächter Plus"
+description: "Lit le WattWächter Plus et affiche la puissance, la consommation et l'injection. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/placeholder.png"
+keywords:
+  - "wattwächter plus"
+  - "domotique wattwächter plus"
+  - "gladys wattwächter plus"
+  - "wattwächter plus gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/tomgermany/gladys-wattwaechter instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"WattWächter Plus","description":"Lit le WattWächter Plus et affiche la puissance, la consommation et l'injection.","owner":"tomgermany","owner_avatar_url":"https://avatars.githubusercontent.com/u/535105?v=4","repo_url":"https://github.com/tomgermany/gladys-wattwaechter","cover_url":"https://integration-store-storage.gladysassistant.com/covers/placeholder.png","type":"device","version":"1.2.5","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T00:20:43Z"}} />
+
+Une intégration [Gladys Assistant](https://gladysassistant.com/) qui lit votre compteur électrique à
+travers un **WattWächter Plus**. Tout reste sur votre réseau local : pas de cloud, pas de compte.
+
+## Prérequis : activer Modbus
+
+**Wattwächter der Fa. Wattwächter, angebracht an den Zähler bei ihnen:[wattwächter] (https://www.wattwaechter.com/)/)** 
+
+**Le serveur Modbus est désactivé par défaut dans le WattWächter et doit d'abord être activé.** Sans
+cette étape, l'appareil ne répond pas sur le port 502 et l'intégration ne peut rien lire.
+
+Ouvrez l'interface web du WattWächter, utilisez l'**explorateur d'API**, choisissez l'endpoint
+`POST /api/v1/settings` et envoyez ce contenu :
+
+```json
+{ "modbus": { "enable": true, "port": 502 } }
+```
+
+Ne changez le port que s'il est déjà occupé. Le port choisi se saisit ensuite dans la configuration de
+l'intégration.
+
+## Installation
+
+1. Dans Gladys, ouvrez **Intégrations** et installez le **WattWächter Plus**.
+2. Ouvrez son écran **Configuration**.
+3. Saisissez l'adresse de l'appareil : son IP, par exemple `192.168.0.6`, ou le nom mDNS
+   `wattwaechter-xxxxxxxxxxxx.local`.
+4. Saisissez le port Modbus, 502 par défaut.
+5. Saisissez le **jeton de lecture de l'API REST** pour les totaux de période du widget. Sans jeton,
+   tout fonctionne sauf les quatre boutons de période.
+6. Appuyez sur **Tester la connexion**. La réponse indique le modèle, le firmware, le nombre de mesures
+   et la puissance actuelle.
+7. Lancez une recherche dans l'onglet **Découverte** et créez l'appareil trouvé.
+
+## Ce que l'appareil fournit
+
+Tout est en lecture seule : un compteur mesure, il ne connaît aucune commande.
+
+| Fonction | Signification |
+| --- | --- |
+| Puissance | La consommation actuelle en watts. **Positif = consommation, négatif = injection.** |
+| Index consommation | L'index cumulé en kWh, pour la surveillance d'énergie. |
+| Index injection | L'index cumulé de l'injection en kWh. |
+| Puissance L1 à L3 | La puissance par phase. |
+| Tension L1 à L3 | La tension par phase, en volts. |
+| Courant L1 à L3 | Le courant par phase, en ampères. |
+| Fréquence | La fréquence du réseau, en hertz. |
+
+Une mesure que le compteur ne fournit pas ne crée aucune fonction. Un compteur qui ne connaît que deux
+phases n'a donc pas de L3, plutôt qu'un zéro qui serait faux.
+
+## Le widget « Compteur électrique »
+
+- **La puissance** en grande tuile, avec le signe du compteur. En injection, la tuile devient verte.
+- **Le numéro de compteur**, pour savoir de quel compteur il s'agit.
+- **Quatre boutons :** aujourd'hui, 7 jours, 30 jours, 365 jours. La période choisie est mise en
+  évidence et sa consommation s'affiche en dessous, en kWh.
+
+Dans les réglages de la tuile, vous pouvez aussi choisir quel compteur l'alimente et si les totaux
+apparaissent en kWh ou en Wh.
+
+## Scènes
+
+**Le déclencheur « La puissance franchit une limite »** se déclenche quand la puissance dépasse la
+limite haute ou descend sous la limite basse. Les limites se règlent dans la configuration ; 0
+désactive le côté concerné. La limite basse peut être négative, car l'injection est une puissance
+négative.
+
+Le déclencheur se déclenche **une fois par franchissement**, pas à chaque mesure. Il faut que la
+puissance s'éloigne à nouveau de la limite avant un nouveau déclenchement. Pour une simple condition
+« puissance au-dessus de X », le déclencheur « l'état d'un appareil change » de Gladys suffit.
+
+**L'action « Lire les index du compteur »** lit l'appareil maintenant et transmet puissance,
+consommation, injection et numéro de compteur aux étapes suivantes.
+
+**L'action « Lire le total d'une période »** additionne la consommation sur une période et la renvoie.
+Nécessite le jeton de lecture.
+
+## Comment ça marche
+
+Deux chemins vers le même appareil, et les deux sont nécessaires :
+
+- **Modbus TCP** fournit les mesures. Il ne répond qu'aux codes de lecture `0x03` et `0x04`, et il ne
+  connaît que le présent. L'appareil accepte au maximum deux clients à la fois.
+- **L'API REST** fournit les périodes, car elle seule sait ce qui a été consommé hier. Elle nécessite
+  le jeton de lecture et fonctionne sur le port 80.
+
+L'intégration lit les registres selon le standard **SunSpec**. À partir du firmware 1.2.1, les valeurs
+sont aussi disponibles en flottants, et ce chemin est utilisé quand il répond ; sinon les entiers sont
+mis à l'échelle dans l'intégration. La valeur que SunSpec réserve pour « ce compteur ne fournit pas
+cette mesure » est filtrée et jamais publiée.
+
+## Mention légale
+
+Ce projet est **indépendant et non officiel**. Il **n'est ni affilié à Smart Circuits GmbH** ni à
+WattWächter, et n'est ni autorisé, ni soutenu, ni sponsorisé par eux. **WattWächter** est une marque de
+son propriétaire respectif et n'est utilisée ici que pour nommer l'appareil avec lequel cette
+intégration fonctionne. Toutes les autres marques, noms de produits et de sociétés appartiennent à
+leurs propriétaires respectifs.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par WattWächter Plus dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connecter le WattWächter Plus | `section` | Non | Le serveur Modbus TCP de l'appareil est désactivé en usine. Activez-le d'abord dans l'interface web du WattWächter sous Réglages → Modbus TCP, sinon l'intégration ne peut lire aucune valeur. L'adresse et le port y figurent aussi. |
+| Adresse du WattWächter | `string` | Oui | Adresse IP ou nom mDNS, par exemple wattwaechter-XXXXXXXXXXXX.local. Une IP fixe via une réservation DHCP dans le routeur est plus robuste que le nom mDNS. |
+| Port Modbus | `number` | Non | Par défaut 502. À modifier seulement si le port a été changé sur l'appareil. |
+| Jeton de lecture de l'API REST (facultatif) | `string` | Non | Nécessaire uniquement pour les totaux de période (aujourd'hui, 7, 30, 365 jours) et l'action de scène « lire le total d'une période ». Sans jeton, ces boutons restent masqués. L'authentification de l'API est désactivée en usine ; si elle l'est, laissez vide. |
+| Intervalle d'interrogation en millisecondes | `number` | Non | Fréquence de lecture des valeurs. Valeurs autorisées : 1000, 2000, 10000, 15000, 30000 et 60000. Par défaut 60000, une fois par minute. |
+| Limite supérieure du déclencheur de scène en watts | `number` | Non | Au-delà de cette puissance, l'intégration signale l'événement « seuil de puissance franchi ». 0 désactive la limite supérieure. |
+| Limite inférieure du déclencheur de scène en watts | `number` | Non | Indiquez une valeur négative pour l'injection, par exemple -3000. 0 désactive la limite inférieure. |
+
+## Comment installer WattWächter Plus dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : WattWächter Plus apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/tomgermany/gladys-wattwaechter:1.2.5`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/tomgermany/gladys-wattwaechter](https://github.com/tomgermany/gladys-wattwaechter).
+
+WattWächter Plus nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+WattWächter Plus est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [tomgermany](https://github.com/tomgermany), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/tomgermany/gladys-wattwaechter) — [source de cette documentation](https://github.com/tomgermany/gladys-wattwaechter/blob/HEAD/docs/fr.md)

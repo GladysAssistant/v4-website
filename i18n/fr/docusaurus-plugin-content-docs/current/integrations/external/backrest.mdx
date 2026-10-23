@@ -1,0 +1,243 @@
+---
+title: "Intégration domotique Backrest, gratuite et open source"
+sidebar_label: "Backrest"
+description: "Vos plans Backrest dans Gladys : leur état, et une alerte si une sauvegarde échoue ou est en retard. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-backrest.png"
+keywords:
+  - "backrest"
+  - "domotique backrest"
+  - "gladys backrest"
+  - "backrest gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-backrest instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Backrest","description":"Vos plans Backrest dans Gladys : leur état, et une alerte si une sauvegarde échoue ou est en retard.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-backrest","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-backrest.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:27:19Z"}} />
+
+[Backrest](https://github.com/garethgeorge/backrest) est une interface web et
+un planificateur pour les sauvegardes [restic](https://restic.net/). Cette
+intégration amène dans Gladys les plans et les dépôts d'une instance Backrest :
+chaque plan devient un appareil avec son état, sa dernière sauvegarde réussie,
+les données qu'il a ajoutées et les erreurs de sa dernière sauvegarde ; chaque
+dépôt montre sa taille et ses instantanés. Des scènes peuvent réagir quand
+**n'importe quelle** sauvegarde réussit, échoue ou est en retard (pas de
+réussite depuis trop longtemps), un widget du tableau de bord liste d'abord les
+plans en échec, et une scène peut lancer une sauvegarde.
+
+Testée avec un vrai Backrest 1.14 (image Docker `garethgeorge/backrest`, dépôt
+restic local) : une sauvegarde qui réussit, une dont le dossier manque, une
+avec un fichier illisible, une sauvegarde lancée depuis l'intégration, avec et
+sans authentification. Pas encore testée sur un vrai Gladys : vos retours sont
+les bienvenus sur [les issues](https://github.com/guim31/gladys-backrest/issues).
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Backrest 1.x (testé avec la 1.14.1), son interface web joignable depuis la
+  machine de Gladys (port 9898 par défaut).
+- Si son authentification est activée : un nom d'utilisateur et son mot de
+  passe (Backrest, **Settings → Users**). Mieux vaut un utilisateur dédié que
+  le vôtre.
+
+L'intégration lit Backrest toutes les 5 minutes par défaut (toutes les 30
+secondes pendant une sauvegarde) : une requête légère par plan, plus
+l'historique de chaque dépôt une fois par heure. Rien ne sort de votre réseau.
+
+## Mise en route
+
+### 1. Vérifier l'adresse de Backrest
+
+Ouvrez Backrest dans un navigateur et notez son adresse, par exemple
+`http://192.168.1.2:9898`. Par défaut, Backrest n'écoute que sa propre machine
+(`127.0.0.1:9898`) : pour le joindre depuis Gladys, lancez-le avec
+`BACKREST_PORT=0.0.0.0:9898` (c'est déjà le cas de l'image Docker).
+
+### 2. Configurer l'intégration
+
+Dans Gladys, **Intégrations → Backrest → Configuration** :
+
+- **Adresse de Backrest** : l'adresse notée plus haut. Une adresse seule
+  (`192.168.1.2`) utilise le port 9898 ; une adresse copiée du navigateur
+  fonctionne aussi.
+- **Nom d'utilisateur** et **Mot de passe** : un utilisateur de Backrest.
+  Laissez-les vides si son authentification est désactivée.
+- **Intervalle de rafraîchissement** : 1, 5 (par défaut) ou 15 minutes.
+- **En retard après** : quand un plan sans réussite passe en retard.
+  _Automatique_ (par défaut) suit la planification de chaque plan : sa période
+  (« toutes les 24 heures ») ou le plus long écart de son expression cron, plus
+  un quart de celle-ci (une heure au moins) : 30 heures pour un plan quotidien,
+  90 heures pour un plan lancé les jours ouvrés seulement. Un plan sans
+  planification n'est alors jamais en retard. Ou un délai fixe, de 12 heures à
+  une semaine, pour tous les plans.
+- **Autoriser le lancement des sauvegardes** : permet à l'action de scène
+  « Lancer une sauvegarde » de fonctionner. Désactivez-le si personne ne doit
+  lancer de sauvegarde depuis Gladys.
+- **Langue des noms** : langue des noms des fonctionnalités, des états et des
+  résultats de scène.
+
+**Tester la connexion** lit Backrest et résume : le nombre de plans et de
+dépôts, en échec et en retard.
+
+### 3. Ajouter les plans
+
+Dans l'onglet **Découverte**, ajoutez les plans et les dépôts à suivre, et
+l'appareil « Backrest » pour l'instance. Les déclencheurs de scène fonctionnent
+pour tous les plans, ajoutés ou non.
+
+## Les appareils
+
+Chaque plan :
+
+| Fonctionnalité                           | Valeur                                                                 |
+| ---------------------------------------- | ---------------------------------------------------------------------- |
+| État                                     | OK, Avec avertissements, En échec, En retard, En cours ou Jamais lancé |
+| Dernière sauvegarde réussie              | jour/mois heures:minutes, « - » s'il n'y en a pas                      |
+| Heures depuis la dernière réussite       | en heures                                                              |
+| Durée de la dernière sauvegarde          | en secondes                                                            |
+| Données ajoutées (dernière sauvegarde)   | nouvelles données envoyées au dépôt, en Mo                             |
+| Instantanés                              | instantanés de ce plan conservés dans le dépôt                         |
+| Erreurs de la dernière sauvegarde        | 1 si elle a échoué, 0 sinon                                            |
+| Avertissements de la dernière sauvegarde | nombre de fichiers qu'elle n'a pas pu lire                             |
+| En cours                                 | 1 pendant que ce plan sauvegarde                                       |
+| Prochaine sauvegarde planifiée           | jour/mois heures:minutes, « - » sans planification                     |
+
+Chaque dépôt :
+
+- **Taille du dépôt** : en Mo, d'après la dernière opération « stats » de
+  Backrest (après un prune, une fois par jour au plus ; **Stats** sur la page du
+  dépôt dans Backrest en lance une) ;
+- **Instantanés** : les instantanés qu'il contient.
+
+L'appareil « Backrest », pour l'instance :
+
+- **Sauvegarde en cours** : 1 ou 0 ;
+- **Progression** : en % ;
+- **Plan actuel** : son nom, « - » s'il n'y en a pas ;
+- **Plans en échec** et **Plans en retard** : combien.
+
+Une sauvegarde « réussit » quand restic crée un instantané, avec ou sans
+avertissements (fichiers illisibles). Elle « échoue » quand aucun instantané
+n'est créé (dossier manquant, dépôt injoignable ou verrouillé…). L'état montre
+d'abord ce qui demande votre attention : un plan en échec affiche « En échec »
+même s'il est aussi en retard. Les essais à blanc (dry run) sont ignorés.
+
+## Tableau de bord
+
+Le widget **Backrest** montre le nombre de plans en échec, en retard et OK,
+puis une ligne par plan : en échec d'abord, puis en retard, en cours, avec
+avertissements, jamais lancés, OK, avec la dernière réussite (ou la progression
+de la sauvegarde en cours). Tous les plans par défaut, ou ceux choisis dans ses
+réglages. Le bouton **Actualiser** relit Backrest.
+
+## Scènes
+
+### Déclencheurs
+
+- **Une sauvegarde réussit** : une sauvegarde se termine par un instantané,
+  avec ou sans avertissements. Informations : plan, durée (minutes),
+  avertissements, données ajoutées, instantanés.
+- **Une sauvegarde échoue** : une sauvegarde se termine sans instantané. Le
+  filtre **Résultat** choisit les erreurs, les avertissements, ou les deux
+  (vide). Informations : plan, l'erreur (ou le premier fichier non lu),
+  erreurs, avertissements.
+- **Un plan est en retard** : un plan n'a pas réussi depuis plus longtemps que
+  le délai « En retard après ». Une fois par dépassement, de nouveau après une
+  nouvelle réussite. Informations : plan, heures depuis la dernière réussite,
+  dernière réussite.
+
+Chaque déclencheur peut se limiter à certains plans (vide : tous).
+
+### Actions
+
+- **État d'un plan** : lit l'état d'un plan pour les actions suivantes : en
+  échec, en retard, l'état en toutes lettres, le nom, la dernière réussite, les
+  heures depuis la dernière réussite (-1 s'il n'y en a pas), et une phrase
+  toute prête (« photos : En échec, dernière réussite 18/10 02:05. »).
+- **Lancer une sauvegarde** : lance maintenant une sauvegarde du plan (Backrest
+  la met en file derrière la tâche en cours). Une erreur dans les premières
+  secondes (dossier manquant, plan supprimé) est l'erreur de l'action ; ensuite,
+  les déclencheurs disent comment elle s'est terminée. Refusée quand
+  « Autoriser le lancement des sauvegardes » est désactivé.
+
+### Idées de scènes
+
+- **Une sauvegarde échoue** → envoyer un message avec le plan et son erreur,
+  pris dans les informations du déclencheur.
+- **Un plan est en retard** → prévenir avec le plan et les heures depuis sa
+  dernière réussite : l'ordinateur qui garde les photos n'a pas été allumé
+  depuis des jours.
+- Chaque dimanche à 10 h → **État d'un plan** → envoyer la phrase ; ou
+  sauvegarder les documents en quittant la maison, avec **Lancer une
+  sauvegarde**.
+
+## Dépannage
+
+- **« Backrest ne répond pas »** : vérifiez l'adresse et le port depuis la
+  machine de Gladys, et que Backrest écoute le réseau
+  (`BACKREST_PORT=0.0.0.0:9898`).
+- **« nom d'utilisateur ou mot de passe manquant ou refusé par Backrest »** :
+  son authentification est activée : saisissez le nom et le mot de passe d'un
+  utilisateur de Backrest.
+- **« aucun Backrest à cette adresse »** : l'adresse pointe vers autre chose.
+- **« certificat refusé »** : un certificat auto-signé sur un proxy inverse ;
+  utilisez l'adresse `http://` sur votre réseau.
+- **Taille du dépôt vide** : Backrest ne l'a pas encore calculée ; lancez
+  **Stats** depuis la page du dépôt dans Backrest.
+- **Un plan ne passe jamais en retard** : en _Automatique_, un plan sans
+  planification ne peut pas être en retard ; choisissez un délai fixe. Un plan
+  qui n'a jamais réussi n'est pas en retard non plus : il affiche En échec ou
+  Jamais lancé.
+- Pour en voir plus, passez la variable `LOG_LEVEL` de l'intégration à `debug`.
+
+## Limites
+
+- Une instance Backrest par intégration ; les plans des autres instances
+  synchronisées avec elle ne sont pas montrés.
+- Backrest garde ses opérations une trentaine de jours : au-delà, la dernière
+  réussite est celle dont l'intégration se souvient.
+- L'intégration ne restaure, ne purge et ne modifie rien : elle surveille les
+  plans, et lance une sauvegarde si c'est autorisé.
+- Sans lien avec Backrest ni restic. Signalez un problème ou une idée sur
+  [les issues](https://github.com/guim31/gladys-backrest/issues).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Backrest dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre Backrest | `section` | Non | Backrest, l'interface web de restic. Saisissez son adresse, et son nom d'utilisateur et son mot de passe si son authentification est activée. Ajoutez ensuite les plans et les dépôts à suivre depuis l'onglet Découverte. |
+| Adresse de Backrest | `string` | Oui | L'adresse de l'interface web, port 9898 par défaut. |
+| Nom d'utilisateur | `string` | Non | Un utilisateur de Backrest (Paramètres → Utilisateurs). Vide si son authentification est désactivée. |
+| Mot de passe | `secret` | Non | Le mot de passe de cet utilisateur. Vide si l'authentification de Backrest est désactivée. |
+| Options | `section` | Non |  |
+| Intervalle de rafraîchissement | `select` | Non | À quelle fréquence Backrest est lu. Toutes les 30 secondes pendant une sauvegarde. |
+| En retard après | `select` | Non | Un plan sans sauvegarde réussie depuis ce délai est en retard. Automatique : le plus long écart de sa planification plus une marge ; un plan sans planification n'est alors jamais en retard. |
+| Autoriser le lancement des sauvegardes | `boolean` | Non | Permet à l'action de scène « Lancer une sauvegarde » d'exécuter un plan dans Backrest. |
+| Langue des noms | `select` | Non | Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil), des états et des résultats de scène. |
+
+## Comment installer Backrest dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Backrest apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-backrest:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-backrest](https://github.com/guim31/gladys-backrest).
+
+Backrest nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Backrest est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-backrest) — [source de cette documentation](https://github.com/guim31/gladys-backrest/blob/HEAD/docs/fr.md)

@@ -1,0 +1,244 @@
+---
+title: "Integración domótica Jenkins, gratuita y de código abierto"
+sidebar_label: "Jenkins"
+description: "Sus tareas de Jenkins en Gladys: estado de los builds, alertas de fallo, lanzar desde una escena. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-jenkins.png"
+keywords:
+  - "jenkins"
+  - "domótica jenkins"
+  - "gladys jenkins"
+  - "jenkins gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-jenkins instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Jenkins","description":"Sus tareas de Jenkins en Gladys: estado de los builds, alertas de fallo, lanzar desde una escena.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-jenkins","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-jenkins.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:30:39Z"}} />
+
+[Jenkins](https://www.jenkins.io/) es el servidor de automatización libre y
+autoalojado que sirve para construir, probar y desplegar software. Esta
+integración sigue sus tareas: cada una se convierte en un dispositivo con el
+resultado de su última ejecución, su número y su duración, y si hay una ejecución
+en curso; un dispositivo **Jenkins** resume la cola, los agentes desconectados y
+las tareas fallidas. Las escenas pueden reaccionar a una **ejecución terminada**,
+a una tarea que **empieza a fallar o vuelve a estar en verde**, o a un **agente
+que se desconecta**, leer una tarea y, si usted lo permite, **lanzar una tarea**
+con sus parámetros. Un widget del panel muestra todas las tareas de un vistazo.
+
+Probada con un Jenkins 2.580 LTS real (Docker); todavía no con una instancia real
+de Gladys: sus comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-jenkins/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un Jenkins accesible desde la máquina de Gladys, en la red local o en
+  Internet.
+- Un usuario de Jenkins y su token de API. La lectura requiere los permisos
+  **Overall/Read** y **Job/Read**; lanzar tareas desde las escenas requiere
+  también **Job/Build**.
+
+En cada actualización (cada minuto por defecto), la integración hace tres
+solicitudes ligeras: la lista de tareas con las diez últimas ejecuciones de cada
+una (carpetas incluidas, hasta tres niveles), la cola y los nodos. Lanzar una
+tarea añade dos solicitudes, solo cuando una escena lo pide.
+
+## Primeros pasos
+
+### 1. Crear un token de API
+
+En Jenkins, haga clic en su nombre arriba a la derecha, luego **Seguridad → Token
+de API → Añadir nuevo token**, dele un nombre y cópielo (solo se muestra una
+vez). Un usuario dedicado, con solo los permisos anteriores, limita lo que
+Gladys puede hacer.
+
+### 2. Configurar la integración
+
+En Gladys, abra **Integraciones → Jenkins → Configuración** y rellene:
+
+- **Dirección de Jenkins**: la dirección con la que abre Jenkins,
+  `http://192.168.1.2:8080` o `https://ci.example.com` (conserve la subruta si
+  Jenkins funciona bajo una, p. ej. `https://example.com/jenkins`).
+- **Usuario** y **Token de API**: el usuario del paso 1 y su token. Ambos
+  vacíos: acceso anónimo, si su Jenkins permite la lectura anónima.
+- **Tareas que seguir**: vacío para todas las tareas (50 como máximo), o nombres
+  o enlaces de tareas copiados del navegador, separados por comas. Un nombre de
+  carpeta sigue todas sus tareas. Ejemplo: `copia, infra/despliegue`.
+- **Permitir que las escenas lancen tareas**: desactivado por defecto. Actívelo
+  para usar la acción **Lanzar una tarea de Jenkins**.
+- **Intervalo de actualización** e **Idioma de los nombres**.
+
+Haga clic en **Probar la conexión**: Jenkins y su versión, cuántas tareas se
+siguen, cuántas están fallidas o en cola, cuántos agentes están desconectados,
+si las escenas pueden lanzar tareas, y las tareas de la lista que Jenkins no
+conoce.
+
+### 3. Añadir los dispositivos
+
+En **Descubrimiento**, añada el dispositivo **Jenkins** y las tareas que desee.
+Sus valores llegan enseguida. Los disparadores de escena y el widget funcionan
+incluso para una tarea no añadida como dispositivo.
+
+## Los dispositivos
+
+### Un dispositivo por tarea
+
+Con el nombre completo de la tarea (`carpeta/tarea` dentro de una carpeta).
+Jenkins no da ningún otro identificador a una tarea: una tarea renombrada es un
+dispositivo nuevo.
+
+| Función                         | Tipo     | Valor                                                                              |
+| ------------------------------- | -------- | ---------------------------------------------------------------------------------- |
+| Estado                          | texto    | Correcta, Fallida, Inestable, Cancelada, No construida, En curso o Nunca ejecutada |
+| Última ejecución correcta       | binario  | 1 si la última ejecución terminada fue correcta, 0 si falló o es inestable         |
+| En curso                        | binario  | 1 mientras hay una ejecución                                                       |
+| Número de la última ejecución   | contador | número de la última ejecución                                                      |
+| Duración de la última ejecución | duración | duración de la última ejecución terminada, en segundos                             |
+
+Mientras hay una ejecución, el estado indica **En curso**; **Última ejecución
+correcta** y **Duración de la última ejecución** conservan los valores de la
+ejecución anterior. Una ejecución cancelada no cambia **Última ejecución
+correcta**.
+
+### El dispositivo Jenkins
+
+| Función               | Tipo     | Valor                                                      |
+| --------------------- | -------- | ---------------------------------------------------------- |
+| Cola de ejecución     | contador | ejecuciones en espera                                      |
+| Agentes desconectados | contador | nodos desconectados (nodo integrado incluido)              |
+| Tareas fallidas       | contador | tareas seguidas cuya última ejecución falló o es inestable |
+| Tareas en curso       | contador | tareas seguidas en ejecución                               |
+
+## Panel
+
+El widget **Tareas de Jenkins** muestra una fila por tarea, con su estado y el
+número de su última ejecución: primero las fallidas, luego las inestables, luego
+las que están en curso. Una línea encima indica cuántas ejecuciones esperan y
+cuántos agentes están desconectados, cuando los hay. Elija tareas en sus ajustes,
+o déjelo vacío para todas. **Actualizar** vuelve a leer Jenkins enseguida.
+
+## Escenas
+
+### Disparadores
+
+- **Ejecución de Jenkins terminada**: ha terminado una ejecución de una tarea
+  seguida, sea cual sea su resultado (filtro por tarea y resultado: correcta,
+  fallida, inestable, cancelada). Variables: el nombre de la tarea, el número de
+  la ejecución, el resultado en palabras, la duración en segundos, el enlace y un
+  resumen listo para un mensaje.
+- **Tarea de Jenkins fallida o de nuevo en verde**: una tarea empieza a fallar
+  (una ejecución fallida o inestable tras un éxito, o su primera ejecución
+  fallida), o vuelve a pasar tras un fallo (filtro por tarea y cambio).
+  Variables: el nombre de la tarea, el número de la ejecución, el resultado, el
+  enlace y un resumen.
+- **Agente de Jenkins desconectado**: un nodo que estaba conectado se desconecta
+  (filtro por nombre del agente, vacío para todos). Variables: el nombre del
+  agente, el motivo indicado por Jenkins y un resumen.
+
+La primera lectura de una tarea o de un agente solo aprende su estado: el pasado
+nunca se anuncia. Se anuncian como máximo tres ejecuciones por tarea y lectura.
+La integración conserva lo que ha visto: un reinicio no pierde ningún evento ni
+anuncia uno dos veces.
+
+### Acciones
+
+- **Lanzar una tarea de Jenkins**: pone en cola una ejecución de una tarea
+  seguida. Parámetros opcionales, `NOMBRE=valor` separados por `&` (p. ej.
+  `TARGET=prod&VERSION=1.2`), o un objeto JSON para un valor que contenga `&` (`{"MESSAGE": "a & b"}`); vacío, la tarea usa sus valores por defecto. Se
+  rechaza un parámetro que la tarea no declara. Requiere **Permitir que las
+  escenas lancen tareas** en la configuración. Variables: el nombre de la tarea,
+  si la ejecución se puso en cola y su número en la cola. La ejecución continúa
+  en Jenkins: use **Ejecución de Jenkins terminada** para reaccionar a su fin.
+- **Leer una tarea de Jenkins**: el estado de una tarea seguida como variables
+  para las siguientes acciones: estado en palabras, último resultado, última
+  ejecución correcta, en curso, número y duración de la última ejecución,
+  enlace.
+
+### Ideas de escenas
+
+- **Tarea de Jenkins fallida o de nuevo en verde**, cambio «Fallida» → poner la
+  lámpara del despacho en rojo y enviar el resumen; cambio «De nuevo en verde» →
+  volver a ponerla en blanco.
+- Cada noche a las 3:00, si no hay nadie en casa → **Lanzar una tarea de
+  Jenkins** `copia`; **Ejecución de Jenkins terminada** para `copia` con el
+  resultado «Fallida» → enviar un mensaje.
+- **Agente de Jenkins desconectado** → enviarse un mensaje con el resumen: la
+  máquina del agente quizá esté apagada.
+
+## Solución de problemas
+
+- **Jenkins no responde**: compruebe la dirección desde la máquina de Gladys
+  (mismo puerto, mismo protocolo); un Gladys en Docker llega al host por su
+  dirección IP, no por `localhost`.
+- **La dirección redirige**: introduzca la dirección `https://` en la que termina
+  el navegador, con la subruta si la hay.
+- **Usuario o token de API rechazado**: el token se revocó o se escribió mal;
+  cree uno nuevo. Una contraseña también funciona, pero es mejor un token.
+- **Acceso denegado**: no se ha introducido ningún usuario y Jenkins rechaza la
+  lectura anónima, o el usuario no tiene el permiso **Overall/Read**.
+- **Jenkins lo ha rechazado: el usuario necesita el permiso Job/Build**:
+  concédaselo, o deje el lanzamiento desactivado.
+- **No hay ninguna API de Jenkins en esta dirección**: la dirección apunta a otro
+  servicio, o falta la subruta.
+- Una tarea no aparece: está a más de tres niveles de carpetas, o más de 50
+  tareas coinciden con la lista: indique menos tareas o carpetas.
+- **Certificado rechazado**: no se acepta un certificado autofirmado; use la
+  dirección `http://` en la red local.
+
+## Límites
+
+- Lanzar tareas es el único comando, y está desactivado por defecto. Una
+  ejecución no se puede detener desde Gladys.
+- 50 tareas como máximo, hasta tres niveles de carpetas; Jenkins se lee como
+  mucho cada minuto: un evento llega con hasta un intervalo de retraso.
+- Una tarea se conoce por su nombre completo: renombrarla o moverla a otra
+  carpeta crea un dispositivo nuevo.
+- Se leen las diez últimas ejecuciones de cada tarea: si terminan más de diez
+  entre dos lecturas, las más antiguas no se anuncian.
+- No se leen las etapas de los pipelines, los informes de pruebas ni los
+  registros de ejecución.
+- Los textos de los dispositivos y de las escenas siguen el idioma de la
+  configuración; los nombres de las funciones se fijan al añadir un dispositivo.
+- Desarrollada y probada con Jenkins 2.580 LTS; las versiones anteriores con la
+  misma API JSON deberían funcionar, sin garantía.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Jenkins te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Jenkins | `section` | No | Introduzca la dirección de su Jenkins, un usuario y su token de API (haga clic en su nombre arriba a la derecha → Seguridad → Token de API → Añadir nuevo token). Basta con un usuario con los permisos Overall/Read y Job/Read para seguir las tareas. |
+| Dirección de Jenkins | `string` | No | La dirección con la que abre Jenkins: http:\/\/192.168.1.2:8080 o https:\/\/ci.example.com. |
+| Usuario | `string` | No | El usuario de Jenkins al que pertenece el token de API. |
+| Token de API | `secret` | No | Vacío, con el usuario vacío: acceso anónimo, si Jenkins lo permite. |
+| Tareas que seguir | `string` | No | Vacío: todas las tareas (50 como máximo). Si no, nombres o enlaces de tareas, separados por comas; un nombre de carpeta sigue todas sus tareas. |
+| Opciones | `section` | No |  |
+| Permitir que las escenas lancen tareas | `boolean` | No | Desactivado por defecto. Si se activa, la acción «Lanzar una tarea de Jenkins» puede iniciar cualquier tarea seguida: el usuario necesita el permiso Job/Build. |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Jenkins: tres solicitudes ligeras cada vez. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los estados de las tareas y de los textos de escena. |
+
+## Cómo instalar Jenkins en Gladys
+
+1. En Gladys, abre **Integraciones**: Jenkins aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-jenkins:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-jenkins](https://github.com/guim31/gladys-jenkins).
+
+Jenkins requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Jenkins es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-jenkins) — [fuente de esta documentación](https://github.com/guim31/gladys-jenkins/blob/HEAD/docs/es.md)

@@ -1,0 +1,178 @@
+---
+title: "Intégration domotique Cambridge Audio, gratuite et open source"
+sidebar_label: "Cambridge Audio"
+description: "Amplis et streamers Cambridge Audio StreamMagic en local : marche, volume, source, lecture. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-cambridge-audio.png"
+keywords:
+  - "cambridge audio"
+  - "domotique cambridge audio"
+  - "gladys cambridge audio"
+  - "cambridge audio gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-cambridge-audio instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Cambridge Audio","description":"Amplis et streamers Cambridge Audio StreamMagic en local : marche, volume, source, lecture.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-cambridge-audio","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-cambridge-audio.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T05:16:14Z"}} />
+
+Pilotez vos amplis et streamers **Cambridge Audio** équipés de **StreamMagic**
+(CXN, MXN, EVO, CXA, AXN, Edge…) depuis Gladys, en local, sans aucun cloud :
+allumage, veille, volume, sourdine, source, lecture, pause, suivant,
+précédent et titre en cours.
+
+> **Important.** Cette intégration n'a jamais été testée avec un vrai appareil :
+> elle a été écrite d'après la bibliothèque `aiostreammagic` (celle de Home
+> Assistant) et testée avec un faux appareil seulement. Vos retours sont les
+> bienvenus. Intégration non officielle, sans lien avec Cambridge Audio.
+
+## Installation
+
+1. Donnez à chaque appareil une **adresse IP fixe** dans votre box (bail DHCP
+   réservé).
+2. Dans Gladys, installez l'intégration **Cambridge Audio**, puis ouvrez sa
+   configuration.
+3. Saisissez les adresses IP, séparées par des virgules (par exemple
+   `192.168.1.40, 192.168.1.41`). Le bouton **Chercher les appareils** peut
+   aussi les trouver sur le réseau (mDNS, facultatif : la recherche ne
+   traverse pas tous les réseaux).
+4. Choisissez le **plafond de volume** (50 % par défaut).
+5. Les appareils apparaissent dans l'onglet **Découverte** : créez-les.
+
+L'intégration garde une connexion websocket ouverte avec chaque appareil
+(`ws://<ip>/smoip`, port 80) : les changements faits sur l'appareil, sa
+télécommande ou l'application StreamMagic arrivent tout de suite dans Gladys.
+
+## Ce que vous obtenez
+
+| Fonction           | Type Gladys                    | Remarque                                                      |
+| ------------------ | ------------------------------ | ------------------------------------------------------------- |
+| Marche             | état binaire (lecture seule)   | 1 allumé, 0 en veille ou injoignable                          |
+| Allumer            | bouton                         | sort l'appareil de la veille réseau                           |
+| Veille             | bouton                         | met l'appareil en veille réseau                               |
+| Volume             | musique / volume (0 à 100)     | plafonné, seulement si le préampli de l'appareil est activé   |
+| Sourdine           | bouton (télévision / sourdine) | chaque appui lit l'état puis règle l'inverse                  |
+| Lecture, pause     | boutons musique                | l'action explicite, ou la bascule seulement si elle est utile |
+| Suivant, précédent | boutons musique                |                                                               |
+| Lecture en cours   | état musique (lecture seule)   | 1 en lecture, 0 sinon                                         |
+| Source             | liste                          | les sources de l'appareil ; la liste ne fait que grandir      |
+| Titre              | texte (lecture seule)          | « Artiste - Titre » (ou la station) ; « — » sans lecture      |
+
+Volontairement, aucun **interrupteur** : un « éteins tout » ou « allume
+tout » d'un assistant vocal ou d'une scène ne réveille ni ne coupe votre ampli.
+
+## Plafond de volume
+
+Le volume demandé depuis Gladys (tableau de bord, scène, assistant vocal) ne
+dépasse jamais le plafond de la configuration : un volume plus fort est ramené
+au plafond. Le plafond est relu juste avant l'envoi : une nouvelle valeur
+enregistrée s'applique tout de suite. Le volume réglé sur l'appareil lui-même
+(bouton, télécommande, application) n'est pas modifié par l'intégration, sauf
+dans deux cas où Gladys le rendrait audible :
+
+- **Retirer la sourdine** : si le volume de l'appareil dépasse le plafond, il
+  est d'abord ramené au plafond, puis la sourdine est retirée, seulement
+  quand l'appareil indique un volume au plafond ou en dessous ; sinon la
+  sourdine est gardée (« volume non ramené au plafond, sourdine gardée »). Si
+  le volume ne peut pas être lu, rien n'est envoyé.
+- **Allumer** : après le réveil, le volume est relu et ramené au plafond s'il
+  le dépasse. Si l'appareil met du temps à se réveiller, ou ne confirme pas
+  la baisse, l'intégration revérifie toutes les 2,5 s pendant 15 s environ ;
+  un volume monté au-dessus du plafond pendant ces 15 s est aussi ramené
+  (même si l'appareil était déjà allumé). Une Veille appuyée entre-temps
+  n'arrête pas ces vérifications : elles ne font que baisser le volume d'un
+  appareil qui se dit allumé. Au-delà de ces 15 s, le volume n'est pas
+  corrigé (l'appareil reprend le volume qu'il avait avant sa veille).
+
+Si le préampli de l'appareil est désactivé (streamer branché sur un autre
+ampli), le volume n'est ni affiché ni réglable : il se règle sur l'ampli.
+
+## Veille et reconnexion
+
+- En **veille réseau**, l'appareil reste joignable : l'état Marche passe à 0
+  et le bouton Allumer le réveille.
+- En **veille éco**, l'appareil quitte le réseau : il est affiché éteint, cité
+  dans le statut de l'intégration, et l'intégration réessaie de s'y connecter
+  à intervalles espacés (10 s, puis le double à chaque échec, jusqu'à 5
+  minutes). Le bouton Allumer ne peut rien dans ce cas.
+- Si un autre appareil répond à l'adresse d'un appareil créé (adresse
+  changée), son adresse est oubliée et une recherche se lance d'elle-même
+  toutes les 10 minutes ; vous pouvez aussi saisir la nouvelle adresse.
+
+## Commandes
+
+Chaque commande reçoit une réponse en moins de 4 secondes (Gladys attend 5
+secondes). Allumer, Veille, volume, sourdine et source ne sont confirmés que
+quand l'appareil renvoie la valeur demandée (un appareil peut accepter un
+message et l'ignorer) : Allumer attend le réveil jusqu'à la fin des 4
+secondes ; Veille ne compte qu'un état lu après elle, et jamais pendant
+qu'un appareil se réveille d'un Allumer (il se dit éteint lui aussi). Une
+commande partie vers l'appareil sans cette
+confirmation est signalée « envoyée, sans confirmation », et l'état poussé
+par l'appareil montre ensuite ce qu'il a fait. Une commande qui n'a pas pu
+partir est signalée « rien envoyé » : c'est le cas de toute commande, Veille
+comprise, vers un appareil non connecté. Veille n'attend jamais derrière une
+autre commande, et annule les commandes encore en attente qui pourraient
+rallumer l'appareil (allumer, source, lecture, suivant, précédent :
+« cancelled by Standby, nothing sent »). La sourdine passe avant les
+commandes en attente.
+
+Quand la source n'offre que la bascule lecture/pause, Lecture n'agit qu'en
+pause ou à l'arrêt, Pause qu'en lecture ; dans un état intermédiaire
+(connexion, mise en mémoire tampon…), la commande est refusée sans rien
+envoyer.
+
+## Boutons de la configuration
+
+- **Chercher les appareils** : recherche mDNS par Gladys, puis les adresses
+  saisies.
+- **Vérifier les appareils** : l'état de connexion, la marche et le volume de
+  chaque appareil, et le plafond en vigueur.
+
+## Données et confidentialité
+
+L'intégration ne demande ni compte ni mot de passe : le websocket StreamMagic
+n'en a pas. Elle garde dans `/data/cambridge-audio.json` la liste des
+appareils connus (identifiant, adresse, nom, modèle, sources). Rien ne sort de
+votre réseau local.
+
+## Limites connues
+
+- Une seule zone (`ZONE1`), comme l'application StreamMagic.
+- Pas encore de préréglages (presets), de radio, d'égaliseur, de balance, de
+  luminosité de l'afficheur ni de répétition / aléatoire.
+- Jamais testé avec un vrai appareil : les réponses réelles peuvent différer.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Cambridge Audio dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos appareils Cambridge Audio, sur votre réseau local | `section` | Non | Allumage, veille, volume, sourdine, source, lecture, pause, suivant, précédent et titre en cours de chaque appareil StreamMagic (streamers et amplis CXN, MXN, EVO, CXA, AXN...), par son websocket local, sans aucun cloud. Donnez à chaque appareil une adresse IP fixe dans votre box et saisissez-la ci-dessous ; « Chercher les appareils » peut aussi les trouver (facultatif). Les appareils apparaissent alors dans l'onglet Découverte. Le volume réglé depuis Gladys ne dépasse jamais le plafond ci-dessous. Un appareil en veille éco quitte le réseau : il est affiché éteint, et réessayé à intervalles espacés. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec Cambridge Audio. |
+| Adresses IP des appareils | `string` | Non | Séparées par des virgules, par exemple 192.168.1.40, 192.168.1.41. Les appareils trouvés par la recherche sont gardés sans être saisis ici. |
+| Plafond de volume (%) | `number` | Non | Le volume le plus fort que Gladys peut régler, de 1 à 100 % (100 : pas de plafond). Un volume plus fort demandé par une scène, un assistant vocal ou le tableau de bord est ramené à ce plafond. Le volume réglé sur l'appareil lui-même (bouton, télécommande, application) n'est pas modifié. |
+
+## Comment installer Cambridge Audio dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Cambridge Audio apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-cambridge-audio:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-cambridge-audio](https://github.com/LM1LC3N7/gladys-cambridge-audio).
+
+Cambridge Audio nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Cambridge Audio est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-cambridge-audio) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-cambridge-audio/blob/HEAD/docs/fr.md)

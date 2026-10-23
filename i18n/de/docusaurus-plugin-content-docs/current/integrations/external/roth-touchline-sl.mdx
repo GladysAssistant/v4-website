@@ -1,0 +1,158 @@
+---
+title: "Roth Touchline SL Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Roth Touchline SL"
+description: "Roth Touchline SL underfloor heating: rooms, temperatures, optional setpoints and programs. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-touchline-sl.png"
+keywords:
+  - "roth touchline sl"
+  - "roth touchline sl smart home"
+  - "gladys roth touchline sl"
+  - "roth touchline sl gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-touchline-sl instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Roth Touchline SL","description":"Roth Touchline SL underfloor heating: rooms, temperatures, optional setpoints and programs.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-touchline-sl","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-touchline-sl.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:22:09Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration shows the zones (rooms) of your **Roth Touchline SL**
+underfloor heating in Gladys, through the public Roth Touchline SL API (the
+cloud the Roth Touchline SL app uses), with the e-mail address and the
+password of your Roth account.
+
+**Never tested with a real controller nor a real account**: it follows the
+pytouchlinesl library (the one of the Home Assistant integration), without
+having been tried on a real installation. Tell us on the forum whether it
+works for you. **Not affiliated with Roth.**
+
+## What it does
+
+For each zone switched on of each controller of the account, a device
+"Room name (Touchline SL)" with:
+
+- room temperature and humidity;
+- setpoint (thermostat);
+- heating running (idle, heating or cooling, read only);
+- program (a list: constant temperature or one of the programs of the
+  controller) and the mode read ("Program "Living"", "Constant
+  temperature", "Temporary setpoint"…);
+- zone status (OK, sensor damaged, no communication…);
+- window open (when window sensors are paired), battery of the room
+  thermostat.
+
+Zones switched off in the controller are not offered.
+
+## Setup
+
+1. Install the integration from the Gladys store.
+2. Enter the e-mail address and the password of your Roth Touchline SL
+   account, then save. The password is kept by Gladys in its database,
+   never shown again, sent only to Roth (roth-touchlinesl.com, over https).
+3. Open the **Discovery** tab and add the zones you want.
+
+The **Test the connection** button reads Roth once and shows its state.
+
+## Commands (off by default)
+
+By default Gladys only reads. Two separate options:
+
+- **Allow the setpoint commands**: the dashboard, the scenes and the voice
+  assistants can change the setpoint of a zone. The zone then goes to a
+  constant temperature (it leaves its program, as in the Roth app).
+- **Allow the program commands**: the "Program" list can put a zone on one
+  of the programs of the controller, or on a constant temperature (with the
+  setpoint it has).
+
+Safety bounds:
+
+- a setpoint goes from 5 °C to the **setpoint ceiling**, **24 °C by
+  default**, adjustable from 16 to 30 °C, never more than 30 °C;
+- a program is chosen only when **all** its temperatures stay within these
+  bounds (else the command is refused);
+- the ceiling is checked again right before sending: when it was lowered
+  during the command, nothing leaves;
+- a program not read well (a half-empty interval, a zone whose mode cannot
+  be read) is never sent back;
+- a zone that cools, is switched off or is unknown is never commanded;
+- a zone on its own program or a temporary setpoint can be put on a program
+  from the list (the list then shows the last program read, the mode read
+  tells the truth);
+- no command goes through a switch: a "turn everything off" of a voice
+  assistant never reaches the heating. The Roth API has no command to turn
+  the heating off.
+
+Each command reads the zone again right before acting and decides on that
+read; it leaves within 3.5 s or is refused with nothing sent. When Roth does
+not answer in time after sending, Gladys shows "sent, without confirmation"
+and reads the zone again 5 s and 20 s later. One command at a time. To
+choose a program, Roth asks for the whole program to be sent back: the
+integration sends it back as it just read it, changing nothing in it.
+
+## Limits and safety
+
+- Read every 60 s (from 30 s to 10 min).
+- Credentials refused: a stop kept in `/data`, next tries after 15 min,
+  1 h, 6 h then every 24 h, never in a loop; saving other credentials or
+  pressing "Test the connection" tries again.
+- Roth token refused: one new sign-in only, never two sign-ins within a
+  minute (even after a restart); a token refused right after a sign-in, or
+  three renewals without any successful read, give the stop above.
+- Roth busy (HTTP 429) or failing (5xx): a pause of 1 min to 6 h, kept in
+  `/data`, for the reads and the commands alike.
+- `/data` never holds the e-mail address, the password nor the token.
+- A command never signs in to Roth itself: when the token was just
+  refused, it answers "try again in a minute".
+
+## Credits
+
+The Roth API and the shape of its answers come from
+[pytouchlinesl](https://github.com/jnsgruk/pytouchlinesl) (jnsgruk,
+Apache-2.0), the library of the Home Assistant integration. See
+`THIRD_PARTY_NOTICES.md`.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Roth Touchline SL in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Roth Touchline SL account | `section` | Nein | Shows each zone (room) of your Roth Touchline SL underfloor heating in Gladys, through the public Roth Touchline SL API (the cloud of the Roth app): temperature, humidity, setpoint, heating running, program, battery of the room sensor. Enter the e-mail address and the password of your Roth Touchline SL account, save, then add the zones from the Discovery tab. Never tested with a real controller nor a real account. Not affiliated with Roth. |
+| E-mail address of the Roth account | `string` | Ja |  |
+| Password of the Roth account | `secret` | Ja | Kept by Gladys in its database, never shown again, sent only to Roth (roth-touchlinesl.com, over https). |
+| Commands | `section` | Nein | By default Gladys only reads. Each kind of command has its own option. Once allowed, the dashboard, the scenes and the voice assistants can change the setpoint of a zone (from 5 °C to the ceiling below) or put a zone on one of the programs of the controller (only a program whose temperatures all stay within the same bounds). A zone in cooling mode is never commanded. |
+| Allow the setpoint commands | `boolean` | Nein | Off by default. Off: every setpoint command is refused. A setpoint puts the zone on a constant temperature (it leaves its program). |
+| Allow the program commands | `boolean` | Nein | Off by default. Off: every program change is refused. |
+| Setpoint ceiling (°C) | `number` | Nein | Gladys never sets a zone above this temperature, nor puts it on a program that goes above it. 24 °C by default, from 16 to 30 °C (never more than 30 °C, whatever is typed). |
+| Refresh interval (s) | `number` | Nein | How often Roth is read, in seconds. |
+| Language of the feature names | `select` | Nein | Used for the names of the devices and features added from now on, for the mode texts and for the command errors. |
+
+## So installierst du Roth Touchline SL in Gladys
+
+1. Öffne in Gladys **Integrationen**: Roth Touchline SL erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-touchline-sl:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-touchline-sl](https://github.com/LM1LC3N7/gladys-touchline-sl).
+
+Roth Touchline SL benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Roth Touchline SL ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-touchline-sl) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-touchline-sl/blob/HEAD/docs/en.md)

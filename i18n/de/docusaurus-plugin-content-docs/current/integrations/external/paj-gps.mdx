@@ -1,0 +1,169 @@
+---
+title: "PAJ GPS Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "PAJ GPS"
+description: "Position, battery, presence at home and alerts of your PAJ GPS trackers, read only. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-paj-gps.png"
+keywords:
+  - "paj gps"
+  - "paj gps smart home"
+  - "gladys paj gps"
+  - "paj gps gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-paj-gps instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PAJ GPS","description":"Position, battery, presence at home and alerts of your PAJ GPS trackers, read only.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-paj-gps","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-paj-gps.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T16:11:56Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Follow your PAJ GPS trackers (car, bike, people, pets, valuables) in Gladys:
+position, speed, battery, last seen, distance to home and "at home", and the
+alerts PAJ raises (SOS button, shock, low battery, zone...). Read only,
+through the cloud of PAJ GPS (connect.paj-gps.de), with the account of the
+PAJ app.
+
+> This integration has never been tested with a real PAJ GPS tracker nor a
+> real account: it follows the documented API of PAJ and the pajgps-api
+> library. Please report what differs. Unofficial integration, not
+> affiliated with PAJ.
+
+## Setup
+
+1. Fill in the **e-mail address** and the **password** of your PAJ GPS
+   account (the ones you use in the PAJ app or on connect.paj-gps.de). The
+   password is kept by Gladys in its database, never shown again, never
+   logged, sent only to the PAJ GPS API.
+2. Choose the **refresh** (5 minutes by default, never less) and the
+   **"at home" radius** (200 m by default).
+3. Save. Gladys reads the account, then the **Discovery** tab lists one device
+   per tracker (20 at most): add the ones you want.
+
+For the distance to home, give your house a position in Gladys
+(**Settings > Houses**). On installation, Gladys asks you to let the
+integration read the position of your houses: it is only used here, in your
+Gladys, to compute the distances.
+
+## What each tracker gives
+
+| Feature          | What it is                                                                          |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| Latitude         | Last position known by PAJ (no history by default)                                  |
+| Longitude        | Last position known by PAJ (no history by default)                                  |
+| Speed            | km/h at the last position                                                           |
+| Battery          | % (trackers with their own battery only)                                            |
+| Last seen        | Date of the last position (UTC)                                                     |
+| Distance to home | Meters to the nearest house of Gladys that has a position                           |
+| At home          | 1 within the radius; 0 beyond the radius plus a margin (half of it, 100 m at least) |
+
+A position is published once: a restart of the integration never sends an old
+position again as a new one, a position older than the one shown (a late
+upload of the tracker) is never published, and a position dated more than
+5 minutes ahead of the clock of Gladys (a tracker with a wrong clock) is
+ignored. Everything is read only: a tracker cannot be
+switched, configured or located on demand from Gladys.
+
+**Presence of a Gladys user.** Gladys cannot yet move a user on its map from
+an integration: use the "At home" feature of the tracker in your scenes (for
+example "when At home of the car becomes 1").
+
+## The "PAJ GPS alert" scene trigger
+
+It fires for each alert PAJ records for a tracker **created in Gladys**:
+choose a tracker (or any) and an alert type (or any): SOS, shock (movement),
+low battery, radius left, speed, power cut off, ignition, drop, zone entered,
+zone left, voltage, turned off, other. The alerts are set in the PAJ app
+(they must be turned on there). Variables: the tracker name, the alert type
+and its time (UTC); never the position.
+
+- Read at the refresh, so an alert arrives up to one interval late.
+- Only alerts of the last hour fire; none for what happened before the
+  tracker was created in Gladys or before the first reading. **With a refresh
+  of 1 hour, an alert may never fire** (it can be just over an hour old when
+  read): choose 30 minutes or less if you use this trigger.
+- 30 events at most per reading (the most recent ones); nothing is marked
+  read in PAJ. An alert route refused for one tracker (HTTP 401/403) only
+  skips its alerts for that reading.
+
+## Pace, failures and privacy
+
+- **Pace.** One reading per interval: the trackers and their last positions
+  (two requests), then one request per tracker created in Gladys for its
+  alerts. Nothing reads sooner: neither the **Test the connection** button,
+  nor Discovery, nor a reconnection, nor saving an unchanged configuration,
+  nor a restart (the time of the last attempt is kept in `/data`).
+- **Refused credentials.** When PAJ refuses the e-mail address or the
+  password, nothing more is sent with them (a wrong password tried again and
+  again may lock the account). Correct them and save, or click **Test the
+  connection**: one more try, never sooner than the interval. A new token is
+  asked at most once per reading when PAJ refuses the current one.
+- **PAJ asks to wait** (HTTP 429, a server error): every request pauses
+  (Retry-After when given, 6 h at most), even after a restart. A 403 page of
+  a firewall pauses 6 h (not about the credentials).
+- **Privacy.** Positions, tracker names and ids, the e-mail address, the
+  password and the tokens are never logged nor written to disk by the
+  integration. `/data` only keeps salted fingerprints, the time of the last
+  attempt, a pause, and the dates of the last position and alert published.
+  The positions published are kept by Gladys like any other value (without
+  history unless you turn it on). The e-mail address and the password go in
+  the address of the login request, as the PAJ API asks for them (over
+  HTTPS, never logged by the integration). They may therefore appear in the
+  access logs of PAJ or of its hosting: use a password for PAJ that you use
+  nowhere else.
+- **Unexpected login answer** (HTTP 404: the API may have changed): said as
+  such, not as refused credentials; not tried again by itself.
+- **Houses.** Read again at every reading: a house given a position later
+  counts at the next reading. A restart keeps "at home" within the margin
+  (the last value Gladys keeps).
+
+## Limits
+
+- 20 trackers at most per account (the ones created in Gladys first).
+- A tracker reports its position at its own pace (PAJ settings), often less
+  often than the refresh.
+- Not tested with a real tracker (see above). The voltage of car trackers,
+  the geofences and the trip history are not read (yet).
+
+Reference: [pajgps-api](https://github.com/Skipperro/pajgps-api) (MIT), ported
+to JavaScript.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt PAJ GPS in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| How it works | `section` | Nein | Gladys reads your PAJ GPS trackers through connect.paj-gps.de, with the account of the PAJ app. Each tracker becomes a Gladys device (Discovery tab): latitude, longitude, speed, battery, last seen, and, when a house of Gladys has a position, the distance to home and "at home". The alerts of the trackers (SOS, shock, low battery, zone...) become a scene trigger. Read only: Gladys never changes anything at PAJ. The position of your house is only used here, in your Gladys; positions are never logged nor written to disk by the integration. Never tested with a real tracker. Unofficial integration, not affiliated with PAJ. |
+| E-mail address | `string` | Ja | The e-mail address of your PAJ GPS account. Never logged. |
+| Password | `secret` | Ja | The password of your PAJ GPS account. Kept by Gladys in its database, never shown again, never logged, sent only to the PAJ GPS API. |
+| Refresh | `select` | Ja | How often Gladys reads the trackers (two requests, plus one per tracker created in Gladys for its alerts). Nothing reads faster: neither the test button, nor a restart. |
+| At home within | `select` | Ja | A tracker closer than this to a house of Gladys (Settings > Houses) is at home. It is away again only beyond this distance plus a margin (half of it, 100 m at least), against the jitter of a position. |
+
+## So installierst du PAJ GPS in Gladys
+
+1. Öffne in Gladys **Integrationen**: PAJ GPS erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-paj-gps:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-paj-gps](https://github.com/LM1LC3N7/gladys-paj-gps).
+
+PAJ GPS benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+PAJ GPS ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-paj-gps) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-paj-gps/blob/HEAD/docs/en.md)

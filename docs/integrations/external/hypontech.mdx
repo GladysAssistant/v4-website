@@ -1,0 +1,179 @@
+---
+title: "Hypontech smart home integration, free and open source"
+sidebar_label: "Hypontech"
+description: "Unofficial: Hypontech inverters and batteries via the Hypon cloud: power, energy, index. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hypontech.png"
+keywords:
+  - "hypontech"
+  - "hypontech smart home"
+  - "gladys hypontech"
+  - "hypontech gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-hypontech instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Hypontech","description":"Unofficial: Hypontech inverters and batteries via the Hypon cloud: power, energy, index.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hypontech","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hypontech.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T21:16:46Z"}} />
+
+**Unofficial** connector, not affiliated with Hypontech. It reads your Hypon
+cloud account (the one of the Hypontech app and of hypon.cloud), **read-only**,
+and gives Gladys your Hypontech micro-inverters, plants and batteries. It never
+sends a command.
+
+**Never tested with a real device** nor with a real account: the Hypon cloud
+API is not documented; it is read as the
+[hyponcloud](https://github.com/jcisio/hyponcloud) library (the one of the Home
+Assistant integration) reads it. Feedback is welcome on the GitHub repository.
+
+## What you get
+
+For each **plant** of your account:
+
+- the solar power (W) and the energy of the day (kWh);
+- a **solar production index** for the Gladys energy monitoring (see below);
+- the power exchanged with the grid, the home consumption, the battery charge
+  and power, when the cloud gives them for this plant.
+
+For each **inverter**: power, energy of the day, online, fault, warning. At
+night an offline micro-inverter goes to 0 W; its counters keep their last
+value.
+
+For each **battery**: charge (%) and number of cycles.
+
+## Configuration
+
+1. Install the integration from the Gladys store.
+2. Enter the **username** and the **password** of your Hypon account (the ones
+   of the Hypontech app). The password is kept by Gladys in its database,
+   never shown again, and sent only to the Hypon cloud (`api.hypon.cloud`). It
+   is never logged, nor the username, nor the session token.
+3. **Portal**: Hypontech for almost everyone; EAS Solar or Nexen if your
+   installer gave you their portal.
+4. **Production index**: on each inverter (default, the safest), on the
+   plants, or none. Never both: the production would be counted twice. Choose
+   "None" if another meter (a production meter, a smart plug, another
+   integration) already counts this production in Gladys. **Choose it before
+   creating the devices** (see below).
+5. **Peak power** (optional): the one of your largest plant, on the installer's
+   invoice. It bounds what the index of a plant may take between two reads.
+   Empty: learned from the power the cloud gives over a week (60 kW for a plant
+   and 15 kW for an inverter until then); an inverter uses its own learned
+   power as soon as it is known. Never enter less than the real value.
+6. **Read every**: 5 minutes by default (2 to 60). Each read makes about four
+   requests per plant; the cloud itself is only updated every few minutes.
+7. Open the **Discover** tab and create the devices you want. Their values come
+   at the next read.
+
+## The production index
+
+The cloud gives, for each plant and each inverter, the energy produced since
+it was put into service. Gladys counts every rise of this index as production.
+So that an odd value is never counted:
+
+- an index of 0 is never sent;
+- a plausible rise (no more than the power of the source × the time elapsed,
+  plus a small margin) goes through. This power is each index's own: learned
+  from the power the cloud gives (or the peak power typed, for a plant);
+- at night (nothing produced, whether the total is unchanged, absent, at 0 or
+  partial: an offline inverter the cloud shows at 0, a plant whose cloud sums
+  the inverters online only) the reference is dated again at each read of a
+  source read and up to date: hours of night never widen the margin of the
+  morning;
+- the total of a **plant** is used only when its inverters were read, each of
+  them has already given a total, and it reaches the sum of the highest totals
+  seen for them: a partial total (an inverter offline) is never counted, the
+  index waits for the whole total;
+- a **jump** or a **drop** is **held back**: the last accepted value is sent
+  again, the status of the integration shows it, and it stays held across a
+  restart. Neither time nor repetition confirms it;
+- a **drop is never accepted**: it comes from an inverter offline, a partial
+  total or an odd value back to normal; the index goes on by itself when the
+  total comes back. An inverter removed or replaced: choose "Each inverter"
+  (it becomes a new device, without a jump);
+- to take a **jump**, click **"Accept the held index"**: the first click lists
+  the jumps held and accepts nothing; a second click within 5 minutes accepts
+  exactly these values, counted at once at the next read. By day a held value
+  may change at each read: click twice between two reads (a value that changed
+  stays held). Saving the configuration never accepts anything.
+
+**Changing the level of the index later stops the index of the former level
+for good**: its devices keep it (their history is never deleted) but never
+receive a value again, even if you come back to that level, so that the
+production in between is never counted twice. The status of the integration
+says so. To resume the index of a device, delete it and create it again from
+the Discover tab. For the new level, "Update" its devices in the Discover tab.
+
+Remaining risk: if `/data` is lost and the container stopped for days, the
+reference taken back from Gladys is old and its margin covers the stop: an
+odd value read when it starts again could go through (bounded by the power of
+the source).
+
+## Pace, pauses and refusals
+
+- Never two reads less than an interval apart, even after a restart, a
+  reconnection, a save of the configuration or a click on "Test the
+  connection" (the time of the last read is kept in `/data`).
+- One login (token) per hour of reads; never a login loop.
+- If the cloud asks to wait (429, or a 5xx error), the reads pause from 1
+  minute to 6 hours, kept across a restart.
+- If the cloud **refuses the username or the password**, nothing more is sent
+  with them, even after a restart. Save the right ones, or click "Test the
+  connection" for one more try (never sooner than the interval). The refusal is
+  erased only by a login that works.
+- `/data` never keeps the password, the username nor the token: only the time
+  of the last read, a pause, the salted fingerprint of refused credentials
+  (erased at the first success) and the state of the indexes.
+
+## Known limits
+
+- The cloud API is not documented: it may change without notice.
+- The sign of the grid power (import > 0 expected, as Gladys wants it) and the
+  one of the battery power are the ones the cloud gives; still to confirm.
+- The grid power and the home consumption appear only after a first value
+  other than 0 (a plant without meter gives 0).
+- A plant the cloud has not updated for more than 2 hours (gateway offline) no
+  longer sends its live values, nor those of its inverters and batteries.
+- A gateway down by day that the cloud would show at 0 W: the catch-up of
+  production when it comes back may be held (counted less, never more, until
+  the click).
+- At most 10 plants and 100 inverters or batteries per plant are read.
+- No Bluetooth, no local access to the gateway.
+
+## Configuration settings
+
+These are the settings Hypontech asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Hypon cloud account | `section` | No | Unofficial connector, not affiliated with Hypontech. It reads your Hypon cloud account (the one of the Hypontech app and of hypon.cloud), read only, every 5 minutes by default: for each plant its solar power, energy of the day and a solar production index for the Gladys energy monitoring (the lifetime total of the cloud, checked before it is counted), the grid and home power and the battery when the cloud gives them; each micro-inverter and battery as its own device. It never sends a command. The password is kept by Gladys in its database, never shown again, and sent only to the Hypon cloud (api.hypon.cloud); it is never logged, nor the username. The cloud API is not documented: never tested with a real account. |
+| Username | `string` | Yes | The username (or e-mail address) of your Hypon cloud account, as in the Hypontech app. Never logged. |
+| Password | `secret` | Yes | Kept by Gladys in its database, never shown again, sent only to the Hypon cloud. If the cloud refuses it, nothing more is sent with it: save the right one, or use the test button for one more try. |
+| Portal | `select` | No | The brand of the portal of your account: Hypontech for almost everyone; EAS Solar or Nexen if your installer gave you their portal. |
+| Production index | `select` | No | Which devices carry the solar production index the Gladys energy monitoring counts: each inverter (default, the safest: its own total), or the plants, never both (the production would be counted twice). A plant total is counted only when it reaches the sum of its inverters. Choose "None" if another meter (a production meter, a smart plug) already counts this production in Gladys. Choose it before creating the devices: when it changes, the index of the former level stops for good (never counted twice); to resume it, delete the device and create it again. |
+| Peak power of the largest plant (kWp, optional) | `number` | No | The peak power of your panels (on the installer's invoice). It bounds what the production index of a plant may take between two reads (an odd total is held back instead). Empty: learned from the power the cloud gives over a week (60 kW for a plant, 15 kW for an inverter until then); an inverter always uses its own learned power once known. Never enter less than the real peak power: in doubt, leave it empty. |
+| Read every (minutes) | `number` | No | Minutes between two reads of the cloud (2 to 60, 5 by default). Each read makes about four requests per plant; the cloud itself is updated every few minutes. |
+
+## How to install Hypontech in Gladys
+
+1. In Gladys, open **Integrations**: Hypontech appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-hypontech:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-hypontech](https://github.com/LM1LC3N7/gladys-hypontech).
+
+Hypontech requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Hypontech is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-hypontech) — [source of this documentation](https://github.com/LM1LC3N7/gladys-hypontech/blob/HEAD/docs/en.md)

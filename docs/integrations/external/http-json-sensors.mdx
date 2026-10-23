@@ -1,0 +1,378 @@
+---
+title: "HTTP / JSON sensors smart home integration, free and open source"
+sidebar_label: "HTTP / JSON sensors"
+description: "Any JSON API, text or web page as a Gladys sensor, and HTTP calls from your scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-http-json.png"
+keywords:
+  - "http / json sensors"
+  - "http / json sensors smart home"
+  - "gladys http / json sensors"
+  - "http / json sensors gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-http-json instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"HTTP / JSON sensors","description":"Any JSON API, text or web page as a Gladys sensor, and HTTP calls from your scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-http-json","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-http-json.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T07:12:53Z"}} />
+
+Turn any address that answers over HTTP into a Gladys sensor: a JSON API (a
+router, a NAS, a solar inverter, a smart plug, a public API), a plain text
+answer, or a web page. You say where the value is in the answer, and its type
+(temperature, power, energy, on/off, text…): it becomes a device, read at the
+interval you choose. Your scenes can also call any address, with scene values
+in it, and use the answer in the next steps.
+
+This is the Gladys counterpart of the `rest` and `scrape` integrations of Home
+Assistant. Nothing is written anywhere but to the addresses you type.
+
+Tested with a test web server (JSON, text, HTML, 401 and 500 errors, slow and
+oversized answers, redirects) and the public Open-Meteo API, in the locked
+container of Gladys. Feedback welcome:
+[github.com/guim31/gladys-http-json/issues](https://github.com/guim31/gladys-http-json/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- An address the Gladys machine can reach: on your local network (private
+  addresses are allowed, they are the main use) or on the Internet.
+- If the address needs it, its token or key (see **Secret header (token)**).
+
+## Getting started
+
+### 1. Fill in a slot
+
+The configuration has 10 slots, **Sensor 1** to **Sensor 10**. A slot with an
+**Address (URL)** is a sensor; an empty address leaves the slot unused. Each
+slot has these fields:
+
+- **Name**: the name of the device (empty: "HTTP sensor 3").
+- **Address (URL)**: `http://` or `https://`, e.g.
+  `http://192.168.1.20/api/status`. Without a scheme, `http://` is used. A
+  user and password in the address are refused: use the secret header.
+- **Method**: GET or POST.
+- **Headers**: one `Name: value` per line, or several separated by a `|` with a space on each side, e.g.
+  `Accept: application/json | X-Room: pool`.
+- **Secret header (token)**: never shown again, never written in the logs.
+  A token alone is sent as `Authorization: Bearer <token>`; `Basic …` or
+  `Token …` are sent as typed after `Authorization:`; a whole header such as
+  `X-Api-Key: abc123` (or `X-Api-Key:abc123`) is sent as is.
+- **Body (POST)**: sent with POST only; JSON is sent as `application/json`,
+  anything else as text.
+- **Field path or /regular expression/**: where the value is (next section).
+- **Type**: what the value is (below).
+- **Multiplier** and **Offset**: for numbers, value × multiplier + offset
+  (e.g. `0.001` to turn Wh into kWh, `0.1` for tenths of a degree). A decimal
+  comma is accepted. Empty: 1 and 0.
+- **Reading interval**: from 30 seconds to 1 hour.
+- **Check the certificate (https)**: on by default; untick it for a device
+  with a self-signed certificate.
+
+Under **Options**, **Language of the names and messages** sets the names of
+the features (fixed when the device is added), the scene variables and the
+test report.
+
+### 2. Say where the value is
+
+- **A JSON answer**: a field path. `data.temp`, `sensors[0].value`,
+  `items[-1].price` (the last one), `['key with.dots']`, or the JSONPath
+  forms `$.data.temp` and `items[?(@.name=='kitchen')].temp` (the first
+  element whose `name` is `kitchen`; `==` and `!=`, texts in quotes, numbers,
+  `true`, `false`, `null`).
+- **A text answer or a web page**: a regular expression between slashes,
+  e.g. `/Temperature: ([0-9.,]+)/`. The first group in brackets is the value
+  (the whole match without a group). Flags after the last slash: `i` (case),
+  `s`, `m`, `u`. For a web page, tags are removed from the value and the usual
+  entities (`&nbsp;`, `&deg;`…) decoded. An expression taking more than half
+  a second is stopped.
+- **Empty**: the whole answer (a device that answers `21.5` or `ON`).
+
+A number in a text is found on its own: `21,5 °C` gives 21.5, `1 234,5 m³`
+gives 1234.5. A comma or a dot as thousands separator is not understood
+(`1,234.5`): write a regular expression for those.
+
+### 3. Choose the type
+
+| Type                 | Gladys feature    | The value          |
+| -------------------- | ----------------- | ------------------ |
+| **Number (no unit)** | generic sensor    | any number         |
+| **Temperature (°C)** | temperature       | number             |
+| **Humidity (%)**     | humidity          | number             |
+| **Percentage (%)**   | level             | number             |
+| **Power (W)**        | power             | number (signed)    |
+| **Energy (kWh)**     | energy            | number             |
+| **Binary (on/off)**  | input state (1/0) | see below          |
+| **Text**             | text              | 250 characters max |
+
+**Binary (on/off)**: `true`, a number other than 0, `on`, `yes`, `up`,
+`active`, `enabled` (and `oui`, `ja`, `si`) give 1; `false`, 0, `off`, `no`,
+`down`, `inactive`, `disabled` (and `non`, `nein`) give 0. Anything else is an
+error.
+
+### 4. Add the devices
+
+Click **Test the sensors**: every sensor is read now, and the answer says what
+each one gives, or why it gives nothing. Then add the sensors in the
+**Discovery** tab of the integration.
+
+## The devices
+
+One device per sensor, with two features:
+
+- the value, of the type of the slot;
+- **In error**: 1 while the sensor fails, 0 otherwise.
+
+A failed reading is tried again after 30 seconds; the sensor is in error after
+two failed readings in a row, so one lost answer changes nothing. The last
+value stays meanwhile. The badge of the device says local or cloud (from the
+address), unreachable while in error.
+
+Changing the address, the path, the type or a header of a slot keeps the
+device and its history (the identity is the slot number). Changing the type
+adds a new value feature: click **Update** in the Discovery tab.
+
+## Dashboard
+
+The **HTTP values** widget shows one row per sensor: the value with its unit,
+or "Error". In its settings, choose the sensors to show (empty: all; only the
+devices added to Gladys can be chosen). **Refresh** reads them again now.
+
+## Scenes
+
+### Triggers
+
+- **A sensor fails**: two readings in a row fail (no answer, HTTP error, value
+  not found, configuration to fix). Once, until the sensor works again. Filter:
+  a sensor, or any. Variables: the sensor name, the error, its key (`status`,
+  `timeout`, `unreachable`, `tls`, `too_large`, `redirect`, `not_json`,
+  `not_found`, `no_match`, `not_number`, `not_binary`, `empty`, `config`…)
+  and the HTTP code (0 without an answer).
+- **A text value changes**: a sensor of type **Text** reads a value different
+  from the last one (not at the first reading, not after a restart).
+  Variables: the sensor name, the new value and the previous one.
+
+For a number that crosses a threshold, use the device value in a scene
+condition as for any sensor.
+
+### Actions
+
+- **Call an address**: sends a request — address, method (GET, POST, PUT,
+  PATCH, DELETE), headers, body — where scene values can be inserted (type
+  `{{`). The body is not sent with GET. **Secret header of sensor** adds the
+  secret header of a sensor, **only towards the address of that sensor (same scheme, host and port)**: a scene cannot send it elsewhere (no secret can be typed in a
+  scene, every user can read them). An optional field path or regular
+  expression reads a value in the answer.
+- **Read a sensor now**: reads a sensor without waiting for its interval, and
+  publishes its value.
+
+Both give the next actions: **Succeeded**, the **HTTP code (0: no answer)**,
+the **Value read**, the **Value as a number (0 if none)** and the **Error**;
+**Call an address** also gives the **Answer (2000 characters at most)**. A
+failed request does not stop the scene: test **Succeeded**.
+
+### Scene ideas
+
+- Every evening at 22:00, **Call an address**
+  `http://192.168.1.30/relay/0?turn=off` to switch off a Shelly relay, then
+  send a message if **Succeeded** is false.
+- **A sensor fails** on the NAS sensor: send "NAS: " and the **Error** variable to your
+  phone.
+- When the alarm is armed, **Call an address** on a webhook (Node-RED, n8n,
+  Home Assistant) with the method POST and the body `{"alarm": "armed"}`.
+- **Read a sensor now** on the pool temperature before starting the pump, then
+  a condition on the value.
+
+## Troubleshooting
+
+- **Field not found in the answer**: open the address in a browser, copy the
+  path to the value (Firefox shows JSON as a tree, "Copy path" is in the
+  context menu of a value). Lists are counted from 0.
+- **The answer is not JSON**: the address gives a page or a text: use a
+  regular expression, or check the address (a login page?).
+- **Error answer (HTTP 401 or 403)**: the token or the key is wrong or
+  missing: fill in **Secret header (token)**.
+- **Certificate refused**: untick **Check the certificate (https)** for that
+  slot.
+- **Redirected to another address, refused**: the address sends to another host, or from https to http (often `http://` to a cloud login page). Type the final address.
+- **No answer in time**: the address answers in more than 10 seconds.
+- **The value is not a number**: the path leads to a text or a list; adjust it,
+  or choose the type **Text**.
+- Logs: set the `LOG_LEVEL=debug` variable of the integration to see every
+  reading.
+
+## Limits
+
+- 10 sensors, one value each. For several values of one answer, use several
+  slots with the same address.
+- Answers of 1 MB at most, 10 seconds at most (20 s for a scene call),
+  3 redirects at most, on the same host only and never from https to http.
+- No cookies, no login form, no JavaScript: a page built by JavaScript in the
+  browser shows nothing here. Use its API.
+- No units other than the ones of the types: a number in another unit goes in
+  **Number (no unit)**.
+- Mind the rules of the APIs you read (quotas, terms): the interval is yours to
+  choose. Open-Meteo, for example, asks for fewer than 10 000 calls a day.
+
+## Configuration settings
+
+These are the settings HTTP / JSON sensors asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| HTTP / JSON sensors | `section` | No | Up to 10 sensors, one per slot: an address, and where the value is in the answer. Each sensor becomes a device in the Discovery tab. An empty address leaves the slot unused. The fields are explained under sensor 1. |
+| Sensor 1 | `section` | No |  |
+| Name | `string` | No | Name of the device. Empty: “HTTP sensor N”. |
+| Address (URL) | `string` | No | http:\/\/ or https:\/\/, local addresses included. |
+| Method | `select` | No |  |
+| Headers | `string` | No | One “Name: value” per line, or separated by “ \| ”. |
+| Secret header (token) | `secret` | No | A token alone is sent as “Authorization: Bearer …”. Or a whole header: “X-Api-Key: …”. Never shown in the logs. |
+| Body (POST) | `string` | No | Sent with POST only. JSON is sent as application/json. |
+| Field path or /regular expression/ | `string` | No | JSON: data.items[0].temp. Text or HTML page: /Temp: ([0-9.]+)/ (first group). Empty: the whole answer. |
+| Type | `select` | No |  |
+| Multiplier | `string` | No | Numbers only. Empty: 1. E.g. 0.001 for Wh to kWh. |
+| Offset | `string` | No | Added after the multiplier. Empty: 0. |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No | Untick for a device with a self-signed certificate. |
+| Sensor 2 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 3 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 4 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 5 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 6 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 7 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 8 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 9 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Sensor 10 | `section` | No |  |
+| Name | `string` | No |  |
+| Address (URL) | `string` | No |  |
+| Method | `select` | No |  |
+| Headers | `string` | No |  |
+| Secret header (token) | `secret` | No |  |
+| Body (POST) | `string` | No |  |
+| Field path or /regular expression/ | `string` | No |  |
+| Type | `select` | No |  |
+| Multiplier | `string` | No |  |
+| Offset | `string` | No |  |
+| Reading interval | `select` | No |  |
+| Check the certificate (https) | `boolean` | No |  |
+| Options | `section` | No |  |
+| Language of the names and messages | `select` | No | Device feature names (set when the device is added), scene variables, test report. |
+
+## How to install HTTP / JSON sensors in Gladys
+
+1. In Gladys, open **Integrations**: HTTP / JSON sensors appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-http-json:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-http-json](https://github.com/guim31/gladys-http-json).
+
+HTTP / JSON sensors requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+HTTP / JSON sensors is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-http-json) — [source of this documentation](https://github.com/guim31/gladys-http-json/blob/HEAD/docs/en.md)

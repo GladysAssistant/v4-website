@@ -1,0 +1,189 @@
+---
+title: "Integración domótica Unfolded Circle Remote, gratuita y de código abierto"
+sidebar_label: "Unfolded Circle Remote"
+description: "Unfolded Circle Remote Two and Remote 3: battery, activities and their buttons, on your network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-unfolded-circle.png"
+keywords:
+  - "unfolded circle remote"
+  - "domótica unfolded circle remote"
+  - "gladys unfolded circle remote"
+  - "unfolded circle remote gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-unfolded-circle instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Unfolded Circle Remote","description":"Unfolded Circle Remote Two and Remote 3: battery, activities and their buttons, on your network.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-unfolded-circle","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-unfolded-circle.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-20T23:54:27Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This integration brings an **Unfolded Circle Remote Two** or **Remote 3** into
+Gladys, through the local API of the remote (the REST Core API documented by
+Unfolded Circle): no cloud, everything stays on your network.
+
+> **Warning: never tested with a real device.** This integration has never
+> been tested with a real device: it was written from the
+> pyUnfoldedCircleRemote library and tested with simulated answers only. Your
+> feedback is welcome on the Gladys forum.
+
+Unofficial, not affiliated with Unfolded Circle.
+
+## What the remote shows
+
+| Feature             | Type      | Values                                              |
+| ------------------- | --------- | --------------------------------------------------- |
+| Battery             | read only | charge level, %                                     |
+| Charging            | read only | 1 on its dock or cable, 0 otherwise                 |
+| Reachable           | read only | 1 the remote answered the last reading, 0 otherwise |
+| Power mode          | text      | Normal, Idle, Low power, Asleep                     |
+| Current activity    | text      | names of the activities running, "—" when none      |
+| _activity_: running | read only | 1 the activity runs, 0 stopped (one per activity)   |
+| Start _activity_    | button    | starts the activity (`activity.on`)                 |
+| Stop _activity_     | button    | stops the activity (`activity.off`)                 |
+
+Start and stop are **buttons**, not a switch: an "everything off" of a voice
+assistant or a scene cannot trigger them. The state of each activity can
+trigger a scene.
+
+The activities are the ones you created on the remote (50 at most). An
+activity added on the remote shows up in the **Discovery** tab at the next
+reading; a deleted activity keeps its features in Gladys (its history is not
+lost), but its buttons answer that it no longer exists.
+
+## Configuration
+
+1. **Address of the remote**: its IP address or host name on your network
+   (settings of the remote, Wi-Fi). Better give it a fixed address in your
+   router. A port may follow (`192.168.1.20:8080`).
+2. **API key**: see below.
+3. **Reading interval**: 30 seconds to 5 minutes (1 minute by default).
+4. Save. The remote shows up in the **Discovery** tab: add it.
+
+The key is kept by Gladys in its database, never shown again, and sent only
+to your remote, in the `Authorization` header of each request. The local API
+of the remote is plain HTTP: the key travels in clear on your local network,
+as for the web configurator of the remote.
+
+### Create an API key
+
+The key is created with the PIN of the web configurator of the remote (shown
+on the remote in the profile settings, web configurator section). From a
+computer on the same network:
+
+```bash
+curl -u web-configurator:<PIN> -X POST http://<address>/api/auth/api_keys \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "Gladys", "scopes": ["admin"]}'
+```
+
+The answer holds `api_key`: copy its value into the **API key** field. It is
+shown only once. The integration never asks for the PIN. To revoke the key
+later: `GET /api/auth/api_keys` (with the PIN) then
+`DELETE /api/auth/api_keys/<key_id>`.
+
+## Sleep
+
+To save its battery, the remote goes to sleep and turns its Wi-Fi off: it no
+longer answers. "Reachable" goes to 0, the other values keep their last
+reading, and the integration tries again at each interval (never faster). The
+values come back as soon as it wakes up (a press, a pick-up, the dock). A
+button pressed while it sleeps answers that the remote is unreachable:
+nothing is sent. The integration does not wake the remote up (no Wake-on-LAN
+in this version).
+
+While it sleeps, each reading costs one request (the activity list): the
+battery and the power mode are only asked once it answered.
+
+> **Question to testers**: tell us on the forum whether readings every 30
+> seconds keep the remote from sleeping or drain its battery faster. When in
+> doubt, keep 1 minute or more.
+
+## Commands
+
+- "Start" is sent in the order of the presses, one command at a time.
+- "Stop" goes at once, without waiting for the queued starts, and cancels the
+  starts of the same activity still waiting. It is always tried once, even
+  during a pause or while the key is held as refused, and even for an
+  activity the integration has not read yet.
+- Each command must go through within 3.5 seconds (Gladys waits 5 seconds).
+  When the remote does not answer in time, Gladys shows "sent, without
+  confirmation" and the state is read again two seconds later.
+- After commands, the readings are grouped: one every 10 seconds at most.
+- A command the remote refuses (401 or 403) does not stop the integration: a
+  reading checks the key at once, and only a refused reading holds it as
+  refused.
+
+## Status and errors
+
+- **Key refused** (revoked, or another remote at this address): the
+  integration stops and only tries again by itself after 1 hour, then 6
+  hours, then every 24 hours. This stop is kept across restarts. Paste a new
+  key (tried at once, even while a reading was under way) or click
+  **Reconnect** (one try).
+- **Too many requests (429) or remote busy (5xx)**: a pause of 1 minute to 6
+  hours (5 minutes by default for a 5xx, 15 minutes for a 429), kept across
+  restarts. During the pause nothing is read and "Start" is refused; "Stop"
+  still goes (one try). A 5xx of the activity list starts the pause; a 5xx of
+  the battery, the power mode or the identity of a remote already known (at a
+  restart, a new key or "Reconnect" too) only leaves those values out: the
+  saved identity is kept and asked again 6 hours later, the activities are
+  still followed. Only the very first identity reading, without which there
+  is no device, pauses on a 5xx. A 429 always starts the pause.
+- **Certificate refused**: an `https://` address with a self-signed
+  certificate is refused; the status says so and nothing is sent. Type the
+  address without `https://` (the local API is plain HTTP).
+- **No answer**: see "Sleep".
+
+## Privacy
+
+The integration only talks to your remote, on your network. It reads
+`/api/pub/version` (without the key), `/api/system`, `/api/system/power`,
+`/api/system/power/battery` and `/api/activities`, and sends the activity
+commands to `/api/entities/<activity>/command`. Nothing goes to the Internet.
+
+## Credits
+
+JavaScript port of
+[pyUnfoldedCircleRemote](https://github.com/jackjpowell/py-unfolded-circle)
+(MIT), the library of the Home Assistant integration by Jack Powell.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Unfolded Circle Remote te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Unfolded Circle remote | `section` | No | Brings an Unfolded Circle Remote Two or Remote 3 into Gladys, through the local API of the remote (no cloud): battery level, charging, power mode, the activities running, and for each activity a button to start it and a button to stop it. The remote needs an API key (see the guide). A remote asleep does not answer: its values come back when it wakes up. Never tested with a real remote. Unofficial, not affiliated with Unfolded Circle. |
+| Address of the remote | `string` | Sí | Its IP address or host name on your network, as shown in the settings of the remote (Wi-Fi). A port may follow (192.168.1.20:8080). |
+| API key | `secret` | Sí | Created on the remote (see the guide). Kept by Gladys in its database, never shown again, sent only to your remote. |
+| Reading interval | `select` | No | How often the remote is read. Shorter shows a started activity sooner. |
+| Language of the names | `select` | No | Used for the names of the features added from now on, and the activity names when the remote has them in several languages. |
+
+## Cómo instalar Unfolded Circle Remote en Gladys
+
+1. En Gladys, abre **Integraciones**: Unfolded Circle Remote aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-unfolded-circle:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-unfolded-circle](https://github.com/LM1LC3N7/gladys-unfolded-circle).
+
+Unfolded Circle Remote requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Unfolded Circle Remote es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-unfolded-circle) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-unfolded-circle/blob/HEAD/docs/en.md)

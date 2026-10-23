@@ -1,0 +1,239 @@
+---
+title: "authentik Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "authentik"
+description: "authentik in Gladys: fehlgeschlagene Anmeldungen, ungewöhnliche Länder und Outposts in Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-authentik.png"
+keywords:
+  - "authentik"
+  - "authentik smart home"
+  - "gladys authentik"
+  - "authentik gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-authentik instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"authentik","description":"authentik in Gladys: fehlgeschlagene Anmeldungen, ungewöhnliche Länder und Outposts in Szenen.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-authentik","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-authentik.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:26:29Z"}} />
+
+[authentik](https://goauthentik.io/) ist ein freier Identitätsanbieter: Single
+Sign-on (SSO) und Mehr-Faktor-Authentifizierung für die Dienste deines Zuhauses
+oder deiner Firma. Diese Integration bringt seine **Sicherheitsereignisse** zu
+Gladys: ein Gerät „authentik“ mit den Fehlversuchen und Anmeldungen des Tages
+und den Outposts online, Szenen, die bei einer fehlgeschlagenen Anmeldung, einer
+Serie von Fehlversuchen, einer Anmeldung aus einem ungewöhnlichen Land, einem
+Outpost offline oder einem anderen Sicherheitsereignis auslösen (um dir eine
+Benachrichtigung mit Benutzer, Adresse und Land zu schicken), und ein
+Dashboard-Widget mit den letzten Ereignissen.
+
+Getestet mit einem echten authentik 2026.8.4 (Docker, mit den offiziellen
+GeoIP-Testdatenbanken von MaxMind; Fehlversuche und Anmeldungen über die
+Flow-API gespielt). Ohne Produktivinstallation entwickelt: Rückmeldungen sind
+willkommen unter [den Issues](https://github.com/guim31/gladys-authentik/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- authentik, vom Gladys-Rechner aus erreichbar (seine öffentliche Adresse oder
+  seine lokale Adresse auf Port 9000 oder 9443). Getestet mit 2026.8; eine
+  ältere Version mit derselben API v3 sollte funktionieren.
+- Ein **Dienstkonto** mit einer Rolle, die die Ereignisse, die Benutzer und die
+  Outposts lesen darf, und ein **API-Token** dafür (siehe unten).
+- Optional: **GeoIP** in authentik (eine kostenlose MaxMind-GeoLite2-Datenbank)
+  für Land und Stadt jeder Anmeldung. Ohne sie funktioniert alles außer dem
+  Auslöser „Anmeldung aus einem ungewöhnlichen Land“.
+
+Gladys liest nur: In authentik lässt sich von Gladys aus nichts ändern.
+
+## Erste Schritte
+
+### 1. Ein Dienstkonto anlegen
+
+In der Admin-Oberfläche von authentik: **Verzeichnis → Benutzer → Neues
+Dienstkonto**, Name `gladys`, „Gruppe erstellen“ und „Läuft ab“ abwählen. Das
+dann angezeigte Token ist ein App-Passwort: Es wird **von der API abgelehnt**,
+nutze es nicht.
+
+### 2. Ihm die Leseberechtigungen geben
+
+**Verzeichnis → Rollen → Erstellen**, Name `Gladys read-only`. In der Rolle,
+Reiter **Berechtigungen → Berechtigung zuweisen**, füge hinzu:
+
+- `authentik_events | event | Can view Event` (`view_event`);
+- `authentik_core | User | Can view User` (`view_user`);
+- `authentik_outposts | Outpost | Can view Outpost` (`view_outpost`).
+
+Dann Reiter **Benutzer → Vorhandenen Benutzer hinzufügen**: das Konto `gladys`.
+
+### 3. Ein API-Token erstellen
+
+**Verzeichnis → Tokens und App-Passwörter → Erstellen**: Kennung `gladys-api`,
+Benutzer `gladys`, Zweck **API**, „Läuft ab“ abwählen. Kopiere das Token mit
+der Schaltfläche „Token kopieren“.
+
+### 4. Die Integration konfigurieren
+
+In Gladys, **Integrationen → authentik → Konfiguration**:
+
+- **Adresse von authentik**: z. B. `https://auth.example.com`.
+- **API-Token**: das Token aus Schritt 3.
+- **Fehlversuche für eine Serie** und **Zeitfenster der Serie**: die Regel des
+  Auslösers „Serie fehlgeschlagener Anmeldungen“, standardmäßig 5 Fehlversuche
+  in 10 Minuten.
+- **Übliche Länder**: ISO-Codes der Länder, aus denen sich deine Benutzer
+  anmelden (`DE, AT`). Leer lernt die Integration sie selbst (siehe unten).
+- **Aktualisierungsintervall**: standardmäßig 1 Minute.
+- **Sprache der Namen**: Sprache der Funktionsnamen und des Satzes.
+
+**Verbindung testen** liest authentik sofort und fasst zusammen, was es sieht.
+
+### 5. Das Gerät hinzufügen
+
+Füge unter **Erkennung** das Gerät „authentik“ hinzu.
+
+## Das Gerät
+
+| Funktion                             | Inhalt                                              |
+| ------------------------------------ | --------------------------------------------------- |
+| `Erreichbar`                         | 1, wenn die API von authentik antwortet, sonst 0    |
+| `Fehlgeschlagene Anmeldungen (1 h)`  | Fehlgeschlagene Anmeldungen der letzten Stunde      |
+| `Fehlgeschlagene Anmeldungen (24 h)` | Fehlgeschlagene Anmeldungen der letzten 24 Stunden  |
+| `Anmeldungen (24 h)`                 | Erfolgreiche Anmeldungen der letzten 24 Stunden     |
+| `Benutzer`                           | Aktive Benutzerkonten (ohne Dienstkonten)           |
+| `Outposts online`                    | Outposts mit mindestens einer verbundenen Instanz   |
+| `Outposts`                           | In authentik angelegte Outposts (eingebetteter mit) |
+| `Version`                            | Version des authentik-Servers                       |
+
+„Erreichbar“ geht nach zwei fehlgeschlagenen Lesevorgängen hintereinander auf 0:
+Ein Neustart von authentik bleibt unbemerkt. Die Zähler können wie jeder Sensor
+Szenen auslösen (z. B. „Fehlgeschlagene Anmeldungen (1 h)“ über 20).
+
+## Dashboard
+
+Das Widget **authentik-Sicherheit** zeigt die Fehlversuche und Anmeldungen der
+letzten 24 Stunden, die Outposts online und dann die letzten
+Sicherheitsereignisse (Benutzer, was passiert ist, Land, Uhrzeit).
+**Aktualisieren** liest authentik neu.
+
+## Szenen
+
+### Auslöser
+
+- **Fehlgeschlagene Anmeldung**: Jemand hat ein falsches Passwort oder einen
+  unbekannten Benutzernamen eingegeben. Filter: der Benutzername. Variablen:
+  eingegebener Benutzername, Adresse, Land, Stadt.
+- **Serie fehlgeschlagener Anmeldungen**: Die Fehlversuche erreichen die in der
+  Konfiguration eingestellte Zahl in ihrem Zeitfenster. Einmal pro Serie, dann
+  erst wieder, wenn die Zahl unter die Schwelle gefallen ist. Variablen: Zahl
+  der Fehlversuche, Zeitfenster, verschiedene Benutzernamen und Adressen,
+  letzter Benutzername, letzte Adresse und letztes Land.
+- **Anmeldung aus einem ungewöhnlichen Land**: eine erfolgreiche Anmeldung aus
+  einem Land außerhalb der üblichen. Ist das Feld „Übliche Länder“ leer, lernt
+  die Integration die Länder der erfolgreichen Anmeldungen (das erste still, die
+  letzten 24 Stunden beim ersten Start): Die erste Anmeldung aus einem neuen
+  Land löst aus, die nächsten nicht. Filter: der Benutzername. Variablen:
+  Benutzername, Adresse, Land, Stadt.
+- **Outpost offline**: Ein Outpost (Proxy, LDAP, RADIUS…) hat zwei
+  Lesevorgänge hintereinander keine verbundene Instanz. Einmal, bis er zurück
+  ist. Filter: der Name des Outposts. Variablen: Name, Typ.
+- **Sicherheitsereignis**: eine verdächtige Anfrage, eine Passwortänderung oder
+  ein Identitätswechsel durch einen Administrator. Filter: das Ereignis.
+  Variablen: Ereignis, Benutzername, Adresse, Land, Stadt, Meldung von
+  authentik.
+
+Benutzernamen und Adressen sind personenbezogene Daten: Diese werden an deine
+Szenen weitergegeben (für eine Benachrichtigung) und im Widget angezeigt, aber
+nie auf der Info-Stufe in die Protokolle der Integration geschrieben.
+
+### Aktionen
+
+- **Zustand von authentik**: fasst authentik für eine Nachricht zusammen:
+  Fehlversuche über 1 Stunde und 24 Stunden, Anmeldungen, Outposts online und
+  insgesamt, Version, letzter fehlgeschlagener Benutzername und letzte Adresse
+  und ein fertiger Satz („authentik: 3 fehlgeschlagene Anmeldung(en) in 1 h, 3
+  in 24 h, 2 Anmeldung(en) in 24 h, Outposts online: 1/2, 2 Benutzer“).
+
+### Szenenideen
+
+- **Fehlgeschlagene Anmeldung** mit dem Benutzernamen `admin` → eine
+  Benachrichtigung „Jemand probiert das Admin-Konto aus
+  \{\{triggerEvent.data.country\}\} (\{\{triggerEvent.data.ip\}\})“.
+- **Serie fehlgeschlagener Anmeldungen** → eine Benachrichtigung, und das Licht
+  an der Haustür blinkt rot, wenn niemand zu Hause ist.
+- **Outpost offline** → eine Benachrichtigung: Die Webdienste hinter dem Proxy
+  authentifizieren nicht mehr.
+- Jeden Abend **Zustand von authentik** → der Satz in einer Nachricht.
+
+## Fehlerbehebung
+
+- **„API-Token abgelehnt“**: Das Token ist falsch, abgelaufen, oder es ist das
+  App-Passwort des Dienstkontos: Erstelle ein Token mit dem Zweck **API**.
+- **„Dem Token fehlt eine Berechtigung“**: Die Rolle hat kein `view_event`, oder
+  das Konto ist nicht in der Rolle. „Outposts nicht lesbar“ oder „Benutzer nicht
+  lesbar“ im Test: Es fehlt `view_outpost` oder `view_user`.
+- **„TLS abgelehnt“**: authentik nutzt ein selbstsigniertes Zertifikat, oder für den HTTP-Port 9000 wurde `https://` eingegeben.
+  Nutze seine lokale Adresse mit `http://…:9000` oder ein vertrauenswürdiges
+  Zertifikat.
+- **„keine authentik-API unter dieser Adresse“**: Prüfe die Adresse (die der
+  Admin-Oberfläche, ohne `/if/admin`).
+- **Kein Land in den Ereignissen**: GeoIP ist in authentik nicht eingerichtet.
+- Ausführliche Protokolle: `LOG_LEVEL=debug` am Container.
+
+## Grenzen
+
+- authentik hat keinen Datumsfilter für seine Ereignisse: Die Integration liest
+  die letzten Seiten bis zu einem bereits gesehenen Ereignis, höchstens 1.000
+  Ereignisse pro Lesevorgang, 3.000 beim ersten. Darüber hinaus (ein massiver
+  Angriff) sind die Zähler Mindestwerte.
+- Höchstens 10 Szenenereignisse pro Auslöser und Lesevorgang: Ein Angriff
+  schickt nie Hunderte Benachrichtigungen.
+- Was passiert ist, während die Integration gestoppt war, wird beim nächsten
+  Start gemeldet (innerhalb der letzten 24 Stunden; das Datum des letzten
+  Ereignisses wird in `/data` gespeichert); der allererste Start meldet nichts.
+- Die von authentik gespeicherten Ereignisse laufen nach der in authentik
+  eingestellten Aufbewahrungszeit ab.
+- Nur die Anmeldungen und die oben genannten Sicherheitsereignisse werden
+  verfolgt, nicht die Freigaben von Anwendungen oder Konfigurationsänderungen.
+
+Nicht mit Authentik Security Inc. verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt authentik in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein authentik-Server | `section` | Nein | Lege in authentik ein Dienstkonto an, eine Rolle mit den Berechtigungen view_event, view_user und view_outpost und ein Token mit dem Zweck API. Die Anleitung zeigt jeden Schritt. |
+| Adresse von authentik | `string` | Nein | Die Adresse, mit der du authentik öffnest, oder seine lokale Adresse (Port 9000 oder 9443). |
+| API-Token | `secret` | Nein | Token des Dienstkontos, Zweck API. Nur lesend: Gladys ändert nichts in authentik. |
+| Alarme | `section` | Nein | Eine Serie von Fehlversuchen löst einmal aus, wenn so viele Fehlversuche im gewählten Zeitfenster auftreten. Übliche Länder: ISO-Codes (DE, AT…); leer werden die Länder früherer Anmeldungen gelernt. |
+| Fehlversuche für eine Serie | `number` | Nein |  |
+| Zeitfenster der Serie | `select` | Nein |  |
+| Übliche Länder | `string` | Nein | Braucht GeoIP in authentik. Leer: aus den Anmeldungen gelernt. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft authentik gelesen wird: nur die neuen Ereignisse. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Hinzufügen des Geräts festgelegt) und der Szenenergebnisse. |
+
+## So installierst du authentik in Gladys
+
+1. Öffne in Gladys **Integrationen**: authentik erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-authentik:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-authentik](https://github.com/guim31/gladys-authentik).
+
+authentik benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+authentik ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-authentik) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-authentik/blob/HEAD/docs/de.md)

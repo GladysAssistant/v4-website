@@ -1,0 +1,240 @@
+---
+title: "IMEON Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "IMEON"
+description: "Unofficial: IMEON hybrid inverters on your network: solar, battery, grid, energy indexes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-imeon.png"
+keywords:
+  - "imeon"
+  - "imeon smart home"
+  - "gladys imeon"
+  - "imeon gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-imeon instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"IMEON","description":"Unofficial: IMEON hybrid inverters on your network: solar, battery, grid, energy indexes.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-imeon","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-imeon.png","type":"device","version":"0.1.2","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T04:53:29Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial** integration, not affiliated with Imeon Energy. It reads your
+IMEON hybrid inverter (IMEON 3.6, 9.12, 3-25…) on your local network, through
+the local API of OS One, without any cloud, once a minute. **Read-only**: it
+never changes a setting of the inverter (mode, battery charge, injection,
+relay).
+
+**Never tested with a real IMEON inverter**: the integration was written from
+the official library of Imeon Energy (imeon_inverter_api) and the Home
+Assistant integration that uses it. Your feedback is welcome.
+
+## Requirements
+
+- An IMEON inverter with OS One, reachable on your local network (a fixed IP
+  address in your router is advised).
+- The **API module** turned on in the inverter (without it, the integration
+  says "not an IMEON answer").
+- The user name and password of the local interface of the inverter (often
+  `user@local`). A user account is enough: the integration only reads.
+
+## Setup
+
+1. In Gladys, install the IMEON integration from the catalog.
+2. Enter the **address** of the inverter (e.g. `192.168.1.50`), the **user
+   name** and the **password**. The password is kept by Gladys in its
+   database, never shown again, sent only to the inverter on your network.
+3. Click **Test the connection**: the model and serial of the inverter are
+   shown.
+4. In the **Discover** tab, create the "IMEON …" device. Its values come at
+   once, then every minute.
+
+## What you get
+
+- **Solar**: total production (`energy-production-sensor`, W), per string,
+  share used in the house, share injected.
+- **Battery**: charge (%), power, status (1 = charging, 2 = discharging, 3 =
+  charged), stored and consumed powers.
+- **Grid**: power taken (`energy-sensor`, W, read by the energy contracts),
+  power injected, flow, voltage and current per phase, frequency.
+- **House**: consumption (W), AC input and output, energy meter, inverter
+  temperatures, self-consumption and self-sufficiency over 24 h, inverter
+  state and mode (read-only), charging current and injection power limits.
+- **Counters of the day** (kWh): solar production, taken from and injected
+  into the grid, house consumption, stored in and taken from the battery,
+  forecasts left. These are plain sensors: they start again from 0 each night
+  and are never counted by the energy monitoring.
+- **Two energy indexes** for the Gladys energy monitoring: the **grid
+  consumption** index (the core derives the consumption and its cost) and the
+  **solar production** index (the core derives the production per half
+  hour).
+
+Phases L2 and L3 only show once the inverter shows them (three-phase
+inverter).
+
+## The energy indexes
+
+The local API of the inverter only gives **counters of the day**, started
+again from 0 at midnight, and no lifetime counter. The Gladys energy
+monitoring needs a cumulative index. So the integration builds it: index =
+sum of the days ended + counter of the day.
+
+Rule: every doubt counts less, never more.
+
+- A drop of the counter is a new day only around the local midnight (11 pm
+  to 3 am, time zone `TZ` of the container, Europe/Paris by default), once a
+  night, or when the last value taken is from an earlier day (a cut across
+  midnight), and only down to 36 kWh at most. The index then stays exactly
+  where it was: neither the first value of the new day nor what the inverter
+  counted between the last read and its midnight is counted (a little less).
+- A second drop while the first new day may still be undone (a stale low
+  value just before midnight, then the real 0) undoes the first one: only one
+  new day counts.
+- Any other drop (a reboot, a lost clock, a glitch in the day) gives no index
+  until the counter is back above its last value (the status says so). What
+  is not back is not counted.
+- A rise faster than the margin since the last value taken (36 kW for the
+  consumption, the learned margin for the production, see below) is a jump: never
+  taken, never confirmed by time.
+- A "new day" taken by mistake (a counter at 0 near midnight) is undone when,
+  within 3 h, the counter comes back faster than possible, straight back to
+  the exact value of the day before, or, read after a gap of more than 3
+  minutes, back to at least half of the day before: a night reboot of the
+  inverter (unread, 0 or a stale value, unread, back) is one incident. The
+  only exception: a real cut across midnight (a drop read out of the midnight
+  window, after 3 am, the local day changed and over 1 h without reads before
+  the drop, measured on the monotonic clock: a wall clock jumping forward
+  forges none). The night is then used: a value under
+  the day before gives no index until the counter passes it or the local day
+  changes.
+- A wall clock set back gives no index until it has caught up with the last
+  read.
+- If the integration is stopped for hours around midnight, the energy of
+  those hours is not counted.
+- **Risk left near midnight**: after a new day still undoable, a value read
+  after a gap but under half of the day before is taken as the consumption
+  of the new day (at most that value counted too much); and after a real cut
+  across midnight (a drop read after 3 am, over 1 h without reads), a return
+  to the level of the day before after another gap, slow enough to be
+  plausible, would count the day before a second time: it needs an inverter
+  whose midnight is more than 3 h late, a cut, a counter near 0 and a return. The guard below still
+  holds any jump of the index.
+
+The counter of the day before shown again (a reboot of the inverter) is kept
+out of the index: after midnight, a value within 0.1 kWh of the last one read
+while the inverter has not started its new day; later the same day, a value
+within 0.1 kWh of the day before while the counter of the day is still more
+than 0.1 kWh under it (a jump, never a slow rise). The counter of the day is
+not sent either for that read, and the status says so.
+The mark of the day before is noted for the night of the new day, even when
+the inverter resets a little before our midnight. After an update from 0.1.1,
+this protection starts at the first midnight after it (or at once when the
+update falls within 3 h of a new day).
+
+Each index then passes the **guard** taken from the P1 Monitor integration:
+never 0; a plausible rise goes through (at most 36 kW on average since the
+last value, plus 0.5 kWh, for the grid consumption index; for the solar
+production index, 1.5 × the highest solar power of the last 30 days once 7
+days are known, between 2 and 36 kW, and 36 kW before); a drop or a jump is
+**held** (the last accepted value is sent again), shown in the status of the
+integration and kept across restarts.
+
+- A **jump** is only taken by the **Accept the held index** button, and only
+  for the value shown (plus what may have come since): it is then counted at
+  once.
+- A **drop** is **never accepted**: the index built from the counter of the
+  day only drops when it takes back values already sent (or when `/data` is
+  older than Gladys), never because a meter was replaced. Nothing to do: it
+  corrects itself and goes on once the counter is back above it; only the new
+  energy is counted. The button answers that a drop is never accepted.
+- Saving the configuration never accepts anything.
+
+For the production index, when the counter of the day only moves by steps
+(every few minutes), the rise of a step is judged on the time since the
+previous step (20 min at most, never above 36 kW), not on a single minute.
+Longer steps, or steps too large for 36 kW, may still lose the rest of a day
+(as in 0.1.1).
+
+**Risk left (it would count too much)**:
+
+- the day before shown again more than 0.1 kWh away from the last value
+  read, above or below, is taken as a rise of the day, or shown again while the
+  counter of the day is already less than 0.1 kWh under it: 0.1 kWh at most;
+- any false read that fits the margin goes through: for the consumption,
+  36 kW × the length of the silence (a single false value after 30 min
+  without reads: +6.35 kWh measured); for the production, 36 kW for the
+  first 7 days and after an update, then the learned margin.
+
+**Limit (it counts less)**: after a refused jump, nothing more is taken that
+day for that index (unless the counter comes back close to its last value
+taken); the index goes on with the new day.
+If you delete and create the device again, its indexes start from scratch.
+
+## Errors and pauses
+
+- **User name or password refused**: the reads stop (kept across restarts),
+  one new try after 1 h, then 2 h… up to 24 h. Correct them and save the
+  configuration to start again at once. The test button never forces a try
+  during this stop.
+- **HTTP 429 or 5xx**: a pause from 1 minute to 6 hours (kept across
+  restarts), never a read before its end.
+- **Unreachable inverter**: new try after 1 minute, then doubled up to 15
+  minutes.
+- **Session ended**: the integration logs in again once per read, never in a
+  loop.
+- A secondary page (temperatures, forecast, state…) that does not answer never
+  holds back the other values.
+
+## Known limits
+
+- Never tested with a real IMEON inverter: the names of the fields and their
+  units come from the library and the Home Assistant integration.
+- Read-only in v0.1: no change of mode, grid charge, night discharge,
+  injection or relay.
+- The timeline messages of the inverter are not read in v0.1.
+- One inverter per integration.
+
+## Data and privacy
+
+Everything stays on your local network: the integration only talks to the
+inverter. The `/data` folder of the integration only keeps the serial, the
+state of the indexes and guards, and the pauses running: never the password
+nor the session cookie.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt IMEON in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| IMEON inverter | `section` | Nein | Unofficial connector, not affiliated with Imeon Energy. It reads your IMEON hybrid inverter through the local API of OS One (the "API module" must be turned on), without any cloud, once a minute: solar production, battery, grid, house consumption, temperatures, and two energy indexes for the Gladys energy monitoring (taken from the grid, solar production), built from the counters of the day of the inverter. Read-only: it never changes a setting of the inverter. Never tested with a real IMEON inverter. |
+| Inverter address | `string` | Ja | The IP address of the inverter on your network (shown by your router), with a port only if it is not 80. Preferably give it a fixed address in your router; if it changes, enter the new one: the device and its history are kept. |
+| User name | `string` | Ja | The user name of the local interface of the inverter (OS One), often an e-mail address such as user@local. A user account is enough: the integration only reads. |
+| Password | `secret` | Ja | The password of that account. Kept by Gladys in its database, never shown again, sent only to the inverter on your network. |
+
+## So installierst du IMEON in Gladys
+
+1. Öffne in Gladys **Integrationen**: IMEON erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-imeon:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-imeon](https://github.com/LM1LC3N7/gladys-imeon).
+
+IMEON benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+IMEON ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-imeon) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-imeon/blob/HEAD/docs/en.md)

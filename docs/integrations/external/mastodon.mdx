@@ -1,0 +1,171 @@
+---
+title: "Mastodon smart home integration, free and open source"
+sidebar_label: "Mastodon"
+description: "Post to Mastodon from a scene, run scenes on mentions and new followers, follow your counters. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mastodon.png"
+keywords:
+  - "mastodon"
+  - "mastodon smart home"
+  - "gladys mastodon"
+  - "mastodon gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-mastodon instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Mastodon","description":"Post to Mastodon from a scene, run scenes on mentions and new followers, follow your counters.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mastodon","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mastodon.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:56:20Z"}} />
+
+Connects one Mastodon account to Gladys: scenes can post on Mastodon and write privately to people you
+know, and they can start when the account is mentioned, receives a private mention, gets a new follower,
+or has a post boosted or favourited. A device follows the counters of the account (followers, accounts
+followed, posts, unread notifications), and a dashboard widget shows the last notifications.
+
+It works with any server speaking the Mastodon API: Mastodon, GoToSocial, Akkoma, Pleroma.
+
+> Tested against a real GoToSocial server, not yet against Mastodon itself nor a real Gladys: feedback
+> welcome on [GitHub](https://github.com/guim31/gladys-mastodon/issues).
+
+## What you need
+
+- Gladys 5.1 or later.
+- A Mastodon account. A dedicated account for the house (marked as a bot in its profile) is best: everything
+  the scenes post is posted under its name.
+- An access token of this account: on the server, open **Preferences → Development → New application**,
+  give it a name (Gladys), tick the **read** and **write:statuses** scopes (and **write:media** to attach
+  images), save, open the application and copy **Your access token**. On GoToSocial:
+  **Settings → Applications**, then request a token for the application.
+
+## Set up
+
+1. Install the integration: **Integrations → Install from GitHub**, address
+   `https://github.com/guim31/gladys-mastodon`.
+2. In its **Configuration** tab, fill in:
+   - **Server address**: the address of your server, e.g. `https://mastodon.social`.
+   - **Access token**: the token copied above.
+   - **Allowed accounts**: the accounts whose mentions start scenes, separated by commas, e.g.
+     `alice@mastodon.social, bob` (`bob` is an account of your own server). Empty: no mention starts a scene.
+     These accounts may also receive private mentions from the scenes.
+   - **Language of the names**: the language of the device features and of the errors returned to the
+     scenes.
+3. Save. The status turns to "connected", and the account appears in the **Discovery** tab: add it to get
+   its counters.
+4. **Test the connection** checks the token and shows the account, its followers and unread notifications.
+
+## The device
+
+One device per account, named `Mastodon @account@server`, with four counters: **Followers**, **Following**,
+**Posts** and **Unread notifications**. They are read every 5 minutes, and right after a notification. The
+unread notifications are those after the read marker of the Mastodon apps: reading them in the Mastodon web
+interface or in a compatible app sets them back to 0. On servers without the count of Mastodon 4.3
+(GoToSocial, older Mastodon), at most 40 are counted.
+
+## Dashboard
+
+The **Mastodon** widget shows whether the account is connected, its followers and unread notifications, and
+the last five notifications (mentions, followers, boosts, favourites). Private mentions are never shown: the
+dashboard is seen by everyone at home. Two buttons: **Mark as read** (when notifications are unread) moves
+the read marker to the newest notification, **Test the connection** runs the test above.
+
+## Scenes
+
+### Triggers
+
+- **Mastodon mention received**: a public, unlisted or followers-only post mentions the account. Filters:
+  **Author** (an address such as `alice@mastodon.social`) and **Visibility**. Variables: the author (address
+  and display name), the text without the leading mentions, the visibility, the post id and its address.
+- **Mastodon private mention received**: a private mention (a direct message) reached the account. Filter:
+  **Author**. Same variables, without the visibility.
+- **New Mastodon follower**: someone follows the account, or asks to when the account is locked. Variables:
+  the author and whether it is a follow request to approve.
+- **Mastodon post boosted or favourited**: someone boosted or favourited a post of the account. Filter:
+  **Kind**. Variables: the kind (`boost` or `favourite`), the author, the text and the address of the post.
+
+Only the mentions of the **Allowed accounts** start a scene: with an empty list, none does (followers,
+boosts and favourites start their triggers for everyone). The account itself never starts a trigger, and notifications older than 10 minutes
+(received while Gladys was stopped) start nothing.
+
+### Actions
+
+- **Post on Mastodon**: publishes a post. **Visibility**: unlisted by default (on the profile, not in the
+  public timelines), public or followers only. Optional **Content warning**, and an optional image: an
+  **Image address** in http(s) the integration can reach (the snapshot address of a camera, for instance
+  `http://user:password@192.168.1.30/snapshot.jpg`; JPEG, PNG, GIF or WebP, 8 MB at most) with its **Image
+  description** for screen readers. The text is cut at the length the server allows (500 characters on
+  Mastodon by default).
+- **Send a Mastodon private mention**: writes privately to an account. The **Recipient** must be an allowed
+  account or one the account follows: the integration never writes to a stranger. **In reply to** takes the
+  post id variable of a trigger, to answer in the same conversation. The other `@` of the message are
+  neutralised (an invisible character follows them): a text taken from a trigger never adds a recipient.
+
+Both actions return **Sent**, the **Post id**, the **Post address** and the **Error**, for the following
+actions of the scene. At most 30 posts an hour come from the scenes: beyond, they are skipped.
+
+### Scene ideas
+
+- **The doorbell rang**: when the doorbell button is pressed → Post on Mastodon, followers only, "Someone
+  rang at the door", with the snapshot address of the door camera.
+- **A command by private mention**: Mastodon private mention received, author `alice@mastodon.social` → if
+  the text is "garage", close the garage, then Send a Mastodon private mention to the author, in reply to the
+  post id: "The garage is closing."
+- **A new follower**: New Mastodon follower → a notification to the phone of the house, with the author.
+
+## Troubleshooting
+
+- **"access token refused"**: the token was revoked or mistyped; create a new one.
+- **"refused: does the token have the read and write:statuses scopes?"**: the application lacks a scope;
+  tick it and use the new token.
+- **No trigger while the counters work**: the streaming API may be blocked by a reverse proxy (WebSocket
+  upgrade). The integration then reads the notifications every minute: triggers come late but come. Check
+  that your proxy forwards `/api/v1/streaming` as a WebSocket.
+- **A mention starts nothing**: check that its author is in **Allowed accounts** (full address, e.g. `alice@mastodon.social`) and
+  the **Author** filter of the trigger; set `LOG_LEVEL=debug` to see the ignored mentions in the logs.
+- **The image is missing**: the address must be reachable from the container of the integration, and
+  answer with an image type.
+
+## Limits
+
+- One account per Gladys. The token gives the integration the rights of the account: use a dedicated one.
+- Mentions take effect in about a second through the streaming API; notifications missed during a cut are
+  read back afterwards, but those older than 10 minutes start no scene, and at most 200 are read back.
+- Gladys does not give a device integration its camera images: the image of a post comes from an address.
+- Mastodon limits an account to 300 posts in 3 hours and 300 requests in 5 minutes; the integration makes
+  about 3 requests every 5 minutes, more when notifications arrive.
+- Polls, edits and admin notifications are not triggers. Text only: the HTML of posts becomes plain text.
+- Not affiliated with Mastodon gGmbH. Mastodon is a trademark of Mastodon gGmbH.
+
+## Configuration settings
+
+These are the settings Mastodon asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | On your Mastodon server, open Preferences → Development → New application, tick the read and write:statuses scopes, save, then copy the access token. A dedicated account for the house is best. |
+| Server address | `string` | Yes | The address of your Mastodon (or GoToSocial, Akkoma, Pleroma) server, e.g. https:\/\/mastodon.social. |
+| Access token | `secret` | No | The access token of the application created in Preferences → Development. |
+| Allowed accounts | `string` | No | Accounts whose mentions fire scenes, separated by commas, e.g. alice@mastodon.social, bob. Empty: nobody. They may also receive private mentions. |
+| Language of the names | `select` | No | Language of the device features and of the errors returned to the scenes. |
+
+## How to install Mastodon in Gladys
+
+1. In Gladys, open **Integrations**: Mastodon appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-mastodon:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-mastodon](https://github.com/guim31/gladys-mastodon).
+
+Mastodon requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Mastodon is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-mastodon) — [source of this documentation](https://github.com/guim31/gladys-mastodon/blob/HEAD/docs/en.md)

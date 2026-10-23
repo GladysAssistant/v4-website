@@ -1,0 +1,191 @@
+---
+title: "Intégration domotique Hypontech, gratuite et open source"
+sidebar_label: "Hypontech"
+description: "Non officiel : onduleurs et batteries Hypontech via le cloud Hypon : puissance, énergie, index. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hypontech.png"
+keywords:
+  - "hypontech"
+  - "domotique hypontech"
+  - "gladys hypontech"
+  - "hypontech gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-hypontech instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Hypontech","description":"Non officiel : onduleurs et batteries Hypontech via le cloud Hypon : puissance, énergie, index.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hypontech","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hypontech.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T21:16:46Z"}} />
+
+Connecteur **non officiel**, sans lien avec Hypontech. Il lit votre compte du
+cloud Hypon (celui de l'application Hypontech et du site hypon.cloud) en
+**lecture seule** et donne à Gladys vos micro-onduleurs, vos centrales et vos
+batteries Hypontech. Il n'envoie jamais de commande.
+
+**Jamais testé avec un vrai appareil** ni avec un vrai compte : l'API du cloud
+Hypon n'est pas documentée, elle est lue comme le fait la bibliothèque
+[hyponcloud](https://github.com/jcisio/hyponcloud) (celle de l'intégration Home
+Assistant). Vos retours sont les bienvenus sur le dépôt GitHub.
+
+## Ce que vous obtenez
+
+Pour chaque **centrale** de votre compte :
+
+- la puissance solaire (W) et l'énergie du jour (kWh) ;
+- un **index de production solaire** pour le suivi énergétique de Gladys (voir
+  plus bas) ;
+- la puissance échangée avec le réseau, la consommation de la maison, la charge
+  et la puissance de la batterie, quand le cloud les donne pour cette centrale.
+
+Pour chaque **onduleur** : puissance, énergie du jour, en ligne, défaut,
+avertissement. La nuit, un micro-onduleur hors ligne passe à 0 W ; ses
+compteurs gardent leur dernière valeur.
+
+Pour chaque **batterie** : charge (%) et nombre de cycles.
+
+## Configuration
+
+1. Installez l'intégration depuis le store de Gladys.
+2. Saisissez l'**identifiant** et le **mot de passe** de votre compte Hypon
+   (ceux de l'application Hypontech). Le mot de passe est gardé par Gladys dans
+   sa base, jamais réaffiché, et envoyé uniquement au cloud Hypon
+   (`api.hypon.cloud`). Il n'est jamais journalisé, pas plus que l'identifiant
+   ni le jeton de session.
+3. **Portail** : Hypontech pour presque tout le monde ; EAS Solar ou Nexen si
+   votre installateur vous a donné leur portail.
+4. **Index de production** : sur chaque onduleur (par défaut, le plus sûr),
+   sur les centrales, ou aucun. Jamais les deux : la production serait comptée
+   deux fois. Choisissez « Aucun » si un autre compteur (compteur de
+   production, prise connectée, autre intégration) compte déjà cette
+   production dans Gladys. **Choisissez-le avant de créer les appareils** (voir
+   plus bas).
+5. **Puissance crête** (facultatif) : celle de votre plus grande centrale, sur
+   la facture de l'installateur. Elle borne ce que l'index d'une centrale peut
+   prendre entre deux lectures. Vide : apprise depuis la puissance donnée par
+   le cloud sur une semaine (60 kW pour une centrale et 15 kW pour un onduleur
+   d'ici là) ; un onduleur utilise sa propre puissance apprise dès qu'elle est
+   connue. Ne saisissez jamais moins que la vraie valeur.
+6. **Lecture toutes les** : 5 minutes par défaut (2 à 60). Chaque lecture fait
+   environ quatre requêtes par centrale ; le cloud n'est de toute façon mis à
+   jour que toutes les quelques minutes.
+7. Ouvrez l'onglet **Découverte** et créez les appareils voulus. Leurs valeurs
+   arrivent à la lecture suivante.
+
+## L'index de production
+
+Le cloud donne pour chaque centrale et chaque onduleur l'énergie produite
+depuis la mise en service. Gladys compte chaque hausse de cet index comme de la
+production. Pour ne jamais compter une valeur aberrante :
+
+- un index à 0 n'est jamais envoyé ;
+- une hausse plausible (pas plus que la puissance de la source × le temps
+  écoulé, un peu de marge en plus) passe. Cette puissance est propre à chaque
+  index : apprise de la puissance donnée par le cloud (ou la puissance crête
+  saisie pour une centrale) ;
+- la nuit (rien produit, que le total soit inchangé, absent, à 0 ou partiel :
+  un onduleur hors ligne que le cloud montre à 0, une centrale dont le cloud ne
+  somme que les onduleurs en ligne), la référence est redatée à chaque lecture
+  d'une source lue et à jour : des heures de nuit n'élargissent jamais la marge
+  du matin ;
+- le total d'une **centrale** n'est utilisé que si ses onduleurs ont été lus,
+  que chacun a déjà donné un total, et qu'il atteint la somme des plus hauts
+  totaux vus pour eux : un total partiel (un onduleur hors ligne) n'est jamais
+  compté, l'index attend le total complet ;
+- un **saut** ou une **baisse** est **retenu** : la dernière valeur acceptée est
+  renvoyée, l'état de l'intégration l'affiche, et il le reste après un
+  redémarrage. Ni le temps ni la répétition ne le confirment ;
+- une **baisse n'est jamais acceptée** : elle vient d'un onduleur hors ligne,
+  d'un total partiel ou d'une valeur fausse revenue à la normale ; l'index
+  reprend seul quand le total revient. Un onduleur retiré ou remplacé :
+  choisissez « Chaque onduleur » (il devient un nouvel appareil, sans saut) ;
+- pour prendre un **saut**, cliquez sur **« Accepter l'index retenu »** : le
+  premier clic liste les sauts retenus sans rien accepter ; un second clic dans
+  les 5 minutes accepte exactement ces valeurs, comptées d'un coup à la lecture
+  suivante. De jour, une valeur retenue peut changer à chaque lecture : cliquez
+  deux fois entre deux lectures (une valeur qui a changé reste retenue).
+  Enregistrer la configuration n'accepte jamais rien.
+
+**Changer le niveau de l'index plus tard arrête pour de bon l'index de
+l'ancien niveau** : ses appareils le gardent (leur historique n'est jamais
+supprimé) mais ne reçoivent plus jamais de valeur, même si vous revenez à ce
+niveau, pour que la production entre-temps ne soit jamais comptée deux fois.
+L'état de l'intégration le signale. Pour reprendre l'index d'un appareil,
+supprimez-le et recréez-le depuis l'onglet Découverte. Pour le nouveau niveau,
+« Mettez à jour » ses appareils dans l'onglet Découverte.
+
+Risque restant : si `/data` est perdu et le conteneur arrêté plusieurs jours,
+la référence reprise de Gladys est ancienne et sa marge couvre l'arrêt : une
+valeur fausse lue à la reprise pourrait passer (bornée par la puissance de la
+source).
+
+## Rythme, pauses et refus
+
+- Jamais deux lectures à moins d'un intervalle d'écart, même après un
+  redémarrage, une reconnexion, un enregistrement de la configuration ou un
+  clic sur « Tester la connexion » (l'heure de la dernière lecture est gardée
+  dans `/data`).
+- Une seule connexion (jeton) par heure de lectures ; jamais de reconnexion en
+  boucle.
+- Si le cloud demande d'attendre (429, ou une erreur 5xx), les lectures sont
+  en pause de 1 minute à 6 heures, gardée après un redémarrage.
+- Si le cloud **refuse l'identifiant ou le mot de passe**, plus rien n'est
+  envoyé avec eux, même après un redémarrage. Enregistrez les bons, ou cliquez
+  sur « Tester la connexion » pour un nouvel essai (jamais avant l'intervalle).
+  Le refus n'est effacé que par une connexion réussie.
+- `/data` ne garde jamais le mot de passe, l'identifiant ni le jeton :
+  seulement l'heure de la dernière lecture, une pause, l'empreinte salée
+  d'identifiants refusés (effacée au premier succès) et l'état des index.
+
+## Limites connues
+
+- L'API du cloud n'est pas documentée : elle peut changer sans prévenir.
+- Le signe de la puissance réseau (import > 0 attendu, comme le veut Gladys) et
+  celui de la puissance batterie sont ceux que donne le cloud ; ils restent à
+  confirmer.
+- La puissance réseau et la consommation de la maison n'apparaissent qu'après
+  une première valeur non nulle (une centrale sans compteur donne 0).
+- Une centrale non mise à jour par le cloud depuis plus de 2 heures (passerelle
+  hors ligne) n'envoie plus ses valeurs en direct ni celles de ses onduleurs et
+  batteries.
+- Une passerelle tombée en journée que le cloud montrerait à 0 W : le
+  rattrapage de production au retour peut être retenu (moins compté, jamais
+  plus, jusqu'au clic).
+- Au plus 10 centrales et 100 onduleurs ou batteries par centrale sont lus.
+- Pas de Bluetooth, pas d'accès local à la passerelle.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Hypontech dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Compte du cloud Hypon | `section` | Non | Connecteur non officiel, sans lien avec Hypontech. Il lit votre compte du cloud Hypon (celui de l'application Hypontech et de hypon.cloud), en lecture seule, toutes les 5 minutes par défaut : pour chaque centrale sa puissance solaire, son énergie du jour et un index de production solaire pour le suivi énergétique de Gladys (le total depuis la mise en service donné par le cloud, vérifié avant d'être compté), la puissance du réseau, de la maison et la batterie quand le cloud les donne ; chaque micro-onduleur et chaque batterie comme un appareil. Il n'envoie jamais de commande. Le mot de passe est gardé par Gladys dans sa base, jamais réaffiché, et envoyé uniquement au cloud Hypon (api.hypon.cloud) ; il n'est jamais journalisé, pas plus que l'identifiant. L'API du cloud n'est pas documentée : jamais testé avec un vrai compte. |
+| Identifiant | `string` | Oui | L'identifiant (ou l'adresse e-mail) de votre compte du cloud Hypon, comme dans l'application Hypontech. Jamais journalisé. |
+| Mot de passe | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, envoyé uniquement au cloud Hypon. Si le cloud le refuse, plus rien n'est envoyé avec lui : enregistrez le bon, ou utilisez le bouton de test pour un nouvel essai. |
+| Portail | `select` | Non | La marque du portail de votre compte : Hypontech pour presque tout le monde ; EAS Solar ou Nexen si votre installateur vous a donné leur portail. |
+| Index de production | `select` | Non | Quels appareils portent l'index de production solaire que compte le suivi énergétique de Gladys : chaque onduleur (par défaut, le plus sûr : son propre total), ou les centrales, jamais les deux (la production serait comptée deux fois). Le total d'une centrale n'est compté que s'il atteint la somme de ses onduleurs. Choisissez « Aucun » si un autre compteur (compteur de production, prise connectée) compte déjà cette production dans Gladys. Choisissez-le avant de créer les appareils : s'il change, l'index de l'ancien niveau s'arrête pour de bon (jamais compté deux fois) ; pour le reprendre, supprimez l'appareil et recréez-le. |
+| Puissance crête de la plus grande centrale (kWc, facultatif) | `number` | Non | La puissance crête de vos panneaux (sur la facture de l'installateur). Elle borne ce que l'index de production d'une centrale peut prendre entre deux lectures (un total aberrant est retenu). Vide : apprise depuis la puissance donnée par le cloud sur une semaine (60 kW pour une centrale, 15 kW pour un onduleur d'ici là) ; un onduleur utilise toujours sa propre puissance apprise une fois connue. Ne saisissez jamais moins que la vraie puissance crête : dans le doute, laissez vide. |
+| Lecture toutes les (minutes) | `number` | Non | Minutes entre deux lectures du cloud (2 à 60, 5 par défaut). Chaque lecture fait environ quatre requêtes par centrale ; le cloud lui-même n'est mis à jour que toutes les quelques minutes. |
+
+## Comment installer Hypontech dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Hypontech apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-hypontech:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-hypontech](https://github.com/LM1LC3N7/gladys-hypontech).
+
+Hypontech nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Hypontech est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-hypontech) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-hypontech/blob/HEAD/docs/fr.md)

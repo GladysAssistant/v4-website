@@ -1,0 +1,250 @@
+---
+title: "Blocky smart home integration, free and open source"
+sidebar_label: "Blocky"
+description: "Blocky DNS ad blocker: blocking pause by group, query statistics, list refresh. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-blocky.png"
+keywords:
+  - "blocky"
+  - "blocky smart home"
+  - "gladys blocky"
+  - "blocky gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-blocky instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Blocky","description":"Blocky DNS ad blocker: blocking pause by group, query statistics, list refresh.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-blocky","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-blocky.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:28:35Z"}} />
+
+Follow and control your [Blocky](https://0xerr0r.github.io/blocky/) DNS proxy
+and ad blocker from Gladys, over your local network: pause its blocking for
+five minutes from the dashboard when a website breaks, pause only some groups
+of block lists from a scene, refresh the lists, see its queries of the last
+hour, and know when it stops answering.
+
+> **Tested against a real Blocky v0.35** (the official Docker image), not yet
+> with a real Gladys installation: feedback welcome. If something does not work
+> as described, please say so on the
+> [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-blocky/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later (5.2.0 or later for the _Pause…_ button of
+  the widget).
+- **Blocky** with its HTTP port open to Gladys (`ports: http: 4000` in
+  `config.yml`). The REST API of Blocky has no password: Gladys reaches it
+  directly, like the `blocky` command does.
+- For the statistics, the **Prometheus** endpoint of Blocky turned on:
+
+```yaml
+prometheus:
+  enable: true
+```
+
+Without it, the device only has the blocking switch, and the widget only the
+state and the buttons.
+
+## Set up
+
+1. Install the integration from the Gladys catalog.
+2. In **Configuration**, enter the **Address** of your server (for example
+   `192.168.1.2`: port 4000 is added; or a full address such as
+   `http://192.168.1.2:4000` or `https://dns.example.net`), and optionally a
+   **Name**. Two or three servers? Fill in the _Second server_ and _Third
+   server_ sections too.
+3. Save, then click **Test the connection**: the message under the button says,
+   for each server, whether it answers, its version, the state of its blocking
+   and whether the statistics are on.
+4. Open the **Discover** tab: one device per server. Click **Add**, pick a
+   room, save.
+
+Options:
+
+- **Accept self-signed certificates**: for an `https://` address (the HTTPS
+  port of Blocky) whose certificate is self-signed. Leave it off for `http://`
+  addresses.
+- **Refresh interval**: how often the servers are read, from 30 seconds
+  (default) to 5 minutes.
+- **Turning the blocking switch off**: what the switch of the device does when
+  you turn it off: pause the blocking for 5 minutes (default), 15, 30 or 60
+  minutes, or disable it until you turn it back on.
+- **Language of the feature names**: English, French, German or Spanish. The
+  names are given when a device is added (French by default).
+
+## The device of each server
+
+| Feature                     | What it is                                                                |
+| --------------------------- | ------------------------------------------------------------------------- |
+| Blocking                    | Switch: on, Blocky blocks the listed domains; off, it lets all in         |
+| DNS queries (last hour)     | Queries received over the last 60 minutes                                 |
+| Blocked queries (last hour) | Queries blocked over the last 60 minutes                                  |
+| Share blocked (last hour)   | Share of the queries blocked, in %, rounded                               |
+| Cache hit rate (last hour)  | Share of the queries sent upstream that the cache answered, in %, rounded |
+| Blocked domains             | Entries of the deny lists, all groups together                            |
+| Version                     | The installed version of Blocky                                           |
+
+All features but _Blocking_ come from the Prometheus endpoint. Blocky counts
+since it started; the integration computes the last hour from two readings an
+hour apart. Just after Gladys, the integration or Blocky starts, the figures
+appear after the second reading and cover a shorter time, up to an hour.
+Turning Prometheus on or off adds or removes these features: Gladys then
+offers to **Update** the device in the Discover tab.
+
+The switch reads **off** as soon as Blocky reports its blocking as disabled,
+also when only some groups are paused. When a pause has a length, Blocky turns
+the blocking back on by itself at the end, and the switch follows. The badge of
+the device shows **Local** when the server answers and **Unreachable** when it
+does not.
+
+## Dashboard
+
+Add the **Blocky** widget to a dashboard. By default it shows all your servers
+together; choose one in its settings to show only that one. Pausing a single
+server out of two changes nothing: your devices then ask the other one.
+
+The widget shows the queries, the blocked queries and the share blocked over
+the last hour, the state of each server (blocking, paused with the minutes
+left, disabled, unreachable), the groups of a pause that does not cover all
+of them, the cache hit rate and the blocked domains. Its buttons:
+
+- **Pause 5 min** and **Pause 30 min**: pause the whole blocking right away;
+- **Pause…**: opens a small form to type the duration in minutes (Gladys 5.2.0
+  or later; an older Gladys answers that it needs an update);
+- **Resume**: turns the blocking back on. It shows a check mark while the
+  blocking is on everywhere.
+
+## Scenes
+
+### Triggers
+
+- **Blocky blocking paused**: the blocking was turned off, from Gladys or from
+  elsewhere (the `blocky` command, another tool). Filter by server and by
+  origin (_From Gladys_ or _Outside Gladys_). The actions can read the name of
+  the server, the length of the pause in minutes (`duration_minutes`, 0 when
+  it has no end) and the groups paused (`groups`; a pause of the whole
+  blocking lists every group, plus `default`).
+- **Blocky blocking resumed**: the blocking is on again. The origin tells
+  whether the pause ended on its own (_End of the pause_), from Gladys or from
+  elsewhere; `paused_minutes` says how long it lasted.
+- **Blocky no longer answers**: a server did not answer two reads in a row
+  (the second one 15 seconds after the first). The DNS of your home may be
+  down. `error` says why, in the language of the configuration.
+- **Blocky answers again**: it is back; `down_minutes` says after how long.
+
+### Actions
+
+- **Pause Blocky blocking**: pauses the blocking on one server, or on all of
+  them when the field is left empty, for a number of minutes (5 by default, 0
+  until resumed, one day at most). **Groups**: leave it empty to pause the
+  whole blocking, or type the names of groups of your `denylists`, separated
+  by commas (for example `ads`), to pause only those. A new pause replaces the
+  running one. The following actions can read how many servers were paused.
+- **Resume Blocky blocking**: turns the blocking back on, on one server or all
+  of them.
+- **Refresh the Blocky lists**: downloads the deny and allow lists again now,
+  for example after editing a list file.
+- **Flush the Blocky DNS cache**: empties the DNS cache, for example after
+  changing a record, so the next queries are answered afresh.
+- **Read the Blocky statistics**: reads the queries of the last hour into a
+  sentence, such as "In the last hour, 1,234 DNS queries, 123 blocked (10 %).",
+  in the language of the configuration. The following actions can send it
+  (`sentence`) or use the figures (`queries_last_hour`, `blocked_last_hour`,
+  `blocked_percent`, `blocking_enabled`). Needs the Prometheus endpoint.
+
+The _Blocking_ switch can also be used with the standard Gladys action that
+controls a device.
+
+### Scene ideas
+
+- **Game time**: every Wednesday at 14:00, _Pause Blocky blocking_ for 120
+  minutes with the group `games`: the game sites open for two hours, the ads
+  stay blocked, and the blocking comes back on its own.
+- **DNS alert**: _Blocky no longer answers_ → send a message "Blocky
+  \{\{triggerEvent.data.server\}\} does not answer: \{\{triggerEvent.data.error\}\}".
+  And _Blocky answers again_ → "back after
+  \{\{triggerEvent.data.down_minutes\}\} min".
+- **Safety net**: a scene every evening at 20:00 with _Resume Blocky
+  blocking_, so a switch turned off "until turned back on" never stays off all
+  night.
+
+## Troubleshooting
+
+- **"no Blocky API at this address"**: something else answers there, or the
+  port is the DNS one. Enter the HTTP port of Blocky (`ports: http:` in
+  `config.yml`, often 4000): `192.168.1.2`, or `http://192.168.1.2:4000`.
+- **"unknown group"**: the _Groups_ field of the pause names a group that is
+  not in the `denylists` of `config.yml` (names are case-sensitive).
+- **No statistics**: turn on `prometheus: enable: true` in `config.yml`, then
+  restart Blocky. _Test the connection_ says "statistics on" once it works.
+- **"certificate refused"**: you entered an `https://` address; tick _Accept
+  self-signed certificates_, or use the `http://` address.
+- **"the address redirects"**: enter the `https://` address.
+- **"a password protects this address"**: a reverse proxy with a login stands
+  in front of Blocky; give Gladys the direct address of Blocky instead.
+- **"does not answer"**: check that `http://<address>:4000/api/blocking/status`
+  opens from a computer on the network of Gladys. Names ending in `.local`
+  usually do not work inside the integration: use the IP address.
+- Logs: on the page of the integration in Gladys, or `docker logs` on the host.
+  They show the start, each server lost and back, the problems (once each, not
+  at every reading) and your commands. Start the container with
+  `LOG_LEVEL=debug` to see every reading and every retry.
+
+## Limits
+
+- One integration handles up to three servers. Blocky instances that share
+  their state through Redis pause together: pausing one is enough.
+- The integration reads each server once per refresh interval (two small
+  requests: the blocking status and the Prometheus page): no quota is at risk.
+- The figures are those of the last hour only; Gladys keeps their history.
+- The shares are rounded in the device (Gladys has no decimal percentage
+  sensor); the widget shows one decimal for the share blocked.
+- The integration does not edit the lists, the groups of clients nor the
+  configuration of Blocky: use `config.yml` for that.
+
+This integration is not affiliated with Blocky or its authors.
+
+## Configuration settings
+
+These are the settings Blocky asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Blocky server | `section` | No | Blocky's REST API, on its HTTP port (ports: http: 4000 in config.yml). For the statistics, also turn on prometheus (enable: true). Up to three servers. |
+| Address | `string` | Yes | IP address or name of the server (HTTP port 4000 by default), or a full URL such as http:\/\/192.168.1.2:4000. |
+| Name | `string` | No | Name of the device in Gladys. Empty: "Blocky" followed by the address. |
+| Second server (optional) | `section` | No | Same fields, for another Blocky server of your network. |
+| Address | `string` | No | IP address or name of the server (HTTP port 4000 by default), or a full URL such as http:\/\/192.168.1.2:4000. |
+| Name | `string` | No | Name of the device in Gladys. Empty: "Blocky" followed by the address. |
+| Third server (optional) | `section` | No | Same fields, for another Blocky server of your network. |
+| Address | `string` | No | IP address or name of the server (HTTP port 4000 by default), or a full URL such as http:\/\/192.168.1.2:4000. |
+| Name | `string` | No | Name of the device in Gladys. Empty: "Blocky" followed by the address. |
+| Options | `section` | No |  |
+| Accept self-signed certificates | `boolean` | No | For https:\/\/ addresses (Blocky's HTTPS port) with a self-signed certificate. Tick only for your own servers. |
+| Refresh interval | `select` | No | How often the Blocky servers are read. |
+| Turning the blocking switch off | `select` | No | Pauses the blocking for this long, or until the switch is turned back on. |
+| Language of the feature names | `select` | No | Names given to the features when a device is added, and texts of the scene events. |
+
+## How to install Blocky in Gladys
+
+1. In Gladys, open **Integrations**: Blocky appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-blocky:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-blocky](https://github.com/guim31/gladys-blocky).
+
+Blocky requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Blocky is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-blocky) — [source of this documentation](https://github.com/guim31/gladys-blocky/blob/HEAD/docs/en.md)

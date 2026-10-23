@@ -1,0 +1,194 @@
+---
+title: "Sleep as Android smart home integration, free and open source"
+sidebar_label: "Sleep as Android"
+description: "Sleep tracking, alarms and sleep phases of the Sleep as Android app in Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-sleepasandroid.png"
+keywords:
+  - "sleep as android"
+  - "sleep as android smart home"
+  - "gladys sleep as android"
+  - "sleep as android gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-sleepasandroid instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sleep as Android","description":"Sleep tracking, alarms and sleep phases of the Sleep as Android app in Gladys.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-sleepasandroid","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-sleepasandroid.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T08:32:46Z"}} />
+
+This integration brings the [Sleep as Android](https://sleep.urbandroid.org/) app into Gladys:
+whether sleep tracking is on, the sleep phase (awake, light, deep, REM), the alarm ringing, the
+next alarm and how long you slept. Every event of the app can start a Gladys scene: close the
+shutters when tracking starts, turn the lights on softly when the alarm rings, send a message when
+a baby cry is heard.
+
+Requires **Gladys 5.1 or later**.
+
+## How the events reach Gladys
+
+Sleep as Android pushes its events, Gladys never asks the phone. Two channels, use one or both:
+
+| Channel     | Badge in Gladys | What you need                                   | Works away from home |
+| ----------- | --------------- | ----------------------------------------------- | -------------------- |
+| **MQTT**    | local           | an MQTT broker on your network (e.g. Mosquitto) | no                   |
+| **Webhook** | cloud           | a Gladys Plus subscription                      | yes                  |
+
+With both, every event arrives twice: the integration keeps the first copy and drops the other.
+The **Prefer the local connection** toggle of the Configuration screen chooses which channel the
+device badge shows when both work.
+
+## 1. Configure the integration
+
+Open **Integrations → Sleep as Android → Configuration**.
+
+| Field                     | What to put                                                                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Sleepers                  | Empty for a single phone. One phone per person: their first names, separated by commas (`Alice, Bob`). One Gladys device each.      |
+| MQTT broker address       | `mqtt://192.168.1.10:1883` (or `mqtts://…:8883` for TLS). The network address of the broker, **never `localhost`**. Empty: no MQTT. |
+| MQTT user name / password | The broker account, if it asks for one.                                                                                             |
+| MQTT topic                | `SleepAsAndroid` by default. Must be the same as in the app.                                                                        |
+| Time zone                 | The zone the next alarm is written in (`Europe/Paris`, `America/Montreal`…).                                                        |
+
+For the cloud channel, paste your **Gladys Plus Open API key** in the **Gladys Plus webhooks**
+block of the same screen.
+
+Then click **Test the connection**: the answer says which channels work and gives, for every
+sleeper, **the exact topic and URL to type in the app**.
+
+## 2. Configure Sleep as Android
+
+### MQTT (local)
+
+In the app: **Settings → Services → Automation → MQTT**.
+
+- turn it on;
+- **URL**: `tcp://192.168.1.10:1883` (the broker address, with `tcp://`, or `ssl://` for TLS);
+- **Topic**: `SleepAsAndroid` for the first (or only) sleeper, `SleepAsAndroid/bob` for Bob;
+- **Client ID**: anything unique, e.g. `phone-bob`;
+- user name and password if your broker needs them.
+
+The integration subscribes to the topic and to every sub-topic. Messages published with the
+_retain_ flag are ignored: they are old events, replaying them would start your scenes again.
+
+### Webhook (cloud, through Gladys Plus)
+
+In the app: **Settings → Services → Automation → Webhooks**, turn it on and paste the URL given by
+**Test the connection**. With several sleepers, each phone gets the URL followed by
+`?sleeper=<name>` (e.g. `…?sleeper=bob`); the first sleeper can use the URL as is.
+
+Keep that URL private: whoever has it can send events in your name.
+
+### Check it
+
+Use the app's **Test** button (in the MQTT or Webhooks screen), or start a sleep tracking: the
+**Last event** feature of the device changes within seconds.
+
+## 3. Create the devices
+
+**Integrations → Sleep as Android → Discovery**: one device per sleeper, named
+`Sleep as Android` (single phone) or `Sleep as Android — Alice`. Create them.
+
+| Feature             | Values                                                                           |
+| ------------------- | -------------------------------------------------------------------------------- |
+| Sleep tracking      | 1 while tracking, 0 when stopped or paused                                       |
+| Sleep phase         | 0 awake, 1 REM, 2 light, 3 deep (the deeper, the higher: a hypnogram once drawn) |
+| Alarm ringing       | 1 while the alarm rings, 0 once dismissed or snoozed                             |
+| Next alarm          | text, e.g. `2026-10-22 07:00 · Work`, `—` when there is none                     |
+| Last event          | text, the raw name of the last event (`deep_sleep`, `alarm_alert_start`…)        |
+| Last sleep duration | hours tracked during the last session, pauses excluded                           |
+
+The states are saved by the integration: a Gladys restart during the night does not lose the start
+of the session.
+
+Renaming a sleeper in the configuration creates a new device: its id comes from its name.
+
+## 4. Scenes
+
+Triggers (**When…**), each with a **Sleeper** filter (empty = all):
+
+| Trigger                           | Filter                                                                                                                                                    | Variables                                         |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Sleep tracking started or stopped | started, stopped, paused, resumed                                                                                                                         | sleeper, state, duration_hours (when stopped)     |
+| Alarm event                       | ringing, dismissed, snooze, snooze canceled, next alarm skipped, rescheduled, wake-up check, time to bed, alarm coming soon, smart wake-up soon / started | sleeper, event, alarm_time, alarm_label           |
+| Sleep phase changed               | awake, fell asleep, light, deep, REM                                                                                                                      | sleeper, phase                                    |
+| Sound detected during sleep       | snoring, talking, cough, baby crying, laughter, breathing alert (apnea), anti-snoring                                                                     | sleeper, sound                                    |
+| Any Sleep as Android event        | —                                                                                                                                                         | sleeper, event (raw name), value1, value2, value3 |
+
+Read a variable in the next actions with `{{triggerEvent.data.alarm_label}}`.
+
+Actions (**Then…**):
+
+- **Read the sleep status**: puts `tracking`, `phase`, `alarm_ringing`, `next_alarm`,
+  `last_event` and `last_sleep_hours` of a sleeper in variables — "if tracking, do not turn the
+  lights on";
+- **Reset a sleeper**: back to awake, nothing running — for the morning after a phone that died
+  during the night.
+
+Examples:
+
+- _When_ Sleep tracking started (started) → close the bedroom shutters, turn off the lights.
+- _When_ Alarm event (ringing) → light at 20 %, then open the shutters.
+- _When_ Sound detected (baby crying) → send a message to the parents.
+
+To build a scene during the day, **Simulate an event** (Configuration screen) plays any event as
+if the phone had sent it.
+
+## 5. Dashboard widget
+
+Add the **Sleep** widget and pick a sleeper (empty: the first one). It shows the tracking and alarm
+tiles, the last twelve hours as a hypnogram, the phase, the next alarm, the duration of the last
+night, how the events arrive (MQTT or Gladys Plus) and a **Reset** button.
+
+## Troubleshooting
+
+- **Nothing arrives by MQTT**: `localhost` and `127.0.0.1` point at the integration's own
+  container, use the broker's network address. **Test the connection** shows the broker's answer
+  (refused password, unreachable…). The topic of the app must be the one of the configuration,
+  case included.
+- **Badge "cloud" with an orange dot**: you prefer local, a broker is configured but unreachable,
+  and the events come through Gladys Plus.
+- **"Webhook not available"**: Gladys Plus is not linked, or the Open API key is missing in the
+  Gladys Plus webhooks block.
+- **An event for an unknown sleeper is ignored**: the topic `SleepAsAndroid/<name>` or the
+  `?sleeper=<name>` must name a sleeper of the configuration (case and accents do not matter).
+- **The tracking stays on**: the phone died before sending "tracking stopped". Use **Reset** (widget
+  or scene action).
+
+## Configuration settings
+
+These are the settings Sleep as Android asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Sleep as Android sends its events (tracking started, alarm ringing, deep sleep…) two ways, use one or both. Local: MQTT, to a broker on your network (Settings > Services > Automation > MQTT in the app). Cloud: a webhook relayed by Gladys Plus, which also works away from home (Settings > Services > Automation > Webhooks). "Test the connection" gives the exact topic and URL to type in the app. |
+| Sleepers | `string` | No | One phone per person? Their first names, separated by commas: one Gladys device each. Leave empty for a single phone. The first one listens to the base topic and to the URL as is, the others to the base topic followed by /their-name and to the URL followed by ?sleeper=their-name. |
+| Local: MQTT | `section` | No | The broker the app publishes to, e.g. the one of the Gladys MQTT integration. Leave the address empty to receive by Gladys Plus only. |
+| MQTT broker address | `string` | No | mqtt:\/\/address:1883, or mqtts:\/\/ for TLS. Use the network address of the broker, never localhost: the integration runs in its own container. |
+| MQTT user name | `string` | No |  |
+| MQTT password | `secret` | No |  |
+| MQTT topic | `string` | No | The topic typed in the app. Every sub-topic is listened to too (one per sleeper). |
+| Time zone | `string` | No | The time zone the next alarm is written in, an IANA name such as Europe/Paris. |
+
+## How to install Sleep as Android in Gladys
+
+1. In Gladys, open **Integrations**: Sleep as Android appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-sleepasandroid:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-sleepasandroid](https://github.com/prohand/gladys-sleepasandroid).
+
+Sleep as Android requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Sleep as Android is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-sleepasandroid) — [source of this documentation](https://github.com/prohand/gladys-sleepasandroid/blob/HEAD/docs/en.md)

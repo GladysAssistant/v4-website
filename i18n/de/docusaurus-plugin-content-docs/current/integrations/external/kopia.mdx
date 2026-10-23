@@ -1,0 +1,255 @@
+---
+title: "Kopia Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Kopia"
+description: "Deine Kopia-Snapshots in Gladys: ihr Zustand und ein Alarm, wenn einer fehlschlägt. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kopia.png"
+keywords:
+  - "kopia"
+  - "kopia smart home"
+  - "gladys kopia"
+  - "kopia gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-kopia instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Kopia","description":"Deine Kopia-Snapshots in Gladys: ihr Zustand und ein Alarm, wenn einer fehlschlägt.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-kopia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kopia.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:53:44Z"}} />
+
+[Kopia](https://kopia.io/) erstellt verschlüsselte, deduplizierte Snapshots
+deiner Dateien auf eine Festplatte, ein NAS oder einen Cloud-Speicher. Diese
+Integration holt die Quellen eines Kopia-Servers in Gladys: Jede Quelle (ein
+gesicherter Ordner) wird ein Gerät mit ihrem Zustand, ihrem letzten
+erfolgreichen Snapshot, ihrer Größe, ihren Dateien und den Fehlern ihres
+letzten Snapshots. Szenen können reagieren, wenn **irgendein** Snapshot
+gelingt, fehlschlägt oder überfällig ist (zu lange kein Erfolg), ein
+Dashboard-Widget listet die fehlgeschlagenen Quellen zuerst, und eine Szene
+kann einen Snapshot starten.
+
+Getestet mit einem echten Kopia 0.23 (Docker-Image `kopia/kopia`,
+Dateisystem-Repository, Basic-Authentifizierung, HTTP und selbstsigniertes
+HTTPS): ein Snapshot, der gelingt, einer mit einer unlesbaren Datei, einer,
+dessen Ordner gelöscht wurde, und ein aus der Integration gestarteter
+Snapshot. Noch nicht mit einem echten Gladys getestet: Rückmeldungen gern über
+[die Issues](https://github.com/guim31/gladys-kopia/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Kopia als **Server** mit Weboberfläche gestartet, `kopia server start`,
+  erreichbar vom Gladys-Rechner (standardmäßig Port 51515). KopiaUI, die
+  Desktop-Anwendung, hört nur auf ihren eigenen Rechner und eignet sich
+  daher nicht.
+- Benutzername und Passwort des Servers, angegeben mit `--server-username`
+  (standardmäßig `kopia`) und `--server-password`. Nicht das Passwort des
+  Repositorys.
+
+Die Integration liest Kopia standardmäßig alle 5 Minuten (alle 30 Sekunden
+während eines Snapshots): ein paar leichte Anfragen in deinem eigenen Netz.
+
+## Erste Schritte
+
+### 1. Den Kopia-Server starten
+
+Zum Beispiel mit einem von Kopia erzeugten Zertifikat:
+
+```
+kopia server start --address=0.0.0.0:51515 \
+  --server-username=kopia --server-password=… \
+  --tls-generate-cert
+```
+
+Beim ersten Start zeigt Kopia `SERVER CERT SHA256: …`: Notiere diesen
+Fingerabdruck. Mit `--insecure` statt eines Zertifikats spricht der Server
+einfaches HTTP: Nutze das nur in einem Netz, dem du vertraust. Das
+Docker-Image `kopia/kopia` nimmt dieselben Optionen.
+
+### 2. Die Integration konfigurieren
+
+In Gladys, **Integrationen → Kopia → Konfiguration**:
+
+- **Kopia-Adresse**: zum Beispiel `https://192.168.1.2:51515` (`http://` mit
+  `--insecure`). Eine bloße Adresse (`192.168.1.2`) bedeutet `http://` auf
+  Port 51515; eine aus dem Browser kopierte Adresse geht auch.
+- **Benutzername** und **Passwort**: `--server-username` und
+  `--server-password` des Servers.
+- **Zertifikat-Fingerabdruck**: nur für ein selbstsigniertes Zertifikat
+  (`--tls-generate-cert`): der oben notierte `SERVER CERT SHA256`. Die
+  Integration akzeptiert dann dieses Zertifikat und kein anderes, immer über `https://`. Lass das Feld
+  leer bei `http://` oder einem Zertifikat einer bekannten Stelle.
+- **Aktualisierungsintervall**: 1, 5 (Standard) oder 15 Minuten.
+- **Überfällig nach**: wann eine Quelle ohne erfolgreichen Snapshot überfällig
+  wird. _Automatisch_ (Standard) folgt der Zeitplan-Richtlinie jeder Quelle:
+  ihrem Intervall plus einem Viertel davon (mindestens eine Stunde) — 30
+  Stunden für einen täglichen Snapshot, auch bei „Tageszeiten“. Eine Quelle
+  ohne Intervall (manuell oder ein Cron-Ausdruck) ist dann nie überfällig.
+  Oder eine feste Zeit, von 12 Stunden bis zu einer Woche, für alle Quellen.
+- **Starten von Snapshots erlauben**: lässt die Szenenaktion „Snapshot
+  starten“ arbeiten. Schalte es ab, wenn niemand aus Gladys einen Snapshot
+  starten soll.
+- **Sprache der Namen**: Sprache der Funktionsnamen, der Zustände und der
+  Szenen-Ergebnisse.
+
+**Verbindung testen** liest Kopia und fasst zusammen: die Zahl der Quellen,
+fehlgeschlagen und überfällig.
+
+### 3. Die Quellen anlegen
+
+Lege im Tab **Entdecken** die Quellen an, denen du folgen willst, und das Gerät
+„Kopia“ für den Server. Eine Quelle erscheint, sobald sie in Kopia eine
+Richtlinie oder einen Snapshot hat. Die Szenen-Auslöser funktionieren für alle
+Quellen, angelegt oder nicht.
+
+## Die Geräte
+
+Jede Quelle:
+
+| Funktion                       | Wert                                                      |
+| ------------------------------ | --------------------------------------------------------- |
+| Zustand                        | OK, Fehlgeschlagen, Überfällig, Läuft oder Kein Snapshot  |
+| Letzter erfolgreicher Snapshot | Tag/Monat Stunden:Minuten, „-“ wenn keiner                |
+| Stunden seit letztem Erfolg    | in Stunden                                                |
+| Dauer des letzten Snapshots    | in Sekunden                                               |
+| Größe                          | Größe der Dateien des letzten Snapshots, in MB            |
+| Dateien                        | Dateien des letzten Snapshots                             |
+| Snapshots                      | im Repository behaltene Snapshots                         |
+| Fehler des letzten Snapshots   | unlesbare Dateien (1 für einen fehlgeschlagenen Snapshot) |
+| Läuft                          | 1, solange ein Snapshot dieser Quelle läuft               |
+| Nächster geplanter Snapshot    | Tag/Monat Stunden:Minuten, „-“ ohne Zeitplan              |
+
+Das Gerät „Kopia“, für den Server:
+
+- **Repository verbunden**: 1, oder 0, wenn der Server nicht mit seinem
+  Repository verbunden ist;
+- **Snapshot läuft**: 1 oder 0;
+- **Fortschritt**: in %;
+- **Aktuelle Quelle**: ihr Pfad, „-“ wenn keine;
+- **Fehlgeschlagene Quellen** und **Überfällige Quellen**: wie viele.
+
+Ein Snapshot „schlägt fehl“, wenn Kopia einige Dateien nicht lesen konnte (es
+speichert den Snapshot ohne sie), wenn er unvollständig ist oder wenn er ganz
+fehlschlägt (ein gelöschter Ordner, ein unerreichbarer Speicher: Es wird kein
+Snapshot gespeichert). Fehler, die die Richtlinie der Quelle ignoriert, zählen
+nicht. Der Zustand zeigt zuerst, was Aufmerksamkeit braucht: Eine
+fehlgeschlagene Quelle zeigt „Fehlgeschlagen“, auch wenn sie überfällig ist.
+
+Die Quellen eines anderen Rechners oder Benutzers (Clients desselben
+Repositorys) heißen `benutzer@host:/pfad`.
+
+## Dashboard
+
+Das Widget **Kopia** zeigt die Zahl der Quellen, die fehlgeschlagen,
+überfällig und OK sind, dann eine Zeile pro Quelle: zuerst fehlgeschlagen,
+dann überfällig, laufend, ohne Snapshot, OK, mit dem letzten Erfolg (oder dem
+Fortschritt der laufenden). Standardmäßig alle Quellen, oder die in seinen
+Einstellungen gewählten. Die Schaltfläche **Aktualisieren** liest Kopia neu.
+
+## Szenen
+
+### Auslöser
+
+- **Ein Snapshot gelingt**: Ein Snapshot wird ohne Fehler abgeschlossen.
+  Informationen: Quelle, Dauer (Minuten), Dateien, Größe, behaltene Snapshots.
+- **Ein Snapshot schlägt fehl**: unlesbare Dateien, ein unvollständiger
+  Snapshot oder ein vollständiger Fehlschlag. Informationen: Quelle, erster
+  Fehler, Fehler.
+- **Eine Quelle ist überfällig**: Eine Quelle hatte länger als die Zeit
+  „Überfällig nach“ keinen erfolgreichen Snapshot. Einmal pro überschrittener
+  Zeit, wieder nach einem neuen Erfolg. Informationen: Quelle, Stunden seit
+  letztem Erfolg, letzter Erfolg.
+
+Jeder Auslöser lässt sich auf einige Quellen beschränken (leer: alle).
+
+### Aktionen
+
+- **Zustand einer Quelle**: liest den Zustand einer Quelle für die nächsten
+  Aktionen: fehlgeschlagen, überfällig, der Zustand in Worten, die Quelle, der
+  letzte Erfolg, Stunden seit letztem Erfolg (-1, wenn keiner), und ein
+  fertiger Satz („/home/anna: Fehlgeschlagen, letzter Erfolg 18.10.,
+  02:05.“).
+- **Snapshot starten**: startet jetzt einen Snapshot der Quelle. Abgelehnt,
+  wenn „Starten von Snapshots erlauben“ abgeschaltet ist.
+
+### Szenen-Ideen
+
+- **Ein Snapshot schlägt fehl** → eine Nachricht mit der Quelle und ihrem
+  ersten Fehler senden, aus den Informationen des Auslösers.
+- **Eine Quelle ist überfällig** → mit der Quelle und den Stunden seit ihrem
+  letzten Erfolg benachrichtigen.
+- Jeden Sonntag um 10:00 → **Zustand einer Quelle** → den Satz senden; oder
+  beim Verlassen des Hauses einen Snapshot der Fotos starten, mit **Snapshot
+  starten**.
+
+## Fehlerbehebung
+
+- **„Kopia antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner aus,
+  und dass der Server auf das Netz hört (`--address=0.0.0.0:51515`, nicht
+  `127.0.0.1`).
+- **„Benutzername oder Passwort von Kopia abgelehnt“**: Gib sie erneut ein; es
+  sind die von `--server-username` und `--server-password`.
+- **„Zertifikat abgelehnt“**: ein selbstsigniertes Zertifikat; gib seinen
+  Fingerabdruck in der Konfiguration ein.
+- **„das Zertifikat passt nicht zum Fingerabdruck“**: Das Zertifikat hat sich
+  geändert (Kopia erzeugt ein neues, wenn seine Dateien gelöscht werden): Gib
+  den neuen Fingerabdruck ein.
+- **„Kopia ist nicht mit seinem Repository verbunden“**: Verbinde den Server in
+  seiner Weboberfläche wieder mit seinem Repository.
+- **Eine Quelle wird nie überfällig**: In _Automatisch_ kann eine Quelle ohne
+  Intervall nicht überfällig sein; wähle eine feste Zeit. Eine Quelle, die nie
+  erfolgreich war, ist auch nicht überfällig, sondern zeigt Fehlgeschlagen oder
+  Kein Snapshot.
+- **Ein vollständiger Fehlschlag ist nach einem Neustart von Kopia nicht mehr
+  zu sehen**: Kopia hält seine Aufgaben nur im Speicher; die Integration hat
+  ihn trotzdem gemeldet, als er geschah.
+- Für mehr Details setze die Variable `LOG_LEVEL` der Integration auf `debug`.
+
+## Grenzen
+
+- Ein Kopia-Server pro Integration.
+- Ein vollständiger Fehlschlag (kein Snapshot gespeichert) ist nur aus der
+  Aufgabenliste des Servers bekannt, die bei seinem Neustart verloren geht.
+- Die Integration stellt keine Snapshots oder Richtlinien wieder her, löscht
+  oder ändert sie nicht, überwacht sie nur und startet sie, wenn erlaubt.
+- Nicht mit Kopia verbunden. Melde ein Problem oder eine Idee über
+  [die Issues](https://github.com/guim31/gladys-kopia/issues).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Kopia in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Kopia-Server | `section` | Nein | Kopia als Server mit Weboberfläche gestartet (kopia server start). Gib seine Adresse, seinen Benutzernamen und sein Passwort ein und lege dann die Quellen im Tab „Entdecken“ an. |
+| Kopia-Adresse | `string` | Ja | Die Adresse der Weboberfläche, standardmäßig Port 51515. https:\/\/, wenn der Server TLS nutzt. |
+| Benutzername | `string` | Nein | Der --server-username des Servers, standardmäßig kopia. |
+| Passwort | `secret` | Ja | Das --server-password des Servers (nicht das Passwort des Repositorys). |
+| Zertifikat-Fingerabdruck | `string` | Nein | Nur für ein selbstsigniertes Zertifikat (--tls-generate-cert): sein SHA-256-Fingerabdruck, den Kopia beim Start anzeigt (SERVER CERT SHA256). Sonst leer. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Kopia gelesen wird. Alle 30 Sekunden während eines Snapshots. |
+| Überfällig nach | `select` | Nein | Eine Quelle ohne erfolgreichen Snapshot seit dieser Zeit ist überfällig. Automatisch: ihr Zeitplan-Intervall plus ein Puffer; eine Quelle ohne Intervall ist dann nie überfällig. |
+| Starten von Snapshots erlauben | `boolean` | Nein | Erlaubt der Szenenaktion „Snapshot starten“, einen Snapshot in Kopia zu starten. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Anlegen eines Geräts festgelegt), der Zustände und der Szenen-Ergebnisse. |
+
+## So installierst du Kopia in Gladys
+
+1. Öffne in Gladys **Integrationen**: Kopia erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-kopia:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-kopia](https://github.com/guim31/gladys-kopia).
+
+Kopia benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Kopia ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-kopia) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-kopia/blob/HEAD/docs/de.md)

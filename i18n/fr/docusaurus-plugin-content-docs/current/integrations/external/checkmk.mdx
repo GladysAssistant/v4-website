@@ -1,0 +1,248 @@
+---
+title: "Intégration domotique Checkmk, gratuite et open source"
+sidebar_label: "Checkmk"
+description: "Vos hôtes et services Checkmk dans Gladys, et des scènes quand un hôte tombe ou un service échoue. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-checkmk.png"
+keywords:
+  - "checkmk"
+  - "domotique checkmk"
+  - "gladys checkmk"
+  - "checkmk gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-checkmk instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Checkmk","description":"Vos hôtes et services Checkmk dans Gladys, et des scènes quand un hôte tombe ou un service échoue.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-checkmk","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-checkmk.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:31:07Z"}} />
+
+Amenez votre supervision [Checkmk](https://checkmk.com/) dans Gladys : chaque
+hôte devient un appareil (UP, services en WARN, CRIT et UNKNOWN, problèmes non
+traités, maintenance), un appareil « Checkmk » résume tout le site, et vos
+scènes réagissent quand un hôte tombe ou qu'un service échoue — une lumière
+rouge quand le NAS est tombé, un message quand un disque passe CRIT. Une scène
+peut aussi acquitter les problèmes d'un hôte, et un widget du tableau de bord
+liste les problèmes en cours.
+
+L'intégration lit l'API REST de votre site Checkmk sur votre réseau local,
+avec un utilisateur d'automatisation. Rien ne passe par un cloud.
+
+Testée sur un vrai Checkmk 2.5 Community (image Docker officielle, un hôte
+supervisé par son agent, des hôtes DOWN et UNREACH, des checks locaux forcés
+en WARN et CRIT, une maintenance) ; de la 2.2 à la 2.4 seulement par la même
+API documentée. Vos retours sont les bienvenus :
+[github.com/guim31/gladys-checkmk/issues](https://github.com/guim31/gladys-checkmk/issues).
+
+## Ce qu'il vous faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Checkmk 2.2 ou plus récent, toutes éditions (Community, ex-Raw, comprise),
+  joignable depuis la machine de Gladys.
+- Un utilisateur d'automatisation pour Gladys. Le rôle « Normal monitoring
+  user » suffit : il voit les hôtes de ses groupes de contacts et peut acquitter
+  leurs problèmes.
+
+## Mise en route
+
+### 1. Créer un utilisateur d'automatisation
+
+Dans Checkmk, ouvrez **Setup → Users → Add user** :
+
+- **Username** : par exemple `gladys` ;
+- **Authentication** : « Automation secret for machine accounts », et copiez
+  le secret ;
+- **Roles** : « Normal monitoring user » ;
+- **Contact groups** : les groupes des hôtes à suivre (`all` par défaut).
+
+Enregistrez, puis **activez les changements**.
+
+### 2. Configurer l'intégration
+
+Dans Gladys, ouvrez la configuration de l'intégration :
+
+- **Adresse du site** : l'adresse avec laquelle vous ouvrez Checkmk, nom du
+  site compris, par exemple `http://192.168.1.2/monsite`. N'importe quelle page
+  du site copiée depuis le navigateur convient aussi.
+- **Utilisateur d'automatisation** et **Secret d'automatisation** :
+  l'utilisateur de l'étape 1.
+- **Dossier (facultatif)** : le chemin d'un dossier de Setup, par exemple
+  `/homelab`, sous-dossiers compris. C'est le chemin du dossier (son nom dans
+  l'URL), pas toujours son titre. Vide : tous les hôtes que l'utilisateur voit.
+- **Étiquettes d'hôte (facultatif)** : `clé:valeur` séparées par des virgules,
+  par exemple `gladys:yes` ; un hôte doit toutes les porter. Une clé seule
+  accepte toute valeur.
+- **Intervalle de rafraîchissement** : de 30 secondes à 5 minutes (1 minute
+  par défaut).
+- **Autoriser l'acquittement depuis les scènes** : décochez pour désactiver
+  l'action d'acquittement.
+- **Accepter les certificats auto-signés** : pour une adresse en `https://`
+  dont le certificat n'est pas reconnu par votre navigateur non plus.
+- **Langue des noms** : langue des noms des fonctionnalités et des résultats
+  de scène.
+
+Enregistrez, puis cliquez sur **Tester la connexion** : elle affiche la
+version de Checkmk, le nombre d'hôtes, d'hôtes DOWN et de services en
+problème.
+
+### 3. Ajouter les appareils
+
+Ouvrez l'onglet **Découverte** de l'intégration et ajoutez les hôtes à suivre,
+et l'appareil « Checkmk » si vous voulez les totaux. Les déclencheurs de scène
+valent pour tous les hôtes, ajoutés à Gladys ou non.
+
+## Les appareils
+
+Chaque **hôte** :
+
+| Fonctionnalité        | Valeur                                                             |
+| --------------------- | ------------------------------------------------------------------ |
+| Hôte UP               | 1 UP, 0 DOWN ou UNREACH ; vide tant que l'hôte est PENDING         |
+| Services WARN         | nombre de services en WARN                                         |
+| Services CRIT         | nombre de services en CRIT                                         |
+| Services UNKNOWN      | nombre de services en UNKNOWN                                      |
+| Problèmes non traités | problèmes de l'hôte et des services ni acquittés ni en maintenance |
+| En maintenance        | 1 pendant une maintenance planifiée (downtime) de l'hôte           |
+
+L'appareil **Checkmk** : Hôtes DOWN (DOWN ou UNREACH), Services WARN, Services
+CRIT, Services UNKNOWN et Problèmes non traités, sur les hôtes de la
+configuration.
+
+Les valeurs ne sont envoyées à Gladys que lorsqu'elles changent, et toutes les
+6 heures sinon.
+
+## Tableau de bord
+
+Le widget **Problèmes Checkmk** affiche trois tuiles — les hôtes DOWN, les
+services CRIT, les problèmes non traités — et les problèmes : hôtes DOWN, puis
+UNREACH, puis services CRIT, UNKNOWN et WARN, les plus récents d'abord. Chaque
+ligne donne le service et son état, l'hôte, ✓ une fois acquitté et ⏸ en
+maintenance. Dix lignes au plus. **Actualiser** relit Checkmk. Dans ses
+réglages, choisissez des hôtes pour n'afficher que les leurs (vide : tous les
+hôtes).
+
+## Scènes
+
+### Déclencheurs
+
+- **Un hôte tombe** : un hôte passe DOWN ou UNREACH. Filtre : hôtes (vide :
+  n'importe lequel). Variables : nom de l'hôte, état (DOWN, UNREACH). Un hôte
+  qui passe de DOWN à UNREACH n'est pas signalé deux fois.
+- **Un hôte revient** : un hôte signalé tombé est de nouveau UP. Variables :
+  nom de l'hôte, durée en minutes.
+- **Un service pose problème** : un service passe WARN, CRIT ou UNKNOWN, ou
+  change entre eux (de WARN à CRIT, par exemple). Filtres : hôtes, états (vide :
+  n'importe lequel ; pour « CRIT seulement », choisissez CRIT). Variables : nom
+  de l'hôte, service, état, sortie du check.
+- **Un service revient OK** : un service signalé en problème est de nouveau
+  OK. Filtres : hôtes, dernier état de problème signalé. Variables : nom de
+  l'hôte, service, dernier état de problème, durée en minutes.
+- **Checkmk ne répond plus** : l'API REST ne répond pas deux fois de suite
+  (variables : adresse du site, erreur).
+
+Les problèmes déjà présents au démarrage de l'intégration ne sont pas signalés, mais leur fin l'est. Seuls les états confirmés (HARD) comptent : tant que Checkmk refait un check (état SOFT), rien n'est signalé. Un changement survenu pendant un redémarrage de Gladys ou de
+l'intégration est signalé une fois à la lecture suivante. Un problème en
+maintenance (du service ou de son hôte) n'est pas signalé, puisque Checkmk ne
+le notifie pas non plus ; s'il est toujours là à la fin de la maintenance, il
+est signalé à ce moment-là.
+
+### Actions
+
+- **Acquitter les problèmes d'un hôte** : acquitte dans Checkmk le problème
+  de l'hôte (DOWN, UNREACH) et chacun de ses services en problème pas encore
+  acquitté, avec un commentaire (vide : « Acquitté depuis Gladys »).
+  L'acquittement est persistant (jusqu'au retour à UP ou OK) et n'envoie
+  aucune notification. Renvoie le nombre acquitté. Désactivable par «
+  Autoriser l'acquittement depuis les scènes ».
+- **Lire les problèmes** : compte et liste les problèmes d'un hôte, ou de
+  tous, pour les actions suivantes : nombre, non traités, hôtes DOWN, services
+  CRIT, WARN et UNKNOWN, et la liste « hôte : problème ».
+
+### Idées de scènes
+
+- **Une lumière rouge quand le NAS tombe** : déclencheur « Un hôte tombe »,
+  hôte NAS → passer la lampe du salon au rouge et envoyer
+  `{{triggerEvent.data.host}} : {{triggerEvent.data.state_name}}`.
+- **Seulement les services critiques** : déclencheur « Un service pose
+  problème », état CRIT → message `\{\{triggerEvent.data.host\}\} /
+\{\{triggerEvent.data.service\}\} : \{\{triggerEvent.data.output\}\}`.
+- **Rapport du matin** : chaque jour à 8 h, « Lire les problèmes » → envoyer
+  le nombre et la liste quand le nombre dépasse 0.
+- **Vu depuis le canapé** : un bouton du tableau de bord ou une télécommande
+  Zigbee lance « Acquitter les problèmes d'un hôte » sur le NAS.
+
+## Dépannage
+
+- **« Utilisateur ou secret d'automatisation refusé »** : vérifiez
+  l'utilisateur (un utilisateur d'automatisation, pas à mot de passe) et son
+  secret dans Setup → Users, et que les changements sont activés.
+- **« Checkmk ne répond pas »** : vérifiez l'adresse depuis la machine de
+  Gladys. `localhost` désigne le conteneur de l'intégration lui-même : utilisez
+  l'adresse IP de la machine de Checkmk.
+- **« Pas de site Checkmk à cette adresse »** : le nom du site manque ou est
+  faux dans l'adresse : c'est la première partie du chemin, `/monsite` dans
+  `http://192.168.1.2/monsite/check_mk/`.
+- **« Aucun hôte visible »** : le cœur de supervision du site est arrêté (`omd
+status`), ou l'utilisateur n'est dans aucun groupe de contacts des hôtes.
+- **« Certificat refusé »** : cochez « Accepter les certificats auto-signés »,
+  ou utilisez l'adresse en `http://` sur le réseau local.
+- **Un hôte manque** : il est hors du dossier ou des étiquettes, ou dans aucun
+  groupe de contacts de l'utilisateur.
+- **L'acquittement est refusé** : le rôle de l'utilisateur doit avoir le droit
+  d'acquitter les problèmes (« Normal monitoring user » l'a).
+
+## Limites
+
+- Un seul site Checkmk par intégration (les hôtes des sites distants, quand
+  l'utilisateur les voit depuis le site central, sont inclus).
+- États des hôtes et des services seulement : ni métriques, ni inventaire.
+- « Un service revient OK » se déclenche aussi quand un service en problème
+  est retiré de la supervision ; un hôte retiré de Checkmk ou du périmètre
+  disparaît sans signal.
+- 30 événements de scène au plus par lecture : une panne réseau peut en lever
+  des dizaines d'un coup ; le reste suit aux lectures suivantes.
+- Pas de quota sur l'API REST : chaque lecture envoie deux requêtes (trois une
+  fois par heure, pour la version).
+
+Sans lien avec Checkmk GmbH. Checkmk est une marque de Checkmk GmbH.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Checkmk dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre site Checkmk | `section` | Non | Dans Checkmk (2.2+), Setup → Users : créez un utilisateur avec un « Automation secret for machine accounts », rôle « Normal monitoring user », dans un groupe de contacts des hôtes. Ajoutez ensuite les hôtes depuis l'onglet Découverte : les déclencheurs valent pour tous. |
+| Adresse du site | `string` | Oui | L'adresse avec laquelle vous ouvrez Checkmk, nom du site compris ; l'API REST s'en déduit. |
+| Utilisateur d'automatisation | `string` | Oui |  |
+| Secret d'automatisation | `secret` | Oui | Un utilisateur de supervision normal suffit : il voit les hôtes de ses groupes de contacts et peut les acquitter. |
+| Dossier (facultatif) | `string` | Non | Chemin d'un dossier de Setup, sous-dossiers compris. Vide : tous les hôtes que l'utilisateur voit. |
+| Étiquettes d'hôte (facultatif) | `string` | Non | clé:valeur, séparées par des virgules ; un hôte doit toutes les porter. Une clé seule : toute valeur. |
+| Options | `section` | Non |  |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture de Checkmk : deux ou trois requêtes d'API à chaque fois. |
+| Autoriser l'acquittement depuis les scènes | `boolean` | Non | Décochez pour désactiver l'action de scène « Acquitter les problèmes d'un hôte ». |
+| Accepter les certificats auto-signés | `boolean` | Non | Seulement pour une adresse en https:\/\/ dont le certificat n'est pas reconnu par votre navigateur non plus. |
+| Langue des noms | `select` | Non | Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil) et des résultats de scène. |
+
+## Comment installer Checkmk dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Checkmk apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-checkmk:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-checkmk](https://github.com/guim31/gladys-checkmk).
+
+Checkmk nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Checkmk est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-checkmk) — [source de cette documentation](https://github.com/guim31/gladys-checkmk/blob/HEAD/docs/fr.md)

@@ -1,0 +1,206 @@
+---
+title: "Intégration domotique Linn & OpenHome, gratuite et open source"
+sidebar_label: "Linn & OpenHome"
+description: "Lecteurs réseau Linn et OpenHome en local : veille, volume, sources, épingles, lecture. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-linn.png"
+keywords:
+  - "linn & openhome"
+  - "domotique linn & openhome"
+  - "gladys linn & openhome"
+  - "linn & openhome gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-linn instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Linn & OpenHome","description":"Lecteurs réseau Linn et OpenHome en local : veille, volume, sources, épingles, lecture.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-linn","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-linn.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:17:14Z"}} />
+
+Pilotez vos lecteurs réseau **Linn** (DS, DSM, Majik, Selekt, Klimax…) et les
+autres appareils **OpenHome** depuis Gladys, en local, sans aucun cloud :
+allumage, veille, volume, sourdine, source, épingles (les préréglages de
+l'application Linn), lecture, pause, suivant, précédent et titre en cours.
+
+> **Important.** Cette intégration n'a jamais été testée avec un vrai appareil :
+> elle a été écrite d'après la bibliothèque `openhomedevice` (celle de Home
+> Assistant) et testée avec un faux appareil seulement. Vos retours sont les
+> bienvenus. Intégration non officielle, sans lien avec Linn Products.
+
+## Ce n'est pas l'intégration DLNA
+
+L'intégration [DLNA de guim31](https://github.com/guim31/gladys-dlna)
+(`guim31/gladys-dlna`) pilote tout lecteur UPnP AV générique (services
+`AVTransport` et `RenderingControl`) : lire une URL ou un serveur multimédia,
+volume, lecture. Elle fonctionne aussi avec un Linn.
+
+Celle-ci passe par un autre chemin : elle ne parle qu'aux **services OpenHome**
+(`urn:av-openhome-org`), jamais à `AVTransport` ni à `RenderingControl`. Elle
+apporte ce que le DLNA n'a pas :
+
+- les **sources** de l'appareil (Playlist, Radio, Songcast, entrées HDMI,
+  analogiques, numériques…), à choisir dans une liste ;
+- les **épingles** (« pins ») réglées dans l'application Linn : une radio, une
+  liste de lecture, une entrée, rappelées d'un clic ;
+- la **veille** (allumer, mettre en veille, état de marche).
+
+Elle pilote aussi le volume (**plafonné**), la sourdine, la lecture et le titre,
+par les services Volume, Transport et Info d'OpenHome.
+
+Elle ne lit pas d'URL, ne parcourt pas de serveur multimédia et ne joue pas les
+notifications : pour cela, gardez l'intégration DLNA. Les deux peuvent tourner
+ensemble ; un même lecteur peut alors être créé dans chacune. Attention : le
+plafond de volume de cette intégration ne s'applique pas à ce que l'intégration
+DLNA envoie au même lecteur.
+
+## Installation
+
+1. Dans Gladys, installez l'intégration **Linn & OpenHome**.
+2. Choisissez le **plafond de volume** (50 par défaut) dans sa configuration.
+3. Ouvrez l'onglet **Découverte** : les lecteurs trouvés par la recherche SSDP
+   (lancée par Gladys sur votre réseau) apparaissent. Créez-les.
+
+Un lecteur sur un autre sous-réseau ou VLAN n'est pas trouvé par le SSDP :
+saisissez alors l'URL de sa **description UPnP** dans la configuration
+(champ facultatif, par exemple
+`http://192.168.1.30:55178/<uuid>/Upnp/device.xml`). Un outil de découverte
+UPnP sur votre ordinateur l'affiche.
+
+## Ce que vous obtenez
+
+| Fonction           | Type Gladys                    | Remarque                                                    |
+| ------------------ | ------------------------------ | ----------------------------------------------------------- |
+| Marche             | état binaire (lecture seule)   | 1 allumé, 0 en veille ou injoignable                        |
+| Allumer            | bouton                         | sort le lecteur de la veille                                |
+| Veille             | bouton                         | met le lecteur en veille                                    |
+| Volume             | musique / volume (0 à 100)     | plafonné ; absent si le volume du lecteur est fixe          |
+| Sourdine           | bouton (télévision / sourdine) | un appui lit l'état puis règle l'inverse ; 0 la retire      |
+| Lecture, pause     | boutons musique                |                                                             |
+| Suivant, précédent | boutons musique                | pas sur une radio                                           |
+| Lecture en cours   | état musique (lecture seule)   | 1 en lecture, 0 sinon                                       |
+| Source             | liste                          | les sources visibles, puis les épingles (« 3. FIP »)        |
+| Titre              | texte (lecture seule)          | « Artiste - Titre » (ou le texte de la radio) ; « — » sinon |
+
+Volontairement, aucun **interrupteur** : un « éteins tout » ou « allume tout »
+d'un assistant vocal ou d'une scène ne réveille ni ne coupe votre lecteur.
+
+## Plafond de volume
+
+Le volume demandé depuis Gladys (tableau de bord, scène, assistant vocal) ne
+dépasse jamais le plafond de la configuration : un volume plus fort est ramené
+au plafond. Le plafond est relu juste avant l'envoi : une nouvelle valeur
+enregistrée s'applique tout de suite. Le volume réglé sur le lecteur lui-même
+(bouton, télécommande, application) n'est pas modifié, sauf dans les cas où
+Gladys le rendrait audible :
+
+- **Retirer la sourdine** : si le volume dépasse le plafond, il est d'abord
+  ramené au plafond, puis la sourdine est retirée.
+- **Allumer**, ou choisir une source, une épingle, Lecture, Suivant ou
+  Précédent quand le lecteur est en veille (un Linn sort alors de veille) : après le réveil, le volume est relu et ramené au plafond s'il le
+  dépasse. Si le lecteur met du temps à se réveiller, l'intégration revérifie
+  toutes les 2,5 s pendant 15 s environ, sauf si Veille est appuyé entre-temps.
+
+Le plafond est un pourcentage : si le lecteur annonce un volume maximal autre
+que 100 (`Volume.Characteristics`), le volume et le plafond sont mis à
+l'échelle de ses pas.
+
+## Lecture de l'état
+
+Le conteneur de l'intégration n'a pas de port entrant : les événements UPnP
+(GENA) ne peuvent pas lui parvenir. L'intégration lit donc chaque lecteur créé
+à intervalle régulier (10 s par défaut, de 5 à 300 s) : veille, source,
+volume, sourdine, état de lecture, et le titre seulement quand ses compteurs
+disent qu'il a changé. Une requête à la fois par lecteur. En veille, seule la
+veille est lue. La liste des sources et les épingles sont relues toutes les
+30 minutes, ou quand une source inconnue est choisie.
+
+Un lecteur qui ne répond plus est affiché éteint, cité dans le statut de
+l'intégration, et réessayé à intervalles espacés (jusqu'à 5 minutes). Une
+nouvelle recherche SSDP se lance alors d'elle-même toutes les 10 minutes au
+plus, pour suivre une nouvelle adresse (le lecteur est reconnu par son UDN).
+
+## Commandes
+
+Chaque commande reçoit une réponse en moins de 4 secondes (Gladys attend 5
+secondes) : chaque requête est bornée par ce qui reste de ce délai, et la
+vérification du plafond après un réveil continue en arrière-plan si besoin.
+Une commande qui n'a pas pu partir est signalée « not sent » (rien envoyé) ;
+une commande partie dont la réponse manque ou est inutilisable (délai, erreur
+HTTP) est signalée « sent, without confirmation » (envoyée, sans
+confirmation) ; un refus du lecteur (erreur SOAP) est cité tel quel.
+
+Une commande annule la lecture d'état en cours et passe avant elle ; Veille et
+sourdine passent aussi avant les autres commandes en attente. **Veille l'emporte sur
+les commandes qui n'ont encore rien envoyé** : celle en cours de lecture est
+annulée, et celles qui attendent dans la file et pourraient rallumer le lecteur
+(Allumer, Source, épingle, Lecture, Suivant, Précédent) ne partent plus ; elles
+répondent « not sent (Standby went first) ». Veille n'attend qu'une écriture
+déjà partie, dans la limite de son délai, jamais une lecture ni un lecteur lent
+à répondre. La source choisie est vérifiée sur la liste relue du
+lecteur avant l'envoi ; pour une épingle, l'emplacement est relu et doit
+toujours contenir la même épingle (sinon rien n'est envoyé).
+
+Sourdine : le bouton du tableau de bord envoie un appui, qui règle l'inverse
+de l'état lu. Une scène qui envoie 0 retire la sourdine (plafond appliqué) ;
+si elle est déjà retirée, rien n'est envoyé.
+
+## Boutons de la configuration
+
+- **Vérifier les lecteurs** : l'état de chaque lecteur créé (marche, source,
+  volume, sourdine) et le plafond en vigueur, en 25 secondes au plus (un
+  lecteur qui n'a pas pu être lu à temps est signalé « non lu »).
+- **Lister les sources et épingles** : relance la recherche, puis liste les
+  sources visibles et les épingles de chaque lecteur.
+
+## Sécurité, données et confidentialité
+
+- L'intégration ne demande ni compte ni mot de passe : OpenHome n'en a pas.
+  Elle n'écrit rien sur le disque. Rien ne sort de votre réseau local.
+- Les réponses des lecteurs sont bornées (256 Ko pour une description, 64 Ko
+  pour une réponse SOAP) et lues par un analyseur XML linéaire qui refuse
+  tout `DOCTYPE` : aucune entité externe ni interne n'est jamais résolue.
+- Une réponse SSDP n'est retenue que si son adresse de description est en
+  `http` sur l'adresse privée qui a répondu ; chaque URL de commande doit
+  rester sur la même machine et le même port que la description.
+
+## Limites connues
+
+- Pas de Songcast (groupes de pièces), de lecture d'URL, de notification, de
+  balance, de minuterie ni de mise à jour du micrologiciel.
+- Pas d'événements UPnP : un changement fait sur le lecteur apparaît au plus
+  tard à la lecture suivante.
+- Jamais testé avec un vrai appareil : les réponses réelles peuvent différer.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Linn & OpenHome dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos lecteurs Linn et OpenHome, sur votre réseau local | `section` | Non | Allumage, veille, volume, sourdine, source, épingles (les préréglages de l'application Linn), lecture, pause, suivant, précédent et titre en cours de chaque lecteur doté des services OpenHome (Linn DS et DSM, et autres lecteurs OpenHome), par UPnP sur votre réseau, sans aucun cloud. Les lecteurs sont trouvés par une recherche SSDP et apparaissent dans l'onglet Découverte. Le volume réglé depuis Gladys ne dépasse jamais le plafond ci-dessous. Ce n'est pas l'intégration DLNA générique : elle ne pilote que les services OpenHome (Product pour les sources et la veille, Pins, et les Volume, Transport et Info d'OpenHome), jamais ceux de l'UPnP AV ; le plafond ne s'applique pas à un lecteur créé aussi dans l'intégration DLNA. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec Linn Products. |
+| Plafond de volume (%) | `number` | Non | Le volume le plus fort que Gladys peut régler, de 1 à 100 (100 : pas de plafond). Un volume plus fort demandé par une scène, un assistant vocal ou le tableau de bord est ramené à ce plafond ; couper la sourdine et réveiller un lecteur le ramènent d'abord sous le plafond. Le volume réglé sur le lecteur lui-même (bouton, télécommande, application) n'est pas modifié. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de chaque lecteur, de 5 à 300 secondes. Un lecteur qui ne répond pas est réessayé à intervalles espacés (jusqu'à 5 minutes). |
+| URL de description (facultatif) | `string` | Non | Seulement pour un lecteur que la recherche SSDP n'atteint pas (autre sous-réseau ou VLAN) : l'URL de sa description UPnP, séparées par des virgules. La plupart des lecteurs sont trouvés sans. |
+
+## Comment installer Linn & OpenHome dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Linn & OpenHome apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-linn:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-linn](https://github.com/LM1LC3N7/gladys-linn).
+
+Linn & OpenHome nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Linn & OpenHome est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-linn) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-linn/blob/HEAD/docs/fr.md)

@@ -1,0 +1,220 @@
+---
+title: "Intégration domotique Semaphore UI, gratuite et open source"
+sidebar_label: "Semaphore UI"
+description: "Lancez vos modèles Semaphore UI (Ansible…) depuis vos scènes Gladys et suivez leur résultat. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-semaphore.png"
+keywords:
+  - "semaphore ui"
+  - "domotique semaphore ui"
+  - "gladys semaphore ui"
+  - "semaphore ui gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-semaphore instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Semaphore UI","description":"Lancez vos modèles Semaphore UI (Ansible…) depuis vos scènes Gladys et suivez leur résultat.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-semaphore","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-semaphore.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:11:33Z"}} />
+
+[Semaphore UI](https://semaphoreui.com/) est une interface web libre pour
+lancer des playbooks Ansible, du code Terraform/OpenTofu et des scripts shell
+ou Python : chaque « modèle » (template) est un travail qu'on lance d'un clic
+et dont on suit le résultat. Cette intégration amène dans Gladys les modèles
+**que vous autorisez** : chacun devient un appareil avec le statut de sa
+dernière tâche, une scène peut **lancer un modèle** (et attendre sa fin) ou
+**arrêter** sa tâche en cours, des scènes peuvent réagir quand une tâche
+**réussit** ou **échoue**, et un widget du tableau de bord affiche leur dernier
+statut avec un bouton **Lancer**.
+
+Testée contre un vrai Semaphore UI 2.19 (Docker, SQLite, playbooks Ansible) ;
+pas encore contre une vraie instance Gladys : vos retours sont les bienvenus
+sur [les issues](https://github.com/guim31/gladys-semaphore/issues).
+
+## Ce qu'il vous faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Semaphore UI 2.x, joignable depuis la machine de Gladys.
+- Un jeton d'API d'un utilisateur de Semaphore qui peut lancer les modèles
+  (rôle « Task Runner » ou plus dans son projet).
+
+Lancer un modèle exécute du code sur vos machines. C'est pourquoi rien n'est
+lançable depuis Gladys tant que vous n'avez pas saisi son numéro dans la liste
+des modèles autorisés, et pourquoi l'intégration ne lit jamais la sortie des
+tâches (les journaux d'Ansible peuvent contenir des secrets) : seulement leur
+statut et leur durée.
+
+À chaque actualisation (une minute par défaut), l'intégration lit la liste des
+projets, puis les modèles des projets qui contiennent un modèle autorisé ;
+toutes les 5 secondes pendant qu'une tâche d'un modèle autorisé tourne.
+Semaphore ne limite pas le nombre de requêtes à son API.
+
+## Mise en route
+
+### 1. Créer un jeton d'API
+
+Dans Semaphore, ouvrez le menu utilisateur (en bas à gauche) → **API tokens**
+et créez un jeton. Sur une version sans cet écran, l'API en crée un :
+`POST /api/user/tokens` une fois connecté. Le jeton agit avec les droits de son
+utilisateur : un utilisateur dédié, membre des seuls projets concernés, limite
+ce que Gladys peut faire.
+
+### 2. Configurer l'intégration
+
+Dans Gladys, **Intégrations → Semaphore UI → Configuration** :
+
+- **Adresse de Semaphore** : l'adresse avec laquelle vous ouvrez Semaphore,
+  ex. `http://192.168.1.2:3000` (le port 3000 est ajouté à une adresse IP
+  seule).
+- **Jeton d'API** : le jeton de l'étape 1.
+- **Langue des noms** : français par défaut ; elle fixe les noms des
+  fonctionnalités à l'ajout d'un appareil, les statuts et les résultats de
+  scène.
+
+Enregistrez, puis cliquez sur **Tester la connexion** : la liste de tous les
+modèles que voit le jeton s'affiche, avec leur numéro, leur projet et leur nom,
+ex. `#3 Home lab : Update servers`.
+
+### 3. Autoriser des modèles
+
+Saisissez dans **Modèles autorisés (numéros)** les numéros des modèles que
+Gladys peut suivre et lancer, séparés par des virgules : `3, 7`. Le numéro
+figure aussi dans l'adresse d'un modèle dans Semaphore
+(`…/project/1/templates/3`). Vide : rien n'est suivi, rien n'est lançable.
+
+### 4. Ajouter les appareils
+
+Dans l'onglet **Découverte**, ajoutez les modèles voulus comme appareils. Les
+déclencheurs, les actions et le widget fonctionnent pour tout modèle autorisé ;
+les appareils apportent les états et l'historique.
+
+## Les appareils
+
+Un appareil par modèle autorisé, à son nom :
+
+| Fonctionnalité             | Signification                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| Dernière tâche             | statut de la dernière tâche : Réussi, En échec, En cours, Arrêté, En attente…  |
+| Dernière tâche réussie     | 1 quand la dernière tâche terminée a réussi, 0 si elle a échoué ou été arrêtée |
+| En cours                   | 1 pendant qu'une tâche du modèle tourne                                        |
+| Dernier lancement          | début de la dernière tâche (jour/mois heures:minutes, fuseau de Gladys)        |
+| Durée de la dernière tâche | durée de la dernière tâche terminée, en secondes                               |
+
+L'appareil n'a aucune commande : lancer Ansible n'est pas un interrupteur
+qu'un assistant vocal ou un appui malencontreux devrait atteindre. Un modèle se
+lance depuis une scène ou depuis le widget, qui demande une confirmation.
+
+## Tableau de bord
+
+Le widget **Modèles Semaphore** liste les modèles autorisés (ou ceux choisis
+dans ses réglages), ceux en échec d'abord, puis ceux en cours : dernier statut,
+heure de début, durée. Sous la liste, un bouton par modèle (les trois premiers) :
+**Lancer**, ou **Arrêter** pendant qu'une tâche tourne. Gladys demande une
+confirmation avant de l'envoyer. **Actualiser** relit Semaphore.
+
+## Scènes
+
+### Déclencheurs
+
+- **Une tâche Semaphore réussit** : une tâche d'un modèle autorisé se termine
+  avec succès.
+- **Une tâche Semaphore échoue** : une tâche d'un modèle autorisé se termine en
+  erreur.
+
+Les deux peuvent être limités à certains modèles, et donnent le nom du modèle,
+le projet, le numéro de la tâche et la durée en secondes. Une tâche arrêtée
+n'est ni l'un ni l'autre. Les tâches lancées depuis Semaphore lui-même, une
+planification ou un autre outil comptent aussi. La première lecture après
+l'installation n'annonce rien du passé ; une tâche terminée pendant un
+redémarrage de Gladys ou de l'intégration est annoncée une fois.
+
+### Actions
+
+- **Lancer un modèle Semaphore** : lance un modèle autorisé. **Variables
+  supplémentaires (JSON)** est facultatif : un objet JSON transmis à la tâche,
+  ex. `{"target": "web1"}` (les valeurs de la scène peuvent y être insérées).
+  Avec **Attendre la fin (90 s au plus)**, la scène attend la tâche et les
+  actions suivantes reçoivent son résultat. Sorties : numéro de la tâche,
+  terminée, réussie, statut, durée (s).
+- **Arrêter une tâche Semaphore** : arrête la tâche en cours d'un modèle
+  autorisé. Sorties : une tâche a été arrêtée (oui/non), numéro de la tâche.
+
+Les deux refusent un modèle absent de la liste des modèles autorisés, même si
+son appareil existe encore dans Gladys.
+
+### Idées de scènes
+
+- Chaque dimanche à 3 h, lancer « Update servers » ; quand **Une tâche
+  Semaphore échoue**, envoyer un message Telegram : « \{\{triggerEvent.data.template\}\}
+  a échoué après \{\{triggerEvent.data.duration\}\} s ».
+- En quittant la maison, lancer « Nightly backup » avec **Attendre la fin**,
+  puis vous prévenir seulement si « Réussie » est faux.
+- Un bouton sur la tablette murale : le widget, avec « Redémarrer le serveur
+  multimédia » autorisé.
+
+## Dépannage
+
+- **Jeton d'API refusé** : le jeton a été supprimé ou mal recopié ; créez-en un
+  nouveau.
+- **Refusé par Semaphore : cet utilisateur n'a pas le droit de lancer des
+  tâches dans le projet** : donnez à l'utilisateur du jeton le rôle « Task
+  Runner » (ou plus) dans le projet.
+- **Autorisés mais introuvables** : le numéro est faux, le modèle a été
+  supprimé, ou l'utilisateur du jeton n'est pas membre de son projet. **Tester
+  la connexion** liste ce que voit le jeton.
+- **Aucune API Semaphore à cette adresse** : vérifiez l'adresse et le port ;
+  derrière un proxy inverse, incluez son chemin.
+- **L'adresse redirige** : saisissez l'adresse en `https://`.
+- Une tâche n'apparaît pas tout de suite : l'intégration lit Semaphore chaque
+  minute (réglable), toutes les 5 secondes pendant qu'une tâche tourne.
+
+## Limites
+
+- Seule la dernière tâche de chaque modèle est lue : si deux tâches du même
+  modèle se terminent entre deux lectures, seule la dernière déclenche une
+  scène.
+- La sortie des tâches n'est jamais lue ni affichée, par choix.
+- « Attendre la fin » attend 90 s au plus (la limite d'une action de scène dans
+  Gladys) ; une tâche plus longue continue, et les déclencheurs signalent sa
+  fin.
+- Les tâches Terraform en attente de confirmation affichent « À confirmer » ;
+  la confirmation se fait dans Semaphore.
+- Développée et testée contre Semaphore UI 2.19.17 ; les versions 2.x plus
+  anciennes devraient fonctionner (même API), sans test.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Semaphore UI dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre Semaphore | `section` | Non | Dans Semaphore, ouvrez le menu utilisateur → API tokens et créez un jeton. Collez-le ci-dessous avec l'adresse de Semaphore, cliquez sur Tester la connexion pour lister les modèles avec leur numéro, puis saisissez les numéros des modèles que Gladys peut lancer. Rien n'est lançable avant. |
+| Adresse de Semaphore | `string` | Non | L'adresse avec laquelle vous ouvrez Semaphore. Le port 3000 est ajouté à une adresse IP seule. |
+| Jeton d'API | `secret` | Non | Créé dans le menu utilisateur → API tokens. Il agit avec les droits de son utilisateur. |
+| Modèles autorisés (numéros) | `string` | Non | Numéros des modèles que Gladys peut suivre et lancer, séparés par des virgules. Vide : aucun. Tester la connexion les liste. |
+| Options | `section` | Non |  |
+| Intervalle d'actualisation | `select` | Non | La fréquence de lecture de Semaphore ; toutes les 5 secondes pendant qu'une tâche tourne. |
+| Langue des noms | `select` | Non | Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil), des statuts et des résultats de scène. |
+
+## Comment installer Semaphore UI dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Semaphore UI apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-semaphore:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-semaphore](https://github.com/guim31/gladys-semaphore).
+
+Semaphore UI nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Semaphore UI est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-semaphore) — [source de cette documentation](https://github.com/guim31/gladys-semaphore/blob/HEAD/docs/fr.md)

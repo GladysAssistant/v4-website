@@ -1,0 +1,395 @@
+---
+title: "Intégration domotique HTTP / JSON sensors, gratuite et open source"
+sidebar_label: "HTTP / JSON sensors"
+description: "Une API JSON, un texte ou une page web en capteur Gladys, et des appels HTTP depuis vos scènes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-http-json.png"
+keywords:
+  - "http / json sensors"
+  - "domotique http / json sensors"
+  - "gladys http / json sensors"
+  - "http / json sensors gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-http-json instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"HTTP / JSON sensors","description":"Une API JSON, un texte ou une page web en capteur Gladys, et des appels HTTP depuis vos scènes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-http-json","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-http-json.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T07:12:53Z"}} />
+
+Faites de n'importe quelle adresse qui répond en HTTP un capteur Gladys : une
+API JSON (box, NAS, onduleur solaire, prise connectée, API publique), une
+réponse en texte brut, ou une page web. Vous indiquez où se trouve la valeur
+dans la réponse, et son type (température, puissance, énergie, oui/non,
+texte…) : elle devient un appareil, lu à l'intervalle choisi. Vos scènes
+peuvent aussi appeler n'importe quelle adresse, avec des valeurs de la scène,
+et se servir de la réponse dans les étapes suivantes.
+
+C'est l'équivalent dans Gladys des intégrations `rest` et `scrape` de Home
+Assistant. Rien n'est écrit ailleurs qu'aux adresses que vous saisissez.
+
+Testé avec un serveur web de test (JSON, texte, HTML, erreurs 401 et 500,
+réponses lentes et trop grandes, redirections) et l'API publique Open-Meteo,
+dans le conteneur verrouillé de Gladys. Vos retours sont les bienvenus :
+[github.com/guim31/gladys-http-json/issues](https://github.com/guim31/gladys-http-json/issues).
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Une adresse que la machine Gladys peut joindre : sur votre réseau local (les
+  adresses privées sont permises, c'est l'usage principal) ou sur Internet.
+- Si l'adresse le demande, son jeton ou sa clé (voir **En-tête secret
+  (jeton)**).
+
+## Pour commencer
+
+### 1. Remplir un emplacement
+
+La configuration compte 10 emplacements, **Capteur 1** à **Capteur 10**. Un
+emplacement avec une **Adresse (URL)** est un capteur ; une adresse vide
+laisse l'emplacement libre. Chaque emplacement a ces champs :
+
+- **Nom** : le nom de l'appareil (vide : « Capteur HTTP 3 »).
+- **Adresse (URL)** : `http://` ou `https://`, ex.
+  `http://192.168.1.20/api/status`. Sans schéma, `http://` est utilisé. Un
+  utilisateur et un mot de passe dans l'adresse sont refusés : utilisez
+  l'en-tête secret.
+- **Méthode** : GET ou POST.
+- **En-têtes** : un `Nom: valeur` par ligne, ou plusieurs séparés par un `|` entouré d'espaces,
+  ex. `Accept: application/json | X-Room: piscine`.
+- **En-tête secret (jeton)** : jamais réaffiché, jamais écrit dans les logs.
+  Un jeton seul part en `Authorization: Bearer <jeton>` ; `Basic …` ou
+  `Token …` partent tels quels après `Authorization:` ; un en-tête entier
+  comme `X-Api-Key: abc123` (ou `X-Api-Key:abc123`) part tel quel.
+- **Corps (POST)** : envoyé en POST seulement ; du JSON part en
+  `application/json`, le reste en texte.
+- **Chemin du champ ou /expression régulière/** : où se trouve la valeur
+  (section suivante).
+- **Type** : ce qu'est la valeur (plus bas).
+- **Multiplicateur** et **Décalage** : pour les nombres, valeur ×
+  multiplicateur + décalage (ex. `0,001` pour passer des Wh aux kWh, `0,1`
+  pour des dixièmes de degré). La virgule est acceptée. Vides : 1 et 0.
+- **Intervalle de lecture** : de 30 secondes à 1 heure.
+- **Vérifier le certificat (https)** : activé par défaut ; décochez-le pour un
+  appareil au certificat auto-signé.
+
+Sous **Options**, **Langue des noms et des messages** règle les noms des
+fonctionnalités (fixés à l'ajout de l'appareil), les variables de scène et le
+rapport de test.
+
+### 2. Dire où se trouve la valeur
+
+- **Une réponse JSON** : un chemin de champ. `data.temp`,
+  `sensors[0].value`, `items[-1].price` (le dernier), `['clé avec.points']`,
+  ou les formes JSONPath `$.data.temp` et
+  `items[?(@.name=='cuisine')].temp` (le premier élément dont `name` vaut
+  `cuisine` ; `==` et `!=`, textes entre guillemets, nombres, `true`,
+  `false`, `null`).
+- **Une réponse texte ou une page web** : une expression régulière entre
+  barres obliques, ex. `/Température : ([0-9.,]+)/`. Le premier groupe entre
+  parenthèses est la valeur (toute la correspondance s'il n'y a pas de
+  groupe). Options après la dernière barre : `i` (casse), `s`, `m`, `u`. Pour
+  une page web, les balises sont retirées de la valeur et les entités
+  courantes (`&nbsp;`, `&deg;`…) décodées. Une expression qui prend plus d'une
+  demi-seconde est arrêtée.
+- **Vide** : toute la réponse (un appareil qui répond `21.5` ou `ON`).
+
+Un nombre dans un texte est trouvé tout seul : `21,5 °C` donne 21,5,
+`1 234,5 m³` donne 1234,5. Une virgule ou un point comme séparateur de milliers
+n'est pas compris (`1,234.5`) : écrivez une expression régulière pour
+ceux-là.
+
+### 3. Choisir le type
+
+| Type                    | Fonctionnalité Gladys  | La valeur           |
+| ----------------------- | ---------------------- | ------------------- |
+| **Nombre (sans unité)** | capteur générique      | un nombre           |
+| **Température (°C)**    | température            | nombre              |
+| **Humidité (%)**        | humidité               | nombre              |
+| **Pourcentage (%)**     | niveau                 | nombre              |
+| **Puissance (W)**       | puissance              | nombre (signé)      |
+| **Énergie (kWh)**       | énergie                | nombre              |
+| **Binaire (oui/non)**   | état de l'entrée (1/0) | voir plus bas       |
+| **Texte**               | texte                  | 250 caractères max. |
+
+**Binaire (oui/non)** : `true`, un nombre autre que 0, `on`, `yes`, `up`,
+`active`, `enabled` (et `oui`, `ja`, `si`) donnent 1 ; `false`, 0, `off`,
+`no`, `down`, `inactive`, `disabled` (et `non`, `nein`) donnent 0. Tout le
+reste est une erreur.
+
+### 4. Ajouter les appareils
+
+Cliquez sur **Tester les capteurs** : chaque capteur est lu tout de suite, et
+la réponse dit ce que chacun donne, ou pourquoi il ne donne rien. Ajoutez
+ensuite les capteurs dans l'onglet **Découverte** de l'intégration.
+
+## Les appareils
+
+Un appareil par capteur, avec deux fonctionnalités :
+
+- la valeur, du type de l'emplacement ;
+- **En erreur** : 1 tant que le capteur échoue, 0 sinon.
+
+Une lecture ratée est retentée 30 secondes plus tard ; le capteur est en
+erreur après deux lectures ratées de suite : une réponse perdue ne change
+rien. La dernière valeur reste en attendant. Le badge de l'appareil indique
+local ou cloud (d'après l'adresse), injoignable tant qu'il est en erreur.
+
+Changer l'adresse, le chemin, le type ou un en-tête d'un emplacement garde
+l'appareil et son historique (l'identité est le numéro de l'emplacement).
+Changer le type ajoute une nouvelle fonctionnalité de valeur : cliquez sur
+**Mettre à jour** dans l'onglet Découverte.
+
+## Tableau de bord
+
+Le widget **Valeurs HTTP** affiche une ligne par capteur : la valeur avec son
+unité, ou « Erreur ». Dans ses réglages, choisissez les capteurs à afficher
+(vide : tous ; seuls les appareils ajoutés à Gladys se choisissent).
+**Actualiser** les relit tout de suite.
+
+## Scènes
+
+### Déclencheurs
+
+- **Un capteur échoue** : deux lectures de suite échouent (pas de réponse,
+  erreur HTTP, valeur introuvable, configuration à corriger). Une fois,
+  jusqu'à ce que le capteur remarche. Filtre : un capteur, ou n'importe
+  lequel. Variables : le nom du capteur, l'erreur, sa clé (`status`,
+  `timeout`, `unreachable`, `tls`, `too_large`, `redirect`, `not_json`,
+  `not_found`, `no_match`, `not_number`, `not_binary`, `empty`, `config`…)
+  et le code HTTP (0 sans réponse).
+- **Une valeur texte change** : un capteur de type **Texte** lit une valeur
+  différente de la précédente (pas à la première lecture, pas après un
+  redémarrage). Variables : le nom du capteur, la nouvelle valeur et la
+  précédente.
+
+Pour un nombre qui franchit un seuil, utilisez la valeur de l'appareil dans
+une condition de scène, comme pour tout capteur.
+
+### Actions
+
+- **Appeler une adresse** : envoie une requête — adresse, méthode (GET, POST,
+  PUT, PATCH, DELETE), en-têtes, corps — où des valeurs de la scène peuvent
+  être insérées (tapez `{{`). Le corps n'est pas envoyé en GET. **En-tête
+  secret du capteur** ajoute l'en-tête secret d'un capteur, **seulement vers l'adresse de ce capteur (même schéma, hôte et port)** : une scène ne peut pas l'envoyer
+  ailleurs (aucun secret ne se saisit dans une scène, tout utilisateur peut
+  les lire). Un chemin de champ ou une expression régulière, facultatif, lit
+  une valeur dans la réponse.
+- **Relire un capteur maintenant** : lit un capteur sans attendre son
+  intervalle, et publie sa valeur.
+
+Les deux donnent aux actions suivantes : **Réussi**, le **Code HTTP (0 : pas
+de réponse)**, la **Valeur lue**, la **Valeur en nombre (0 si aucune)** et
+l'**Erreur** ; **Appeler une adresse** donne aussi la **Réponse (2000
+caractères au plus)**. Une requête ratée n'arrête pas la scène : testez
+**Réussi**.
+
+### Idées de scènes
+
+- Chaque soir à 22 h, **Appeler une adresse**
+  `http://192.168.1.30/relay/0?turn=off` pour éteindre un relais Shelly, puis
+  envoyer un message si **Réussi** est faux.
+- **Un capteur échoue** sur le capteur du NAS : envoyer « NAS : » et la variable
+  **Erreur** sur votre téléphone.
+- Quand l'alarme est armée, **Appeler une adresse** sur un webhook (Node-RED,
+  n8n, Home Assistant) en POST avec le corps `{"alarme": "armée"}`.
+- **Relire un capteur maintenant** la température de la piscine avant de
+  lancer la pompe, puis une condition sur la valeur.
+
+## Dépannage
+
+- **Champ introuvable dans la réponse** : ouvrez l'adresse dans un
+  navigateur, copiez le chemin jusqu'à la valeur (Firefox affiche le JSON en
+  arbre, « Copier le chemin » est dans le menu contextuel d'une valeur). Les
+  listes se comptent à partir de 0.
+- **La réponse n'est pas du JSON** : l'adresse donne une page ou un texte :
+  utilisez une expression régulière, ou vérifiez l'adresse (une page de
+  connexion ?).
+- **Réponse d'erreur (HTTP 401 ou 403)** : le jeton ou la clé est faux ou
+  absent : remplissez **En-tête secret (jeton)**.
+- **Certificat refusé** : décochez **Vérifier le certificat (https)** pour cet
+  emplacement.
+- **Redirigé vers une autre adresse, refusé** : l'adresse renvoie vers un autre hôte, ou de https vers http (souvent `http://` vers une page de connexion dans le cloud).
+  Saisissez l'adresse finale.
+- **Pas de réponse à temps** : l'adresse met plus de 10 secondes à répondre.
+- **La valeur n'est pas un nombre** : le chemin mène à un texte ou à une
+  liste ; ajustez-le, ou choisissez le type **Texte**.
+- Logs : réglez la variable `LOG_LEVEL=debug` de l'intégration pour voir
+  chaque lecture.
+
+## Limites
+
+- 10 capteurs, une valeur chacun. Pour plusieurs valeurs d'une même réponse,
+  utilisez plusieurs emplacements avec la même adresse.
+- Réponses de 1 Mo au plus, 10 secondes au plus (20 s pour un appel de
+  scène), 3 redirections au plus, sur le même hôte seulement et jamais de https vers http.
+- Ni cookies, ni formulaire de connexion, ni JavaScript : une page construite
+  par JavaScript dans le navigateur ne montre rien ici. Utilisez son API.
+- Pas d'autres unités que celles des types : un nombre dans une autre unité va
+  dans **Nombre (sans unité)**.
+- Respectez les règles des API que vous lisez (quotas, conditions) :
+  l'intervalle est à votre main. Open-Meteo, par exemple, demande moins de
+  10 000 appels par jour.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par HTTP / JSON sensors dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Capteurs HTTP / JSON | `section` | Non | Jusqu'à 10 capteurs, un par emplacement : une adresse, et où se trouve la valeur dans la réponse. Chaque capteur devient un appareil dans l'onglet Découverte. Une adresse vide laisse l'emplacement libre. Les champs sont expliqués sous le capteur 1. |
+| Capteur 1 | `section` | Non |  |
+| Nom | `string` | Non | Nom de l'appareil. Vide : « Capteur HTTP N ». |
+| Adresse (URL) | `string` | Non | http:\/\/ ou https:\/\/, adresses locales comprises. |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non | Un « Nom: valeur » par ligne, ou séparés par « \| ». |
+| En-tête secret (jeton) | `secret` | Non | Un jeton seul part en « Authorization: Bearer … ». Ou un en-tête entier : « X-Api-Key: … ». Jamais dans les logs. |
+| Corps (POST) | `string` | Non | Envoyé en POST seulement. Du JSON part en application/json. |
+| Chemin du champ ou /expression régulière/ | `string` | Non | JSON : data.items[0].temp. Texte ou page HTML : /Temp: ([0-9.]+)/ (premier groupe). Vide : toute la réponse. |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non | Nombres seulement. Vide : 1. Ex. 0,001 pour des Wh en kWh. |
+| Décalage | `string` | Non | Ajouté après le multiplicateur. Vide : 0. |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non | Décochez pour un appareil au certificat auto-signé. |
+| Capteur 2 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 3 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 4 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 5 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 6 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 7 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 8 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 9 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Capteur 10 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse (URL) | `string` | Non |  |
+| Méthode | `select` | Non |  |
+| En-têtes | `string` | Non |  |
+| En-tête secret (jeton) | `secret` | Non |  |
+| Corps (POST) | `string` | Non |  |
+| Chemin du champ ou /expression régulière/ | `string` | Non |  |
+| Type | `select` | Non |  |
+| Multiplicateur | `string` | Non |  |
+| Décalage | `string` | Non |  |
+| Intervalle de lecture | `select` | Non |  |
+| Vérifier le certificat (https) | `boolean` | Non |  |
+| Options | `section` | Non |  |
+| Langue des noms et des messages | `select` | Non | Noms des fonctionnalités (fixés à l'ajout de l'appareil), variables de scène, rapport de test. |
+
+## Comment installer HTTP / JSON sensors dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : HTTP / JSON sensors apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-http-json:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-http-json](https://github.com/guim31/gladys-http-json).
+
+HTTP / JSON sensors nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+HTTP / JSON sensors est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-http-json) — [source de cette documentation](https://github.com/guim31/gladys-http-json/blob/HEAD/docs/fr.md)

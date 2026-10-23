@@ -1,0 +1,246 @@
+---
+title: "Integración domótica WeeWX, gratuita y de código abierto"
+sidebar_label: "WeeWX"
+description: "Su estación meteorológica WeeWX en Gladys, sea cual sea su marca: datos en directo, MQTT o HTTP. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-weewx.png"
+keywords:
+  - "weewx"
+  - "domótica weewx"
+  - "gladys weewx"
+  - "weewx gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-weewx instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"WeeWX","description":"Su estación meteorológica WeeWX en Gladys, sea cual sea su marca: datos en directo, MQTT o HTTP.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-weewx","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-weewx.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T09:11:11Z"}} />
+
+Lleva su estación meteorológica **WeeWX** a Gladys, sea cual sea su marca (Davis, Fine Offset /
+Ecowitt, Oregon Scientific, La Crosse, WeatherFlow…): temperatura, humedad, presión, viento, lluvia,
+UV, radiación solar y más, tal como WeeWX los mide.
+
+> Desarrollada sin el hardware: esta integración se ha probado con WeeWX 5.4 y su controlador
+> Simulator integrado, con los mensajes reales de weewx-mqtt, weewx-json y Belchertown, pero todavía
+> no con una estación real. Sus comentarios son bienvenidos en el repositorio de GitHub.
+
+Esta integración no está afiliada al proyecto WeeWX.
+
+## Presentación
+
+[WeeWX](https://weewx.com) es el software libre que lee una estación meteorológica y archiva sus
+mediciones. Esta integración lee WeeWX desde una de dos fuentes, o desde ambas:
+
+- **MQTT**, con la extensión [weewx-mqtt](https://github.com/matthewwall/weewx-mqtt): en directo,
+  una medición cada pocos segundos (recomendado);
+- **HTTP**, el archivo JSON de un skin de WeeWX: [weewx-json](https://github.com/teeks99/weewx-json)
+  (`weewx.json` o `current_minimal.json`) o
+  [Belchertown](https://github.com/poblabs/weewx-belchertown) (`weewx_data.json`), que WeeWX
+  reescribe en cada informe (cada 5 minutos por defecto).
+
+Obtiene un dispositivo de Gladys para la estación, cuatro disparadores de escena, una acción de
+escena y un widget del panel. Todo es de solo lectura y se queda en su red local: sin cuenta, sin
+nube.
+
+Los sistemas de unidades US, METRIC y METRICWX de WeeWX son compatibles: Gladys recibe °C, km/h,
+hPa y mm, y los convierte a sus preferencias cuando puede.
+
+## Requisitos
+
+- Gladys 5.1 o posterior.
+- WeeWX 4 o 5, accesible por red desde Gladys.
+- Para MQTT: un broker MQTT (Mosquitto, o el de Gladys) y la extensión weewx-mqtt.
+- Para HTTP: un servidor web que sirva la carpeta `public_html` de WeeWX, y el skin weewx-json o
+  Belchertown.
+
+### Preparar weewx-mqtt
+
+Instale la extensión y luego indique su broker en `weewx.conf`:
+
+```ini
+[StdRESTful]
+    [[MQTT]]
+        server_url = mqtt://usuario:contraseña@192.0.2.10:1883/
+        topic = weather
+        unit_system = METRIC
+        binding = archive, loop
+        aggregation = aggregate
+```
+
+`binding = loop` envía cada paquete de bucle (cada 2 a 5 segundos según la estación), `archive`
+cada registro de archivo. Mantenga ambos para tener valores en directo y una lluvia del día exacta.
+weewx-mqtt publica sus paquetes JSON en el `topic` seguido de `/loop`: aquí `weather/loop`.
+
+### Preparar un skin JSON
+
+Instale weewx-json (o Belchertown) y anote la dirección de su archivo, por ejemplo
+`http://192.0.2.10/weewx/json/weewx.json` o
+`http://192.0.2.10/weewx/belchertown/json/weewx_data.json`. Ábrala primero en un navegador: debe
+ver JSON, no una página de error.
+
+## Configuración
+
+En Gladys, abra **Integraciones → WeeWX → Configuración**:
+
+| Campo                                | Qué introducir                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Broker MQTT                          | `mqtt://dirección:1883` (o `mqtts://` con TLS). Vacío: solo HTTP.                                 |
+| Usuario / contraseña MQTT            | Solo si el broker los exige.                                                                      |
+| Tema MQTT                            | `weather/loop` por defecto: el `topic` de weewx-mqtt seguido de `/loop`. Se aceptan comodines.    |
+| Dirección del archivo JSON           | La dirección de `weewx.json`, `current_minimal.json` o `weewx_data.json`. Vacío: solo MQTT.       |
+| Intervalo de lectura del archivo (s) | 60 por defecto, 15 como mínimo. WeeWX reescribe el archivo una vez por intervalo de archivo.      |
+| Idioma de los textos                 | Nombres de las funciones (fijados al añadir la estación), frase de escena y mensajes de acciones. |
+
+Guarde y luego pulse **Comprobar las fuentes**: indica si el broker y el archivo responden y cuántos
+valores envió WeeWX por última vez. En cuanto llegue una primera medición, abra la pestaña
+**Descubrimiento** y añada la estación.
+
+## El dispositivo estación
+
+La estación solo tiene las funciones que mide: un valor que WeeWX nunca ha enviado no aparece. Un
+sensor añadido más tarde (un sensor UV, por ejemplo) aparece en la pestaña Descubrimiento, que
+entonces propone actualizar el dispositivo.
+
+| Función                 | Unidad | Fuente WeeWX                                                             |
+| ----------------------- | ------ | ------------------------------------------------------------------------ |
+| Temperatura             | °C     | `outTemp`                                                                |
+| Sensación térmica       | °C     | `appTemp`, si no el índice de calor o la sensación por viento            |
+| Punto de rocío          | °C     | `dewpoint`                                                               |
+| Humedad                 | %      | `outHumidity`                                                            |
+| Temperatura interior    | °C     | `inTemp` (consola)                                                       |
+| Humedad interior        | %      | `inHumidity` (consola)                                                   |
+| Presión (nivel del mar) | hPa    | `barometer`                                                              |
+| Presión (estación)      | hPa    | `pressure` (solo MQTT)                                                   |
+| Viento medio / Ráfagas  | km/h   | `windSpeed`, `windGust`                                                  |
+| Dirección del viento    | °      | `windDir`                                                                |
+| Intensidad de lluvia    | mm/h   | `rainRate`                                                               |
+| Lluvia de hoy           | mm     | `dayRain`, o los paquetes de bucle sumados desde medianoche              |
+| Está lloviendo          | sí/no  | intensidad de lluvia mayor que cero, o lluvia desde la medición anterior |
+| Índice UV               |        | `UV`                                                                     |
+| Radiación solar (W/m²)  |        | `radiation`                                                              |
+| Batería baja            | sí/no  | algún `…BatteryStatus` distinto de 0 (solo MQTT)                         |
+| Última medición         | min    | minutos desde que la integración recibió una medición nueva              |
+
+La función **Última medición** cuenta según el reloj de Gladys, no el de WeeWX: un reloj de WeeWX
+adelantado o atrasado no tiene efecto.
+
+## Widget
+
+**Estación WeeWX** muestra las condiciones actuales: mosaicos en directo (temperatura, humedad,
+viento, lluvia de hoy, presión, los que mide la estación), luego la sensación térmica, el viento con
+su dirección y ráfagas, la lluvia, el índice UV, la consola interior y una batería baja, y hace
+cuánto llegó la última medición. Los valores siguen su preferencia métrica o imperial.
+
+## Disparadores de escena
+
+- **Empieza a llover**: la estación mide lluvia tras al menos 30 minutos sin ella. Una vez por
+  episodio de lluvia, sean cuales sean los chubascos intermedios. Variable: nombre de la estación.
+- **Deja de llover**: sin lluvia durante el tiempo elegido (15, 30, 60 o 120 minutos), tras haber
+  llovido. Una vez por periodo seco. Variables: lluvia de hoy (mm), nombre de la estación.
+- **Ráfaga de viento fuerte**: una ráfaga por encima de la velocidad elegida (30 a 120 km/h), la
+  primera en 30 minutos. Variables: ráfaga (km/h), nombre de la estación.
+- **Estación sin datos**: ninguna medición nueva durante el tiempo elegido (5 a 120 minutos):
+  WeeWX, la estación o la red no funciona. Una vez por silencio. Variables: minutos sin medición,
+  nombre de la estación.
+
+Tras un reinicio de la integración, la primera medición sirve de referencia: una lluvia que ya cae o
+un viento ya fuerte no dispara nada.
+
+## Acción de escena
+
+**Condiciones actuales** devuelve las últimas mediciones en una frase lista para un mensaje — por
+ejemplo `12,4 °C, sensación 10 °C, humedad 81 %, viento SO 15 km/h, ráfagas 32 km/h.` — y en
+valores: temperatura, humedad, viento medio, ráfagas, lluvia de hoy, está lloviendo, minutos desde
+la medición. La frase sigue el idioma de la configuración.
+
+## Ejemplos de escenas
+
+- _Mensaje de la mañana_: a las 7:00, **Condiciones actuales**, luego enviar un mensaje
+  `Tiempo en casa: {{summary}}`.
+- _Recoger el toldo_: **Ráfaga de viento fuerte** por encima de 50 km/h → cerrar el toldo y enviar
+  un mensaje con la ráfaga.
+- _Ropa tendida_: **Empieza a llover** → enviar un mensaje «recoja la ropa».
+- _Riego_: **Deja de llover** desde hace 120 minutos, con la condición «Lluvia de hoy inferior a
+  2 mm» → iniciar el riego.
+- _Vigilancia de la estación_: **Estación sin datos** desde hace 60 minutos → enviar un mensaje.
+
+## Actualización y uso de datos
+
+- MQTT: cada paquete se lee al llegar (cada pocos segundos), pero los estados se envían a Gladys
+  como mucho cada 15 segundos, y solo los que cambiaron. Los disparadores ven cada paquete.
+- HTTP: el archivo se lee en el intervalo elegido; WeeWX lo reescribe una vez por intervalo de
+  archivo, así que los valores cambian cada 5 minutos aproximadamente.
+- Un valor que no cambia se vuelve a enviar cada 6 horas, para que Gladys nunca lo muestre como
+  desactualizado.
+- Nada sale de su red local.
+
+## Solución de problemas
+
+- **Ninguna estación en la pestaña Descubrimiento**: todavía no ha llegado ninguna medición. Pulse
+  **Comprobar las fuentes**.
+- **«El broker MQTT rechaza la conexión»**: nombre de usuario o contraseña incorrectos.
+- **«No se puede acceder al broker MQTT»**: dirección o puerto incorrectos, o el broker está
+  detenido. Gladys ejecuta la integración en un contenedor: `localhost` es el propio contenedor, use
+  la dirección de la máquina.
+- **Conectado, pero «Ningún mensaje todavía»**: weewx-mqtt publica en otro sitio. Compruebe su
+  `topic` (y el sufijo `/loop`) con un cliente MQTT como MQTT Explorer.
+- **«El archivo no tiene un formato WeeWX compatible»**: la dirección apunta a otro archivo (una
+  página HTML, el `day.json` de Belchertown…). Use `weewx.json`, `current_minimal.json` o
+  `weewx_data.json`.
+- **Falta la lluvia de hoy por MQTT**: weewx-mqtt solo añade `dayRain` si `augment_record` está
+  activado (por defecto). Con solo paquetes de bucle y sin `dayRain`, la integración suma la lluvia
+  ella misma a partir de la siguiente medianoche.
+- **Estación sin datos se dispara demasiado por HTTP**: el archivo solo se reescribe una vez por
+  intervalo de archivo; elija una duración claramente mayor (15 minutos o más para el intervalo de
+  5 minutos por defecto).
+- **Registros**: configure `LOG_LEVEL=debug` en el contenedor para ver el detalle de cada ciclo.
+
+## Limitaciones
+
+- Una instancia de WeeWX, es decir, una estación, por integración.
+- Los sensores adicionales de WeeWX (`extraTemp1`, suelo, hoja, rayos, calidad del aire…) aún no se
+  leen.
+- Los archivos de weewx-json y Belchertown contienen menos valores que MQTT: ni presión de la
+  estación, ni batería, y ni UV ni radiación con weewx-json.
+- Los temas de valor único de weewx-mqtt (`weather/outTemp_C`…) se ignoran: mantenga la agregación
+  `aggregate`.
+- Desarrollada y probada con el controlador Simulator de WeeWX, no con una estación real.
+
+## Parámetros de configuración
+
+Estos son los parámetros que WeeWX te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conectar WeeWX | `section` | No | Indique al menos una fuente. MQTT (extensión weewx-mqtt) es en directo, cada pocos segundos. HTTP lee el archivo JSON de un skin (weewx-json o Belchertown), que WeeWX regenera cada pocos minutos. |
+| Broker MQTT | `string` | No | El broker en el que publica weewx-mqtt. Déjelo vacío para usar solo HTTP. |
+| Usuario MQTT | `string` | No | Solo si el broker lo exige. |
+| Contraseña MQTT | `secret` | No |  |
+| Tema MQTT | `string` | No | El `topic` de weewx-mqtt seguido de /loop: weather/loop por defecto. |
+| Dirección del archivo JSON | `string` | No | weewx.json (skin weewx-json) o weewx_data.json (skin Belchertown), tal como lo sirve el servidor web de WeeWX. Déjelo vacío para usar solo MQTT. |
+| Intervalo de lectura del archivo (s) | `number` | No | WeeWX reescribe el archivo una vez por intervalo de archivo (5 minutos por defecto). |
+| Idioma de los textos | `select` | No | Nombres de las funciones de la estación al añadirla, frases de escenas y mensajes de las acciones. |
+
+## Cómo instalar WeeWX en Gladys
+
+1. En Gladys, abre **Integraciones**: WeeWX aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-weewx:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-weewx](https://github.com/guim31/gladys-weewx).
+
+WeeWX requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+WeeWX es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-weewx) — [fuente de esta documentación](https://github.com/guim31/gladys-weewx/blob/HEAD/docs/es.md)

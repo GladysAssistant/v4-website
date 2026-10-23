@@ -1,0 +1,268 @@
+---
+title: "Integración domótica Alfen Eve, gratuita y de código abierto"
+sidebar_label: "Alfen Eve"
+description: "Alfen Eve charger over its local HTTPS API: state, power, energy, pause; optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-alfen.png"
+keywords:
+  - "alfen eve"
+  - "domótica alfen eve"
+  - "gladys alfen eve"
+  - "alfen eve gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-alfen instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Alfen Eve","description":"Alfen Eve charger over its local HTTPS API: state, power, energy, pause; optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-alfen","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-alfen.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T20:09:44Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Shows your **Alfen Eve** charger (Single S-line, Single Pro-line, Double
+Pro-line) in Gladys through its **local HTTPS API**: no cloud, no account,
+directly on your network.
+
+> **Never tested with a real charger.** Not affiliated with Alfen. The local
+> API of Alfen is not documented: the integration talks to it as the
+> alfen_wallbox integration of Home Assistant does. Alfen may change it in a
+> firmware update.
+
+## What you get
+
+One device per charger (socket 1 of an Eve Double in this version), with:
+
+| Feature                                    | Content                                                                   |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| Status                                     | No vehicle, plugged in not charging, charge paused, charging, error       |
+| Status of the charger                      | The status the charger gives, as text ("Charging Normal (11)")            |
+| Connector                                  | Available, occupied, faulted or unavailable ("charging station" category) |
+| Charging state                             | Charging, EV connected, paused by the charger, idle                       |
+| Vehicle plugged in, Charge paused, Error   | Yes / no                                                                  |
+| Power                                      | In W                                                                      |
+| Current L1 / L2 / L3, Voltage L1 / L2 / L3 | In A and V                                                                |
+| Maximum station current                    | In A: the limit of the installation; 0 A while the charge is paused       |
+| Charging current set                       | In A, the max current of socket 1                                         |
+| Energy index                               | In kWh, the meter of the socket: an index, guarded (see below)            |
+| Temperature                                | In °C                                                                     |
+| Pause charging                             | Button, always available                                                  |
+| Resume charging                            | Button (only if allowed)                                                  |
+| Set the charging current                   | List from 6 A to the ceiling (only if allowed)                            |
+
+Read every 60 seconds by default (30 s to 1 h, configurable).
+
+## Setup
+
+1. Give the charger a **fixed IP address** in your router.
+2. You need the **password of the charger**: the one the Alfen app (MyEve or Eve
+   Connect) asks for. The user name is
+   usually `admin`.
+3. Install the integration from the Gladys store. In its configuration, enter
+   the **IP address of the charger** and its **password**. A user name and a
+   password pasted in the address (`admin:…@`) make the address ignored, and
+   are never shown back: use the dedicated fields.
+4. Save, then add the charger from the **Discovery** tab.
+
+The password is **kept by Gladys in its database, never shown again**, and
+sent only to the charger, over HTTPS. It is never written to the logs, to
+`/data` nor to a state.
+
+### One session at a time
+
+The charger takes **one session at a time**. The integration never holds it:
+at each read it opens a short connection, logs in, reads, **logs out** and
+closes the connection (a few seconds). The Alfen app (MyEve, Eve Connect) can log in between
+two reads. While it is logged in, the charger may refuse Gladys: the status
+says so ("the charger closed the session" or "credentials refused"), and the
+next tries are spaced. Gladys never opens two sessions at once: a command
+takes the place of a read under way, a pause takes the place of anything.
+
+### Pinned certificate
+
+The charger serves a **self-signed** certificate: no authority can vouch for
+it. At the **first connection**, the integration keeps its SHA-256
+fingerprint (in `/data`) and compares it at every connection, **before
+sending anything**, the password included. If the certificate changes (a
+charger replaced, a firmware update, or another device at the address),
+nothing is sent: the status shows the start of the new fingerprint. If it is
+your charger, click **"Trust the new certificate"**, **in two clicks**: the
+first one shows the whole fingerprint (compare it), the second one within
+60 seconds pins exactly that one, then the charger is read; if another
+fingerprint was seen meanwhile, it is shown again. The very first
+connection trusts the certificate it is given: make it on your trusted
+network. If `/data` cannot be written, the first pin is not kept and the
+password is not sent (the status says so). The connection requires TLS 1.2
+at least; the list of algorithms is widened (security level 1, as the Home
+Assistant integration does) for older chargers: the pin, checked before
+anything is sent, vouches for the charger.
+
+The **Test the connection** button reads the charger once if the interval
+since the last read has passed (never more often: neither through this
+button, nor the Discovery tab, nor a reconnection of Gladys, nor a saved
+configuration, nor a restart).
+
+## Energy index
+
+The meter of the socket is an **index**: Gladys derives consumption and cost
+from it, and counts every rise in full. The integration guards it as the P1
+Monitor integration does:
+
+- never 0; an implausible **drop** or **jump** (more than 25 kW on average
+  since the last value; a socket gives 22 at most) is **held**: the last
+  accepted value is sent again, the status of the integration and the badge
+  of the device show the kWh waiting, and the log says so; the hold is kept
+  in `/data`, across restarts too;
+- it is never confirmed by repetition nor by time: only the **"Accept the
+  held index"** action of the configuration takes it, **in two clicks**. The
+  first click takes nothing: it lists the value held (drop or jump, from →
+  to, kWh). A second click within 60 seconds takes exactly that — the value
+  listed, plus what the charger may have delivered since — and answers with
+  what is counted; if the value changed meanwhile, it is listed again. Saving
+  the configuration or a reconnection never accepts anything;
+- a charger added again starts from a fresh guard.
+
+The charger usually sits behind your main meter: in the energy settings of
+Gladys, put it under that meter so that it is not counted twice.
+
+## Commands
+
+**"Pause charging"** is always available, without any option. The Alfen
+charger has no pause command: as the Home Assistant integration does, Gladys
+sets the **maximum station current to 0 A** (`2062_0`). The pause is **never
+held back**: not by another command under way (it takes its place; a resume
+or a current not sent yet is dropped), not by the minute between two
+changes, not by a 429 or 5xx pause (one session), not by a missing read (it
+needs none), not right after a restart (the identity of the charger is kept
+in `/data`). When the charger refused the credentials, the pause still tries
+a login, **at most one every 5 minutes**: a refused password is never sent
+again in a loop (by a scene for instance). A pause that goes through lifts
+the block and the reads go on; a refused pause never lengthens the wait of
+the reads.
+
+Every read where the maximum station current is 6 A or more **keeps it in
+`/data`**: the value a resume writes back, always the latest limit of the
+installation (a read during a pause, at 0 A, replaces nothing). Before
+writing, the pause reads that current only when it costs it nothing: never
+during a 429/5xx pause or a block (one session, one write), and only when
+the time left covers the read and a new session. It writes nothing when the
+charger is already paused (no follow-up read then); if that read fails, the
+pause is written anyway. Remaining risk: if the installer changes the limit
+and the charger is then paused from the app within the same read interval,
+Gladys never saw the new limit and a resume would write back the old one.
+
+When a resume was left without confirmation, it may still reach the charger
+later: a pause sent within the next 90 seconds is watched, and sent again
+(twice at most, also when a resend fails) if a read shows the charge resumed
+while no other resume left Gladys since. **Beware**: a resume made within
+these 90 seconds from the Alfen app is cancelled too; do it again
+afterwards.
+
+**A pause stays on the charger until a resume**: the maximum station current
+stays at 0 A. With the option below off (the default), only the Alfen
+app (MyEve, Eve Connect) sets that current back: a forgotten pause (by a scene, the AI
+chat) may prevent the next charge and leave the car uncharged. **The value to
+set back** is the one from before the pause: the status of the integration
+shows it during the pause ("… A before the pause"). Whether the owner's app
+can change that setting was not checked: the installer tool may be needed.
+
+**"Resume charging"** and **"Set the charging current"** refuse every
+command while **Allow resuming and the charging current** is off (the
+default). On:
+
+- **Resume** sets the maximum station current back to **exactly** the value
+  last read at 6 A or more (the limit of your installation), never capped
+  nor guessed: without a value known (a charger always seen paused), the
+  resume is **refused**; refused too **without a vehicle plugged in**, or on an error
+  or an unknown state.
+- **Charging current** (`2129_0`, socket 1): from 6 A to the **ceiling**: the
+  lower of the "Ceiling of the charging current" of the configuration (16 A
+  by default; it applies to this current only) and the maximum station
+  current, checked again right before sending. Setting the current during a
+  pause does not resume the charge.
+- **One change a minute at most** (resume or current): no fine regulation
+  from Gladys. These are settings of the charger: do not change them all the
+  time.
+
+They are **buttons** and a **list**, never switches: a "turn everything off"
+(from Gladys, Google Home, Alexa or HomeKit) never reaches them. A scene may
+trigger them, only through an explicit action. Note that the AI chat of
+Gladys (MCP) can create and run such a scene: while the commands are
+allowed, it can resume the charge or change the current.
+
+Each command opens its own session: connection, certificate checked,
+**identity of the charger read again** (another charger at the address
+refuses the command; an unreadable identity is not another charger), login,
+then, for a resume or a current, a **read of the charger** on which alone it
+decides. The option and the deadline are checked again right before sending.
+A command without effect (already so) is not sent. A command that cannot
+leave within 3.5 seconds (connection included) is refused unsent. A command
+the charger accepted is confirmed only by a read showing the value asked,
+5 then 20 seconds later. When the charger does not answer (silence, a 5xx),
+Gladys shows "Command sent, without confirmation".
+
+## Errors and limits
+
+- **Charger unreachable**: only the connector ("unavailable") and the status
+  ("Charger unreachable") change; the other values keep their last one. New
+  try after 30 s, 1, 2, then 5 minutes, never faster than the interval.
+- **Credentials refused**: the status asks to check them. New tries after
+  15 minutes, 1 hour, then every 6 hours, never sooner (kept in `/data`
+  across a restart); saving new credentials tries again at once.
+- **429 (too many requests)** or **5xx**: a pause (1 minute to 6 hours for a 429) of the reads and of the commands but the pause of the charge, never
+  shorter than the interval, kept in `/data`. An error on the temperature
+  alone never stops the rest.
+- One charger per integration, socket 1 only. Neither the phases, the solar
+  charging, the RFID authorization nor a reboot of the charger are commanded
+  from Gladys in this version. No Bluetooth.
+- If your charger is also driven over OCPP or by the load balancing of
+  another system, both may contradict each other: command only one.
+- The logs never hold the text of the answers of the charger, the password
+  nor the session token.
+
+## Credits
+
+Port of [alfen_wallbox](https://github.com/leeyuentuen/alfen_wallbox)
+(leeyuentuen, MIT), the Alfen integration of Home Assistant. Index guard
+taken from the P1 Monitor integration. Apache-2.0 license.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Alfen Eve te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Alfen charger | `section` | No | Shows your Alfen Eve charger (Single S-line, Single Pro-line, Double Pro-line) in Gladys through its local HTTPS API, without any cloud: state, vehicle plugged in, power, current and voltage per phase, energy index, temperature. The charger takes one session at a time: Gladys logs in briefly at each read, then logs out, so that the Alfen app (MyEve, Eve Connect) can still connect. Give the charger a fixed address in your router, enter it with the password of the charger, save, then add the charger from the Discovery tab. Pausing the charge is always possible from Gladys; resuming it and the charging current only if you allow them below. Never tested with a real charger. Not affiliated with Alfen. |
+| IP address of the charger | `string` | Sí | An IPv4 address or a host name, optionally followed by a port (443 by default). |
+| User name | `string` | No | The user name of the local API of the charger: "admin" unless your installer changed it. |
+| Password of the charger | `secret` | Sí | The password of the charger (the one the Alfen app (MyEve, Eve Connect) uses). Kept by Gladys in its database, never shown again, sent only to the charger, over HTTPS, and only once its certificate is checked against the one pinned at the first connection. Sent as typed (spaces included). Refused credentials are tried again after 15 min, 1 h, then every 6 h. |
+| Allow resuming and the charging current | `boolean` | No | Off by default. On: Gladys may resume the charge (button, the last station current read at 6 A or more written back exactly) and set the charging current (list, 6 A to the ceiling below). Off: these two features refuse every command. "Pause charging" is always available: it sets the maximum station current of the charger to 0 A, which stays until a resume (the value to set back is shown in the status); with this option off, only the Alfen app (MyEve, Eve Connect) resumes it (a forgotten pause may prevent the next charge). |
+| Ceiling of the charging current (A) | `number` | No | The highest charging current (socket current) Gladys may ask for (16 A by default). The lower of this value and the maximum station current read on the charger applies. A resume always writes back exactly the last station current read at 6 A or more. |
+| Refresh interval (s) | `number` | No | How often the charger is read, in seconds. Each read is a short session on the charger. |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## Cómo instalar Alfen Eve en Gladys
+
+1. En Gladys, abre **Integraciones**: Alfen Eve aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-alfen:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-alfen](https://github.com/LM1LC3N7/gladys-alfen).
+
+Alfen Eve requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Alfen Eve es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-alfen) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-alfen/blob/HEAD/docs/en.md)

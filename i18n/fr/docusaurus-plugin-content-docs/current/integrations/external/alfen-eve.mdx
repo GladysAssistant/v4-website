@@ -1,0 +1,277 @@
+---
+title: "Intégration domotique Alfen Eve, gratuite et open source"
+sidebar_label: "Alfen Eve"
+description: "Borne Alfen Eve par son API HTTPS locale : état, puissance, énergie, pause ; commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-alfen.png"
+keywords:
+  - "alfen eve"
+  - "domotique alfen eve"
+  - "gladys alfen eve"
+  - "alfen eve gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-alfen instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Alfen Eve","description":"Borne Alfen Eve par son API HTTPS locale : état, puissance, énergie, pause ; commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-alfen","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-alfen.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T20:09:44Z"}} />
+
+Affiche votre borne de recharge **Alfen Eve** (Single S-line, Single
+Pro-line, Double Pro-line) dans Gladys par son **API HTTPS locale** : sans
+cloud, sans compte, directement sur votre réseau.
+
+> **Jamais testé avec une vraie borne.** Sans lien avec Alfen. L'API locale
+> d'Alfen n'est pas documentée : l'intégration lui parle comme l'intégration
+> alfen_wallbox de Home Assistant. Alfen peut la changer lors d'une mise à
+> jour de la borne.
+
+## Ce que vous obtenez
+
+Un appareil par borne (la prise 1 d'une Eve Double dans cette version), avec :
+
+| Fonctionnalité                             | Contenu                                                                         |
+| ------------------------------------------ | ------------------------------------------------------------------------------- |
+| État                                       | Aucun véhicule, branché sans charge, charge en pause, en charge, erreur         |
+| Statut de la borne                         | Le statut donné par la borne, en texte (« Charging Normal (11) »)               |
+| Connecteur                                 | Disponible, occupé, en défaut ou indisponible (catégorie « borne de recharge ») |
+| État de charge                             | En charge, véhicule connecté, en pause par la borne, inactif                    |
+| Véhicule branché, Charge en pause, Erreur  | Oui / non                                                                       |
+| Puissance                                  | En W                                                                            |
+| Courant L1 / L2 / L3, Tension L1 / L2 / L3 | En A et en V                                                                    |
+| Courant maximal de la borne                | En A : la limite de l'installation ; 0 A quand la charge est en pause           |
+| Courant de charge réglé                    | En A, le courant maximal de la prise 1                                          |
+| Index d'énergie                            | En kWh, le compteur de la prise : un index, protégé (voir plus bas)             |
+| Température                                | En °C                                                                           |
+| Mettre la charge en pause                  | Bouton, toujours disponible                                                     |
+| Reprendre la charge                        | Bouton (seulement si autorisé)                                                  |
+| Régler le courant de charge                | Liste de 6 A au plafond (seulement si autorisé)                                 |
+
+Lecture toutes les 60 secondes par défaut (de 30 s à 1 h, réglable).
+
+## Installation
+
+1. Donnez à la borne une **adresse IP fixe** dans votre box.
+2. Il vous faut le **mot de passe de la borne** : celui que demande
+   l'application Alfen (« MyEve » ou
+   « Eve Connect »). Le nom d'utilisateur est en général `admin`.
+3. Installez l'intégration depuis le store de Gladys. Dans sa configuration,
+   saisissez l'**adresse IP de la borne** et son **mot de passe**. Un nom et
+   un mot de passe collés dans l'adresse (`admin:…@`) font ignorer l'adresse,
+   et ne sont jamais réaffichés : utilisez les champs dédiés.
+4. Enregistrez, puis ajoutez la borne depuis l'onglet **Découverte**.
+
+Le mot de passe est **gardé par Gladys dans sa base, jamais réaffiché**, et
+envoyé seulement à la borne, en HTTPS. Il n'est jamais écrit dans les
+journaux, ni dans `/data`, ni dans un état.
+
+### Une seule session à la fois
+
+La borne n'accepte **qu'une session à la fois**. L'intégration ne garde
+donc jamais la borne : à chaque lecture, elle ouvre une connexion courte, se
+connecte, lit, **se déconnecte** et ferme la connexion (quelques secondes).
+L'application Alfen (MyEve, Eve Connect) peut se connecter entre deux lectures.
+Pendant qu'elle est connectée, la borne peut refuser la connexion de Gladys :
+l'état le dit (« la borne a fermé la session » ou « identifiants refusés »),
+et les essais suivants sont espacés. Gladys n'ouvre jamais deux sessions à la
+fois : une commande prend la place d'une lecture en cours, une pause prend la
+place de tout.
+
+### Certificat épinglé
+
+La borne présente un certificat **auto-signé** : aucune autorité ne peut le
+garantir. À la **première connexion**, l'intégration retient son empreinte
+SHA-256 (dans `/data`) et la compare ensuite à chaque connexion, **avant
+d'envoyer quoi que ce soit**, le mot de passe compris. Si le certificat
+change (borne remplacée, mise à jour, ou autre appareil à l'adresse), rien
+n'est envoyé : l'état affiche le début de la nouvelle empreinte. Si c'est
+bien votre borne, cliquez sur **« Faire confiance au nouveau certificat »**,
+**en deux clics** : le premier montre l'empreinte entière (comparez-la), le
+second dans les 60 secondes épingle exactement celle-là, puis la borne est
+lue ; si une autre empreinte a été vue entre-temps, elle est montrée de
+nouveau. La toute première connexion fait confiance au certificat présenté :
+faites-la sur votre réseau de confiance. Si `/data` ne peut pas être écrit,
+la première épingle n'est pas gardée et le mot de passe n'est pas envoyé
+(l'état le dit). La connexion exige TLS 1.2 au moins ; la liste des
+algorithmes est élargie (niveau de sécurité 1, comme l'intégration Home
+Assistant) pour les bornes anciennes : c'est l'épingle, vérifiée avant tout
+envoi, qui garantit la borne.
+
+Le bouton **Tester la connexion** lit la borne une fois si l'intervalle
+depuis la dernière lecture est passé (jamais plus souvent : ni par ce bouton,
+ni par l'onglet Découverte, ni par une reconnexion de Gladys, ni par un
+enregistrement de la configuration, ni par un redémarrage).
+
+## Index d'énergie
+
+Le compteur de la prise est un **index** : Gladys en tire la consommation et
+le coût, et compte chaque hausse en entier. L'intégration le protège comme
+l'intégration P1 Monitor :
+
+- jamais 0 ; une **baisse** ou un **saut** improbable (plus de 25 kW en
+  moyenne depuis la dernière valeur, une prise en donne 22 au plus) est
+  **retenu** : la dernière valeur acceptée est renvoyée, l'état de
+  l'intégration et le badge de l'appareil montrent les kWh en attente, et le
+  journal le dit ; la retenue est gardée dans `/data`, même après un
+  redémarrage ;
+- elle n'est jamais confirmée par la répétition ni par le temps : seule
+  l'action **« Accepter l'index retenu »** de la configuration la prend, **en
+  deux clics**. Le premier clic ne prend rien : il montre la valeur retenue
+  (baisse ou saut, de → à, kWh). Un second clic dans les 60 secondes prend
+  exactement cela — la valeur montrée, plus ce que la borne a pu charger
+  depuis — et répond par ce qui est compté ; si la valeur a changé
+  entre-temps, elle est montrée de nouveau. Enregistrer la configuration ou
+  une reconnexion n'accepte jamais rien ;
+- une borne ajoutée de nouveau repart d'une garde neuve.
+
+La borne est en général derrière votre compteur principal : dans les réglages
+d'énergie de Gladys, rangez-la sous ce compteur pour qu'elle ne soit pas
+comptée deux fois.
+
+## Commandes
+
+**« Mettre la charge en pause »** est toujours disponible, sans option. La
+borne Alfen n'a pas de commande de pause : comme l'intégration Home
+Assistant, Gladys met le **courant maximal de la borne à 0 A** (`2062_0`).
+La pause n'est **jamais retenue** : ni par une autre commande en cours (elle
+prend sa place ; une reprise ou un courant pas encore envoyé est abandonné),
+ni par la minute entre deux changements, ni par une pause 429 ou 5xx (une
+seule session), ni par l'absence de lecture (elle n'en a pas besoin), ni
+juste après un redémarrage (l'identité de la borne est gardée dans `/data`).
+Quand la borne a refusé les identifiants, la pause tente quand même une
+connexion, **au plus une toutes les 5 minutes** : un mot de passe refusé
+n'est jamais renvoyé en boucle (par une scène par exemple). Une pause qui
+passe lève le blocage et les lectures reprennent ; une pause refusée
+n'allonge pas l'attente des lectures.
+
+Chaque lecture où le courant maximal de la borne vaut 6 A ou plus le **garde
+dans `/data`** : c'est la valeur qu'une reprise réécrira, toujours la limite
+de l'installation la plus récente (une lecture pendant une pause, à 0 A, ne
+remplace rien). Avant d'écrire, la pause relit ce courant seulement si cela
+ne lui coûte rien : jamais pendant une pause 429/5xx ni un blocage (une
+session, une écriture), et seulement si le temps restant couvre la lecture et
+une nouvelle session. Elle n'écrit rien si la borne est déjà en pause (pas de
+lecture de suivi alors) ; si cette lecture échoue, la pause est écrite quand
+même. Risque restant : si l'installateur change la limite puis que la borne
+est mise en pause depuis l'application dans le même intervalle de lecture,
+Gladys n'a pas vu la nouvelle limite et une reprise réécrirait l'ancienne.
+
+Quand une reprise est restée sans confirmation, elle peut encore atteindre la
+borne plus tard : une pause envoyée dans les 90 secondes qui suivent est
+surveillée, et renvoyée (deux fois au plus, même si un renvoi échoue) si une
+lecture montre la charge reprise alors qu'aucune autre reprise n'est partie
+depuis Gladys. **Attention** : une reprise faite dans ces 90 secondes depuis
+l'application Alfen est donc annulée elle aussi ; refaites-la
+après.
+
+**Une pause reste sur la borne jusqu'à une reprise** : le courant maximal de
+la borne reste à 0 A. Avec l'option ci-dessous désactivée (par défaut), seule
+l'application Alfen (MyEve, Eve Connect) remet ce courant : une pause oubliée
+(par une scène, le chat IA) peut empêcher la charge suivante et laisser la
+voiture non chargée. **La valeur à remettre** est celle d'avant la pause :
+l'état de l'intégration l'affiche pendant la pause (« … A avant la pause »).
+Que l'application du propriétaire puisse modifier ce réglage n'a pas été
+vérifié : il faut parfois l'outil de l'installateur.
+
+**« Reprendre la charge »** et **« Régler le courant de charge »** refusent
+toute commande tant que **Autoriser la reprise et le courant de charge** est
+désactivé (par défaut). Activé :
+
+- **Reprendre** remet le courant maximal de la borne à **exactement** la
+  dernière valeur lue à 6 A ou plus (la limite de votre installation),
+  jamais plafonnée ni devinée : sans valeur connue (borne toujours vue en
+  pause), la reprise est **refusée** ; refusée aussi **sans véhicule
+  branché**, ou sur une erreur ou un état inconnu.
+- **Courant de charge** (`2129_0`, la prise 1) : de 6 A au **plafond** : le
+  plus bas du « Plafond du courant de charge » de la configuration (16 A par
+  défaut ; il ne s'applique qu'à ce courant) et du courant maximal de la
+  borne, revérifié juste avant l'envoi. Régler le courant pendant une pause
+  ne reprend pas la charge.
+- **Un changement par minute au plus** (reprise ou courant) : pas de
+  régulation fine depuis Gladys. Ce sont des réglages de la borne : ne les
+  changez pas sans cesse.
+
+Ce sont des **boutons** et une **liste**, jamais des interrupteurs : un
+« éteins tout » (depuis Gladys, Google Home, Alexa ou HomeKit) ne les atteint
+jamais. Une scène peut les déclencher, seulement par une action explicite.
+Notez que le chat IA de Gladys (MCP) peut créer et lancer une telle scène :
+tant que les commandes sont autorisées, il peut reprendre la charge ou
+changer le courant.
+
+Chaque commande ouvre sa propre session : connexion, certificat vérifié,
+**identité de la borne relue** (une autre borne à l'adresse refuse la
+commande ; une identité illisible n'est pas une autre borne), connexion,
+puis, pour une reprise ou un courant, **lecture de la borne** sur laquelle
+seule elle décide. L'option et l'échéance sont revérifiées juste avant
+l'envoi. Une commande sans effet (déjà le cas) n'est pas envoyée. Une
+commande qui ne peut pas partir dans les 3,5 secondes (connexion comprise)
+est refusée sans être envoyée. Une commande acceptée par la borne n'est
+confirmée que par une lecture montrant la valeur demandée, faite 5 puis
+20 secondes plus tard. Quand la borne ne répond pas (silence, erreur 5xx),
+Gladys affiche « Commande envoyée, sans confirmation ».
+
+## Erreurs et limites
+
+- **Borne injoignable** : seuls le connecteur (« indisponible ») et l'état
+  (« Borne injoignable ») changent ; les autres valeurs gardent la dernière.
+  Nouvel essai après 30 s, 1, 2, puis 5 minutes, jamais plus vite que
+  l'intervalle.
+- **Identifiants refusés** : l'état demande de les vérifier. Nouveaux essais
+  après 15 minutes, 1 heure, puis toutes les 6 heures, jamais plus tôt (gardé
+  dans `/data` après un redémarrage) ; enregistrer de nouveaux identifiants
+  réessaie aussitôt.
+- **429 (trop de requêtes)** ou **5xx** : une pause (de 1 minute à 6 heures
+  pour un 429) pour les lectures et les commandes sauf la pause de la charge,
+  jamais plus courte que l'intervalle, gardée dans `/data`. Une erreur sur la
+  température seule n'arrête pas le reste.
+- Une seule borne par intégration, la prise 1 seulement. Ni les phases, ni la
+  charge solaire, ni l'autorisation RFID, ni un redémarrage de la borne ne se
+  commandent depuis Gladys dans cette version. Pas de Bluetooth.
+- Si votre borne est aussi pilotée par OCPP ou par la répartition de charge
+  d'un autre système, les deux peuvent se contredire : n'en commandez qu'un.
+- Les journaux ne contiennent jamais le texte des réponses de la borne, ni le
+  mot de passe, ni le jeton de session.
+
+## Crédits
+
+Portage de [alfen_wallbox](https://github.com/leeyuentuen/alfen_wallbox)
+(leeyuentuen, MIT), l'intégration Alfen de Home Assistant. Garde de l'index
+reprise de l'intégration P1 Monitor. Licence Apache-2.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Alfen Eve dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre borne Alfen | `section` | Non | Affiche votre borne Alfen Eve (Single S-line, Single Pro-line, Double Pro-line) dans Gladys par son API HTTPS locale, sans cloud : état, véhicule branché, puissance, courant et tension par phase, index d'énergie, température. La borne n'accepte qu'une session à la fois : Gladys se connecte brièvement à chaque lecture, puis se déconnecte, pour que l'application Alfen (MyEve, Eve Connect) puisse toujours se connecter. Donnez à la borne une adresse fixe dans votre box, saisissez-la avec le mot de passe de la borne, enregistrez, puis ajoutez la borne depuis l'onglet Découverte. Mettre la charge en pause est toujours possible depuis Gladys ; la reprendre et le courant de charge seulement si vous les autorisez ci-dessous. Jamais testé avec une vraie borne. Sans lien avec Alfen. |
+| Adresse IP de la borne | `string` | Oui | Une adresse IPv4 ou un nom d'hôte, éventuellement suivi d'un port (443 par défaut). |
+| Nom d'utilisateur | `string` | Non | Le nom d'utilisateur de l'API locale de la borne : « admin » sauf si votre installateur l'a changé. |
+| Mot de passe de la borne | `secret` | Oui | Le mot de passe de la borne (celui qu'utilise l'application Alfen (MyEve, Eve Connect)). Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la borne, en HTTPS, et seulement une fois son certificat comparé à celui épinglé à la première connexion. Envoyé tel que saisi (espaces compris). Des identifiants refusés sont réessayés après 15 min, 1 h, puis toutes les 6 h. |
+| Autoriser la reprise et le courant de charge | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut reprendre la charge (bouton, le dernier courant maximal lu à 6 A ou plus réécrit exactement) et régler le courant de charge (liste, de 6 A au plafond ci-dessous). Désactivé : ces deux fonctionnalités refusent toute commande. « Mettre la charge en pause » reste toujours disponible : elle met le courant maximal de la borne à 0 A, ce qui reste jusqu'à une reprise (la valeur à remettre est affichée dans l'état) ; option désactivée, seule l'application Alfen (MyEve, Eve Connect) la reprend (une pause oubliée peut empêcher la charge suivante). |
+| Plafond du courant de charge (A) | `number` | Non | Le courant de charge (courant de la prise) le plus élevé que Gladys peut demander (16 A par défaut). La plus basse de cette valeur et du courant maximal de la borne lu sur celle-ci s'applique. Une reprise réécrit toujours exactement le dernier courant maximal lu à 6 A ou plus. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la borne, en secondes. Chaque lecture est une courte session sur la borne. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer Alfen Eve dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Alfen Eve apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-alfen:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-alfen](https://github.com/LM1LC3N7/gladys-alfen).
+
+Alfen Eve nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Alfen Eve est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-alfen) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-alfen/blob/HEAD/docs/fr.md)

@@ -1,0 +1,209 @@
+---
+title: "Intégration domotique KEBA KeContact, gratuite et open source"
+sidebar_label: "KEBA KeContact"
+description: "Bornes KEBA KeContact P20/P30 en UDP local : état, puissance, énergie ; commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-keba.png"
+keywords:
+  - "keba kecontact"
+  - "domotique keba kecontact"
+  - "gladys keba kecontact"
+  - "keba kecontact gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-keba instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"KEBA KeContact","description":"Bornes KEBA KeContact P20/P30 en UDP local : état, puissance, énergie ; commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-keba","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-keba.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T16:02:32Z"}} />
+
+Suivez votre borne de recharge **KEBA KeContact P20 ou P30** (ou une wallbox
+BMW qui en dérive) dans Gladys, par son **interface UDP locale** (port 7090),
+sans cloud.
+
+> Intégration non officielle, **jamais testée avec une vraie borne** : elle
+> suit la bibliothèque keba-kecontact (celle de Home Assistant) et le guide UDP
+> de KEBA. Vos retours sont les bienvenus. Sans lien avec KEBA.
+
+## Ce que vous obtenez
+
+Un appareil par borne (identifiée par son numéro de série), avec :
+
+- **État** de la borne (démarrage, pas prête, prête, en charge, erreur,
+  autorisation refusée), **connecteur** et **état de charge** ;
+- **prise et câble** : véhicule branché, câble branché sur la borne, câble
+  verrouillé ;
+- **puissance** (W), **courant** (A) et **tension** (V) de chaque phase ;
+- **énergie de la session** et **énergie totale** (kWh) : de simples capteurs,
+  jamais un index du suivi énergétique (la borne est déjà derrière votre
+  compteur, elle serait comptée deux fois) ;
+- **courant maximal autorisé** (A), **charge activée** par la borne et
+  **charge autorisée** (« ena »), **mode de repli** (failsafe) actif ou non,
+  **autorisation requise** (RFID) ;
+- en option, trois commandes (voir plus bas).
+
+Une borne sans compteur intégré (P20 e-series, P30 « Deutschland Edition »)
+ne donne ni puissance, ni courant, ni tension, ni énergie : ces fonctionnalités
+restent vides.
+
+## 1. Activer l'interface UDP sur la borne
+
+L'interface UDP (« smart home interface ») est **désactivée en usine**. Sur une
+P20 ou une P30 c-series, elle s'active par un **micro-interrupteur DIP** dans la borne :
+d'après la documentation KEBA, le commutateur **DSW1.3** sur **ON** (à vérifier
+dans le manuel d'installation de votre modèle). Sur une P30 x-series, elle se
+règle dans son interface web (paramètre « UDP » / « Smart Home interface »).
+
+**Faites-le faire par un électricien** : il faut ouvrir la borne, hors
+tension. Ne touchez pas aux autres commutateurs (courant maximal, etc.).
+
+La borne doit être reliée à votre réseau (câble Ethernet) avec une **adresse
+IP fixe** (réservation DHCP dans votre box).
+
+## 2. Configurer l'intégration
+
+1. Dans Gladys, installez l'intégration **KEBA KeContact** depuis le store.
+2. Saisissez l'**adresse IP** de la borne (une adresse IPv4 ; plusieurs bornes :
+   séparez-les par des virgules, huit au plus), puis enregistrez.
+3. Ouvrez l'onglet **Découverte** et ajoutez la borne.
+
+Le bouton **Tester la connexion** lit chaque borne une fois.
+
+## Sécurité : aucune authentification
+
+L'interface UDP de KEBA **n'a aucune authentification** : tout appareil de
+votre réseau local peut lire la borne et lui envoyer des commandes, même sans
+Gladys. Gardez la borne sur un **réseau local de confiance** (jamais exposée
+sur Internet, idéalement sur un réseau séparé des invités et des objets peu
+sûrs). Activer les commandes dans Gladys n'ouvre rien de plus sur la borne,
+mais permet à Gladys (scènes, chat IA par MCP, comptes Gladys) de les envoyer.
+
+## Commandes (désactivées par défaut)
+
+Avec l'option **Autoriser les commandes** :
+
+- **Autoriser la charge** et **Interdire la charge** : deux boutons qui
+  envoient `ena 1` et `ena 0` ;
+- **Régler le courant de charge** : une liste de 6 A à la limite matérielle de
+  la borne (`curr`), **au plus une fois par minute et par borne**. Ce n'est pas
+  une régulation fine (suivi de la production solaire seconde par seconde) :
+  la borne garde peut-être cette valeur en mémoire permanente, ce qui reste à
+  vérifier. Un changement plus rapproché est refusé sans envoi ; « Interdire
+  la charge » reste toujours disponible.
+
+Jamais d'interrupteur : un « tout éteindre » d'un assistant vocal ou d'une
+scène ne peut pas couper la charge. Avant chaque commande, la borne est relue
+(rapport 2) et la commande décidée sur cette lecture ; le courant est refusé
+au-dessus de la limite matérielle lue à ce moment (`Curr HW`, arrondie à
+l'ampère inférieur). L'option est revérifiée juste avant que la commande parte.
+
+Ce que disent les réponses :
+
+- **TCH-OK** veut dire que la borne a **accepté** la commande, pas qu'elle
+  l'a **appliquée**. L'intégration relit la borne ensuite ; si la valeur n'a
+  jamais bougé, elle l'écrit une fois dans le journal et dans le statut
+  (« a accepté … sans l'appliquer ») : modèle qui ne se pilote pas (c-series ?)
+  ou réglage (DSW1.3, gestion de charge d'un groupe de bornes).
+- **TCH-ERR** : la borne a refusé (modèle ou configuration).
+- Pas de réponse : « envoyée, sans confirmation » ; vérifiez l'état quelques
+  secondes plus tard.
+- Un produit que l'intégration ne reconnaît pas (ni KEBA P20/P30, ni BMW), ou
+  une borne qui ne donne pas son numéro de série dans le rapport 2, refuse les
+  commandes (lecture seule).
+
+**Interdire la charge** passe toujours en premier : il n'attend pas la réponse
+d'une autre commande en cours (celle-ci devient « envoyée, sans
+confirmation »), et un « Autoriser » ou un courant plus ancien ne part jamais
+après lui. **Interdire reste en place** jusqu'à un « Autoriser la charge » (à
+vérifier : peut-être aussi jusqu'à un redémarrage de la borne) : une scène qui
+interdit la charge doit aussi la réautoriser.
+
+« Charge autorisée (ena) » montre l'état de ces deux boutons. « Charge activée
+(borne) » (`Enable sys`) montre si la borne permet la charge au total : elle
+peut rester à 0 avec « ena » à 1 à cause d'une autre cause (entrée X1, badge
+RFID, gestion de charge, micro-interrupteurs).
+
+Le **mode de repli** (failsafe) est seulement lu : l'intégration ne le modifie
+jamais. Démarrer ou arrêter une session avec un badge RFID n'est pas proposé.
+
+Avec les commandes autorisées, le chat IA de Gladys (MCP) peut créer et lancer
+une scène qui autorise ou interdit la charge.
+
+## Réseau et Docker
+
+La borne répond au **port UDP 7090 de l'expéditeur**, quel que soit le port
+d'où la question est partie. L'intégration ouvre le port 7090 dans son
+conteneur, sur le réseau Docker de Gladys (pont avec NAT). Cela ne marche que
+si Docker garde le port source 7090 en sortie :
+
+- sur Linux avec Docker « classique », la translation (MASQUERADE) garde en
+  général le port source quand il est libre sur l'hôte : c'est le cas attendu ;
+- avec Docker Desktop (Windows, macOS) ou Docker « rootless », le trafic passe
+  par une couche réseau qui peut changer le port source : les réponses se
+  perdent alors et la borne paraît injoignable ;
+- si un autre programme de la même machine parle déjà à la borne depuis le
+  port 7090 (Home Assistant ou evcc en réseau hôte, par exemple), Docker doit
+  changer le port source et les réponses se perdent : n'en gardez qu'un.
+
+Rien de cela n'a été vérifié sur une vraie installation.
+
+## Rythme
+
+Chaque borne est lue toutes les 30 s par défaut (10 s à 10 min) : rapport 2
+(état), rapport 3 (compteur), et le rapport 1 (identité) une fois par heure.
+Une seule requête à la fois pour toutes les bornes, 100 ms au moins entre deux
+messages, et 2 s de pause pour la borne qui vient de recevoir `ena 0` (les
+autres continuent), comme keba-kecontact. Une réponse qui arrive en retard
+n'est jamais prise pour celle d'une requête suivante. Une borne qui ne répond
+plus est relue après 30 s, 1, 2 puis 5 min ; elle apparaît « Borne
+injoignable ».
+
+## Limites
+
+- Jamais testé avec une vraie borne.
+- Adresses IPv4 seulement (une réponse est attribuée à sa requête par son
+  adresse source).
+- Pas de découverte automatique (le broadcast ne traverse pas le réseau Docker).
+- Pas de démarrage par badge RFID, pas de réglage du mode de repli, pas de bascule de phases,
+  pas d'historique des sessions (rapports 1xx).
+
+## Crédits
+
+Le protocole est porté de **keba-kecontact** (MIT, Philipp Danner), la
+bibliothèque de l'intégration KEBA de Home Assistant. Voir
+`THIRD_PARTY_NOTICES.md`. KEBA et KeContact sont des marques de KEBA AG.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par KEBA KeContact dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre borne KEBA | `section` | Non | Affiche votre borne de recharge KEBA KeContact P20 ou P30 (ou une wallbox BMW qui en dérive) dans Gladys par son interface UDP locale (port 7090), sans cloud : état, prise et câble, puissance, courant et tension par phase, énergie de la session, énergie totale, courant maximal, états d'activation et de repli. Activez d'abord l'interface UDP sur la borne (micro-interrupteur DIP, voir le guide). Cette interface n'a AUCUNE authentification : gardez la borne sur un réseau local de confiance. Saisissez son adresse IP, enregistrez, puis ajoutez-la depuis l'onglet Découverte. Autoriser ou interdire la charge et le courant de charge ne se changent depuis Gladys que si vous autorisez les commandes ci-dessous. Jamais testé avec une vraie borne. Sans lien avec KEBA. |
+| Adresse IP de la borne | `string` | Oui | Une adresse IPv4 (donnez une adresse fixe à la borne dans votre box). Plusieurs bornes : séparez-les par des virgules, huit au plus. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut autoriser ou interdire la charge (ena 1 / ena 0) et régler le courant de charge (de 6 A à la limite matérielle de la borne, au plus une fois par minute). N'importe qui sur votre réseau peut déjà les envoyer : la borne n'a pas d'authentification. Désactivé : ces trois fonctionnalités refusent toute commande. Le mode de repli n'est jamais modifié. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de chaque borne, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer KEBA KeContact dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : KEBA KeContact apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-keba:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-keba](https://github.com/LM1LC3N7/gladys-keba).
+
+KEBA KeContact nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+KEBA KeContact est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-keba) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-keba/blob/HEAD/docs/fr.md)

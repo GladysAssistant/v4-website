@@ -1,0 +1,229 @@
+---
+title: "Integración domótica FHEM, gratuita y de código abierto"
+sidebar_label: "FHEM"
+description: "Puente a FHEM: importe sus dispositivos (luces, persianas, sensores…) en Gladys y contrólelos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-fhem.png"
+keywords:
+  - "fhem"
+  - "domótica fhem"
+  - "gladys fhem"
+  - "fhem gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-fhem instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"FHEM","description":"Puente a FHEM: importe sus dispositivos (luces, persianas, sensores…) en Gladys y contrólelos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-fhem","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-fhem.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:37:57Z"}} />
+
+Esta integración conecta Gladys con su servidor **FHEM**. Los dispositivos de
+FHEM (HomeMatic, Z-Wave, Shelly, dummies, todo lo que FHEM controla) se
+convierten en dispositivos de Gladys: sus readings siguen a FHEM en directo, y
+Gladys los controla a través de FHEM, que sigue hablando con el hardware. Todo
+se queda en su red local.
+
+FHEM no está afiliado a Gladys Assistant, y esta integración no está afiliada
+al proyecto FHEM.
+
+> Probada con un FHEM 6.4 real en Docker y dispositivos dummy (sin hardware
+> real): sus comentarios desde instalaciones reales son bienvenidos.
+
+## Requisitos
+
+- Gladys Assistant 5.1.0 o posterior.
+- FHEM con su interfaz web **FHEMWEB** (el dispositivo `WEB`, puerto 8083 por
+  defecto), accesible desde la máquina de Gladys.
+- Opcional: un nombre de usuario y una contraseña si FHEMWEB los pide (un
+  dispositivo `allowed` con `basicAuth`).
+
+## Configuración
+
+### Dirección
+
+Escriba la dirección de FHEMWEB vista desde la máquina de Gladys, por ejemplo
+`http://192.168.1.30:8083/fhem`. Sin ruta, se usa `/fhem`; sin puerto, 8083.
+Use una dirección IP: Gladys ejecuta la integración en un contenedor que no
+resuelve los nombres `.local`, y `localhost` es el propio contenedor.
+
+Gladys lee por sí mismo el token CSRF de FHEMWEB: no hay nada que cambiar en
+FHEM.
+
+### Nombre de usuario y contraseña
+
+Déjelos vacíos si FHEMWEB se abre sin contraseña. Si lo protegió
+(`define allowed_WEB allowed`, `attr allowed_WEB validFor WEB`,
+`set allowed_WEB basicAuth <usuario> <contraseña>`), escriba los mismos.
+
+### Elegir qué importar
+
+- **Solo los dispositivos de estas habitaciones**: habitaciones de FHEM
+  (atributo `room`), separadas por comas. Un dispositivo cuenta si está en una
+  de ellas. Vacío: todos los dispositivos.
+- **Dispositivos a excluir**: nombres de dispositivos FHEM, separados por
+  comas; `*` sustituye cualquier texto (`HM_*, Test_*`).
+- En FHEM, un dispositivo con `genericDeviceType` `ignore`, o con el atributo
+  `ignore`, nunca se importa.
+
+### Cerraduras, puertas de garaje y alarmas
+
+Desactivado por defecto: las cerraduras muestran su estado, las puertas de
+garaje si están abiertas, pero Gladys no puede abrirlas, ni desde el
+dispositivo, ni con una escena, ni con un asistente de voz. Active **Permitir
+comandos de cerraduras, puertas de garaje y alarmas** si lo acepta. Un
+dispositivo es una cerradura, una puerta de garaje o una alarma cuando su
+`genericDeviceType` es `lock`, `garage` o `security`, o cuando tiene los
+comandos `lock` y `unlock`.
+
+### Opciones
+
+- **Persianas: 0 % significa abierta en FHEM**: Gladys espera 100 % para una
+  persiana abierta, como HomeMatic, Shelly y el mapping homebridge de FHEM.
+  Actívelo si sus persianas cuentan al revés.
+- **Intervalo mínimo entre dos valores de un sensor**: un contador que informa
+  cada segundo se envía a Gladys a este ritmo (10 s por defecto). Interruptores
+  y detectores nunca se retrasan.
+- **Dispositivos vigilados para las escenas**: vea el disparador más abajo.
+- **Idioma de los nombres de funciones**: francés por defecto.
+
+## Lo que obtiene
+
+### Dispositivos
+
+Cada dispositivo FHEM se ofrece una vez en la pestaña **Descubrir**, con el
+nombre de su `alias` (si no, su nombre) y su habitación. Añada los que quiera.
+El tipo de un dispositivo viene de su atributo `genericDeviceType` cuando está
+definido, si no de sus comandos (`PossibleSets`) y readings:
+
+| FHEM                                                                                        | Gladys                                                     |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `genericDeviceType` `light`, u `on`/`off` con `pct`/`dim`                                   | luz: encendido/apagado, brillo                             |
+| `genericDeviceType` `switch`/`outlet`, u `on`/`off`                                         | interruptor: encendido/apagado                             |
+| `genericDeviceType` `blind`, HomeMatic `blindActuator`, o `up`/`down`/`stop` sin `on`/`off` | persiana: posición (`pct`), abrir/cerrar/parar             |
+| `desired-temp` (termostatos)                                                                | consigna de termostato, en los límites que indica FHEM     |
+| `genericDeviceType` `contact`/`window`/`garage`, `contact`                                  | sensor de apertura (abierto, entreabierto: abierto)        |
+| `genericDeviceType` `motion`, reading `motion`                                              | detector de movimiento                                     |
+| reading `presence`, dispositivos PRESENCE y ROOMMATE                                        | sensor de presencia                                        |
+| `genericDeviceType` `lock`, comandos `lock`/`unlock`                                        | cerradura (solo lectura por defecto)                       |
+| readings `temperature`/`measured-temp`, `humidity`                                          | temperatura (°C), humedad (%)                              |
+| readings `pressure`, `co2`, `luminance`/`illuminance`                                       | presión (hPa), CO2 (ppm), iluminancia (lux)                |
+| readings `power`, `energy`                                                                  | potencia (W), energía (kWh): del enchufe, o de un contador |
+| reading `battery` (`ok`/`low` o %), `batteryPercent`                                        | batería baja, o nivel de batería (%)                       |
+
+Un comando solo se ofrece si FHEM lo lista en los comandos del dispositivo; si
+no, la función es de solo lectura. Gladys envía `set <dispositivo> on`,
+`set <dispositivo> pct 40`, `set <dispositivo> desired-temp 21.5`… y el cambio
+de reading que sigue es la confirmación.
+
+### Widget del panel
+
+El widget **FHEM** muestra la conexión, si los estados llegan en directo o por
+consulta periódica, la revisión de FHEM, los dispositivos ofrecidos y
+añadidos, y un botón **Recargar** que vuelve a leer la lista de dispositivos.
+
+### Disparadores de escena
+
+**Dispositivo FHEM modificado**: un reading de un dispositivo vigilado cambió
+(configuración, **Dispositivos vigilados para las escenas**), incluso un
+dispositivo no añadido a Gladys: un botón, un timbre, un estado de residentes,
+un modo de alarma. Filtros: dispositivo, reading y nuevo valor (todos
+opcionales). Variables: dispositivo, alias, reading, nuevo valor, valor
+anterior.
+
+### Acciones de escena
+
+**Enviar un comando a un dispositivo FHEM**: ejecuta
+`set <dispositivo> <comando>` en cualquier dispositivo que FHEM conozca, aunque
+no esté añadido a Gladys: `on`, `off`, `pct 50`, `on-for-timer 300`, una escena
+de un `LightScene`… Solo un `set`: un `;` o llaves se rechazan, así que una
+escena no puede ejecutar otro comando de FHEM ni código Perl. Las cerraduras,
+puertas de garaje y alarmas siguen el interruptor de seguridad, igual que una
+`structure` o una `LightScene` que contenga una. FHEM aún puede transmitir un
+comando por sí mismo (un `notify` sobre un dummy): eso depende de su
+configuración de FHEM.
+
+## Ejemplos de escenas
+
+- Cuando el timbre `Klingel` (vigilado) pasa a `pressed`, enviar un mensaje y
+  encender la luz de la entrada durante cinco minutos (`on-for-timer 300`).
+- Cuando el dispositivo de residentes `rgr_Residents` pasa a `absent`, cerrar
+  las persianas y bajar los termostatos.
+- A la puesta del sol, si el detector de movimiento del salón no vio a nadie
+  desde hace una hora, apagar todas las luces del salón.
+
+## Solución de problemas
+
+- **No accesible**: compruebe la dirección desde la máquina de Gladys
+  (`curl http://<dirección>:8083/fhem?XHR=1`), y que FHEMWEB no esté limitado a
+  la máquina local (atributo `allowfrom` de `WEB`, o un `WEB` ligado a
+  127.0.0.1).
+- **Acceso rechazado**: el usuario y la contraseña del dispositivo `allowed`.
+- **Falta un dispositivo**: ejecute **Probar la conexión** en la
+  configuración: lista los tipos de FHEM no importados. Defina
+  `genericDeviceType` en el dispositivo en FHEM
+  (`attr <dispositivo> genericDeviceType light`), luego **Recargar** en el
+  widget o vuelva a buscar.
+- **«Consulta periódica» en el widget**: un proxy inverso corta la petición
+  larga de FHEMWEB (`inform`). Los estados llegan igualmente cada 30 segundos.
+- **Persianas al revés**: active **Persianas: 0 % significa abierta en FHEM**.
+
+## Límites
+
+- Desarrollada sin hardware FHEM real: probada con FHEM 6.4 y dispositivos
+  dummy. Sus comentarios son bienvenidos.
+- FHEM no indica las unidades: la potencia se toma en W, la energía en kWh,
+  las temperaturas en °C.
+- Colores, modos de termostatos, reproductores y otros comandos no se
+  convierten en funciones de Gladys: la acción de escena envía cualquier `set`.
+- Un dispositivo renombrado en FHEM conserva su dispositivo de Gladys (FHEM 6
+  da a cada dispositivo un FUUID que sobrevive al cambio de nombre); en un FHEM
+  más antiguo sin FUUID, un dispositivo renombrado es uno nuevo.
+- FHEMWEB no dice nada en un flujo tranquilo: el flujo se reabre cada
+  15 minutos y la lista se vuelve a leer entonces.
+
+## Privacidad
+
+La integración solo habla con su servidor FHEM, en su red. Nada sale a
+Internet. Gladys guarda la contraseña y nunca se escribe en los registros.
+
+## Parámetros de configuración
+
+Estos son los parámetros que FHEM te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sus dispositivos FHEM en Gladys | `section` | No | Gladys lee los dispositivos de su servidor FHEM mediante FHEMWEB, su interfaz web, y sigue sus cambios en directo. Los dispositivos aparecen luego en la pestaña Descubrir: añada los que quiera. Defina el atributo genericDeviceType en FHEM (light, switch, blind, thermostat, contact, motion…) para los dispositivos que Gladys no reconozca. |
+| Dirección de FHEMWEB | `string` | Sí | Su dirección IP, puerto y ruta, vistos desde la máquina de Gladys. Sin nombre .local, sin localhost. |
+| Nombre de usuario | `string` | No | Solo si FHEMWEB pide una contraseña (basicAuth de un dispositivo allowed). |
+| Contraseña | `secret` | No |  |
+| Solo los dispositivos de estas habitaciones | `string` | No | Habitaciones de FHEM (atributo room), separadas por comas. Vacío: todos los dispositivos. |
+| Dispositivos a excluir | `string` | No | Nombres de dispositivos FHEM, separados por comas; * sustituye cualquier texto. Nunca se importan. |
+| Permitir comandos de cerraduras, puertas de garaje y alarmas | `boolean` | No | Desactivado: las cerraduras muestran su estado, pero Gladys no puede abrirlas, desde un dispositivo, una escena o un asistente de voz. |
+| Persianas: 0 % significa abierta en FHEM | `boolean` | No | Gladys espera 100 % para una persiana abierta, como HomeMatic y Shelly en FHEM. Actívelo si sus persianas cuentan al revés. |
+| Intervalo mínimo entre dos valores de un sensor (s) | `number` | No | Un contador que informa cada segundo se envía a Gladys a este ritmo. Interruptores y detectores nunca se retrasan. |
+| Escenas | `section` | No | Los dispositivos indicados aquí activan el disparador de escena «Dispositivo FHEM modificado» en cada cambio de uno de sus readings, aunque no estén añadidos a Gladys (un botón, un timbre, un estado de residentes…). |
+| Dispositivos vigilados para las escenas | `string` | No | Nombres de dispositivos FHEM, separados por comas; * sustituye cualquier texto. |
+| Idioma de los nombres de funciones | `select` | No |  |
+
+## Cómo instalar FHEM en Gladys
+
+1. En Gladys, abre **Integraciones**: FHEM aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-fhem:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-fhem](https://github.com/guim31/gladys-fhem).
+
+FHEM requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+FHEM es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-fhem) — [fuente de esta documentación](https://github.com/guim31/gladys-fhem/blob/HEAD/docs/es.md)

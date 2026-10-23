@@ -1,0 +1,200 @@
+---
+title: "Intégration domotique Teltonika, gratuite et open source"
+sidebar_label: "Teltonika"
+description: "Routeurs 4G/5G Teltonika (RutOS) : signal mobile, opérateur, données, débits. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-teltonika.png"
+keywords:
+  - "teltonika"
+  - "domotique teltonika"
+  - "gladys teltonika"
+  - "teltonika gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-teltonika instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Teltonika","description":"Routeurs 4G/5G Teltonika (RutOS) : signal mobile, opérateur, données, débits.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-teltonika","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-teltonika.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:21:57Z"}} />
+
+Les routeurs 4G/5G [Teltonika](https://teltonika-networks.com) (séries RUTX,
+RUT, RUTM, TRB, sous RutOS 7 ou plus récent) dans Gladys, par l'API HTTP
+locale du routeur. Utile pour une résidence secondaire, un camping-car ou
+une connexion de secours :
+
+- chaque **modem** du routeur devient un appareil Gladys (onglet
+  Découverte) : **données mobiles connectées** (oui / non), **signal** en
+  barres (0 à 5) et en valeurs (**RSSI**, **RSRP**, **RSRQ**, **SINR**),
+  **opérateur**, **type de réseau** (4G, 5G NSA…), **bande**, état de la
+  **carte SIM**, **température** du modem, **débits** descendant et montant,
+  **données reçues** et **envoyées** ;
+- le **routeur** devient un appareil avec son **firmware** et un bouton
+  **Redémarrer le routeur**, inactif tant que vous ne l'autorisez pas ;
+- deux déclencheurs de scène : **Données mobiles perdues** et **Données
+  mobiles revenues**.
+
+> **Cette intégration n'a jamais été testée avec un vrai routeur.** Cette
+> première version a été portée depuis teltasync, la bibliothèque qu'utilise
+> Home Assistant, et testée seulement contre un faux routeur. Dites sur le
+> forum Gladys ce qui marche et ce qui ne marche pas, avec le modèle et la
+> version de RutOS.
+
+Intégration non officielle, sans lien avec Teltonika.
+
+## Avant de commencer
+
+1. Le routeur doit être sous **RutOS 7** ou plus récent (l'API HTTP n'existe
+   pas avant). La version est dans l'interface web, **Système**, **Firmware**.
+2. Choisissez le compte que Gladys utilisera. Le compte `admin` marche ; un
+   compte dédié est préférable : dans **Système**, **Administration**,
+   **Utilisateurs**, créez un utilisateur avec un accès en lecture à l'API
+   (et en écriture seulement si vous voulez le bouton Redémarrer).
+3. Notez l'adresse IP du routeur sur votre réseau local (celle de son
+   interface web, souvent `192.168.1.1`).
+
+## Configuration
+
+- **Adresse du routeur** : son adresse IP ou son nom d'hôte. Une adresse
+  collée depuis un navigateur (`https://192.168.1.1`) est lue comme son
+  protocole, son hôte et son port.
+- **Protocole** : **HTTPS** par défaut. Le routeur a un certificat
+  auto-signé, qu'aucune autorité ne garantit : Gladys l'apprend à la
+  première connexion et garde son empreinte SHA-256 dans son volume `/data`.
+  Si le routeur présente ensuite un autre certificat (réinitialisation,
+  nouveau certificat, ou un autre appareil à cette adresse), Gladys s'arrête
+  **avant d'envoyer quoi que ce soit** et le dit dans le statut : si c'est
+  vous qui avez changé le certificat, enregistrez la configuration pour
+  accepter le nouveau. **HTTP** envoie le mot de passe en clair sur votre
+  réseau ; beaucoup de routeurs redirigent d'ailleurs le HTTP vers le HTTPS.
+- **Port** : vide, 443 en HTTPS et 80 en HTTP.
+- **Nom d'utilisateur** : `admin` par défaut.
+- **Mot de passe** : gardé par Gladys dans sa base, jamais réaffiché, envoyé
+  seulement au routeur. Il est pris tel que vous le tapez (une espace au
+  début ou à la fin compte). L'intégration ne l'écrit jamais dans ses
+  journaux ni dans `/data`, pas plus que le jeton de session du routeur.
+- **Rafraîchissement** : fréquence de lecture des modems (toutes les minutes
+  par défaut, une requête à chaque fois). Le routeur donne un jeton valable
+  environ cinq minutes : Gladys se reconnecte à peu près une fois toutes les
+  cinq minutes. Le modèle et le firmware sont relus une fois par heure.
+- **Autoriser le redémarrage du routeur** : désactivé par défaut (voir plus
+  bas).
+
+Le bouton **Tester la connexion** dit ce que le routeur répond. Comme
+l'analyse de l'onglet Découverte et un redémarrage de Gladys, il ne relit le
+routeur que si la dernière lecture est plus ancienne que le
+rafraîchissement ; après une erreur, il redonne le statut de cette erreur
+jusqu'au prochain essai, sans requête. Seul l'enregistrement de la
+configuration relit tout de suite.
+
+## Les valeurs
+
+- **Signal (barres)** : notre échelle à partir du RSSI : 5 barres à -65 dBm
+  ou mieux, 4 à -75, 3 à -85, 2 à -95, 1 à -105, 0 en dessous. L'interface
+  web de RutOS peut afficher une autre échelle.
+- **RSSI**, **RSRP** (dBm), **RSRQ**, **SINR** (dB) : telles que le routeur
+  les donne. Gladys n'a pas d'unité dBm : l'unité est dans le nom de la
+  fonctionnalité.
+- **Débits** (kbit/s) : moyennes entre deux lectures, calculées à partir des
+  compteurs du modem. Pas de débit à la première lecture, après une coupure,
+  ni quand un compteur repart de zéro.
+- **Données reçues / envoyées** (Mo, millions d'octets) : les compteurs du
+  modem, tels que RutOS les donne ; ils repartent de zéro quand le modem se
+  reconnecte ou redémarre. Ce ne sont pas les compteurs de forfait.
+- **Carte SIM** : l'état de la carte, ou ce qu'elle demande (PIN, PUK).
+- Un modem hors ligne garde son appareil, montré non connecté.
+
+## Redémarrage du routeur
+
+Un redémarrage coupe Internet pour tout ce qui passe par le routeur pendant
+une ou deux minutes, Gladys compris s'il passe par lui. C'est pourquoi :
+
+- le bouton refuse tant que **Autoriser le redémarrage du routeur** n'est pas
+  activé ;
+- c'est un bouton, jamais un interrupteur : un « éteins tout » d'un
+  assistant vocal ou d'une scène ne l'atteint pas ;
+- avant d'envoyer, Gladys relit le routeur et vérifie que c'est le même
+  (même numéro de série, gardé seulement comme une empreinte) ; l'option est
+  revérifiée juste avant l'envoi ; si le routeur est trop lent, le
+  redémarrage n'est pas envoyé et Gladys le dit ;
+- un seul redémarrage toutes les 10 minutes (même après un redémarrage de
+  l'intégration) : une scène qui boucle ne peut pas le relancer sans cesse ;
+- si le routeur ne répond pas après l'envoi, Gladys dit « envoyé, sans
+  confirmation » : il a pu redémarrer.
+
+## Déclencheurs de scène
+
+- **Données mobiles perdues** : un modem qui avait une connexion de données
+  l'a perdue à la lecture suivante.
+- **Données mobiles revenues** : un modem qui n'avait plus de connexion en a
+  de nouveau une.
+
+Filtrez sur un modem ou laissez vide pour tous. Variables : le nom du modem
+et l'opérateur. Aucun déclencheur ne part à la première lecture ni après une
+panne du routeur (chaque lecture n'est comparée qu'à la précédente).
+
+## En cas de problème
+
+Le statut de connexion de l'intégration dit ce qui se passe :
+
+- **Nom d'utilisateur ou mot de passe refusé** : Gladys s'arrête et ne
+  réessaie pas seul, même après un redémarrage (le routeur pourrait bloquer
+  le compte après plusieurs échecs). Vérifiez-les et enregistrez la
+  configuration.
+- **Le routeur accepte la connexion mais refuse les lectures** : le compte
+  n'a pas les droits sur l'API ; Gladys réessaie en espaçant.
+- **Certificat HTTPS changé** : voir Protocole plus haut.
+- **HTTP 429 ou erreur serveur (5xx)** : toutes les requêtes sont suspendues
+  (d'une minute à six heures), et la pause survit à un redémarrage.
+- **Pas de réponse, mauvaise adresse, mauvais protocole** : Gladys réessaie,
+  jamais plus vite que le rafraîchissement, en attendant plus longtemps à
+  chaque fois (jusqu'à 30 minutes).
+
+## Vie privée
+
+Gladys ne garde que ce qu'il montre. L'IMEI, l'IMSI, l'ICCID, les numéros de
+série, les adresses MAC, les identifiants de cellule et les numéros de
+téléphone que le routeur renvoie ne sont jamais repris : ni dans Gladys, ni
+dans les journaux, ni dans `/data`. Un texte qui contient un long numéro
+(qui n'aurait rien à y faire) ou une adresse MAC n'est pas affiché.
+
+L'intégration ne fait pas encore la liste des appareils connectés au
+routeur ni la présence (voir TODO.md).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Teltonika dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fonctionnement | `section` | Non | Gladys lit un routeur Teltonika (séries RUTX, RUT, RUTM, TRB, RutOS 7 ou plus récent) par son API HTTP locale, avec un compte du routeur. Chaque modem devient un appareil : données mobiles connectées, signal (barres, RSSI, RSRP, RSRQ, SINR), opérateur, type de réseau, bande, carte SIM, température, débits descendant et montant, données reçues et envoyées. Le routeur donne son firmware et un bouton Redémarrer, inactif tant que vous ne l'autorisez pas plus bas. Déclencheurs de scène : données mobiles perdues, données mobiles revenues. L'IMEI, l'IMSI, l'ICCID, les numéros de série et de téléphone ne sont jamais repris dans Gladys. Intégration non officielle, sans lien avec Teltonika. |
+| Adresse du routeur | `string` | Oui | L'adresse IP (ou le nom d'hôte) du routeur sur votre réseau local, celle de son interface web. |
+| Protocole | `select` | Oui | HTTPS par défaut. Le routeur a un certificat auto-signé : Gladys l'apprend à la première connexion puis refuse tout autre (rien n'est envoyé). Le HTTP envoie le mot de passe en clair sur votre réseau. |
+| Port | `number` | Non | Vide : 443 en HTTPS, 80 en HTTP. Changez-le seulement si vous avez déplacé l'interface web du routeur. |
+| Nom d'utilisateur | `string` | Oui | Un compte du routeur autorisé à utiliser l'API. admin par défaut ; un compte dédié avec un accès en lecture est préférable. |
+| Mot de passe | `secret` | Oui | Le mot de passe de ce compte. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement au routeur. Si le routeur le refuse, Gladys s'arrête jusqu'à l'enregistrement de la configuration (le routeur pourrait bloquer le compte). |
+| Rafraîchissement | `select` | Oui | Fréquence de lecture des modems (une requête à chaque fois, une connexion environ toutes les 5 minutes). Les débits sont des moyennes sur cet intervalle. |
+| Redémarrage | `section` | Non | Un redémarrage coupe Internet pour tout ce qui passe par le routeur pendant une ou deux minutes, Gladys compris s'il passe par lui. Désactivé par défaut. |
+| Autoriser le redémarrage du routeur | `boolean` | Non | Désactivé par défaut. Activé : le bouton Redémarrer de l'appareil routeur fonctionne (le routeur est relu d'abord, et un redémarrage toutes les 10 minutes au plus). Désactivé : le bouton refuse. |
+
+## Comment installer Teltonika dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Teltonika apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-teltonika:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-teltonika](https://github.com/LM1LC3N7/gladys-teltonika).
+
+Teltonika nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Teltonika est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-teltonika) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-teltonika/blob/HEAD/docs/fr.md)

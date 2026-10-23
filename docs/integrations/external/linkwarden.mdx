@@ -1,0 +1,189 @@
+---
+title: "Linkwarden smart home integration, free and open source"
+sidebar_label: "Linkwarden"
+description: "Your Linkwarden links in Gladys: counters, new links, links saved and read from scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-linkwarden.png"
+keywords:
+  - "linkwarden"
+  - "linkwarden smart home"
+  - "gladys linkwarden"
+  - "linkwarden gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-linkwarden instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Linkwarden","description":"Your Linkwarden links in Gladys: counters, new links, links saved and read from scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-linkwarden","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-linkwarden.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T17:55:28Z"}} />
+
+Connect Gladys to [Linkwarden](https://linkwarden.app), the self-hosted app to
+collect, organize and preserve links: follow your counters, react when a link
+is saved in a collection, save links from your scenes or from the dashboard,
+and read the newest ones in a message. Everything stays on your local network:
+Gladys talks directly to your Linkwarden server.
+
+Tested against a real Linkwarden 2.16.3 server (the official Docker image).
+Feedback welcome on the Gladys forum.
+
+## Prerequisites
+
+- Gladys Assistant 5.2 or later.
+- Linkwarden 2.10 or later, reachable from the Gladys machine, on port 3000 by
+  default, or through a reverse proxy.
+- An access token: in Linkwarden, open **Settings → Access Tokens** and create
+  one. Choose **Never** as expiry, or note the date to renew it. The
+  integration sees the links of the user who owns the token, shared
+  collections included.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **Linkwarden address**, enter the IP address of the server, for example
+   `192.168.1.50`: the integration then uses port 3000. Add a port if yours
+   differs (`192.168.1.50:3100`). Behind a reverse proxy, enter the full
+   address (`https://links.example.org`).
+3. Paste the **Access token**.
+4. **Read Linkwarden every**: 5, 15, 30 (default) or 60 minutes. New links are
+   announced at the next read; the links saved from Gladys update the counters
+   at once.
+5. **Language of names and messages** sets the feature names (fixed when a
+   device is added) and the texts of the integration. French by default.
+6. Save, then use **Test the connection**: it shows the Linkwarden user and the
+   number of links and collections.
+7. In the **Discovery** tab, add the **Linkwarden** device, and the collections
+   you want to follow.
+
+## Devices
+
+**Linkwarden** (one device for the user of the token):
+
+| Feature           | Value                                                 |
+| ----------------- | ----------------------------------------------------- |
+| Links             | number of links, in every collection                  |
+| Links added today | links saved or imported since midnight                |
+| Collections       | number of collections, sub-collections included       |
+| Latest link       | name of the newest link (its domain when it has none) |
+
+**One device per collection** (named like the collection, `Parent / Child`
+for a sub-collection), with one feature, **Links**: the number of links
+directly in the collection. Add only the ones you care about.
+
+The counters keep their history: a chart shows how a collection grows.
+
+## Dashboard widget
+
+**Linkwarden**: three tiles (links, today, collections), the six newest links
+and a **Save a link** button. In the widget settings, **Collection** picks a
+collection device: the widget then shows its number of links and its newest
+links, and saves in it. Tap a link to read its description and to open it
+(https links only; **Open in Linkwarden** appears when Linkwarden is reached
+over https). **Save a link** opens a form: type a link (`https://…` or
+`www.…`) and the integration saves it.
+
+## Scene triggers
+
+**New link**: a link is saved in Linkwarden, from the web app, the browser
+extension, the mobile app or an RSS feed. The **Collection** filter keeps only
+the links of one collection (pick a collection device; empty: all). Imports
+and the links saved by this integration are not announced.
+
+Variables: **Name**, **Link**, **Description**, **Collection** (its name),
+**Tags** (separated by commas) and **Link id**.
+
+The first read after the installation is silent: the links already there are
+not announced. At most ten events are fired per read; the rest is counted as
+seen.
+
+## Scene actions
+
+- **Save a link in Linkwarden**: **Link** (required), and optionally **Name**
+  (empty: Linkwarden uses the title of the page), **Collection** (the name of
+  an existing collection, upper or lower case alike, `Parent/Child` for a
+  sub-collection; empty: Unorganized) and **Tags** (separated by commas;
+  missing tags are created). An unknown collection is an error: the
+  integration never creates one. Returns **Link id**, **Name**, **Collection**
+  and **Already saved** (true when Linkwarden refuses duplicates, a setting of
+  its preferences, and the link is there already).
+- **Read the latest Linkwarden links**: **Collection** (optional, as above)
+  and **Number of links** (1, 3, 5 or 10). Returns **Number of links read**,
+  **Links, one per line** (`name — address`), **Name of the newest link** and
+  **Address of the newest link**.
+
+## Scene examples
+
+- **Recipes on your phone**: trigger **New link**, collection **Recipes** →
+  send a message "New recipe: \{\{triggerEvent.data.name\}\}
+  \{\{triggerEvent.data.url\}\}".
+- **Sunday reading**: every Sunday at 10:00 → **Read the latest Linkwarden
+  links**, collection `Reading`, 5 links → send a message with the output
+  **Links, one per line**.
+- **Save the camera clip**: when another integration gives a clip address →
+  **Save a link in Linkwarden** with that address, collection `Cameras`, tag
+  `doorbell`.
+- **Reading pile**: every evening → continue only if the feature **Links** of
+  the `Reading` collection is above 30 → send a message "Your reading pile has
+  more than 30 links".
+
+## Troubleshooting
+
+- **"Linkwarden refused the access token"**: the token was revoked, has
+  expired or was mistyped. Create a new one in Linkwarden → Settings → Access
+  Tokens.
+- **"Linkwarden does not answer"**: check the address and the port from the
+  Gladys machine. The container uses a bridge network: `localhost` is the
+  container itself, enter the IP address of the server instead.
+- **"This address does not answer like Linkwarden 2.10 or later"**: a proxy
+  login page answers instead of Linkwarden, or Linkwarden is too old. Enter
+  the address of Linkwarden itself, or update it.
+- **"No collection … in Linkwarden"**: the collection of the scene action must
+  exist. Create it in Linkwarden first.
+- A collection is missing from the trigger filter or the widget settings: add
+  its device in the **Discovery** tab first.
+- To see more in the logs of the integration, set `LOG_LEVEL=debug`.
+
+## Limits
+
+- One Linkwarden user: the owner of the token.
+- The trigger fires at the next read (30 minutes by default), not instantly:
+  Linkwarden pushes nothing.
+- **Links added today** and the trigger read up to 500 links per read: past
+  that, the count of the day stops at 500 and the oldest are not announced.
+- Discovery offers the first 100 collections.
+- The integration never deletes, moves nor archives anything in Linkwarden.
+- Not affiliated with the Linkwarden project.
+
+## Configuration settings
+
+These are the settings Linkwarden asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect Linkwarden | `section` | No | Enter the address of your Linkwarden server (port 3000 by default) and an access token: in Linkwarden, open Settings → Access Tokens and create one. The integration reads your counters and newest links, and saves the links your scenes send it. |
+| Linkwarden address | `string` | Yes |  |
+| Access token | `secret` | Yes | Linkwarden → Settings → Access Tokens → New token (expiry: never, or renew it in time). |
+| Read Linkwarden every | `select` | No | New links are announced at the next read. Links saved from Gladys update the counters at once. |
+| Language of names and messages | `select` | No | Feature names are set when a device is added to Gladys. |
+
+## How to install Linkwarden in Gladys
+
+1. In Gladys, open **Integrations**: Linkwarden appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-linkwarden:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-linkwarden](https://github.com/guim31/gladys-linkwarden).
+
+Linkwarden requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Linkwarden is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-linkwarden) — [source of this documentation](https://github.com/guim31/gladys-linkwarden/blob/HEAD/docs/en.md)

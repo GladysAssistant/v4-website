@@ -1,0 +1,151 @@
+---
+title: "Blue Current smart home integration, free and open source"
+sidebar_label: "Blue Current"
+description: "Blue Current charge points (NL, BE) via the official API: status, power, energy; optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-blue-current.png"
+keywords:
+  - "blue current"
+  - "blue current smart home"
+  - "gladys blue current"
+  - "blue current gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-blue-current instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Blue Current","description":"Blue Current charge points (NL, BE) via the official API: status, power, energy; optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-blue-current","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-blue-current.png","type":"device","version":"0.1.1","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-10-22T10:08:29Z"}} />
+
+Shows your **Blue Current** charge points (Netherlands, Belgium) in Gladys,
+in real time, through the official API Blue Current makes for home
+automation (the one of its Home Assistant integration).
+
+**Never tested with a real account**: this integration was written from the
+library Blue Current publishes for Home Assistant, and tested against
+simulated answers only. Not affiliated with Blue Current.
+
+## What you get
+
+One Gladys device per charge point, with:
+
+- **Status**: available, charging, blocked, error, offline;
+- **Connector** and **charging state** (the charging-station features of Gladys);
+- **Vehicle**: no vehicle, vehicle connected, ready to charge, error;
+- **Power** (W), **current** and **voltage** per phase (L1, L2, L3);
+- **Energy of the session** (kWh), **duration of the session** (minutes),
+  **cost of the session** (€, when Blue Current gives it: it documents this
+  value as disabled for now), **maximum current** (A).
+
+And, only if you allow them (see below):
+
+- **Start a session** and **Stop the session** (buttons);
+- **Availability** (a list: available / blocked), to block or unblock the
+  charge point;
+- **Reboot the charge point** (a button), behind its own option.
+
+The commands are buttons and a list, never on/off switches: a "turn
+everything off" of a voice assistant or a scene cannot reach them.
+
+## Create the API token
+
+1. Sign in to the Blue Current driver portal,
+   [my.bluecurrent.nl](https://my.bluecurrent.nl), with the account of your
+   charge point.
+2. Open the settings, then **Advanced**, and create the **Home Assistant
+   API token**. (The Blue Current app may offer it too; not verified.)
+3. Copy the token.
+
+## Set up
+
+1. In Gladys, open the integration, paste the token in **Blue Current API
+   token**, save. The token is kept by Gladys in its database, never shown
+   again, and sent only to Blue Current.
+2. The status says how many charge points Blue Current lists. Open the
+   **Discovery** tab and add them.
+3. To use the commands, turn on **Allow the commands** (start, stop, block,
+   unblock) and, separately, **Allow rebooting the charge point**. Both are
+   off by default.
+
+## Good to know
+
+- **One connection**: Blue Current pushes the changes, nothing is polled. A
+  lost connection comes back by itself, after a few seconds then longer and
+  longer (up to 10 minutes).
+- **Daily request limit**: Blue Current limits the requests per day. When it
+  is reached, the integration waits until midnight (Amsterdam time) before
+  connecting again, even after a restart.
+- **"Already open elsewhere"**: Blue Current may refuse a second connection
+  (another Gladys, a Home Assistant with the same account). The integration
+  then waits at least two minutes between tries.
+- **"Slow down" (HTTP 429)**: the integration waits for the time Blue
+  Current asks (between 1 minute and 6 hours, 15 minutes when it says
+  nothing), even after a restart.
+- **Refused token**: when Blue Current refuses the token, or refuses the
+  connection within 30 minutes of accepting the token, the integration stops
+  and tries again after 6 hours, then every 24 hours. Save a new token, or
+  click **Test the connection**, to try again at once.
+- **How the integration introduces itself**: the Blue Current API asks each
+  client for its kind in its first message (`HELLO`). The integration sends
+  `homeassistant`, the only value Blue Current documents (that of the library
+  it publishes for Home Assistant), and never tries another one; its own
+  name, `gladys-blue-current` and its version, goes in the User-Agent of the
+  connection.
+- **Commands**: before each one, the status of the charge point is read
+  again; the command is refused if it cannot be read or if the charge point
+  is offline. Nothing is sent when there is nothing to do (start while
+  charging, stop without a vehicle, block a charge point already blocked):
+  Gladys then shows success. A session is started only with a vehicle plugged
+  in ("plug in the vehicle first" otherwise), with the default charge card of
+  the charge point, as Blue Current gives it. One command at a time, except
+  **Stop the session**, which never waits. Gladys waits 5 seconds: if Blue
+  Current has not confirmed by then, Gladys shows "Command sent, without
+  confirmation" (or "sent and received, without a result from the charge
+  point"): the command may have been carried out, the state follows.
+- **Reboot**: the charge point restarts and a session in progress is cut.
+- The power is the sum, over the phases, of voltage times current (the Home
+  Assistant integration shows a slightly different estimate).
+- **Not handled yet**: smart charging, plug and charge, linked cards only,
+  the choice of the charge card, the grid status (building load).
+
+## Privacy
+
+The integration talks only to Blue Current
+(`wss://motown.bluecurrent.nl`). It never logs the token. In `/data` it keeps
+only the end of a request-limit pause and, after a refusal, a hash of the
+refused token with the time of the next try.
+
+## Configuration settings
+
+These are the settings Blue Current asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Blue Current account | `section` | No | Shows your Blue Current charge points in Gladys through the official Blue Current API (the one of Home Assistant), in real time: status, vehicle, power, current and voltage per phase, energy, duration and cost of the session. Create an API token on my.bluecurrent.nl (Advanced, Home Assistant API token), paste it below, save, then add the charge points from the Discovery tab. Starting, stopping, blocking and rebooting from Gladys need the options below, off by default. Never tested with a real account. Not affiliated with Blue Current. |
+| Blue Current API token | `secret` | Yes | Created on my.bluecurrent.nl, Advanced, Home Assistant API token. Kept by Gladys in its database, never shown again, sent only to Blue Current. |
+| Allow the commands | `boolean` | No | Off by default. On: Gladys may start a session (with the default charge card of the charge point), stop it, and block or unblock the charge point. Off: these features refuse every command. |
+| Allow rebooting the charge point | `boolean` | No | Off by default. A heavy action: the charge point restarts and a session in progress is cut. On: the Reboot button of each charge point works. |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## How to install Blue Current in Gladys
+
+1. In Gladys, open **Integrations**: Blue Current appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-blue-current:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-blue-current](https://github.com/LM1LC3N7/gladys-blue-current).
+
+Blue Current requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Blue Current is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-blue-current) — [source of this documentation](https://github.com/LM1LC3N7/gladys-blue-current/blob/HEAD/docs/en.md)

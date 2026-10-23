@@ -1,0 +1,171 @@
+---
+title: "Intégration domotique ismartgate, gratuite et open source"
+sidebar_label: "ismartgate"
+description: "Portes de garage et portails ismartgate et GogoGate2, en local : état, ouvrir, fermer, capteurs. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ismartgate.png"
+keywords:
+  - "ismartgate"
+  - "domotique ismartgate"
+  - "gladys ismartgate"
+  - "ismartgate gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-ismartgate instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ismartgate","description":"Portes de garage et portails ismartgate et GogoGate2, en local : état, ouvrir, fermer, capteurs.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ismartgate","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ismartgate.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T20:00:27Z"}} />
+
+Cette intégration affiche dans Gladys les portes de garage et portails pilotés
+par une passerelle **ismartgate** (PRO, LITE, Mini) ou **GogoGate2**, et
+ajoute des boutons pour les ouvrir et les fermer, par l'API locale de la
+passerelle, sur votre réseau, sans son cloud.
+
+**Jamais testé avec un vrai appareil** : l'intégration suit la bibliothèque
+ismartgate (celle de l'intégration Home Assistant « Gogogate2 and
+ismartgate »), mais personne ne l'a encore essayée sur une passerelle réelle.
+Cette API locale n'est pas documentée par le fabricant. Vos retours sont les
+bienvenus.
+
+Intégration non officielle, sans lien avec ismartgate.
+
+## Dans Gladys
+
+Un appareil par porte configurée sur la passerelle (une porte qui a un nom
+dans son application) :
+
+| Fonctionnalité           | Détail                                                                   |
+| ------------------------ | ------------------------------------------------------------------------ |
+| Porte de garage, Portail | capteur d'ouverture, lecture seule (ouverte / fermée)                    |
+| Ouvrir, Fermer           | boutons (seulement pour une sortie en mode porte de garage ou impulsion) |
+| Température              | capteur sans fil seulement                                               |
+| Pile du capteur          | en %, capteur sans fil seulement                                         |
+
+## Installation
+
+1. Donnez à la passerelle une adresse IP fixe dans votre box.
+2. Dans l'application ismartgate, créez de préférence un utilisateur pour
+   Gladys, avec seulement les portes qu'il peut commander.
+3. Dans Gladys, installez l'intégration ismartgate depuis le store, choisissez
+   la famille (ismartgate ou GogoGate2), saisissez l'adresse IP, l'identifiant
+   et le mot de passe.
+4. Ajoutez les portes depuis l'onglet Découverte.
+
+Le mot de passe est gardé par Gladys dans sa base, jamais réaffiché, envoyé
+seulement à votre passerelle. L'API locale le transporte brouillé (AES) dans
+l'adresse de la requête, en HTTP : sur une ismartgate la clé est tirée de
+l'identifiant et du mot de passe, mais sur une **GogoGate2 la clé est la même
+pour toutes les passerelles et publique** : quiconque capte le trafic de votre
+réseau local peut lire l'identifiant et le mot de passe. Utilisez un
+utilisateur dédié, avec un mot de passe que vous n'utilisez nulle part
+ailleurs.
+
+## Sécurité des commandes
+
+La passerelle ne connaît qu'une commande : **une impulsion** sur le relais de
+la porte, la même pour ouvrir et pour fermer, comme le bouton d'une
+télécommande. Une impulsion pendant que la porte bouge peut l'arrêter ou la
+renvoyer dans l'autre sens. Donc :
+
+- une porte n'est jamais un interrupteur : un « éteins tout » d'un assistant
+  vocal ou d'une scène ne peut pas l'atteindre ;
+- **l'ouverture et la fermeture sont désactivées par défaut** : fermer et
+  ouvrir sont la même impulsion (sur une porte en mouvement, « Fermer » peut
+  la rouvrir), d'où une seule option ; sans elle, ni ouverture ni fermeture
+  depuis Gladys. Activez « Autoriser l'ouverture et la fermeture » pour que le
+  tableau de bord, les scènes et les assistants vocaux puissent ouvrir et
+  fermer. L'autorisation est vérifiée à l'arrivée de la commande, après la
+  relecture et juste avant l'envoi ;
+- chaque commande relit la passerelle juste avant d'agir : la passerelle doit
+  être la même (son identifiant), la porte configurée, en mode porte de garage
+  ou impulsion, avec un état connu. « Ouvrir » n'envoie une impulsion que sur
+  une porte lue fermée, « Fermer » que sur une porte lue ouverte ; dans
+  l'état voulu, rien n'est envoyé ; sans état (capteur absent ou en défaut),
+  rien n'est envoyé ;
+- une fermeture (autorisée) n'attend jamais derrière les ouvertures, et a
+  droit à un essai même pendant une pause demandée par la passerelle ou après
+  des identifiants refusés ; une fermeture, même refusée, annule aussitôt une
+  ouverture de la même porte qui n'est pas encore partie ;
+- une impulsion à la fois par porte, et après chaque impulsion aucune autre
+  sur cette porte tant qu'elle n'est pas lue dans l'autre état, ou que le
+  « temps de course » (30 s par défaut) plus 5 s n'est pas écoulé ;
+- une commande qui ne peut pas partir en 3,5 secondes est refusée sans être
+  envoyée ; une impulsion partie sans réponse est annoncée « envoyée, sans
+  confirmation », puis la porte est relue.
+
+**Limite** (option activée) : la passerelle ne dit pas si une porte est en
+train de se fermer (le capteur reste « ouverte » jusqu'à la fin de la
+course). Si quelqu'un vient de lancer la fermeture avec une télécommande et
+qu'une fermeture part de Gladys au même moment, l'impulsion peut arrêter la
+porte ou la renvoyer vers l'ouverture, comme un second appui sur la
+télécommande. Gladys ne le fait jamais elle-même deux fois de suite (la garde
+ci-dessus, gardée aussi à travers un redémarrage). Une porte sans capteur ne
+donne pas d'état : Gladys n'y envoie aucune impulsion.
+
+Il n'y a pas de bouton « Arrêter » : la passerelle n'a pas de commande d'arrêt.
+
+## Pannes
+
+- Identifiants refusés : la passerelle n'est plus interrogée, puis à nouveau
+  après 15 min, 1 h, 6 h et toutes les 24 h, même après un redémarrage ;
+  enregistrer d'autres identifiants réessaie aussitôt, « Tester la
+  connexion » dès que l'intervalle de rafraîchissement est écoulé.
+- Une passerelle qui demande d'attendre (HTTP 429 ou 5xx) est mise en pause
+  d'une minute à six heures, même après un redémarrage : ni relevé ni
+  ouverture ; une fermeture autorisée a encore droit à un essai.
+- Une porte effacée de la passerelle (sans nom) est affichée injoignable et
+  nommée dans le statut.
+- Une passerelle qui ne répond pas est relue après 30 s, 1, 2 puis 5 min,
+  jamais plus vite que l'intervalle de rafraîchissement. « Tester la
+  connexion », une reconnexion de Gladys ou un redémarrage ne relisent jamais
+  plus vite que l'intervalle.
+- Si une autre passerelle répond à l'adresse (bail DHCP), ses portes
+  apparaissent dans l'onglet Découverte et les anciennes sont affichées
+  injoignables.
+
+## Limites
+
+- Pas de recherche automatique sur le réseau : saisissez l'adresse IP.
+- Pas de caméra, pas de sorties en mode marche/arrêt (affichées en lecture
+  seule), pas d'accès par le cloud ismartgate.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par ismartgate dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre passerelle ismartgate ou GogoGate2, sur votre réseau local | `section` | Non | Lit les portes de la passerelle (ouvertes ou fermées, température et pile des capteurs sans fil) par son API locale, sans son cloud, et ajoute des boutons « Ouvrir » et « Fermer ». Donnez à la passerelle une adresse IP fixe dans votre box, saisissez-la ci-dessous avec l'identifiant et le mot de passe de son application, puis ajoutez les portes depuis l'onglet Découverte. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec ismartgate. |
+| Passerelle | `select` | Non | La famille de votre passerelle : ismartgate (PRO, LITE, Mini) ou l'ancienne GogoGate2. |
+| Adresse IP de la passerelle | `string` | Non | Par exemple 192.168.1.30 (ajoutez :port s'il n'est pas 80). |
+| Identifiant | `string` | Non | Un utilisateur de la passerelle (son application ou sa page web). Le mieux est un utilisateur dédié à Gladys, avec seulement les portes qu'il peut utiliser. |
+| Mot de passe | `secret` | Non | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à votre passerelle, brouillé comme son API locale le demande (avec la clé fixe de toutes les GogoGate2, donc lisible par qui capte le trafic de votre réseau local). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la passerelle, en secondes. |
+| Ouverture et fermeture | `section` | Non | La passerelle ne connaît qu'une commande : une impulsion sur le relais de la porte, la même pour ouvrir et fermer. Chaque porte est donc affichée avec des boutons, jamais comme un interrupteur, et Gladys n'envoie une impulsion que depuis l'autre bout : « Ouvrir » sur une porte lue fermée à l'instant, « Fermer » sur une porte lue ouverte, rien quand le capteur ne donne pas d'état. Comme une impulsion sur une porte en mouvement peut l'arrêter ou la rouvrir, l'ouverture ET la fermeture sont refusées tant que vous ne les autorisez pas ci-dessous. Une fermeture annule toujours une ouverture qui n'est pas encore partie. Après une impulsion, aucune autre sur cette porte tant qu'elle n'est pas vue bouger, ou que le temps de course n'est pas écoulé : une seconde impulsion l'arrêterait ou la renverrait. |
+| Autoriser l'ouverture et la fermeture | `boolean` | Non | Désactivé par défaut : Gladys n'ouvre ni ne ferme alors rien (fermer est la même impulsion). Activé : le tableau de bord, les scènes et les assistants vocaux peuvent ouvrir et fermer les portes et portails. |
+| Temps de course (s) | `number` | Non | Le temps que met votre porte ou portail le plus lent à s'ouvrir ou se fermer, en secondes. Après une impulsion, aucune autre sur cette porte pendant ce temps plus 5 s, sauf si elle est vue bouger. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités ajoutées désormais, et aux erreurs des commandes. |
+
+## Comment installer ismartgate dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : ismartgate apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ismartgate:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-ismartgate](https://github.com/LM1LC3N7/gladys-ismartgate).
+
+ismartgate nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+ismartgate est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-ismartgate) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-ismartgate/blob/HEAD/docs/fr.md)

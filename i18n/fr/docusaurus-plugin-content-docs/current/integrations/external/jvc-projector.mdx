@@ -1,0 +1,192 @@
+---
+title: "Intégration domotique JVC Projector, gratuite et open source"
+sidebar_label: "JVC Projector"
+description: "Vidéoprojecteurs JVC D-ILA en local : marche, veille, entrée, mode d'image, heures de lampe. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-jvc-projector.png"
+keywords:
+  - "jvc projector"
+  - "domotique jvc projector"
+  - "gladys jvc projector"
+  - "jvc projector gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-jvc-projector instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"JVC Projector","description":"Vidéoprojecteurs JVC D-ILA en local : marche, veille, entrée, mode d'image, heures de lampe.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-jvc-projector","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-jvc-projector.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:10:26Z"}} />
+
+Pilotez vos vidéoprojecteurs **JVC D-ILA** (séries DLA-NZ, NX, N, X, RS et
+Z, modèles depuis 2012) depuis Gladys, en local, sans aucun cloud :
+allumage, veille, entrée, mode d'image, touches de télécommande, signal et
+heures de lampe / laser.
+
+> **Important.** Cette intégration n'a jamais été testée avec un vrai
+> projecteur : elle a été écrite d'après la bibliothèque `pyjvcprojector`
+> (celle de Home Assistant) et testée avec un faux projecteur seulement. Vos
+> retours sont les bienvenus. Intégration non officielle, sans lien avec
+> JVCKENWOOD.
+
+## Installation
+
+1. Branchez le projecteur sur votre réseau (prise LAN) et donnez-lui une
+   **adresse IP fixe** dans votre box (bail DHCP réservé), ou réglez-en une
+   dans son menu Réseau.
+2. Pour le piloter **en veille**, gardez son réseau actif en veille : réglez
+   le **mode ECO** sur Arrêt (sinon il quitte le réseau en veille, et seule
+   la télécommande peut l'allumer).
+3. Les modèles récents (depuis 2024, et certains après une mise à jour)
+   exigent un **mot de passe réseau** réglé dans le menu Réseau du
+   projecteur : saisissez-le dans la configuration. Les modèles plus anciens
+   n'en ont pas : laissez le champ vide.
+4. Dans Gladys, installez l'intégration **JVC Projector**, ouvrez sa
+   configuration et saisissez les adresses IP, séparées par des virgules
+   (par exemple `192.168.1.50` ; port 20554 par défaut, un autre sous la
+   forme `192.168.1.50:20555`).
+5. Les projecteurs apparaissent dans l'onglet **Découverte** : créez-les.
+
+La première fois, le projecteur doit être allumé, ou en veille avec son
+réseau actif : l'intégration lit son modèle et son adresse MAC, qui
+l'identifie ensuite (son adresse peut changer : saisissez la nouvelle).
+
+## Ce que vous obtenez
+
+| Fonction             | Type Gladys                  | Remarque                                                                    |
+| -------------------- | ---------------------------- | --------------------------------------------------------------------------- |
+| Marche               | état binaire (lecture seule) | 1 allumé ou en préchauffage, 0 veille, refroidissement, erreur, injoignable |
+| État de marche       | texte (lecture seule)        | en anglais : On, Warming up, Cooling down, Standby, Error, Not reachable    |
+| Allumer              | bouton                       | envoyé seulement en veille                                                  |
+| Veille               | bouton                       | envoyé allumé ; en préchauffage, envoyé dès que le projecteur est allumé    |
+| Entrée               | liste                        | HDMI 1, HDMI 2                                                              |
+| Mode d'image         | liste                        | les modes de votre modèle (Film, Cinema, Natural, HDR10, User 1…)           |
+| Touche               | liste                        | Menu, flèches, OK, Retour, Info, réglage de l'objectif, Mode 1 à 10…        |
+| Signal               | état binaire (lecture seule) | 1 quand l'entrée reçoit un signal                                           |
+| Heures lampe / laser | durée en heures              | lues quand le projecteur est allumé                                         |
+
+Volontairement, aucun **interrupteur** : un « éteins tout » ou « allume
+tout » d'un assistant vocal ou d'une scène n'allume ni n'éteint jamais votre
+projecteur. Utilisez les deux boutons dans vos scènes.
+
+L'entrée, le mode d'image et le signal sont lus quand le projecteur est
+allumé (le mode d'image seulement avec un signal, comme Home Assistant). La
+liste des modes d'image suit le modèle que donne le projecteur ; un modèle
+inconnu de l'intégration n'en propose aucun.
+
+## Commandes
+
+L'état de marche est relu sur le projecteur juste avant chaque commande,
+puis son adresse MAC s'il l'a déjà donnée dans cet état (un autre projecteur
+à l'adresse : rien n'est envoyé, et l'adresse est oubliée). Chaque lecture
+de fond vérifie aussi la MAC. Seule une adresse MAC valide d'un autre
+projecteur compte : un projecteur qui ne donne pas sa MAC en veille, ou des
+zéros, garde son adresse et peut toujours être allumé.
+
+- **Allumer** n'est envoyé qu'en veille. Déjà allumé ou en préchauffage :
+  rien à faire. En **refroidissement**, le projecteur le refuse : la commande
+  est refusée, rien n'est envoyé ; réessayez une fois en veille.
+- **Veille** n'est envoyé que projecteur allumé. Déjà en veille ou en
+  refroidissement : rien à faire. En **préchauffage**, le projecteur
+  l'ignore : Gladys reçoit la réponse « warming up: standby will be sent
+  once it is on, nothing sent yet » (la veille sera envoyée dès qu'il est
+  allumé, rien n'est encore envoyé), et l'intégration l'envoie dès qu'il est
+  allumé (vérifié toutes les 5 secondes, dans les 3 minutes, même après une
+  lecture ratée) ; un appui sur Allumer entre-temps l'annule. La veille
+  n'est jamais refusée faute d'avoir pu lire l'état : elle est alors envoyée
+  quand même. Elle passe avant les autres commandes en attente, et n'attend
+  jamais derrière une lecture de fond ni derrière la confirmation lente d'un
+  changement d'entrée ou de mode d'image (cette connexion est fermée ; le
+  changement reste « envoyée, sans confirmation »).
+- **Entrée**, **mode d'image** et **touche** ne sont envoyés que projecteur
+  allumé.
+
+Chaque commande reçoit une réponse en moins de 4 secondes (Gladys attend 5
+secondes). Une commande partie sans confirmation du projecteur à temps est
+signalée « envoyée, sans confirmation » (un changement d'entrée peut prendre
+jusqu'à 10 secondes sur le projecteur) ; une commande qui n'a pas pu partir
+est signalée « rien envoyé ». L'état est relu 3 secondes après chaque
+commande.
+
+## Mot de passe réseau
+
+Le mot de passe est gardé par Gladys dans sa base, jamais réaffiché, et
+envoyé seulement aux projecteurs, au début de chaque connexion (complété
+comme l'attendent les anciens modèles, puis sous la forme SHA-256 des
+modèles récents si la première est refusée, comme le fait
+`pyjvcprojector`). L'intégration ne l'écrit jamais dans son dossier de
+données, ni dans ses journaux, statuts ou messages d'erreur.
+
+Un **mot de passe refusé** arrête les essais vers ce projecteur : le statut
+de l'intégration l'indique, et le mot de passe n'est réessayé qu'à
+l'enregistrement de la configuration, ou 30 minutes plus tard (jamais en
+boucle). Un projecteur qui ferme la connexion ou se tait après avoir refusé
+un mot de passe compte aussi comme un refus. Corrigez-le dans le menu Réseau
+du projecteur ou dans la
+configuration, puis enregistrez.
+
+## Bouton de la configuration
+
+- **Vérifier les projecteurs** : lit chaque projecteur tout de suite (marche,
+  heures de lampe) et rappelle l'intervalle de rafraîchissement.
+
+## Rafraîchissement, statut et limites
+
+- L'état de chaque projecteur est lu toutes les 15 secondes par défaut (10 à
+  300), en une courte connexion (le projecteur n'accepte qu'un client à la
+  fois : fermez l'application JVC ou un autre pilote s'il se dit « occupé »).
+- Un projecteur qui ne répond pas affiche la marche à 0 et « Not
+  reachable », et est cité dans le statut de l'intégration ; il est redemandé
+  à chaque rafraîchissement, jamais plus vite.
+- Si un autre projecteur répond à l'adresse d'un projecteur créé (adresse
+  changée), son adresse est oubliée et il n'est jamais commandé là :
+  saisissez sa nouvelle adresse.
+
+## Données et confidentialité
+
+L'intégration garde dans `/data/jvc-projector.json` les projecteurs connus
+(adresse MAC, adresse, port, modèle, modes d'image) et les adresses dont le
+mot de passe a été refusé, avec l'heure du prochain essai. Rien ne sort de
+votre réseau local.
+
+## Limites connues
+
+- HDMI 1 et HDMI 2 seulement (les entrées que connaît `pyjvcprojector`).
+- Pas encore de mémoires d'objectif, de puissance laser, de mode
+  d'installation, d'anamorphose ni de réglages HDR.
+- Un seul mot de passe pour tous les projecteurs.
+- Jamais testé avec un vrai projecteur : les réponses réelles peuvent
+  différer.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par JVC Projector dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos projecteurs JVC, sur votre réseau local | `section` | Non | Allumage, veille, entrée, mode d'image, touches de télécommande, signal et heures de lampe / laser de chaque projecteur JVC D-ILA (séries DLA-NZ, NX, N, X, RS, Z), par le protocole réseau publié par JVC (port TCP 20554), sans aucun cloud. Donnez à chaque projecteur une adresse IP fixe dans votre box et saisissez-la ci-dessous ; les projecteurs apparaissent alors dans l'onglet Découverte. Pour piloter un projecteur en veille, gardez son réseau actif en veille (mode ECO désactivé). Allumage et veille sont des boutons, jamais un interrupteur : un « tout éteindre » n'allume ni n'éteint jamais un projecteur. Jamais testé avec un vrai projecteur. Intégration non officielle, sans lien avec JVCKENWOOD. |
+| Adresses IP des projecteurs | `string` | Non | Séparées par des virgules, par exemple 192.168.1.50, 192.168.1.51. Port 20554 par défaut (un autre : 192.168.1.50:20555). |
+| Mot de passe réseau des projecteurs (facultatif) | `secret` | Non | Seulement si un mot de passe réseau est réglé sur le projecteur (menu Réseau ; exigé par les modèles récents) : le même pour tous les projecteurs. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement aux projecteurs, au début de chaque connexion. Un mot de passe refusé arrête les essais jusqu'au prochain enregistrement de la configuration (ou 30 minutes). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de l'état de chaque projecteur, en secondes (10 à 300). |
+
+## Comment installer JVC Projector dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : JVC Projector apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-jvc-projector:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-jvc-projector](https://github.com/LM1LC3N7/gladys-jvc-projector).
+
+JVC Projector nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+JVC Projector est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-jvc-projector) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-jvc-projector/blob/HEAD/docs/fr.md)

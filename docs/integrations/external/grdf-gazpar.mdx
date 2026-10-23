@@ -19,7 +19,7 @@ https://github.com/PhilippeMA/gladys-grdf instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"GRDF Gazpar","description":"Reads the daily gas consumption of your GRDF Gazpar meter from your GRDF account.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-grdf","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-grdf.png","type":"device","version":"1.1.8","gladys_version":">=4.86.0","stars":1,"pushed_at":"2026-09-10T21:07:24Z"}} />
+<ExternalIntegrationHeader integration={{"name":"GRDF Gazpar","description":"Reads the daily gas consumption of your GRDF Gazpar meter from your GRDF account.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-grdf","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-grdf.png","type":"device","version":"1.2.1","gladys_version":">=5.2.0","stars":1,"pushed_at":"2026-10-22T13:28:20Z"}} />
 
 This integration reads the gas consumption measured by your **Gazpar** meter and
 turns it into Gladys devices, so your gas shows up next to the rest of your home
@@ -80,6 +80,31 @@ carrying four read-only sensors:
 Every value is recorded with the date of the day it belongs to, not the date it
 was downloaded: your charts stay correct even though the data arrives late.
 
+Gladys adds a fifth sensor of its own, **the cost**, derived from the daily
+consumption — see below.
+
+## Cost tracking
+
+The daily consumption is not published as a plain measurement: it goes through
+the Gladys dated-consumption mechanism, the one meant for suppliers whose
+readings arrive after the fact. Gladys derives a cost sensor from it, attaches
+it to the meter, and computes it from your energy contract.
+
+To get euros, one thing is left to do, once:
+
+1. open **Energy** in Gladys;
+2. create a contract for your Gazpar meter, with your price per kWh and your
+   standing charge.
+
+Two things worth knowing. The gas price comes from your **supplier** (Engie,
+TotalEnergies…), not from GRDF, which only distributes it: you enter it
+yourself, the integration cannot know it. And until a contract is attached to
+this meter, Gladys files it under your main meter — usually electricity — which
+would price your gas at the electricity rate. A dedicated contract avoids that.
+
+The cost of the history already imported is recomputed automatically whenever
+the contract or its price changes.
+
 ## When the data arrives
 
 GRDF publishes a reading **one to two days late**, usually during the day
@@ -104,6 +129,26 @@ measurements for devices you added. Once added, the history is imported within
 seconds, and at worst within a minute — or use **Refresh the data now**. A long
 history takes a few minutes to appear in full: it is fed in gently (see above),
 oldest day first.
+
+**My meter has no cost sensor.** Gladys does not update the sensors of a device
+that is already created: a meter added before the version that introduced cost
+tracking keeps its old ones. Delete the device and add it back from the
+**Discovery** tab to get the new definition — its history is re-imported over
+the window set in **History to import**.
+
+**"Could not reach GRDF".** The request never arrived: nothing was refused, the
+connection itself failed. So this is not a password problem. The usual causes,
+in the order worth checking: GRDF is down (try monespace.grdf.fr in a browser),
+your Gladys server lost its way to the Internet, or its DNS resolution is
+broken. From the machine hosting Gladys:
+
+```
+curl -sS -o /dev/null -w '%{http_code}\n' https://monespace.grdf.fr
+```
+
+The integration retries a few times within the same pass, then gives up and
+tries again at the next refresh: an outage of a few hours clears on its own,
+and the missing days are caught up by the first pass that gets through.
 
 **"No login token in the page GRDF served".** GRDF answered with something
 other than its sign-in form. The message says what came back — a captcha, a
@@ -166,11 +211,11 @@ These are the settings GRDF Gazpar asks for in its configuration screen in Glady
 ## How to install GRDF Gazpar in Gladys
 
 1. In Gladys, open **Integrations**: GRDF Gazpar appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/philippema/gladys-grdf:1.1.8`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/philippema/gladys-grdf:1.2.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/PhilippeMA/gladys-grdf](https://github.com/PhilippeMA/gladys-grdf).
 
-GRDF Gazpar requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+GRDF Gazpar requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

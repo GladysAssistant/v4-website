@@ -1,0 +1,192 @@
+---
+title: "InvenTree smart home integration, free and open source"
+sidebar_label: "InvenTree"
+description: "InvenTree in Gladys: parts below minimum, out of stock, purchase orders and stock value. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-inventree.png"
+keywords:
+  - "inventree"
+  - "inventree smart home"
+  - "gladys inventree"
+  - "inventree gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-inventree instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"InvenTree","description":"InvenTree in Gladys: parts below minimum, out of stock, purchase orders and stock value.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-inventree","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-inventree.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T11:42:47Z"}} />
+
+Follow your [InvenTree](https://inventree.org/) inventory in Gladys: the parts
+below their minimum stock, the parts out of stock, the purchase orders on the
+way and the value of the stock. Scenes can react when a part runs low or when
+an order is received, read the stock of a part, and if you allow it, take
+parts out of the stock. Gladys talks directly to your InvenTree server, at
+home or hosted.
+
+Tested against a real InvenTree 1.6.1 server (the official Docker image, with
+PostgreSQL). Feedback welcome on the Gladys forum.
+
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- An InvenTree server (version 1.0 or later) reachable from the Gladys
+  machine: on your network, or on the Internet in HTTPS.
+- An API token: in InvenTree, open your user settings, **Security**, **Access
+  tokens**, add a token and copy it. A dedicated user is a good idea. Its roles
+  (Admin, Groups) decide what Gladys sees:
+  - **Parts: view**, required;
+  - **Purchase orders: view**, for the orders in progress and received;
+  - **Stock items: view**, for the value of the stock;
+  - **Stock items: change**, only to remove stock from a scene.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **InvenTree address**, enter the address you open in your browser, for
+   example `http://192.168.1.50:8000` or `https://inventree.example.org`.
+3. Paste the **API token** (with or without the word `Token` in front).
+4. **Read InvenTree every**: 5, 15 (default), 30 minutes or 1 hour.
+5. **One device per part**: none, the parts the user of the token subscribed
+   to (the star on the page of a part, the default), or every part with a
+   minimum stock. 50 parts at most.
+6. **Allow scenes to remove stock**: off by default. Turn it on only if a
+   scene should take parts out of InvenTree.
+7. **Language of names and messages** sets the feature names (fixed when the
+   device is added) and the texts of the scene actions. French by default.
+8. Save, then use **Test the connection**: it shows the InvenTree version, the
+   number of parts, those below minimum and the orders in progress.
+9. In the **Discovery** tab, add the **InvenTree** device and the part devices
+   you want.
+
+## Devices
+
+The **InvenTree** device:
+
+| Feature                     | Meaning                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| Parts                       | Active parts (virtual parts left out)                                             |
+| Parts below minimum         | Parts with a minimum stock and a total stock strictly below it (InvenTree's rule) |
+| Parts out of stock          | Parts with a minimum stock and nothing left                                       |
+| Purchase orders in progress | Orders pending, placed or on hold                                                 |
+| Overdue purchase orders     | Orders past their target date                                                     |
+| Stock value                 | Quantity × purchase price of the stock items, in the main currency of InvenTree   |
+
+Prices in another currency are converted with the exchange rates of InvenTree;
+an item without a price counts for nothing. The value has the euro, dollar or
+pound unit when that is the main currency of InvenTree.
+
+Each **part device** (named after the part) has: quantity in stock (with
+history), minimum stock and quantity on order. The stock of a part includes
+its variants, as in InvenTree.
+
+A token whose user may not view the orders or the stock items leaves those
+features empty, rather than showing a false zero.
+
+## Dashboard widget
+
+**Parts to restock**: tiles with the parts below minimum, out of stock and the
+purchase orders in progress (orange when one is overdue), and the list of the
+parts to restock, the emptiest first: quantity, minimum, quantity on order.
+
+## Scene triggers
+
+- **Part below minimum**: a part falls below its minimum stock. Variables:
+  part, IPN, category, quantity in stock, minimum stock, quantity on order. The
+  part is announced again after it went back to its minimum.
+- **Part out of stock**: a part with a minimum stock has none left. Variables:
+  part, IPN, category, minimum stock, quantity on order.
+- **Purchase order received**: an order in progress is completed in InvenTree.
+  Variables: order reference, supplier, description, number of lines.
+
+The first read after the installation is silent: what is already low is not
+announced. A restart does not announce anything twice. At most 10 events of
+each kind are fired per read (a mass import does not flood your scenes).
+
+## Scene actions
+
+- **Read the stock of a part**: give the part by its name, its IPN, a piece
+  of its name that only one part has, or its number (`#12`). Outputs: quantity
+  in stock, minimum stock, quantity on order, below minimum (yes/no) and a
+  sentence such as "Arduino Nano: 2 in stock, minimum 3, 5 on order.".
+- **Remove stock** (only when allowed in the configuration): takes a quantity
+  out of a part, from its stock items expiring first, then the oldest, and writes it in the
+  history of InvenTree ("Removed by a Gladys Assistant scene"). Nothing is
+  removed when the stock is short. Only the part's own stock items are used (not those of its variants), allocated stock included; serialized items are left alone. Same
+  outputs as the reading.
+
+## Scene examples
+
+- **Shopping list**: trigger "Part below minimum" → message "Restock
+  \{\{triggerEvent.data.part\}\}: \{\{triggerEvent.data.quantity\}\} left (minimum
+  \{\{triggerEvent.data.minimum\}\})".
+- **Delivery arrived**: trigger "Purchase order received" → message "Order
+  \{\{triggerEvent.data.order\}\} from \{\{triggerEvent.data.supplier\}\} received".
+- **Filament for the next print**: every evening → "Read the stock of a part"
+  `PLA black` → continue only if "below minimum" is true → send the sentence
+  as a message.
+- **Coffee capsules**: a button press → "Remove stock" `Coffee capsules`, 1.
+
+## Troubleshooting
+
+- **"Token refused"**: the token was revoked or expired; create a new one.
+- **"The user of this token may not view the parts"**: give the user the
+  **Parts** role (view), or use another user's token.
+- **"This address does not answer like InvenTree"**: check the address (the
+  one of the web interface, with its port), and that no proxy asks for a login
+  first.
+- **No order or value**: the user of the token lacks the **Purchase orders**
+  or **Stock items** role (view); the logs of the integration say so once.
+- **No part device**: subscribe to the parts (star) with the user of the
+  token, or choose "Every part with a minimum stock".
+- Detailed logs: set the `LOG_LEVEL` variable of the container to `debug`.
+
+## Limits
+
+- One InvenTree server per integration.
+- InvenTree does not notify: changes reach Gladys at the next read (15 minutes
+  by default), or at once after a removal made by a scene.
+- Parts without a minimum stock are never "below minimum" nor "out of stock":
+  give a minimum (even 1) to the parts you want to follow.
+- The value only counts stock items that have a purchase price.
+- The scene action removes whole quantities (1 or more): the Gladys form has
+  no decimals. Decimal quantities (0.5 kg) are shown as they are.
+- Sales orders, builds and the other InvenTree modules are not followed.
+- Not affiliated with the InvenTree project.
+
+## Configuration settings
+
+These are the settings InvenTree asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect InvenTree | `section` | No | Enter the address of your InvenTree server and an API token: in InvenTree, open your user settings, Security, Access tokens, and add a token. The user of the token needs to view parts; to view purchase orders and stock items for the orders and the value; to change stock only for the stock removal. |
+| InvenTree address | `string` | Yes |  |
+| API token | `secret` | Yes |  |
+| Read InvenTree every | `select` | No |  |
+| One device per part | `select` | No | Quantity in stock, minimum and quantity on order of each part, with history (50 parts at most). |
+| Allow scenes to remove stock | `boolean` | No | Enables the scene action "Remove stock". Off by default: a scene then only reads InvenTree. |
+| Language of names and messages | `select` | No | Feature names are set when the device is added to Gladys. |
+
+## How to install InvenTree in Gladys
+
+1. In Gladys, open **Integrations**: InvenTree appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-inventree:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-inventree](https://github.com/guim31/gladys-inventree).
+
+InvenTree requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+InvenTree is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-inventree) — [source of this documentation](https://github.com/guim31/gladys-inventree/blob/HEAD/docs/en.md)

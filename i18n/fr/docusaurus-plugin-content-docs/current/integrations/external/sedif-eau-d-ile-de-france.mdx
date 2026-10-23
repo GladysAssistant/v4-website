@@ -19,7 +19,7 @@ https://github.com/PhilippeMA/gladys-sedif instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"SEDIF – Eau d'Île-de-France","description":"Suivez votre consommation d'eau SEDIF (L'Eau d'Île-de-France / Veolia) dans Gladys.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-sedif","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-sedif.jpg","type":"device","version":"1.0.1","gladys_version":">=4.85.0","stars":0,"pushed_at":"2026-08-22T15:18:19Z"}} />
+<ExternalIntegrationHeader integration={{"name":"SEDIF – Eau d'Île-de-France","description":"Suivez votre consommation d'eau SEDIF (L'Eau d'Île-de-France / Veolia) dans Gladys.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-sedif","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-sedif.jpg","type":"device","version":"1.0.2","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-10-22T08:38:46Z"}} />
 
 Cette intégration ajoute à Gladys un appareil « Compteur d'eau SEDIF » qui suit
 votre consommation d'eau potable à partir de votre espace client
@@ -60,7 +60,7 @@ tracer les courbes et les utiliser dans des scènes) :
 | **Origine des relevés**            | Automatique (par défaut) ou fichier CSV déposé. Voir ci-dessous.                                                   |
 | **Adresse e-mail**                 | L'identifiant de votre espace client. Inutile en mode fichier déposé.                                              |
 | **Mot de passe**                   | Le mot de passe du même compte. Stocké en clair par Gladys — voir « Vos identifiants ».                            |
-| **Numéro de contrat**              | À renseigner uniquement si votre compte porte plusieurs contrats. Il figure sur votre facture.                     |
+| **Contrat (rang)**                 | À laisser vide, sauf plusieurs contrats sur le compte. On indique un rang (1 = le premier), pas un numéro.         |
 | **Intervalle de rafraîchissement** | Par défaut 6 heures. Le compteur n'étant relevé qu'une fois par jour, il n'y a rien à gagner à descendre plus bas. |
 | **Historique à importer**          | Nombre de jours repris lors du premier import. 30 jours par défaut, jusqu'à 3 ans.                                 |
 | **Inclure les relevés estimés**    | Désactivé par défaut. Voir « Relevés mesurés et estimés ».                                                         |
@@ -121,6 +121,14 @@ C'est une limite du service, pas de l'intégration.
 Chaque relevé est publié dans Gladys **à sa date réelle**, pas à la date de
 l'import : votre courbe est donc correctement datée, y compris pour l'historique
 repris au premier démarrage.
+
+**L'exploitant réécrit le passé récent.** Une journée apparaît quelques heures
+après sa fin, encore provisoire, puis elle est corrigée — parfois d'une
+estimation vers une mesure plus basse. L'intégration revérifie donc les
+**quatorze derniers jours** à chaque relevé et republie ceux dont la valeur a
+changé. Gladys reconnaît une journée déjà enregistrée et met sa valeur à jour au
+lieu d'en ajouter une seconde : votre courbe suit les corrections toute seule,
+sans réimport manuel.
 
 L'intégration gère elle-même son rythme, sans passer par le mécanisme de
 scrutation de Gladys (qui ne descend pas en dessous d'un rafraîchissement par
@@ -183,9 +191,11 @@ identifiant.
 - **« Aucun compteur rattaché au contrat »** : votre compteur n'est
   probablement pas télérelevé, et l'espace client n'a pas d'historique
   quotidien à donner.
-- **« Le contrat X ne fait pas partie des contrats actifs »** : le message liste
-  les contrats trouvés ; recopiez-en un, ou videz le champ pour prendre le seul
-  contrat du compte.
+- **Un message sur le choix du contrat** : l'espace client identifie les
+  contrats par des jetons qu'il régénère à chaque requête — impossible d'y
+  reconnaître le numéro figurant sur votre facture. Le champ attend donc un
+  **rang** : `1` pour le premier contrat, `2` pour le deuxième. Avec un seul
+  contrat, laissez-le vide.
 - **Une erreur nommant une classe `LTN...`** : l'exploitant a changé son
   application. C'est le cas qui demande une mise à jour de l'intégration ;
   basculez sur « Fichier CSV déposé » en attendant.
@@ -206,7 +216,7 @@ Voici les paramètres demandés par SEDIF – Eau d'Île-de-France dans son écr
 | Origine des relevés | `select` | Non | Automatique se connecte et lit l'API de l'espace client — quelques requêtes HTTP, sans navigateur, léger pour n'importe quelle machine. Fichier déposé ne demande aucun identifiant : vous téléchargez vous-même le CSV depuis l'espace client et le déposez dans le dossier d'import de l'intégration. Les deux produisent exactement le même appareil et les mêmes courbes. |
 | Adresse e-mail | `string` | Non | L'adresse e-mail de votre compte leaudiledefrance.fr. Utilisée uniquement par la source automatique ; laissez vide si vous déposez le fichier vous-même. |
 | Mot de passe | `secret` | Non | Le mot de passe de votre compte leaudiledefrance.fr, utilisé uniquement par la source automatique. Gladys stocke la configuration des intégrations EN CLAIR dans sa base : le champ secret garantit seulement que la valeur n'est jamais renvoyée à l'interface web, pas qu'elle est protégée sur le disque. Préférez un mot de passe que vous ne réutilisez pas ailleurs. |
-| Numéro de contrat | `string` | Non | Utile uniquement si votre compte porte plusieurs contrats. Il figure sur votre facture et dans l'espace client. Laissez vide si votre compte n'a qu'un seul contrat. |
+| Numéro de contrat | `string` | Non | Laissez vide, sauf si votre compte porte PLUSIEURS contrats. L'espace client les identifie par des jetons regénérés à chaque requête, un contrat ne peut donc pas être nommé ici : indiquez son rang (1 pour le premier). Avec un seul contrat, ce champ est ignoré. |
 | Intervalle de rafraîchissement (s) | `number` | Non | Fréquence d'interrogation de l'espace client, en secondes. Le compteur n'est relevé qu'une fois par jour : un intervalle court n'apporte rien. |
 | Historique à importer (jours) | `number` | Non |  |
 | Inclure les relevés estimés | `boolean` | Non | L'espace client indique si un relevé est mesuré ou estimé. Les relevés estimés sont ignorés par défaut car ils peuvent faire reculer l'index du compteur. |
@@ -214,11 +224,11 @@ Voici les paramètres demandés par SEDIF – Eau d'Île-de-France dans son écr
 ## Comment installer SEDIF – Eau d'Île-de-France dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : SEDIF – Eau d'Île-de-France apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-sedif:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-sedif:1.0.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/PhilippeMA/gladys-sedif](https://github.com/PhilippeMA/gladys-sedif).
 
-SEDIF – Eau d'Île-de-France nécessite Gladys `>=4.85.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+SEDIF – Eau d'Île-de-France nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

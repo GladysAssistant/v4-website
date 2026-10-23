@@ -1,0 +1,183 @@
+---
+title: "Integración domótica Balboa Spa, gratuita y de código abierto"
+sidebar_label: "Balboa Spa"
+description: "Balboa spas with a BWA Wi-Fi module, locally: temperature, setpoint, pumps, lights, filtration. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-balboa.png"
+keywords:
+  - "balboa spa"
+  - "domótica balboa spa"
+  - "gladys balboa spa"
+  - "balboa spa gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-balboa instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Balboa Spa","description":"Balboa spas with a BWA Wi-Fi module, locally: temperature, setpoint, pumps, lights, filtration.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-balboa","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-balboa.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:08:02Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Shows your **Balboa** spa in Gladys over your local network, through the
+**BWA Wi-Fi module** (the one of the Balboa Worldwide App), without any
+cloud: water temperature, setpoint, heat mode, pumps, blowers, lights,
+filter cycles and circulation pump.
+
+**Never tested with a real spa.** The local protocol is not documented by
+Balboa: this integration follows what
+[pybalboa](https://github.com/natekspencer/pybalboa) (the library of Home
+Assistant's Balboa integration) does. Not affiliated with Balboa Water Group.
+
+## Before you start
+
+- A Balboa controller (BP, GS, EL series…) with a **BWA Wi-Fi module**
+  (BWG), connected to your Wi-Fi.
+- The **IP address** of the module: look for it in your router (often named
+  `BWGSpa`) and give it a fixed address (DHCP reservation).
+- The module talks on TCP port **4257**, without a password: keep it on a
+  **trusted network** (no port forwarding from the internet).
+- The module accepts few connections at once: if Gladys cannot connect,
+  close the Balboa app on the local network, and do not run Home
+  Assistant's Balboa integration on the same spa at the same time.
+
+## Setup
+
+1. Install the integration from the store.
+2. In its configuration, enter the **IP address of the Wi-Fi module**
+   (for example `192.168.1.80`; another port can be added as
+   `192.168.1.80:4257`), then save.
+3. "Test the connection" shows the state: "Connected: Balboa BP501G1."
+4. In the **Discovery** tab, add the spa.
+
+## What you get
+
+| Feature               | Type                                 | Notes                                  |
+| --------------------- | ------------------------------------ | -------------------------------------- |
+| Water temperature     | temperature (°C)                     | Sent at most every 10 to 15 s          |
+| Setpoint              | thermostat (°C)                      | Command, see "Heating"                 |
+| Heating               | read only, 0/1                       | 1 while the heater runs                |
+| Heat mode             | list: Ready / Rest                   | Command, see "Heating"                 |
+| Spa status            | text                                 | State, heat mode, heating, Wi-Fi notes |
+| Temperature range     | text                                 | Low / High (read only)                 |
+| Filter cycles 1 and 2 | read only, 0/1                       | 1 while running                        |
+| Circulation pump      | read only, 0/1                       | When the spa has one                   |
+| Pumps 1 to 8          | list: Off / Low / High (or Off / On) | Pumps 1–6 commandable, 7–8 read only   |
+| Blowers               | list                                 | Commandable                            |
+| Lights                | light on/off                         | Commandable                            |
+| Auxiliaries, misters  | read only, 0/1                       | When the spa has them                  |
+
+A spa set to °F is shown in °C. The features follow the device
+configuration the spa reports; a feature never disappears from a device
+already created.
+
+## Heating
+
+Off by default: turn on **"Allow the heating commands"** to let Gladys
+change the **setpoint** and put the heat mode on **"Ready"**.
+
+- **Setpoint ceiling**: Gladys never sets the spa above it. **38 °C by
+  default**, configurable from 30 to 40 °C, **never above 40 °C** (the limit
+  of spa standards), whatever is typed. Steps of 0.5 °C; the spa must accept
+  the value in its current range (low range: 10–37 °C, high range:
+  26.5–40 °C by default).
+- **"Rest"** (heats during filtration only) is never refused by an option:
+  it lowers the heating.
+- **"Ready"** keeps the setpoint set on the spa: it is refused when that
+  setpoint (perhaps set at the panel) is above the ceiling.
+- The temperature range (low/high) is read only.
+
+## Pumps and blowers
+
+Off by default: turn on **"Allow the pumps"** to start the jets. **"Off"
+is never refused by an option**, and cancels a command still running that
+is not a stop. It can still be refused when the spa state is unknown, when
+a previous press has not shown yet, or when there is no time left to send
+it. They are lists, never on/off switches: a "turn everything off" of a
+voice assistant or a scene cannot reach them. Several stops at once (a
+scene turning everything off) run side by side.
+
+The spa only knows "next speed" presses: Gladys sends one press at a time
+and waits for the spa to show it before the next one (Low → High → Off for
+a two-speed pump).
+
+When the spa has both a circulation pump and blower 1, the state of blower
+1 is unknown (the protocol, as known, reads them from the same bit): it is
+not shown and not commanded until a real spa confirms how to read it.
+
+## Lights
+
+On and off by default. Turn off **"Allow turning the lights on"** to only
+let Gladys turn them off.
+
+## How commands behave
+
+- Each command waits for a status the spa sends **after** your click (the
+  spa sends one about every second): nothing is decided on an old state,
+  and a frame is not sent if a newer state arrived since the decision.
+- The options and the ceiling are checked again right before each frame
+  leaves.
+- A frame is sent within 3.5 s of the click or not at all. If the spa does
+  not show the change (in a state sent after the frame) by 4.3 s, the answer
+  is **"Command sent, without confirmation"**: check the spa a few seconds
+  later. Gladys never sends another press on an unknown outcome (for 20 s,
+  until the spa shows it): a new command is refused meanwhile, a stop waits
+  for it.
+- One command at a time, stops aside.
+
+## Troubleshooting
+
+- "No connection to the spa": check the IP address, that the module is on
+  your network, and that no other app keeps it busy. Gladys tries again
+  after 10 s, 30 s, 1, 2, then every 5 minutes.
+- "Connected to the Wi-Fi module, waiting for the spa…": the module answers
+  but the spa sends nothing yet (spa starting, or the module lost the spa).
+- The status shows "the spa does not answer the module": the module reports
+  that it cannot talk to the spa controller.
+
+## Privacy
+
+Everything stays on your local network. No account, no cloud, no password.
+The MAC address of the module is the identifier of the device in Gladys; it
+is never written in the logs.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Balboa Spa te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your spa | `section` | No | Shows your Balboa spa (BP, GS, EL controllers with a BWA Wi-Fi module, as used by the Balboa Worldwide App) in Gladys over your local network, without any cloud: water temperature, setpoint, heat mode, pumps, blowers, lights and filter cycles. Enter the IP address of the Wi-Fi module (give it a fixed address in your router), save, then add the spa from the Discovery tab. The module accepts few connections at once: close the Balboa app on the local network if Gladys cannot connect. The local protocol is not documented by Balboa and has no password: keep the module on a trusted network. Never tested with a real spa. Not affiliated with Balboa Water Group. |
+| IP address of the Wi-Fi module | `string` | Sí | An IPv4 address or a host name (port 4257 unless you add one, for example 192.168.1.80:4257). |
+| Allow the heating commands | `boolean` | No | Off by default. On: Gladys may change the setpoint (up to the ceiling below) and put the heat mode on "Ready". Off: these commands are refused. "Rest" (heats during filtration only) is always allowed. |
+| Setpoint ceiling (°C) | `number` | No | Gladys never sets the spa above this temperature. 38 °C by default, from 30 to 40 °C (never more than 40 °C, the limit of spa standards, whatever is typed). |
+| Allow the pumps | `boolean` | No | Off by default. On: Gladys may start the pumps and blowers (jets). Off: only "Off" is accepted. |
+| Allow turning the lights on | `boolean` | No | On by default. Off: Gladys may only turn the spa lights off. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, for the state texts and for the command errors. |
+
+## Cómo instalar Balboa Spa en Gladys
+
+1. En Gladys, abre **Integraciones**: Balboa Spa aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-balboa:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-balboa](https://github.com/LM1LC3N7/gladys-balboa).
+
+Balboa Spa requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Balboa Spa es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-balboa) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-balboa/blob/HEAD/docs/en.md)

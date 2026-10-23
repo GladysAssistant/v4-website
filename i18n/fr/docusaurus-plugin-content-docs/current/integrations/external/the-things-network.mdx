@@ -1,0 +1,211 @@
+---
+title: "Intégration domotique The Things Network, gratuite et open source"
+sidebar_label: "The Things Network"
+description: "Connecteur non officiel : vos capteurs LoRaWAN de The Things Network / The Things Stack. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-things-network.png"
+keywords:
+  - "the things network"
+  - "domotique the things network"
+  - "gladys the things network"
+  - "the things network gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-things-network instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"The Things Network","description":"Connecteur non officiel : vos capteurs LoRaWAN de The Things Network / The Things Stack.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-things-network","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-things-network.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T19:59:27Z"}} />
+
+Cette intégration amène dans Gladys les dernières valeurs décodées des
+capteurs LoRaWAN d'une application **The Things Network** (édition
+communautaire de The Things Stack) ou **The Things Stack Cloud** :
+température, humidité, pression, luminosité, CO2, particules fines, humidité
+du sol, vent, UV, distance, batterie, fuite d'eau et mouvement.
+
+Elle lit l'**API Storage officielle** de The Things Stack, en **lecture
+seule** : rien n'est jamais envoyé à vos appareils (pas de message
+descendant), rien n'est modifié dans la console.
+
+> Connecteur **non officiel**, sans lien avec The Things Industries.
+> L'intégration n'a **jamais été testée avec un vrai compte** The Things
+> Network pour l'instant : vos retours sont les bienvenus.
+
+## 1. Activer l'intégration Storage (indispensable)
+
+Sans elle, The Things Stack ne garde aucun message et l'intégration ne voit
+rien.
+
+1. Ouvrez la console (par exemple https://eu1.cloud.thethings.network/console)
+   et votre application.
+2. Menu **Integrations > Storage Integration**.
+3. Cliquez sur **Activate Storage Integration**.
+
+Seuls les messages reçus **après** l'activation sont gardés, pour une durée
+limitée qui dépend de votre offre (voir la documentation de The Things
+Stack).
+
+## 2. Un décodeur pour chaque appareil
+
+L'intégration lit la charge **décodée** (`decoded_payload`). Chaque appareil
+(ou l'application) doit avoir un décodeur (**Payload formatters > Uplink**) :
+celui du catalogue d'appareils (Device Repository), Cayenne LPP, ou le vôtre.
+
+## 3. Créer une clé API
+
+1. Dans l'application : **API keys > Add API key**.
+2. Donnez-lui seulement le droit **Read application traffic (uplink and
+   downlink)**.
+3. Copiez la clé (elle commence par `NNSXS.`) : elle ne sera plus affichée.
+
+## 4. Configurer l'intégration dans Gladys
+
+- **Cluster** : celui de votre application, visible dans l'adresse de la
+  console (`eu1` pour l'Europe). Pour un tenant The Things Stack Cloud ou
+  votre propre serveur, choisissez **Autre serveur** et saisissez son nom
+  d'hôte (HTTPS seulement, par exemple
+  `montenant.eu1.cloud.thethings.industries`).
+- **ID de l'application** : tel qu'affiché dans la console.
+- **Clé API** : gardée par Gladys dans sa base, jamais réaffichée ; envoyée
+  seulement au serveur choisi, dans un en-tête (jamais dans une adresse), et
+  jamais écrite dans les journaux.
+- **Intervalle de lecture** : 5 minutes par défaut (2 à 60). Une seule
+  requête par lecture, pour tous les appareils de l'application.
+
+Puis cliquez sur **Tester l'application** : le bouton affiche les dernières
+valeurs de chaque appareil, les champs ignorés et l'heure de la prochaine
+lecture possible. Les appareils apparaissent dans l'onglet **Découverte** dès
+leur premier message reçu.
+
+## Les valeurs reconnues
+
+Un décodeur peut nommer ses champs comme il veut. L'intégration ne crée une
+fonction dans Gladys que si elle sait **ce que mesure** le champ **et dans
+quelle unité**, et seulement avec les unités que Gladys connaît. Les valeurs
+hors bornes sont écartées (jamais ramenées dans les bornes). Les autres champs
+sont ignorés (le bouton de test les liste).
+
+| Mesure              | Noms de champs reconnus (majuscules, `_` et numéro de canal Cayenne ignorés)                                         | Unité dans Gladys                    |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| Température         | `temperature`, `temp`, `TempC`, `TempC_SHT`, `TempC_DS`, `air_temperature`, `soil_temperature`, `water_temperature`… | °C (-50 à 125)                       |
+| Humidité            | `humidity`, `hum`, `Hum_SHT`, `relative_humidity`, `air_humidity`, `rh`                                              | %                                    |
+| Pression            | `barometric_pressure`, `barometer`, `air_pressure`, `baro` (300 à 1100 hPa) ; `pressure` seul : 850 à 1100 hPa       | hPa (une valeur en Pa est convertie) |
+| Luminosité          | `illuminance`, `luminosity`, `lux`, `light`, `light_intensity`, `ILL_lx`                                             | lux                                  |
+| CO2                 | `co2`, `co2_ppm`, `carbon_dioxide`                                                                                   | ppm                                  |
+| Particules          | `pm25`, `pm2_5`, `pm10`                                                                                              | µg/m³                                |
+| Batterie            | `battery_level`, `battery_percent` ; `battery` ou `bat` : nombre entier de 6 à 100 (puis 0 à 100)                    | %                                    |
+| Tension de batterie | `BatV`, `battery_voltage`, `vbat` ; en mV : `battery_mv`, `bat_mv`                                                   | V                                    |
+| Distance            | `distance_mm`, `distance_cm`, `distance_m` (une distance sans unité est ignorée)                                     | mm, cm, m                            |
+| Humidité du sol     | `soil_moisture`, `moisture`, `water_soil`, `vwc`                                                                     | %                                    |
+| Vent                | `wind_speed` (m/s), `wind_speed_kmh`                                                                                 | m/s, km/h                            |
+| UV                  | `uv`, `uv_index`                                                                                                     | indice UV                            |
+| Fuite d'eau         | `leak`, `water_leak`, `leakage` (vrai/faux ou un nombre entier : 1 et plus = détectée)                               | détectée ou non                      |
+| Mouvement           | `motion`, `occupancy`, `pir` (vrai/faux ou un nombre entier, par ex. un compte de détections : 1 et plus = détecté)  | détecté ou non                       |
+
+Les capteurs **SenseCAP** (Seeed) sont lus par leurs types (`Air
+Temperature`, `Air Humidity`, `Light Intensity`, `Barometric Pressure`, `UV
+Index`, `Wind Speed`…) et leur batterie. Un décodeur peut aussi déclarer
+l'unité de ses champs avec `_sensor_attr`, comme dans Home Assistant :
+`{"_sensor_attr": {"distance": {"unit": "cm", "device_class": "distance"}}}`.
+
+Le type et l'unité d'un champ sont choisis à sa première lecture, puis ne
+changent plus (après une perte de `/data`, c'est la fonction déjà créée qui
+décide). Une fonction déjà créée n'est jamais retirée de l'appareil.
+
+Un champ `battery` ou `bat` nu est ambigu : certains décodeurs y mettent une
+tension arrondie (3 pour 3 V) ou l'échelle LoRaWAN 0-254. Seul un nombre entier
+de 6 à 100 est d'abord lu comme un pourcentage ; une fois qu'il a donné une
+valeur au-dessus de 5 %, les valeurs de 0 à 5 % sont lues aussi (une pile
+presque vide reste visible). Préférez un décodeur qui nomme
+`battery_level` ou `BatV`.
+
+## Fonctionnement
+
+- Chaque message est publié **une seule fois**, dans l'ordre de réception :
+  aucune valeur n'est perdue entre deux lectures (une fuite 0 → 1 → 0 arrive
+  bien dans Gladys).
+- **Scènes** : la valeur la plus récente de chaque fonction, reçue depuis la
+  lecture précédente (intervalle + 2 minutes), est publiée « en direct » :
+  Gladys déclenche alors les scènes, au moment de la lecture (donc jusqu'à un
+  intervalle après la mesure), et l'historique la date de sa lecture. Pour une
+  fuite d'eau ou un mouvement, chaque changement de cette période est publié
+  en direct, dans l'ordre. Les messages plus anciens (rattrapage après une
+  pause, un refus ou un arrêt) sont publiés datés de leur réception, du plus
+  ancien au plus récent : ils vont dans l'historique sans déclencher de scène.
+- Rattrapage borné : les messages des 6 dernières heures, au plus 48 par
+  fonction. Au tout premier démarrage, seulement ceux des 3 dernières heures.
+- Un appareil est identifié par son **DevEUI** (ou, sans DevEUI, par l'ID de
+  l'application et celui de l'appareil) : un appareil supprimé puis recréé
+  avec un autre DevEUI sous le même ID devient un nouvel appareil.
+- Au plus 100 appareils (un appareil muet depuis 30 jours et non créé dans
+  Gladys est oublié), 24 valeurs par appareil et 1000 messages par lecture.
+  Un message de plus de 256 Ko est ignoré (et compté dans le statut) ; une
+  réponse de plus de 8 Mo est lue jusqu'à cette limite (les plus récents
+  d'abord) : le statut le dit et conseille de réduire l'intervalle.
+- Gladys accepte 300 états par minute : les états partent par lots, dans ce
+  budget ; le surplus attend la minute suivante.
+
+## Erreurs et pauses
+
+- **Clé refusée** (401), **droit manquant** (403) ou **application
+  introuvable / intégration Storage non activée** (404) : les lectures
+  s'arrêtent, un nouvel essai toutes les 6 heures, ou tout de suite si vous
+  changez la configuration. Le statut dit pourquoi.
+- **Serveur occupé** (429 ou 5xx) : pause (Retry-After, sinon 5 minutes
+  doublées à chaque fois, de 1 minute à 6 heures).
+- Rien ne lit plus vite que l'intervalle : ni le bouton de test, ni une
+  reconnexion, ni un redémarrage. L'heure de la dernière requête, les pauses
+  et les refus sont gardés dans `/data` (jamais la clé ; seulement, tant
+  qu'une clé est refusée, une empreinte salée de cette clé refusée, effacée
+  au premier succès).
+
+## Limites
+
+- Lecture seule : pas de message descendant, pas de commande.
+- Les positions GPS ne sont pas reprises (Gladys n'a pas de fonction de
+  position pour un capteur).
+- Les champs sans unité connue (ex. `analog_in`, `Work_mode`) sont ignorés.
+
+## Crédits
+
+La logique de l'API Storage et des décodeurs (par défaut et SenseCAP) est
+portée de [ttn_client](https://github.com/angelnu/thethingsnetwork_python_client)
+(MIT, Angel Nunez Mencias), la bibliothèque de l'intégration The Things
+Network de Home Assistant. The Things Network et The Things Stack sont des
+marques de leur propriétaire.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par The Things Network dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre application LoRaWAN | `section` | Non | Connecteur non officiel, sans lien avec The Things Industries. Il lit les dernières valeurs décodées des appareils d'une application par l'API Storage officielle de The Things Stack (The Things Network, édition communautaire, ou The Things Stack Cloud) : température, humidité, pression, luminosité, CO2, particules fines, humidité du sol, vent, UV, distance, batterie, fuite d'eau et mouvement, quand le décodeur (payload formatter) les nomme. Lecture seule : rien n'est jamais envoyé à vos appareils. Avant tout, activez l'intégration Storage de l'application dans la console (Integrations > Storage Integration), puis créez une clé API avec le droit « Read application traffic ». Jamais testé avec un vrai compte pour l'instant. |
+| Cluster | `select` | Non | Le cluster de votre application, visible dans l'adresse de la console (eu1 pour l'Europe). |
+| Autre serveur | `string` | Non | Seulement avec « Autre serveur » : le nom d'hôte de votre The Things Stack (tenant Cloud ou votre propre serveur), joint en HTTPS. |
+| ID de l'application | `string` | Non | L'ID de l'application dans la console (lettres minuscules, nombres et tirets). |
+| Clé API | `secret` | Non | Une clé API de l'application (elle commence par NNSXS.) avec le seul droit « Read application traffic (uplink and downlink) ». Gardée par Gladys dans sa base, jamais réaffichée ; envoyée seulement au serveur ci-dessus. |
+| Intervalle de lecture (minutes) | `number` | Non | Une requête à chaque fois, pour tous les appareils de l'application. Rien ne lit plus tôt, ni le bouton de test ni un redémarrage. Les capteurs LoRaWAN émettent en général toutes les 5 à 60 minutes. |
+
+## Comment installer The Things Network dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : The Things Network apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-things-network:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-things-network](https://github.com/LM1LC3N7/gladys-things-network).
+
+The Things Network nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+The Things Network est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-things-network) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-things-network/blob/HEAD/docs/fr.md)

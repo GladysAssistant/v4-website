@@ -1,0 +1,225 @@
+---
+title: "Integración domótica Duplicati, gratuita y de código abierto"
+sidebar_label: "Duplicati"
+description: "Sus copias de Duplicati en Gladys: su estado y una alerta si una falla o deja de ejecutarse. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-duplicati.png"
+keywords:
+  - "duplicati"
+  - "domótica duplicati"
+  - "gladys duplicati"
+  - "duplicati gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-duplicati instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Duplicati","description":"Sus copias de Duplicati en Gladys: su estado y una alerta si una falla o deja de ejecutarse.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-duplicati","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-duplicati.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:34:08Z"}} />
+
+[Duplicati](https://duplicati.com/) hace copias de seguridad cifradas de sus
+archivos en un disco, un NAS o un almacenamiento en la nube. Esta integración
+trae a Gladys las tareas de copia de un servidor Duplicati: cada tarea se
+convierte en un dispositivo con su estado, su última copia correcta, el tamaño
+en el destino y los errores de su última ejecución. Las escenas pueden
+reaccionar cuando **cualquier** copia se completa, falla o tiene retraso
+(demasiado tiempo sin éxito), un widget del panel enumera primero las copias
+fallidas, y una escena puede iniciar una copia.
+
+Probada con un Duplicati 2.4 real (imagen Docker `duplicati/duplicati`): una
+copia que se completa, una con avisos, una que falla tras borrar su destino, y
+una copia iniciada desde la integración. Aún no probada en un Gladys real: sus
+comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-duplicati/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Duplicati **2.1 o posterior** (su interfaz web, en el puerto 8200 por
+  defecto), accesible desde la máquina de Gladys. Duplicati 2.0 y anteriores
+  tienen otra API y no son compatibles.
+- La contraseña de la interfaz web de Duplicati. Duplicati 2.1 siempre la
+  protege: defínala en los ajustes de Duplicati, o con la variable
+  `DUPLICATI__WEBSERVICE_PASSWORD` de su imagen Docker.
+
+La integración lee Duplicati cada 5 minutos por defecto (cada 30 segundos
+durante una copia): unas pocas peticiones ligeras en su red.
+
+## Primeros pasos
+
+### 1. Localizar la dirección de Duplicati
+
+Abra la interfaz de Duplicati en un navegador y anote su dirección, por ejemplo
+`http://192.168.1.2:8200`. Si Duplicati solo escucha en su propia máquina
+(`localhost`), autorice las demás máquinas de la red: opción
+`--webservice-interface=any` (ya es así en la imagen Docker), y añada el nombre
+o la dirección que usa Gladys a `--webservice-allowed-hostnames` si accede por
+un nombre.
+
+### 2. Configurar la integración
+
+En Gladys, **Integraciones → Duplicati → Configuración**:
+
+- **Dirección de Duplicati**: la dirección anotada arriba. Una dirección sola
+  (`192.168.1.2`) usa el puerto 8200; una dirección copiada del navegador
+  también sirve.
+- **Contraseña**: la contraseña de la interfaz de Duplicati.
+- **Intervalo de actualización**: 1, 5 (por defecto) o 15 minutos.
+- **Con retraso tras**: cuándo una copia sin éxito pasa a tener retraso.
+  _Automático_ (por defecto) sigue la programación de cada copia: su periodo,
+  más los días que omite, más un cuarto del periodo (una hora como mínimo), es
+  decir 30 horas para una copia diaria. Una copia sin programación nunca tiene
+  retraso entonces. O un plazo fijo, de 12 horas a una semana, para todas las
+  copias.
+- **Permitir iniciar copias**: permite que funcione la acción de escena
+  «Iniciar una copia». Desactívelo si nadie debe iniciar una copia desde Gladys.
+- **Idioma de los nombres**: idioma de los nombres de las funciones, de los
+  estados y de los resultados de escena.
+
+**Probar la conexión** lee Duplicati y resume: el número de copias, fallidas y
+con retraso.
+
+### 3. Añadir las copias
+
+En la pestaña **Descubrir**, añada las copias que quiera seguir, y el
+dispositivo «Duplicati» para el servidor. Los disparadores de escena funcionan
+para todas las copias, añadidas o no.
+
+## Los dispositivos
+
+Cada tarea de copia:
+
+| Función                         | Valor                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------- |
+| Estado                          | Correcta, Con avisos, Fallida, Con retraso, En curso o Nunca ejecutada |
+| Última copia correcta           | día/mes horas:minutos, «-» si no hay                                   |
+| Horas desde el último éxito     | en horas                                                               |
+| Duración de la última ejecución | en segundos                                                            |
+| Tamaño en el destino            | los archivos en el destino, en MB                                      |
+| Versiones                       | versiones de copia conservadas en el destino                           |
+| Errores de la última ejecución  | número de errores                                                      |
+| Avisos de la última ejecución   | número de avisos                                                       |
+| En ejecución                    | 1 mientras esta copia se ejecuta                                       |
+| Próxima ejecución programada    | día/mes horas:minutos, «-» sin programación                            |
+
+El dispositivo «Duplicati», para el servidor:
+
+- **Copia en curso**: 1 o 0;
+- **Progreso**: en %;
+- **Copia actual**: su nombre, «-» si no hay;
+- **Copias fallidas** y **Copias con retraso**: cuántas.
+
+Una copia «se completa» cuando Duplicati la termina, con o sin avisos: se crea
+una versión. «Falla» cuando termina con errores (destino inaccesible, archivos
+que faltan en el almacenamiento…). El estado muestra primero lo que requiere
+su atención: una copia fallida muestra «Fallida» aunque también tenga retraso.
+
+## Panel
+
+El widget **Duplicati** muestra el número de copias fallidas, con retraso y
+correctas, y luego una línea por copia: primero las fallidas, después las que
+tienen retraso, en curso, con avisos, nunca ejecutadas, correctas, con el
+último éxito (o el progreso de la que está en curso). Todas las copias por
+defecto, o las elegidas en sus ajustes. El botón **Actualizar** vuelve a leer
+Duplicati.
+
+## Escenas
+
+### Disparadores
+
+- **Una copia se completa**: una copia termina, con o sin avisos. Información:
+  nombre de la copia, duración (minutos), avisos, versiones, tamaño en el
+  destino.
+- **Una copia falla**: una copia termina con errores. El filtro **Resultado**
+  elige los errores, los avisos o ambos (vacío). Información: nombre de la
+  copia, primer error o aviso, errores, avisos.
+- **Una copia tiene retraso**: una copia no se ha completado desde hace más que
+  el plazo «Con retraso tras». Una vez por superación, de nuevo tras un nuevo
+  éxito. Información: nombre de la copia, horas desde el último éxito, último
+  éxito.
+
+Cada disparador puede limitarse a algunas copias (vacío: todas).
+
+### Acciones
+
+- **Estado de una copia**: lee el estado de una copia para las siguientes
+  acciones: fallida, con retraso, el estado en palabras, el nombre, el último
+  éxito, las horas desde el último éxito (-1 si no hay) y una frase lista
+  («Photos: Fallida, último éxito 18/10 02:05.»).
+- **Iniciar una copia**: inicia una copia ahora. Duplicati la pone en cola si
+  otra se está ejecutando. Rechazada cuando «Permitir iniciar copias» está
+  desactivado.
+
+### Ideas de escenas
+
+- **Una copia falla** → enviar un mensaje con el nombre de la copia y su primer
+  error, elegidos en la información del disparador.
+- **Una copia tiene retraso** → avisar con el nombre de la copia y las horas
+  desde su último éxito.
+- Cada domingo a las 10:00 → **Estado de una copia** → enviar la frase; o
+  iniciar la copia de las fotos cuando salga de casa, con **Iniciar una copia**.
+
+## Solución de problemas
+
+- **«Duplicati no responde»**: compruebe la dirección y el puerto desde la
+  máquina de Gladys, y que Duplicati escucha en la red
+  (`--webservice-interface=any`).
+- **«contraseña rechazada por Duplicati»**: introduzca de nuevo la contraseña
+  de la interfaz. Duplicati también puede rechazar un nombre de host que no
+  conoce: añádalo a `--webservice-allowed-hostnames`.
+- **«no hay ningún Duplicati 2.1 o posterior en esta dirección»**: la dirección
+  apunta a otra cosa, o a Duplicati 2.0 (actualícelo).
+- **«certificado rechazado»**: un certificado autofirmado; use la dirección
+  `http://` en su red.
+- **Una copia nunca tiene retraso**: en _Automático_, una copia sin
+  programación no puede tener retraso; elija un plazo fijo. Una copia que nunca se completó tampoco tiene retraso: muestra Fallida o Nunca ejecutada.
+- Para ver más, ponga la variable `LOG_LEVEL` de la integración en `debug`.
+
+## Límites
+
+- Un solo servidor Duplicati por integración.
+- Solo Duplicati 2.1 o posterior.
+- Los resultados vienen del registro que Duplicati guarda para cada copia: una
+  copia cuya base de datos local se borró solo muestra lo que dice su resumen.
+- La integración no restaura, no repara ni modifica copias: las vigila, y las
+  inicia si está permitido.
+- Sin afiliación con Duplicati. Informe de un problema o una idea en
+  [las issues](https://github.com/guim31/gladys-duplicati/issues).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Duplicati te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor Duplicati | `section` | No | Duplicati 2.1 o posterior. Introduzca la dirección de su interfaz web y la contraseña que la protege (Ajustes → Acceso a la interfaz). Después añada las copias desde la pestaña Descubrir. |
+| Dirección de Duplicati | `string` | Sí | La dirección de la interfaz web, puerto 8200 por defecto. |
+| Contraseña | `secret` | Sí | La contraseña de la interfaz web de Duplicati. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Duplicati. Cada 30 segundos durante una copia. |
+| Con retraso tras | `select` | No | Una copia sin éxito desde hace este tiempo tiene retraso. Automático: su programación más un margen; una copia sin programación nunca tiene retraso. |
+| Permitir iniciar copias | `boolean` | No | Permite que la acción de escena «Iniciar una copia» inicie una copia en Duplicati. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los estados y de los resultados de escena. |
+
+## Cómo instalar Duplicati en Gladys
+
+1. En Gladys, abre **Integraciones**: Duplicati aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-duplicati:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-duplicati](https://github.com/guim31/gladys-duplicati).
+
+Duplicati requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Duplicati es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-duplicati) — [fuente de esta documentación](https://github.com/guim31/gladys-duplicati/blob/HEAD/docs/es.md)

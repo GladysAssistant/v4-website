@@ -1,0 +1,165 @@
+---
+title: "BleBox Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "BleBox"
+description: "BleBox Wi-Fi modules, locally: lights, relays, shutters, gate, heating, sensors. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-blebox.png"
+keywords:
+  - "blebox"
+  - "blebox smart home"
+  - "gladys blebox"
+  - "blebox gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-blebox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"BleBox","description":"BleBox Wi-Fi modules, locally: lights, relays, shutters, gate, heating, sensors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-blebox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-blebox.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-20T19:08:50Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration shows your BleBox Wi-Fi modules in Gladys and controls them
+through their local HTTP API, on your network, without the BleBox cloud.
+
+**Never tested with a real device**: the integration follows the API
+documentation and the manufacturer's blebox-uniapi library, but nobody has
+tried it on a real module yet. Feedback is welcome.
+
+Unofficial integration, not affiliated with BleBox.
+
+## Supported modules
+
+| Module                | In Gladys                                                        |
+| --------------------- | ---------------------------------------------------------------- |
+| wLightBox, wLightBoxS | light: on/off, brightness, colour (depending on the colour mode) |
+| dimmerBox             | light: on/off, brightness                                        |
+| switchBox, switchBoxD | relays (read only until declared safe), power                    |
+| shutterBox            | shutter or curtain: open, close, stop, position (if calibrated)  |
+| gateBox               | gate: open/closed, position, open, close and stop buttons        |
+| thermoBox             | temperature, probe, setpoint, heating on/off, safety cut-off     |
+| tempSensor            | temperature                                                      |
+| airSensor             | PM2.5 and PM10                                                   |
+| multiSensor           | temperature, humidity, light level, wind, rain, flood, CO2…      |
+
+## Setup
+
+1. Give each module a fixed IP address in your router.
+2. In Gladys, install the BleBox integration from the store.
+3. Type the IP addresses of the modules (separated by commas), or use "Find
+   the BleBox devices" (mDNS search through Gladys).
+4. Add the devices from the Discovery tab.
+
+If the local API of your modules is protected in the wBox app, type the user
+name and the password. The password is kept by Gladys in its database, never
+shown again, sent only to your modules: the typed addresses and the modules
+already added (in clear on your local network: the modules have no https). A
+protected module only found by the search gets no credentials: the status
+asks you to type its address.
+
+## Command safety
+
+- **Relays**: a relay may feed anything, and a "turn everything off" of a
+  voice assistant or a scene reaches every switch. So a relay is shown read
+  only until you declare it safe in "Relays declared safe" (the module id,
+  parameter `DEVICE_ID` of the Discovery tab, or `id:number` for one relay).
+  A relay removed from the list is refused at once, even if its command was
+  waiting.
+- **Gate**: never a switch, only buttons, and only the ones the wiring of the
+  gateBox allows. Opening (and the walk-in output) is refused until "Allow
+  opening the gate" is on.
+  - Recent gateBox (API 20210118 or later): opening and closing use its
+    `/s/o` and `/s/c` commands, the module decides on its limit switches
+    (and refuses when it cannot tell). Closing is always allowed. These
+    commands depend on the limit switches: check in the wBox app that the
+    open/closed state the gateBox shows is right before relying on them.
+  - Opening and closing on separate outputs: closing is always allowed.
+  - Step-by-step mode on an older gateBox: closing and opening are **the
+    same pulse** (open, stop, close, stop). So closing also needs "Allow
+    opening the gate", and the pulse is only sent when the gate is seen
+    fully open to close it, or fully closed to open it.
+  - Stopping (second output set as "stop") is always allowed.
+  - One pulse at a time: after a pulse, the next one is refused until the
+    gate is seen elsewhere than where it was (or a few seconds later); use
+    "Stop the gate". Recent gateBox modules do not tell whether the gate
+    moves, only whether it is at a limit switch.
+  - Closing and stopping cancel, as soon as they arrive, an opening (or a
+    walk-in output) that has not left yet; cancelling never sends anything.
+    The walk-in output follows the same one-pulse-at-a-time rule.
+- **Heating (thermoBox)**: switching off is always sent, without a state
+  read (it only depends on the identity of the module). Switching on and the
+  setpoint are refused until "Allow the heating commands" is on, and the
+  setpoint never exceeds the ceiling (25 °C by default, 30 °C at most) nor
+  the range of the thermoBox. Gladys only switches the thermoBox on in the
+  mode (heating or cooling) set in its own settings.
+- Before every command, Gladys checks that the same module still answers at
+  this address. Each sensitive command reads the state of the module just
+  before acting; the permission is checked again right before sending. A
+  command that cannot leave within 3.5 seconds is refused unsent; a command
+  sent without an answer is reported "sent, without confirmation".
+
+## Failures
+
+- Credentials refused: the module is no longer asked nor commanded, then
+  again after 15 min, 1 h, 6 h and every 24 h; saving other credentials or
+  "Find the BleBox devices" tries again at once.
+- A module asking to wait (HTTP 429 or 5xx) is paused for one minute to six
+  hours, even across a restart: no reads, no opening, no switching on.
+  Closing, stopping and switching off stay possible (one try).
+- A module that does not answer is read again after 30 s, 1, 2 then 5 min,
+  never faster than the refresh interval; if its address changed, an mDNS
+  search finds it again (every 5 minutes at most).
+
+## Limits
+
+- No energy index (kWh counters) in this version, nor the PM1 of the
+  airSensor, the slat tilt, the white temperature or the effects of the
+  wLightBox.
+- No saunaBox, tvLiftBox nor gateController.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt BleBox in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your BleBox modules, on your local network | `section` | Nein | wLightBox, wLightBoxS and dimmerBox (lights), switchBox and switchBoxD (relays), shutterBox (shutters), gateBox (gate), thermoBox (heating), tempSensor, airSensor and multiSensor, through the local HTTP API of the modules, without the BleBox cloud. Give each module a fixed IP address in your router, type the addresses below or use "Find the BleBox devices", then add them from the Discovery tab. Never tested with a real device. Unofficial integration, not affiliated with BleBox. |
+| IP addresses of the modules | `string` | Nein | Separated by commas, for example 192.168.1.40, 192.168.1.41 (add :port if it is not 80). Modules found by the search are kept without being typed here. |
+| User name (optional) | `string` | Nein | Only if the local API of your modules is protected by a password in the wBox app. The same for every module. |
+| Password (optional) | `secret` | Nein | Kept by Gladys in its database, never shown again, sent only to your BleBox modules: the typed addresses and the modules already added (in clear on your local network: they have no https). A module only found by the search gets no credentials. |
+| Refresh interval (s) | `number` | Nein | How often each module is read, in seconds. |
+| Relays (switchBox) | `section` | Nein | A relay may feed anything (a pump, a heater, a gate motor), and a "turn everything off" of a voice assistant or a scene reaches every switch. So a relay is only shown in Gladys, read only, until you declare it safe below: it then becomes a switch you can control. |
+| Relays declared safe | `string` | Nein | The device ids (shown in the Discovery tab, parameter DEVICE_ID), separated by commas: every relay of the module, or id:number for one relay (0 for the first one). Only for loads that may be switched at any time (a lamp, a fan). |
+| Gate (gateBox) | `section` | Nein | The gate is shown with buttons (open, close, stop), never as a switch. Opening (and the walk-in output) is refused until you allow it below. Stopping, and closing on a gateBox that has its own close command (recent firmware, or open/close wiring), are always allowed. In step-by-step mode on an older gateBox, closing sends the same pulse as opening: it needs this permission too, and is only sent when the gate is seen fully open (fully closed to open). One pulse at a time: another one waits until the gate is seen moving. |
+| Allow opening the gate | `boolean` | Nein | Off by default. On: the dashboard, the scenes and the voice assistants can open the gate (and close a step-by-step one, the same pulse). |
+| Heating (thermoBox) | `section` | Nein | By default Gladys only reads the thermoBox, and can switch it off (even while the module asks to wait; only refused credentials stop it). Once allowed, it can also switch it on and change its setpoint, never above the ceiling below nor outside the range of the thermoBox. |
+| Allow the heating commands | `boolean` | Nein | Off by default. Off: switching on and setpoints are refused (switching off stays allowed). |
+| Setpoint ceiling (°C) | `number` | Nein | Gladys never sets a thermoBox above this temperature. 25 °C by default, from 10 to 30 °C (never more than 30 °C, whatever is typed). |
+| Language of the feature names | `select` | Nein | Used for the names of the features added from now on, and for the command errors. |
+
+## So installierst du BleBox in Gladys
+
+1. Öffne in Gladys **Integrationen**: BleBox erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-blebox:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-blebox](https://github.com/LM1LC3N7/gladys-blebox).
+
+BleBox benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+BleBox ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-blebox) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-blebox/blob/HEAD/docs/en.md)

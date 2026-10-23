@@ -1,0 +1,150 @@
+---
+title: "YouTube Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "YouTube"
+description: "Öffentliche YouTube-Kanäle verfolgen: neue Videos, Livestreams, Abonnenten, Szenen, Widgets. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-youtube.jpg"
+keywords:
+  - "youtube"
+  - "youtube smart home"
+  - "gladys youtube"
+  - "youtube gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/William-De71/gladys-youtube instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"YouTube","description":"Öffentliche YouTube-Kanäle verfolgen: neue Videos, Livestreams, Abonnenten, Szenen, Widgets.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-youtube","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-youtube.jpg","type":"device","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T23:31:42Z"}} />
+
+## Überblick
+
+Diese Integration verfolgt öffentliche YouTube-Kanäle in Gladys. Jeder Kanal wird zu einem Gerät mit seinen Abonnenten, seinen Aufrufen gesamt, seiner Anzahl Videos sowie Titel und Datum seines neuesten Videos. Neue Videos werden über die öffentlichen RSS-Feeds der Kanäle erkannt, alle 15 Minuten und ohne Kontingent; die Statistiken und die Details der Videos (Dauer, Livestream) kommen von der offiziellen YouTube Data API v3 mit Ihrem eigenen Google-Cloud-API-Schlüssel.
+
+Sie bringt Szenen-Auslöser (ein Video oder Short wird veröffentlicht, ein Livestream beginnt, eine Abonnentenmarke wird erreicht, der Schlüssel wird abgelehnt, das Kontingent ist erschöpft), Szenen-Aktionen (das neueste Video eines Kanals, die Statistiken eines Kanals) und drei Dashboard-Widgets.
+
+Nicht mit Google oder YouTube verbunden, nicht von ihnen unterstützt oder gesponsert. YouTube ist eine Marke von Google LLC.
+
+![Die drei Widgets der Integration: neueste Videos, ein Kanal und das Kontingent des Tages (generierte Illustration, kein Screenshot)](https://raw.githubusercontent.com/William-De71/gladys-youtube/main/docs/assets/widgets.de.png)
+
+Das Bild oben ist eine generierte Illustration mit erfundenen Kanälen, kein Screenshot.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Ein Google-Konto und ein **Google-Cloud-API-Schlüssel** mit aktivierter **YouTube Data API v3**:
+  1. Öffnen Sie die [Google Cloud Console](https://console.cloud.google.com/) und erstellen Sie ein Projekt (zum Beispiel „Gladys YouTube“).
+  2. Suchen Sie unter APIs & Dienste → Bibliothek nach **YouTube Data API v3** und drücken Sie **Aktivieren**.
+  3. Drücken Sie unter APIs & Dienste → Anmeldedaten auf **Anmeldedaten erstellen → API-Schlüssel**.
+  4. Bearbeiten Sie den Schlüssel: Wählen Sie unter **API-Einschränkungen** „Schlüssel einschränken“ und haken Sie nur YouTube Data API v3 an; lassen Sie **Anwendungseinschränkungen** auf „Keine“ (Gladys ruft von Ihrem Zuhause aus auf, nicht von einer Website).
+- Kein Rechnungskonto nötig: Die API ist innerhalb ihres Tageskontingents von 10.000 Einheiten pro Projekt kostenlos, zurückgesetzt um Mitternacht pazifischer Zeit. Jeder Aufruf der Integration kostet 1 Einheit; für 10 Kanäle etwa 30 Einheiten pro Tag.
+
+## Konfiguration
+
+| Feld                               | Bedeutung                                                                                                                                                        |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Google-Cloud-API-Schlüssel         | Pflicht. Nie in den Logs angezeigt, nur in einem Header an Google gesendet.                                                                                      |
+| Neue Videos: prüfen alle (Minuten) | 5 bis 240, standardmäßig 15. Liest den RSS-Feed jedes Kanals: kostenlos. YouTube aktualisiert seine Feeds etwa alle 15 Minuten.                                  |
+| Statistiken: lesen alle (Minuten)  | 15 bis 1.440, standardmäßig 60. Abonnenten, Aufrufe und Videos aller Kanäle: 1 Einheit pro 50 Kanäle.                                                            |
+| Tagesbudget (Einheiten)            | Standardmäßig 9.000. Ist es verbraucht, warten die Statistiken bis Mitternacht pazifischer Zeit; die RSS-Feeds erkennen weiterhin neue Videos (ohne ihre Dauer). |
+| Sprache der Texte                  | Funktionsnamen, Daten, Szenen-Zusammenfassungen und Meldungen. Automatisch: die Sprache Ihres Dashboards.                                                        |
+
+Konfigurations-Schaltflächen:
+
+- **Kanal hinzufügen**: sein @Handle (`@GoogleDevelopers`), seine URL (`youtube.com/@…`, `/channel/UC…`, `/user/…`), seine ID (`UC…`) oder die URL eines seiner Videos eingeben. 1 Einheit (2 für eine Video-URL), plus 1 für die Details seiner neuesten Videos. Bis zu 50 Kanäle.
+- **Kanal entfernen**: per Nummer (`#2`), Name, @Handle oder ID. Sein Gerät bleibt in Gladys, bis Sie es löschen.
+- **Kanäle auflisten**: jeder Kanal mit Nummer, Abonnenten, neuestem Video, letzter Prüfung und letztem Fehler sowie die Einheiten des Tages.
+- **API-Schlüssel testen**: liest den offiziellen YouTube-Kanal (1 Einheit) und sagt, was zu korrigieren ist, wenn Google den Schlüssel ablehnt.
+
+## Verwendung
+
+### Kanäle
+
+Fügen Sie die Kanäle mit **Kanal hinzufügen** hinzu. Die letzten Uploads eines neuen Kanals werden sofort gelesen und als Vergangenheit behalten: Sie werden nie als neu angekündigt. Alte benutzerdefinierte URLs (`/c/Name`) haben keine API: Der Name wird als Handle versucht; schlägt das fehl, verwenden Sie das auf der Kanalseite angezeigte @Handle.
+
+### Geräte
+
+Öffnen Sie den Reiter **Entdecken** der Integration und fügen Sie die gewünschten Kanäle hinzu. Jedes Gerät hat:
+
+- Abonnenten, Aufrufe gesamt, Videos (Zähler). YouTube rundet die öffentliche Abonnentenzahl auf drei signifikante Stellen ab (1.234.567 ergibt 1.230.000); ein Kanal kann sie verbergen, die Funktion bleibt dann leer.
+- Neuestes Video: der Titel des neuesten Uploads (ein Short oder ein beendeter Livestream eingeschlossen, ein geplanter Livestream ausgeschlossen) und sein Veröffentlichungsdatum, in der Zeitzone von Gladys.
+
+### Dashboard-Widgets
+
+- **Neueste Videos**: die neuesten Uploads Ihrer Kanäle (höchstens 8), das neueste zuerst und ein laufender Livestream oben, mit Vorschaubild, Kanal, Datum und einem Abzeichen (LIVE, Geplant, Short oder die Dauer). Ein Antippen öffnet die Details und den Link zum Video. Einstellungen: die Kanäle (leer: alle), Shorts anzeigen oder nicht. „Jetzt prüfen“ liest die RSS-Feeds sofort (kostenlos).
+- **YouTube-Kanal**: ein Kanal mit dem Vorschaubild seines neuesten Videos, seinen Abonnenten, Aufrufen und Videos, dem neuesten Video, seinem Datum, dem Live-Status und einer Schaltfläche „Aktualisieren“ (1 Einheit für die Statistiken).
+- **YouTube-Kontingent**: die heute verbrauchten Einheiten, die nächste Rücksetzung, die von Ihren Kanälen pro Tag geplanten Einheiten, der Status des Schlüssels.
+
+Die Schaltflächen prüfen nie einen Kanal, der vor weniger als einer Minute geprüft wurde, und lösen nie eine Szene aus: Die gefundenen neuen Videos werden beim nächsten Durchlauf der Uhr angekündigt.
+
+### Szenen
+
+Auslöser:
+
+- **Ein Kanal veröffentlicht ein Video**: ein neues Video oder Short, vor weniger als 48 Stunden veröffentlicht (ohne Livestreams). Filter: Kanal, Art (Video oder Short). Variablen: `channel_name`, `title`, `url`, `video_id`, `kind`, `short`, `duration_seconds`, `duration`, `published_at`, `thumbnail`, `summary`.
+- **Ein Kanal geht live**: ein Livestream oder eine Premiere beginnt; ein geplanter Livestream wird ab 30 Minuten vor Beginn alle 5 Minuten geprüft. Variablen: `channel_name`, `title`, `url`, `video_id`, `started_at`, `scheduled_at`, `thumbnail`, `summary`.
+- **Ein Kanal erreicht eine Abonnentenmarke**: 100, 200, 500, 1.000, 2.000, 5.000, 10.000… Jede Marke löst nur einmal aus; das erste Lesen eines Kanals dient als Ausgangswert. Variablen: `channel_name`, `milestone`, `subscribers`, `summary`.
+- **Google lehnt den API-Schlüssel ab**: einmal, bis eine Anfrage wieder gelingt. Variablen: `reason`, `summary`.
+- **Das Tageskontingent ist erschöpft**: das Budget der Integration (`budget`) oder eine Ablehnung durch Google (`google`); einmal pro Tag. Variablen: `source`, `used`, `budget`, `summary`.
+
+Aktionen:
+
+- **Neuestes Video eines Kanals abrufen**: prüft jetzt seinen RSS-Feed (kostenlos). Ausgaben: `title`, `url`, `video_id`, `short`, `duration_seconds`, `published_at`, `live`, `summary`.
+- **Statistiken eines Kanals abrufen**: der letzte Wert, ohne Anfrage. Ausgaben: `subscribers` (-1 wenn verborgen), `views`, `videos`, `summary`.
+
+Beispiele:
+
+- Wenn ein Kanal ein Video veröffentlicht, Art „Video“ → eine Nachricht senden: `{{triggerEvent.data.summary}}`.
+- Wenn ein Kanal live geht → das Wohnzimmerlicht in den Kinomodus schalten.
+- Jeden Abend um 19 Uhr → das neueste Video eines Kanals abrufen → seinen Titel mit der Sprachausgabe von Gladys sagen.
+
+### Transport
+
+Cloud: Die Integration liest `www.googleapis.com` (Data API, mit Ihrem Schlüssel), `www.youtube.com` (RSS-Feeds, Shorts-Erkennung) und `i.ytimg.com` (Vorschaubilder). Nur die IDs der verfolgten öffentlichen Kanäle und Videos werden gesendet. Die Kanäle werden in der Gladys-Konfiguration gespeichert; `/data` behält die letzten Werte und den Einheitenzähler.
+
+## Fehlerbehebung
+
+- **„Google lehnt den API-Schlüssel ab (API_KEY_INVALID)“**: Kopieren Sie den Schlüssel erneut aus der Cloud Console.
+- **„SERVICE_DISABLED“** oder **„accessNotConfigured“**: YouTube Data API v3 ist im Projekt des Schlüssels nicht aktiviert.
+- **„API_KEY_SERVICE_BLOCKED“**: Die API-Einschränkungen des Schlüssels enthalten YouTube Data API v3 nicht.
+- **„API_KEY_HTTP_REFERRER_BLOCKED“** oder **„API_KEY_IP_ADDRESS_BLOCKED“**: Stellen Sie die Anwendungseinschränkungen des Schlüssels auf „Keine“.
+- **Kontingent erschöpft**: Warten Sie bis Mitternacht pazifischer Zeit; prüfen Sie in der Cloud Console (APIs & Dienste → YouTube Data API v3 → Kontingente), dass keine andere Anwendung dasselbe Projekt nutzt, oder lesen Sie die Statistiken seltener.
+- **„RSS feed 404“** in „Kanäle auflisten“: Die Feeds von YouTube fallen manchmal einige Stunden aus; die Integration liest dann die Upload-Playlist (1 Einheit pro Kanal), solange weniger als 80 % des Budgets verbraucht sind. Ein Kanal, der tagelang im Fehler bleibt, wurde vielleicht gelöscht.
+- **Ein neues Video wurde nicht angekündigt**: YouTube aktualisiert seine Feeds etwa alle 15 Minuten, ein Video wird also 15 bis 30 Minuten nach seiner Veröffentlichung erkannt; ein Video, das während eines Stillstands der Integration von mehr als 48 Stunden veröffentlicht wurde, wird nicht angekündigt; eine Premiere löst „geht live“ aus, nicht „veröffentlicht ein Video“.
+- Melden Sie ein Problem auf GitHub mit den Versionen von Gladys und der Integration, dem Text von „Kanäle auflisten“ und den Logs der Integration (Einstellungen → Supervision). Fügen Sie nie Ihren API-Schlüssel ein.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt YouTube in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| YouTube | `section` | Nein | So funktioniert es: 1. Erstellen Sie in der Google Cloud Console ein Projekt, aktivieren Sie „YouTube Data API v3“ und erstellen Sie einen API-Schlüssel (auf diese API beschränkt). Fügen Sie ihn unten ein. 2. Fügen Sie jeden Kanal mit „Kanal hinzufügen“ hinzu: sein @Handle, seine URL oder seine ID. 3. Öffnen Sie den Reiter Entdecken und fügen Sie den Kanal hinzu: Er wird zu einem Gerät mit Abonnenten, Aufrufen, Videos und neuestem Video. 4. Fügen Sie die Widgets einem Dashboard hinzu und nutzen Sie die Szenen (neues Video, Livestream gestartet). Neue Videos werden über die öffentlichen RSS-Feeds erkannt (ohne Kontingent); Statistiken und Videodetails nutzen das kostenlose Tageskontingent der API (10.000 Einheiten, etwa 30 pro Tag für 10 Kanäle). Nicht mit Google oder YouTube verbunden. |
+| Google-Cloud-API-Schlüssel | `secret` | Ja | Ein Schlüssel eines Google-Cloud-Projekts mit aktivierter „YouTube Data API v3“. Beschränken Sie ihn auf diese API; ein Rechnungskonto ist nicht nötig. |
+| Neue Videos: prüfen alle (Minuten) | `number` | Nein | Wie oft der RSS-Feed jedes Kanals gelesen wird (5 bis 240). Kostenlos: ohne Kontingent. YouTube aktualisiert seine Feeds etwa alle 15 Minuten. |
+| Statistiken: lesen alle (Minuten) | `number` | Nein | Abonnenten, Aufrufe und Videos aller Kanäle (15 bis 1.440): 1 Einheit pro 50 Kanäle bei jedem Lesen. |
+| Tagesbudget (Einheiten) | `number` | Nein | Einheiten pro Tag, die die Integration verbrauchen darf; Google gibt kostenlos 10.000 pro Tag und Cloud-Projekt, zurückgesetzt um Mitternacht pazifischer Zeit. Danach erkennen die RSS-Feeds weiterhin neue Videos. |
+| Sprache der Texte | `select` | Nein | Funktionsnamen, Daten, Szenen-Zusammenfassungen und Meldungen der Schaltflächen. Automatisch: die Sprache Ihres Dashboards, sobald ein Widget angezeigt wurde, vorher aus der Zeitzone von Gladys abgeleitet. |
+
+## So installierst du YouTube in Gladys
+
+1. Öffne in Gladys **Integrationen**: YouTube erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-youtube:0.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-youtube](https://github.com/William-De71/gladys-youtube).
+
+YouTube benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+YouTube ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [William-De71](https://github.com/William-De71) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/William-De71/gladys-youtube) — [Quelle dieser Dokumentation](https://github.com/William-De71/gladys-youtube/blob/HEAD/docs/de.md)

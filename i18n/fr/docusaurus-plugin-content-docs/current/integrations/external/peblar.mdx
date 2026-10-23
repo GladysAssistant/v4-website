@@ -1,0 +1,221 @@
+---
+title: "Intégration domotique Peblar, gratuite et open source"
+sidebar_label: "Peblar"
+description: "Bornes Peblar par l'API REST locale : état, puissance, courant, énergie ; commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-peblar.png"
+keywords:
+  - "peblar"
+  - "domotique peblar"
+  - "gladys peblar"
+  - "peblar gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-peblar instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Peblar","description":"Bornes Peblar par l'API REST locale : état, puissance, courant, énergie ; commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-peblar","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-peblar.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T05:20:19Z"}} />
+
+Affiche votre borne de recharge **Peblar** (Rocksolid, Business) dans Gladys
+par son **API REST locale** : sans cloud, sans compte, directement sur votre
+réseau.
+
+> **Jamais testé avec une vraie borne.** Sans lien avec Peblar.
+> L'intégration parle à la borne comme la bibliothèque peblar (utilisée par
+> Home Assistant). Peblar peut changer son API lors d'une mise à jour.
+
+## Ce que vous obtenez
+
+Un appareil par borne, avec :
+
+| Fonctionnalité                       | Contenu                                                                         |
+| ------------------------------------ | ------------------------------------------------------------------------------- |
+| État                                 | Aucun véhicule, branché en attente, charge arrêtée, en charge, erreur, défaut   |
+| Connecteur                           | Disponible, occupé, en défaut ou indisponible (catégorie « borne de recharge ») |
+| État de charge                       | En charge, véhicule connecté, en pause par la borne, inactif                    |
+| Véhicule branché                     | Oui / non                                                                       |
+| Puissance, et puissance L1 / L2 / L3 | En W                                                                            |
+| Courant L1 / L2 / L3                 | En A                                                                            |
+| Tension L1 / L2 / L3                 | En V (une phase que la borne ne mesure pas reste vide)                          |
+| Énergie de la session                | En kWh, un capteur simple                                                       |
+| Énergie totale                       | En kWh, un capteur simple                                                       |
+| Limite du courant de charge          | En A : la limite demandée par l'API REST locale (0 = charge arrêtée)            |
+| Limite de courant appliquée          | En A : ce que la borne permet vraiment (câble, délestage, solaire…)             |
+| Limité par                           | Ce qui fixe la limite appliquée (texte de la borne)                             |
+| Erreur / avertissement signalé       | Oui / non                                                                       |
+| Monophasé forcé                      | Oui / non (lecture seule)                                                       |
+| Démarrer, Arrêter la charge          | Boutons (commandes autorisées seulement)                                        |
+| Régler le courant de charge          | Liste de 6 A au plafond (commandes autorisées seulement)                        |
+
+Lecture toutes les 30 secondes par défaut (de 10 s à 10 min, réglable).
+
+**Énergie** : l'énergie de la session et l'énergie totale sont des
+**capteurs simples**, jamais des index : elles n'entrent pas dans l'onglet
+Énergie de Gladys (la borne est déjà comptée par votre compteur principal,
+elle serait comptée deux fois). Aucune consommation journalière n'est
+publiée, et un total de 0 n'est jamais publié.
+
+## Installation
+
+1. Donnez à la borne une **adresse IP fixe** dans votre box.
+2. Dans l'**interface web de la borne** (son adresse IP dans un navigateur) :
+   Paramètres, **API REST locale** : activez-la, en **lecture et écriture**
+   si vous voulez les commandes, et copiez le **jeton d'API**.
+3. Installez l'intégration depuis le store de Gladys. Dans sa configuration,
+   saisissez l'**adresse IP de la borne** et le **jeton d'API** (une adresse
+   qui contient un nom d'utilisateur ou un mot de passe, avec un `@`, est
+   ignorée et jamais réaffichée).
+   - À la place du jeton, vous pouvez donner le **mot de passe de
+     l'interface web** : l'intégration se connecte alors pour lire le jeton
+     (l'API REST locale doit quand même être activée), la limite de
+     l'installation et le courant nominal de la borne, au démarrage puis une
+     fois par jour. Elle ne change jamais un réglage de la borne.
+4. Enregistrez, puis ajoutez la borne depuis l'onglet **Découverte**.
+
+Le jeton et le mot de passe sont **gardés par Gladys dans sa base, jamais
+réaffichés**, et envoyés seulement à la borne (le jeton dans l'en-tête
+`Authorization`). Ils ne sont jamais écrits dans les journaux, ni dans
+`/data`, ni dans un état. La borne ne parle qu'en HTTP simple : le jeton et le
+mot de passe passent **en clair, en HTTP** sur votre réseau local (comme avec
+l'interface web de la borne elle-même). Gardez la borne sur un réseau de
+confiance.
+
+Le bouton **Tester la connexion** lit la borne une fois (au plus toutes les
+10 secondes).
+
+## Commandes (désactivées par défaut)
+
+« Démarrer la charge », « Arrêter la charge » et « Régler le courant de
+charge » refusent toute commande tant que **Autoriser les commandes** est
+désactivé. Activé :
+
+- **Arrêter** met la limite du courant de charge à 0 : la borne suspend la
+  charge ;
+- **Démarrer** la remet au dernier courant vu (6 A s'il n'est pas connu),
+  jamais au-dessus du plafond ; **refusé sans véhicule branché**, ou sur une
+  erreur, un défaut ou un état inconnu ;
+- **Courant de charge** : de 6 A au **plafond** : le « Plafond du courant de
+  charge » de la configuration (16 A par défaut, 32 A au plus), et avec le
+  mot de passe aussi la limite de l'installation et le courant nominal lus
+  sur la borne (le plus bas l'emporte). Avec le **jeton seul**, la borne ne
+  donne aucune limite à l'intégration : le plafond est celui de la
+  configuration seul (16 A par défaut), et la borne bride quand même le
+  courant à ses limites d'installation et de câble (montrées dans « Limite de
+  courant appliquée »). Refusé tant que la charge est arrêtée (une limite
+  sous 6 A : cela la relancerait : utilisez Démarrer). **Un changement par
+  minute au plus** (démarrage compris) : pas de régulation fine depuis
+  Gladys.
+
+Ce sont des **boutons** et une **liste**, jamais des interrupteurs : un
+« éteins tout » (depuis Gladys, Google Home, Alexa ou HomeKit) ne les atteint
+jamais. Une scène peut les déclencher, seulement par une action explicite, et
+seulement quand les commandes sont autorisées. Notez que le chat IA de Gladys
+(MCP) peut créer et lancer une telle scène : tant que les commandes sont
+autorisées, il peut démarrer ou arrêter la charge.
+
+Avant chaque commande, l'intégration **relit la borne** et décide sur cette
+lecture seulement ; l'option est revérifiée juste avant l'envoi. Une commande
+sans effet (déjà le cas) n'est pas envoyée. Une commande qui ne peut pas
+partir dans les 3,5 secondes est refusée sans être envoyée. Quand la borne ne
+confirme pas (silence, erreur 5xx), Gladys affiche « Commande envoyée, sans
+confirmation » : vérifiez l'état, relu 5 puis 20 secondes plus tard. Une
+commande à la fois : une autre est refusée aussitôt, **sauf « Arrêter la
+charge », jamais retenu** : il part tout de suite, même pendant une autre
+commande (il est alors renvoyé une fois quand elle se termine, et un
+démarrage ou un courant pas encore envoyé lui cède la place), même dans la
+minute entre deux courants, même pendant une pause 429 ou 5xx ou un blocage
+sur jeton refusé (alors une seule requête, sans relecture), même après un
+redémarrage de l'intégration avant que la borne ait pu être relue (le numéro
+de série de la dernière borne lue à cette adresse est gardé dans `/data` ;
+Démarrer et le courant attendent cette première lecture), et même quand la
+lecture juste avant échoue. **Avec le mot de passe seul**, un arrêt a besoin
+du jeton lu à une connexion : il est donc refusé jusqu'à la première
+connexion réussie : après un redémarrage, jusqu'à la fin d'une pause gardée
+(5 minutes, jusqu'à 6 heures si la borne le demande), pendant un blocage sur
+mot de passe (15 min, 1 h, 6 h), et jusqu'à 10 minutes après une connexion à
+laquelle la borne a répondu par une erreur (une connexion qui ne l'a pas
+atteinte est retentée plus tôt). **Pour une scène qui doit pouvoir arrêter la
+charge (délestage), utilisez le jeton d'API.** Quand une commande est restée
+sans confirmation, ou quand un arrêt a doublé une commande en cours qui peut
+encore arriver après lui, celle-ci peut atteindre la borne plus tard :
+l'arrêt est surveillé pendant 90 secondes (jusqu'à la première lecture après
+une pause 429, 10 minutes au plus), et renvoyé (deux fois au plus) si une
+lecture montre de nouveau un courant alors qu'aucune autre commande n'est
+partie de Gladys, y compris quand le renvoi de l'arrêt après cette commande
+a échoué. Un démarrage fait entre-temps depuis l'application Peblar, son
+interface web ou OCPP est alors annulé lui aussi.
+
+Un jeton en **lecture seule** (mode d'accès de l'API REST locale) refuse
+toute commande ; l'état de l'intégration le signale.
+
+## Erreurs et limites
+
+- **Borne injoignable** : seuls le connecteur (« indisponible ») et l'état
+  (« Borne injoignable ») changent ; les autres valeurs gardent la dernière.
+  Nouvel essai après 30 s, 1, 2, puis 5 minutes, jamais plus vite que
+  l'intervalle.
+- **Jeton refusé** : l'état demande de le vérifier (un nouveau jeton généré
+  dans l'interface web remplace l'ancien). **Mot de passe refusé** : de même.
+  Nouveaux essais après 15 minutes, 1 heure, puis toutes les 6 heures, jamais
+  plus tôt (gardé dans `/data` après un redémarrage, pour qu'un mauvais mot
+  de passe ne bloque jamais le compte en boucle) ; enregistrer de nouveaux
+  identifiants réessaie aussitôt. Avec le mot de passe, un jeton qui expire
+  (après un redémarrage de la borne) donne une nouvelle connexion, au plus
+  une toutes les 10 minutes.
+- **429 (trop de requêtes)** ou **5xx** : une pause (de 1 minute à 6 heures
+  pour un 429) pour les lectures et les commandes sauf « Arrêter la charge »,
+  jamais plus courte que l'intervalle, gardée dans `/data` après un
+  redémarrage.
+- **Mot de passe seul** : aucune commande (arrêt compris) avant la première
+  connexion réussie après un redémarrage, une pause ou un blocage sur mot de
+  passe ; utilisez le jeton d'API pour les commandes.
+- Ni les modes de charge intelligente (solaire, programmation), ni les
+  phases, ni le verrouillage de la prise, ni les badges RFID ne se changent
+  depuis Gladys.
+- Les journaux ne contiennent jamais le texte des réponses de la borne, ni le
+  jeton, ni le mot de passe.
+
+## Crédits
+
+Portage de [peblar](https://github.com/frenck/python-peblar) (Franck Nijhof,
+MIT, version 2.1.0), la bibliothèque de l'intégration Peblar de Home
+Assistant. Licence Apache-2.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Peblar dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre borne Peblar | `section` | Non | Affiche votre borne Peblar (Rocksolid, Business) dans Gladys par son API REST locale, sans cloud : état, véhicule branché, puissance, courant et tension par phase, énergie de la session et énergie totale, limite du courant de charge. Saisissez l'adresse IP de la borne (donnez-lui une adresse fixe dans votre box) et son jeton d'API (interface web de la borne, Paramètres, API REST locale) ou le mot de passe de son interface web, enregistrez, puis ajoutez-la depuis l'onglet Découverte. Démarrer, arrêter et le courant de charge ne se changent depuis Gladys que si vous autorisez les commandes ci-dessous. Jamais testé avec une vraie borne. Sans lien avec Peblar. |
+| Adresse IP de la borne | `string` | Oui | Une adresse IPv4 ou un nom d'hôte, éventuellement suivi d'un port (80 par défaut). |
+| Jeton d'API de l'API REST locale | `secret` | Non | Interface web de la borne, Paramètres, API REST locale : activez-la (accès en lecture et écriture pour les commandes) et copiez le jeton. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la borne, en clair (HTTP), dans l'en-tête Authorization. Utilisé plutôt que le mot de passe quand les deux sont donnés. |
+| Mot de passe de l'interface web (à la place du jeton) | `secret` | Non | Facultatif, si vous ne donnez pas de jeton : l'intégration se connecte à l'interface web de la borne pour lire le jeton d'API (l'API REST locale doit être activée), la limite de l'installation et le courant nominal. Envoyé en clair, en HTTP, sur le réseau local. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la borne. Un mot de passe refusé est réessayé après 15 min, 1 h, puis toutes les 6 h. Pour les commandes, préférez le jeton : avec le mot de passe seul, l'arrêt attend la première connexion après un redémarrage. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut démarrer et arrêter la charge (boutons) et régler le courant de charge (liste, de 6 A au plafond ci-dessous). Désactivé : ces trois fonctionnalités refusent toute commande. |
+| Plafond du courant de charge (A) | `number` | Non | Le courant le plus élevé que Gladys peut demander. Avec le jeton seul, cette valeur seule (16 A par défaut ; la borne applique quand même ses propres limites). Avec le mot de passe, la plus basse de cette valeur et des limites lues sur la borne. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la borne, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer Peblar dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Peblar apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-peblar:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-peblar](https://github.com/LM1LC3N7/gladys-peblar).
+
+Peblar nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Peblar est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-peblar) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-peblar/blob/HEAD/docs/fr.md)

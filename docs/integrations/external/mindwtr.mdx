@@ -1,0 +1,245 @@
+---
+title: "Mindwtr smart home integration, free and open source"
+sidebar_label: "Mindwtr"
+description: "Mindwtr GTD tasks via its sync server: inbox, today's and overdue tasks, capture from a scene. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mindwtr.png"
+keywords:
+  - "mindwtr"
+  - "mindwtr smart home"
+  - "gladys mindwtr"
+  - "mindwtr gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-mindwtr instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Mindwtr","description":"Mindwtr GTD tasks via its sync server: inbox, today's and overdue tasks, capture from a scene.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mindwtr","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mindwtr.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T06:57:41Z"}} />
+
+Your [Mindwtr](https://github.com/dongdongbh/Mindwtr) tasks (the free GTD
+app) in Gladys: what waits in the inbox, your next actions, what is due today
+or overdue. A scene reacts when a task reaches its due date or when the inbox
+waits for its review, another one captures "buy bread" from a button or a
+voice command, a tap on the dashboard marks a task done, and Gladys can read
+today's tasks every morning.
+
+> **Feedback welcome.** This integration was tested against a real Mindwtr
+> sync server (Docker image `ghcr.io/dongdongbh/mindwtr-cloud` 1.3.6, October
+> 2026), not yet in daily use. If something does not work as described, say
+> so on the [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-mindwtr/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- The **self-hosted sync server of Mindwtr**, `mindwtr-cloud` (see the
+  [Mindwtr Docker guide](https://github.com/dongdongbh/Mindwtr/blob/main/docker/README.md)),
+  reachable from Gladys. It listens on port **8787**.
+- Your Mindwtr apps (desktop, phone, web app) synced with this server:
+  **Settings** → **Sync** → **Self-Hosted**.
+
+**Only the sync through this server works.** If your apps sync through
+**Dropbox**, **WebDAV**, iCloud or a shared folder, the integration has
+nothing to read: Mindwtr exposes its REST API on `mindwtr-cloud` only.
+Moving to this server takes one Docker container and one token.
+
+The integration reads and writes through the **REST API** of the server
+(`/v1/tasks`), with the same token as the apps. It never touches the sync
+document (`/v1/data`): the tasks added and completed go through the server,
+which merges them as the apps do, and they appear on your devices at their
+next sync.
+
+## Installation
+
+1. In Gladys, **Integrations** → install **Mindwtr**.
+2. In the **Configuration** screen, fill in:
+   - **Address**: the "Self-Hosted URL" of your apps, for example
+     `http://192.168.1.20:8787`, or `https://mindwtr.example.org` behind Caddy
+     or another reverse proxy (a prefix such as `/mindwtr` is kept; `/v1/data`
+     at the end is dropped). It is the port of the server, **not** the one of
+     the web app (5173);
+   - **Sync token**: the token typed in your apps, one of the tokens of
+     `MINDWTR_CLOUD_AUTH_TOKENS` on the server. Each token is its own task
+     list: take the one of the list to follow.
+3. Options:
+   - **Inbox review after**: the delay of the **Mindwtr inbox to review**
+     trigger (24 hours by default, from 4 hours to 1 week);
+   - **Accept self-signed certificates**: for an `https://` address with a
+     self-signed certificate (Caddy's local authority, for instance), on your
+     own server only;
+   - **Refresh interval**: 1 to 10 minutes (5 by default). Due times, the
+     inbox review and midnight are always followed on time, whatever the
+     interval;
+   - **Language of the feature names**: the names given to the features when
+     the device is added (French by default), and the texts sent to scenes.
+4. Save, then **Test the connection**: the integration reads the server and
+   gives the number of open tasks and of tasks in the inbox.
+5. In the **Discovery** tab, add the **Mindwtr** device.
+
+## Device
+
+One **Mindwtr** device, with seven features:
+
+| Feature              | What it shows                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `Tasks in the inbox` | the tasks captured and not clarified yet (Inbox list)                                                          |
+| `Next actions`       | the tasks of the Next list                                                                                     |
+| `Waiting for`        | the tasks of the Waiting list (what you expect from someone)                                                   |
+| `Overdue tasks`      | the open tasks whose due time has passed                                                                       |
+| `Tasks due today`    | the open tasks due today, whether their time has passed or not                                                 |
+| `Tasks done today`   | the tasks marked done since midnight, in an app or from Gladys                                                 |
+| `Next due date`      | the open task with the earliest due time still ahead, and when (`Take out the bins · 19:00`); `None` otherwise |
+
+An **open** task is neither done, archived, deleted, nor a note of the
+Reference list. A due date without a time is due until the end of that day,
+as in the apps: the task is overdue from midnight on. "Today" and the times
+are those of the time zone of Gladys: Mindwtr stores due dates without a time
+zone, at the time you typed.
+
+## Dashboard
+
+The **Mindwtr: today** widget shows two tiles (due today, overdue), the list
+of what is left for today, overdue first, with the time and the contexts of
+each task, and a button for each of the four most urgent ones: a tap marks the
+task done. When nothing is left, the widget says so and gives the next due
+date.
+
+The counters can also go on the dashboard like any device feature, and their
+history is kept.
+
+## Scenes
+
+### Triggers
+
+- **Mindwtr task due**: an open task reaches its due time; for a due date
+  without a time, at the start of that day (midnight). The `all_day` value
+  tells which.
+- **Mindwtr task overdue**: at midnight, a task due that day is still not
+  done. Once per task and due date.
+- **Mindwtr inbox to review**: an item has waited in the inbox for the delay
+  of the configuration (24 hours by default). The trigger comes back at the
+  same interval until the inbox has been emptied: the reminder of the GTD
+  review. Values: the number of tasks in the inbox, the oldest one, its age in
+  hours.
+- **Mindwtr task added**: a new task appears, captured on a phone, through the
+  API or from Gladys (`from_gladys` is then true, so that a scene does not
+  start itself again). The next occurrence of a repeating task does not count.
+
+Filters: the GTD list (inbox, next actions, waiting for, someday/maybe) for
+the three task triggers, and the exact title for the first two. Values passed
+to the actions: the task, its id, its list, its contexts, its project, its due
+date as in Mindwtr (`2026-10-21T19:00`) and `all_day`.
+
+A task done before its due date fires nothing. Nor does a due date moved into
+the past by hand: only the moments that pass while the integration runs count.
+A restart fires nothing twice; a moment that passed while the integration was
+stopped fires at its restart, if it is less than an hour old.
+
+### Actions
+
+- **Add a task to the Mindwtr inbox**: a title, and if you want a due date and
+  contexts. The due date is written `2026-10-25`, `25/10`, `tomorrow`,
+  `today`, optionally followed by a time (`tomorrow 18:30`, `25/10 9:00`); a
+  due date not understood makes the action fail rather than store a wrong
+  date. Contexts are written `@home` or `home`, several separated by blanks or
+  commas. The title is kept as is: a `#` or an `@` in the title is not parsed.
+  Results: the task, its id, its due date.
+- **Mark a Mindwtr task done**: the exact **title** of an open task (case and
+  accents ignored), or its id (`{{triggerEvent.data.task_id}}` of a trigger).
+  A repeating task moves on to its next occurrence, as in the apps. Results:
+  the task, its id.
+- **Read today's Mindwtr tasks**: as a sentence
+  (`4 task(s) for today: …. 2 overdue. 2 in the inbox.`), for every context or
+  one (`@home`). Results: the sentence, the number of tasks for today (overdue
+  included), of overdue tasks, of tasks in the inbox. Send the sentence in a
+  message, or have Gladys say it.
+
+The text fields accept scene variables.
+
+### Scene ideas
+
+- At 7:30, **Read today's Mindwtr tasks**, then send the sentence on Telegram
+  or have the kitchen speaker say it.
+- A button by the door runs **Add a task to the Mindwtr inbox** with
+  `Buy bread` and the context `@errands`.
+- **Mindwtr inbox to review** on Sunday evening: a message "5 items wait in
+  your inbox, the oldest for 72 hours".
+- **Mindwtr task due** with the title `Take out the bins`: blink the light of
+  the hall; an NFC tag on the bin runs **Mark a Mindwtr task done**.
+
+## Troubleshooting
+
+- **"The sync server does not answer"**: check the address and the port from
+  the machine of Gladys (`http://<address>:8787/health` answers
+  `{"ok":true}`).
+- **"Token refused"**: the token is not in `MINDWTR_CLOUD_AUTH_TOKENS` of the
+  server (badly copied, or removed). Copy the one of the sync settings of the
+  app.
+- **"No Mindwtr sync server at this address"**: the address answers, but not
+  with the API: often the port of the web app (5173) instead of the server's
+  (8787), or a proxy asking for a login (Authelia) in front of `/v1`.
+- **"The address redirects"**: enter the `https://` address.
+- **"The server cannot use its data folder"**: a problem of the server itself
+  (permissions of the `/app/cloud_data` volume); its logs explain it.
+- **The counters are at zero**: the token is accepted, but it is the one of
+  another list (one token = one list). Check it is the same as in the apps.
+- **"Several open tasks have this title"**: rename one of them, or use the id
+  given by a trigger.
+- Logs: `LOG_LEVEL=debug` on the container shows every reading.
+
+## Limits
+
+- Only through the self-hosted sync server `mindwtr-cloud`: neither Dropbox,
+  nor WebDAV, nor iCloud, nor a local file.
+- The server is read every 1 to 10 minutes (and at each due time, at the inbox
+  review and at midnight): a task done on the phone appears in Gladys within
+  that delay, once the phone has synced. Three requests per reading (open
+  tasks, done tasks, projects), plus one per page of 500 tasks; the server
+  accepts 120 a minute by default.
+- The integration adds tasks to the inbox and marks tasks done; it does not
+  edit, delete or move them.
+- Tasks of the Reference list are not counted. Areas are not used.
+- Tested with `mindwtr-cloud` 1.3.6.
+- Gladys keeps no Mindwtr data but `/data/mindwtr-state.json`: the time of the
+  last reading, the ids of the open tasks and the time of the last review, so
+  that no event fires twice. The token is not in it.
+- Not affiliated with the Mindwtr project.
+
+## Configuration settings
+
+These are the settings Mindwtr asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Mindwtr sync server | `section` | No | The self-hosted sync server of Mindwtr (mindwtr-cloud, Docker image). Dropbox and WebDAV sync are not supported: the integration needs this server. |
+| Address | `string` | Yes | The Self-Hosted URL of the app's sync settings, with :port (8787 by default) and https:\/\/ for HTTPS. |
+| Sync token | `secret` | Yes | The token of the app's sync settings, one of MINDWTR_CLOUD_AUTH_TOKENS of the server. Each token is its own task list. |
+| Options | `section` | No |  |
+| Inbox review after | `select` | No | The "Inbox to review" scene event fires when an item has waited this long in the inbox, then again at the same interval until the inbox is empty. |
+| Accept self-signed certificates | `boolean` | No | For an https:\/\/ address whose certificate is self-signed (Caddy's local CA). Tick only for your own server. |
+| Refresh interval | `select` | No | How often the server is read. Due times and midnight are always followed on time. |
+| Language of the feature names | `select` | No | Names given to the features when the device is added, and texts sent to scenes. |
+
+## How to install Mindwtr in Gladys
+
+1. In Gladys, open **Integrations**: Mindwtr appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-mindwtr:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-mindwtr](https://github.com/guim31/gladys-mindwtr).
+
+Mindwtr requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Mindwtr is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-mindwtr) — [source of this documentation](https://github.com/guim31/gladys-mindwtr/blob/HEAD/docs/en.md)

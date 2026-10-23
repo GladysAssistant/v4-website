@@ -1,0 +1,262 @@
+---
+title: "Integración domótica Mindwtr, gratuita y de código abierto"
+sidebar_label: "Mindwtr"
+description: "Tareas GTD de Mindwtr vía su servidor: bandeja de entrada, hoy, atrasadas, captura por escena. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mindwtr.png"
+keywords:
+  - "mindwtr"
+  - "domótica mindwtr"
+  - "gladys mindwtr"
+  - "mindwtr gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-mindwtr instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Mindwtr","description":"Tareas GTD de Mindwtr vía su servidor: bandeja de entrada, hoy, atrasadas, captura por escena.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mindwtr","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mindwtr.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T06:57:41Z"}} />
+
+Sus tareas de [Mindwtr](https://github.com/dongdongbh/Mindwtr) (la aplicación
+GTD libre) en Gladys: lo que espera en la bandeja de entrada, sus próximas
+acciones, lo que vence hoy o está atrasado. Una escena reacciona cuando una
+tarea llega a su vencimiento o cuando la bandeja de entrada espera su
+revisión, otra captura «comprar pan» desde un botón o una orden de voz, un
+toque en el panel termina una tarea, y Gladys puede leer las tareas del día
+cada mañana.
+
+> **Sus comentarios son bienvenidos.** Esta integración se ha probado con un
+> servidor de sincronización Mindwtr real (imagen Docker
+> `ghcr.io/dongdongbh/mindwtr-cloud` 1.3.6, octubre de 2026), pero aún no en
+> el uso diario. Si algo no funciona como se describe, dígalo en el
+> [foro de Gladys](https://community.gladysassistant.com) o en las
+> [issues](https://github.com/guim31/gladys-mindwtr/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- El **servidor de sincronización autoalojado de Mindwtr**, `mindwtr-cloud`
+  (vea la
+  [guía Docker de Mindwtr](https://github.com/dongdongbh/Mindwtr/blob/main/docker/README.md)),
+  accesible desde Gladys. Escucha en el puerto **8787**.
+- Sus aplicaciones Mindwtr (escritorio, móvil, aplicación web) sincronizadas
+  con este servidor: **Settings** → **Sync** → **Self-Hosted**.
+
+**Solo sirve la sincronización por este servidor.** Si sus aplicaciones se
+sincronizan por **Dropbox**, **WebDAV**, iCloud o una carpeta compartida, la
+integración no tiene nada que leer: Mindwtr solo ofrece su API REST en
+`mindwtr-cloud`. Pasar a este servidor solo requiere un contenedor Docker y un
+token.
+
+La integración lee y escribe por la **API REST** del servidor (`/v1/tasks`),
+con el mismo token que las aplicaciones. Nunca toca el documento de
+sincronización (`/v1/data`): las tareas añadidas y terminadas pasan por el
+servidor, que las fusiona como lo hacen las aplicaciones, y aparecen en sus
+dispositivos en su próxima sincronización.
+
+## Instalación
+
+1. En Gladys, **Integraciones** → instale **Mindwtr**.
+2. En la pantalla **Configuración**, indique:
+   - **Dirección**: la «Self-Hosted URL» de sus aplicaciones, por ejemplo
+     `http://192.168.1.20:8787`, o `https://mindwtr.example.org` detrás de
+     Caddy u otro proxy inverso (un prefijo como `/mindwtr` se conserva;
+     `/v1/data` al final se quita). Es el puerto del servidor, **no** el de la
+     aplicación web (5173);
+   - **Token de sincronización**: el token de sus aplicaciones, uno de los
+     tokens de `MINDWTR_CLOUD_AUTH_TOKENS` del servidor. Cada token tiene su
+     propia lista de tareas: elija el de la lista que quiere seguir.
+3. Opciones:
+   - **Revisión de la bandeja de entrada tras**: el plazo del desencadenante
+     **Bandeja de entrada de Mindwtr por revisar** (24 horas por defecto, de
+     4 horas a 1 semana);
+   - **Aceptar certificados autofirmados**: para una dirección `https://` con
+     certificado autofirmado (la CA local de Caddy, por ejemplo), solo para su
+     propio servidor;
+   - **Intervalo de actualización**: de 1 a 10 minutos (5 por defecto). Los
+     vencimientos, la revisión de la bandeja de entrada y la medianoche se
+     siguen siempre a tiempo, sea cual sea el intervalo;
+   - **Idioma de los nombres de funciones**: los nombres de las funciones al
+     añadir el dispositivo (francés por defecto) y los textos enviados a las
+     escenas.
+4. Guarde y pulse **Probar la conexión**: la integración lee el servidor e
+   indica el número de tareas abiertas y de tareas en la bandeja de entrada.
+5. En la pestaña **Descubrimiento**, añada el dispositivo **Mindwtr**.
+
+## Dispositivo
+
+Un dispositivo **Mindwtr**, con siete funciones:
+
+| Función                           | Lo que indica                                                                                                          |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `Tareas en la bandeja de entrada` | las tareas capturadas aún sin aclarar (lista Inbox)                                                                    |
+| `Próximas acciones`               | las tareas de la lista Next                                                                                            |
+| `En espera`                       | las tareas de la lista Waiting (lo que espera de alguien)                                                              |
+| `Tareas atrasadas`                | las tareas abiertas cuyo vencimiento ya pasó                                                                           |
+| `Tareas para hoy`                 | las tareas abiertas que vencen hoy, haya pasado su hora o no                                                           |
+| `Tareas terminadas hoy`           | las tareas terminadas desde medianoche, en una aplicación o desde Gladys                                               |
+| `Próximo vencimiento`             | la tarea abierta con el vencimiento más cercano aún por llegar, y cuándo (`Sacar la basura · 19:00`); si no, `Ninguna` |
+
+Una tarea **abierta** no está terminada, ni archivada, ni eliminada, ni es una
+nota de la lista Reference. Un vencimiento sin hora vale hasta el final de ese
+día, como en las aplicaciones: la tarea solo está atrasada a partir de la
+medianoche. «Hoy» y las horas son los de la zona horaria de Gladys: Mindwtr
+guarda los vencimientos sin zona horaria, a la hora que usted escribió.
+
+## Panel
+
+El widget **Mindwtr: hoy** muestra dos mosaicos (para hoy, atrasadas), la
+lista de lo que queda para hoy, atrasadas primero, con la hora y los contextos
+de cada tarea, y un botón para cada una de las cuatro más urgentes: un toque
+termina la tarea. Cuando no queda nada, el widget lo dice e indica el próximo
+vencimiento.
+
+Los contadores también pueden ir al panel como cualquier función de
+dispositivo, y se guarda su historial.
+
+## Escenas
+
+### Desencadenantes
+
+- **Tarea de Mindwtr vencida**: una tarea abierta llega a su hora de
+  vencimiento; para un vencimiento sin hora, al empezar ese día (medianoche).
+  El valor `all_day` indica cuál de los dos.
+- **Tarea de Mindwtr atrasada**: a medianoche, una tarea que vencía ese día
+  sigue sin terminar. Una vez por tarea y vencimiento.
+- **Bandeja de entrada de Mindwtr por revisar**: un elemento lleva en la
+  bandeja de entrada el plazo de la configuración (24 horas por defecto). El
+  desencadenante vuelve al mismo ritmo mientras la bandeja de entrada no se
+  haya vaciado: el recordatorio de la revisión GTD. Valores: el número de
+  tareas en la bandeja de entrada, la más antigua, su antigüedad en horas.
+- **Tarea de Mindwtr añadida**: aparece una tarea nueva, capturada en un
+  móvil, por la API o desde Gladys (`from_gladys` vale entonces verdadero,
+  para que una escena no se vuelva a lanzar a sí misma). La siguiente
+  repetición de una tarea periódica no cuenta.
+
+Filtros: la lista GTD (bandeja de entrada, próximas acciones, en espera, algún
+día/quizás) para los tres desencadenantes de tarea, y el título exacto para
+los dos primeros. Valores transmitidos a las acciones: la tarea, su
+identificador, su lista, sus contextos, su proyecto, su vencimiento como en
+Mindwtr (`2026-10-21T19:00`) y `all_day`.
+
+Una tarea terminada antes de su vencimiento no desencadena nada. Tampoco un
+vencimiento movido a mano al pasado: solo cuentan los momentos que pasan
+mientras la integración funciona. Un reinicio no desencadena nada dos veces;
+un momento que pasó mientras la integración estaba parada desencadena al
+reiniciarse, si tiene menos de una hora.
+
+### Acciones
+
+- **Añadir una tarea a la bandeja de entrada de Mindwtr**: un título y, si lo
+  desea, un vencimiento y contextos. El vencimiento se escribe `2026-10-25`,
+  `25/10`, `mañana`, `hoy`, opcionalmente seguido de una hora
+  (`mañana 18:30`, `25/10 9:00`); un vencimiento no entendido hace fallar la
+  acción en lugar de guardar una fecha errónea. Los contextos se escriben
+  `@casa` o `casa`, varios separados por espacios o comas. El título se guarda
+  tal cual: un `#` o una `@` en el título no se interpretan. Resultados: la
+  tarea, su identificador, su vencimiento.
+- **Terminar una tarea de Mindwtr**: el **título** exacto de una tarea abierta
+  (sin distinguir mayúsculas ni acentos), o su identificador
+  (`{{triggerEvent.data.task_id}}` de un desencadenante). Una tarea periódica
+  pasa a su siguiente repetición, como en las aplicaciones. Resultados: la
+  tarea, su identificador.
+- **Leer las tareas de Mindwtr del día**: en una frase
+  (`4 tarea(s) para hoy: …. 2 atrasada(s). 2 en la bandeja de entrada.`),
+  para todos los contextos o uno (`@casa`). Resultados: la frase, el número de
+  tareas para hoy (atrasadas incluidas), de tareas atrasadas, de tareas en la
+  bandeja de entrada. Envíe la frase en un mensaje, o haga que Gladys la diga.
+
+Los campos de texto aceptan variables de escena.
+
+### Ideas de escenas
+
+- A las 7:30, **Leer las tareas de Mindwtr del día**, y enviar la frase por
+  Telegram o hacer que la diga el altavoz de la cocina.
+- Un botón junto a la puerta lanza **Añadir una tarea a la bandeja de entrada
+  de Mindwtr** con `Comprar pan` y el contexto `@recados`.
+- **Bandeja de entrada de Mindwtr por revisar** el domingo por la tarde: un
+  mensaje «5 elementos esperan en su bandeja de entrada, el más antiguo desde
+  hace 72 horas».
+- **Tarea de Mindwtr vencida** con el título `Sacar la basura`: hacer
+  parpadear la luz de la entrada; una etiqueta NFC en el cubo lanza
+  **Terminar una tarea de Mindwtr**.
+
+## Solución de problemas
+
+- **«El servidor de sincronización no responde»**: compruebe la dirección y el
+  puerto desde el equipo de Gladys (`http://<dirección>:8787/health` responde
+  `{"ok":true}`).
+- **«Token rechazado»**: el token no está en `MINDWTR_CLOUD_AUTH_TOKENS` del
+  servidor (mal copiado o eliminado). Copie el de los ajustes de
+  sincronización de la aplicación.
+- **«No hay servidor de sincronización Mindwtr en esta dirección»**: la
+  dirección responde, pero no con la API: a menudo el puerto de la aplicación
+  web (5173) en lugar del servidor (8787), o un proxy que pide iniciar sesión
+  (Authelia) delante de `/v1`.
+- **«La dirección redirige»**: introduzca la dirección `https://`.
+- **«El servidor no puede usar su carpeta de datos»**: un problema del propio
+  servidor (permisos del volumen `/app/cloud_data`); sus registros lo
+  explican.
+- **Los contadores están a cero**: el token se acepta, pero es el de otra
+  lista (un token = una lista). Compruebe que es el mismo que en las
+  aplicaciones.
+- **«Varias tareas abiertas tienen este título»**: cambie el nombre de una, o
+  use el identificador que da un desencadenante.
+- Registros: `LOG_LEVEL=debug` en el contenedor muestra cada lectura.
+
+## Límites
+
+- Solo por el servidor de sincronización autoalojado `mindwtr-cloud`: ni
+  Dropbox, ni WebDAV, ni iCloud, ni un archivo local.
+- El servidor se lee cada 1 a 10 minutos (y en cada vencimiento, en la
+  revisión de la bandeja de entrada y a medianoche): una tarea terminada en el
+  móvil aparece en Gladys en ese plazo, una vez sincronizado el móvil. Tres
+  solicitudes por lectura (tareas abiertas, tareas terminadas, proyectos), más
+  una por página de 500 tareas; el servidor acepta 120 por minuto por defecto.
+- La integración añade tareas a la bandeja de entrada y termina tareas; no las
+  modifica, ni las elimina, ni las mueve.
+- Las tareas de la lista Reference no se cuentan. Las áreas no se usan.
+- Probada con `mindwtr-cloud` 1.3.6.
+- Gladys no guarda ningún dato de Mindwtr salvo `/data/mindwtr-state.json`: la
+  hora de la última lectura, los identificadores de las tareas abiertas y la
+  hora de la última revisión, para que ningún evento se envíe dos veces. El
+  token no está en él.
+- Sin relación con el proyecto Mindwtr.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Mindwtr te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor de sincronización Mindwtr | `section` | No | El servidor de sincronización autoalojado de Mindwtr (mindwtr-cloud, imagen Docker). La sincronización Dropbox o WebDAV no sirve: la integración necesita este servidor. |
+| Dirección | `string` | Sí | La URL Self-Hosted de los ajustes de sincronización de la aplicación, con :puerto (8787 por defecto) y https:\/\/ para HTTPS. |
+| Token de sincronización | `secret` | Sí | El token de los ajustes de sincronización de la aplicación, uno de los MINDWTR_CLOUD_AUTH_TOKENS del servidor. Cada token tiene su propia lista de tareas. |
+| Opciones | `section` | No |  |
+| Revisión de la bandeja de entrada tras | `select` | No | El evento de escena «Bandeja de entrada por revisar» se activa cuando un elemento lleva este tiempo esperando, y luego al mismo ritmo hasta que esté vacía. |
+| Aceptar certificados autofirmados | `boolean` | No | Para una dirección https:\/\/ con certificado autofirmado (CA local de Caddy). Márquelo solo para su propio servidor. |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee el servidor. Los vencimientos y la medianoche se siguen siempre a tiempo. |
+| Idioma de los nombres de funciones | `select` | No | Nombres de las funciones al añadir el dispositivo y textos enviados a las escenas. |
+
+## Cómo instalar Mindwtr en Gladys
+
+1. En Gladys, abre **Integraciones**: Mindwtr aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-mindwtr:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-mindwtr](https://github.com/guim31/gladys-mindwtr).
+
+Mindwtr requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Mindwtr es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-mindwtr) — [fuente de esta documentación](https://github.com/guim31/gladys-mindwtr/blob/HEAD/docs/es.md)

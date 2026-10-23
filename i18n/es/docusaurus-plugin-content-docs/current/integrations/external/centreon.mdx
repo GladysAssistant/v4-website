@@ -1,0 +1,270 @@
+---
+title: "Integración domótica Centreon, gratuita y de código abierto"
+sidebar_label: "Centreon"
+description: "Sus hosts y servicios de Centreon en Gladys, con escenas cuando un host cae o falla un servicio. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-centreon.png"
+keywords:
+  - "centreon"
+  - "domótica centreon"
+  - "gladys centreon"
+  - "centreon gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-centreon instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Centreon","description":"Sus hosts y servicios de Centreon en Gladys, con escenas cuando un host cae o falla un servicio.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-centreon","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-centreon.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:30:16Z"}} />
+
+Lleve su supervisión [Centreon](https://www.centreon.com/) a Gladys: cada host
+se convierte en un dispositivo (activo, servicios WARNING, CRITICAL y UNKNOWN,
+problemas sin gestionar, reconocido, mantenimiento), un dispositivo
+«Centreon» resume el conjunto, y sus escenas reaccionan cuando un host cae o
+falla un servicio — una luz roja cuando el NAS cae, un mensaje cuando una copia
+de seguridad pasa a CRITICAL. Una escena también puede reconocer los problemas
+de un host, y un widget del panel lista los problemas en curso.
+
+La integración lee la API REST v2 de Centreon (`/centreon/api/latest`) en su
+red local, con un usuario de Centreon dedicado. Nada pasa por una nube.
+
+Probado con un Centreon 24.10 real (24.10.12, imagen Docker comunitaria todo
+en uno: checks de prueba forzados a WARNING, CRITICAL y UNKNOWN, un host DOWN,
+un host UNREACHABLE detrás de él, un mantenimiento, reconocimientos, un host
+nunca comprobado, usuarios sin los derechos). Sus comentarios son
+bienvenidos:
+[github.com/guim31/gladys-centreon/issues](https://github.com/guim31/gladys-centreon/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Centreon con su API REST v2 (solo se probó la 24.10; 22.04 y posteriores
+  deberían funcionar),
+  su interfaz web accesible desde la máquina de Gladys (normalmente
+  `http://<dirección>/centreon`). Ediciones Open Source, IT o Business.
+- Un usuario de Centreon para Gladys, solo con los derechos necesarios.
+
+## Primeros pasos
+
+### 1. Cree un usuario de Centreon
+
+En Centreon, como administrador:
+
+1. **Configuration > Users > Contacts / Users > Add**: un usuario `gladys`, no
+   administrador, con una contraseña larga. En la pestaña **Centreon
+   Authentication**, ponga **Reach API Realtime** en Sí (la API de
+   configuración no es necesaria).
+2. **Administration > ACL > Resources Access**: un recurso con los hosts que
+   seguir (o todos los hosts) y, si filtra por grupos de hosts, **también esos
+   grupos de hosts**: un usuario solo ve un grupo de hosts si sus recursos lo
+   contienen.
+3. **Administration > ACL > Actions Access** (para reconocer desde Gladys): un
+   acceso con **Acknowledge** para hosts y para servicios.
+4. **Administration > ACL > Access Groups**: un grupo con el usuario, el
+   recurso y el acceso a acciones.
+
+Centreon calcula las ACL en menos de un minuto.
+
+### 2. Configure la integración
+
+En Gladys, abra la configuración de la integración:
+
+- **Dirección**: la dirección de la interfaz web de Centreon, p. ej.
+  `192.168.1.2`. Se añaden `http://` y `/centreon` salvo que introduzca otros
+  (p. ej. `https://monitoring.example.com/centreon`). También sirve una
+  dirección copiada del navegador.
+- **Usuario de Centreon** y **Contraseña**: el usuario del paso 1.
+- **Grupos de hosts (opcional)**: nombres de grupos de hosts separados por
+  comas, p. ej. `homelab, linux-servers`: se toma un host de uno de ellos.
+  Vacío: todos los hosts que ve el usuario.
+- **Intervalo de actualización**: de 30 segundos a 5 minutos (1 minuto por
+  defecto).
+- **Permitir reconocer desde escenas**: desmárquelo para desactivar la acción
+  de reconocimiento.
+- **Aceptar certificados autofirmados**: solo para una dirección `https://`
+  con un certificado autofirmado. Desactivado por defecto.
+- **Idioma de los nombres**: idioma de los nombres de las funciones y de los
+  resultados de escena.
+
+Guarde y haga clic en **Probar la conexión**: verá la versión de Centreon, el
+número de hosts, de hosts caídos y de servicios con problemas.
+
+### 3. Añada los dispositivos
+
+Abra la pestaña **Descubrir** de la integración y añada los hosts que quiera
+seguir, y el dispositivo «Centreon» si quiere los totales. Los desencadenantes
+de escena valen para todos los hosts, añadidos a Gladys o no.
+
+## Los dispositivos
+
+Cada **host** (con su nombre en Centreon; renombrarlo en Centreon conserva el
+mismo dispositivo):
+
+| Función                 | Valor                                                                    |
+| ----------------------- | ------------------------------------------------------------------------ |
+| Host UP                 | 1 UP, 0 DOWN o UNREACHABLE; vacío mientras el host está PENDING          |
+| Servicios WARNING       | número de servicios WARNING                                              |
+| Servicios CRITICAL      | número de servicios CRITICAL                                             |
+| Servicios UNKNOWN       | número de servicios UNKNOWN                                              |
+| Problemas sin gestionar | problemas del host y de los servicios ni reconocidos ni en mantenimiento |
+| Host reconocido         | 1 cuando el host está DOWN o UNREACHABLE y su problema reconocido        |
+| En mantenimiento        | 1 durante un mantenimiento del host                                      |
+
+El dispositivo **Centreon**: Hosts DOWN (DOWN o UNREACHABLE), Servicios
+WARNING, Servicios CRITICAL, Servicios UNKNOWN y Problemas sin gestionar,
+sobre los hosts de la configuración.
+
+Un host está UNREACHABLE cuando está DOWN detrás de un host padre también
+caído. Los contadores de servicios incluyen los estados que Centreon aún está
+confirmando (SOFT), como la vista Resource Status. Los valores solo se envían a
+Gladys cuando cambian, y cada 6 horas si no.
+
+## Panel
+
+El widget **Problemas de Centreon** muestra tres mosaicos — los hosts caídos,
+los servicios CRITICAL, los problemas sin gestionar — y los problemas: hosts
+DOWN, luego UNREACHABLE, luego servicios CRITICAL, UNKNOWN y WARNING, los más
+recientes primero. Cada línea da el servicio y su estado, el host, ✓ una vez
+reconocido y ⏸ en mantenimiento. Diez líneas como máximo. **Actualizar** vuelve
+a leer Centreon. En sus ajustes, elija hosts para mostrar solo los suyos
+(vacío: todos).
+
+## Escenas
+
+### Desencadenantes
+
+- **Un host cae**: un host pasa a DOWN o UNREACHABLE. Filtro: hosts (vacío:
+  cualquiera). Variables: nombre del host, estado (DOWN, UNREACHABLE). Un host
+  que pasa de DOWN a UNREACHABLE no se anuncia dos veces.
+- **Un host vuelve**: un host anunciado como caído vuelve a estar UP.
+  Variables: nombre del host, duración en minutos.
+- **Un servicio tiene un problema**: un servicio pasa a WARNING, CRITICAL o
+  UNKNOWN, o cambia entre ellos (de WARNING a CRITICAL, por ejemplo). Filtros:
+  hosts, estados (vacío: todos; para «solo CRITICAL», elija CRITICAL).
+  Variables: nombre del host, servicio, estado, salida del check (su primera
+  línea).
+- **Un servicio vuelve a OK**: un servicio anunciado con problemas vuelve a
+  estar OK. Filtros: hosts, último estado de problema anunciado. Variables:
+  nombre del host, servicio, último estado de problema, duración en minutos.
+- **Centreon ya no responde**: la API REST no responde dos veces seguidas
+  (variables: dirección, error).
+
+Los problemas ya presentes al iniciar la integración no se anuncian, pero su
+fin sí. Solo cuentan los estados confirmados (HARD): mientras Centreon repite
+un check (estado SOFT, hasta «Max check attempts»), no se anuncia nada, igual
+que Centreon tampoco notifica. Un cambio ocurrido durante un reinicio de
+Gladys o de la integración se anuncia una vez en la lectura siguiente. Un
+problema en mantenimiento (del servicio o de su host) no se anuncia; si sigue
+ahí al terminar el mantenimiento, se anuncia entonces.
+
+### Acciones
+
+- **Reconocer los problemas de un host**: reconoce en Centreon el problema del
+  host (DOWN, UNREACHABLE) y cada uno de sus servicios con problemas aún no
+  reconocido, con un comentario (vacío: «Reconocido desde Gladys»), en nombre
+  del usuario de Gladys. El reconocimiento es persistente (hasta que el host
+  esté UP o el servicio OK), su comentario se conserva, y no notifica a nadie.
+  Devuelve el número reconocido. Se desactiva con «Permitir reconocer desde
+  escenas».
+- **Leer los problemas**: cuenta y lista los problemas de un host, o de todos,
+  para las acciones siguientes: número, sin gestionar, hosts caídos,
+  servicios CRITICAL, WARNING y UNKNOWN, y la lista «host: problema».
+
+### Ideas de escenas
+
+- **Una luz roja cuando el NAS cae**: desencadenante «Un host cae», host nas →
+  poner en rojo la lámpara del salón y enviar
+  `{{triggerEvent.data.host}}: {{triggerEvent.data.state_name}}`.
+- **Solo los servicios críticos**: desencadenante «Un servicio tiene un
+  problema», estado CRITICAL → mensaje `\{\{triggerEvent.data.host\}\} /
+\{\{triggerEvent.data.service\}\}: \{\{triggerEvent.data.output\}\}`.
+- **Informe matinal**: cada día a las 8:00, «Leer los problemas» → enviar el
+  número y la lista cuando el número sea mayor que 0.
+- **Visto desde el sofá**: un botón del panel o un mando Zigbee lanza
+  «Reconocer los problemas de un host» sobre el NAS.
+
+## Solución de problemas
+
+- **«Usuario o contraseña rechazados por Centreon»**: compruebe el usuario, su
+  contraseña y que esté activado. Un usuario autenticado solo por LDAP o SSO
+  puede no acceder a la API: use un usuario local.
+- **«Acceso denegado: permita al usuario Reach API Realtime»**: paso 1.1.
+- **«Ningún host visible»**: el usuario no tiene un recurso ACL con hosts
+  (paso 1.2), o Centreon aún no ha calculado las ACL (espere un minuto).
+- **«Grupos de hosts no encontrados»**: compruebe los nombres y añada los
+  grupos de hosts al recurso ACL del usuario (paso 1.2).
+- **«Centreon no responde»**: compruebe la dirección desde la máquina de
+  Gladys. `localhost` es el propio contenedor de la integración: use la
+  dirección IP de la máquina de Centreon.
+- **«No hay ninguna API de Centreon en esta dirección»**: responde otra cosa:
+  introduzca la dirección de la interfaz web, con su ruta si no es
+  `/centreon` (un Centreon en la raíz de su sitio:
+  `https://<dirección>/api/latest`).
+- **«Este Centreon redirige a HTTPS»**: introduzca `https://` delante de la
+  dirección.
+- **«Certificado rechazado»**: marque «Aceptar certificados autofirmados».
+- **Falta un host**: no está en ninguno de los grupos de hosts de la
+  configuración, o no está en el recurso ACL del usuario.
+- **El reconocimiento es rechazado**: el usuario necesita las acciones ACL de
+  reconocimiento de hosts y servicios (paso 1.3).
+
+## Límites
+
+- Un solo Centreon por integración (con servidores remotos y pollers, la
+  dirección del servidor central: ve todos los hosts).
+- Solo estados de hosts y servicios: ni métricas, ni datos de rendimiento, ni
+  vistas de negocio (BAM).
+- La integración lee Centreon al intervalo elegido: un evento que viene y se va
+  entre dos lecturas se pierde.
+- «Un servicio vuelve a OK» también se dispara cuando un servicio con
+  problemas se retira de la supervisión; un host retirado de Centreon o del
+  ámbito termina sin ruido.
+- Como máximo 30 eventos de escena por lectura: un corte de red puede generar
+  decenas de golpe; el resto sigue en las lecturas siguientes.
+- Sin cuota en la API REST: cada lectura envía dos peticiones (una más con
+  grupos de hosts, una más cada hora para la versión), y vuelve a iniciar
+  sesión cuando Centreon cierra la sesión.
+- Un reconocimiento pasa por la cadena de comandos de Centreon (Gorgone): si
+  está detenida, Centreon acepta el reconocimiento pero nunca llega al motor.
+
+Sin relación con la empresa Centreon.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Centreon te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Centreon | `section` | No | En Centreon, cree un usuario dedicado autorizado a «Reach API Realtime», en un grupo ACL cuyos recursos contengan los hosts (y los grupos de hosts que filtrar) y, para reconocer, las acciones de reconocimiento. Después añada los hosts desde la pestaña Descubrir. |
+| Dirección | `string` | Sí | La dirección de la interfaz web de Centreon; http:\/\/ y /centreon salvo que introduzca otros (en la raíz de un sitio: …/api/latest). |
+| Usuario de Centreon | `string` | Sí |  |
+| Contraseña | `secret` | Sí | La contraseña de este usuario. No un administrador: un usuario dedicado, solo con los derechos de arriba. |
+| Grupos de hosts (opcional) | `string` | No | Nombres de grupos de hosts, separados por comas: se toma un host de uno de ellos. Vacío: todos los hosts que ve el usuario. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Centreon: dos peticiones de API cada vez (tres con grupos de hosts). |
+| Permitir reconocer desde escenas | `boolean` | No | Desmarque para desactivar la acción de escena «Reconocer los problemas de un host». |
+| Aceptar certificados autofirmados | `boolean` | No | Solo para https:\/\/ con un certificado autofirmado (habitual en un Centreon doméstico). |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo) y de los resultados de escena. |
+
+## Cómo instalar Centreon en Gladys
+
+1. En Gladys, abre **Integraciones**: Centreon aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-centreon:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-centreon](https://github.com/guim31/gladys-centreon).
+
+Centreon requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Centreon es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-centreon) — [fuente de esta documentación](https://github.com/guim31/gladys-centreon/blob/HEAD/docs/es.md)

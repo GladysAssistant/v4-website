@@ -1,0 +1,221 @@
+---
+title: "Integración domótica Bang & Olufsen, gratuita y de código abierto"
+sidebar_label: "Bang & Olufsen"
+description: "Bang & Olufsen Mozart speakers and TVs on the local network: volume, mute, source, playback. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bang-olufsen.png"
+keywords:
+  - "bang & olufsen"
+  - "domótica bang & olufsen"
+  - "gladys bang & olufsen"
+  - "bang & olufsen gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-bang-olufsen instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Bang & Olufsen","description":"Bang & Olufsen Mozart speakers and TVs on the local network: volume, mute, source, playback.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bang-olufsen","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bang-olufsen.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T19:06:47Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Control the recent **Bang & Olufsen** products of the **Mozart** platform
+from Gladys, on your local network, without any cloud: volume (capped),
+mute, source, play, pause, next, previous, the title playing, and standby.
+The integration uses the official local API Bang & Olufsen publishes for
+these products (REST, and live notifications over a WebSocket), the one the
+Home Assistant Bang & Olufsen integration uses.
+
+> **Unofficial integration, not affiliated with Bang & Olufsen.** This first
+> milestone was written and tested against a simulated product only: it has
+> **never been tested with a real product**. Your feedback is welcome.
+
+## Supported products
+
+Only the products of the **Mozart** platform, the ones Bang & Olufsen lists
+for its API: Beosound Balance, Beosound Emerge, Beosound Level, Beosound A5,
+Beosound A9 (5th generation), Beosound 2 (3rd generation), Beosound Theatre,
+Beosound Premiere, Beolab 8, Beolab 28 and Beoconnect Core. A **Beovision**
+TV is reached through its Mozart part (a Beosound Theatre, for example): the
+sound (volume, source, playback), not the picture.
+
+**Older BeoLink products are not supported**: Beoplay speakers (A9 up to the
+4th generation, M3, M5…), BeoSound Core, BeoSound Essence, BeoSound 35,
+Beovision TVs without a Mozart product, and every product of the "ASE" or
+older platforms. They do not answer the Mozart API: the integration status
+says so for an address where such a product answers, and nothing is added.
+
+## Prepare the products
+
+1. Set the products up with the Bang & Olufsen app as usual (Wi-Fi or
+   Ethernet).
+2. Give each product a **fixed IP address** in your router (reserved DHCP
+   lease). The address is shown in the B&O app, or in your router's list of
+   devices.
+3. Gladys must reach the products on the network: port 80 (REST API) and
+   port 9339 (notifications).
+
+## Add a product
+
+- **By its address** (recommended): type the IP address in "IP addresses of
+  the products" (several addresses separated by commas) and save.
+- **By the search** (optional): use **Find the products**. Gladys browses the
+  network (mDNS, service `_bangolufsen._tcp`) for the integration. A network
+  that blocks multicast may hide them: type the address then. The search is
+  never needed for the rest to work.
+
+The product appears in the integration's **Discovery** tab: create it.
+
+## What you get
+
+One Gladys device per product:
+
+| Feature     | Detail                                                                   |
+| ----------- | ------------------------------------------------------------------------ |
+| Power       | Read only: 1 on, 0 standby (or network standby), off or unreachable      |
+| Standby     | Button: puts the product in standby                                      |
+| Volume      | 0 to 100, read and set (whole numbers only), capped by the volume cap    |
+| Mute        | Button: each press reads the mute from the product and sets the opposite |
+| Play, Pause | Buttons                                                                  |
+| Next, Prev. | Buttons                                                                  |
+| Playback    | Read only: 1 playing, 0 paused, stopped or idle                          |
+| Source      | Dropdown, read and set: the sources this product has shown (Spotify, …)  |
+| Now playing | Text: "Artist - Title", or "—" when nothing plays                        |
+
+The states arrive **at once** through the notifications of the product
+(volume turned on the product, track changed in the B&O app…), merged to one
+update per second at most; the whole state is also read again at the refresh
+interval. When the notifications are lost, they are opened again after 5
+seconds, then twice as long each time (5 minutes at most).
+
+The "Source" dropdown lists the sources the product announces as enabled and
+playable (Spotify, TIDAL, Deezer, radio, AirPlay, Chromecast, line-in, TV…).
+A source seen once stays in the list; selecting one that is not available at
+that moment is refused and nothing is sent.
+
+## Volume cap
+
+**Volume cap** (1 to 100, **70** by default) is the highest volume Gladys may
+set. A higher volume asked by a scene, the dashboard or a voice assistant is
+lowered to the cap (the log says so), never refused. The cap is read again
+just before each volume command, so a lowered cap applies at once. It only
+limits what Gladys sends: the B&O app, the remote and the buttons of the
+product are not limited. Set it to 100 to remove it.
+
+The commands that bring the sound back respect the cap too:
+
+- **Unmute**: the volume is read from the product just before; above the cap
+  (read at that moment), Gladys first lowers it to the cap, then unmutes. If
+  the volume cannot be lowered in time (or is unknown), the product is not
+  unmuted and Gladys says so ("nothing sent").
+- **Play** and a **source change**: when the last known volume (from the
+  last reading or notification) is above the cap, it is lowered to the cap
+  first. The last known volume may be a few seconds old.
+
+## Standby, and turning on
+
+The API has **no "power on"**: power is a read-only state and standby a
+button, not a switch, so a "turn everything off" never puts the products in
+standby, and a "turn everything on" has nothing to send. A product wakes up
+by itself when something plays to it (AirPlay, Chromecast, Spotify…), or from
+the B&O app, its remote or its buttons.
+
+A product in standby usually still answers (network standby): it shows **0**
+with its last volume. A product that does not answer at all is shown **0**
+too (off or unreachable), the integration status names it, and it is asked
+again less and less often: after the refresh interval, then twice as long
+each time, 5 minutes at most. A product that accepts the connection and then
+says nothing is **unknown**: nothing is published.
+
+## A product that changed address
+
+Each product is known by its serial number (from its Beolink id), not by its
+address. When another product answers at the address of a created one, the
+integration never sends anything there: the product shows **0**, the status
+says "address unknown", and a search runs by itself every 10 minutes until it
+is found again. A fixed address in the router avoids it.
+
+## Commands
+
+Every command is answered to Gladys within 5 seconds. Commands to one product
+are sent one at a time; a command that cannot start in time is dropped, never
+sent late. Pause, mute and standby go before the volume changes still
+waiting, and volume changes still waiting are merged (moving a slider sends
+the last position only). Standby on a product that does not answer is
+answered "does not answer: nothing sent". After a command the state is read
+again, but never faster than the refresh interval (the notifications show
+the change at once anyway). A volume that is not a whole number from 0 to 100 (empty, 12.5,
+text…) is refused before anything is sent. When a command may have reached
+the product but was not confirmed in time, Gladys shows "sent, without
+confirmation" and the state is read again as soon as the refresh interval allows; "nothing sent"
+is only said when no command request left.
+
+## Settings
+
+- **Volume cap**: see above.
+- **Refresh interval**: how often the whole state is read again, 10 to 300
+  seconds (30 by default).
+- **Check the products**: asks every known product now and says which ones
+  answer, whether they are on, and their volume.
+
+## Privacy and security
+
+The integration only talks to the products, on your local network, in plain
+HTTP and WebSocket (the API offers nothing else). The API has no password,
+and the integration asks for none. It keeps a list of the known products
+(serial number, address, name, sources) in its data folder (`/data`).
+Answers are read with a size limit (64 KB), notifications too (64 KB each, 50
+per second at most), and only the expected fields are kept.
+
+## Limits
+
+- Local network only, Mozart products only (see above).
+- No "power on", no multiroom (Beolink) grouping, no sound settings, no
+  notification playback in this first version.
+- Never tested with a real product so far.
+
+## Credits
+
+The endpoints and models are ported to JavaScript from
+[mozart-api](https://github.com/bang-olufsen/mozart-open-api) (MIT license),
+published by Bang & Olufsen. Bang & Olufsen, Beosound, Beolab, Beovision,
+Beoconnect and BeoLink are trademarks of Bang & Olufsen, used only to name
+the compatible products.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Bang & Olufsen te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Bang & Olufsen Mozart products, on your local network | `section` | No | Volume, mute, source, play, pause, next, previous, title and standby of the recent Bang & Olufsen products of the Mozart platform (Beosound, Beolab, Beoconnect Core, the sound of a Beovision with a Beosound Theatre), through their official local API (REST and live notifications, plain HTTP on your network), without any cloud. Older BeoLink products (Beoplay, BeoSound Core, Essence, Beovision without Mozart) are not supported. Give each product a fixed IP address in your router and type it below; "Find the products" can also look for them (optional). The products then appear in the Discovery tab. Never tested with a real product. Unofficial integration, not affiliated with Bang & Olufsen. |
+| IP addresses of the products | `string` | No | Separated by commas, for example 192.168.1.40, 192.168.1.41. Products found by the search are kept without being typed here. |
+| Volume cap | `number` | No | The highest volume Gladys may set, 1 to 100 (70 by default): a higher volume asked by a scene, the dashboard or a voice assistant is lowered to it. It does not limit the B&O app or the buttons of the product. |
+| Refresh interval (s) | `number` | No | How often the whole state is read again, in seconds; changes also arrive at once through the notifications of the product. A product that does not answer is asked less and less often (5 minutes at most). |
+
+## Cómo instalar Bang & Olufsen en Gladys
+
+1. En Gladys, abre **Integraciones**: Bang & Olufsen aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-bang-olufsen:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-bang-olufsen](https://github.com/LM1LC3N7/gladys-bang-olufsen).
+
+Bang & Olufsen requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Bang & Olufsen es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-bang-olufsen) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-bang-olufsen/blob/HEAD/docs/en.md)
